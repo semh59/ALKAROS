@@ -39,6 +39,22 @@
     busy: false,
     error: null,
     lastResult: null,
+    // V1-RMD-292: billing.bill_adjustments summary/list - discount, voluntary tip and any other fee already
+    // applied to this bill (billing/bills/{id}/adjustments, GET only for this task; discount/tip are the only
+    // two write endpoints this task adds a client for).
+    adjustmentSummary: null,
+    adjustmentItems: [],
+    discountReason: 'ManagerDiscretion',
+    discountCalcType: 'Percentage',
+    discountValueDraft: '',
+    discountNoteDraft: '',
+    discountBusy: false,
+    discountError: null,
+    discountNotice: null,
+    tipAmountDraft: '',
+    tipNoteDraft: '',
+    tipBusy: false,
+    tipError: null,
   };
 
   function escapeHtml(value) {
@@ -94,6 +110,29 @@
     return '/api/v1/terminals/' + state.terminalId + '/billing/bills/' + state.billId + '/tenders/';
   }
 
+  function billBase() {
+    return '/api/v1/terminals/' + state.terminalId + '/billing/bills/' + state.billId;
+  }
+
+  // V1-RMD-292: DiscountReasonCatalog's own codes (ALKAROS.Billing.Adjustments) - the server rejects any
+  // other value, so this list is exhaustive by construction, not a guess.
+  var DISCOUNT_REASON_LABELS = {
+    CustomerLoyalty: 'Müşteri sadakati',
+    PromotionalOffer: 'Promosyon',
+    ServiceRecovery: 'Hizmet telafisi (şikayet/hata düzeltmesi)',
+    ManagerDiscretion: 'Yönetici takdiri / düzeltme',
+  };
+
+  // AdjustmentType's own enum (ALKAROS.Billing.Adjustments) - every value GET .../adjustments can return.
+  var ADJUSTMENT_TYPE_LABELS = {
+    DiscountPercentage: 'İndirim (%)',
+    DiscountAmount: 'İndirim (tutar)',
+    ServiceFee: 'Ücret',
+    Kuver: 'Kuver',
+    Tip: 'Bahşiş',
+    CustomFee: 'Özel ücret',
+  };
+
   function setBusy(value) { state.busy = value; render(); }
   function setError(message) { state.error = message; render(); }
 
@@ -125,9 +164,11 @@
     Promise.all([
       api(tendersBase()),
       api('/api/v1/terminals/' + state.terminalId + '/cash-sessions/active'),
+      api(billBase() + '/adjustments'),
     ]).then(function (results) {
       var summaryResult = results[0];
       var cashResult = results[1];
+      var adjustmentsResult = results[2];
 
       if (summaryResult.status === 404) {
         state.phase = 'missingBill';
@@ -144,6 +185,7 @@
       state.cashSessionOpen = cashResult.ok;
       state.cashSessionId = cashResult.ok ? cashResult.body.cashSessionId : null;
       if (!state.cashSessionOpen) state.selectedMethod = 'Eft';
+      applyAdjustmentsResult(adjustmentsResult);
 
       // V1-RMD-258/V13-RMD-002: the server persists a real, unresolved
       // Payment (Pending/Unknown/ReconciliationRequired) for this bill and
@@ -162,8 +204,39 @@
     });
   }
 
+  // V1-RMD-292: a real, deep server-side finding, verified by reading the code (not this task's to fix -
+  // Host/Modules, outside this task's Owned surface of split-payment.js alone):
+  //
+  // bill.PayableAmount is set once when the bill is created and NEVER updated again.
+  // ApplyDiscountAsync/ApplyTipAsync only ever insert a billing.bill_adjustments row; nothing writes an
+  // adjusted total back onto the bill itself. Both places that actually gate money then use the RAW,
+  // never-adjusted PayableAmount as a hard ceiling:
+  //   - PaymentAllocationFactory.Create: `remaining = bill.PayableAmount - alreadyAllocated`, throws
+  //     OverAllocationException if a tender would exceed it - a voluntary tip can therefore NEVER actually be
+  //     collected through a tender once the running total would pass the ORIGINAL bill amount.
+  //   - BillPaymentClosureCalculator: `paymentSatisfied = allocatedTotal >= bill.PayableAmount` (again raw) -
+  //     a bill discounted here can never actually CLOSE by collecting only the discounted amount; the full
+  //     original amount is still required, forever.
+  //
+  // So a discount/tip is real and persisted (billing.bill_adjustments, audited, grant-flow-protected for
+  // discount) but does NOT change what must be collected or when the bill closes - fixing that needs the
+  // allocation/closure ceiling itself to read AdjustmentCalculator's AdjustedPayableAmount, a Host/Modules
+  // change (V1-RMD-298, opened from this task). Showing a "reduced kalan" here would be actively wrong: it
+  // would tell a cashier to stop collecting money the bill still legally requires. This page therefore keeps
+  // the server's own (real, ceiling-enforcing) remainingAmount authoritative for tendering, and shows
+  // adjustments as their own clearly-labelled informational total instead of folding them into "Kalan".
   function remainingAmount() {
     return state.summary ? state.summary.remainingAmount : 0;
+  }
+
+  function applyAdjustmentsResult(result) {
+    if (!result || !result.ok) return;
+    state.adjustmentItems = result.body.adjustments || [];
+    state.adjustmentSummary = result.body.summary || null;
+  }
+
+  function refreshAdjustments() {
+    return api(billBase() + '/adjustments').then(applyAdjustmentsResult);
   }
 
   // ---- actions ---------------------------------------------------------
@@ -269,6 +342,96 @@
     }).catch(function () {
       state.busy = false;
       setError('Bağlantı kurulamadı. Tekrar deneyin.');
+    });
+  }
+
+  // V1-RMD-292: bills.discount is grant-class (BillingSplitApplication.cs's own comment on the endpoint) -
+  // a role holding it outright applies at once (200, Status 'Applied'); a role that does not raises a grant
+  // request through the exact same policy/delegation/manager-decision engine authorization-decisions.cs
+  // already surfaces (202, Status 'Pending', never silently denied); the policy engine can also refuse it
+  // outright (403, code GRANT_DENIED - client-side Turkish override below, since that endpoint's own message
+  // is the literal English string "Discount request was denied.", outside this task's Owned surface to fix).
+  function submitDiscount() {
+    var value = Number(state.discountValueDraft);
+    if (!(value > 0)) {
+      state.discountError = 'Tutar sıfırdan büyük olmalı.';
+      render();
+      return;
+    }
+    state.discountBusy = true;
+    state.discountError = null;
+    state.discountNotice = null;
+    render();
+    api(billBase() + '/discount', {
+      method: 'POST',
+      body: {
+        IdempotencyKey: crypto.randomUUID(),
+        CalculationType: state.discountCalcType,
+        Value: value,
+        ReasonCode: state.discountReason,
+        Notes: state.discountNoteDraft || null,
+      },
+    }).then(function (result) {
+      state.discountBusy = false;
+      if (!result.ok) {
+        var code = result.body && result.body.error && result.body.error.code;
+        state.discountError = code === 'GRANT_DENIED'
+          ? 'İndirim talebiniz reddedildi. Yetkili bir kullanıcı uygulayabilir.'
+          : describeHttpFailure(result.status, result.body);
+        render();
+        return;
+      }
+      state.discountValueDraft = '';
+      state.discountNoteDraft = '';
+      if (result.body.status === 'Pending') {
+        state.discountNotice = 'İndirim talebiniz yönetici onayına gönderildi; onaylanana kadar hesap değişmez.';
+        render();
+        return;
+      }
+      state.discountNotice = 'İndirim uygulandı ve kaydedildi.';
+      // V1-RMD-292: remainingAmount() is the server's own, real tender ceiling and is unaffected by a
+      // discount today (see remainingAmount's own doc comment) - amountDraft is deliberately left as-is.
+      return refreshAdjustments().then(render);
+    }).catch(function () {
+      state.discountBusy = false;
+      state.discountError = 'Bağlantı kurulamadı. Tekrar deneyin.';
+      render();
+    });
+  }
+
+  // V1-RMD-292: bills.split is checked directly (RequireMutationAsync) - a voluntary tip is data entry of
+  // money already handed over, never a discretionary decision a role might lack the authority for (see the
+  // endpoint's own comment); no grant flow here, unlike the discount above.
+  function submitTip() {
+    var amount = Number(state.tipAmountDraft);
+    if (!(amount > 0)) {
+      state.tipError = 'Tutar sıfırdan büyük olmalı.';
+      render();
+      return;
+    }
+    state.tipBusy = true;
+    state.tipError = null;
+    render();
+    api(billBase() + '/tip', {
+      method: 'POST',
+      body: { IdempotencyKey: crypto.randomUUID(), Amount: amount, Notes: state.tipNoteDraft || null },
+    }).then(function (result) {
+      state.tipBusy = false;
+      if (!result.ok) {
+        // FORBIDDEN and FEATURE_DISABLED already carry a correct Turkish message from the server
+        // (BillingSplitExceptionFilter's own Map) - no client-side override needed here, unlike discount's
+        // GRANT_DENIED above.
+        state.tipError = describeHttpFailure(result.status, result.body);
+        render();
+        return;
+      }
+      state.tipAmountDraft = '';
+      state.tipNoteDraft = '';
+      return refreshAdjustments().then(render);
+    }).catch(function () {
+      state.tipBusy = false;
+      state.tipError = 'Bağlantı kurulamadı. Tekrar deneyin.';
+      render();
     });
   }
 
@@ -442,6 +605,76 @@
     );
   }
 
+  function renderAdjustmentList() {
+    if (state.adjustmentItems.length === 0) return '';
+    var adjustedTotal = state.adjustmentSummary ? state.adjustmentSummary.adjustedPayableAmount : null;
+    return (
+      '<div class="sp-field"><span class="sp-field-label">Uygulanan indirim, bahşiş ve ücretler</span>' +
+      state.adjustmentItems.map(function (item) {
+        var label = ADJUSTMENT_TYPE_LABELS[item.adjustmentType] || item.adjustmentType;
+        var sign = item.isDeduction ? '−' : '+';
+        return (
+          '<div class="sp-line"><span class="sp-line-method">' + escapeHtml(label) +
+          (item.reason ? ' · ' + escapeHtml(DISCOUNT_REASON_LABELS[item.reason] || item.reason) : '') + '</span>' +
+          '<span class="sp-line-status is-approved">' + sign + formatMoney(item.amount) + '</span></div>'
+        );
+      }).join('') +
+      (adjustedTotal != null
+        ? '<div class="sp-line"><span class="sp-line-method">Kaydedilen düzeltmelerle toplam</span>' +
+          '<span class="sp-line-status is-approved">' + formatMoney(adjustedTotal) + '</span></div>'
+        : '') +
+      // V1-RMD-292: honest disclosure, not a display bug - see remainingAmount()'s own doc comment. The
+      // adjustment is really persisted and audited; it just does not yet change the tender ceiling below.
+      '<div class="sp-alert-body">Bu tutar bilgi amaçlıdır; kasa hâlâ aşağıdaki "Kalan" tutarını tahsil eder.</div>' +
+      '</div>'
+    );
+  }
+
+  function renderDiscountForm() {
+    var disabled = state.discountBusy ? ' disabled' : '';
+    return (
+      '<div class="sp-field"><span class="sp-field-label">İndirim / düzeltme ekle</span>' +
+      (state.discountNotice ? '<div class="sp-alert-body">' + escapeHtml(state.discountNotice) + '</div>' : '') +
+      (state.discountError ? '<div class="sp-alert-body" style="color:var(--color-danger)">' + escapeHtml(state.discountError) + '</div>' : '') +
+      '<select class="sp-input" id="discount-reason">' +
+      Object.keys(DISCOUNT_REASON_LABELS).map(function (code) {
+        return '<option value="' + code + '"' + (state.discountReason === code ? ' selected' : '') + '>' +
+          escapeHtml(DISCOUNT_REASON_LABELS[code]) + '</option>';
+      }).join('') +
+      '</select>' +
+      '<div class="sp-row">' +
+      '<select class="sp-input" id="discount-calc-type">' +
+      '<option value="Percentage"' + (state.discountCalcType === 'Percentage' ? ' selected' : '') + '>Yüzde (%)</option>' +
+      '<option value="FixedAmount"' + (state.discountCalcType === 'FixedAmount' ? ' selected' : '') + '>Tutar (₺)</option>' +
+      '</select>' +
+      '<input class="sp-input" type="number" step="0.01" min="0.01" id="discount-value" placeholder="Değer" value="' +
+      escapeHtml(state.discountValueDraft) + '">' +
+      '</div>' +
+      '<input class="sp-input" type="text" id="discount-note" maxlength="500" placeholder="Not (opsiyonel)" value="' +
+      escapeHtml(state.discountNoteDraft) + '">' +
+      '<button class="sp-btn sp-btn-secondary" id="submit-discount" type="button"' + disabled + '>' +
+      (state.discountBusy ? 'Gönderiliyor…' : 'İndirim uygula') + '</button>' +
+      '</div>'
+    );
+  }
+
+  function renderTipForm() {
+    var disabled = state.tipBusy ? ' disabled' : '';
+    return (
+      '<div class="sp-field"><span class="sp-field-label">Gönüllü bahşiş ekle</span>' +
+      (state.tipError ? '<div class="sp-alert-body" style="color:var(--color-danger)">' + escapeHtml(state.tipError) + '</div>' : '') +
+      '<div class="sp-row">' +
+      '<input class="sp-input" type="number" step="0.01" min="0.01" id="tip-amount" placeholder="Tutar" value="' +
+      escapeHtml(state.tipAmountDraft) + '">' +
+      '<input class="sp-input" type="text" id="tip-note" maxlength="500" placeholder="Not (opsiyonel)" value="' +
+      escapeHtml(state.tipNoteDraft) + '">' +
+      '</div>' +
+      '<button class="sp-btn sp-btn-secondary" id="submit-tip" type="button"' + disabled + '>' +
+      (state.tipBusy ? 'Gönderiliyor…' : 'Bahşiş ekle') + '</button>' +
+      '</div>'
+    );
+  }
+
   function renderReady() {
     var s = state.summary;
     var remaining = remainingAmount();
@@ -462,6 +695,8 @@
       '<div class="sp-summary-row is-remaining' + (remaining <= 0.004 ? ' is-zero' : '') + '">' +
       '<span>Kalan</span><span class="value">' + formatMoney(remaining) + '</span></div>' +
       '<div class="sp-divider"></div>' +
+      renderAdjustmentList() +
+      (state.locked ? '' : renderDiscountForm() + renderTipForm()) +
       renderAllocationLines() +
       (state.locked ? '' :
         '<div class="sp-field"><span class="sp-field-label">Eşit bölüştür</span>' +
@@ -536,6 +771,22 @@
     if (resolveButton) resolveButton.addEventListener('click', resolveNotCharged);
     var submitButton = document.getElementById('submit-tender');
     if (submitButton) submitButton.addEventListener('click', submitTender);
+    var discountReasonInput = document.getElementById('discount-reason');
+    if (discountReasonInput) discountReasonInput.addEventListener('change', function () { state.discountReason = this.value; });
+    var discountCalcTypeInput = document.getElementById('discount-calc-type');
+    if (discountCalcTypeInput) discountCalcTypeInput.addEventListener('change', function () { state.discountCalcType = this.value; });
+    var discountValueInput = document.getElementById('discount-value');
+    if (discountValueInput) discountValueInput.addEventListener('input', function () { state.discountValueDraft = this.value; });
+    var discountNoteInput = document.getElementById('discount-note');
+    if (discountNoteInput) discountNoteInput.addEventListener('input', function () { state.discountNoteDraft = this.value; });
+    var submitDiscountButton = document.getElementById('submit-discount');
+    if (submitDiscountButton) submitDiscountButton.addEventListener('click', submitDiscount);
+    var tipAmountInput = document.getElementById('tip-amount');
+    if (tipAmountInput) tipAmountInput.addEventListener('input', function () { state.tipAmountDraft = this.value; });
+    var tipNoteInput = document.getElementById('tip-note');
+    if (tipNoteInput) tipNoteInput.addEventListener('input', function () { state.tipNoteDraft = this.value; });
+    var submitTipButton = document.getElementById('submit-tip');
+    if (submitTipButton) submitTipButton.addEventListener('click', submitTip);
   }
 
   function renderPaid() {

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1314,
-  "markdown_line_count": 101323,
-  "markdown_byte_count": 5814101,
+  "markdown_file_count": 1315,
+  "markdown_line_count": 101396,
+  "markdown_byte_count": 5820830,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2521,9 +2521,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9BA03588F687050F19D7BF17174810D6EDF523B5B0E1909E6D39E52D8AFEDCC3",
-      "lines": 2590,
-      "bytes": 377182,
+      "sha256": "F8C1C2850BED39C6A4337E75AD06B337E3F4BFEABF5AB9FADB0ECA1B13D8520F",
+      "lines": 2591,
+      "bytes": 377349,
       "utf8": true
     },
     {
@@ -7253,9 +7253,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-292-cashier-discount-tip-adjustment-ui.md",
-      "sha256": "03E8E85B3A6D4A73BDF0B4D9972D3A33450BD2FC1AF80376305F926B3E802DCA",
-      "lines": 44,
-      "bytes": 1599,
+      "sha256": "2FDD9D053FDFBEA60052F2A3A3D4C7A22531DBFE60CE86236B0CB25548FD0F56",
+      "lines": 65,
+      "bytes": 4455,
       "utf8": true
     },
     {
@@ -7291,6 +7291,13 @@
       "sha256": "B9B7C5CFE478D88BDA36C30DCDD8942D42A0208D9FF67EAA034AD64EF5C04177",
       "lines": 56,
       "bytes": 3730,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-298-adjustment-aware-payment-ceiling.md",
+      "sha256": "BBE00601B699E0ED64789125E6D0CC1D2BCE3937EBB27068A131B6A5AD23D287",
+      "lines": 51,
+      "bytes": 3706,
       "utf8": true
     },
     {
