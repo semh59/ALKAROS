@@ -1,8 +1,8 @@
 # V12-OUI-003 - Online platform kimlik bilgisi ekranı
 
 - Task ID: V12-OUI-003
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Planned
 
@@ -24,6 +24,7 @@ desen); platform istemcileri bilgiyi bu depodan okur. V12-OUI-002'den bölme tes
   - src/Modules/OnlineOrdering/Yemeksepeti/StatusSync/ (V12-ONL-003) — istemcinin bilgiyi depodan okuması.
   - src/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox/ (V12-ONL-001) — webhook sırrının depodan okunması.
   - src/Modules/OnlineOrdering/OnlineOrderingModule.cs (V12-MAP-001) — kayıt.
+  - src/Host/DualScreen/DualScreenApplication.cs — uç nokta kaydı.
   - src/Clients/PosTerminal/src/routes/ — ekran bağlantısı.
   - src/Clients/PosTerminal/src/shell/ — menü bağlantısı.
   - database/MigrationComposition/order.json — migration konumu.
