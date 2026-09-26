@@ -65,6 +65,9 @@ public sealed class PostgresChannelReportService : IChannelReportService
                    count(*) FILTER (WHERE o.status = 'Rejected')::int,
                    count(*) FILTER (WHERE o.status = 'Cancelled')::int,
                    COALESCE(sum(o.total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
+                   COALESCE(sum(o.subtotal - o.discount_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
+                   COALESCE(sum(o.tax_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
+                   COALESCE(sum(o.discount_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
                    COALESCE(sum(o.total) FILTER (WHERE o.status = 'Cancelled'), 0)
             FROM orders.orders o
             WHERE o.source IN ('Qr', 'Online')
@@ -84,7 +87,8 @@ public sealed class PostgresChannelReportService : IChannelReportService
             rows.Add(new ChannelDayRow(
                 DateOnly.FromDateTime(reader.GetDateTime(0)), reader.GetString(1),
                 reader.GetInt32(2), reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6),
-                reader.GetDecimal(7), reader.GetDecimal(8), 0));
+                reader.GetDecimal(7), reader.GetDecimal(8), reader.GetDecimal(9), reader.GetDecimal(10),
+                reader.GetDecimal(11), 0));
         }
 
         EnsureBounded(rows.Count, "channel order");
@@ -132,7 +136,7 @@ public sealed class PostgresChannelReportService : IChannelReportService
             if (index >= 0)
                 days[index] = days[index] with { ProviderRefused = count };
             else
-                days.Add(new ChannelDayRow(date, ChannelSource.Online, 0, 0, 0, 0, 0, 0m, 0m, count));
+                days.Add(new ChannelDayRow(date, ChannelSource.Online, 0, 0, 0, 0, 0, 0m, 0m, 0m, 0m, 0m, count));
         }
 
         return days.OrderBy(row => row.BusinessDate).ThenBy(row => row.Source, StringComparer.Ordinal).ToList();
@@ -187,7 +191,8 @@ public sealed class PostgresChannelReportService : IChannelReportService
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT count(*)::int, COALESCE(sum(total) FILTER (WHERE status IN ({AcceptedStatuses})), 0)
+            SELECT count(*)::int, COALESCE(sum(total) FILTER (WHERE status IN ({AcceptedStatuses})), 0),
+                   COALESCE(sum(subtotal - discount_total) FILTER (WHERE status IN ({AcceptedStatuses})), 0)
             FROM orders.orders
             WHERE source IN ('Qr', 'Online')
               AND ($3::text IS NULL OR source = $3)
@@ -200,8 +205,8 @@ public sealed class PostgresChannelReportService : IChannelReportService
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         await reader.ReadAsync(cancellationToken).ConfigureAwait(false);
         return new ChannelReportCheck(
-            reader.GetInt32(0), reader.GetDecimal(1),
-            days.Sum(row => row.OrdersReceived), days.Sum(row => row.AcceptedValue));
+            reader.GetInt32(0), reader.GetDecimal(1), reader.GetDecimal(2),
+            days.Sum(row => row.OrdersReceived), days.Sum(row => row.AcceptedValue), days.Sum(row => row.AcceptedNetValue));
     }
 
     private static void AddWindow(NpgsqlCommand command, ChannelReportFilter filter, DateTimeOffset start, DateTimeOffset end)

@@ -8,7 +8,9 @@ reconciliation.online_order_retry_attempts. Business date = Europe/Istanbul serv
 
 Metric definition note: V0-DOM-008 has no row literally named "channel volume/value"; the report derives its
 definitions from V0-DOM-008's approved rules (business date, ledger source of truth, reconciliation total,
-"Reconciliation backlog"). The definitions are written in the task file and are open to Semih's approval.
+"Reconciliation backlog"). Approved by Semih 2026-09-26 with one change: accepted value split gross/net
+(AcceptedValue = total, AcceptedNetValue = subtotal - discount_total, AcceptedTaxValue = tax_total,
+AcceptedDiscount = discount_total); the ledger check also compares net.
 
 Commands (exit 0):
 - dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
@@ -26,7 +28,9 @@ Golden dataset (2031-03-10..11, UTC+3 boundaries): expected rows
   2031-03-10 Qr     received 3 awaiting 1 accepted 1 rejected 1 value 100
   2031-03-11 Online received 2 accepted 2 value 105 refused 1
   reconciliation 2031-03-10: LocallyAcceptedProviderUnknown open 1 (250.50); ProviderAcceptedLocallyRefused open 1 closed 1
-  retries 2; ledger check 8 / 525.50 == reported 8 / 525.50 -> matched exactly.
+  retries 2; ledger check 8 / 525.50 gross / 437.91 net == reported -> matched exactly.
+  (after the gross/net split: Online day1 net 267.08 tax 53.42 discount 10; Qr net 83.33 tax 16.67;
+   Online day2 net 87.50 tax 17.50)
 
 Mutations (backup restore + cmp, 10/10 killed):
 R1 business-date time zone replaced in SQL -> 1 failed (R1b: window computed in UTC -> 1 failed)
@@ -38,3 +42,6 @@ R6 Cashier added to channels -> 1 failed
 R7 Open dropped from open-case count -> 1 failed
 R8 31-day bound loosened -> 1 failed
 R9 retries counted for the QR-only report -> 1 failed
+N1 net without discount -> 1 failed
+N2 tax summed from discount_total -> 2 failed
+N3 ledger net without discount -> 1 failed

@@ -33,7 +33,7 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
         await _database.SeedOrderAsync("Qr", "Accepted", 100m, Utc(2031, 3, 10, 9, 0));
         await _database.SeedOrderAsync("Qr", "PendingConfirmation", 40m, Utc(2031, 3, 10, 9, 5));
         await _database.SeedOrderAsync("Qr", "Rejected", 30m, Utc(2031, 3, 10, 9, 10));
-        await _database.SeedOrderAsync("Online", "Served", 250.50m, Utc(2031, 3, 10, 10, 0), "ys-a1");
+        await _database.SeedOrderAsync("Online", "Served", 250.50m, Utc(2031, 3, 10, 10, 0), "ys-a1", discount: 10m);
         await _database.SeedOrderAsync("Online", "Cancelled", 80m, Utc(2031, 3, 10, 11, 0), "ys-a2");
         await _database.SeedOrderAsync("Online", "Accepted", 70m, Utc(2031, 3, 9, 21, 10), "ys-a3"); // 00:10 local on the 10th
         await _database.SeedOrderAsync("Cashier", "Accepted", 999m, Utc(2031, 3, 10, 12, 0)); // not a channel
@@ -65,14 +65,14 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
 
         report.ReportVersion.Should().Be("channel-report.v1");
         report.Days.Should().Equal(
-            new ChannelDayRow(Day1, "Online", 3, 0, 2, 0, 1, 320.50m, 80m, 1),
-            new ChannelDayRow(Day1, "Qr", 3, 1, 1, 1, 0, 100m, 0m, 0),
-            new ChannelDayRow(Day2, "Online", 2, 0, 2, 0, 0, 105m, 0m, 1));
+            new ChannelDayRow(Day1, "Online", 3, 0, 2, 0, 1, 320.50m, 267.08m, 53.42m, 10m, 80m, 1),
+            new ChannelDayRow(Day1, "Qr", 3, 1, 1, 1, 0, 100m, 83.33m, 16.67m, 0m, 0m, 0),
+            new ChannelDayRow(Day2, "Online", 2, 0, 2, 0, 0, 105m, 87.50m, 17.50m, 0m, 0m, 1));
         report.Reconciliation.Should().Equal(
             new ChannelReconciliationRow(Day1, "LocallyAcceptedProviderUnknown", 1, 0, 250.50m),
             new ChannelReconciliationRow(Day1, "ProviderAcceptedLocallyRefused", 1, 1, 0m));
         report.RetryAttempts.Should().Be(2);
-        report.Check.Should().Be(new ChannelReportCheck(8, 525.50m, 8, 525.50m));
+        report.Check.Should().Be(new ChannelReportCheck(8, 525.50m, 437.91m, 8, 525.50m, 437.91m));
         report.Check.IsBalanced.Should().BeTrue();
 
         var again = await _reports.GetReportAsync(new ChannelReportFilter(Day1, Day2));
@@ -90,13 +90,13 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
         await _database.SeedRetryAttemptAsync(caseId, Utc(2032, 6, 1, 12, 5));
 
         var qr = await _reports.GetReportAsync(new ChannelReportFilter(day, day, "Qr"));
-        qr.Days.Should().Equal(new ChannelDayRow(day, "Qr", 1, 0, 1, 0, 0, 20m, 0m, 0));
+        qr.Days.Should().Equal(new ChannelDayRow(day, "Qr", 1, 0, 1, 0, 0, 20m, 16.67m, 3.33m, 0m, 0m, 0));
         qr.Reconciliation.Should().BeEmpty();
         qr.RetryAttempts.Should().Be(0);
-        qr.Check.Should().Be(new ChannelReportCheck(1, 20m, 1, 20m));
+        qr.Check.Should().Be(new ChannelReportCheck(1, 20m, 16.67m, 1, 20m, 16.67m));
 
         var online = await _reports.GetReportAsync(new ChannelReportFilter(day, day, "Online"));
-        online.Days.Should().Equal(new ChannelDayRow(day, "Online", 1, 0, 1, 0, 0, 35m, 0m, 1));
+        online.Days.Should().Equal(new ChannelDayRow(day, "Online", 1, 0, 1, 0, 0, 35m, 29.17m, 5.83m, 0m, 0m, 1));
         online.Reconciliation.Should().ContainSingle().Which.Kind.Should().Be("ProviderEventFailed");
         online.RetryAttempts.Should().Be(1);
     }
@@ -109,7 +109,7 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
 
         var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day));
 
-        report.Days.Should().Equal(new ChannelDayRow(day, "Online", 0, 0, 0, 0, 0, 0m, 0m, 1));
+        report.Days.Should().Equal(new ChannelDayRow(day, "Online", 0, 0, 0, 0, 0, 0m, 0m, 0m, 0m, 0m, 1));
         report.Check.IsBalanced.Should().BeTrue();
     }
 

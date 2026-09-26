@@ -86,7 +86,9 @@ operasyonel kuyruk verin.
   - Reddedilen eylemin nedeni yeniden yüklemeden sonra da ekranda kalır.
   - axe-core, açık iptal formu dahil kritik veya ciddi bulgu vermez.
   - Odak görünürlüğü ve 44 px dokunma hedefleri CSS'te tanımlıdır.
-  - Ekran okuyuculu elle test (NVDA/VoiceOver) yapılmadı; yalnız otomatik denetim var.
+  - Ekran okuyuculu elle test (NVDA/VoiceOver) yapılmadı; yalnız otomatik denetim var. Açık madde (Semih
+    2026-09-26, "Açık iş olarak kaydet"): bu ekranın NVDA/VoiceOver ile elle testi V20-UAT-001 kabul testi
+    aşamasında yapılır; görev bu madde nedeniyle yeniden açılmaz.
 - Mutasyon kontrolü (dosya yedekten geri yüklenip `cmp` ile doğrulandı): teslim gövdesinden `expectedRowVersion`
   çıkarılınca, bilinmeyen durum ham kodla gösterilince, sunucudaki sürüm kontrolü kapatılınca ve kaynak süzgeci
   yok sayılınca birer test kırmızıya döndü.
