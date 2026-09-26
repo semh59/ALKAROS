@@ -1,0 +1,2 @@
+Başarılı!  - Başarısız:     0, Başarılı:   161, Atlanan:     0, Toplam:   161, Süre: 9 m 39 s - ALKAROS.Host.Tests.dll (net8.0)
+done

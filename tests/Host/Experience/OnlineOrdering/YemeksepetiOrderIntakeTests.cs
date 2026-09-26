@@ -192,7 +192,7 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task KnownNoOpAndUnknownStatusesChangeNoOrderAndCancellationsWaitForStatusSync()
+    public async Task KnownNoOpUnknownAndOrderlessCancellationStatusesChangeNoOrder()
     {
         var (_, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
         var orderId = NewOrderId();
@@ -200,12 +200,12 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
         await StoreAsync(Delivery(orderId, "PREPARING", "t2", (sku, 1)));
         await StoreAsync(Delivery(orderId, "CANCELLED", "t3", (sku, 1)));
 
-        Assert.Equal(2, await DrainAsync());
+        Assert.Equal(3, await DrainAsync());
 
         Assert.Empty(await _database.OnlineOrdersAsync(orderId));
         var inbox = await _database.InboxAsync(orderId);
         Assert.Equal(
-            new[] { ("DISPATCHED", "NoOp"), ("PREPARING", "UnknownStatus"), ("CANCELLED", (string?)null) },
+            new[] { ("DISPATCHED", "NoOp"), ("PREPARING", "UnknownStatus"), ("CANCELLED", (string?)"CancelledBeforeOrder") },
             inbox.Select(e => (e.Status, e.Outcome)).ToArray());
         Assert.Contains("EvidenceId", inbox[1].Detail);
     }

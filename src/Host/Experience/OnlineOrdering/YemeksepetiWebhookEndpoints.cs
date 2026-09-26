@@ -39,6 +39,7 @@ public static class YemeksepetiWebhookEndpoints
         services.TryAddTransient<IModifierGroupRepository, PostgresModifierGroupRepository>();
         services.TryAddTransient<IYemeksepetiProductMappingService, PostgresYemeksepetiProductMappingService>();
         services.TryAddTransient<YemeksepetiOrderNormalizer>();
+        services.TryAddTransient<YemeksepetiStatusSyncService>();
         services.TryAddTransient<YemeksepetiOrderIntakeService>();
         services.AddHostedService<YemeksepetiInboxProcessingHostedService>();
         return services;

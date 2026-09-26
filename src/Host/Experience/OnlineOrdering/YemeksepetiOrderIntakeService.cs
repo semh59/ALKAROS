@@ -1,6 +1,7 @@
 using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping;
+using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
@@ -27,8 +28,22 @@ public sealed class YemeksepetiOrderIntakeService
     /// <summary>The actor recorded for holds and order history written by webhook processing.</summary>
     public static readonly Guid SystemActorId = new("00000000-0000-0000-0000-0000000005e7");
 
-    /// <summary>Cancellations are claimed by the V12-ONL-003 status sync, not here.</summary>
-    private static readonly string[] DeferredStatuses = ["CANCELLED"];
+    /// <summary>V12-ONL-003: every status is claimed here now; cancellations are applied by the status sync.</summary>
+    private static readonly string[] DeferredStatuses = [];
+
+    /// <summary>
+    /// V12-ONL-003: refusals the provider hears back about as ITEM_UNAVAILABLE — the order's items
+    /// themselves cannot be sold here. A structurally broken payload is left for review instead.
+    /// </summary>
+    private static readonly HashSet<NormalizationRejection> ItemUnavailableRejections =
+    [
+        NormalizationRejection.UnmappedSku,
+        NormalizationRejection.AmbiguousSku,
+        NormalizationRejection.ProductInactive,
+        NormalizationRejection.ProductRequiresModifierChoice,
+        NormalizationRejection.ProductHasNoTaxProfile,
+        NormalizationRejection.UnsupportedPricingType
+    ];
 
     private const string AcceptReason = "Yemeksepeti siparişi - sağlayıcı tarafından kabul edildi.";
 
@@ -38,6 +53,7 @@ public sealed class YemeksepetiOrderIntakeService
     private readonly IOrderRepository _orders;
     private readonly IOrderSubmissionDispatcher _dispatcher;
     private readonly ICrossChannelPortionArbiter _arbiter;
+    private readonly YemeksepetiStatusSyncService _statusSync;
 
     public YemeksepetiOrderIntakeService(
         NpgsqlDataSource dataSource,
@@ -45,7 +61,8 @@ public sealed class YemeksepetiOrderIntakeService
         YemeksepetiOrderNormalizer normalizer,
         IOrderRepository orders,
         IOrderSubmissionDispatcher dispatcher,
-        ICrossChannelPortionArbiter arbiter)
+        ICrossChannelPortionArbiter arbiter,
+        YemeksepetiStatusSyncService statusSync)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _inbox = inbox ?? throw new ArgumentNullException(nameof(inbox));
@@ -53,6 +70,7 @@ public sealed class YemeksepetiOrderIntakeService
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         _arbiter = arbiter ?? throw new ArgumentNullException(nameof(arbiter));
+        _statusSync = statusSync ?? throw new ArgumentNullException(nameof(statusSync));
     }
 
     /// <summary>Processes the oldest pending event, if any. Returns false when nothing was waiting.</summary>
@@ -89,6 +107,10 @@ public sealed class YemeksepetiOrderIntakeService
                 case StatusMappingKind.Command when mapping.Command == InternalOrderCommand.AcceptIncomingOrder:
                     await IntakeAsync(claimed, rawPayload, connection, transaction, cancellationToken).ConfigureAwait(false);
                     break;
+                case StatusMappingKind.Command when mapping.Command == InternalOrderCommand.CancelOrder:
+                    await _statusSync.ApplyProviderCancellationAsync(
+                        claimed, mapping.Cancellation!, connection, transaction, cancellationToken).ConfigureAwait(false);
+                    break;
                 default:
                     throw new InvalidOperationException(
                         $"Inbox event '{claimed.InboxId}' mapped to {mapping.Kind}/{mapping.Command}, which this processor never claims.");
@@ -117,12 +139,17 @@ public sealed class YemeksepetiOrderIntakeService
         CancellationToken cancellationToken)
     {
         // Two different events of the same provider order (a retried RECEIVED with a new update
-        // time) must never become two orders; serialize per provider order id.
-        await using (var lockCommand = new NpgsqlCommand(
-            "SELECT pg_advisory_xact_lock(hashtext('online-ordering.yemeksepeti-order:' || $1));", connection, transaction))
+        // time) must never become two orders; serialize per provider order id — the same lock the
+        // V12-ONL-003 status sync takes, so a cancellation racing this intake closes deterministically.
+        await YemeksepetiStatusSyncService.LockOrderAsync(claimed.ExternalOrderId, connection, transaction, cancellationToken)
+            .ConfigureAwait(false);
+
+        if (await ProviderAlreadyCancelledAsync(claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false))
         {
-            lockCommand.Parameters.AddWithValue(claimed.ExternalOrderId);
-            await lockCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
+                claimed.InboxId, InboxProcessingOutcome.SkippedCancelledOrder, null, null,
+                connection, transaction, cancellationToken).ConfigureAwait(false);
+            return;
         }
 
         if (await FindOrderAsync(claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false) is { } existing)
@@ -136,10 +163,17 @@ public sealed class YemeksepetiOrderIntakeService
         var normalized = await _normalizer.NormalizeAsync(rawPayload, claimed.ReceivedAt, cancellationToken).ConfigureAwait(false);
         if (normalized.Order is not { } onlineOrder)
         {
+            var itemsUnavailable = ItemUnavailableRejections.Contains(normalized.Rejection!.Value);
             await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
                 claimed.InboxId, InboxProcessingOutcome.Rejected, null,
-                new { rejection = normalized.Rejection!.Value.ToString(), detail = normalized.Detail },
+                new { rejection = normalized.Rejection!.Value.ToString(), detail = normalized.Detail, providerCancellationRequested = itemsUnavailable },
                 connection, transaction, cancellationToken).ConfigureAwait(false);
+            var references = YemeksepetiStatusSync.ReadItemReferences(rawPayload);
+            if (itemsUnavailable && references.Count > 0)
+            {
+                await YemeksepetiStatusSyncService.RequestProviderCancellationAsync(
+                    claimed.ExternalOrderId, references, connection, transaction, cancellationToken).ConfigureAwait(false);
+            }
             return;
         }
 
@@ -168,8 +202,13 @@ public sealed class YemeksepetiOrderIntakeService
                 {
                     reason = hold.Outcome.ToString(),
                     shortages = hold.Shortages.Select(s => new { s.StockItemId, s.RequiredQuantity, s.AvailableQuantity }),
-                    unconfigured = hold.UnconfiguredLines.Select(u => new { u.ProductId, gap = u.Gap.ToString() })
+                    unconfigured = hold.UnconfiguredLines.Select(u => new { u.ProductId, gap = u.Gap.ToString() }),
+                    providerCancellationRequested = true
                 },
+                connection, transaction, cancellationToken).ConfigureAwait(false);
+            await YemeksepetiStatusSyncService.RequestProviderCancellationAsync(
+                onlineOrder.ExternalOrderId,
+                onlineOrder.Lines.Select(line => new YemeksepetiOrderLineReference(line.ExternalSku, line.Quantity)).ToList(),
                 connection, transaction, cancellationToken).ConfigureAwait(false);
             return;
         }
@@ -199,8 +238,22 @@ public sealed class YemeksepetiOrderIntakeService
         await _orders.SaveAsync(accepted, version, connection, transaction, cancellationToken).ConfigureAwait(false);
 
         await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
-            claimed.InboxId, InboxProcessingOutcome.OrderCreated, orderId, new { displayCode = onlineOrder.DisplayCode },
+            claimed.InboxId, InboxProcessingOutcome.OrderCreated, orderId,
+            new { displayCode = onlineOrder.DisplayCode, transportType = onlineOrder.TransportType },
             connection, transaction, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<bool> ProviderAlreadyCancelledAsync(
+        string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM online_ordering.yemeksepeti_webhook_inbox
+                WHERE external_order_id = $1 AND processing_outcome = 'CancelledBeforeOrder');
+            """, connection, transaction);
+        command.Parameters.AddWithValue(externalOrderId);
+        return (bool)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
     }
 
     private static async Task<Guid?> FindOrderAsync(

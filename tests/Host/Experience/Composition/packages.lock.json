@@ -284,6 +284,8 @@
         "type": "Project",
         "dependencies": {
           "ALKAROS.Catalog": "[1.0.0, )",
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "ALKAROS.Secrets": "[1.0.0, )",
           "ALKAROS.SensitiveData": "[1.0.0, )",

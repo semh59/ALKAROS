@@ -175,6 +175,44 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
         return (decimal)(await command.ExecuteScalarAsync())!;
     }
 
+    public async Task<IReadOnlyList<string>> OutboundStatusUpdatesAsync(string externalOrderId)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            SELECT convert_from(payload_envelope, 'UTF8')
+            FROM outbox_messages
+            WHERE event_type = 'online-ordering.yemeksepeti.status-update-requested.v1'
+              AND convert_from(payload_envelope, 'UTF8')::jsonb->>'externalOrderId' = @id
+            ORDER BY created_at, id;
+            """);
+        command.Parameters.AddWithValue("id", externalOrderId);
+        var rows = new List<string>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            rows.Add(reader.GetString(0));
+        return rows;
+    }
+
+    public Task MarkKitchenPreparingAsync(Guid orderId) =>
+        ExecAsync(
+            """
+            UPDATE kitchen.kitchen_ticket_items SET status = 'Preparing'
+            WHERE ticket_id IN (SELECT id FROM kitchen.kitchen_tickets WHERE order_id = @id);
+            """,
+            ("id", orderId));
+
+    public async Task<decimal> OnHandAsync(Guid productId)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            SELECT b.on_hand_quantity FROM inventory.product_stock_mappings m
+            JOIN inventory.stock_balances b ON b.stock_item_id = m.stock_item_id
+            WHERE m.product_id = @id;
+            """);
+        command.Parameters.AddWithValue("id", productId);
+        return (decimal)(await command.ExecuteScalarAsync())!;
+    }
+
     public async Task CorruptEnvelopeAsync(string externalOrderId)
     {
         await ExecAsync(

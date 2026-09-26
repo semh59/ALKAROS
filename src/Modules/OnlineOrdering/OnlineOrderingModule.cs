@@ -1,6 +1,8 @@
+using ALKAROS.IntegrationContracts;
 using ALKAROS.ModuleComposition;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
+using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Secrets;
 
@@ -28,5 +30,12 @@ public sealed class OnlineOrderingModule : IModule
         context.RegisterTransient<YemeksepetiWebhookInbox, YemeksepetiWebhookInbox>();
         // V12-ONL-002: payload normalization.
         context.RegisterTransient<YemeksepetiOrderNormalizer, YemeksepetiOrderNormalizer>();
+        // V12-ONL-003: committed local status changes reach the provider through the outbox. One
+        // client instance so its cached access token is shared (UNVERIFIED DRAFT provider calls).
+        context.RegisterSingleton<IYemeksepetiPartnerClient>(services => new YemeksepetiPartnerHttpClient(
+            new HttpClient { Timeout = TimeSpan.FromSeconds(10) },
+            (ISecretProvider)services.GetService(typeof(ISecretProvider))!,
+            TimeProvider.System));
+        context.RegisterTransient<IIntegrationEventConsumer, YemeksepetiStatusUpdateConsumer>();
     }
 }

@@ -1,0 +1,27 @@
+V12-ONL-003 completion evidence (2026-09-26, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (postgres:18, UTF8).
+
+UNVERIFIED DRAFT provider client (no call ever made to sandbox or production; V0-YSP-001 Blocked):
+- Registered source https://developer.yemeksepeti.com/api-specifications (read 2026-09-26):
+  POST /v2/oauth/token, application/x-www-form-urlencoded, grant_type/client_id/client_secret;
+  production https://yemeksepeti.partner.deliveryhero.io, sandbox https://sandbox.partner.deliveryhero.io;
+  PUT /v2/chains/{chain_id}/orders/{order_id}; items need _id or sku and status; cancellation object with reason;
+  statuses CANCELLED / DISPATCHED (vendor) / READY_FOR_PICKUP (logistics); reasons CLOSED, ITEM_UNAVAILABLE, TOO_BUSY.
+- CONFLICT, unresolved: https://partner-api-docs-tmp.s3.us-east-2.amazonaws.com/index.html shows base
+  https://api.deliveryhero.com, path /v2/orders/{order_id}, ApiKeyAuth and `cancellation` as a plain string enum;
+  item status sample "IN_CART". The client follows the registered developer-portal source; the item status value
+  IN_CART comes from the S3 sample only.
+
+Commands (exit 0):
+- dotnet restore ALKAROS.slnx --force-evaluate; dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- dotnet test tests/Modules/OnlineOrdering/Yemeksepeti/StatusSync -> 13/13
+- dotnet test tests/Host/Experience/OnlineOrdering -> 26/26 (12 new status-sync tests)
+- dotnet test tests/Host/MigrationComposition -> 161/161 (host-tests.txt)
+- dotnet test tests/Architecture/ModuleBoundaries -> 9/9
+- consistency_audit.py -> clean; project_manifest_tool.py -> VALID; plan_audit_tool.py validate -> 0/0
+Mutations (restored from backup, cmp identical): compensation moved after kitchen cancel -> 1 failed;
+cancel-before-order check off -> 1 failed; handover consumption removed -> 3 failed; divergence evidence id
+random -> 1 failed; token cache off -> 1 failed.
+Process incident: the first mutation loop used `git checkout` to restore and wiped the uncommitted intake
+edits; they were re-applied from the scratchpad edit script, leftover mutations reverted, all suites green
+again, then mutations re-run with backup+cmp.

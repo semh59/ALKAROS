@@ -19,6 +19,18 @@ public enum InboxProcessingOutcome
     NoOp,
     UnknownStatus,
 
+    /// <summary>V12-ONL-003: the provider cancelled; the local order was cancelled (holds compensated).</summary>
+    OrderCancelled,
+
+    /// <summary>V12-ONL-003: a repeated cancellation of an order already cancelled; nothing was done again.</summary>
+    AlreadyCancelled,
+
+    /// <summary>V12-ONL-003: the provider cancelled an order that has no local order.</summary>
+    CancelledBeforeOrder,
+
+    /// <summary>V12-ONL-003: a new-order event arrived after the provider had already cancelled that order; no order was created.</summary>
+    SkippedCancelledOrder,
+
     /// <summary>Processing kept failing; closed after <see cref="YemeksepetiInboxProcessingStore.MaxAttempts"/> attempts for review.</summary>
     Failed
 }
