@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using ALKAROS.OnlineOrdering.Providers.Contracts;
 
 namespace ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping;
 

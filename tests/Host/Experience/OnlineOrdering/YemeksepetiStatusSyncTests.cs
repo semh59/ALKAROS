@@ -12,6 +12,7 @@ using ALKAROS.OnlineOrdering.CatalogPublishing;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Secrets;
+using ALKAROS.OnlineOrdering.Providers.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Npgsql;
@@ -33,6 +34,7 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
     private static readonly string?[] CancelledThenSkipped = ["CancelledBeforeOrder", "SkippedCancelledOrder"];
 
     private readonly OnlineOrderingTestDatabase _database = new();
+    private readonly RecordingPlatform _otherPlatform = new();
     private WebApplication? _app;
 
     public async Task InitializeAsync()
@@ -47,6 +49,8 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
         builder.Services.AddSingleton<ISecretProvider>(secrets);
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddYemeksepetiWebhookExperience();
+        // V12-ONL-007: a second platform behind the same contract, to prove the shared flow is not Yemeksepeti's.
+        builder.Services.AddSingleton<IOnlineOrderProvider>(_otherPlatform);
         _app = builder.Build();
     }
 
@@ -243,7 +247,7 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
             await start.ExecuteNonQueryAsync();
         }
 
-        var cancel = Task.Run(() => Sync.CancelByRestaurantAsync(orderId, YemeksepetiCancellationReason.TooBusy, Guid.NewGuid()));
+        var cancel = Task.Run(() => Sync.CancelByRestaurantAsync(orderId, OnlineCancellationReason.TooBusy, Guid.NewGuid()));
         await Task.Delay(TimeSpan.FromMilliseconds(700));
         Assert.False(cancel.IsCompleted);
         await kitchenWrite.CommitAsync();
@@ -267,7 +271,7 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
             """);
         try
         {
-            var cancel = () => Sync.CancelByRestaurantAsync(orderId, YemeksepetiCancellationReason.TooBusy, Guid.NewGuid());
+            var cancel = () => Sync.CancelByRestaurantAsync(orderId, OnlineCancellationReason.TooBusy, Guid.NewGuid());
             await Assert.ThrowsAsync<PostgresException>(cancel);
         }
         finally
@@ -334,10 +338,10 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
 
         Assert.Equal(
             OnlineOrderActionOutcome.Applied,
-            await Sync.CancelByRestaurantAsync(orderId, YemeksepetiCancellationReason.TooBusy, staff));
+            await Sync.CancelByRestaurantAsync(orderId, OnlineCancellationReason.TooBusy, staff));
         Assert.Equal(
             OnlineOrderActionOutcome.AlreadyApplied,
-            await Sync.CancelByRestaurantAsync(orderId, YemeksepetiCancellationReason.TooBusy, staff));
+            await Sync.CancelByRestaurantAsync(orderId, OnlineCancellationReason.TooBusy, staff));
 
         Assert.Equal(new[] { ("Released", "Online") }, await _database.HoldsAsync(orderId));
         Assert.Equal(1m, await _database.AvailableAsync(productId));
@@ -354,7 +358,7 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
 
         Assert.Equal(
             OnlineOrderActionOutcome.NotAllowed,
-            await Sync.CancelByRestaurantAsync(orderId, YemeksepetiCancellationReason.Closed, Guid.NewGuid()));
+            await Sync.CancelByRestaurantAsync(orderId, OnlineCancellationReason.Closed, Guid.NewGuid()));
         Assert.Single(await OutboundAsync(externalId));
     }
 
@@ -427,4 +431,92 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
 
     private static string EvidenceIdOf(string detail) =>
         System.Text.Json.JsonDocument.Parse(detail).RootElement.GetProperty("evidenceId").GetString()!;
+
+    /// <summary>
+    /// V12-ONL-007: a platform that only answers what the shared handover and cancellation flow asks of it and
+    /// records every status it is told. Intake still reads the Yemeksepeti inbox (V12-ONL-008), so the payload
+    /// members are never reached here.
+    /// </summary>
+    private sealed class RecordingPlatform : IOnlineOrderProvider
+    {
+        public List<OnlineOrderStatusRequest> Requests { get; } = [];
+
+        public string Provider => "test-platform";
+
+        public string DisplayName => "Test Platformu";
+
+        public string OrderNumberPrefix => "TP-";
+
+        public StatusMappingResult MapStatus(string externalOrderId, string providerStatus, string rawPayload) =>
+            throw new InvalidOperationException("The test platform has no inbox.");
+
+        public Task<NormalizationResult> NormalizeAsync(string rawPayload, DateTimeOffset receivedAt, CancellationToken cancellationToken = default) =>
+            throw new InvalidOperationException("The test platform has no inbox.");
+
+        public IReadOnlyList<OnlineOrderLineReference> ReadItemReferences(string rawPayload) =>
+            throw new InvalidOperationException("The test platform has no inbox.");
+
+        public Task<OnlineOutboundStatus?> HandoverStatusAsync(
+            Guid orderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default) =>
+            Task.FromResult<OnlineOutboundStatus?>(OnlineOutboundStatus.Dispatched);
+
+        public Task RequestStatusAsync(
+            OnlineOrderStatusRequest request, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+        {
+            Requests.Add(request);
+            return Task.CompletedTask;
+        }
+    }
+
+    private Task MoveToOtherPlatformAsync(Guid orderId) =>
+        _database.ExecAsync("UPDATE online_ordering.online_orders SET provider = 'test-platform' WHERE order_id = @id;", ("id", orderId));
+
+    [Fact]
+    public async Task AHandoverOfAnotherPlatformsOrderIsReportedToThatPlatformOnly()
+    {
+        var (_, _, externalId, orderId) = await AcceptedOrderAsync(onHand: 2m);
+        await MoveToOtherPlatformAsync(orderId);
+
+        Assert.Equal(OnlineOrderActionOutcome.Applied, await Sync.HandOverAsync(orderId, Guid.NewGuid()));
+
+        var request = Assert.Single(_otherPlatform.Requests);
+        Assert.Equal((externalId, OnlineOutboundStatus.Dispatched, (OnlineCancellationReason?)null), (request.ExternalOrderId, request.Status, request.Reason));
+        Assert.Single(request.Items);
+        Assert.Empty(await OutboundAsync(externalId));
+        Assert.Equal("Completed", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
+        Assert.Equal(new[] { ("Consumed", "Online") }, await _database.HoldsAsync(orderId));
+    }
+
+    [Fact]
+    public async Task ARestaurantCancellationOfAnotherPlatformsOrderGoesToThatPlatformWithItsReason()
+    {
+        var (_, _, externalId, orderId) = await AcceptedOrderAsync(onHand: 2m);
+        await MoveToOtherPlatformAsync(orderId);
+
+        Assert.Equal(OnlineOrderActionOutcome.Applied,
+            await Sync.CancelByRestaurantAsync(orderId, OnlineCancellationReason.TooBusy, Guid.NewGuid()));
+
+        var request = Assert.Single(_otherPlatform.Requests);
+        Assert.Equal((OnlineOutboundStatus.Cancelled, (OnlineCancellationReason?)OnlineCancellationReason.TooBusy), (request.Status, request.Reason));
+        Assert.Empty(await OutboundAsync(externalId));
+        Assert.Equal(new[] { ("Released", "Online") }, await _database.HoldsAsync(orderId));
+    }
+
+    [Fact]
+    public async Task AnOnlineOrderWithoutAPlatformLinkIsNotTreatedAsOne()
+    {
+        var (_, _, _, orderId) = await AcceptedOrderAsync(onHand: 2m);
+        await _database.ExecAsync("DELETE FROM online_ordering.online_orders WHERE order_id = @id;", ("id", orderId));
+
+        await Assert.ThrowsAsync<NotAnOnlineOrderException>(() => Sync.HandOverAsync(orderId, Guid.NewGuid()));
+    }
+
+    [Fact]
+    public void ThePlatformRegistryRefusesTwoPlatformsWithOneIdentityAndAnUnknownIdentity()
+    {
+        Assert.Throws<ArgumentException>(() => new OnlineOrderProviderRegistry([new RecordingPlatform(), new RecordingPlatform()]));
+        var registry = new OnlineOrderProviderRegistry([new RecordingPlatform()]);
+        Assert.Equal("test-platform", registry.Get("test-platform").Provider);
+        Assert.Throws<UnknownOnlineOrderProviderException>(() => registry.Get("migros-yemek"));
+    }
 }

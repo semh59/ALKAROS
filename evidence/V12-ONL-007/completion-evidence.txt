@@ -1,0 +1,44 @@
+V12-ONL-007 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: d45eabca.
+
+Changes:
+- Providers/Contracts: IOnlineOrderProvider (identity, Turkish display name, order number prefix, status mapping,
+  normalization, item references, handover status for an order, outbound status request), OnlineOutboundStatus,
+  OnlineCancellationReason, OnlineOrderLineReference, OnlineOrderStatusRequest, OnlineOrderProviderRegistry
+  (duplicate identity and unknown identity are explicit errors).
+- Shared models moved to the contract namespace: status mapping result, cancellation detail, normalized order and
+  normalization result. Yemeksepeti keeps its signal records and its outbound wire event (partner client unchanged).
+- Yemeksepeti/Provider/YemeksepetiOnlineOrderProvider: translation only (mapper, normalizer, transport-based
+  handover, outbound event).
+- Host: intake uses the adapter; handover and restaurant cancellation read the order's platform from the
+  V12-ONL-006 link and act through that platform's adapter; the order lock key names the platform; the online
+  operations endpoint parses OnlineCancellationReason (same values, HTTP contract unchanged).
+- Module and Host both register the adapter and registry (Host with TryAdd, as the other experiences).
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- Host OnlineOrdering 63/63 (+4 contract tests: another platform's handover and cancellation, missing link,
+  registry rules), Host.Tests incl. DI composition 161/161, Yemeksepeti OrderNormalization 33/33, StatusMapping 32/32,
+  StatusSync 19/19, WebhookInbox 30/30, ProductMapping 22/22, AvailabilityPublishing 14/14, CatalogPublishing 15/15,
+  Reconciliation.OnlineOrders 22/22, Host Reconciliation 12/12, Architecture 9/9
+- consistency_audit clean; plan_audit validate 0/0; project_manifest VALID
+
+Not covered by a test (stated, not hidden): the lock key now naming the platform has no test that two platforms'
+equal numbers do not wait on each other; it changes only which advisory lock is taken.
+
+Mutations (per iteration: backup, mutate, test, cp restore, cmp verified; 7/7 killed):
+KILLED P1 order's platform ignored (always Yemeksepeti)
+KILLED P2 handover reported to Yemeksepeti regardless
+KILLED P3 duplicate platform identity accepted
+KILLED P4 unknown platform falls back silently
+KILLED P5 restaurant reason not passed on
+KILLED P6 Yemeksepeti dispatched mapped wrong
+KILLED P7 Yemeksepeti reason mapped wrong
+
+Scope check deviation (recorded, not hidden): task_scope_tool.py reports three files under
+src/Modules/OnlineOrdering/Yemeksepeti/OrderNormalization/ (YemeksepetiInboxProcessingStore.cs,
+YemeksepetiOrderNormalizer.cs: one using line each; YemeksepetiOrderNormalizationModels.cs: moved to
+Providers/Contracts). The task file declares that folder in its "Sınırlı ek" line, but abbreviated
+("src/Modules/OnlineOrdering/Yemeksepeti/StatusMapping/, OrderNormalization/ ve StatusSync/"); the tool only reads
+full path tokens. The change is exactly the declared one (model move to the contract); the task file cannot be
+edited beyond Status after InProgress, so it is recorded here. Future task files write every shared path in full.

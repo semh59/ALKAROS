@@ -3,6 +3,7 @@ using ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
 using Xunit;
+using ALKAROS.OnlineOrdering.Providers.Contracts;
 
 namespace ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization.Tests;
 

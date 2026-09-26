@@ -43,6 +43,26 @@ public static class OnlineOrderLinkStore
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>V12-ONL-007: the platform and platform order number of a local order, or null when it is not an online order.</summary>
+    public static async Task<(string Provider, string ExternalOrderId)?> FindLinkAsync(
+        Guid orderId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var command = new NpgsqlCommand(
+            "SELECT provider, external_order_id FROM online_ordering.online_orders WHERE order_id = $1;",
+            connection, transaction);
+        command.Parameters.AddWithValue(orderId);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        return await reader.ReadAsync(cancellationToken).ConfigureAwait(false)
+            ? (reader.GetString(0), reader.GetString(1))
+            : null;
+    }
+
     /// <summary>The local order for a platform order number, or null when there is none.</summary>
     public static async Task<Guid?> FindOrderIdAsync(
         string provider,

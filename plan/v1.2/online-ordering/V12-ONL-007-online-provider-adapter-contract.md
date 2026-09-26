@@ -1,7 +1,7 @@
 # V12-ONL-007 - Online platform adaptör sözleşmesi ve Yemeksepeti'nin bu sözleşmeye taşınması
 
 - Task ID: V12-ONL-007
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Existing

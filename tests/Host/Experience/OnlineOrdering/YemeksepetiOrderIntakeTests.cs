@@ -7,6 +7,7 @@ using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Secrets;
 using ALKAROS.OnlineOrdering.OrderLinks;
+using ALKAROS.OnlineOrdering.Providers.Contracts;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;

@@ -1,5 +1,7 @@
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
+using ALKAROS.OnlineOrdering.Yemeksepeti.Provider;
+using ALKAROS.OnlineOrdering.Providers.Contracts;
 using ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +41,9 @@ public static class YemeksepetiWebhookEndpoints
         services.TryAddTransient<IModifierGroupRepository, PostgresModifierGroupRepository>();
         services.TryAddTransient<IYemeksepetiProductMappingService, PostgresYemeksepetiProductMappingService>();
         services.TryAddTransient<YemeksepetiOrderNormalizer>();
+        // V12-ONL-007: every platform behind the shared contract; the module registers the same adapters.
+        services.TryAddEnumerable(ServiceDescriptor.Transient<IOnlineOrderProvider, YemeksepetiOnlineOrderProvider>());
+        services.TryAddTransient<OnlineOrderProviderRegistry>();
         services.TryAddTransient<YemeksepetiStatusSyncService>();
         services.TryAddTransient<YemeksepetiOrderIntakeService>();
         services.AddHostedService<YemeksepetiInboxProcessingHostedService>();

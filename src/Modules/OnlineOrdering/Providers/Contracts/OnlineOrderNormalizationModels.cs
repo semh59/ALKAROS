@@ -1,4 +1,4 @@
-namespace ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
+namespace ALKAROS.OnlineOrdering.Providers.Contracts;
 
 /// <summary>
 /// One order line resolved to an active catalog product. <see cref="Instructions"/> is the customer's note for

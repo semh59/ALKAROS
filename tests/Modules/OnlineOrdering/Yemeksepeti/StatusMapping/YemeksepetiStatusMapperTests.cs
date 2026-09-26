@@ -1,5 +1,6 @@
 using FluentAssertions;
 using Xunit;
+using ALKAROS.OnlineOrdering.Providers.Contracts;
 
 namespace ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping.Tests;
 

@@ -4,6 +4,7 @@ using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.OnlineOrdering.AvailabilityPublishing;
+using ALKAROS.OnlineOrdering.Providers.Contracts;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Orders.OrderAggregate;
@@ -101,7 +102,7 @@ public static class OnlineOperationsEndpoints
             CancellationToken cancellationToken) =>
         {
             var userId = await RequireStaffAsync(context, terminalId, dualStore, authorization, cancellationToken);
-            if (!Enum.TryParse<YemeksepetiCancellationReason>(request.Reason, ignoreCase: false, out var reason)
+            if (!Enum.TryParse<OnlineCancellationReason>(request.Reason, ignoreCase: false, out var reason)
                 || !Enum.IsDefined(reason))
                 throw new ArgumentException("Unknown cancellation reason.", nameof(request));
             return Reply(await sync.CancelByRestaurantAsync(orderId, reason, userId, request.ExpectedRowVersion, cancellationToken));

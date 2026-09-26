@@ -2,6 +2,7 @@ using System.Text.Json;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping;
 using Npgsql;
 using NpgsqlTypes;
+using ALKAROS.OnlineOrdering.Providers.Contracts;
 
 namespace ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 
