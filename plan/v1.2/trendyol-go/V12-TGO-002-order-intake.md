@@ -1,8 +1,8 @@
 # V12-TGO-002 - Uber Eats Trendyol Go siparişlerini webhook ve çekmeyle al
 
 - Task ID: V12-TGO-002
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: integration
 - Surface state: Planned
 
@@ -21,6 +21,10 @@ alan webhook alıcısı ile sipariş listesini çeken adaptörü yazmak. Sağlay
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan; Semih 2026-09-26 kararı):
   - src/Modules/OnlineOrdering/OnlineOrderingModule.cs (V12-MAP-001) — kayıt.
   - tests/Host/Experience/OnlineOrdering/ — uçtan uca testler.
+  - src/Host/DualScreen/DualScreenApplication.cs — webhook uç noktası kaydı.
+  - src/Modules/OnlineOrdering/Credentials/ (V12-OUI-003) — webhook anahtarı, entegratör adı ve işlemi yapan e-posta alanları.
+  - src/Clients/PosTerminal/src/features/online-platform-credentials/ (V12-OUI-003) — yeni alanların Türkçe etiketleri.
+  - src/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/ (V12-MAP-001) — eşleme servisinin platform parametresi.
 
 ## In scope
 
