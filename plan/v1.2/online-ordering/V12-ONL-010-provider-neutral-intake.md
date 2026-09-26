@@ -1,8 +1,8 @@
 # V12-ONL-010 - Kayıtlı her platformun gelen kutusu olaylarını siparişe çevir
 
 - Task ID: V12-ONL-010
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Planned
 
