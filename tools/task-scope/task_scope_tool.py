@@ -47,6 +47,20 @@ _NEXT_HEADER = re.compile(r"^##\s+", re.MULTILINE)
 _TASK_ID_FORMAT = re.compile(r"^V\d+-[A-Z]+-\d+$")
 _BACKTICK_PATH = re.compile(r"`([^`]+)`")
 _PATH_SHAPE = re.compile(r"[/\\.*?]")
+# V12-GOV-005: a "Sınırlı ek" (limited addition) item in Owned surface names
+# files another task owns that this task may also write. They are written
+# without backticks (so plan_audit's ownership/overlap check never sees them)
+# and still have to be declared before the work starts. Only repo-path-shaped
+# words enter the write allowlist: a word with a "/" (a trailing "/" means the
+# whole directory), or a root-level file name with a source extension.
+_SHARED_SURFACE_MARKER = "- Sınırlı ek"
+_TASK_ID_FRAGMENT = re.compile(r"^[A-Z][A-Z0-9]*-[A-Z0-9-]*\d")
+_SHARED_PATH = re.compile(
+    r"(?<![\w`./-])("
+    r"(?:[A-Za-z0-9_.*-]+/)+[A-Za-z0-9_.*-]*"
+    r"|[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_-]+)*\.(?:slnx|sln|json|cs|csproj|ts|tsx|js|css|md|sql|py|props|targets|yml|yaml)"
+    r")(?![\w`/])"
+)
 
 VALID_STATUSES: Set[str] = {
     "Planned", "InProgress", "Done", "Blocked", "NotApplicable"
@@ -219,6 +233,7 @@ class TaskMetadata:
         dependencies: List[str],
         owned_surface: List[str],
         file_path: Path,
+        shared_surface: Optional[List[str]] = None,
     ) -> None:
         self.task_id = task_id
         self.status = status
@@ -226,6 +241,7 @@ class TaskMetadata:
         self.dependencies = dependencies
         self.owned_surface = owned_surface
         self.file_path = file_path
+        self.shared_surface = shared_surface if shared_surface is not None else []
 
     def __repr__(self) -> str:
         return (
@@ -299,9 +315,18 @@ def parse_task_text(text: str, file_path: Path) -> TaskMetadata:
 
     owned_section = _extract_section(text, _OWNED_SURFACE_HEADER)
     owned_surface: List[str] = []
+    shared_surface: List[str] = []
     in_item = False
+    in_shared = False
     for line in owned_section.splitlines():
         stripped = line.strip()
+        if line.startswith("- "):
+            in_shared = stripped.startswith(_SHARED_SURFACE_MARKER)
+        if in_shared and stripped:
+            for word in _SHARED_PATH.findall(_BACKTICK_PATH.sub(" ", stripped)):
+                if _TASK_ID_FRAGMENT.match(word):
+                    continue  # "ONL-004/005" is a task reference, not a path
+                shared_surface.append(word + "**" if word.endswith("/") else word)
         if stripped.startswith("- "):
             in_item = not stripped.startswith("- Bu görev")
             line_source = stripped
@@ -328,6 +353,7 @@ def parse_task_text(text: str, file_path: Path) -> TaskMetadata:
         dependencies=dependencies,
         owned_surface=owned_surface,
         file_path=file_path,
+        shared_surface=shared_surface,
     )
 
 
@@ -822,6 +848,8 @@ def build_allowlist(task: TaskMetadata) -> List[str]:
 
     The allowlist includes:
     - All patterns from the task's ``Owned surface`` section.
+    - The paths its "Sınırlı ek" item declares (V12-GOV-005): shared files
+      the task may write but does not own.
     - ``evidence/<Task-ID>/**``.
 
     The task Markdown is deliberately excluded. It is validated separately
@@ -831,6 +859,8 @@ def build_allowlist(task: TaskMetadata) -> List[str]:
     for surface in task.owned_surface:
         normalized = normalize_path(surface)
         patterns.append(normalized)
+    for surface in task.shared_surface:
+        patterns.append(normalize_path(surface))
 
     patterns.append(f"evidence/{task.task_id.lower()}/**")
 

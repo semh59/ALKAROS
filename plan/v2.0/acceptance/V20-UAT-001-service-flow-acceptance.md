@@ -24,6 +24,8 @@ workflow'ları için named user acceptance toplamak.
 
 - Role-based scenario script'leri, success/failure flow'ları, concurrent Table/Order state'leri, kitchen routing,
   QR PendingConfirmation, Yemeksepeti kabul/ret/iptal kuyruğu ve printer recovery.
+- `V12-OUI-001` online sipariş ekranının NVDA/VoiceOver ile elle erişilebilirlik testi
+  (`docs/compliance/accessibility-target.md` §4; V12-GOV-005, 2026-09-26).
 
 ## Out of scope
 

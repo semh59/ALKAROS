@@ -1,0 +1,286 @@
+
+=== 8301124c V12-GOV-004 (7 files) status Done->Done
+
+=== 2c9460fa V12-STK-001 (28 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'evidence/V12-STK-001/**'}
+  OUT: M ALKAROS.slnx  (matches only CURRENT surface)
+  OUT: M src/Host/Experience/NfcOrdering/NfcOrderingEndpoints.cs  (matches only CURRENT surface)
+  OUT: M src/Host/Experience/Orders/OrderManagementEndpoints.cs  (matches only CURRENT surface)
+  OUT: M src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/Inventory/InventoryModule.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/NfcOrdering/ALKAROS.Host.Experience.NfcOrdering.Tests.csproj 
+  OUT: M tests/Host/Experience/Orders/Confirmation/ALKAROS.Host.Experience.Orders.Confirmation.Tests.csproj  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/Orders/Confirmation/OrderManagementConfirmationHttpTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/Orders/Confirmation/OrderManagementConfirmationTestDatabase.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/Orders/Confirmation/QrOrderExpiryHostedServiceTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/Orders/TableDraft/ALKAROS.Host.Experience.Orders.TableDraft.Tests.csproj 
+  OUT: M tests/Host/Experience/Orders/VoidSent/ALKAROS.Host.Experience.Orders.VoidSent.Tests.csproj 
+  OUT: M tests/Host/Experience/QrOrdering/ALKAROS.Host.Experience.QrOrdering.Tests.csproj 
+  OUT: M tools/consistency-audit/unreachable_services_allowlist.json  (matches only CURRENT surface)
+
+=== ea19a858 V12-QRO-003 (9 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'evidence/V12-QRO-003/**'}
+  OUT: M src/Host/Experience/Orders/OrderManagementEndpoints.cs  (matches only CURRENT surface)
+  OUT: M src/Host/Experience/Orders/PendingOrderConfirmation/PendingOrderConfirmationStore.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/Orders/Confirmation/OrderManagementConfirmationTestDatabase.cs  (matches only CURRENT surface)
+  OUT: A tests/Host/Experience/Orders/Confirmation/QrConfirmationReservationHttpTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/Orders/Confirmation/QrOrderExpiryHostedServiceTests.cs  (matches only CURRENT surface)
+  OUT: M tools/consistency-audit/unreachable_services_allowlist.json  (matches only CURRENT surface)
+
+=== d0891b6d V12-MAP-001 (62 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'src/Modules/OnlineOrdering/OnlineOrderingModule.cs', 'evidence/V12-MAP-001/**', 'src/Modules/OnlineOrdering/ALKAROS.OnlineOrdering.csproj', 'ALKAROS.OnlineOrdering'}
+  OUT: M ALKAROS.slnx  (matches only CURRENT surface)
+  OUT: M database/MigrationComposition/order.json  (matches only CURRENT surface)
+  OUT: M src/Host/ALKAROS.Host.csproj  (matches only CURRENT surface)
+  OUT: M src/Host/Composition/Migrations/MigrationManifest.cs  (matches only CURRENT surface)
+  OUT: M src/Host/Composition/Modules/ModuleRegistry.cs  (matches only CURRENT surface)
+  OUT: M src/Host/packages.lock.json 
+  OUT: A src/Modules/OnlineOrdering/ALKAROS.OnlineOrdering.csproj  (matches only CURRENT surface)
+  OUT: A src/Modules/OnlineOrdering/OnlineOrderingModule.cs  (matches only CURRENT surface)
+  OUT: A src/Modules/OnlineOrdering/packages.lock.json 
+  OUT: M tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Architecture/ModuleBoundaries/packages.lock.json 
+  OUT: M tests/Host/Experience/Authorization/packages.lock.json 
+  OUT: M tests/Host/Experience/Billing/packages.lock.json 
+  OUT: M tests/Host/Experience/CashSession/packages.lock.json 
+  OUT: M tests/Host/Experience/Catalog/packages.lock.json 
+  OUT: M tests/Host/Experience/Composition/packages.lock.json 
+  OUT: M tests/Host/Experience/HelpRequests/packages.lock.json 
+  OUT: M tests/Host/Experience/Inventory/packages.lock.json 
+  OUT: M tests/Host/Experience/InventoryReporting/packages.lock.json 
+  OUT: M tests/Host/Experience/KitchenOperations/packages.lock.json 
+  OUT: M tests/Host/Experience/Menu/packages.lock.json 
+  OUT: M tests/Host/Experience/NfcOrdering/packages.lock.json 
+  OUT: M tests/Host/Experience/Observability/packages.lock.json 
+  OUT: M tests/Host/Experience/OfflineReconciliation/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/Comp/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/Confirmation/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/TableDraft/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/Void/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/VoidSent/packages.lock.json 
+  OUT: M tests/Host/Experience/PaymentTender/packages.lock.json 
+  OUT: M tests/Host/Experience/PendingOrderNotifications/packages.lock.json 
+  OUT: M tests/Host/Experience/Production/packages.lock.json 
+  OUT: M tests/Host/Experience/Purchasing/packages.lock.json 
+  OUT: M tests/Host/Experience/QnbCredentialSettings/packages.lock.json 
+  OUT: M tests/Host/Experience/QrOrdering/packages.lock.json 
+  OUT: M tests/Host/Experience/Recipes/packages.lock.json 
+  OUT: M tests/Host/Experience/Reconciliation/packages.lock.json 
+  OUT: M tests/Host/Experience/RelaySettings/packages.lock.json 
+  OUT: M tests/Host/Experience/Reporting/packages.lock.json 
+  OUT: M tests/Host/Experience/Roles/packages.lock.json 
+  OUT: M tests/Host/Experience/SecurityAdministration/packages.lock.json 
+  OUT: M tests/Host/Experience/Settings/packages.lock.json 
+  OUT: M tests/Host/Experience/Tables/packages.lock.json 
+  OUT: M tests/Host/Experience/TokenTerminalSettings/packages.lock.json 
+  OUT: M tests/Host/Experience/WaiterNotifications/packages.lock.json 
+  OUT: M tests/Host/Experience/WebPush/packages.lock.json 
+  OUT: M tests/Host/MigrationComposition/Composition/HostModuleReachabilityTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/MigrationComposition/Manifest/ManifestTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/MigrationComposition/packages.lock.json 
+  OUT: M tools/consistency-audit/unreachable_services_allowlist.json  (matches only CURRENT surface)
+
+=== 0b256fce V12-MAP-002 (8 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'evidence/V12-MAP-002/**'}
+  OUT: M ALKAROS.slnx  (matches only CURRENT surface)
+
+=== c774419b V12-ONL-001 (62 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'src/Host/Experience/OnlineOrdering/YemeksepetiWebhookEndpoints.cs', 'tests/Host/Experience/OnlineOrdering/**', 'sys.updated_at', 'evidence/V12-ONL-001/**'}
+  OUT: M ALKAROS.slnx  (matches only CURRENT surface)
+  OUT: M database/MigrationComposition/order.json  (matches only CURRENT surface)
+  OUT: M src/Host/Composition/Migrations/MigrationManifest.cs  (matches only CURRENT surface)
+  OUT: M src/Host/DualScreen/DualScreenApplication.cs  (matches only CURRENT surface)
+  OUT: A src/Host/Experience/OnlineOrdering/YemeksepetiWebhookEndpoints.cs  (matches only CURRENT surface)
+  OUT: M src/Host/packages.lock.json 
+  OUT: M src/Modules/OnlineOrdering/ALKAROS.OnlineOrdering.csproj  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/OnlineOrderingModule.cs 
+  OUT: M src/Modules/OnlineOrdering/packages.lock.json 
+  OUT: M tests/Architecture/ModuleBoundaries/packages.lock.json 
+  OUT: M tests/Host/Experience/Authorization/packages.lock.json 
+  OUT: M tests/Host/Experience/Billing/packages.lock.json 
+  OUT: M tests/Host/Experience/CashSession/packages.lock.json 
+  OUT: M tests/Host/Experience/Catalog/packages.lock.json 
+  OUT: M tests/Host/Experience/Composition/packages.lock.json 
+  OUT: M tests/Host/Experience/HelpRequests/packages.lock.json 
+  OUT: M tests/Host/Experience/Inventory/packages.lock.json 
+  OUT: M tests/Host/Experience/InventoryReporting/packages.lock.json 
+  OUT: M tests/Host/Experience/KitchenOperations/packages.lock.json 
+  OUT: M tests/Host/Experience/Menu/packages.lock.json 
+  OUT: M tests/Host/Experience/NfcOrdering/packages.lock.json 
+  OUT: M tests/Host/Experience/Observability/packages.lock.json 
+  OUT: M tests/Host/Experience/OfflineReconciliation/packages.lock.json 
+  OUT: A tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj  (matches only CURRENT surface)
+  OUT: A tests/Host/Experience/OnlineOrdering/YemeksepetiWebhookHttpTests.cs  (matches only CURRENT surface)
+  OUT: A tests/Host/Experience/OnlineOrdering/packages.lock.json  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/Orders/Comp/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/Confirmation/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/TableDraft/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/Void/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/VoidSent/packages.lock.json 
+  OUT: M tests/Host/Experience/PaymentTender/packages.lock.json 
+  OUT: M tests/Host/Experience/PendingOrderNotifications/packages.lock.json 
+  OUT: M tests/Host/Experience/Production/packages.lock.json 
+  OUT: M tests/Host/Experience/Purchasing/packages.lock.json 
+  OUT: M tests/Host/Experience/QnbCredentialSettings/packages.lock.json 
+  OUT: M tests/Host/Experience/QrOrdering/packages.lock.json 
+  OUT: M tests/Host/Experience/Recipes/packages.lock.json 
+  OUT: M tests/Host/Experience/Reconciliation/packages.lock.json 
+  OUT: M tests/Host/Experience/RelaySettings/packages.lock.json 
+  OUT: M tests/Host/Experience/Reporting/packages.lock.json 
+  OUT: M tests/Host/Experience/Roles/packages.lock.json 
+  OUT: M tests/Host/Experience/SecurityAdministration/packages.lock.json 
+  OUT: M tests/Host/Experience/Settings/packages.lock.json 
+  OUT: M tests/Host/Experience/Tables/packages.lock.json 
+  OUT: M tests/Host/Experience/TokenTerminalSettings/packages.lock.json 
+  OUT: M tests/Host/Experience/WaiterNotifications/packages.lock.json 
+  OUT: M tests/Host/Experience/WebPush/packages.lock.json 
+  OUT: M tests/Host/MigrationComposition/Manifest/ManifestTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/MigrationComposition/packages.lock.json 
+  OUT: M tests/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/packages.lock.json 
+  OUT: M tests/Modules/OnlineOrdering/Yemeksepeti/StatusMapping/packages.lock.json 
+
+=== 08bd8c2c V12-ONL-002 (25 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'src/Host/Experience/OnlineOrdering/YemeksepetiOrderIntakeService.cs', 'src/Host/Experience/OnlineOrdering/YemeksepetiInboxProcessingHostedService.cs', 'evidence/V12-ONL-002/**'}
+  OUT: M ALKAROS.slnx  (matches only CURRENT surface)
+  OUT: M database/MigrationComposition/order.json  (matches only CURRENT surface)
+  OUT: M src/Host/Composition/Migrations/MigrationManifest.cs  (matches only CURRENT surface)
+  OUT: A src/Host/Experience/OnlineOrdering/YemeksepetiInboxProcessingHostedService.cs  (matches only CURRENT surface)
+  OUT: A src/Host/Experience/OnlineOrdering/YemeksepetiOrderIntakeService.cs  (matches only CURRENT surface)
+  OUT: M src/Host/Experience/OnlineOrdering/YemeksepetiWebhookEndpoints.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/OnlineOrderingModule.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox/YemeksepetiWebhookInbox.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj  (matches only CURRENT surface)
+  OUT: A tests/Host/Experience/OnlineOrdering/OnlineOrderingTestDatabase.cs  (matches only CURRENT surface)
+  OUT: A tests/Host/Experience/OnlineOrdering/YemeksepetiOrderIntakeTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/OnlineOrdering/YemeksepetiWebhookHttpTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/MigrationComposition/Manifest/ManifestTests.cs  (matches only CURRENT surface)
+  OUT: M tools/consistency-audit/unreachable_services_allowlist.json  (matches only CURRENT surface)
+
+=== 9ea0a7d4 V12-ONL-003 (64 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'evidence/V12-ONL-003/**', 'PUT /v2/chains/{chain_id}/orders/{order_id}', 'cancellation.reason', 'src/Host/Experience/OnlineOrdering/YemeksepetiStatusSyncService.cs'}
+  OUT: M ALKAROS.slnx  (matches only CURRENT surface)
+  OUT: M src/Host/Experience/OnlineOrdering/YemeksepetiOrderIntakeService.cs  (matches only CURRENT surface)
+  OUT: A src/Host/Experience/OnlineOrdering/YemeksepetiStatusSyncService.cs  (matches only CURRENT surface)
+  OUT: M src/Host/Experience/OnlineOrdering/YemeksepetiWebhookEndpoints.cs  (matches only CURRENT surface)
+  OUT: M src/Host/packages.lock.json 
+  OUT: M src/Modules/OnlineOrdering/ALKAROS.OnlineOrdering.csproj  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/OnlineOrderingModule.cs 
+  OUT: M src/Modules/OnlineOrdering/Yemeksepeti/OrderNormalization/YemeksepetiInboxProcessingStore.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/packages.lock.json 
+  OUT: M tests/Architecture/ModuleBoundaries/packages.lock.json 
+  OUT: M tests/Host/Experience/Authorization/packages.lock.json 
+  OUT: M tests/Host/Experience/Billing/packages.lock.json 
+  OUT: M tests/Host/Experience/CashSession/packages.lock.json 
+  OUT: M tests/Host/Experience/Catalog/packages.lock.json 
+  OUT: M tests/Host/Experience/Composition/packages.lock.json 
+  OUT: M tests/Host/Experience/HelpRequests/packages.lock.json 
+  OUT: M tests/Host/Experience/Inventory/packages.lock.json 
+  OUT: M tests/Host/Experience/InventoryReporting/packages.lock.json 
+  OUT: M tests/Host/Experience/KitchenOperations/packages.lock.json 
+  OUT: M tests/Host/Experience/Menu/packages.lock.json 
+  OUT: M tests/Host/Experience/NfcOrdering/packages.lock.json 
+  OUT: M tests/Host/Experience/Observability/packages.lock.json 
+  OUT: M tests/Host/Experience/OfflineReconciliation/packages.lock.json 
+  OUT: M tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/OnlineOrdering/OnlineOrderingTestDatabase.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/OnlineOrdering/YemeksepetiOrderIntakeTests.cs  (matches only CURRENT surface)
+  OUT: A tests/Host/Experience/OnlineOrdering/YemeksepetiStatusSyncTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/OnlineOrdering/packages.lock.json  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/Orders/Comp/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/Confirmation/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/TableDraft/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/Void/packages.lock.json 
+  OUT: M tests/Host/Experience/Orders/VoidSent/packages.lock.json 
+  OUT: M tests/Host/Experience/PaymentTender/packages.lock.json 
+  OUT: M tests/Host/Experience/PendingOrderNotifications/packages.lock.json 
+  OUT: M tests/Host/Experience/Production/packages.lock.json 
+  OUT: M tests/Host/Experience/Purchasing/packages.lock.json 
+  OUT: M tests/Host/Experience/QnbCredentialSettings/packages.lock.json 
+  OUT: M tests/Host/Experience/QrOrdering/packages.lock.json 
+  OUT: M tests/Host/Experience/Recipes/packages.lock.json 
+  OUT: M tests/Host/Experience/Reconciliation/packages.lock.json 
+  OUT: M tests/Host/Experience/RelaySettings/packages.lock.json 
+  OUT: M tests/Host/Experience/Reporting/packages.lock.json 
+  OUT: M tests/Host/Experience/Roles/packages.lock.json 
+  OUT: M tests/Host/Experience/SecurityAdministration/packages.lock.json 
+  OUT: M tests/Host/Experience/Settings/packages.lock.json 
+  OUT: M tests/Host/Experience/Tables/packages.lock.json 
+  OUT: M tests/Host/Experience/TokenTerminalSettings/packages.lock.json 
+  OUT: M tests/Host/Experience/WaiterNotifications/packages.lock.json 
+  OUT: M tests/Host/Experience/WebPush/packages.lock.json 
+  OUT: M tests/Host/MigrationComposition/packages.lock.json 
+  OUT: M tests/Modules/OnlineOrdering/Yemeksepeti/OrderNormalization/packages.lock.json 
+  OUT: M tests/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/packages.lock.json 
+  OUT: M tests/Modules/OnlineOrdering/Yemeksepeti/StatusMapping/packages.lock.json 
+  OUT: M tests/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox/packages.lock.json 
+
+=== 7ef68cb6 V12-ONL-004 (26 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'integrations.manage', 'src/Host/Experience/OnlineOrdering/OnlineCatalogPublishingEndpoints.cs', 'evidence/V12-ONL-004/**', 'PUT /v2/chains/{chain_id}/vendors/{vendor_id}/catalog'}
+  OUT: M ALKAROS.slnx  (matches only CURRENT surface)
+  OUT: M database/MigrationComposition/order.json  (matches only CURRENT surface)
+  OUT: M src/Host/Composition/Migrations/MigrationManifest.cs  (matches only CURRENT surface)
+  OUT: M src/Host/DualScreen/DualScreenApplication.cs  (matches only CURRENT surface)
+  OUT: A src/Host/Experience/OnlineOrdering/OnlineCatalogPublishingEndpoints.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/OnlineOrderingModule.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/IYemeksepetiProductMappingService.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/PostgresYemeksepetiProductMappingService.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/Yemeksepeti/StatusSync/YemeksepetiPartnerClient.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj  (matches only CURRENT surface)
+  OUT: A tests/Host/Experience/OnlineOrdering/OnlineCatalogPublishingHttpTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/OnlineOrdering/OnlineOrderingTestDatabase.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/MigrationComposition/Manifest/ManifestTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Modules/OnlineOrdering/Yemeksepeti/StatusSync/YemeksepetiPartnerClientTests.cs  (matches only CURRENT surface)
+
+=== fd5b9dc0 V12-ONL-005 (20 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'inventory.stock_balances.available_quantity', 'src/Host/Experience/OnlineOrdering/OnlineAvailabilityPublishingHostedService.cs', 'evidence/V12-ONL-005/**'}
+  OUT: M ALKAROS.slnx  (matches only CURRENT surface)
+  OUT: M database/MigrationComposition/order.json  (matches only CURRENT surface)
+  OUT: M src/Host/Composition/Migrations/MigrationManifest.cs  (matches only CURRENT surface)
+  OUT: M src/Host/DualScreen/DualScreenApplication.cs  (matches only CURRENT surface)
+  OUT: A src/Host/Experience/OnlineOrdering/OnlineAvailabilityPublishingHostedService.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/OnlineOrderingModule.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/IYemeksepetiProductMappingService.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/PostgresYemeksepetiProductMappingService.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/MigrationComposition/Manifest/ManifestTests.cs  (matches only CURRENT surface)
+
+=== bbd16634 V12-OUI-001 (15 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'src/Apps/BackOffice', 'src/Host/Experience/OnlineOrdering/OnlineOperationsEndpoints.cs', 'evidence/V12-OUI-001/**', 'src/Clients/PosTerminal/src/features/online-operations/**'}
+  OUT: A src/Clients/PosTerminal/src/features/online-operations/OnlineOperationsWorkspace.test.tsx  (matches only CURRENT surface)
+  OUT: A src/Clients/PosTerminal/src/features/online-operations/OnlineOperationsWorkspace.tsx  (matches only CURRENT surface)
+  OUT: A src/Clients/PosTerminal/src/features/online-operations/index.ts  (matches only CURRENT surface)
+  OUT: A src/Clients/PosTerminal/src/features/online-operations/online-operations.css  (matches only CURRENT surface)
+  OUT: A src/Clients/PosTerminal/src/features/online-operations/onlineOperationsApi.ts  (matches only CURRENT surface)
+  OUT: M src/Clients/PosTerminal/src/routes/workspace.tsx  (matches only CURRENT surface)
+  OUT: M src/Clients/PosTerminal/src/strings.ts  (matches only CURRENT surface)
+  OUT: M src/Host/DualScreen/DualScreenApplication.cs  (matches only CURRENT surface)
+  OUT: A src/Host/Experience/OnlineOrdering/OnlineOperationsEndpoints.cs  (matches only CURRENT surface)
+  OUT: M src/Host/Experience/OnlineOrdering/YemeksepetiStatusSyncService.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj  (matches only CURRENT surface)
+  OUT: A tests/Host/Experience/OnlineOrdering/OnlineOperationsHttpTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/Experience/OnlineOrdering/OnlineOrderingTestDatabase.cs  (matches only CURRENT surface)
+
+=== 911ac747 V12-REC-001 (31 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'evidence/V12-REC-001/**', 'src/Host/Experience/Reconciliation/OnlineOrderReconciliationEndpoints.cs', 'src/Host/Experience/Reconciliation/OnlineOrderingInboxReprocessing.cs', 'Reconciliation.OnlineOrders'}
+  OUT: M ALKAROS.slnx  (matches only CURRENT surface)
+  OUT: M database/MigrationComposition/order.json  (matches only CURRENT surface)
+  OUT: M src/Host/Composition/Migrations/MigrationManifest.cs  (matches only CURRENT surface)
+  OUT: M src/Host/Composition/Modules/ModuleRegistry.cs  (matches only CURRENT surface)
+  OUT: M src/Host/DualScreen/DualScreenApplication.cs  (matches only CURRENT surface)
+  OUT: A src/Host/Experience/Reconciliation/OnlineOrderReconciliationEndpoints.cs  (matches only CURRENT surface)
+  OUT: A src/Host/Experience/Reconciliation/OnlineOrderingInboxReprocessing.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/OnlineOrdering/Yemeksepeti/OrderNormalization/YemeksepetiInboxProcessingStore.cs  (matches only CURRENT surface)
+  OUT: M tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs  (matches only CURRENT surface)
+  OUT: A tests/Host/Experience/Reconciliation/OnlineOrderReconciliationHttpTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/MigrationComposition/Composition/HostModuleReachabilityTests.cs  (matches only CURRENT surface)
+  OUT: M tests/Host/MigrationComposition/Manifest/ManifestTests.cs  (matches only CURRENT surface)
+
+=== 702524a9 V12-RPT-001 (13 files) status Planned->Done
+  !! OWNED SURFACE CHANGED IN COMMIT: {'channel-report.v1', 'orders.orders', 'evidence/V12-RPT-001/**', 'reports.view', 'orders.total', '/api/v1/management/reports/channels', 'src/Host/Experience/Reporting/ChannelReportEndpoints.cs', 'check.isBalanced'}
+  OUT: M ALKAROS.slnx  (matches only CURRENT surface)
+  OUT: M src/Host/DualScreen/DualScreenApplication.cs  (matches only CURRENT surface)
+  OUT: A src/Host/Experience/Reporting/ChannelReportEndpoints.cs  (matches only CURRENT surface)
+  OUT: M src/Modules/Reporting/ReportingModule.cs  (matches only CURRENT surface)
+  OUT: A tests/Host/Experience/Reconciliation/ChannelReportHttpTests.cs  (matches only CURRENT surface)
+
+=== df4efdf0 V12-RPT-001 (7 files) status Done->Done
+  OUT: M plan/v1.2/online-operations-ui/V12-OUI-001-online-order-operations.md 

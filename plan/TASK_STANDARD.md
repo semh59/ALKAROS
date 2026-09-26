@@ -162,3 +162,24 @@ Bir görev şu üçü sağlanmadan Done olamaz:
 
 Bu şablon mevcut görev dosyalarının `Acceptance evidence` bölümlerini
 değiştirmez; yalnız yeni görev yazımı için kılavuzdur.
+
+## Aktif görevde yürütme kuralı (V12-GOV-005, 2026-09-26)
+
+Faz 3 bağımsız denetimi, görev commit'lerinin `task_scope_tool.py` diff modunda geçemediğini buldu. Bu yüzden
+her uygulama görevi şu sırayla yürütülür:
+
+1. **Önce InProgress commit'i.** Görev dosyası, Owned surface'i eksiksiz olarak yazılmış halde (yeni dosyalar
+   ve paylaşılan dosyalar dahil) ve `Status: InProgress` ile tek başına commit'lenir. Uygulama bu commit'ten
+   sonra başlar.
+2. **Görev dosyası sabit kalır.** Görev sürerken görev dosyasında yalnız `Status` ve `Assignee` değişir.
+   Sonuçlar, test sayıları ve mutasyon kanıtı `evidence/<Task-ID>/` altına yazılır; Acceptance evidence
+   bölümüne sonradan metin eklenmez.
+3. **Paylaşılan dosyalar "Sınırlı ek" ile bildirilir.** Başka bir görevin sahip olduğu dosya, Owned
+   surface'teki `- Sınırlı ek` maddesinin altında, ters tırnaksız ve depo yoluyla yazılır (dizin için sonda
+   `/`). `task_scope_tool.py` bu yollara yazmaya izin verir, ama sahiplik vermez; plan_audit çakışma kontrolü
+   değişmez. Görev sürerken Owned surface'e yeni yol eklenmez. Öngörülmeyen bir dosya gerekirse görev durdurulur
+   ve kapsam yeni bir görevle açılır.
+4. **Her commit öncesi kapsam kontrolü.** Şu komut exit 0 vermeden commit atılmaz:
+   `python tools/task-scope/task_scope_tool.py --task-id <ID> --diff-base <InProgress commit>`
+5. **Bir commit, bir görev.** Bir commit başka bir görevin plan dosyasını değiştirmez. Değişiklik gerekiyorsa
+   değiştiren görevin "Sınırlı ek" listesinde yer alır.

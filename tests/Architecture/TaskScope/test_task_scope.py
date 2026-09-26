@@ -1707,3 +1707,105 @@ class TestDoneTransitionDiffMode:
         result = mod.run_validation("V1-FND-003", make_repo, make_plan, diff_base=base)
         assert result["metadata_errors"] == []
         assert result["valid"] is True
+
+
+# ---------------------------------------------------------------------------
+# V12-GOV-005: "Sınırlı ek" shared-write declarations
+# ---------------------------------------------------------------------------
+
+SHARED_SURFACE = (
+    "- `tools/task-scope/**`\n"
+    "- Bu görev, başka bir task'ın owned surface alanını değiştiremez.\n"
+    "- Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır:\n"
+    "  - src/Host/Shared/Registry.cs (V1-X-001 sahipliğinde) — yalnız kayıt satırı.\n"
+    "  - tests/Shared/ ve ALKAROS.slnx — yeni test dosyası ve proje kaydı.\n"
+)
+
+
+class TestSharedSurfaceDeclaration:
+    def test_a_declared_shared_file_may_be_written(self, write_task, make_repo, make_plan, run_tool):
+        write_task(owned_surface=SHARED_SURFACE)
+        _write(make_repo, "src/Host/Shared/Registry.cs")
+        _write(make_repo, "ALKAROS.slnx")
+        exit_code, result = run_tool("V1-FND-003", make_repo, make_plan)
+        assert exit_code == 0, result["findings"]
+
+    def test_a_declared_shared_directory_covers_its_files(self, write_task, make_repo, make_plan, run_tool):
+        write_task(owned_surface=SHARED_SURFACE)
+        _write(make_repo, "tests/Shared/NewTests.cs")
+        exit_code, result = run_tool("V1-FND-003", make_repo, make_plan)
+        assert exit_code == 0, result["findings"]
+
+    def test_an_undeclared_neighbour_of_a_shared_file_is_still_refused(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        write_task(owned_surface=SHARED_SURFACE)
+        _write(make_repo, "src/Host/Shared/Other.cs")
+        exit_code, result = run_tool("V1-FND-003", make_repo, make_plan)
+        assert exit_code == 1
+        assert "src/host/shared/other.cs" in [f["path"] for f in result["findings"]]
+
+    def test_prose_and_task_ids_in_the_declaration_never_become_paths(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        write_task(owned_surface=SHARED_SURFACE + "  - V1-X-001/002 kararı.\n")
+        _write(make_repo, "V1-X-001/002")
+        exit_code, result = run_tool("V1-FND-003", make_repo, make_plan)
+        assert exit_code == 1
+
+    def test_a_path_outside_the_limited_addition_item_is_not_shared(
+        self, write_task, make_repo, make_plan, run_tool
+    ):
+        write_task(owned_surface="- `tools/task-scope/**`\n- Not: src/Host/Shared/Registry.cs okunur.\n")
+        _write(make_repo, "src/Host/Shared/Registry.cs")
+        exit_code, result = run_tool("V1-FND-003", make_repo, make_plan)
+        assert exit_code == 1
+
+
+# ---------------------------------------------------------------------------
+# V12-GOV-005: plan_audit cross-checks this tool's waiver copies
+# ---------------------------------------------------------------------------
+
+def _load_plan_audit(monkeypatch, workspace: Path):
+    import importlib.util
+
+    source = Path(__file__).resolve().parents[3] / "tools" / "plan-audit" / "plan_audit_tool.py"
+    spec = importlib.util.spec_from_file_location("plan_audit_tool_under_test", source)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(module, "WORKSPACE", workspace)
+    return module
+
+
+def _copy_task_scope_tool(tmp_path: Path) -> Path:
+    real = Path(__file__).resolve().parents[3] / "tools" / "task-scope" / "task_scope_tool.py"
+    target = tmp_path / "tools" / "task-scope" / "task_scope_tool.py"
+    target.parent.mkdir(parents=True)
+    target.write_bytes(real.read_bytes())
+    return target
+
+
+class TestTaskScopeWaiverCrossCheck:
+    def test_the_real_copies_agree(self, tmp_path, monkeypatch):
+        _copy_task_scope_tool(tmp_path)
+        plan_audit = _load_plan_audit(monkeypatch, tmp_path)
+        assert plan_audit.validate_task_scope_waivers() == []
+
+    @pytest.mark.parametrize(
+        ("original", "mutated", "code"),
+        [
+            ('("V12-ONL-004", "V0-YSP-001"),', '("V12-ONL-005", "V0-YSP-001"),',
+             "TASK_SCOPE_YEMEKSEPETI_CHANNEL_WAIVER_MISMATCH"),
+            ('("V13-RPT-001", "V13-FSC-001"),', '("V13-RPT-001", "V13-FSC-002"),',
+             "TASK_SCOPE_PAYMENT_ORCHESTRATION_WAIVER_MISMATCH"),
+        ],
+        ids=["yemeksepeti", "payment"],
+    )
+    def test_a_drifted_copy_fails_closed(self, tmp_path, monkeypatch, original, mutated, code):
+        target = _copy_task_scope_tool(tmp_path)
+        text = target.read_text(encoding="utf-8")
+        assert text.count(original) == 1
+        target.write_text(text.replace(original, mutated), encoding="utf-8")
+        plan_audit = _load_plan_audit(monkeypatch, tmp_path)
+        errors = plan_audit.validate_task_scope_waivers()
+        assert len(errors) == 1 and errors[0].startswith(code)

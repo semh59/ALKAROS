@@ -977,6 +977,50 @@ def parse_task_scope_admission_records(path: Path) -> tuple[list[tuple[str, str,
     return records, []
 
 
+def parse_task_scope_waiver_constant(path: Path, name: str) -> set[tuple[str, str]] | None:
+    """V12-GOV-005: read a task-scope waiver set literal, or None when it is not a plain set of pairs."""
+    tree = ast.parse(read_utf8(path), filename=str(path))
+    for node in tree.body:
+        if isinstance(node, ast.Assign) and any(
+            isinstance(target, ast.Name) and target.id == name for target in node.targets
+        ):
+            try:
+                value = ast.literal_eval(node.value)
+            except ValueError:
+                return None
+            if isinstance(value, set) and all(
+                isinstance(pair, tuple) and len(pair) == 2 and all(isinstance(i, str) for i in pair)
+                for pair in value
+            ):
+                return value
+            return None
+    return None
+
+
+def validate_task_scope_waivers() -> list[str]:
+    """V12-GOV-005: the task-scope copies of both per-edge waivers must equal this tool's constants.
+
+    GATES.md is already checked against these constants; before this the task-scope copies were not
+    compared with anything, so the three sources could drift silently.
+    """
+    errors: list[str] = []
+    tool_path = WORKSPACE / "tools" / "task-scope" / "task_scope_tool.py"
+    for tool_name, expected, code in (
+        ("_PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER", PAYMENT_ORCHESTRATION_DEPENDENCY_WAIVER,
+         "TASK_SCOPE_PAYMENT_ORCHESTRATION_WAIVER"),
+        ("_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER", YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER,
+         "TASK_SCOPE_YEMEKSEPETI_CHANNEL_WAIVER"),
+    ):
+        registered = parse_task_scope_waiver_constant(tool_path, tool_name)
+        if registered is None:
+            errors.append(f"{code}_DECLARATION")
+        elif registered != expected:
+            errors.append(
+                "%s_MISMATCH expected=%s registered=%s" % (code, sorted(expected), sorted(registered))
+            )
+    return errors
+
+
 def validate_remediation_admission_tuple() -> list[str]:
     """Require contract, gate table and canonical task-scope records to agree."""
     errors: list[str] = []
@@ -2353,6 +2397,7 @@ def validate_plan() -> None:
     )
     gate_text = read_utf8(PLAN_DIR / "GATES.md")
     errors.extend(validate_remediation_admission_tuple())
+    errors.extend(validate_task_scope_waivers())
     registered_gates = set(GATE_ID.findall(gate_text))
     deferred_block = gate_text.split("<!-- V0_DEFERRED_TASKS:START -->", 1)
     if len(deferred_block) != 2 or "<!-- V0_DEFERRED_TASKS:END -->" not in deferred_block[1]:

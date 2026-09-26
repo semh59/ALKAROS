@@ -275,6 +275,12 @@ kanıt, test adı veya görev metni onu "doğrulandı" diye nitelemez. Tüketici
 kanıt `V0-YSP-001` ve `V20-INT-003` sahipliğinde açık kalır. Bu waiver ne
 `V0-YSP-001`'i kapatır, ne aynı tüketicinin başka bir bağımlılığını etkiler.
 
+2026-09-26 (`V12-GOV-005`, `C104`): Semih'in kararıyla `V12-ONL-004`'ün "gerçek sandbox kanıtları" ve
+`V12-ONL-005`'in "etkin provider'lar için gerçek sandbox kanıtı" teslim kalemleri, bu iki görev `Done`
+kalırken adıyla `V20-INT-003`'e devredildi. `V12-ONL-005` bu tablonun tüketicisi değildir (`V0-YSP-001`'e
+doğrudan bağlı değil, zincirle bağlıdır); devir bu paragrafla onu da kapsar. İki görevin sandbox maddeleri
+karşılanmış sayılmaz.
+
 <!-- V12_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER:START -->
 | Consumer | Waived dependency | Approval date | Required evidence |
 | --- | --- | --- | --- |
@@ -290,7 +296,9 @@ Bu tablo `tools/plan-audit/plan_audit_tool.py`'nin
 `YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER` sabitiyle ve
 `tools/task-scope/task_scope_tool.py`'nin
 `_YEMEKSEPETI_CHANNEL_DEPENDENCY_WAIVER` sabitiyle tam eşleşmelidir (V13
-ödeme orkestrasyonu waiver'ıyla aynı fail-closed desen). Yeni product behavior
+ödeme orkestrasyonu waiver'ıyla aynı fail-closed desen). `V12-GOV-005`'ten beri `plan_audit_tool.py`
+task-scope kopyalarını da okur; uyuşmazlık `TASK_SCOPE_YEMEKSEPETI_CHANNEL_WAIVER_MISMATCH` ve
+`TASK_SCOPE_PAYMENT_ORCHESTRATION_WAIVER_MISMATCH` hatası verir. Yeni product behavior
 başlatmaz ve üretimde hiçbir Yemeksepeti kanalını etkinleştirmez.
 
 2026-08-15 kullanıcı onayıyla (`TRACEABILITY.md` C69) `V0-REV-001..030`

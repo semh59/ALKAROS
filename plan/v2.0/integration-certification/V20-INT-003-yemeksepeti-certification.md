@@ -24,6 +24,7 @@ onaylayın.
 
 - İmzalı webhook/replay, order normalleştirme, eşleme, kabul etme/reddetme/iptal etme, katalog yayınlama,
   kullanılabilirlik yayınlama, retry ve hız sınırı durumları.
+- `V12-ONL-004` ve `V12-ONL-005`'ten devralınan gerçek sandbox teslim kalemleri (V12-GOV-005, 2026-09-26).
 
 ## Out of scope
 
