@@ -18,10 +18,14 @@ public interface IRelayProvisioningService
     /// SetTunnelConfiguration using the already-saved API token and
     /// account/zone/base-domain config, then persists the resulting tunnel
     /// id/token/hostname. Idempotent in the sense that calling it again
-    /// creates a brand new Cloudflare tunnel and replaces the stored one —
-    /// Cloudflare itself refuses to delete a tunnel with an active
-    /// connection, but nothing here manages that lifecycle or cleans up the
-    /// orphaned previous tunnel.
+    /// creates a brand new Cloudflare tunnel and replaces the stored one.
+    /// V1-RMD-334 (independent 2026-09-26 audit, orta seviye bulgu): a
+    /// reprovision now makes a best-effort attempt to delete the PREVIOUS
+    /// tunnel afterward — Cloudflare itself refuses to delete a tunnel with
+    /// an active connection, so this can legitimately fail (the local
+    /// connector may not have switched over to the new token yet); that
+    /// failure is logged and never surfaces to the caller, since the new
+    /// tunnel is already live and correct either way.
     /// </summary>
     Task<RelayProvisioningResult> ProvisionAsync(string subdomainLabel, CancellationToken cancellationToken = default);
 }
@@ -33,6 +37,14 @@ public sealed class RelayProvisioningService : IRelayProvisioningService
             LogLevel.Error,
             new EventId(5510, nameof(LogProvisioningFailed)),
             "Cloudflare tunnel provisioning failed for subdomain '{SubdomainLabel}'.");
+
+    // V1-RMD-334: best-effort only - Cloudflare's own "still has an active connection" refusal
+    // is an expected, tolerable outcome here, not a failure worth escalating.
+    private static readonly Action<ILogger, string, Exception?> LogPreviousTunnelDeleteFailed =
+        LoggerMessage.Define<string>(
+            LogLevel.Warning,
+            new EventId(5511, nameof(LogPreviousTunnelDeleteFailed)),
+            "Could not delete the previous Cloudflare tunnel '{TunnelId}' after reprovisioning (likely still has an active connection); it may be orphaned.");
 
 
     /// <summary>
@@ -83,6 +95,10 @@ public sealed class RelayProvisioningService : IRelayProvisioningService
         if (config is null)
             throw new RelayProvisioningException("Önce hesap kimliği, bölge kimliği ve ana alan adı kaydedilmelidir.");
 
+        // V1-RMD-334: captured BEFORE the new tunnel replaces it in the store, so the delete
+        // attempt below targets the tunnel this call is actually retiring.
+        var previousTunnel = await _tunnelStore.GetInfoAsync(cancellationToken);
+
         CloudflareTunnel tunnel;
         string tunnelToken;
         var hostname = $"{subdomainLabel}.{config.BaseDomain}";
@@ -109,6 +125,19 @@ public sealed class RelayProvisioningService : IRelayProvisioningService
         }
 
         await _tunnelStore.SaveAsync(tunnel.Id, tunnelToken, hostname, cancellationToken);
+
+        if (previousTunnel is not null && previousTunnel.TunnelId != tunnel.Id)
+        {
+            try
+            {
+                await _client.DeleteTunnelAsync(apiToken, config.AccountId, previousTunnel.TunnelId, cancellationToken);
+            }
+            catch (CloudflareApiException exception)
+            {
+                LogPreviousTunnelDeleteFailed(_logger, previousTunnel.TunnelId, exception);
+            }
+        }
+
         return new RelayProvisioningResult(hostname);
     }
 }

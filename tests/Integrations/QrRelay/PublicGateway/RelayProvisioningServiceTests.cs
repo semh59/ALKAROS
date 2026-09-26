@@ -82,6 +82,52 @@ public sealed class RelayProvisioningServiceTests
         Assert.DoesNotContain("Invalid access token", exception.Message, StringComparison.Ordinal);
     }
 
+    // V1-RMD-334 (independent 2026-09-26 audit, orta seviye bulgu): ICloudflareApiClient.DeleteTunnelAsync
+    // existed but was never called anywhere - a reprovision left the previous tunnel permanently orphaned.
+    [Fact]
+    public async Task ReprovisioningDeletesThePreviousTunnelAfterTheNewOneIsLive()
+    {
+        var client = new FakeCloudflareApiClient();
+        var tunnelStore = new FakeTunnelStore(new RelayTunnelInfo("tunnel-id-old", "old.alkaros.app", DateTimeOffset.UtcNow.AddDays(-1)));
+        var service = new RelayProvisioningService(
+            client, new FakeCredentialStore("cf-real-token"), new FakeConfigStore(Config), tunnelStore, NullLogger<RelayProvisioningService>.Instance);
+
+        var result = await service.ProvisionAsync("sube1");
+
+        Assert.Equal("sube1.alkaros.app", result.Hostname);
+        Assert.Equal("tunnel-id-1", tunnelStore.Saved!.Value.TunnelId);
+        Assert.Equal("tunnel-id-old", client.LastDeletedTunnelId);
+    }
+
+    [Fact]
+    public async Task ANeverProvisionedRelayHasNoPreviousTunnelToDelete()
+    {
+        var client = new FakeCloudflareApiClient();
+        var tunnelStore = new FakeTunnelStore();
+        var service = new RelayProvisioningService(
+            client, new FakeCredentialStore("cf-real-token"), new FakeConfigStore(Config), tunnelStore, NullLogger<RelayProvisioningService>.Instance);
+
+        await service.ProvisionAsync("sube1");
+
+        Assert.Null(client.LastDeletedTunnelId);
+    }
+
+    /// <summary>Cloudflare refusing to delete a still-connected tunnel is expected, not a failure of provisioning itself.</summary>
+    [Fact]
+    public async Task ANewTunnelStaysTheResultEvenWhenCloudflareRefusesToDeleteTheOldOneBecauseItIsStillConnected()
+    {
+        var client = new FakeCloudflareApiClient { FailDelete = true };
+        var tunnelStore = new FakeTunnelStore(new RelayTunnelInfo("tunnel-id-old", "old.alkaros.app", DateTimeOffset.UtcNow.AddDays(-1)));
+        var service = new RelayProvisioningService(
+            client, new FakeCredentialStore("cf-real-token"), new FakeConfigStore(Config), tunnelStore, NullLogger<RelayProvisioningService>.Instance);
+
+        var result = await service.ProvisionAsync("sube1");
+
+        Assert.Equal("sube1.alkaros.app", result.Hostname);
+        Assert.Equal("tunnel-id-1", tunnelStore.Saved!.Value.TunnelId);
+        Assert.Null(client.LastDeletedTunnelId);
+    }
+
     private sealed class FakeCredentialStore : IRelayCredentialStore
     {
         private readonly string? _token;
@@ -113,16 +159,24 @@ public sealed class RelayProvisioningServiceTests
 
     private sealed class FakeTunnelStore : IRelayTunnelStore
     {
+        public FakeTunnelStore(RelayTunnelInfo? existing = null)
+        {
+            _info = existing;
+        }
+
+        private RelayTunnelInfo? _info;
+
         public (string TunnelId, string Token, string Hostname)? Saved { get; private set; }
 
         public Task SaveAsync(string tunnelId, string tunnelToken, string hostname, CancellationToken cancellationToken = default)
         {
             Saved = (tunnelId, tunnelToken, hostname);
+            _info = new RelayTunnelInfo(tunnelId, hostname, DateTimeOffset.UtcNow);
             return Task.CompletedTask;
         }
 
         public Task<RelayTunnelInfo?> GetInfoAsync(CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
+            Task.FromResult(_info);
 
         public Task<string?> ResolveTunnelTokenAsync(CancellationToken cancellationToken = default) =>
             throw new NotSupportedException();
@@ -141,6 +195,8 @@ public sealed class RelayProvisioningServiceTests
         public string? LastConfiguredHostname { get; private set; }
         public string? LastConfiguredOriginService { get; private set; }
 
+        private int _createCount;
+
         public Task<CloudflareTunnel> CreateTunnelAsync(string apiToken, string accountId, string name, CancellationToken cancellationToken = default)
         {
             if (FailWith is not null)
@@ -149,7 +205,8 @@ public sealed class RelayProvisioningServiceTests
             LastApiToken = apiToken;
             LastAccountId = accountId;
             LastTunnelName = name;
-            return Task.FromResult(new CloudflareTunnel("tunnel-id-1", name));
+            _createCount++;
+            return Task.FromResult(new CloudflareTunnel($"tunnel-id-{_createCount}", name));
         }
 
         public Task<string> GetTunnelTokenAsync(string apiToken, string accountId, string tunnelId, CancellationToken cancellationToken = default) =>
@@ -171,7 +228,15 @@ public sealed class RelayProvisioningServiceTests
             return Task.CompletedTask;
         }
 
-        public Task DeleteTunnelAsync(string apiToken, string accountId, string tunnelId, CancellationToken cancellationToken = default) =>
-            throw new NotSupportedException();
+        public bool FailDelete { get; set; }
+        public string? LastDeletedTunnelId { get; private set; }
+
+        public Task DeleteTunnelAsync(string apiToken, string accountId, string tunnelId, CancellationToken cancellationToken = default)
+        {
+            if (FailDelete)
+                throw new CloudflareApiException("still has an active connection");
+            LastDeletedTunnelId = tunnelId;
+            return Task.CompletedTask;
+        }
     }
 }
