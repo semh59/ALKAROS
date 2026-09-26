@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1335,
-  "markdown_line_count": 103021,
-  "markdown_byte_count": 5927511,
+  "markdown_file_count": 1336,
+  "markdown_line_count": 103079,
+  "markdown_byte_count": 5932399,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "2A3AE579F5FD37DE694BFA005E2D139A2A2814CD614337117786B8C58F497E10",
-      "lines": 2611,
-      "bytes": 380679,
+      "sha256": "0335E9F9A6BF28A33AC6DE73CA0F7F4C3BA1A957A69666BAEED7EC7D4731F9BB",
+      "lines": 2612,
+      "bytes": 380853,
       "utf8": true
     },
     {
@@ -7382,6 +7382,13 @@
       "sha256": "EC55FBA76BB26333EF73564FB6041F3734F0F269CB5B0C0F1C846452A308C92A",
       "lines": 66,
       "bytes": 6426,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-320-rebuild-balances-preserves-reservations.md",
+      "sha256": "0D84274DF9A86D411D02B266C90FC213F5CF3059318BD9C0B7E12A032ECA02FE",
+      "lines": 57,
+      "bytes": 4714,
       "utf8": true
     },
     {

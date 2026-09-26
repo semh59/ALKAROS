@@ -160,6 +160,51 @@ public sealed class StockBalanceDatabaseTests : IClassFixture<StockBalanceTestDb
         replayed.Should().Be(75m);
     }
 
+    /// <summary>
+    /// V1-RMD-320 (independent 2026-09-26 audit, finding K8): <see cref="StockBalanceProjector.RebuildAllBalancesAsync"/>
+    /// deletes the whole <c>inventory.stock_balances</c> table and rebuilds every row from the movement
+    /// ledger - before this fix, every fresh row it inserted defaulted <c>reserved_quantity</c> to 0, so
+    /// any active reservation silently vanished on every rebuild (currently unreachable from any real
+    /// endpoint, but a future maintenance tool wiring this up would have made every reserved portion look
+    /// "available" again - a real double-sell risk). Proves a reservation survives a real rebuild against
+    /// real Postgres.
+    /// </summary>
+    [Fact]
+    public async Task RebuildAllBalancesPreservesAnActiveReservationInsteadOfSilentlyZeroingIt()
+    {
+        var locCode = "LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
+        var loc = await _masterService.CreateLocationAsync(locCode, "Kitchen Store", StockLocationType.Kitchen);
+
+        var itemCode = "SKU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();
+        var item = await _masterService.CreateStockItemAsync(itemCode, "Steak", StockItemType.RawMaterial, "kg");
+
+        var purchase = await _movementService.RecordMovementAsync(item.Id, loc.Id, StockMovementType.PurchaseReceipt, 20m, "kg", StockMovementSourceType.PurchaseOrder);
+        await _projector.ApplyMovementAsync(purchase);
+
+        // Simulates an active portion reservation the way ReservationBalanceProjector's own repository
+        // would (this test project has no dependency on the ReservationBalanceProjection module, so it
+        // sets the same column directly rather than pulling that module in just for this).
+        await using (var cmd = _db.DataSource.CreateCommand(
+            "UPDATE inventory.stock_balances SET reserved_quantity = 6, available_quantity = on_hand_quantity - 6 " +
+            "WHERE stock_item_id = $1 AND stock_location_id = $2;"))
+        {
+            cmd.Parameters.AddWithValue(item.Id);
+            cmd.Parameters.AddWithValue(loc.Id);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        var beforeRebuild = await _balanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id);
+        beforeRebuild!.ReservedQuantity.Should().Be(6m);
+
+        await _projector.RebuildAllBalancesAsync();
+
+        var afterRebuild = await _balanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id);
+        afterRebuild.Should().NotBeNull();
+        afterRebuild!.OnHandQuantity.Should().Be(20m, "the on-hand rebuild itself must still work exactly as before");
+        afterRebuild.ReservedQuantity.Should().Be(6m, "the reservation must survive the rebuild, not silently zero");
+        afterRebuild.AvailableQuantity.Should().Be(14m);
+    }
+
     [Fact]
     public async Task DeletingStockItemReferencedByStockBalanceThrowsForeignKeyRestriction()
     {

@@ -525,6 +525,33 @@ public sealed class WasteRecordingDomainTests
             _balances.Clear();
             return Task.CompletedTask;
         }
+
+        // V1-RMD-320 (K8): minimal in-memory fake support for the new interface members.
+        public Task<IReadOnlyDictionary<(Guid StockItemId, Guid StockLocationId), decimal>> GetAllReservedQuantitiesAsync(CancellationToken ct = default)
+        {
+            var result = _balances.Values
+                .Where(b => b.ReservedQuantity != 0m)
+                .ToDictionary(b => (b.StockItemId, b.StockLocationId), b => b.ReservedQuantity);
+            return Task.FromResult<IReadOnlyDictionary<(Guid, Guid), decimal>>(result);
+        }
+
+        public Task RestoreReservedQuantityAsync(Guid stockItemId, Guid stockLocationId, decimal reservedQuantity, CancellationToken ct = default)
+        {
+            var key = (stockItemId, stockLocationId);
+            if (_balances.TryGetValue(key, out var existing))
+            {
+                _balances[key] = new StockBalance(
+                    existing.Id, stockItemId, stockLocationId, existing.OnHandQuantity,
+                    reservedQuantity, existing.OnHandQuantity - reservedQuantity, DateTimeOffset.UtcNow, existing.RowVersion + 1);
+            }
+            else
+            {
+                _balances[key] = new StockBalance(
+                    Guid.NewGuid(), stockItemId, stockLocationId, 0m,
+                    reservedQuantity, -reservedQuantity, DateTimeOffset.UtcNow, 1);
+            }
+            return Task.CompletedTask;
+        }
     }
 
     /// <summary>

@@ -48,6 +48,25 @@ public interface IStockBalanceRepository
     Task ResetAllBalancesAsync(CancellationToken ct = default);
 
     /// <summary>
+    /// V1-RMD-320 (independent 2026-09-26 audit, finding K8): every (stock item, location) pair that
+    /// currently carries a non-zero <c>reserved_quantity</c>, read BEFORE <see cref="ResetAllBalancesAsync"/>
+    /// wipes the whole table — <see cref="IStockBalanceProjector.RebuildAllBalancesAsync"/> uses this to
+    /// restore reservations afterward, since <see cref="SetExactBalanceAsync"/>'s own INSERT always
+    /// defaults a fresh row's reserved_quantity to 0.
+    /// </summary>
+    Task<IReadOnlyDictionary<(Guid StockItemId, Guid StockLocationId), decimal>> GetAllReservedQuantitiesAsync(
+        CancellationToken ct = default);
+
+    /// <summary>
+    /// V1-RMD-320 (K8): restores a captured reserved_quantity onto whatever row now exists for this pair
+    /// (upserts a fresh on_hand=0 row if the on-hand rebuild loop never touched this pair - a reservation
+    /// can exist for an item/location with no net movement history at all), recomputing
+    /// available_quantity = on_hand_quantity - reserved_quantity.
+    /// </summary>
+    Task RestoreReservedQuantityAsync(
+        Guid stockItemId, Guid stockLocationId, decimal reservedQuantity, CancellationToken ct = default);
+
+    /// <summary>
     /// V1-WTR-027 follow-up (2026-09-12): takes the same transaction-scoped
     /// advisory lock <see cref="ApplyOnHandDeltaAsync(Guid, Guid, decimal, NpgsqlConnection, NpgsqlTransaction, CancellationToken)"/>
     /// and <see cref="TryApplyGuardedOnHandDeltaAsync"/> already take

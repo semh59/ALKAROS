@@ -38,6 +38,14 @@ public sealed class StockBalanceProjector : IStockBalanceProjector
     {
         var sw = Stopwatch.StartNew();
 
+        // V1-RMD-320 (independent 2026-09-26 audit, finding K8): captured BEFORE the reset below wipes the
+        // whole table. ResetAllBalancesAsync's DELETE, followed by SetExactBalanceAsync's own always-a-
+        // fresh-INSERT (reserved_quantity defaults to 0), used to silently zero every active reservation on
+        // every rebuild - unreachable from any HTTP endpoint/hosted service today, but a future maintenance
+        // tool wiring this up would have made every reserved portion look "available" again, a real
+        // double-sell risk. Restored at the end of this method, not the caller's problem to remember.
+        var reservedBefore = await _balanceRepo.GetAllReservedQuantitiesAsync(ct);
+
         // 1. Reset all projected balances to guarantee no ghost or orphaned balances
         await _balanceRepo.ResetAllBalancesAsync(ct);
 
@@ -69,6 +77,12 @@ public sealed class StockBalanceProjector : IStockBalanceProjector
                 totalBalancesUpdated++;
             }
         }
+
+        // 3. Restore every reservation captured in step 0 - whether or not the pair was touched by the
+        // on-hand rebuild above (a reservation can exist for an item/location with no net movement
+        // history at all, e.g. every movement that created it was later fully reversed).
+        foreach (var ((stockItemId, stockLocationId), reservedQuantity) in reservedBefore)
+            await _balanceRepo.RestoreReservedQuantityAsync(stockItemId, stockLocationId, reservedQuantity, ct);
 
         sw.Stop();
         return new BalanceRebuildReport(totalMovements, totalBalancesUpdated, sw.Elapsed);

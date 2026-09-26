@@ -346,6 +346,54 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         await cmd.ExecuteNonQueryAsync(ct);
     }
 
+    public async Task<IReadOnlyDictionary<(Guid StockItemId, Guid StockLocationId), decimal>> GetAllReservedQuantitiesAsync(
+        CancellationToken ct = default)
+    {
+        var sql = $"""
+            SELECT stock_item_id, stock_location_id, reserved_quantity
+            FROM inventory.stock_balances
+            WHERE reserved_quantity <> 0
+            LIMIT {MaxUnpagedRows + 1};
+            """;
+
+        var result = new Dictionary<(Guid, Guid), decimal>();
+        await using var cmd = _dataSource.CreateCommand(sql);
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+        while (await reader.ReadAsync(ct))
+            result[(reader.GetGuid(0), reader.GetGuid(1))] = reader.GetDecimal(2);
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"GetAllReservedQuantitiesAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+
+        return result;
+    }
+
+    public async Task RestoreReservedQuantityAsync(
+        Guid stockItemId, Guid stockLocationId, decimal reservedQuantity, CancellationToken ct = default)
+    {
+        const string sql = @"
+            INSERT INTO inventory.stock_balances (
+                stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+                reserved_quantity, available_quantity, updated_at, row_version
+            ) VALUES (
+                $1, $2, $3, 0, $4, -$4, NOW(), 1
+            )
+            ON CONFLICT (stock_item_id, stock_location_id) DO UPDATE
+            SET reserved_quantity = EXCLUDED.reserved_quantity,
+                available_quantity = inventory.stock_balances.on_hand_quantity - EXCLUDED.reserved_quantity,
+                updated_at = NOW(),
+                row_version = inventory.stock_balances.row_version + 1;";
+
+        await using var cmd = _dataSource.CreateCommand(sql);
+        cmd.Parameters.AddWithValue(Guid.NewGuid());
+        cmd.Parameters.AddWithValue(stockItemId);
+        cmd.Parameters.AddWithValue(stockLocationId);
+        cmd.Parameters.AddWithValue(reservedQuantity);
+
+        await cmd.ExecuteNonQueryAsync(ct);
+    }
+
     private static StockBalance MapRow(NpgsqlDataReader reader)
     {
         return new StockBalance(
