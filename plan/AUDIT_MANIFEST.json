@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1312,
-  "markdown_line_count": 100587,
-  "markdown_byte_count": 5749873,
+  "markdown_file_count": 1313,
+  "markdown_line_count": 101238,
+  "markdown_byte_count": 5804799,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -62,9 +62,9 @@
     },
     {
       "path": "tools/plan-audit/plan_audit_tool.py",
-      "sha256": "0D16CE786F06857A9501169AE63B95BCF077390336419979EBE29AECFF8E8705",
-      "lines": 4444,
-      "bytes": 216837,
+      "sha256": "486F856DF98BD0453E8F1B7E37B8BD339EAFA23416C7A05A9789BCE6B31889AD",
+      "lines": 4493,
+      "bytes": 219007,
       "utf8": true
     }
   ],
@@ -2521,9 +2521,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9CE7935FD4C98EEC9C6CF31496B9AF75F4D450CAD7C61E5D239F88E787D3D3AF",
-      "lines": 2588,
-      "bytes": 376824,
+      "sha256": "8D7D5D06C6D7F6593349D1DC0667B8BD8FD61621A2F7AEC8EE0324C497C834F3",
+      "lines": 2589,
+      "bytes": 377004,
       "utf8": true
     },
     {
@@ -2542,9 +2542,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "E2A20FCA4B8767267DE0B3DA6E076A08E47C79F64D35E1EC0E49C50954D02327",
-      "lines": 516,
-      "bytes": 140818,
+      "sha256": "A330DF2BFD042CBA84AFE140B4CE277387220070E98E84A1E6ED6EC90D47AA37",
+      "lines": 551,
+      "bytes": 143466,
       "utf8": true
     },
     {
@@ -2598,9 +2598,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "2B8E27B0BA639747BA1CD7D64653D49DA6C88AE3CF1C4C27656C903C7D223D2B",
-      "lines": 204,
-      "bytes": 86171,
+      "sha256": "5BC96F4416D0D6E53E397E8EE9A3B5539E1AEDB8A2C76166E2A700D840B350D8",
+      "lines": 205,
+      "bytes": 87858,
       "utf8": true
     },
     {
@@ -8135,16 +8135,16 @@
     },
     {
       "path": "plan/v1.2/channel-mapping/V12-MAP-001-product-mapping.md",
-      "sha256": "FEB94BB28247A347CA7C5EF0F7EB400406C9523BD8BDAFEA6D15686889C9DBCD",
-      "lines": 52,
-      "bytes": 1346,
+      "sha256": "9BBDBEAC8B44C30F23A4A48872DBC1C06FEE301EE80A1E188C658D5840CD1444",
+      "lines": 84,
+      "bytes": 4531,
       "utf8": true
     },
     {
       "path": "plan/v1.2/channel-mapping/V12-MAP-002-status-mapping.md",
-      "sha256": "5EE0938E28AAD07B45E256C72ACAEEA66DC134369698102C17DC46B86B42F089",
-      "lines": 53,
-      "bytes": 1363,
+      "sha256": "F0378141855C2804B8591ADEDE19F0E3BDCBF5594AED1B70C82545D8ABCDB298",
+      "lines": 74,
+      "bytes": 3388,
       "utf8": true
     },
     {
@@ -8190,6 +8190,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.2/governance/V12-GOV-004-yemeksepeti-channel-dependency-waiver.md",
+      "sha256": "66BA47AE48291BC98D0386C6D38B8B4AEFB0EFDF54B3FEA39E1CA19EF32E2DB0",
+      "lines": 105,
+      "bytes": 4749,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.2/nfc-ordering/V12-NFC-001-self-check-in-and-trusted-order-intake.md",
       "sha256": "2225556607D714E0829C5DF928D261DEFB58C51A62A948ECE95F6389ECB96D96",
       "lines": 120,
@@ -8212,44 +8219,44 @@
     },
     {
       "path": "plan/v1.2/online-operations-ui/V12-OUI-001-online-order-operations.md",
-      "sha256": "A3DE602AC0A7D1C0F4110D1285C6457E41DDEC6D4C6D01E1D882CCCD39814074",
-      "lines": 57,
-      "bytes": 1399,
+      "sha256": "82BA92E301BC50DDF7D82A4372E44BE1254E1E98CB08C0B0B05C77362FD5F782",
+      "lines": 100,
+      "bytes": 5094,
       "utf8": true
     },
     {
       "path": "plan/v1.2/online-ordering/V12-ONL-001-webhook-inbox.md",
-      "sha256": "0EFC19C6F602E301C3AE4355A00EBAB9D51F2B935C09ACE0439D11B71C861A18",
-      "lines": 57,
-      "bytes": 1437,
+      "sha256": "4D45FEF134961066634C54185980F0EE71F19838453074F46C5552229B78AC98",
+      "lines": 87,
+      "bytes": 4462,
       "utf8": true
     },
     {
       "path": "plan/v1.2/online-ordering/V12-ONL-002-external-order-normalization.md",
-      "sha256": "D4787372C4B63B30B05A11ABC9998A9849C3A7F9CC72159B4B4FDCA41385CA7D",
-      "lines": 59,
-      "bytes": 1699,
+      "sha256": "BB28E5A29818DF2AB3D8F52B228AB18B196280501A774D6F396F442EFCB9F817",
+      "lines": 100,
+      "bytes": 5786,
       "utf8": true
     },
     {
       "path": "plan/v1.2/online-ordering/V12-ONL-003-status-and-cancellation-sync.md",
-      "sha256": "745DC4EC7F856BB75E886842142D5DE294C9DDC6DACFEC70F6E814BF7E41BBA1",
-      "lines": 62,
-      "bytes": 1734,
+      "sha256": "FEA331C595BF3472E68EF0A438FA2717C4BFBBB2E0457B5562F5FEEDA4A2D15E",
+      "lines": 113,
+      "bytes": 6521,
       "utf8": true
     },
     {
       "path": "plan/v1.2/online-ordering/V12-ONL-004-channel-catalog-publishing.md",
-      "sha256": "56FC4FBC8BB57945BB7C4F7C1375304EB8C4EBCFA7B29E5B24A9A8DC93EF2953",
-      "lines": 60,
-      "bytes": 1534,
+      "sha256": "1A007ABCA50627B81B6EEE4EAEE59FC0317BFA61FA71082A69CE1424445793A6",
+      "lines": 109,
+      "bytes": 5825,
       "utf8": true
     },
     {
       "path": "plan/v1.2/online-ordering/V12-ONL-005-channel-availability-publishing.md",
-      "sha256": "451517AD38150F8F65F54826DB0F7169577A04EE7677F4D73309DBD74E5CD752",
-      "lines": 57,
-      "bytes": 1428,
+      "sha256": "814568526E5FD2B9DE018544C2DFA978D75F814E996D6ACA93789B099F64A33B",
+      "lines": 95,
+      "bytes": 4891,
       "utf8": true
     },
     {
@@ -8268,9 +8275,9 @@
     },
     {
       "path": "plan/v1.2/qr-ordering/V12-QRO-003-confirmation-and-reservation.md",
-      "sha256": "4E2DF6309071D043906792313D314471203DD2C17BC01D7903008FB3E5D496C4",
-      "lines": 57,
-      "bytes": 1343,
+      "sha256": "0CE426DE5266BF47C2471195B3D980EF04F1AC4A2DAA010147652E77265D6BE4",
+      "lines": 87,
+      "bytes": 4004,
       "utf8": true
     },
     {
@@ -8352,23 +8359,23 @@
     },
     {
       "path": "plan/v1.2/reconciliation/V12-REC-001-online-order-reconciliation.md",
-      "sha256": "E9287C795D700CEA6CB1F8C49CFEFB18F53B653BB0DEB8B871F0E72C4153F7B8",
-      "lines": 60,
-      "bytes": 1587,
+      "sha256": "6AB60C241FC789F87C34E95AFB05A94AB06C1C98F248CEC650A1627053B1CA0F",
+      "lines": 136,
+      "bytes": 7852,
       "utf8": true
     },
     {
       "path": "plan/v1.2/reporting/V12-RPT-001-channel-reports.md",
-      "sha256": "F6788813A17BF27ABAB22774E1A5CC4250DF5CC3794117F9859DDC45321949B9",
-      "lines": 51,
-      "bytes": 1376,
+      "sha256": "6CD9C09F3CC579BDAA883DE725CA7F68AC0173CCE66F29A9B5845A490390D5D3",
+      "lines": 108,
+      "bytes": 5959,
       "utf8": true
     },
     {
       "path": "plan/v1.2/shared-stock/V12-STK-001-cross-channel-last-portion.md",
-      "sha256": "C5CEF2182269C0F2464C0CA936652B26E1DFBD94448BB099AC196E4BA1B0F7EB",
-      "lines": 58,
-      "bytes": 1671,
+      "sha256": "8381DBC429C6EFF37F66CE434A0C78753D116AF859D234BBAB53C73CA74A2328",
+      "lines": 99,
+      "bytes": 5266,
       "utf8": true
     },
     {
