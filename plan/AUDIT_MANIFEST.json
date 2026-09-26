@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1343,
-  "markdown_line_count": 103450,
-  "markdown_byte_count": 5960953,
+  "markdown_file_count": 1344,
+  "markdown_line_count": 103502,
+  "markdown_byte_count": 5965110,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "AD10692908854B8B874070DF2D90BB08B31AAE6CDBF74D53AFC49C54581F0369",
-      "lines": 2619,
-      "bytes": 382031,
+      "sha256": "DD87D7FF33D8230A8F6D95620B36CA80F2965F950FDD13C4216A9150070282A5",
+      "lines": 2620,
+      "bytes": 382208,
       "utf8": true
     },
     {
@@ -7438,6 +7438,13 @@
       "sha256": "28B6BC248535D00545366004B84EE4B47C30162652847F66E6F16CA970431335",
       "lines": 42,
       "bytes": 2646,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-328-refund-flow-already-tracked-as-v13-alc-004.md",
+      "sha256": "8D87CFC60D3B5D47A29C0732538B1419CE9A65A4608BD2B0A2F05C434ECC4A66",
+      "lines": 51,
+      "bytes": 3980,
       "utf8": true
     },
     {
