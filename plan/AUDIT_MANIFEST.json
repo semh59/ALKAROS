@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1366,
-  "markdown_line_count": 104845,
-  "markdown_byte_count": 6038110,
+  "markdown_file_count": 1370,
+  "markdown_line_count": 105074,
+  "markdown_byte_count": 6050611,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2464,6 +2464,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V12-GOV-008/decision-record.md",
+      "sha256": "081E32C11202F3A8289E1A63586F300512CB908E5E47D363836E6CC494E276B0",
+      "lines": 25,
+      "bytes": 1364,
+      "utf8": true
+    },
+    {
       "path": "evidence/V13-GOV-006/README.md",
       "sha256": "B33A4648B0FE354E6A866B54DE5377129B889B8BF6BFFAAC34AC2938BC0CE12C",
       "lines": 108,
@@ -2542,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "FA56B48C878330FA24308423D61BD7F1E2DB857678E10EF4D55E369BB1736FB5",
-      "lines": 2642,
-      "bytes": 385890,
+      "sha256": "9215AED606C8AFFCA84BABD9F375A0A7F04B31666B048D7533EC317A83A4A8FB",
+      "lines": 2646,
+      "bytes": 386529,
       "utf8": true
     },
     {
@@ -2619,9 +2626,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "D2F4F945E93A729AB28AB32C29AD21978499E8662E91C58DFF36B1D910919DB2",
-      "lines": 208,
-      "bytes": 91451,
+      "sha256": "F3AFF98CE7784BCDDAC0E0920FA327144B9FF5FFA2BFD61A2A36BE519B571C13",
+      "lines": 209,
+      "bytes": 92177,
       "utf8": true
     },
     {
@@ -7490,6 +7497,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-334-relay-tunnel-cleanup-on-reprovision.md",
+      "sha256": "82255F117297407C391E1AC9AD0B79E2BC85D1D710183F23EB9A7E9376CC341A",
+      "lines": 67,
+      "bytes": 3778,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -8421,6 +8435,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.2/governance/V12-GOV-008-provider-neutral-intake-gap.md",
+      "sha256": "DAF9E72C758805D3827DF645014DBDA1931621212EB18442334176252671B97D",
+      "lines": 65,
+      "bytes": 2632,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.2/migros-yemek/V12-MGY-001-pos-integrator-contract.md",
       "sha256": "57A43B150A2654B568D09D1FB8229EE6722F49C2686D9FFCC87D06AF113EB25F",
       "lines": 50,
@@ -8534,9 +8555,16 @@
     },
     {
       "path": "plan/v1.2/online-ordering/V12-ONL-009-provider-order-polling.md",
-      "sha256": "ADB762ECC88C9B61F3F7C6FD782024067DB734042757323F784109408CADC033",
-      "lines": 48,
-      "bytes": 1859,
+      "sha256": "C0B3385138DE5843FF3CF1D2A6D43C848C18B82F0A3C8207DE2EFBBEE8D3AAB4",
+      "lines": 55,
+      "bytes": 2383,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-ordering/V12-ONL-010-provider-neutral-intake.md",
+      "sha256": "586EAEA4DD5B49C15E879A27E0F76FCD9CD3DC0D07ACC0072D2C0AB60ED6A3E0",
+      "lines": 57,
+      "bytes": 2681,
       "utf8": true
     },
     {
@@ -8674,9 +8702,9 @@
     },
     {
       "path": "plan/v1.2/README.md",
-      "sha256": "C0E2B3658C548A5B1D4248ADC3D26F86AFBC97372A48B5CDFB320AC506F77D3C",
-      "lines": 70,
-      "bytes": 3546,
+      "sha256": "50D5209B7F4349A12271EFE8861AD1CA7F8839B40A1A0C329B0EEF137DDDC554",
+      "lines": 72,
+      "bytes": 3689,
       "utf8": true
     },
     {
@@ -8723,9 +8751,9 @@
     },
     {
       "path": "plan/v1.2/trendyol-go/V12-TGO-002-order-intake.md",
-      "sha256": "2556F6F06D8AAAABE742F449E76E9752EBF9BC6FE00DBA462F8AA3F02D90F94C",
-      "lines": 48,
-      "bytes": 2063,
+      "sha256": "8DA9D0E0ADEFCCE394B94311D4D27BE0BB12BC590783CF4F22F6785B50AE17F5",
+      "lines": 49,
+      "bytes": 2077,
       "utf8": true
     },
     {
