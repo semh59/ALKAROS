@@ -8,13 +8,32 @@
 # stays valid. Install the internal root CA on each device (see
 # deploy/docker/README.md) for a valid secure context - the WaiterPwa service
 # worker and offline queue need it.
-
 {
 	admin off
 	# Clients that connect to a bare IP send no TLS SNI, so Caddy cannot tell
 	# which site's certificate to present. Pin the default to ALKAROS_PROXY_HOST
 	# so `https://<lan-ip>:8443` completes its handshake.
 	default_sni {$ALKAROS_PROXY_HOST:localhost}
+}
+
+# V1-RMD-335 (independent 2026-09-26 audit, orta seviye bulgu): none of the
+# vhosts below set a single security response header. Applied at the site
+# level so it covers every handle (static files AND the reverse-proxied API/
+# hub responses) in one place. Deliberately conservative: no
+# Content-Security-Policy (would need auditing every inline script/style the
+# SPA bundles actually use first - a real risk of silently breaking the app,
+# out of this finding's own scope) and no Strict-Transport-Security (this
+# deployment's TLS is `tls internal`, a per-device-installed root CA on a LAN
+# - HSTS pinning a device to HTTPS-only before that CA install is confirmed
+# working risks locking a device out of the app entirely, which is worse than
+# the header's own absence). The headers below carry no such risk.
+(security_headers) {
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy same-origin
+		Permissions-Policy "geolocation=(), microphone=(), camera=()"
+	}
 }
 
 # Static SPA + client shells. try_files falls back to the app shell for deep
@@ -30,6 +49,8 @@
 
 {$ALKAROS_PROXY_HOST:localhost}, localhost {
 	tls internal
+
+	import security_headers
 
 	# The customer-display origin signal (finding B-4) must originate here,
 	# never from a client - strip any inbound copy before proxying.
@@ -59,6 +80,8 @@
 # https://display.<ALKAROS_PROXY_HOST>/display and install the same root CA.
 display.{$ALKAROS_PROXY_HOST:localhost} {
 	tls internal
+
+	import security_headers
 
 	# Every dynamic path is tagged as the display origin and proxied to the
 	# api; the api admits only the customer-display routes and answers any
@@ -94,6 +117,8 @@ display.{$ALKAROS_PROXY_HOST:localhost} {
 # /qr/?t=<token> and install the same root CA.
 nfc.{$ALKAROS_PROXY_HOST:localhost} {
 	tls internal
+
+	import security_headers
 
 	handle /api/v1/nfc/* {
 		reverse_proxy api:5080 {
