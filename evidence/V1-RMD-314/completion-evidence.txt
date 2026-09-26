@@ -1,0 +1,31 @@
+V1-RMD-314 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Baseline (InProgress) commit: d46dcd68.
+
+Root cause (from the failing CI logs, not guessed):
+- Run 36238168190 (job 108393668083): 06-offline-queue tests 2 and 3 waited for "Bağlantı yok" but the ribbon said
+  "Çevrimdışı mod kurulamadı — sayfayı yenileyin" (20 retries): the service worker registration had failed (the test
+  goes offline right after login, while sw.js may still be downloading). The failure disabled offline mode for
+  good and its reason hid the lost connection, although the queue (localStorage) works without the worker.
+- Run 36226232929 (job 108360700099): the visibilitychange test timed out: a flush started by the "online" event
+  was still running (and failing with 503), so every visibilitychange was skipped (flushInFlight) until the
+  15 s timer.
+
+Changes:
+- waiter-app.js: a failed registration is retried on "online" and after 2 s x 2^n, up to 5 attempts; a later
+  success clears the "kurulamadı" state.
+- js/state.js renderRibbon: offline always shows "Bağlantı yok — siparişler kuyrukta bekliyor"; the disabled
+  reason only while online.
+- js/offline-queue.js flushQueue: a trigger during a running flush is remembered; if rounds remain when it ends,
+  one more flush runs at once.
+- 06-offline-queue.spec.js: one visibilitychange is enough (no re-dispatch loop working around the skip).
+
+Commands (exit 0):
+- tests/Clients/StaticApps vitest 26/26 (+2)
+- WaiterPwa E2E full suite locally against the real Host (Postgres 56433), 3 consecutive runs: 45/45, 45/45, 45/45
+
+Mutations (per iteration: backup, mutate, test, cp restore, cmp verified; 5/5 killed):
+KILLED W1 failed registration never retried
+KILLED W2 later success keeps the warning
+KILLED R1 disabled reason hides lost connection
+KILLED F1 trigger during a flush dropped
+KILLED F2 remembered trigger never rerun

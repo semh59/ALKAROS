@@ -186,6 +186,9 @@ const QUEUE_RETRY_MAX_MS = 5 * 60 * 1000;
 let queueRetryTimer = null;
 let queueRetryDelay = QUEUE_RETRY_MIN_MS;
 let flushInFlight = false;
+// V1-RMD-314: a trigger (connection back, app shown again) that arrives while a flush is running is remembered;
+// when that flush ends with rounds still queued, one more flush runs at once instead of waiting for the timer.
+let flushRequested = false;
 
 export function scheduleQueueRetry() {
   window.clearTimeout(queueRetryTimer);
@@ -204,8 +207,12 @@ export async function flushQueue() {
   // Two overlapping flushes would send the same payload twice. The server
   // is idempotent on the submission id, so this is a courtesy rather than
   // the last line of defence — but it also keeps the ribbon honest.
-  if (flushInFlight) return;
+  if (flushInFlight) {
+    flushRequested = true;
+    return;
+  }
   flushInFlight = true;
+  flushRequested = false;
 
   try {
     for (const payload of sortQueueByPriority(state.offlineQueue)) {
@@ -234,7 +241,12 @@ export async function flushQueue() {
     await loadTables();
   } finally {
     flushInFlight = false;
-    scheduleQueueRetry();
+    if (flushRequested && state.offlineQueue.length > 0 && state.isOnline) {
+      void flushQueue();
+    } else {
+      flushRequested = false;
+      scheduleQueueRetry();
+    }
   }
 }
 

@@ -188,15 +188,18 @@ const OFFLINE_DISABLED_REASONS = {
 export function renderRibbon() {
   const offline = state.offlineDisabled || !state.isOnline;
   el.ribbon.classList.toggle('is-offline', offline);
-  if (state.offlineDisabled) {
+  // V1-RMD-314: a lost connection is what the waiter must see first. The queue lives in localStorage and works
+  // without the service worker, so "Bağlantı yok" is true even when offline mode could not be set up; that reason
+  // is shown only while the connection is up.
+  if (!state.isOnline) {
+    el.ribbonText.textContent = 'Bağlantı yok — siparişler kuyrukta bekliyor';
+  } else if (state.offlineDisabled) {
     el.ribbonText.textContent = OFFLINE_DISABLED_REASONS[state.offlineDisabledReason]
       || OFFLINE_DISABLED_REASONS.unknown;
-  } else if (state.isOnline) {
+  } else {
     el.ribbonText.textContent = state.liveState === 'connected'
       ? 'Bağlı'
       : 'Bağlı — canlı bildirimler yeniden bağlanıyor';
-  } else {
-    el.ribbonText.textContent = 'Bağlantı yok — siparişler kuyrukta bekliyor';
   }
 
   const waiting = state.offlineQueue.length;

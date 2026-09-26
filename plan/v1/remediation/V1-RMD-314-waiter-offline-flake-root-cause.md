@@ -1,7 +1,7 @@
 # V1-RMD-314 - Garson çevrimdışı kuyruğunun kararsız E2E testlerinin kök nedenini kapat
 
 - Task ID: V1-RMD-314
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Existing

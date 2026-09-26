@@ -148,6 +148,10 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
   // — a reader of four different state fields, not specifically an
   // offline-queue concern.
 
+  const MAX_WORKER_REGISTRATION_ATTEMPTS = 5;
+  const WORKER_REGISTRATION_RETRY_MS = 2000;
+  let workerRegistrationAttempts = 0;
+
   function registerOfflineWorker() {
     if (!window.isSecureContext) {
       state.offlineDisabled = true;
@@ -163,11 +167,30 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       console.warn('Offline mode disabled: this browser has no service worker support.');
       return;
     }
-    navigator.serviceWorker.register('./sw.js').catch((err) => {
+    // V1-RMD-314: a registration that fails once (typically the network dropping while sw.js downloads) used
+    // to disable offline mode for good. It is retried when the connection returns and after a growing wait,
+    // a few times, and a later success clears the "kurulamadı" state.
+    workerRegistrationAttempts += 1;
+    navigator.serviceWorker.register('./sw.js').then(() => {
+      if (state.offlineDisabledReason === 'registration-failed') {
+        state.offlineDisabled = false;
+        state.offlineDisabledReason = null;
+        renderRibbon();
+      }
+    }).catch((err) => {
       state.offlineDisabled = true;
       state.offlineDisabledReason = 'registration-failed';
       renderRibbon();
       console.warn('Service worker registration failed; offline mode is disabled:', err);
+      if (workerRegistrationAttempts >= MAX_WORKER_REGISTRATION_ATTEMPTS) return;
+      let timer = 0;
+      const retry = () => {
+        window.clearTimeout(timer);
+        window.removeEventListener('online', retry);
+        registerOfflineWorker();
+      };
+      timer = window.setTimeout(retry, WORKER_REGISTRATION_RETRY_MS * 2 ** (workerRegistrationAttempts - 1));
+      window.addEventListener('online', retry);
     });
   }
 

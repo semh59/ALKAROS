@@ -173,12 +173,11 @@ test.describe('Çevrimdışı sipariş kuyruğu (V1-WTR-053)', () => {
     await page.unroute(SUBMIT_DRAFT);
     // 15 sn'lik geri-deneme zamanlayıcısının altında: gönderimi yapan
     // zamanlayıcı değil, visibilitychange dinleyicisinin kendisi olmalı.
-    // Çevrimiçi olayının başlattığı bir gönderim hâlâ sürüyorsa uygulama ikinci
-    // tetiği bilerek atlar (yavaş CI'da bu yarış görüldü); olay yeniden tetiklenir.
-    await expect.poll(async () => {
-      await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
-      return ribbonQueue(page).isHidden();
-    }, { timeout: 8_000, intervals: [250, 500, 1_000] }).toBe(true);
+    // V1-RMD-314: çevrimiçi olayının başlattığı gönderim hâlâ sürüyorsa uygulama
+    // artık tetiği atlamaz, hatırlar ve o gönderim bitince hemen yeniden dener;
+    // bu yüzden tek bir olay yeterlidir.
+    await page.evaluate(() => document.dispatchEvent(new Event('visibilitychange')));
+    await expect(ribbonQueue(page)).toBeHidden({ timeout: 8_000 });
     await expect.poll(() => serverOrderItemCount(page, seed.offlineTableIds[4]), { timeout: 15_000 }).toBe(1);
   });
 });

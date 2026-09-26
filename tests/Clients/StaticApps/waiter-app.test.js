@@ -213,4 +213,61 @@ describe("waiter-app.js", () => {
     expect(shown).not.toMatch(/Failed to fetch/i);
     expect(shown).toContain("Sunucuya ulaşılamadı");
   });
+
+  describe("V1-RMD-314: offline mode survives a failed set-up and a busy flush", () => {
+    let register;
+
+    beforeEach(() => {
+      register = vi.fn();
+      Object.defineProperty(window, "isSecureContext", { value: true, configurable: true });
+      Object.defineProperty(navigator, "serviceWorker", { value: { register }, configurable: true });
+    });
+
+    afterEach(() => {
+      delete window.isSecureContext;
+      delete navigator.serviceWorker;
+    });
+
+    const ribbon = () => document.getElementById("ribbonText").textContent;
+
+    it("retries a failed service worker registration when the connection returns and clears the warning", async () => {
+      register.mockRejectedValueOnce(new TypeError("Failed to fetch sw.js")).mockResolvedValue({});
+      await startAppWithOneProductInCart(standardRoutes());
+      await vi.waitFor(() => expect(ribbon()).toContain("kurulamadı"));
+
+      window.dispatchEvent(new Event("offline"));
+      // A lost connection is what the waiter sees first, whatever the service worker's state.
+      expect(ribbon()).toContain("Bağlantı yok");
+
+      window.dispatchEvent(new Event("online"));
+      await vi.waitFor(() => expect(register).toHaveBeenCalledTimes(2));
+      await vi.waitFor(() => expect(ribbon()).toMatch(/^Bağlı/));
+    });
+
+    it("runs the queue again at once when a trigger arrives during a flush that fails", async () => {
+      register.mockResolvedValue({});
+      let submits = 0;
+      const routes = standardRoutes();
+      const submitRoute = routes.find((r) => r.test(`http://test/orders/${ORDER_ID}/submit-draft`, { method: "POST" }));
+      submitRoute.delayMs = 150;
+      Object.defineProperty(submitRoute, "status", { get: () => (submits++ === 0 ? 503 : 200), configurable: true });
+      const fetchMock = await startAppWithOneProductInCart(routes);
+      window.dispatchEvent(new Event("offline"));
+      document.getElementById("btnSendFromMenu").click();
+      await vi.waitFor(() => expect(lastToastText()).toContain("kuyruğa alındı"));
+
+      window.dispatchEvent(new Event("online"));
+      await vi.waitFor(() => {
+        if (!fetchMock.mock.calls.some(([url]) => url.includes("/submit-draft"))) throw new Error("flush not started");
+      });
+      // The connection "returns again" while the first (failing) flush is still waiting for the server.
+      window.dispatchEvent(new Event("online"));
+
+      // Well under the 15 s retry timer: the remembered trigger sends the round right after the failure.
+      await vi.waitFor(() => {
+        expect(JSON.parse(localStorage.getItem("alkaros_waiter_offline_queue") || "[]")).toHaveLength(0);
+      }, { timeout: 3000 });
+      expect(submits).toBe(2);
+    });
+  });
 });
