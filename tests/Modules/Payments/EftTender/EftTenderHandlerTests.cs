@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Payments.Allocations.Persistence;
@@ -27,16 +28,39 @@ public sealed class EftTenderHandlerTests : IClassFixture<EftTenderHandlerTestDa
     private readonly PostgresPaymentAllocationRepository _allocations;
     private readonly PostgresBillRepository _bills;
     private readonly PostgresOrderRepository _orders;
+    private readonly PostgresBillAdjustmentRepository _adjustments;
     private readonly EftTenderHandler _handler;
 
     public EftTenderHandlerTests(EftTenderHandlerTestDatabase database)
     {
         _dataSource = database.DataSource;
         _payments = new PostgresPaymentRepository(_dataSource);
-        _allocations = new PostgresPaymentAllocationRepository(_dataSource);
+        _adjustments = new PostgresBillAdjustmentRepository(_dataSource);
+        _allocations = new PostgresPaymentAllocationRepository(_dataSource, _adjustments);
         _bills = new PostgresBillRepository(_dataSource);
         _orders = new PostgresOrderRepository(_dataSource);
-        _handler = new EftTenderHandler(_bills, _payments, _allocations, _dataSource);
+        _handler = new EftTenderHandler(_bills, _payments, _allocations, _adjustments, _dataSource);
+    }
+
+    /// <summary>
+    /// V1-RMD-298 (independent 2026-09-26 audit, finding K1): the same tip-raises-the-real-ceiling fix as
+    /// CashTenderHandlerTests' own equivalent test - before this fix, EftTenderHandler's own fail-fast
+    /// pre-check read the Bill's never-updated PayableAmount directly and would reject this EFT tender.
+    /// </summary>
+    [Fact]
+    public async Task HandleAsyncAcceptsATenderThatIncludesATipEvenThoughItExceedsTheOriginalPayable()
+    {
+        var billId = await SeedBillAsync(payable: 80m);
+        await _adjustments.AddAsync(BillAdjustment.CreateTip(
+            Guid.NewGuid(), billId, amount: 20m, reason: "Test tip", authorizedBy: Guid.NewGuid()));
+        var request = new TenderRequest(
+            Guid.NewGuid(), TenderMethod.Eft, Amount: 100m,
+            BillId: billId, IdempotencyKey: Guid.NewGuid().ToString());
+
+        var result = await _handler.HandleAsync(request);
+
+        ((TenderApproved)result).ApprovedAmount.Should().Be(100m);
+        (await _allocations.GetByBillIdAsync(billId)).Should().ContainSingle(a => a.Amount == 100m);
     }
 
     [Fact]

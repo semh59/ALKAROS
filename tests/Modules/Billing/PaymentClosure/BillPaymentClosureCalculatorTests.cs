@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.PaymentAggregate;
@@ -16,7 +17,7 @@ public sealed class BillPaymentClosureCalculatorTests
     {
         var bill = MakeBill(payable: 100m);
 
-        var projection = BillPaymentClosureCalculator.Compute(bill, payments: [], allocations: []);
+        var projection = BillPaymentClosureCalculator.Compute(bill, payments: [], allocations: [], adjustments: []);
 
         projection.PaymentSatisfied.Should().BeFalse();
         projection.AllocatedTotal.Should().Be(0m);
@@ -35,7 +36,7 @@ public sealed class BillPaymentClosureCalculatorTests
         var bill = MakeBill(payable: 100m);
         var payment = MakeNonApprovedPayment(bill.Id, 100m, status);
 
-        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], allocations: []);
+        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], allocations: [], adjustments: []);
 
         projection.PaymentSatisfied.Should().BeFalse();
         projection.AllocatedTotal.Should().Be(0m);
@@ -48,7 +49,7 @@ public sealed class BillPaymentClosureCalculatorTests
         var bill = MakeBill(payable: 100m);
         var pending = MakeNonApprovedPayment(bill.Id, 100m, PaymentStatus.Pending);
 
-        var projection = BillPaymentClosureCalculator.Compute(bill, [pending], allocations: []);
+        var projection = BillPaymentClosureCalculator.Compute(bill, [pending], allocations: [], adjustments: []);
 
         projection.Blockers.Should().Contain(BillClosureBlocker.HasPendingPayment);
     }
@@ -59,7 +60,7 @@ public sealed class BillPaymentClosureCalculatorTests
         var bill = MakeBill(payable: 100m);
         var unknown = MakeNonApprovedPayment(bill.Id, 100m, PaymentStatus.Unknown);
 
-        var projection = BillPaymentClosureCalculator.Compute(bill, [unknown], allocations: []);
+        var projection = BillPaymentClosureCalculator.Compute(bill, [unknown], allocations: [], adjustments: []);
 
         projection.Blockers.Should().Contain(BillClosureBlocker.HasUnknownPayment);
     }
@@ -71,7 +72,7 @@ public sealed class BillPaymentClosureCalculatorTests
         var payment = MakeApprovedPayment(bill.Id, requested: 80m, tendered: 100m, approved: 80m);
         var allocation = MakeAllocation(payment, bill, amount: 80m);
 
-        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], [allocation]);
+        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], [allocation], adjustments: []);
 
         projection.PaymentSatisfied.Should().BeTrue();
         projection.AllocatedTotal.Should().Be(80m);
@@ -87,7 +88,7 @@ public sealed class BillPaymentClosureCalculatorTests
         var payment = MakeApprovedPayment(bill.Id, requested: 100m, tendered: 40m, approved: 40m);
         var allocation = MakeAllocation(payment, bill, amount: 40m);
 
-        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], [allocation]);
+        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], [allocation], adjustments: []);
 
         projection.PaymentSatisfied.Should().BeFalse();
         projection.AllocatedTotal.Should().Be(40m);
@@ -105,10 +106,32 @@ public sealed class BillPaymentClosureCalculatorTests
         var payment = MakeNonApprovedPayment(bill.Id, 80m, PaymentStatus.Pending);
         var allocation = new PaymentAllocation(Guid.NewGuid(), payment.Id, bill.Id, 80m, "TRY", "key-orphan");
 
-        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], [allocation]);
+        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], [allocation], adjustments: []);
 
         projection.AllocatedTotal.Should().Be(0m);
         projection.PaymentSatisfied.Should().BeFalse();
+    }
+
+    /// <summary>
+    /// V1-RMD-298 (independent 2026-09-26 audit, finding K1): a bill discounted below its original payable
+    /// amount must be able to close on the discounted (adjusted) total, not the ORIGINAL, never-updated
+    /// <see cref="Bill.PayableAmount"/> - <c>billing.bill_adjustments</c> never mutates that field
+    /// (V0-DOM-004), so this is the only place the discount actually takes effect for closure purposes.
+    /// </summary>
+    [Fact]
+    public void ComputeMarksSatisfiedOnTheDiscountAdjustedTotalNotTheOriginalPayable()
+    {
+        var bill = MakeBill(payable: 100m);
+        var discount = BillAdjustment.CreateDiscountAmount(
+            Guid.NewGuid(), bill.Id, discountAmount: 20m, taxRate: 0m, reason: "Test discount", authorizedBy: Guid.NewGuid());
+        var payment = MakeApprovedPayment(bill.Id, requested: 80m, tendered: 80m, approved: 80m);
+        var allocation = MakeAllocation(payment, bill, amount: 80m);
+
+        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], [allocation], [discount]);
+
+        projection.PayableAmount.Should().Be(80m);
+        projection.PaymentSatisfied.Should().BeTrue();
+        projection.Blockers.Should().BeEmpty();
     }
 
     private static Bill MakeBill(decimal payable)

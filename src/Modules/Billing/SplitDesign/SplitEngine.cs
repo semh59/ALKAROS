@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 
 namespace ALKAROS.Billing.SplitDesign;
@@ -10,23 +11,29 @@ public static class SplitEngine
 {
     /// <summary>
     /// Calculates an equal split of a Bill across <paramref name="personCount"/> people.
-    /// Distributes remainder kuruş deterministically to the last allocation so the sum exactly equals <see cref="Bill.PayableAmount"/>.
+    /// Distributes remainder kuruş deterministically to the last allocation so the sum exactly equals
+    /// <see cref="Bill.PayableAmount"/> — or, when <paramref name="adjustment"/> is supplied (V1-RMD-298,
+    /// independent 2026-09-26 audit finding K1), the discount/tip-adjusted payable/tax totals instead, since
+    /// <c>billing.bill_adjustments</c> never mutates <see cref="Bill.PayableAmount"/> itself (V0-DOM-004).
+    /// <c>null</c> (the default) preserves the original, unadjusted behaviour exactly.
     /// </summary>
     public static IReadOnlyList<BillAllocation> CreateEqualSplit(
         Bill bill,
         int personCount,
         IReadOnlyList<string>? personLabels = null,
-        Guid? createdBy = null)
+        Guid? createdBy = null,
+        AdjustedBillSummary? adjustment = null)
     {
         ArgumentNullException.ThrowIfNull(bill);
 
         if (personCount < 2)
             throw new ArgumentException("Equal split requires at least 2 people.", nameof(personCount));
-        if (bill.PayableAmount <= 0)
-            throw new InvalidOperationException($"Cannot split Bill {bill.Id} with non-positive payable amount {bill.PayableAmount}.");
 
-        var totalPayable = bill.PayableAmount;
-        var totalTax = bill.TaxTotal;
+        var totalPayable = adjustment?.AdjustedPayableAmount ?? bill.PayableAmount;
+        var totalTax = adjustment?.AdjustedTaxTotal ?? bill.TaxTotal;
+
+        if (totalPayable <= 0)
+            throw new InvalidOperationException($"Cannot split Bill {bill.Id} with non-positive payable amount {totalPayable}.");
 
         // Base amount rounded down to kuruş
         var baseAmount = BillMath.RoundCurrency(Math.Floor((totalPayable / personCount) * 100m) / 100m);
@@ -68,12 +75,15 @@ public static class SplitEngine
 
     /// <summary>
     /// Calculates an explicit amount split for a Bill.
-    /// Enforces that the sum of target amounts matches <see cref="Bill.PayableAmount"/> exactly.
+    /// Enforces that the sum of target amounts matches <see cref="Bill.PayableAmount"/> exactly — or, when
+    /// <paramref name="adjustment"/> is supplied (V1-RMD-298), the discount/tip-adjusted payable/tax totals
+    /// instead. <c>null</c> (the default) preserves the original, unadjusted behaviour exactly.
     /// </summary>
     public static IReadOnlyList<BillAllocation> CreateAmountSplit(
         Bill bill,
         IReadOnlyList<(string OwnerReference, decimal Amount)> targets,
-        Guid? createdBy = null)
+        Guid? createdBy = null,
+        AdjustedBillSummary? adjustment = null)
     {
         ArgumentNullException.ThrowIfNull(bill);
         ArgumentNullException.ThrowIfNull(targets);
@@ -89,14 +99,16 @@ public static class SplitEngine
                 throw new ArgumentException($"Target amount for '{owner}' must be positive.", nameof(targets));
         }
 
+        var totalPayable = adjustment?.AdjustedPayableAmount ?? bill.PayableAmount;
+        var totalTax = adjustment?.AdjustedTaxTotal ?? bill.TaxTotal;
+
         var totalSpecified = targets.Sum(t => BillMath.RoundCurrency(t.Amount));
-        if (totalSpecified != bill.PayableAmount)
+        if (totalSpecified != totalPayable)
         {
             throw new InvalidOperationException(
-                $"Sum of split amounts ({totalSpecified}) does not match Bill payable amount ({bill.PayableAmount}).");
+                $"Sum of split amounts ({totalSpecified}) does not match Bill payable amount ({totalPayable}).");
         }
 
-        var totalTax = bill.TaxTotal;
         var allocations = new List<BillAllocation>(targets.Count);
         var runningTax = 0m;
 
@@ -112,8 +124,8 @@ public static class SplitEngine
             }
             else
             {
-                taxAmount = bill.PayableAmount > 0
-                    ? FloorCurrency(totalTax * (roundedAmount / bill.PayableAmount))
+                taxAmount = totalPayable > 0
+                    ? FloorCurrency(totalTax * (roundedAmount / totalPayable))
                     : 0m;
                 runningTax += taxAmount;
             }
@@ -242,12 +254,16 @@ public static class SplitEngine
     }
 
     /// <summary>
-    /// Creates a lossless custom allocation design with optional item quantities.
+    /// Creates a lossless custom allocation design with optional item quantities. When
+    /// <paramref name="adjustment"/> is supplied (V1-RMD-298), targets must sum to the discount/tip-adjusted
+    /// payable amount instead of <see cref="Bill.PayableAmount"/>. <c>null</c> (the default) preserves the
+    /// original, unadjusted behaviour exactly.
     /// </summary>
     public static IReadOnlyList<BillAllocation> CreateCustomSplit(
         Bill bill,
         IReadOnlyList<CustomSplitTarget> targets,
-        Guid? createdBy = null)
+        Guid? createdBy = null,
+        AdjustedBillSummary? adjustment = null)
     {
         ArgumentNullException.ThrowIfNull(bill);
         ArgumentNullException.ThrowIfNull(targets);
@@ -279,11 +295,14 @@ public static class SplitEngine
             }
         }
 
+        var totalPayable = adjustment?.AdjustedPayableAmount ?? bill.PayableAmount;
+        var totalTax = adjustment?.AdjustedTaxTotal ?? bill.TaxTotal;
+
         var roundedAmounts = targets.Select(target => BillMath.RoundCurrency(target.Amount)).ToArray();
-        if (roundedAmounts.Sum() != bill.PayableAmount)
+        if (roundedAmounts.Sum() != totalPayable)
         {
             throw new InvalidOperationException(
-                $"Sum of custom split amounts ({roundedAmounts.Sum()}) does not match Bill payable amount ({bill.PayableAmount}).");
+                $"Sum of custom split amounts ({roundedAmounts.Sum()}) does not match Bill payable amount ({totalPayable}).");
         }
 
         var allocations = new List<BillAllocation>(targets.Count);
@@ -292,8 +311,8 @@ public static class SplitEngine
         {
             var target = targets[index];
             var tax = index == targets.Count - 1
-                ? BillMath.RoundCurrency(bill.TaxTotal - runningTax)
-                : FloorCurrency(bill.TaxTotal * (roundedAmounts[index] / bill.PayableAmount));
+                ? BillMath.RoundCurrency(totalTax - runningTax)
+                : FloorCurrency(totalTax * (roundedAmounts[index] / totalPayable));
             runningTax += tax;
 
             allocations.Add(new BillAllocation(

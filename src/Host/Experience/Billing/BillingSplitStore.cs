@@ -332,7 +332,8 @@ public sealed class BillingSplitStore
         ArgumentNullException.ThrowIfNull(request);
         var bill = await GetBillAsync(billId, cancellationToken);
         var owners = RequiredOwners(request.Owners, SplitMode.EqualByPerson, requireUnique: true);
-        var allocations = SplitEngine.CreateEqualSplit(bill, owners.Count, owners, actorId);
+        var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);
+        var allocations = SplitEngine.CreateEqualSplit(bill, owners.Count, owners, actorId, adjustment);
         return await ReplaceAsync(bill, request.ExpectedBillRowVersion, request.ExpectedAllocations, allocations, cancellationToken);
     }
 
@@ -349,10 +350,12 @@ public sealed class BillingSplitStore
             .Select(target => OwnerReference(target.Owner, SplitMode.ByAmount))
             .ToList();
         EnsureUnique(ownerReferences, nameof(request));
+        var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);
         var allocations = SplitEngine.CreateAmountSplit(
             bill,
             targets.Select((target, index) => (ownerReferences[index], target.Amount)).ToList(),
-            actorId);
+            actorId,
+            adjustment);
         return await ReplaceAsync(bill, request.ExpectedBillRowVersion, request.ExpectedAllocations, allocations, cancellationToken);
     }
 
@@ -384,6 +387,7 @@ public sealed class BillingSplitStore
         ArgumentNullException.ThrowIfNull(request);
         var bill = await GetBillAsync(billId, cancellationToken);
         var targets = request.Targets ?? throw new ArgumentException("Custom targets are required.", nameof(request));
+        var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);
         var allocations = SplitEngine.CreateCustomSplit(
             bill,
             targets.Select(target => new CustomSplitTarget(
@@ -391,8 +395,24 @@ public sealed class BillingSplitStore
                 target.Amount,
                 target.BillItemId,
                 target.Quantity)).ToList(),
-            actorId);
+            actorId,
+            adjustment);
         return await ReplaceAsync(bill, request.ExpectedBillRowVersion, request.ExpectedAllocations, allocations, cancellationToken);
+    }
+
+    /// <summary>
+    /// V1-RMD-298 (independent 2026-09-26 audit, finding K1): loads the discount/tip-adjusted payable/tax
+    /// totals for a split calculation, or <c>null</c> when no adjustment repository is configured (this
+    /// store's own established optional-dependency pattern — see <see cref="_adjustments"/>) so the split
+    /// engine falls back to the Bill's own unadjusted totals rather than throwing.
+    /// </summary>
+    private async Task<AdjustedBillSummary?> LoadAdjustmentAsync(Bill bill, CancellationToken cancellationToken)
+    {
+        if (_adjustments is null)
+            return null;
+
+        var adjustments = await _adjustments.GetByBillIdAsync(bill.Id, cancellationToken);
+        return AdjustmentCalculator.Calculate(bill, adjustments);
     }
 
     public async Task<BillSplitDesignDto> ClearAsync(

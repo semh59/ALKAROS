@@ -1,4 +1,5 @@
 using ALKAROS.ModuleComposition;
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.Integration;
 using ALKAROS.Billing.SplitDesign;
 using ALKAROS.IntegrationContracts;
@@ -21,6 +22,10 @@ public sealed class BillingModule : IModule
     {
         context.RegisterTransient<IBillRepository, PostgresBillRepository>();
         context.RegisterTransient<ISplitDesignRepository, PostgresSplitDesignRepository>();
+        // V1-RMD-298: needed by Payments.Allocations.Persistence and Billing.PaymentClosure (both already
+        // depend on "Billing") to compute the real, adjustment-aware payable ceiling - registered once here
+        // rather than in each dependent module, matching IBillRepository's own single-owner precedent above.
+        context.RegisterTransient<IBillAdjustmentRepository, PostgresBillAdjustmentRepository>();
 
         // Reacts to Table Management merge/transfer/unmerge events by moving
         // Bill's own rows to the new table (V0-ARC-001 row 3).

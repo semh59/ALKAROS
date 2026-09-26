@@ -1,5 +1,6 @@
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.PaymentClosure;
 using ALKAROS.Host.Experience.Orders;
@@ -131,6 +132,7 @@ public static partial class DualScreenApplication
             IPaymentAllocationRepository allocationRepository,
             IPaymentRepository paymentRepository,
             IManualCardConfirmationRepository confirmations,
+            IBillAdjustmentRepository adjustmentRepository,
             DualScreenStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
@@ -143,7 +145,12 @@ public static partial class DualScreenApplication
 
             var allocations = await allocationRepository.GetByBillIdAsync(billId, cancellationToken);
             var allocatedTotal = allocations.Sum(a => a.Amount);
-            var remaining = bill.PayableAmount - allocatedTotal;
+            // V1-RMD-298 (independent 2026-09-26 audit, finding K1): the real (discount/tip-adjusted)
+            // ceiling, not bill.PayableAmount - billing.bill_adjustments never updates that field. This is
+            // the value the cashier UI's remainingAmount() reads directly.
+            var billAdjustments = await adjustmentRepository.GetByBillIdAsync(billId, cancellationToken);
+            var adjustedPayableAmount = AdjustmentCalculator.Calculate(bill, billAdjustments).AdjustedPayableAmount;
+            var remaining = adjustedPayableAmount - allocatedTotal;
 
             var payments = await paymentRepository.GetByBillIdAsync(billId, cancellationToken);
             var paymentsById = payments.ToDictionary(p => p.Id);
@@ -179,7 +186,7 @@ public static partial class DualScreenApplication
                         : new PendingCardConfirmationV1(pending.Id, pending.SlipNumber, pending.Amount, pending.RequestedBy, pending.RequestedAt));
 
             return Results.Ok(new BillTenderSummaryV1(
-                billId, bill.PayableAmount, allocatedTotal, remaining, lines, unsettledDto));
+                billId, adjustedPayableAmount, allocatedTotal, remaining, lines, unsettledDto));
         });
 
         // V1-RMD-264: an unconfirmed card payment locks its bill (no real

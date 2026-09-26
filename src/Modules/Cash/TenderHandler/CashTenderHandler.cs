@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
@@ -31,6 +32,7 @@ public sealed class CashTenderHandler : ICashTenderHandler
     private readonly IPaymentRepository _paymentRepository;
     private readonly IPaymentAllocationRepository _allocationRepository;
     private readonly ICashTransactionLedgerRepository _ledgerRepository;
+    private readonly IBillAdjustmentRepository _adjustmentRepository;
     private readonly NpgsqlDataSource _dataSource;
 
     public CashTenderHandler(
@@ -39,6 +41,7 @@ public sealed class CashTenderHandler : ICashTenderHandler
         IPaymentRepository paymentRepository,
         IPaymentAllocationRepository allocationRepository,
         ICashTransactionLedgerRepository ledgerRepository,
+        IBillAdjustmentRepository adjustmentRepository,
         NpgsqlDataSource dataSource)
     {
         _sessionRepository = sessionRepository ?? throw new ArgumentNullException(nameof(sessionRepository));
@@ -46,6 +49,7 @@ public sealed class CashTenderHandler : ICashTenderHandler
         _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
         _allocationRepository = allocationRepository ?? throw new ArgumentNullException(nameof(allocationRepository));
         _ledgerRepository = ledgerRepository ?? throw new ArgumentNullException(nameof(ledgerRepository));
+        _adjustmentRepository = adjustmentRepository ?? throw new ArgumentNullException(nameof(adjustmentRepository));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
 
@@ -100,9 +104,15 @@ public sealed class CashTenderHandler : ICashTenderHandler
         // broke replay itself (a second, identical submit of an
         // already-fully-allocated bill was wrongly rejected as
         // over-allocating).
+        // V1-RMD-298: the real (discount/tip-adjusted) ceiling, not bill.PayableAmount - see
+        // PaymentAllocationFactory.Create's own comment. This is still only the fail-fast pre-check (see the
+        // class doc comment above); AllocateAsync's own call into the factory below remains the real,
+        // concurrency-safe guard.
         var existingAllocations = await _allocationRepository.GetByBillIdAsync(bill.Id, cancellationToken);
         var alreadyAllocated = existingAllocations.Sum(a => a.Amount);
-        var remainingPayable = bill.PayableAmount - alreadyAllocated;
+        var billAdjustments = await _adjustmentRepository.GetByBillIdAsync(bill.Id, cancellationToken);
+        var adjustedPayableAmount = AdjustmentCalculator.Calculate(bill, billAdjustments).AdjustedPayableAmount;
+        var remainingPayable = adjustedPayableAmount - alreadyAllocated;
         if (request.AmountDue > remainingPayable)
             throw new OverAllocationException(bill.Id, request.AmountDue, remainingPayable);
 

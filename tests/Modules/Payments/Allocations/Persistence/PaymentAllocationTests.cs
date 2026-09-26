@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Payments.Allocations.Persistence.Tests.Fixtures;
@@ -19,10 +20,10 @@ public sealed class PaymentAllocationFactoryTests
     {
         var (payment, bill) = MakeMatchingPair();
 
-        var actZero = () => PaymentAllocationFactory.Create(payment, bill, 0m, alreadyAllocatedForBill: 0m, "key-1");
+        var actZero = () => PaymentAllocationFactory.Create(payment, bill, 0m, alreadyAllocatedForBill: 0m, adjustedPayableAmount: bill.PayableAmount, "key-1");
         actZero.Should().Throw<InvalidPaymentAllocationAmountException>();
 
-        var actNegative = () => PaymentAllocationFactory.Create(payment, bill, -10m, alreadyAllocatedForBill: 0m, "key-2");
+        var actNegative = () => PaymentAllocationFactory.Create(payment, bill, -10m, alreadyAllocatedForBill: 0m, adjustedPayableAmount: bill.PayableAmount, "key-2");
         actNegative.Should().Throw<InvalidPaymentAllocationAmountException>();
     }
 
@@ -32,7 +33,7 @@ public sealed class PaymentAllocationFactoryTests
         var (payment, _) = MakeMatchingPair();
         var otherBill = new Bill(Guid.NewGuid(), "BILL-OTHER-01", currencyCode: "TRY");
 
-        var act = () => PaymentAllocationFactory.Create(payment, otherBill, 10m, alreadyAllocatedForBill: 0m, "key-3");
+        var act = () => PaymentAllocationFactory.Create(payment, otherBill, 10m, alreadyAllocatedForBill: 0m, adjustedPayableAmount: otherBill.PayableAmount, "key-3");
 
         act.Should().Throw<CrossBillPaymentAllocationException>()
             .Where(ex => ex.PaymentBillId == payment.BillId && ex.TargetBillId == otherBill.Id);
@@ -45,7 +46,7 @@ public sealed class PaymentAllocationFactoryTests
         var bill = new Bill(billId, "BILL-EUR-01", currencyCode: "EUR");
         var payment = new Payment(Guid.NewGuid(), billId, 80m, currencyCode: "TRY");
 
-        var act = () => PaymentAllocationFactory.Create(payment, bill, 10m, alreadyAllocatedForBill: 0m, "key-4");
+        var act = () => PaymentAllocationFactory.Create(payment, bill, 10m, alreadyAllocatedForBill: 0m, adjustedPayableAmount: bill.PayableAmount, "key-4");
 
         act.Should().Throw<CurrencyMismatchAllocationException>()
             .Where(ex => ex.PaymentCurrency == "TRY" && ex.BillCurrency == "EUR");
@@ -57,7 +58,7 @@ public sealed class PaymentAllocationFactoryTests
         var (payment, bill) = MakeMatchingPair(payableAmount: 80m);
 
         // 50 already allocated, remaining is 30 - requesting 31 must reject.
-        var act = () => PaymentAllocationFactory.Create(payment, bill, 31m, alreadyAllocatedForBill: 50m, "key-5");
+        var act = () => PaymentAllocationFactory.Create(payment, bill, 31m, alreadyAllocatedForBill: 50m, adjustedPayableAmount: bill.PayableAmount, "key-5");
 
         act.Should().Throw<OverAllocationException>()
             .Where(ex => ex.BillId == bill.Id && ex.RemainingPayable == 30m);
@@ -68,12 +69,35 @@ public sealed class PaymentAllocationFactoryTests
     {
         var (payment, bill) = MakeMatchingPair(payableAmount: 80m);
 
-        var allocation = PaymentAllocationFactory.Create(payment, bill, 30m, alreadyAllocatedForBill: 50m, "key-6");
+        var allocation = PaymentAllocationFactory.Create(payment, bill, 30m, alreadyAllocatedForBill: 50m, adjustedPayableAmount: bill.PayableAmount, "key-6");
 
         allocation.Amount.Should().Be(30m);
         allocation.CurrencyCode.Should().Be("TRY");
         allocation.PaymentId.Should().Be(payment.Id);
         allocation.BillId.Should().Be(bill.Id);
+    }
+
+    /// <summary>
+    /// V1-RMD-298 (independent 2026-09-26 audit, finding K1): a discounted bill's real ceiling is the
+    /// discount/tip-adjusted amount, not <see cref="Bill.PayableAmount"/> itself (which
+    /// <c>billing.bill_adjustments</c> never mutates, per V0-DOM-004) - an amount that exceeds the ORIGINAL
+    /// payable but fits under the caller-supplied adjustedPayableAmount must be accepted.
+    /// </summary>
+    [Fact]
+    public void CreateAllowsAnAmountAboveTheOriginalPayableWhenTheCallerSuppliesADiscountedAdjustedCeiling()
+    {
+        var (payment, bill) = MakeMatchingPair(payableAmount: 100m);
+
+        // Original payable is 100, but the caller says a 20 discount was applied - the real ceiling is 80.
+        var allocation = PaymentAllocationFactory.Create(
+            payment, bill, 80m, alreadyAllocatedForBill: 0m, adjustedPayableAmount: 80m, "key-7");
+
+        allocation.Amount.Should().Be(80m);
+
+        var actOverTheAdjustedCeiling = () => PaymentAllocationFactory.Create(
+            payment, bill, 1m, alreadyAllocatedForBill: 80m, adjustedPayableAmount: 80m, "key-8");
+        actOverTheAdjustedCeiling.Should().Throw<OverAllocationException>()
+            .Where(ex => ex.RemainingPayable == 0m);
     }
 
     private static (Payment Payment, Bill Bill) MakeMatchingPair(decimal payableAmount = 80m)
@@ -111,7 +135,8 @@ public sealed class PostgresPaymentAllocationRepositoryTests : IClassFixture<Pay
     public PostgresPaymentAllocationRepositoryTests(PaymentAllocationTestDatabase database)
     {
         _dataSource = database.DataSource;
-        _allocations = new PostgresPaymentAllocationRepository(database.DataSource);
+        _allocations = new PostgresPaymentAllocationRepository(
+            database.DataSource, new PostgresBillAdjustmentRepository(database.DataSource));
         _payments = new PostgresPaymentRepository(database.DataSource);
         _bills = new PostgresBillRepository(database.DataSource);
         _orders = new PostgresOrderRepository(database.DataSource);

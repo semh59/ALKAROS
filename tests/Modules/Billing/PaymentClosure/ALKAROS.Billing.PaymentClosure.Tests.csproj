@@ -28,6 +28,8 @@
     <None Include="..\..\..\..\database\migrations\V1\V1-TBL-001\010-tables.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-ORD-001\011-orders.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-BIL-001\019-billing.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V1\V1-BIL-003\021-bill-adjustments.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V1\V1-RMD-112\075-bill-adjustments-idempotency-key.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-RMD-002\036-nonnegative-line-amounts.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-RMD-111\056-orders-serving-user-id.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-WTR-015\102-orders-party-size.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.PaymentClosure.Tests.Fixtures;
 using ALKAROS.Orders.OrderAggregate;
@@ -30,8 +31,8 @@ public sealed class BillPaymentClosureProjectorTests : IClassFixture<BillPayment
         _bills = new PostgresBillRepository(_dataSource);
         _orders = new PostgresOrderRepository(_dataSource);
         _payments = new PostgresPaymentRepository(_dataSource);
-        _allocations = new PostgresPaymentAllocationRepository(_dataSource);
-        _projector = new BillPaymentClosureProjector(_bills, _payments, _allocations);
+        _allocations = new PostgresPaymentAllocationRepository(_dataSource, new PostgresBillAdjustmentRepository(_dataSource));
+        _projector = new BillPaymentClosureProjector(_bills, _payments, _allocations, new PostgresBillAdjustmentRepository(_dataSource));
     }
 
     [Fact]

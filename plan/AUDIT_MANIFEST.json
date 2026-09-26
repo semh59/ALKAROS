@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1321,
-  "markdown_line_count": 101896,
-  "markdown_byte_count": 5849133,
+  "markdown_file_count": 1322,
+  "markdown_line_count": 102170,
+  "markdown_byte_count": 5875140,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -172,6 +172,13 @@
       "sha256": "00FF32152F2C604D99EA20716AD9EEB08E8EB0BA54F839B69AE4E6134B08E3B2",
       "lines": 321,
       "bytes": 25439,
+      "utf8": true
+    },
+    {
+      "path": "docs/audit/INDEPENDENT_DEEP_AUDIT_2026-09-26.md",
+      "sha256": "965F119E626F2983339FB68958A2CC18F4E61B602288732B042A9991659636AB",
+      "lines": 188,
+      "bytes": 18293,
       "utf8": true
     },
     {
@@ -2521,9 +2528,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "DDA77A92CE8642BF5BE75DB997694161CB37BE366AD63FE48654EFEFA128880C",
-      "lines": 2597,
-      "bytes": 378347,
+      "sha256": "54A0B35E14FF1F2C59928ACF03C20F7AE55B4249F1EE9E8AE72CBCA506AE2EB3",
+      "lines": 2598,
+      "bytes": 378495,
       "utf8": true
     },
     {
@@ -7295,9 +7302,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-298-adjustment-aware-payment-ceiling.md",
-      "sha256": "BBE00601B699E0ED64789125E6D0CC1D2BCE3937EBB27068A131B6A5AD23D287",
-      "lines": 51,
-      "bytes": 3706,
+      "sha256": "D6214CF55304FD084AC41222106B6FEDF381E3D0CD0625FD7A9BFC432700DE81",
+      "lines": 136,
+      "bytes": 11272,
       "utf8": true
     },
     {

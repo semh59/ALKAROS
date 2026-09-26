@@ -204,27 +204,12 @@
     });
   }
 
-  // V1-RMD-292: a real, deep server-side finding, verified by reading the code (not this task's to fix -
-  // Host/Modules, outside this task's Owned surface of split-payment.js alone):
-  //
-  // bill.PayableAmount is set once when the bill is created and NEVER updated again.
-  // ApplyDiscountAsync/ApplyTipAsync only ever insert a billing.bill_adjustments row; nothing writes an
-  // adjusted total back onto the bill itself. Both places that actually gate money then use the RAW,
-  // never-adjusted PayableAmount as a hard ceiling:
-  //   - PaymentAllocationFactory.Create: `remaining = bill.PayableAmount - alreadyAllocated`, throws
-  //     OverAllocationException if a tender would exceed it - a voluntary tip can therefore NEVER actually be
-  //     collected through a tender once the running total would pass the ORIGINAL bill amount.
-  //   - BillPaymentClosureCalculator: `paymentSatisfied = allocatedTotal >= bill.PayableAmount` (again raw) -
-  //     a bill discounted here can never actually CLOSE by collecting only the discounted amount; the full
-  //     original amount is still required, forever.
-  //
-  // So a discount/tip is real and persisted (billing.bill_adjustments, audited, grant-flow-protected for
-  // discount) but does NOT change what must be collected or when the bill closes - fixing that needs the
-  // allocation/closure ceiling itself to read AdjustmentCalculator's AdjustedPayableAmount, a Host/Modules
-  // change (V1-RMD-298, opened from this task). Showing a "reduced kalan" here would be actively wrong: it
-  // would tell a cashier to stop collecting money the bill still legally requires. This page therefore keeps
-  // the server's own (real, ceiling-enforcing) remainingAmount authoritative for tendering, and shows
-  // adjustments as their own clearly-labelled informational total instead of folding them into "Kalan".
+  // V1-RMD-298 (independent 2026-09-26 audit, finding K1): fixed. GET .../tenders/ now returns the real,
+  // discount/tip-adjusted ceiling (AdjustmentCalculator.Calculate's AdjustedPayableAmount), not the Bill's
+  // own never-updated PayableAmount - see DualScreenApplication.Payments.cs. The allocation/closure gates
+  // (PaymentAllocationFactory, BillPaymentClosureCalculator, CashTenderHandler, EftTenderHandler) were fixed
+  // the same way, so this value is now genuinely authoritative for tendering: a discount/tip now really does
+  // change what must be collected and when the bill closes, matching what this page has always shown.
   function remainingAmount() {
     return state.summary ? state.summary.remainingAmount : 0;
   }
@@ -389,9 +374,13 @@
         return;
       }
       state.discountNotice = 'İndirim uygulandı ve kaydedildi.';
-      // V1-RMD-292: remainingAmount() is the server's own, real tender ceiling and is unaffected by a
-      // discount today (see remainingAmount's own doc comment) - amountDraft is deliberately left as-is.
-      return refreshAdjustments().then(render);
+      // V1-RMD-298: a discount now genuinely lowers remainingAmount() (server-side ceiling fix) - refresh
+      // the tender summary too, not just the adjustments list, and re-derive amountDraft from the new
+      // ceiling the same way loadEverything() does on initial load.
+      return refreshAdjustments().then(refreshSummary).then(function () {
+        state.amountDraft = remainingAmount().toFixed(2);
+        render();
+      });
     }).catch(function () {
       state.discountBusy = false;
       state.discountError = 'Bağlantı kurulamadı. Tekrar deneyin.';
@@ -427,7 +416,12 @@
       }
       state.tipAmountDraft = '';
       state.tipNoteDraft = '';
-      return refreshAdjustments().then(render);
+      // V1-RMD-298: a tip now genuinely raises remainingAmount() (server-side ceiling fix) - same
+      // refresh-summary-then-re-derive-amountDraft pattern as submitDiscount above.
+      return refreshAdjustments().then(refreshSummary).then(function () {
+        state.amountDraft = remainingAmount().toFixed(2);
+        render();
+      });
     }).catch(function () {
       state.tipBusy = false;
       state.tipError = 'Bağlantı kurulamadı. Tekrar deneyin.';
@@ -623,9 +617,6 @@
         ? '<div class="sp-line"><span class="sp-line-method">Kaydedilen düzeltmelerle toplam</span>' +
           '<span class="sp-line-status is-approved">' + formatMoney(adjustedTotal) + '</span></div>'
         : '') +
-      // V1-RMD-292: honest disclosure, not a display bug - see remainingAmount()'s own doc comment. The
-      // adjustment is really persisted and audited; it just does not yet change the tender ceiling below.
-      '<div class="sp-alert-body">Bu tutar bilgi amaçlıdır; kasa hâlâ aşağıdaki "Kalan" tutarını tahsil eder.</div>' +
       '</div>'
     );
   }

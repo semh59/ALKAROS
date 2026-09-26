@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.PaymentAggregate;
@@ -18,11 +19,13 @@ public static class BillPaymentClosureCalculator
     public static BillPaymentClosureProjection Compute(
         Bill bill,
         IReadOnlyList<Payment> payments,
-        IReadOnlyList<PaymentAllocation> allocations)
+        IReadOnlyList<PaymentAllocation> allocations,
+        IReadOnlyList<BillAdjustment> adjustments)
     {
         ArgumentNullException.ThrowIfNull(bill);
         ArgumentNullException.ThrowIfNull(payments);
         ArgumentNullException.ThrowIfNull(allocations);
+        ArgumentNullException.ThrowIfNull(adjustments);
 
         // Refunded/PartiallyRefunded are out of this task's scope (V13-ALC-004's
         // own remit — netting a refund out of what still counts as "paid").
@@ -50,24 +53,29 @@ public static class BillPaymentClosureCalculator
             .Where(a => approvedPaymentIds.Contains(a.PaymentId))
             .Sum(a => a.Amount);
 
+        // V1-RMD-298 (independent 2026-09-26 audit, finding K1): the real (discount/tip-adjusted) ceiling,
+        // not bill.PayableAmount directly - billing.bill_adjustments never updates that field, so a
+        // discounted bill used to require its full ORIGINAL amount to ever close.
+        var adjustedPayable = AdjustmentCalculator.Calculate(bill, adjustments).AdjustedPayableAmount;
+
         var blockers = new List<BillClosureBlocker>();
-        if (allocatedTotal < bill.PayableAmount)
+        if (allocatedTotal < adjustedPayable)
             blockers.Add(BillClosureBlocker.NotFullyAllocated);
         if (payments.Any(p => p.Status is PaymentStatus.Pending or PaymentStatus.ReconciliationRequired))
             blockers.Add(BillClosureBlocker.HasPendingPayment);
         if (payments.Any(p => p.Status == PaymentStatus.Unknown))
             blockers.Add(BillClosureBlocker.HasUnknownPayment);
 
-        // AllocateAsync's own remaining-payable invariant (V0-DOM-004) means
-        // allocatedTotal can never legitimately exceed PayableAmount — >=
-        // rather than == only guards against that invariant ever being
-        // violated upstream, it never changes the outcome in practice.
-        var paymentSatisfied = bill.PayableAmount > 0 && allocatedTotal >= bill.PayableAmount;
+        // AllocateAsync's own remaining-payable invariant (V0-DOM-004, now adjustment-aware - see
+        // PaymentAllocationFactory.Create) means allocatedTotal can never legitimately exceed adjustedPayable
+        // — >= rather than == only guards against that invariant ever being violated upstream, it never
+        // changes the outcome in practice.
+        var paymentSatisfied = adjustedPayable > 0 && allocatedTotal >= adjustedPayable;
 
         return new BillPaymentClosureProjection(
             bill.Id,
             bill.CurrencyCode,
-            bill.PayableAmount,
+            adjustedPayable,
             allocatedTotal,
             paidTotal,
             changeTotal,

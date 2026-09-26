@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
@@ -31,6 +32,7 @@ public sealed class TenderCompositionTests : IClassFixture<TenderCompositionTest
     private readonly PostgresCashSessionRepository _sessions;
     private readonly PostgresBillRepository _bills;
     private readonly PostgresOrderRepository _orders;
+    private readonly PostgresBillAdjustmentRepository _adjustments;
     private readonly CashSessionLifecycleService _sessionService;
     private readonly CashTenderHandler _cashHandler;
 
@@ -38,13 +40,14 @@ public sealed class TenderCompositionTests : IClassFixture<TenderCompositionTest
     {
         _dataSource = database.DataSource;
         _payments = new PostgresPaymentRepository(_dataSource);
-        _allocations = new PostgresPaymentAllocationRepository(_dataSource);
+        _adjustments = new PostgresBillAdjustmentRepository(_dataSource);
+        _allocations = new PostgresPaymentAllocationRepository(_dataSource, _adjustments);
         _ledger = new PostgresCashTransactionLedgerRepository(_dataSource);
         _sessions = new PostgresCashSessionRepository(_dataSource);
         _bills = new PostgresBillRepository(_dataSource);
         _orders = new PostgresOrderRepository(_dataSource);
         _sessionService = new CashSessionLifecycleService(_sessions, new CashSessionPolicy());
-        _cashHandler = new CashTenderHandler(_sessions, _bills, _payments, _allocations, _ledger, _dataSource);
+        _cashHandler = new CashTenderHandler(_sessions, _bills, _payments, _allocations, _ledger, _adjustments, _dataSource);
     }
 
     private ALKAROS.Payments.TenderRouting.TenderHandlerRegistry BuildRegistry()
@@ -56,7 +59,7 @@ public sealed class TenderCompositionTests : IClassFixture<TenderCompositionTest
     }
 
     private ALKAROS.Payments.EftTender.EftTenderHandler BuildEftHandler()
-        => new(_bills, _payments, _allocations, _dataSource);
+        => new(_bills, _payments, _allocations, _adjustments, _dataSource);
 
     [Fact]
     public void FactoryBuildsARegistryWithCashAndBankCardResolved()

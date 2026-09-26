@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
@@ -28,6 +29,7 @@ public sealed class CashTenderHandlerTests : IClassFixture<CashTenderHandlerTest
     private readonly PostgresCashSessionRepository _sessions;
     private readonly PostgresBillRepository _bills;
     private readonly PostgresOrderRepository _orders;
+    private readonly PostgresBillAdjustmentRepository _adjustments;
     private readonly CashSessionLifecycleService _sessionService;
     private readonly CashTenderHandler _handler;
 
@@ -35,13 +37,36 @@ public sealed class CashTenderHandlerTests : IClassFixture<CashTenderHandlerTest
     {
         _dataSource = database.DataSource;
         _payments = new PostgresPaymentRepository(_dataSource);
-        _allocations = new PostgresPaymentAllocationRepository(_dataSource);
+        _adjustments = new PostgresBillAdjustmentRepository(_dataSource);
+        _allocations = new PostgresPaymentAllocationRepository(_dataSource, _adjustments);
         _ledger = new PostgresCashTransactionLedgerRepository(_dataSource);
         _sessions = new PostgresCashSessionRepository(_dataSource);
         _bills = new PostgresBillRepository(_dataSource);
         _orders = new PostgresOrderRepository(_dataSource);
         _sessionService = new CashSessionLifecycleService(_sessions, new CashSessionPolicy());
-        _handler = new CashTenderHandler(_sessions, _bills, _payments, _allocations, _ledger, _dataSource);
+        _handler = new CashTenderHandler(_sessions, _bills, _payments, _allocations, _ledger, _adjustments, _dataSource);
+    }
+
+    /// <summary>
+    /// V1-RMD-298 (independent 2026-09-26 audit, finding K1): a voluntary tip raises the real payable
+    /// ceiling above the Bill's own ORIGINAL, never-updated PayableAmount (V0-DOM-004 - the tip only ever
+    /// lands in billing.bill_adjustments). Before this fix, this cash tender for 100 against an original
+    /// payable of 80 would have thrown OverAllocationException, making a tip un-collectible in cash the
+    /// moment the running total would pass the bill's original amount.
+    /// </summary>
+    [Fact]
+    public async Task HandleAsyncAcceptsATenderThatIncludesATipEvenThoughItExceedsTheOriginalPayable()
+    {
+        var sessionId = await SeedOpenSessionAsync();
+        var billId = await SeedBillAsync(payable: 80m);
+        await _adjustments.AddAsync(BillAdjustment.CreateTip(
+            Guid.NewGuid(), billId, amount: 20m, reason: "Test tip", authorizedBy: Guid.NewGuid()));
+        var request = new CashTenderRequest(sessionId, billId, AmountDue: 100m, TenderedAmount: 100m, IdempotencyKey: Guid.NewGuid().ToString());
+
+        var result = await _handler.HandleAsync(request);
+
+        result.ApprovedAmount.Should().Be(100m);
+        (await _allocations.GetByBillIdAsync(billId)).Should().ContainSingle(a => a.Amount == 100m);
     }
 
     [Fact]

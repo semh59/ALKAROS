@@ -4,15 +4,14 @@ import { loginViaApi, createBill, openSplitPayment, selectMethod, setAmount } fr
 
 // V1-RMD-292: billing/bills/{id}/discount, /tip and (read-only) /adjustments had no client.
 //
-// A real, deep server-side finding surfaced while wiring this (verified by reading the code, not fixed here -
-// Host/Modules, outside this task's Owned surface of split-payment.js alone; V1-RMD-298 opened for it):
-// bill.PayableAmount never updates when a discount/tip is recorded, and the two places that actually gate
-// money (PaymentAllocationFactory's tender ceiling, BillPaymentClosureCalculator's "is this bill fully paid"
-// check) both use that same raw, never-adjusted amount. So a discount/tip is real and persisted, but does NOT
-// change what the till must still collect to close the bill, and a tip can never itself be tendered past the
-// bill's original amount. This screen tells the cashier that honestly instead of showing a wrong "Kalan".
-test.describe('Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292)', () => {
-  test('indirim ve bahşiş kaydedilir ve görünür; tahsilat tavanı (dürüstçe) hâlâ hesabın ham tutarıdır', async ({ page }) => {
+// V1-RMD-298 (independent 2026-09-26 audit, finding K1, fixed): bill.PayableAmount never updates when a
+// discount/tip is recorded, and the places that actually gate money (PaymentAllocationFactory's tender
+// ceiling, BillPaymentClosureCalculator's "is this bill fully paid" check, CashTenderHandler/EftTenderHandler's
+// own pre-checks, the tender-summary GET this screen reads) all used to read that same raw, never-adjusted
+// amount. Fixed to read AdjustmentCalculator's AdjustedPayableAmount instead - a discount/tip now genuinely
+// changes what the till must collect and when the bill closes, matching what this screen has always shown.
+test.describe('Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298)', () => {
+  test('indirim ve bahşiş kaydedilir; tahsilat tavanı düzeltilmiş tutara göre gerçekten değişir', async ({ page }) => {
     const seed = readSeed();
     const terminalId = await loginViaApi(page, seed);
     const billId = await createBill(page, terminalId, seed, { quantity: 1 }); // 100 ₺
@@ -21,22 +20,20 @@ test.describe('Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292)', () =
     await expect(page.getByRole('heading', { name: 'Tahsilat' })).toBeVisible({ timeout: 15_000 });
     await expect(page.locator('.sp-summary-row.is-remaining .value')).toHaveText('₺100,00');
 
-    // %10 indirim: gerçek bir sunucu kaydı oluşur ve görünür.
+    // %10 indirim: gerçek bir sunucu kaydı oluşur ve görünür, tavan hemen 90 ₺'ye düşer.
     await page.locator('#discount-calc-type').selectOption('Percentage');
     await page.locator('#discount-value').fill('10');
     await page.getByRole('button', { name: 'İndirim uygula' }).click();
     await expect(page.getByText('İndirim uygulandı ve kaydedildi.')).toBeVisible({ timeout: 10_000 });
     await expect(page.locator('.sp-line-method', { hasText: 'İndirim (%)' })).toBeVisible();
     await expect(page.locator('.sp-line-method', { hasText: 'Kaydedilen düzeltmelerle toplam' })).toBeVisible();
+    await expect(page.locator('.sp-summary-row.is-remaining .value')).toHaveText('₺90,00');
 
-    // 20 ₺ gönüllü bahşiş: aynı şekilde gerçek bir kayıt.
+    // 20 ₺ gönüllü bahşiş: aynı şekilde gerçek bir kayıt, tavan 110 ₺'ye çıkar.
     await page.locator('#tip-amount').fill('20');
     await page.getByRole('button', { name: 'Bahşiş ekle' }).click();
     await expect(page.locator('.sp-line-method', { hasText: 'Bahşiş' })).toBeVisible({ timeout: 10_000 });
-
-    // Dürüst tavan: "Kalan" hâlâ hesabın ham tutarı (100 ₺) - indirim/bahşiş bunu değiştirmedi (bulgu).
-    await expect(page.locator('.sp-summary-row.is-remaining .value')).toHaveText('₺100,00');
-    await expect(page.getByText('Bu tutar bilgi amaçlıdır')).toBeVisible();
+    await expect(page.locator('.sp-summary-row.is-remaining .value')).toHaveText('₺110,00');
 
     // Sunucu gerçeği: kayıtlı düzeltmeler gerçekten `AdjustmentCalculator.Calculate`'ten geliyor (90 - indirim
     // + 20 bahşiş = 110), ayrı bir GET ile doğrulanıyor - ekranın kendi metnini tekrar okumak değil.
@@ -44,15 +41,15 @@ test.describe('Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292)', () =
     expect(adjustments.summary.adjustedPayableAmount).toBe(110);
     expect(adjustments.adjustments).toHaveLength(2);
 
-    // Ham tutarın tamamı (100 ₺) hâlâ gerçekten tahsil edilebiliyor.
+    // Düzeltilmiş tutarın tamamı (110 ₺) gerçekten tahsil edilip hesap kapatılabiliyor.
     await selectMethod(page, 'Eft');
-    await setAmount(page, '100');
+    await setAmount(page, '110');
     await page.locator('#eft-confirm').check();
     await page.getByRole('button', { name: 'Ödemeyi Ekle' }).click();
     await expect(page.getByRole('heading', { name: 'Hesap Ödendi' })).toBeVisible({ timeout: 10_000 });
   });
 
-  test('bahşiş dahil tutar tahsil edilmeye çalışılırsa sunucu reddeder (tavan ham tutardır - bulgu)', async ({ page }) => {
+  test('bahşiş dahil düzeltilmiş tutar artık gerçekten tahsil edilebiliyor; onu aşan tutar hâlâ reddedilir', async ({ page }) => {
     const seed = readSeed();
     const terminalId = await loginViaApi(page, seed);
     const billId = await createBill(page, terminalId, seed, { quantity: 1 }); // 100 ₺
@@ -62,13 +59,15 @@ test.describe('Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292)', () =
     await page.locator('#tip-amount').fill('20');
     await page.getByRole('button', { name: 'Bahşiş ekle' }).click();
     await expect(page.locator('.sp-line-method', { hasText: 'Bahşiş' })).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('.sp-summary-row.is-remaining .value')).toHaveText('₺120,00');
 
-    // Ekranın kendi sınırı hâlâ 100 ₺'yi aşan bir tutara izin vermiyor (client-side guard, remainingAmount()).
+    // K1 fix: 120 ₺ (ham 100 ₺'yi aşan, gerçek düzeltilmiş tavan) artık gerçekten kabul ediliyor - eskiden
+    // sunucu bunu OverAllocationException/EftOverTenderException ile reddederdi.
     await selectMethod(page, 'Eft');
     await setAmount(page, '120');
     await page.locator('#eft-confirm').check();
     await page.getByRole('button', { name: 'Ödemeyi Ekle' }).click();
-    await expect(page.getByText('Tutar kalan tutarı aşamaz.')).toBeVisible({ timeout: 5_000 });
+    await expect(page.getByRole('heading', { name: 'Hesap Ödendi' })).toBeVisible({ timeout: 10_000 });
   });
 
   test('yetkisiz kullanıcı reddedilir: indirim isteği yönetici onayına düşer, ret Türkçe gösterilir', async ({ page }) => {

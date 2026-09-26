@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Payments.Allocations.Persistence;
@@ -32,7 +33,7 @@ public sealed class PostgresRefundIntentRepositoryTests : IClassFixture<RefundIn
         _bills = new PostgresBillRepository(_dataSource);
         _orders = new PostgresOrderRepository(_dataSource);
         _payments = new PostgresPaymentRepository(_dataSource);
-        _allocations = new PostgresPaymentAllocationRepository(_dataSource);
+        _allocations = new PostgresPaymentAllocationRepository(_dataSource, new PostgresBillAdjustmentRepository(_dataSource));
         _refundIntents = new PostgresRefundIntentRepository(_dataSource);
     }
 

@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using Xunit;
 
@@ -94,6 +95,49 @@ public sealed class SplitDesignDomainTests
         Assert.Equal(bill.PayableAmount, allocations.Sum(a => a.AllocatedAmount));
         // Sum of taxes matches bill.TaxTotal exactly
         Assert.Equal(bill.TaxTotal, allocations.Sum(a => a.TaxAmount));
+    }
+
+    /// <summary>
+    /// V1-RMD-298 (independent 2026-09-26 audit, finding K1): when the caller supplies an
+    /// <see cref="AdjustedBillSummary"/> (a real discount is on file), the split target is the discount-
+    /// adjusted payable/tax totals, not <see cref="Bill.PayableAmount"/>/<see cref="Bill.TaxTotal"/> - those
+    /// never change (V0-DOM-004), so this is the only place the discount actually reaches a split design.
+    /// </summary>
+    [Fact]
+    public void EqualSplitUsesTheAdjustedPayableAndTaxWhenAnAdjustmentIsSupplied()
+    {
+        var item = new BillItem(
+            id: Guid.NewGuid(),
+            billId: Guid.NewGuid(),
+            orderItemId: Guid.NewGuid(),
+            productId: Guid.NewGuid(),
+            productNameSnapshot: "Test Item",
+            quantity: 1,
+            unitPrice: 90.91m,
+            taxRate: 10m,
+            taxAmount: 9.09m,
+            netAmount: 90.91m,
+            grossAmount: 100.00m);
+        var bill = new Bill(item.BillId, "BILL-002", new[] { item });
+        var adjustment = new AdjustedBillSummary(
+            BillId: bill.Id,
+            OriginalSubtotal: bill.Subtotal,
+            OriginalPayableAmount: bill.PayableAmount,
+            TotalDiscounts: 20m,
+            TotalFees: 0m,
+            TotalTips: 0m,
+            AdjustedDiscountTotal: 20m,
+            AdjustedTaxTotal: 7.27m,
+            AdjustedPayableAmount: 80.00m);
+
+        var allocations = SplitEngine.CreateEqualSplit(bill, personCount: 2, adjustment: adjustment);
+
+        Assert.Equal(2, allocations.Count);
+        Assert.Equal(80.00m, allocations.Sum(a => a.AllocatedAmount));
+        Assert.Equal(7.27m, allocations.Sum(a => a.TaxAmount));
+        // The original, unadjusted totals are NOT what this split targets - proves adjustment, not
+        // bill.PayableAmount/TaxTotal, is really driving the calculation.
+        Assert.NotEqual(bill.PayableAmount, allocations.Sum(a => a.AllocatedAmount));
     }
 
     [Fact]

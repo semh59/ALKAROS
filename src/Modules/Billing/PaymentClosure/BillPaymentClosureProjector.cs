@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.PaymentAggregate;
@@ -9,15 +10,18 @@ public sealed class BillPaymentClosureProjector : IBillPaymentClosureProjector
     private readonly IBillRepository _billRepository;
     private readonly IPaymentRepository _paymentRepository;
     private readonly IPaymentAllocationRepository _allocationRepository;
+    private readonly IBillAdjustmentRepository _adjustmentRepository;
 
     public BillPaymentClosureProjector(
         IBillRepository billRepository,
         IPaymentRepository paymentRepository,
-        IPaymentAllocationRepository allocationRepository)
+        IPaymentAllocationRepository allocationRepository,
+        IBillAdjustmentRepository adjustmentRepository)
     {
         _billRepository = billRepository ?? throw new ArgumentNullException(nameof(billRepository));
         _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
         _allocationRepository = allocationRepository ?? throw new ArgumentNullException(nameof(allocationRepository));
+        _adjustmentRepository = adjustmentRepository ?? throw new ArgumentNullException(nameof(adjustmentRepository));
     }
 
     public async Task<BillPaymentClosureProjection> RebuildAsync(Guid billId, CancellationToken cancellationToken = default)
@@ -40,7 +44,8 @@ public sealed class BillPaymentClosureProjector : IBillPaymentClosureProjector
         // rebuild is by definition safe to call again).
         var payments = await _paymentRepository.GetByBillIdAsync(billId, cancellationToken);
         var allocations = await _allocationRepository.GetByBillIdAsync(billId, cancellationToken);
+        var adjustments = await _adjustmentRepository.GetByBillIdAsync(billId, cancellationToken);
 
-        return BillPaymentClosureCalculator.Compute(bill, payments, allocations);
+        return BillPaymentClosureCalculator.Compute(bill, payments, allocations, adjustments);
     }
 }

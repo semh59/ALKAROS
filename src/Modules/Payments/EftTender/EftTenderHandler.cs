@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.PaymentAggregate;
@@ -35,17 +36,20 @@ public sealed class EftTenderHandler : IEftTenderHandler
     private readonly IBillRepository _billRepository;
     private readonly IPaymentRepository _paymentRepository;
     private readonly IPaymentAllocationRepository _allocationRepository;
+    private readonly IBillAdjustmentRepository _adjustmentRepository;
     private readonly NpgsqlDataSource _dataSource;
 
     public EftTenderHandler(
         IBillRepository billRepository,
         IPaymentRepository paymentRepository,
         IPaymentAllocationRepository allocationRepository,
+        IBillAdjustmentRepository adjustmentRepository,
         NpgsqlDataSource dataSource)
     {
         _billRepository = billRepository ?? throw new ArgumentNullException(nameof(billRepository));
         _paymentRepository = paymentRepository ?? throw new ArgumentNullException(nameof(paymentRepository));
         _allocationRepository = allocationRepository ?? throw new ArgumentNullException(nameof(allocationRepository));
+        _adjustmentRepository = adjustmentRepository ?? throw new ArgumentNullException(nameof(adjustmentRepository));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
 
@@ -113,10 +117,16 @@ public sealed class EftTenderHandler : IEftTenderHandler
         if (unsettledPayment is not null)
             throw new EftUnsettledPaymentExistsException(billId, unsettledPayment.Id, unsettledPayment.Status.ToString());
 
+        // V1-RMD-298: the real (discount/tip-adjusted) ceiling, not bill.PayableAmount - see
+        // PaymentAllocationFactory.Create's own comment. AllocateAsync's own call into the factory below
+        // remains the real, concurrency-safe guard under the bill-settlement lock already held above.
         var existingAllocations = await _allocationRepository.GetByBillIdAsync(billId, cancellationToken)
             .ConfigureAwait(false);
         var alreadyAllocated = existingAllocations.Sum(a => a.Amount);
-        var remainingPayable = bill.PayableAmount - alreadyAllocated;
+        var billAdjustments = await _adjustmentRepository.GetByBillIdAsync(billId, cancellationToken)
+            .ConfigureAwait(false);
+        var adjustedPayableAmount = AdjustmentCalculator.Calculate(bill, billAdjustments).AdjustedPayableAmount;
+        var remainingPayable = adjustedPayableAmount - alreadyAllocated;
         if (request.Amount > remainingPayable)
             throw new EftOverTenderException(billId, request.Amount, remainingPayable);
 

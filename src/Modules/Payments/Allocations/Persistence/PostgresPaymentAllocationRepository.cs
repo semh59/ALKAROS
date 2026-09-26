@@ -1,3 +1,4 @@
+using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Payments.PaymentAggregate;
 using Npgsql;
@@ -10,10 +11,12 @@ public sealed class PostgresPaymentAllocationRepository : IPaymentAllocationRepo
     private const int MaxUnpagedRows = 5000;
 
     private readonly NpgsqlDataSource _dataSource;
+    private readonly IBillAdjustmentRepository _adjustments;
 
-    public PostgresPaymentAllocationRepository(NpgsqlDataSource dataSource)
+    public PostgresPaymentAllocationRepository(NpgsqlDataSource dataSource, IBillAdjustmentRepository adjustments)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _adjustments = adjustments ?? throw new ArgumentNullException(nameof(adjustments));
     }
 
     public async Task<PaymentAllocation> AllocateAsync(
@@ -72,7 +75,11 @@ public sealed class PostgresPaymentAllocationRepository : IPaymentAllocationRepo
         await LockBillAsync(connection, transaction, bill.Id, cancellationToken);
 
         var alreadyAllocated = await SumAllocatedAsync(connection, transaction, bill.Id, cancellationToken);
-        var allocation = PaymentAllocationFactory.Create(payment, bill, amount, alreadyAllocated, idempotencyKey);
+        // V1-RMD-298: the real (discount/tip-adjusted) ceiling, not the bill's own never-updated
+        // PayableAmount - see PaymentAllocationFactory.Create's own comment on this parameter.
+        var billAdjustments = await _adjustments.GetByBillIdAsync(bill.Id, cancellationToken);
+        var adjustedPayableAmount = AdjustmentCalculator.Calculate(bill, billAdjustments).AdjustedPayableAmount;
+        var allocation = PaymentAllocationFactory.Create(payment, bill, amount, alreadyAllocated, adjustedPayableAmount, idempotencyKey);
 
         await InsertAsync(connection, transaction, allocation, cancellationToken);
         return allocation;
