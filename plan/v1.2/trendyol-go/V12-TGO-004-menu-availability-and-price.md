@@ -1,8 +1,8 @@
 # V12-TGO-004 - Uber Eats Trendyol Go menüsünde ürün durumunu ve fiyatı yayınla
 
 - Task ID: V12-TGO-004
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: integration
 - Surface state: Planned
 
@@ -19,6 +19,9 @@ güncellemesi kuyruğa alındığı için toplu istek sonucu izlenir. Sağlayıc
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan; Semih 2026-09-26 kararı):
   - src/Modules/OnlineOrdering/OnlineOrderingModule.cs (V12-MAP-001) — kanal kaydı.
+  - src/Modules/OnlineOrdering/Credentials/ (V12-OUI-003) — mağaza kimliği alanı.
+  - src/Clients/PosTerminal/src/features/online-platform-credentials/ (V12-OUI-003) — alan etiketi.
+  - tests/Host/Experience/OnlineOrdering/ — testler.
 
 ## In scope
 
