@@ -538,6 +538,78 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         Assert.Equal(0, again.GetProperty("eligible").GetInt32());
     }
 
+    private const string OutboxPath = "/api/v1/management/security/outbox";
+
+    [Fact]
+    public async Task TheOutboxDeadLetterToolsAreManagerOnly()
+    {
+        var deadLetterId = await _database.SeedDeadOutboxMessageAsync();
+
+        using var anonymous = CreateClient(null);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync($"{OutboxPath}/dead-letters")).StatusCode);
+        using var viewOnly = CreateClient(SecurityAdministrationTestDatabase.ViewOnlyManagerToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await viewOnly.GetAsync($"{OutboxPath}/dead-letters")).StatusCode);
+        Assert.Equal(
+            HttpStatusCode.Forbidden,
+            (await viewOnly.PostAsync($"{OutboxPath}/dead-letters/{deadLetterId:D}/requeue?dryRun=false", null)).StatusCode);
+        using var supervisorDevice = CreateClient(SecurityAdministrationTestDatabase.SupervisorDeviceToken);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await supervisorDevice.GetAsync($"{OutboxPath}/dead-letters")).StatusCode);
+    }
+
+    [Fact]
+    public async Task ARealDeadLetterIsListedWithItsAttemptCountAndLastError()
+    {
+        var deadLetterId = await _database.SeedDeadOutboxMessageAsync("orders.table-transfer.completed", "consumer threw: simulated permanent failure");
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        var list = await manager.GetFromJsonAsync<JsonElement>($"{OutboxPath}/dead-letters");
+
+        Assert.Equal(1, list.GetProperty("total").GetInt64());
+        var item = list.GetProperty("items").EnumerateArray().Single();
+        Assert.Equal(deadLetterId, item.GetProperty("id").GetGuid());
+        Assert.Equal("orders.table-transfer.completed", item.GetProperty("eventType").GetString());
+        Assert.Equal(3, item.GetProperty("attemptCount").GetInt32());
+        Assert.Equal("consumer threw: simulated permanent failure", item.GetProperty("lastError").GetString());
+    }
+
+    [Fact]
+    public async Task RequeuingADeadLetterIsADryRunByDefaultAndTheRealRunMakesItPendingAgain()
+    {
+        var deadLetterId = await _database.SeedDeadOutboxMessageAsync();
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        using var dryResponse = await manager.PostAsync($"{OutboxPath}/dead-letters/{deadLetterId:D}/requeue", null);
+        var dryText = await dryResponse.Content.ReadAsStringAsync();
+        Assert.True(dryResponse.IsSuccessStatusCode, dryText);
+        var dry = JsonDocument.Parse(dryText).RootElement;
+        Assert.True(dry.GetProperty("dryRun").GetBoolean());
+        Assert.False(dry.GetProperty("requeued").GetBoolean());
+        Assert.Equal("dead", await _database.OutboxMessageStatusAsync(deadLetterId));
+
+        using var realResponse = await manager.PostAsync($"{OutboxPath}/dead-letters/{deadLetterId:D}/requeue?dryRun=false", null);
+        var realText = await realResponse.Content.ReadAsStringAsync();
+        Assert.True(realResponse.IsSuccessStatusCode, realText);
+        var real = JsonDocument.Parse(realText).RootElement;
+        Assert.False(real.GetProperty("dryRun").GetBoolean());
+        Assert.True(real.GetProperty("requeued").GetBoolean());
+        Assert.Equal("pending", await _database.OutboxMessageStatusAsync(deadLetterId));
+        Assert.Equal(1, await _database.SystemAuditCountAsync("outbox.dead-letter.requeued", OutboxAdministration.AuditAggregateId));
+
+        // Already pending, not dead: a repeat is refused, not silently re-applied.
+        using var repeat = await manager.PostAsync($"{OutboxPath}/dead-letters/{deadLetterId:D}/requeue?dryRun=false", null);
+        Assert.Equal(HttpStatusCode.NotFound, repeat.StatusCode);
+    }
+
+    [Fact]
+    public async Task RequeuingAnUnknownDeadLetterIsNotFound()
+    {
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        using var response = await manager.PostAsync($"{OutboxPath}/dead-letters/{Guid.NewGuid():D}/requeue?dryRun=false", null);
+
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+    }
+
     private HttpClient CreateClient(string? managerToken)
     {
         var client = new HttpClient { BaseAddress = _baseAddress };

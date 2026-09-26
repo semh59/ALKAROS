@@ -1,8 +1,8 @@
 # V1-RMD-288 - Outbox ölü mektupları yöneticiye görünür ve yeniden kuyruğa alınabilir olur
 
 - Task ID: V1-RMD-288
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: Claude Sonnet 5
 - Work type: remediation
 - Surface state: Existing
 
@@ -38,8 +38,11 @@
 
 ## Acceptance evidence
 
-- Host testleri (UTF8 Postgres 18): anonim 401, yetkisiz 403; gerçek bir ölü mektup listelenir; yeniden kuyruğa alma mesajı tekrar teslim edilebilir yapar ve denetim olayı yazar; dry-run hiçbir şeyi değiştirmez.
-- `plan_audit_tool.py validate` temiz.
+- Host testleri (UTF8 Postgres 18): `SecurityAdministration` paketi 26/26 (4 yeni). Yeni: anonim 401, salt-okur yetkili (`reports.view`) ve `security.manage`'a sahip `supervisor:` cihazı reddediliyor; gerçek bir ölü mektup (`status='dead'`, 3 deneme, hata metni) listeleniyor; varsayılan çağrı kuru çalıştırma (durum değişmiyor); `dryRun=false` mesajı `pending`'e alıyor, deneme sayacını sıfırlıyor ve denetim olayı yazıyor; aynı mesaj ikinci kez istenince (artık `dead` değil) `404`; bilinmeyen kimlik `404`.
+- Mimari sınır testleri (pytest): 10/10.
+- Mutasyon kontrolü: `OutboxAdministration.cs` ve `SecurityAdministrationEndpoints.cs`'teki `MapOutbox()` çağrısı geri alınınca test projesi derlenmedi (`OutboxAdministration` adı bulunamadı) — testlerin yeni koda gerçekten bağlı olduğunu kanıtlıyor.
+- `plan_audit_tool.py validate` ve `consistency_audit.py` temiz.
+- Kapsam notu: tüketici hatasının kök sebebi onarılmıyor (görevin kapsamı dışında); yeniden kuyruğa alınan mesaj kök sebep düzelmediyse yeniden ölebilir, bu beklenen davranış.
 
 ## Handoff
 

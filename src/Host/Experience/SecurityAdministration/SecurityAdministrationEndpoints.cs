@@ -177,6 +177,7 @@ public static class SecurityAdministrationEndpoints
 
         group.MapSecretRotation();
         group.MapOrderBacklog();
+        group.MapOutbox();
 
         return group;
     }

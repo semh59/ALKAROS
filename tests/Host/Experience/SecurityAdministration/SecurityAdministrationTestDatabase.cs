@@ -173,6 +173,25 @@ public sealed class SecurityAdministrationTestDatabase : PgTestDatabase
     public Task<string> OrderStatusOfAsync(Guid orderId)
         => ScalarAsync<string>($"SELECT status FROM orders.orders WHERE order_id = '{orderId:D}';");
 
+    /// <summary>Seeds a dead-lettered outbox message (V1-RMD-288) - the state OutboxDispatcherHostedService
+    /// leaves a message in after it exhausts RetryPolicy.MaxAttempts, without needing a real consumer that
+    /// permanently fails.</summary>
+    public async Task<Guid> SeedDeadOutboxMessageAsync(string eventType = "orders.table-transfer.completed", string? lastError = "consumer threw: simulated permanent failure")
+    {
+        var id = Guid.NewGuid();
+        var aggregateId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO outbox_messages (id, event_type, aggregate_type, aggregate_id, payload_envelope, status, attempt_count, last_error)
+            VALUES (@id, @eventType, 'Order', @aggregateId, decode('7b7d', 'hex'), 'dead', 3, @lastError);
+            """,
+            ("id", id), ("eventType", eventType), ("aggregateId", aggregateId), ("lastError", (object?)lastError ?? DBNull.Value));
+        return id;
+    }
+
+    public Task<string> OutboxMessageStatusAsync(Guid id)
+        => ScalarAsync<string>($"SELECT status FROM outbox_messages WHERE id = '{id:D}';");
+
     /// <summary>Restore-drill scratch databases still present on the server (must be 0 after a drill).</summary>
     public Task<long> ScratchDatabaseCountAsync()
         => ScalarAsync<long>("SELECT count(*) FROM pg_database WHERE datname LIKE 'alkaros_restore_drill_%';");
