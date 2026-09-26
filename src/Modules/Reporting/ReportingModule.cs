@@ -1,6 +1,7 @@
 namespace ALKAROS.Reporting;
 
 using ALKAROS.ModuleComposition;
+using ALKAROS.Reporting.Channels;
 using ALKAROS.Reporting.MenuInventory;
 using ALKAROS.Reporting.Payments;
 using ALKAROS.Reporting.V1Operations;
@@ -22,5 +23,7 @@ public sealed class ReportingModule : IModule
         // V13-RPT-001: payment/cash/reconciliation settlement report.
         context.RegisterTransient<IPaymentSettlementReportRepository, PostgresPaymentSettlementReportRepository>();
         context.RegisterTransient<IPaymentSettlementReportService, PaymentSettlementReportService>();
+        // V12-RPT-001: QR/online channel report.
+        context.RegisterTransient<IChannelReportService, PostgresChannelReportService>();
     }
 }

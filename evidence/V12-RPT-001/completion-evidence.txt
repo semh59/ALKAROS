@@ -1,0 +1,40 @@
+V12-RPT-001 completion evidence (2026-09-26, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (postgres:18, UTF8).
+
+Scope: PostgresChannelReportService (src/Modules/Reporting/Channels), report version channel-report.v1,
+GET /api/v1/management/reports/channels?from&to&source (manager session + reports.view). Read-only over
+orders.orders, online_ordering.yemeksepeti_webhook_inbox, reconciliation.cases and
+reconciliation.online_order_retry_attempts. Business date = Europe/Istanbul service day.
+
+Metric definition note: V0-DOM-008 has no row literally named "channel volume/value"; the report derives its
+definitions from V0-DOM-008's approved rules (business date, ledger source of truth, reconciliation total,
+"Reconciliation backlog"). The definitions are written in the task file and are open to Semih's approval.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- dotnet test tests/Modules/Reporting/Channels -> 4/4
+- dotnet test tests/Modules/Reporting/Payments -> 9/9 (regression)
+- dotnet test tests/Host/Experience/Reconciliation -> 12/12 (2 new ChannelReportHttpTests)
+- dotnet test tests/Host/Experience/Reporting -> 5/5 (regression)
+- dotnet test tests/Architecture/ModuleBoundaries -> 9/9
+- dotnet test tests/Host/MigrationComposition -> 161/161
+- consistency_audit.py -> clean; project_manifest_tool.py -> VALID; plan_audit_tool.py validate -> 0/0
+  (AUDIT_MANIFEST/AUDIT_REPORT regenerated locally for validation only and reverted before commit)
+
+Golden dataset (2031-03-10..11, UTC+3 boundaries): expected rows
+  2031-03-10 Online received 3 accepted 2 cancelled 1 value 320.50 cancelledValue 80 refused 1
+  2031-03-10 Qr     received 3 awaiting 1 accepted 1 rejected 1 value 100
+  2031-03-11 Online received 2 accepted 2 value 105 refused 1
+  reconciliation 2031-03-10: LocallyAcceptedProviderUnknown open 1 (250.50); ProviderAcceptedLocallyRefused open 1 closed 1
+  retries 2; ledger check 8 / 525.50 == reported 8 / 525.50 -> matched exactly.
+
+Mutations (backup restore + cmp, 10/10 killed):
+R1 business-date time zone replaced in SQL -> 1 failed (R1b: window computed in UTC -> 1 failed)
+R2 Completed dropped from accepted bucket -> 1 failed
+R3 reprocessed refusal not excluded -> 1 failed
+R4 refusal counted per webhook -> 1 failed
+R5 source filter ignored in ledger check -> 1 failed
+R6 Cashier added to channels -> 1 failed
+R7 Open dropped from open-case count -> 1 failed
+R8 31-day bound loosened -> 1 failed
+R9 retries counted for the QR-only report -> 1 failed

@@ -576,6 +576,7 @@ public static partial class DualScreenApplication
         app.MapReconciliationCaseApi();
         app.MapPaymentSettlementApi();
         app.MapOnlineOrderReconciliationApi();
+        app.MapChannelReportApi();
         app.MapSecurityAdministrationApi();
         app.MapObservabilityApi();
         app.MapTableManagementApi();
