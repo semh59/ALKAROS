@@ -1,0 +1,53 @@
+V12-ONL-009 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 91c884cf (amended before push to
+add tests/Host/Experience/Reconciliation/, whose pair count moved from 8 to 9). Migration 156 reserved with alkaros-8e.
+
+Changes:
+- Migration 156 online_ordering.provider_poll_state: cursor (<=512), next_poll_at, failure streak (count +
+  failing_since, kept in step by a CHECK), last_error, last_success_at.
+- Contracts: IOnlineOrderPollingSource (Provider, Interval, PollAsync(cursor)), PolledOrderEvent (adapter-computed
+  event key, same as its webhook path), OnlineOrderPollPage, OnlineOrderPollRateLimitedException(RetryAfter),
+  OnlineOrderPollingNotConfiguredException.
+- OnlineOrderPoller (module): per platform, when due, locks its state row (FOR UPDATE SKIP LOCKED: one poll at a time),
+  polls, stores every event in the shared inbox (V12-ONL-010) and only then advances the cursor. Rate limited: waits
+  max(interval, retry-after) (capped 30 min), cursor kept, counted in the failure streak. Failure: exponential backoff
+  interval*2^n (capped 30 min), cursor kept. Not configured: not a failure, ends a streak. One source per platform.
+- OnlineOrderPollingHostedService: a pass every 5 s; each platform's interval decides when it is due. Registered in
+  DualScreenApplication; OnlineOrderingModule registers the poller.
+- Reconciliation: ProviderPollingFailingSourcePair (kind ProviderPollingFailing, next action CheckChannelConnection),
+  a case once a streak reaches 3, keyed by platform + streak start so a later streak is a new case; resolving is
+  refused while the streak lasts.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- Host OnlineOrdering 95/95 (8 new OnlineOrderPollingTests); Reconciliation.OnlineOrders 25/25 (1 new); Host
+  Reconciliation 12/12; OfflineReconciliation 7/7; Reconciliation CaseFoundation 9/9, Payments 7/7; Host Reporting
+  5/5; Reporting.Channels 8/8; every tests/Modules/OnlineOrdering project green; ALKAROS.Host.Tests
+  manifest/composition/registry/program subset 63/63
+- Migration 156 on an empty database: up, up, constraint probes refused (streak without start, bad provider), down,
+  down, up again
+- consistency_audit clean; plan_audit validate 0/0
+
+Mutations (per iteration: backup, mutate, test, restore, cmp verified; 15/15 killed; P5 and P9 were first written
+in a form that did not compile and were rerun in a compiling form):
+KILLED P1 cursor never advances
+KILLED P2 page without cursor clears it
+KILLED P3 not-due platform polled
+KILLED P4 no per-platform lock
+KILLED P5 retry-after ignored
+KILLED P6 rate limit may poll faster than interval
+KILLED P7 no exponential backoff
+KILLED P8 not-configured keeps the streak
+KILLED P9 overlong cursor accepted
+KILLED P10 polled events not stored
+KILLED P11 success keeps the streak
+KILLED P12 rate limit not counted
+KILLED R1 case threshold off by one
+KILLED R2 key ignores the streak
+KILLED R3 wrong next action
+
+Honest limits:
+- No platform implements the polling port yet; Trendyol Go's source comes with V12-TGO-002 (unverified draft).
+- The HTTP call runs while the platform's state row is locked (bounded by the adapter's own timeout).
+- The reconciliation module registration of the new pair is not covered by a mutation (the tests list pairs
+  themselves); the host reconciliation scan test counts nine pairs.

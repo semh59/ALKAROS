@@ -34,6 +34,7 @@ public sealed class OnlineOrderReconciliationModule : IModule
                 new ProviderTotalMismatchSourcePair(dataSource),
                 new ProviderStatusUnknownSourcePair(dataSource),
                 new ProviderPriceMismatchSourcePair(dataSource),
+                new ProviderPollingFailingSourcePair(dataSource),
             };
         });
         context.RegisterTransient(provider => new OnlineOrderReconciliationScanner(

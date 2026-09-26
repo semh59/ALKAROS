@@ -39,6 +39,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
             new ProviderTotalMismatchSourcePair(_dataSource),
             new ProviderStatusUnknownSourcePair(_dataSource),
             new ProviderPriceMismatchSourcePair(_dataSource),
+            new ProviderPollingFailingSourcePair(_dataSource),
         ];
     }
 
@@ -362,6 +363,56 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         await _database.MarkAvailabilityDeliveredAsync("yemeksepeti", old);
         (await Actions().ResolveAsync(oldCase.CaseId, oldCase.RowVersion, "Bağlantı düzeldi.", Manager)).Outcome
             .Should().Be(OnlineOrderResolveOutcome.Resolved);
+    }
+
+    // V12-ONL-009: a platform's polling failure streak becomes one case per streak; it resolves only once polling works.
+    private Task<long> SetPollingStreakAsync(string provider, int failures, DateTimeOffset? since) =>
+        _database.CountAsync(
+            """
+            WITH upsert AS (
+                INSERT INTO online_ordering.provider_poll_state (provider, consecutive_failures, failing_since, last_error)
+                VALUES ($1, $2, $3, CASE WHEN $2 > 0 THEN 'HttpRequestException' END)
+                ON CONFLICT (provider) DO UPDATE
+                    SET consecutive_failures = EXCLUDED.consecutive_failures, failing_since = EXCLUDED.failing_since,
+                        last_error = EXCLUDED.last_error
+                RETURNING 1)
+            SELECT count(*) FROM upsert;
+            """, provider, failures, (object?)since ?? DBNull.Value);
+
+    [Fact]
+    public async Task APollingFailureStreakIsOneCaseThatResolvesOnlyWhenPollingWorksAgain()
+    {
+        var provider = "pp-" + Guid.NewGuid().ToString("N")[..10];
+        var since = new DateTimeOffset(2026, 9, 27, 8, 0, 0, TimeSpan.Zero);
+        var pair = new ProviderPollingFailingSourcePair(_dataSource);
+        var key = $"{ProviderPollingFailingSourcePair.DeduplicationPrefix}{provider}:{since.ToUnixTimeMilliseconds()}";
+
+        await SetPollingStreakAsync(provider, ProviderPollingFailingSourcePair.FailureStreak - 1, since);
+        await Scanner(pair).ScanAllAsync();
+        (await CasesForKeyAsync(key)).Should().Be(0);
+
+        await SetPollingStreakAsync(provider, ProviderPollingFailingSourcePair.FailureStreak, since);
+        await Scanner(pair).ScanAllAsync();
+        await Scanner(pair).ScanAllAsync();
+        (await CasesForKeyAsync(key)).Should().Be(1);
+        var record = await ActiveCaseAsync(key);
+        var details = OnlineOrderCaseDetails.TryParse(record.DetailsJson)!;
+        (details.Kind, details.NextAction, details.Provider, details.Reason).Should().Be(
+            (OnlineOrderDivergenceKind.ProviderPollingFailing, OnlineOrderNextAction.CheckChannelConnection, provider, "HttpRequestException"));
+        record.SourceBRef.Should().Be($"{provider}:polling");
+
+        (await Actions().RetryAsync(record.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.NotRetryable);
+        (await Actions().ResolveAsync(record.CaseId, record.RowVersion, "Bağlantı düzeldi.", Manager)).Outcome
+            .Should().Be(OnlineOrderResolveOutcome.StillDiverged);
+        await SetPollingStreakAsync(provider, 0, null);
+        (await Actions().ResolveAsync(record.CaseId, record.RowVersion, "Bağlantı düzeldi.", Manager)).Outcome
+            .Should().Be(OnlineOrderResolveOutcome.Resolved);
+
+        // A later streak of the same platform is a case of its own.
+        var later = since.AddHours(3);
+        await SetPollingStreakAsync(provider, ProviderPollingFailingSourcePair.FailureStreak, later);
+        await Scanner(pair).ScanAllAsync();
+        await ActiveCaseAsync($"{ProviderPollingFailingSourcePair.DeduplicationPrefix}{provider}:{later.ToUnixTimeMilliseconds()}");
     }
 
     [Fact]

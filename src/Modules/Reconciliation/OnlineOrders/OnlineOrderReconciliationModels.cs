@@ -31,6 +31,9 @@ public static class OnlineOrderDivergenceKind
 
     /// <summary>V12-RMD-008: the provider priced one or more items differently from the catalog.</summary>
     public const string ProviderPriceMismatch = "ProviderPriceMismatch";
+
+    /// <summary>V12-ONL-009: a platform's order polling keeps failing; orders its webhook missed are not arriving.</summary>
+    public const string ProviderPollingFailing = "ProviderPollingFailing";
 }
 
 /// <summary>The safe next action each case carries; only the first three can be retried from the case.</summary>

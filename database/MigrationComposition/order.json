@@ -1331,6 +1331,14 @@
         "platform_credentials"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "156",
+      "phase": "B",
+      "tables": [
+        "provider_poll_state"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

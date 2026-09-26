@@ -1,7 +1,7 @@
 # V12-ONL-009 - Webhook'u olmayan ya da kapanan platformlar için sipariş çekme altyapısı
 
 - Task ID: V12-ONL-009
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Planned

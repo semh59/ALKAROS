@@ -31,6 +31,7 @@
     <None Include="../../../../database/migrations/V12/V12-ONL-006/153-online-order-provider-link.down.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V12/V12-ONL-008/*.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V12/V12-OUI-003/*.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V12/V12-ONL-009/*.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V12/V12-RMD-004/150-online-intake-backoff-and-unique-order.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V12/V12-RMD-004/150-online-intake-backoff-and-unique-order.down.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V12/V12-RMD-007/151-online-order-customer-note-scrub.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

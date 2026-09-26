@@ -190,6 +190,7 @@ public static partial class DualScreenApplication
         builder.Services.AddOnlineOperationsExperience();
         builder.Services.AddOnlinePlatformCredentialExperience();
         OnlineAvailabilityPublishingHostedService.AddOnlineAvailabilityPublishingExperience(builder.Services);
+        OnlineOrderPollingHostedService.AddOnlineOrderPollingExperience(builder.Services);
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
         builder.Services.AddRoleManagementExperience();

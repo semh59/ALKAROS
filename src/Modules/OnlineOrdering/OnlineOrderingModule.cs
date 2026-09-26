@@ -2,6 +2,7 @@ using ALKAROS.IntegrationContracts;
 using ALKAROS.ModuleComposition;
 using ALKAROS.OnlineOrdering.AvailabilityPublishing;
 using ALKAROS.OnlineOrdering.Credentials;
+using ALKAROS.OnlineOrdering.Polling;
 using ALKAROS.OnlineOrdering.Providers.Inbox;
 using ALKAROS.OnlineOrdering.Yemeksepeti.Provider;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
@@ -43,6 +44,11 @@ public sealed class OnlineOrderingModule : IModule
         context.RegisterTransient(services => new ProviderInbox(
             (NpgsqlDataSource)services.GetService(typeof(NpgsqlDataSource))!,
             (ISecretProvider)services.GetService(typeof(ISecretProvider))!));
+        // V12-ONL-009: polls every platform adapter that offers an order list into the same inbox.
+        context.RegisterTransient(services => new OnlineOrderPoller(
+            (NpgsqlDataSource)services.GetService(typeof(NpgsqlDataSource))!,
+            (ProviderInbox)services.GetService(typeof(ProviderInbox))!,
+            (IEnumerable<IOnlineOrderPollingSource>)services.GetService(typeof(IEnumerable<IOnlineOrderPollingSource>))!));
         context.RegisterTransient(services => new YemeksepetiWebhookInbox(
             (NpgsqlDataSource)services.GetService(typeof(NpgsqlDataSource))!,
             PlatformSettings(services)));
