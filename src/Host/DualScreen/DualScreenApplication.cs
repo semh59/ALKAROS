@@ -170,6 +170,11 @@ public static partial class DualScreenApplication
         // IObservabilityService's health-check surface (V1-OBS-001)
         // existed with zero HTTP surface.
         builder.Services.AddObservabilityExperience();
+        // V1-RMD-326 (independent 2026-09-26 audit, finding K14): the first real health probe - see
+        // DatabaseHealthProbeHostedService's own doc comment for why this was needed at all (before this
+        // fix, POST /health-checks only ever recorded whatever status a caller claimed, never anything
+        // independently observed).
+        builder.Services.AddHostedService<DatabaseHealthProbeHostedService>();
         builder.Services.AddKitchenOperationsExperience();
         builder.Services.AddOrderManagementExperience();
         builder.Services.AddNfcOrderingExperience();
