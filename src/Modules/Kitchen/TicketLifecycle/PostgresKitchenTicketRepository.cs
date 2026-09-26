@@ -93,12 +93,21 @@ public sealed class PostgresKitchenTicketRepository : IKitchenTicketRepository
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentNullException.ThrowIfNull(transaction);
 
+        // An order has a handful of tickets; more than this is a fault, reported instead of locking unboundedly.
+        const int maxTicketsPerOrder = 500;
+        var locked = 0;
         await using (var lockCommand = new NpgsqlCommand(
-            "SELECT id FROM kitchen.kitchen_tickets WHERE order_id = @order_id ORDER BY id FOR UPDATE;", connection, transaction))
+            "SELECT id FROM kitchen.kitchen_tickets WHERE order_id = @order_id ORDER BY id LIMIT @limit FOR UPDATE;", connection, transaction))
         {
             lockCommand.Parameters.AddWithValue("order_id", orderId);
-            await lockCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            lockCommand.Parameters.AddWithValue("limit", maxTicketsPerOrder + 1);
+            await using var reader = await lockCommand.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+                locked++;
         }
+
+        if (locked > maxTicketsPerOrder)
+            throw new InvalidOperationException($"Order '{orderId}' has more than {maxTicketsPerOrder} kitchen tickets.");
 
         return await LoadTicketGraphAsync(connection, "t.order_id = @filter", orderId, cancellationToken, transaction)
             .ConfigureAwait(false);
