@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1374,
-  "markdown_line_count": 105350,
-  "markdown_byte_count": 6066204,
+  "markdown_file_count": 1375,
+  "markdown_line_count": 105435,
+  "markdown_byte_count": 6071821,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "6DBCF487C8639635AE55A851F2C2EFBBB9EB7747E8858B84F0ACC0FE2165136D",
-      "lines": 2650,
-      "bytes": 387230,
+      "sha256": "91271C935E998803B6835D26ECBB1E57FBC673DFD0D9BA489FDA5904238F2D41",
+      "lines": 2651,
+      "bytes": 387412,
       "utf8": true
     },
     {
@@ -7529,6 +7529,13 @@
       "sha256": "969B367A0AE9AFC7B7DDC767406C6A28D404FF39EDB011BA903A2060D74ADE62",
       "lines": 75,
       "bytes": 4312,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-339-physical-print-recovery-reprint-execution-wired.md",
+      "sha256": "8FCC74A7CAB9AF4AFB5CFFF47AF63BD9828B1E8FEA59EDCFC7D28A5BC94136E8",
+      "lines": 84,
+      "bytes": 5435,
       "utf8": true
     },
     {

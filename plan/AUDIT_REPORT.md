@@ -2560,6 +2560,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-336-github-actions-sha-pinning.md` | ✅ | `0F9F4165144309A50AD3D28AE9DA599E8EF0A8D11731B195E39EEA10FE106551` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-337-dotnet-vulnerability-scan-actually-fails-the-build.md` | ✅ | `729C96E64B1DD4E0C0CE2963E20FC8AB119BA0B932279C04516D2B129F01BFD4` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-338-consistency-audit-multiline-sql-and-limit-comment-gaps.md` | ✅ | `969B367A0AE9AFC7B7DDC767406C6A28D404FF39EDB011BA903A2060D74ADE62` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-339-physical-print-recovery-reprint-execution-wired.md` | ✅ | `8FCC74A7CAB9AF4AFB5CFFF47AF63BD9828B1E8FEA59EDCFC7D28A5BC94136E8` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2646,5 +2647,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1374` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1375` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.
