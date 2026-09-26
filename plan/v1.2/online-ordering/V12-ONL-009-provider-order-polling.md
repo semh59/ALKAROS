@@ -17,11 +17,17 @@ aynı gelen kutusuna yazan zamanlanmış servis kurulur.
 - `src/Modules/OnlineOrdering/Polling/**`
 - `tests/Modules/OnlineOrdering/Polling/**`
 - `src/Host/Experience/OnlineOrdering/OnlineOrderPollingHostedService.cs`
+- `database/migrations/V12/V12-ONL-009/**`
 - `evidence/V12-ONL-009/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan; Semih 2026-09-26 kararı):
   - src/Modules/OnlineOrdering/Providers/Contracts/ (V12-ONL-007) — isteğe bağlı çekme portu.
   - src/Modules/OnlineOrdering/OnlineOrderingModule.cs (V12-MAP-001) — kayıt.
+  - src/Host/DualScreen/DualScreenApplication.cs — zamanlanmış servisin kaydı (V12-GOV-008).
+  - database/MigrationComposition/order.json — migration konumu (V12-GOV-008).
+  - src/Host/Composition/Migrations/MigrationManifest.cs — migration konumu (V12-GOV-008).
+  - tests/Host/MigrationComposition/Manifest/ManifestTests.cs — migration konumu (V12-GOV-008).
+  - tests/Host/Experience/OnlineOrdering/ — testler ve fikstür bağlantıları (V12-GOV-008).
 
 ## In scope
 
@@ -36,6 +42,7 @@ aynı gelen kutusuna yazan zamanlanmış servis kurulur.
 ## Dependencies
 
 - V12-ONL-008
+- V12-ONL-010
 
 ## Acceptance evidence
 

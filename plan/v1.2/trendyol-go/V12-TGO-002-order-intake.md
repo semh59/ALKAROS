@@ -35,6 +35,7 @@ alan webhook alıcısı ile sipariş listesini çeken adaptörü yazmak. Sağlay
 ## Dependencies
 
 - V12-ONL-009
+- V12-ONL-010
 - V12-TGO-001
 
 ## Acceptance evidence

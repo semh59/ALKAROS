@@ -53,10 +53,12 @@ Bugünkü gerçek durum:
 2026-09-26 (`V12-GOV-006`, `TRACEABILITY.md` C105): online yemek kanalları
 Yemeksepeti'ye ek olarak Uber Eats Trendyol Go ve Migros Yemek'e doğrudan
 entegrasyonla genişletildi (Getir Yemek, Uber Eats Trendyol Go'ya devredildiği
-için ayrı kanal değildir). Ortak çekirdek `V12-ONL-006..009`, `V12-REC-002` ve
+için ayrı kanal değildir). Ortak çekirdek `V12-ONL-006..010`, `V12-REC-002` ve
 `V12-OUI-002`; platform görevleri `trendyol-go` (`V12-TGO-001..005`) ve
 `migros-yemek` (`V12-MGY-001..002`) modüllerindedir. `V12-TGO-001` ve
 `V12-MGY-001` gerçek platform erişimi gelene kadar `Blocked` kalır.
+`V12-ONL-010` (platformdan bağımsız sipariş alımı) 2026-09-27'de `V12-GOV-008`
+(`TRACEABILITY.md` C107) ile eksik görev olarak eklendi.
 
 Doğrulanan plan hacmi: 12 modül, 25 tek-sahip görev dosyası. 2026-09-07:
 `V12-GOV-001` (NFC kanalının kabulü), `V12-GOV-002` (QR'ın eski
