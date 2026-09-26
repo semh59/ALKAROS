@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1371,
-  "markdown_line_count": 105141,
-  "markdown_byte_count": 6054267,
+  "markdown_file_count": 1372,
+  "markdown_line_count": 105203,
+  "markdown_byte_count": 6057494,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C3A2250F5A7D67A555140AD9BCC8E06F32FDAA8D5097B305720CD21C5FB60A06",
-      "lines": 2647,
-      "bytes": 386695,
+      "sha256": "6CAE268FA1EBFA5E2ECD8FBEB3C03A39F9D86536699656D49F10DDABCBE0C957",
+      "lines": 2648,
+      "bytes": 386856,
       "utf8": true
     },
     {
@@ -7508,6 +7508,13 @@
       "sha256": "BB3969324F125522A65EB9535A5641580C46CD1A85E036A1E489053637261E93",
       "lines": 66,
       "bytes": 3490,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-336-github-actions-sha-pinning.md",
+      "sha256": "0F9F4165144309A50AD3D28AE9DA599E8EF0A8D11731B195E39EEA10FE106551",
+      "lines": 61,
+      "bytes": 3066,
       "utf8": true
     },
     {
