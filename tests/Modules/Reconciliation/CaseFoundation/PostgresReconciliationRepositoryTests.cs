@@ -19,6 +19,58 @@ public sealed class PostgresReconciliationRepositoryTests : IClassFixture<Reconc
         _service = new ReconciliationService(_repository);
     }
 
+    private static CreateCaseRequest RaceRequest(string key) => new(
+        DeduplicationKey: key,
+        CaseType: CaseType.OnlineOrderMismatch,
+        SourceARef: "orders.orders:x",
+        SourceBRef: "yemeksepeti:order:y",
+        DiscrepancyAmount: 0m,
+        Severity: CaseSeverity.High,
+        PerformedBy: Guid.NewGuid());
+
+    private async Task<(NpgsqlConnection Connection, NpgsqlTransaction Transaction)> HoldKeyLockAsync(string key)
+    {
+        var connection = await _db.DataSource.OpenConnectionAsync();
+        var transaction = await connection.BeginTransactionAsync();
+        await using var command = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext('reconciliation-case:' || $1));", connection, transaction);
+        command.Parameters.AddWithValue(key);
+        await command.ExecuteNonQueryAsync();
+        return (connection, transaction);
+    }
+
+    [Fact]
+    public async Task ACreationWaitsWhileAnotherCreationOfTheSameKeyIsInProgress()
+    {
+        var key = "rmd312:wait:" + Guid.NewGuid().ToString("N");
+        var (connection, transaction) = await HoldKeyLockAsync(key);
+
+        var creation = _service.CreateOrDeduplicateCaseAsync(RaceRequest(key));
+        var finishedEarly = await Task.WhenAny(creation, Task.Delay(500)) == creation;
+        await transaction.RollbackAsync();
+        await connection.DisposeAsync();
+        await creation;
+
+        finishedEarly.Should().BeFalse("a creation of the same key is serialized behind the one in progress");
+    }
+
+    [Fact]
+    public async Task ConcurrentCreationsOfOneKeyLeaveOneCaseAndDeduplicateTheRest()
+    {
+        var key = "rmd312:race:" + Guid.NewGuid().ToString("N");
+        var (connection, transaction) = await HoldKeyLockAsync(key);
+
+        var creations = Enumerable.Range(0, 6).Select(_ => _service.CreateOrDeduplicateCaseAsync(RaceRequest(key))).ToList();
+        await Task.Delay(300);
+        await transaction.RollbackAsync();
+        await connection.DisposeAsync();
+        var cases = await Task.WhenAll(creations);
+
+        cases.Select(c => c.CaseId).Distinct().Should().ContainSingle();
+        var actions = await _service.GetCaseActionsAsync(cases[0].CaseId);
+        actions.Count(a => a.ActionType == ActionType.Created).Should().Be(1);
+        actions.Count(a => a.ActionType == ActionType.Deduplicated).Should().Be(5);
+    }
+
     [Fact]
     public async Task CreateCaseAndDeduplicateActiveOpenCaseSuccessfully()
     {

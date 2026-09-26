@@ -68,6 +68,17 @@ public sealed class PostgresReconciliationRepository : IReconciliationRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
+        // V1-RMD-312: the check below finds nothing to lock while no case exists yet, so two concurrent creations
+        // of the same key both inserted and the second failed on the active-key unique index. A transaction lock
+        // on the key serializes them: the later one finds the earlier one's case and deduplicates into it.
+        await using (var lockCmd = connection.CreateCommand())
+        {
+            lockCmd.Transaction = transaction;
+            lockCmd.CommandText = "SELECT pg_advisory_xact_lock(hashtext('reconciliation-case:' || @key));";
+            AddParameter(lockCmd, "key", request.DeduplicationKey.Trim());
+            await lockCmd.ExecuteNonQueryAsync(cancellationToken);
+        }
+
         // 1. Check for existing active case with row lock
         const string checkSql = $"""
             SELECT case_id, deduplication_key, case_type, source_a_ref, source_b_ref, discrepancy_amount, severity, status, opened_at, resolved_at, row_version, details::text

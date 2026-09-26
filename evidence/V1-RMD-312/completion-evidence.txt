@@ -1,0 +1,16 @@
+V1-RMD-312 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 5777da0e.
+
+Root cause: CreateOrDeduplicateCaseAsync looked for the active case with SELECT ... FOR UPDATE, which locks nothing
+while no case exists; concurrent creations of one key both inserted and the second hit
+uq_reconciliation_cases_active_dedup (23505). The V12-REC-001 scanner then reported the whole source as unreadable.
+Fix: pg_advisory_xact_lock(hashtext('reconciliation-case:' || key)) at the start of the transaction.
+
+Tests (exit 0):
+- tests/Modules/Reconciliation/CaseFoundation -> 8/8 (+2: a creation waits while another of the same key is in
+  progress; six concurrent creations released together -> one case, 1 Created + 5 Deduplicated actions)
+- tests/Modules/Reconciliation/OnlineOrders -> 15/15 (concurrent-scan test now also asserts no FailureReason)
+- tests/Modules/Reconciliation/Payments 7/7, tests/Host/Experience/Reconciliation 12/12
+- consistency_audit clean; plan_audit validate 0/0
+
+Mutation (backup restore + cmp): key lock not executed -> CaseFoundation 1 failed, OnlineOrders 1 failed.

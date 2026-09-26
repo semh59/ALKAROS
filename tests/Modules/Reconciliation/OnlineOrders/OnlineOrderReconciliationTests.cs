@@ -314,9 +314,11 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         foreach (var id in externalIds)
             await _database.SeedInboxAsync(id, "Rejected", detail: new { rejection = "UnmappedSku", providerCancellationRequested = false });
 
-        await Task.WhenAll(Enumerable.Range(0, 4).Select(_ =>
+        var scans = await Task.WhenAll(Enumerable.Range(0, 4).Select(_ =>
             Task.Run(() => Scanner(new ProviderAcceptedLocallyRefusedSourcePair(_dataSource)).ScanAllAsync())));
 
+        // No scan loses its source to a duplicate-key failure (V1-RMD-312).
+        scans.SelectMany(s => s).Should().OnlyContain(r => r.FailureReason == null);
         foreach (var id in externalIds)
             (await CasesForKeyAsync(ProviderAcceptedLocallyRefusedSourcePair.DeduplicationPrefix + id)).Should().Be(1);
     }
