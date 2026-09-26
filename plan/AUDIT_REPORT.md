@@ -2518,6 +2518,8 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-315-current-bill-id-cleared-on-logout.md` | ✅ | `2F91FF1DA2DAEDDEFBB12DA37157D56BCDAC1AC23292013E543EA3E162B21E54` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-316-authorization-self-approval-guard.md` | ✅ | `BD7703B8E77D52A1EDDF7B9EDB511E5FF7B597465DE406A3FD61AD9E00C68C0F` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-317-held-course-ticket-never-ready.md` | ✅ | `0DE6AE498D34054FEAE9663C0336EB179EAD8BD2618E3D0F9FDC9695ED0FE631` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-318-held-course-void-restores-stock.md` | ✅ | `BF7465CBD1F577F2306B7DA16C506C08FE7584651294F0B80F01F2F546A5E735` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-330-waiter-offline-flake-root-cause.md` | ✅ | `3EA62D33E2F081C13BF4A0135C90931062E6EF07E385F16A54D9BD10CA758540` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2604,5 +2606,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1332` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1334` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1332,
-  "markdown_line_count": 102841,
-  "markdown_byte_count": 5915072,
+  "markdown_file_count": 1334,
+  "markdown_line_count": 102953,
+  "markdown_byte_count": 5920925,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "2FD857B996C237673F3FE254476BABB510E500B60AB86560A367832B6001D6CE",
-      "lines": 2608,
-      "bytes": 380182,
+      "sha256": "E1A29E20E9ED39387ED17B7910F76BFFF50464F0C1FE236FBAABD8CDCD300F8F",
+      "lines": 2610,
+      "bytes": 380514,
       "utf8": true
     },
     {
@@ -7368,6 +7368,20 @@
       "sha256": "0DE6AE498D34054FEAE9663C0336EB179EAD8BD2618E3D0F9FDC9695ED0FE631",
       "lines": 45,
       "bytes": 3267,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-318-held-course-void-restores-stock.md",
+      "sha256": "BF7465CBD1F577F2306B7DA16C506C08FE7584651294F0B80F01F2F546A5E735",
+      "lines": 45,
+      "bytes": 2731,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-330-waiter-offline-flake-root-cause.md",
+      "sha256": "3EA62D33E2F081C13BF4A0135C90931062E6EF07E385F16A54D9BD10CA758540",
+      "lines": 65,
+      "bytes": 2790,
       "utf8": true
     },
     {

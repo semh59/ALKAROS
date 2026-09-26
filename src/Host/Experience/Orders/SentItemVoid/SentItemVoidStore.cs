@@ -129,8 +129,16 @@ public sealed class SentItemVoidStore
         // decided the item is void regardless of whether this succeeds.
         // Deliberately keys off `item.KitchenState` captured BEFORE
         // CancelItem() above, not the voided copy — this store's own
-        // precondition already guarantees it is Sent, Preparing, or Ready.
-        var stockRestored = item.KitchenState == KitchenState.Sent
+        // precondition (above) allows Held, Sent, Preparing or Ready.
+        //
+        // V1-RMD-318 (independent 2026-09-26 audit, finding K6): this used to check only
+        // `KitchenState.Sent`, but a `Held` item (a later course of a multi-course round -
+        // Order.FireRound's own doc comment) is just as much "nothing physically used yet" as `Sent` is
+        // (this whole method's own class doc comment above) - it was activated and had its stock
+        // CONSUMED at the same fire-round moment a Sent item was (OrderSubmissionStockDispatcher filters
+        // on IsActive, not KitchenState). Voiding a never-called-in held course therefore permanently
+        // leaked its stock: consumed once at fire time, never given back.
+        var stockRestored = item.KitchenState is KitchenState.Sent or KitchenState.Held
             && await RestoreStockForVoidedItemAsync(item, command, now, cancellationToken).ConfigureAwait(false);
 
         await AppendAuditAsync(

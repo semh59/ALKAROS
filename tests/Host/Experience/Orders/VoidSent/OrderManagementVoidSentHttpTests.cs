@@ -254,6 +254,35 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
     }
 
     /// <summary>
+    /// V1-RMD-318 (independent 2026-09-26 audit, finding K6): a `Held` item (a later course of a
+    /// multi-course round, printed but never called in - Order.FireRound's own doc comment) is activated
+    /// and has its stock CONSUMED at the very same fire-round moment a `Sent` item is
+    /// (OrderSubmissionStockDispatcher filters on IsActive, not KitchenState). Voiding it before it is
+    /// ever called in must give that stock back exactly like voiding a Sent item does - before this fix,
+    /// the restore check only recognised KitchenState.Sent and silently leaked a Held item's stock forever.
+    /// </summary>
+    [Fact]
+    public async Task VoidingAHeldLaterCourseItemBeforeItIsEverCalledInRestoresItsStock()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Held);
+        var (stockItemId, _) = await _database.SeedConsumedStockForItemAsync(itemId, onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<VoidSentItemResultV1>();
+        Assert.Equal("Applied", body!.Status);
+        Assert.True(body.StockRestored);
+        Assert.Equal(10m, await _database.GetOnHandQuantityAsync(stockItemId));
+    }
+
+    /// <summary>
     /// V1-RMD-152: a line's extras consume their own stock, and their
     /// movements are written against the SAME order item id as the product's.
     /// That is what lets this restore path give them back with the rest of
