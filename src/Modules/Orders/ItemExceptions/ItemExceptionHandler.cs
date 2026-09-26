@@ -123,17 +123,31 @@ public sealed class ItemExceptionHandler
             order.ServingUserId,
             order.PartySize);
 
-        var newVersion = await _orderRepository.SaveAsync(updatedOrder, command.ExpectedRowVersion, cancellationToken).ConfigureAwait(false);
+        long newVersion;
+        // V1-RMD-332 (independent 2026-09-26 audit, orta seviye bulgu): the domain write and its
+        // audit row now share one transaction — a crash or a dropped connection between two
+        // separate commits used to leave a void with no audit trail (or, symmetrically, an audit
+        // row for a void that never actually persisted).
+        await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false))
+        await using (var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
+        {
+            newVersion = await _orderRepository.SaveAsync(updatedOrder, command.ExpectedRowVersion, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
 
-        await AppendAuditAsync(
-            "Order.ItemVoided",
-            order.Id,
-            command.ActorId,
-            command.ReasonCode,
-            command.CorrelationId,
-            beforeState: new { ItemId = targetItem.Id, Status = targetItem.Status.ToString(), KitchenState = targetItem.KitchenState.ToString(), Total = targetItem.GrossAmount },
-            afterState: new { ItemId = voidedItem.Id, Status = voidedItem.Status.ToString(), KitchenState = voidedItem.KitchenState.ToString(), Total = voidedItem.GrossAmount },
-            cancellationToken).ConfigureAwait(false);
+            await AppendAuditAsync(
+                "Order.ItemVoided",
+                order.Id,
+                command.ActorId,
+                command.ReasonCode,
+                command.CorrelationId,
+                beforeState: new { ItemId = targetItem.Id, Status = targetItem.Status.ToString(), KitchenState = targetItem.KitchenState.ToString(), Total = targetItem.GrossAmount },
+                afterState: new { ItemId = voidedItem.Id, Status = voidedItem.Status.ToString(), KitchenState = voidedItem.KitchenState.ToString(), Total = voidedItem.GrossAmount },
+                connection,
+                transaction,
+                cancellationToken).ConfigureAwait(false);
+
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
 
         return new ItemExceptionResult(
             order.Id,
@@ -272,17 +286,28 @@ public sealed class ItemExceptionHandler
             order.ServingUserId,
             order.PartySize);
 
-        var newVersion = await _orderRepository.SaveAsync(updatedOrder, command.ExpectedRowVersion, cancellationToken).ConfigureAwait(false);
+        long newVersion;
+        // V1-RMD-332: same reasoning as VoidItemAsync above.
+        await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false))
+        await using (var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
+        {
+            newVersion = await _orderRepository.SaveAsync(updatedOrder, command.ExpectedRowVersion, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
 
-        await AppendAuditAsync(
-            "Order.ItemComplimentary",
-            order.Id,
-            command.ActorId,
-            command.ReasonCode,
-            command.CorrelationId,
-            beforeState: new { ItemId = targetItem.Id, Status = targetItem.Status.ToString(), Total = targetItem.GrossAmount },
-            afterState: new { ItemId = compItem.Id, Status = compItem.Status.ToString(), Total = compItem.GrossAmount },
-            cancellationToken).ConfigureAwait(false);
+            await AppendAuditAsync(
+                "Order.ItemComplimentary",
+                order.Id,
+                command.ActorId,
+                command.ReasonCode,
+                command.CorrelationId,
+                beforeState: new { ItemId = targetItem.Id, Status = targetItem.Status.ToString(), Total = targetItem.GrossAmount },
+                afterState: new { ItemId = compItem.Id, Status = compItem.Status.ToString(), Total = compItem.GrossAmount },
+                connection,
+                transaction,
+                cancellationToken).ConfigureAwait(false);
+
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
 
         return new ItemExceptionResult(
             order.Id,
@@ -295,7 +320,7 @@ public sealed class ItemExceptionHandler
             now);
     }
 
-    private async Task AppendAuditAsync(
+    private static async Task AppendAuditAsync(
         string eventName,
         Guid orderId,
         Guid actorId,
@@ -303,10 +328,12 @@ public sealed class ItemExceptionHandler
         string correlationId,
         object beforeState,
         object afterState,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
         CancellationToken cancellationToken)
     {
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var cmd = connection.CreateCommand();
+        cmd.Transaction = transaction;
         cmd.CommandText =
             """
             INSERT INTO audit.audit_events (

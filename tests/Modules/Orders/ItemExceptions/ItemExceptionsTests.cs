@@ -285,4 +285,52 @@ public sealed class PostgresItemExceptionsIntegrationTests : IClassFixture<ItemE
 
         await act.Should().ThrowAsync<StaleOrderRowVersionException>();
     }
+
+    private async Task<long> AuditCountAsync(Guid orderId, string eventName)
+    {
+        await using var cmd = _dataSource.CreateCommand(
+            "SELECT count(*) FROM audit.audit_events WHERE aggregate_id = @id AND event_name = @name;");
+        cmd.Parameters.AddWithValue("id", orderId);
+        cmd.Parameters.AddWithValue("name", eventName);
+        return (long)(await cmd.ExecuteScalarAsync())!;
+    }
+
+    // V1-RMD-332 (independent 2026-09-26 audit, orta seviye bulgu): the domain write and its
+    // own audit row used to go through two separate connections/commits — this proves the
+    // successful path really does write both, not just the order.
+    [Fact]
+    public async Task VoidItemAsyncWritesExactlyOneAuditRowForTheSuccessfulVoid()
+    {
+        var (order, item1, _) = await CreateAndSeedSubmittedOrderAsync(KitchenState.NotSent);
+        var cmd = new VoidOrderItemCommand(
+            order.Id, item1.Id, order.RowVersion, Guid.NewGuid(),
+            ReasonCode: VoidReasonCatalog.CustomerChange, CorrelationId: "corr-audit-void");
+
+        await _handler.VoidItemAsync(cmd);
+
+        (await AuditCountAsync(order.Id, "Order.ItemVoided")).Should().Be(1);
+    }
+
+    // Proves the fix is real, not cosmetic: when the audit insert itself fails (here, a
+    // correlation id past the audit table's own VARCHAR(128) column - a real Postgres
+    // constraint, not an injected fault), the domain write inside the SAME transaction rolls
+    // back too. Before V1-RMD-332 this would have left the item permanently Cancelled with
+    // no audit trail at all - the exact "silent gap" the finding named.
+    [Fact]
+    public async Task WhenTheAuditInsertItselfFailsTheDomainWriteInsideTheSameTransactionIsRolledBackToo()
+    {
+        var (order, item1, _) = await CreateAndSeedSubmittedOrderAsync(KitchenState.NotSent);
+        var oversizedCorrelationId = new string('x', 200);
+        var cmd = new VoidOrderItemCommand(
+            order.Id, item1.Id, order.RowVersion, Guid.NewGuid(),
+            ReasonCode: VoidReasonCatalog.CustomerChange, CorrelationId: oversizedCorrelationId);
+
+        var act = () => _handler.VoidItemAsync(cmd);
+
+        await act.Should().ThrowAsync<PostgresException>();
+        var reloaded = await _orderRepo.GetByIdAsync(order.Id);
+        reloaded!.Items.First(i => i.Id == item1.Id).Status.Should().Be(OrderItemState.Active);
+        reloaded.RowVersion.Should().Be(order.RowVersion);
+        (await AuditCountAsync(order.Id, "Order.ItemVoided")).Should().Be(0);
+    }
 }

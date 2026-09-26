@@ -126,10 +126,13 @@ public sealed class PendingOrderConfirmationStore
                 .ConfigureAwait(false);
             tableReleased = await ReleaseTableAsync(order, releaseToOccupied: true, connection, transaction, cancellationToken)
                 .ConfigureAwait(false);
+            // V1-RMD-332 (independent 2026-09-26 audit, orta seviye bulgu): the audit row now
+            // shares this transaction — a crash or connection loss between the domain write and
+            // a SEPARATE audit insert used to leave an Accepted order with no audit trail at all.
+            await AppendAuditAsync(order.Id, "Order.Accepted", actorId, notes, now, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         }
-
-        await AppendAuditAsync(order.Id, "Order.Accepted", actorId, notes, now, cancellationToken).ConfigureAwait(false);
 
         return new PendingOrderConfirmationResultV1(
             order.Id, accepted.Status.ToString(), newVersion, accepted.Total, 0, tableReleased, now);
@@ -178,10 +181,12 @@ public sealed class PendingOrderConfirmationStore
                 .ConfigureAwait(false);
             tableReleased = await ReleaseTableAsync(order, releaseToOccupied: false, connection, transaction, cancellationToken)
                 .ConfigureAwait(false);
+            // V1-RMD-332: same reasoning as AcceptAsync above — the audit row shares this
+            // transaction, so a rejection is never recorded without also being audited (or vice versa).
+            await AppendAuditAsync(order.Id, "Order.Rejected", actorId, reason, now, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         }
-
-        await AppendAuditAsync(order.Id, "Order.Rejected", actorId, reason, now, cancellationToken).ConfigureAwait(false);
 
         return new PendingOrderConfirmationResultV1(
             order.Id, rejected.Status.ToString(), newVersion, rejected.Total, cancelledTicketItems, tableReleased, now);
@@ -331,10 +336,13 @@ public sealed class PendingOrderConfirmationStore
         return new ProductStockNotConfiguredException(item.ProductId, item.ProductNameSnapshot);
     }
 
-    private async Task AppendAuditAsync(
-        Guid orderId, string eventName, Guid actorId, string? reason, DateTimeOffset now, CancellationToken cancellationToken)
+    private static async Task AppendAuditAsync(
+        Guid orderId, string eventName, Guid actorId, string? reason, DateTimeOffset now,
+        NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
     {
-        await using var command = _dataSource.CreateCommand(
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText =
             """
             INSERT INTO audit.audit_events (
                 id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
@@ -344,7 +352,7 @@ public sealed class PendingOrderConfirmationStore
                 @id, @event_name, 'Order', @aggregate_id, @actor_id, 'User',
                 @reason, @correlation_id, NULL, NULL, NULL, NULL, @occurred_at
             );
-            """);
+            """;
         command.Parameters.AddWithValue("id", Guid.NewGuid());
         command.Parameters.AddWithValue("event_name", eventName);
         command.Parameters.AddWithValue("aggregate_id", orderId);

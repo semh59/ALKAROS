@@ -516,6 +516,16 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
         return result is decimal value ? value : 0m;
     }
 
+    /// <summary>V1-RMD-332: proves Accept/Reject's audit row shares the same transaction as the domain write.</summary>
+    public async Task<long> AuditCountAsync(Guid orderId, string eventName)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT count(*) FROM audit.audit_events WHERE aggregate_id = @id AND event_name = @name;");
+        command.Parameters.AddWithValue("id", orderId);
+        command.Parameters.AddWithValue("name", eventName);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
     public async Task<IReadOnlyList<string>> GetKitchenTicketItemStatusesAsync(Guid orderId)
     {
         var repository = new PostgresKitchenTicketRepository(DataSource);

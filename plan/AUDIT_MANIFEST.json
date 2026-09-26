@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1364,
-  "markdown_line_count": 104683,
-  "markdown_byte_count": 6027608,
+  "markdown_file_count": 1365,
+  "markdown_line_count": 104763,
+  "markdown_byte_count": 6032885,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2542,9 +2542,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C6B8B0B5C9C93E846F1459FE0FB7C829D2D8AB0067CB0BA1DE85DDDA64FEEF71",
-      "lines": 2640,
-      "bytes": 385524,
+      "sha256": "E782A39C5EABD3B137DCAFCF05E23D7E3BFA7C81830A55013E89C67538FACC07",
+      "lines": 2641,
+      "bytes": 385706,
       "utf8": true
     },
     {
@@ -7473,6 +7473,13 @@
       "sha256": "F3BC62011A5C720E59B9CA1D934F2B0327ECBB4BD73D67BF933047D465A90BF4",
       "lines": 95,
       "bytes": 6513,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-332-item-exception-and-confirmation-audit-atomicity.md",
+      "sha256": "4B4AE3671D45A9349699CAFCDFD965279A73487978B4565B559C95E4EB044D4A",
+      "lines": 79,
+      "bytes": 5095,
       "utf8": true
     },
     {

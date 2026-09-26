@@ -67,6 +67,10 @@ public sealed class OrderManagementConfirmationHttpTests : IAsyncLifetime
         var (status, currentOrderId) = await _database.GetTableStateAsync(tableId);
         Assert.Equal("Occupied", status);
         Assert.Equal(orderId, currentOrderId);
+
+        // V1-RMD-332 (independent 2026-09-26 audit, orta seviye bulgu): the audit row now
+        // shares PendingOrderConfirmationStore's own transaction with the Accepted write.
+        Assert.Equal(1, await _database.AuditCountAsync(orderId, "Order.Accepted"));
     }
 
     /// <summary>Semih's decision (2026-09-09): Accept should really decrement stock, for every channel this store serves.</summary>
@@ -318,6 +322,9 @@ public sealed class OrderManagementConfirmationHttpTests : IAsyncLifetime
         var (status, currentOrderId) = await _database.GetTableStateAsync(tableId);
         Assert.Equal("Available", status);
         Assert.Null(currentOrderId);
+
+        // V1-RMD-332: same reasoning as the Accept test above.
+        Assert.Equal(1, await _database.AuditCountAsync(orderId, "Order.Rejected"));
     }
 
     [Fact]
