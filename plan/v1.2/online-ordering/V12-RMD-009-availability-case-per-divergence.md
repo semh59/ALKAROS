@@ -1,7 +1,7 @@
 # V12-RMD-009 - Stok yayını farkı vakasını her yeni farkta yeniden aç
 
 - Task ID: V12-RMD-009
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Existing

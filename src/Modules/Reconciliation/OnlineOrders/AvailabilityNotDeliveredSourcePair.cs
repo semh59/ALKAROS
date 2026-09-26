@@ -1,3 +1,4 @@
+using System.Globalization;
 using ALKAROS.Reconciliation.CaseFoundation;
 using ALKAROS.Reconciliation.Payments;
 using Npgsql;
@@ -34,21 +35,15 @@ public sealed class AvailabilityNotDeliveredSourcePair : IOnlineOrderSourcePair
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT s.channel, s.product_id, s.external_sku
+            SELECT s.channel, s.product_id, s.external_sku, s.desired_version
             FROM online_ordering.availability_states s
             WHERE s.delivered_quantity IS DISTINCT FROM s.desired_quantity
               AND (s.desired_at < now() - make_interval(mins => $1) OR s.delivery_attempts >= $2)
-              -- V12-RMD-006: a dismissal silences the divergence a person looked at; a new quantity after it
-              -- (desired_at moves only when the quantity changes) is a new divergence and opens a new case.
-              AND NOT EXISTS (SELECT 1 FROM reconciliation.cases rc
-                              WHERE rc.deduplication_key = $3 || s.channel || ':' || s.product_id::text
-                                AND rc.status = 'Dismissed' AND rc.resolved_at >= s.desired_at)
             ORDER BY s.channel, s.product_id
             LIMIT {OnlineOrderSourceScan.MaxScanRows + 1};
             """);
         command.Parameters.AddWithValue(ToleranceMinutes);
         command.Parameters.AddWithValue(FailedAttempts);
-        command.Parameters.AddWithValue(DeduplicationPrefix);
 
         return await OnlineOrderSourceScan.ReadAsync(command, Name, reader =>
         {
@@ -57,8 +52,11 @@ public sealed class AvailabilityNotDeliveredSourcePair : IOnlineOrderSourcePair
             var sku = reader.GetString(2);
             var details = new OnlineOrderCaseDetails(
                 Kind, OnlineOrderNextAction.CheckChannelConnection, Channel: channel, ProductId: productId);
+            // V12-RMD-009: the key names this divergence (the desired quantity's version), not the product. A case
+            // is never reopened once resolved or dismissed (V1-RMD-323), and the next divergence of the same
+            // product is a new version, so it gets a case of its own.
             return new DetectedDiscrepancy(
-                $"{DeduplicationPrefix}{channel}:{productId}",
+                string.Create(CultureInfo.InvariantCulture, $"{DeduplicationPrefix}{channel}:{productId}:{reader.GetInt64(3)}"),
                 CaseType.OnlineOrderMismatch,
                 $"online_ordering.availability_states:{channel}:{productId}",
                 $"{channel}:sku:{sku}",

@@ -1,0 +1,20 @@
+V12-RMD-009 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 6449c30f.
+
+Cause: 9a9d083d (V1-RMD-323) made case deduplication status-independent. AvailabilityNotDelivered's key
+("online-availability:{channel}:{product}") names a recurring condition, so after one resolved or dismissed case a
+product's later divergences were never visible again (Reconciliation.OnlineOrders was 20/21 on master).
+
+Change: the key now names the divergence ("...:{desired_version}"). Repeated scans of the same divergence find the
+same case; a new desired quantity (new version) opens a new case; a resolved or dismissed case stays closed. The
+V12-RMD-006 dismissal guard (resolved_at from the application clock compared with desired_at from the database
+clock) is removed as redundant. No live data exists (V0-YSP-001 Blocked), so no old-format keys need migrating.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- Reconciliation.OnlineOrders 22/22 (+1, two assertions updated to the versioned key), Host Reconciliation 12/12
+- consistency_audit clean; plan_audit validate 0/0
+
+Mutations (backup, mutate, test, cp restore, cmp verified; 2/2 killed):
+KILLED V1 key names the product, not the divergence
+KILLED V2 key ignores the version value

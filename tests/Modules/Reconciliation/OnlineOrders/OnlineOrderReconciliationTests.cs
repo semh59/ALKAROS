@@ -351,9 +351,9 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
 
         await Scanner(new AvailabilityNotDeliveredSourcePair(_dataSource)).ScanAllAsync();
 
-        (await CasesForKeyAsync($"online-availability:yemeksepeti:{fresh}")).Should().Be(0);
-        var oldCase = await ActiveCaseAsync($"online-availability:yemeksepeti:{old}");
-        await ActiveCaseAsync($"online-availability:yemeksepeti:{failing}");
+        (await CasesForKeyAsync($"online-availability:yemeksepeti:{fresh}:1")).Should().Be(0);
+        var oldCase = await ActiveCaseAsync($"online-availability:yemeksepeti:{old}:1");
+        await ActiveCaseAsync($"online-availability:yemeksepeti:{failing}:1");
         OnlineOrderCaseDetails.TryParse(oldCase.DetailsJson)!.NextAction.Should().Be(OnlineOrderNextAction.CheckChannelConnection);
 
         (await Actions().RetryAsync(oldCase.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.NotRetryable);
@@ -409,6 +409,17 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         (await CasesForKeyAsync(deadKey)).Should().Be(1);
     }
 
+    private Task<long> MoveAvailabilityAsync(Guid product, int desired, long version) =>
+        _database.CountAsync(
+            """
+            WITH moved AS (
+                UPDATE online_ordering.availability_states
+                SET desired_quantity = $2, desired_version = $3, desired_at = now(), delivery_attempts = 3
+                WHERE product_id = $1 RETURNING 1)
+            SELECT count(*) FROM moved;
+            """,
+            product, desired, version);
+
     [Fact]
     public async Task ADismissedAvailabilityDivergenceStaysQuietUntilTheQuantityChanges()
     {
@@ -416,18 +427,38 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         await _database.SeedAvailabilityStateAsync("yemeksepeti", product, desired: 0, delivered: 4, attempts: 0, desiredMinutesAgo: 30);
         var pair = new AvailabilityNotDeliveredSourcePair(_dataSource);
         await Scanner(pair).ScanAllAsync();
-        var key = $"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}";
+        var firstKey = $"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}:1";
 
-        await DismissAsync(key);
+        await DismissAsync(firstKey);
         await Scanner(pair).ScanAllAsync();
-        (await CasesForKeyAsync(key)).Should().Be(1);
+        (await CasesForKeyAsync(firstKey)).Should().Be(1);
+        (await _cases.GetActiveCaseByDedupKeyAsync(firstKey)).Should().BeNull();
 
-        await _database.CountAsync(
-            "WITH moved AS (UPDATE online_ordering.availability_states SET desired_quantity = 1, desired_at = now(), delivery_attempts = 3 WHERE product_id = $1 RETURNING 1) SELECT count(*) FROM moved;",
-            product);
+        await MoveAvailabilityAsync(product, desired: 1, version: 2);
         await Scanner(pair).ScanAllAsync();
-        (await CasesForKeyAsync(key)).Should().Be(2);
-        (await _cases.GetActiveCaseByDedupKeyAsync(key)).Should().NotBeNull();
+
+        (await CasesForKeyAsync(firstKey)).Should().Be(1);
+        (await _cases.GetActiveCaseByDedupKeyAsync($"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}:2"))
+            .Should().NotBeNull();
+    }
+
+    [Fact]
+    public async Task AProductThatDivergesAgainAfterAResolvedCaseGetsANewCase()
+    {
+        var product = Guid.NewGuid();
+        await _database.SeedAvailabilityStateAsync("yemeksepeti", product, desired: 0, delivered: 4, attempts: 0, desiredMinutesAgo: 30);
+        var pair = new AvailabilityNotDeliveredSourcePair(_dataSource);
+        await Scanner(pair).ScanAllAsync();
+        var first = await ActiveCaseAsync($"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}:1");
+        await _database.MarkAvailabilityDeliveredAsync("yemeksepeti", product);
+        (await Actions().ResolveAsync(first.CaseId, first.RowVersion, "Bağlantı düzeldi.", Manager)).Outcome
+            .Should().Be(OnlineOrderResolveOutcome.Resolved);
+
+        // Hours later the same product fails to reach the channel again: a new divergence, a new case.
+        await MoveAvailabilityAsync(product, desired: 3, version: 2);
+        await Scanner(pair).ScanAllAsync();
+
+        await ActiveCaseAsync($"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}:2");
     }
 
     [Fact]
