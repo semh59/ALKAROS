@@ -3,6 +3,8 @@ using ALKAROS.ModuleComposition;
 using ALKAROS.OnlineOrdering.AvailabilityPublishing;
 using ALKAROS.OnlineOrdering.Credentials;
 using ALKAROS.OnlineOrdering.Polling;
+using ALKAROS.OnlineOrdering.Providers.TrendyolGo.OrderIntake;
+using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.OnlineOrdering.Providers.Inbox;
 using ALKAROS.OnlineOrdering.Yemeksepeti.Provider;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
@@ -76,6 +78,23 @@ public sealed class OnlineOrderingModule : IModule
         // V12-ONL-005: availability publishing per enabled channel.
         context.RegisterTransient<IAvailabilityChannelPublisher, YemeksepetiAvailabilityPublisher>();
         context.RegisterTransient<AvailabilityPublicationService, AvailabilityPublicationService>();
+
+        // V12-TGO-002 (UNVERIFIED DRAFT): Trendyol Go events are stored by its webhook and by polling its package
+        // list. Its IOnlineOrderProvider is registered with its outbound calls (V12-TGO-003); until then its events
+        // wait in the inbox.
+        context.RegisterTransient(services => new TrendyolGoWebhookInbox(
+            (ProviderInbox)services.GetService(typeof(ProviderInbox))!, PlatformSettings(services)));
+        context.RegisterTransient(services => new TrendyolGoOrderNormalizer(
+            new PostgresYemeksepetiProductMappingService(
+                (NpgsqlDataSource)services.GetService(typeof(NpgsqlDataSource))!,
+                (IProductRepository)services.GetService(typeof(IProductRepository))!,
+                (IProductModifierGroupRepository)services.GetService(typeof(IProductModifierGroupRepository))!,
+                (IModifierGroupRepository)services.GetService(typeof(IModifierGroupRepository))!,
+                TrendyolGoEvents.Provider),
+            (IProductRepository)services.GetService(typeof(IProductRepository))!,
+            (ITaxProfileRepository)services.GetService(typeof(ITaxProfileRepository))!));
+        context.RegisterSingleton<IOnlineOrderPollingSource>(services => new TrendyolGoOrderPollingSource(
+            new HttpClient { Timeout = TimeSpan.FromSeconds(10) }, PlatformSettings(services), TimeProvider.System));
     }
 
     private static StoredOnlinePlatformSecretProvider PlatformSettings(IServiceProvider services) => new(

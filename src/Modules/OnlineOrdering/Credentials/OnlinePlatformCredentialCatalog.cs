@@ -17,7 +17,8 @@ public sealed record OnlinePlatformCredentialDefinition(string Provider, IReadOn
 /// value and an environment variable are two sources of the same setting.
 /// <para>
 /// Trendyol Go's fields follow its public integration document (EXT:TGO-MEAL-API: supplier id plus API key and
-/// secret for basic authentication); like the adapter that will read them, they are an UNVERIFIED DRAFT until a
+/// secret for basic authentication, the integrator headers, the webhook header value); like the adapter that reads
+/// them, they are an UNVERIFIED DRAFT until a
 /// real seller account exists (V12-TGO-001). Migros Yemek has no public document, so it has no settings yet.
 /// </para>
 /// </summary>
@@ -43,6 +44,11 @@ public static class OnlinePlatformCredentialCatalog
             new("supplier-id", IsSecret: false),
             new("api-key", IsSecret: true),
             new("api-secret", IsSecret: true),
+            // V12-TGO-002: the integrator name (User-Agent and x-agentname headers), the e-mail of the person the
+            // calls are made for (x-executor-user) and the header value Trendyol Go sends back on webhook calls.
+            new("integrator-name", IsSecret: false),
+            new("executor-email", IsSecret: false),
+            new("webhook-secret", IsSecret: true),
         ]),
     ];
 

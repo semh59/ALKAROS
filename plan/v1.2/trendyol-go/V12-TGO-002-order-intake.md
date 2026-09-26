@@ -1,7 +1,7 @@
 # V12-TGO-002 - Uber Eats Trendyol Go siparişlerini webhook ve çekmeyle al
 
 - Task ID: V12-TGO-002
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: integration
 - Surface state: Planned

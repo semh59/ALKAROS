@@ -6,8 +6,11 @@ namespace ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
 
 public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProductMappingService
 {
-    /// <summary>V12-ONL-008: the shared mapping table's rows this service reads and writes.</summary>
-    private const string Provider = OnlineOrderProviders.Yemeksepeti;
+    /// <summary>
+    /// V12-ONL-008: the shared mapping table's rows this service reads and writes. V12-TGO-002: Yemeksepeti's unless
+    /// another platform is named; the mapping rules are the same for every platform.
+    /// </summary>
+    private readonly string _provider;
 
     // Catalog's own SKU column width; a provider SKU longer than any product SKU cannot be ours.
     private const int MaxSkuLength = 100;
@@ -21,8 +24,11 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         NpgsqlDataSource dataSource,
         IProductRepository products,
         IProductModifierGroupRepository productModifierGroups,
-        IModifierGroupRepository modifierGroups)
+        IModifierGroupRepository modifierGroups,
+        string provider = OnlineOrderProviders.Yemeksepeti)
     {
+        ArgumentException.ThrowIfNullOrWhiteSpace(provider);
+        _provider = provider;
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _products = products ?? throw new ArgumentNullException(nameof(products));
         _productModifierGroups = productModifierGroups ?? throw new ArgumentNullException(nameof(productModifierGroups));
@@ -71,7 +77,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         await using (var lockCommand = new NpgsqlCommand(
             "SELECT pg_advisory_xact_lock(hashtext('online_ordering.provider_product_mappings:' || $1));", connection, transaction))
         {
-            lockCommand.Parameters.AddWithValue(Provider);
+            lockCommand.Parameters.AddWithValue(_provider);
             await lockCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
@@ -107,7 +113,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
             close.Parameters.AddWithValue(openForSku.MappingId);
             close.Parameters.AddWithValue(effectiveFrom);
             close.Parameters.AddWithValue(actorId);
-            close.Parameters.AddWithValue(Provider);
+            close.Parameters.AddWithValue(_provider);
             await close.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
@@ -124,7 +130,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
             insert.Parameters.AddWithValue(productId);
             insert.Parameters.AddWithValue(effectiveFrom);
             insert.Parameters.AddWithValue(actorId);
-            insert.Parameters.AddWithValue(Provider);
+            insert.Parameters.AddWithValue(_provider);
             await insert.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         }
 
@@ -150,7 +156,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
             """);
         command.Parameters.AddWithValue(sku);
         command.Parameters.AddWithValue(at);
-        command.Parameters.AddWithValue(Provider);
+        command.Parameters.AddWithValue(_provider);
 
         var matches = new List<(Guid MappingId, Guid ProductId)>(2);
         await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
@@ -184,7 +190,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
             LIMIT 1;
             """);
         command.Parameters.AddWithValue(productId);
-        command.Parameters.AddWithValue(Provider);
+        command.Parameters.AddWithValue(_provider);
         return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) as string;
     }
 
@@ -200,7 +206,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
             LIMIT $1;
             """);
         command.Parameters.AddWithValue(limit);
-        command.Parameters.AddWithValue(Provider);
+        command.Parameters.AddWithValue(_provider);
         var mappings = new List<YemeksepetiProductMapping>();
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
@@ -243,7 +249,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         return null;
     }
 
-    private static async Task<YemeksepetiProductMapping?> FindOpenAsync<T>(
+    private async Task<YemeksepetiProductMapping?> FindOpenAsync<T>(
         string predicate,
         T value,
         NpgsqlConnection connection,
@@ -258,7 +264,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
             LIMIT 1;
             """, connection, transaction);
         command.Parameters.AddWithValue(value!);
-        command.Parameters.AddWithValue(Provider);
+        command.Parameters.AddWithValue(_provider);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         if (!await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             return null;
@@ -266,7 +272,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
             reader.GetGuid(0), reader.GetString(1), reader.GetGuid(2), reader.GetFieldValue<DateTimeOffset>(3), null);
     }
 
-    private static async Task<bool> HasMappingStartingAtOrAfterAsync(
+    private async Task<bool> HasMappingStartingAtOrAfterAsync(
         string sku,
         DateTimeOffset effectiveFrom,
         NpgsqlConnection connection,
@@ -281,7 +287,7 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
             """, connection, transaction);
         command.Parameters.AddWithValue(sku);
         command.Parameters.AddWithValue(effectiveFrom);
-        command.Parameters.AddWithValue(Provider);
+        command.Parameters.AddWithValue(_provider);
         return (bool)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
     }
 }

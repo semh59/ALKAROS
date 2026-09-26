@@ -191,6 +191,7 @@ public static partial class DualScreenApplication
         builder.Services.AddOnlinePlatformCredentialExperience();
         OnlineAvailabilityPublishingHostedService.AddOnlineAvailabilityPublishingExperience(builder.Services);
         OnlineOrderPollingHostedService.AddOnlineOrderPollingExperience(builder.Services);
+        builder.Services.AddTrendyolGoWebhookExperience();
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
         builder.Services.AddRoleManagementExperience();
@@ -290,6 +291,9 @@ public static partial class DualScreenApplication
             // retries a delivery at most 5 times, 10 s apart).
             rateLimiter.AddPolicy("yemeksepeti-webhook", context =>
                 FixedWindow($"{ClientPartition(context)}:yemeksepeti-webhook", 300));
+            // V12-TGO-002: Trendyol Go retries a failed delivery at most 3 times, a minute apart.
+            rateLimiter.AddPolicy("trendyol-go-webhook", context =>
+                FixedWindow($"{ClientPartition(context)}:trendyol-go-webhook", 300));
             rateLimiter.AddPolicy("nfc-order", context =>
                 FixedWindow(RoutePartition(context, "tableId", "nfc-order"), 30));
             // V12-CWB-001: relay-facing, so unlike every other unauthenticated
@@ -599,6 +603,7 @@ public static partial class DualScreenApplication
         app.MapTokenTerminalSettingsApi();
         app.MapQnbCredentialSettingsApi();
         app.MapYemeksepetiWebhookApi();
+        app.MapTrendyolGoWebhookApi();
         app.MapOnlineCatalogPublishingApi();
         app.MapOnlineOperationsApi();
         app.MapOnlinePlatformCredentialApi();

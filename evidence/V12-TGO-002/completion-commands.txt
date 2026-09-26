@@ -1,0 +1,9 @@
+V12-TGO-002 commands (2026-09-27, exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- tests/Host/Experience/OnlineOrdering 114/114 (19 new TrendyolGoOrderIntakeTests)
+- tests/Modules/OnlineOrdering: AvailabilityPublishing 14/14, CatalogPublishing 15/15, OrderNormalization 33/33,
+  ProductMapping 24/24, StatusMapping 32/32, StatusSync 19/19, WebhookInbox 31/31
+- Reconciliation.OnlineOrders 25/25; Host Reconciliation 12/12; Reporting.Channels 8/8
+- ALKAROS.Host.Tests manifest/composition/registry/program/dual-screen subset 138/138
+- PosTerminal vitest 31 files 234/234; production build ok
+- consistency_audit clean; plan_audit validate 0/0

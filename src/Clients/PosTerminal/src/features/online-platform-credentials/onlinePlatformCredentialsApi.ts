@@ -39,6 +39,8 @@ const fieldLabels: Record<string, string> = {
   "supplier-id": "Satıcı kimliği",
   "api-key": "API anahtarı",
   "api-secret": "API gizli anahtarı",
+  "integrator-name": "Entegratör adı",
+  "executor-email": "İşlemi yapan kişinin e-postası",
 };
 
 /** A platform or field this screen does not know yet is never shown by its raw id. */

@@ -1,0 +1,66 @@
+V12-TGO-002 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 01a9ce96.
+Dependency V12-TGO-001 (Blocked) waived per edge by C106 / V12-GOV-007. Everything provider-facing here is an
+UNVERIFIED DRAFT built from the public document only; no real Trendyol Go delivery or stage call was made.
+
+Sources read 2026-09-27 in the built-in browser (the site renders client-side; plain fetch returns an empty shell):
+- developers.tgoapps.com ... /webhook-order-integration/Introduction (retries: up to 3, one minute apart; idempotent
+  HTTPS endpoints required; the integration can be disabled if the endpoint stays down)
+- ... /webhook-order-integration/endpoints/Create-Integrator (one POST per event type to baseUrl + destinationUrl;
+  authorization via custom secrets.httpHeaders / httpQueryParams; "short-term duplicate events" expected)
+- ... /webhook-order-integration/Event-Types-Payloads (created/cancelled/unsupplied/shipped/delivered/... payloads;
+  "id" is the package id shared by a package's events; cancelInfo.reasonCode/reason)
+- ... /order-integration/get-order-packages (GET .../suppliers/{supplierId}/packages, packageModificationStartDate/
+  EndDate epoch ms, page, size <= 50, content/totalPages; x-agentname and x-executor-user headers; product count =
+  number of lineItemIds; Model 1/2 address rules; storePickupSelected)
+
+Changes:
+- TrendyolGoEvents: stored event names (webhook type names; polled packageStatus mapped to the same names; picking/
+  invoiced for restaurant-side states) and the inbox key = SHA-256(platform, event, package id), so a delivery, its
+  retries and a polled copy are one row.
+- TrendyolGoWebhookInbox + TrendyolGoWebhookEndpoints: POST /api/v1/integrations/trendyol-go/orders/webhook/{event};
+  header x-api-key checked in constant time against the platform's webhook-secret before the body is read; 503 when
+  not configured, 401, 404 unknown event, 413, 400 without a package id; own rate-limit policy; registered in
+  DualScreenApplication.
+- TrendyolGoOrderNormalizer: package id = order identity, orderCode = display code; quantity = items not cancelled;
+  unitSellingPrice (else price); modifiers / extras / removals as the kitchen instruction text; GO / STORE /
+  STORE_PICKUP; platform total (totalPrice - totalDeliveryPrice) compared only without coupons or promotions;
+  customer data and meal card stay only in the encrypted payload.
+- TrendyolGoOnlineOrderProvider: created -> accept; cancelled -> cancel (non-seller); unsupplied -> cancel (vendor,
+  reason code + text); shipped/delivered -> no-op; picking/invoiced -> own echo; other documented events unknown
+  (the integrator subscribes the five, as the document's sample does). Outbound calls throw until V12-TGO-003, and
+  the provider is not registered in the Host yet, so Trendyol Go events wait in the inbox until then.
+- TrendyolGoApiSettings + TrendyolGoOrderPollingSource (V12-ONL-009 port): basic auth, User-Agent
+  "{supplierId} - {integrator}", x-agentname, x-executor-user; 15-minute windows, every page read before the cursor
+  moves, next window starts 1 minute earlier; 429 -> rate limited with Retry-After; not configured -> off; > 20 pages
+  -> failure. Interval 30 s.
+- Shared pieces: platform fields integrator-name, executor-email, webhook-secret on the settings screen (labels in
+  Turkish); the product mapping service takes a platform (Yemeksepeti's by default).
+
+Commands (exit 0 unless stated): see completion-commands.txt.
+
+Mutations (per iteration: backup, mutate, test, restore, cmp verified; 16/16 killed; T2..T16 were rerun after the
+first script run stopped on a string-escaping mistake in the script itself, not in the code):
+KILLED T1 any header accepted (first run; its result file was not written because the run stopped at T2)
+KILLED T2 key ignores the event
+KILLED T3 polled status stored raw
+KILLED T4 cancelled items counted
+KILLED T5 discounted total compared
+KILLED T6 delivery fee not subtracted
+KILLED T7 pickup not recognized
+KILLED T8 no window overlap
+KILLED T9 only the first page read
+KILLED T10 429 not a rate limit
+KILLED T11 executor header missing
+KILLED T12 unsupplied not the vendor
+KILLED T13 invoiced unknown
+KILLED T14 mapping platform ignored
+KILLED T15 removals not marked
+KILLED T16 closed channel answers 401
+
+Honest limits:
+- Nothing here has met a real Trendyol Go payload or endpoint; V12-TGO-001 stays Blocked.
+- Mapping Trendyol Go product ids to catalog products has no screen yet (V12-TGO-004 reads the menu).
+- The customer-note view of the operations screen reads Yemeksepeti's field; a Trendyol Go order shows no note there.
+- The integrator itself (Create Integrator, Add Seller, Enable) is created once by a person with the platform's seller
+  token; no code does it.
