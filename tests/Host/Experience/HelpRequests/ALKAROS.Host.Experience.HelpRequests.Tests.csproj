@@ -15,6 +15,13 @@
   </ItemGroup>
 
   <ItemGroup>
+    <!-- V1-RMD-289: HelpRequestHubTests fakes a HubCallerContext/IGroupManager for a direct, real-Postgres
+         unit test of OnConnectedAsync - needs the shared framework's SignalR/Http.Features types, same as
+         SecurityAdministration's own test project. -->
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="../../../../src/Host/ALKAROS.Host.csproj" />
     <ProjectReference Include="../../../BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj" />
   </ItemGroup>

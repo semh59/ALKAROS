@@ -67,4 +67,27 @@ public sealed class HelpRequestTestDatabase : PgTestDatabase
 
     public Task<long> HelpRequestCountAsync()
         => ScalarAsync<long>("SELECT count(*) FROM notifications.help_requests;");
+
+    /// <summary>V1-RMD-289: seeds a manager or supervisor device session - the cookie HelpRequestHub itself
+    /// authenticates (`alkaros.manager`), never the cashier one <see cref="SeedCashierSessionAsync"/> seeds.</summary>
+    public async Task<(Guid UserId, string RawToken)> SeedManagementSessionAsync(string devicePrefix)
+    {
+        var userId = Guid.NewGuid();
+        var (raw, hash) = DeviceSessionToken.Create();
+
+        await ExecuteAsync(
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'not-used', 'Help Request Hub Test', true);
+            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, created_at, expires_at)
+            VALUES (@session_id, @user_id, @device_id, @token_hash, now(), now() + interval '1 hour');
+            """,
+            ("user_id", userId),
+            ("username", "help-hub-" + userId.ToString("N")),
+            ("session_id", Guid.NewGuid()),
+            ("device_id", $"{devicePrefix}:{Guid.NewGuid():D}"),
+            ("token_hash", hash));
+
+        return (userId, raw);
+    }
 }

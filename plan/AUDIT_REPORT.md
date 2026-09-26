@@ -2493,7 +2493,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-286-cashier-help-hub-resilience.md` | ✅ | `7A60694960E85BD45E5CAA22EA210A098560E616ED0720BAD8D9B123DC8C8F72` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-287-cashier-pending-checks-live-push.md` | ✅ | `DB380CD8189122F1BDDE0FAEC0F73E495E405A997E6857E51F284E6E8174B553` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-288-outbox-dead-letter-visibility.md` | ✅ | `F6EB06D058A98109A49CB469C2AEC1371FD7277C6A6F476AE7944DC5A946754A` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-289-help-request-scoped-delivery.md` | ✅ | `09F7B712E932CA76B46A4BF6054CCD3C0130B0D65F3119C2EB363B2AF94C471D` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-289-help-request-scoped-delivery.md` | ✅ | `EEEBE905ABC6E66A873D1DEC3507978D422B2C0779FF8A3AD3C8E7A7462BAC30` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-290-e2e-suites-in-ci.md` | ✅ | `BEF657C0A61EE2B2CF4CA9668019167E7AE994726021F57A71CC8B76BF41E190` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-291-posterminal-session-expiry-handling.md` | ✅ | `D3D3DC5D9C63A6465A15294EBEF9E6E860613A08912CB9C8F17003FEC69A05B9` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-292-cashier-discount-tip-adjustment-ui.md` | ✅ | `2FDD9D053FDFBEA60052F2A3A3D4C7A22531DBFE60CE86236B0CB25548FD0F56` | Tek-sahip görev |

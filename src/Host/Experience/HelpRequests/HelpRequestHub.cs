@@ -18,11 +18,31 @@ namespace ALKAROS.Host.Experience.HelpRequests;
 /// role). Same flat-broadcast shape as WaiterOrderStatusHub for the same
 /// reason: there is no manager-to-terminal assignment tracked anywhere to
 /// target one specific device.
+///
+/// V1-RMD-289: re-examined a deep-scan finding that framed the broadcast
+/// itself ("Clients.All") as the bug and proposed narrowing delivery to one
+/// raising terminal's own group. That does not fit this hub: the terminalId
+/// that raises a call (a waiter device) and the terminalId a manager's own
+/// session is bound to (a till) are different devices with unrelated ids —
+/// grouping by either would silently stop most managers from ever hearing a
+/// call, contradicting this class's own long-standing "no manager-to-
+/// terminal assignment exists" design note above (and LowStockAlertHub's own
+/// identical Clients.All pattern for the same class of restaurant-wide,
+/// not-per-terminal, management alert). Every connection reaching
+/// Clients.All is already gated by OnConnectedAsync below — nothing
+/// unauthenticated is in that audience today. What this task actually adds:
+/// an explicit recipient group (defence in depth — a future change to the
+/// gate below can no longer widen delivery merely by leaving a connection
+/// open) and the real, previously-missing SignalR-connection-level proof
+/// that the gate holds and that a real broadcast reaches it.
 /// </summary>
 public sealed class HelpRequestHub : Hub
 {
     public const string Route = "/hubs/help-requests";
     public const string HelpRequested = "HelpRequested";
+
+    /// <summary>V1-RMD-289: every authenticated connection's explicit recipient group — see the class doc comment.</summary>
+    public const string RecipientsGroup = "help-request-recipients";
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -43,6 +63,7 @@ public sealed class HelpRequestHub : Hub
             return;
         }
 
+        await Groups.AddToGroupAsync(Context.ConnectionId, RecipientsGroup, Context.ConnectionAborted);
         await base.OnConnectedAsync();
     }
 

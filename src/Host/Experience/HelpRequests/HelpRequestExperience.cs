@@ -105,7 +105,9 @@ public static class HelpRequestExperience
                     statusCode: StatusCodes.Status403Forbidden);
             }
 
-            await hub.Clients.All.SendAsync(
+            // V1-RMD-289: explicit recipient group instead of Clients.All - see HelpRequestHub's own doc
+            // comment on why this stays a flat, restaurant-wide broadcast rather than a per-terminal one.
+            await hub.Clients.Group(HelpRequestHub.RecipientsGroup).SendAsync(
                 HelpRequestHub.HelpRequested,
                 new HelpRequestedV1(request.TableId, record.TableNumber, request.RequestType,
                     record.RequestedByDisplayName, record.CreatedAt),
