@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1376,
-  "markdown_line_count": 105509,
-  "markdown_byte_count": 6076226,
+  "markdown_file_count": 1377,
+  "markdown_line_count": 105594,
+  "markdown_byte_count": 6082051,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F6269B85FE416D3186797232557ECBB2161FF405BB891B0769D88F0332DA782A",
-      "lines": 2652,
-      "bytes": 387571,
+      "sha256": "A35EE0D57882D4FB90236CFF14FB4F8C6244F20F8B521C3422672C1B91C1BCC3",
+      "lines": 2653,
+      "bytes": 387745,
       "utf8": true
     },
     {
@@ -7546,6 +7546,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-341-nav-hide-vs-in-module-lock-investigated.md",
+      "sha256": "E2E7E79261C6F3D83AC45542428E1548012CFA2362C6B3BC4A3F6E63AB724709",
+      "lines": 80,
+      "bytes": 5171,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -8793,9 +8800,9 @@
     },
     {
       "path": "plan/v1.2/trendyol-go/V12-TGO-002-order-intake.md",
-      "sha256": "8DA9D0E0ADEFCCE394B94311D4D27BE0BB12BC590783CF4F22F6785B50AE17F5",
-      "lines": 49,
-      "bytes": 2077,
+      "sha256": "A2D012D94868EE7E2AB38328554828622CB90AD90837A77B6279CA4A579A330A",
+      "lines": 53,
+      "bytes": 2557,
       "utf8": true
     },
     {
