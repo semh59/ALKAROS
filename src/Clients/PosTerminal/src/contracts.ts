@@ -53,6 +53,18 @@ export interface RelayCredentialStatus {
   connectorState: "NotConfigured" | "Running" | "Restarting" | "Unknown";
 }
 
+// V1-RMD-331 (independent 2026-09-26 audit, finding K10): resolves a
+// manager-supplied username into the userId SecurityAdministration's
+// revoke-sessions/force-unlock actions require. isLocked reflects the
+// account's password lockout only (matches AccountRecoveryService.ForceUnlockAsync's
+// own scope, never the separate PIN lockout).
+export interface UserLookupResult {
+  userId: string;
+  displayName: string;
+  active: boolean;
+  isLocked: boolean;
+}
+
 // V14-QNB-006: userId/vergiTcKimlikNo are not secret (they identify WHICH
 // tenant, not a credential) so they round-trip back; the password never does.
 export interface QnbCredentialStatus {

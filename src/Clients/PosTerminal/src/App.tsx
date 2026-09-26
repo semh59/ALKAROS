@@ -34,6 +34,9 @@ const CustomerDisplayScreensaverSettings = lazy(() =>
 const BusinessIdentitySettings = lazy(() =>
   import("./routes/BusinessIdentitySettings").then((m) => ({ default: m.BusinessIdentitySettings })),
 );
+const SecurityAdministration = lazy(() =>
+  import("./routes/SecurityAdministration").then((m) => ({ default: m.SecurityAdministration })),
+);
 
 export function App() {
   if (window.location.pathname.startsWith("/display")) {
@@ -89,6 +92,13 @@ export function App() {
     return (
       <Suspense fallback={null}>
         <BusinessIdentitySettings />
+      </Suspense>
+    );
+  }
+  if (window.location.pathname.startsWith("/settings/security")) {
+    return (
+      <Suspense fallback={null}>
+        <SecurityAdministration />
       </Suspense>
     );
   }

@@ -1,4 +1,5 @@
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Host.Experience.Observability;
@@ -65,6 +66,28 @@ public static class SecurityAdministrationEndpoints
         ArgumentNullException.ThrowIfNull(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/security");
         group.AddEndpointFilter<SecurityAdministrationEndpointFilter>();
+
+        // V1-RMD-331 (independent 2026-09-26 audit, finding K10): revoke-sessions/force-unlock
+        // above already existed but had no way for a manager to turn a username into the
+        // userId they require — AccountRecoveryService's own doc comment deliberately keeps
+        // username lookup out of ITS scope ("never a username lookup by a stranger"), but an
+        // authorized manager already past this group's security.manage gate is not a
+        // stranger. Read-only, reuses IUserStore.GetByUsernameAsync as-is.
+        group.MapGet("/users/lookup", async (
+            string username,
+            IUserStore users,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var user = await users.GetByUsernameAsync(username, cancellationToken);
+            return user is null
+                ? Results.Json(
+                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                        "NOT_FOUND", "İstenen kullanıcı bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
+                    statusCode: StatusCodes.Status404NotFound)
+                : Results.Ok(new UserLookupResultV1(
+                    user.UserId, user.DisplayName, user.Active, user.LockedUntil.HasValue && user.LockedUntil.Value > DateTimeOffset.UtcNow));
+        });
 
         group.MapPost("/users/{userId:guid}/revoke-sessions", async (
             Guid userId,
@@ -194,6 +217,8 @@ public sealed record DiagnosticBundleRequestV1(
     DateTimeOffset WindowStart,
     DateTimeOffset WindowEnd,
     string? Reason);
+
+public sealed record UserLookupResultV1(Guid UserId, string DisplayName, bool Active, bool IsLocked);
 
 public sealed record RevokeSessionsResultV1(Guid UserId, int RevokedSessions);
 

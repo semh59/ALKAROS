@@ -15,6 +15,7 @@ import type {
   RuntimeConfiguration,
   SettingRecord,
   TokenTerminalCredentialStatus,
+  UserLookupResult,
 } from "./contracts";
 
 // V1-CDP-002/004: fetchIdleScreensaver's result — the content type decides
@@ -341,6 +342,23 @@ export const api = {
     request<QnbConnectionTestResult>(`/api/v1/terminals/${terminalId}/qnb-credential/test-connection`, {
       method: "POST",
     }),
+  // V1-RMD-331 (independent 2026-09-26 audit, finding K10): the manager-only
+  // /api/v1/management/security surface already exists server-side, gated by
+  // the alkaros.manager cookie a login minting catalog.manage already leaves
+  // in the browser — no separate management login is needed here. lookupUser
+  // resolves a username to the userId the other two actually require.
+  lookupUser: (username: string) =>
+    request<UserLookupResult>(`/api/v1/management/security/users/lookup?username=${encodeURIComponent(username)}`),
+  revokeAllSessions: (userId: string) =>
+    request<{ userId: string; revokedSessions: number }>(
+      `/api/v1/management/security/users/${userId}/revoke-sessions`,
+      { method: "POST" },
+    ),
+  forceUnlockUser: (userId: string) =>
+    request<{ userId: string; unlocked: boolean }>(
+      `/api/v1/management/security/users/${userId}/force-unlock`,
+      { method: "POST" },
+    ),
   // V1-CUI-012: public/session-free, same endpoint the QR customer pages
   // use — reading it also self-registers business.name/business.accent_theme
   // (BusinessNameSetting/BusinessAccentThemeSetting) if this is the very

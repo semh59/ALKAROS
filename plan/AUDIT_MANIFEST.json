@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1345,
-  "markdown_line_count": 103550,
-  "markdown_byte_count": 5969485,
+  "markdown_file_count": 1346,
+  "markdown_line_count": 103646,
+  "markdown_byte_count": 5976187,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "BB3728B39E232671A214BBD76FC3F71B39E326D7FC6AB0043C4742795F6F6C27",
-      "lines": 2621,
-      "bytes": 382385,
+      "sha256": "BFE818C790413D8C0F61CC2C66A80CB8268E0D49C6A6435A1D9553FCE27ED891",
+      "lines": 2622,
+      "bytes": 382574,
       "utf8": true
     },
     {
@@ -7459,6 +7459,13 @@
       "sha256": "3EA62D33E2F081C13BF4A0135C90931062E6EF07E385F16A54D9BD10CA758540",
       "lines": 65,
       "bytes": 2790,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-331-security-recovery-endpoints-reachable-from-posterminal.md",
+      "sha256": "F3BC62011A5C720E59B9CA1D934F2B0327ECBB4BD73D67BF933047D465A90BF4",
+      "lines": 95,
+      "bytes": 6513,
       "utf8": true
     },
     {

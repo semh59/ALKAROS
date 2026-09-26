@@ -73,6 +73,27 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
 
     private static string UnlockPath(Guid userId) => $"/api/v1/management/security/users/{userId:D}/force-unlock";
 
+    private static string LookupPath(string username) => $"/api/v1/management/security/users/lookup?username={Uri.EscapeDataString(username)}";
+
+    [Fact]
+    public async Task LookupResolvesAUsernameToTheUserIdTheOtherTwoActionsRequireAndOnlyAManagerMayUseIt()
+    {
+        using var anonymous = CreateClient(null);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync(LookupPath(SecurityAdministrationTestDatabase.TargetUsername))).StatusCode);
+        using var viewOnly = CreateClient(SecurityAdministrationTestDatabase.ViewOnlyManagerToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await viewOnly.GetAsync(LookupPath(SecurityAdministrationTestDatabase.TargetUsername))).StatusCode);
+
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+        var found = await manager.GetFromJsonAsync<JsonElement>(LookupPath(SecurityAdministrationTestDatabase.TargetUsername));
+        Assert.Equal(SecurityAdministrationTestDatabase.TargetUserId, found.GetProperty("userId").GetGuid());
+        Assert.Equal("Target User", found.GetProperty("displayName").GetString());
+        Assert.True(found.GetProperty("active").GetBoolean());
+        Assert.True(found.GetProperty("isLocked").GetBoolean());
+
+        using var missing = await manager.GetAsync(LookupPath("no-such-user-rmd331"));
+        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+    }
+
     [Fact]
     public async Task OnlyAManagerSessionHoldingSecurityManageMayUseTheSurface()
     {

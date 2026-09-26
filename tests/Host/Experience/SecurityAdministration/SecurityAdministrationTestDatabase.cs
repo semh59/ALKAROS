@@ -23,6 +23,7 @@ public sealed class SecurityAdministrationTestDatabase : PgTestDatabase
     public static readonly Guid ViewOnlyManagerUserId = Guid.NewGuid();
     public static readonly Guid SupervisorDeviceUserId = Guid.NewGuid();
     public static readonly Guid TargetUserId = Guid.NewGuid();
+    public static string TargetUsername => $"rmd266-target-{TargetUserId:N}";
     public const string ManagerToken = "rmd266-manager-token";
     public const string ViewOnlyManagerToken = "rmd266-view-only-manager-token";
     public const string SupervisorDeviceToken = "rmd266-supervisor-device-token";
