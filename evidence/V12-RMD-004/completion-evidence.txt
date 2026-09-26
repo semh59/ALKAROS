@@ -1,0 +1,40 @@
+V12-RMD-004 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 0934352a.
+Provider shapes used (items[].instructions/status/replaced_id, payment.sub_total) come from the public Partner API
+v2.0.2 page only (items[].status is documented only by the example "IN_CART"); UNVERIFIED DRAFT, V0-YSP-001 Blocked.
+
+Changes:
+- Second RECEIVED guard: an earlier Rejected/Diverged event with providerCancellationRequested=true makes a later
+  RECEIVED close as SkippedCancellationRequested (no order).
+- items[].instructions -> order item notes (cleaned, <= 200); items[].status other than IN_CART/absent/null, or a
+  non-empty replaced_id -> Rejected UnsupportedItemStatus (no provider cancellation; left to a person).
+- payment.sub_total compared with the lines; mismatch recorded (totalsMatch/providerSubTotal/localSubTotal), order
+  not stopped; new V12-REC-001 pair ProviderTotalMismatch (manual, never reopens).
+- Unknown delivery kind: the V12-MAP-002 mapper already stops RECEIVED+PICKUP as UnknownStatus before
+  normalization (the audit's "accepted but never handed over" did not happen); the real gap was that UnknownStatus
+  events were invisible. New V12-REC-001 pair ProviderStatusUnknown (manual, never reopens). The normalizer also
+  refuses such a delivery kind (UnsupportedTransportType) as a second line of defence. Showing UnknownStatus in the
+  online operations screen is V12-RMD-006's (OnlineOperationsEndpoints.cs is outside this task's surface).
+- Retries: next_attempt_at, 10 s x 2^(n-1) capped at 600 s, MaxAttempts 8; a non-shutdown
+  OperationCanceledException now uses up an attempt.
+- Migration 150: inbox next_attempt_at; unique index orders(source_external_id) WHERE source='Online'.
+- PosTerminal Turkish labels for the two new rejection reasons.
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- OrderNormalization 32/32 (+14), WebhookInbox 21/21, StatusSync 15/15, AvailabilityPublishing 10/10,
+  CatalogPublishing 11/11, Reconciliation/OnlineOrders 17/17 (+2), Host OnlineOrdering 46/46 (+11),
+  Host Reconciliation 12/12 (scan now reports 7 sources), Reporting/Channels 4/4, ModuleBoundaries 9/9,
+  MigrationComposition 161/161; PosTerminal online-operations vitest 7/7
+- migration 150 down -> up exercised by TheIntakeCorrectnessMigrationRollsBackAndReapplies
+- consistency_audit clean; project_manifest VALID; plan_audit validate 0/0
+
+Mutations (each: backup, mutate, test, cp restore, cmp verified; 11/11 killed):
+M1 second-RECEIVED guard off -> 1 failed        M7 unique index made non-unique -> 1 failed
+M2 instructions not copied to notes -> 1        M8 unknown-status pair reads nothing -> 1
+M3 item status check off -> 2                   M9 normalizer transport check removed -> 2
+M4 totals always "match" -> 1                   M10 total pair reads matching rows too -> 1
+M5 claim ignores next_attempt_at -> 1           M11 wait not exponential -> 1
+M6 timeout OCE not counted -> 1
+Process note: an earlier run of this mutation loop had no restore step and stacked all 11 mutations in the
+worktree; they were reversed one by one (no git checkout) and this clean per-mutation run replaced it.

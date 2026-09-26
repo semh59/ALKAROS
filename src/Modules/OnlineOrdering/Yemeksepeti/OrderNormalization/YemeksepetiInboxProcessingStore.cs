@@ -31,6 +31,12 @@ public enum InboxProcessingOutcome
     /// <summary>V12-ONL-003: a new-order event arrived after the provider had already cancelled that order; no order was created.</summary>
     SkippedCancelledOrder,
 
+    /// <summary>
+    /// V12-RMD-004: a new-order event arrived for an order this restaurant had already asked the provider to cancel
+    /// (an earlier event was refused with a cancellation request); no order was created.
+    /// </summary>
+    SkippedCancellationRequested,
+
     /// <summary>Processing kept failing; closed after <see cref="YemeksepetiInboxProcessingStore.MaxAttempts"/> attempts for review.</summary>
     Failed
 }
@@ -49,7 +55,11 @@ public sealed record ClaimedInboxEvent(
 /// </summary>
 public static class YemeksepetiInboxProcessingStore
 {
-    public const int MaxAttempts = 5;
+    public const int MaxAttempts = 8;
+
+    /// <summary>V12-RMD-004: the wait before retry n is 10 s x 2^(n-1), at most 10 minutes (about 30 minutes in all).</summary>
+    public const int FirstRetryDelaySeconds = 10;
+    public const int MaxRetryDelaySeconds = 600;
 
     public static async Task<ClaimedInboxEvent?> ClaimNextAsync(
         IReadOnlyCollection<string> deferredStatuses,
@@ -63,6 +73,7 @@ public static class YemeksepetiInboxProcessingStore
             SELECT inbox_id, external_order_id, provider_status, received_at, payload_envelope
             FROM online_ordering.yemeksepeti_webhook_inbox
             WHERE processed_at IS NULL AND NOT (provider_status = ANY($1))
+              AND (next_attempt_at IS NULL OR next_attempt_at <= now())
             ORDER BY processing_attempts, received_at, inbox_id
             LIMIT 1
             FOR UPDATE SKIP LOCKED;
@@ -121,12 +132,15 @@ public static class YemeksepetiInboxProcessingStore
             SET processing_attempts = processing_attempts + 1,
                 last_error = left($2, 200),
                 processed_at = CASE WHEN processing_attempts + 1 >= $3 THEN now() END,
-                processing_outcome = CASE WHEN processing_attempts + 1 >= $3 THEN 'Failed' END
+                processing_outcome = CASE WHEN processing_attempts + 1 >= $3 THEN 'Failed' END,
+                next_attempt_at = now() + make_interval(secs => LEAST($5, $4 * power(2, processing_attempts)))
             WHERE inbox_id = $1 AND processed_at IS NULL;
             """, connection);
         command.Parameters.AddWithValue(inboxId);
         command.Parameters.AddWithValue(error);
         command.Parameters.AddWithValue(MaxAttempts);
+        command.Parameters.AddWithValue((double)FirstRetryDelaySeconds);
+        command.Parameters.AddWithValue((double)MaxRetryDelaySeconds);
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
@@ -143,7 +157,7 @@ public static class YemeksepetiInboxProcessingStore
             """
             UPDATE online_ordering.yemeksepeti_webhook_inbox
             SET processed_at = NULL, processing_outcome = NULL, order_id = NULL, outcome_detail = NULL,
-                processing_attempts = 0, last_error = NULL
+                processing_attempts = 0, last_error = NULL, next_attempt_at = NULL
             WHERE inbox_id = $1
               AND processing_outcome IN ('Rejected', 'Failed')
               AND NOT COALESCE((outcome_detail->>'providerCancellationRequested')::boolean, false);

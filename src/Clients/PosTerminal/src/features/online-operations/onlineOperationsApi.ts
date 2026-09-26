@@ -125,6 +125,8 @@ const reasonLabels: Record<string, string> = {
   OutOfStock: "Stok yetersiz",
   NotConfigured: "Stok tanımı eksik",
   CancelledAfterHandover: "Teslimden sonra iptal edildi",
+  UnsupportedTransportType: "Desteklenmeyen teslim türü",
+  UnsupportedItemStatus: "Değiştirilmiş veya desteklenmeyen kalem",
 };
 export const cancellationReasonLabels: Record<CancellationReason, string> = {
   Closed: "Restoran kapalı",

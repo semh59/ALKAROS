@@ -109,6 +109,70 @@ public sealed class YemeksepetiOrderNormalizerTests : IClassFixture<Normalizatio
         }, options => options.WithStrictOrdering());
     }
 
+    private static string ItemWith(string sku, string extra) =>
+        "{\"_id\":\"i-" + sku + "\",\"sku\":\"" + sku + "\",\"name\":\"provider name\"," + extra
+        + "\"pricing\":{\"pricing_type\":\"UNIT\",\"quantity\":2,\"unit_price\":145.5}}";
+
+    [Fact]
+    public async Task ItemInstructionsAreKeptCleanedAndBoundedOnTheLine()
+    {
+        var (_, sku) = await _db.SeedMappedProductAsync();
+        var longNote = new string('x', 250);
+
+        var plain = await _normalizer.NormalizeAsync(Order(ItemWith(sku, "\"instructions\":\" Soğansız\\u0007 \",")), ReceivedAt);
+        var bounded = await _normalizer.NormalizeAsync(Order(ItemWith(sku, "\"instructions\":\"" + longNote + "\",")), ReceivedAt);
+        var none = await _normalizer.NormalizeAsync(Order(Item(sku)), ReceivedAt);
+
+        plain.Order!.Lines.Single().Instructions.Should().Be("Soğansız");
+        bounded.Order!.Lines.Single().Instructions.Should().HaveLength(200);
+        none.Order!.Lines.Single().Instructions.Should().BeNull();
+    }
+
+    [Theory]
+    [InlineData("\"status\":\"IN_CART\",", null)]
+    [InlineData("\"status\":null,", null)]
+    [InlineData("\"replaced_id\":null,", null)]
+    [InlineData("\"replaced_id\":\"\",", null)]
+    [InlineData("\"status\":\"REMOVED\",", NormalizationRejection.UnsupportedItemStatus)]
+    [InlineData("\"status\":7,", NormalizationRejection.UnsupportedItemStatus)]
+    [InlineData("\"replaced_id\":\"9a1b\",", NormalizationRejection.UnsupportedItemStatus)]
+    public async Task OnlyTheDocumentedItemStatusBecomesALine(string extra, NormalizationRejection? expected)
+    {
+        var (_, sku) = await _db.SeedMappedProductAsync();
+
+        var result = await _normalizer.NormalizeAsync(Order(ItemWith(sku, extra)), ReceivedAt);
+
+        result.Rejection.Should().Be(expected);
+    }
+
+    [Theory]
+    [InlineData("PICKUP")]
+    [InlineData("DINE_IN")]
+    public async Task ADeliveryKindWithNoDocumentedHandoverIsRefused(string transportType)
+    {
+        var (_, sku) = await _db.SeedMappedProductAsync();
+
+        var result = await _normalizer.NormalizeAsync(Order(Item(sku)).Replace("LOGISTICS_DELIVERY", transportType), ReceivedAt);
+
+        result.Rejection.Should().Be(NormalizationRejection.UnsupportedTransportType);
+        result.Detail.Should().Be(transportType);
+    }
+
+    [Theory]
+    [InlineData(",\"payment\":{\"sub_total\":291.00}", true)]
+    [InlineData(",\"payment\":{\"sub_total\":290.00}", false)]
+    [InlineData(",\"payment\":{\"sub_total\":\"291\"}", null)]
+    [InlineData("", null)]
+    public async Task TheProviderSubTotalIsComparedWithTheLines(string payment, bool? match)
+    {
+        var (_, sku) = await _db.SeedMappedProductAsync();
+
+        var result = await _normalizer.NormalizeAsync(Order(Item(sku), payment), ReceivedAt);
+
+        result.Order!.LocalSubTotal.Should().Be(291m);
+        result.Order.TotalsMatch.Should().Be(match);
+    }
+
     [Fact]
     public async Task OneUnmappedLineRejectsTheWholeOrder()
     {

@@ -1279,6 +1279,15 @@
         "online_order_retry_attempts"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "150",
+      "phase": "B",
+      "tables": [
+        "yemeksepeti_webhook_inbox",
+        "orders"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

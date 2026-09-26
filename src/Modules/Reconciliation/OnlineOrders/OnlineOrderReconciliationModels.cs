@@ -22,6 +22,12 @@ public static class OnlineOrderDivergenceKind
 
     /// <summary>A channel was never told a product's current sellable quantity.</summary>
     public const string AvailabilityNotDelivered = "AvailabilityNotDelivered";
+
+    /// <summary>V12-RMD-004: the provider's sub-total differed from the lines the local order was built from.</summary>
+    public const string ProviderTotalMismatch = "ProviderTotalMismatch";
+
+    /// <summary>V12-RMD-004: a provider event with a status or delivery kind the mapper does not know; nothing was done locally.</summary>
+    public const string ProviderStatusUnknown = "ProviderStatusUnknown";
 }
 
 /// <summary>The safe next action each case carries; only the first three can be retried from the case.</summary>

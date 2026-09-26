@@ -18,6 +18,7 @@ const queue: OnlineOperationsQueue = {
     { inboxId: "p-1", externalOrderId: "ext-1", providerStatus: "RECEIVED", outcome: "Rejected", reason: "UnmappedSku", attempts: 0, receivedAt: "2026-09-26T09:00:00Z" },
     { inboxId: "p-2", externalOrderId: "ext-2", providerStatus: "RECEIVED", outcome: "Diverged", reason: "OutOfStock", attempts: 0, receivedAt: "2026-09-26T09:10:00Z" },
     { inboxId: "p-3", externalOrderId: "ext-3", providerStatus: "RECEIVED", outcome: "Retrying", reason: "SomeFutureCode", attempts: 2, receivedAt: "2026-09-26T09:20:00Z" },
+    { inboxId: "p-4", externalOrderId: "ext-4", providerStatus: "RECEIVED", outcome: "Rejected", reason: "UnsupportedItemStatus", attempts: 0, receivedAt: "2026-09-26T09:30:00Z" },
   ],
   retries: { pendingProviderEvents: 1, catalogPublicationsRetrying: 2, availabilityDivergences: 0 },
 };
@@ -59,10 +60,11 @@ describe("OnlineOperationsWorkspace", () => {
     expect(text).toContain("Eşlenmemiş ürün");
     expect(text).toContain("Stok yetersiz");
     expect(text).toContain("Yeniden deneniyor");
+    expect(text).toContain("Değiştirilmiş veya desteklenmeyen kalem");
     expect(text).toContain("Yeniden denenen katalog yayını: 2");
     // Unknown server values fall back to Turkish, raw codes never reach the screen.
     expect(text).toContain("Diğer");
-    for (const raw of ["PendingConfirmation", "Accepted", "UnmappedSku", "OutOfStock", "SomethingNew", "SomeFutureCode", "Rejected", "Diverged"]) {
+    for (const raw of ["PendingConfirmation", "Accepted", "UnmappedSku", "OutOfStock", "SomethingNew", "SomeFutureCode", "Rejected", "Diverged", "UnsupportedItemStatus"]) {
       expect(text).not.toContain(raw);
     }
   });

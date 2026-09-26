@@ -23,6 +23,8 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
     private const string Secret = "Bearer static-portal-token";
 
     private static readonly string?[] CreatedThenReplayed = ["OrderCreated", "OrderAlreadyExists"];
+    private static readonly string?[] DivergedThenSkipped = ["Diverged", "SkippedCancellationRequested"];
+    private static readonly string?[] AllergyNote = ["Soğansız, fıstık alerjisi"];
 
     private readonly OnlineOrderingTestDatabase _database = new();
     private WebApplication? _app;
@@ -221,12 +223,18 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
         await StoreAsync(Delivery(healthy, "RECEIVED", "t1", (sku, 1)));
 
         var failures = 0;
-        for (var pass = 0; pass < 10; pass++)
+        for (var pass = 0; pass < 30; pass++)
         {
             try
             {
                 if (!await Intake.ProcessNextAsync())
-                    break;
+                {
+                    // V12-RMD-004: the poisoned event waits between attempts; nothing else is left, so its wait
+                    // is made due. Stop once it is closed and nothing waits any more.
+                    if ((await _database.InboxAsync(poisoned))[0].Outcome is not null)
+                        break;
+                    await _database.ExpireRetryWaitsAsync();
+                }
             }
             catch (Exception)
             {
@@ -238,6 +246,196 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
         var poison = Assert.Single(await _database.InboxAsync(poisoned));
         Assert.Equal(("Failed", YemeksepetiInboxProcessingStore.MaxAttempts), (poison.Outcome, poison.Attempts));
         Assert.Equal("OrderCreated", Assert.Single(await _database.InboxAsync(healthy)).Outcome);
+    }
+
+    private static byte[] Custom(string orderId, string updatedAt, string transportType, string itemExtra, string sku, string paymentJson = "")
+    {
+        var json = "{\"order_id\":\"" + orderId + "\",\"external_order_id\":\"YS-" + orderId[..6] + "\",\"status\":\"RECEIVED\","
+                   + "\"transport_type\":\"" + transportType + "\",\"comment\":\"Kapıda ödeme yok, 0555 111 22 33\","
+                   + "\"items\":[{\"_id\":\"" + Guid.NewGuid().ToString("N") + "\",\"sku\":\"" + sku + "\",\"name\":\"Pide\","
+                   + itemExtra
+                   + "\"pricing\":{\"pricing_type\":\"UNIT\",\"quantity\":1,\"unit_price\":150.00}}]"
+                   + paymentJson + ",\"sys\":{\"updated_at\":\"" + updatedAt + "\"}}";
+        return Encoding.UTF8.GetBytes(json);
+    }
+
+    [Fact]
+    public async Task AFailingEventWaitsLongerAfterEachAttemptAndIsNotClaimedBeforeItIsDue()
+    {
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 1m);
+        var poisoned = NewOrderId();
+        await StoreAsync(Delivery(poisoned, "RECEIVED", "t1", (sku, 1)));
+        await _database.CorruptEnvelopeAsync(poisoned);
+
+        await Assert.ThrowsAnyAsync<Exception>(() => Intake.ProcessNextAsync());
+        var firstWait = await _database.SecondsUntilNextAttemptAsync(poisoned);
+        Assert.False(await Intake.ProcessNextAsync());
+
+        await _database.ExpireRetryWaitsAsync();
+        await Assert.ThrowsAnyAsync<Exception>(() => Intake.ProcessNextAsync());
+        var secondWait = await _database.SecondsUntilNextAttemptAsync(poisoned);
+
+        Assert.InRange(firstWait, 5, 11);
+        Assert.InRange(secondWait, 15, 21);
+    }
+
+    [Fact]
+    public async Task ATimeoutThatIsNotAShutdownUsesUpAnAttempt()
+    {
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 1m);
+        var orderId = NewOrderId();
+        await StoreAsync(Delivery(orderId, "RECEIVED", "t1", (sku, 1)));
+        var secrets = new InMemorySecretProvider();
+        secrets.Set(new SecretReference("envelope-master-key"), EnvelopeKey());
+        secrets.Set(YemeksepetiWebhookInbox.WebhookSecret, Secret);
+        var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
+        builder.Services.AddSingleton(_database.DataSource);
+        builder.Services.AddSingleton<ISecretProvider>(secrets);
+        builder.Services.AddOrderManagementExperience();
+        builder.Services.AddYemeksepetiWebhookExperience();
+        builder.Services.AddSingleton<ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.IYemeksepetiProductMappingService, TimingOutMappings>();
+        await using var app = builder.Build();
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => app.Services.GetRequiredService<YemeksepetiOrderIntakeService>().ProcessNextAsync());
+
+        var inbox = Assert.Single(await _database.InboxAsync(orderId));
+        Assert.Equal((null, 1), (inbox.Outcome, inbox.Attempts));
+    }
+
+    private string EnvelopeKey() =>
+        _app!.Services.GetRequiredService<ISecretProvider>().GetValue(new SecretReference("envelope-master-key"))!;
+
+    private sealed class TimingOutMappings : ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.IYemeksepetiProductMappingService
+    {
+        public Task<ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.ProductMappingResolution> ResolveAsync(
+            string externalSku, DateTimeOffset asOf, CancellationToken cancellationToken = default) =>
+            throw new OperationCanceledException("The mapping lookup timed out.");
+
+        public Task<ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.YemeksepetiProductMapping> MapAsync(
+            string externalSku, Guid productId, DateTimeOffset effectiveFrom, Guid actorId, CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public Task<string?> FindOpenSkuForProductAsync(Guid productId, CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+
+        public Task<IReadOnlyList<ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.YemeksepetiProductMapping>> ListOpenMappingsAsync(
+            int limit, CancellationToken cancellationToken = default) =>
+            throw new NotSupportedException();
+    }
+
+    [Fact]
+    public async Task ASecondReceivedAfterARefusalWithACancellationRequestCreatesNoOrder()
+    {
+        var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 0m);
+        var orderId = NewOrderId();
+        await StoreAsync(Delivery(orderId, "RECEIVED", "t1", (sku, 1)));
+        Assert.Equal(1, await DrainAsync());
+
+        // Stock arrives, then the provider sends the same order again with a new update time.
+        await _database.AddOnHandAsync(productId, 5m);
+        await StoreAsync(Delivery(orderId, "RECEIVED", "t2", (sku, 1)));
+        Assert.Equal(1, await DrainAsync());
+
+        Assert.Empty(await _database.OnlineOrdersAsync(orderId));
+        Assert.Equal(DivergedThenSkipped, (await _database.InboxAsync(orderId)).Select(e => e.Outcome).ToArray());
+    }
+
+    [Fact]
+    public async Task ItemInstructionsBecomeTheItemNoteWhileTheOrderCommentDoesNot()
+    {
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var orderId = NewOrderId();
+        await StoreAsync(Custom(orderId, "t1", "LOGISTICS_DELIVERY", "\"instructions\":\"Soğansız, fıstık alerjisi\",\"status\":\"IN_CART\",", sku));
+
+        Assert.Equal(1, await DrainAsync());
+
+        var order = Assert.Single(await _database.OnlineOrdersAsync(orderId));
+        Assert.Equal(AllergyNote, (await _database.OrderItemNotesAsync(order.OrderId)).ToArray());
+    }
+
+    [Fact]
+    public async Task ANewOrderWithAnUnknownDeliveryKindCreatesNothingAndIsRecordedAsUnknown()
+    {
+        // The status mapper stops it before normalization (no documented handover exists for it); V12-RMD-004 makes
+        // such an event a reconciliation case instead of a silent dead end.
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var orderId = NewOrderId();
+        await StoreAsync(Custom(orderId, "t1", "PICKUP", "", sku));
+
+        Assert.Equal(1, await DrainAsync());
+
+        Assert.Empty(await _database.OnlineOrdersAsync(orderId));
+        Assert.Equal("UnknownStatus", Assert.Single(await _database.InboxAsync(orderId)).Outcome);
+        Assert.Empty(await _database.OutboundStatusUpdatesAsync(orderId));
+    }
+
+    [Theory]
+    [InlineData("LOGISTICS_DELIVERY", "\"status\":\"REMOVED\",", "UnsupportedItemStatus")]
+    [InlineData("LOGISTICS_DELIVERY", "\"replaced_id\":\"a1b2\",", "UnsupportedItemStatus")]
+    public async Task AnOrderThatCouldNeverBeHandledIsRefusedForAPersonWithoutACancellationRequest(
+        string transportType, string itemExtra, string rejection)
+    {
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var orderId = NewOrderId();
+        await StoreAsync(Custom(orderId, "t1", transportType, itemExtra, sku));
+
+        Assert.Equal(1, await DrainAsync());
+
+        Assert.Empty(await _database.OnlineOrdersAsync(orderId));
+        var inbox = Assert.Single(await _database.InboxAsync(orderId));
+        Assert.Equal("Rejected", inbox.Outcome);
+        Assert.Contains($"\"rejection\": \"{rejection}\"", inbox.Detail);
+        Assert.Contains("\"providerCancellationRequested\": false", inbox.Detail);
+        Assert.Empty(await _database.OutboundStatusUpdatesAsync(orderId));
+    }
+
+    [Theory]
+    [InlineData(",\"payment\":{\"sub_total\":150.00,\"order_total\":165.00}", "true")]
+    [InlineData(",\"payment\":{\"sub_total\":140.00,\"order_total\":155.00}", "false")]
+    public async Task TheProviderSubTotalIsComparedAndRecordedWithoutStoppingTheOrder(string payment, string match)
+    {
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var orderId = NewOrderId();
+        await StoreAsync(Custom(orderId, "t1", "VENDOR_DELIVERY", "", sku, payment));
+
+        Assert.Equal(1, await DrainAsync());
+
+        Assert.Single(await _database.OnlineOrdersAsync(orderId));
+        var inbox = Assert.Single(await _database.InboxAsync(orderId));
+        Assert.Equal("OrderCreated", inbox.Outcome);
+        Assert.Contains($"\"totalsMatch\": {match}", inbox.Detail);
+        Assert.Contains("\"localSubTotal\": 150", inbox.Detail);
+    }
+
+    [Fact]
+    public async Task TheDatabaseRefusesASecondLocalOrderForOneProviderOrder()
+    {
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var orderId = NewOrderId();
+        await StoreAsync(Delivery(orderId, "RECEIVED", "t1", (sku, 1)));
+        Assert.Equal(1, await DrainAsync());
+
+        var duplicate = await Assert.ThrowsAsync<Npgsql.PostgresException>(() => _database.ExecAsync(
+            """
+            INSERT INTO orders.orders (order_id, source, source_external_id, status, confirmation_status, order_number, created_at, updated_at)
+            VALUES (gen_random_uuid(), 'Online', @external, 'Accepted', 'Accepted', @number, now(), now());
+            """,
+            ("external", orderId), ("number", "DUP-" + orderId[..8])));
+        Assert.Equal("23505", duplicate.SqlState);
+    }
+
+    [Fact]
+    public async Task TheIntakeCorrectnessMigrationRollsBackAndReapplies()
+    {
+        await _database.RunFixtureAsync("150-online-intake-backoff-and-unique-order.down.sql");
+        await _database.RunFixtureAsync("150-online-intake-backoff-and-unique-order.up.sql");
+        var (_, sku) = await _database.SeedSellableProductAsync(onHand: 1m);
+        var orderId = NewOrderId();
+        await StoreAsync(Delivery(orderId, "RECEIVED", "t1", (sku, 1)));
+
+        Assert.Equal(1, await DrainAsync());
+        Assert.Equal("OrderCreated", Assert.Single(await _database.InboxAsync(orderId)).Outcome);
     }
 
     [Fact]

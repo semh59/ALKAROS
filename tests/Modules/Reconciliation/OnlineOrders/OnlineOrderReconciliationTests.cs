@@ -36,6 +36,8 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
             new ProviderEventFailedSourcePair(_dataSource),
             new CancelledAfterHandoverSourcePair(_dataSource),
             new AvailabilityNotDeliveredSourcePair(_dataSource),
+            new ProviderTotalMismatchSourcePair(_dataSource),
+            new ProviderStatusUnknownSourcePair(_dataSource),
         ];
     }
 
@@ -251,6 +253,54 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         await Scanner(new CancelledAfterHandoverSourcePair(_dataSource)).ScanAllAsync();
         (await CasesForKeyAsync(key)).Should().Be(1);
         (await _cases.GetActiveCaseByDedupKeyAsync(key)).Should().BeNull();
+    }
+
+    [Fact]
+    public async Task AProviderSubTotalDifferenceIsACaseForAPersonAndNeverReopens()
+    {
+        var externalId = NewExternalId();
+        var orderId = await _database.SeedOnlineOrderAsync(externalId, "Accepted", 150m);
+        await _database.SeedInboxAsync(externalId, "OrderCreated", orderId,
+            new { totalsMatch = false, providerSubTotal = 140.00m, localSubTotal = 150.00m });
+        var matching = NewExternalId();
+        var matchingOrder = await _database.SeedOnlineOrderAsync(matching, "Accepted", 150m);
+        await _database.SeedInboxAsync(matching, "OrderCreated", matchingOrder,
+            new { totalsMatch = true, providerSubTotal = 150.00m, localSubTotal = 150.00m });
+
+        var pair = new ProviderTotalMismatchSourcePair(_dataSource);
+        await Scanner(pair).ScanAllAsync();
+
+        var key = ProviderTotalMismatchSourcePair.DeduplicationPrefix + externalId;
+        var record = await ActiveCaseAsync(key);
+        record.DiscrepancyAmount.Should().Be(10m);
+        record.SourceARef.Should().Be($"orders.orders:{orderId}");
+        (await CasesForKeyAsync(ProviderTotalMismatchSourcePair.DeduplicationPrefix + matching)).Should().Be(0);
+        (await Actions().RetryAsync(record.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.NotRetryable);
+
+        (await Actions().ResolveAsync(record.CaseId, record.RowVersion, "Sağlayıcı indirimi, fark kabul edildi.", Manager)).Outcome
+            .Should().Be(OnlineOrderResolveOutcome.Resolved);
+        await Scanner(pair).ScanAllAsync();
+        (await CasesForKeyAsync(key)).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task AnEventWithAnUnknownProviderStatusIsACaseForAPersonAndNeverReopens()
+    {
+        var externalId = NewExternalId();
+        var inbox = await _database.SeedInboxAsync(externalId, "UnknownStatus", detail: new { evidenceId = "u-1" });
+        var pair = new ProviderStatusUnknownSourcePair(_dataSource);
+
+        await Scanner(pair).ScanAllAsync();
+        await Scanner(pair).ScanAllAsync();
+
+        var key = ProviderStatusUnknownSourcePair.DeduplicationPrefix + inbox;
+        (await CasesForKeyAsync(key)).Should().Be(1);
+        var record = await ActiveCaseAsync(key);
+        record.Severity.Should().Be(CaseSeverity.High);
+        (await Actions().ResolveAsync(record.CaseId, record.RowVersion, "Sağlayıcıyla görüşüldü.", Manager)).Outcome
+            .Should().Be(OnlineOrderResolveOutcome.Resolved);
+        await Scanner(pair).ScanAllAsync();
+        (await CasesForKeyAsync(key)).Should().Be(1);
     }
 
     [Fact]

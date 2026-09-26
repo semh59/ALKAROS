@@ -229,6 +229,43 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
         return rows;
     }
 
+    /// <summary>V12-RMD-004: makes every waiting retry due now.</summary>
+    public Task ExpireRetryWaitsAsync() =>
+        ExecAsync("UPDATE online_ordering.yemeksepeti_webhook_inbox SET next_attempt_at = now() - interval '1 second' WHERE processed_at IS NULL AND next_attempt_at IS NOT NULL;");
+
+    /// <summary>V12-RMD-004: seconds until the event's next attempt is due (negative when due).</summary>
+    public async Task<double> SecondsUntilNextAttemptAsync(string externalOrderId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT EXTRACT(EPOCH FROM next_attempt_at - now())::float8 FROM online_ordering.yemeksepeti_webhook_inbox WHERE external_order_id = @id;");
+        command.Parameters.AddWithValue("id", externalOrderId);
+        return (double)(await command.ExecuteScalarAsync())!;
+    }
+
+    /// <summary>V12-RMD-004: the notes of every item of an order.</summary>
+    public async Task<IReadOnlyList<string?>> OrderItemNotesAsync(Guid orderId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT notes FROM orders.order_items WHERE order_id = @id ORDER BY created_at, order_item_id;");
+        command.Parameters.AddWithValue("id", orderId);
+        var notes = new List<string?>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            notes.Add(reader.IsDBNull(0) ? null : reader.GetString(0));
+        return notes;
+    }
+
+    /// <summary>V12-RMD-004: stock arrives for a product's single mapped stock item.</summary>
+    public Task AddOnHandAsync(Guid productId, decimal quantity) =>
+        ExecAsync(
+            """
+            UPDATE inventory.stock_balances b
+            SET on_hand_quantity = on_hand_quantity + @quantity, available_quantity = available_quantity + @quantity,
+                row_version = row_version + 1
+            FROM inventory.product_stock_mappings m
+            WHERE m.product_id = @product AND b.stock_item_id = m.stock_item_id;
+            """,
+            ("product", productId), ("quantity", quantity));
+
     public async Task<IReadOnlyList<(string Status, string Channel)>> HoldsAsync(Guid orderId)
     {
         await using var command = DataSource.CreateCommand(
@@ -310,7 +347,7 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
             ("id", externalOrderId));
     }
 
-    private async Task ExecAsync(string sql, params (string Name, object Value)[] parameters)
+    public async Task ExecAsync(string sql, params (string Name, object Value)[] parameters)
     {
         await using var command = DataSource.CreateCommand(sql);
         foreach (var (name, value) in parameters)

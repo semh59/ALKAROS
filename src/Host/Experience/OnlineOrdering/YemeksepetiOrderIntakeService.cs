@@ -119,8 +119,10 @@ public sealed class YemeksepetiOrderIntakeService
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             return true;
         }
-        catch (Exception ex) when (ex is not OperationCanceledException)
+        catch (Exception ex) when (ex is not OperationCanceledException || !cancellationToken.IsCancellationRequested)
         {
+            // V12-RMD-004: only the host shutting down leaves an attempt uncounted; a timeout is a failure like
+            // any other and must use up an attempt, or the event would be retried forever.
             // Nothing of this attempt survives the rollback; the failure itself is recorded on a
             // separate connection so the event is retried behind healthier ones, then closed.
             await transaction.RollbackAsync(CancellationToken.None).ConfigureAwait(false);
@@ -148,6 +150,16 @@ public sealed class YemeksepetiOrderIntakeService
         {
             await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
                 claimed.InboxId, InboxProcessingOutcome.SkippedCancelledOrder, null, null,
+                connection, transaction, cancellationToken).ConfigureAwait(false);
+            return;
+        }
+
+        if (await CancellationAlreadyRequestedAsync(claimed.ExternalOrderId, connection, transaction, cancellationToken).ConfigureAwait(false))
+        {
+            // V12-RMD-004: an earlier event of this order was refused and the provider was asked to cancel it; a new
+            // RECEIVED (a fresh update time) must not now create the order the provider was told cannot be made.
+            await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
+                claimed.InboxId, InboxProcessingOutcome.SkippedCancellationRequested, null, null,
                 connection, transaction, cancellationToken).ConfigureAwait(false);
             return;
         }
@@ -182,7 +194,7 @@ public sealed class YemeksepetiOrderIntakeService
         var items = onlineOrder.Lines
             .Select(line => new OrderItem(
                 Guid.NewGuid(), orderId, line.ProductId, line.ProductName, line.Quantity, line.UnitPrice, line.TaxRate,
-                skuSnapshot: line.ExternalSku, createdAt: now, updatedAt: now))
+                skuSnapshot: line.ExternalSku, notes: line.Instructions, createdAt: now, updatedAt: now))
             .ToList();
 
         // Stock first: a refusal writes nothing, so there is never an order without its holds.
@@ -246,8 +258,30 @@ public sealed class YemeksepetiOrderIntakeService
 
         await YemeksepetiInboxProcessingStore.MarkProcessedAsync(
             claimed.InboxId, InboxProcessingOutcome.OrderCreated, orderId,
-            new { displayCode = onlineOrder.DisplayCode, transportType = onlineOrder.TransportType },
+            new
+            {
+                displayCode = onlineOrder.DisplayCode,
+                transportType = onlineOrder.TransportType,
+                totalsMatch = onlineOrder.TotalsMatch,
+                providerSubTotal = onlineOrder.ProviderSubTotal,
+                localSubTotal = onlineOrder.LocalSubTotal
+            },
             connection, transaction, cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<bool> CancellationAlreadyRequestedAsync(
+        string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM online_ordering.yemeksepeti_webhook_inbox
+                WHERE external_order_id = $1
+                  AND processing_outcome IN ('Rejected', 'Diverged')
+                  AND COALESCE((outcome_detail->>'providerCancellationRequested')::boolean, false));
+            """, connection, transaction);
+        command.Parameters.AddWithValue(externalOrderId);
+        return (bool)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!;
     }
 
     private static async Task<bool> ProviderAlreadyCancelledAsync(
