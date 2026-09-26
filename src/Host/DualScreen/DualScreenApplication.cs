@@ -176,6 +176,7 @@ public static partial class DualScreenApplication
         builder.Services.AddTokenTerminalSettingsExperience();
         builder.Services.AddQnbCredentialSettingsExperience();
         builder.Services.AddYemeksepetiWebhookExperience();
+        builder.Services.AddOnlineCatalogPublishingExperience();
         builder.Services.AddBillingSplitExperience();
         builder.Services.AddAuthorizationDecisionExperience();
         builder.Services.AddRoleManagementExperience();
@@ -582,6 +583,7 @@ public static partial class DualScreenApplication
         app.MapTokenTerminalSettingsApi();
         app.MapQnbCredentialSettingsApi();
         app.MapYemeksepetiWebhookApi();
+        app.MapOnlineCatalogPublishingApi();
         app.MapBillingSplitApi();
         app.MapAuthorizationDecisionApi();
         app.MapRoleManagementApi();

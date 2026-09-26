@@ -1,0 +1,22 @@
+V12-ONL-004 completion evidence (2026-09-26, worktree ALKAROS-faz3, branch faz3-yemeksepeti)
+Test Postgres: localhost:56433 (postgres:18, UTF8).
+
+UNVERIFIED DRAFT provider call - registered source https://developer.yemeksepeti.com/api-specifications only:
+PUT /v2/chains/{chain_id}/vendors/{vendor_id}/catalog, products[{sku, price|active|quantity}], bulk job_id.
+Adding products (POST /v2/chains/{chain_id}/catalog) is documented as Beta/pilot-only and is NOT used.
+No field exists for names, tax rates, modifiers or our categories -> recorded as UnsupportedCapabilities.
+The acceptance clause "matches the approved provider response" is NOT satisfied here: it needs sandbox access
+and stays with V0-YSP-001 / V20-INT-003 (V12-GOV-004 waiver).
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- dotnet test tests/Modules/OnlineOrdering/CatalogPublishing -> 11/11
+- dotnet test tests/Modules/OnlineOrdering/Yemeksepeti/StatusSync -> 15/15 (2 new catalog-call tests)
+- dotnet test tests/Host/Experience/OnlineOrdering -> 29/29 (3 new HTTP tests)
+- dotnet test tests/Host/MigrationComposition -> 161/161 (host-tests.txt; migration 147)
+- dotnet test tests/Architecture/ModuleBoundaries -> 9/9
+- consistency_audit.py -> clean; project_manifest_tool.py -> VALID; plan_audit_tool.py validate -> 0/0
+Real defect found by the tests: publishing silently re-pointed a catalog SKU already mapped to another product.
+Mutations (backup restore + cmp): Unchanged check off -> 2 failed; SKU ownership check removed -> 1; delivered
+status check removed -> 1; modifier check off -> 1; per-menu lock removed -> 1 (after the race test was made
+genuinely concurrent; the first version let it survive).

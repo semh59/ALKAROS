@@ -1,5 +1,7 @@
 using ALKAROS.IntegrationContracts;
 using ALKAROS.ModuleComposition;
+using ALKAROS.OnlineOrdering.CatalogPublishing;
+using ALKAROS.OnlineOrdering.CatalogPublishing.Yemeksepeti;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
@@ -37,5 +39,10 @@ public sealed class OnlineOrderingModule : IModule
             (ISecretProvider)services.GetService(typeof(ISecretProvider))!,
             TimeProvider.System));
         context.RegisterTransient<IIntegrationEventConsumer, YemeksepetiStatusUpdateConsumer>();
+        // V12-ONL-004: catalog publication per channel, delivered through the outbox.
+        context.RegisterSingleton<TimeProvider>(TimeProvider.System);
+        context.RegisterTransient<ICatalogChannelPublisher, YemeksepetiCatalogPublisher>();
+        context.RegisterTransient<CatalogPublicationService, CatalogPublicationService>();
+        context.RegisterTransient<IIntegrationEventConsumer, CatalogPublicationConsumer>();
     }
 }

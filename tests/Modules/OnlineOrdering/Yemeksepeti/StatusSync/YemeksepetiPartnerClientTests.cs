@@ -160,6 +160,47 @@ public sealed class YemeksepetiPartnerClientTests
         body.RootElement.GetProperty("cancellation").GetProperty("reason").GetString().Should().Be("ITEM_UNAVAILABLE");
     }
 
+    [Fact]
+    public async Task AVendorCatalogUpdateUsesTheDocumentedPathAndOmitsFieldsItDoesNotSet()
+    {
+        var handler = new RecordingHandler();
+        var secrets = Configured();
+        secrets.Set(YemeksepetiPartnerHttpClient.VendorId, "vendor-7");
+        using var client = new YemeksepetiPartnerHttpClient(new HttpClient(handler), secrets, new ManualTime());
+
+        var jobId = await client.UpdateVendorCatalogAsync(
+        [
+            new YemeksepetiCatalogProductUpdate("ys-pide", 145.5m, true, null),
+            new YemeksepetiCatalogProductUpdate("ys-ayran", null, null, 0m)
+        ]);
+
+        var update = handler.Requests[1];
+        update.Method.Should().Be(HttpMethod.Put);
+        update.Url.Should().Be("https://sandbox.partner.deliveryhero.io/v2/chains/chain-42/vendors/vendor-7/catalog");
+        using var body = JsonDocument.Parse(update.Body);
+        var products = body.RootElement.GetProperty("products");
+        products[0].GetProperty("price").GetDecimal().Should().Be(145.5m);
+        products[0].GetProperty("active").GetBoolean().Should().BeTrue();
+        products[0].TryGetProperty("quantity", out _).Should().BeFalse();
+        products[1].GetProperty("quantity").GetDecimal().Should().Be(0m);
+        products[1].TryGetProperty("price", out _).Should().BeFalse();
+        jobId.Should().BeNull("the recorded fake answers without a job_id");
+    }
+
+    [Fact]
+    public async Task AnEmptyOrContentlessCatalogUpdateIsRefusedBeforeAnyCall()
+    {
+        var handler = new RecordingHandler();
+        using var client = new YemeksepetiPartnerHttpClient(new HttpClient(handler), Configured(), new ManualTime());
+
+        var empty = () => client.UpdateVendorCatalogAsync([]);
+        var contentless = () => client.UpdateVendorCatalogAsync([new YemeksepetiCatalogProductUpdate("ys-x", null, null, null)]);
+
+        await empty.Should().ThrowAsync<ArgumentException>();
+        await contentless.Should().ThrowAsync<ArgumentException>();
+        handler.Requests.Should().BeEmpty();
+    }
+
     [Theory]
     [InlineData("LOGISTICS_DELIVERY", YemeksepetiOutboundStatus.ReadyForPickup)]
     [InlineData("VENDOR_DELIVERY", YemeksepetiOutboundStatus.Dispatched)]

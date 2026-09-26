@@ -1,4 +1,6 @@
 using ALKAROS.Catalog.ProductCatalog;
+using ALKAROS.Host.DualScreen;
+using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.MovementLedger;
@@ -36,6 +38,64 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
 
     public async Task RunFixtureAsync(string file) =>
         await RunAsync(DataSource, await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", file)));
+
+    /// <summary>A signed-in staff session on <paramref name="terminalId"/> holding exactly <paramref name="permissionCodes"/>; returns its cookie.</summary>
+    public async Task<string> SeedStaffSessionAsync(Guid terminalId, params string[] permissionCodes)
+    {
+        var userId = Guid.NewGuid();
+        var suffix = userId.ToString("N");
+        var (raw, hash) = DeviceSessionToken.Create();
+        await ExecAsync(
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'not-used', 'Online Ordering Test', true);
+            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, created_at, expires_at)
+            VALUES (@session_id, @user_id, @device_id, @token_hash, now(), now() + interval '1 hour');
+            """,
+            ("user_id", userId), ("username", "online-" + suffix), ("session_id", Guid.NewGuid()),
+            ("device_id", $"cashier:{terminalId:D}"), ("token_hash", hash));
+
+        var roleId = Guid.NewGuid();
+        await ExecAsync("INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @code, 'Online Ordering Test Role');",
+            ("role_id", roleId), ("code", "online-" + suffix));
+        await ExecAsync("INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (@id, @user_id, @role_id);",
+            ("id", Guid.NewGuid()), ("user_id", userId), ("role_id", roleId));
+        foreach (var code in permissionCodes)
+        {
+            await ExecAsync(
+                """
+                INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
+                SELECT @id, @role_id, permission_id FROM identity.permissions WHERE code = @code;
+                """,
+                ("id", Guid.NewGuid()), ("role_id", roleId), ("code", code));
+        }
+
+        return $"{DualScreenApplication.CashierCookieName}={raw}";
+    }
+
+    /// <summary>A menu holding one active, priced product; returns the menu and the product's catalog SKU.</summary>
+    public async Task<(Guid MenuId, Guid ProductId, string CatalogSku)> SeedPublishableMenuAsync(decimal price)
+    {
+        var menuId = Guid.NewGuid();
+        var productId = Guid.NewGuid();
+        var sku = "PUB-" + productId.ToString("N")[..8];
+        await ExecAsync(
+            """
+            INSERT INTO menu.menus (menu_id, code, name) VALUES (@menu, @code, 'Online Menü');
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, current_price)
+            VALUES (@product, @sku, 'Mercimek Çorbası', 1, 1, true, @price);
+            INSERT INTO menu.menu_items (menu_item_id, menu_id, product_id) VALUES (@item, @menu, @product);
+            """,
+            ("menu", menuId), ("code", "OM-" + menuId.ToString("N")[..8]), ("product", productId), ("sku", sku),
+            ("price", price), ("item", Guid.NewGuid()));
+        return (menuId, productId, sku);
+    }
+
+    public async Task<long> CountPublicationsAsync()
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM online_ordering.catalog_publications;");
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
 
     public async Task<long> CountAllAsync()
     {

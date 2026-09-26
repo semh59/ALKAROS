@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using ALKAROS.Secrets;
 
@@ -9,7 +10,16 @@ namespace ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
 public interface IYemeksepetiPartnerClient
 {
     Task UpdateOrderStatusAsync(YemeksepetiStatusUpdateRequested update, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V12-ONL-004/005: updates price and/or availability of products the vendor's catalog already has.
+    /// Returns the provider's bulk-job identifier when the response carries one.
+    /// </summary>
+    Task<string?> UpdateVendorCatalogAsync(IReadOnlyList<YemeksepetiCatalogProductUpdate> products, CancellationToken cancellationToken = default);
 }
+
+/// <summary>One product line of a vendor catalog update: <c>sku</c> plus at least one of price, active, quantity.</summary>
+public sealed record YemeksepetiCatalogProductUpdate(string Sku, decimal? Price, bool? Active, decimal? Quantity);
 
 public sealed class YemeksepetiPartnerApiException : Exception
 {
@@ -41,6 +51,7 @@ public sealed class YemeksepetiPartnerHttpClient : IYemeksepetiPartnerClient, ID
     public static readonly SecretReference ChainId = new("yemeksepeti-chain-id");
     public static readonly SecretReference ClientId = new("yemeksepeti-client-id");
     public static readonly SecretReference ClientSecret = new("yemeksepeti-client-secret");
+    public static readonly SecretReference VendorId = new("yemeksepeti-vendor-id");
 
     private static readonly TimeSpan ExpirySafetyMargin = TimeSpan.FromSeconds(60);
 
@@ -81,6 +92,48 @@ public sealed class YemeksepetiPartnerHttpClient : IYemeksepetiPartnerClient, ID
         if (!response.IsSuccessStatusCode)
             throw new YemeksepetiPartnerApiException(
                 $"Yemeksepeti order update for '{update.ExternalOrderId}' failed with HTTP {(int)response.StatusCode}.");
+    }
+
+    /// <summary>
+    /// UNVERIFIED DRAFT (same source as above): <c>PUT {base}/v2/chains/{chain_id}/vendors/{vendor_id}/catalog</c>
+    /// with <c>products</c>, each carrying the mandatory <c>sku</c> and at least one of <c>price</c>, <c>active</c>,
+    /// <c>quantity</c>; bulk operations answer with a <c>job_id</c>. Only products the vendor catalog already has
+    /// can be updated this way; creating products is a pilot-only beta call this client does not make.
+    /// </summary>
+    public async Task<string?> UpdateVendorCatalogAsync(
+        IReadOnlyList<YemeksepetiCatalogProductUpdate> products, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(products);
+        if (products.Count == 0)
+            throw new ArgumentException("A catalog update needs at least one product.", nameof(products));
+        if (products.Any(p => p.Price is null && p.Active is null && p.Quantity is null))
+            throw new ArgumentException("Every product needs a price, an active flag or a quantity.", nameof(products));
+
+        var baseUrl = new Uri(Resolve(BaseUrl).TrimEnd('/') + "/");
+        var path = $"v2/chains/{Uri.EscapeDataString(Resolve(ChainId))}/vendors/{Uri.EscapeDataString(Resolve(VendorId))}/catalog";
+        var token = await AccessTokenAsync(baseUrl, cancellationToken).ConfigureAwait(false);
+
+        using var request = new HttpRequestMessage(HttpMethod.Put, new Uri(baseUrl, path))
+        {
+            Content = JsonContent.Create(new CatalogUpdateBody(products
+                .Select(p => new CatalogProductBody(p.Sku, p.Price, p.Active, p.Quantity))
+                .ToList()))
+        };
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+        using var response = await _http.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        if (!response.IsSuccessStatusCode)
+            throw new YemeksepetiPartnerApiException($"Yemeksepeti catalog update failed with HTTP {(int)response.StatusCode}.");
+
+        var body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        if (string.IsNullOrWhiteSpace(body))
+            return null;
+        using var document = JsonDocument.Parse(body);
+        return document.RootElement.ValueKind == JsonValueKind.Object
+               && document.RootElement.TryGetProperty("job_id", out var jobId)
+               && jobId.ValueKind == JsonValueKind.String
+            ? jobId.GetString()
+            : null;
     }
 
     /// <summary>The client owns its HttpClient (created for it at registration) and its token lock.</summary>
@@ -147,7 +200,8 @@ public sealed class YemeksepetiPartnerHttpClient : IYemeksepetiPartnerClient, ID
     {
         public bool IsAllowed(string accessor, SecretReference reference) =>
             string.Equals(accessor, Accessor, StringComparison.Ordinal)
-            && (reference == BaseUrl || reference == ChainId || reference == ClientId || reference == ClientSecret);
+            && (reference == BaseUrl || reference == ChainId || reference == ClientId || reference == ClientSecret
+                || reference == VendorId);
     }
 
     private sealed record TokenResponse(
@@ -168,4 +222,12 @@ public sealed class YemeksepetiPartnerHttpClient : IYemeksepetiPartnerClient, ID
     private sealed record OrderItemPricing([property: JsonPropertyName("quantity")] decimal Quantity);
 
     private sealed record CancellationBody([property: JsonPropertyName("reason")] string Reason);
+
+    private sealed record CatalogUpdateBody([property: JsonPropertyName("products")] IReadOnlyList<CatalogProductBody> Products);
+
+    private sealed record CatalogProductBody(
+        [property: JsonPropertyName("sku")] string Sku,
+        [property: JsonPropertyName("price"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] decimal? Price,
+        [property: JsonPropertyName("active"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] bool? Active,
+        [property: JsonPropertyName("quantity"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] decimal? Quantity);
 }

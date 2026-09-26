@@ -143,6 +143,18 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         return new ProductMappingResolution(outcome, sku, productId, mappingId);
     }
 
+    public async Task<string?> FindOpenSkuForProductAsync(Guid productId, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT external_sku FROM online_ordering.yemeksepeti_product_mappings
+            WHERE product_id = $1 AND effective_to IS NULL
+            LIMIT 1;
+            """);
+        command.Parameters.AddWithValue(productId);
+        return await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) as string;
+    }
+
     private static string NormalizeSku(string externalSku)
     {
         if (string.IsNullOrWhiteSpace(externalSku))
