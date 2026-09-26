@@ -1,3 +1,4 @@
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -90,8 +91,11 @@ public sealed class YemeksepetiPartnerHttpClient : IYemeksepetiPartnerClient, ID
 
         using var response = await _http.SendAsync(request, cancellationToken).ConfigureAwait(false);
         if (!response.IsSuccessStatusCode)
+        {
+            await ForgetRejectedTokenAsync(response, token).ConfigureAwait(false);
             throw new YemeksepetiPartnerApiException(
                 $"Yemeksepeti order update for '{update.ExternalOrderId}' failed with HTTP {(int)response.StatusCode}.");
+        }
     }
 
     /// <summary>
@@ -123,7 +127,10 @@ public sealed class YemeksepetiPartnerHttpClient : IYemeksepetiPartnerClient, ID
 
         using var response = await _http.SendAsync(request, cancellationToken).ConfigureAwait(false);
         if (!response.IsSuccessStatusCode)
+        {
+            await ForgetRejectedTokenAsync(response, token).ConfigureAwait(false);
             throw new YemeksepetiPartnerApiException($"Yemeksepeti catalog update failed with HTTP {(int)response.StatusCode}.");
+        }
 
         var body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
         if (string.IsNullOrWhiteSpace(body))
@@ -167,6 +174,26 @@ public sealed class YemeksepetiPartnerHttpClient : IYemeksepetiPartnerClient, ID
 
             _token = (accessToken, _time.GetUtcNow() + TimeSpan.FromSeconds(body.ExpiresIn) - ExpirySafetyMargin);
             return accessToken;
+        }
+        finally
+        {
+            _tokenLock.Release();
+        }
+    }
+
+    /// <summary>
+    /// V12-RMD-008: a 401 means the provider no longer accepts the cached token (revoked or expired early), so it
+    /// is dropped and the next attempt fetches a new one — unless another call already replaced it.
+    /// </summary>
+    private async Task ForgetRejectedTokenAsync(HttpResponseMessage response, string token)
+    {
+        if (response.StatusCode != HttpStatusCode.Unauthorized)
+            return;
+        await _tokenLock.WaitAsync(CancellationToken.None).ConfigureAwait(false);
+        try
+        {
+            if (_token is { } cached && string.Equals(cached.Token, token, StringComparison.Ordinal))
+                _token = null;
         }
         finally
         {

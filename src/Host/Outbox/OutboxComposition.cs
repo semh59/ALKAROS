@@ -19,10 +19,22 @@ public static class OutboxComposition
     {
         ArgumentNullException.ThrowIfNull(services);
 
-        services.TryAddSingleton(sp => new OutboxStore(sp.GetRequiredService<NpgsqlDataSource>()));
+        services.TryAddSingleton(CreateStore);
         services.TryAddScoped<IOutboxDeliverySink, OutboxFanoutSink>();
         services.AddHostedService<OutboxDispatcherHostedService>();
 
         return services;
+    }
+
+    /// <summary>
+    /// V12-RMD-008: the one way the host builds its <see cref="OutboxStore"/>, so whichever registration wins,
+    /// every module's <see cref="OutboxRetryProfile"/> is applied.
+    /// </summary>
+    public static OutboxStore CreateStore(IServiceProvider services)
+    {
+        ArgumentNullException.ThrowIfNull(services);
+        return new OutboxStore(
+            services.GetRequiredService<NpgsqlDataSource>(),
+            retryProfiles: services.GetServices<OutboxRetryProfile>());
     }
 }

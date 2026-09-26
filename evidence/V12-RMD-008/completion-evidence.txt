@@ -1,0 +1,63 @@
+V12-RMD-008 completion evidence (2026-09-26, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 9e34acbc.
+Provider behaviour (Yemeksepeti Partner API) remains an UNVERIFIED DRAFT (V0-YSP-001 Blocked).
+
+Changes:
+- Messaging: OutboxRetryProfile(EventType, MaxAttempts, BaseDelay, MaxDelay). OutboxStore takes profiles; a
+  message of a profiled event type uses its own attempt budget and a capped wait (LEAST(cap, base x 2^n));
+  every other event type keeps the default (3 attempts, store base delay, no cap). Duplicate profiles for one
+  event type are refused. The host builds its store in one place (OutboxComposition.CreateStore), also used
+  by the kitchen registration, so whichever registration wins the profiles apply.
+- OnlineOrderingModule registers the provider profile (12 attempts, 30 s x 2^n, at most 30 min: ~3 h before
+  dead) for Yemeksepeti status updates and catalog publications. A dead update still surfaces as the existing
+  LocallyAcceptedProviderUnknown case.
+- YemeksepetiPartnerHttpClient: a 401 drops the cached token if it is still the one the call used; other
+  errors keep it.
+- CancelLocallyAsync: the order's kitchen tickets are locked (FOR UPDATE, V1-RMD-313 overload) in the
+  cancellation transaction before the stock decision and saved in it. No FOR SHARE in
+  PostgresKitchenItemStateProvider (every kitchen write updates its ticket row first, so the ticket lock gives
+  the same guarantee without crossing the module boundary).
+- HandOverAsync walks the online order to Completed (platform settles payment); a later provider
+  cancellation stays Diverged evidence. No backfill migration: there is no live online data (V0-YSP-001).
+- Normalizer carries each product's catalog price (CatalogPrice); PriceDifferences lists lines whose provider
+  price differs; intake records pricesMatch / priceDifferenceAmount / priceDifferences; new
+  ProviderPriceMismatch source pair (manual resolution, amount = sum |provider - catalog| x quantity).
+- Online operations endpoint errors: handover without a known delivery kind -> 409 HANDOVER_NOT_SUPPORTED;
+  stock configuration / insufficient stock -> 409 STOCK_NOT_AVAILABLE (Turkish messages).
+
+Deviations from the task file (recorded, not hidden):
+- In scope 6 also named StaleOrderRowVersionException -> 409. It is never thrown by the hand-over or cancel
+  endpoints (they return a Stale outcome), so mapping it would be dead code; it was not added.
+- The PosTerminal label listed in the owned surface was not needed: no screen shows reconciliation case kinds
+  (the reconciliation UI does not exist yet), so nothing in PosTerminal changed.
+- The catalog profile is declared in OnlineOrderingModule (owned) rather than CatalogPublicationService (not in
+  this task's surface).
+
+Commands (exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- Messaging 42/42 (+3), Yemeksepeti.StatusSync 19/19 (+4), OrderNormalization 33/33 (+1),
+  Reconciliation.OnlineOrders 18/18 (+1), Host Reconciliation 12/12 (scan count 7 -> 8),
+  Host OnlineOrdering 57/57 (+7; 4 existing assertions Served -> Completed), CatalogPublishing 15/15,
+  Host KitchenOperations 35/35, Architecture 9/9
+- consistency_audit clean; plan_audit validate 0 errors / 0 warnings; project_manifest VALID
+
+Mutations (per iteration: backup, mutate, test, cp restore, cmp verified; dotnet test with
+--blame-hang-timeout 3m; 18/18 killed):
+KILLED R1 profile ignored by the store
+KILLED R3 profile attempt budget ignored
+KILLED R4 host store built without profiles
+KILLED R5 status profile not registered
+KILLED R6 catalog profile not registered
+KILLED T1 401 keeps the token
+KILLED T2 every error drops the token
+KILLED K1 tickets read without the lock
+KILLED K2 tickets saved outside the transaction
+KILLED C1 handover stops at Served
+KILLED E1 untyped handover refusal
+KILLED E2 stock refusal unmapped
+KILLED P1 catalog price not carried
+KILLED P2 equal prices listed as differences
+KILLED P3 intake always records a match
+KILLED P4 pair reads the wrong flag
+KILLED P5 pair not registered
+KILLED R2 wait cap removed (re-run as GREATEST instead of LEAST so only the cap changes; the profile test fails)

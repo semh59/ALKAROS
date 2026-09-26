@@ -409,6 +409,29 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
         Assert.Contains("\"localSubTotal\": 150", inbox.Detail);
     }
 
+    [Theory]
+    [InlineData(150.00, "true", 0)]
+    [InlineData(140.00, "false", 10)]
+    public async Task AProviderPriceDifferentFromTheCatalogIsRecordedWithoutStoppingTheOrder(
+        decimal catalogPrice, string match, int differenceAmount)
+    {
+        var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        await _database.ExecAsync(
+            "UPDATE catalog.products SET current_price = @price WHERE product_id = @id;", ("price", catalogPrice), ("id", productId));
+        var orderId = NewOrderId();
+        await StoreAsync(Custom(orderId, "t1", "VENDOR_DELIVERY", "", sku));
+
+        Assert.Equal(1, await DrainAsync());
+
+        Assert.Single(await _database.OnlineOrdersAsync(orderId));
+        var inbox = Assert.Single(await _database.InboxAsync(orderId));
+        Assert.Equal("OrderCreated", inbox.Outcome);
+        Assert.Contains($"\"pricesMatch\": {match}", inbox.Detail);
+        Assert.Contains($"\"priceDifferenceAmount\": {differenceAmount}", inbox.Detail);
+        if (match == "false")
+            Assert.Contains($"\"catalogUnitPrice\": 140", inbox.Detail);
+    }
+
     [Fact]
     public async Task TheDatabaseRefusesASecondLocalOrderForOneProviderOrder()
     {

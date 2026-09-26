@@ -264,7 +264,19 @@ public sealed class YemeksepetiOrderIntakeService
                 transportType = onlineOrder.TransportType,
                 totalsMatch = onlineOrder.TotalsMatch,
                 providerSubTotal = onlineOrder.ProviderSubTotal,
-                localSubTotal = onlineOrder.LocalSubTotal
+                localSubTotal = onlineOrder.LocalSubTotal,
+                // V12-RMD-008: provider item prices that differ from the catalog, for reconciliation.
+                pricesMatch = onlineOrder.PriceDifferences.Count == 0,
+                priceDifferenceAmount = onlineOrder.PriceDifferences.Sum(difference => difference.Amount),
+                priceDifferences = onlineOrder.PriceDifferences
+                    .Select(difference => new
+                    {
+                        sku = difference.Sku,
+                        quantity = difference.Quantity,
+                        providerUnitPrice = difference.ProviderUnitPrice,
+                        catalogUnitPrice = difference.CatalogUnitPrice
+                    })
+                    .ToList()
             },
             connection, transaction, cancellationToken).ConfigureAwait(false);
     }

@@ -41,11 +41,15 @@ public sealed class OnlineOrderingModule : IModule
             (ISecretProvider)services.GetService(typeof(ISecretProvider))!,
             TimeProvider.System));
         context.RegisterTransient<IIntegrationEventConsumer, YemeksepetiStatusUpdateConsumer>();
+        // V12-RMD-008: a provider outage lasts minutes, not the default budget's ~15 s; these deliveries are tried
+        // for about three hours before they are dead (and surface as a reconciliation case).
+        context.RegisterSingleton(YemeksepetiStatusSync.RetryProfile);
         // V12-ONL-004: catalog publication per channel, delivered through the outbox.
         context.RegisterSingleton<TimeProvider>(TimeProvider.System);
         context.RegisterTransient<ICatalogChannelPublisher, YemeksepetiCatalogPublisher>();
         context.RegisterTransient<CatalogPublicationService, CatalogPublicationService>();
         context.RegisterTransient<IIntegrationEventConsumer, CatalogPublicationConsumer>();
+        context.RegisterSingleton(YemeksepetiStatusSync.ProviderRetryProfile(CatalogPublicationService.RequestedEventType));
         // V12-ONL-005: availability publishing per enabled channel.
         context.RegisterTransient<IAvailabilityChannelPublisher, YemeksepetiAvailabilityPublisher>();
         context.RegisterTransient<AvailabilityPublicationService, AvailabilityPublicationService>();

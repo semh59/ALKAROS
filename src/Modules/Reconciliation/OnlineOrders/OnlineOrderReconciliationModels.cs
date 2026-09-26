@@ -28,6 +28,9 @@ public static class OnlineOrderDivergenceKind
 
     /// <summary>V12-RMD-004: a provider event with a status or delivery kind the mapper does not know; nothing was done locally.</summary>
     public const string ProviderStatusUnknown = "ProviderStatusUnknown";
+
+    /// <summary>V12-RMD-008: the provider priced one or more items differently from the catalog.</summary>
+    public const string ProviderPriceMismatch = "ProviderPriceMismatch";
 }
 
 /// <summary>The safe next action each case carries; only the first three can be retried from the case.</summary>

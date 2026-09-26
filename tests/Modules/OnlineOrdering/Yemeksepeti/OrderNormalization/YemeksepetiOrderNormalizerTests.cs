@@ -55,6 +55,10 @@ public sealed class NormalizationTestDatabase : PgTestDatabase
         return (productId, sku);
     }
 
+    /// <summary>V12-RMD-008: gives the product a catalog price.</summary>
+    public Task SetPriceAsync(Guid productId, decimal price) =>
+        ExecAsync("UPDATE catalog.products SET current_price = $2 WHERE product_id = $1;", productId, price);
+
     public Task DeactivateAsync(Guid productId) =>
         ExecAsync("UPDATE catalog.products SET active = false WHERE product_id = $1;", productId);
 
@@ -171,6 +175,25 @@ public sealed class YemeksepetiOrderNormalizerTests : IClassFixture<Normalizatio
 
         result.Order!.LocalSubTotal.Should().Be(291m);
         result.Order.TotalsMatch.Should().Be(match);
+    }
+
+    [Fact]
+    public async Task EveryLineCarriesItsCatalogPriceAndOnlyRealDifferencesAreListed()
+    {
+        var (cheaper, cheaperSku) = await _db.SeedMappedProductAsync("Kıymalı Pide");
+        var (same, sameSku) = await _db.SeedMappedProductAsync("Ayran");
+        var (_, unpricedSku) = await _db.SeedMappedProductAsync("Salata");
+        await _db.SetPriceAsync(cheaper, 140m);
+        await _db.SetPriceAsync(same, 145.5m);
+
+        var result = await _normalizer.NormalizeAsync(
+            Order(Item(cheaperSku) + "," + Item(sameSku) + "," + Item(unpricedSku)), ReceivedAt);
+
+        result.Order!.Lines.Select(line => line.CatalogPrice).Should().Equal(140m, 145.5m, null);
+        var difference = result.Order.PriceDifferences.Should().ContainSingle().Subject;
+        difference.Should().Be(new OnlineOrderPriceDifference(cheaperSku, 2m, 145.5m, 140m));
+        difference.Amount.Should().Be(11m);
+        result.Order.TotalsMatch.Should().BeNull("a price difference never stops or changes the order itself");
     }
 
     [Fact]

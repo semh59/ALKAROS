@@ -124,7 +124,10 @@ public sealed class YemeksepetiStatusSyncService
     /// <summary>
     /// The restaurant hands an online order to the courier: its holds are consumed, the order reaches
     /// Served and the provider is told (READY_FOR_PICKUP for a platform courier, DISPATCHED for the
-    /// restaurant's own). Repeating it changes nothing.
+    /// restaurant's own). Repeating it changes nothing. Since V12-RMD-008 the order then closes as Completed:
+    /// the platform settles the payment and the restaurant's part ends at handover, so the order leaves every
+    /// open-order view and the closed-order retention rules apply to it. A provider cancellation that comes
+    /// after this is recorded as divergence evidence, as before.
     /// </summary>
     public async Task<OnlineOrderActionOutcome> HandOverAsync(
         Guid orderId, Guid actorId, long? expectedRowVersion = null, CancellationToken cancellationToken = default)
@@ -154,17 +157,20 @@ public sealed class YemeksepetiStatusSyncService
 
         var handover = YemeksepetiStatusSync.HandoverStatusFor(
             await TransportTypeAsync(order.Id, connection, transaction, cancellationToken).ConfigureAwait(false))
-            ?? throw new InvalidOperationException($"Online order '{order.Id}' has no documented delivery kind to report a handover for.");
+            ?? throw new OnlineOrderHandoverNotSupportedException(order.Id);
 
         await _consumption.ConsumeForAcceptedOrderAsync(order, actorId, connection, transaction, cancellationToken).ConfigureAwait(false);
 
         var now = DateTimeOffset.UtcNow;
         var current = order;
-        foreach (var next in new[] { OrderState.Preparing, OrderState.Ready, OrderState.Served })
+        foreach (var next in new[] { OrderState.Preparing, OrderState.Ready, OrderState.Served, OrderState.Completed })
         {
             if (!current.CanTransitionTo(next))
                 continue;
-            var moved = current.TransitionTo(next, "Yemeksepeti siparişi kuryeye teslim edildi.", actorId, now);
+            var reason = next == OrderState.Completed
+                ? "Yemeksepeti siparişi teslim edildi; ödemesi platform üzerinden."
+                : "Yemeksepeti siparişi kuryeye teslim edildi.";
+            var moved = current.TransitionTo(next, reason, actorId, now);
             var version = await _orders.SaveAsync(moved, current.RowVersion, connection, transaction, cancellationToken)
                 .ConfigureAwait(false);
             current = moved.WithRowVersion(version);
@@ -247,18 +253,23 @@ public sealed class YemeksepetiStatusSyncService
         if (!order.CanTransitionTo(OrderState.Cancelled))
             return OnlineOrderActionOutcome.NotAllowed;
 
+        // V12-RMD-008: the order's kitchen tickets are locked first, in this transaction. Every kitchen write
+        // updates its ticket row before its items, so no preparation can start between the stock decision below
+        // and the cancellation after it; and if this transaction rolls back, the kitchen cancellation does too.
+        var tickets = await _tickets.GetByOrderIdAsync(order.Id, connection, transaction, cancellationToken).ConfigureAwait(false);
+
         // Stock first, while the kitchen items still show how far preparation got. It joins this transaction
         // (V1-RMD-310): if the order change below fails, the holds are not released either.
         await _arbiter.CompensateAsync(order.Id, actorId, reason, connection, transaction, cancellationToken).ConfigureAwait(false);
 
         var now = DateTimeOffset.UtcNow;
-        foreach (var ticket in await _tickets.GetByOrderIdAsync(order.Id, cancellationToken).ConfigureAwait(false))
+        foreach (var ticket in tickets)
         {
             var updated = ticket;
             foreach (var item in ticket.Items.Where(i => i.CanTransitionTo(KitchenTicketItemState.Cancelled)))
                 updated = updated.UpdateItemStatus(item.Id, KitchenTicketItemState.Cancelled, reason, now);
             if (!ReferenceEquals(updated, ticket))
-                await _tickets.SaveAsync(updated, ticket.RowVersion, cancellationToken).ConfigureAwait(false);
+                await _tickets.SaveAsync(updated, ticket.RowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
         }
 
         await _orders.SaveAsync(
@@ -313,6 +324,16 @@ public sealed class YemeksepetiStatusSyncService
 
     private static Guid EvidenceId(string kind, string externalOrderId) =>
         new(SHA256.HashData(Encoding.UTF8.GetBytes(kind + "\u001f" + externalOrderId)).AsSpan(0, 16));
+}
+
+/// <summary>
+/// V12-RMD-008: the order's delivery kind is not one the provider documents a handover status for, so a handover
+/// cannot be reported (intake records such an order as unknown; a person resolves it).
+/// </summary>
+public sealed class OnlineOrderHandoverNotSupportedException : Exception
+{
+    public OnlineOrderHandoverNotSupportedException(Guid orderId)
+        : base($"Online order '{orderId}' has no documented delivery kind to report a handover for.") { }
 }
 
 /// <summary>The order exists but did not come from an online channel, so online actions do not apply to it.</summary>

@@ -1,6 +1,8 @@
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Inventory.StockMaster;
 using ALKAROS.OnlineOrdering.AvailabilityPublishing;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
@@ -349,6 +351,12 @@ public sealed class OnlineOperationsExceptionFilter : IEndpointFilter
         OrderNotFoundException => (404, "ORDER_NOT_FOUND", "Sipariş bulunamadı."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         NotAnOnlineOrderException => (409, "NOT_AN_ONLINE_ORDER", "Bu işlem yalnız online kanal siparişleri için yapılabilir."),
+        // V12-RMD-008: each refusal says what actually happened.
+        OnlineOrderHandoverNotSupportedException => (409, "HANDOVER_NOT_SUPPORTED",
+            "Bu siparişin teslimat türü tanınmadığı için teslim bildirilemez. Mutabakat ekranından inceleyin."),
+        InsufficientOrderStockException or ProductStockNotConfiguredException or StockItemHasNoDefaultLocationException
+            or StockItemNotFoundException => (409, "STOCK_NOT_AVAILABLE",
+                "Siparişin stoğu düşülemedi (stok yetersiz ya da ürünün stok eşlemesi eksik). Stok ayarlarını kontrol edin."),
         InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

@@ -178,8 +178,44 @@ public sealed class OnlineOperationsHttpTests : IAsyncLifetime, IDisposable
         Assert.Equal(HttpStatusCode.OK, first.StatusCode);
         Assert.Equal("Applied", (await first.Content.ReadFromJsonAsync<OnlineOrderActionResultV1>())!.Outcome);
         Assert.Equal("AlreadyApplied", (await again.Content.ReadFromJsonAsync<OnlineOrderActionResultV1>())!.Outcome);
-        Assert.Equal("Served", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
+        Assert.Equal("Completed", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
         Assert.Equal(new[] { ("Consumed", "Online") }, await _database.HoldsAsync(orderId));
+    }
+
+    [Fact]
+    public async Task AHandoverThatCannotBeReportedSaysWhyInsteadOfBlamingAConcurrentChange()
+    {
+        var cookie = await _database.SeedStaffSessionAsync(_terminalId, "orders.create");
+        var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var (orderId, _, externalId) = await AcceptedOnlineOrderAsync(sku, productId);
+        await _database.ExecAsync(
+            "UPDATE online_ordering.yemeksepeti_webhook_inbox SET outcome_detail = outcome_detail - 'transportType' WHERE order_id = @id;",
+            ("id", orderId));
+
+        using var response = await _client!.SendAsync(
+            Post(Action(orderId, "hand-over"), cookie, new OnlineOrderActionRequestV1(await _database.RowVersionAsync(orderId))));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("HANDOVER_NOT_SUPPORTED", body);
+        Assert.Contains("teslimat türü tanınmadığı", body);
+        Assert.Equal("Accepted", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
+    }
+
+    [Fact]
+    public async Task AHandoverWhoseStockCannotBeTakenSaysSo()
+    {
+        var cookie = await _database.SeedStaffSessionAsync(_terminalId, "orders.create");
+        var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var (orderId, _, externalId) = await AcceptedOnlineOrderAsync(sku, productId);
+        await _database.ExecAsync("DELETE FROM inventory.product_stock_mappings WHERE product_id = @id;", ("id", productId));
+
+        using var response = await _client!.SendAsync(
+            Post(Action(orderId, "hand-over"), cookie, new OnlineOrderActionRequestV1(await _database.RowVersionAsync(orderId))));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("STOCK_NOT_AVAILABLE", await response.Content.ReadAsStringAsync());
+        Assert.Equal("Accepted", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
     }
 
     [Fact]

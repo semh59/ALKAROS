@@ -3,6 +3,8 @@ namespace ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 /// <summary>
 /// One order line resolved to an active catalog product. <see cref="Instructions"/> is the customer's note for
 /// this item (a preparation instruction for the kitchen, PO:2026-09-01), control characters removed and bounded.
+/// <see cref="UnitPrice"/> is the provider's price (what the customer paid); <see cref="CatalogPrice"/> is the
+/// product's own current price when it has one (V12-RMD-008).
 /// </summary>
 public sealed record NormalizedOnlineOrderLine(
     string ExternalSku,
@@ -11,7 +13,15 @@ public sealed record NormalizedOnlineOrderLine(
     decimal Quantity,
     decimal UnitPrice,
     decimal TaxRate,
-    string? Instructions = null);
+    string? Instructions = null,
+    decimal? CatalogPrice = null);
+
+/// <summary>V12-RMD-008: a line the provider priced differently from the catalog.</summary>
+public sealed record OnlineOrderPriceDifference(string Sku, decimal Quantity, decimal ProviderUnitPrice, decimal CatalogUnitPrice)
+{
+    /// <summary>|provider - catalog| x quantity, rounded to kuruş.</summary>
+    public decimal Amount => decimal.Round(Math.Abs(ProviderUnitPrice - CatalogUnitPrice) * Quantity, 2, MidpointRounding.AwayFromZero);
+}
 
 /// <summary>
 /// A provider order in internal terms. <see cref="ExternalOrderId"/> is the provider's own
@@ -35,6 +45,16 @@ public sealed record NormalizedOnlineOrder(
     /// the payload carried none. A mismatch never blocks the order; it is recorded and reconciled.
     /// </summary>
     public bool? TotalsMatch => ProviderSubTotal is { } provider ? provider == LocalSubTotal : null;
+
+    /// <summary>
+    /// V12-RMD-008: the lines whose provider price differs from the product's catalog price. A line whose product
+    /// has no catalog price has nothing to compare with. A difference never blocks the order; it is recorded and
+    /// reconciled.
+    /// </summary>
+    public IReadOnlyList<OnlineOrderPriceDifference> PriceDifferences => Lines
+        .Where(line => line.CatalogPrice is { } catalog && catalog != line.UnitPrice)
+        .Select(line => new OnlineOrderPriceDifference(line.ExternalSku, line.Quantity, line.UnitPrice, line.CatalogPrice!.Value))
+        .ToList();
 }
 
 public enum NormalizationRejection

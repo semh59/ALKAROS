@@ -18,11 +18,16 @@ public sealed class OutboxStore
     private readonly NpgsqlDataSource _dataSource;
     private readonly TimeSpan _baseDelay;
     private readonly TimeSpan _leaseTimeout;
+    private readonly Dictionary<string, OutboxRetryProfile> _retryProfiles;
 
+    /// <param name="retryProfiles">
+    /// V12-RMD-008: event types with their own retry budget; every other event type keeps the default one.
+    /// </param>
     public OutboxStore(
         NpgsqlDataSource dataSource,
         TimeSpan? baseDelay = null,
-        TimeSpan? leaseTimeout = null)
+        TimeSpan? leaseTimeout = null,
+        IEnumerable<OutboxRetryProfile>? retryProfiles = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _baseDelay = baseDelay ?? TimeSpan.FromSeconds(5);
@@ -31,6 +36,16 @@ public sealed class OutboxStore
         _leaseTimeout = leaseTimeout ?? TimeSpan.FromMinutes(5);
         if (_leaseTimeout <= TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(leaseTimeout), "Lease timeout must be positive.");
+
+        var profiles = new Dictionary<string, OutboxRetryProfile>(StringComparer.Ordinal);
+        foreach (var profile in retryProfiles ?? [])
+        {
+            ArgumentNullException.ThrowIfNull(profile, nameof(retryProfiles));
+            if (!profiles.TryAdd(profile.EventType, profile))
+                throw new ArgumentException($"Event type '{profile.EventType}' has more than one retry profile.", nameof(retryProfiles));
+        }
+
+        _retryProfiles = profiles;
     }
 
     /// <summary>
@@ -134,7 +149,8 @@ public sealed class OutboxStore
                 await MarkDispatchedAsync(connection, transaction, message.Id, message.LeaseGeneration + 1, cancellationToken).ConfigureAwait(false);
             else
                 await RecordFailureAsync(
-                        connection, transaction, message.Id, message.LeaseGeneration + 1, failure ?? "handler returned false", cancellationToken)
+                        connection, transaction, message.Id, message.EventType, message.LeaseGeneration + 1,
+                        failure ?? "handler returned false", cancellationToken)
                     .ConfigureAwait(false);
 
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
@@ -262,9 +278,13 @@ public sealed class OutboxStore
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         Guid id,
+        string eventType,
         long leaseGeneration,
         string error,
         CancellationToken cancellationToken)
-        => RetryPolicy.RecordFailureAsync(
-            connection, "outbox_messages", id, leaseGeneration, error, _baseDelay, transaction, cancellationToken);
+        => _retryProfiles.TryGetValue(eventType, out var profile)
+            ? RetryPolicy.RecordFailureAsync(
+                connection, "outbox_messages", id, leaseGeneration, error, profile, transaction, cancellationToken)
+            : RetryPolicy.RecordFailureAsync(
+                connection, "outbox_messages", id, leaseGeneration, error, _baseDelay, transaction, cancellationToken);
 }

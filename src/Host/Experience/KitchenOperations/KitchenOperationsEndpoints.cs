@@ -114,7 +114,7 @@ public static class KitchenOperationsEndpoints
         services.TryAddSingleton<ISettingsRepository, PostgresSettingsRepository>();
         services.TryAddSingleton<ISettingValidator, SettingValidator>();
         services.TryAddSingleton<ISettingsService, SettingsService>();
-        services.TryAddSingleton(sp => new OutboxStore(sp.GetRequiredService<NpgsqlDataSource>()));
+        services.TryAddSingleton(ALKAROS.Host.Outbox.OutboxComposition.CreateStore);
         // V1-WTR-009: broadcasts "ready" to every connected waiter device.
         services.TryAddSingleton<IOrderRepository, PostgresOrderRepository>();
         services.AddWaiterNotificationsExperience();

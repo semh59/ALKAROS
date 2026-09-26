@@ -86,7 +86,8 @@ public sealed class YemeksepetiOrderNormalizer
                 return NormalizationResult.Rejected(NormalizationRejection.ProductHasNoTaxProfile, line.Sku);
 
             lines.Add(new NormalizedOnlineOrderLine(
-                line.Sku, product.Id, product.Name, line.Quantity, line.UnitPrice, taxProfile.VatRate, line.Instructions));
+                line.Sku, product.Id, product.Name, line.Quantity, line.UnitPrice, taxProfile.VatRate, line.Instructions,
+                product.CurrentPrice));
         }
 
         return NormalizationResult.Accepted(new NormalizedOnlineOrder(

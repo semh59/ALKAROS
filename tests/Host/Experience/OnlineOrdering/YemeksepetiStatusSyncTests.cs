@@ -1,14 +1,20 @@
 using System.Security.Cryptography;
 using System.Text;
+using ALKAROS.Host.Composition;
+using ALKAROS.Host.Composition.Modules;
 using ALKAROS.Host.Experience.OnlineOrdering;
 using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Host.Outbox;
 using ALKAROS.IntegrationContracts;
 using ALKAROS.Inventory.CrossChannelReservation;
+using ALKAROS.Messaging;
+using ALKAROS.OnlineOrdering.CatalogPublishing;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Secrets;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using Xunit;
 
 namespace ALKAROS.Host.Experience.OnlineOrdering.Tests;
@@ -166,7 +172,7 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task AHandoverConsumesTheHoldReachesServedAndTellsTheProviderOnce()
+    public async Task AHandoverConsumesTheHoldCompletesTheOrderAndTellsTheProviderOnce()
     {
         var (productId, _, externalId, orderId) = await AcceptedOrderAsync(onHand: 2m);
         var staff = Guid.NewGuid();
@@ -174,13 +180,122 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
         Assert.Equal(OnlineOrderActionOutcome.Applied, await Sync.HandOverAsync(orderId, staff));
         Assert.Equal(OnlineOrderActionOutcome.AlreadyApplied, await Sync.HandOverAsync(orderId, staff));
 
-        Assert.Equal("Served", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
+        Assert.Equal("Completed", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
         Assert.Equal(new[] { ("Consumed", "Online") }, await _database.HoldsAsync(orderId));
         Assert.Equal((1m, 1m), (await _database.OnHandAsync(productId), await _database.AvailableAsync(productId)));
         var update = Assert.Single(await OutboundAsync(externalId));
         Assert.Equal(YemeksepetiOutboundStatus.ReadyForPickup, update.Status);
         Assert.Null(update.Reason);
         Assert.Single(update.Items);
+    }
+
+    [Fact]
+    public async Task TheHostOutboxGivesProviderDeliveriesTheirOwnRetryBudget()
+    {
+        var (_, _, _, orderId) = await AcceptedOrderAsync();
+        await Sync.HandOverAsync(orderId, Guid.NewGuid());
+        var services = new ServiceCollection();
+        services.AddSingleton(_database.DataSource);
+        HostComposition.ApplyComposedModuleServices(services, ModuleRegistry.ComposeRoot(ModuleRegistry.DefaultCatalog).Services);
+        services.AddOutboxDispatch();
+        await using var provider = services.BuildServiceProvider();
+        var store = provider.GetRequiredService<OutboxStore>();
+        await store.EnqueueAsync(new OutboxEnvelope(CatalogPublicationService.RequestedEventType, "CatalogPublication", Guid.NewGuid(), [1]));
+        await store.EnqueueAsync(new OutboxEnvelope("rmd008.other-event.v1", "Other", Guid.NewGuid(), [1]));
+
+        while (await store.DispatchAsync(new FailingSink(), batchSize: 50) > 0)
+        {
+        }
+
+        // A provider delivery waits 30 s after its first failure; any other event keeps the default 5 s.
+        foreach (var eventType in new[] { YemeksepetiStatusSync.StatusUpdateRequestedEventType, CatalogPublicationService.RequestedEventType })
+            Assert.InRange(await SecondsUntilRetryAsync(eventType), 27, 31);
+        Assert.InRange(await SecondsUntilRetryAsync("rmd008.other-event.v1"), 2, 6);
+    }
+
+    private async Task<double> SecondsUntilRetryAsync(string eventType)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT max(EXTRACT(EPOCH FROM next_retry_at - now()))::float8 FROM outbox_messages WHERE event_type = @type AND attempt_count = 1;");
+        command.Parameters.AddWithValue("type", eventType);
+        return (double)(await command.ExecuteScalarAsync())!;
+    }
+
+    private sealed class FailingSink : IOutboxDeliverySink
+    {
+        public Task<bool> HandleAsync(OutboxMessage message, CancellationToken cancellationToken) => Task.FromResult(false);
+    }
+
+    [Fact]
+    public async Task ACancellationWaitsForAKitchenWriteInFlightAndDecidesOnWhatItWrote()
+    {
+        var (_, _, _, orderId) = await AcceptedOrderAsync(onHand: 2m);
+        await using var kitchen = await _database.DataSource.OpenConnectionAsync();
+        await using var kitchenWrite = await kitchen.BeginTransactionAsync();
+        await using (var start = new NpgsqlCommand(
+            """
+            UPDATE kitchen.kitchen_tickets SET row_version = row_version + 1 WHERE order_id = @id;
+            UPDATE kitchen.kitchen_ticket_items SET status = 'Preparing'
+            WHERE ticket_id IN (SELECT id FROM kitchen.kitchen_tickets WHERE order_id = @id);
+            """, kitchen, kitchenWrite))
+        {
+            start.Parameters.AddWithValue("id", orderId);
+            await start.ExecuteNonQueryAsync();
+        }
+
+        var cancel = Task.Run(() => Sync.CancelByRestaurantAsync(orderId, YemeksepetiCancellationReason.TooBusy, Guid.NewGuid()));
+        await Task.Delay(TimeSpan.FromMilliseconds(700));
+        Assert.False(cancel.IsCompleted);
+        await kitchenWrite.CommitAsync();
+
+        Assert.Equal(OnlineOrderActionOutcome.Applied, await cancel);
+        // The kitchen had started, so the portion is wasted, not put back on sale.
+        Assert.Equal(new[] { ("Waste", "Online") }, await _database.HoldsAsync(orderId));
+        Assert.All(await KitchenItemStatusesAsync(orderId), status => Assert.Equal("Cancelled", status));
+    }
+
+    [Fact]
+    public async Task ACancellationThatFailsLeavesTheKitchenAndTheStockUntouched()
+    {
+        var (_, _, externalId, orderId) = await AcceptedOrderAsync(onHand: 2m);
+        var guard = "rmd008_refuse_" + Guid.NewGuid().ToString("N")[..12];
+        await _database.ExecAsync(
+            $$"""
+            CREATE FUNCTION public.{{guard}}() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN RAISE EXCEPTION 'refused by test'; END $$;
+            CREATE TRIGGER {{guard}} BEFORE UPDATE ON orders.orders FOR EACH ROW
+                WHEN (NEW.order_id = '{{orderId}}' AND NEW.status = 'Cancelled') EXECUTE FUNCTION public.{{guard}}();
+            """);
+        try
+        {
+            var cancel = () => Sync.CancelByRestaurantAsync(orderId, YemeksepetiCancellationReason.TooBusy, Guid.NewGuid());
+            await Assert.ThrowsAsync<PostgresException>(cancel);
+        }
+        finally
+        {
+            await _database.ExecAsync($"DROP TRIGGER {guard} ON orders.orders; DROP FUNCTION public.{guard}();");
+        }
+
+        Assert.Equal("Accepted", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
+        Assert.Equal(new[] { ("Reserved", "Online") }, await _database.HoldsAsync(orderId));
+        Assert.All(await KitchenItemStatusesAsync(orderId), status => Assert.NotEqual("Cancelled", status));
+        Assert.Empty(await OutboundAsync(externalId));
+    }
+
+    private async Task<IReadOnlyList<string>> KitchenItemStatusesAsync(Guid orderId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            """
+            SELECT i.status FROM kitchen.kitchen_ticket_items i
+            JOIN kitchen.kitchen_tickets t ON t.id = i.ticket_id
+            WHERE t.order_id = @id;
+            """);
+        command.Parameters.AddWithValue("id", orderId);
+        var statuses = new List<string>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            statuses.Add(reader.GetString(0));
+        Assert.NotEmpty(statuses);
+        return statuses;
     }
 
     [Fact]
@@ -203,7 +318,7 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
         await StoreAsync(Event(externalId, "CANCELLED", "t3", sku, cancelledBy: "LOGISTICS", afterPickup: true));
         await DrainAsync();
 
-        Assert.Equal("Served", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
+        Assert.Equal("Completed", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
         var diverged = (await _database.InboxAsync(externalId)).Where(e => e.Outcome == "Diverged").ToList();
         Assert.Equal(2, diverged.Count);
         Assert.All(diverged, e => Assert.Contains("CancelledAfterHandover", e.Detail));
@@ -296,7 +411,7 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
             var holds = await _database.HoldsAsync(orderId);
             if (handoverOutcome == OnlineOrderActionOutcome.Applied)
             {
-                Assert.Equal("Served", status);
+                Assert.Equal("Completed", status);
                 Assert.Equal(new[] { ("Consumed", "Online") }, holds);
                 Assert.Equal(0m, await _database.OnHandAsync(productId));
             }

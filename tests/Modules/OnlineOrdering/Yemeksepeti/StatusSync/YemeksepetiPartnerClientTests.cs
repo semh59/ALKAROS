@@ -160,6 +160,54 @@ public sealed class YemeksepetiPartnerClientTests
         body.RootElement.GetProperty("cancellation").GetProperty("reason").GetString().Should().Be("ITEM_UNAVAILABLE");
     }
 
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ARejectedTokenIsDroppedSoTheNextAttemptFetchesANewOne(bool catalog)
+    {
+        var handler = new RecordingHandler { UpdateStatus = HttpStatusCode.Unauthorized };
+        var secrets = Configured();
+        secrets.Set(YemeksepetiPartnerHttpClient.VendorId, "vendor-7");
+        using var client = new YemeksepetiPartnerHttpClient(new HttpClient(handler), secrets, new ManualTime());
+        Task Call() => catalog
+            ? client.UpdateVendorCatalogAsync([new YemeksepetiCatalogProductUpdate("ys-pide", 1m, true, null)])
+            : client.UpdateOrderStatusAsync(Update(YemeksepetiOutboundStatus.Dispatched));
+
+        var rejected = Call;
+        await rejected.Should().ThrowAsync<YemeksepetiPartnerApiException>().WithMessage("*HTTP 401*");
+        handler.UpdateStatus = HttpStatusCode.OK;
+        await Call();
+
+        handler.Requests.Count(r => r.Url.EndsWith("/v2/oauth/token", StringComparison.Ordinal)).Should().Be(2);
+        handler.Requests.Last().Authorization.Should().Be("Bearer tok-3");
+    }
+
+    [Fact]
+    public void ProviderDeliveriesAreRetriedForAboutThreeHoursBeforeTheyAreDead()
+    {
+        var profile = YemeksepetiStatusSync.RetryProfile;
+        var totalWait = Enumerable.Range(0, profile.MaxAttempts - 1)
+            .Sum(n => Math.Min(profile.MaxDelay.TotalSeconds, profile.BaseDelay.TotalSeconds * Math.Pow(2, n)));
+
+        profile.EventType.Should().Be(YemeksepetiStatusSync.StatusUpdateRequestedEventType);
+        profile.MaxAttempts.Should().Be(12);
+        TimeSpan.FromSeconds(totalWait).Should().BeCloseTo(TimeSpan.FromHours(3), TimeSpan.FromMinutes(10));
+    }
+
+    [Fact]
+    public async Task AnotherProviderErrorKeepsTheToken()
+    {
+        var handler = new RecordingHandler { UpdateStatus = HttpStatusCode.ServiceUnavailable };
+        using var client = new YemeksepetiPartnerHttpClient(new HttpClient(handler), Configured(), new ManualTime());
+
+        var failing = () => client.UpdateOrderStatusAsync(Update(YemeksepetiOutboundStatus.Dispatched));
+        await failing.Should().ThrowAsync<YemeksepetiPartnerApiException>();
+        handler.UpdateStatus = HttpStatusCode.OK;
+        await client.UpdateOrderStatusAsync(Update(YemeksepetiOutboundStatus.Dispatched));
+
+        handler.Requests.Count(r => r.Url.EndsWith("/v2/oauth/token", StringComparison.Ordinal)).Should().Be(1);
+    }
+
     [Fact]
     public async Task AVendorCatalogUpdateUsesTheDocumentedPathAndOmitsFieldsItDoesNotSet()
     {

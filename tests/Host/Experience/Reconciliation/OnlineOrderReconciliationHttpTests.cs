@@ -89,7 +89,7 @@ public sealed class OnlineOrderReconciliationHttpTests : IAsyncLifetime
         using var scan = await supervisor.PostAsync($"{BasePath}/scan", null);
         Assert.Equal(HttpStatusCode.OK, scan.StatusCode);
         var results = await scan.Content.ReadFromJsonAsync<JsonElement>();
-        Assert.Equal(7, results.GetArrayLength());
+        Assert.Equal(8, results.GetArrayLength());
         Assert.All(results.EnumerateArray(), r => Assert.Equal(JsonValueKind.Null, r.GetProperty("failureReason").ValueKind));
 
         var caseId = await _database.ScalarAsync<Guid>(

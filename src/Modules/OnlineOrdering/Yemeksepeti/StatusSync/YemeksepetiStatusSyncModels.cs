@@ -44,6 +44,16 @@ public static class YemeksepetiStatusSync
 {
     public const string StatusUpdateRequestedEventType = "online-ordering.yemeksepeti.status-update-requested.v1";
 
+    /// <summary>
+    /// V12-RMD-008: 12 attempts, waiting 30 s x 2^n and at most 30 minutes — about three hours in all — before a
+    /// status update is dead.
+    /// </summary>
+    public static readonly OutboxRetryProfile RetryProfile = ProviderRetryProfile(StatusUpdateRequestedEventType);
+
+    /// <summary>V12-RMD-008: the retry budget every delivery to the provider uses.</summary>
+    public static OutboxRetryProfile ProviderRetryProfile(string eventType) =>
+        new(eventType, maxAttempts: 12, baseDelay: TimeSpan.FromSeconds(30), maxDelay: TimeSpan.FromMinutes(30));
+
     private const string VendorDelivery = "VENDOR_DELIVERY";
     private const string LogisticsDelivery = "LOGISTICS_DELIVERY";
 

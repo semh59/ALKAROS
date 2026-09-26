@@ -58,7 +58,7 @@ public static class RetryPolicy
     /// concurrently recovered record is never overwritten. When
     /// <paramref name="transaction"/> is provided the update joins it.
     /// </summary>
-    public static async Task RecordFailureAsync(
+    public static Task RecordFailureAsync(
         NpgsqlConnection connection,
         string tableName,
         Guid id,
@@ -68,14 +68,51 @@ public static class RetryPolicy
         NpgsqlTransaction? transaction = null,
         CancellationToken cancellationToken = default)
     {
+        if (baseDelay <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(baseDelay), "Base delay must be positive.");
+        return RecordFailureCoreAsync(
+            connection, tableName, id, leaseGeneration, error, MaxAttempts, baseDelay, null, transaction, cancellationToken);
+    }
+
+    /// <summary>
+    /// V12-RMD-008: <see cref="RecordFailureAsync(NpgsqlConnection, string, Guid, long, string, TimeSpan, NpgsqlTransaction?, CancellationToken)"/>
+    /// with an event type's own budget: dead after <see cref="OutboxRetryProfile.MaxAttempts"/> attempts, each
+    /// wait capped at <see cref="OutboxRetryProfile.MaxDelay"/>.
+    /// </summary>
+    public static Task RecordFailureAsync(
+        NpgsqlConnection connection,
+        string tableName,
+        Guid id,
+        long leaseGeneration,
+        string error,
+        OutboxRetryProfile profile,
+        NpgsqlTransaction? transaction = null,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(profile);
+        return RecordFailureCoreAsync(
+            connection, tableName, id, leaseGeneration, error, profile.MaxAttempts, profile.BaseDelay, profile.MaxDelay,
+            transaction, cancellationToken);
+    }
+
+    private static async Task RecordFailureCoreAsync(
+        NpgsqlConnection connection,
+        string tableName,
+        Guid id,
+        long leaseGeneration,
+        string error,
+        int maxAttempts,
+        TimeSpan baseDelay,
+        TimeSpan? maxDelay,
+        NpgsqlTransaction? transaction,
+        CancellationToken cancellationToken)
+    {
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentException.ThrowIfNullOrWhiteSpace(tableName);
         if (!AllowedTableNames.Contains(tableName))
             throw new ArgumentException(
                 $"Table name '{tableName}' is not an allowed retry table.", nameof(tableName));
         ArgumentNullException.ThrowIfNull(error);
-        if (baseDelay <= TimeSpan.Zero)
-            throw new ArgumentOutOfRangeException(nameof(baseDelay), "Base delay must be positive.");
 
         await using var command = connection.CreateCommand();
         command.Transaction = transaction;
@@ -88,15 +125,17 @@ public static class RetryPolicy
                 next_retry_at = CASE WHEN attempt_count + 1 >= $3
                                      THEN NULL
                                      ELSE now() + make_interval(
-                                         secs => $4 * power(2::double precision, attempt_count))
+                                         -- LEAST ignores a NULL cap: the default budget has none.
+                                         secs => LEAST($6, $4 * power(2::double precision, attempt_count)))
                                 END
             WHERE id = $1 AND status = 'in_flight' AND lease_generation = $5;
             """;
         command.Parameters.AddWithValue(id);
         command.Parameters.AddWithValue(SanitizeError(error));
-        command.Parameters.AddWithValue(MaxAttempts);
+        command.Parameters.AddWithValue(maxAttempts);
         command.Parameters.AddWithValue(baseDelay.TotalSeconds);
         command.Parameters.AddWithValue(leaseGeneration);
+        command.Parameters.Add(new NpgsqlParameter { Value = maxDelay is { } cap ? cap.TotalSeconds : DBNull.Value, NpgsqlDbType = NpgsqlTypes.NpgsqlDbType.Double });
         var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
         if (affected != 1)
             throw new InvalidOperationException(
@@ -114,4 +153,37 @@ public static class RetryPolicy
         // through structured telemetry without exposing the raw message.
         return "handler failure";
     }
+}
+
+/// <summary>
+/// V12-RMD-008: the retry budget of one outbox event type. A message of an event type without a profile
+/// keeps the default <see cref="RetryPolicy"/> budget (<see cref="RetryPolicy.MaxAttempts"/> attempts,
+/// the store's base delay, no cap). A profile is for deliveries to an outside party whose outages last
+/// minutes, not seconds: its message waits <see cref="BaseDelay"/> x 2^(attempts so far), at most
+/// <see cref="MaxDelay"/>, and is dead after <see cref="MaxAttempts"/> failed attempts.
+/// </summary>
+public sealed class OutboxRetryProfile
+{
+    public OutboxRetryProfile(string eventType, int maxAttempts, TimeSpan baseDelay, TimeSpan maxDelay)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(eventType);
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(maxAttempts);
+        if (baseDelay <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(baseDelay), "Base delay must be positive.");
+        if (maxDelay < baseDelay)
+            throw new ArgumentOutOfRangeException(nameof(maxDelay), "The longest wait cannot be shorter than the first.");
+
+        EventType = eventType;
+        MaxAttempts = maxAttempts;
+        BaseDelay = baseDelay;
+        MaxDelay = maxDelay;
+    }
+
+    public string EventType { get; }
+
+    public int MaxAttempts { get; }
+
+    public TimeSpan BaseDelay { get; }
+
+    public TimeSpan MaxDelay { get; }
 }

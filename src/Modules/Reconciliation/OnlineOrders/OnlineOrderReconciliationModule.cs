@@ -33,6 +33,7 @@ public sealed class OnlineOrderReconciliationModule : IModule
                 new AvailabilityNotDeliveredSourcePair(dataSource),
                 new ProviderTotalMismatchSourcePair(dataSource),
                 new ProviderStatusUnknownSourcePair(dataSource),
+                new ProviderPriceMismatchSourcePair(dataSource),
             };
         });
         context.RegisterTransient(provider => new OnlineOrderReconciliationScanner(

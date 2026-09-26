@@ -38,6 +38,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
             new AvailabilityNotDeliveredSourcePair(_dataSource),
             new ProviderTotalMismatchSourcePair(_dataSource),
             new ProviderStatusUnknownSourcePair(_dataSource),
+            new ProviderPriceMismatchSourcePair(_dataSource),
         ];
     }
 
@@ -278,6 +279,41 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         (await Actions().RetryAsync(record.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.NotRetryable);
 
         (await Actions().ResolveAsync(record.CaseId, record.RowVersion, "Sağlayıcı indirimi, fark kabul edildi.", Manager)).Outcome
+            .Should().Be(OnlineOrderResolveOutcome.Resolved);
+        await Scanner(pair).ScanAllAsync();
+        (await CasesForKeyAsync(key)).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task AProviderPriceDifferenceIsACaseForAPersonAndNeverReopens()
+    {
+        var externalId = NewExternalId();
+        var orderId = await _database.SeedOnlineOrderAsync(externalId, "Accepted", 291m);
+        await _database.SeedInboxAsync(externalId, "OrderCreated", orderId,
+            new { pricesMatch = false, priceDifferenceAmount = 11.00m });
+        var matching = NewExternalId();
+        var matchingOrder = await _database.SeedOnlineOrderAsync(matching, "Accepted", 150m);
+        await _database.SeedInboxAsync(matching, "OrderCreated", matchingOrder, new { pricesMatch = true, priceDifferenceAmount = 0m });
+        var older = NewExternalId();
+        var olderOrder = await _database.SeedOnlineOrderAsync(older, "Accepted", 150m);
+        await _database.SeedInboxAsync(older, "OrderCreated", olderOrder, new { totalsMatch = true });
+
+        var pair = new ProviderPriceMismatchSourcePair(_dataSource);
+        await Scanner(pair).ScanAllAsync();
+
+        var key = ProviderPriceMismatchSourcePair.DeduplicationPrefix + externalId;
+        var record = await ActiveCaseAsync(key);
+        record.CaseType.Should().Be(CaseType.OnlineOrderMismatch);
+        record.DiscrepancyAmount.Should().Be(11m);
+        record.SourceARef.Should().Be($"orders.orders:{orderId}");
+        var details = OnlineOrderCaseDetails.TryParse(record.DetailsJson)!;
+        details.Kind.Should().Be(OnlineOrderDivergenceKind.ProviderPriceMismatch);
+        details.NextAction.Should().Be(OnlineOrderNextAction.SettleWithProvider);
+        (await CasesForKeyAsync(ProviderPriceMismatchSourcePair.DeduplicationPrefix + matching)).Should().Be(0);
+        (await CasesForKeyAsync(ProviderPriceMismatchSourcePair.DeduplicationPrefix + older)).Should().Be(0);
+        (await Actions().RetryAsync(record.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.NotRetryable);
+
+        (await Actions().ResolveAsync(record.CaseId, record.RowVersion, "Sağlayıcı kampanyası, fark kabul edildi.", Manager)).Outcome
             .Should().Be(OnlineOrderResolveOutcome.Resolved);
         await Scanner(pair).ScanAllAsync();
         (await CasesForKeyAsync(key)).Should().Be(1);
