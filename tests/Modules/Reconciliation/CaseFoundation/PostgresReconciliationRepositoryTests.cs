@@ -146,6 +146,54 @@ public sealed class PostgresReconciliationRepositoryTests : IClassFixture<Reconc
         await act.Should().ThrowAsync<InvalidCaseStatusTransitionException>();
     }
 
+    /// <summary>
+    /// V1-RMD-323 (independent 2026-09-26 audit, finding K18): every source pair's own dedup key is
+    /// permanently tied to one entity (a payment id, a session id, ...) that never changes - a rescan
+    /// finding the exact same still-broken condition used to open a brand-new duplicate case the moment
+    /// the first one reached Resolved, because the dedup check only looked at Open/Investigating/Escalated.
+    /// A "resolved" case reopening itself on every future scan defeats the entire point of resolving it.
+    /// </summary>
+    [Fact]
+    public async Task RescanningTheSameKeyAfterTheCaseIsResolvedDeduplicatesIntoItInsteadOfOpeningANewOne()
+    {
+        var user = Guid.NewGuid();
+        var dedupKey = "hugin-unknown:" + Guid.NewGuid().ToString("N");
+
+        var created = await _service.CreateOrDeduplicateCaseAsync(new CreateCaseRequest(
+            DeduplicationKey: dedupKey,
+            CaseType: CaseType.PaymentMismatch,
+            SourceARef: "payments.payments:p1",
+            SourceBRef: "billing.bills:b1",
+            DiscrepancyAmount: 42.00m,
+            Severity: CaseSeverity.Critical,
+            PerformedBy: user));
+
+        var resolved = await _service.TransitionCaseStatusAsync(new TransitionCaseStatusRequest(
+            CaseId: created.CaseId,
+            NewStatus: CaseStatus.Resolved,
+            ExpectedVersion: 1,
+            PerformedBy: user,
+            ReasonOrNote: "Handled manually"));
+        resolved.Status.Should().Be(CaseStatus.Resolved);
+
+        // The underlying condition (e.g. the Payment) never actually changed - a rescan finds the exact
+        // same discrepancy and calls this with the SAME key, exactly like a real scheduled scan would.
+        var rescanned = await _service.CreateOrDeduplicateCaseAsync(new CreateCaseRequest(
+            DeduplicationKey: dedupKey,
+            CaseType: CaseType.PaymentMismatch,
+            SourceARef: "payments.payments:p1",
+            SourceBRef: "billing.bills:b1",
+            DiscrepancyAmount: 42.00m,
+            Severity: CaseSeverity.Critical,
+            PerformedBy: Guid.NewGuid()));
+
+        rescanned.CaseId.Should().Be(created.CaseId, "the same permanently-tied key must deduplicate into the existing case, not spawn a new one");
+        rescanned.Status.Should().Be(CaseStatus.Resolved, "deduplicating into it must not silently reopen it");
+
+        var actions = await _repository.GetCaseActionsAsync(created.CaseId);
+        actions.Should().Contain(a => a.ActionType == ActionType.Deduplicated);
+    }
+
     [Fact]
     public async Task OptimisticConcurrencyConflictDetected()
     {

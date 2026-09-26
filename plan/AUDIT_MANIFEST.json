@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1338,
-  "markdown_line_count": 103174,
-  "markdown_byte_count": 5939119,
+  "markdown_file_count": 1339,
+  "markdown_line_count": 103223,
+  "markdown_byte_count": 5943524,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2535,9 +2535,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "375ADE510304AC717833E045D028FE1B37BCCB348B73EA4A99DEECED2A256E59",
-      "lines": 2614,
-      "bytes": 381191,
+      "sha256": "C637C6B3ACF6A1F1CF34172512C414DAC68D4740E6007D60F4EBD3C2716D7FE2",
+      "lines": 2615,
+      "bytes": 381369,
       "utf8": true
     },
     {
@@ -7403,6 +7403,13 @@
       "sha256": "BF28DF12993AD3BC202F7F3315E32C393A12E3BF9005269112FA05CFD5B61182",
       "lines": 47,
       "bytes": 3515,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-323-reconciliation-case-dedup-includes-resolved.md",
+      "sha256": "196F8F702C049B6357636A50A0DDDEF40DB65BE3055A6C00E92FF93D4531B4B6",
+      "lines": 48,
+      "bytes": 4227,
       "utf8": true
     },
     {

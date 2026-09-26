@@ -79,11 +79,22 @@ public sealed class PostgresReconciliationRepository : IReconciliationRepository
             await lockCmd.ExecuteNonQueryAsync(cancellationToken);
         }
 
-        // 1. Check for existing active case with row lock
+        // 1. Check for ANY existing case with this key (not just an active one) with row lock.
+        //
+        // V1-RMD-323 (independent 2026-09-26 audit, finding K18): every source pair's own deduplication
+        // key is permanently tied to one entity (a payment id, a settlement attempt id, a cash session id -
+        // see e.g. PaymentUnknownSourcePair's own "hugin-unknown:{paymentId}") that itself never changes.
+        // Restricting this check to Open/Investigating/Escalated used to mean a Resolved or Dismissed case
+        // became invisible to it - the very next scan found the exact same underlying condition (nothing
+        // about resolving/dismissing a CASE changes the row this scan reads) and, finding no "active" case
+        // to deduplicate into, opened a brand-new one for the same entity. A case for a permanently-tied
+        // key can never legitimately represent a genuinely NEW occurrence once one already exists, so this
+        // now deduplicates into an existing case regardless of its status - a reconciler who genuinely
+        // needs to revisit a resolved/dismissed case still can, explicitly, via TransitionCaseStatusAsync.
         const string checkSql = $"""
             SELECT case_id, deduplication_key, case_type, source_a_ref, source_b_ref, discrepancy_amount, severity, status, opened_at, resolved_at, row_version, details::text
             FROM {CasesTable}
-            WHERE deduplication_key = @key AND status IN ('Open', 'Investigating', 'Escalated')
+            WHERE deduplication_key = @key
             FOR UPDATE;
             """;
 
