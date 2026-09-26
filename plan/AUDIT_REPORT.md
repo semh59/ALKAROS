@@ -2516,7 +2516,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-313-qr-reject-kitchen-cancel-atomic.md` | ✅ | `E352358B06A9918D42EB782DDF2D35EFC92473543F6C1C9989708B0DCFFCA202` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-314-tender-idempotency-key-stable-across-retry.md` | ✅ | `51C005E12F00941C08F6EE20DCA87B16A21D7D5D693A4598D09947650A778C1D` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-315-current-bill-id-cleared-on-logout.md` | ✅ | `2F91FF1DA2DAEDDEFBB12DA37157D56BCDAC1AC23292013E543EA3E162B21E54` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-316-authorization-self-approval-guard.md` | ✅ | `BD7703B8E77D52A1EDDF7B9EDB511E5FF7B597465DE406A3FD61AD9E00C68C0F` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-316-authorization-self-approval-guard.md` | ✅ | `16FB77C9D28101125C50DF174F22CF37441D0FAE7A2E269EA2011F2C7F41F77B` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-317-held-course-ticket-never-ready.md` | ✅ | `0DE6AE498D34054FEAE9663C0336EB179EAD8BD2618E3D0F9FDC9695ED0FE631` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-318-held-course-void-restores-stock.md` | ✅ | `BF7465CBD1F577F2306B7DA16C506C08FE7584651294F0B80F01F2F546A5E735` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-330-waiter-offline-flake-root-cause.md` | ✅ | `3EA62D33E2F081C13BF4A0135C90931062E6EF07E385F16A54D9BD10CA758540` | Tek-sahip görev |

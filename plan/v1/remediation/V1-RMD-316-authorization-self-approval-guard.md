@@ -44,6 +44,7 @@ Bağımsız 13 ajanlı derin denetimin (2026-09-26) K9 bulgusu: `AuthorizationDe
 ## Acceptance evidence
 
 Host testleri (UTF8 Postgres 18), gerçek bir HTTP sunucusuna karşı: `AuthorizationDecisionHttpTests` 7/7 (2 yeni test) —
+
 - `ManagerCannotApproveOrDenyTheirOwnGrantRequest`: talebin `RequesterUserId`'si onaylayan yöneticinin kendi kullanıcı kimliğiyle seed edilir; hem `/approve` hem `/deny` gerçek 403 `SELF_APPROVAL_NOT_ALLOWED` döndürür, talep hâlâ `pending` listede görünür (gerçekten çözülmemiş).
 - `ManagerCannotClearTheirOwnBehaviouralTightening`: aynı desen, kısıtlamanın `UserId`'si.
 
