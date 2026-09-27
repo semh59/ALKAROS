@@ -146,6 +146,27 @@
   function setBusy(value) { state.busy = value; render(); }
   function setError(message) { state.error = message; render(); }
 
+  // V1-RMD-378 (module-by-module UI audit round 2, T7 - rol-arası haberleşme): a card payment
+  // "onay bekliyor" needs a SECOND, different manager to approve it (V1-RMD-283's own two-person
+  // rule) - but nothing here ever refreshed while this page sat open waiting. A manager watching
+  // this exact screen for the other manager's decision (on a different terminal) saw only the
+  // stale "Onay bekliyor" state forever, with no way to know it resolved short of manually
+  // reloading. Polls only while a real pending confirmation exists - the one moment a SECOND
+  // person's action anywhere else in the system can change what this screen should show with no
+  // action from whoever is looking at it.
+  var pendingConfirmationPollTimer = null;
+  function ensurePendingConfirmationPoll() {
+    var pending = state.summary && state.summary.unsettledPayment && state.summary.unsettledPayment.pendingConfirmation;
+    if (pending && !pendingConfirmationPollTimer) {
+      pendingConfirmationPollTimer = window.setInterval(function () {
+        refreshSummary().then(render);
+      }, 5000);
+    } else if (!pending && pendingConfirmationPollTimer) {
+      window.clearInterval(pendingConfirmationPollTimer);
+      pendingConfirmationPollTimer = null;
+    }
+  }
+
   // ---- bootstrap -----------------------------------------------------
 
   function bootstrap() {
@@ -845,6 +866,7 @@
       app.innerHTML = '<div class="sp-loading">Hesap yükleniyor…</div>';
       return;
     }
+    if (state.summary) ensurePendingConfirmationPoll();
     app.setAttribute('aria-busy', state.busy ? 'true' : 'false');
     switch (state.phase) {
       case 'missingBill': return renderMissingBill();
