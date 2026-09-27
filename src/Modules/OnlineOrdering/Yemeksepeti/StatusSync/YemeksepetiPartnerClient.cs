@@ -17,7 +17,24 @@ public interface IYemeksepetiPartnerClient
     /// Returns the provider's bulk-job identifier when the response carries one.
     /// </summary>
     Task<string?> UpdateVendorCatalogAsync(IReadOnlyList<YemeksepetiCatalogProductUpdate> products, CancellationToken cancellationToken = default);
+
+    /// <summary>V12-ONL-011: opens or closes the vendor on the platform. Not supported by in-memory fakes.</summary>
+    Task SetVendorStatusAsync(YemeksepetiVendorStatusChange change, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("Vendor status needs the Yemeksepeti partner client.");
+
+    /// <summary>V12-ONL-011: the vendor's status as the platform reports it. Not supported by in-memory fakes.</summary>
+    Task<YemeksepetiVendorStatus> GetVendorStatusAsync(CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("Vendor status needs the Yemeksepeti partner client.");
 }
+
+/// <summary>
+/// V12-ONL-011: a vendor status change — <c>OPEN</c>, <c>CLOSED_TODAY</c> or <c>CLOSED_UNTIL</c> with its UTC time; a
+/// closure carries one of the documented <c>closed_reason</c> values.
+/// </summary>
+public sealed record YemeksepetiVendorStatusChange(string Status, string? ClosedReason, DateTimeOffset? ClosedUntil);
+
+/// <summary>V12-ONL-011: the vendor's reported status and, for <c>CLOSED_UNTIL</c>, until when.</summary>
+public sealed record YemeksepetiVendorStatus(string Status, DateTimeOffset? ClosedUntil);
 
 /// <summary>One product line of a vendor catalog update: <c>sku</c> plus at least one of price, active, quantity.</summary>
 public sealed record YemeksepetiCatalogProductUpdate(string Sku, decimal? Price, bool? Active, decimal? Quantity);
@@ -143,6 +160,64 @@ public sealed class YemeksepetiPartnerHttpClient : IYemeksepetiPartnerClient, ID
             : null;
     }
 
+    /// <summary>
+    /// V12-ONL-011, UNVERIFIED DRAFT (EXT:YSP-PARTNER-2.0.2 "Outlet Management", read 2026-09-27):
+    /// <c>PUT {base}/v2/chains/{chain_id}/vendors/{vendor_id}/status</c> with <c>status</c>, <c>closed_reason</c> (omitted
+    /// when opening) and <c>closed_until</c> (UTC, only for <c>CLOSED_UNTIL</c>). <c>OPEN</c> opens a closed vendor only
+    /// within its opening hours.
+    /// </summary>
+    public async Task SetVendorStatusAsync(YemeksepetiVendorStatusChange change, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(change);
+        if (change.Status is not ("OPEN" or "CLOSED_TODAY" or "CLOSED_UNTIL"))
+            throw new ArgumentException($"Unsupported vendor status '{change.Status}'.", nameof(change));
+        if (change.Status == "CLOSED_UNTIL" && change.ClosedUntil is null)
+            throw new ArgumentException("CLOSED_UNTIL needs a closing time.", nameof(change));
+
+        var baseUrl = new Uri(Resolve(BaseUrl).TrimEnd('/') + "/");
+        var token = await AccessTokenAsync(baseUrl, cancellationToken).ConfigureAwait(false);
+        using var request = new HttpRequestMessage(HttpMethod.Put, new Uri(baseUrl, VendorStatusPath()))
+        {
+            Content = JsonContent.Create(new VendorStatusBody(
+                change.Status,
+                change.Status == "OPEN" ? null : change.ClosedReason,
+                change.Status == "CLOSED_UNTIL" ? change.ClosedUntil!.Value.ToUniversalTime().ToString("yyyy-MM-dd'T'HH:mm:ss'Z'", System.Globalization.CultureInfo.InvariantCulture) : null))
+        };
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        using var response = await _http.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        if (!response.IsSuccessStatusCode)
+        {
+            await ForgetRejectedTokenAsync(response, token).ConfigureAwait(false);
+            throw new YemeksepetiPartnerApiException($"Yemeksepeti vendor status update failed with HTTP {(int)response.StatusCode}.");
+        }
+    }
+
+    /// <summary>V12-ONL-011, UNVERIFIED DRAFT: <c>GET {base}/v2/chains/{chain_id}/vendors/{vendor_id}/status</c>.</summary>
+    public async Task<YemeksepetiVendorStatus> GetVendorStatusAsync(CancellationToken cancellationToken = default)
+    {
+        var baseUrl = new Uri(Resolve(BaseUrl).TrimEnd('/') + "/");
+        var token = await AccessTokenAsync(baseUrl, cancellationToken).ConfigureAwait(false);
+        using var request = new HttpRequestMessage(HttpMethod.Get, new Uri(baseUrl, VendorStatusPath()));
+        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        using var response = await _http.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        if (!response.IsSuccessStatusCode)
+        {
+            await ForgetRejectedTokenAsync(response, token).ConfigureAwait(false);
+            throw new YemeksepetiPartnerApiException($"Yemeksepeti vendor status read failed with HTTP {(int)response.StatusCode}.");
+        }
+
+        var body = await response.Content.ReadFromJsonAsync<VendorStatusResponse>(cancellationToken).ConfigureAwait(false);
+        if (body?.Status is not { Length: > 0 } status)
+            throw new YemeksepetiPartnerApiException("Yemeksepeti vendor status answer had no status.");
+        return new YemeksepetiVendorStatus(
+            status,
+            DateTimeOffset.TryParse(body.ClosedUntil, System.Globalization.CultureInfo.InvariantCulture,
+                System.Globalization.DateTimeStyles.AssumeUniversal, out var until) ? until : null);
+    }
+
+    private string VendorStatusPath() =>
+        $"v2/chains/{Uri.EscapeDataString(Resolve(ChainId))}/vendors/{Uri.EscapeDataString(Resolve(VendorId))}/status";
+
     /// <summary>The client owns its HttpClient (created for it at registration) and its token lock.</summary>
     public void Dispose()
     {
@@ -230,6 +305,15 @@ public sealed class YemeksepetiPartnerHttpClient : IYemeksepetiPartnerClient, ID
             && (reference == BaseUrl || reference == ChainId || reference == ClientId || reference == ClientSecret
                 || reference == VendorId);
     }
+
+    private sealed record VendorStatusBody(
+        [property: JsonPropertyName("status")] string Status,
+        [property: JsonPropertyName("closed_reason"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? ClosedReason,
+        [property: JsonPropertyName("closed_until"), JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)] string? ClosedUntil);
+
+    private sealed record VendorStatusResponse(
+        [property: JsonPropertyName("status")] string? Status,
+        [property: JsonPropertyName("closed_until")] string? ClosedUntil);
 
     private sealed record TokenResponse(
         [property: JsonPropertyName("access_token")] string? AccessToken,

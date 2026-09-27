@@ -1,0 +1,46 @@
+V12-ONL-011 commands (2026-09-27, exit 0 unless noted):
+
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors.
+
+- CHECK constraint bug found and fixed before closing this task (found while investigating the earlier
+  MigrationFailed/CHECK-constraint symptom noted below): ck_platform_store_status_closure originally read
+  "(desired_state = 'Open') = (closed_until IS NULL AND close_reason IS NULL)" - this only forces Open to have
+  BOTH fields null, it does NOT force a non-Open state to have BOTH fields set (a ClosedToday row with
+  close_reason left NULL, or closed_until left NULL, satisfied the old constraint because the boolean equality
+  only needs both sides to agree on TRUE/FALSE, not on each field individually). Rewritten as two mutually
+  exclusive branches:
+    (desired_state = 'Open' AND closed_until IS NULL AND close_reason IS NULL)
+    OR (desired_state <> 'Open' AND closed_until IS NOT NULL AND close_reason IS NOT NULL)
+  Verified against the real test Postgres (alkaros-test-pg): a temporary table with the OLD constraint text
+  accepted both bug rows (ClosedToday/close_reason=NULL, ClosedUntil/closed_until=NULL); the NEW constraint
+  rejects both, plus a third case (Open with a stray close_reason set), while still accepting the two valid
+  combinations (Open with both null, ClosedToday with both set). Added a defense-in-depth xunit test
+  (TheClosureConstraintRejectsAStateMissingEitherHalf, 3 InlineData cases) inserting raw SQL directly against
+  the migrated schema, bypassing OnlineStoreStatusService entirely, so a future bug in the C# layer would still
+  be caught at the database level.
+
+- tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj:
+  - Filtered to OnlineStoreStatusTests only: 26/26 (23 original + 3 new constraint-defense cases).
+  - Full project run: 172/173 - the ONE failure (TrendyolGoOrderIntakeTests.
+    ACreatedPackageBecomesOneOrderWithItsChoicesForTheKitchenAndACancellationCancelsIt, Npgsql PostgresException
+    22P05 "unsupported Unicode escape sequence" in YemeksepetiInboxProcessingStore.MarkProcessedAsync) was
+    confirmed PRE-EXISTING and UNRELATED to V12-ONL-011: reproduced identically (git stash -u, rebuild, same
+    filtered run) on the clean pre-V12-ONL-011 worktree state, with zero files this task owns or touches
+    anywhere in its call stack. Not this task's to fix.
+
+- tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj (ManifestTests + DualScreenStoreTests + the rest of
+  this project): 161/161, full green in one run (13m55s - genuinely slow, not flaky; an earlier run hit the
+  harness's own 10-minute command timeout mid-run with no test failure, purely a wall-clock cutoff, not a bug).
+
+- PosTerminal vitest: 36 files, 265/265 (online-store-status: 5 new tests; OnlineFoodHub.test.tsx extended with
+  2 new assertions for the store-status panel's fetch and its "Restoran durumu" heading); production build ok
+  (corepack pnpm build, no errors).
+
+- Migration 157 on a fresh, empty Postgres database (alkaros_migration_verify_v12onl011, dropped after): up
+  (schema + table + all 5 constraints created), down (table dropped cleanly), up again (idempotent - schema
+  IF NOT EXISTS, table created fresh) - all three steps exit 0, verified with \d showing the corrected
+  ck_platform_store_status_closure constraint text after the second up.
+
+- task_scope_tool.py --task-id V12-ONL-011 (worktree mode, before commit): "OK: All changes within scope".
+
+- consistency_audit.py: clean. plan_audit_tool.py validate: 0 errors, 0 warnings.

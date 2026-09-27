@@ -1339,6 +1339,14 @@
         "provider_poll_state"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "157",
+      "phase": "B",
+      "tables": [
+        "platform_store_status"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

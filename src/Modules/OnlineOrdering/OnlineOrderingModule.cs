@@ -8,6 +8,7 @@ using ALKAROS.OnlineOrdering.Providers.TrendyolGo.StatusSync;
 using ALKAROS.OnlineOrdering.Providers.TrendyolGo.Menu;
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.OnlineOrdering.Providers.Inbox;
+using ALKAROS.OnlineOrdering.StoreStatus;
 using ALKAROS.OnlineOrdering.Yemeksepeti.Provider;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
 using ALKAROS.OnlineOrdering.AvailabilityPublishing.Yemeksepeti;
@@ -108,6 +109,16 @@ public sealed class OnlineOrderingModule : IModule
             TrendyolGoMappings(services), (TrendyolGoMenuClient)services.GetService(typeof(TrendyolGoMenuClient))!, TimeProvider.System));
         context.RegisterTransient<IAvailabilityChannelPublisher>(services => new TrendyolGoAvailabilityPublisher(
             TrendyolGoMappings(services), (TrendyolGoMenuClient)services.GetService(typeof(TrendyolGoMenuClient))!));
+
+        // V12-ONL-011 (UNVERIFIED DRAFT): each platform's open/closed switch and the service that delivers requests.
+        context.RegisterTransient<IOnlineStoreStatusChannel>(services => new YemeksepetiStoreStatusChannel(
+            (IYemeksepetiPartnerClient)services.GetService(typeof(IYemeksepetiPartnerClient))!, PlatformSettings(services)));
+        context.RegisterSingleton<IOnlineStoreStatusChannel>(services => new TrendyolGoStoreStatusChannel(
+            new HttpClient { Timeout = TimeSpan.FromSeconds(10) }, PlatformSettings(services)));
+        context.RegisterTransient(services => new OnlineStoreStatusService(
+            (NpgsqlDataSource)services.GetService(typeof(NpgsqlDataSource))!,
+            (IEnumerable<IOnlineStoreStatusChannel>)services.GetService(typeof(IEnumerable<IOnlineStoreStatusChannel>))!,
+            (TimeProvider)services.GetService(typeof(TimeProvider))!));
     }
 
     /// <summary>V12-TGO-002/004: the shared mapping service reading Trendyol Go's rows.</summary>

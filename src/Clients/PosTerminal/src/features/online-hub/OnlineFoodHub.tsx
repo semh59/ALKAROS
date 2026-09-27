@@ -3,6 +3,7 @@ import { OnlineMenuTab } from "../online-menu";
 import { OnlineOperationsWorkspace } from "../online-operations";
 import { OnlinePlatformCredentialsWorkspace } from "../online-platform-credentials";
 import { OnlineProblemsTab } from "../online-problems";
+import { OnlineStoreStatusPanel } from "../online-store-status";
 import {
   OnlineHubApiError,
   canSeeOnlineTab,
@@ -22,7 +23,7 @@ const tabOrder: readonly OnlineHubTab[] = ["orders", "menu", "problems", "settin
 /**
  * V12-OUI-004: online food in one screen. The platform status line is on top; the tabs below hold the order queue and,
  * by the session's capabilities, the menu and settings (a manager's) and the problems (V12-OUI-006). A tab a session may
- * not see is neither shown nor loaded.
+ * not see is neither shown nor loaded. Settings opens with the restaurant's open/closed switch per platform (V12-ONL-011).
  */
 export function OnlineFoodHub({
   terminalId,
@@ -63,7 +64,12 @@ export function OnlineFoodHub({
         {active === "orders" && <OnlineOperationsWorkspace terminalId={terminalId} />}
         {active === "menu" && <OnlineMenuTab terminalId={terminalId} />}
         {active === "problems" && <OnlineProblemsTab terminalId={terminalId} canAct={granted.has("reconciliation.manage")} />}
-        {active === "settings" && <OnlinePlatformCredentialsWorkspace terminalId={terminalId} />}
+        {active === "settings" && (
+          <>
+            <OnlineStoreStatusPanel terminalId={terminalId} />
+            <OnlinePlatformCredentialsWorkspace terminalId={terminalId} />
+          </>
+        )}
       </div>
     </div>
   );

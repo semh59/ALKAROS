@@ -26,7 +26,8 @@ describe("OnlineFoodHub", () => {
     fetchMock.mockImplementation(async (url: string) =>
       url.endsWith("/online-channels") ? ok({ platforms: channels })
         : url.includes("/online-platform-credentials") ? ok({ platforms: [] })
-          : ok(emptyQueue));
+          : url.includes("/online-store-status") ? ok([])
+            : ok(emptyQueue));
     vi.stubGlobal("fetch", fetchMock);
   });
   afterEach(() => {
@@ -58,6 +59,7 @@ describe("OnlineFoodHub", () => {
     expect(text).toContain("Son sipariş olayı:");
     expect(text).not.toContain("Ayarlara git");
     expect(urls().some((url) => url.includes("online-platform-credentials"))).toBe(false);
+    expect(urls().some((url) => url.includes("online-store-status"))).toBe(false);
     expect(urls()).toContain("/api/v1/terminals/t-1/online-operations?source=all");
   });
 
@@ -77,6 +79,8 @@ describe("OnlineFoodHub", () => {
     act(() => root?.unmount());
     await render("settings", manager, onSelectTab);
     expect(urls().some((url) => url.includes("online-platform-credentials"))).toBe(true);
+    expect(urls()).toContain("/api/v1/terminals/t-1/online-store-status/");
+    expect(document.body.textContent).toContain("Restoran durumu");
     expect(document.querySelectorAll('[role="tab"]')[2].getAttribute("aria-selected")).toBe("true");
 
     const results = await axe.run(document.body, { rules: { "color-contrast": { enabled: false } } });
