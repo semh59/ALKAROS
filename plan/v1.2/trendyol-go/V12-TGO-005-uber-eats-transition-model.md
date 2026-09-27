@@ -1,8 +1,8 @@
 # V12-TGO-005 - Uber Eats geçiş modelindeki sipariş alanlarını destekle
 
 - Task ID: V12-TGO-005
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: integration
 - Surface state: Planned
 
@@ -19,6 +19,12 @@ geliyor. Adaptör iki modeli de kaldırır. Sağlayıcı davranışı yalnız he
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan; Semih 2026-09-26 kararı):
   - src/Modules/OnlineOrdering/Providers/TrendyolGo/ (V12-TGO-002, V12-TGO-003) — model alanları.
   - tests/Modules/OnlineOrdering/Providers/TrendyolGo/ — testler.
+  - src/Modules/OnlineOrdering/Providers/Contracts/ (V12-ONL-007) — müşteri notu ve arama bilgisinin platformdan okunması.
+  - src/Modules/OnlineOrdering/Yemeksepeti/Provider/ (V12-ONL-007) — Yemeksepeti notunun aynı noktadan okunması.
+  - src/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox/ (V12-ONL-001) — not okumanın yükten ayrılması.
+  - src/Host/Experience/OnlineOrdering/ (V12-OUI-001) — not uç noktasının arama bilgisini taşıması.
+  - src/Clients/PosTerminal/src/features/online-operations/ (V12-OUI-001) — arama bilgisinin Türkçe gösterimi.
+  - tests/Host/Experience/OnlineOrdering/ — testler.
 
 ## In scope
 
