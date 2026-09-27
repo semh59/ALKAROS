@@ -59,6 +59,9 @@ için ayrı kanal değildir). Ortak çekirdek `V12-ONL-006..010`, `V12-REC-002` 
 `V12-MGY-001` gerçek platform erişimi gelene kadar `Blocked` kalır.
 `V12-ONL-010` (platformdan bağımsız sipariş alımı) 2026-09-27'de `V12-GOV-008`
 (`TRACEABILITY.md` C107) ile eksik görev olarak eklendi.
+2026-09-27 (`V12-GOV-009`, C108): online yemek tek "Online Yemek" ekranında toplanır —
+`V12-OUI-004` (merkez ekran), `V12-OUI-005` (Menü ve ürün eşleme), `V12-OUI-006`
+(Sorunlar), `V12-ONL-011` (restoranı platformda açma/kapama/yoğun).
 
 Doğrulanan plan hacmi: 12 modül, 25 tek-sahip görev dosyası. 2026-09-07:
 `V12-GOV-001` (NFC kanalının kabulü), `V12-GOV-002` (QR'ın eski
