@@ -531,6 +531,68 @@ describe("workspace /system-health route surfaces the real backend error message
 });
 
 /**
+ * V1-RMD-381 (module-by-module UI audit round 2, 2026-09-27): unlike
+ * KitchenOperationsWorkspace's own 8s poll, TableRoute never refreshed on
+ * its own - a manager watching the floor plan saw only whatever was true
+ * at the moment they last clicked "Yenile", with no way to know a
+ * waiter/cashier's own table-status change had landed since.
+ */
+describe("workspace /tables route polls for live status changes", () => {
+  let root: Root | null = null;
+
+  async function render(element: ReactElement) {
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(element));
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it("re-fetches every 8s while the floor plan is ready, and stops once it is not", async () => {
+    let zoneCalls = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/table-management/zones")) { zoneCalls += 1; return jsonResponse([]); }
+      if (path.includes("/table-management/tables")) return jsonResponse([]);
+      return jsonResponse([]);
+    }));
+
+    vi.useFakeTimers();
+    window.history.replaceState({}, "", "/tables");
+    await render(
+      <RouterProvider>
+        <ExperiencePage
+          terminalId="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+          displayName="Test Kullanıcı"
+          capabilities={["tables.status"]}
+          path="/tables"
+          backendStatus="online"
+          onLogout={async () => {}}
+        />
+      </RouterProvider>,
+    );
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+
+    const afterInitialLoad = zoneCalls;
+    expect(afterInitialLoad).toBeGreaterThan(0);
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(8_000); });
+    expect(zoneCalls).toBe(afterInitialLoad + 1);
+
+    await act(async () => { await vi.advanceTimersByTimeAsync(8_000); });
+    expect(zoneCalls).toBe(afterInitialLoad + 2);
+  });
+});
+
+/**
  * V1-RMD-223: found by an independent audit (2026-09-16) - KitchenRoute's
  * onLoadPerformanceReport prop was a fresh inline closure every render, and
  * `client` itself is a fresh object every 8s poll cycle (load() always

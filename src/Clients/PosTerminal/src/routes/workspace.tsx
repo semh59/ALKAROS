@@ -224,6 +224,21 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
 
   useEffect(() => { void load(); }, [load]);
 
+  // V1-RMD-381 (module-by-module UI audit round 2, T7 - cross-role communication): unlike
+  // KitchenOperationsWorkspace's own 8s poll (POLL_INTERVAL_MS, "the comparison report's own
+  // CRIT finding"), this screen never refreshed on its own - a manager watching the floor plan
+  // saw only whatever was true at the moment they last clicked "Yenile", with no way to know a
+  // waiter/cashier's own table-status change (occupied, cleared, transferred) had landed since.
+  // Same guard as kitchen's own: only while genuinely ready/empty, never while an error/auth/
+  // offline/stale state is already asking for a manual action, and safe during floor-plan
+  // editing (FloorPlanWorkspace's own effect only re-syncs its draft from a fresh `plan` prop
+  // while in "operation" mode, never while "setup").
+  useEffect(() => {
+    if (state !== "ready" && state !== "empty") return;
+    const timer = window.setInterval(() => { void load(); }, 8_000);
+    return () => window.clearInterval(timer);
+  }, [state, load]);
+
   const handleSelectZone = (zoneId: string) => {
     setSelectedZoneId(zoneId);
     void loadFloorPlanForZone(zoneId, zones);
