@@ -2,6 +2,7 @@
 
 import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { NfcOrder } from "./NfcOrder";
 
@@ -176,5 +177,20 @@ describe("NfcOrder", () => {
     await act(async () => Promise.resolve());
 
     expect(document.body.textContent).toContain("garsonu çağırın");
+  });
+
+  // V1-RMD-374 (module-by-module UI audit, 2026-09-27): unlike ~13 other
+  // feature workspaces, this guest-facing screen had no axe-core scan.
+  it("has no critical or serious axe violations", async () => {
+    document.title = "ALKAROS masa siparişi";
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/catalog")) return jsonResponse(CATALOG);
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+    await render("/nfc/table-1");
+    await act(async () => Promise.resolve());
+    const report = await axe.run(document, { rules: { "color-contrast": { enabled: false } } });
+    expect(report.violations.filter((violation) => violation.impact === "critical" || violation.impact === "serious")).toEqual([]);
   });
 });

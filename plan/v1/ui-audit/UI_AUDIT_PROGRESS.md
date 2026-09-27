@@ -26,7 +26,7 @@ Modül-modül, kalıcı denetim süreci (2026-09-27 kararı). Kurallar:
 | 11 | PosTerminal — online-* (hub/menu/ops/credentials/problems/store-status) | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-371; en olgun bölümlerden biri, tek CSS sınıf uyumsuzluğu |
 | 12 | PosTerminal — system-health | Tamamlandı | 2 | 2 | 2026-09-27 | V1-RMD-372; axe boşluğu + Modül 9'da ertelenen hata sınıfı |
 | 13 | PosTerminal — Ayarlar ekranları (Relay/Qnb/Token/Security/BusinessIdentity/Reservation/Screensaver) | Tamamlandı | 2 | 2 | 2026-09-27 | V1-RMD-373; axe boşluğu (7 ekran) + eksik test dosyası (Screensaver) |
-| 14 | PosTerminal — NfcOrder + CustomerDisplay | Bekliyor | - | - | - | - |
+| 14 | PosTerminal — NfcOrder + CustomerDisplay | Tamamlandı | 2 | 2 | 2026-09-27 | V1-RMD-374; axe boşluğu + CustomerDisplay'in eksik test dosyası |
 | 15 | CustomerWeb — Menu | Bekliyor | - | - | - | - |
 | 16 | CustomerWeb — OrderEntry | Bekliyor | - | - | - | - |
 | 17 | CustomerWeb — Bill | Bekliyor | - | - | - | - |
