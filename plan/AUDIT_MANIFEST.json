@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1380,
-  "markdown_line_count": 105813,
-  "markdown_byte_count": 6095726,
+  "markdown_file_count": 1381,
+  "markdown_line_count": 105882,
+  "markdown_byte_count": 6099648,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "477211DD0BC7238D3996C5D2D8DC042CBF7B959860FE122ED11C37397D7ED08D",
-      "lines": 2656,
-      "bytes": 388262,
+      "sha256": "3E3218DE22E6D5DDC54183C1650BD868081EA6F557C3AE1283C06623675C3C6D",
+      "lines": 2657,
+      "bytes": 388432,
       "utf8": true
     },
     {
@@ -7571,6 +7571,13 @@
       "sha256": "F3312130C4812F642B393C930D1BDC95E3903F0A546799ABBC5D1691E8AACF63",
       "lines": 75,
       "bytes": 4662,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-345-customerweb-error-region-aria-alert.md",
+      "sha256": "61F38221F022F1A98A2FC5D015876326FFE446A9FB6977A9E5E9B002AA5B0311",
+      "lines": 68,
+      "bytes": 3752,
       "utf8": true
     },
     {
