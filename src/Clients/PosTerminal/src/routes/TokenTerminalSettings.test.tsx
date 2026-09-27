@@ -2,6 +2,7 @@
 
 import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { TokenTerminalSettings } from "./TokenTerminalSettings";
 
@@ -206,5 +207,17 @@ describe("TokenTerminalSettings", () => {
     expect(branchField.value).toBe("branch-2");
     expect(terminalField.value).toBe("AV0000111044");
     expect(clientIdField.value).toBe("cid-example");
+  });
+
+  // V1-RMD-373 (module-by-module UI audit, 2026-09-27): unlike ~13 other
+  // feature workspaces, none of the Ayarlar (settings) screens had an
+  // axe-core scan.
+  it("has no critical or serious axe violations", async () => {
+    document.title = "ALKAROS Token ayarları";
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ error: { code: "UNAUTHORIZED", message: "Oturum yok." } }, 401)));
+    await render(<TokenTerminalSettings />);
+    await act(async () => Promise.resolve());
+    const report = await axe.run(document, { rules: { "color-contrast": { enabled: false } } });
+    expect(report.violations.filter((violation) => violation.impact === "critical" || violation.impact === "serious")).toEqual([]);
   });
 });

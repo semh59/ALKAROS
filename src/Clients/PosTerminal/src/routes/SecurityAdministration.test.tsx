@@ -2,6 +2,7 @@
 
 import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SecurityAdministration } from "./SecurityAdministration";
 
@@ -165,5 +166,17 @@ describe("SecurityAdministration", () => {
 
     expect(document.body.textContent).toContain("bulunamadı");
     expect(document.body.textContent).not.toContain("404");
+  });
+
+  // V1-RMD-373 (module-by-module UI audit, 2026-09-27): unlike ~13 other
+  // feature workspaces, none of the Ayarlar (settings) screens had an
+  // axe-core scan.
+  it("has no critical or serious axe violations", async () => {
+    document.title = "ALKAROS güvenlik yönetimi";
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ error: { code: "UNAUTHORIZED", message: "Oturum yok." } }, 401)));
+    await render(<SecurityAdministration />);
+    await act(async () => Promise.resolve());
+    const report = await axe.run(document, { rules: { "color-contrast": { enabled: false } } });
+    expect(report.violations.filter((violation) => violation.impact === "critical" || violation.impact === "serious")).toEqual([]);
   });
 });

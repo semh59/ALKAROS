@@ -2,6 +2,7 @@
 
 import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import axe from "axe-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { BusinessIdentitySettings } from "./BusinessIdentitySettings";
 
@@ -246,5 +247,17 @@ describe("BusinessIdentitySettings", () => {
 
     expect(deleteCalled).toBe(true);
     expect(document.body.textContent).toContain("Logo kaldırıldı");
+  });
+
+  // V1-RMD-373 (module-by-module UI audit, 2026-09-27): unlike ~13 other
+  // feature workspaces, none of the Ayarlar (settings) screens had an
+  // axe-core scan.
+  it("has no critical or serious axe violations", async () => {
+    document.title = "ALKAROS işletme kimliği";
+    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse({ error: { code: "UNAUTHORIZED", message: "Oturum yok." } }, 401)));
+    await render(<BusinessIdentitySettings />);
+    await act(async () => Promise.resolve());
+    const report = await axe.run(document, { rules: { "color-contrast": { enabled: false } } });
+    expect(report.violations.filter((violation) => violation.impact === "critical" || violation.impact === "serious")).toEqual([]);
   });
 });
