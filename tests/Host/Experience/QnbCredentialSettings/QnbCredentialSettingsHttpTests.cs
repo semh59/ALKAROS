@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -199,6 +200,51 @@ public sealed class QnbCredentialSettingsHttpTests : IAsyncLifetime
             $"Unexpected message: {body.Message}");
         Assert.DoesNotContain("EF0003", body.Message);
         Assert.DoesNotContain("Oturum açma", body.Message);
+    }
+
+    /// <summary>
+    /// V1-RMD-347 (independent 2026-09-26 audit, orta seviye bulgu): before this, the production
+    /// cutover for "Bağlantıyı Test Et"'s target URL existed only as a code comment - there was
+    /// no mechanical way to point it anywhere but the hardcoded test-tenant URL. Proves the new
+    /// ALKAROS_QNB_USER_SERVICE_URL override is actually wired end to end: a real local HTTP
+    /// listener stands in for QNB (no fault in its response, so wsLogin/logout both succeed),
+    /// and success is only possible if the override URL was genuinely used - the real QNB test
+    /// server always answers placeholder credentials with a SOAP fault (see the sibling test
+    /// above), never a bare success.
+    /// </summary>
+    [Fact]
+    public async Task TestConnectionUsesTheEnvironmentOverrideUrlWhenOneIsSet()
+    {
+        var fakeQnbBuilder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
+        fakeQnbBuilder.WebHost.UseUrls("http://127.0.0.1:0");
+        await using var fakeQnb = fakeQnbBuilder.Build();
+        fakeQnb.MapPost("/", () => Results.Text("<response/>", "text/xml"));
+        await fakeQnb.StartAsync();
+        var fakeQnbAddress = fakeQnb.Services.GetRequiredService<IServer>()
+            .Features.Get<IServerAddressesFeature>()!.Addresses.Single();
+
+        Environment.SetEnvironmentVariable("ALKAROS_QNB_USER_SERVICE_URL", fakeQnbAddress);
+        try
+        {
+            var terminalId = Guid.NewGuid();
+            var cookie = await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "manager", "integrations.manage");
+            await using var app = await StartAsync();
+            using var client = CreateClient(app);
+
+            using var saveResponse = await client.SendAsync(JsonRequest(CredentialPath(terminalId), cookie, SampleRequest()));
+            Assert.Equal(HttpStatusCode.NoContent, saveResponse.StatusCode);
+
+            using var response = await client.SendAsync(JsonRequest(TestConnectionPath(terminalId), cookie, method: HttpMethod.Post));
+            var body = await response.Content.ReadFromJsonAsync<QnbConnectionTestResponse>();
+
+            Assert.True(body!.Success, $"Expected the override URL to be used (fake server, no fault -> success); got: {body.Message}");
+            Assert.Equal("Bağlantı başarılı.", body.Message);
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable("ALKAROS_QNB_USER_SERVICE_URL", null);
+            await fakeQnb.StopAsync();
+        }
     }
 
     private static string CredentialPath(Guid terminalId) => $"/api/v1/terminals/{terminalId:D}/qnb-credential/";

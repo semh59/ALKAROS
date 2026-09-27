@@ -35,6 +35,19 @@ public static class QnbCredentialSettingsEndpoints
     // `V14-QNB-001/002`'s own scope once `V0-QNB-001` closes.
     private const string QnbTestUserServiceUrl = "https://erpefaturatest1.qnbesolutions.com.tr/efatura/ws/userService";
 
+    // V1-RMD-347 (independent 2026-09-26 audit, orta seviye bulgu): before this, the
+    // production cutover point for the URL above existed only as a code comment - a
+    // deployment going to a real QNB tenant had no way to point the connection test screen
+    // at it without editing and rebuilding this file. Mirrors this codebase's own established
+    // convention for exactly this kind of "safe test default, production overridable via
+    // environment" value (ALKAROS_BACKUP_DIR, ALKAROS_RESTORE_MAINTENANCE_CONNECTION, ...).
+    // A real production tenant's userService URL is a config value, never a secret, so an
+    // env var (not the secret store) is the right home for it.
+    private static string ResolveQnbUserServiceUrl()
+        => Environment.GetEnvironmentVariable("ALKAROS_QNB_USER_SERVICE_URL") is { Length: > 0 } configured
+            ? configured
+            : QnbTestUserServiceUrl;
+
     public static IServiceCollection AddQnbCredentialSettingsExperience(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -127,7 +140,7 @@ public static class QnbCredentialSettingsEndpoints
             if (status.UserId is null || password is null)
                 return Results.Ok(new QnbConnectionTestResponse(false, "Önce kullanıcı adı ve parola kaydedilmelidir."));
 
-            var client = new QnbSoapClient(httpClientFactory.CreateClient(), QnbTestUserServiceUrl);
+            var client = new QnbSoapClient(httpClientFactory.CreateClient(), ResolveQnbUserServiceUrl());
             try
             {
                 await client.LoginAsync(status.UserId, password, cancellationToken: cancellationToken);
