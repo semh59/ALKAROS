@@ -10,7 +10,7 @@ import { PendingChecksWorkspace } from "../features/pending-checks";
 import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
 import { BillingSplitApiError, BillSplitWorkspace, createBillFromOrder, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
 import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
-import { KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
+import { KitchenOperationsApiError, KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
 import { SystemHealthWorkspace, type SystemHealthState } from "../features/system-health";
 import { AuthorizationDecisionsWorkspace, createAuthorizationDecisionsClient, type AuthorizationDecisionState, type AuthorizationDecisionsData } from "../features/authorization-decisions";
 
@@ -541,7 +541,13 @@ function KitchenRoute({ terminalId, canAdvance, canOperate, canManageReprints, c
       setClient(null);
       setData(emptyKitchenData);
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "conflict" : "error");
-      setErrorMessage(reason instanceof ApiError ? reason.message : "Mutfak verisi alınamadı.");
+      // V1-RMD-369 (module-by-module UI audit, module 9): kitchenApi.ts
+      // throws its own KitchenOperationsApiError, not the shared ApiError
+      // this checked alone - same two-error-class gap as V1-RMD-366/367/368.
+      // KitchenOperationsWorkspace.tsx's own action handlers already check
+      // KitchenOperationsApiError correctly; only this route-level load()
+      // (the first fetch, behind the error/offline/conflict states) had it.
+      setErrorMessage(reason instanceof ApiError || reason instanceof KitchenOperationsApiError ? reason.message : "Mutfak verisi alınamadı.");
     }
   }, [canAdvance, terminalId]);
   useEffect(() => { void load(); }, [load]);

@@ -21,7 +21,7 @@ Modül-modül, kalıcı denetim süreci (2026-09-27 kararı). Kurallar:
 | 6 | PosTerminal — workspace.tsx + tables | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-365 (ilk tarama, hatalıydı) → V1-RMD-367 ile yeniden açılıp düzeltildi (yanlış hata sınıfı) |
 | 7 | PosTerminal — billing | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-366; yanlış hata sınıfı kontrolü (V1-RMD-114 sınıfından) |
 | 8 | PosTerminal — catalog | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-368; aynı yanlış hata sınıfı deseni (V1-RMD-366/367 ile aynı kök neden) |
-| 9 | PosTerminal — kitchen-operations | Bekliyor | - | - | - | - |
+| 9 | PosTerminal — kitchen-operations | Tamamlandı | 3 | 3 | 2026-09-27 | V1-RMD-369; ARIA durumu + aynı yanlış hata sınıfı deseni |
 | 10 | PosTerminal — pending-checks | Bekliyor | - | - | - | - |
 | 11 | PosTerminal — online-* (hub/menu/ops/credentials/problems/store-status) | Bekliyor | - | - | - | - |
 | 12 | PosTerminal — system-health | Bekliyor | - | - | - | - |

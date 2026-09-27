@@ -436,18 +436,24 @@ export function KitchenOperationsWorkspace({
       </div>
       {/* V1-KDS-008: Expo (per-table) vs Tüm Gün (per-product totals) —
           same board data, two ways to look at it. */}
+      {/* V1-RMD-369 (module-by-module UI audit): these two groups carried
+          only a visual .is-active class, no ARIA state at all - the same
+          gap V1-RMD-360 closed in Cashier's category tabs. aria-pressed
+          matches TableWorkspace.tsx's own established convention for this
+          exact shape (a role="group" of mutually exclusive toggle buttons),
+          not role="tab"/radio, to stay consistent with that precedent. */}
       <div className="kitchen-view-mode" role="group" aria-label="Görünüm modu">
-        <button type="button" className={viewMode === "expo" ? "is-active" : ""} onClick={() => setViewMode("expo")}>Expo</button>
-        <button type="button" className={viewMode === "allday" ? "is-active" : ""} onClick={() => setViewMode("allday")}>Tüm Gün</button>
+        <button type="button" className={viewMode === "expo" ? "is-active" : ""} aria-pressed={viewMode === "expo"} onClick={() => setViewMode("expo")}>Expo</button>
+        <button type="button" className={viewMode === "allday" ? "is-active" : ""} aria-pressed={viewMode === "allday"} onClick={() => setViewMode("allday")}>Tüm Gün</button>
         {/* V1-KIT-014/V1-KDS-009: hidden entirely without reports.view —
             an operational report, not a locked-but-visible action like the
             86 button (V1-KDS-002's own pattern doesn't apply here). */}
-        {canViewReports && onLoadPerformanceReport && <button type="button" className={viewMode === "report" ? "is-active" : ""} onClick={() => setViewMode("report")}>Rapor</button>}
+        {canViewReports && onLoadPerformanceReport && <button type="button" className={viewMode === "report" ? "is-active" : ""} aria-pressed={viewMode === "report"} onClick={() => setViewMode("report")}>Rapor</button>}
       </div>
       <div className="kitchen-density" role="group" aria-label="Ekran yoğunluğu">
-        <button type="button" className={densityOverride === "auto" ? "is-active" : ""} onClick={() => setDensityOverride("auto")}>Otomatik{autoDense && densityOverride === "auto" ? " (yoğun)" : ""}</button>
-        <button type="button" className={densityOverride === "sparse" ? "is-active" : ""} onClick={() => setDensityOverride("sparse")}>Sakin mod</button>
-        <button type="button" className={densityOverride === "dense" ? "is-active" : ""} onClick={() => setDensityOverride("dense")}>Yoğun mod</button>
+        <button type="button" className={densityOverride === "auto" ? "is-active" : ""} aria-pressed={densityOverride === "auto"} onClick={() => setDensityOverride("auto")}>Otomatik{autoDense && densityOverride === "auto" ? " (yoğun)" : ""}</button>
+        <button type="button" className={densityOverride === "sparse" ? "is-active" : ""} aria-pressed={densityOverride === "sparse"} onClick={() => setDensityOverride("sparse")}>Sakin mod</button>
+        <button type="button" className={densityOverride === "dense" ? "is-active" : ""} aria-pressed={densityOverride === "dense"} onClick={() => setDensityOverride("dense")}>Yoğun mod</button>
       </div>
     </div>
 
@@ -705,6 +711,12 @@ function ItemRow({
           type="button"
           className={`kitchen-step ${isPast ? "is-done" : ""} ${isCurrent ? `is-current is-current--${stage.toLowerCase()}` : ""} ${isNext ? "is-next" : ""}`}
           disabled={!clickable}
+          // V1-RMD-369: a stage stepper, not a toggle group - this row's
+          // ONE current stage is marked the ARIA way ("step" of a process),
+          // the same distinction the split-payment radiogroup (Module 3)
+          // and this file's own view/density groups (aria-pressed, above)
+          // draw for their different shapes.
+          aria-current={isCurrent ? "step" : undefined}
           onClick={clickable ? () => onAdvance(stage) : undefined}
         >{isPast ? "✓ " : ""}{busy && isNext ? "…" : itemStatusLabels[stage]}</button>;
       })}

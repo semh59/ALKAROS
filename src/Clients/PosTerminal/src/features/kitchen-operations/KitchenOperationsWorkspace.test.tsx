@@ -275,6 +275,35 @@ describe("kitchen operations workspace", () => {
     expect(workspace.className).toContain("is-dense");
   });
 
+  // V1-RMD-369 (module-by-module UI audit, 2026-09-27): the view-mode and
+  // density button groups carried only a visual .is-active class, no ARIA
+  // state at all - the same gap V1-RMD-360 closed in Cashier's category
+  // tabs, fixed here to aria-pressed to match TableWorkspace.tsx's own
+  // established convention for this exact shape.
+  it("moves aria-pressed on the view-mode and density groups as the active option changes", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    const expoButton = [...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent === "Expo")!;
+    const alldayButton = [...document.querySelectorAll(".kitchen-view-mode button")].find((button) => button.textContent === "Tüm Gün")!;
+    expect(expoButton.getAttribute("aria-pressed")).toBe("true");
+    expect(alldayButton.getAttribute("aria-pressed")).toBe("false");
+    await click(alldayButton);
+    expect(expoButton.getAttribute("aria-pressed")).toBe("false");
+    expect(alldayButton.getAttribute("aria-pressed")).toBe("true");
+
+    const denseButton = [...document.querySelectorAll(".kitchen-density button")].find((button) => button.textContent?.includes("Yoğun mod"))!;
+    expect(denseButton.getAttribute("aria-pressed")).toBe("false");
+    await click(denseButton);
+    expect(denseButton.getAttribute("aria-pressed")).toBe("true");
+  });
+
+  it("marks the item stepper's current stage with aria-current=step", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    const current = document.querySelector(".kitchen-step.is-current")!;
+    expect(current.getAttribute("aria-current")).toBe("step");
+    const others = [...document.querySelectorAll(".kitchen-step")].filter((step) => step !== current);
+    others.forEach((step) => expect(step.getAttribute("aria-current")).toBeNull());
+  });
+
   // V1-KIT-013/V1-KDS-006: proves the threshold is actually read from
   // data.denseModeThreshold, not a hardcoded 9 — the shared fixture only
   // ever has 1 open item, so a hardcoded-9 implementation would also
