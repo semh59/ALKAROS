@@ -1,0 +1,32 @@
+# Arayüz denetimi ilerleme takibi
+
+Modül-modül, kalıcı denetim süreci (2026-09-27 kararı). Kurallar:
+
+- Her oturum başında bu dosya okunur; "Bekliyor" olmayan hiçbir modüle tekrar dokunulmaz.
+- "Devam Ediyor" durumundaki bir modül varsa, yeni bir modüle başlamadan önce o bitirilir.
+- Bir modülün TÜM bulguları (düzeltilmiş ya da bilinçli olarak ertelenmiş şekilde belgelenmiş)
+  kapanmadan sıradaki modüle geçilmez.
+- Denetim boyutları (her modül için): P1 Rakip karşılaştırması, P2 Saha gerçekliği,
+  P3 Basitlik/bilişsel yük, P4 Öğrenme eşiği, T1 Erişilebilirlik, T2 Native tarayıcı API'leri,
+  T3 Hata yönetimi, T4 Durum kalıcılığı, T5 Tutarlılık, T6 Frontend-backend uyumu,
+  T7 Rol-arası haberleşme, T8 Mobil/performans.
+
+| # | Modül | Durum | Bulgu | Düzeltilen | Tarih | Not |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | Cashier vanilla (ana ekran) | Tamamlandı | 6 (+4 ürün gözlemi) | 6 | 2026-09-27 | V1-RMD-360; ürün gözlemleri (P1/P3/P4) Semih'in kararına bırakıldı |
+| 2 | Cashier — Kasa Oturumu | Bekliyor | - | - | - | - |
+| 3 | Cashier — Tahsilat/Split Payment | Bekliyor | - | - | - | - |
+| 4 | WaiterPwa | Bekliyor | - | - | - | - |
+| 5 | PosTerminal — Cashier.tsx | Bekliyor | - | - | - | - |
+| 6 | PosTerminal — workspace.tsx + tables | Bekliyor | - | - | - | - |
+| 7 | PosTerminal — billing | Bekliyor | - | - | - | - |
+| 8 | PosTerminal — catalog | Bekliyor | - | - | - | - |
+| 9 | PosTerminal — kitchen-operations | Bekliyor | - | - | - | - |
+| 10 | PosTerminal — pending-checks | Bekliyor | - | - | - | - |
+| 11 | PosTerminal — online-* (hub/menu/ops/credentials/problems/store-status) | Bekliyor | - | - | - | - |
+| 12 | PosTerminal — system-health | Bekliyor | - | - | - | - |
+| 13 | PosTerminal — Ayarlar ekranları (Relay/Qnb/Token/Security/BusinessIdentity/Reservation/Screensaver) | Bekliyor | - | - | - | - |
+| 14 | PosTerminal — NfcOrder + CustomerDisplay | Bekliyor | - | - | - | - |
+| 15 | CustomerWeb — Menu | Bekliyor | - | - | - | - |
+| 16 | CustomerWeb — OrderEntry | Bekliyor | - | - | - | - |
+| 17 | CustomerWeb — Bill | Bekliyor | - | - | - | - |

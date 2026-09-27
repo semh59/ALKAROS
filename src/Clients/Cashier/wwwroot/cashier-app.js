@@ -75,6 +75,31 @@
     }
   }
 
+  // V1-RMD-360 (module-by-module UI audit, 2026-09-27): the ACTIVE ticket (unlike a parked
+  // one) had no persistence at all - a tab crash, an accidental refresh, or the kiosk browser
+  // restarting mid-order (a real operational event: a Windows update reboot, a browser crash)
+  // silently discarded every item the cashier had already entered, with no recovery, while an
+  // explicitly parked ticket already survived exactly that. Mirrors loadParkedTickets/
+  // saveParkedTickets' own try/catch shape. Cleared on shift close alongside the parked-ticket
+  // key (cash-session.js) for the same vardiya-boundary reasoning as V1-RMD-343.
+  function loadActiveTicket() {
+    try {
+      const saved = JSON.parse(localStorage.getItem('alkaros_cashier_active_ticket') || '[]');
+      return Array.isArray(saved) ? saved : [];
+    } catch (parseError) {
+      console.error('Aktif fiş verisi bozuk, boş sepetle devam ediliyor:', parseError);
+      return [];
+    }
+  }
+
+  function saveActiveTicket() {
+    try {
+      localStorage.setItem('alkaros_cashier_active_ticket', JSON.stringify(state.ticketItems));
+    } catch (writeError) {
+      console.error('Aktif fiş kaydedilemedi:', writeError);
+    }
+  }
+
   // State
   const state = {
     // Terminal identity is resolved from the authenticated cashier session
@@ -87,7 +112,7 @@
     activeCategory: 'all',
 
     // Active Ticket / Basket
-    ticketItems: [],
+    ticketItems: loadActiveTicket(),
     parkedTickets: loadParkedTickets(),
 
     // Catalog is loaded from the authoritative endpoint only. There is no
@@ -139,6 +164,51 @@
     btnConfirmModalCancel: document.getElementById('btnConfirmModalCancel')
   };
 
+  // V1-RMD-360 (module-by-module UI audit, 2026-09-27): #parkedModal/#confirmModal already had
+  // role="dialog"/"alertdialog" aria-modal="true" markup, but nothing actually moved keyboard
+  // focus INTO either on open (a screen reader user, and a sighted keyboard user, stayed on
+  // whatever was focused behind the overlay), nothing closed them on Escape (the one key every
+  // OS/browser dialog convention trains people to reach for), and nothing restored focus to
+  // whatever opened them on close (keyboard navigation resumed at the top of the page instead of
+  // where the user left off). Shared helper: focuses the first real control inside the dialog,
+  // traps Tab/Shift+Tab within it (the WAI-ARIA dialog pattern - a Tab that would leave the
+  // dialog wraps to its other end instead of reaching page content behind the overlay), closes
+  // on Escape, and restores focus on any close path (Escape, Cancel, backdrop-adjacent buttons).
+  function trapModalFocus(modalEl, onClose) {
+    const focusable = Array.from(
+      modalEl.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+    ).filter((node) => !node.disabled && node.offsetParent !== null);
+    const first = focusable[0];
+    const last = focusable[focusable.length - 1];
+    const previouslyFocused = document.activeElement;
+    if (first) first.focus({ preventScroll: true });
+
+    const onKeydown = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        cleanup();
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab' || focusable.length === 0) return;
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    const cleanup = () => {
+      modalEl.removeEventListener('keydown', onKeydown);
+      if (previouslyFocused && typeof previouslyFocused.focus === 'function') {
+        previouslyFocused.focus({ preventScroll: true });
+      }
+    };
+    modalEl.addEventListener('keydown', onKeydown);
+    return cleanup;
+  }
+
   // V1-RMD-355 (independent 2026-09-26 audit, a low-severity finding): replaces the native confirm() dialog
   // used by recallParkedTicket - an unstylable, un-brandable browser box that also can't be driven from an
   // automated E2E test the way an in-app modal can. Same self-contained resolve-on-click shape as the existing
@@ -157,12 +227,16 @@
 
       const settle = (result) => {
         el.confirmModal.hidden = true;
+        releaseFocusTrap();
         el.btnConfirmModalAccept.removeEventListener('click', onAccept);
         el.btnConfirmModalCancel.removeEventListener('click', onCancel);
         resolve(result);
       };
       const onAccept = () => settle(true);
       const onCancel = () => settle(false);
+      // V1-RMD-360: Escape is treated the same as clicking "Vazgeç" - a confirm dialog's
+      // safe/no-op answer.
+      const releaseFocusTrap = trapModalFocus(el.confirmModal, () => settle(false));
 
       el.btnConfirmModalAccept.addEventListener('click', onAccept);
       el.btnConfirmModalCancel.addEventListener('click', onCancel);
@@ -231,6 +305,14 @@
     updateConnectivityBadge();
     window.addEventListener('online', onConnectivityChange);
     window.addEventListener('offline', onConnectivityChange);
+
+    // V1-RMD-360 (module-by-module UI audit, 2026-09-27, saha gerçekliği): a real terminal's
+    // barcode scanner types into whatever field has focus - it is not a separate device with its
+    // own target. Nothing here ever focused the search box, so the FIRST scan of a shift (or of
+    // any moment the cashier had clicked elsewhere) landed nowhere and was silently lost. Only
+    // done once at boot, not stolen back on every render - a cashier who has since clicked into
+    // the ticket panel to edit a note, say, must keep that focus.
+    if (el.searchInput) el.searchInput.focus({ preventScroll: true });
 
     const sessionOk = await bootstrapSession();
     if (sessionOk) {
@@ -413,12 +495,21 @@
   }
 
   function renderCategoryTabs() {
+    // V1-RMD-360 (module-by-module UI audit, 2026-09-27): the nav wrapper already carried
+    // aria-label="Ürün Kategorileri", but the buttons inside had no role/state at all - a screen
+    // reader announced each as a plain, unrelated button, with no way to tell which category (if
+    // any) is currently selected. role="tablist"/"tab" + aria-selected is the standard WAI-ARIA
+    // tabs pattern for exactly this "one of several mutually exclusive views" shape.
+    if (el.categoryTabs) el.categoryTabs.setAttribute('role', 'tablist');
     if (!el.categoryTabs) return;
-    el.categoryTabs.innerHTML = state.categories.map(c => `
-      <button type="button" class="tab-chip ${state.activeCategory === c.id ? 'active' : ''}" data-cat-id="${escapeHtml(c.id)}">
+    el.categoryTabs.innerHTML = state.categories.map(c => {
+      const selected = state.activeCategory === c.id;
+      return `
+      <button type="button" class="tab-chip ${selected ? 'active' : ''}" role="tab" aria-selected="${selected}" data-cat-id="${escapeHtml(c.id)}">
         ${escapeHtml(c.name)}
       </button>
-    `).join('');
+    `;
+    }).join('');
   }
 
   function renderProducts(searchQuery = '') {
@@ -453,6 +544,11 @@
   }
 
   function renderTicket() {
+    // V1-RMD-360: every mutation to state.ticketItems (add/inc/dec/del/clear/dispatch/park/
+    // recall) already calls renderTicket() right after, so hooking the save in here - rather
+    // than at each call site separately - keeps the active ticket persisted without a
+    // per-call-site save that could be missed on a future change.
+    saveActiveTicket();
     if (!el.ticketItemsStream) return;
     if (state.ticketItems.length === 0) {
       el.ticketItemsStream.innerHTML = '<div class="ticket-empty">Sepet boş. Ürün seçin.</div>';
@@ -666,6 +762,9 @@
       state.ticketItems = [];
       renderTicket();
       showToast(`Sipariş mutfağa iletildi. (${itemCount} kalem, ${formatMoney(total)})`, 'success');
+      // V1-RMD-360: the moment a dispatch succeeds is also the moment the NEXT customer's order
+      // starts - the same "scanner needs a focused field" reasoning as init()'s own focus call.
+      if (el.searchInput) el.searchInput.focus({ preventScroll: true });
     } catch {
       showToast('Sunucuya ulaşılamadı. Sipariş iletilemedi.', 'error');
     } finally {
@@ -723,7 +822,16 @@
     saveParkedTickets();
     renderTicket();
     updateParkBadge();
+    closeParkedModal();
+  }
+
+  // V1-RMD-360: one close path shared by the X button, a successful recall, and Escape (via
+  // trapModalFocus's onClose) - releasing the focus trap is idempotent (see trapModalFocus's own
+  // cleanup), so calling this from more than one of those paths in a row is safe.
+  let closeParkedModalFocusTrap = () => {};
+  function closeParkedModal() {
     if (el.parkedModal) el.parkedModal.hidden = true;
+    closeParkedModalFocusTrap();
   }
 
   function renderParkedModal() {
@@ -769,8 +877,17 @@
 
     // Search Input
     if (el.searchInput) {
+      // V1-RMD-360 (module-by-module UI audit, 2026-09-27): re-rendered the whole product grid
+      // on every single keystroke, with no debounce - a barcode scanner "types" a whole SKU in
+      // well under 100ms, so a scan used to trigger one full re-render per character instead of
+      // one for the finished value; a manual typist got the same on a slower kiosk. 120ms is
+      // short enough that a human typist still sees results feel instant, long enough that a
+      // scanner's whole burst collapses into a single render.
+      let searchDebounceTimer = null;
       el.searchInput.addEventListener('input', (e) => {
-        renderProducts(e.target.value);
+        const value = e.target.value;
+        window.clearTimeout(searchDebounceTimer);
+        searchDebounceTimer = window.setTimeout(() => renderProducts(value), 120);
       });
     }
 
@@ -806,7 +923,12 @@
         const field = e.target.closest('.item-note-input');
         if (!field) return;
         const index = state.ticketItems.findIndex(i => i.id === field.dataset.id);
-        if (index >= 0) state.ticketItems[index].note = field.value;
+        if (index >= 0) {
+          state.ticketItems[index].note = field.value;
+          // V1-RMD-360: does not call renderTicket() (typing would lose focus/caret position
+          // on a re-render of the whole stream), so it needs its own explicit persist call.
+          saveActiveTicket();
+        }
       });
       el.ticketItemsStream.addEventListener('click', (e) => {
         const btn = e.target.closest('.btn-micro');
@@ -834,8 +956,19 @@
     if (el.btnClearTicket) {
       el.btnClearTicket.addEventListener('click', () => {
         if (state.ticketItems.length === 0) return;
-        state.ticketItems = [];
-        renderTicket();
+        // V1-RMD-360 (module-by-module UI audit, 2026-09-27): this is the single most
+        // destructive, completely irreversible action on this screen (unlike "Beklet", it
+        // has no undo - the sepet is gone) and, unlike the LESS destructive "Geri Yükle"
+        // (V1-RMD-355 already gave THAT one a confirmation), it had none at all. A single
+        // stray tap during a busy shift silently discards every item already entered.
+        void (async () => {
+          const confirmed = await showConfirmModal(
+            'Fişteki tüm ürünler silinecek. Bu işlem geri alınamaz. Devam etmek istiyor musunuz?'
+          );
+          if (!confirmed) return;
+          state.ticketItems = [];
+          renderTicket();
+        })();
       });
     }
 
@@ -857,15 +990,20 @@
     if (el.btnRecallTicket) {
       el.btnRecallTicket.addEventListener('click', () => {
         renderParkedModal();
-        if (el.parkedModal) el.parkedModal.hidden = false;
+        if (el.parkedModal) {
+          el.parkedModal.hidden = false;
+          // V1-RMD-360: same focus-trap/Escape treatment as #confirmModal. The trap is
+          // re-established on every open (renderParkedModal() just replaced the list's
+          // innerHTML, so its own recall buttons are fresh DOM nodes each time).
+          closeParkedModalFocusTrap();
+          closeParkedModalFocusTrap = trapModalFocus(el.parkedModal, closeParkedModal);
+        }
       });
     }
 
     // Close Parked Modal
     if (el.btnCloseParkedModal) {
-      el.btnCloseParkedModal.addEventListener('click', () => {
-        if (el.parkedModal) el.parkedModal.hidden = true;
-      });
+      el.btnCloseParkedModal.addEventListener('click', closeParkedModal);
     }
 
     // Recall inside Modal

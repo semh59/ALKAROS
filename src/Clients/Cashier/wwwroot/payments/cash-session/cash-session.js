@@ -344,6 +344,10 @@
       // that boundary.
       try {
         window.localStorage.removeItem('alkaros_cashier_parked');
+        // V1-RMD-360 (module-by-module UI audit, 2026-09-27): the active (unparked) ticket
+        // gained its own persistence the same day - same vardiya boundary applies to it as to
+        // a parked one, for the same reason V1-RMD-343 already gave above.
+        window.localStorage.removeItem('alkaros_cashier_active_ticket');
       } catch (err) {
         // localStorage kullanılamıyor olabilir (gizli sekme); vardiya
         // kapanışını bu yüzden engellemek anlamsız.

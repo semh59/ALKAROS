@@ -209,7 +209,15 @@ body {
   display: none;
 }
 
-.category-tab-btn {
+/* V1-RMD-360 (module-by-module UI audit, 2026-09-27): renders as class="tab-chip" since
+   641ab882 (2026-08-29, an unrelated WaiterPwa/Cashier contract-alignment commit) renamed
+   the JS side (both the render call and its own click-handler selector, .closest('.tab-chip'))
+   but never touched this file - every category tab has rendered as an unstyled, undersized
+   default browser button ever since, with no visible "active" state, for a month, unnoticed by
+   two independent audits (2026-09-05, 2026-09-26). Renamed here to match the class JS actually
+   emits, rather than reverting the JS - both of its own references are already consistent.
+*/
+.tab-chip {
   height: var(--touch-target);
   padding: 0 16px;
   border-radius: var(--radius-sm);
@@ -228,7 +236,7 @@ body {
 
 /* foundations.md §1.1: accent as a fill is only ever paired with --color-ink
    text (AAA, 8.86:1) — never white, never accent-as-text on a light ground. */
-.category-tab-btn.active {
+.tab-chip.active {
   background: var(--color-accent);
   border-color: var(--color-accent);
   color: var(--color-ink);
