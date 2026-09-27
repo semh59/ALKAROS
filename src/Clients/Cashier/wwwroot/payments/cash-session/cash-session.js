@@ -107,6 +107,22 @@
     render();
   }
 
+  // V1-RMD-361 (module-by-module UI audit, 2026-09-27, saha gerçekliği): #app's own
+  // aria-live="polite" (index.html) already tells a screen reader content changed on every full
+  // re-render, but nothing ever moved KEYBOARD focus to the new screen's own primary field -
+  // opening the cash-drawer count, say, left focus wherever the PREVIOUS screen's now-gone button
+  // used to be. On a touchscreen kiosk with no physical keyboard, this also means the numeric pad
+  // never pops up on its own; the cashier must tap the amount field manually first, every time.
+  // Skipped only for a busy-state re-render of the SAME screen (setBusy toggles state.busy and
+  // re-renders the current phase as-is) - stealing focus back from a field the cashier is still
+  // typing into, just because the button they have not clicked yet got disabled, would be worse
+  // than doing nothing.
+  function focusPrimaryField() {
+    var target = app.querySelector('input, textarea');
+    if (!target) target = app.querySelector('button:not(:disabled)');
+    if (target) target.focus({ preventScroll: true });
+  }
+
   function setError(message) {
     state.error = message;
     render();
@@ -366,10 +382,15 @@
 
   // ---- rendering ---------------------------------------------------------
 
+  // V1-RMD-361 (module-by-module UI audit, 2026-09-27): this box had no role="alert" - the same
+  // gap V1-RMD-345 already closed for CustomerWeb's error regions, missed here. #app is already
+  // aria-live="polite" (index.html), so a screen reader DOES hear the text either way, but
+  // role="alert" is what tells it this specific piece is an error worth a distinct, more urgent
+  // announcement rather than just "some content changed".
   function errorAlert() {
     if (!state.error) return '';
     return (
-      '<div class="cs-alert cs-alert-danger">' +
+      '<div class="cs-alert cs-alert-danger" role="alert">' +
       '<span class="cs-alert-icon">!</span>' +
       '<div><div class="cs-alert-title">Hata</div>' +
       '<div class="cs-alert-body">' + escapeHtml(state.error) + '</div></div>' +
@@ -490,9 +511,9 @@
       '<div class="cs-card">' +
       '<div><span class="cs-eyebrow">Kasa Hareketi</span>' +
       '<h1 class="cs-title">' + (isIn ? 'Nakit Giriş' : 'Nakit Çıkış') + '</h1></div>' +
-      '<div class="cs-tabs">' +
-      '<button class="cs-tab' + (isIn ? ' is-active' : '') + '" id="tab-in" type="button">Giriş</button>' +
-      '<button class="cs-tab' + (!isIn ? ' is-active' : '') + '" id="tab-out" type="button">Çıkış</button>' +
+      '<div class="cs-tabs" role="tablist">' +
+      '<button class="cs-tab' + (isIn ? ' is-active' : '') + '" role="tab" aria-selected="' + isIn + '" id="tab-in" type="button">Giriş</button>' +
+      '<button class="cs-tab' + (!isIn ? ' is-active' : '') + '" role="tab" aria-selected="' + !isIn + '" id="tab-out" type="button">Çıkış</button>' +
       '</div>' +
       errorAlert() +
       '<label class="cs-field-label" for="movement-amount">Tutar</label>' +
@@ -626,6 +647,12 @@
     });
   }
 
+  // V1-RMD-361: render() is the ONE place that both knows the current phase and can compare it
+  // against the phase that was on screen a moment ago - the right single point to decide whether
+  // this call is a genuine screen change (focus the new screen) or just a busy-state re-render of
+  // the SAME screen (leave focus exactly where the cashier put it).
+  var lastFocusedPhase = null;
+
   function render() {
     if (state.phase === 'checking') {
       app.innerHTML = '<div class="cs-loading">Oturum kontrol ediliyor…</div>';
@@ -633,15 +660,19 @@
     }
     app.setAttribute('aria-busy', state.busy ? 'true' : 'false');
     switch (state.phase) {
-      case 'login': return renderLogin();
-      case 'noSession': return renderNoSession();
-      case 'conflict': return renderConflict();
-      case 'open': return renderOpen();
-      case 'movement': return renderMovement();
-      case 'counting': return renderCounting();
-      case 'closing': return renderClosing();
-      case 'closed': return renderClosed();
-      default: return renderOpen();
+      case 'login': renderLogin(); break;
+      case 'noSession': renderNoSession(); break;
+      case 'conflict': renderConflict(); break;
+      case 'open': renderOpen(); break;
+      case 'movement': renderMovement(); break;
+      case 'counting': renderCounting(); break;
+      case 'closing': renderClosing(); break;
+      case 'closed': renderClosed(); break;
+      default: renderOpen(); break;
+    }
+    if (lastFocusedPhase !== state.phase) {
+      lastFocusedPhase = state.phase;
+      focusPrimaryField();
     }
   }
 
