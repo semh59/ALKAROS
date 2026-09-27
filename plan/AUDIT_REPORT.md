@@ -1963,9 +1963,10 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1.2/nfc-ordering/V12-NFC-003-customer-menu-and-order-page.md` | ✅ | `F2B57326D5C154954E0238AB49BC6E46AB3A80ABFC3C70D3DDD5ACCA63390EBF` | Tek-sahip görev |
 | `plan/v1.2/online-operations-ui/V12-OUI-002-provider-label-and-credentials.md` | ✅ | `56C232DF93E6A10F48AEAB19B2FA0F9456412D493F965650E5DEB4807470751B` | Tek-sahip görev |
 | `plan/v1.2/online-operations-ui/V12-OUI-003-online-platform-credentials.md` | ✅ | `D7CC4E56672E48049540F9170A0648F3AF4124EDDCED900638A8DBC2A18EE5AC` | Tek-sahip görev |
-| `plan/v1.2/online-operations-ui/V12-OUI-004-online-food-hub.md` | ✅ | `0E5593179E21CFE2645F86FE70D003CEB1F7AF1D72B03A0EE1BE1943BBC00C77` | Tek-sahip görev |
-| `plan/v1.2/online-operations-ui/V12-OUI-005-online-menu-tab.md` | ✅ | `4E4BC74A0924C1057E01745E109ABC61D3BCD9BD86EB98CB49C272C7CA2909A9` | Tek-sahip görev |
-| `plan/v1.2/online-operations-ui/V12-OUI-006-online-problems-tab.md` | ✅ | `9D8F617485ADBEAD58F2F939EAB26EFE5DB4EA8758E89B81AB7014C15E73B377` | Tek-sahip görev |
+| `plan/v1.2/online-operations-ui/V12-OUI-004-online-food-hub.md` | ✅ | `A2467DFD160C993BC9CC34E9369B5FA46AD78BA5E4AF3016A5390B91DD4AAC53` | Tek-sahip görev |
+| `plan/v1.2/online-operations-ui/V12-OUI-005-online-menu-tab.md` | ✅ | `878D2439909E727A0710517CF078CB138BE9CFD8AE153D87C5D479B677096A69` | Tek-sahip görev |
+| `plan/v1.2/online-operations-ui/V12-OUI-006-online-problems-tab.md` | ✅ | `422C999375BEA101298B1565A1AC64BB79F0442A714A70DFBE9B0FA0F6761E0A` | Tek-sahip görev |
+| `plan/v1.2/online-operations-ui/V12-RMD-010-online-problems-endpoint-ownership.md` | ✅ | `C4CDBD806D8DA78366A309CF72A4433D034D1E4C8B13FA96A114E415770044A2` | Tek-sahip görev |
 | `plan/v1.2/online-ordering/V12-ONL-006-online-order-provider.md` | ✅ | `D3D18C5D7995A2B74899D754CE56C191DF421C58AFCB89F791700B835C54AA36` | Tek-sahip görev |
 | `plan/v1.2/online-ordering/V12-ONL-007-online-provider-adapter-contract.md` | ✅ | `B50096DABCC21253F38BDF798854AADBD902E433730188D0D95F2E89D65D30D7` | Tek-sahip görev |
 | `plan/v1.2/online-ordering/V12-ONL-008-provider-neutral-inbox-and-mapping.md` | ✅ | `F2AB6529601D3755E31B7E8BA8F0D5E8CCF17B80590AB4FB4C03EC1E5E31AFE9` | Tek-sahip görev |
@@ -2583,6 +2584,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-353-relay-connector-status-reporter-async.md` | ✅ | `0D9CBEC0C5B5DC9FF489A94AC086BC2438682A78438FB2C9B6C90DE257B936E9` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-354-cloudflared-graceful-shutdown.md` | ✅ | `53395D46FA37A906A4E11383A2485C2929153712FFB98B720DCA55B39092A9D2` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-355-cashier-parked-ticket-confirm-modal.md` | ✅ | `CCECF420FDC26519F8F7389A07022F2A5AC9470E920C638872202F6F32FD7685` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-356-cashier-accessibility-keyboard-and-labels.md` | ✅ | `AD208F4E8CFA718F14B2CEC6CB49C066192C4F764F4D4164F99B5F3DA27746F1` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2669,5 +2671,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1397` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1399` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

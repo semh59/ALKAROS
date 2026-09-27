@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1397,
-  "markdown_line_count": 106966,
-  "markdown_byte_count": 6160539,
+  "markdown_file_count": 1399,
+  "markdown_line_count": 107092,
+  "markdown_byte_count": 6167323,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "FADB19D028685FF89E65B7E979AC58BED8B649C0A08B58C049A2BB6D899EFFF6",
-      "lines": 2673,
-      "bytes": 391076,
+      "sha256": "2F808D440A65821C28F68AFECD1057EE66FD0575DB2A9F689BE480070F31E3AE",
+      "lines": 2675,
+      "bytes": 391433,
       "utf8": true
     },
     {
@@ -7658,6 +7658,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-356-cashier-accessibility-keyboard-and-labels.md",
+      "sha256": "AD208F4E8CFA718F14B2CEC6CB49C066192C4F764F4D4164F99B5F3DA27746F1",
+      "lines": 79,
+      "bytes": 4799,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -8660,23 +8667,30 @@
     },
     {
       "path": "plan/v1.2/online-operations-ui/V12-OUI-004-online-food-hub.md",
-      "sha256": "0E5593179E21CFE2645F86FE70D003CEB1F7AF1D72B03A0EE1BE1943BBC00C77",
+      "sha256": "A2467DFD160C993BC9CC34E9369B5FA46AD78BA5E4AF3016A5390B91DD4AAC53",
       "lines": 55,
-      "bytes": 2368,
+      "bytes": 2389,
       "utf8": true
     },
     {
       "path": "plan/v1.2/online-operations-ui/V12-OUI-005-online-menu-tab.md",
-      "sha256": "4E4BC74A0924C1057E01745E109ABC61D3BCD9BD86EB98CB49C272C7CA2909A9",
-      "lines": 57,
-      "bytes": 2736,
+      "sha256": "878D2439909E727A0710517CF078CB138BE9CFD8AE153D87C5D479B677096A69",
+      "lines": 58,
+      "bytes": 2848,
       "utf8": true
     },
     {
       "path": "plan/v1.2/online-operations-ui/V12-OUI-006-online-problems-tab.md",
-      "sha256": "9D8F617485ADBEAD58F2F939EAB26EFE5DB4EA8758E89B81AB7014C15E73B377",
-      "lines": 47,
-      "bytes": 1727,
+      "sha256": "422C999375BEA101298B1565A1AC64BB79F0442A714A70DFBE9B0FA0F6761E0A",
+      "lines": 49,
+      "bytes": 1940,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-operations-ui/V12-RMD-010-online-problems-endpoint-ownership.md",
+      "sha256": "C4CDBD806D8DA78366A309CF72A4433D034D1E4C8B13FA96A114E415770044A2",
+      "lines": 42,
+      "bytes": 1282,
       "utf8": true
     },
     {
