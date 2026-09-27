@@ -30,3 +30,33 @@ Modül-modül, kalıcı denetim süreci (2026-09-27 kararı). Kurallar:
 | 15 | CustomerWeb — Menu | Tamamlandı | 0 | 0 | 2026-09-27 | V1-RMD-375; gerçek bulgu yok (canlı güncelleme yok) |
 | 16 | CustomerWeb — OrderEntry | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-375; sipariş durumu sessizce güncelleniyordu |
 | 17 | CustomerWeb — Bill | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-375; "canlı güncellenir" dediği halde hiç duyurulmuyordu |
+
+## Tur 2 (2026-09-27 başladı): P1/P2/P4/T7/T8 derin geçişi
+
+Semih'in geri bildirimi: Tur 1'de T1/T3/T6 (erişilebilirlik, hata yönetimi, backend uyumu)
+gerçek derinlikte işlendi, ama P1 (rakip karşılaştırması), P2 (saha gerçekliği), P4 (öğrenme
+eşiği), T7 (rol-arası haberleşme), T8 (mobil/performans) yüzeysel geçildi — "gözlem yok"
+denilip atlandı, gerçek bir inceleme yapılmadı. Bu tur, aynı 17 modülü, yalnızca bu 5 boyut
+üzerinden, gerçek derinlikte yeniden ele alıyor. Aynı kurallar geçerli: modül sırayla, bir
+modülün TÜM bulguları kapanmadan diğerine geçilmez, her gerçek bulgu için gerçek düzeltme +
+gerçek test + mutation-check + görev dosyası + dört gate + commit/push.
+
+| # | Modül | Durum | Bulgu | Düzeltilen | Tarih | Not |
+| --- | --- | --- | --- | --- | --- | --- |
+| 1 | Cashier vanilla (ana ekran) | Bekliyor | - | - | - | - |
+| 2 | Cashier — Kasa Oturumu | Bekliyor | - | - | - | - |
+| 3 | Cashier — Tahsilat/Split Payment | Bekliyor | - | - | - | - |
+| 4 | WaiterPwa | Bekliyor | - | - | - | - |
+| 5 | PosTerminal — Cashier.tsx | Bekliyor | - | - | - | - |
+| 6 | PosTerminal — workspace.tsx + tables | Bekliyor | - | - | - | - |
+| 7 | PosTerminal — billing | Bekliyor | - | - | - | - |
+| 8 | PosTerminal — catalog | Bekliyor | - | - | - | - |
+| 9 | PosTerminal — kitchen-operations | Bekliyor | - | - | - | - |
+| 10 | PosTerminal — pending-checks | Bekliyor | - | - | - | - |
+| 11 | PosTerminal — online-* (hub/menu/ops/credentials/problems/store-status) | Bekliyor | - | - | - | - |
+| 12 | PosTerminal — system-health | Bekliyor | - | - | - | - |
+| 13 | PosTerminal — Ayarlar ekranları (Relay/Qnb/Token/Security/BusinessIdentity/Reservation/Screensaver) | Bekliyor | - | - | - | - |
+| 14 | PosTerminal — NfcOrder + CustomerDisplay | Bekliyor | - | - | - | - |
+| 15 | CustomerWeb — Menu | Bekliyor | - | - | - | - |
+| 16 | CustomerWeb — OrderEntry | Bekliyor | - | - | - | - |
+| 17 | CustomerWeb — Bill | Bekliyor | - | - | - | - |
