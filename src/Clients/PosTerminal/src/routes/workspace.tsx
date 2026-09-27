@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiError, api } from "../api";
+import { tryGetItem, trySetItem } from "../storage";
 import { useRouter } from "../router";
 import { navLabels, roleLabels } from "../strings";
 import { ProductionShell } from "../shell";
@@ -292,7 +293,7 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
   const searchParams = useMemo(() => new URLSearchParams(window.location.search), []);
   const orderParam = searchParams.get("orderId");
   const [billId, setBillId] = useState<string>(
-    () => searchParams.get("billId") || localStorage.getItem("alkaros.current-bill-id") || "",
+    () => searchParams.get("billId") || tryGetItem("alkaros.current-bill-id") || "",
   );
   const client = useMemo(
     () => (billId ? createBillingSplitClient(terminalId, billId) : null),
@@ -321,7 +322,7 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
       setDesign(nextDesign);
       if (nextDesign.billId && nextDesign.billId !== billId) {
         setBillId(nextDesign.billId);
-        localStorage.setItem("alkaros.current-bill-id", nextDesign.billId);
+        trySetItem("alkaros.current-bill-id", nextDesign.billId);
       }
       const ownerClient = nextDesign.billId && nextDesign.billId !== billId
         ? createBillingSplitClient(terminalId, nextDesign.billId)
@@ -348,7 +349,7 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
     setDesign(updated);
     if (updated.billId && updated.billId !== billId) {
       setBillId(updated.billId);
-      localStorage.setItem("alkaros.current-bill-id", updated.billId);
+      trySetItem("alkaros.current-bill-id", updated.billId);
     }
     return updated;
   };

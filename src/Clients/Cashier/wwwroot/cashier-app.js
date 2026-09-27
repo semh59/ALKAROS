@@ -62,6 +62,19 @@
     }
   }
 
+  // V1-RMD-350 (independent 2026-09-26 audit, düşük seviye bulgu): the write
+  // side of the same key had no such guard - a private tab or a full quota
+  // would throw synchronously and abort parkCurrentTicket()/
+  // recallParkedTicket() mid-way, same crash risk V1-RMD-232 already fixed
+  // for the read side above.
+  function saveParkedTickets() {
+    try {
+      localStorage.setItem('alkaros_cashier_parked', JSON.stringify(state.parkedTickets));
+    } catch (writeError) {
+      console.error('Bekletilen fiş listesi kaydedilemedi:', writeError);
+    }
+  }
+
   // State
   const state = {
     // Terminal identity is resolved from the authenticated cashier session
@@ -654,7 +667,7 @@
       parkedAt: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }),
       items: [...state.ticketItems]
     });
-    localStorage.setItem('alkaros_cashier_parked', JSON.stringify(state.parkedTickets));
+    saveParkedTickets();
     state.ticketItems = [];
     renderTicket();
     updateParkBadge();
@@ -673,7 +686,7 @@
 
     state.ticketItems = state.parkedTickets[index].items;
     state.parkedTickets.splice(index, 1);
-    localStorage.setItem('alkaros_cashier_parked', JSON.stringify(state.parkedTickets));
+    saveParkedTickets();
     renderTicket();
     updateParkBadge();
     if (el.parkedModal) el.parkedModal.hidden = true;
