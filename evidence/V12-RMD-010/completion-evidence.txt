@@ -1,0 +1,17 @@
+V12-RMD-010 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Baseline (InProgress) commit: 6e0157f6.
+
+What happened: V12-OUI-006 (8d69e7d6) created src/Host/Experience/Reconciliation/OnlineProblemsEndpoints.cs under its
+"Sınırlı ek" directory src/Host/Experience/Reconciliation/. That notice grants write access only, not ownership, so
+plan_audit_tool.py validate reported "UNOWNED_PRODUCTION_FILE src/Host/Experience/Reconciliation/OnlineProblemsEndpoints.cs".
+The closing command chain read the result through `tail`, which always succeeds, so the error did not stop the chain and
+the commit was pushed to master with plan validation failing (the same slip the session's closing rule warns about:
+match "Validation errors: 0" explicitly before committing).
+
+Fix: this task owns the file; the file's content is unchanged. From here on the closing chain matches the exact line
+"Validation errors: 0" with grep -x and stops otherwise.
+
+Commands (exit 0):
+- python tools/plan-audit/plan_audit_tool.py validate | grep -x "Validation errors: 0"
+- python tools/consistency-audit/consistency_audit.py -> consistency-audit: clean
+- task_scope_tool.py --task-id V12-RMD-010 --diff-base 6e0157f6 -> OK
