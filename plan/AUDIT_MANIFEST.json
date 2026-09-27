@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1387,
-  "markdown_line_count": 106299,
-  "markdown_byte_count": 6123127,
+  "markdown_file_count": 1388,
+  "markdown_line_count": 106388,
+  "markdown_byte_count": 6129282,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "7057B366B3A9ADBF4642BB78C99B7571AE2D28FFBB5EE530431B6EDAF45348D1",
-      "lines": 2663,
-      "bytes": 389446,
+      "sha256": "6F225D8E747A5B13554A075421E8491D764337E43A5A1A0F9D26F2AF81F4A38E",
+      "lines": 2664,
+      "bytes": 389615,
       "utf8": true
     },
     {
@@ -7620,6 +7620,13 @@
       "sha256": "2C314C9A98DB15CA64E06DB50D82BB48DC05BC182A7CB9BE1D739F470EE6C649",
       "lines": 68,
       "bytes": 3913,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-352-down-sql-drop-constraint-if-exists.md",
+      "sha256": "72439635CB4D0C732BB2FC6CC917568C9C94A0A0F1AA352467059AEAB1D60241",
+      "lines": 88,
+      "bytes": 5986,
       "utf8": true
     },
     {

@@ -18,7 +18,7 @@ BEGIN
     END IF;
 
     IF to_regclass('online_ordering.provider_inbox') IS NOT NULL THEN
-        ALTER TABLE online_ordering.provider_inbox DROP CONSTRAINT uq_provider_inbox_event;
+        ALTER TABLE online_ordering.provider_inbox DROP CONSTRAINT IF EXISTS uq_provider_inbox_event;
         ALTER TABLE online_ordering.provider_inbox ADD CONSTRAINT uq_yemeksepeti_webhook_inbox_event UNIQUE (event_key);
         DROP INDEX IF EXISTS online_ordering.ix_provider_inbox_order;
         CREATE INDEX ix_yemeksepeti_webhook_inbox_order ON online_ordering.provider_inbox (external_order_id, received_at);

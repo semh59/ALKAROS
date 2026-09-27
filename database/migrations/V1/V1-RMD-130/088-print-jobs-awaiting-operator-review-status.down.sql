@@ -1,5 +1,5 @@
 ALTER TABLE kitchen.print_jobs
-    DROP CONSTRAINT print_jobs_status_check;
+    DROP CONSTRAINT IF EXISTS print_jobs_status_check;
 
 ALTER TABLE kitchen.print_jobs
     ADD CONSTRAINT print_jobs_status_check

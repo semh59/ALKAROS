@@ -5,7 +5,7 @@
 -- deployment that has not yet accepted live personal-budget grants, not a
 -- data-destructive tool).
 ALTER TABLE identity.authorization_grants
-    DROP CONSTRAINT ck_authorization_grants_policy_path;
+    DROP CONSTRAINT IF EXISTS ck_authorization_grants_policy_path;
 
 ALTER TABLE identity.authorization_grants
     ADD CONSTRAINT ck_authorization_grants_policy_path

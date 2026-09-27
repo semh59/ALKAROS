@@ -1,5 +1,5 @@
 ALTER TABLE identity.denial_events
-    DROP CONSTRAINT fk_denial_events_user;
+    DROP CONSTRAINT IF EXISTS fk_denial_events_user;
 
 ALTER TABLE identity.denial_events
     ADD CONSTRAINT fk_denial_events_user FOREIGN KEY (user_id)

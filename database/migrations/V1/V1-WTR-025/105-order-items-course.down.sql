@@ -1,5 +1,5 @@
 ALTER TABLE orders.order_items
-    DROP CONSTRAINT order_items_kitchen_state_check;
+    DROP CONSTRAINT IF EXISTS order_items_kitchen_state_check;
 
 ALTER TABLE orders.order_items
     ADD CONSTRAINT order_items_kitchen_state_check
