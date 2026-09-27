@@ -465,7 +465,11 @@ function SystemHealthRoute({ terminalId, canView }: { terminalId: string; canVie
       setHealth(null);
       setBackups([]);
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : "error");
-      setErrorMessage(reason instanceof ApiError ? reason.message : "Sağlık verisi alınamadı.");
+      // V1-RMD-372 (module-by-module UI audit, module 12): this route reuses
+      // kitchen-operations' client (no dedicated system-health API), whose
+      // real errors are KitchenOperationsApiError, not the shared ApiError
+      // this checked alone - same class of gap as V1-RMD-366/367/368/369.
+      setErrorMessage(reason instanceof ApiError || reason instanceof KitchenOperationsApiError ? reason.message : "Sağlık verisi alınamadı.");
     }
   }, [canView, terminalId]);
   useEffect(() => { void load(); }, [load]);

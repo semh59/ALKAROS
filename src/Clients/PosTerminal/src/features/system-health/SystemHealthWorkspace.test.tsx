@@ -2,6 +2,7 @@
 
 import { act, type ComponentProps, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { SystemHealthWorkspace } from "./index";
 
@@ -44,5 +45,14 @@ describe("system health workspace", () => {
   it("blocks the workspace when the viewer is not a manager", async () => {
     await render(<SystemHealthWorkspace {...baseProps({ state: "unauthorized" })} />);
     expect(document.body.textContent).toContain("Yönetici oturumu gerekli");
+  });
+
+  // V1-RMD-372 (module-by-module UI audit, 2026-09-27): unlike ~13 other
+  // feature workspaces, this file had no axe-core scan at all.
+  it("has no critical or serious axe violations", async () => {
+    document.title = "ALKAROS sistem sağlığı";
+    await render(<SystemHealthWorkspace {...baseProps()} />);
+    const report = await axe.run(document, { rules: { "color-contrast": { enabled: false } } });
+    expect(report.violations.filter((violation) => violation.impact === "critical" || violation.impact === "serious")).toEqual([]);
   });
 });

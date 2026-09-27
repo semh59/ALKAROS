@@ -472,6 +472,65 @@ describe("workspace /kitchen route surfaces the real backend error message", () 
 });
 
 /**
+ * V1-RMD-372 (module-by-module UI audit, module 12, 2026-09-27):
+ * SystemHealthRoute's load() checked only `reason instanceof ApiError`, but
+ * it reuses kitchen-operations' client (no dedicated system-health API),
+ * whose real errors are KitchenOperationsApiError - same class of gap as
+ * V1-RMD-366/367/368/369.
+ */
+describe("workspace /system-health route surfaces the real backend error message", () => {
+  let root: Root | null = null;
+
+  async function render(element: ReactElement) {
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(element));
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("shows the health endpoint's own error message, not the generic fallback", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.endsWith("/runtime-configuration")) return jsonResponse({ kitchenStationId: "hot-line" });
+      if (path.includes("/operations/health/latest")) {
+        // Not 0/401: those map to states whose own StateMessage never
+        // renders the supplied message (see the billing test's own note).
+        return new Response(
+          JSON.stringify({ error: { code: "SNAPSHOT_STALE", message: "Sağlık anlık görüntüsü alınamadı." } }),
+          { status: 500, headers: { "Content-Type": "application/json" } },
+        );
+      }
+      return jsonResponse([]);
+    }));
+    window.history.replaceState({}, "", "/system-health");
+    await render(
+      <RouterProvider>
+        <ExperiencePage
+          terminalId="aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+          displayName="Test Kullanıcı"
+          capabilities={["catalog.manage"]}
+          path="/system-health"
+          backendStatus="online"
+          onLogout={async () => {}}
+        />
+      </RouterProvider>,
+    );
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("Sağlık anlık görüntüsü alınamadı.");
+    expect(document.body.textContent).not.toContain("Sağlık verisi alınamadı.");
+  });
+});
+
+/**
  * V1-RMD-223: found by an independent audit (2026-09-16) - KitchenRoute's
  * onLoadPerformanceReport prop was a fresh inline closure every render, and
  * `client` itself is a fresh object every 8s poll cycle (load() always
