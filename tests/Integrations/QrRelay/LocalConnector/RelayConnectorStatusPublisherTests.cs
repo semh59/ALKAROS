@@ -123,6 +123,6 @@ public sealed class RelayConnectorStatusPublisherTests : IAsyncLifetime
 
         public RelayConnectorStatus Status { get; set; }
 
-        public RelayConnectorStatus CurrentStatus => Status;
+        public Task<RelayConnectorStatus> GetCurrentStatusAsync(CancellationToken cancellationToken) => Task.FromResult(Status);
     }
 }

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1388,
-  "markdown_line_count": 106388,
-  "markdown_byte_count": 6129282,
+  "markdown_file_count": 1389,
+  "markdown_line_count": 106469,
+  "markdown_byte_count": 6134560,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "6F225D8E747A5B13554A075421E8491D764337E43A5A1A0F9D26F2AF81F4A38E",
-      "lines": 2664,
-      "bytes": 389615,
+      "sha256": "84C27459F825C5A69500FDFBC0E9E7472811AFE219A462C2B55C0B0D6BB64CB6",
+      "lines": 2665,
+      "bytes": 389787,
       "utf8": true
     },
     {
@@ -7627,6 +7627,13 @@
       "sha256": "72439635CB4D0C732BB2FC6CC917568C9C94A0A0F1AA352467059AEAB1D60241",
       "lines": 88,
       "bytes": 5986,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-353-relay-connector-status-reporter-async.md",
+      "sha256": "0D9CBEC0C5B5DC9FF489A94AC086BC2438682A78438FB2C9B6C90DE257B936E9",
+      "lines": 80,
+      "bytes": 5106,
       "utf8": true
     },
     {

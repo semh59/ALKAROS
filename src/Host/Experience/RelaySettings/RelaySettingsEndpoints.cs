@@ -110,9 +110,10 @@ public static class RelaySettingsEndpoints
             var status = await credentialStore.GetStatusAsync(cancellationToken);
             var config = await configStore.GetAsync(cancellationToken);
             var tunnel = await tunnelStore.GetInfoAsync(cancellationToken);
+            var currentConnectorStatus = await connectorStatus.GetCurrentStatusAsync(cancellationToken);
             return Results.Ok(new RelayCredentialStatusResponse(
                 status.Configured, status.UpdatedAt, config?.AccountId, config?.ZoneId, config?.BaseDomain,
-                tunnel?.Hostname, tunnel?.UpdatedAt, connectorStatus.CurrentStatus.State.ToString()));
+                tunnel?.Hostname, tunnel?.UpdatedAt, currentConnectorStatus.State.ToString()));
         });
 
         group.MapPost("/provision", async (

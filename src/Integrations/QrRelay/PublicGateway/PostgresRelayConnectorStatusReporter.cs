@@ -40,43 +40,42 @@ public sealed class PostgresRelayConnectorStatusReporter : IRelayConnectorStatus
         _nowUtc = nowUtc ?? throw new ArgumentNullException(nameof(nowUtc));
     }
 
-    // IRelayConnectorStatusReporter.CurrentStatus is a synchronous property
-    // (RelayConnectorSupervisor's own in-memory read, V12-QRT-001, out of
-    // this task's Owned surface) — genuinely synchronous ADO.NET calls here
-    // (not an async call blocked-on-synchronously) so a manager checking
-    // /status does one quick round-trip on the calling thread rather than
-    // this reporter wrapping async work in a blocking anti-pattern.
-    public RelayConnectorStatus CurrentStatus
+    // V1-RMD-353 (independent 2026-09-26 audit, a low-severity finding): this used to be a synchronous
+    // property doing genuinely synchronous ADO.NET calls (OpenConnection/ExecuteReader), reasoned at the time
+    // as "not an async call blocked-on-synchronously, so no anti-pattern". That missed that this reporter's
+    // sole real caller (RelaySettingsEndpoints.cs's "/status" handler) is itself an async request handler -
+    // a genuinely-synchronous DB round-trip there still blocks a thread-pool thread for its duration, same
+    // cost to the request pipeline as the sync-over-async anti-pattern it was trying to avoid. Converted to
+    // real async ADO.NET (OpenConnectionAsync/ExecuteReaderAsync/ReadAsync), matching every other Postgres
+    // read in this codebase.
+    public async Task<RelayConnectorStatus> GetCurrentStatusAsync(CancellationToken cancellationToken)
     {
-        get
-        {
-            using var connection = _dataSource.OpenConnection();
-            using var command = connection.CreateCommand();
-            command.CommandText =
-                """
-                SELECT state, last_started_at, restart_count, last_exit_code, updated_at
-                FROM qr_ordering.relay_connector_status
-                WHERE connector_key = @connector_key;
-                """;
-            command.Parameters.Add("connector_key", NpgsqlDbType.Text).Value = ConnectorKey;
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var command = connection.CreateCommand();
+        command.CommandText =
+            """
+            SELECT state, last_started_at, restart_count, last_exit_code, updated_at
+            FROM qr_ordering.relay_connector_status
+            WHERE connector_key = @connector_key;
+            """;
+        command.Parameters.Add("connector_key", NpgsqlDbType.Text).Value = ConnectorKey;
 
-            using var reader = command.ExecuteReader();
-            if (!reader.Read())
-                return NotConfigured;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
+            return NotConfigured;
 
-            var state = Enum.Parse<RelayConnectorState>(reader.GetString(0));
-            var updatedAt = reader.GetFieldValue<DateTimeOffset>(4);
+        var state = Enum.Parse<RelayConnectorState>(reader.GetString(0));
+        var updatedAt = reader.GetFieldValue<DateTimeOffset>(4);
 
-            // V1-RMD-324 (K17): the row's own freshness, not just its content - a "Running" row the
-            // publisher stopped updating because its whole container died is no longer trustworthy.
-            if (_nowUtc() - updatedAt > StalenessThreshold)
-                state = RelayConnectorState.Unknown;
+        // V1-RMD-324 (K17): the row's own freshness, not just its content - a "Running" row the
+        // publisher stopped updating because its whole container died is no longer trustworthy.
+        if (_nowUtc() - updatedAt > StalenessThreshold)
+            state = RelayConnectorState.Unknown;
 
-            return new RelayConnectorStatus(
-                state,
-                reader.IsDBNull(1) ? null : reader.GetFieldValue<DateTimeOffset>(1),
-                reader.GetInt32(2),
-                reader.IsDBNull(3) ? null : reader.GetInt32(3));
-        }
+        return new RelayConnectorStatus(
+            state,
+            reader.IsDBNull(1) ? null : reader.GetFieldValue<DateTimeOffset>(1),
+            reader.GetInt32(2),
+            reader.IsDBNull(3) ? null : reader.GetInt32(3));
     }
 }

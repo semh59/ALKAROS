@@ -24,9 +24,9 @@ public sealed class PostgresRelayConnectorStatusReporterTests : IAsyncLifetime
     public Task DisposeAsync() => _database.DisposeAsync();
 
     [Fact]
-    public void WithNothingWrittenYetReportsNotConfigured()
+    public async Task WithNothingWrittenYetReportsNotConfigured()
     {
-        var status = _reporter.CurrentStatus;
+        var status = await _reporter.GetCurrentStatusAsync(CancellationToken.None);
 
         Assert.Equal(RelayConnectorState.NotConfigured, status.State);
         Assert.Null(status.LastStartedAt);
@@ -40,7 +40,7 @@ public sealed class PostgresRelayConnectorStatusReporterTests : IAsyncLifetime
         var startedAt = DateTimeOffset.UtcNow;
         await InsertRowAsync("Running", startedAt, restartCount: 3, lastExitCode: null);
 
-        var status = _reporter.CurrentStatus;
+        var status = await _reporter.GetCurrentStatusAsync(CancellationToken.None);
 
         Assert.Equal(RelayConnectorState.Running, status.State);
         // Postgres timestamptz rounds to microsecond precision; .NET's
@@ -56,7 +56,7 @@ public sealed class PostgresRelayConnectorStatusReporterTests : IAsyncLifetime
     {
         await InsertRowAsync("Restarting", DateTimeOffset.UtcNow, restartCount: 1, lastExitCode: 137);
 
-        var status = _reporter.CurrentStatus;
+        var status = await _reporter.GetCurrentStatusAsync(CancellationToken.None);
 
         Assert.Equal(RelayConnectorState.Restarting, status.State);
         Assert.Equal(137, status.LastExitCode);
@@ -75,7 +75,7 @@ public sealed class PostgresRelayConnectorStatusReporterTests : IAsyncLifetime
         var reporter = new PostgresRelayConnectorStatusReporter(_database.DataSource, () => now);
         await InsertRowAsync("Running", now.AddMinutes(-5), restartCount: 0, lastExitCode: null, updatedAt: now.AddSeconds(-31));
 
-        var status = reporter.CurrentStatus;
+        var status = await reporter.GetCurrentStatusAsync(CancellationToken.None);
 
         Assert.Equal(RelayConnectorState.Unknown, status.State);
     }
@@ -88,7 +88,7 @@ public sealed class PostgresRelayConnectorStatusReporterTests : IAsyncLifetime
         var reporter = new PostgresRelayConnectorStatusReporter(_database.DataSource, () => now);
         await InsertRowAsync("Running", now.AddMinutes(-5), restartCount: 0, lastExitCode: null, updatedAt: now.AddSeconds(-29));
 
-        var status = reporter.CurrentStatus;
+        var status = await reporter.GetCurrentStatusAsync(CancellationToken.None);
 
         Assert.Equal(RelayConnectorState.Running, status.State);
     }

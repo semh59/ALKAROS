@@ -69,7 +69,7 @@ public sealed class RelayConnectorStatusPublisher : BackgroundService
 
     private async Task PublishAsync(CancellationToken cancellationToken)
     {
-        var status = _statusReporter.CurrentStatus;
+        var status = await _statusReporter.GetCurrentStatusAsync(cancellationToken);
 
         await using var command = _dataSource.CreateCommand(
             """

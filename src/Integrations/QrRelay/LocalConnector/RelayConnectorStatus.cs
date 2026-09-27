@@ -39,5 +39,12 @@ public sealed record RelayConnectorStatus(
 
 public interface IRelayConnectorStatusReporter
 {
-    RelayConnectorStatus CurrentStatus { get; }
+    /// <summary>
+    /// V1-RMD-353 (independent 2026-09-26 audit, a low-severity finding): async so that
+    /// <see cref="ALKAROS.QrRelay.PublicGateway.PostgresRelayConnectorStatusReporter"/>'s implementation
+    /// (a real Postgres round-trip) never blocks a thread-pool thread inside an already-async HTTP request
+    /// handler. <see cref="RelayConnectorSupervisor"/>'s own implementation is a genuinely instant in-memory
+    /// read and simply wraps its existing synchronous <c>CurrentStatus</c> property in a completed task.
+    /// </summary>
+    Task<RelayConnectorStatus> GetCurrentStatusAsync(CancellationToken cancellationToken);
 }

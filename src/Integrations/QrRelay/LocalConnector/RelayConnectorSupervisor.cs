@@ -100,6 +100,10 @@ public sealed class RelayConnectorSupervisor : BackgroundService, IRelayConnecto
         get { lock (_statusLock) return _status; }
     }
 
+    /// <summary>V1-RMD-353: this container's own view of itself is always an instant in-memory read.</summary>
+    public Task<RelayConnectorStatus> GetCurrentStatusAsync(CancellationToken cancellationToken)
+        => Task.FromResult(CurrentStatus);
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         while (!stoppingToken.IsCancellationRequested)
