@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1389,
-  "markdown_line_count": 106469,
-  "markdown_byte_count": 6134560,
+  "markdown_file_count": 1395,
+  "markdown_line_count": 106820,
+  "markdown_byte_count": 6151460,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2471,6 +2471,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V12-GOV-009/decision-record.md",
+      "sha256": "D646C673BBDFA6ECA4EB55957F91BA6B16443CB54381E2E6197B38127FB5E28E",
+      "lines": 46,
+      "bytes": 2153,
+      "utf8": true
+    },
+    {
       "path": "evidence/V13-GOV-006/README.md",
       "sha256": "B33A4648B0FE354E6A866B54DE5377129B889B8BF6BFFAAC34AC2938BC0CE12C",
       "lines": 108,
@@ -2549,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "84C27459F825C5A69500FDFBC0E9E7472811AFE219A462C2B55C0B0D6BB64CB6",
-      "lines": 2665,
-      "bytes": 389787,
+      "sha256": "84E62D70E3D228A65E6E19D98FB61E211F35C0101FFE9D64AFD72E2F810A3A2A",
+      "lines": 2671,
+      "bytes": 390742,
       "utf8": true
     },
     {
@@ -2577,9 +2584,9 @@
     },
     {
       "path": "plan/OFFICIAL_SOURCE_REGISTER.md",
-      "sha256": "55BAEDFB79F62EEAFEF1E5D9D861559DB374DC8CD8E878A484F5FB81A60B2C56",
+      "sha256": "B4947B689E06B4AD696916E25EC36C27600F802CD4AA5A8D27C23D4C4DB7A93D",
       "lines": 45,
-      "bytes": 8399,
+      "bytes": 8600,
       "utf8": true
     },
     {
@@ -2626,9 +2633,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "F3AFF98CE7784BCDDAC0E0920FA327144B9FF5FFA2BFD61A2A36BE519B571C13",
-      "lines": 209,
-      "bytes": 92177,
+      "sha256": "8E048FDA72C9A68801EA078525148BB7FF820156AB1CC5CE79BA496DE7329269",
+      "lines": 210,
+      "bytes": 92834,
       "utf8": true
     },
     {
@@ -8575,6 +8582,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.2/governance/V12-GOV-009-single-online-food-screen.md",
+      "sha256": "29032601B38E4CB56D0D7073E3522E5F03C0FC7DE67FC318DFC60FF0B20E3581",
+      "lines": 67,
+      "bytes": 2640,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.2/migros-yemek/V12-MGY-001-pos-integrator-contract.md",
       "sha256": "57A43B150A2654B568D09D1FB8229EE6722F49C2686D9FFCC87D06AF113EB25F",
       "lines": 50,
@@ -8628,6 +8642,27 @@
       "sha256": "D7CC4E56672E48049540F9170A0648F3AF4124EDDCED900638A8DBC2A18EE5AC",
       "lines": 59,
       "bytes": 2694,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-operations-ui/V12-OUI-004-online-food-hub.md",
+      "sha256": "0E5593179E21CFE2645F86FE70D003CEB1F7AF1D72B03A0EE1BE1943BBC00C77",
+      "lines": 55,
+      "bytes": 2368,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-operations-ui/V12-OUI-005-online-menu-tab.md",
+      "sha256": "4E4BC74A0924C1057E01745E109ABC61D3BCD9BD86EB98CB49C272C7CA2909A9",
+      "lines": 57,
+      "bytes": 2736,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-operations-ui/V12-OUI-006-online-problems-tab.md",
+      "sha256": "9D8F617485ADBEAD58F2F939EAB26EFE5DB4EA8758E89B81AB7014C15E73B377",
+      "lines": 47,
+      "bytes": 1727,
       "utf8": true
     },
     {
@@ -8698,6 +8733,13 @@
       "sha256": "2F16491B6E04430604D1D892C248EF9EA993EFF0858E0C9076513AD1091231B6",
       "lines": 57,
       "bytes": 2702,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/online-ordering/V12-ONL-011-platform-store-status.md",
+      "sha256": "636EA47706A4CFF15BB533A170DF7BB5DD03B9DF4ED30E84FA439E8FF7374392",
+      "lines": 69,
+      "bytes": 3216,
       "utf8": true
     },
     {
@@ -8835,9 +8877,9 @@
     },
     {
       "path": "plan/v1.2/README.md",
-      "sha256": "50D5209B7F4349A12271EFE8861AD1CA7F8839B40A1A0C329B0EEF137DDDC554",
-      "lines": 72,
-      "bytes": 3689,
+      "sha256": "1D825A4ABA79B76C9BA578DB7FA79AF2874B9E8E3A111F20C138EE3DD9D6DB38",
+      "lines": 75,
+      "bytes": 3936,
       "utf8": true
     },
     {
