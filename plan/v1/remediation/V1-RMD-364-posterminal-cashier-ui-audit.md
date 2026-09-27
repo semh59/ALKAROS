@@ -37,7 +37,7 @@ taşıyordu; 401/409/ağ hatası ayrımı (`execute()`) doğru kurulmuştu.
 ## Owned surface
 
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.tsx
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.category-tabs.test.tsx
+- `src/Clients/PosTerminal/src/routes/Cashier.category-tabs.test.tsx`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/ui-audit/UI_AUDIT_PROGRESS.md
 - `plan/v1/remediation/V1-RMD-364-posterminal-cashier-ui-audit.md`
 
