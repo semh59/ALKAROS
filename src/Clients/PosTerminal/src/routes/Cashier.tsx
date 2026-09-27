@@ -535,9 +535,16 @@ export function Cashier() {
       </div>
 
       <div className="pos-workspace">
-        <nav className="category-rail" aria-label="Ürün kategorileri">
+        {/* V1-RMD-364 (module-by-module UI audit): the same tab-pattern gap
+            Cashier's vanilla client had (V1-RMD-360) - this filters which
+            view of the SAME product grid shows, so role="tab" + aria-selected
+            is the right pair (not radiogroup/radio, which Module 3's
+            split-payment fix used for a VALUE choice instead). */}
+        <nav className="category-rail" aria-label="Ürün kategorileri" role="tablist">
           <button
             className={activeCategory === "ALL" ? "active" : ""}
+            role="tab"
+            aria-selected={activeCategory === "ALL"}
             onClick={() => setActiveCategory("ALL")}
           >
             <span className="category-glyph">⌂</span>
@@ -547,6 +554,8 @@ export function Cashier() {
           {categories.map((category, index) => (
             <button
               className={activeCategory === category.code ? "active" : ""}
+              role="tab"
+              aria-selected={activeCategory === category.code}
               key={category.code}
               onClick={() => setActiveCategory(category.code)}
             >

@@ -17,7 +17,7 @@ Modül-modül, kalıcı denetim süreci (2026-09-27 kararı). Kurallar:
 | 2 | Cashier — Kasa Oturumu | Tamamlandı | 3 (+1 ürün gözlemi) | 3 | 2026-09-27 | V1-RMD-361 |
 | 3 | Cashier — Tahsilat/Split Payment | Tamamlandı | 4 | 4 | 2026-09-27 | V1-RMD-362 |
 | 4 | WaiterPwa | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-363; diğer modüllere göre en olgun çıktı |
-| 5 | PosTerminal — Cashier.tsx | Bekliyor | - | - | - | - |
+| 5 | PosTerminal — Cashier.tsx | Tamamlandı | 2 | 2 | 2026-09-27 | V1-RMD-364; ayrıca axe-core test kapsama boşluğu kapatıldı |
 | 6 | PosTerminal — workspace.tsx + tables | Bekliyor | - | - | - | - |
 | 7 | PosTerminal — billing | Bekliyor | - | - | - | - |
 | 8 | PosTerminal — catalog | Bekliyor | - | - | - | - |
