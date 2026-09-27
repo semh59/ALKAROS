@@ -47,7 +47,7 @@ gerçek test + mutation-check + görev dosyası + dört gate + commit/push.
 | 2 | Cashier — Kasa Oturumu | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-377; kupür bazlı sayım (P1) |
 | 3 | Cashier — Tahsilat/Split Payment | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-378; onay bekleyen kart tahsilatı sessizce bayatlıyordu (T7) |
 | 4 | WaiterPwa | Tamamlandı | 1 (+2 ertelenen) | 1 | 2026-09-27 | V1-RMD-379; arama debounce'u (T8); favoriler (P1) ve yardım-onay geri bildirimi (T7) Semih'e bırakıldı |
-| 5 | PosTerminal — Cashier.tsx | Bekliyor | - | - | - | - |
+| 5 | PosTerminal — Cashier.tsx | Tamamlandı | 1 (kod değişikliği yok) | 0 | 2026-09-27 | V1-RMD-380; CİDDİ — modifikatör desteği yok, backend domain/şema değişikliği gerektiriyor, Semih'e bırakıldı |
 | 6 | PosTerminal — workspace.tsx + tables | Bekliyor | - | - | - | - |
 | 7 | PosTerminal — billing | Bekliyor | - | - | - | - |
 | 8 | PosTerminal — catalog | Bekliyor | - | - | - | - |
