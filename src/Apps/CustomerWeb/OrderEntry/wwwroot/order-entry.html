@@ -36,7 +36,14 @@
 
     <button id="btnSubmitOrder" type="button" class="submit-button" hidden>Siparişi Gönder</button>
 
-    <section id="orderStatus" class="order-status" hidden>
+    <!-- V1-RMD-375 (module-by-module UI audit): this text changes live while
+         pollUntilMaterialized() polls (order-entry.js) - a customer using a
+         screen reader got no announcement at all as their order moved from
+         submitted to accepted/rejected. role="status" + aria-live="polite"
+         matches the Turkish-copy convention this codebase already uses for
+         every other live status text (Cashier's system-state, WaiterPwa's
+         ribbon). -->
+    <section id="orderStatus" class="order-status" role="status" aria-live="polite" hidden>
       <p id="orderStatusMessage"></p>
     </section>
   </main>

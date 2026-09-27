@@ -90,3 +90,18 @@ def test_customer_web_bill_renders_the_business_own_identity():
     assert "businessName" in app_code
     assert "hasLogo" in app_code
     assert "--cw-accent" in app_code
+
+
+def test_customer_web_bill_live_regions_are_actually_announced():
+    """V1-RMD-375 (module-by-module UI audit, 2026-09-27): the header's own
+    copy promises "Bu ekran canlı güncellenir" (updates live - bill.js polls
+    every few seconds), but neither the item list nor the running total had
+    any aria-live at all - a guest using a screen reader had no way to know
+    a new item or price change had landed. aria-atomic="false" on the list
+    matches Cashier's own ticket-lines precedent (Cashier.tsx) so only what
+    actually changed is read, not the whole bill re-announced on every poll."""
+    html = (WWWROOT / "bill.html").read_text(encoding="utf-8")
+
+    assert "Bu ekran canlı güncellenir" in html
+    assert 'id="billList" class="bill-list" aria-live="polite" aria-atomic="false"' in html
+    assert 'id="billSummary" class="bill-summary" role="status" aria-live="polite"' in html

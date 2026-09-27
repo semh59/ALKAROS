@@ -27,6 +27,6 @@ Modül-modül, kalıcı denetim süreci (2026-09-27 kararı). Kurallar:
 | 12 | PosTerminal — system-health | Tamamlandı | 2 | 2 | 2026-09-27 | V1-RMD-372; axe boşluğu + Modül 9'da ertelenen hata sınıfı |
 | 13 | PosTerminal — Ayarlar ekranları (Relay/Qnb/Token/Security/BusinessIdentity/Reservation/Screensaver) | Tamamlandı | 2 | 2 | 2026-09-27 | V1-RMD-373; axe boşluğu (7 ekran) + eksik test dosyası (Screensaver) |
 | 14 | PosTerminal — NfcOrder + CustomerDisplay | Tamamlandı | 2 | 2 | 2026-09-27 | V1-RMD-374; axe boşluğu + CustomerDisplay'in eksik test dosyası |
-| 15 | CustomerWeb — Menu | Bekliyor | - | - | - | - |
-| 16 | CustomerWeb — OrderEntry | Bekliyor | - | - | - | - |
-| 17 | CustomerWeb — Bill | Bekliyor | - | - | - | - |
+| 15 | CustomerWeb — Menu | Tamamlandı | 0 | 0 | 2026-09-27 | V1-RMD-375; gerçek bulgu yok (canlı güncelleme yok) |
+| 16 | CustomerWeb — OrderEntry | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-375; sipariş durumu sessizce güncelleniyordu |
+| 17 | CustomerWeb — Bill | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-375; "canlı güncellenir" dediği halde hiç duyurulmuyordu |

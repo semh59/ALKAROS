@@ -26,9 +26,16 @@
       Henüz siparişiniz görünmüyor. <a href="./index.html">Menüden ürün ekleyin.</a>
     </p>
 
-    <ul id="billList" class="bill-list" hidden></ul>
+    <!-- V1-RMD-375 (module-by-module UI audit): the header's own copy
+         promises "Bu ekran canlı güncellenir" (updates live, polled every
+         few seconds by bill.js), but nothing here was ever announced to a
+         screen reader - a customer using one had no way to know a new item
+         or price change had landed. aria-atomic="false" matches Cashier's
+         own ticket-lines precedent (Cashier.tsx) so only what actually
+         changed is read, not the whole bill re-announced on every poll. -->
+    <ul id="billList" class="bill-list" aria-live="polite" aria-atomic="false" hidden></ul>
 
-    <div id="billSummary" class="bill-summary" hidden>
+    <div id="billSummary" class="bill-summary" role="status" aria-live="polite" hidden>
       <div class="bill-summary-row">
         <span>Ara toplam</span>
         <span id="billSubtotal"></span>

@@ -92,3 +92,14 @@ def test_customer_web_order_entry_renders_the_business_own_identity():
     assert "businessName" in app_code
     assert "hasLogo" in app_code
     assert "--cw-accent" in app_code
+
+
+def test_customer_web_order_entry_status_section_is_announced_live():
+    """V1-RMD-375 (module-by-module UI audit, 2026-09-27): #orderStatusMessage's
+    text changes live while pollUntilMaterialized() polls (submitted ->
+    accepted/rejected) with no page reload - without role="status" +
+    aria-live, a screen reader user got no announcement at all as their
+    order's outcome changed."""
+    html = (WWWROOT / "order-entry.html").read_text(encoding="utf-8")
+
+    assert 'id="orderStatus" class="order-status" role="status" aria-live="polite"' in html
