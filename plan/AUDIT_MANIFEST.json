@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1384,
-  "markdown_line_count": 106099,
-  "markdown_byte_count": 6112378,
+  "markdown_file_count": 1385,
+  "markdown_line_count": 106164,
+  "markdown_byte_count": 6115651,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "3CF3C619E6D0F18B69B5A322C241418625ED2E64450767A4970F14ADB2CB54FE",
-      "lines": 2660,
-      "bytes": 388949,
+      "sha256": "D1FD3B2B67BBDD3E84A36727F0EE652BE8B590B4F55671619514C34A635F5471",
+      "lines": 2661,
+      "bytes": 389110,
       "utf8": true
     },
     {
@@ -7599,6 +7599,13 @@
       "sha256": "784F654D0C89C966ADC6A1B50ABBA5976E148D25A7BB83AB8CA99F770832AD13",
       "lines": 67,
       "bytes": 3555,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-349-cashier-pwa-manifest-icons.md",
+      "sha256": "4668B3E04773001C469C6458FB7523D20A4D3ADBB835D2B6881B2D190E95F94C",
+      "lines": 64,
+      "bytes": 3112,
       "utf8": true
     },
     {

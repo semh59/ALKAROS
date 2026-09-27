@@ -21,8 +21,8 @@ saymak için en az bir gerçek ≥192px ikon gerektirir.
 
 ## Owned surface
 
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/icon-192.png
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/icon-512.png
+- `src/Clients/Cashier/wwwroot/icon-192.png`
+- `src/Clients/Cashier/wwwroot/icon-512.png`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/E2E/Cashier/specs/19-pwa-manifest.spec.js
 - `plan/v1/remediation/V1-RMD-349-cashier-pwa-manifest-icons.md`
 
