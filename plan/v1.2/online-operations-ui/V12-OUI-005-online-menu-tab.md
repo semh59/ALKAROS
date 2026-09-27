@@ -1,8 +1,8 @@
 # V12-OUI-005 - Online Yemek Menü sekmesi ve ürün eşleme
 
 - Task ID: V12-OUI-005
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Planned
 
@@ -21,6 +21,7 @@ eşlemesi olmadan kullanılamadığı için bu sekme onu kullanılabilir yapar. 
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan; Semih 2026-09-27 kararı):
   - src/Clients/PosTerminal/src/features/online-hub/ (V12-OUI-004) — sekmenin yerleştirilmesi.
+  - src/Clients/PosTerminal/src/routes/ — Menü yolunun yalnız yöneticiye açılması.
   - src/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/ (V12-MAP-001) — platform bazlı eşleme listesi ve kapatma.
   - src/Modules/OnlineOrdering/Providers/TrendyolGo/Menu/ (V12-TGO-004) — platform menüsünün adlarıyla okunması.
   - src/Modules/OnlineOrdering/CatalogPublishing/ (V12-ONL-004) — yayın geçmişinin okunması.
