@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1396,
-  "markdown_line_count": 106899,
-  "markdown_byte_count": 6156613,
+  "markdown_file_count": 1397,
+  "markdown_line_count": 106966,
+  "markdown_byte_count": 6160539,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "8F30F2387AAF5503A6B15F274D12AC3292B8AD032B51D194DD1AD4410BCA55E7",
-      "lines": 2672,
-      "bytes": 390906,
+      "sha256": "FADB19D028685FF89E65B7E979AC58BED8B649C0A08B58C049A2BB6D899EFFF6",
+      "lines": 2673,
+      "bytes": 391076,
       "utf8": true
     },
     {
@@ -7648,6 +7648,13 @@
       "sha256": "53395D46FA37A906A4E11383A2485C2929153712FFB98B720DCA55B39092A9D2",
       "lines": 78,
       "bytes": 4989,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-355-cashier-parked-ticket-confirm-modal.md",
+      "sha256": "CCECF420FDC26519F8F7389A07022F2A5AC9470E920C638872202F6F32FD7685",
+      "lines": 66,
+      "bytes": 3756,
       "utf8": true
     },
     {

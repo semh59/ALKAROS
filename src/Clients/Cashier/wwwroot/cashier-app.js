@@ -132,8 +132,42 @@
     connectivityLabel: document.getElementById('connectivityLabel'),
     dispatchHint: document.getElementById('dispatchHint'),
     dispatchWaiterSelect: document.getElementById('dispatchWaiterSelect'),
-    toastRegion: document.getElementById('toastRegion')
+    toastRegion: document.getElementById('toastRegion'),
+    confirmModal: document.getElementById('confirmModal'),
+    confirmModalMessage: document.getElementById('confirmModalMessage'),
+    btnConfirmModalAccept: document.getElementById('btnConfirmModalAccept'),
+    btnConfirmModalCancel: document.getElementById('btnConfirmModalCancel')
   };
+
+  // V1-RMD-355 (independent 2026-09-26 audit, a low-severity finding): replaces the native confirm() dialog
+  // used by recallParkedTicket - an unstylable, un-brandable browser box that also can't be driven from an
+  // automated E2E test the way an in-app modal can. Same self-contained resolve-on-click shape as the existing
+  // V1-RMD-253 alert()->toast replacement above. Only one confirmation can be pending at a time (matches this
+  // screen's own single-cashier, single-flow-at-a-time usage - the modal already blocks the whole screen).
+  function showConfirmModal(message) {
+    return new Promise((resolve) => {
+      if (!el.confirmModal || !el.confirmModalMessage || !el.btnConfirmModalAccept || !el.btnConfirmModalCancel) {
+        // Markup missing (should not happen in production) - never leave the caller hanging.
+        resolve(false);
+        return;
+      }
+
+      el.confirmModalMessage.textContent = message;
+      el.confirmModal.hidden = false;
+
+      const settle = (result) => {
+        el.confirmModal.hidden = true;
+        el.btnConfirmModalAccept.removeEventListener('click', onAccept);
+        el.btnConfirmModalCancel.removeEventListener('click', onCancel);
+        resolve(result);
+      };
+      const onAccept = () => settle(true);
+      const onCancel = () => settle(false);
+
+      el.btnConfirmModalAccept.addEventListener('click', onAccept);
+      el.btnConfirmModalCancel.addEventListener('click', onCancel);
+    });
+  }
 
   // V1-RMD-253: replaces native alert() in the dispatch flow — a blocking
   // dialog the cashier had to manually dismiss on every single order,
@@ -673,12 +707,12 @@
     updateParkBadge();
   }
 
-  function recallParkedTicket(parkedId) {
+  async function recallParkedTicket(parkedId) {
     const index = state.parkedTickets.findIndex(p => p.id === parkedId);
     if (index < 0) return;
 
     if (state.ticketItems.length > 0) {
-      const confirmReplace = confirm(
+      const confirmReplace = await showConfirmModal(
         'Mevcut sepette ürünler var. Bekletilen fişi yüklemek mevcut sepeti değiştirecektir. Devam etmek istiyor musunuz?'
       );
       if (!confirmReplace) return;

@@ -595,6 +595,22 @@ body {
   margin-bottom: 16px;
 }
 
+/* V1-RMD-355: the in-app confirm() replacement. */
+.modal-card--confirm {
+  max-width: 400px;
+}
+
+.modal-card__message {
+  margin-bottom: 20px;
+  line-height: 1.5;
+}
+
+.modal-card__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 /* Classes for markup injected via innerHTML by cashier-app.js. These replace
    inline style="..." attributes that a strict style-src 'self' CSP drops
    (deep-analysis finding F-1). */
