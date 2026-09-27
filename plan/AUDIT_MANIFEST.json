@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1405,
-  "markdown_line_count": 107537,
-  "markdown_byte_count": 6193945,
+  "markdown_file_count": 1406,
+  "markdown_line_count": 107603,
+  "markdown_byte_count": 6197268,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "1392D36DA7568C8A1A078BD2D29D9C525B5BE65FCED3999E89969DA672A27065",
-      "lines": 2681,
-      "bytes": 392417,
+      "sha256": "100C8A0ECC4F384111B4EEEC5F34D1513357B776DF35A5B70A1074A8F695185A",
+      "lines": 2682,
+      "bytes": 392574,
       "utf8": true
     },
     {
@@ -7700,6 +7700,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-362-split-payment-ui-audit.md",
+      "sha256": "9ED75230DDF56E32D6F6E7B066F94FEE1DFF86CFD94A3B073457B66A06EB1C1E",
+      "lines": 65,
+      "bytes": 3145,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -7883,9 +7890,9 @@
     },
     {
       "path": "plan/v1/ui-audit/UI_AUDIT_PROGRESS.md",
-      "sha256": "E8D6B357F8A94E4EA942E9E843DC36A0743B844E8383899E5568CC9DB47DEF81",
+      "sha256": "9DD102ACD7DCF8EE1E28292018394C7B4363C11F3C3836F7152EBF4C18C69015",
       "lines": 32,
-      "bytes": 2236,
+      "bytes": 2257,
       "utf8": true
     },
     {
