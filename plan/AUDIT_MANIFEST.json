@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1383,
-  "markdown_line_count": 106031,
-  "markdown_byte_count": 6108656,
+  "markdown_file_count": 1384,
+  "markdown_line_count": 106099,
+  "markdown_byte_count": 6112378,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "3ECE2E6292EDDA0FFE5DB5F22CA920DF01720F5F712C58EBF1AAC4BCA52ABDB6",
-      "lines": 2659,
-      "bytes": 388782,
+      "sha256": "3CF3C619E6D0F18B69B5A322C241418625ED2E64450767A4970F14ADB2CB54FE",
+      "lines": 2660,
+      "bytes": 388949,
       "utf8": true
     },
     {
@@ -7592,6 +7592,13 @@
       "sha256": "F6391BF629797E87885372C159A24010D61677FBFF251123DA2093887D8330C1",
       "lines": 60,
       "bytes": 3116,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-348-nfc-submission-id-sessionstorage.md",
+      "sha256": "784F654D0C89C966ADC6A1B50ABBA5976E148D25A7BB83AB8CA99F770832AD13",
+      "lines": 67,
+      "bytes": 3555,
       "utf8": true
     },
     {
