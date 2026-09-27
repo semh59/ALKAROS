@@ -468,9 +468,9 @@
           <input class="item-note-input" type="text" maxlength="200" placeholder="Not (örn. az, acısız)" value="${escapeHtml(item.note || '')}" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} özel talimat" />
         </div>
         <div class="item-actions">
-          <button type="button" class="btn-micro" data-action="dec" data-id="${escapeHtml(item.id)}">−</button>
+          <button type="button" class="btn-micro" data-action="dec" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} adedini azalt">−</button>
           <span class="ticket-row-qty">${item.quantity}</span>
-          <button type="button" class="btn-micro" data-action="inc" data-id="${escapeHtml(item.id)}">+</button>
+          <button type="button" class="btn-micro" data-action="inc" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} adedini artır">+</button>
           <button type="button" class="btn-micro btn-del" data-action="del" data-id="${escapeHtml(item.id)}" title="Sil" aria-label="Sil"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
         </div>
       </div>
@@ -779,6 +779,21 @@
       el.productMatrix.addEventListener('click', (e) => {
         const card = e.target.closest('.pos-product-card');
         if (!card) return;
+        const prodId = card.dataset.productId;
+        const prod = state.products.find(p => p.id === prodId);
+        if (prod) addProductToTicket(prod);
+      });
+
+      // V1-RMD-356 (independent 2026-09-26 audit, a low-severity finding): the card already carries
+      // tabindex="0" role="button" (a keyboard user CAN tab to it), but nothing ever handled Enter/Space -
+      // the two keys every screen reader and keyboard-only user expects to activate a focused button. Mirrors
+      // the click handler above exactly rather than calling .click() (avoids depending on synthetic-event
+      // bubbling back into this same delegated listener).
+      el.productMatrix.addEventListener('keydown', (e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        const card = e.target.closest('.pos-product-card');
+        if (!card) return;
+        e.preventDefault();
         const prodId = card.dataset.productId;
         const prod = state.products.find(p => p.id === prodId);
         if (prod) addProductToTicket(prod);

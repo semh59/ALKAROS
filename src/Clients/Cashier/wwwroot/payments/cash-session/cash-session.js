@@ -381,9 +381,9 @@
       '<p class="cs-subtitle">Kasa oturumunu yönetmek için giriş yapın.</p></div>' +
       errorAlert() +
       '<form id="login-form" class="cs-field">' +
-      '<label class="cs-field-label">Kullanıcı adı</label>' +
+      '<label class="cs-field-label" for="username">Kullanıcı adı</label>' +
       '<input class="cs-input" type="text" id="username" autocomplete="username" required>' +
-      '<label class="cs-field-label">Şifre</label>' +
+      '<label class="cs-field-label" for="password">Şifre</label>' +
       '<input class="cs-input" type="password" id="password" autocomplete="current-password" required>' +
       '<button class="cs-btn cs-btn-primary" type="submit" ' + (state.busy ? 'disabled' : '') + '>' +
       (state.busy ? 'Giriş yapılıyor…' : 'Giriş Yap') + '</button>' +
@@ -406,7 +406,7 @@
       '<h1 class="cs-title">Vardiyayı Başlat</h1>' +
       '<p class="cs-subtitle">Çekmecede bulunan başlangıç tutarını girin.</p></div>' +
       errorAlert() +
-      '<label class="cs-field-label">Açılış Tutarı</label>' +
+      '<label class="cs-field-label" for="opening-balance">Açılış Tutarı</label>' +
       '<div class="cs-amount-field"><input type="number" step="0.01" min="0" id="opening-balance" ' +
       'value="' + (suggested != null ? Number(suggested).toFixed(2) : '0.00') + '">' +
       '<span class="cs-amount-suffix">₺</span></div>' +
@@ -491,10 +491,10 @@
       '<button class="cs-tab' + (!isIn ? ' is-active' : '') + '" id="tab-out" type="button">Çıkış</button>' +
       '</div>' +
       errorAlert() +
-      '<label class="cs-field-label">Tutar</label>' +
+      '<label class="cs-field-label" for="movement-amount">Tutar</label>' +
       '<div class="cs-amount-field"><input type="number" step="0.01" min="0.01" id="movement-amount" value="0.00">' +
       '<span class="cs-amount-suffix">₺</span></div>' +
-      '<label class="cs-field-label">Açıklama <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></label>' +
+      '<label class="cs-field-label" for="movement-notes">Açıklama <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></label>' +
       '<textarea class="cs-textarea" id="movement-notes" placeholder="Örn. banka için para çekildi"></textarea>' +
       '<div class="cs-row">' +
       '<button class="cs-btn cs-btn-secondary" id="movement-cancel">Vazgeç</button>' +
@@ -532,10 +532,10 @@
       '<h1 class="cs-title">Çekmecedeki Nakdi Sayın</h1>' +
       '<p class="cs-subtitle">Elinizdeki gerçek nakit tutarını girin.</p></div>' +
       errorAlert() +
-      '<label class="cs-field-label">Sayılan Tutar</label>' +
+      '<label class="cs-field-label" for="counted-amount">Sayılan Tutar</label>' +
       '<div class="cs-amount-field"><input type="number" step="0.01" min="0" id="counted-amount" value="0.00">' +
       '<span class="cs-amount-suffix">₺</span></div>' +
-      '<label class="cs-field-label">Not <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></label>' +
+      '<label class="cs-field-label" for="count-notes">Not <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></label>' +
       '<textarea class="cs-textarea" id="count-notes"></textarea>' +
       '<button class="cs-btn cs-btn-primary" id="submit-count" ' + (state.busy ? 'disabled' : '') + '>' +
       (state.busy ? 'Kaydediliyor…' : 'Sayımı Kaydet') + '</button>' +
@@ -573,7 +573,7 @@
         ? '<div class="cs-alert cs-alert-danger"><span class="cs-alert-icon">!</span>' +
           '<div><div class="cs-alert-title">Fark tolerans sınırını aşıyor</div>' +
           '<div class="cs-alert-body">Devam etmek için süpervizör onayı ve açıklama gerekir.</div></div></div>' +
-          '<label class="cs-field-label">Süpervizör Açıklaması</label>' +
+          '<label class="cs-field-label" for="override-reason">Süpervizör Açıklaması</label>' +
           '<textarea class="cs-textarea" id="override-reason"></textarea>'
         : '') +
       '<button class="cs-btn cs-btn-primary" id="submit-close" ' + (state.busy ? 'disabled' : '') + '>' +

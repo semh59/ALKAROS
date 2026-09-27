@@ -612,7 +612,7 @@
         escapeHtml(pending.slipNumber) + ' · ' + formatMoney(pending.amount) + '</span>' +
         (mine
           ? '<div class="sp-alert-body">Kart çekildi bildirimini siz yaptınız; ikinci bir yetkilinin onaylaması gerekir.</div>'
-          : '<input class="sp-input" type="text" id="decision-note" maxlength="500" placeholder="Not (isteğe bağlı)" value="' +
+          : '<input class="sp-input" type="text" id="decision-note" maxlength="500" placeholder="Not (isteğe bağlı)" aria-label="Onay notu (isteğe bağlı)" value="' +
             escapeHtml(state.decisionNote) + '">' +
             '<button class="sp-btn sp-btn-primary" id="approve-confirmation" type="button"' + disabled + '>Onayla: kart çekildi</button>') +
         '<button class="sp-btn sp-btn-secondary" id="reject-confirmation" type="button"' + disabled + '>' +
@@ -621,11 +621,11 @@
     }
     return (
       '<div class="sp-field"><span class="sp-field-label">Yetkili müdür: kart çekildi mi? (fiş numarası ile, ikinci bir yetkili onaylar)</span>' +
-      '<input class="sp-input" type="text" id="claim-slip" maxlength="32" placeholder="Fiş numarası" value="' + escapeHtml(state.slipDraft) + '">' +
+      '<input class="sp-input" type="text" id="claim-slip" maxlength="32" placeholder="Fiş numarası" aria-label="Fiş numarası" value="' + escapeHtml(state.slipDraft) + '">' +
       '<button class="sp-btn sp-btn-secondary" id="claim-card-charged" type="button"' + disabled + '>Kart çekildi: onaya gönder</button></div>' +
       '<div class="sp-field"><span class="sp-field-label">Yetkili müdür: kart çekilmedi mi?</span>' +
       '<input class="sp-input" type="text" id="resolve-reason" maxlength="500" ' +
-      'placeholder="Gerekçe (zorunlu)" value="' + escapeHtml(state.resolveReason) + '">' +
+      'placeholder="Gerekçe (zorunlu)" aria-label="Kart çekilmedi gerekçesi (zorunlu)" value="' + escapeHtml(state.resolveReason) + '">' +
       '<button class="sp-btn sp-btn-secondary" id="resolve-not-charged" type="button"' + disabled + '>Kart çekilmedi olarak çöz</button></div>'
     );
   }
@@ -658,21 +658,21 @@
       '<div class="sp-field"><span class="sp-field-label">İndirim / düzeltme ekle</span>' +
       (state.discountNotice ? '<div class="sp-alert-body">' + escapeHtml(state.discountNotice) + '</div>' : '') +
       (state.discountError ? '<div class="sp-alert-body" style="color:var(--color-danger)">' + escapeHtml(state.discountError) + '</div>' : '') +
-      '<select class="sp-input" id="discount-reason">' +
+      '<select class="sp-input" id="discount-reason" aria-label="İndirim gerekçesi">' +
       Object.keys(DISCOUNT_REASON_LABELS).map(function (code) {
         return '<option value="' + code + '"' + (state.discountReason === code ? ' selected' : '') + '>' +
           escapeHtml(DISCOUNT_REASON_LABELS[code]) + '</option>';
       }).join('') +
       '</select>' +
       '<div class="sp-row">' +
-      '<select class="sp-input" id="discount-calc-type">' +
+      '<select class="sp-input" id="discount-calc-type" aria-label="İndirim hesaplama türü">' +
       '<option value="Percentage"' + (state.discountCalcType === 'Percentage' ? ' selected' : '') + '>Yüzde (%)</option>' +
       '<option value="FixedAmount"' + (state.discountCalcType === 'FixedAmount' ? ' selected' : '') + '>Tutar (₺)</option>' +
       '</select>' +
-      '<input class="sp-input" type="number" step="0.01" min="0.01" id="discount-value" placeholder="Değer" value="' +
+      '<input class="sp-input" type="number" step="0.01" min="0.01" id="discount-value" placeholder="Değer" aria-label="İndirim değeri" value="' +
       escapeHtml(state.discountValueDraft) + '">' +
       '</div>' +
-      '<input class="sp-input" type="text" id="discount-note" maxlength="500" placeholder="Not (opsiyonel)" value="' +
+      '<input class="sp-input" type="text" id="discount-note" maxlength="500" placeholder="Not (opsiyonel)" aria-label="İndirim notu (opsiyonel)" value="' +
       escapeHtml(state.discountNoteDraft) + '">' +
       '<button class="sp-btn sp-btn-secondary" id="submit-discount" type="button"' + disabled + '>' +
       (state.discountBusy ? 'Gönderiliyor…' : 'İndirim uygula') + '</button>' +
@@ -686,9 +686,9 @@
       '<div class="sp-field"><span class="sp-field-label">Gönüllü bahşiş ekle</span>' +
       (state.tipError ? '<div class="sp-alert-body" style="color:var(--color-danger)">' + escapeHtml(state.tipError) + '</div>' : '') +
       '<div class="sp-row">' +
-      '<input class="sp-input" type="number" step="0.01" min="0.01" id="tip-amount" placeholder="Tutar" value="' +
+      '<input class="sp-input" type="number" step="0.01" min="0.01" id="tip-amount" placeholder="Tutar" aria-label="Bahşiş tutarı" value="' +
       escapeHtml(state.tipAmountDraft) + '">' +
-      '<input class="sp-input" type="text" id="tip-note" maxlength="500" placeholder="Not (opsiyonel)" value="' +
+      '<input class="sp-input" type="text" id="tip-note" maxlength="500" placeholder="Not (opsiyonel)" aria-label="Bahşiş notu (opsiyonel)" value="' +
       escapeHtml(state.tipNoteDraft) + '">' +
       '</div>' +
       '<button class="sp-btn sp-btn-secondary" id="submit-tip" type="button"' + disabled + '>' +
@@ -723,16 +723,16 @@
       (state.locked ? '' :
         '<div class="sp-field"><span class="sp-field-label">Eşit bölüştür</span>' +
         '<div class="sp-row">' +
-        '<input class="sp-input" type="number" min="2" step="1" id="split-count" value="' + state.splitCount + '">' +
+        '<input class="sp-input" type="number" min="2" step="1" id="split-count" aria-label="Kişi sayısı" value="' + state.splitCount + '">' +
         '<button class="sp-btn sp-btn-secondary" id="apply-split" type="button">Hesapla</button>' +
         '</div></div>' +
         '<div class="sp-field"><span class="sp-field-label">Ödeme yöntemi</span>' + renderMethodChips() + '</div>' +
         '<div class="sp-field"><span class="sp-field-label">Tutar</span>' +
-        '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" value="' + state.amountDraft + '">' +
+        '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
         '<span class="sp-amount-suffix">₺</span></div></div>' +
         (state.selectedMethod !== 'Cash'
           ? '<div class="sp-field"><span class="sp-field-label">Not <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></span>' +
-            '<input class="sp-input" type="text" id="note-draft" value="' + escapeHtml(state.noteDraft) + '"></div>'
+            '<input class="sp-input" type="text" id="note-draft" aria-label="Ödeme notu (opsiyonel)" value="' + escapeHtml(state.noteDraft) + '"></div>'
           : '') +
         (state.selectedMethod === 'Eft'
           ? '<div class="sp-confirm-row"><input type="checkbox" id="eft-confirm"' + (state.eftConfirmed ? ' checked' : '') + '>' +
