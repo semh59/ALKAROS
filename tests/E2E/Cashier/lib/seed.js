@@ -148,10 +148,47 @@ export async function seedDatabase(client) {
     [paymentProductId],
   );
 
+  // V1-RMD-376 (module-by-module UI audit round 2): a product with a
+  // MANDATORY (min_selections > 0) modifier group - the same seed shape
+  // tests/E2E/WaiterPwa/lib/seed.js already uses for its own optional
+  // group, here made required (selection_type 1/Single, min 1) so a spec
+  // can prove the quick-order screen actually blocks confirming with
+  // nothing chosen.
+  const modifierProductId = randomUUID();
+  const modifierGroupId = randomUUID();
+  const modifierSmallId = randomUUID();
+  const modifierLargeId = randomUUID();
+  await client.query(
+    `INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active, is_available, current_price)
+     VALUES ($1, 'E2E-KASA-BOYLU', 'E2E Boylu Ürün', 1, 1, true, true, 150.00)`,
+    [modifierProductId],
+  );
+  await client.query(
+    `INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections, active)
+     VALUES ($1, 'E2E-BOY', 'Boy', 1, 1, 1, true)`,
+    [modifierGroupId],
+  );
+  await client.query(
+    `INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+     VALUES ($1, $2, 'E2E-KUCUK', 'Küçük', 0.00, true)`,
+    [modifierSmallId, modifierGroupId],
+  );
+  await client.query(
+    `INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+     VALUES ($1, $2, 'E2E-BUYUK', 'Büyük', 25.00, true)`,
+    [modifierLargeId, modifierGroupId],
+  );
+  await client.query(
+    `INSERT INTO catalog.product_modifier_groups (product_modifier_group_id, product_id, modifier_group_id)
+     VALUES ($1, $2, $3)`,
+    [randomUUID(), modifierProductId, modifierGroupId],
+  );
+
   const stockPlan = [
     { productId: lowStockProductId, onHand: 3 },
     { productId: normalStockProductId, onHand: 500 },
     { productId: paymentProductId, onHand: 5000 },
+    { productId: modifierProductId, onHand: 500 },
   ];
   for (const { productId, onHand } of stockPlan) {
     const locationId = randomUUID();
@@ -189,6 +226,10 @@ export async function seedDatabase(client) {
     lowStockProductId,
     normalStockProductId,
     paymentProductId,
+    modifierProductId,
+    modifierGroupId,
+    modifierSmallId,
+    modifierLargeId,
     transferTables,
   };
 }

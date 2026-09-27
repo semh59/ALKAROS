@@ -135,7 +135,11 @@
     // /orders/waiter-load. Missing entries render with no count (never "0
     // masa" - a waiter this map has nothing for is just unmeasured, not
     // confirmed idle).
-    waiterLoads: {}
+    waiterLoads: {},
+
+    // V1-RMD-376: { product, chosen: { [groupId]: Set<modifierId> } } while
+    // the modifier modal is open, null otherwise.
+    modifierContext: null
   };
 
   // DOM Elements
@@ -161,7 +165,12 @@
     confirmModal: document.getElementById('confirmModal'),
     confirmModalMessage: document.getElementById('confirmModalMessage'),
     btnConfirmModalAccept: document.getElementById('btnConfirmModalAccept'),
-    btnConfirmModalCancel: document.getElementById('btnConfirmModalCancel')
+    btnConfirmModalCancel: document.getElementById('btnConfirmModalCancel'),
+    modifierModal: document.getElementById('modifierModal'),
+    modifierGroupsList: document.getElementById('modifierGroupsList'),
+    btnCloseModifierModal: document.getElementById('btnCloseModifierModal'),
+    btnModifierCancel: document.getElementById('btnModifierCancel'),
+    btnModifierConfirm: document.getElementById('btnModifierConfirm')
   };
 
   // V1-RMD-360 (module-by-module UI audit, 2026-09-27): #parkedModal/#confirmModal already had
@@ -392,7 +401,17 @@
           price: Number(p.unitPrice ?? 0),
           // V1-CUI-010: how many more units the mapped stock can still
           // cover, null when the product isn't stock-tracked (unlimited).
-          remainingCount: p.remainingCount != null ? p.remainingCount : null
+          remainingCount: p.remainingCount != null ? p.remainingCount : null,
+          // V1-RMD-376 (module-by-module UI audit round 2, P1 - rakip
+          // karşılaştırması): the server's own CatalogModifierGroupDto doc
+          // comment says mandatory-group enforcement is deliberately left to
+          // the client - this field existed on the response the whole time,
+          // WaiterPwa's own catalog mapping already reads it, but this
+          // screen dropped it entirely, so a product with a required option
+          // group (e.g. "Boy: Küçük/Orta/Büyük") could be added with no way
+          // to ever record which one, silently, with no error from either
+          // side.
+          modifierGroups: Array.isArray(p.modifierGroups) ? p.modifierGroups : []
         }))
         .filter(p => p.id && p.name);
       if (products.length === 0) throw new Error('catalog empty');
@@ -529,7 +548,12 @@
     const query = searchQuery.trim().toLowerCase();
     const filtered = state.products.filter(p => {
       const matchCat = state.activeCategory === 'all' || p.categoryId === state.activeCategory;
-      const matchSearch = !query || p.name.toLowerCase().includes(query) || (p.code && p.code.includes(query));
+      // V1-RMD-376 (module-by-module UI audit round 2, P2 - saha gerçekliği): `query` is already
+      // lowercased above, but `p.code` never was - SKUs in this catalog are conventionally
+      // uppercase ("E2E-KASA-DUSUK"), so a case-sensitive .includes() here never matched a
+      // lowercase search at all, silently, for any code-based search (a cashier typing a SKU by
+      // hand, or a scanner sending it in a different case than the catalog record).
+      const matchSearch = !query || p.name.toLowerCase().includes(query) || (p.code && p.code.toLowerCase().includes(query));
       return matchCat && matchSearch;
     });
 
@@ -560,6 +584,9 @@
       <div class="ticket-row">
         <div class="item-meta">
           <div class="item-title">${escapeHtml(item.name)}</div>
+          ${item.modifiers && item.modifiers.length > 0
+            ? `<div class="item-modifiers">${escapeHtml(item.modifiers.map(m => m.name).join(', '))}</div>`
+            : ''}
           <div class="item-sub">${formatMoney(item.price)} × ${item.quantity} = ${formatMoney(item.price * item.quantity)}</div>
           <input class="item-note-input" type="text" maxlength="200" placeholder="Not (örn. az, acısız)" value="${escapeHtml(item.note || '')}" data-id="${escapeHtml(item.id)}" aria-label="${escapeHtml(item.name)} özel talimat" />
         </div>
@@ -596,18 +623,27 @@
     el.parkCountBadge.style.display = state.parkedTickets.length > 0 ? 'inline-block' : 'none';
   }
 
-  function addProductToTicket(product) {
-    const existing = state.ticketItems.find(i => i.productId === product.id && !i.note);
+  function addProductToTicket(product, modifiers = []) {
+    // V1-RMD-376: a line with modifiers is never merged into a plain one (or
+    // a differently-modified one) of the same product - mirrors WaiterPwa's
+    // own addToDraft, which keeps a modified line distinct for the same
+    // reason: two "Kahve, sütlü" and one "Kahve, sade" are three different
+    // things the kitchen needs to see separately, not one line of three.
+    const existing = modifiers.length === 0
+      ? state.ticketItems.find(i => i.productId === product.id && !i.note && (!i.modifiers || i.modifiers.length === 0))
+      : null;
     if (existing) {
       existing.quantity += 1;
     } else {
+      const extra = modifiers.reduce((sum, m) => sum + (m.priceDelta || 0), 0);
       state.ticketItems.push({
         id: crypto.randomUUID(),
         productId: product.id,
         name: product.name,
-        price: product.price,
+        price: product.price + extra,
         quantity: 1,
-        note: ''
+        note: '',
+        modifiers
       });
     }
     renderTicket();
@@ -663,7 +699,11 @@
         productName: item.name,
         quantity: item.quantity,
         unitPrice: item.price,
-        specialInstructions: item.note && item.note.trim() ? item.note.trim() : null
+        specialInstructions: item.note && item.note.trim() ? item.note.trim() : null,
+        // V1-RMD-376: the server recomputes the real price/name from the
+        // catalog for each modifierId regardless (OrderItemModifierDto's own
+        // doc comment) - only the id is a real input.
+        modifiers: (item.modifiers || []).map(m => ({ modifierId: m.modifierId }))
       }))
     };
 
@@ -856,6 +896,105 @@
     }).join('');
   }
 
+  // V1-RMD-376 (module-by-module UI audit round 2): opens the option picker for a product that
+  // has at least one modifier group. Mirrors WaiterPwa's product-sheet.js openProductSheet/
+  // toggleModifier at the level this quick-order screen actually needs - one quantity (always
+  // 1, incremented afterward like every other line here), no seat/course assignment (Cashier has
+  // no seats and no course structure, unlike a table order).
+  let closeModifierModalFocusTrap = () => {};
+
+  function openModifierModal(product) {
+    state.modifierContext = { product, chosen: {} };
+    for (const group of product.modifierGroups) {
+      state.modifierContext.chosen[group.modifierGroupId] = new Set();
+    }
+    renderModifierGroups();
+    if (el.modifierModal) {
+      el.modifierModal.hidden = false;
+      closeModifierModalFocusTrap();
+      closeModifierModalFocusTrap = trapModalFocus(el.modifierModal, closeModifierModal);
+    }
+  }
+
+  function closeModifierModal() {
+    if (el.modifierModal) el.modifierModal.hidden = true;
+    closeModifierModalFocusTrap();
+    state.modifierContext = null;
+  }
+
+  function modifierConfirmIsAllowed() {
+    const context = state.modifierContext;
+    if (!context) return false;
+    return context.product.modifierGroups.every((group) => {
+      if (group.minSelections <= 0) return true;
+      return (context.chosen[group.modifierGroupId] || new Set()).size >= group.minSelections;
+    });
+  }
+
+  function renderModifierGroups() {
+    const context = state.modifierContext;
+    if (!el.modifierGroupsList || !context) return;
+    el.modifierGroupsList.innerHTML = context.product.modifierGroups.map((group) => {
+      const single = group.selectionType === 'Single';
+      const required = group.minSelections > 0;
+      const rule = required
+        ? (single ? 'zorunlu — bir tane seçin' : `zorunlu — en az ${group.minSelections}`)
+        : (single ? 'bir tane seçilebilir' : `en fazla ${group.maxSelections || group.modifiers.length}`);
+      const options = group.modifiers.map((modifier) => {
+        const checked = context.chosen[group.modifierGroupId].has(modifier.modifierId);
+        const priceLabel = modifier.priceDelta ? `+${formatMoney(modifier.priceDelta)}` : 'ücretsiz';
+        return `
+          <label class="modifier-option">
+            <input type="${single ? 'radio' : 'checkbox'}" name="modifier-group-${escapeHtml(group.modifierGroupId)}"
+                   data-group-id="${escapeHtml(group.modifierGroupId)}" data-modifier-id="${escapeHtml(modifier.modifierId)}"
+                   data-single="${single}" ${checked ? 'checked' : ''} />
+            <span class="modifier-option__name">${escapeHtml(modifier.name)}</span>
+            <span class="modifier-option__price">${escapeHtml(priceLabel)}</span>
+          </label>`;
+      }).join('');
+      return `
+        <div class="modifier-group">
+          <div class="modifier-group__head">
+            <span class="modifier-group__name">${escapeHtml(group.name)}</span>
+            <span class="modifier-group__rule${required ? ' modifier-group__rule--required' : ''}">${escapeHtml(rule)}</span>
+          </div>
+          ${options}
+        </div>`;
+    }).join('');
+    if (el.btnModifierConfirm) el.btnModifierConfirm.disabled = !modifierConfirmIsAllowed();
+  }
+
+  function onModifierOptionChange(input) {
+    const context = state.modifierContext;
+    if (!context) return;
+    const groupId = input.dataset.groupId;
+    const modifierId = input.dataset.modifierId;
+    const chosen = context.chosen[groupId];
+    if (input.dataset.single === 'true') {
+      chosen.clear();
+      chosen.add(modifierId);
+    } else if (input.checked) {
+      chosen.add(modifierId);
+    } else {
+      chosen.delete(modifierId);
+    }
+    renderModifierGroups();
+  }
+
+  function confirmModifierSelection() {
+    const context = state.modifierContext;
+    if (!context || !modifierConfirmIsAllowed()) return;
+    const chosenModifiers = [];
+    for (const group of context.product.modifierGroups) {
+      for (const modifierId of context.chosen[group.modifierGroupId]) {
+        const modifier = group.modifiers.find((candidate) => candidate.modifierId === modifierId);
+        if (modifier) chosenModifiers.push({ modifierId: modifier.modifierId, name: modifier.name, priceDelta: modifier.priceDelta || 0 });
+      }
+    }
+    addProductToTicket(context.product, chosenModifiers);
+    closeModifierModal();
+  }
+
   function bindEvents() {
     // Category Tabs
     if (el.categoryTabs) {
@@ -887,18 +1026,38 @@
       el.searchInput.addEventListener('input', (e) => {
         const value = e.target.value;
         window.clearTimeout(searchDebounceTimer);
-        searchDebounceTimer = window.setTimeout(() => renderProducts(value), 120);
+        // V1-RMD-376 (module-by-module UI audit round 2, P2/P1 - saha gerçekliği/rakip
+        // karşılaştırması): a barcode scanner "types" the SKU then stops - nothing here ever
+        // acted on that, so the scanned text just sat in the box requiring the cashier to look
+        // down and tap the matching card by hand on every single scan, real POS registers
+        // (Toast/Square) auto-add the moment a scan resolves to exactly one SKU and clear the
+        // field for the next one. Checked once the debounce settles (the same "typing paused"
+        // moment that already told a human search apart from a scan's own burst).
+        searchDebounceTimer = window.setTimeout(() => {
+          const trimmed = value.trim();
+          const exactMatch = trimmed && state.products.find(p => p.code && p.code.toLowerCase() === trimmed.toLowerCase());
+          if (exactMatch) {
+            el.searchInput.value = '';
+            renderProducts('');
+            if (exactMatch.modifierGroups.length > 0) openModifierModal(exactMatch);
+            else addProductToTicket(exactMatch);
+            return;
+          }
+          renderProducts(value);
+        }, 120);
       });
     }
 
-    // Product Click -> Add to Ticket
+    // Product Click -> Add to Ticket (or open the option picker first - V1-RMD-376)
     if (el.productMatrix) {
       el.productMatrix.addEventListener('click', (e) => {
         const card = e.target.closest('.pos-product-card');
         if (!card) return;
         const prodId = card.dataset.productId;
         const prod = state.products.find(p => p.id === prodId);
-        if (prod) addProductToTicket(prod);
+        if (!prod) return;
+        if (prod.modifierGroups.length > 0) openModifierModal(prod);
+        else addProductToTicket(prod);
       });
 
       // V1-RMD-356 (independent 2026-09-26 audit, a low-severity finding): the card already carries
@@ -913,9 +1072,22 @@
         e.preventDefault();
         const prodId = card.dataset.productId;
         const prod = state.products.find(p => p.id === prodId);
-        if (prod) addProductToTicket(prod);
+        if (!prod) return;
+        if (prod.modifierGroups.length > 0) openModifierModal(prod);
+        else addProductToTicket(prod);
       });
     }
+
+    // V1-RMD-376: modifier modal wiring.
+    if (el.modifierGroupsList) {
+      el.modifierGroupsList.addEventListener('change', (e) => {
+        const input = e.target.closest('input[data-modifier-id]');
+        if (input) onModifierOptionChange(input);
+      });
+    }
+    if (el.btnModifierConfirm) el.btnModifierConfirm.addEventListener('click', confirmModifierSelection);
+    if (el.btnModifierCancel) el.btnModifierCancel.addEventListener('click', closeModifierModal);
+    if (el.btnCloseModifierModal) el.btnCloseModifierModal.addEventListener('click', closeModifierModal);
 
     // Ticket Actions (Inc / Dec / Free / Del)
     if (el.ticketItemsStream) {

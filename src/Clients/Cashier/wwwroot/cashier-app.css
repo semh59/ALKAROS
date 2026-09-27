@@ -619,6 +619,72 @@ body {
   gap: 8px;
 }
 
+/* V1-RMD-376: the modifier picker's own confirm action - a positive,
+   non-destructive commit (unlike confirmModal's danger-toned accept). */
+.btn-ticket-action--primary {
+  background: var(--color-brand);
+  border-color: var(--color-brand);
+  color: #ffffff;
+}
+
+.btn-ticket-action--primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.modifier-group {
+  margin-bottom: 18px;
+}
+
+.modifier-group:last-child {
+  margin-bottom: 0;
+}
+
+.modifier-group__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.modifier-group__name {
+  font-weight: 800;
+}
+
+.modifier-group__rule {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+.modifier-group__rule--required {
+  color: var(--color-danger);
+}
+
+.modifier-option {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+  padding: 4px 0;
+  cursor: pointer;
+}
+
+.modifier-option__name {
+  flex: 1;
+}
+
+.modifier-option__price {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+}
+
+/* Ticket line's own chosen-modifier sublist (V1-RMD-376). */
+.item-modifiers {
+  font-size: 0.78rem;
+  color: var(--color-text-muted);
+  margin-top: 2px;
+}
+
 /* Classes for markup injected via innerHTML by cashier-app.js. These replace
    inline style="..." attributes that a strict style-src 'self' CSP drops
    (deep-analysis finding F-1). */

@@ -142,6 +142,28 @@
     </div>
   </div>
 
+  <!-- V1-RMD-376 (module-by-module UI audit round 2, saha/rakip karşılaştırması): a product
+       with a mandatory option group (CatalogModifierGroupDto.MinSelections>0 — the server's own
+       doc comment says enforcement is deliberately left to the client) used to add straight to
+       the ticket with zero chance to capture it - the exact capability every real competitor
+       register (Toast/Square/Lightspeed) offers at the point of sale, and one WaiterPwa's own
+       product-sheet.js already has for the same catalog. -->
+  <div class="modal-overlay" id="modifierModal" hidden role="dialog" aria-modal="true" aria-labelledby="modifierModalTitle">
+    <div class="modal-card">
+      <div class="modal-card__head">
+        <h2 id="modifierModalTitle" class="modal-card__title">Seçenekler</h2>
+        <button type="button" class="btn-ticket-action" id="btnCloseModifierModal" aria-label="Kapat"><svg class="icon" aria-hidden="true"><use href="#ico-close"/></svg></button>
+      </div>
+      <div id="modifierGroupsList" class="modal-card__list">
+        <!-- Injected by cashier-app.js -->
+      </div>
+      <div class="modal-card__actions">
+        <button type="button" class="btn-ticket-action" id="btnModifierCancel">Vazgeç</button>
+        <button type="button" class="btn-ticket-action btn-ticket-action--primary" id="btnModifierConfirm">Adisyona Ekle</button>
+      </div>
+    </div>
+  </div>
+
   <!-- V1-RMD-355: an in-app replacement for the native confirm() dialog, so a manager-facing style/behavior
        change never depends on the browser's own unstylable confirm() box. -->
   <div class="modal-overlay" id="confirmModal" hidden role="alertdialog" aria-modal="true" aria-labelledby="confirmModalTitle" aria-describedby="confirmModalMessage">
