@@ -41,7 +41,7 @@ export const navLabels = {
   tables: "Masalar",
   billing: "Hesap",
   pendingChecks: "Bekleyen hesaplar",
-  onlineOperations: "Online siparişler",
+  onlineFood: "Online Yemek",
   kitchen: "Mutfak",
   catalog: "Menü",
   system: "Sistem",

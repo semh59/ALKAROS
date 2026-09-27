@@ -145,8 +145,8 @@ describe("workspace route gating uses granular permission codes, not the removed
 
   const forbiddenText = "Bu alana erişim izniniz yok";
 
-  async function renderRoute(path: string, capabilities: readonly string[]) {
-    vi.stubGlobal("fetch", vi.fn(async () => jsonResponse([])));
+  async function renderRoute(path: string, capabilities: readonly string[], answer: (url: string) => unknown = () => []) {
+    vi.stubGlobal("fetch", vi.fn(async (url: string) => jsonResponse(answer(String(url)))));
     window.history.replaceState({}, "", path);
     await render(
       <RouterProvider>
@@ -192,6 +192,30 @@ describe("workspace route gating uses granular permission codes, not the removed
     expect(document.body.textContent).toContain(forbiddenText);
     const urls = (vi.mocked(fetch).mock.calls as unknown[][]).map(([url]) => String(url));
     expect(urls.some((url) => url.includes("online-platform-credentials"))).toBe(false);
+  });
+
+  // V12-OUI-004: one "Online Yemek" entry; its settings tab is a manager's, reached also by the new path.
+  it("has one online food entry that opens the orders for a cashier and the settings tab only for a manager", async () => {
+    const online = (url: string) => url.includes("/online-operations")
+      ? { orders: [], problems: [], retries: { pendingProviderEvents: 0, catalogPublicationsRetrying: 0, availabilityDivergences: 0 } }
+      : url.endsWith("/online-channels") ? { platforms: [] } : url.includes("/online-platform-credentials") ? { platforms: [] } : [];
+    await renderRoute("/online", ["orders.create"], online);
+    expect(document.body.textContent).not.toContain(forbiddenText);
+    const entries = [...document.querySelectorAll("a, button")].filter((e) => e.textContent?.includes("Online"));
+    expect(entries.map((e) => e.textContent?.trim()).filter((t) => t === "Online Yemek").length).toBeGreaterThanOrEqual(1);
+    expect(document.body.textContent).not.toContain("Online platform bilgileri");
+    expect(document.body.textContent).not.toContain("Online siparişler");
+    expect([...document.querySelectorAll('[role="tab"]')].map((t) => t.textContent)).toEqual(["Siparişler"]);
+    await act(async () => root!.unmount());
+    root = null;
+
+    await renderRoute("/online/settings", ["orders.create", "integrations.manage"], online);
+    expect(document.body.textContent).toContain("Online platform bağlantı bilgileri");
+    await act(async () => root!.unmount());
+    root = null;
+
+    await renderRoute("/online/settings", ["orders.create"], online);
+    expect(document.body.textContent).toContain(forbiddenText);
   });
 });
 

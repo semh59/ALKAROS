@@ -1,0 +1,40 @@
+V12-OUI-004 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 89f88658.
+Opened by V12-GOV-009 (C108) after Semih asked for online food in one screen.
+
+Changes:
+- PosTerminal features/online-hub: OnlineFoodHub with a platform status line on top and tabs. Orders
+  (OnlineOperationsWorkspace) for every session that takes orders; Settings (OnlinePlatformCredentialsWorkspace) only
+  for integrations.manage — a tab the session may not see is neither shown nor loaded (a cashier sent to the settings
+  path gets the orders tab and never requests the settings). The Menu and Problems tabs are added by V12-OUI-005/006.
+- One navigation entry "Online Yemek" (/online); /online/settings is the settings tab; the old /online-operations and
+  /online-platforms open the matching tab; /online/settings and /online-platforms are forbidden without
+  integrations.manage (the shell's forbidden state).
+- Status line: per registered platform "Bağlantı bilgileri eksik" (with "Ayarlara git" for a manager), "Sipariş çekme
+  hata veriyor, yeniden deneniyor", "Platform istek sınırına takıldı, bekleniyor", "Son sipariş olayı: …" or "Henüz
+  sipariş olayı gelmedi"; refreshed every minute; a read failure is shown in Turkish.
+- Host OnlineChannelHealthEndpoints: GET /api/v1/terminals/{id}/online-channels (orders.create) → provider,
+  displayName, configured (every connection setting present, stored on the settings screen or as an environment
+  variable), lastEventAt (newest inbox event), polling (NotPolled/Working/RateLimited/Failing); no secret or raw error.
+  Registered in DualScreenApplication.
+
+Commands (exit 0): see completion-commands.txt.
+
+Mutations (per iteration: backup, mutate, test, restore, cmp verified; 12/12 killed):
+KILLED H1 no permission check
+KILLED H2 stored settings ignored
+KILLED H3 any setting counts as set up
+KILLED H4 rate limit shown as failing
+KILLED H5 polling without events lost
+KILLED U1 cashier sees settings tab
+KILLED U2 settings path not manager-only
+KILLED U3 old settings path lost
+KILLED U4 cashier offered settings
+KILLED U5 failing polling not a warning
+KILLED U6 rate limit text missing
+KILLED U7 hidden tab still rendered
+
+Honest limits:
+- The list of settings each platform needs for "configured" lives in the status endpoint (the settings catalog has no
+  required/optional flag); a new platform needs its entry there.
+- The route test gives the order queue a well-formed answer; the queue component still assumes the server's shape.

@@ -1,0 +1,7 @@
+V12-OUI-004 commands (2026-09-27, exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- tests/Host/Experience/OnlineOrdering 143/143 (2 new OnlineChannelHealthHttpTests)
+- ALKAROS.Host.Tests manifest/composition/registry/program/dual-screen subset 138/138
+- PosTerminal vitest 33 files 249/249 (online-hub 5 new, route test 1 new); production build ok
+- UI_STYLE_GUIDE section 4 English leak scan: no hit in features/online-hub
+- consistency_audit clean; plan_audit validate 0/0; no NUL bytes; line endings unchanged

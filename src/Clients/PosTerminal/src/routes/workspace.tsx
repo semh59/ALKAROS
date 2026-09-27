@@ -7,8 +7,7 @@ import { ProductionShell } from "../shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
 import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
 import { PendingChecksWorkspace } from "../features/pending-checks";
-import { OnlineOperationsWorkspace } from "../features/online-operations";
-import { OnlinePlatformCredentialsWorkspace } from "../features/online-platform-credentials";
+import { OnlineFoodHub, onlineHubPaths, onlineHubTabFor } from "../features/online-hub";
 import { BillSplitWorkspace, createBillFromOrder, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
 import { CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
 import { KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
@@ -46,8 +45,10 @@ export function ExperiencePage({
   const routeNeedsReportsView = path === "/authorization";
   const routeNeedsBillsSplit = path === "/billing";
   const routeNeedsKitchenAdvance = path === "/kitchen";
-  // V12-OUI-003: platform API settings are a manager's integration setting, like the QNB and relay screens.
-  const routeNeedsIntegrationsManage = path === "/online-platforms";
+  // V12-OUI-004: online food is one screen; its settings tab (V12-OUI-003's platform API settings) is a manager's
+  // integration setting, like the QNB and relay screens. The old separate paths open the matching tab.
+  const onlineTab = onlineHubTabFor(path);
+  const routeNeedsIntegrationsManage = onlineTab === "settings";
   const canOpenRoute = routeNeedsIntegrationsManage
     ? capabilitySet.has("integrations.manage")
     : routeNeedsCatalogManage
@@ -117,9 +118,8 @@ export function ExperiencePage({
     { id: "tables", label: navLabels.tables, href: "/tables", icon: "tables", requiredCapability: "tables.status" },
     { id: "billing", label: navLabels.billing, href: "/billing", icon: "billing", requiredCapability: "bills.split" },
     { id: "pending-checks", label: navLabels.pendingChecks, href: "/pending-checks", icon: "billing", requiredCapability: "orders.create" },
-    // V12-OUI-001: QR orders waiting for staff and online-channel orders; same permission as accepting a QR order.
-    { id: "online-operations", label: navLabels.onlineOperations, href: "/online-operations", icon: "billing", requiredCapability: "orders.create" },
-    { id: "online-platforms", label: "Online platform bilgileri", href: "/online-platforms", icon: "system", requiredCapability: "integrations.manage" },
+    // V12-OUI-004: one entry for online food (orders, and for a manager its settings); same permission as accepting a QR order.
+    { id: "online", label: navLabels.onlineFood, href: onlineHubPaths.orders, icon: "billing", requiredCapability: "orders.create" },
     // V1-IAM-028: kitchen.advance is additive — every role that held
     // orders.send before still holds it, and the new kitchen-staff
     // ("Mutfak Personeli") role holds ONLY kitchen.advance. Gating the nav
@@ -130,8 +130,8 @@ export function ExperiencePage({
     { id: "system-health", label: navLabels.system, href: "/system-health", icon: "system", requiredCapability: "catalog.manage" },
     { id: "authorization", label: navLabels.authorization, href: "/authorization", icon: "system", requiredCapability: "reports.view" },
   ];
-  const title = path === "/tables" ? "Masa yönetimi" : path === "/pending-checks" ? "Bekleyen hesaplar" : path === "/online-operations" ? "Online siparişler" : path === "/online-platforms" ? "Online platform bilgileri" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : "Kasa satış";
-  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/pending-checks" ? "Garsonların kasaya gönderdiği, tahsil edilmeyi bekleyen hesaplar" : path === "/online-operations" ? "Onay bekleyen QR siparişleri ve Yemeksepeti siparişleri" : path === "/online-platforms" ? "Yemeksepeti ve Trendyol Go bağlantı bilgileri" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifikatör kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : "Gerçek zamanlı sipariş ve müşteri ekranı";
+  const title = path === "/tables" ? "Masa yönetimi" : path === "/pending-checks" ? "Bekleyen hesaplar" : onlineTab !== null ? "Online Yemek" : path === "/billing" ? "Hesap bölme" : path === "/catalog" ? "Menü ve katalog" : path === "/kitchen" ? "Mutfak ve operasyon" : path === "/system-health" ? "Sistem sağlığı" : path === "/authorization" ? "Yetki kararları" : "Kasa satış";
+  const description = path === "/tables" ? "Salon, masa durumu ve servis akışı" : path === "/pending-checks" ? "Garsonların kasaya gönderdiği, tahsil edilmeyi bekleyen hesaplar" : onlineTab !== null ? "QR ve online platform siparişleri, platform bağlantıları ve ayarlar" : path === "/billing" ? "Kişi, ürün veya tutar bazlı hesap paylaştırma" : path === "/catalog" ? "Fiyat, ürün ve modifikatör kayıtları" : path === "/kitchen" ? "Ticket, yazıcı kurtarma ve operasyon sağlığı" : path === "/system-health" ? "Veritabanı, disk ve yedekleme durumu" : path === "/authorization" ? "Bekleyen istekler, süreli devirler ve davranışsal sıkılaştırmalar" : "Gerçek zamanlı sipariş ve müşteri ekranı";
 
   return <ProductionShell
     session={session}
@@ -140,7 +140,7 @@ export function ExperiencePage({
     freshness={freshness}
     navigation={navigation}
     onNavigate={navigate}
-    activeNavigationId={path === "/tables" ? "tables" : path === "/pending-checks" ? "pending-checks" : path === "/online-operations" ? "online-operations" : path === "/online-platforms" ? "online-platforms" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : "sales"}
+    activeNavigationId={path === "/tables" ? "tables" : path === "/pending-checks" ? "pending-checks" : onlineTab !== null ? "online" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : "sales"}
     workspaceTitle={title}
     workspaceDescription={description}
     headerActions={<><a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
@@ -148,13 +148,19 @@ export function ExperiencePage({
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} />}
-    {path === "/online-operations" && <OnlineOperationsWorkspace terminalId={terminalId} />}
-    {path === "/online-platforms" && <OnlinePlatformCredentialsWorkspace terminalId={terminalId} />}
+    {onlineTab !== null && (
+      <OnlineFoodHub
+        terminalId={terminalId}
+        tab={onlineTab}
+        canManage={capabilitySet.has("integrations.manage")}
+        onSelectTab={(tab) => navigate(onlineHubPaths[tab])}
+      />
+    )}
     {path === "/catalog" && <CatalogRoute canManage={canOpenRoute} />}
     {path === "/kitchen" && <KitchenRoute terminalId={terminalId} canAdvance={capabilitySet.has("kitchen.advance") || capabilitySet.has("orders.send")} canOperate={capabilitySet.has("orders.send")} canManageReprints={capabilitySet.has("kitchen.reprint")} canManageRouting={capabilitySet.has("kitchen.routing.manage")} canSuspendAvailability={capabilitySet.has("kitchen.availability.suspend")} canViewReports={capabilitySet.has("reports.view")} />}
     {path === "/system-health" && <SystemHealthRoute terminalId={terminalId} canView={canOpenRoute} />}
     {path === "/authorization" && <AuthorizationDecisionsRoute canView={canOpenRoute} />}
-    {!(["/", "/tables", "/billing", "/pending-checks", "/online-operations", "/online-platforms", "/catalog", "/kitchen", "/system-health", "/authorization"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
+    {onlineTab === null && !(["/", "/tables", "/billing", "/pending-checks", "/catalog", "/kitchen", "/system-health", "/authorization"] as readonly string[]).includes(path) && <div className="experience-not-found">Bu çalışma alanı bulunamadı.</div>}
   </ProductionShell>;
 }
 
