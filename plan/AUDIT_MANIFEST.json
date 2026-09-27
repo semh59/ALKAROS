@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1404,
-  "markdown_line_count": 107470,
-  "markdown_byte_count": 6190387,
+  "markdown_file_count": 1405,
+  "markdown_line_count": 107537,
+  "markdown_byte_count": 6193945,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "6F7A7C1670C48DD7DC1F7048FF6D5F0BFB8AA235AEFBEA8EF65E6E8319529EC7",
-      "lines": 2680,
-      "bytes": 392261,
+      "sha256": "1392D36DA7568C8A1A078BD2D29D9C525B5BE65FCED3999E89969DA672A27065",
+      "lines": 2681,
+      "bytes": 392417,
       "utf8": true
     },
     {
@@ -7693,6 +7693,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-361-cash-session-ui-audit.md",
+      "sha256": "5D8975EDF30C84266232F19BED0404B80C817A6C47B5F8BAC2E2FE511815D40F",
+      "lines": 66,
+      "bytes": 3360,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -7876,9 +7883,9 @@
     },
     {
       "path": "plan/v1/ui-audit/UI_AUDIT_PROGRESS.md",
-      "sha256": "494F9CC784B623AB8E78445758374F3600A2702B812BDCD146198666AA16DFFE",
+      "sha256": "E8D6B357F8A94E4EA942E9E843DC36A0743B844E8383899E5568CC9DB47DEF81",
       "lines": 32,
-      "bytes": 2194,
+      "bytes": 2236,
       "utf8": true
     },
     {
