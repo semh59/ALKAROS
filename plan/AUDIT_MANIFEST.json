@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1395,
-  "markdown_line_count": 106820,
-  "markdown_byte_count": 6151460,
+  "markdown_file_count": 1396,
+  "markdown_line_count": 106899,
+  "markdown_byte_count": 6156613,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "84E62D70E3D228A65E6E19D98FB61E211F35C0101FFE9D64AFD72E2F810A3A2A",
-      "lines": 2671,
-      "bytes": 390742,
+      "sha256": "8F30F2387AAF5503A6B15F274D12AC3292B8AD032B51D194DD1AD4410BCA55E7",
+      "lines": 2672,
+      "bytes": 390906,
       "utf8": true
     },
     {
@@ -7641,6 +7641,13 @@
       "sha256": "0D9CBEC0C5B5DC9FF489A94AC086BC2438682A78438FB2C9B6C90DE257B936E9",
       "lines": 80,
       "bytes": 5106,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-354-cloudflared-graceful-shutdown.md",
+      "sha256": "53395D46FA37A906A4E11383A2485C2929153712FFB98B720DCA55B39092A9D2",
+      "lines": 78,
+      "bytes": 4989,
       "utf8": true
     },
     {
