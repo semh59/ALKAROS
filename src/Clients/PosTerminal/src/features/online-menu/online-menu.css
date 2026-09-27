@@ -1,0 +1,20 @@
+.online-menu { display: grid; gap: var(--ds-space-3); }
+.online-menu__platforms, .online-menu__publish, .online-menu__filters { display: flex; gap: var(--ds-space-2); flex-wrap: wrap; align-items: center; }
+.online-menu button { min-height: 2.75rem; padding: 0 var(--ds-space-3); border: 0; border-radius: var(--ds-radius-sm); color: #fff; background: #142b35; cursor: pointer; }
+.online-menu__platforms button { color: #152b34; background: #f7fbfd; border: 1px solid #bdc8cd; }
+.online-menu__platforms button[aria-pressed="true"] { color: #fff; background: #142b35; }
+.online-menu .online-menu__secondary { color: #142b35; background: #dfe8ec; }
+.online-menu button:disabled { opacity: .6; cursor: not-allowed; }
+.online-menu select, .online-menu input[type="search"], .online-menu input:not([type]) { min-height: 2.75rem; padding: 0 var(--ds-space-2); border: 1px solid #bdc8cd; border-radius: var(--ds-radius-sm); }
+.online-menu button:focus-visible, .online-menu input:focus-visible, .online-menu select:focus-visible { outline: 3px solid #ff7d49; outline-offset: 2px; }
+.online-menu__check { display: inline-flex; gap: .4rem; align-items: center; min-height: 2.75rem; }
+.online-menu__table { width: 100%; border-collapse: collapse; }
+.online-menu__table th, .online-menu__table td { text-align: left; padding: .4rem .5rem; border-bottom: 1px solid #dfe8ec; vertical-align: middle; }
+.online-menu__mapped { display: inline-flex; gap: var(--ds-space-2); align-items: center; flex-wrap: wrap; }
+.online-menu__publications { margin: 0; padding-left: 1.2rem; color: #4f5f66; }
+.online-menu__hint { margin: 0; color: #4f5f66; }
+.online-menu__warning { margin: 0; color: var(--ds-color-danger); }
+.online-menu__notice:empty { display: none; }
+.online-menu__notice { margin: 0; color: #1d5e33; }
+.online-menu__error { margin: 0; border: 1px solid var(--ds-color-danger); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
+.online-menu__sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }

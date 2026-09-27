@@ -190,6 +190,7 @@ public static partial class DualScreenApplication
         builder.Services.AddOnlineOperationsExperience();
         builder.Services.AddOnlinePlatformCredentialExperience();
         builder.Services.AddOnlineChannelHealthExperience();
+        builder.Services.AddOnlineMenuExperience();
         OnlineAvailabilityPublishingHostedService.AddOnlineAvailabilityPublishingExperience(builder.Services);
         OnlineOrderPollingHostedService.AddOnlineOrderPollingExperience(builder.Services);
         builder.Services.AddTrendyolGoWebhookExperience();
@@ -609,6 +610,7 @@ public static partial class DualScreenApplication
         app.MapOnlineOperationsApi();
         app.MapOnlinePlatformCredentialApi();
         app.MapOnlineChannelHealthApi();
+        app.MapOnlineMenuApi();
         app.MapBillingSplitApi();
         app.MapAuthorizationDecisionApi();
         app.MapRoleManagementApi();

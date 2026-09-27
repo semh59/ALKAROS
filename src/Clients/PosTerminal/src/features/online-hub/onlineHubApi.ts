@@ -1,6 +1,6 @@
 /** V12-OUI-004: the online food screen's tabs and its platform status line. */
 
-export type OnlineHubTab = "orders" | "settings";
+export type OnlineHubTab = "orders" | "menu" | "settings";
 
 export type ChannelPolling = "NotPolled" | "Working" | "RateLimited" | "Failing";
 
@@ -13,7 +13,7 @@ export interface OnlineChannelHealth {
 }
 
 /** The path of each tab; the old separate screens open the matching tab. */
-export const onlineHubPaths: Record<OnlineHubTab, string> = { orders: "/online", settings: "/online/settings" };
+export const onlineHubPaths: Record<OnlineHubTab, string> = { orders: "/online", menu: "/online/menu", settings: "/online/settings" };
 
 /** Which tab a path opens, or null when the path is not the online food screen. */
 export function onlineHubTabFor(path: string): OnlineHubTab | null {
@@ -21,6 +21,8 @@ export function onlineHubTabFor(path: string): OnlineHubTab | null {
     case "/online":
     case "/online-operations":
       return "orders";
+    case "/online/menu":
+      return "menu";
     case "/online/settings":
     case "/online-platforms":
       return "settings";
@@ -30,7 +32,7 @@ export function onlineHubTabFor(path: string): OnlineHubTab | null {
 }
 
 /** Tabs only a manager's session sees (their data is never even requested otherwise). */
-export const managerOnlyTabs: ReadonlySet<OnlineHubTab> = new Set(["settings"]);
+export const managerOnlyTabs: ReadonlySet<OnlineHubTab> = new Set(["menu", "settings"]);
 
 const time = (iso: string) =>
   new Date(iso).toLocaleString("tr-TR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });

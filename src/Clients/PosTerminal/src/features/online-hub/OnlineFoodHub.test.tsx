@@ -44,9 +44,10 @@ describe("OnlineFoodHub", () => {
   const urls = () => fetchMock.mock.calls.map(([url]) => String(url));
 
   it("shows a cashier the orders and the platform status only, and never asks for the settings", async () => {
-    await render("settings", false);
+    await render("menu", false);
 
     expect(tabs()).toEqual(["Siparişler"]);
+    expect(urls().some((url) => url.includes("/online-menu/"))).toBe(false);
     expect(document.querySelector('[role="tab"]')?.getAttribute("aria-selected")).toBe("true");
     const text = document.body.textContent ?? "";
     expect(text).toContain("Trendyol Go");
@@ -61,17 +62,19 @@ describe("OnlineFoodHub", () => {
     const onSelectTab = vi.fn();
     await render("orders", true, onSelectTab);
 
-    expect(tabs()).toEqual(["Siparişler", "Ayarlar"]);
+    expect(tabs()).toEqual(["Siparişler", "Menü", "Ayarlar"]);
     await act(async () => { (document.querySelectorAll('[role="tab"]')[1] as HTMLButtonElement).click(); });
+    expect(onSelectTab).toHaveBeenLastCalledWith("menu");
+    await act(async () => { (document.querySelectorAll('[role="tab"]')[2] as HTMLButtonElement).click(); });
     expect(onSelectTab).toHaveBeenLastCalledWith("settings");
     const goToSettings = [...document.querySelectorAll("button")].find((b) => b.textContent === "Ayarlara git")!;
     await act(async () => { goToSettings.click(); });
-    expect(onSelectTab).toHaveBeenCalledTimes(2);
+    expect(onSelectTab).toHaveBeenCalledTimes(3);
 
     act(() => root?.unmount());
     await render("settings", true, onSelectTab);
     expect(urls().some((url) => url.includes("online-platform-credentials"))).toBe(true);
-    expect(document.querySelectorAll('[role="tab"]')[1].getAttribute("aria-selected")).toBe("true");
+    expect(document.querySelectorAll('[role="tab"]')[2].getAttribute("aria-selected")).toBe("true");
 
     const results = await axe.run(document.body, { rules: { "color-contrast": { enabled: false } } });
     expect(results.violations).toEqual([]);
@@ -102,6 +105,7 @@ describe("OnlineFoodHub", () => {
   it("opens the matching tab from the old separate paths", () => {
     expect([onlineHubTabFor("/online"), onlineHubTabFor("/online-operations")]).toEqual(["orders", "orders"]);
     expect([onlineHubTabFor("/online/settings"), onlineHubTabFor("/online-platforms")]).toEqual(["settings", "settings"]);
+    expect(onlineHubTabFor("/online/menu")).toBe("menu");
     expect(onlineHubTabFor("/tables")).toBeNull();
   });
 });

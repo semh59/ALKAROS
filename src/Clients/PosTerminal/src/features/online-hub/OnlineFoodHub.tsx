@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useState } from "react";
+import { OnlineMenuTab } from "../online-menu";
 import { OnlineOperationsWorkspace } from "../online-operations";
 import { OnlinePlatformCredentialsWorkspace } from "../online-platform-credentials";
 import {
@@ -14,8 +15,8 @@ import "./online-hub.css";
 
 const REFRESH_MS = 60_000;
 
-const tabLabels: Record<OnlineHubTab, string> = { orders: "Siparişler", settings: "Ayarlar" };
-const tabOrder: readonly OnlineHubTab[] = ["orders", "settings"];
+const tabLabels: Record<OnlineHubTab, string> = { orders: "Siparişler", menu: "Menü", settings: "Ayarlar" };
+const tabOrder: readonly OnlineHubTab[] = ["orders", "menu", "settings"];
 
 /**
  * V12-OUI-004: online food in one screen. The platform status line is on top; the tabs below hold the order queue and,
@@ -56,6 +57,7 @@ export function OnlineFoodHub({
       </div>
       <div id={panelId} role="tabpanel" aria-label={tabLabels[active]}>
         {active === "orders" && <OnlineOperationsWorkspace terminalId={terminalId} />}
+        {active === "menu" && <OnlineMenuTab terminalId={terminalId} />}
         {active === "settings" && <OnlinePlatformCredentialsWorkspace terminalId={terminalId} />}
       </div>
     </div>

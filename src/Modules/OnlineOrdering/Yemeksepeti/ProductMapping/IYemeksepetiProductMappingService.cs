@@ -35,6 +35,13 @@ public interface IYemeksepetiProductMappingService
         return await MapAsync(externalSku, productId, effectiveFrom, actorId, cancellationToken).ConfigureAwait(false);
     }
 
+    /// <summary>
+    /// V12-OUI-005: from <paramref name="at"/> on, the product's open mapping on this platform no longer stands (the
+    /// history of what it meant stays). False when the product had no open mapping. Not supported by in-memory fakes.
+    /// </summary>
+    Task<bool> CloseOpenMappingAsync(Guid productId, DateTimeOffset at, Guid actorId, CancellationToken cancellationToken = default) =>
+        throw new NotSupportedException("Closing a mapping needs the Postgres mapping service.");
+
     /// <summary>V12-ONL-004: the SKU a product is currently published under, or null when it has no open mapping.</summary>
     Task<string?> FindOpenSkuForProductAsync(Guid productId, CancellationToken cancellationToken = default);
 

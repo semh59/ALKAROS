@@ -7,7 +7,7 @@ import { ProductionShell } from "../shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
 import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
 import { PendingChecksWorkspace } from "../features/pending-checks";
-import { OnlineFoodHub, onlineHubPaths, onlineHubTabFor } from "../features/online-hub";
+import { OnlineFoodHub, managerOnlyTabs, onlineHubPaths, onlineHubTabFor } from "../features/online-hub";
 import { BillSplitWorkspace, createBillFromOrder, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
 import { CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
 import { KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
@@ -48,7 +48,8 @@ export function ExperiencePage({
   // V12-OUI-004: online food is one screen; its settings tab (V12-OUI-003's platform API settings) is a manager's
   // integration setting, like the QNB and relay screens. The old separate paths open the matching tab.
   const onlineTab = onlineHubTabFor(path);
-  const routeNeedsIntegrationsManage = onlineTab === "settings";
+  // V12-OUI-005: every manager-only tab (menu, settings) is closed to other sessions here too.
+  const routeNeedsIntegrationsManage = onlineTab !== null && managerOnlyTabs.has(onlineTab);
   const canOpenRoute = routeNeedsIntegrationsManage
     ? capabilitySet.has("integrations.manage")
     : routeNeedsCatalogManage

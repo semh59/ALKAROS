@@ -7,6 +7,9 @@ using ALKAROS.Secrets;
 
 namespace ALKAROS.OnlineOrdering.Providers.TrendyolGo.Menu;
 
+/// <summary>V12-OUI-005: one product of the store's menu as the platform lists it.</summary>
+public sealed record TrendyolGoMenuProduct(long Id, string Name, bool Active);
+
 /// <summary>One product price for <c>POST .../products/price</c>.</summary>
 public sealed record TrendyolGoPriceUpdate(long ProductId, decimal SellingPrice);
 
@@ -53,7 +56,11 @@ public sealed class TrendyolGoMenuClient
     public bool IsConfigured => TrendyolGoApiSettings.Resolve(_secrets) is not null && StoreId() is not null;
 
     /// <summary>The platform product ids on the store's menu.</summary>
-    public async Task<IReadOnlySet<long>> MenuProductIdsAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlySet<long>> MenuProductIdsAsync(CancellationToken cancellationToken = default) =>
+        (await MenuProductsAsync(cancellationToken).ConfigureAwait(false)).Select(p => p.Id).ToHashSet();
+
+    /// <summary>V12-OUI-005: the store's menu products with their names and whether they are on sale.</summary>
+    public async Task<IReadOnlyList<TrendyolGoMenuProduct>> MenuProductsAsync(CancellationToken cancellationToken = default)
     {
         var (settings, storeId) = Require();
         using var request = new HttpRequestMessage(HttpMethod.Get, Endpoint(settings, $"stores/{Uri.EscapeDataString(storeId)}/products"));
@@ -65,8 +72,11 @@ public sealed class TrendyolGoMenuClient
             throw new TrendyolGoMenuException("The menu answer has no products array.");
         return products.EnumerateArray()
             .Where(p => p.ValueKind == JsonValueKind.Object && p.TryGetProperty("id", out var id) && id.ValueKind == JsonValueKind.Number)
-            .Select(p => p.GetProperty("id").GetInt64())
-            .ToHashSet();
+            .Select(p => new TrendyolGoMenuProduct(
+                p.GetProperty("id").GetInt64(),
+                p.TryGetProperty("name", out var name) && name.ValueKind == JsonValueKind.String ? name.GetString()!.Trim() : "",
+                p.TryGetProperty("status", out var status) && status.ValueKind == JsonValueKind.String && status.GetString() == "ACTIVE"))
+            .ToList();
     }
 
     /// <summary>Puts one product on sale or takes it off; a concurrent-change 409 is tried once more.</summary>

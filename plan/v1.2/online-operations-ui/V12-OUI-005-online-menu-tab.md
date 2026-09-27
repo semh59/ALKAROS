@@ -1,7 +1,7 @@
 # V12-OUI-005 - Online Yemek Menü sekmesi ve ürün eşleme
 
 - Task ID: V12-OUI-005
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Planned

@@ -1,0 +1,9 @@
+V12-OUI-005 commands (2026-09-27, exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- tests/Host/Experience/OnlineOrdering 147/147 (4 new OnlineMenuHttpTests)
+- tests/Modules/OnlineOrdering: 14, 15, 33, 24, 32, 19, 31 (all green; the mapping service change included)
+- ALKAROS.Host.Tests manifest/composition/registry/program/dual-screen subset 138/138
+- PosTerminal vitest 34 files 255/255 (online-menu 6 new); production build ok
+- UI_STYLE_GUIDE section 4 leak scan: three hits in onlineMenuApi.ts are a type literal, dictionary keys and a server
+  code comparison (allowed by the guide: data keys / API values), none is shown text
+- consistency_audit clean; plan_audit validate 0/0; no NUL bytes; line endings unchanged

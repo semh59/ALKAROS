@@ -43,6 +43,45 @@ public sealed class PostgresYemeksepetiProductMappingService : IYemeksepetiProdu
         CancellationToken cancellationToken = default) =>
         (await MapCoreAsync(externalSku, productId, effectiveFrom, actorId, requireUnowned: false, cancellationToken).ConfigureAwait(false))!;
 
+    /// <summary>
+    /// V12-OUI-005: closes the product's open mapping under the same platform-wide lock as every mapping change. A mapping
+    /// that has not started yet ends one millisecond after its start, so its range stays valid and never meant anything.
+    /// </summary>
+    public async Task<bool> CloseOpenMappingAsync(Guid productId, DateTimeOffset at, Guid actorId, CancellationToken cancellationToken = default)
+    {
+        if (productId == Guid.Empty)
+            throw new InvalidProductMappingRequestException("ProductId cannot be empty.");
+        if (actorId == Guid.Empty)
+            throw new InvalidProductMappingRequestException("ActorId cannot be empty.");
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+        await using (var lockCommand = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext('online_ordering.provider_product_mappings:' || $1));", connection, transaction))
+        {
+            lockCommand.Parameters.AddWithValue(_provider);
+            await lockCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        int closed;
+        await using (var close = new NpgsqlCommand(
+            """
+            UPDATE online_ordering.provider_product_mappings
+            SET effective_to = GREATEST($2, effective_from + interval '1 millisecond'), closed_by = $3
+            WHERE provider = $4 AND product_id = $1 AND effective_to IS NULL;
+            """, connection, transaction))
+        {
+            close.Parameters.AddWithValue(productId);
+            close.Parameters.AddWithValue(at);
+            close.Parameters.AddWithValue(actorId);
+            close.Parameters.AddWithValue(_provider);
+            closed = await close.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
+
+        await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        return closed > 0;
+    }
+
     public Task<YemeksepetiProductMapping?> MapIfUnownedAsync(
         string externalSku,
         Guid productId,

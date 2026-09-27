@@ -1,0 +1,47 @@
+V12-OUI-005 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 7e2d2681 (amended before push to add
+src/Clients/PosTerminal/src/routes/, where the Menu path is gated to managers).
+
+Changes:
+- Host OnlineMenuEndpoints (integrations.manage), /api/v1/terminals/{id}/online-menu:
+  - GET /{provider}: every catalog product (up to 1000) with its open platform code, catalog price, the price in the
+    platform's last delivered publication, what the platform was last told (on sale / sold out / not reported), the
+    active catalog menus, the last 5 publications (status, items, validation error count, whether delivery is failing —
+    never the error text) and, for Trendyol Go, the store's own menu (id, name, on sale, which product it is mapped to)
+    or "platform menu unavailable" when it cannot be read.
+  - PUT /{provider}/mappings/{productId} {externalSku}: trimmed, 1-100 characters, digits only on Trendyol Go; a code that
+    already stands for another product is refused (CODE_TAKEN), never moved; mapping refusals in Turkish.
+  - DELETE /{provider}/mappings/{productId}: closes the open mapping (history kept, closed_by recorded).
+  - Unknown platform 404; the Trendyol Go menu client comes from DI (module singleton in the Host).
+- Mapping service: CloseOpenMappingAsync (same platform-wide lock as every mapping change).
+- Trendyol Go menu client: MenuProductsAsync (id, name, on sale).
+- PosTerminal features/online-menu (Menu tab, manager only, /online/menu): platform choice, "{platform} menüsünü
+  yayınla" with the chosen catalog menu (existing publication endpoint) and a Turkish result naming products that could
+  not be published; recent publications; platform products left unmapped; mappings missing from the platform menu;
+  search and "only unmapped"; map by picking from the platform menu (Trendyol Go) or typing the code (Yemeksepeti).
+
+Commands (exit 0): see completion-commands.txt.
+
+Mutations (per iteration: backup, mutate, test, restore, cmp verified; 17/17 killed):
+KILLED S1 no manager check
+KILLED S2 code moved silently
+KILLED S3 non-numeric Trendyol Go code accepted
+KILLED S4 sold out shown on sale
+KILLED S5 platform product not linked to its mapping
+KILLED S6 unreadable platform menu fails the page
+KILLED S7 closing touches other platforms
+KILLED S8 failing publication not flagged
+KILLED S9 published price not from the platform's channel
+KILLED U1 sold out label wrong
+KILLED U2 failing publication shown as sending
+KILLED U3 mapped platform products offered
+KILLED U4 stale mapping not warned
+KILLED U5 unmapped filter ignored
+KILLED U6 code not trimmed
+KILLED U7 publish to wrong channel
+KILLED U8 unpublished products not named
+
+Honest limits:
+- More than 1000 catalog products are not listed (the list is ordered active first, then by name).
+- Only active catalog menus can be published from the tab.
+- Nothing here has met a real platform; the Trendyol Go menu read is the V12-TGO-004 unverified draft.
