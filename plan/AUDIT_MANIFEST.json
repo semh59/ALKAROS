@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1410,
-  "markdown_line_count": 107943,
-  "markdown_byte_count": 6216480,
+  "markdown_file_count": 1412,
+  "markdown_line_count": 108089,
+  "markdown_byte_count": 6224290,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "661A534EDAB8C6A558DA860ECDC0945195EB069765EB761DBD3586E8FEF3A5B7",
-      "lines": 2685,
-      "bytes": 393062,
+      "sha256": "0B043BA9651440C8E289CC069922DB599395E81C8920046158C3EAE537BAA016",
+      "lines": 2686,
+      "bytes": 393225,
       "utf8": true
     },
     {
@@ -7722,9 +7722,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-365-posterminal-workspace-tables-ui-audit.md",
-      "sha256": "1F1801CCF7CF29170FED19B6DA6CE6B4CE77EF13D7F8A23B9A5814BA3FBA1488",
-      "lines": 80,
-      "bytes": 4274,
+      "sha256": "3C3B7B492CBE7282118253820C7E54686149633477CCA385F6454C615FCF2189",
+      "lines": 87,
+      "bytes": 4939,
       "utf8": true
     },
     {
@@ -7732,6 +7732,20 @@
       "sha256": "69F5922C893724FF8DF3076AD960AFD2496D3A123AE619858E2CFD3D79CD6479",
       "lines": 83,
       "bytes": 4649,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-367-posterminal-tables-error-class-fix.md",
+      "sha256": "F2462F330CCD00C34CF9E83A80A59E2319027087FB20DFEF99C794C9797AFE7A",
+      "lines": 62,
+      "bytes": 2778,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-368-posterminal-catalog-ui-audit.md",
+      "sha256": "6FB63C55F69A2D9036B0985631D7F17F29EBEC58A5BF8D69B513BAD682396521",
+      "lines": 76,
+      "bytes": 4060,
       "utf8": true
     },
     {
@@ -7918,9 +7932,9 @@
     },
     {
       "path": "plan/v1/ui-audit/UI_AUDIT_PROGRESS.md",
-      "sha256": "06268C4ED577A5C84782F2149ED2829DA4C24FD6530EC51AB6502CA1624FECD8",
+      "sha256": "E8C3C9BD824953FEA8FA4BE9C3EC901EC777115EB83FE251D095727FA1F4DA1B",
       "lines": 32,
-      "bytes": 2553,
+      "bytes": 2697,
       "utf8": true
     },
     {
