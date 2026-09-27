@@ -27,6 +27,14 @@ export function toast(text, options) {
   const node = document.createElement('div');
   node.className = 'toast';
   if (settings.undo) node.dataset.hasUndo = 'true';
+  // V1-RMD-363 (module-by-module UI audit): #toasts only ever had a bare
+  // aria-live="polite" wrapper - it announces new children, but with no
+  // role a screen reader has no way to tell an ordinary "eklendi" toast
+  // apart from a real failure worth stopping for. A warning toast (the
+  // same call sites cash-session.js/split-payment.js already mark with
+  // role="alert") gets that role here too; a plain toast gets the milder
+  // role="status", matching Cashier's own discount-success notice.
+  node.setAttribute('role', settings.warning ? 'alert' : 'status');
   node.innerHTML = `
     <span class="toast-mark${settings.warning ? ' is-warning' : ''}">
       <svg class="icon" aria-hidden="true"><use href="#ico-${settings.warning ? 'alert' : 'check'}"/></svg>
