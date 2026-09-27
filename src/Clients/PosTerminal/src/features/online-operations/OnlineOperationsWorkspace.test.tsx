@@ -1,4 +1,6 @@
 // @vitest-environment jsdom
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
@@ -122,6 +124,16 @@ describe("OnlineOperationsWorkspace", () => {
     const text = document.body.textContent ?? "";
     expect(text).toContain("Servis İstiyorum");
     expect(text).toContain("0212 111 22 33 numarasını arayın, sonra müşteri arama kodunu tuşlayın: 12345678");
+    // V1-RMD-371 (module-by-module UI audit): `.online-ops__note` had no CSS
+    // rule at all (a class-name mismatch with the unrelated
+    // `.online-ops__notice` - the same root-cause shape as V1-RMD-360's
+    // category-tab bug). jsdom does not apply real stylesheets, so
+    // getComputedStyle can't prove this the way a browser-backed E2E test
+    // would (confirmed: that assertion still passed with the CSS reverted) -
+    // asserting the class the JSX actually renders has a real rule in the
+    // stylesheet source is what genuinely catches the mismatch here.
+    const cssSource = readFileSync(join(import.meta.dirname, "online-operations.css"), "utf8");
+    expect(cssSource).toMatch(/\.online-ops__note\b/);
 
     await act(async () => { noteButtons()[1].click(); });
     expect(document.body.textContent).not.toContain("numarasını arayın");

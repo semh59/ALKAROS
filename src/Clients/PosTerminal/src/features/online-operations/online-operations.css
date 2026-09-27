@@ -21,6 +21,12 @@
 .online-ops__radio { display: inline-flex; gap: .4rem; align-items: center; min-height: 2.75rem; }
 .online-ops__notice:empty { display: none; }
 .online-ops__notice { color: #1d5e33; }
+/* V1-RMD-371 (module-by-module UI audit): per-order customer note/masked-call
+   text (`openNote`) rendered with this class, but no rule existed for it -
+   only the unrelated, differently-named `.online-ops__notice` above did.
+   The note always carries a phone/code the cashier reads aloud, so it gets
+   its own visible callout, not silent default paragraph styling. */
+.online-ops__note { margin: 0; padding: var(--ds-space-2) var(--ds-space-3); border-radius: var(--ds-radius-sm); background: #eef4f6; color: #152b34; }
 .online-ops__error { border: 1px solid var(--ds-color-danger); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
 .online-ops__empty { color: #4f5f66; }
 .online-ops__problems h3 { margin: 0 0 var(--ds-space-2); font-size: 1rem; }
