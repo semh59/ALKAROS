@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { ApiError } from "../../api";
 import { Button, ModalDialog, SelectField, StateMessage, TextField, ValidationSummary } from "../../design-system";
 import { commonActions, stateText } from "../../strings";
+import { CatalogApiError } from "./catalogApi";
 import {
   catalogAddLabels,
   catalogEntityLabels,
@@ -95,7 +96,9 @@ export function CatalogWorkspace({ state, data, canManage, onRefresh, onCreate, 
       setEditorOpen(false);
       setFeedback({ tone: "success", message: `${catalogEntityLabels[kind]} kaydı oluşturuldu.` });
     } catch (reason) {
-      const message = reason instanceof ApiError ? reason.message : "Kayıt oluşturulamadı.";
+      // V1-RMD-368 (module-by-module UI audit): catalogApi.ts throws its own
+      // CatalogApiError, not the shared ApiError this checked alone.
+      const message = reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Kayıt oluşturulamadı.";
       const conflict = /409|conflict|overlap|duplicate/i.test(message);
       setFeedback({ tone: conflict ? "conflict" : "error", message: conflict ? "Kayıt çakıştı. Formunuz korunuyor; güncel veriyi yenileyin." : message });
     }
@@ -111,7 +114,7 @@ export function CatalogWorkspace({ state, data, canManage, onRefresh, onCreate, 
       await onSetAvailability(product.id, next);
       setFeedback({ tone: "success", message: next ? `${product.name} yeniden satışa açıldı.` : `${product.name} menüden kaldırıldı ("86").` });
     } catch (reason) {
-      setFeedback({ tone: "error", message: reason instanceof ApiError ? reason.message : "Kullanılabilirlik güncellenemedi." });
+      setFeedback({ tone: "error", message: reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Kullanılabilirlik güncellenemedi." });
     } finally {
       setAvailabilityBusy(false);
     }
@@ -140,7 +143,7 @@ export function CatalogWorkspace({ state, data, canManage, onRefresh, onCreate, 
       await onSetPrepTime(product.id, next);
       setFeedback({ tone: "success", message: next === null ? `${product.name} için hazırlama süresi kaldırıldı.` : `${product.name} için hazırlama süresi ${next} dk olarak kaydedildi.` });
     } catch (reason) {
-      setFeedback({ tone: "error", message: reason instanceof ApiError ? reason.message : "Hazırlama süresi güncellenemedi." });
+      setFeedback({ tone: "error", message: reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Hazırlama süresi güncellenemedi." });
     } finally {
       setPrepTimeBusy(false);
     }

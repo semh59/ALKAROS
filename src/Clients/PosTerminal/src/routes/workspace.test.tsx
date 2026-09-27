@@ -231,6 +231,67 @@ describe("workspace route gating uses granular permission codes, not the removed
 });
 
 /**
+ * V1-RMD-367 (module-by-module UI audit, reopening module 6, 2026-09-27):
+ * TableRoute's load() checked only `reason instanceof ApiError`, but
+ * tableApi.ts's real client throws its own TableManagementApiError -
+ * V1-RMD-114 already fixed this class of gap inside TableWorkspace.tsx's
+ * OWN action-error helper, but this route-level load() (behind this file's
+ * error/offline/stale states) never got the same fix. Module 6 had been
+ * marked "no findings" before this was found while fixing the identical
+ * gap in module 7's billing route - reopened and closed here.
+ */
+describe("workspace /tables route surfaces the real backend error message", () => {
+  let root: Root | null = null;
+
+  async function render(element: ReactElement) {
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(element));
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("shows the table-management endpoint's own error message, not the generic fallback", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/table-management/zones") || path.includes("/table-management/tables")) {
+        // Not 0/401/409: those map to states whose own StateMessage never
+        // renders the supplied message (see the billing test's own note).
+        return new Response(
+          JSON.stringify({ error: { code: "TABLE_STORE_UNAVAILABLE", message: "Masa servisi şu anda yanıt vermiyor." } }),
+          { status: 500, headers: { "Content-Type": "application/json" } },
+        );
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+    window.history.replaceState({}, "", "/tables");
+    await render(
+      <RouterProvider>
+        <ExperiencePage
+          terminalId="88888888-8888-8888-8888-888888888888"
+          displayName="Test Kullanıcı"
+          capabilities={["tables.status"]}
+          path="/tables"
+          backendStatus="online"
+          onLogout={async () => {}}
+        />
+      </RouterProvider>,
+    );
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("Masa servisi şu anda yanıt vermiyor.");
+    expect(document.body.textContent).not.toContain("Masa verisi alınamadı.");
+  });
+});
+
+/**
  * V1-RMD-366 (module-by-module UI audit, 2026-09-27): BillingRoute's load()
  * checked only `reason instanceof ApiError` for the message it shows, but
  * billingApi.ts's real client throws its own BillingSplitApiError - a
@@ -289,6 +350,64 @@ describe("workspace /billing route surfaces the real backend error message", () 
 
     expect(document.body.textContent).toContain("Bu hesap zaten kapatılmış.");
     expect(document.body.textContent).not.toContain("Hesap bölme verisi alınamadı.");
+  });
+});
+
+/**
+ * V1-RMD-368 (module-by-module UI audit, 2026-09-27): CatalogRoute's load()
+ * checked only `reason instanceof ApiError`, but catalogApi.ts's real
+ * client throws its own CatalogApiError - same class of gap as V1-RMD-366
+ * (billing) and the reopened V1-RMD-367 (tables), all stemming from
+ * V1-RMD-114's original fix never reaching every route in this one file.
+ */
+describe("workspace /catalog route surfaces the real backend error message", () => {
+  let root: Root | null = null;
+
+  async function render(element: ReactElement) {
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(element));
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("shows the catalog endpoint's own error message, not the generic fallback", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/management/catalog/")) {
+        // Not 0/401/409: those map to states whose own StateMessage never
+        // renders the supplied message (see the billing test's own note).
+        return new Response(
+          JSON.stringify({ error: { code: "CATALOG_LOCKED", message: "Katalog şu anda bakımda; yeniden deneyin." } }),
+          { status: 500, headers: { "Content-Type": "application/json" } },
+        );
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+    window.history.replaceState({}, "", "/catalog");
+    await render(
+      <RouterProvider>
+        <ExperiencePage
+          terminalId="77777777-7777-7777-7777-777777777777"
+          displayName="Test Kullanıcı"
+          capabilities={["catalog.manage"]}
+          path="/catalog"
+          backendStatus="online"
+          onLogout={async () => {}}
+        />
+      </RouterProvider>,
+    );
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("Katalog şu anda bakımda; yeniden deneyin.");
+    expect(document.body.textContent).not.toContain("Katalog verisi alınamadı.");
   });
 });
 

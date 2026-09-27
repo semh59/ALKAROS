@@ -5,11 +5,11 @@ import { useRouter } from "../router";
 import { navLabels, roleLabels } from "../strings";
 import { ProductionShell } from "../shell";
 import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellNavigationItem, ShellSession } from "../shell/models";
-import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
+import { TableManagementApiError, TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
 import { PendingChecksWorkspace } from "../features/pending-checks";
 import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
 import { BillingSplitApiError, BillSplitWorkspace, createBillFromOrder, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
-import { CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
+import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
 import { KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
 import { SystemHealthWorkspace, type SystemHealthState } from "../features/system-health";
 import { AuthorizationDecisionsWorkspace, createAuthorizationDecisionsClient, type AuthorizationDecisionState, type AuthorizationDecisionsData } from "../features/authorization-decisions";
@@ -212,7 +212,13 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
     } catch (reason) {
       const status = (reason as { status?: number }).status;
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
-      setErrorMessage(reason instanceof ApiError ? reason.message : "Masa verisi alınamadı.");
+      // V1-RMD-367 (module-by-module UI audit, reopening module 6):
+      // tableApi.ts throws its own TableManagementApiError, not the shared
+      // ApiError this checked alone - TableWorkspace.tsx's own errorMessage()
+      // helper already checks both for its action failures, but this
+      // route-level load() (the first fetch, and the one behind the
+      // error/offline/stale states) never got the same fix.
+      setErrorMessage(reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Masa verisi alınamadı.");
     }
   }, [client, selectedZoneId, loadFloorPlanForZone]);
 
@@ -232,7 +238,7 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
       setFloorPlan(result.floorPlan);
       return result;
     } catch (reason) {
-      const msg = reason instanceof ApiError ? reason.message : "Kat planı kaydedilemedi.";
+      const msg = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Kat planı kaydedilemedi.";
       setFloorPlanError(msg);
       throw reason;
     } finally {
@@ -422,7 +428,11 @@ function CatalogRoute({ canManage }: { canManage: boolean }) {
     } catch (reason) {
       const status = (reason as { status?: number }).status;
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "conflict" : "error");
-      setErrorMessage(reason instanceof ApiError ? reason.message : "Katalog verisi alınamadı.");
+      // V1-RMD-368 (module-by-module UI audit, module 8): catalogApi.ts
+      // throws its own CatalogApiError, not the shared ApiError this
+      // checked alone - same two-error-class gap V1-RMD-114 closed for
+      // tables, now reopened here for the route-level load().
+      setErrorMessage(reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Katalog verisi alınamadı.");
     }
   }, [canManage, client]);
   useEffect(() => { void load(); }, [load]);

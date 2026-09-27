@@ -5,7 +5,7 @@ import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "../../api";
-import { CatalogWorkspace, type CatalogData } from "./index";
+import { CatalogApiError, CatalogWorkspace, type CatalogData } from "./index";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -127,6 +127,18 @@ describe("catalog workspace", () => {
     expect(searchInput!.getAttribute("aria-label")).toBe("Katalog ara");
     const nav = document.querySelector(".catalog-workspace__tabs");
     expect(nav!.getAttribute("aria-label")).toBe("Katalog kaynak türü");
+  });
+
+  it("shows the backend's own Turkish message for a real CatalogApiError, not the generic fallback", async () => {
+    // V1-RMD-368 (module-by-module UI audit, 2026-09-27): onSetAvailability's
+    // REAL failures reach this component as catalogApi.ts's own
+    // CatalogApiError, not the shared ApiError the V1-RMD-114 test above
+    // checks - that test's mock (`new ApiError(...)`) never exercised the
+    // class production code actually throws, so this went unnoticed.
+    const onSetAvailability = vi.fn().mockRejectedValue(new CatalogApiError(409, "PRODUCT_IN_ACTIVE_ORDER", "Bu ürün açık bir siparişte olduğu için kaldırılamıyor."));
+    await render(<CatalogWorkspace {...baseProps({ onSetAvailability })} />);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("Menüden kaldır"))!);
+    expect(document.body.textContent).toContain("Bu ürün açık bir siparişte olduğu için kaldırılamıyor.");
   });
 
   it("has no critical or serious axe violations", async () => {

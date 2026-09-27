@@ -74,7 +74,14 @@ daha olgun çıktı — muhtemelen bu kod tabanının en dikkatli tasarlanmış 
   axe taramasını zaten içeriyor) zaten `src/Clients/PosTerminal`'in tam paketiyle (269 test)
   Modül 5'in kapanışında yeşil doğrulandı; bu modülde ek bir değişiklik yapılmadığından yeniden
   çalıştırmaya gerek yoktu.
+- **Düzeltme notu (aynı gün):** yukarıdaki "gerçek, eyleme geçirilebilir bir bulgu YOK" sonucu
+  eksikti. Modül 7'yi (billing) kapatırken bulunan sistemik bir hata sınıfı deseni,
+  `workspace.tsx`'teki `TableRoute.load()`/`handleSaveFloorPlan()`'da da GERÇEKTEN mevcuttu —
+  `tableApi.ts`'nin kendi `TableManagementApiError`'ı yalnızca paylaşılan `ApiError` kontrol
+  edilerek atlanıyordu; ilk taramada bu, `TableWorkspace.tsx`'in kendi (doğru) `errorMessage()`
+  yardımcısıyla karıştırılmış, `workspace.tsx`'in ayrı rota-seviyesi `load()`'u kontrol
+  edilmemişti. Bulgu V1-RMD-367'de düzeltildi — ayrıntı ve kanıt orada.
 
 ## Handoff
 
-- None
+- V1-RMD-367
