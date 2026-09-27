@@ -28,11 +28,40 @@ export function NfcOrder() {
   const [cart, setCart] = useState<Record<string, number>>({});
   const [message, setMessage] = useState("");
   const [result, setResult] = useState<NfcOrderResult | null>(null);
-  // Stable for the lifetime of one in-flight submission attempt so a retry
-  // after a dropped connection replays the same order instead of starting a
-  // second one (V12-NFC-001's ux_orders_table_submission index); reset once
-  // that attempt either succeeds or the customer starts a fresh round.
-  const submissionIdRef = useRef<string | null>(null);
+  // V1-RMD-348 (independent 2026-09-26 audit, orta seviye bulgu): stable for
+  // the lifetime of one in-flight submission attempt so a retry after a
+  // dropped connection replays the same order instead of starting a second
+  // one (V12-NFC-001's ux_orders_table_submission index) - reset once that
+  // attempt either succeeds or the customer starts a fresh round. This used
+  // to live only in a React ref (in-memory), unlike the QR customer app's
+  // own equivalent (order-entry.js's sessionStorage-backed
+  // readOrCreateSubmissionId()) - a page refresh or backgrounding while
+  // the submit button was in flight lost the id entirely, so a retry
+  // generated a brand new one and could place a genuine duplicate order. Table-scoped
+  // (not a single shared key) since this page's own URL always encodes
+  // tableId and nothing stops two browser tabs on the same phone, each
+  // pointed at a different table's NFC tag.
+  const submissionIdStorageKey = `alkaros.nfc.submissionId.${tableId}`;
+  const submissionIdRef = useRef<string | null>(
+    (() => {
+      try {
+        return sessionStorage.getItem(submissionIdStorageKey);
+      } catch {
+        return null;
+      }
+    })(),
+  );
+
+  const setSubmissionId = (value: string | null) => {
+    submissionIdRef.current = value;
+    try {
+      if (value === null) sessionStorage.removeItem(submissionIdStorageKey);
+      else sessionStorage.setItem(submissionIdStorageKey, value);
+    } catch {
+      // sessionStorage may be unavailable (a private tab); the in-memory
+      // value is still kept for the lifetime of this session either way.
+    }
+  };
 
   const loadCatalog = useCallback(async () => {
     setState("loading");
@@ -77,7 +106,7 @@ export function NfcOrder() {
 
   const submit = async () => {
     if (cartLines.length === 0) return;
-    submissionIdRef.current ??= crypto.randomUUID();
+    if (submissionIdRef.current === null) setSubmissionId(crypto.randomUUID());
     setState("submitting");
     setMessage("");
     try {
@@ -88,9 +117,9 @@ export function NfcOrder() {
           productId: line.product.productId,
           quantity: line.quantity,
         })),
-        submissionIdRef.current,
+        submissionIdRef.current!,
       );
-      submissionIdRef.current = null;
+      setSubmissionId(null);
       setResult(order);
       setState("placed");
     } catch (reason) {
@@ -107,7 +136,7 @@ export function NfcOrder() {
   const startNewRound = () => {
     setCart({});
     setResult(null);
-    submissionIdRef.current = null;
+    setSubmissionId(null);
     setState("browsing");
   };
 

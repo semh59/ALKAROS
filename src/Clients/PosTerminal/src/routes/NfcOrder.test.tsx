@@ -36,6 +36,7 @@ describe("NfcOrder", () => {
     root = null;
     vi.unstubAllGlobals();
     vi.restoreAllMocks();
+    sessionStorage.clear();
   });
 
   it("with an invalid link (no table id), shows a clear error instead of a broken menu", async () => {
@@ -88,6 +89,69 @@ describe("NfcOrder", () => {
 
     expect(document.body.textContent).toContain("Siparişiniz alındı");
     expect(document.body.textContent).toContain("Çorba");
+  });
+
+  // V1-RMD-348 (independent 2026-09-26 audit, orta seviye bulgu): before this,
+  // submissionIdRef lived only in a React ref - a page reload/navigation away
+  // while a submission was in flight lost it entirely, so a retry generated
+  // a brand new id and could place a genuine duplicate order. This seeds
+  // sessionStorage exactly as a real prior mount (interrupted mid-submission
+  // by a reload) would have left it, then mounts fresh - the real-world
+  // scenario this fix targets, without the flakiness of trying to abandon a
+  // genuinely in-flight React update mid-act().
+  it("picks up a submissionId a previous (reloaded-away) mount already persisted, instead of generating a new one", async () => {
+    sessionStorage.setItem("alkaros.nfc.submissionId.table-1", "existing-in-flight-id");
+    let submittedId: string | null = null;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(input);
+      if (path.includes("/catalog")) return jsonResponse(CATALOG);
+      if (path.includes("/orders")) {
+        submittedId = (JSON.parse(String(init!.body)) as { id: string }).id;
+        return jsonResponse({
+          orderId: "o1", tableId: "table-1", tableNumber: "T-01", status: "Accepted", rowVersion: 3,
+          totalAmount: 60, items: [], createdAt: new Date().toISOString(),
+        });
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render("/nfc/table-1");
+    await act(async () => Promise.resolve());
+    const increase = document.querySelector<HTMLButtonElement>('[aria-label="Çorba adedini artır"]')!;
+    await act(async () => increase.click());
+    const submitButton = [...document.querySelectorAll("button")].find((b) => b.textContent === "Siparişi Gönder")!;
+    await act(async () => submitButton.click());
+    await act(async () => Promise.resolve());
+
+    expect(submittedId).toBe("existing-in-flight-id");
+    // Placed successfully -> the key is cleared, so a genuinely NEW order
+    // later gets a fresh id rather than replaying this one forever.
+    expect(sessionStorage.getItem("alkaros.nfc.submissionId.table-1")).toBeNull();
+  });
+
+  it("two browser tabs open on different tables never collide on the same submissionId key", async () => {
+    sessionStorage.setItem("alkaros.nfc.submissionId.table-2", "other-tables-id");
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(input);
+      if (path.includes("/catalog")) return jsonResponse(CATALOG);
+      if (path.includes("/orders")) {
+        const id = (JSON.parse(String(init!.body)) as { id: string }).id;
+        expect(id).not.toBe("other-tables-id");
+        return jsonResponse({
+          orderId: "o1", tableId: "table-1", tableNumber: "T-01", status: "Accepted", rowVersion: 3,
+          totalAmount: 60, items: [], createdAt: new Date().toISOString(),
+        });
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render("/nfc/table-1");
+    await act(async () => Promise.resolve());
+    const increase = document.querySelector<HTMLButtonElement>('[aria-label="Çorba adedini artır"]')!;
+    await act(async () => increase.click());
+    const submitButton = [...document.querySelectorAll("button")].find((b) => b.textContent === "Siparişi Gönder")!;
+    await act(async () => submitButton.click());
+    await act(async () => Promise.resolve());
   });
 
   it("when the table is not available for self-service, shows the blocking message from the server", async () => {
