@@ -1347,6 +1347,14 @@
         "platform_store_status"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "158",
+      "phase": "B",
+      "tables": [
+        "manual_card_confirmations"
+      ],
+      "deferredConstraints": []
     }
   ]
 }
