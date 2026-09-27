@@ -216,6 +216,17 @@ describe("workspace route gating uses granular permission codes, not the removed
 
     await renderRoute("/online/settings", ["orders.create"], online);
     expect(document.body.textContent).toContain(forbiddenText);
+    await act(async () => root!.unmount());
+    root = null;
+
+    // V12-OUI-006: the problems path is for staff who see reports.
+    await renderRoute("/online/problems", ["orders.create"], online);
+    expect(document.body.textContent).toContain(forbiddenText);
+    await act(async () => root!.unmount());
+    root = null;
+    await renderRoute("/online/problems", ["orders.create", "reports.view"], (url) => url.includes("/online-problems") ? [] : online(url));
+    expect(document.body.textContent).not.toContain(forbiddenText);
+    expect(document.body.textContent).toContain("Açık online sipariş sorunu yok.");
   });
 });
 

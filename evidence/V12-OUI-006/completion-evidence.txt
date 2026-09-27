@@ -1,0 +1,44 @@
+V12-OUI-006 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: c08a790e.
+
+Finding while building: the existing reconciliation endpoints authenticate with the management console's own session
+cookie, not the terminal's staff session the online food screen runs on. So the Problems tab has its own small endpoint
+group on the terminal session that calls the very same OnlineOrderReconciliationActions (same version and source checks).
+
+Changes:
+- Host OnlineProblemsEndpoints, /api/v1/terminals/{id}/online-problems:
+  - GET / (reports.view): active (Open, Investigating, Escalated) OnlineOrderMismatch cases only, up to 200, newest
+    first — kind, platform, platform order number, amount, status, opened at, row version, next action, whether the next
+    action can be retried.
+  - POST /{caseId}/retry and /{caseId}/resolve {expectedVersion, note} (reconciliation.manage); a blank note, a case not
+    found, not online, closed, not retryable or still diverged are refused in Turkish.
+  Registered in DualScreenApplication.
+- PosTerminal features/online-problems: the Problems tab ("Sorunlar", /online/problems) with every problem in Turkish
+  (unknown kinds and actions get a Turkish fallback, never the raw code); "Yeniden dene" only where safe and "Çözüldü"
+  with a required note only for reconciliation.manage.
+- The hub now decides each tab by the session's capabilities: orders (the screen's own), menu and settings
+  (integrations.manage), problems (reports.view or reconciliation.manage); the route gate uses the same table.
+
+Commands (exit 0): see completion-commands.txt.
+
+Mutations (per iteration: backup, mutate, test, restore, cmp verified; 13/13 killed):
+KILLED P1 viewing needs the manage right
+KILLED P2 acting needs only reports
+KILLED P4 closed cases listed
+KILLED P5 every case retryable
+KILLED Q1 viewer offered actions
+KILLED Q2 retry offered where unsafe
+KILLED Q3 unknown kind shown raw
+KILLED Q4 note not trimmed
+KILLED Q5 problems tab for everyone
+KILLED Q6 acting by the viewing right
+KILLED Q7 route open without the right
+KILLED P3 other case types listed
+KILLED P6 blank note accepted
+P3 first survived: the test's non-online case had no details, so it was skipped for that reason alone; the test now
+gives it online-looking details and P3 is killed. P6 was first written in a form that did not compile and was rerun in a
+compiling form.
+
+Honest limits:
+- At most 200 active online cases are listed.
+- The note's trimming is not observed by a server test (it is by the screen test).

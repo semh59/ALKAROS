@@ -2,12 +2,13 @@ import { useCallback, useEffect, useId, useState } from "react";
 import { OnlineMenuTab } from "../online-menu";
 import { OnlineOperationsWorkspace } from "../online-operations";
 import { OnlinePlatformCredentialsWorkspace } from "../online-platform-credentials";
+import { OnlineProblemsTab } from "../online-problems";
 import {
   OnlineHubApiError,
+  canSeeOnlineTab,
   channelNeedsAttention,
   channelStatusText,
   loadChannelHealth,
-  managerOnlyTabs,
   type OnlineChannelHealth,
   type OnlineHubTab,
 } from "./onlineHubApi";
@@ -15,25 +16,28 @@ import "./online-hub.css";
 
 const REFRESH_MS = 60_000;
 
-const tabLabels: Record<OnlineHubTab, string> = { orders: "Siparişler", menu: "Menü", settings: "Ayarlar" };
-const tabOrder: readonly OnlineHubTab[] = ["orders", "menu", "settings"];
+const tabLabels: Record<OnlineHubTab, string> = { orders: "Siparişler", menu: "Menü", problems: "Sorunlar", settings: "Ayarlar" };
+const tabOrder: readonly OnlineHubTab[] = ["orders", "menu", "problems", "settings"];
 
 /**
  * V12-OUI-004: online food in one screen. The platform status line is on top; the tabs below hold the order queue and,
- * for a manager's session only, the platform settings. A tab a session may not see is neither shown nor loaded.
+ * by the session's capabilities, the menu and settings (a manager's) and the problems (V12-OUI-006). A tab a session may
+ * not see is neither shown nor loaded.
  */
 export function OnlineFoodHub({
   terminalId,
   tab,
-  canManage,
+  capabilities,
   onSelectTab,
 }: {
   terminalId: string;
   tab: OnlineHubTab;
-  canManage: boolean;
+  capabilities: readonly string[];
   onSelectTab: (tab: OnlineHubTab) => void;
 }) {
-  const tabs = tabOrder.filter((option) => canManage || !managerOnlyTabs.has(option));
+  const granted = new Set(capabilities);
+  const canManage = canSeeOnlineTab("settings", granted);
+  const tabs = tabOrder.filter((option) => canSeeOnlineTab(option, granted));
   const active = tabs.includes(tab) ? tab : "orders";
   const panelId = useId();
 
@@ -58,6 +62,7 @@ export function OnlineFoodHub({
       <div id={panelId} role="tabpanel" aria-label={tabLabels[active]}>
         {active === "orders" && <OnlineOperationsWorkspace terminalId={terminalId} />}
         {active === "menu" && <OnlineMenuTab terminalId={terminalId} />}
+        {active === "problems" && <OnlineProblemsTab terminalId={terminalId} canAct={granted.has("reconciliation.manage")} />}
         {active === "settings" && <OnlinePlatformCredentialsWorkspace terminalId={terminalId} />}
       </div>
     </div>

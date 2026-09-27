@@ -1,6 +1,6 @@
 /** V12-OUI-004: the online food screen's tabs and its platform status line. */
 
-export type OnlineHubTab = "orders" | "menu" | "settings";
+export type OnlineHubTab = "orders" | "menu" | "problems" | "settings";
 
 export type ChannelPolling = "NotPolled" | "Working" | "RateLimited" | "Failing";
 
@@ -13,7 +13,7 @@ export interface OnlineChannelHealth {
 }
 
 /** The path of each tab; the old separate screens open the matching tab. */
-export const onlineHubPaths: Record<OnlineHubTab, string> = { orders: "/online", menu: "/online/menu", settings: "/online/settings" };
+export const onlineHubPaths: Record<OnlineHubTab, string> = { orders: "/online", menu: "/online/menu", problems: "/online/problems", settings: "/online/settings" };
 
 /** Which tab a path opens, or null when the path is not the online food screen. */
 export function onlineHubTabFor(path: string): OnlineHubTab | null {
@@ -23,6 +23,8 @@ export function onlineHubTabFor(path: string): OnlineHubTab | null {
       return "orders";
     case "/online/menu":
       return "menu";
+    case "/online/problems":
+      return "problems";
     case "/online/settings":
     case "/online-platforms":
       return "settings";
@@ -31,8 +33,22 @@ export function onlineHubTabFor(path: string): OnlineHubTab | null {
   }
 }
 
-/** Tabs only a manager's session sees (their data is never even requested otherwise). */
-export const managerOnlyTabs: ReadonlySet<OnlineHubTab> = new Set(["menu", "settings"]);
+/**
+ * The capabilities a session needs to see each tab (any one of them); null means the screen's own permission is enough.
+ * A tab a session may not see is never shown and its data is never requested. Menu and settings are a manager's
+ * (V12-GOV-009); problems are for staff who see reports, and only a reconciliation manager acts on them.
+ */
+export const onlineTabCapabilities: Record<OnlineHubTab, readonly string[] | null> = {
+  orders: null,
+  menu: ["integrations.manage"],
+  problems: ["reports.view", "reconciliation.manage"],
+  settings: ["integrations.manage"],
+};
+
+export const canSeeOnlineTab = (tab: OnlineHubTab, capabilities: ReadonlySet<string>) => {
+  const needed = onlineTabCapabilities[tab];
+  return needed === null || needed.some((capability) => capabilities.has(capability));
+};
 
 const time = (iso: string) =>
   new Date(iso).toLocaleString("tr-TR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });

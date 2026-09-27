@@ -1,0 +1,8 @@
+V12-OUI-006 commands (2026-09-27, exit 0):
+- dotnet build ALKAROS.slnx -> 0 warnings, 0 errors
+- tests/Host/Experience/Reconciliation 14/14 (2 new OnlineProblemsHttpTests); tests/Host/Experience/OnlineOrdering 147/147;
+  Reconciliation.OnlineOrders 27/27
+- ALKAROS.Host.Tests manifest/composition/registry/program/dual-screen subset 138/138
+- PosTerminal vitest 35 files 260/260 (online-problems 4 new, hub 1 new, route test extended); production build ok
+- UI_STYLE_GUIDE section 4 leak scan: no hit in features/online-problems
+- consistency_audit clean; plan_audit validate 0/0; no NUL bytes; line endings unchanged
