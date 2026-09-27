@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1401,
-  "markdown_line_count": 107243,
-  "markdown_byte_count": 6175689,
+  "markdown_file_count": 1402,
+  "markdown_line_count": 107333,
+  "markdown_byte_count": 6181370,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D5D6622F5A29B5B6937BC0D2C92244D6BD5A07B4D344057014C059E977D91803",
-      "lines": 2677,
-      "bytes": 391779,
+      "sha256": "D05B3E33D19AAF538BBBEFB78521D00209C1C0564F94D3CBBD7C7EF37AED6695",
+      "lines": 2678,
+      "bytes": 391960,
       "utf8": true
     },
     {
@@ -7676,6 +7676,13 @@
       "sha256": "D848BF16DF6270661EF0ECC1E9C246AF5C145010FD0D79A9A779765E076D93FE",
       "lines": 77,
       "bytes": 4117,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-359-manual-card-decided-consistency-constraint-fix.md",
+      "sha256": "E9CECE8737902CC908063D79B0BD207F242A8C3E6C1ACCB81971B13C9DADE65F",
+      "lines": 89,
+      "bytes": 5500,
       "utf8": true
     },
     {
