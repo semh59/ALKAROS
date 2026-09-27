@@ -48,6 +48,9 @@ test.describe('Kasa Oturumu - erişilebilirlik ve odak yönetimi (V1-RMD-361)', 
 
     await page.getByRole('button', { name: 'Sayıma Başla' }).click();
     await expect(page.getByRole('heading', { name: 'Çekmecedeki Nakdi Sayın' })).toBeVisible();
-    await expect(page.locator('#counted-amount')).toBeFocused();
+    // V1-RMD-377 (module-by-module UI audit round 2): the counting screen
+    // now defaults to a kupür (banknote/coin) breakdown - the first field is
+    // its highest-denomination count, not the old single free-typed amount.
+    await expect(page.locator('#denom-200')).toBeFocused();
   });
 });

@@ -5,6 +5,15 @@ import { readSeed } from '../lib/testHelpers.js';
 // wwwroot/payments/cash-session/**) exercised end to end against the real
 // Host + real Postgres this suite already boots - no mocked fetch, the same
 // backend V13-CSH-004 wired up.
+// V1-RMD-377 (module-by-module UI audit round 2): the counting screen now
+// defaults to a kupür (banknote/coin) breakdown - these scenarios test the
+// session lifecycle itself, not the counting UI (that has its own spec,
+// 28-cash-session-denomination-count.spec.js), so they switch to the
+// original single free-typed field first.
+async function useManualCount(page) {
+  await page.getByRole('button', { name: 'Kupürüm yok, tek tutar gireceğim' }).click();
+}
+
 async function loginOnCashSessionPage(page, seed) {
   // 02-stock-badge-and-kitchen-dispatch.spec.js's own precedent: UseDefaultFiles
   // does not resolve a bare directory URL to index.html here, only an explicit
@@ -39,6 +48,7 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     // Sayım: 500 açılış + 50 nakit giriş = 550 beklenen; tam o kadar sayılır.
     await page.getByRole('button', { name: 'Sayıma Başla' }).click();
     await expect(page.getByRole('heading', { name: 'Çekmecedeki Nakdi Sayın' })).toBeVisible();
+    await useManualCount(page);
     await page.locator('#counted-amount').fill('550');
     await page.getByRole('button', { name: 'Sayımı Kaydet' }).click();
 
@@ -75,6 +85,7 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     await expect(page.getByRole('heading', { name: /E2E Kasiyer/ })).toBeVisible();
     await page.getByRole('button', { name: 'Sayıma Başla' }).click();
     await expect(page.getByRole('heading', { name: 'Çekmecedeki Nakdi Sayın' })).toBeVisible();
+    await useManualCount(page);
     await page.locator('#counted-amount').fill('0');
     await page.getByRole('button', { name: 'Sayımı Kaydet' }).click();
 
@@ -95,6 +106,7 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     await expect(page.getByRole('heading', { name: /E2E Kasiyer/ })).toBeVisible();
 
     await page.getByRole('button', { name: 'Sayıma Başla' }).click();
+    await useManualCount(page);
     // Beklenenden çok farklı bir sayım - süpervizör onay akışını tetikler.
     await page.locator('#counted-amount').fill('40');
     await page.getByRole('button', { name: 'Sayımı Kaydet' }).click();

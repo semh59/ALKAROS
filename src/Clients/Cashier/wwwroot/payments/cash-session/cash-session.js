@@ -28,7 +28,19 @@
     // split-payment.js's tenderIdempotencyKey. Cleared on any real server response (success or a
     // definitive rejection); only a network failure keeps it for a retry.
     cashMovementIdempotencyKey: null,
+    // V1-RMD-377 (module-by-module UI audit round 2, P1 - rakip karşılaştırması): counts of each
+    // banknote/coin while the denomination-based counter is in use; countMode toggles between it
+    // and the original single free-typed field (kept for the real edge case a kupür sayımı cannot
+    // cover - foreign currency, a torn/taped note, etc.).
+    countMode: 'denomination',
+    denominationCounts: {},
   };
+
+  // V1-RMD-377: current TRY banknotes/coins actually found in a till - not every coin ISO 4217
+  // still mints (1/5 kuruş are not realistically handled at a register), same "practical, not
+  // exhaustive" judgement call as this file's own OCCUPANCY_WARNING_MINUTES-style constants
+  // elsewhere in this codebase.
+  var DENOMINATIONS = [200, 100, 50, 20, 10, 5, 1, 0.5];
 
   function escapeHtml(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (ch) {
@@ -550,23 +562,94 @@
     });
   }
 
+  // V1-RMD-377 (module-by-module UI audit round 2, P1 - rakip karşılaştırması): a real
+  // competitor register (Toast/Square/Clover) counts a drawer by kupür (banknote/coin), not one
+  // free-typed number the cashier has to mentally add up themselves - one keystroke error in
+  // that mental math used to become an unexplained variance at close with no way to trace which
+  // denomination it came from.
+  function denominationTotal() {
+    var total = 0;
+    for (var i = 0; i < DENOMINATIONS.length; i++) {
+      var d = DENOMINATIONS[i];
+      total += d * Math.max(0, Math.floor(Number(state.denominationCounts[d]) || 0));
+    }
+    return Math.round(total * 100) / 100;
+  }
+
+  function denominationLabel(d) {
+    return d >= 1 ? (d + ' ₺') : (Math.round(d * 100) + ' kr');
+  }
+
+  function renderDenominationRows() {
+    var rows = DENOMINATIONS.map(function (d) {
+      var count = state.denominationCounts[d] || 0;
+      return (
+        '<div class="cs-denom-row">' +
+        '<label class="cs-denom-label" for="denom-' + d + '">' + denominationLabel(d) + '</label>' +
+        '<input class="cs-denom-count" type="number" min="0" step="1" inputmode="numeric" ' +
+        'id="denom-' + d + '" data-denom="' + d + '" value="' + count + '">' +
+        '<span class="cs-denom-subtotal">' + formatMoney(d * count) + '</span>' +
+        '</div>'
+      );
+    }).join('');
+    return (
+      '<div class="cs-denom-list">' + rows + '</div>' +
+      '<div class="cs-summary-row cs-denom-total"><span>Toplam</span>' +
+      '<span class="value" id="denom-total-value">' + formatMoney(denominationTotal()) + '</span></div>'
+    );
+  }
+
   function renderCounting() {
+    var isDenom = state.countMode === 'denomination';
     app.innerHTML =
       '<div class="cs-card">' +
       '<div><span class="cs-eyebrow">Sayım</span>' +
       '<h1 class="cs-title">Çekmecedeki Nakdi Sayın</h1>' +
-      '<p class="cs-subtitle">Elinizdeki gerçek nakit tutarını girin.</p></div>' +
+      '<p class="cs-subtitle">' +
+      (isDenom
+        ? 'Her kupürden kaç adet olduğunu girin, toplam otomatik hesaplanır.'
+        : 'Elinizdeki gerçek nakit tutarını girin.') +
+      '</p></div>' +
       errorAlert() +
-      '<label class="cs-field-label" for="counted-amount">Sayılan Tutar</label>' +
-      '<div class="cs-amount-field"><input type="number" step="0.01" min="0" id="counted-amount" value="0.00">' +
-      '<span class="cs-amount-suffix">₺</span></div>' +
+      (isDenom
+        ? renderDenominationRows()
+        : ('<label class="cs-field-label" for="counted-amount">Sayılan Tutar</label>' +
+           '<div class="cs-amount-field"><input type="number" step="0.01" min="0" id="counted-amount" value="0.00">' +
+           '<span class="cs-amount-suffix">₺</span></div>')) +
       '<label class="cs-field-label" for="count-notes">Not <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></label>' +
       '<textarea class="cs-textarea" id="count-notes"></textarea>' +
+      '<button class="cs-btn cs-btn-ghost" id="toggle-count-mode" type="button">' +
+      (isDenom ? 'Kupürüm yok, tek tutar gireceğim' : 'Kupür bazlı saymaya dön') +
+      '</button>' +
       '<button class="cs-btn cs-btn-primary" id="submit-count" ' + (state.busy ? 'disabled' : '') + '>' +
       (state.busy ? 'Kaydediliyor…' : 'Sayımı Kaydet') + '</button>' +
       '</div>';
+
+    if (isDenom) {
+      var inputs = app.querySelectorAll('.cs-denom-count');
+      for (var i = 0; i < inputs.length; i++) {
+        inputs[i].addEventListener('input', function (event) {
+          var denom = Number(event.target.dataset.denom);
+          var count = Math.max(0, Math.floor(Number(event.target.value) || 0));
+          state.denominationCounts[denom] = count;
+          // Targeted DOM updates, not a full render() - the same reasoning
+          // cashier-app.js's own item-note-input already documents: a
+          // re-render mid-keystroke would drop focus/caret out of the very
+          // field the cashier is still typing into.
+          var subtotalEl = event.target.parentElement.querySelector('.cs-denom-subtotal');
+          if (subtotalEl) subtotalEl.textContent = formatMoney(denom * count);
+          var totalEl = document.getElementById('denom-total-value');
+          if (totalEl) totalEl.textContent = formatMoney(denominationTotal());
+        });
+      }
+    }
+    document.getElementById('toggle-count-mode').addEventListener('click', function () {
+      state.countMode = isDenom ? 'manual' : 'denomination';
+      state.error = null;
+      render();
+    });
     document.getElementById('submit-count').addEventListener('click', function () {
-      var amount = Number(document.getElementById('counted-amount').value);
+      var amount = isDenom ? denominationTotal() : Number(document.getElementById('counted-amount').value);
       var notes = document.getElementById('count-notes').value.trim();
       if (!(amount >= 0)) {
         setError('Geçerli bir tutar girin.');

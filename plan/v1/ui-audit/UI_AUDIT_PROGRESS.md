@@ -44,7 +44,7 @@ gerçek test + mutation-check + görev dosyası + dört gate + commit/push.
 | # | Modül | Durum | Bulgu | Düzeltilen | Tarih | Not |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1 | Cashier vanilla (ana ekran) | Tamamlandı | 3 | 3 | 2026-09-27 | V1-RMD-376; modifikatör desteği yok (P1), barkod/kod arama gerçekliği (P2) |
-| 2 | Cashier — Kasa Oturumu | Bekliyor | - | - | - | - |
+| 2 | Cashier — Kasa Oturumu | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-377; kupür bazlı sayım (P1) |
 | 3 | Cashier — Tahsilat/Split Payment | Bekliyor | - | - | - | - |
 | 4 | WaiterPwa | Bekliyor | - | - | - | - |
 | 5 | PosTerminal — Cashier.tsx | Bekliyor | - | - | - | - |
