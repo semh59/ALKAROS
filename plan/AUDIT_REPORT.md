@@ -1983,9 +1983,9 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1.2/shared-stock/V12-RMD-003-cross-channel-arbiter-hardening.md` | ✅ | `3D0FEBEEC5B78ECD654E599511C299D9C2FD989CE9311CF568EEDFC1A3804614` | Tek-sahip görev |
 | `plan/v1.2/trendyol-go/V12-TGO-001-meal-api-contract.md` | ✅ | `E4A09F9E992A9E5E654D39F91681322990DEA252AD13B1C831AC0495070352B6` | Tek-sahip görev |
 | `plan/v1.2/trendyol-go/V12-TGO-002-order-intake.md` | ✅ | `A2D012D94868EE7E2AB38328554828622CB90AD90837A77B6279CA4A579A330A` | Tek-sahip görev |
-| `plan/v1.2/trendyol-go/V12-TGO-003-outbound-status.md` | ✅ | `1D4A2056397697D9838CC87D4DB4CC807EBCF371771781D8CBC5FE73D246E5D1` | Tek-sahip görev |
-| `plan/v1.2/trendyol-go/V12-TGO-004-menu-availability-and-price.md` | ✅ | `2EB6D6F0DB92D07FC96EB1024AA358C4EB7CE63B2D83EFC5801EDA657807AEDB` | Tek-sahip görev |
-| `plan/v1.2/trendyol-go/V12-TGO-005-uber-eats-transition-model.md` | ✅ | `FB434F2B34760114738F07703A9CA38B2F3D132B067E06D620AF63716D3B1260` | Tek-sahip görev |
+| `plan/v1.2/trendyol-go/V12-TGO-003-outbound-status.md` | ✅ | `FEC9F9B762BD5A8D6A389A5CF0D67CBAEF4F02F745BFCDCEBEFA5157D9A20538` | Tek-sahip görev |
+| `plan/v1.2/trendyol-go/V12-TGO-004-menu-availability-and-price.md` | ✅ | `678B2816CE1C562FBAFD659B113311D10CD0B9891F267A1D23D07FF4FDCE565D` | Tek-sahip görev |
+| `plan/v1.2/trendyol-go/V12-TGO-005-uber-eats-transition-model.md` | ✅ | `6E41FAD16E627C5158318017EF95D01849EA24557DF623931809A75813941540` | Tek-sahip görev |
 | `plan/v1.3/cash/V13-CSH-003-cash-tender-handler.md` | ✅ | `40E3010063E3FABE16230C3E9FD310879052AE3DFAB218AF75F695751B54FC90` | Tek-sahip görev |
 | `plan/v1.3/cash/V13-CSH-004-cash-session-and-tender-http-composition.md` | ✅ | `F92177527517F4E78646848FDD9F7BC817037E8B6EB809876563F80B4938B96D` | Tek-sahip görev |
 | `plan/v1.3/fiscal/V13-FSC-004-t300-adisyon-adapter.md` | ✅ | `BF56B091994CAE1B61285F119C079CC87F6BB7264085F34125A74008D23272FB` | Tek-sahip görev |
@@ -2565,6 +2565,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-341-nav-hide-vs-in-module-lock-investigated.md` | ✅ | `E2E7E79261C6F3D83AC45542428E1548012CFA2362C6B3BC4A3F6E63AB724709` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-342-qnb-token-credential-format-validation.md` | ✅ | `7ED1EB71608117FA1532EEAEE095CC09C2D71247C31C08D52105121B573AE868` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-343-parked-cart-cleared-on-shift-close.md` | ✅ | `66BE30BA318CA90FED74AEFC9B6AE40626EC341CE2DF67C4B6CB057BCA9A6988` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-344-production-unit-converter-and-lock-order.md` | ✅ | `F3312130C4812F642B393C930D1BDC95E3903F0A546799ABBC5D1691E8AACF63` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2651,5 +2652,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1379` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1380` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

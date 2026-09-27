@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1379,
-  "markdown_line_count": 105720,
-  "markdown_byte_count": 6089221,
+  "markdown_file_count": 1380,
+  "markdown_line_count": 105813,
+  "markdown_byte_count": 6095726,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "A8C89BD319D10ED17831D27A18BC3BA8C9F873DE645A726955EDC450045A373F",
-      "lines": 2655,
-      "bytes": 388087,
+      "sha256": "477211DD0BC7238D3996C5D2D8DC042CBF7B959860FE122ED11C37397D7ED08D",
+      "lines": 2656,
+      "bytes": 388262,
       "utf8": true
     },
     {
@@ -7567,6 +7567,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-344-production-unit-converter-and-lock-order.md",
+      "sha256": "F3312130C4812F642B393C930D1BDC95E3903F0A546799ABBC5D1691E8AACF63",
+      "lines": 75,
+      "bytes": 4662,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -8821,23 +8828,23 @@
     },
     {
       "path": "plan/v1.2/trendyol-go/V12-TGO-003-outbound-status.md",
-      "sha256": "1D4A2056397697D9838CC87D4DB4CC807EBCF371771781D8CBC5FE73D246E5D1",
-      "lines": 46,
-      "bytes": 1865,
+      "sha256": "FEC9F9B762BD5A8D6A389A5CF0D67CBAEF4F02F745BFCDCEBEFA5157D9A20538",
+      "lines": 54,
+      "bytes": 2613,
       "utf8": true
     },
     {
       "path": "plan/v1.2/trendyol-go/V12-TGO-004-menu-availability-and-price.md",
-      "sha256": "2EB6D6F0DB92D07FC96EB1024AA358C4EB7CE63B2D83EFC5801EDA657807AEDB",
-      "lines": 44,
-      "bytes": 1708,
+      "sha256": "678B2816CE1C562FBAFD659B113311D10CD0B9891F267A1D23D07FF4FDCE565D",
+      "lines": 47,
+      "bytes": 1973,
       "utf8": true
     },
     {
       "path": "plan/v1.2/trendyol-go/V12-TGO-005-uber-eats-transition-model.md",
-      "sha256": "FB434F2B34760114738F07703A9CA38B2F3D132B067E06D620AF63716D3B1260",
-      "lines": 44,
-      "bytes": 1674,
+      "sha256": "6E41FAD16E627C5158318017EF95D01849EA24557DF623931809A75813941540",
+      "lines": 50,
+      "bytes": 2329,
       "utf8": true
     },
     {
