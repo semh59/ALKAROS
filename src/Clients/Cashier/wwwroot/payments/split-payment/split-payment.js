@@ -537,10 +537,14 @@
 
   // ---- rendering ---------------------------------------------------------
 
+  // V1-RMD-362 (module-by-module UI audit, 2026-09-27): the same gap class V1-RMD-345 closed for
+  // CustomerWeb and V1-RMD-361 closed for cash-session.js, missed on THIS page - #app is already
+  // aria-live="polite" (index.html) so a screen reader hears the text, but nothing marked it as
+  // specifically an error.
   function errorAlert() {
     if (!state.error) return '';
     return (
-      '<div class="sp-alert sp-alert-danger">' +
+      '<div class="sp-alert sp-alert-danger" role="alert">' +
       '<span class="sp-alert-icon">!</span>' +
       '<div><div class="sp-alert-title">Hata</div>' +
       '<div class="sp-alert-body">' + escapeHtml(state.error) + '</div></div>' +
@@ -568,15 +572,21 @@
       '</div>';
   }
 
+  // V1-RMD-362: three mutually-exclusive buttons that pick ONE value (which the rest of the form's
+  // behavior then depends on) had only a visual .is-active class - no ARIA grouping or state at
+  // all, unlike Module 1/2's category/direction tabs (a genuinely different pattern: those are
+  // VIEWS, this is a VALUE choice) - role="radiogroup"/"radio" + aria-checked is the correct
+  // pattern for "exactly one of these applies" rather than role="tab".
   function renderMethodChips() {
     var methods = ['Cash', 'BankCard', 'Eft'];
     return (
-      '<div class="sp-method-chips">' +
+      '<div class="sp-method-chips" role="radiogroup" aria-label="Ödeme yöntemi">' +
       methods.map(function (method) {
         var disabled = method === 'Cash' && !state.cashSessionOpen;
         var active = state.selectedMethod === method;
         return (
           '<button type="button" class="sp-method-chip' + (active ? ' is-active' : '') + '" ' +
+          'role="radio" aria-checked="' + active + '" ' +
           'data-method="' + method + '"' + (disabled ? ' disabled' : '') + '>' +
           escapeHtml(METHOD_LABELS[method]) + (disabled ? ' (kasa kapalı)' : '') + '</button>'
         );
@@ -656,8 +666,10 @@
     var disabled = state.discountBusy ? ' disabled' : '';
     return (
       '<div class="sp-field"><span class="sp-field-label">İndirim / düzeltme ekle</span>' +
-      (state.discountNotice ? '<div class="sp-alert-body">' + escapeHtml(state.discountNotice) + '</div>' : '') +
-      (state.discountError ? '<div class="sp-alert-body" style="color:var(--color-danger)">' + escapeHtml(state.discountError) + '</div>' : '') +
+      // V1-RMD-362: a bare .sp-alert-body with no role at all - a screen reader was never told a
+      // discount attempt succeeded OR failed, only a sighted cashier watching the screen saw it.
+      (state.discountNotice ? '<div class="sp-alert-body" role="status">' + escapeHtml(state.discountNotice) + '</div>' : '') +
+      (state.discountError ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state.discountError) + '</div>' : '') +
       '<select class="sp-input" id="discount-reason" aria-label="İndirim gerekçesi">' +
       Object.keys(DISCOUNT_REASON_LABELS).map(function (code) {
         return '<option value="' + code + '"' + (state.discountReason === code ? ' selected' : '') + '>' +
@@ -684,7 +696,7 @@
     var disabled = state.tipBusy ? ' disabled' : '';
     return (
       '<div class="sp-field"><span class="sp-field-label">Gönüllü bahşiş ekle</span>' +
-      (state.tipError ? '<div class="sp-alert-body" style="color:var(--color-danger)">' + escapeHtml(state.tipError) + '</div>' : '') +
+      (state.tipError ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state.tipError) + '</div>' : '') +
       '<div class="sp-row">' +
       '<input class="sp-input" type="number" step="0.01" min="0.01" id="tip-amount" placeholder="Tutar" aria-label="Bahşiş tutarı" value="' +
       escapeHtml(state.tipAmountDraft) + '">' +
@@ -706,7 +718,7 @@
       '<h1 class="sp-title">Tahsilat</h1></div>' +
       errorAlert() +
       (state.locked
-        ? '<div class="sp-alert sp-alert-warning"><span class="sp-alert-icon">!</span>' +
+        ? '<div class="sp-alert sp-alert-warning" role="alert"><span class="sp-alert-icon">!</span>' +
           '<div><div class="sp-alert-title">Manuel mutabakat gerekiyor</div>' +
           '<div class="sp-alert-body">Son kart tahsilatı otomatik onaylanamadı. Bu hesaba yeni bir tahsilat ' +
           'eklemeden önce mutabakat tamamlanmalı.</div></div></div>' +
