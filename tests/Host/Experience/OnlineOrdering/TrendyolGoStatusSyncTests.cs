@@ -227,7 +227,8 @@ public sealed class TrendyolGoStatusSyncTests : IAsyncLifetime
     [Fact]
     public async Task AFailedCallOrMissingSettingsOrAnUnknownPackageFailsTheDeliverySoTheOutboxRetriesIt()
     {
-        var handler = new RecordingHandler { Status = HttpStatusCode.Conflict };
+        // V12-TGO-005: a conflict on invoiced means "already invoiced"; any other failure fails the delivery.
+        var handler = new RecordingHandler { Status = HttpStatusCode.InternalServerError };
         var consumer = Consumer(new TrendyolGoStatusClient(new HttpClient(handler), _secrets, TimeProvider.System));
         var payload = IntegrationEventSerializer.Serialize(new TrendyolGoStatusUpdateRequested(
             Guid.NewGuid(), NewPackageId(), TrendyolGoPackageAction.Invoiced, null, DateTimeOffset.UtcNow));

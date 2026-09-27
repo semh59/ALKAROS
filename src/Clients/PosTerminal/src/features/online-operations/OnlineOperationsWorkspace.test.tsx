@@ -4,7 +4,7 @@ import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { OnlineOperationsWorkspace } from "./OnlineOperationsWorkspace";
-import type { OnlineOperationsQueue } from "./onlineOperationsApi";
+import { loadCustomerNote, type OnlineOperationsQueue } from "./onlineOperationsApi";
 
 (globalThis as { IS_REACT_ACT_ENVIRONMENT?: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -108,6 +108,34 @@ describe("OnlineOperationsWorkspace", () => {
 
     await act(async () => { button("Tüm platformlar").click(); });
     expect(document.body.textContent).toContain("YS-778899");
+  });
+
+  it("shows the platform's call number and code with the note only when both are given", async () => {
+    fetchMock.mockImplementation(async (url: string) =>
+      url.endsWith("/customer-note")
+        ? ok(url.includes("on-1") ? { note: "Servis İstiyorum", callPhone: "0212 111 22 33", callCode: "12345678" } : { note: null, callPhone: "0212 111 22 33", callCode: null })
+        : ok(queue));
+    await render();
+    const noteButtons = () => [...document.querySelectorAll("button")].filter((b) => b.textContent === "Müşteri notu");
+
+    await act(async () => { noteButtons()[0].click(); });
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("Servis İstiyorum");
+    expect(text).toContain("0212 111 22 33 numarasını arayın, sonra müşteri arama kodunu tuşlayın: 12345678");
+
+    await act(async () => { noteButtons()[1].click(); });
+    expect(document.body.textContent).not.toContain("numarasını arayın");
+    expect(document.body.textContent).toContain("Müşteri notu yok.");
+  });
+
+  it("drops half of the call information: a number without its code (or the reverse) is never returned", async () => {
+    const order = queue.orders[1];
+    fetchMock.mockResolvedValueOnce(ok({ note: "n", callPhone: "0212 111 22 33", callCode: null }));
+    expect(await loadCustomerNote("t-1", order)).toEqual({ note: "n", callPhone: null, callCode: null });
+    fetchMock.mockResolvedValueOnce(ok({ note: null, callPhone: null, callCode: "12345678" }));
+    expect(await loadCustomerNote("t-1", order)).toEqual({ note: null, callPhone: null, callCode: null });
+    fetchMock.mockResolvedValueOnce(ok({ note: null, callPhone: "0212 111 22 33", callCode: "12345678" }));
+    expect(await loadCustomerNote("t-1", order)).toEqual({ note: null, callPhone: "0212 111 22 33", callCode: "12345678" });
   });
 
   it("never lets an older answer overwrite a newer one", async () => {

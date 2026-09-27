@@ -62,6 +62,43 @@ public sealed class TrendyolGoOnlineOrderProvider : IOnlineOrderProvider
     public IReadOnlyList<OnlineOrderLineReference> ReadItemReferences(string rawPayload) =>
         TrendyolGoOrderNormalizer.ReadItemReferences(rawPayload);
 
+    /// <summary>V12-TGO-005: the package's <c>customerNote</c>, control characters removed, at most 200 characters.</summary>
+    public string? ReadCustomerNote(string rawPayload)
+    {
+        using var document = JsonDocument.Parse(rawPayload);
+        if (!document.RootElement.TryGetProperty("customerNote", out var note) || note.ValueKind != JsonValueKind.String)
+            return null;
+        var text = new string(note.GetString()!.Where(c => !char.IsControl(c)).ToArray()).Trim();
+        return text.Length == 0 ? null : text[..Math.Min(200, text.Length)];
+    }
+
+    /// <summary>
+    /// V12-TGO-005 (Uber Eats transition, EXT:TGO-MEAL-API "Meal Changes", read 2026-09-27): the platform's number to
+    /// call — <c>callCenterPhone</c>, else <c>address.phone</c>; after the transition it may differ per order — and
+    /// <c>address.pinCode</c>, the code entered after dialling (8 digits for an Uber order; for other orders the 11-digit
+    /// order number). Null unless both are present; a value that is not a plain phone number or digit code is refused.
+    /// </summary>
+    public OnlineOrderCallInfo? ReadCallInfo(string rawPayload)
+    {
+        using var document = JsonDocument.Parse(rawPayload);
+        var root = document.RootElement;
+        if (root.ValueKind != JsonValueKind.Object)
+            return null;
+        var address = root.TryGetProperty("address", out var a) && a.ValueKind == JsonValueKind.Object ? a : default;
+        var phone = Text(root, "callCenterPhone") ?? (address.ValueKind == JsonValueKind.Object ? Text(address, "phone") : null);
+        var pin = address.ValueKind == JsonValueKind.Object ? Text(address, "pinCode") : null;
+        if (phone is null || pin is null
+            || phone.Length > 20 || !phone.All(c => char.IsAsciiDigit(c) || c is ' ' or '+' or '-' or '(' or ')')
+            || pin.Length is < 4 or > 16 || !pin.All(char.IsAsciiDigit))
+            return null;
+        return new OnlineOrderCallInfo(phone, pin);
+
+        static string? Text(JsonElement element, string name) =>
+            element.TryGetProperty(name, out var value) && value.ValueKind == JsonValueKind.String && value.GetString()!.Trim() is { Length: > 0 } text
+                ? text
+                : element.TryGetProperty(name, out var number) && number.ValueKind == JsonValueKind.Number ? number.GetRawText() : null;
+    }
+
     /// <summary>
     /// The handover follows the delivery kind recorded when the order was created: the platform's courier (<c>GO</c>)
     /// collects a prepared package; the restaurant's own courier (<c>STORE</c>) is dispatched. An in-store pickup has

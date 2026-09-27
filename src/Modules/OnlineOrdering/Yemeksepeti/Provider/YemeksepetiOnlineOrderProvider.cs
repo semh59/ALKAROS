@@ -3,6 +3,7 @@ using ALKAROS.OnlineOrdering.Providers.Contracts;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
+using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using Npgsql;
 
 namespace ALKAROS.OnlineOrdering.Yemeksepeti.Provider;
@@ -32,6 +33,9 @@ public sealed class YemeksepetiOnlineOrderProvider : IOnlineOrderProvider
 
     public Task<NormalizationResult> NormalizeAsync(string rawPayload, DateTimeOffset receivedAt, CancellationToken cancellationToken = default) =>
         _normalizer.NormalizeAsync(rawPayload, receivedAt, cancellationToken);
+
+    /// <summary>V12-TGO-005: Yemeksepeti's <c>comment</c>; the platform documents no calling code.</summary>
+    public string? ReadCustomerNote(string rawPayload) => YemeksepetiWebhookInbox.CustomerNoteOf(rawPayload);
 
     public IReadOnlyList<OnlineOrderLineReference> ReadItemReferences(string rawPayload) =>
         YemeksepetiStatusSync.ReadItemReferences(rawPayload)

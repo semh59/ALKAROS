@@ -50,8 +50,12 @@ public sealed class TrendyolGoStatusClient : IDisposable
     public Task PickedAsync(string packageId, int preparationMinutes, CancellationToken cancellationToken = default) =>
         PutAsync("picked", "packages/picked", new { packageId, preparationTime = preparationMinutes }, cancellationToken);
 
+    /// <summary>
+    /// V12-TGO-005: after the Uber Eats transition the platform may move a package to Invoiced by itself; the document
+    /// says sending invoiced again must not fail, so a conflict answer here counts as already invoiced.
+    /// </summary>
     public Task InvoicedAsync(string packageId, CancellationToken cancellationToken = default) =>
-        PutAsync("invoiced", "packages/invoiced", new { packageId, actualDate = ActualDate() }, cancellationToken);
+        PutAsync("invoiced", "packages/invoiced", new { packageId, actualDate = ActualDate() }, cancellationToken, conflictMeansDone: true);
 
     public Task ManualShippedAsync(string packageId, CancellationToken cancellationToken = default) =>
         PutAsync("manual-shipped", $"packages/{Uri.EscapeDataString(packageId)}/manual-shipped", new { actualDate = ActualDate() }, cancellationToken);
@@ -68,7 +72,7 @@ public sealed class TrendyolGoStatusClient : IDisposable
     /// <summary>"Must be a past date when provided": one second before now.</summary>
     private long ActualDate() => _time.GetUtcNow().AddSeconds(-1).ToUnixTimeMilliseconds();
 
-    private async Task PutAsync(string endpoint, string path, object body, CancellationToken cancellationToken)
+    private async Task PutAsync(string endpoint, string path, object body, CancellationToken cancellationToken, bool conflictMeansDone = false)
     {
         var settings = TrendyolGoApiSettings.Resolve(_secrets)
             ?? throw new TrendyolGoApiException("Trendyol Go settings are not entered.");
@@ -78,6 +82,8 @@ public sealed class TrendyolGoStatusClient : IDisposable
         using var request = new HttpRequestMessage(HttpMethod.Put, uri) { Content = JsonContent.Create(body) };
         settings.Apply(request);
         using var response = await _http.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        if (conflictMeansDone && response.StatusCode == System.Net.HttpStatusCode.Conflict)
+            return;
         if (!response.IsSuccessStatusCode)
             throw new TrendyolGoApiException($"Trendyol Go {endpoint} call failed with HTTP {(int)response.StatusCode}.");
     }

@@ -5,6 +5,7 @@ using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.OnlineOrdering.AvailabilityPublishing;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
+using ALKAROS.OnlineOrdering.Providers.Inbox;
 using ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Orders.OrderAggregate;
@@ -109,35 +110,39 @@ public static class OnlineOperationsEndpoints
         }).RequireRateLimiting("terminal-write");
 
         // V12-RMD-007: the customer's note is kept only in the encrypted provider payload (KVKK). Staff open it on
-        // purpose, and every opening is written to the audit trail with who opened it.
+        // purpose, and every opening is written to the audit trail with who opened it. V12-TGO-005: the note is read by
+        // the order's own platform, which may also give the number and code to call the customer through it.
         group.MapGet("/orders/{orderId:guid}/customer-note", async (
             Guid terminalId,
             Guid orderId,
             NpgsqlDataSource dataSource,
-            YemeksepetiWebhookInbox inbox,
+            ProviderInbox inbox,
+            OnlineOrderProviderRegistry providers,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var userId = await RequireStaffAsync(context, terminalId, dualStore, authorization, cancellationToken);
-            var note = await ReadCustomerNoteAsync(dataSource, inbox, orderId, cancellationToken);
-            await AuditNoteViewAsync(dataSource, orderId, userId, note is not null, cancellationToken);
-            return Results.Ok(new OnlineOrderCustomerNoteV1(note));
+            var (note, call) = await ReadCustomerNoteAsync(dataSource, inbox, providers, orderId, cancellationToken);
+            await AuditNoteViewAsync(dataSource, orderId, userId, note is not null, call is not null, cancellationToken);
+            return Results.Ok(new OnlineOrderCustomerNoteV1(note, call?.Phone, call?.PinCode));
         }).RequireRateLimiting("terminal-read");
 
         return group;
     }
 
-    private static async Task<string?> ReadCustomerNoteAsync(
-        NpgsqlDataSource dataSource, YemeksepetiWebhookInbox inbox, Guid orderId, CancellationToken cancellationToken)
+    private static async Task<(string? Note, OnlineOrderCallInfo? Call)> ReadCustomerNoteAsync(
+        NpgsqlDataSource dataSource, ProviderInbox inbox, OnlineOrderProviderRegistry providers, Guid orderId,
+        CancellationToken cancellationToken)
     {
         await using var command = dataSource.CreateCommand(
             """
             SELECT o.source,
                    (SELECT i.payload_envelope FROM online_ordering.provider_inbox i
                     WHERE i.order_id = o.order_id AND i.processing_outcome = 'OrderCreated'
-                    ORDER BY i.received_at LIMIT 1)
+                    ORDER BY i.received_at LIMIT 1),
+                   (SELECT l.provider FROM online_ordering.online_orders l WHERE l.order_id = o.order_id)
             FROM orders.orders o
             WHERE o.order_id = $1;
             """);
@@ -147,11 +152,15 @@ public static class OnlineOperationsEndpoints
             throw new OrderNotFoundException(orderId);
         if (reader.GetString(0) != "Online")
             throw new NotAnOnlineOrderException(orderId);
-        return reader.IsDBNull(1) ? null : inbox.ReadCustomerNote(reader.GetFieldValue<byte[]>(1));
+        if (reader.IsDBNull(1) || reader.IsDBNull(2) || !providers.Providers.Contains(reader.GetString(2)))
+            return (null, null);
+        var provider = providers.Get(reader.GetString(2));
+        var payload = inbox.OpenPayload(reader.GetFieldValue<byte[]>(1));
+        return (provider.ReadCustomerNote(payload), provider.ReadCallInfo(payload));
     }
 
     private static async Task AuditNoteViewAsync(
-        NpgsqlDataSource dataSource, Guid orderId, Guid userId, bool hadNote, CancellationToken cancellationToken)
+        NpgsqlDataSource dataSource, Guid orderId, Guid userId, bool hadNote, bool hadCallInfo, CancellationToken cancellationToken)
     {
         await using var command = dataSource.CreateCommand(
             """
@@ -164,7 +173,7 @@ public static class OnlineOperationsEndpoints
         command.Parameters.AddWithValue(orderId);
         command.Parameters.AddWithValue(userId);
         command.Parameters.AddWithValue(orderId.ToString("D"));
-        command.Parameters.AddWithValue(hadNote ? "{\"hadNote\":true}" : "{\"hadNote\":false}");
+        command.Parameters.AddWithValue(System.Text.Json.JsonSerializer.Serialize(new { hadNote, hadCallInfo }));
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
@@ -370,4 +379,5 @@ public sealed class OnlineOperationsExceptionFilter : IEndpointFilter
     };
 }
 
-public sealed record OnlineOrderCustomerNoteV1(string? Note);
+/// <summary>V12-TGO-005: <see cref="CallPhone"/> and <see cref="CallCode"/> are the platform's number and code to reach the customer.</summary>
+public sealed record OnlineOrderCustomerNoteV1(string? Note, string? CallPhone = null, string? CallCode = null);

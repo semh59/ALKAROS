@@ -152,9 +152,13 @@ public sealed class YemeksepetiWebhookInbox
     /// or null. It is never copied into an order (it often carries a phone number or an address); it is opened only
     /// for an authorized, audited view.
     /// </summary>
-    public string? ReadCustomerNote(byte[] payloadEnvelope)
+    public string? ReadCustomerNote(byte[] payloadEnvelope) => CustomerNoteOf(OpenPayload(payloadEnvelope));
+
+    /// <summary>V12-TGO-005: the same note read from an already opened payload (the Yemeksepeti adapter's reading).</summary>
+    public static string? CustomerNoteOf(string rawPayload)
     {
-        using var document = JsonDocument.Parse(OpenPayload(payloadEnvelope));
+        ArgumentNullException.ThrowIfNull(rawPayload);
+        using var document = JsonDocument.Parse(rawPayload);
         if (!document.RootElement.TryGetProperty("comment", out var comment) || comment.ValueKind != JsonValueKind.String)
             return null;
         var text = new string(comment.GetString()!.Where(c => !char.IsControl(c)).ToArray()).Trim();

@@ -101,14 +101,27 @@ export async function cancelOnlineOrder(terminalId: string, order: OnlineOperati
 }
 
 /**
- * V12-RMD-007: the customer's note is kept encrypted on the server and opened on purpose; every opening is audited
- * there. Null when the order carried no note.
+ * V12-TGO-005: what an opened order note holds — the customer's note and, when the platform gives them, its number and
+ * code to reach the customer through it (not the customer's own number).
  */
-export async function loadCustomerNote(terminalId: string, order: OnlineOperationsOrder, fetcher: typeof fetch = fetch): Promise<string | null> {
+export interface CustomerNote {
+  note: string | null;
+  callPhone: string | null;
+  callCode: string | null;
+}
+
+/**
+ * V12-RMD-007: the customer's note is kept encrypted on the server and opened on purpose; every opening is audited
+ * there.
+ */
+export async function loadCustomerNote(terminalId: string, order: OnlineOperationsOrder, fetcher: typeof fetch = fetch): Promise<CustomerNote> {
   const response = await call(`${base(terminalId)}/online-operations/orders/${encodeURIComponent(order.orderId)}/customer-note`,
     undefined, "Müşteri notu açılamadı.", fetcher);
-  const body = await response.json() as { note?: string | null };
-  return body.note ?? null;
+  const body = await response.json() as { note?: string | null; callPhone?: string | null; callCode?: string | null };
+  const callPhone = body.callPhone ?? null;
+  const callCode = body.callCode ?? null;
+  // The call information is shown only whole: a number without its code (or the reverse) cannot reach the customer.
+  return { note: body.note ?? null, callPhone: callPhone && callCode ? callPhone : null, callCode: callPhone && callCode ? callCode : null };
 }
 
 // Every server value shown to a person goes through these dictionaries (docs/UI_STYLE_GUIDE.md);

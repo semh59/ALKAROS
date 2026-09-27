@@ -1,7 +1,7 @@
 # V12-TGO-005 - Uber Eats geçiş modelindeki sipariş alanlarını destekle
 
 - Task ID: V12-TGO-005
-- Status: InProgress
+- Status: Done
 - Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: integration
 - Surface state: Planned

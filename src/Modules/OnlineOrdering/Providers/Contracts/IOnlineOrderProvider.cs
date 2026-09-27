@@ -25,6 +25,12 @@ public enum OnlineCancellationReason
 /// <summary>An item as the platform identifies it on a status update.</summary>
 public sealed record OnlineOrderLineReference(string Sku, decimal Quantity);
 
+/// <summary>
+/// V12-TGO-005: how staff reach the customer through the platform: call <see cref="Phone"/> (the platform's number,
+/// which may change per order) and enter <see cref="PinCode"/>. Neither is the customer's own number.
+/// </summary>
+public sealed record OnlineOrderCallInfo(string Phone, string PinCode);
+
 /// <summary>A local status change the platform must hear about; queued in the caller's transaction.</summary>
 public sealed record OnlineOrderStatusRequest(
     string ExternalOrderId,
@@ -73,6 +79,15 @@ public interface IOnlineOrderProvider
     Task OrderAcceptedAsync(
         Guid orderId, string externalOrderId, NpgsqlConnection connection, NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    /// <summary>
+    /// V12-TGO-005: the customer's order note in a stored payload (control characters removed, bounded), or null. It is
+    /// only ever opened on purpose by staff and audited; it is never copied into an order.
+    /// </summary>
+    string? ReadCustomerNote(string rawPayload) => null;
+
+    /// <summary>V12-TGO-005: how to call the customer through the platform, when the platform gives it; null otherwise.</summary>
+    OnlineOrderCallInfo? ReadCallInfo(string rawPayload) => null;
 }
 
 /// <summary>The registered platforms by identity.</summary>

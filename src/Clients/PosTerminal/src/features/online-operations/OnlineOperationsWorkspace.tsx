@@ -54,6 +54,8 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
   // V12-RMD-007: which order's customer note is open, and its text ("" while loading, null when there is none).
   const [noteOrderId, setNoteOrderId] = useState<string>();
   const [noteText, setNoteText] = useState<string | null>("");
+  // V12-TGO-005: the platform's number and code to call the customer, when the order's platform gives them.
+  const [noteCall, setNoteCall] = useState<{ phone: string; code: string } | null>(null);
   const headingId = useId();
   const reasonId = useId();
 
@@ -99,9 +101,12 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
   const openNote = async (order: OnlineOperationsOrder) => {
     setNoteOrderId(order.orderId);
     setNoteText("");
+    setNoteCall(null);
     setActionError(undefined);
     try {
-      setNoteText(await loadCustomerNote(terminalId, order));
+      const opened = await loadCustomerNote(terminalId, order);
+      setNoteText(opened.note);
+      setNoteCall(opened.callPhone && opened.callCode ? { phone: opened.callPhone, code: opened.callCode } : null);
     } catch (reason) {
       setNoteOrderId(undefined);
       setActionError(reason instanceof OnlineOperationsApiError ? reason.message : "Müşteri notu açılamadı.");
@@ -204,6 +209,11 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
               {noteOrderId === order.orderId && (
                 <p className="online-ops__note" role="status" aria-live="polite">
                   {noteText === "" ? "Müşteri notu açılıyor…" : noteText ?? "Müşteri notu yok."}
+                </p>
+              )}
+              {noteOrderId === order.orderId && noteText !== "" && noteCall && (
+                <p className="online-ops__note">
+                  Müşteriye ulaşmak için {noteCall.phone} numarasını arayın, sonra müşteri arama kodunu tuşlayın: <strong>{noteCall.code}</strong>
                 </p>
               )}
 

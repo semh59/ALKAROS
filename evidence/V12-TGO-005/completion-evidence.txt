@@ -1,0 +1,48 @@
+V12-TGO-005 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 869e62e7.
+UNVERIFIED DRAFT under the C106 waiver: checked against the public document, not against Trendyol Go / Uber Eats.
+
+Source read 2026-09-27 (built-in browser): developers.tgoapps.com/en/docs/uber-eats-migration and
+.../uber-eats-migration/meal-uber-eats-migration-changes (changelog 2026-09-02, 2026-09-14): first phase Bilecik only;
+dynamic callCenterPhone/address.phone and address.pinCode (8 digits Uber, 11-digit orderNumber for TGO orders);
+orderCode 3 -> 5 alphanumeric; automatic Invoiced ("sending /invoiced again ... must not result in an error");
+apartmentNumber/floor/doorNumber masked as "TGO Yemek", full address as free text in address1 (not to be parsed);
+customer.id changes, coupon empty (promotions instead), userInformation.appName "UberEats"; review services 403.
+
+Changes:
+- 5-character codes and masked address fields: the intake never read address fields and takes orderCode as a display
+  code of up to 64 characters; now proven with the document's transition model (order notes "Trendyol Go 4D5AC"; no
+  address, name or phone in the order or its processing record).
+- Automatic Invoiced: a 409 answer to invoiced counts as already invoiced; any other failure, and a 409 on any other
+  call, still fails the delivery (the V12-TGO-003 test now uses a 500 for its failure case).
+- Dynamic phone and PIN: IOnlineOrderProvider gained ReadCustomerNote/ReadCallInfo (default: nothing). Trendyol Go reads
+  customerNote, callCenterPhone (else address.phone) and address.pinCode (digits only; a phone of digits, spaces,
+  + - ( ) only). Yemeksepeti reads its comment through the same point (also closes V12-TGO-002's limit that a Trendyol
+  Go order showed no note). The audited customer-note endpoint returns callPhone/callCode; its audit metadata records
+  hadCallInfo. PosTerminal shows, only when both are given: "Müşteriye ulaşmak için {telefon} numarasını arayın, sonra
+  müşteri arama kodunu tuşlayın: {kod}".
+- Promotions without coupon: the platform total is compared only when every promotion amount is zero (V12-TGO-002 rule).
+
+Commands (exit 0): see completion-commands.txt.
+
+Mutations (per iteration: backup, mutate, test, restore, cmp verified):
+KILLED X1 automatic invoiced breaks delivery
+KILLED X2 every conflict ignored
+KILLED X3 non-digit code accepted
+KILLED X4 no fallback to address phone
+KILLED X5 any phone text accepted
+KILLED X6 call info not read
+KILLED X7 call info opening not audited
+KILLED X8 Yemeksepeti note no longer read
+KILLED X9 TGO note field wrong
+SURVIVED/ERROR X10 half call info shown
+KILLED X11 call info never shown
+KILLED X10b API returns half call info
+Result: 11/12 killed. X10 survived as an equivalent mutant: the API function already drops half of the call information
+(a number without its code or the reverse), so the screen's own second guard cannot change what is shown; X10b mutates
+that API guard and is killed by a test added for it.
+
+Honest limits:
+- Review and comment services are not used by ALKAROS, so their 403 needs no handling here.
+- customer.id and appName are not read anywhere, so their changes need no handling.
+- Nothing has been checked against a real Bilecik store or an Uber Eats order.
