@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1400,
-  "markdown_line_count": 107165,
-  "markdown_byte_count": 6171343,
+  "markdown_file_count": 1401,
+  "markdown_line_count": 107243,
+  "markdown_byte_count": 6175637,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F0E2EE0C4B7D3AC80705043C810A77B7F68EB68CFB173B18D44863294A2D05DC",
-      "lines": 2676,
-      "bytes": 391602,
+      "sha256": "337612DC0CCB9C2C758239E817A1B66619B5B74552BE72EE6FDFE74AEDBECAA8",
+      "lines": 2677,
+      "bytes": 391779,
       "utf8": true
     },
     {
@@ -7669,6 +7669,13 @@
       "sha256": "30BB3979310A7013C774D81029997ADCDA6CE77B3FE549F2FE06FEF4EF7B9D16",
       "lines": 72,
       "bytes": 3851,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-358-credential-rotation-mechanism-investigated.md",
+      "sha256": "D848BF16DF6270661EF0ECC1E9C246AF5C145010FD0D79A9A779765E076D93FE",
+      "lines": 77,
+      "bytes": 4117,
       "utf8": true
     },
     {
