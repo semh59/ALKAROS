@@ -19,7 +19,7 @@ Modül-modül, kalıcı denetim süreci (2026-09-27 kararı). Kurallar:
 | 4 | WaiterPwa | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-363; diğer modüllere göre en olgun çıktı |
 | 5 | PosTerminal — Cashier.tsx | Tamamlandı | 2 | 2 | 2026-09-27 | V1-RMD-364; ayrıca axe-core test kapsama boşluğu kapatıldı |
 | 6 | PosTerminal — workspace.tsx + tables | Tamamlandı | 0 | 0 | 2026-09-27 | V1-RMD-365; gerçek bulgu yok, kod tabanının en olgun köşesi |
-| 7 | PosTerminal — billing | Bekliyor | - | - | - | - |
+| 7 | PosTerminal — billing | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-366; yanlış hata sınıfı kontrolü (V1-RMD-114 sınıfından) |
 | 8 | PosTerminal — catalog | Bekliyor | - | - | - | - |
 | 9 | PosTerminal — kitchen-operations | Bekliyor | - | - | - | - |
 | 10 | PosTerminal — pending-checks | Bekliyor | - | - | - | - |

@@ -231,6 +231,68 @@ describe("workspace route gating uses granular permission codes, not the removed
 });
 
 /**
+ * V1-RMD-366 (module-by-module UI audit, 2026-09-27): BillingRoute's load()
+ * checked only `reason instanceof ApiError` for the message it shows, but
+ * billingApi.ts's real client throws its own BillingSplitApiError - a
+ * completely different class. A genuine backend failure (not just a
+ * network drop or a bare 409) was silently replaced by the generic
+ * fallback text, hiding the server's own Turkish reason from the cashier.
+ */
+describe("workspace /billing route surfaces the real backend error message", () => {
+  let root: Root | null = null;
+
+  async function render(element: ReactElement) {
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(element));
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("shows the split-design endpoint's own error message, not the generic fallback", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/split-design")) {
+        // Not 409/401/0: those map to states (stale/unauthorized/offline)
+        // whose own StateMessage never renders `message` at all - a
+        // deliberate design choice for "get fresh data" wording, not part
+        // of what this test is pinning. Any other status falls to the
+        // generic "error" state, whose StateMessage does show it.
+        return new Response(
+          JSON.stringify({ error: { code: "BILL_ALREADY_SETTLED", message: "Bu hesap zaten kapatılmış." } }),
+          { status: 422, headers: { "Content-Type": "application/json" } },
+        );
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+    window.history.replaceState({}, "", "/billing?billId=55555555-5555-5555-5555-555555555555");
+    await render(
+      <RouterProvider>
+        <ExperiencePage
+          terminalId="66666666-6666-6666-6666-666666666666"
+          displayName="Test Kullanıcı"
+          capabilities={["bills.split"]}
+          path="/billing"
+          backendStatus="online"
+          onLogout={async () => {}}
+        />
+      </RouterProvider>,
+    );
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("Bu hesap zaten kapatılmış.");
+    expect(document.body.textContent).not.toContain("Hesap bölme verisi alınamadı.");
+  });
+});
+
+/**
  * V1-RMD-223: found by an independent audit (2026-09-16) - KitchenRoute's
  * onLoadPerformanceReport prop was a fresh inline closure every render, and
  * `client` itself is a fresh object every 8s poll cycle (load() always

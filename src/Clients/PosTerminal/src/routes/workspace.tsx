@@ -8,7 +8,7 @@ import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellN
 import { TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
 import { PendingChecksWorkspace } from "../features/pending-checks";
 import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
-import { BillSplitWorkspace, createBillFromOrder, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
+import { BillingSplitApiError, BillSplitWorkspace, createBillFromOrder, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
 import { CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
 import { KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
 import { SystemHealthWorkspace, type SystemHealthState } from "../features/system-health";
@@ -344,7 +344,12 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
     } catch (reason) {
       const status = (reason as { status?: number }).status;
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
-      setErrorMessage(reason instanceof ApiError ? reason.message : "Hesap bölme verisi alınamadı.");
+      // V1-RMD-366 (module-by-module UI audit): billingApi.ts throws its OWN
+      // error class (BillingSplitApiError), not the shared ApiError - the
+      // same TableWorkspace.tsx/tableApi.ts gap V1-RMD-114 already closed
+      // for table actions. Checking only ApiError silently discarded the
+      // backend's own Turkish message for every real billing-split failure.
+      setErrorMessage(reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : "Hesap bölme verisi alınamadı.");
     }
   }, [client, orderParam, terminalId, billId]);
 

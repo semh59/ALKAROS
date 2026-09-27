@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { ApiError } from "../../api";
+import { BillingSplitApiError } from "./billingApi";
 import { Button, StateMessage, ValidationSummary } from "../../design-system";
 import { commonActions, stateText } from "../../strings";
 import {
@@ -97,7 +98,12 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
       setDesign(next); setEqualOwners(loaded.equalOwners); setItemDraft(loaded.itemDraft); setAmountDraft(loaded.amountDraft); setDirty(false);
       setFeedback({ tone: "success", message: "Hesap dağıtım tasarımı sunucuda kaydedildi. Ödeme işlemi yapılmadı." });
     } catch (reason) {
-      const message = reason instanceof ApiError ? reason.message : "Dağıtım kaydedilemedi.";
+      // V1-RMD-366 (module-by-module UI audit): billingApi.ts throws its own
+      // BillingSplitApiError, not the shared ApiError this used to check
+      // alone - the real backend Turkish message (a genuine validation
+      // failure, not just a 409) was silently replaced with the generic
+      // fallback below.
+      const message = reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : "Dağıtım kaydedilemedi.";
       setFeedback({ tone: /409|concurrent|conflict|version/i.test(message) ? "conflict" : "error", message: /409|concurrent|conflict|version/i.test(message) ? "Hesap sunucuda değişti. Taslağınız korundu; güncel hesabı açıp karşılaştırın." : message });
     } finally { setBusy(false); }
   };
@@ -107,7 +113,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
     try {
       const next = await onClear(design); setDesign(next); setEqualOwners([]); setItemDraft({}); setAmountDraft({}); setDirty(false);
       setFeedback({ tone: "success", message: "Dağıtım tasarımı sıfırlandı. Hesap veya ödeme durumu değişmedi." });
-    } catch (reason) { setFeedback({ tone: "error", message: reason instanceof ApiError ? reason.message : "Dağıtım sıfırlanamadı." }); }
+    } catch (reason) { setFeedback({ tone: "error", message: reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : "Dağıtım sıfırlanamadı." }); }
     finally { setBusy(false); }
   };
 

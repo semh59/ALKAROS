@@ -5,6 +5,7 @@ import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "../../api";
+import { BillingSplitApiError } from "./billingApi";
 import { BillSplitWorkspace } from "./BillSplitWorkspace";
 import type { BillSplitDesign, BillSplitWorkspaceProps, SplitOwnerOption } from "./models";
 
@@ -72,6 +73,21 @@ describe("bill split workspace", () => {
     await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Dağıtımı kaydet")!);
     expect(document.querySelector('[role="alert"]')?.textContent).toContain("Taslağınız korundu");
     expect(checks[0].checked).toBe(true); expect(checks[1].checked).toBe(true);
+  });
+
+  it("shows the backend's own Turkish message for a real BillingSplitApiError, not the generic fallback", async () => {
+    // V1-RMD-366 (module-by-module UI audit, 2026-09-27): onSave/onClear's
+    // REAL failures reach this component as billingApi.ts's own
+    // BillingSplitApiError, not the shared ApiError the V1-RMD-114 test
+    // above checks - that test's own mock (`new ApiError(...)`) never
+    // actually exercised this file's `instanceof` check against the class
+    // production code really throws, which is why this went unnoticed.
+    const onSave = vi.fn().mockRejectedValue(new BillingSplitApiError(422, "ITEM_OVER_ALLOCATED", "Bir kalemin dağıtılan miktarı sunucuda artık geçerli değil."));
+    await render(<BillSplitWorkspace {...props({ onSave })} />);
+    const checks = [...document.querySelectorAll<HTMLInputElement>('.bill-split__owner-picker input')];
+    await click(checks[0]); await click(checks[1]);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Dağıtımı kaydet")!);
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain("Bir kalemin dağıtılan miktarı sunucuda artık geçerli değil.");
   });
 
   it("has no critical or serious automated accessibility findings", async () => {
