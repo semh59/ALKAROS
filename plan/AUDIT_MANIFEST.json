@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1382,
-  "markdown_line_count": 105970,
-  "markdown_byte_count": 6105362,
+  "markdown_file_count": 1383,
+  "markdown_line_count": 106031,
+  "markdown_byte_count": 6108656,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "158806FD46EAB301A3337867A294A2637274039C572E192A955C3953DAE7684F",
-      "lines": 2658,
-      "bytes": 388604,
+      "sha256": "3ECE2E6292EDDA0FFE5DB5F22CA920DF01720F5F712C58EBF1AAC4BCA52ABDB6",
+      "lines": 2659,
+      "bytes": 388782,
       "utf8": true
     },
     {
@@ -7585,6 +7585,13 @@
       "sha256": "5D3190C6ABB900ABB9C275A0302106FDA25F79664D47654C9409A157EDA274E3",
       "lines": 87,
       "bytes": 5542,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-347-qnb-test-connection-production-url-override.md",
+      "sha256": "F6391BF629797E87885372C159A24010D61677FBFF251123DA2093887D8330C1",
+      "lines": 60,
+      "bytes": 3116,
       "utf8": true
     },
     {
