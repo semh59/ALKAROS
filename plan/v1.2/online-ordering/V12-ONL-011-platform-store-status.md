@@ -1,8 +1,8 @@
 # V12-ONL-011 - Restoranı platformda aç, kapat, yoğun moduna al
 
 - Task ID: V12-ONL-011
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: integration
 - Surface state: Planned
 
