@@ -1,8 +1,8 @@
 # V12-OUI-006 - Online Yemek Sorunlar sekmesi
 
 - Task ID: V12-OUI-006
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: Claude Opus 5.5 (session 703155c9)
 - Work type: implementation
 - Surface state: Planned
 
@@ -21,6 +21,8 @@ eylemi (yeniden dene, çözüldü) buradan uygular. `V12-GOV-009` ile açıldı.
   - src/Clients/PosTerminal/src/features/online-hub/ (V12-OUI-004) — sekmenin yerleştirilmesi.
   - src/Host/Experience/Reconciliation/ (V12-REC-001) — online vakaların listelenmesi.
   - tests/Host/Experience/Reconciliation/ — testler.
+  - src/Clients/PosTerminal/src/routes/ — Sorunlar yolunun yetkiye göre açılması.
+  - src/Host/DualScreen/DualScreenApplication.cs — kasa oturumuyla çalışan uç noktaların kaydı.
 
 ## In scope
 
