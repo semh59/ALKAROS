@@ -199,11 +199,27 @@ public sealed class MaintenanceJobHostedService : BackgroundService
 {
     public static readonly TimeSpan InitialDelay = TimeSpan.FromMinutes(10);
 
-    private readonly MaintenanceJobRunner _runner;
+    // V1-RMD-351 (independent 2026-09-26 audit, a low-severity finding): this loop's own error-tolerance
+    // pattern used to differ from every other hosted service in this codebase (DatabaseHealthProbeHostedService,
+    // LowStockAlertHostedService, ...), all of which wrap their per-tick work in a broad catch so one bad tick
+    // never stops the whole loop. Here, MaintenanceJobRunner.RunAsync already catches a JOB's own failure
+    // (records it as "Failed", never rethrows), so this gap was narrow - a bug in the RUNNER's own surrounding
+    // machinery (not a specific job), not a job failure itself. But ExecuteAsync's Task.WhenAll means even that
+    // narrow gap, if it ever fired, would silently stop EVERY maintenance job (not just the one that hit it)
+    // for the rest of the process's life, since BackgroundService never restarts a faulted ExecuteAsync.
+    private static readonly Action<ILogger, string, Exception> LogLoopIterationFailed =
+        LoggerMessage.Define<string>(
+            LogLevel.Error,
+            new EventId(5930, nameof(LogLoopIterationFailed)),
+            "Maintenance job loop for '{JobName}' failed unexpectedly outside the job's own error handling; retrying after the interval.");
 
-    public MaintenanceJobHostedService(MaintenanceJobRunner runner)
+    private readonly MaintenanceJobRunner _runner;
+    private readonly ILogger<MaintenanceJobHostedService> _logger;
+
+    public MaintenanceJobHostedService(MaintenanceJobRunner runner, ILogger<MaintenanceJobHostedService> logger)
     {
         _runner = runner ?? throw new ArgumentNullException(nameof(runner));
+        _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -214,14 +230,35 @@ public sealed class MaintenanceJobHostedService : BackgroundService
         try
         {
             await Task.Delay(InitialDelay, stoppingToken).ConfigureAwait(false);
-            while (!stoppingToken.IsCancellationRequested)
-            {
-                await _runner.RunAsync(job.Name, stoppingToken).ConfigureAwait(false);
-                await Task.Delay(job.Interval, stoppingToken).ConfigureAwait(false);
-            }
         }
         catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
         {
+            return;
+        }
+
+        while (!stoppingToken.IsCancellationRequested)
+        {
+            try
+            {
+                await _runner.RunAsync(job.Name, stoppingToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                return;
+            }
+            catch (Exception ex)
+            {
+                LogLoopIterationFailed(_logger, job.Name, ex);
+            }
+
+            try
+            {
+                await Task.Delay(job.Interval, stoppingToken).ConfigureAwait(false);
+            }
+            catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+            {
+                return;
+            }
         }
     }
 }
