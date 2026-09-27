@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1417,
-  "markdown_line_count": 108461,
-  "markdown_byte_count": 6243629,
+  "markdown_file_count": 1418,
+  "markdown_line_count": 108535,
+  "markdown_byte_count": 6247227,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "3034E4C42FC9DB42BB350B97710D6B773E53D826EB1880C033104DA01B409C6F",
-      "lines": 2692,
-      "bytes": 394232,
+      "sha256": "E8BD38DC97E1B8B1A8949707C6259425EEE6AE4584F5AD8D6AD62A2B11079BCA",
+      "lines": 2693,
+      "bytes": 394396,
       "utf8": true
     },
     {
@@ -7784,6 +7784,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-374-posterminal-nfc-customerdisplay-ui-audit.md",
+      "sha256": "A4B91A5EED9C54BB5AED699BA9B453587653DEFA43FC2EDF367799CCF2F34D20",
+      "lines": 73,
+      "bytes": 3357,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -7967,9 +7974,9 @@
     },
     {
       "path": "plan/v1/ui-audit/UI_AUDIT_PROGRESS.md",
-      "sha256": "462D0987B6BE815030A6D5A0C0095C6C786EA980C5FA5B188ABF7FC63A67BD2E",
+      "sha256": "AD14205E95BAED4E00E19A0EDCC68D9534785C56F57F0FAA3F69184D958900A8",
       "lines": 32,
-      "bytes": 3066,
+      "bytes": 3143,
       "utf8": true
     },
     {
