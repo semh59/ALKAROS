@@ -2585,6 +2585,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-354-cloudflared-graceful-shutdown.md` | ✅ | `53395D46FA37A906A4E11383A2485C2929153712FFB98B720DCA55B39092A9D2` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-355-cashier-parked-ticket-confirm-modal.md` | ✅ | `CCECF420FDC26519F8F7389A07022F2A5AC9470E920C638872202F6F32FD7685` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-356-cashier-accessibility-keyboard-and-labels.md` | ✅ | `AD208F4E8CFA718F14B2CEC6CB49C066192C4F764F4D4164F99B5F3DA27746F1` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-357-nfc-accept-stock-lock-investigated.md` | ✅ | `30BB3979310A7013C774D81029997ADCDA6CE77B3FE549F2FE06FEF4EF7B9D16` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2671,5 +2672,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1399` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1400` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

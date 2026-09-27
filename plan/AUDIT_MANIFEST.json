@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1399,
-  "markdown_line_count": 107092,
-  "markdown_byte_count": 6167323,
+  "markdown_file_count": 1400,
+  "markdown_line_count": 107165,
+  "markdown_byte_count": 6171343,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "2F808D440A65821C28F68AFECD1057EE66FD0575DB2A9F689BE480070F31E3AE",
-      "lines": 2675,
-      "bytes": 391433,
+      "sha256": "F0E2EE0C4B7D3AC80705043C810A77B7F68EB68CFB173B18D44863294A2D05DC",
+      "lines": 2676,
+      "bytes": 391602,
       "utf8": true
     },
     {
@@ -7662,6 +7662,13 @@
       "sha256": "AD208F4E8CFA718F14B2CEC6CB49C066192C4F764F4D4164F99B5F3DA27746F1",
       "lines": 79,
       "bytes": 4799,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-357-nfc-accept-stock-lock-investigated.md",
+      "sha256": "30BB3979310A7013C774D81029997ADCDA6CE77B3FE549F2FE06FEF4EF7B9D16",
+      "lines": 72,
+      "bytes": 3851,
       "utf8": true
     },
     {
