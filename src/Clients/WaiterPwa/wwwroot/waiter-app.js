@@ -415,9 +415,21 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     el.pendingBanner.addEventListener('click', openPendingSheet);
     el.ribbonQueue.addEventListener('click', openFailedOrdersSheet);
 
+    // V1-RMD-379 (module-by-module UI audit round 2, T8 - mobil/performans): renderProducts()
+    // rebuilds the whole visible list (a full innerHTML replace, draftQuantityOf's own scan per
+    // product) on every single keystroke with no debounce - the same class of gap Cashier's own
+    // vanilla search already had fixed for it (V1-RMD-360). A restaurant with a large catalog
+    // (a few hundred products) re-running that on a modest phone CPU on every character typed is
+    // a real stutter risk; 120ms matches Cashier's own choice (fast enough a human typist still
+    // sees results feel instant).
+    let searchDebounceTimer = null;
     el.productSearch.addEventListener('input', (event) => {
-      state.search = event.target.value;
-      renderProducts();
+      const value = event.target.value;
+      window.clearTimeout(searchDebounceTimer);
+      searchDebounceTimer = window.setTimeout(() => {
+        state.search = value;
+        renderProducts();
+      }, 120);
     });
 
     el.categoryChips.addEventListener('click', (event) => {
