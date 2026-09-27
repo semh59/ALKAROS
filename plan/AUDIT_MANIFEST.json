@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1385,
-  "markdown_line_count": 106164,
-  "markdown_byte_count": 6115651,
+  "markdown_file_count": 1386,
+  "markdown_line_count": 106230,
+  "markdown_byte_count": 6119048,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2549,9 +2549,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D1FD3B2B67BBDD3E84A36727F0EE652BE8B590B4F55671619514C34A635F5471",
-      "lines": 2661,
-      "bytes": 389110,
+      "sha256": "CD3E6A5A35C92B4DE2D391576D50258AECDC9FA3870DB7BEF317C49668A16467",
+      "lines": 2662,
+      "bytes": 389280,
       "utf8": true
     },
     {
@@ -7606,6 +7606,13 @@
       "sha256": "4668B3E04773001C469C6458FB7523D20A4D3ADBB835D2B6881B2D190E95F94C",
       "lines": 64,
       "bytes": 3112,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-350-localstorage-setitem-error-handling.md",
+      "sha256": "DC45B2C3C941AF81A30A72121A0E3789A1DBEBE106BBEE8BBF47F4FF4F945877",
+      "lines": 65,
+      "bytes": 3227,
       "utf8": true
     },
     {
