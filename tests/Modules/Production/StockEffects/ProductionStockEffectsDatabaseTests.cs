@@ -91,7 +91,8 @@ public sealed class ProductionStockEffectsDatabaseTests : IClassFixture<Producti
         _service = new ProductionStockEffectService(
             db.DataSource,
             new PostgresStockBalanceRepository(db.DataSource),
-            new PostgresStockMovementRepository(db.DataSource));
+            new PostgresStockMovementRepository(db.DataSource),
+            new ALKAROS.Measurements.UnitConverter());
     }
 
     [Fact]
@@ -423,5 +424,68 @@ public sealed class ProductionStockEffectsDatabaseTests : IClassFixture<Producti
         var act = () => _service.ExecuteBatchStockEffectsAsync(cmd);
         await act.Should().ThrowAsync<InvalidProductionStockEffectException>()
             .WithMessage("*cancelled*");
+    }
+
+    /// <summary>
+    /// V1-RMD-344 (independent 2026-09-26 audit, orta seviye bulgu): this module's own
+    /// hardcoded ResolveConversionFactorAsync only knew metric mass/volume pairs directly -
+    /// anything else (including two different Count-dimension units, like "adet" vs "piece")
+    /// fell through to a raw recipe.unit_conversions lookup that would throw
+    /// InvalidProductionStockEffectException with no matching row. The shared IUnitConverter
+    /// this now delegates to already knows Count-dimension units natively (StandardUnits.All),
+    /// so this succeeds with ZERO custom conversion row seeded - proving the fix actually
+    /// replaced the duplicated logic, not just kept it working by accident.
+    /// </summary>
+    [Fact]
+    public async Task ACountDimensionCrossUnitIngredientConvertsThroughTheSharedUnitConverterWithNoCustomDbRow()
+    {
+        var locationId = Guid.NewGuid();
+        var eggId = Guid.NewGuid();
+        var recipeId = Guid.NewGuid();
+        var versionId = Guid.NewGuid();
+
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using (var cmd = new NpgsqlCommand(
+            """
+            INSERT INTO inventory.stock_locations (id, code, name, location_type, is_active, row_version)
+            VALUES (@loc, @locCode, 'Count Unit Test Kitchen', 'Kitchen', true, 1);
+
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, is_active, row_version)
+            VALUES (@item, @itemCode, 'Eggs', 'RawMaterial', 'piece', true, 1);
+
+            INSERT INTO inventory.stock_balances (stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity, reserved_quantity, available_quantity, updated_at, row_version)
+            VALUES (@bal, @item, @loc, 100.0000, 0, 100.0000, NOW(), 1);
+
+            INSERT INTO recipe.recipes (id, code, name, created_at, row_version)
+            VALUES (@recipeId, @recipeCode, 'Egg Dish', NOW(), 1);
+
+            INSERT INTO recipe.recipe_versions (id, recipe_id, version_number, status, yield_quantity, yield_unit_code, created_at, row_version)
+            VALUES (@versionId, @recipeId, 1, 'Active', 1.0000, 'portion', NOW(), 1);
+
+            INSERT INTO recipe.recipe_ingredients (id, recipe_version_id, ingredient_item_id, quantity, unit_code, loss_percentage, created_at)
+            VALUES (@ing, @versionId, @item, 2.0000, 'adet', 0.00, NOW());
+            """, conn))
+        {
+            cmd.Parameters.AddWithValue("loc", locationId);
+            cmd.Parameters.AddWithValue("locCode", "LOC-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("item", eggId);
+            cmd.Parameters.AddWithValue("itemCode", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("bal", Guid.NewGuid());
+            cmd.Parameters.AddWithValue("recipeId", recipeId);
+            cmd.Parameters.AddWithValue("recipeCode", "RCP-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("versionId", versionId);
+            cmd.Parameters.AddWithValue("ing", Guid.NewGuid());
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        var batchId = await CreateBatchAsync(versionId, locationId, plannedQuantity: 1.0m);
+        var result = await _service.ExecuteBatchStockEffectsAsync(new ExecuteBatchStockEffectsCommand(
+            BatchId: batchId, ActualQuantity: 1.0m, SourceLocationId: locationId));
+
+        var consumption = result.Consumptions.Should().ContainSingle(c => c.StockItemId == eggId).Subject;
+        consumption.NativeQuantity.Should().Be(2.0m);
+        consumption.NativeUnitCode.Should().Be("adet");
+        consumption.Quantity.Should().Be(2.0000m);
+        consumption.UnitCode.Should().Be("piece");
     }
 }

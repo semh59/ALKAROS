@@ -32,4 +32,5 @@ public sealed class InsufficientProductionStockException : ProductionStockEffect
 public sealed class InvalidProductionStockEffectException : ProductionStockEffectException
 {
     public InvalidProductionStockEffectException(string message) : base(message) { }
+    public InvalidProductionStockEffectException(string message, Exception innerException) : base(message, innerException) { }
 }

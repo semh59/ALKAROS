@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ALKAROS.Inventory.BalanceProjection;
@@ -16,15 +17,25 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
     private readonly NpgsqlDataSource _dataSource;
     private readonly IStockBalanceRepository _balanceRepo;
     private readonly IStockMovementRepository _movementRepo;
+    private readonly ALKAROS.Measurements.IUnitConverter _unitConverter;
 
     public ProductionStockEffectService(
         NpgsqlDataSource dataSource,
         IStockBalanceRepository balanceRepo,
-        IStockMovementRepository movementRepo)
+        IStockMovementRepository movementRepo,
+        ALKAROS.Measurements.IUnitConverter unitConverter)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _balanceRepo = balanceRepo ?? throw new ArgumentNullException(nameof(balanceRepo));
         _movementRepo = movementRepo ?? throw new ArgumentNullException(nameof(movementRepo));
+        // V1-RMD-344 (independent 2026-09-26 audit, orta seviye bulgu): replaces this class's own
+        // duplicated ResolveConversionFactorAsync (a hardcoded metric-only shortlist plus a raw
+        // recipe.unit_conversions query) with the shared, Singleton IUnitConverter every other
+        // module already injects (V1-RMD-319/K7) - this module was the one caller still bypassing
+        // it, with its own copy that could silently drift from the central built-in table and
+        // never saw a custom conversion registered only in memory (RegisterConversion), only
+        // ones already persisted to the same table.
+        _unitConverter = unitConverter ?? throw new ArgumentNullException(nameof(unitConverter));
     }
 
     public async Task<ProductionStockEffectResult> ExecuteBatchStockEffectsAsync(
@@ -177,8 +188,20 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
             var wasteFactor = ing.LossPercentage / 100.0m;
             var effectiveNativeQuantity = Math.Round(nativeQuantity * (1.0m + wasteFactor), 4, MidpointRounding.AwayFromZero);
 
-            var conversionFactor = await ResolveConversionFactorAsync(conn, tx, ing.RecipeUnitCode, ing.StockTrackingUnitCode, ct);
-            var effectiveStockQuantity = Math.Round(effectiveNativeQuantity * conversionFactor, 4, MidpointRounding.AwayFromZero);
+            decimal effectiveStockQuantity;
+            try
+            {
+                effectiveStockQuantity = Math.Round(
+                    _unitConverter.Convert(effectiveNativeQuantity, ing.RecipeUnitCode, ing.StockTrackingUnitCode),
+                    4, MidpointRounding.AwayFromZero);
+            }
+            catch (Exception exception) when (
+                exception is ALKAROS.Measurements.UnknownUnitException
+                or ALKAROS.Measurements.IncompatibleUnitDimensionException)
+            {
+                throw new InvalidProductionStockEffectException(
+                    $"No unit conversion factor found between '{ing.RecipeUnitCode}' and '{ing.StockTrackingUnitCode}'.", exception);
+            }
 
             plannedConsumptions.Add(new PlannedConsumption(
                 StockItemId: ing.StockItemId,
@@ -189,8 +212,18 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
                 StockUnitCode: ing.StockTrackingUnitCode));
         }
 
+        // V1-RMD-344 (independent 2026-09-26 audit, orta seviye bulgu): before this, the FOR
+        // UPDATE lock below was taken in whatever order the recipe's own ingredient rows
+        // happen to list (ri.sort_order) - the same location for every ingredient here, but a
+        // different recipe consuming an overlapping set of stock items in a different
+        // sort_order sequence could lock them in the opposite order, deadlocking two
+        // concurrent batches against each other. Sorted into one global order first, matching
+        // OrderStockConsumptionService.LockStockRowsAsync's own established pattern (V12-RMD-003)
+        // for the exact same class of risk.
+        var lockOrderedConsumptions = plannedConsumptions.OrderBy(pc => pc.StockItemId).ToList();
+
         // 5. Atomic Stock Verification: check available_quantity for all ingredients
-        foreach (var pc in plannedConsumptions)
+        foreach (var pc in lockOrderedConsumptions)
         {
             const string balanceSql = """
                 SELECT available_quantity
@@ -525,53 +558,6 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
         }
 
         return list;
-    }
-
-    private static async Task<decimal> ResolveConversionFactorAsync(
-        NpgsqlConnection conn,
-        NpgsqlTransaction? tx,
-        string fromUnit,
-        string toUnit,
-        CancellationToken ct)
-    {
-        var f = fromUnit.Trim().ToLowerInvariant();
-        var t = toUnit.Trim().ToLowerInvariant();
-
-        if (f == t) return 1.0m;
-
-        // Standard metric conversions
-        if (f == "g" && t == "kg") return 0.001m;
-        if (f == "kg" && t == "g") return 1000m;
-        if (f == "mg" && t == "g") return 0.001m;
-        if (f == "g" && t == "mg") return 1000m;
-        if (f == "mg" && t == "kg") return 0.000001m;
-        if (f == "kg" && t == "mg") return 1000000m;
-
-        if (f == "ml" && t == "l") return 0.001m;
-        if (f == "l" && t == "ml") return 1000m;
-        if (f == "cl" && t == "l") return 0.01m;
-        if (f == "l" && t == "cl") return 100m;
-        if (f == "ml" && t == "cl") return 0.1m;
-        if (f == "cl" && t == "ml") return 10m;
-
-        // Query database unit conversions table
-        const string convSql = """
-            SELECT factor
-            FROM recipe.unit_conversions
-            WHERE from_unit_code = @from AND to_unit_code = @to AND active = true;
-            """;
-
-        await using var cmd = new NpgsqlCommand(convSql, conn, tx);
-        cmd.Parameters.AddWithValue("from", f);
-        cmd.Parameters.AddWithValue("to", t);
-        var res = await cmd.ExecuteScalarAsync(ct);
-        if (res != null && res != DBNull.Value)
-        {
-            return Convert.ToDecimal(res, CultureInfo.InvariantCulture);
-        }
-
-        throw new InvalidProductionStockEffectException(
-            $"No unit conversion factor found between '{fromUnit}' and '{toUnit}'.");
     }
 
     private sealed record IngredientRequirement(
