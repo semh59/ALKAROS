@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
+import axe from "axe-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PendingChecksWorkspace } from "./PendingChecksWorkspace";
 
@@ -160,5 +161,17 @@ describe("PendingChecksWorkspace", () => {
 
     await act(async () => { hubLifecycle.reconnected?.(); });
     expect(awaitingCalls()).toBe(before + 2);
+  });
+
+  // V1-RMD-370 (module-by-module UI audit, 2026-09-27): unlike ~13 other
+  // feature workspaces (CatalogWorkspace, BillSplitWorkspace,
+  // TableWorkspace, etc.), this file had no axe-core scan at all.
+  it("has no critical or serious axe violations", async () => {
+    document.documentElement.lang = "tr";
+    document.title = "ALKAROS bekleyen hesaplar";
+    fetchMock.mockResolvedValue(ok(sample));
+    await render();
+    const report = await axe.run(document, { rules: { "color-contrast": { enabled: false } } });
+    expect(report.violations.filter((violation) => violation.impact === "critical" || violation.impact === "serious")).toEqual([]);
   });
 });
