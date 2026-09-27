@@ -3,7 +3,7 @@
   "audit_date": "2026-07-30",
   "markdown_file_count": 1401,
   "markdown_line_count": 107243,
-  "markdown_byte_count": 6175637,
+  "markdown_byte_count": 6175689,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,7 +2556,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "337612DC0CCB9C2C758239E817A1B66619B5B74552BE72EE6FDFE74AEDBECAA8",
+      "sha256": "D5D6622F5A29B5B6937BC0D2C92244D6BD5A07B4D344057014C059E977D91803",
       "lines": 2677,
       "bytes": 391779,
       "utf8": true
@@ -8779,9 +8779,9 @@
     },
     {
       "path": "plan/v1.2/online-ordering/V12-ONL-011-platform-store-status.md",
-      "sha256": "636EA47706A4CFF15BB533A170DF7BB5DD03B9DF4ED30E84FA439E8FF7374392",
+      "sha256": "7B2DE6CC401196C945E6CEF774518285DAE08A70A065CE52F6BBD707C4AC331A",
       "lines": 69,
-      "bytes": 3216,
+      "bytes": 3268,
       "utf8": true
     },
     {
