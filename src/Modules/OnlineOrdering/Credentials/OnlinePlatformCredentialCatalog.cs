@@ -51,6 +51,8 @@ public static class OnlinePlatformCredentialCatalog
             new("webhook-secret", IsSecret: true),
             // V12-TGO-003: the preparation time reported when an order is accepted (minutes; 20 when not entered).
             new("preparation-minutes", IsSecret: false),
+            // V12-TGO-004: the store whose menu (on-sale status) is managed.
+            new("store-id", IsSecret: false),
         ]),
     ];
 

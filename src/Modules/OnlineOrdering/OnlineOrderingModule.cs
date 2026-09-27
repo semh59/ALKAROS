@@ -5,6 +5,7 @@ using ALKAROS.OnlineOrdering.Credentials;
 using ALKAROS.OnlineOrdering.Polling;
 using ALKAROS.OnlineOrdering.Providers.TrendyolGo.OrderIntake;
 using ALKAROS.OnlineOrdering.Providers.TrendyolGo.StatusSync;
+using ALKAROS.OnlineOrdering.Providers.TrendyolGo.Menu;
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.OnlineOrdering.Providers.Inbox;
 using ALKAROS.OnlineOrdering.Yemeksepeti.Provider;
@@ -85,12 +86,7 @@ public sealed class OnlineOrderingModule : IModule
         context.RegisterTransient(services => new TrendyolGoWebhookInbox(
             (ProviderInbox)services.GetService(typeof(ProviderInbox))!, PlatformSettings(services)));
         context.RegisterTransient(services => new TrendyolGoOrderNormalizer(
-            new PostgresYemeksepetiProductMappingService(
-                (NpgsqlDataSource)services.GetService(typeof(NpgsqlDataSource))!,
-                (IProductRepository)services.GetService(typeof(IProductRepository))!,
-                (IProductModifierGroupRepository)services.GetService(typeof(IProductModifierGroupRepository))!,
-                (IModifierGroupRepository)services.GetService(typeof(IModifierGroupRepository))!,
-                TrendyolGoEvents.Provider),
+            TrendyolGoMappings(services),
             (IProductRepository)services.GetService(typeof(IProductRepository))!,
             (ITaxProfileRepository)services.GetService(typeof(ITaxProfileRepository))!));
         context.RegisterSingleton<IOnlineOrderPollingSource>(services => new TrendyolGoOrderPollingSource(
@@ -105,7 +101,22 @@ public sealed class OnlineOrderingModule : IModule
             (ProviderInbox)services.GetService(typeof(ProviderInbox))!,
             PlatformSettings(services)));
         context.RegisterSingleton(TrendyolGoStatusSync.RetryProfile);
+        // V12-TGO-004: Trendyol Go's catalog (price, on-sale status) and availability channels.
+        context.RegisterSingleton(services => new TrendyolGoMenuClient(
+            new HttpClient { Timeout = TimeSpan.FromSeconds(10) }, PlatformSettings(services), TimeProvider.System));
+        context.RegisterTransient<ICatalogChannelPublisher>(services => new TrendyolGoCatalogPublisher(
+            TrendyolGoMappings(services), (TrendyolGoMenuClient)services.GetService(typeof(TrendyolGoMenuClient))!, TimeProvider.System));
+        context.RegisterTransient<IAvailabilityChannelPublisher>(services => new TrendyolGoAvailabilityPublisher(
+            TrendyolGoMappings(services), (TrendyolGoMenuClient)services.GetService(typeof(TrendyolGoMenuClient))!));
     }
+
+    /// <summary>V12-TGO-002/004: the shared mapping service reading Trendyol Go's rows.</summary>
+    private static PostgresYemeksepetiProductMappingService TrendyolGoMappings(IServiceProvider services) => new(
+        (NpgsqlDataSource)services.GetService(typeof(NpgsqlDataSource))!,
+        (IProductRepository)services.GetService(typeof(IProductRepository))!,
+        (IProductModifierGroupRepository)services.GetService(typeof(IProductModifierGroupRepository))!,
+        (IModifierGroupRepository)services.GetService(typeof(IModifierGroupRepository))!,
+        TrendyolGoEvents.Provider);
 
     private static StoredOnlinePlatformSecretProvider PlatformSettings(IServiceProvider services) => new(
         (IOnlinePlatformCredentialStore)services.GetService(typeof(IOnlinePlatformCredentialStore))!,

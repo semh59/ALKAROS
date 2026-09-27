@@ -1,0 +1,48 @@
+V12-TGO-004 completion evidence (2026-09-27, worktree ALKAROS-faz3)
+Test Postgres: localhost:56433 (postgres:18, UTF8). Baseline (InProgress) commit: 913dc6b2.
+UNVERIFIED DRAFT under the C106 waiver: calls are checked against the public document, not against Trendyol Go.
+
+Sources read 2026-09-27 (built-in browser): developers.tgoapps.com .../menu-integration/get-restaurant-menu (GET
+.../product/meal/suppliers/{supplierId}/stores/{storeId}/products), update-restaurant-product-status (PUT
+.../stores/{storeId}/products/{productId}/status ACTIVE|PASSIVE), update-price (POST .../suppliers/{supplierId}/
+products/price, 1-1000 items, batchRequestId, an unchanged repeat is refused), get-batch-request-result (GET
+.../batch-requests/{id}, status/failedItemCount/items[].failureReasons, kept 4 hours), error-codes (409 concurrent
+store change: retry; error body errors[].message).
+
+Changes:
+- TrendyolGoMenuClient: menu read, on-sale status (a 409 is sent once more), price update (<= 1000), batch result
+  (only FAILED rows or rows with reasons count as refused; rows in progress do not); errors carry the platform message.
+  New platform setting store-id ("Mağaza kimliği").
+- TrendyolGoAvailabilityPublisher ("Trendyol Go"): no stock quantity on this platform: 0 -> PASSIVE, else ACTIVE;
+  its products are the open trendyol-go mappings; enabled only when every setting including the store is entered.
+- TrendyolGoCatalogPublisher ("Trendyol Go"): the external id is only an existing trendyol-go mapping (the platform's
+  numeric product id), never made from the catalog SKU, and only if the store menu (read once per publication) has it;
+  otherwise the product is reported ExternalIdUnavailable. Publishing sends each on-sale status, then the prices in
+  chunks of 1000, and checks each batch (1 s, 2 s, 4 s): a refused row fails the publication with product id and reason
+  (recorded as its last error); a batch still running is recorded by its batch id.
+- Both channels are registered in OnlineOrderingModule (the Trendyol Go mapping service is shared with intake).
+
+Commands (exit 0): see completion-commands.txt.
+
+Mutations (per iteration: backup, mutate, test, restore, cmp verified; 13/13 killed):
+KILLED M1 sold-out product stays on sale
+KILLED M2 concurrent change not retried
+KILLED M3 concurrent change retried forever
+KILLED M4 menu not checked
+KILLED M5 refused prices ignored
+KILLED M6 rows in progress counted as refused
+KILLED M7 more than 1000 prices in one request
+KILLED M8 channel on without a store
+KILLED M9 status inverted
+KILLED M10 batch not awaited
+KILLED M11 platform message dropped
+KILLED M12 catalog channel not registered
+KILLED M13 availability channel not registered
+
+Honest limits:
+- There is no screen yet to map a Trendyol Go product id to a catalog product; until one exists the mappings must be
+  entered another way, and the catalog publication reports unmapped products as ExternalIdUnavailable.
+- After a refused row, retrying the same publication sends the same prices, which the platform refuses as a repeat; the
+  publication stays failed (visible) until the menu or the prices change and a new publication is made.
+- A batch still running after the three checks is recorded by its id only; nothing checks it again later.
+- Section (category) status is not published (not in scope).

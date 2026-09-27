@@ -42,6 +42,7 @@ const fieldLabels: Record<string, string> = {
   "integrator-name": "Entegratör adı",
   "executor-email": "İşlemi yapan kişinin e-postası",
   "preparation-minutes": "Hazırlık süresi (dakika)",
+  "store-id": "Mağaza kimliği",
 };
 
 /** A platform or field this screen does not know yet is never shown by its raw id. */
