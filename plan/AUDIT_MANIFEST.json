@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1494,
-  "markdown_line_count": 113656,
-  "markdown_byte_count": 6547786,
+  "markdown_file_count": 1495,
+  "markdown_line_count": 113715,
+  "markdown_byte_count": 6550531,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "00F691A35C8A4BF99E57381E7D8507C222795839AC2C6F6507BBA6891675D08C",
-      "lines": 2770,
-      "bytes": 406856,
+      "sha256": "00F6DBE314AD15E4CB78D9CBAE180324B913116139C2CB8F9B94ADA8B263F2FC",
+      "lines": 2771,
+      "bytes": 407028,
       "utf8": true
     },
     {
@@ -8320,6 +8320,13 @@
       "sha256": "247AB2AE260785BC67A22DA11EAF66FFE0EEDF8B3FD9F16F095C0D7CAABD0A07",
       "lines": 64,
       "bytes": 3062,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-438-catalog-list-and-detail-english-leaks.md",
+      "sha256": "8B249E7252E0F759BA74C533F26A61C7C5FFCB6F18CBC73A91428686B2AC15C9",
+      "lines": 58,
+      "bytes": 2573,
       "utf8": true
     },
     {
