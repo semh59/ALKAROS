@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1457,
-  "markdown_line_count": 111336,
-  "markdown_byte_count": 6425376,
+  "markdown_file_count": 1458,
+  "markdown_line_count": 111406,
+  "markdown_byte_count": 6429315,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -309,9 +309,9 @@
     },
     {
       "path": "docs/domain/authorization-model.md",
-      "sha256": "2A114EBB056876A6E5BD3312CBD95C3AA91760D050BE85F1BEEADE7453B545BD",
-      "lines": 224,
-      "bytes": 12963,
+      "sha256": "1480E0C8465A303EE4F67F8300AFD1B556106FE1E8E39F6580EBDF359DE9B59D",
+      "lines": 226,
+      "bytes": 13109,
       "utf8": true
     },
     {
@@ -2640,9 +2640,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F9AFE70684BA265592B7849CFE9AC8A0502B5F98187A1B9C39C445E5BBFFD8E7",
-      "lines": 2733,
-      "bytes": 400653,
+      "sha256": "A5E822D3C3E299346A163B53E79AA066D96E92FCE54541C23D119D11A5294B9F",
+      "lines": 2734,
+      "bytes": 400820,
       "utf8": true
     },
     {
@@ -8061,6 +8061,13 @@
       "sha256": "BE6AC4C9A162D02915E30595E3AD3C56E16C89156761DE6AF10DBEC81809E7A8",
       "lines": 85,
       "bytes": 5018,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-402-waiter-grant-on-unassigned-check.md",
+      "sha256": "9B44ED62B970BCFE25E3C3A76664D4DC55ECE7FBED59FF6EB003775B1D5A2894",
+      "lines": 67,
+      "bytes": 3626,
       "utf8": true
     },
     {
