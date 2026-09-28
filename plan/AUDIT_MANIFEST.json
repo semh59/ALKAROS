@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1495,
-  "markdown_line_count": 113715,
-  "markdown_byte_count": 6550531,
+  "markdown_file_count": 1496,
+  "markdown_line_count": 113775,
+  "markdown_byte_count": 6553488,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "00F6DBE314AD15E4CB78D9CBAE180324B913116139C2CB8F9B94ADA8B263F2FC",
-      "lines": 2771,
-      "bytes": 407028,
+      "sha256": "C764BD458F168DA4F2EB6FCFE76B14352887B5A968A38B6EBA5C3180BD0B9912",
+      "lines": 2772,
+      "bytes": 407212,
       "utf8": true
     },
     {
@@ -8327,6 +8327,13 @@
       "sha256": "8B249E7252E0F759BA74C533F26A61C7C5FFCB6F18CBC73A91428686B2AC15C9",
       "lines": 58,
       "bytes": 2573,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-439-nfc-concurrent-first-submission-order-number-race.md",
+      "sha256": "81096E6F0E4B1ABF1CEB1B8D9D6C29878047DF473447FF4072E76C87C0D161A1",
+      "lines": 59,
+      "bytes": 2773,
       "utf8": true
     },
     {
