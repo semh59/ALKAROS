@@ -1,4 +1,5 @@
 using ALKAROS.Cash.Contracts;
+using ALKAROS.Cash.TransactionLedger;
 using Npgsql;
 
 namespace ALKAROS.Cash.SessionLifecycle;
@@ -93,7 +94,32 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
     {
         ArgumentNullException.ThrowIfNull(session);
 
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await InsertSessionAsync(connection, null, session, cancellationToken);
+    }
+
+    public async Task AddAsync(CashSessionRecord session, CashTransaction openingEntry, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(session);
+        ArgumentNullException.ThrowIfNull(openingEntry);
+        if (openingEntry.Type != CashTransactionType.Opening || openingEntry.CashSessionId != session.Snapshot.CashSessionId)
+            throw new ArgumentException("The opening entry must be this session's Opening ledger entry.", nameof(openingEntry));
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await InsertSessionAsync(connection, transaction, session, cancellationToken);
+        await new PostgresCashTransactionLedgerRepository(_dataSource)
+            .RecordAsync(openingEntry, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+    }
+
+    private static async Task InsertSessionAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction? transaction,
+        CashSessionRecord session,
+        CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
             $"""
             INSERT INTO {Sessions} (
                 cash_session_id, cashier_user_id, terminal_id, status,
@@ -107,7 +133,7 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
                 @opened_at, @closed_at, @closed_by, @is_supervisor_override,
                 @override_reason, @reconciled_at, @reconciled_by, @reconciliation_notes,
                 @row_version, @created_at, @updated_at);
-            """);
+            """, connection, transaction);
         BindRecord(command, session);
         command.Parameters.AddWithValue("created_at", session.Snapshot.OpenedAt);
         command.Parameters.AddWithValue("updated_at", session.Snapshot.OpenedAt);

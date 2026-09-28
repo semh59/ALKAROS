@@ -1,7 +1,7 @@
 # V1-RMD-416 - Kasa açılışında oturum ve açılış defter kaydını tek işlemde yazmak
 
 - Task ID: V1-RMD-416
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -48,7 +48,16 @@ açılış yolu eklenir; kasa açılış ucu bu yolu kullanır. Defter kaydı ya
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Host.Experience.CashSession.Tests` 21/21, `ALKAROS.Cash.SessionLifecycle.Tests` 12/12 ve
+  `ALKAROS.Cash.TenderHandler.Tests` 9/9 (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata;
+  `evidence/V1-RMD-416/tests.log`). Açılış kaydının yazıldığını ve kapanışın ondan hesaplandığını sınayan mevcut testler
+  değişmeden geçer.
+- Yeni test `AFailedOpeningLedgerWriteLeavesNoSessionBehind`: `Opening` defter yazması veritabanında zorla
+  başarısız kılınınca açılış başarısız döner ve terminalde oturum kalmaz; engel kaldırılınca aynı terminalde açılış 201
+  döner. Üretim değişikliği geri alınınca kırmızı (oturum sayısı 0 beklenirken 1;
+  `evidence/V1-RMD-416/red-without-fix.log`).
+- Semih'in elle deneyebileceği senaryo: normal kullanımda görünür bir fark yok; kasa açılışında bir veritabanı hatası
+  olursa kasa açılmamış sayılır ve yeniden açılabilir, açılış tutarı kaybolmuş bir oturum kalmaz.
 
 ## Handoff
 

@@ -1,4 +1,5 @@
 using ALKAROS.Cash.Contracts;
+using ALKAROS.Cash.TransactionLedger;
 using Npgsql;
 
 namespace ALKAROS.Cash.SessionLifecycle;
@@ -14,8 +15,16 @@ public sealed class CashSessionLifecycleService : ICashSessionLifecycleService
         _policy = policy ?? throw new ArgumentNullException(nameof(policy));
     }
 
-    public async Task<(CashSessionSnapshot Session, CashSessionOpenedEvent Event)> OpenSessionAsync(
+    public Task<(CashSessionSnapshot Session, CashSessionOpenedEvent Event)> OpenSessionAsync(
         OpenCashSessionCommand command, CancellationToken cancellationToken = default)
+        => OpenAsync(command, postOpeningEntry: false, cancellationToken);
+
+    public Task<(CashSessionSnapshot Session, CashSessionOpenedEvent Event)> OpenSessionWithOpeningEntryAsync(
+        OpenCashSessionCommand command, CancellationToken cancellationToken = default)
+        => OpenAsync(command, postOpeningEntry: true, cancellationToken);
+
+    private async Task<(CashSessionSnapshot Session, CashSessionOpenedEvent Event)> OpenAsync(
+        OpenCashSessionCommand command, bool postOpeningEntry, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(command);
         command.Validate();
@@ -41,7 +50,20 @@ public sealed class CashSessionLifecycleService : ICashSessionLifecycleService
 
         try
         {
-            await _repository.AddAsync(record, cancellationToken);
+            if (postOpeningEntry && command.OpeningBalance > 0)
+            {
+                await _repository.AddAsync(
+                    record,
+                    new CashTransaction(
+                        Guid.NewGuid(), command.CashSessionId, CashTransactionType.Opening,
+                        command.OpeningBalance, CashTransactionDirection.In,
+                        recordedBy: command.CashierUserId, occurredAt: now),
+                    cancellationToken);
+            }
+            else
+            {
+                await _repository.AddAsync(record, cancellationToken);
+            }
         }
         catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation
             && ex.ConstraintName == "ux_cash_sessions_one_active_per_terminal")

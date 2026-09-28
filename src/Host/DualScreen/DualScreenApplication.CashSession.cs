@@ -61,31 +61,17 @@ public static partial class DualScreenApplication
             Guid terminalId,
             OpenCashSessionRequestV1 request,
             ICashSessionLifecycleService sessions,
-            ICashTransactionLedgerRepository ledger,
             DualScreenStore store,
             IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
-            var (session, openedEvent) = await sessions.OpenSessionAsync(
+            // The Opening ledger entry is what /close's ComputeExpectedCashAsync starts from; it is written in the
+            // same transaction as the session (V1-RMD-416), never as a second write that could fail on its own.
+            var (session, _) = await sessions.OpenSessionWithOpeningEntryAsync(
                 new OpenCashSessionCommand(Guid.NewGuid(), principal.UserId, terminalId, request.OpeningBalance),
                 cancellationToken);
-            // ICashSessionLifecycleService's own doc: V13-CSH-001 has no
-            // ledger of its own - OpenSessionAsync never posts an Opening
-            // entry, "once the ledger lands, the caller sums it instead."
-            // This composition is that caller: without this, /close's own
-            // ComputeExpectedCashAsync would silently start every session
-            // at an expected cash of 0 regardless of what was floated.
-            if (request.OpeningBalance > 0)
-            {
-                await ledger.RecordAsync(
-                    new Cash.TransactionLedger.CashTransaction(
-                        Guid.NewGuid(), session.CashSessionId, CashTransactionType.Opening,
-                        request.OpeningBalance, CashTransactionDirection.In,
-                        recordedBy: principal.UserId, occurredAt: openedEvent.Timestamp),
-                    cancellationToken);
-            }
             return Results.Created($"/api/v1/terminals/{terminalId:D}/cash-sessions/{session.CashSessionId:D}", session);
         });
 

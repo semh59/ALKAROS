@@ -59,6 +59,42 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AFailedOpeningLedgerWriteLeavesNoSessionBehind()
+    {
+        // V1-RMD-416 (V1-RMD-393 F-14): the session and its Opening ledger entry were two separate writes. When the
+        // second failed the session stayed open with no float in its ledger and expected cash started at 0; the
+        // terminal could not even open a fresh session over it.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd416-open-atomic");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await using (var failOpening = _database.DataSource.CreateCommand(
+            """
+            CREATE FUNCTION cash.rmd416_fail_opening() RETURNS trigger LANGUAGE plpgsql AS
+            $$ BEGIN RAISE EXCEPTION 'opening ledger write failed'; END $$;
+            CREATE TRIGGER rmd416_fail_opening BEFORE INSERT ON cash.cash_transactions
+            FOR EACH ROW WHEN (NEW.type = 'Opening') EXECUTE FUNCTION cash.rmd416_fail_opening();
+            """))
+            await failOpening.ExecuteNonQueryAsync();
+
+        var failed = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 500m });
+
+        Assert.False(failed.IsSuccessStatusCode);
+        await using (var count = _database.DataSource.CreateCommand(
+            "SELECT count(*) FROM cash.cash_sessions WHERE terminal_id = @terminal;"))
+        {
+            count.Parameters.AddWithValue("terminal", terminalId);
+            Assert.Equal(0L, (long)(await count.ExecuteScalarAsync())!);
+        }
+
+        await using (var restore = _database.DataSource.CreateCommand(
+            "DROP TRIGGER rmd416_fail_opening ON cash.cash_transactions; DROP FUNCTION cash.rmd416_fail_opening();"))
+            await restore.ExecuteNonQueryAsync();
+        var retried = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 500m });
+        Assert.Equal(HttpStatusCode.Created, retried.StatusCode);
+    }
+
+    [Fact]
     public async Task OpeningASecondSessionOnTheSameTerminalIsRejected()
     {
         var terminalId = Guid.NewGuid();
