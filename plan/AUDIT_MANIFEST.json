@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1475,
-  "markdown_line_count": 112523,
-  "markdown_byte_count": 6491326,
+  "markdown_file_count": 1476,
+  "markdown_line_count": 112589,
+  "markdown_byte_count": 6494630,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "5E5C5F3C4B1D65E161195C91AFA937F44214CABDA38130D102E087F19030D16B",
-      "lines": 2751,
-      "bytes": 403624,
+      "sha256": "B8165D7A2CF14C83C0B2F5F1A4B710C6354E0DB9B14225CCB80C575E8964FB9E",
+      "lines": 2752,
+      "bytes": 403794,
       "utf8": true
     },
     {
@@ -8187,6 +8187,13 @@
       "sha256": "55DA2AEC1DAADE8DE00A3E85C93B2EB59CE99F52C08C3E6210BAC3B46EEF62C9",
       "lines": 65,
       "bytes": 3259,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-419-production-batch-unit-matches-yield.md",
+      "sha256": "F0E11D61780871631244E31EF50EDF4FFF062F427E7B0EC7A190597FB857C075",
+      "lines": 65,
+      "bytes": 3134,
       "utf8": true
     },
     {
