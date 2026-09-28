@@ -1,7 +1,7 @@
 # V14-RMD-001 - Anonimleştirme zaman damgası testi PostgreSQL hassasiyetinde çalışsın
 
 - Task ID: V14-RMD-001
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
