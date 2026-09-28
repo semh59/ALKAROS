@@ -1,8 +1,11 @@
+using System.Security.Cryptography;
+using System.Text;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Inventory.Transactions;
 using ALKAROS.Measurements;
+using Npgsql;
 
 namespace ALKAROS.Inventory.ManualAdjustments;
 
@@ -80,6 +83,22 @@ public sealed class InventoryAdjustmentService : IInventoryAdjustmentService
             quantityInTrackingUnit = _unitConverter.Convert(request.Quantity, requestedUnit, item.TrackingUnitCode);
         }
 
+        // V1-RMD-422 (V1-RMD-398 G-07): the idempotency key used to be accepted and never read, so a retried
+        // adjustment moved stock twice. A keyed adjustment is written with a source reference derived from its key;
+        // a retry finds that movement and is answered with it instead of moving stock again.
+        var movementDirection = request.Direction == AdjustmentDirection.Increase
+            ? MovementDirection.In
+            : MovementDirection.Out;
+        var keyReference = string.IsNullOrWhiteSpace(request.IdempotencyKey)
+            ? (Guid?)null
+            : SourceReferenceFor(request.IdempotencyKey);
+        if (keyReference is { } earlyReference)
+        {
+            var replay = await FindReplayAsync(earlyReference, item.Id, location.Id, movementDirection, quantityInTrackingUnit, ct);
+            if (replay is not null)
+                return replay;
+        }
+
         // Fast, friendly pre-check against the current on-hand balance — NOT
         // the final authority. Two concurrent decreases could both read the
         // same stale balance here and both pass; the guarded transactional
@@ -88,9 +107,6 @@ public sealed class InventoryAdjustmentService : IInventoryAdjustmentService
         var currentBalance = await _balanceRepo.GetByItemAndLocationAsync(item.Id, location.Id, ct);
         var currentOnHand = currentBalance?.OnHandQuantity ?? 0m;
 
-        var movementDirection = request.Direction == AdjustmentDirection.Increase
-            ? MovementDirection.In
-            : MovementDirection.Out;
         var signedDelta = movementDirection == MovementDirection.In ? quantityInTrackingUnit : -quantityInTrackingUnit;
 
         // Non-negative outcome invariant.
@@ -108,6 +124,7 @@ public sealed class InventoryAdjustmentService : IInventoryAdjustmentService
             unitCode: item.TrackingUnitCode,
             sourceType: StockMovementSourceType.InventoryAudit,
             direction: movementDirection,
+            sourceReferenceId: keyReference,
             reason: request.Reason.Trim(),
             createdBy: request.AuthorizedBy);
 
@@ -118,11 +135,22 @@ public sealed class InventoryAdjustmentService : IInventoryAdjustmentService
         // read-then-write gap the fast pre-check above cannot. A guard
         // failure throws BalanceGuardFailedException so the transaction
         // runner rolls back the (otherwise orphaned) ledger append too.
-        StockBalance updatedBalance;
+        StockBalance? updatedBalance;
         try
         {
-            updatedBalance = await _transactionRunner.RunAsync(async (connection, transaction) =>
+            updatedBalance = await _transactionRunner.RunAsync<StockBalance?>(async (connection, transaction) =>
             {
+                if (keyReference is { } reference)
+                {
+                    // Serializes retries of the same key; the one that waited then sees the committed movement.
+                    await using var keyLock = new NpgsqlCommand(
+                        "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
+                    keyLock.Parameters.AddWithValue($"inventory-adjustment:{request.IdempotencyKey}");
+                    await keyLock.ExecuteNonQueryAsync(ct);
+                    if ((await _movementRepo.GetBySourceAsync(StockMovementSourceType.InventoryAudit, reference, ct)).Count > 0)
+                        return null;
+                }
+
                 await _movementRepo.AppendAsync(movement, connection, transaction, ct);
                 return await _balanceRepo.TryApplyGuardedOnHandDeltaAsync(
                     item.Id, location.Id, signedDelta, connection, transaction, ct)
@@ -137,10 +165,51 @@ public sealed class InventoryAdjustmentService : IInventoryAdjustmentService
                 $"Adjustment decrease of {quantityInTrackingUnit} {item.TrackingUnitCode} would result in negative on-hand balance ({latestOnHand - quantityInTrackingUnit}). Current on-hand is {latestOnHand} {item.TrackingUnitCode}.");
         }
 
+        if (updatedBalance is null)
+        {
+            return await FindReplayAsync(keyReference!.Value, item.Id, location.Id, movementDirection, quantityInTrackingUnit, ct)
+                ?? throw new InvalidOperationException("The adjustment recorded under this idempotency key could not be read back.");
+        }
+
         return new InventoryAdjustmentResult(
             movement,
             updatedBalance,
             currentOnHand,
             updatedBalance.OnHandQuantity);
     }
+
+    /// <summary>
+    /// The adjustment already recorded under this key, or null. The same key naming a different adjustment (another
+    /// item, location, direction or quantity) is refused rather than answered with the first one's result.
+    /// </summary>
+    private async Task<InventoryAdjustmentResult?> FindReplayAsync(
+        Guid reference,
+        Guid stockItemId,
+        Guid stockLocationId,
+        MovementDirection direction,
+        decimal quantity,
+        CancellationToken ct)
+    {
+        var recorded = (await _movementRepo.GetBySourceAsync(StockMovementSourceType.InventoryAudit, reference, ct))
+            .FirstOrDefault(m => m.MovementType == StockMovementType.Adjustment);
+        if (recorded is null)
+            return null;
+
+        if (recorded.StockItemId != stockItemId
+            || recorded.StockLocationId != stockLocationId
+            || recorded.Direction != direction
+            || recorded.Quantity != quantity)
+        {
+            throw new DuplicateAdjustmentException(
+                "This idempotency key was already used for a different inventory adjustment.");
+        }
+
+        var balance = await _balanceRepo.GetByItemAndLocationAsync(stockItemId, stockLocationId, ct)
+            ?? throw new InvalidOperationException("The adjusted stock balance could not be read back.");
+        return new InventoryAdjustmentResult(recorded, balance, balance.OnHandQuantity, balance.OnHandQuantity, WasReplayed: true);
+    }
+
+    /// <summary>A stable source reference for an idempotency key (the first 16 bytes of its SHA-256).</summary>
+    private static Guid SourceReferenceFor(string idempotencyKey)
+        => new(SHA256.HashData(Encoding.UTF8.GetBytes($"inventory-adjustment:{idempotencyKey}")).AsSpan(0, 16));
 }

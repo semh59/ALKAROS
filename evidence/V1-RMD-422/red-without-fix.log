@@ -1,0 +1,4 @@
+# Service change reverted (InventoryAdjustmentService.cs at HEAD; the result keeps its new WasReplayed field so the test compiles)
+[xUnit.net 00:00:00.85]     ALKAROS.Inventory.ManualAdjustments.Tests.ManualAdjustmentDatabaseTests.RetriesOfAKeyedAdjustmentMoveStockOnceAndAReusedKeyIsRefused [FAIL]
+   Expected sequentialRetry.WasReplayed to be true, but found False.
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 296 ms - ALKAROS.Inventory.ManualAdjustments.Tests.dll (net8.0)
