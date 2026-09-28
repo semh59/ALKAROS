@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1464,
-  "markdown_line_count": 111769,
-  "markdown_byte_count": 6450270,
+  "markdown_file_count": 1465,
+  "markdown_line_count": 111847,
+  "markdown_byte_count": 6454919,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -309,9 +309,9 @@
     },
     {
       "path": "docs/domain/authorization-model.md",
-      "sha256": "1480E0C8465A303EE4F67F8300AFD1B556106FE1E8E39F6580EBDF359DE9B59D",
-      "lines": 226,
-      "bytes": 13109,
+      "sha256": "7900978ACB38896695F751AAE20C896FF0D80AA9DE28171A60455EF313437C44",
+      "lines": 231,
+      "bytes": 13534,
       "utf8": true
     },
     {
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "B0F1CEDE5B14AB366609465A0D33E89E587452E39731C2E19A2583CCF874069A",
-      "lines": 2740,
-      "bytes": 401782,
+      "sha256": "118BB3158B72B924B5790150341EB8B37744F499089F533A50BAA9EAAC8EBBE0",
+      "lines": 2741,
+      "bytes": 401948,
       "utf8": true
     },
     {
@@ -8110,6 +8110,13 @@
       "sha256": "146D56C19FF4D1773F7643806E8EFB77CD1757750EA06CC81A164FF1DEE34488",
       "lines": 71,
       "bytes": 3889,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-408-governing-role-most-restrictive.md",
+      "sha256": "4EA2A61554623CA4358C4FD95A3EFF8E095AA1E965D36C1F3B370549B70D37C7",
+      "lines": 72,
+      "bytes": 4058,
       "utf8": true
     },
     {
