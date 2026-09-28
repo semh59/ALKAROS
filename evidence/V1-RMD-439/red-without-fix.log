@@ -1,0 +1,31 @@
+# V1-RMD-439 red run: same 20-run loop on 93f560e1 without the post-lock re-check
+    0 Error(s)
+run 1:   Failed ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder [97 ms]
+run 1: Failed!  - Failed:     1, Passed:    18, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 2:   Failed ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder [116 ms]
+run 2: Failed!  - Failed:     1, Passed:    18, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 3:   Failed ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder [103 ms]
+run 3: Failed!  - Failed:     1, Passed:    18, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 4: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 5: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 6: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 3 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 7:   Failed ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder [82 ms]
+run 7: Failed!  - Failed:     1, Passed:    18, Skipped:     0, Total:    19, Duration: 3 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 8: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 9:   Failed ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder [82 ms]
+run 9: Failed!  - Failed:     1, Passed:    18, Skipped:     0, Total:    19, Duration: 3 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 10: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 3 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 11: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 12:   Failed ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder [97 ms]
+run 12: Failed!  - Failed:     1, Passed:    18, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 13: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 14:   Failed ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder [100 ms]
+run 14: Failed!  - Failed:     1, Passed:    18, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 15: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 3 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 16: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 3 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 17: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 3 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 18:   Failed ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder [86 ms]
+run 18: Failed!  - Failed:     1, Passed:    18, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 19:   Failed ALKAROS.Host.Experience.NfcOrdering.Tests.NfcOrderingHttpTests.ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder [92 ms]
+run 19: Failed!  - Failed:     1, Passed:    18, Skipped:     0, Total:    19, Duration: 4 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)
+run 20: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19, Duration: 3 s - ALKAROS.Host.Experience.NfcOrdering.Tests.dll (net8.0)

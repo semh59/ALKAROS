@@ -1,7 +1,7 @@
 # V1-RMD-439 - NFC'de aynı gönderimin eşzamanlı ilk iki isteğinden birinin 503 alması
 
 - Task ID: V1-RMD-439
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -48,9 +48,9 @@ istek, ilk isteğin siparişini bulur ve aynı siparişi döner (ekleme denemesi
 
 ## Acceptance evidence
 
-- `ALKAROS.Host.Experience.NfcOrdering.Tests` (gerçek PostgreSQL 18) 20 ardışık koşuda 19/19; düzeltme olmadan aynı
-  döngüde `ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder` tekrar tekrar düşer
-  (`evidence/V1-RMD-439/tests.log`, `evidence/V1-RMD-439/red-without-fix.log`).
+- `ALKAROS.Host.Experience.NfcOrdering.Tests` (gerçek PostgreSQL 18) 20 ardışık koşunun hepsinde 19/19
+  (`evidence/V1-RMD-439/tests.log`). Düzeltme olmadan aynı döngüde 20 koşunun 9'unda
+  `ConcurrentIdenticalFirstSubmissionsResolveToTheSameOrder` düşer (`evidence/V1-RMD-439/red-without-fix.log`).
 - Semih'in elle deneyebileceği senaryo: NFC menüsünde sepeti gönder düğmesine hızlıca iki kez basın; iki istek de
   aynı siparişi gösterir, hata mesajı çıkmaz ve mutfağa tek fiş gider.
 

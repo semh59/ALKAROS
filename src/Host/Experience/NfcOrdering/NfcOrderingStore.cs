@@ -100,6 +100,16 @@ public sealed class NfcOrderingStore
             if (table is null || !table.Value.Active)
                 throw new NfcTableNotFoundException(tableId);
 
+            // V1-RMD-439: a concurrent identical request that was waiting on the table lock above sees the winner's
+            // committed order only from here on (READ COMMITTED takes a new snapshot per statement). Without this
+            // second look it went on to insert its own order, and when both requests fell in the same 1/100 s the
+            // insert failed on the order number instead of the submission key and surfaced as a 503.
+            if (await FindOrderIdBySubmissionAsync(connection, transaction, tableId, request.Id, cancellationToken) is { } lockedReplayOrderId)
+            {
+                await transaction.CommitAsync(cancellationToken);
+                return await LoadDtoAfterEnsuringAcceptedAsync(lockedReplayOrderId, tableId, request.Id, cancellationToken);
+            }
+
             var selfCheckIn = table.Value.Status == "Available";
             if (!selfCheckIn && table.Value.Status != "Occupied")
                 throw new NfcTableNotAvailableException(tableId, table.Value.Status);
