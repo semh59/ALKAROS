@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1471,
-  "markdown_line_count": 112252,
-  "markdown_byte_count": 6477027,
+  "markdown_file_count": 1472,
+  "markdown_line_count": 112320,
+  "markdown_byte_count": 6480653,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D850441456F3E82D3F160052FB819C3D67EF1764865E2C1F8B04465A8FBDE5C6",
-      "lines": 2747,
-      "bytes": 402956,
+      "sha256": "DE33299A0CAEAAC229D6DE282A24E078AE32990D2D228764E4868508BE0DC735",
+      "lines": 2748,
+      "bytes": 403121,
       "utf8": true
     },
     {
@@ -8159,6 +8159,13 @@
       "sha256": "0BDB18D59380EC518D1B2EF9109DF21C109174FF0B24369DA8B0F12984585C1B",
       "lines": 67,
       "bytes": 3553,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-415-cash-replay-requires-cash-sale.md",
+      "sha256": "D1A07DA44E9E0CBF686A086867631B07A7127EB8514FBB3730710C09E5668EEC",
+      "lines": 67,
+      "bytes": 3461,
       "utf8": true
     },
     {
