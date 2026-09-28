@@ -1,0 +1,4 @@
+  Failed ALKAROS.Host.Tests.DualScreen.DualScreenAuthorizationHttpTests.ASupervisorLoginReachesTheGrantDecisionSurfaceButNotManagerOnlyAreas [4 s]
+Expected: OK
+Actual:   Unauthorized
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 4 s - ALKAROS.Host.Tests.dll (net8.0)

@@ -1,7 +1,7 @@
 # V1-RMD-403 - Şef garsona (supervisor) girişte yönetim oturumu vermek
 
 - Task ID: V1-RMD-403
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -47,7 +47,15 @@ kendi izni) tutan kullanıcıya girişte `supervisor:` yönetim oturumu verir; �
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- `ALKAROS.Host.Tests` DualScreen sınıfları (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata): 76/76
+  (`evidence/V1-RMD-403/tests.log`; ilgisiz bir Kestrel bağlantı testi dar koşuda bir kez düştü, tam koşuda geçti —
+  aynı dosyada not edildi).
+- Yeni test `ASupervisorLoginReachesTheGrantDecisionSurfaceButNotManagerOnlyAreas`: `reports.view` tutan, `catalog.manage`
+  tutmayan kullanıcı gerçek girişle yönetim çerezi alır; bekleyen onaylar 200; yalnız yöneticiye açık katalog 401;
+  çıkıştan sonra aynı çerezle bekleyen onaylar 401.
+- Aynı test üretim değişikliği geri alınınca kırmızı (`evidence/V1-RMD-403/red-without-fix.log`: beklenen 200, gelen 401).
+- Semih'in elle deneyebileceği senaryo: şef garson hesabıyla PosTerminal'e girip "Onaylar" ekranını açmak; bekleyen
+  iptal/ikram istekleri listelenir ve onaylanabilir. Katalog yönetimi yine yalnız yöneticiye açıktır.
 
 ## Handoff
 

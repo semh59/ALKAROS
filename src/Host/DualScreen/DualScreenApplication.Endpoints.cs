@@ -77,10 +77,19 @@ public static partial class DualScreenApplication
             AppendCookie(context, CashierCookieName, rawToken, session.ExpiresAt);
             var capabilities = await roles.GetPermissionCodesForUserAsync(success.UserId, cancellationToken);
             await sessions.RevokeDeviceAsync(success.UserId, $"manager:{request.TerminalId:D}", cancellationToken);
-            if (capabilities.Contains(CatalogManagementEndpoints.ManagePermission, StringComparer.Ordinal))
+            await sessions.RevokeDeviceAsync(success.UserId, $"supervisor:{request.TerminalId:D}", cancellationToken);
+            // V1-RMD-403 (V1-RMD-399 H-03): a floor supervisor (the "sef garson" role) holds reports.view but never
+            // catalog.manage (model §3 decision 3); without a supervisor: session the grant-decision surface and
+            // every other allowSupervisor area stayed unreachable for them. Manager-only areas still refuse it.
+            var managementDevice = capabilities.Contains(CatalogManagementEndpoints.ManagePermission, StringComparer.Ordinal)
+                ? $"manager:{request.TerminalId:D}"
+                : capabilities.Contains(ApplicationPermissions.ReportsView, StringComparer.Ordinal)
+                    ? $"supervisor:{request.TerminalId:D}"
+                    : null;
+            if (managementDevice is not null)
             {
                 var (managerSession, managerToken) = await sessions.CreateSessionAsync(
-                    success.UserId, $"manager:{request.TerminalId:D}", TimeSpan.FromHours(12), cancellationToken);
+                    success.UserId, managementDevice, TimeSpan.FromHours(12), cancellationToken);
                 AppendCookie(context, CatalogManagementEndpoints.ManagerCookieName, managerToken, managerSession.ExpiresAt);
             }
             else
@@ -314,6 +323,7 @@ public static partial class DualScreenApplication
             var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
             await sessions.RevokeAsync(principal.SessionId, cancellationToken);
             await sessions.RevokeDeviceAsync(principal.UserId, $"manager:{terminalId:D}", cancellationToken);
+            await sessions.RevokeDeviceAsync(principal.UserId, $"supervisor:{terminalId:D}", cancellationToken);
             context.Response.Cookies.Delete(CashierCookieName);
             context.Response.Cookies.Delete(CatalogManagementEndpoints.ManagerCookieName);
             return Results.NoContent();

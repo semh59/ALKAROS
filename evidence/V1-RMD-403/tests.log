@@ -1,0 +1,4 @@
+ALKAROS.Host.Tests, FullyQualifiedName~ALKAROS.Host.Tests.DualScreen (DualScreenHostTests, DualScreenAuthorizationHttpTests, DualScreenApiOnlyOriginTests), gerçek PostgreSQL 18, Release:
+Passed!  - Failed:     0, Passed:    76, Skipped:     0, Total:    76, Duration: 7 m 10 s - ALKAROS.Host.Tests.dll (net8.0)
+
+Not: aynı projede yalnız DualScreenHostTests sınıfıyla yapılan ilk dar koşuda ResponseStartedFailureIsLoggedWithTraceIdBeforeKestrelAbortsTheConnection bir kez "Connection reset by peer" ile düştü; bu test giriş koduna dokunmaz ve yanıt başladıktan sonra Kestrel bağlantıyı kopardığında günlüğe yazıldığını sınar. Tam koşuda geçti.
