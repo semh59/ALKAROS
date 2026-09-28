@@ -127,8 +127,7 @@ public static class BillingSplitApplication
             var permissions = await roles.GetPermissionCodesForUserAsync(principal.UserId, cancellationToken);
             if (!permissions.Contains(ApplicationPermissions.BillsDiscount, StringComparer.Ordinal))
             {
-                var roleIds = await roles.GetRoleIdsForUserAsync(principal.UserId, cancellationToken);
-                var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+                var role = await roles.GetGoverningRoleForUserAsync(principal.UserId, cancellationToken);
                 if (role is null)
                     throw new AuthorizationDeniedException(
                         principal.UserId, ApplicationPermissions.BillsDiscount, "Requester has no assigned role.");

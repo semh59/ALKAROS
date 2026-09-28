@@ -105,16 +105,17 @@ public static partial class DualScreenApplication
             // user with no floor role (should not happen in practice) simply
             // gets no offline budget; that is not a login failure.
             object? offlineBudget = null;
-            var roleIds = await roles.GetRoleIdsForUserAsync(success.UserId, cancellationToken);
+            // V1-RMD-408: the governing (most restrictive) role, the same one the grant endpoints evaluate.
+            var governingRole = await roles.GetGoverningRoleForUserAsync(success.UserId, cancellationToken);
             // V1-RMD-175: found by the 2026-09-10 Garson audit — reuses the
             // exact same role lookup already done here for the offline
             // budget, so #userRole on the client has a real name to show
             // from the moment of sign-in rather than only after the next
             // /auth/session poll.
             Role? loginRole = null;
-            if (roleIds.Count > 0)
+            if (governingRole is not null)
             {
-                var role = await roles.GetByIdAsync(roleIds[0], cancellationToken);
+                var role = governingRole;
                 loginRole = role;
                 if (role is not null)
                 {
@@ -159,11 +160,10 @@ public static partial class DualScreenApplication
             // waiter client's own #userRole element had nothing to read
             // and stayed on its static "Garson" HTML default regardless
             // of who actually signed in (a supervisor's own screen still
-            // said "Garson"). A user's first assigned role's display name
+            // said "Garson"). A user's governing role's display name (V1-RMD-408)
             // is the same source the comp/void grant endpoints already
             // use to resolve "the requester's role" for the same user id.
-            var roleIds = await roles.GetRoleIdsForUserAsync(principal.UserId, cancellationToken);
-            var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+            var role = await roles.GetGoverningRoleForUserAsync(principal.UserId, cancellationToken);
             return Results.Ok(new
             {
                 userId = principal.UserId,

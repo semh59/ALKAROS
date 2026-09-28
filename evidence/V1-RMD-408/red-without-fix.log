@@ -1,0 +1,12 @@
+    0 Error(s)
+Passed!  - Failed:     0, Passed:    16, Skipped:     0, Total:    16, Duration: 12 s - ALKAROS.Host.Experience.Orders.Comp.Tests.dll (net8.0)
+--- without fix (production code reverted, tests kept):
+  Failed ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AUserWhoIsBothWaiterAndCashierIsGovernedByTheWaiterRole [1 s]
+Actual:   Accepted
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - ALKAROS.Host.Experience.Orders.Comp.Tests.dll (net8.0)
+  Failed ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AUserWhoIsBothWaiterAndCashierIsGovernedByTheWaiterRole [1 s]
+Actual:   Accepted
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - ALKAROS.Host.Experience.Orders.Comp.Tests.dll (net8.0)
+  Failed ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AUserWhoIsBothWaiterAndCashierIsGovernedByTheWaiterRole [1 s]
+Actual:   Accepted
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - ALKAROS.Host.Experience.Orders.Comp.Tests.dll (net8.0)

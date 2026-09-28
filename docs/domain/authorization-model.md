@@ -101,6 +101,11 @@ authorization request resolved by §4.
 role rule. `payments.take` is seeded to `cashier` / `supervisor` / `manager`; a business that hands its waiters a
 card terminal grants it to the `waiter` role through role management, with no code change.
 
+**Resolved (Semih, 2026-09-28, V1-RMD-408):** a user may hold several roles. Outright permissions are the union
+of all of them, but a grant request (and the offline budget) is evaluated under the user's *governing* role — the
+most restrictive one, i.e. the role holding the fewest permissions outright (ties: smallest role code). A user who
+is both `waiter` and `cashier` is therefore held to the waiter's own-check rule.
+
 ### 3.1 `kitchen.advance` and the `kitchen-staff` role (V1-IAM-028)
 
 All four roles above (waiter/cashier/supervisor/manager) also hold

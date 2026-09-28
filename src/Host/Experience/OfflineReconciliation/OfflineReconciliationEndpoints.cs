@@ -79,8 +79,7 @@ public static class OfflineReconciliationEndpoints
             if (request.Actions.Any(action => action.RequesterUserId != principal.UserId))
                 throw new OfflineReconciliationIdentityMismatchException();
 
-            var roleIds = await roles.GetRoleIdsForUserAsync(principal.UserId, cancellationToken);
-            var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+            var role = await roles.GetGoverningRoleForUserAsync(principal.UserId, cancellationToken);
             if (role is null
                 || request.Actions.Any(action => !string.Equals(action.RequesterRoleCode, role.Code, StringComparison.Ordinal)))
             {

@@ -1,7 +1,7 @@
 # V1-RMD-408 - Çok rollü kullanıcıda onay kurallarını en kısıtlayıcı rolle değerlendirmek
 
 - Task ID: V1-RMD-408
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -26,6 +26,7 @@ verilen çevrimdışı bütçe ile ekrandaki rol adı bu rolü kullanır.
 
 - `plan/v1/remediation/V1-RMD-408-governing-role-most-restrictive.md`
 - `evidence/V1-RMD-408/**`
+- `tests/Modules/Identity/Authorization/GoverningRoleTests.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Identity/Authorization/IRoleRepository.cs ve
   src/Modules/Identity/Authorization/PostgresRoleRepository.cs (V1-RMD-110 sahipliğinde) — yalnız
   `GetGoverningRoleForUserAsync`
@@ -34,8 +35,6 @@ verilen çevrimdışı bütçe ile ekrandaki rol adı bu rolü kullanır.
   (V1-IAM-024 sahipliğinde) — yalnız rol seçimi satırları
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/OfflineReconciliation/OfflineReconciliationEndpoints.cs
   (V1-IAM-025 sahipliğinde) — yalnız rol seçimi satırları
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Identity/Authorization/GoverningRoleTests.cs (yeni dosya,
-  V1-IAM-002 test dizininde)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Orders/Comp/OrderManagementCompHttpTests.cs ve
   tests/Host/Experience/Orders/Comp/OrderManagementCompTestDatabase.cs (V1-BIL-005 sahipliğinde) — çok rollü garson testi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/domain/authorization-model.md (V1-IAM-016 sahipliğinde) — yalnız §3
@@ -56,7 +55,17 @@ verilen çevrimdışı bütçe ile ekrandaki rol adı bu rolü kullanır.
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- Gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata (`evidence/V1-RMD-408/tests.log`):
+  `ALKAROS.Identity.Authorization.Tests` 214/214, `ALKAROS.Host.Experience.Orders.Comp.Tests` 16/16,
+  `ALKAROS.Host.Experience.Orders.VoidSent.Tests` 16/16, `ALKAROS.Host.Experience.Billing.Tests` 19/19,
+  `ALKAROS.Host.Experience.OfflineReconciliation.Tests` 9/9, `ALKAROS.Host.Tests` DualScreen sınıfları 78/78.
+- Yeni testler: `GoverningRoleTests` (az izinli rol atanma sırasından bağımsız kazanır; eşitlikte küçük rol kodu;
+  rolsüz kullanıcıda yok) ve `AUserWhoIsBothWaiterAndCashierIsGovernedByTheWaiterRole` (garson + kasiyer kullanıcının
+  başka garsonun hesabındaki ikramı 403). HTTP testi üretim değişikliği geri alınınca 3/3 kırmızı (202 `Accepted`,
+  istek yöneticiye düşüyor) — `evidence/V1-RMD-408/red-without-fix.log`.
+- Karar kaydı: `docs/domain/authorization-model.md` §3 "Resolved (Semih, 2026-09-28, V1-RMD-408)" notu.
+- Semih'in elle deneyebileceği senaryo: bir personele hem garson hem kasiyer rolü verilir; başka garsonun masasında
+  ikram istediğinde, garson kuralı esas alındığı için istek "İkram talebi reddedildi." ile döner.
 
 ## Handoff
 

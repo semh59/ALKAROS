@@ -696,8 +696,7 @@ public static class OrderManagementEndpoints
             var permissions = await roles.GetPermissionCodesForUserAsync(userId, cancellationToken);
             if (!permissions.Contains(ApplicationPermissions.BillsComp, StringComparer.Ordinal))
             {
-                var roleIds = await roles.GetRoleIdsForUserAsync(userId, cancellationToken);
-                var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+                var role = await roles.GetGoverningRoleForUserAsync(userId, cancellationToken);
                 if (role is null)
                     throw new AuthorizationDeniedException(userId, ApplicationPermissions.BillsComp, "Requester has no assigned role.");
 
@@ -809,8 +808,7 @@ public static class OrderManagementEndpoints
             var permissions = await roles.GetPermissionCodesForUserAsync(userId, cancellationToken);
             if (!permissions.Contains(ApplicationPermissions.BillsVoid, StringComparer.Ordinal))
             {
-                var roleIds = await roles.GetRoleIdsForUserAsync(userId, cancellationToken);
-                var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+                var role = await roles.GetGoverningRoleForUserAsync(userId, cancellationToken);
                 if (role is null)
                     throw new AuthorizationDeniedException(userId, ApplicationPermissions.BillsVoid, "Requester has no assigned role.");
 

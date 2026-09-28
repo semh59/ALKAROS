@@ -107,6 +107,33 @@ public sealed class OrderManagementCompTestDatabase : PgTestDatabase
         return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
     }
 
+    /// <summary>V1-RMD-408: also assigns the migration-seeded <paramref name="roleCode"/> role to <paramref name="userId"/>.</summary>
+    public Task AddSeededRoleAsync(Guid userId, string roleCode)
+        => ExecuteAsync(
+            """
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
+            SELECT @user_role_id, @user_id, role_id FROM identity.roles WHERE code = @role_code;
+            """,
+            ("user_role_id", Guid.NewGuid()),
+            ("user_id", userId),
+            ("role_code", roleCode));
+
+    /// <summary>
+    /// V1-RMD-408: re-inserts the user's <paramref name="roleCode"/> assignment so it is physically the user's last
+    /// role row — the pre-fix code picked whichever row the database returned first.
+    /// </summary>
+    public async Task MoveRoleAssignmentLastAsync(Guid userId, string roleCode)
+    {
+        await ExecuteAsync(
+            """
+            DELETE FROM identity.user_roles
+            WHERE user_id = @user_id AND role_id = (SELECT role_id FROM identity.roles WHERE code = @role_code);
+            """,
+            ("user_id", userId),
+            ("role_code", roleCode));
+        await AddSeededRoleAsync(userId, roleCode);
+    }
+
     /// <summary>Seeds a catalog product and an Active order with a single Active item (unit price 100, tax 10% -> gross 110).</summary>
     public Task<(Guid OrderId, Guid ItemId)> SeedActiveOrderWithOneItemAsync()
         => SeedActiveOrderWithOneItemAsync(servingUserId: null);
