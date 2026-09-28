@@ -1,7 +1,7 @@
 # V1-RMD-393 - Para akışı hedefli derin denetimi (sipariş → hesap → tahsilat → kasa → gün sonu)
 
 - Task ID: V1-RMD-393
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: investigation
 - Surface state: Existing
