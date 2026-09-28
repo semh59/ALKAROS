@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1484,
-  "markdown_line_count": 113126,
-  "markdown_byte_count": 6522140,
+  "markdown_file_count": 1485,
+  "markdown_line_count": 113185,
+  "markdown_byte_count": 6525058,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "1DAA0086C7D29D2901E0B2D0FEEC936292BED5ADA1B7A7D895C64E11D4193E9C",
-      "lines": 2760,
-      "bytes": 405147,
+      "sha256": "AD547AD8B83A88EBF6A175069974A291F5621F8DC97003C96E552E3E1D5F8D37",
+      "lines": 2761,
+      "bytes": 405318,
       "utf8": true
     },
     {
@@ -8250,6 +8250,13 @@
       "sha256": "70620F6ECCAB0888AE167A0ECC125BED187C89CB1F0B335EC7B939222FCCD224",
       "lines": 60,
       "bytes": 2963,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-428-ci-scope-step-untrusted-text-via-env.md",
+      "sha256": "49F939169C94D5661E41B2F4DAB2B9B91A4D00430A04ABB1E4E71180CED5597A",
+      "lines": 58,
+      "bytes": 2747,
       "utf8": true
     },
     {
