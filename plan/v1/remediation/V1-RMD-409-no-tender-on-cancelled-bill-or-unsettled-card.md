@@ -1,7 +1,7 @@
 # V1-RMD-409 - İptal edilmiş hesaba tahsilatı ve çözülmemiş kart varken nakdi reddetmek
 
 - Task ID: V1-RMD-409
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -63,7 +63,20 @@ için) iptal edilmiş hesabı reddeder; nakit tahsilat EFT ve kartla aynı payla
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- Gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata (`evidence/V1-RMD-409/tests.log`): `ALKAROS.Cash.TenderHandler.Tests`
+  7/7, `ALKAROS.Payments.Allocations.Persistence.Tests` 15/15, `ALKAROS.Payments.CardSettlement.Tests` 8/8,
+  `ALKAROS.Payments.EftTender.Tests` 12/12, `ALKAROS.Host.Experience.CashSession.Tests` 19/19,
+  `ALKAROS.Host.Experience.PaymentTender.Tests` 33/33.
+- Yeni testler: `ACashTenderOnACancelledBillIsRefusedAndRecordsNothing` (409 `TENDER_BILL_NOT_PAYABLE`, ödeme yok,
+  beklenen kasa açılış bakiyesinde kalır), `ACashTenderIsRefusedWhileACardAttemptOnTheSameBillIsUnresolved` (gerçek
+  kart ucu `RequiresReconciliation` bırakır; ardından nakit 409 `TENDER_UNSETTLED_PAYMENT_EXISTS`, yalnız kart ödemesi
+  kalır), `EftAndCardTendersOnACancelledBillAreRefusedAndRecordNothing` (EFT ve kart 409, ödeme yok). Üçü de üretim
+  değişikliği geri alınınca kırmızı (`evidence/V1-RMD-409/red-without-fix.log`).
+- V1-RMD-393 denetim probe'ları P01 (F-04) ve P03 (F-07) düzeltilmiş kopyada geçer
+  (`evidence/V1-RMD-409/money-flow-probes-after-fix.log`; harness'e yalnız kopyada bugünkü kasiyer izinleri eklendi).
+- Semih'in elle deneyebileceği senaryo: garson hesabı kasadan geri çağırıp yeniden gönderdiğinde, kasadaki eski ekrandan
+  nakit alınmak istenince "Bu hesap iptal edilmiş; tahsilat alınamaz. Hesabı yenileyin." görülür. Kart denemesi sonuçsuz
+  kalmış bir hesaba nakit alınmak istenince, önce kart ödemesinin sonucunu netleştirmek gerektiği söylenir.
 
 ## Handoff
 

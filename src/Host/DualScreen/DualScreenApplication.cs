@@ -767,6 +767,9 @@ public static partial class DualScreenApplication
             CashTenderBillNotFoundException => (404, "BILL_NOT_FOUND", "Hesap bulunamadı."),
             ClosedCashSessionException => (409, "CLOSED_CASH_SESSION", "Kasa oturumu açık değil."),
             InsufficientCashTenderException => (400, "INSUFFICIENT_CASH_TENDER", "Verilen tutar hesaplanan tutarı karşılamıyor."),
+            // V1-RMD-409 (V1-RMD-393 F-04, F-07): the same codes the card/EFT tender route already returns.
+            CashTenderUnsettledPaymentExistsException => (409, "TENDER_UNSETTLED_PAYMENT_EXISTS", "Bu hesapta çözülmemiş bir kart ödemesi var; nakit almadan önce kart ödemesinin sonucu netleştirilmeli."),
+            BillNotPayableException => (409, "TENDER_BILL_NOT_PAYABLE", "Bu hesap iptal edilmiş; tahsilat alınamaz. Hesabı yenileyin."),
             CashTenderException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             // V13-CSH-004: OverAllocationException (V13-ALC-001) is reachable
             // through the cash-tender endpoint - both this handler's own

@@ -548,6 +548,14 @@ public static partial class DualScreenApplication
                     },
                     statusCode: StatusCodes.Status409Conflict);
             }
+            catch (BillNotPayableException)
+            {
+                // V1-RMD-409 (V1-RMD-393 F-07): e.g. a till screen still showing a check that was recalled and
+                // cancelled; the money must go to the re-issued check instead.
+                return Results.Json(
+                    new { error = new { code = "TENDER_BILL_NOT_PAYABLE", message = "Bu hesap iptal edilmiş; tahsilat alınamaz. Hesabı yenileyin." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
             catch (CrossBillPaymentAllocationException)
             {
                 return Results.Json(

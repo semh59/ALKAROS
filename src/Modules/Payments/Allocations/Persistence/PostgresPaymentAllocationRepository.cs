@@ -74,6 +74,13 @@ public sealed class PostgresPaymentAllocationRepository : IPaymentAllocationRepo
         // over-allocate the bill.
         await LockBillAsync(connection, transaction, bill.Id, cancellationToken);
 
+        // V1-RMD-409 (V1-RMD-393 F-07): the caller's Bill was read before any lock; the recall flow can have
+        // cancelled it since. Every tender method allocates through here, so this one check under the lock covers
+        // cash, EFT and card alike.
+        var currentStatus = await ReadBillStatusAsync(connection, transaction, bill.Id, cancellationToken);
+        if (string.Equals(currentStatus, nameof(BillState.Cancelled), StringComparison.Ordinal))
+            throw new BillNotPayableException(bill.Id, currentStatus!);
+
         var alreadyAllocated = await SumAllocatedAsync(connection, transaction, bill.Id, cancellationToken);
         // V1-RMD-298: the real (discount/tip-adjusted) ceiling, not the bill's own never-updated
         // PayableAmount - see PaymentAllocationFactory.Create's own comment on this parameter.
@@ -131,6 +138,15 @@ public sealed class PostgresPaymentAllocationRepository : IPaymentAllocationRepo
                 $"GetByBillIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return result;
+    }
+
+    private static async Task<string?> ReadBillStatusAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT status FROM billing.bills WHERE bill_id = $1;", connection, transaction);
+        command.Parameters.AddWithValue(billId);
+        return await command.ExecuteScalarAsync(cancellationToken) as string;
     }
 
     private static async Task LockBillAsync(

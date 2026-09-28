@@ -1,0 +1,5 @@
+  Failed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ACashTenderIsRefusedWhileACardAttemptOnTheSameBillIsUnresolved [4 s]
+  Failed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ACashTenderOnACancelledBillIsRefusedAndRecordsNothing [3 s]
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 9 s - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)
+  Failed ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.EftAndCardTendersOnACancelledBillAreRefusedAndRecordNothing [4 s]
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 4 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)

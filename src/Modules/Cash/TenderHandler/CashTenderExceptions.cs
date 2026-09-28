@@ -54,3 +54,22 @@ public sealed class InsufficientCashTenderException : CashTenderException
     public decimal TenderedAmount { get; }
     public decimal AmountDue { get; }
 }
+
+/// <summary>
+/// V1-RMD-409 (V1-RMD-393 F-04): the Bill already has a Payment that is not settled (a card attempt at Unknown,
+/// Pending or ReconciliationRequired). If that card was really charged, taking cash too would charge the guest twice;
+/// EFT and card already refuse this, cash now does as well.
+/// </summary>
+public sealed class CashTenderUnsettledPaymentExistsException : CashTenderException
+{
+    public CashTenderUnsettledPaymentExistsException(Guid billId, Guid existingPaymentId)
+        : base($"Bill '{billId}' has an unsettled payment '{existingPaymentId}'; it must be resolved before a cash tender.")
+    {
+        BillId = billId;
+        ExistingPaymentId = existingPaymentId;
+    }
+
+    public Guid BillId { get; }
+
+    public Guid ExistingPaymentId { get; }
+}

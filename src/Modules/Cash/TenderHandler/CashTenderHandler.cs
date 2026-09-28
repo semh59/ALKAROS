@@ -79,6 +79,10 @@ public sealed class CashTenderHandler : ICashTenderHandler
         // until the first one commits, then finds the allocation already
         // recorded below and replays instead of racing its own Payment/
         // CashTransaction insert against the first attempt's.
+        // V1-RMD-409 (V1-RMD-393 F-04): the shared bill-settlement lock FIRST, idempotency-key lock second — the
+        // same fixed order and key EftTenderHandler and CardSettlementOrchestrator use, so a cash tender now
+        // serializes against a concurrent card attempt on the same bill instead of racing it.
+        await LockBillForSettlementAsync(connection, dbTransaction, bill.Id, cancellationToken);
         await LockIdempotencyKeyAsync(connection, dbTransaction, request.IdempotencyKey, cancellationToken);
 
         var existingAllocation = await _allocationRepository.GetByIdempotencyKeyAsync(
@@ -88,6 +92,15 @@ public sealed class CashTenderHandler : ICashTenderHandler
             await dbTransaction.CommitAsync(cancellationToken);
             return await BuildReplayResultAsync(existingAllocation, request.CashSessionId, cancellationToken);
         }
+
+        // V1-RMD-409 (V1-RMD-393 F-04): V1-RMD-258 left cash out of this guard because a cash payment itself is
+        // never Unknown — but another payment on the same bill can be. If that card attempt was really charged,
+        // cash on top of it charges the guest twice. Read under the bill-settlement lock just taken.
+        var existingPayments = await _paymentRepository.GetByBillIdAsync(bill.Id, cancellationToken);
+        var unsettledPayment = existingPayments.FirstOrDefault(p =>
+            p.Status is PaymentStatus.Pending or PaymentStatus.Unknown or PaymentStatus.ReconciliationRequired);
+        if (unsettledPayment is not null)
+            throw new CashTenderUnsettledPaymentExistsException(bill.Id, unsettledPayment.Id);
 
         // Fail-fast check, now that this is confirmed to be a genuinely new
         // command (not a replay of one that already succeeded): a plain
@@ -166,6 +179,19 @@ public sealed class CashTenderHandler : ICashTenderHandler
             payment.ApprovedAmount ?? 0m,
             payment.ChangeAmount,
             WasReplayed: true);
+    }
+
+    private static async Task LockBillForSettlementAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);";
+        await using (command)
+        {
+            command.Parameters.AddWithValue($"bill-settlement:{billId:N}");
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
     }
 
     private static async Task LockIdempotencyKeyAsync(

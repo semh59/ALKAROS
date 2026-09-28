@@ -113,6 +113,29 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task EftAndCardTendersOnACancelledBillAreRefusedAndRecordNothing()
+    {
+        // V1-RMD-409 (V1-RMD-393 F-07): the guard sits under the allocation lock (EFT) and in the card orchestrator.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd409-cancelled-tenders");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await _database.SetBillStatusAsync(billId, "Cancelled");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var eft = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd409-eft" });
+        var card = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "BankCard", Amount = 60m, IdempotencyKey = "rmd409-card" });
+
+        Assert.Equal(HttpStatusCode.Conflict, eft.StatusCode);
+        Assert.Equal("TENDER_BILL_NOT_PAYABLE", (await eft.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(HttpStatusCode.Conflict, card.StatusCode);
+        Assert.Equal("TENDER_BILL_NOT_PAYABLE", (await card.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(0L, await _database.PaymentCountAsync(billId));
+    }
+
+    [Fact]
     public async Task EftTenderOverTheRemainingAmountIsRejectedAsAConflict()
     {
         var terminalId = Guid.NewGuid();
@@ -966,6 +989,15 @@ internal sealed class PaymentTenderHttpTestDatabase
         await using var command = DataSource.CreateCommand("SELECT role_id FROM identity.roles WHERE code = @code;");
         command.Parameters.AddWithValue("code", roleCode);
         return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    /// <summary>V1-RMD-409: moves a seeded bill to <paramref name="status"/> (e.g. Cancelled by the recall flow).</summary>
+    public async Task SetBillStatusAsync(Guid billId, string status)
+    {
+        await using var command = DataSource.CreateCommand("UPDATE billing.bills SET status = @status WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("id", billId);
+        await command.ExecuteNonQueryAsync();
     }
 
     public async Task<long> PaymentCountAsync(Guid billId)

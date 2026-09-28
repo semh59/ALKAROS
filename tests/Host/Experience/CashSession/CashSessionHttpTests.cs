@@ -347,6 +347,52 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ACashTenderOnACancelledBillIsRefusedAndRecordsNothing()
+    {
+        // V1-RMD-409 (V1-RMD-393 F-07): the recall flow cancels a check; a till still showing it must not take cash.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd409-cancelled");
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await _database.SetBillStatusAsync(billId, "Cancelled");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 100m, IdempotencyKey = "rmd409-cash-cancelled" });
+
+        Assert.Equal(HttpStatusCode.Conflict, tender.StatusCode);
+        Assert.Equal("TENDER_BILL_NOT_PAYABLE", (await tender.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(0L, await _database.CountPaymentsAsync(billId));
+        var expected = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/expected-cash", cookie);
+        Assert.Equal(100m, (await expected.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
+    }
+
+    [Fact]
+    public async Task ACashTenderIsRefusedWhileACardAttemptOnTheSameBillIsUnresolved()
+    {
+        // V1-RMD-409 (V1-RMD-393 F-04): if the card was really charged, cash on top would charge the guest twice.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd409-unsettled");
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var card = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/tenders", cookie,
+            new { Method = "BankCard", Amount = 80m, IdempotencyKey = "rmd409-card" });
+        Assert.Equal("RequiresReconciliation", (await card.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("outcome").GetString());
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 100m, IdempotencyKey = "rmd409-cash-after-card" });
+
+        Assert.Equal(HttpStatusCode.Conflict, tender.StatusCode);
+        Assert.Equal("TENDER_UNSETTLED_PAYMENT_EXISTS", (await tender.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(1L, await _database.CountPaymentsAsync(billId));
+    }
+
+    [Fact]
     public async Task ASessionWithoutCashDrawerIsForbiddenOnDrawerRoutes()
     {
         // V1-RMD-400 (V1-RMD-399 H-02): a signed-in waiter or kitchen device must not operate the drawer.
@@ -577,6 +623,22 @@ internal sealed class CashSessionHttpTestDatabase
         }
 
         return $"alkaros.cashier={rawToken}";
+    }
+
+    /// <summary>V1-RMD-409: moves a seeded bill to <paramref name="status"/> (e.g. Cancelled by the recall flow).</summary>
+    public async Task SetBillStatusAsync(Guid billId, string status)
+    {
+        await using var command = DataSource.CreateCommand("UPDATE billing.bills SET status = @status WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("id", billId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<long> CountPaymentsAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM payments.payments WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<long> CountCashSessionsAsync(Guid terminalId)
