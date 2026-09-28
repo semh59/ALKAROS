@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1472,
-  "markdown_line_count": 112320,
-  "markdown_byte_count": 6480653,
+  "markdown_file_count": 1473,
+  "markdown_line_count": 112385,
+  "markdown_byte_count": 6483948,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "DE33299A0CAEAAC229D6DE282A24E078AE32990D2D228764E4868508BE0DC735",
-      "lines": 2748,
-      "bytes": 403121,
+      "sha256": "1BA06B32C601326BD58A382827A74A992A5FFE3612103FB288C43D683E94EE0D",
+      "lines": 2749,
+      "bytes": 403289,
       "utf8": true
     },
     {
@@ -8166,6 +8166,13 @@
       "sha256": "D1A07DA44E9E0CBF686A086867631B07A7127EB8514FBB3730710C09E5668EEC",
       "lines": 67,
       "bytes": 3461,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-416-cash-session-opening-entry-atomic.md",
+      "sha256": "B6A25FE6C63A4DC8AE6C42E4D83CE17B350B0766620F0E516B43470F671B2CFC",
+      "lines": 64,
+      "bytes": 3127,
       "utf8": true
     },
     {
