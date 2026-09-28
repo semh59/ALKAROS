@@ -119,6 +119,10 @@ jobs:
             exit 1
           }
           Write-Output "OK: every changed path is within scope for at least one of [$($taskIds -join ', ')]"
+          # V1-RMD-394: the Actions pwsh wrapper exits with $LASTEXITCODE, i.e. the last task_scope_tool.py
+          # run - which is 1 whenever that ONE task alone has findings, even though the intersection above
+          # just proved another task covers every one of them. The verdict is the intersection, so exit 0.
+          exit 0
 
   validate:
     name: Locked build, tests and supply chain
