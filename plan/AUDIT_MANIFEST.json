@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1466,
-  "markdown_line_count": 111931,
-  "markdown_byte_count": 6460228,
+  "markdown_file_count": 1467,
+  "markdown_line_count": 111995,
+  "markdown_byte_count": 6463506,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "ED4229A44265DCF37521AF9EA0ED41AE51C3DF59C669BE379C89AA962B8282AE",
-      "lines": 2742,
-      "bytes": 402128,
+      "sha256": "9BE992EBC76FE859E8D6B9DF30A8F1FF70A083D57D84BE44D6D235815ECF60CB",
+      "lines": 2743,
+      "bytes": 402297,
       "utf8": true
     },
     {
@@ -8124,6 +8124,13 @@
       "sha256": "BB324F5F084F4001F49C732F3F49EC1AB2F38E3445D01C83151470781F9A4B7D",
       "lines": 83,
       "bytes": 5129,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-410-discount-cannot-undercut-collected.md",
+      "sha256": "97CC8745FFE46811CAB331EAB37E5D0D6E3B8A94D40E845D5054D8C09FB01BD6",
+      "lines": 63,
+      "bytes": 3109,
       "utf8": true
     },
     {
