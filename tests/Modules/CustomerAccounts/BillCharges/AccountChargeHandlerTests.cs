@@ -4,6 +4,7 @@ using ALKAROS.Billing.BillFoundation;
 using ALKAROS.CustomerAccounts.BillCharges.Tests.Fixtures;
 using ALKAROS.CustomerAccounts.TransactionLedger;
 using ALKAROS.CustomerData.Profiles;
+using ALKAROS.ModuleComposition;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.PaymentAggregate;
@@ -46,7 +47,17 @@ public sealed class AccountChargeHandlerTests : IClassFixture<AccountChargeTestD
     }
 
     private AccountChargeHandler Handler(ICustomerCreditPolicy? creditPolicy = null) =>
-        new(_profiles, creditPolicy ?? new AlwaysApproveCreditPolicy(), _bills, _adjustments, _payments, _allocations, _ledger, _dataSource);
+        new(_profiles, creditPolicy ?? new ApprovingCreditPolicy(), _bills, _adjustments, _payments, _allocations, _ledger, _dataSource);
+
+    /// <summary>
+    /// The handler's own mechanics are tested with a policy that approves;
+    /// the production policy (V1-RMD-436) never does.
+    /// </summary>
+    private sealed class ApprovingCreditPolicy : ICustomerCreditPolicy
+    {
+        public Task<CreditPolicyResult> EvaluateAsync(Guid customerId, decimal amount, CancellationToken cancellationToken) =>
+            Task.FromResult(new CreditPolicyResult(true, null));
+    }
 
     [Fact]
     public async Task HandleAsyncCreatesAPaymentAnAllocationAndAnAccountChargeAtomically()
@@ -120,6 +131,33 @@ public sealed class AccountChargeHandlerTests : IClassFixture<AccountChargeTestD
         await Assert.ThrowsAsync<CustomerProfileNotFoundException>(() => Handler().HandleAsync(request));
 
         (await _allocations.GetByBillIdAsync(billId)).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task TheProductionCreditPolicyRefusesAChargeUntilACreditLimitExists()
+    {
+        var customerId = await SeedCustomerAsync();
+        var billId = await SeedBillAsync(payable: 100m);
+        var request = new AccountChargeRequest(customerId, billId, AmountDue: 100m, IdempotencyKey: Guid.NewGuid().ToString());
+
+        var denied = await Assert.ThrowsAsync<AccountChargeCreditPolicyDeniedException>(
+            () => Handler(new NoCreditLimitDefinedPolicy()).HandleAsync(request));
+
+        denied.Reason.Should().Be("Müşteri için kredi limiti tanımlanmadığından cari hesaba borç yazılamaz.");
+        (await _allocations.GetByBillIdAsync(billId)).Should().BeEmpty();
+        (await _ledger.GetByCustomerAsync(customerId)).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void TheProductionModuleRegistersTheNoCreditLimitPolicy()
+    {
+        var context = new ModuleContext();
+        new CustomerAccountsBillChargesModule().Register(context);
+
+        context.Services
+            .Where(service => service.ServiceType == typeof(ICustomerCreditPolicy))
+            .Should().ContainSingle()
+            .Which.ImplementationType.Should().Be<NoCreditLimitDefinedPolicy>();
     }
 
     private sealed class DenyingCreditPolicy(string reason) : ICustomerCreditPolicy

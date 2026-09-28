@@ -4,22 +4,27 @@ namespace ALKAROS.CustomerAccounts.BillCharges;
 public sealed record CreditPolicyResult(bool Approved, string? DeniedReason);
 
 /// <summary>
-/// Extension seam for credit-worthiness checks beyond plain eligibility
-/// (does the customer exist and remain un-anonymized). This task's own Out
-/// of scope explicitly excludes "genel credit scoring" (general credit
-/// scoring), so <see cref="AlwaysApproveCreditPolicy"/> is an honest
-/// placeholder - it never denies a charge - until a real policy (credit
-/// limits, aging-based holds) is designed as its own task. Mirrors
-/// `ALKAROS.CustomerData.AnonymizationState.IAnonymizationRetentionGuard`'s
-/// exact rationale for the same kind of not-yet-built dependency.
+/// Credit-worthiness check beyond plain eligibility (does the customer exist
+/// and remain un-anonymized), evaluated by <see cref="AccountChargeHandler"/>
+/// before anything is written.
 /// </summary>
 public interface ICustomerCreditPolicy
 {
     Task<CreditPolicyResult> EvaluateAsync(Guid customerId, decimal amount, CancellationToken cancellationToken);
 }
 
-public sealed class AlwaysApproveCreditPolicy : ICustomerCreditPolicy
+/// <summary>
+/// V1-RMD-436 (V1-RMD-393 F-13): the production policy while the system has
+/// no credit limit concept. Extending credit is a decision about a limit, and
+/// without one no charge is approved - the account and the Bill stay
+/// untouched and the denial carries a Turkish reason. A policy that reads
+/// real per-customer limits replaces this registration when that decision is
+/// made.
+/// </summary>
+public sealed class NoCreditLimitDefinedPolicy : ICustomerCreditPolicy
 {
+    public const string DeniedReason = "Müşteri için kredi limiti tanımlanmadığından cari hesaba borç yazılamaz.";
+
     public Task<CreditPolicyResult> EvaluateAsync(Guid customerId, decimal amount, CancellationToken cancellationToken) =>
-        Task.FromResult(new CreditPolicyResult(true, null));
+        Task.FromResult(new CreditPolicyResult(false, DeniedReason));
 }

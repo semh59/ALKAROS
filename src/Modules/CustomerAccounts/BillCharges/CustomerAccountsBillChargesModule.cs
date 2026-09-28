@@ -23,7 +23,8 @@ public sealed class CustomerAccountsBillChargesModule : IModule
 
     public void Register(ModuleContext context)
     {
-        context.RegisterTransient<ICustomerCreditPolicy, AlwaysApproveCreditPolicy>();
+        // V1-RMD-436: no charge is approved until a credit limit exists.
+        context.RegisterTransient<ICustomerCreditPolicy, NoCreditLimitDefinedPolicy>();
 
         // V1-RMD-435: registered here because this module already depends on
         // both CustomerAccounts (the balance it reads) and CustomerData (the

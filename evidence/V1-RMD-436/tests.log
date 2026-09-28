@@ -1,0 +1,4 @@
+# V1-RMD-436 tests on real PostgreSQL 18, Release (patch applied on acfa781e)
+Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14, Duration: 443 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 266 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 15 s - ALKAROS.Host.Experience.Composition.Tests.dll (net8.0)

@@ -16,7 +16,7 @@
   "IAccountChargeHandler": "V14-ACC-003: bu gorevin kendi kapsami yalniz tahsilat orkestrasyonunu kurmak; gercek bir HTTP endpoint'i kasiyer ekranina 'hesaba yaz' secenegi eklendiginde (V14-UI-001 gibi) ekleyecek.",
   "AccountChargeHandler": "V14-ACC-003: bu gorevin kendi kapsami yalniz tahsilat orkestrasyonunu kurmak; gercek bir HTTP endpoint'i kasiyer ekranina 'hesaba yaz' secenegi eklendiginde (V14-UI-001 gibi) ekleyecek.",
   "ICustomerCreditPolicy": "V14-ACC-003: bilincli yer tutucu genisletme noktasi - gercek kredi politikasi ayri bir gorev olarak tasarlanana kadar.",
-  "AlwaysApproveCreditPolicy": "V14-ACC-003: bilincli yer tutucu - gercek bir kredi politikasi ayri bir gorev olarak tasarlanana kadar hicbir zaman reddetmiyor.",
+  "NoCreditLimitDefinedPolicy": "V1-RMD-436: kredi limiti tanimlanana kadar her cari borc yazmayi reddeden uretim politikasi; hesaba yaz HTTP endpoint'i eklendiginde (AccountChargeHandler ile ayni gerekce) erisilebilir olur.",
   "IKitchenRoutingService": "V1-RMD-278: mutfak yonlendirmesi Host tarafindan depolar ve yonlendirici uzerinden zaten calisiyor; sarmalayici servis gereksiz.",
   "IPortionReservationArbitrator": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
   "IPortionReservationArbitratorRepository": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
