@@ -49,7 +49,7 @@ gerçek test + mutation-check + görev dosyası + dört gate + commit/push.
 | 4 | WaiterPwa | Tamamlandı | 1 (+2 ertelenen) | 1 | 2026-09-27 | V1-RMD-379; arama debounce'u (T8); favoriler (P1) ve yardım-onay geri bildirimi (T7) Semih'e bırakıldı |
 | 5 | PosTerminal — Cashier.tsx | Tamamlandı | 1 (kod değişikliği yok) | 0 | 2026-09-27 | V1-RMD-380; CİDDİ — modifikatör desteği yok, backend domain/şema değişikliği gerektiriyor, Semih'e bırakıldı |
 | 6 | PosTerminal — workspace.tsx + tables | Tamamlandı | 1 (+1 ertelenen) | 1 | 2026-09-27 | V1-RMD-381; masa durumu sessizce bayatlıyordu (T7); bekleme listesi (P1) Semih'e bırakıldı |
-| 7 | PosTerminal — billing | Bekliyor | - | - | - | - |
+| 7 | PosTerminal — billing | Tamamlandı | 0 | 0 | 2026-09-27 | V1-RMD-382; gerçek bulgu yok (tek-oturumluk görev, dirty koruması zaten yeterli) |
 | 8 | PosTerminal — catalog | Bekliyor | - | - | - | - |
 | 9 | PosTerminal — kitchen-operations | Bekliyor | - | - | - | - |
 | 10 | PosTerminal — pending-checks | Bekliyor | - | - | - | - |
