@@ -68,7 +68,10 @@ public sealed class PostgresCustomerAnonymizationRequestStoreTests : IAsyncLifet
     public async Task UpdateStatusToAnonymizedSetsAnonymizedAt()
     {
         var id = await _store.CreateAsync(Guid.NewGuid(), AnonymizationRequestStatus.Pending, null, null, DateTimeOffset.UtcNow);
-        var anonymizedAt = DateTimeOffset.UtcNow;
+        // timestamptz keeps microseconds, DateTimeOffset keeps 100 ns ticks: use a value PostgreSQL can store
+        // exactly so the round-trip is still checked for exact equality (V14-RMD-001).
+        var now = DateTimeOffset.UtcNow;
+        var anonymizedAt = now.AddTicks(-(now.Ticks % TimeSpan.TicksPerMicrosecond));
 
         await _store.UpdateStatusAsync(id, AnonymizationRequestStatus.Anonymized, blockedReason: null, anonymizedAt, expectedRowVersion: 1);
 
