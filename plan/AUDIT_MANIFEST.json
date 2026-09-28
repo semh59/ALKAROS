@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1474,
-  "markdown_line_count": 112457,
-  "markdown_byte_count": 6487892,
+  "markdown_file_count": 1475,
+  "markdown_line_count": 112523,
+  "markdown_byte_count": 6491326,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "15AD73332F7A870422303024312EDF4A8A593624A992F35EB0ACD6CAABBBE6D6",
-      "lines": 2750,
-      "bytes": 403449,
+      "sha256": "5E5C5F3C4B1D65E161195C91AFA937F44214CABDA38130D102E087F19030D16B",
+      "lines": 2751,
+      "bytes": 403624,
       "utf8": true
     },
     {
@@ -8180,6 +8180,13 @@
       "sha256": "E4D2A0B07812916137EDE8CAD16E916F43E2B603975CC411597F17353A518A7F",
       "lines": 71,
       "bytes": 3784,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-418-variance-report-skips-voided-consumption.md",
+      "sha256": "55DA2AEC1DAADE8DE00A3E85C93B2EB59CE99F52C08C3E6210BAC3B46EEF62C9",
+      "lines": 65,
+      "bytes": 3259,
       "utf8": true
     },
     {
