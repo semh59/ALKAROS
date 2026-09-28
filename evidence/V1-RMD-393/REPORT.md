@@ -139,6 +139,8 @@ akışın Host HTTP testleri koşuldu (`mutation/run-mutations.sh`, çıktı `mu
 
 - Bağımsız bir ajan, para akışına tek satırlık gerçekçi bir hata yerleştiren bir yama ve mühürlü bir açıklama
   üretti. İkisinin SHA-256'sı 06:58:33Z'de, probe'lar yazılmadan önce kaydedildi (`calibration/SEAL.sha256`).
+  Mühürlü açıklama markdownlint kapsamından çıkması için baytı baytına aynı içerikle `SEALED.md` →
+  `SEALED.txt` olarak yeniden adlandırıldı; `sha256sum calibration/SEALED.txt` mühürdeki değeri verir.
 - Probe'lar yamasız ve yamalı iki kopyada koşuldu; sonuçlar **birebir aynı** çıktı
   (`calibration/run-seeded-blind.log`). Karar, mühür açılmadan önce yazıldı
   (`calibration/VERDICT-before-unseal.txt`).
