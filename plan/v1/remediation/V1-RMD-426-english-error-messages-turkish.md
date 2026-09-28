@@ -1,7 +1,7 @@
 # V1-RMD-426 - Katalog, rol yönetimi ve karar uçlarındaki İngilizce hata mesajlarının Türkçeleştirilmesi
 
 - Task ID: V1-RMD-426
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -48,7 +48,17 @@ bir Türkçe mesaj döner. Hata kodları değişmez.
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Host.Experience.Catalog.Tests` 12/12, `ALKAROS.Host.Experience.Roles.Tests` 8/8 ve
+  `ALKAROS.Host.Experience.Authorization.Tests` 9/9 (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata;
+  `evidence/V1-RMD-426/tests.log`).
+- Mevcut 403 testlerine ve rol çakışması testine Türkçe mesaj doğrulaması eklendi. Üretim değişikliği geri alınınca
+  dördü de kırmızı (İngilizce metin ve ham "Role 'x' already exists." geliyordu;
+  `evidence/V1-RMD-426/red-without-fix.log`).
+- Düzeltme sonrası tarama (`evidence/V1-RMD-426/english-leak-scan.log`): `src/Host` hata eşlemelerinde İngilizce cümle
+  kalmadı; listede kalan satırlar özel harf içermeyen Türkçe cümlelerdir. İstemcilerde bu İngilizce metinlere bağlı bir
+  çeviri yoktu.
+- Semih'in elle deneyebileceği senaryo: katalog yönetimi izni olmayan bir oturumla PosTerminal'de ürün eklemeyi
+  deneyin; ekranda "Katalog yönetimi izni gerekiyor." görünür, İngilizce metin görünmez.
 
 ## Handoff
 

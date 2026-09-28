@@ -1,0 +1,16 @@
+# Production changes reverted (src/ at HEAD), tests kept
+[xUnit.net 00:00:01.21]     ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.MissingAndUnpermissionedSessionsReturnStableErrorsWithoutMutation [FAIL]
+Expected: "Katalog yönetimi izni gerekiyor."
+Actual:   "The catalog manager permission is require"···
+Failed!  - Failed:     1, Passed:    11, Skipped:     0, Total:    12, Duration: 1 s - ALKAROS.Host.Experience.Catalog.Tests.dll (net8.0)
+[xUnit.net 00:00:02.37]     ALKAROS.Host.Experience.Roles.Tests.RoleManagementHttpTests.ActorWithoutRolesManagePermissionIsForbiddenFromCreatingARole [FAIL]
+Expected: "Rol ya da yetki yönetimi izni gerekiyor."
+Actual:   "A role or permission management permissio"···
+[xUnit.net 00:00:08.01]     ALKAROS.Host.Experience.Roles.Tests.RoleManagementHttpTests.ManagerCanCreateARoleAddAPermissionAndAssignItToTheRole [FAIL]
+Expected: "Bu rol, yetki ya da kullanıcı adı zaten v"···
+Actual:   "Role 'host-d7810f46' already exists."
+Failed!  - Failed:     2, Passed:     6, Skipped:     0, Total:     8, Duration: 10 s - ALKAROS.Host.Experience.Roles.Tests.dll (net8.0)
+[xUnit.net 00:00:11.31]     ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.ManagerCannotApproveOrDenyTheirOwnGrantRequest [FAIL]
+Expected: "Kendi talebinizi onaylayamaz ya da redded"···
+Actual:   "You cannot resolve your own request."
+Failed!  - Failed:     1, Passed:     8, Skipped:     0, Total:     9, Duration: 12 s - ALKAROS.Host.Experience.Authorization.Tests.dll (net8.0)

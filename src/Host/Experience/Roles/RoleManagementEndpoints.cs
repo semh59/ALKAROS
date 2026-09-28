@@ -225,17 +225,20 @@ public sealed class RoleManagementEndpointFilter : IEndpointFilter
         var (status, code, message) = exception switch
         {
             RoleManagementUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "A manager or supervisor session is required."),
+                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Yönetici ya da vardiya sorumlusu oturumu gerekiyor."),
             AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "A role or permission management permission is required."),
+                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Rol ya da yetki yönetimi izni gerekiyor."),
+            // V1-RMD-426: the exception's own text is English and names internal codes (UI_STYLE_GUIDE); the
+            // cases behind it are an existing role, permission or username, or a missing permission code.
             InvalidOperationException =>
-                (StatusCodes.Status409Conflict, "ROLE_MANAGEMENT_CONFLICT", exception.Message),
+                (StatusCodes.Status409Conflict, "ROLE_MANAGEMENT_CONFLICT",
+                    "Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı."),
             BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The request is invalid."),
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             ArgumentException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The request is invalid."),
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "The role management operation could not be completed."),
+                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => throw exception,
         };
         return Results.Json(

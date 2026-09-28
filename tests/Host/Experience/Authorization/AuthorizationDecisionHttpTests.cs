@@ -205,6 +205,7 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, approve.StatusCode);
         var approveError = await approve.Content.ReadFromJsonAsync<AuthorizationDecisionErrorEnvelopeV1>();
         Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", approveError!.Error.Code);
+        Assert.Equal("Kendi talebinizi onaylayamaz ya da reddedemezsiniz.", approveError.Error.Message); // V1-RMD-426
 
         using var deny = await client.SendAsync(Request(HttpMethod.Post, GrantPath(grantId, "deny"), manager));
         Assert.Equal(HttpStatusCode.Forbidden, deny.StatusCode);

@@ -1,0 +1,45 @@
+# HEAD 6210adfe + V1-RMD-426 working diff, PostgreSQL 18, Release
+## tests/Host/Experience/Catalog/ALKAROS.Host.Experience.Catalog.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.MissingAndUnpermissionedSessionsReturnStableErrorsWithoutMutation [431 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.ManagerCanCreateAndReadEveryCatalogResourceOverHttp [418 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.CursorIsDeterministicResourceBoundAndPageSizeIsBounded [127 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.MissingForeignKeyIsStableValidationAndDoesNotInsertProduct [92 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.RecomputeAllAsyncNeverClearsASeedPriceForAProductWithNoPricingHistoryRow [69 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.CreatingAScheduledFuturePriceClearsAnAlreadyExpiredCurrentPrice [75 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.AnOutOfRangePrepTimeIsRejected [83 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.SettingPrepTimeStoresItAndClearingItSetsNullAgain [103 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.RecomputeAllAsyncActivatesScheduledPricesAndClearsExpiredOnesWithNoAccompanyingWrite [72 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.ConcurrentDuplicateSkuRequestsHaveOneWinnerAndNoPartialRow [78 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.SettingAvailabilityChangesRowVersionAndReturnsTheProduct [88 ms]
+  Passed ALKAROS.Host.Experience.Catalog.Tests.CatalogManagementHttpTests.DuplicateNegativeAndOverlappingMutationsAreAtomicAndCorrectable [112 ms]
+Total tests: 12
+     Passed: 12
+## tests/Host/Experience/Roles/ALKAROS.Host.Experience.Roles.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Host.Experience.Roles.Tests.RoleManagementRegistrationTests.RegistrationPublishesTheRoleManagementRoutes [286 ms]
+  Passed ALKAROS.Host.Experience.Roles.Tests.RoleManagementHttpTests.ActorWithoutRolesManagePermissionIsForbiddenFromCreatingARole [393 ms]
+  Passed ALKAROS.Host.Experience.Roles.Tests.RoleManagementHttpTests.ActorWithoutUsersManagePermissionIsForbiddenFromCreatingAUser [139 ms]
+  Passed ALKAROS.Host.Experience.Roles.Tests.RoleManagementHttpTests.ManagerCanCreateANewStaffAccount [560 ms]
+  Passed ALKAROS.Host.Experience.Roles.Tests.RoleManagementHttpTests.AnonymousAndUnrecognizedSessionsAreRejected [66 ms]
+  Passed ALKAROS.Host.Experience.Roles.Tests.RoleManagementHttpTests.ManagerCanCreateARoleAddAPermissionAndAssignItToTheRole [158 ms]
+  Passed ALKAROS.Host.Experience.Roles.Tests.RoleManagementHttpTests.ManagerCanAssignAndRevokeAUserFromARole [117 ms]
+  Passed ALKAROS.Host.Experience.Roles.Tests.RoleManagementHttpTests.CreatingAUserWithAnAlreadyTakenUsernameIsRejected [537 ms]
+Total tests: 8
+     Passed: 8
+## tests/Host/Experience/Authorization/ALKAROS.Host.Experience.Authorization.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionRegistrationTests.RegistrationPublishesTheDecisionRoutes [291 ms]
+  Passed ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.AManagerDelegatesAGrantClassPermissionTheyHoldAndItIsListed [447 ms]
+  Passed ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.FirstResponderResolvesTheGrantAndTheSecondGetsAConflict [162 ms]
+  Passed ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.DenyRecordsAManualRefusal [94 ms]
+  Passed ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.ADelegationIsRefusedWhenItBreaksAnyOfItsBounds [211 ms]
+  Passed ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.ManagerCannotClearTheirOwnBehaviouralTightening [114 ms]
+  Passed ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.DelegationsAndTighteningsCanBeListedRevokedAndCleared [132 ms]
+  Passed ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.ManagerCannotApproveOrDenyTheirOwnGrantRequest [102 ms]
+  Passed ALKAROS.Host.Experience.Authorization.Tests.AuthorizationDecisionHttpTests.DecisionSurfaceEnforcesSessionAndPermission [68 ms]
+Total tests: 9
+     Passed: 9
