@@ -25,7 +25,11 @@ env:
 jobs:
   enforce:
     name: Task scope enforcement
-    runs-on: windows-latest
+    # V1-RMD-394: was windows-latest. Python 3.12.11+ ships no Windows builds (source-only security
+    # releases), so once windows-latest moved to Windows Server 2025 setup-python could no longer
+    # provide the pinned 3.12.12 and this job failed before running any step. Every step below is
+    # already pwsh, which ubuntu-latest ships, and the validate job runs the same 3.12.12 on Ubuntu.
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
