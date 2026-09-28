@@ -1,7 +1,7 @@
 # V1-RMD-438 - Katalog listesinde ve ayrıntısında kalan İngilizce değerler ve ham kimlikler
 
 - Task ID: V1-RMD-438
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing

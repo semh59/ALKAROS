@@ -1,0 +1,14 @@
+# V1-RMD-438 PosTerminal typecheck and full vitest run (node v22.22.2)
+$ tsc --noEmit
+typecheck exit=0
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/stale.test.ts > PosTerminal accessibility states > gives the pairing dialog an accessible modal contract
+ Test Files  1 failed | 39 passed (40)
+      Tests  1 failed | 300 passed (301)
+# Note: the one failure is src/stale.test.ts "gives the pairing dialog an accessible modal contract". It fails the
+# same way with this task's changes stashed (pre-existing, not caused by this task): the test waits 10 x 40 ms for
+# the lazily imported Cashier route, and in this container (node 22, cold transform) that import takes ~1.2 s, so
+# the route has not rendered yet. The same suite passed 300/300 here earlier (evidence/V1-RMD-437/tests.log) and
+# passes in CI (node 24). Catalog tests alone:
+ Test Files  2 passed (2)
+      Tests  21 passed (21)

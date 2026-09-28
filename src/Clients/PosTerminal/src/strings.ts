@@ -146,6 +146,11 @@ export const stockModeLabels: Record<string, string> = {
   RecipeDerived: "Reçeteden",
 };
 
+/** V1-RMD-438: the price row subtitle showed the raw PriceType enum. */
+export const priceTypeLabels: Record<string, string> = {
+  SalePrice: "Satış fiyatı",
+};
+
 export const selectableStockModes = ["QuantityTracked", "PortionTracked", "RecipeDerived"] as const;
 
 export const stockModeHint = "Siparişin onaylanması için ürünün stok eşlemesi olmalı.";

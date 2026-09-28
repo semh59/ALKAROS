@@ -98,6 +98,22 @@ describe("catalog workspace", () => {
     expect(onCreate).toHaveBeenCalledWith({ kind: "products", value: expect.objectContaining({ sku: "SU-01", stockMode: "QuantityTracked" }) });
   });
 
+  it("shows product type, tax profile and price type in Turkish instead of raw values", async () => {
+    // V1-RMD-438: the product subtitle showed the raw ProductType enum, the detail showed the tax profile id and the
+    // price subtitle showed the raw PriceType enum with a product id fragment.
+    await render(<CatalogWorkspace {...baseProps()} />);
+    const row = document.querySelector(".catalog-row")!;
+    expect(row.textContent).toContain("ESP-01 · Menü ürünü");
+    const detail = document.querySelector(".catalog-details")!;
+    expect(detail.textContent).toContain("KDV %10");
+    expect(document.body.textContent).not.toContain("MenuItem");
+    expect(detail.textContent).not.toContain("tax-1");
+
+    await click([...document.querySelectorAll(".catalog-workspace__tabs button")].find((button) => button.textContent?.includes("Fiyatlar"))!);
+    expect(document.body.textContent).toContain("Satış fiyatı · Espresso");
+    expect(document.body.textContent).not.toContain("SalePrice");
+  });
+
   it("creates a modifier group — the create surface that was entirely unreachable before this fix", async () => {
     // Found by an independent audit (2026-09-07): an operator could create
     // individual modifiers via this same screen but never the group their
