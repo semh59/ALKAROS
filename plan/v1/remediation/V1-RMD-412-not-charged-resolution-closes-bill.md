@@ -1,7 +1,7 @@
 # V1-RMD-412 - "Kart çekilmedi" çözümünden sonra ödenmiş hesabı kapatmak
 
 - Task ID: V1-RMD-412
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -43,7 +43,15 @@ hesap açık kalır) ve yanıta kapanıp kapanmadığını ekler.
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- `ALKAROS.Host.Experience.PaymentTender.Tests` (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata): 34/34
+  (`evidence/V1-RMD-412/tests.log`).
+- Yeni test `MarkingTheLastUnresolvedCardAttemptNotChargedClosesAnOtherwiseSettledBill`: gerçek kart ucuyla çözülmemiş
+  deneme; hesabın tamamı düzeltme öncesi bir kayıt olarak dağıtılmış; yönetici "kart çekilmedi" der → yanıtta
+  `billClosed = true`, hesap `Paid`. Üretim değişikliği geri alınınca kırmızı (aynı dosya).
+- V1-RMD-393 probe'u P09 artık ön koşuluna ulaşamıyor: duruma F-04 açığıyla (çözülmemiş kart varken nakit) giriyordu ve
+  V1-RMD-409 bunu kapattı (aynı dosyada açıklandı). Senaryo yukarıdaki HTTP testiyle sınanıyor.
+- Semih'in elle deneyebileceği senaryo: kartı sonuçsuz kalan bir hesabın geri kalanı ödenmişse, yönetici "kart
+  çekilmedi" dediği anda hesap kapanır ve masa boşalır.
 
 ## Handoff
 

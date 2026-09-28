@@ -493,6 +493,29 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task MarkingTheLastUnresolvedCardAttemptNotChargedClosesAnOtherwiseSettledBill()
+    {
+        // V1-RMD-412 (V1-RMD-393 F-06): the unresolved attempt was the only thing keeping a fully paid check open.
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd412-cashier");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd412-card");
+        // The rest of the check was collected before V1-RMD-409 closed that door (a pre-fix record).
+        await _database.SeedCollectedAsync(billId, 100m);
+        var managerTerminal = Guid.NewGuid();
+        var manager = await _database.SeedManagerSessionAsync(managerTerminal, "rmd412-manager");
+
+        var response = await PostAsync(client, NotChargedPath(managerTerminal, billId, paymentId), manager,
+            new { Reason = "Kart çekilmedi; hesabın tamamı nakit ödendi." });
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.True((await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("billClosed").GetBoolean());
+        Assert.Equal("Paid", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
     public async Task APlainCashierCannotResolveAnUnconfirmedCardPayment()
     {
         var terminalId = Guid.NewGuid();
@@ -998,6 +1021,23 @@ internal sealed class PaymentTenderHttpTestDatabase
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("id", billId);
         await command.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>V1-RMD-412: an approved payment fully allocated to the bill, recorded straight through the repositories.</summary>
+    public async Task SeedCollectedAsync(Guid billId, decimal amount)
+    {
+        Guid actor;
+        await using (var userCommand = DataSource.CreateCommand("SELECT user_id FROM identity.users ORDER BY username LIMIT 1;"))
+            actor = (Guid)(await userCommand.ExecuteScalarAsync())!;
+        var bill = await new PostgresBillRepository(DataSource).GetByIdAsync(billId)
+            ?? throw new InvalidOperationException("Seeded bill not found.");
+        var payment = new ALKAROS.Payments.PaymentAggregate.Payment(Guid.NewGuid(), billId, amount)
+            .Tender(amount, changedBy: actor)
+            .Approve(amount, changedBy: actor);
+        await new ALKAROS.Payments.PaymentAggregate.PostgresPaymentRepository(DataSource).AddAsync(payment);
+        await new ALKAROS.Payments.Allocations.Persistence.PostgresPaymentAllocationRepository(
+                DataSource, new ALKAROS.Billing.Adjustments.PostgresBillAdjustmentRepository(DataSource))
+            .AllocateAsync(payment, bill, amount, "rmd412-" + Guid.NewGuid().ToString("N"));
     }
 
     public async Task<long> PaymentCountAsync(Guid billId)

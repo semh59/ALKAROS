@@ -200,9 +200,12 @@ public static partial class DualScreenApplication
             ResolveUnsettledPaymentRequestV1 request,
             IManualPaymentResolutionService resolution,
             IPaymentRepository paymentRepository,
+            IBillClosureService billClosure,
+            OrderSettlementService orderSettlement,
             IAuditEventStore auditEvents,
             IAuthorizationService authorization,
             DualScreenStore store,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -230,7 +233,10 @@ public static partial class DualScreenApplication
                         beforeStateJson: JsonSerializer.Serialize(new { status = result.PreviousStatus, billId }),
                         afterStateJson: JsonSerializer.Serialize(new { status = result.NewStatus, billId })),
                     cancellationToken);
-                return Results.Ok(new ResolveUnsettledPaymentResultV1(paymentId, result.NewStatus));
+                // V1-RMD-412 (V1-RMD-393 F-06): the unresolved attempt was what kept an otherwise settled check
+                // open; like card approval and every tender, try to close it now (a check still short stays open).
+                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
+                return Results.Ok(new ResolveUnsettledPaymentResultV1(paymentId, result.NewStatus, closed));
             }
             catch (ManualResolutionReasonInvalidException)
             {
@@ -597,7 +603,7 @@ public sealed record SubmitBillTenderRequestV1(string Method, decimal Amount, st
 
 public sealed record ResolveUnsettledPaymentRequestV1(string? Reason);
 
-public sealed record ResolveUnsettledPaymentResultV1(Guid PaymentId, string Status);
+public sealed record ResolveUnsettledPaymentResultV1(Guid PaymentId, string Status, bool BillClosed = false);
 
 public sealed record SubmitBillTenderResultV1(string Outcome, decimal? ApprovedAmount, string? Reason, bool BillClosed = false);
 

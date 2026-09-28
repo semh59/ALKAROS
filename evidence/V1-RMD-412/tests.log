@@ -1,0 +1,22 @@
+    0 Warning(s)
+    0 Error(s)
+Passed!  - Failed:     0, Passed:    34, Skipped:     0, Total:    34, Duration: 2 m 50 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+--- without fix:
+  Failed ALKAROS.Host.Experience.PaymentTender.Tests.PaymentTenderHttpTests.MarkingTheLastUnresolvedCardAttemptNotChargedClosesAnOtherwiseSettledBill [5 s]
+  Error Message:
+   System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.
+  Stack Trace:
+--
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 5 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+
+V1-RMD-393 P09 (F-06), düzeltilmiş kopyada (harness kasiyerine yalnız bu kopyada cash.drawer ve payments.take eklendi):
+    0 Error(s)
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P09ResolvingTheBlockingCardAttemptClosesAnAlreadyCoveredBill [2 s]
+  Error Message:
+   Precondition (P01 behaviour) not met: cash tender returned 409.
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P09ResolvingTheBlockingCardAttemptClosesAnAlreadyCoveredBill() in /fix/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 222
+--
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 2 s - ALKAROS.Audit.MoneyFlowProbes.dll (net8.0)
+
+Not: P09 duruma F-04 açığı üzerinden (çözülmemiş kart varken nakit) ulaşıyordu; V1-RMD-409 bunu kapattığı için ön koşul artık sağlanamıyor (nakit 409). Aynı son durum yeni HTTP testinde düzeltme öncesi bir kayıt olarak tohumlanıp sınandı.
