@@ -1,7 +1,7 @@
 # V1-RMD-417 - Kasa kapanışı ve sayımın yalnız sayım aşamasında yapılabilmesi
 
 - Task ID: V1-RMD-417
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -50,7 +50,21 @@ sayımı başlatacak şekilde güncellenir.
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Cash.Contracts.Tests` 14/14, `ALKAROS.Cash.SessionLifecycle.Tests` 12/12, `ALKAROS.Cash.TenderHandler.Tests`
+  9/9 ve `ALKAROS.Host.Experience.CashSession.Tests` 22/22 (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata;
+  `evidence/V1-RMD-417/tests.log`). `Open`'dan doğrudan kapatan 13 test adımı önce sayımı başlatacak şekilde güncellendi;
+  beklenen tutarları değişmedi.
+- Yeni testler: `AnOpenSessionCanNeitherRecordACountNorCloseBeforeCountingStarts` (politika) ve
+  `ADrawerCannotBeCountedOrClosedBeforeCountingStarts` (HTTP: `Open` durumda sayım ve kapanış 409
+  `INVALID_CASH_SESSION_STATE`, oturum `Open` kalır; sayım başlatılınca kapanış 200). Üretim değişikliği geri alınınca
+  ikisi de kırmızı (`evidence/V1-RMD-417/red-without-fix.log`).
+- V1-RMD-393 probe'u P05'in ön koşulu kasayı `Open`'dan kapatıyordu ve artık 409 alıyor; probe dosyası kapanmış
+  görevin kanıtı olduğu için değiştirilmedi. Kopyada kapanıştan önce sayım başlatılınca P05 geçer (kasiyer kendi
+  oturumunu uzlaştıramaz); aynı kural `ReconcileNeedsASupervisorWhoIsNotTheSessionsOwnCashier` HTTP testiyle de
+  korunuyor (`evidence/V1-RMD-417/money-flow-probes-after-fix.log`). Aynı koşuda P06 (F-10) açık bulgudur; P07 ve P09
+  ön koşulları V1-RMD-409'dan beri erişilemez.
+- Semih'in elle deneyebileceği senaryo: kasa ekranında akış aynı (sayımı başlat → say → kapat); sayım başlatılmadan
+  kasa kapatma isteği artık "Kasa oturumu bu işlem için uygun durumda değil." ile reddedilir.
 
 ## Handoff
 

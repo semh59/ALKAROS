@@ -95,6 +95,34 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADrawerCannotBeCountedOrClosedBeforeCountingStarts()
+    {
+        // V1-RMD-417 (V1-RMD-393 F-15): cash-session-design.md section 5 - count in Counting, close from Counting.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd417-close-open");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        var sessionPath = $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}";
+
+        var count = await PostAsync(client, sessionPath + "/counts", cookie, new { CountedAmount = 100m });
+        var close = await PostAsync(client, sessionPath + "/close", cookie, new { ActualCash = 100m });
+
+        foreach (var refused in new[] { count, close })
+        {
+            Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+            var error = (await refused.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+            Assert.Equal("INVALID_CASH_SESSION_STATE", error.GetProperty("code").GetString());
+        }
+        var active = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/active", cookie);
+        Assert.Equal("Open", (await active.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString());
+
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, sessionPath + "/start-count", cookie, new { })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, sessionPath + "/close", cookie, new { ActualCash = 100m })).StatusCode);
+    }
+
+    [Fact]
     public async Task OpeningASecondSessionOnTheSameTerminalIsRejected()
     {
         var terminalId = Guid.NewGuid();
@@ -126,6 +154,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, active.StatusCode);
         Assert.Equal(sessionId, (await active.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid());
 
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 100m });
 
@@ -143,6 +172,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 300m });
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
 
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         var close = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 300m });
 
@@ -207,6 +237,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
         var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie, new { ActualCash = 100m });
 
         var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,
@@ -288,6 +319,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, preview.StatusCode);
         Assert.Equal(350m, (await preview.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
 
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         var close = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 350m });
         Assert.Equal(0m, (await close.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("difference").GetDecimal());
@@ -314,6 +346,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var preview = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/expected-cash", cookie);
         Assert.Equal(260m, (await preview.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
 
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie, new { ActualCash = 260m });
 
         var afterClose = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
@@ -361,6 +394,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
 
         // Default tolerance (CashSessionPolicy.ValidateCanCloseSession) is
         // 50.00 - a 60 TL shortage must be rejected without an override.
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         var rejected = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 40m });
         Assert.Equal(HttpStatusCode.Conflict, rejected.StatusCode);
@@ -516,6 +550,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
         var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", ownerCookie, new { OpeningBalance = 100m });
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", ownerCookie, new { });
         var closed = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", ownerCookie,
             new { ActualCash = 100m });
         Assert.Equal(HttpStatusCode.OK, closed.StatusCode);

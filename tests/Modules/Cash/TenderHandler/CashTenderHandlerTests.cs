@@ -254,6 +254,7 @@ public sealed class CashTenderHandlerTests : IClassFixture<CashTenderHandlerTest
     private async Task<Guid> SeedClosedSessionAsync()
     {
         var sessionId = await SeedOpenSessionAsync();
+        await _sessionService.StartCountAsync(new StartCashCountCommand(sessionId, Guid.NewGuid()));
         await _sessionService.CloseSessionAsync(
             new CloseCashSessionCommand(sessionId, ActualCash: 100m, ClosedBy: Guid.NewGuid()),
             expectedCash: 100m);
