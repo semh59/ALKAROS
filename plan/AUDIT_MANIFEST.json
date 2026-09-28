@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1492,
-  "markdown_line_count": 113529,
-  "markdown_byte_count": 6541569,
+  "markdown_file_count": 1493,
+  "markdown_line_count": 113591,
+  "markdown_byte_count": 6544546,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "B62D993D4D35A2CF0F0512BBCF4FC0C5C02A8383E4BE72CC5F1D424A7DEFF747",
-      "lines": 2768,
-      "bytes": 406500,
+      "sha256": "E4C5D183250D29BD582013DF77CCDE47BD25A2B01ED920EEB74A9D1135778CAE",
+      "lines": 2769,
+      "bytes": 406678,
       "utf8": true
     },
     {
@@ -8306,6 +8306,13 @@
       "sha256": "F06C8619375B2E19B1265B2BF469F8D8D20AE108CF273C235D2EF7B29BF604EF",
       "lines": 70,
       "bytes": 3674,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-436-account-charge-refused-without-credit-limit.md",
+      "sha256": "1E44D9B950DDA69F9B9603BF319552A6F78E07676C600FE6CBCE5CA479BAAFAD",
+      "lines": 61,
+      "bytes": 2799,
       "utf8": true
     },
     {

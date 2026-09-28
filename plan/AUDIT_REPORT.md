@@ -2677,6 +2677,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-433-evidence-file-rule-alignment.md` | ✅ | `28C26795CCFA05FC85FEC3CFE8DC19851ACA7622D1FB8E6C42F2B8F7B83298B5` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-434-renumber-master-layer-quality-tasks.md` | ✅ | `36E7C07C206F48F89A0111730999C527C3FB238A331ECA1F130264927768F0FD` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-435-anonymization-blocked-by-open-account-balance.md` | ✅ | `F06C8619375B2E19B1265B2BF469F8D8D20AE108CF273C235D2EF7B29BF604EF` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-436-account-charge-refused-without-credit-limit.md` | ✅ | `1E44D9B950DDA69F9B9603BF319552A6F78E07676C600FE6CBCE5CA479BAAFAD` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2764,5 +2765,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1492` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1493` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.
