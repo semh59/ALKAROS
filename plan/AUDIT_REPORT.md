@@ -1793,8 +1793,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-RMD-255/verification.md` | ✅ | `B45B512DF0725AB47D6D72E51F94CC3335A683320D570CF98F14409523571109` | Tek-sahip görev |
 | `evidence/V1-RMD-256/verification.md` | ✅ | `790528863C826697AF381FD309F4AA5569AA6D1713AA261CE1E6AF824DE0C48D` | Tek-sahip görev |
 | `evidence/V1-RMD-257/verification.md` | ✅ | `0B456567E5A4D4F1FECAA9D30270C9964E95F2388B3E6862F2548EA3540C90FA` | Tek-sahip görev |
-| `evidence/V1-RMD-393/REPORT.md` | ✅ | `E513A8782F91C5C84DCBF8CA9D884FB3D0E6EF7A8FDFB76D59F39FCD938C9810` | Tek-sahip görev |
-| `evidence/V1-RMD-393/calibration/SEALED.md` | ✅ | `443844B46FA90D68ADA634F77F7C6EAF8E82CE199439D7C79E8FD58B1C5A6B39` | Tek-sahip görev |
+| `evidence/V1-RMD-393/REPORT.md` | ✅ | `FBDB9AE647845FCC576D1317A822C15E2F391A0DAB5C7A4B20D4731D7E35D42C` | Tek-sahip görev |
 | `evidence/V1-RMD-393/probes/README.md` | ✅ | `4A9CB5C2EB7A01B39581E62D7D55ECEF6FEF4DFED143FD087417B5F80BC3243A` | Tek-sahip görev |
 | `evidence/V1-SEC-003/candidate-remediation-2026-08-03.md` | ✅ | `C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59` | Tek-sahip görev |
 | `evidence/V1-SEC-003/closure-2026-08-05.md` | ✅ | `055205F9C60FFF4EA57BC87F7C21B548C95466BE6FA7F86ACA13C02DF122C66C` | Tek-sahip görev |
@@ -2625,6 +2624,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-391-customerweb-orderentry-round2-audit.md` | ✅ | `E9F3651DEF6A54CBB44C5842C31F51F7D87510FFAFBE990C4D11DC5E5491FD5F` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-392-customerweb-bill-round2-audit.md` | ✅ | `8B79D7A7DBDE6EBFA6479C6FEE870E022AFE9420E4FB3C46B2CA882D68D2730F` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-393-money-flow-targeted-audit.md` | ✅ | `48A68F3391E07C0B4C930B49808D1324050611A116005C5C903B34C79ACEBF0D` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-394-ci-gate-restore.md` | ✅ | `54E33EFD733DED12B6D65DA0232844C58CFC3E8D99DC15088C23D4BE0507F005` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
