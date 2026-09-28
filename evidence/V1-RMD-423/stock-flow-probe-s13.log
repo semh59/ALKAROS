@@ -1,0 +1,2 @@
+# V1-RMD-398 probe S13 on the fixed copy (unlocked restore in the clone, per the probe README)
+  Passed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S13MovingAverageCostUsesTheRestaurantsLocalDateNotUtc [216 ms]

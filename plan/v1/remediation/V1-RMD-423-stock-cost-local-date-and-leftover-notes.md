@@ -1,7 +1,7 @@
 # V1-RMD-423 - Ortalama maliyetin İstanbul tarihine göre hesaplanması ve koddaki düşünme notlarının temizlenmesi
 
 - Task ID: V1-RMD-423
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -48,7 +48,16 @@ açıklamayla değiştirilir.
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Recipes.CostSnapshots.Tests` 14/14 (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata;
+  `evidence/V1-RMD-423/tests.log`). Mevcut maliyet testleri değişmeden geçer.
+- Yeni test `MovingAverageCostCountsADeliveryOnTheRestaurantsLocalDate`: 5 Ağustos 12:00 (İstanbul) 30 TL'lik ve
+  6 Ağustos 01:30 (İstanbul; UTC'de 5 Ağustos 22:30) 90 TL'lik teslim; 5 Ağustos maliyeti 30, 6 Ağustos maliyeti 60.
+  Üretim değişikliği geri alınınca kırmızı (5 Ağustos için 60; `evidence/V1-RMD-423/red-without-fix.log`).
+- V1-RMD-398 probe'u S13 düzeltilmiş kopyada geçer (`evidence/V1-RMD-423/stock-flow-probe-s13.log`).
+- G-10: `IStockCostResolver.cs` içindeki "Wait…", "Let's inspect…" notları, sorgunun ne yaptığını anlatan kısa bir
+  açıklamayla değiştirildi.
+- Semih'in elle deneyebileceği senaryo: gece yarısından sonra (ör. 01:30) gelen bir teslimat, reçete maliyetinde
+  bir önceki günün değil teslim gününün maliyetine girer.
 
 ## Handoff
 

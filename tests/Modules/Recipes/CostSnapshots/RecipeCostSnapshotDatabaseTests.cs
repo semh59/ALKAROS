@@ -217,6 +217,53 @@ VALUES ($1, $2, 'Fresh Tomatoes', 'RawMaterial', 'kg', true, 1);";
     }
 
     [Fact]
+    public async Task MovingAverageCostCountsADeliveryOnTheRestaurantsLocalDate()
+    {
+        // V1-RMD-423 (V1-RMD-398 G-08): 22:30 UTC on 5 August is 01:30 on 6 August in Istanbul (UTC+3); that delivery
+        // belongs to the 6th, so the cost as of the 5th is the first delivery's price alone.
+        var (_, _, stockItemId) = await SeedRecipeAndItemAsync();
+        var supplierId = Guid.NewGuid();
+        var locationId = Guid.NewGuid();
+        var orderId = Guid.NewGuid();
+        var lineId = Guid.NewGuid();
+        await using (var conn = await _db.DataSource.OpenConnectionAsync())
+        await using (var cmd = new NpgsqlCommand(
+            """
+            INSERT INTO purchasing.suppliers (supplier_id, code, name, active) VALUES (@supplier, @supplierCode, 'Night Farm', true);
+            INSERT INTO inventory.stock_locations (id, code, name, location_type, is_active, row_version)
+            VALUES (@location, @locationCode, 'Night Warehouse', 'Warehouse', true, 1);
+            INSERT INTO purchasing.purchase_orders (order_id, order_number, supplier_id, status, destination_location_id, total_amount, currency)
+            VALUES (@order, @orderNumber, @supplier, 'Submitted', @location, 1200.00, 'TRY');
+            INSERT INTO purchasing.purchase_order_lines (line_id, order_id, stock_item_id, ordered_quantity, received_quantity, unit_code, unit_price, total_price, status)
+            VALUES (@line, @order, @item, 20.00, 20.00, 'kg', 60.00, 1200.00, 'Completed');
+            INSERT INTO purchasing.goods_receipts (receipt_id, receipt_number, order_id, supplier_id, destination_location_id, received_at, received_by)
+            VALUES (@noon, @noonNumber, @order, @supplier, @location, '2026-08-05T09:00:00Z', 'Clerk'),
+                   (@night, @nightNumber, @order, @supplier, @location, '2026-08-05T22:30:00Z', 'Clerk');
+            INSERT INTO purchasing.goods_receipt_items (item_id, receipt_id, order_line_id, stock_item_id, delivered_quantity, accepted_quantity, unit_code, unit_price)
+            VALUES (gen_random_uuid(), @noon, @line, @item, 10.00, 10.00, 'kg', 30.00),
+                   (gen_random_uuid(), @night, @line, @item, 10.00, 10.00, 'kg', 90.00);
+            """, conn))
+        {
+            cmd.Parameters.AddWithValue("supplier", supplierId);
+            cmd.Parameters.AddWithValue("supplierCode", "SUP-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("location", locationId);
+            cmd.Parameters.AddWithValue("locationCode", "LOC-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("order", orderId);
+            cmd.Parameters.AddWithValue("orderNumber", "PO-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("line", lineId);
+            cmd.Parameters.AddWithValue("item", stockItemId);
+            cmd.Parameters.AddWithValue("noon", Guid.NewGuid());
+            cmd.Parameters.AddWithValue("noonNumber", "GR-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("night", Guid.NewGuid());
+            cmd.Parameters.AddWithValue("nightNumber", "GR-" + Guid.NewGuid().ToString("N")[..8]);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        (await _costResolver.ResolveMovingAverageCostAsync(stockItemId, new DateOnly(2026, 8, 5))).Should().Be(30.00m);
+        (await _costResolver.ResolveMovingAverageCostAsync(stockItemId, new DateOnly(2026, 8, 6))).Should().Be(60.00m);
+    }
+
+    [Fact]
     public async Task MovingAverageCostDerivedFromPurchasingGoodsReceiptsCorrectlyCalculatesSnapshot()
     {
         var (_, versionId, stockItemId) = await SeedRecipeAndItemAsync();

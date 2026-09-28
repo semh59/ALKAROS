@@ -1,0 +1,4 @@
+# Production change reverted (src/ at HEAD), tests kept
+[xUnit.net 00:00:00.83]     ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDatabaseTests.MovingAverageCostCountsADeliveryOnTheRestaurantsLocalDate [FAIL]
+   Expected (_costResolver.ResolveMovingAverageCostAsync(stockItemId, new DateOnly(2026, 8, 5))) to be 30.00M, but found 60.0000000000000000M (difference of 30.0000000000000000).
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 179 ms - ALKAROS.Recipes.CostSnapshots.Tests.dll (net8.0)
