@@ -277,6 +277,11 @@ jobs:
       - name: Full .NET tests with line and branch coverage measurement
         shell: bash
         run: |
+          # V1-RMD-394: Actions runs `shell: bash` as `bash -e`, and `set -uo pipefail` never turned -e
+          # off - so the first failing project aborted the step and the per-project loop below never
+          # collected the rest (run 36394844650 stopped after 5 of ~147 projects). The loop records
+          # every failure itself and exits 1 at the end.
+          set +e
           set -uo pipefail
           dotnet tool install --global dotnet-coverage --version 18.10.0
           # V1-RMD-197: found on the first two real runs of this step ever
