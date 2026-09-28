@@ -267,6 +267,35 @@ describe("kitchen operations workspace", () => {
     expect(onTransitionTicket).toHaveBeenCalledTimes(2);
   });
 
+  // V1-RMD-384 (module-by-module UI audit round 2, 2026-09-27): every real
+  // commercial KDS sounds an alert the moment a new ticket lands - kitchen
+  // staff have their hands full and their backs to the screen most of a
+  // shift. This board's 8s poll was completely silent otherwise.
+  it("chimes only when a genuinely new ticket appears, never on first load or a re-render with no new tickets", async () => {
+    const audioContextCtor = vi.fn(() => ({
+      currentTime: 0,
+      createOscillator: () => ({ type: "sine", frequency: { value: 0 }, connect: () => ({ connect: vi.fn() }), start: vi.fn(), stop: vi.fn() }),
+      createGain: () => ({ gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() }, connect: vi.fn(() => ({ connect: vi.fn() })) }),
+      close: vi.fn(async () => undefined),
+    }));
+    vi.stubGlobal("AudioContext", audioContextCtor);
+
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    // The very first render reflects tickets already queued before the
+    // screen opened (a shift starting mid-rush) - must never chime for them.
+    expect(audioContextCtor).not.toHaveBeenCalled();
+
+    // A re-render with the exact same ticket (the poll's own tick, nothing
+    // changed) must stay silent too.
+    await act(async () => { root!.render(<KitchenOperationsWorkspace {...baseProps()} />); });
+    expect(audioContextCtor).not.toHaveBeenCalled();
+
+    // A genuinely new ticket arrives - now it chimes.
+    const withNewTicket: KitchenData = { ...data, tickets: [...data.tickets, { ...data.tickets[0], id: "ticket-2", ticketNumber: "KT-002" }] };
+    await act(async () => { root!.render(<KitchenOperationsWorkspace {...baseProps({ data: withNewTicket })} />); });
+    expect(audioContextCtor).toHaveBeenCalledTimes(1);
+  });
+
   it("toggles dense mode on and off", async () => {
     await render(<KitchenOperationsWorkspace {...baseProps()} />);
     const workspace = document.querySelector(".kitchen-workspace")!;

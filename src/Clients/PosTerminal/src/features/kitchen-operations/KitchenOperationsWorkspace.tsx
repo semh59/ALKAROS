@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { Button, ModalDialog, StateMessage, TextField, ValidationSummary } from "../../design-system";
 import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
@@ -33,6 +33,41 @@ type Density = "auto" | "sparse" | "dense";
 // refresh, without hammering the API every tick.
 const POLL_INTERVAL_MS = 8_000;
 const STAGES = ["Queued", "Preparing", "Ready", "Served"] as const;
+
+// V1-RMD-384 (module-by-module UI audit round 2, P1/P2 - competitor comparison/field
+// reality): every real commercial KDS (Toast KDS, QSR Automations, Fresh KDS) sounds an
+// audible alert the moment a new ticket lands - kitchen staff have their hands full and their
+// backs to the screen most of a shift, unlike a cashier who is always looking at their own
+// register. This board had a silent 8s poll and nothing else; a new ticket only got noticed
+// whenever someone next happened to glance at the rail. Synthesized via the Web Audio API
+// rather than shipping an audio asset - two short tones is enough to cut through a loud kitchen
+// without needing a sample file this codebase would otherwise have to bundle and licence.
+function playNewTicketChime() {
+  try {
+    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
+    if (!AudioContextClass) return;
+    const context = new AudioContextClass();
+    const playTone = (frequency: number, startOffset: number) => {
+      const oscillator = context.createOscillator();
+      const gain = context.createGain();
+      oscillator.type = "sine";
+      oscillator.frequency.value = frequency;
+      gain.gain.setValueAtTime(0.0001, context.currentTime + startOffset);
+      gain.gain.exponentialRampToValueAtTime(0.3, context.currentTime + startOffset + 0.02);
+      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + startOffset + 0.18);
+      oscillator.connect(gain).connect(context.destination);
+      oscillator.start(context.currentTime + startOffset);
+      oscillator.stop(context.currentTime + startOffset + 0.2);
+    };
+    playTone(880, 0);
+    playTone(1175, 0.14);
+    window.setTimeout(() => void context.close(), 500);
+  } catch {
+    // A browser that refuses to synthesize audio (autoplay policy before any
+    // user gesture, an unsupported engine) must never break the board itself -
+    // the visual ticket still appears either way, this is a convenience on top.
+  }
+}
 // V1-KIT-009/V1-KDS-003: mirrors KitchenTicketItem.UndoWindow (10s) — the
 // backend is the actual authority (a request past this shows a normal error
 // like any other), this is only how long the affordance stays visible so
@@ -173,6 +208,22 @@ export function KitchenOperationsWorkspace({
   // A manually chosen density resets whenever the ticket count changes (a
   // ticket arrived or left) — the automatic evaluation starts fresh again.
   useEffect(() => { setDensityOverride("auto"); }, [data.tickets.length]);
+
+  // V1-RMD-384: sounds a chime the moment a ticket this board has never seen before appears -
+  // whether from this component's own 8s poll or the very first load reflects tickets that were
+  // ALREADY queued before this screen opened (a shift starting mid-rush), which must never chime
+  // for every one of them at once; only a genuinely NEW arrival after that first render does.
+  const knownTicketIdsRef = useRef<Set<string> | null>(null);
+  useEffect(() => {
+    const currentIds = new Set(data.tickets.map((ticket) => ticket.id));
+    if (knownTicketIdsRef.current === null) {
+      knownTicketIdsRef.current = currentIds;
+      return;
+    }
+    const hasNewTicket = data.tickets.some((ticket) => !knownTicketIdsRef.current!.has(ticket.id));
+    knownTicketIdsRef.current = currentIds;
+    if (hasNewTicket) playNewTicketChime();
+  }, [data.tickets]);
 
   // V1-KIT-014/V1-KDS-009: fetched on demand, only when the report view is
   // actually opened — not part of the workspace's own polling load(), a
