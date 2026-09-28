@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1481,
-  "markdown_line_count": 112936,
-  "markdown_byte_count": 6512969,
+  "markdown_file_count": 1482,
+  "markdown_line_count": 112999,
+  "markdown_byte_count": 6515861,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "3DC9562585C27EF581F89A636F92A2E7D152E0DFC1CB59E5D94E83F8610F7714",
-      "lines": 2757,
-      "bytes": 404642,
+      "sha256": "116AA1CB92FB051FA020E765E7823748F10998A94E93122113460B5ECC7B8B85",
+      "lines": 2758,
+      "bytes": 404804,
       "utf8": true
     },
     {
@@ -8229,6 +8229,13 @@
       "sha256": "6AE7C63F197E7564FB73075411F0E264B17FC2FAB1F944B63272EF0C427ED552",
       "lines": 68,
       "bytes": 3707,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-425-audit-test-gaps-n02-n08-m07.md",
+      "sha256": "2F37696A44D5E85DAF89FA37F43CC8F0DB886D96777E5FC830D13E9EE1FA47E7",
+      "lines": 62,
+      "bytes": 2730,
       "utf8": true
     },
     {
