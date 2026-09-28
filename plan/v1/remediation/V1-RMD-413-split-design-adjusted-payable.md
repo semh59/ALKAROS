@@ -1,7 +1,7 @@
 # V1-RMD-413 - İndirimli hesapta bölme tasarımının indirimli tutarı kullanması
 
 - Task ID: V1-RMD-413
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -30,6 +30,8 @@ bazında bölünmesi anlaşılır bir Türkçe 409 ile reddedilir (tutar, kişi 
   yanıtındaki indirimli toplamlar, ürün bazında bölme reddi, yeni istisna ve Türkçe 409 eşlemesi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Billing/SplitDesign/PostgresSplitDesignRepository.cs
   (V1-RMD-027 sahipliğinde) — yalnız toplam doğrulamasının indirimli toplamlara geçmesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj
+  (V1-RMD-027 sahipliğinde) — yalnız test veritabanına 021-bill-adjustments.up.sql bağlantısı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/BillingSplitHttpTests.cs (V1-WTR-023
   sahipliğinde) — yeni testler
 
@@ -50,7 +52,20 @@ bazında bölünmesi anlaşılır bir Türkçe 409 ile reddedilir (tutar, kişi 
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Host.Experience.Billing.Tests` 21/21 ve `ALKAROS.Billing.SplitDesign.Tests` 29/29 (gerçek PostgreSQL 18,
+  Release, 0 uyarı / 0 hata; `evidence/V1-RMD-413/tests.log`). SplitDesign test veritabanına düzeltme tablosu
+  bağlandı; bağlanmadan depo testleri tablo bulunamadı hatası veriyordu.
+- Yeni test `ASplitDesignOnADiscountedBillUsesTheDiscountedPayable`: 275'lik hesaba 25 indirim → tasarım 250 gösterir;
+  100 + 150 tutar bölmesi 200 ile kaydedilir, dağıtım vergisi tasarımın indirimli vergisine eşittir; ürün bazında bölme
+  409 `ITEM_SPLIT_ON_ADJUSTED_BILL` döner ve mevcut dağıtımlar değişmez. Üretim değişikliği geri alınınca kırmızı
+  (beklenen 250, gelen 275); yalnız depo değişikliği geri alınınca da kırmızı (kayıt 400 `VALIDATION_FAILED`)
+  (`evidence/V1-RMD-413/red-without-fix.log`).
+- V1-RMD-393 probe'u P14 düzeltilmiş kopyada geçer (`evidence/V1-RMD-413/money-flow-probes-after-fix.log`). Aynı
+  koşudaki P06 (F-10) ve P08 (F-12) açık bulgulardır; P07 ve P09 ön koşulları F-04 düzeltmesinden (V1-RMD-409) beri
+  erişilemez.
+- Semih'in elle deneyebileceği senaryo: 100 TL'lik hesaba 10 TL indirim uygulayıp "Hesabı böl" ekranını açın; ekran
+  90 TL gösterir ve 40 + 50 bölme kaydedilir. Aynı hesapta ürün bazında bölme "İndirim veya ek ücret uygulanmış hesap
+  ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın." uyarısını verir.
 
 ## Handoff
 

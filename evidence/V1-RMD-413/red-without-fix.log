@@ -1,0 +1,8 @@
+# Production changes stashed (src/), tests kept
+   Assert.Equal() Failure: Values differ
+Expected: 250
+Actual:   275.00
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+# Only the repository change stashed (src/Modules): the store now sends 250, the repository still checks 275
+   {"error":{"code":"VALIDATION_FAILED","message":"Hesap bölme isteği doğrulanamadı.","status":400,"traceId":"0HNOTDDQ3I0N7:00000003","conflict":null}}
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)

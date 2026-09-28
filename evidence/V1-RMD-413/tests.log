@@ -1,0 +1,61 @@
+# HEAD 17725663 + V1-RMD-413 working diff, PostgreSQL 18, Release
+## tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitRegistrationTests.RegistrationPublishesVersionedDesignOnlyRoutes [405 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleThatHoldsBillsDiscountAppliesDirectly [817 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.RetryingADiscountWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment [386 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ConcurrentBillCreationForTheSameOrderHasOneWinnerAndNoDuplicateBill [354 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOnAPaidBillIsRejected [186 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleWithoutBillsSplitIsRejectedFromRecordingATip [157 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ApplyingADiscountWritesARealAuditEvent [284 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ConcurrentDiscountsOnTheSameBillDoNotExceedThePayableAmount [224 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatWouldUndercutWhatWasAlreadyCollectedIsRefused [371 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.RetryingATipWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment [187 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ASplitDesignOnADiscountedBillUsesTheDiscountedPayable [455 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleWithoutBillsDiscountAndNoPolicyOrDelegationEscalatesToPending [207 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AnInvalidDiscountReasonCodeIsRejected [131 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleThatHoldsBillsSplitRecordsATipDirectly [152 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AWaiterWhoseOnlyOrderTodayWasCancelledDoesNotDiluteTheTipPool [556 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountExceedingThePayableAmountIsRejectedAndNotPersisted [130 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AVoluntaryTipTodayAppearsInTheServingWaitersShiftSummary [414 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.MalformedJsonBodyReturns400WithoutReachingTheEndpointFilter [89 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied [388 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.EndpointsEnforceSessionPermissionAndAtomicConcurrency [267 ms]
+  Passed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AllModesPersistRejectOverflowSurviveRestartAndClear [427 ms]
+Total tests: 21
+     Passed: 21
+## tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.PartiallyAllocatedItemSplitRemainderBalancesTheLastTarget [37 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitAppliesCustomLabelsWhenProvided [3 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitWithLargeNumbersAndPrimeDivisorWorksLosslessly [1 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitRejectsComplimentaryZeroAmountItem [10 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.OperationalOwnerReferenceRoundTripsStableSeatAndPersonIds [15 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountSplitRejectsNonPositiveOrEmptyTargetAmounts [4 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitUsesTheAdjustedPayableAndTaxWhenAnAdjustmentIsSupplied [4 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitRejectsNonPositiveOrInvalidTarget [1 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitWithFractionalQuantitiesDistributesLosslessly [1 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitRejectsOverAllocation [1 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitRejectsInvalidPersonCountOrZeroPayable [1 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitDistributesGrossAndTaxAcrossOwnersLosslessly [4 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitWithSubKurusAmountThrowsInformativeException [< 1 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.CustomSplitIsLosslessAndRejectsCumulativeQuantityOverflow [18 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitRejectsNonExistentBillItem [1 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.BillAllocationConstructorValidatesAllInvariants [10 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitDistributesPayableAmountAndTaxesLosslesslyWithRemainder [1 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountSplitValidatesTotalSumMatchesBillPayable [3 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignDownSqlTests.DownSqlDropsAllocationsTableAndUpRecreatesCleanly [28 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.OperationalReplaceValidatesSeatAgainstBillTable [317 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.ForeignKeyConstraintsEnforced [20 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.OperationalReplaceRejectsStaleAllocationSetWithoutPartialMutation [22 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.CheckConstraintsEnforced [14 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.CascadeDeleteOnBillDeletesAllocations [13 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.SplitDesignRoundTripPersistsAndLoadsAllFields [25 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.ConcurrentFirstWritersCannotBothCommit [24 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.AllOwnerTypesAndFractionalQuantitiesPersistAccurately [15 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.SaveSplitDesignReplacesPreviousAllocationsAtomically [16 ms]
+  Passed ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.DeleteSplitDesignRemovesAllAllocationsForBill [14 ms]
+Total tests: 29
+     Passed: 29
