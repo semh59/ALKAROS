@@ -1,0 +1,40 @@
+# HEAD 2311890d + V1-RMD-421 working diff, PostgreSQL 18, Release
+## tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Reporting.V1Operations.Tests.ReportingDomainTests.CalculateServiceWindowComputesCorrectBoundsAcrossMidnight [19 ms]
+  Passed ALKAROS.Reporting.V1Operations.Tests.PostgresReportingMigrationTests.MigrationDownAndUpExecutesCleanly [64 ms]
+  Passed ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.OpenAndCloseBusinessDayWithReconciledTotalsSuccessfully [92 ms]
+  Passed ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.OpeningSameDateTwiceThrowsException [28 ms]
+  Passed ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.ConcurrentOpenAttemptsAllowOnlyOneActiveBusinessDay [25 ms]
+  Passed ALKAROS.Reporting.V1Operations.Tests.PostgresOperationalReportRepositoryTests.CloseBusinessDayWithSummariesRollsBackWholeCloseWhenSummaryWriteFails [30 ms]
+Total tests: 6
+     Passed: 6
+## tests/Host/Experience/Reporting/ALKAROS.Host.Experience.Reporting.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.OpeningTheSameDayTwiceIsRejected [382 ms]
+  Passed ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.ANonExistentDayIsNotFound [51 ms]
+  Passed ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation [36 ms]
+  Passed ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.AManagerCanOpenCloseAndReadTheFullReport [165 ms]
+  Passed ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.CloseStoresTheRevenueAndOrderCountRecordedInTheBusinessDayWindow [70 ms]
+  Passed ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.ASupervisorCanReadButNotOpenOrCloseADay [55 ms]
+Total tests: 6
+     Passed: 6
+## tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionShouldNotDependOnAnyModule [96 ms]
+  Passed ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldRetainTypedServiceRegistrations [14 ms]
+  Passed ALKAROS.Architecture.Tests.ModuleBoundaryTests.DeclaredDependenciesStayWithinTheApprovedEdgeList [22 ms]
+  Passed ALKAROS.Architecture.Tests.ModuleBoundaryTests.NoModuleOrIntegrationProjectIsAnEmptyShell [7 ms]
+  Passed ALKAROS.Architecture.Tests.ModuleBoundaryTests.ActualAssemblyDependenciesAreDeclaredInDependsOn [11 ms]
+  Passed ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldComposeInTopologicalOrder [6 ms]
+  Passed ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldRejectUnknownDependency [< 1 ms]
+  Passed ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldDetectCyclicDependencies [< 1 ms]
+  Passed ALKAROS.Architecture.Tests.ModuleBoundaryTests.HostOrchestrationEdgesStayWithinTheApprovedList [201 ms]
+Total tests: 9
+     Passed: 9
+## src/Host/ALKAROS.Host.csproj (build)
+    0 Warning(s)
+    0 Error(s)

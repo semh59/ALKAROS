@@ -16,7 +16,7 @@ public sealed class PostgresOperationalReportRepositoryTests : IClassFixture<Rep
     {
         _db = db;
         _repository = new PostgresOperationalReportRepository(_db.DataSource);
-        _service = new OperationalReportService(_repository);
+        _service = new OperationalReportService(_repository, new FixedBusinessDayTotalsReader(4250.00m, 15));
     }
 
     [Fact]
@@ -58,8 +58,6 @@ public sealed class PostgresOperationalReportRepositoryTests : IClassFixture<Rep
         var result = await _service.CloseBusinessDayAsync(
             businessDate: date,
             closedAt: closedAt,
-            totalRevenue: 4250.00m,
-            totalOrders: 15,
             cancelledItems: 1,
             printFailures: 2,
             waiterSummaries: new[] { waiter1 },
@@ -105,8 +103,6 @@ public sealed class PostgresOperationalReportRepositoryTests : IClassFixture<Rep
         var act = () => _service.CloseBusinessDayAsync(
             businessDate: date,
             closedAt: DateTimeOffset.UtcNow,
-            totalRevenue: 1500m,
-            totalOrders: 15,
             cancelledItems: 0,
             printFailures: 1,
             waiterSummaries: new[] { waiterOne, waiterTwo },

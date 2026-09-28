@@ -1,0 +1,2 @@
+# V1-RMD-393 probe P06 on the fixed copy. The close no longer takes a revenue or order count, so the probe's two caller-supplied arguments (987654.32, 4242) are removed in the clone only; the probe still asserts the stored revenue is the recorded 0.00.
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P06EndOfDayRevenueIsDerivedFromRecordedPaymentsNotFromTheCaller [82 ms]

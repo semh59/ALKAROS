@@ -1,3 +1,5 @@
+using ALKAROS.Reporting.BusinessDayTotals;
+
 namespace ALKAROS.Reporting.V1Operations;
 
 /// <summary>
@@ -6,11 +8,13 @@ namespace ALKAROS.Reporting.V1Operations;
 public interface IOperationalReportService
 {
     Task<BusinessDayRecord> OpenBusinessDayAsync(DateOnly businessDate, DateTimeOffset openedAt, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Closes the business day. Revenue and order count are read from the recorded payments and orders
+    /// (V1-RMD-421, V1-RMD-393 F-10), never taken from the caller.
+    /// </summary>
     Task<BusinessDayReportResult> CloseBusinessDayAsync(
         DateOnly businessDate,
         DateTimeOffset closedAt,
-        decimal totalRevenue,
-        int totalOrders,
         int cancelledItems,
         int printFailures,
         IReadOnlyList<WaiterPerformanceRecord>? waiterSummaries = null,
@@ -27,10 +31,12 @@ public interface IOperationalReportService
 public sealed class OperationalReportService : IOperationalReportService
 {
     private readonly IOperationalReportRepository _repository;
+    private readonly IBusinessDayTotalsReader _totals;
 
-    public OperationalReportService(IOperationalReportRepository repository)
+    public OperationalReportService(IOperationalReportRepository repository, IBusinessDayTotalsReader totals)
     {
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
+        _totals = totals ?? throw new ArgumentNullException(nameof(totals));
     }
 
     public Task<BusinessDayRecord> OpenBusinessDayAsync(DateOnly businessDate, DateTimeOffset openedAt, CancellationToken cancellationToken = default)
@@ -41,8 +47,6 @@ public sealed class OperationalReportService : IOperationalReportService
     public async Task<BusinessDayReportResult> CloseBusinessDayAsync(
         DateOnly businessDate,
         DateTimeOffset closedAt,
-        decimal totalRevenue,
-        int totalOrders,
         int cancelledItems,
         int printFailures,
         IReadOnlyList<WaiterPerformanceRecord>? waiterSummaries = null,
@@ -52,11 +56,12 @@ public sealed class OperationalReportService : IOperationalReportService
         // Business-day close plus waiter and print-error summaries are written in a single
         // transaction; a mid-sequence failure never leaves the day closed with partial
         // summaries (V1-RMD-085).
+        var totals = await _totals.ReadAsync(businessDate, cancellationToken);
         return await _repository.CloseBusinessDayWithSummariesAsync(
             businessDate,
             closedAt,
-            totalRevenue,
-            totalOrders,
+            totals.Revenue,
+            totals.OrderCount,
             cancelledItems,
             printFailures,
             waiterSummaries ?? Array.Empty<WaiterPerformanceRecord>(),

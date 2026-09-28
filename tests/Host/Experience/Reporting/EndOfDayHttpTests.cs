@@ -84,8 +84,40 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
 
         using var supervisorCloseAttempt = await supervisor.PostAsJsonAsync(
             $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close",
-            new CloseBusinessDayV1(1000m, 10, 1, 0));
+            new CloseBusinessDayV1(1, 0));
         Assert.Equal(HttpStatusCode.Forbidden, supervisorCloseAttempt.StatusCode);
+    }
+
+    [Fact]
+    public async Task CloseStoresTheRevenueAndOrderCountRecordedInTheBusinessDayWindow()
+    {
+        // V1-RMD-421 (V1-RMD-393 F-10): the window is 06:00 Europe/Istanbul (03:00 UTC) to 06:00 the next day, end
+        // excluded; revenue is approved payments, orders exclude drafts, rejected and cancelled ones.
+        var businessDate = new DateOnly(2026, 1, 5);
+        var windowStart = new DateTimeOffset(2026, 1, 5, 3, 0, 0, TimeSpan.Zero);
+        var windowEnd = windowStart.AddDays(1);
+        await _database.SeedPaymentAsync(windowStart, 700m);
+        await _database.SeedPaymentAsync(windowEnd.AddMinutes(-30), 300m);
+        await _database.SeedPaymentAsync(windowEnd, 999m);                  // next business day
+        await _database.SeedPaymentAsync(windowStart.AddMinutes(-1), 111m); // previous business day
+        await _database.SeedPaymentAsync(windowStart.AddHours(5), 222m, "Declined");
+        await _database.SeedOrderAsync(windowStart.AddHours(6), "Submitted");
+        await _database.SeedOrderAsync(windowStart.AddHours(7), "Completed");
+        await _database.SeedOrderAsync(windowStart.AddHours(8), "Cancelled");
+        await _database.SeedOrderAsync(windowEnd.AddMinutes(1), "Submitted");
+        using var client = CreateClient(EndOfDayTestDatabase.ManagerToken);
+        using (var opened = await client.PostAsJsonAsync(
+            "/api/v1/management/reporting/business-day/open", new OpenBusinessDayV1(businessDate)))
+            Assert.Equal(HttpStatusCode.Created, opened.StatusCode);
+
+        using var closed = await client.PostAsJsonAsync(
+            $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close",
+            new { TotalRevenue = 987654.32m, TotalOrders = 4242, CancelledItems = 0, PrintFailures = 0 });
+
+        Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
+        var report = await closed.Content.ReadFromJsonAsync<BusinessDayReportV1>();
+        Assert.Equal(1000m, report!.BusinessDay.TotalRevenue);
+        Assert.Equal(2, report.BusinessDay.TotalOrdersCount);
     }
 
     [Fact]
@@ -104,8 +136,6 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
         using var closed = await client.PostAsJsonAsync(
             $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close",
             new CloseBusinessDayV1(
-                TotalRevenue: 5000.50m,
-                TotalOrders: 42,
                 CancelledItems: 2,
                 PrintFailures: 1,
                 WaiterSummaries: [new WaiterPerformanceV1(waiterId, 10, 1200m, 1, 50m)],
@@ -113,7 +143,7 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
         var report = await closed.Content.ReadFromJsonAsync<BusinessDayReportV1>();
         Assert.Equal("Closed", report!.BusinessDay.Status);
-        Assert.Equal(5000.50m, report.BusinessDay.TotalRevenue);
+        Assert.Equal(0m, report.BusinessDay.TotalRevenue); // nothing was recorded on this day
         Assert.Single(report.WaiterSummaries);
         Assert.Single(report.PrintSummaries);
 

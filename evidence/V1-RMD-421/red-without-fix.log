@@ -1,0 +1,5 @@
+# Production changes reverted (src/ at HEAD); the two existing calls in the test file are put back on the old request shape so it compiles; only the new test is run
+[xUnit.net 00:00:02.66]     ALKAROS.Host.Experience.Reporting.Tests.EndOfDayHttpTests.CloseStoresTheRevenueAndOrderCountRecordedInTheBusinessDayWindow [FAIL]
+Expected: 1000
+Actual:   987654.32
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 492 ms - ALKAROS.Host.Experience.Reporting.Tests.dll (net8.0)
