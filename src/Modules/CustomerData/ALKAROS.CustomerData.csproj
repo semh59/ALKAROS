@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSModule>true</ALKAROSModule>
+    <RootNamespace>ALKAROS.CustomerData</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- CustomerDataModule.cs registers this module into ModuleRegistry.DefaultCatalog. -->
+    <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+    <ProjectReference Include="..\..\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj" />
+    <!-- V14-CST-001: name/phone/email/address protected through the
+         ALKAROS.SensitiveData boundary (SensitiveCategory.Pii), mirrors
+         ALKAROS.Invoicing.Qnb.CredentialRegistration.PostgresQnbCredentialStore's
+         exact pattern (its own private resolver/cipher/protector chain -
+         ISensitiveDataAccessPolicy has no shared DI registration by design). -->
+    <ProjectReference Include="..\..\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- PostgresCustomerProfileStore. -->
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+</Project>

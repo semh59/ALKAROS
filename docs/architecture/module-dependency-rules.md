@@ -72,6 +72,7 @@ same-transaction flow"; incoming rows from other modules are not repeated.
 | 27 | Purchasing | Inventory (goods receipt stock movement) | none yet | 2026-09-06 addition |
 | 28 | Support | Observability (system status summary), Audit (selected correlation logs, bundle provenance) | none | V15-SUP-001, 2026-09-22 addition |
 | 29 | Security | Identity (session/lockout hardening composes with AuthenticationService/IUserStore/IDeviceSessionService), Audit (disposal/purge/re-encryption trail) | none | V15-SEC-001/002/003, 2026-09-22 addition (found undeclared by an independent audit — Operations already had a real, undeclared ProjectReference on Security for V15-BKP-001's envelope encryption; Security itself was not a registered IModule at all, so it never appeared in dependency-boundary checks) |
+| 30 | Customer Data (PII/profile boundary) | none (leaf; a customer's name/phone/email/address are protected through the SensitiveData boundary the same way Invoicing's QNB credentials already are) | none | V14-CST-001, 2026-09-28 addition. Row 16 (Customer Account) and row 18 (Invoicing) are expected to reference customer identity through this module once V14-ACC/V14-INV start — this row is the foundation those Faz 4 tasks build on, not a replacement for either. |
 
 Notes:
 

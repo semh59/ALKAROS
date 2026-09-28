@@ -39,6 +39,8 @@ public static class ModuleBoundaryTests
         "ALKAROS.Security",
         "ALKAROS.Support",
         "ALKAROS.OnlineOrdering",
+        // V14-CST-001, 2026-09-28.
+        "ALKAROS.CustomerData",
     };
 
     private static readonly string[] EmptyDependencies = Array.Empty<string>();

@@ -21,6 +21,10 @@ public static class ModuleRegistry
         typeof(ALKAROS.Catalog.ProductCatalog.CatalogModule),
         typeof(ALKAROS.Tables.TableLifecycle.TablesModule),
         typeof(ALKAROS.Audit.AuditModule),
+        // V14-CST-001: a leaf module (no other module dependency) - Customer
+        // Account (V14-ACC) and Invoicing (V14-INV) are expected to
+        // reference customer identity through this module later.
+        typeof(ALKAROS.CustomerData.CustomerDataModule),
         typeof(ALKAROS.Cash.CashModule),
         typeof(ALKAROS.Identity.IdentityModule),
         typeof(ALKAROS.Kitchen.KitchenModule),

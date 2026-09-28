@@ -1,5 +1,10 @@
 # V14-GOV-001 - v1.4 customer PII draft (ahead of GATE-V14-ENTRY)
 
+**2026-09-28: superseded.** `V14-CST-001` is now `Done` — the real
+implementation lives in `src/Modules/CustomerData/Profiles/**`, referencing
+this draft directly (see that task's own plan file). This folder is kept
+as-is for history; nothing here is loaded by the running application.
+
 Bu klasör, `V14-GOV-001`'in (bkz. `plan/v1.4/customer-data/
 V14-GOV-001-v14-gate-unverified-draft-authorization.md`) kendi Owned
 surface'ı altında ürettiği tek deliverable'dır: `V14-CST-001` (müşteri

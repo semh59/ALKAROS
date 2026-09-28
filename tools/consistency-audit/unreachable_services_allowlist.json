@@ -1,5 +1,7 @@
 {
   "AuthorizedReEncryptionService": "V1-RMD-278: yeniden sifreleme yalniz saklama kayitlari uretildiginde anlamli; kayit ureten veri gorevleri (V14) baglayacak.",
+  "ICustomerProfileStore": "V14-CST-001: bu gorevin kendi kapsami yalniz PII sinirini (domain + Postgres store) kurmak; bir HTTP endpoint'i V14-ACC/V14-INV/V14-UI musteri kimligine ihtiyac duydugunda ekleyecek.",
+  "PostgresCustomerProfileStore": "V14-CST-001: bu gorevin kendi kapsami yalniz PII sinirini (domain + Postgres store) kurmak; bir HTTP endpoint'i V14-ACC/V14-INV/V14-UI musteri kimligine ihtiyac duydugunda ekleyecek.",
   "IKitchenRoutingService": "V1-RMD-278: mutfak yonlendirmesi Host tarafindan depolar ve yonlendirici uzerinden zaten calisiyor; sarmalayici servis gereksiz.",
   "IPortionReservationArbitrator": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
   "IPortionReservationArbitratorRepository": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
