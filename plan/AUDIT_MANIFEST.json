@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1491,
-  "markdown_line_count": 113458,
-  "markdown_byte_count": 6537715,
+  "markdown_file_count": 1492,
+  "markdown_line_count": 113529,
+  "markdown_byte_count": 6541569,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C1795D1901F49B4D44C90C4DF8EF8BD0EA800DDB5CEB50D563AC2CE6BCEA7191",
-      "lines": 2767,
-      "bytes": 406320,
+      "sha256": "B62D993D4D35A2CF0F0512BBCF4FC0C5C02A8383E4BE72CC5F1D424A7DEFF747",
+      "lines": 2768,
+      "bytes": 406500,
       "utf8": true
     },
     {
@@ -8299,6 +8299,13 @@
       "sha256": "36E7C07C206F48F89A0111730999C527C3FB238A331ECA1F130264927768F0FD",
       "lines": 61,
       "bytes": 2709,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-435-anonymization-blocked-by-open-account-balance.md",
+      "sha256": "F06C8619375B2E19B1265B2BF469F8D8D20AE108CF273C235D2EF7B29BF604EF",
+      "lines": 70,
+      "bytes": 3674,
       "utf8": true
     },
     {
