@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1461,
-  "markdown_line_count": 111628,
-  "markdown_byte_count": 6442513,
+  "markdown_file_count": 1462,
+  "markdown_line_count": 111683,
+  "markdown_byte_count": 6444974,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2640,9 +2640,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "E54F4F5460B1E52B4FBB7A1846DB689634468240B1F8735E5690D5AE053D7439",
-      "lines": 2737,
-      "bytes": 401307,
+      "sha256": "8E70EA6DB9872968C200A16255CB62A538F95BD1907563F3AA04695EB92F1AAA",
+      "lines": 2738,
+      "bytes": 401467,
       "utf8": true
     },
     {
@@ -8089,6 +8089,13 @@
       "sha256": "90D2BFC5472A33A95CE604880D8F7297665EC6D5D26AFCBDE377353430CF4B1D",
       "lines": 83,
       "bytes": 5091,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-406-session-lifetime-at-login.md",
+      "sha256": "6D677195A4DE21C0E50B287E0EFBC129CFCC25B3F4331192AC86B5B03BED614A",
+      "lines": 54,
+      "bytes": 2301,
       "utf8": true
     },
     {
