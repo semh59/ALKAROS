@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1460,
-  "markdown_line_count": 111544,
-  "markdown_byte_count": 6437269,
+  "markdown_file_count": 1461,
+  "markdown_line_count": 111628,
+  "markdown_byte_count": 6442513,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2640,9 +2640,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "4F6C1E6E15C35961F6E8075DA5EA185EE032472CE547D7D16B6FF3E01B01B80A",
-      "lines": 2736,
-      "bytes": 401154,
+      "sha256": "E54F4F5460B1E52B4FBB7A1846DB689634468240B1F8735E5690D5AE053D7439",
+      "lines": 2737,
+      "bytes": 401307,
       "utf8": true
     },
     {
@@ -8082,6 +8082,13 @@
       "sha256": "D0E626BCFD33045A6EC91A99D757869CD4E6C6D59D0F5E5A8E67F371490BB520",
       "lines": 74,
       "bytes": 4334,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-405-staff-deactivation.md",
+      "sha256": "90D2BFC5472A33A95CE604880D8F7297665EC6D5D26AFCBDE377353430CF4B1D",
+      "lines": 83,
+      "bytes": 5091,
       "utf8": true
     },
     {
