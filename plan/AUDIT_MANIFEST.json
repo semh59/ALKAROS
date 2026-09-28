@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1476,
-  "markdown_line_count": 112589,
-  "markdown_byte_count": 6494630,
+  "markdown_file_count": 1477,
+  "markdown_line_count": 112654,
+  "markdown_byte_count": 6497881,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "B8165D7A2CF14C83C0B2F5F1A4B710C6354E0DB9B14225CCB80C575E8964FB9E",
-      "lines": 2752,
-      "bytes": 403794,
+      "sha256": "D51607F71C4986AE7A134F1A69426E451C151E5503BA236AEF656EC262762F72",
+      "lines": 2753,
+      "bytes": 403968,
       "utf8": true
     },
     {
@@ -8194,6 +8194,13 @@
       "sha256": "F0E11D61780871631244E31EF50EDF4FFF062F427E7B0EC7A190597FB857C075",
       "lines": 65,
       "bytes": 3134,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-420-variance-report-accounts-for-production.md",
+      "sha256": "35334A85617E0DEEAAEFBA79242EEE739B25931B1621BFD6EBB0F4DCB8C9B3D2",
+      "lines": 64,
+      "bytes": 3077,
       "utf8": true
     },
     {
