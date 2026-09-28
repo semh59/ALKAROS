@@ -3,6 +3,7 @@ using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Offline;
 using ALKAROS.Identity.Authorization.Policies;
 using FluentAssertions;
+using Npgsql;
 using Xunit;
 
 namespace ALKAROS.Identity.Authorization.Tests.Offline;
@@ -260,6 +261,32 @@ public sealed class OfflineGrantReconcilerTests : IClassFixture<OfflineBudgetDat
             .Invoking(() => reconciler.ReconcileAsync(budget.BudgetId, new[] { Action("recon-vanished-budget") }))
             .Should().ThrowAsync<UnknownOfflineAuthorityBudgetException>()
             .Where(exception => exception.BudgetId == budget.BudgetId);
+    }
+
+    [Fact]
+    public async Task AForeignKeyFailureOtherThanTheBudgetsIsNotReportedAsAnUnknownBudget()
+    {
+        // V1-RMD-427: the module schema carries no user foreign keys (V1-RMD-189 adds them in the full database), so
+        // a test-only constraint on the grant's subject stands in for "a referenced row does not exist".
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(4), new OfflineAuthorityBudgetLine("bills.comp", 150m, 2));
+        await _db.ExecuteAsync(
+            """
+            ALTER TABLE identity.authorization_grants
+                ADD CONSTRAINT fk_rmd427_test_subject FOREIGN KEY (subject_id)
+                REFERENCES identity.offline_authority_budgets (budget_id) NOT VALID;
+            """);
+        try
+        {
+            var failure = await FluentActions
+                .Invoking(() => Reconciler().ReconcileAsync(budget.BudgetId, new[] { Action("recon-other-fk") }))
+                .Should().ThrowAsync<PostgresException>();
+            failure.Which.ConstraintName.Should().Be("fk_rmd427_test_subject");
+        }
+        finally
+        {
+            await _db.ExecuteAsync("ALTER TABLE identity.authorization_grants DROP CONSTRAINT fk_rmd427_test_subject;");
+        }
     }
 
     /// <summary>Always answers <see cref="GetAsync"/> from a fixed snapshot, regardless of DB state.</summary>

@@ -1,7 +1,7 @@
 # V1-RMD-427 - Çevrimdışı uzlaştırmada her yabancı anahtar hatasının "bütçe bulunamadı" sayılmaması
 
 - Task ID: V1-RMD-427
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -45,7 +45,15 @@ yabancı anahtar ihlali olduğu gibi yukarı çıkar (Host onu mevcut Türkçe 5
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Identity.Authorization.Tests` 215/215 ve `ALKAROS.Host.Experience.OfflineReconciliation.Tests` 9/9 (gerçek
+  PostgreSQL 18, Release, 0 uyarı / 0 hata; `evidence/V1-RMD-427/tests.log`). Bütçenin arada silinmesi testi
+  (`ABudgetDeletedBetweenTheLookupAndTheReplayInsertIsRejectedNotCrashed`) değişmeden geçer.
+- Yeni test `AForeignKeyFailureOtherThanTheBudgetsIsNotReportedAsAnUnknownBudget`: modül şemasında kullanıcı yabancı
+  anahtarları olmadığı için yalnız test süresince eklenen bir kısıt, "başvurulan kayıt yok" durumunu temsil eder;
+  uzlaştırma bu kısıtın hatasını olduğu gibi verir, bütçe hatası atmaz. Üretim değişikliği geri alınınca kırmızı
+  (bütçe hatası atılıyordu; `evidence/V1-RMD-427/red-without-fix.log`).
+- Semih'in elle deneyebileceği senaryo: yok; bugün normal kullanımda bu duruma düşülmüyor, yalnız hatanın gerçek
+  nedeni artık gizlenmiyor.
 
 ## Handoff
 

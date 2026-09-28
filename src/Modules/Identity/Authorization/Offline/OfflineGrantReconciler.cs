@@ -10,6 +10,7 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
 {
     private const string UniqueViolation = "23505";
     private const string ForeignKeyViolation = "23503";
+    private const string ReplayBudgetForeignKey = "fk_offline_authority_replays_budget";
 
     private readonly IOfflineAuthorityBudgetRepository _budgets;
     private readonly IAuthorizationGrantRepository _grants;
@@ -156,10 +157,13 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
                 throw;
             return winner;
         }
-        catch (PostgresException ex) when (ex.SqlState == ForeignKeyViolation)
+        catch (PostgresException ex) when (ex.SqlState == ForeignKeyViolation && ex.ConstraintName == ReplayBudgetForeignKey)
         {
             // The budget was deleted between GetAsync and this insert (a
             // same-session re-issue race, see PostgresOfflineAuthorityBudgetRepository).
+            // V1-RMD-427: only this constraint means that. Every other foreign key the grant and replay rows carry
+            // (requester, serving user) used to be reported as "unknown budget, re-authenticate" too, hiding the real
+            // fault; those now surface as they are.
             throw new UnknownOfflineAuthorityBudgetException(budgetId);
         }
     }
