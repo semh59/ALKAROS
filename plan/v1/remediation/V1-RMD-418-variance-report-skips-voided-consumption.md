@@ -1,7 +1,7 @@
 # V1-RMD-418 - Fark raporunun stoğu geri verilmiş (void) kalemin teorik tüketimini saymaması
 
 - Task ID: V1-RMD-418
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -47,7 +47,18 @@ teorik tüketimi sayılmaya devam eder.
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Reporting.MenuInventory.Tests` 9/9 ve `ALKAROS.Host.Experience.InventoryReporting.Tests` 8/8 (gerçek
+  PostgreSQL 18, Release, 0 uyarı / 0 hata; `evidence/V1-RMD-418/tests.log`).
+- Yeni test `ActualVsTheoreticalReportDoesNotCountAVoidedItemWhoseStockWasGivenBack`: aynı malzemede biri void edilip
+  tüketimi ters kaydedilmiş (0,4 kg), biri servis edilmiş (2 kg) iki kalem; raporda teorik kullanım 2 kg, fark 0.
+  Üretim değişikliği geri alınınca kırmızı (2 beklenirken 2,4; `evidence/V1-RMD-418/red-without-fix.log`).
+- V1-RMD-398 probe'u S02 teorik tüketim defterindeki satırın kendisinin sıfırlanmasını bekliyor ve düzeltilmiş kopyada
+  da başarısız (`evidence/V1-RMD-418/stock-flow-probe-s02.log`): defter değiştirilemez olarak tasarlandı (migration
+  116 tetikleyicisi, miktar > 0), bu yüzden düzeltme defteri değil, probe'un mesajında adı geçen etkiyi (fark
+  raporundaki sahte eksik) hedefler. Defteri okuyan tek üretim sorgusu fark raporudur;
+  `GetTotalsByStockItemAsync` yalnız testlerden çağrılır.
+- Semih'in elle deneyebileceği senaryo: mutfağa gönderilmiş ama hazırlanmaya başlanmamış bir yemeği void edin; gün
+  sonu gerçek-teorik fark raporunda o yemeğin malzemesi beklenen kullanıma eklenmez, sahte eksik görünmez.
 
 ## Handoff
 

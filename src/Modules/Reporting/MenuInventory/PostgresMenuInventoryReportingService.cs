@@ -514,10 +514,23 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
                 GROUP BY stock_item_id, stock_location_id
             ) receipts ON receipts.stock_item_id = cp.stock_item_id AND receipts.stock_location_id = cp.stock_location_id
             LEFT JOIN (
-                SELECT stock_item_id, SUM(quantity) AS qty
-                FROM recipe.theoretical_consumption_records
-                WHERE recorded_at > @from AND recorded_at <= @to
-                GROUP BY stock_item_id
+                -- V1-RMD-418 (V1-RMD-398 G-02): an order item voided before the kitchen started had its stock
+                -- given back (its Order Consumption movement reversed); the immutable theoretical ledger still
+                -- holds its row, which would count uneaten food as expected usage.
+                SELECT tc.stock_item_id, SUM(tc.quantity) AS qty
+                FROM recipe.theoretical_consumption_records tc
+                WHERE tc.recorded_at > @from AND tc.recorded_at <= @to
+                  AND NOT EXISTS (
+                      SELECT 1
+                      FROM inventory.stock_movements consumed
+                      JOIN inventory.stock_movements reversal
+                        ON reversal.source_type = 'StockMovement'
+                       AND reversal.source_reference_id = consumed.stock_movement_id
+                       AND reversal.movement_type = 'Reversal'
+                      WHERE consumed.source_type = 'Order'
+                        AND consumed.source_reference_id = tc.order_item_id
+                        AND consumed.movement_type = 'Consumption')
+                GROUP BY tc.stock_item_id
             ) theoretical ON theoretical.stock_item_id = cp.stock_item_id
             ORDER BY si.name, loc.name;
             """;

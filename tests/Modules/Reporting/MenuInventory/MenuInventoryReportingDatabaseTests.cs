@@ -573,6 +573,80 @@ public sealed class MenuInventoryReportingDatabaseTests : IClassFixture<MenuInve
         row.VariancePercentage.Should().BeApproximately(5m / 65m, 0.0001m);
     }
 
+    /// <summary>
+    /// V1-RMD-418 (V1-RMD-398 G-02): an order item voided before the kitchen started had its Consumption movement
+    /// reversed (stock given back); its theoretical consumption row stays in the immutable ledger but is not
+    /// expected usage. A waste void (no reversal) and an ordinary sale still count.
+    /// </summary>
+    [Fact]
+    public async Task ActualVsTheoreticalReportDoesNotCountAVoidedItemWhoseStockWasGivenBack()
+    {
+        var (_, _, _, versionId, locationId) = await SeedDataAsync();
+        var stockItemId = Guid.NewGuid();
+        var voidedItemId = Guid.NewGuid();
+        var servedItemId = Guid.NewGuid();
+        var from = DateTimeOffset.UtcNow.AddDays(-7);
+        var to = DateTimeOffset.UtcNow;
+
+        await using (var conn = await _db.DataSource.OpenConnectionAsync())
+        {
+            await using (var cmd = new NpgsqlCommand(
+                """
+                INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, is_active, row_version)
+                VALUES (@id, @code, 'AvT Minced Meat', 'RawMaterial', 'kg', true, 1);
+                INSERT INTO inventory.stock_physical_counts
+                    (id, stock_item_id, stock_location_id, counted_quantity, previous_on_hand_quantity, counted_by_user_id, counted_at)
+                VALUES
+                    (gen_random_uuid(), @id, @loc, 10.0000, 10.0000, gen_random_uuid(), @openAt),
+                    (gen_random_uuid(), @id, @loc, 8.0000, 8.0000, gen_random_uuid(), @closeAt);
+                """, conn))
+            {
+                cmd.Parameters.AddWithValue("id", stockItemId);
+                cmd.Parameters.AddWithValue("code", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+                cmd.Parameters.AddWithValue("loc", locationId);
+                cmd.Parameters.AddWithValue("openAt", from.AddDays(-1));
+                cmd.Parameters.AddWithValue("closeAt", to.AddHours(-1));
+                await cmd.ExecuteNonQueryAsync();
+            }
+
+            var consumptionId = Guid.NewGuid();
+            await using (var cmd = new NpgsqlCommand(
+                """
+                INSERT INTO inventory.stock_movements
+                    (stock_movement_id, stock_item_id, stock_location_id, movement_type, direction, quantity, unit_code, source_type, source_reference_id, created_at)
+                VALUES
+                    (@consumption, @item, @loc, 'Consumption', 'Out', 0.4000, 'kg', 'Order', @voided, @soldAt),
+                    (gen_random_uuid(), @item, @loc, 'Reversal', 'In', 0.4000, 'kg', 'StockMovement', @consumption, @voidedAt),
+                    (gen_random_uuid(), @item, @loc, 'Consumption', 'Out', 2.0000, 'kg', 'Order', @served, @soldAt);
+                INSERT INTO recipe.theoretical_consumption_records
+                    (id, order_item_id, product_id, recipe_id, recipe_version_id, stock_item_id, quantity, unit_code, recorded_at)
+                SELECT gen_random_uuid(), line.order_item_id, gen_random_uuid(), rv.recipe_id, rv.id, @item, line.quantity, 'kg', @soldAt
+                FROM recipe.recipe_versions rv
+                CROSS JOIN (VALUES (@voided, 0.4000::numeric), (@served, 2.0000::numeric)) AS line(order_item_id, quantity)
+                WHERE rv.id = @versionId;
+                """, conn))
+            {
+                cmd.Parameters.AddWithValue("consumption", consumptionId);
+                cmd.Parameters.AddWithValue("item", stockItemId);
+                cmd.Parameters.AddWithValue("loc", locationId);
+                cmd.Parameters.AddWithValue("voided", voidedItemId);
+                cmd.Parameters.AddWithValue("served", servedItemId);
+                cmd.Parameters.AddWithValue("versionId", versionId);
+                cmd.Parameters.AddWithValue("soldAt", to.AddDays(-3));
+                cmd.Parameters.AddWithValue("voidedAt", to.AddDays(-3).AddMinutes(5));
+                await cmd.ExecuteNonQueryAsync();
+            }
+        }
+
+        var report = await _service.GetActualVsTheoreticalReportAsync(
+            new ActualVsTheoreticalReportQuery(from, to, locationId));
+
+        var row = report.Items.Should().ContainSingle(i => i.StockItemId == stockItemId).Subject;
+        row.ActualUsage.Should().Be(2m); // 10 - 8
+        row.TheoreticalUsage.Should().Be(2m, "the voided item's 0.4 kg went back to stock and was never used");
+        row.VarianceQuantity.Should().Be(0m);
+    }
+
     [Fact]
     public async Task ActualVsTheoreticalReportExcludesAnItemMissingAnOpeningCount()
     {

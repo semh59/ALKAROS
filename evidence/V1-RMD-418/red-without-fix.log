@@ -1,0 +1,4 @@
+# Production changes stashed (src/), tests kept
+[xUnit.net 00:00:00.90]     ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportDoesNotCountAVoidedItemWhoseStockWasGivenBack [FAIL]
+   Expected row.TheoreticalUsage to be 2M because the voided item's 0.4 kg went back to stock and was never used, but found 2.4000M (difference of 0.4000).
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 259 ms - ALKAROS.Reporting.MenuInventory.Tests.dll (net8.0)
