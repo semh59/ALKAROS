@@ -34,10 +34,11 @@ public static partial class DualScreenApplication
             Guid terminalId,
             ICashSessionLifecycleService sessions,
             DualScreenStore store,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             var suggestion = await sessions.GetSuggestedOpeningBalanceAsync(terminalId, cancellationToken);
             return Results.Ok(new SuggestedOpeningBalanceResponseV1(suggestion));
         });
@@ -46,10 +47,11 @@ public static partial class DualScreenApplication
             Guid terminalId,
             ICashSessionRepository sessionRepository,
             DualScreenStore store,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             var sessions = await sessionRepository.GetByTerminalIdAsync(terminalId, cancellationToken);
             var active = sessions.FirstOrDefault(s => s.IsActive);
             return active is null ? Results.NotFound() : Results.Ok(active);
@@ -61,10 +63,11 @@ public static partial class DualScreenApplication
             ICashSessionLifecycleService sessions,
             ICashTransactionLedgerRepository ledger,
             DualScreenStore store,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             var (session, openedEvent) = await sessions.OpenSessionAsync(
                 new OpenCashSessionCommand(Guid.NewGuid(), principal.UserId, terminalId, request.OpeningBalance),
                 cancellationToken);
@@ -91,10 +94,11 @@ public static partial class DualScreenApplication
             Guid cashSessionId,
             ICashSessionLifecycleService sessions,
             DualScreenStore store,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             var (session, _) = await sessions.StartCountAsync(
                 new StartCashCountCommand(cashSessionId, principal.UserId), cancellationToken);
             return Results.Ok(session);
@@ -106,10 +110,11 @@ public static partial class DualScreenApplication
             RecordCashCountRequestV1 request,
             ICashSessionLifecycleService sessions,
             DualScreenStore store,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             var recorded = await sessions.RecordCountAsync(
                 new RecordCashCountCommand(cashSessionId, request.CountedAmount, principal.UserId, request.Notes),
                 cancellationToken);
@@ -121,10 +126,11 @@ public static partial class DualScreenApplication
             Guid cashSessionId,
             ICashTransactionLedgerRepository ledger,
             DualScreenStore store,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             var expectedCash = await ledger.ComputeExpectedCashAsync(cashSessionId, cancellationToken);
             return Results.Ok(new ExpectedCashResponseV1(expectedCash));
         });
@@ -140,7 +146,7 @@ public static partial class DualScreenApplication
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             // V1-RMD-236: IsSupervisorOverride bypasses CashSessionPolicy's own
             // variance-tolerance check below — without this, any cashier could
             // self-declare the override and close with an unlimited variance.
@@ -164,11 +170,23 @@ public static partial class DualScreenApplication
             Guid cashSessionId,
             ReconcileCashSessionRequestV1 request,
             ICashSessionLifecycleService sessions,
+            ICashSessionRepository sessionRepository,
             DualScreenStore store,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
+            // V1-RMD-400 (V1-RMD-393 F-09): reconciliation is a supervisor act (cash-session-design.md §6) and a
+            // four-eyes check — the cashier who ran the drawer never signs off their own session.
+            await authorization.AuthorizeAsync(
+                principal.UserId, ApplicationPermissions.CashSessionOverride, cancellationToken);
+            var reconciled = await sessionRepository.GetByIdAsync(cashSessionId, cancellationToken);
+            if (reconciled is not null && reconciled.Snapshot.CashierUserId == principal.UserId)
+            {
+                throw new AuthorizationDeniedException(
+                    principal.UserId, ApplicationPermissions.CashSessionOverride, "The session's own cashier cannot reconcile it.");
+            }
             var (session, _) = await sessions.ReconcileSessionAsync(
                 new ReconcileCashSessionCommand(cashSessionId, principal.UserId, request.Notes),
                 cancellationToken);
@@ -182,10 +200,11 @@ public static partial class DualScreenApplication
             ICashSessionRepository sessionRepository,
             ICashTransactionLedgerRepository ledger,
             DualScreenStore store,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             if (string.IsNullOrWhiteSpace(request.IdempotencyKey))
                 throw new ArgumentException("IdempotencyKey is required.", nameof(request));
 
@@ -243,11 +262,12 @@ public static partial class DualScreenApplication
             ALKAROS.Billing.PaymentClosure.IBillClosureService billClosure,
             ALKAROS.Host.Experience.Orders.OrderSettlementService orderSettlement,
             DualScreenStore store,
+            IAuthorizationService authorization,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
             var result = await tenderHandler.HandleAsync(
                 new CashTenderRequest(
                     cashSessionId, request.BillId, request.AmountDue, request.TenderedAmount,
@@ -261,6 +281,19 @@ public static partial class DualScreenApplication
 
         return group;
     }
+
+    /// <summary>
+    /// V1-RMD-400 (V1-RMD-399 H-02): every drawer action needs <c>cash.drawer</c> (authorization model §2/§3),
+    /// not only a signed-in device — a waiter or kitchen session must not open, count or pay out of a drawer.
+    /// </summary>
+    private static Task<CashierPrincipal> RequireCashDrawerAsync(
+        HttpContext context,
+        Guid terminalId,
+        DualScreenStore store,
+        IAuthorizationService authorization,
+        CancellationToken cancellationToken)
+        => RequireCashierPermissionAsync(
+            context, terminalId, store, authorization, ApplicationPermissions.CashDrawer, cancellationToken);
 }
 
 /// <summary>V13-CSH-004: request/response DTOs for the CashSession/cash-tender HTTP surface.</summary>

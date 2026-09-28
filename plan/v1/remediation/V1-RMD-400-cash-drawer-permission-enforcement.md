@@ -1,7 +1,7 @@
 # V1-RMD-400 - Kasa oturumu uçlarını `cash.drawer` iznine bağlamak; mutabakatı amir ve dört göz kuralına almak
 
 - Task ID: V1-RMD-400
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -32,8 +32,6 @@ yapamaz, V1-RMD-316 deseni) bağlar.
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/CashSession/CashSessionHttpTests.cs
   (V13-CSH-004 sahipliğinde kalır) — `SeedCashierSessionAsync` gerçek kasiyer gibi `cash.drawer` tutar; izinsiz
   oturumun ve mutabakat kurallarının testleri eklenir.
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs
-  (V13-PUI-001 sahipliğinde kalır) — yalnız kasa oturumu açan test kasiyerine `cash.drawer` verilir.
 
 ## In scope
 
@@ -54,7 +52,17 @@ yapamaz, V1-RMD-316 deseni) bağlar.
 
 ## Acceptance evidence
 
-- Görev kapanışında doldurulur.
+- `dotnet build tests/Host/Experience/CashSession -c Release`: 0 uyarı, 0 hata.
+- `ALKAROS.Host.Experience.CashSession.Tests` (gerçek PostgreSQL 18): 16/16 geçti
+  (`evidence/V1-RMD-400/cashsession-tests.log`). Yeni: `ASessionWithoutCashDrawerIsForbiddenOnDrawerRoutes`
+  (izinsiz oturum açma/etkin oturum/para çıkışı 403, kasa oturumu yazılmıyor) ve
+  `ReconcileNeedsASupervisorWhoIsNotTheSessionsOwnCashier` (düz kasiyer 403, oturumun kendi amiri 403, başka amir 200).
+- Aynı iki test üretim değişikliği geri alınınca kırmızı (`evidence/V1-RMD-400/red-without-fix.log`, 2/2 başarısız).
+- V1-RMD-399 probe'ları düzeltilmiş kopyada (`evidence/V1-RMD-400/audit-probes-after-fix.log`): gerçek girişli
+  `waiter` ve `kitchen-staff` kasa oturumu açamıyor (D3 geçti); izinsiz oturum taramasında kasa oturumunun 7 ucu artık
+  403, korumayı geçen tek rota kartla tahsilat (V1-RMD-401 kapsamı).
+- Semih'in elle deneyebileceği senaryo: garson hesabıyla Kasa ekranına girip kasa açmayı denemek "Bu işlem için
+  yetkiniz yok." ile reddedilir; kasiyer kasayı açar, kapatır; mutabakatı yalnız başka bir şef garson/yönetici yapar.
 
 ## Handoff
 

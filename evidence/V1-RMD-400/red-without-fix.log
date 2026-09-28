@@ -1,0 +1,5 @@
+Time Elapsed 00:00:14.19
+  Failed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ReconcileNeedsASupervisorWhoIsNotTheSessionsOwnCashier [4 s]
+  Failed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ASessionWithoutCashDrawerIsForbiddenOnDrawerRoutes [3 s]
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 10 s - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)
+ 3 files changed, 108 insertions(+), 32 deletions(-)

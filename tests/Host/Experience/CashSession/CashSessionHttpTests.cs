@@ -339,11 +339,61 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, deniedOverride.StatusCode);
 
         var supervisorCookie = await _database.SeedCashierSessionWithPermissionsAsync(
-            terminalId, "csh004-variance-supervisor", ApplicationPermissions.CashSessionOverride);
+            terminalId, "csh004-variance-supervisor", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride);
         var overridden = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", supervisorCookie,
             new { ActualCash = 40m, IsSupervisorOverride = true, OverrideReason = "recount confirmed short" });
         Assert.Equal(HttpStatusCode.OK, overridden.StatusCode);
         Assert.Equal(-60m, (await overridden.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("difference").GetDecimal());
+    }
+
+    [Fact]
+    public async Task ASessionWithoutCashDrawerIsForbiddenOnDrawerRoutes()
+    {
+        // V1-RMD-400 (V1-RMD-399 H-02): a signed-in waiter or kitchen device must not operate the drawer.
+        var terminalId = Guid.NewGuid();
+        var waiterCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "rmd400-no-drawer", ApplicationPermissions.OrdersCreate, ApplicationPermissions.OrdersSend);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var open = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", waiterCookie, new { OpeningBalance = 100m });
+        var active = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/active", waiterCookie);
+        var movement = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{Guid.NewGuid():D}/cash-movements", waiterCookie,
+            new { Direction = "Out", Amount = 50m, IdempotencyKey = "rmd400-payout" });
+
+        Assert.Equal(HttpStatusCode.Forbidden, open.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, active.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, movement.StatusCode);
+        Assert.Equal(0L, await _database.CountCashSessionsAsync(terminalId));
+    }
+
+    [Fact]
+    public async Task ReconcileNeedsASupervisorWhoIsNotTheSessionsOwnCashier()
+    {
+        // V1-RMD-400 (V1-RMD-393 F-09): cash-session-design.md §6 — reconciliation is a supervisor act, four-eyes.
+        var terminalId = Guid.NewGuid();
+        var ownerCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "rmd400-owner-supervisor", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride);
+        var cashierCookie = await _database.SeedCashierSessionAsync(terminalId, "rmd400-plain-cashier");
+        var otherSupervisorCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "rmd400-other-supervisor", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", ownerCookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        var closed = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", ownerCookie,
+            new { ActualCash = 100m });
+        Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
+        var reconcilePath = $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/reconcile";
+
+        var byPlainCashier = await PostAsync(client, reconcilePath, cashierCookie, new { Notes = "cashier" });
+        var byOwnCashier = await PostAsync(client, reconcilePath, ownerCookie, new { Notes = "self" });
+        var byOtherSupervisor = await PostAsync(client, reconcilePath, otherSupervisorCookie, new { Notes = "checked" });
+
+        Assert.Equal(HttpStatusCode.Forbidden, byPlainCashier.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, byOwnCashier.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, byOtherSupervisor.StatusCode);
+        Assert.Equal("Reconciled", (await byOtherSupervisor.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString());
     }
 
     [Fact]
@@ -448,25 +498,13 @@ internal sealed class CashSessionHttpTestDatabase
         await ExecuteAsync(maintenance, $"DROP DATABASE IF EXISTS {_databaseName} WITH (FORCE);");
     }
 
-    /// <summary>Seeds a real user + a real cashier device session bound to <paramref name="terminalId"/>, and returns the raw Cookie header value.</summary>
-    public async Task<string> SeedCashierSessionAsync(Guid terminalId, string rawToken)
-    {
-        var userId = Guid.NewGuid();
-        await using var command = DataSource.CreateCommand(
-            """
-            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
-            VALUES (@user_id, @username, 'x', 'CashSession Test Cashier', true);
-
-            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, expires_at)
-            VALUES (gen_random_uuid(), @user_id, @device_id, @token_hash, now() + interval '1 hour');
-            """);
-        command.Parameters.AddWithValue("user_id", userId);
-        command.Parameters.AddWithValue("username", "csh004-cashier-" + userId.ToString("N")[..8]);
-        command.Parameters.AddWithValue("device_id", $"cashier:{terminalId:D}");
-        command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
-        await command.ExecuteNonQueryAsync();
-        return $"alkaros.cashier={rawToken}";
-    }
+    /// <summary>
+    /// Seeds a real user + a real cashier device session bound to <paramref name="terminalId"/>, and returns the raw
+    /// Cookie header value. V1-RMD-400: the user holds <c>cash.drawer</c>, as a real cashier does — every drawer
+    /// route now requires it.
+    /// </summary>
+    public Task<string> SeedCashierSessionAsync(Guid terminalId, string rawToken)
+        => SeedCashierSessionWithPermissionsAsync(terminalId, rawToken, ApplicationPermissions.CashDrawer);
 
     /// <summary>
     /// V1-RMD-236: seeds a real user + device session + role + explicit
@@ -518,6 +556,13 @@ internal sealed class CashSessionHttpTestDatabase
         }
 
         return $"alkaros.cashier={rawToken}";
+    }
+
+    public async Task<long> CountCashSessionsAsync(Guid terminalId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM cash.cash_sessions WHERE terminal_id = @terminal_id;");
+        command.Parameters.AddWithValue("terminal_id", terminalId);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     /// <summary>Seeds a real, payable Bill (catalog product + table + order + bill) for a cash-tender test.</summary>
