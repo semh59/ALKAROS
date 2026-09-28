@@ -1,7 +1,7 @@
 # V1-RMD-437 - Katalog ekranının etkisiz "Takipsiz" stok modunu sunmaması
 
 - Task ID: V1-RMD-437
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing

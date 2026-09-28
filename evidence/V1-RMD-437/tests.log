@@ -1,0 +1,5 @@
+# V1-RMD-437 PosTerminal typecheck and full vitest run (node v22.22.2)
+$ tsc --noEmit
+typecheck exit=0
+ Test Files  40 passed (40)
+      Tests  300 passed (300)

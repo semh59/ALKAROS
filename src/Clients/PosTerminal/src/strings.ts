@@ -134,6 +134,22 @@ export const productTypeLabels: Record<string, string> = {
   ServiceItem: "Hizmet kalemi",
 };
 
+/**
+ * V1-RMD-437 (V1-RMD-398 G-11): the sale path never reads the stock mode - an order is only accepted when the product
+ * has a stock mapping (V1-RMD-143) - so the form no longer offers "Untracked"; older records still carry it and show
+ * as a legacy value.
+ */
+export const stockModeLabels: Record<string, string> = {
+  Untracked: "Takipsiz (eski kayıt)",
+  QuantityTracked: "Miktar takipli",
+  PortionTracked: "Porsiyon takipli",
+  RecipeDerived: "Reçeteden",
+};
+
+export const selectableStockModes = ["QuantityTracked", "PortionTracked", "RecipeDerived"] as const;
+
+export const stockModeHint = "Siparişin onaylanması için ürünün stok eşlemesi olmalı.";
+
 export const selectionTypeLabels: Record<string, string> = {
   SelectOne: "Tek seçim",
   SelectMany: "Çoklu seçim",
