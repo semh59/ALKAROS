@@ -40,9 +40,9 @@ deseni (kendi private resolver/cipher/protector zinciri,
 
 - `src/Modules/CustomerData/Profiles/**`, `tests/Modules/CustomerData/Profiles/**`,
   `database/migrations/V14/V14-CST-001/**`
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/CustomerData/ALKAROS.CustomerData.csproj,
-  src/Modules/CustomerData/CustomerDataModule.cs — bu iki dosya modül-köküdür, `V14-CST-002`
-  (`AnonymizationState/**`) de aynı modülün parçası olarak bunlara dokunacak.
+- `src/Modules/CustomerData/ALKAROS.CustomerData.csproj`, `src/Modules/CustomerData/CustomerDataModule.cs`
+  — bu iki dosya modül-köküdür, bu görev tarafından ilk kez oluşturuldu; `V14-CST-002`
+  (`AnonymizationState/**`) aynı modülün parçası olarak bunlara "Sınırlı ek" şeklinde dokunacak.
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Modules/ModuleRegistry.cs
   (V1-FND-001 sahipliğinde kalır) — yalnız `CustomerDataModule` `DefaultCatalog`'a eklenir.
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/ALKAROS.Host.csproj
