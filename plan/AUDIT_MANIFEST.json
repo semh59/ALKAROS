@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1459,
-  "markdown_line_count": 111469,
-  "markdown_byte_count": 6432765,
+  "markdown_file_count": 1460,
+  "markdown_line_count": 111544,
+  "markdown_byte_count": 6437269,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2640,9 +2640,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9156BBA6A899D2C990D3CAF582D1B477739D55CF7BE37370928AA259609CCD89",
-      "lines": 2735,
-      "bytes": 400984,
+      "sha256": "4F6C1E6E15C35961F6E8075DA5EA185EE032472CE547D7D16B6FF3E01B01B80A",
+      "lines": 2736,
+      "bytes": 401154,
       "utf8": true
     },
     {
@@ -8075,6 +8075,13 @@
       "sha256": "F8A31117F8FE35DE6876B9C2FE06D0EC0AD80EBC8370B934419C725A56841D1A",
       "lines": 62,
       "bytes": 3286,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-404-offline-reconciliation-server-truth.md",
+      "sha256": "D0E626BCFD33045A6EC91A99D757869CD4E6C6D59D0F5E5A8E67F371490BB520",
+      "lines": 74,
+      "bytes": 4334,
       "utf8": true
     },
     {
