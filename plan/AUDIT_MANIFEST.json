@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1437,
-  "markdown_line_count": 110138,
-  "markdown_byte_count": 6342184,
+  "markdown_file_count": 1440,
+  "markdown_line_count": 110411,
+  "markdown_byte_count": 6365520,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2296,6 +2296,27 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-393/REPORT.md",
+      "sha256": "E513A8782F91C5C84DCBF8CA9D884FB3D0E6EF7A8FDFB76D59F39FCD938C9810",
+      "lines": 211,
+      "bytes": 19082,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-393/calibration/SEALED.md",
+      "sha256": "443844B46FA90D68ADA634F77F7C6EAF8E82CE199439D7C79E8FD58B1C5A6B39",
+      "lines": 41,
+      "bytes": 2782,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-393/probes/README.md",
+      "sha256": "4A9CB5C2EB7A01B39581E62D7D55ECEF6FEF4DFED143FD087417B5F80BC3243A",
+      "lines": 18,
+      "bytes": 1069,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2556,9 +2577,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9844CFE8034B3C7A743F75AAAD255269FD57336F7B9EF73E0655DF75E7777AF5",
-      "lines": 2713,
-      "bytes": 397694,
+      "sha256": "B178DAD9F00AA625D0FD1B4028666992E4FAD02D570221BCB78E9B5755A03D46",
+      "lines": 2716,
+      "bytes": 398103,
       "utf8": true
     },
     {
@@ -7925,9 +7946,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-393-money-flow-targeted-audit.md",
-      "sha256": "E00D13D2BE8001130BB4BF4DF9C83694B06133323805A19E6D36078504042750",
+      "sha256": "48A68F3391E07C0B4C930B49808D1324050611A116005C5C903B34C79ACEBF0D",
       "lines": 61,
-      "bytes": 2954,
+      "bytes": 2948,
       "utf8": true
     },
     {
