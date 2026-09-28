@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1455,
-  "markdown_line_count": 111174,
-  "markdown_byte_count": 6415848,
+  "markdown_file_count": 1456,
+  "markdown_line_count": 111244,
+  "markdown_byte_count": 6419705,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2640,9 +2640,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "628A374A9C6B9606EF9C256F9868344A581C63DB1E7A2F97DA99F2A23C6CCAE4",
-      "lines": 2731,
-      "bytes": 400324,
+      "sha256": "CE79BB0EB85C978C92E68A320EDAF3954672FAFD5ACBC96DAC0F2E0345819B14",
+      "lines": 2732,
+      "bytes": 400493,
       "utf8": true
     },
     {
@@ -8047,6 +8047,13 @@
       "sha256": "BFFE2600D737F13D19BCD1B1F5AEE8768CFE6590A6C6D4D02123760297DD8A09",
       "lines": 59,
       "bytes": 3033,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-400-cash-drawer-permission-enforcement.md",
+      "sha256": "9606C498743CE87D3FADDCBA52AD22F70F7BFB1E8DA7B226D9FD3EB5C2C766D0",
+      "lines": 69,
+      "bytes": 3688,
       "utf8": true
     },
     {
