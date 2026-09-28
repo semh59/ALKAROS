@@ -491,7 +491,9 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
                 opening.counted_quantity,
                 closing.counted_quantity,
                 COALESCE(receipts.qty, 0),
-                COALESCE(theoretical.qty, 0)
+                COALESCE(theoretical.qty, 0),
+                COALESCE(production.output_qty, 0),
+                COALESCE(production.consumed_qty, 0)
             FROM candidate_pairs cp
             JOIN inventory.stock_items si ON si.id = cp.stock_item_id
             JOIN inventory.stock_locations loc ON loc.id = cp.stock_location_id
@@ -513,6 +515,15 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
                 WHERE source_type IN ('PurchaseOrder', 'GoodsReceipt') AND created_at > @from AND created_at <= @to
                 GROUP BY stock_item_id, stock_location_id
             ) receipts ON receipts.stock_item_id = cp.stock_item_id AND receipts.stock_location_id = cp.stock_location_id
+            LEFT JOIN (
+                -- V1-RMD-420 (V1-RMD-398 G-05): production batches' own recorded movements.
+                SELECT stock_item_id, stock_location_id,
+                       SUM(quantity) FILTER (WHERE movement_type = 'ProductionOutput') AS output_qty,
+                       SUM(quantity) FILTER (WHERE movement_type = 'Consumption') AS consumed_qty
+                FROM inventory.stock_movements
+                WHERE source_type = 'ProductionOrder' AND created_at > @from AND created_at <= @to
+                GROUP BY stock_item_id, stock_location_id
+            ) production ON production.stock_item_id = cp.stock_item_id AND production.stock_location_id = cp.stock_location_id
             LEFT JOIN (
                 -- V1-RMD-418 (V1-RMD-398 G-02): an order item voided before the kitchen started had its stock
                 -- given back (its Order Consumption movement reversed); the immutable theoretical ledger still
@@ -559,10 +570,13 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
             var closingCount = reader.GetDecimal(7);
             var purchaseReceipts = reader.GetDecimal(8);
             var theoreticalUsage = reader.GetDecimal(9);
+            var productionOutput = reader.GetDecimal(10);
+            var productionConsumption = reader.GetDecimal(11);
 
-            var actualUsage = openingCount + purchaseReceipts - closingCount;
-            var varianceQuantity = actualUsage - theoreticalUsage;
-            var variancePercentage = theoreticalUsage == 0m ? (decimal?)null : varianceQuantity / theoreticalUsage;
+            var actualUsage = openingCount + purchaseReceipts + productionOutput - closingCount;
+            var explainedUsage = theoreticalUsage + productionConsumption;
+            var varianceQuantity = actualUsage - explainedUsage;
+            var variancePercentage = explainedUsage == 0m ? (decimal?)null : varianceQuantity / explainedUsage;
 
             items.Add(new ActualVsTheoreticalReportItem(
                 StockItemId: reader.GetGuid(0),
@@ -574,6 +588,8 @@ public sealed class PostgresMenuInventoryReportingService : IMenuInventoryReport
                 OpeningCount: openingCount,
                 ClosingCount: closingCount,
                 PurchaseReceipts: purchaseReceipts,
+                ProductionOutput: productionOutput,
+                ProductionConsumption: productionConsumption,
                 ActualUsage: actualUsage,
                 TheoreticalUsage: theoreticalUsage,
                 VarianceQuantity: varianceQuantity,

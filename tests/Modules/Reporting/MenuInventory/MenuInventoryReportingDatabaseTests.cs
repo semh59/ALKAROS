@@ -647,6 +647,67 @@ public sealed class MenuInventoryReportingDatabaseTests : IClassFixture<MenuInve
         row.VarianceQuantity.Should().Be(0m);
     }
 
+    /// <summary>
+    /// V1-RMD-420 (V1-RMD-398 G-05): 5 kg of flour consumed by a production batch is explained usage, and the 10 kg
+    /// of dough it produced entered stock; neither is unexplained variance.
+    /// </summary>
+    [Fact]
+    public async Task ActualVsTheoreticalReportCountsProductionConsumptionAndOutput()
+    {
+        var (_, _, _, _, locationId) = await SeedDataAsync();
+        var flourId = Guid.NewGuid();
+        var doughId = Guid.NewGuid();
+        var batchId = Guid.NewGuid();
+        var from = DateTimeOffset.UtcNow.AddDays(-7);
+        var to = DateTimeOffset.UtcNow;
+
+        await using (var conn = await _db.DataSource.OpenConnectionAsync())
+        await using (var cmd = new NpgsqlCommand(
+            """
+            INSERT INTO inventory.stock_items (id, code, name, item_type, tracking_unit_code, is_active, row_version)
+            VALUES (@flour, @flourCode, 'AvT Production Flour', 'RawMaterial', 'kg', true, 1),
+                   (@dough, @doughCode, 'AvT Production Dough', 'SemiFinished', 'kg', true, 1);
+            INSERT INTO inventory.stock_physical_counts
+                (id, stock_item_id, stock_location_id, counted_quantity, previous_on_hand_quantity, counted_by_user_id, counted_at)
+            VALUES
+                (gen_random_uuid(), @flour, @loc, 20.0000, 20.0000, gen_random_uuid(), @openAt),
+                (gen_random_uuid(), @flour, @loc, 15.0000, 15.0000, gen_random_uuid(), @closeAt),
+                (gen_random_uuid(), @dough, @loc, 0.0000, 0.0000, gen_random_uuid(), @openAt),
+                (gen_random_uuid(), @dough, @loc, 10.0000, 10.0000, gen_random_uuid(), @closeAt);
+            INSERT INTO inventory.stock_movements
+                (stock_movement_id, stock_item_id, stock_location_id, movement_type, direction, quantity, unit_code, source_type, source_reference_id, created_at)
+            VALUES
+                (gen_random_uuid(), @flour, @loc, 'Consumption', 'Out', 5.0000, 'kg', 'ProductionOrder', @batch, @producedAt),
+                (gen_random_uuid(), @dough, @loc, 'ProductionOutput', 'In', 10.0000, 'kg', 'ProductionOrder', @batch, @producedAt);
+            """, conn))
+        {
+            cmd.Parameters.AddWithValue("flour", flourId);
+            cmd.Parameters.AddWithValue("flourCode", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("dough", doughId);
+            cmd.Parameters.AddWithValue("doughCode", "SKU-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("loc", locationId);
+            cmd.Parameters.AddWithValue("batch", batchId);
+            cmd.Parameters.AddWithValue("openAt", from.AddDays(-1));
+            cmd.Parameters.AddWithValue("closeAt", to.AddHours(-1));
+            cmd.Parameters.AddWithValue("producedAt", to.AddDays(-2));
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        var report = await _service.GetActualVsTheoreticalReportAsync(
+            new ActualVsTheoreticalReportQuery(from, to, locationId));
+
+        var flour = report.Items.Should().ContainSingle(i => i.StockItemId == flourId).Subject;
+        flour.ProductionConsumption.Should().Be(5m);
+        flour.ActualUsage.Should().Be(5m); // 20 - 15
+        flour.VarianceQuantity.Should().Be(0m);
+        flour.VariancePercentage.Should().Be(0m);
+
+        var dough = report.Items.Should().ContainSingle(i => i.StockItemId == doughId).Subject;
+        dough.ProductionOutput.Should().Be(10m);
+        dough.ActualUsage.Should().Be(0m); // 0 + 10 - 10
+        dough.VarianceQuantity.Should().Be(0m);
+    }
+
     [Fact]
     public async Task ActualVsTheoreticalReportExcludesAnItemMissingAnOpeningCount()
     {

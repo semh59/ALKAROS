@@ -114,9 +114,12 @@ public sealed record CriticalStockReport(
 /// theoretical usage is attributed identically to each location's row
 /// (a documented simplification, not a bug: most items live in exactly one
 /// location). <see cref="ActualUsage"/> is
-/// <c>OpeningCount + PurchaseReceipts - ClosingCount</c> — the classic
-/// formula, computed from real <c>inventory.stock_physical_counts</c> rows,
-/// never estimated.
+/// <c>OpeningCount + PurchaseReceipts + ProductionOutput - ClosingCount</c>, computed from real
+/// <c>inventory.stock_physical_counts</c> rows, never estimated.
+/// V1-RMD-420 (V1-RMD-398 G-05): what a completed production batch consumed is recorded, explained usage, and
+/// what it produced entered stock; the classic formula knew neither, so production read as unexplained variance.
+/// <see cref="VarianceQuantity"/> is <c>ActualUsage - (TheoreticalUsage + ProductionConsumption)</c> and
+/// <see cref="VariancePercentage"/> is relative to that explained usage.
 /// </summary>
 public sealed record ActualVsTheoreticalReportItem(
     Guid StockItemId,
@@ -128,6 +131,8 @@ public sealed record ActualVsTheoreticalReportItem(
     decimal OpeningCount,
     decimal ClosingCount,
     decimal PurchaseReceipts,
+    decimal ProductionOutput,
+    decimal ProductionConsumption,
     decimal ActualUsage,
     decimal TheoreticalUsage,
     decimal VarianceQuantity,

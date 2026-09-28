@@ -1,7 +1,7 @@
 # V1-RMD-420 - Fark raporunun üretim tüketimini ve çıktısını hesaba katması
 
 - Task ID: V1-RMD-420
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -47,7 +47,17 @@ Bu görev: rapor satırına dönemdeki üretim tüketimi ve üretim çıktısı 
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Reporting.MenuInventory.Tests` 10/10 ve `ALKAROS.Host.Experience.InventoryReporting.Tests` 8/8 (gerçek
+  PostgreSQL 18, Release, 0 uyarı / 0 hata; `evidence/V1-RMD-420/tests.log`). Mevcut fark raporu testleri (üretim
+  hareketi olmayan kalemler) değişmeden geçer.
+- Yeni test `ActualVsTheoreticalReportCountsProductionConsumptionAndOutput`: üretimin 5 kg tükettiği un (20 → 15) ve
+  10 kg ürettiği hamur (0 → 10) için ikisinde de fark 0. Sorgu ve formül değişikliği geri alınınca kırmızı
+  (`evidence/V1-RMD-420/red-without-fix.log`).
+- V1-RMD-398 probe'u S05 (ve S04) düzeltilmiş kopyada geçer (`evidence/V1-RMD-420/stock-flow-probes.log`).
+- API yanıtındaki fark raporu satırına `productionOutput` ve `productionConsumption` alanları eklendi; bu raporu
+  gösteren bir istemci ekranı yok.
+- Semih'in elle deneyebileceği senaryo: dönem içinde un kullanan bir üretim partisi tamamlayın ve açılış/kapanış
+  sayımını yapın; gerçek-teorik fark raporunda un satırı üretim tüketimini gösterir ve sahte sapma çıkmaz.
 
 ## Handoff
 
