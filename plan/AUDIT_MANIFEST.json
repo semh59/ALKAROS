@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1479,
-  "markdown_line_count": 112802,
-  "markdown_byte_count": 6506052,
+  "markdown_file_count": 1480,
+  "markdown_line_count": 112867,
+  "markdown_byte_count": 6509102,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "DEC8685610DED414835E1D7EECABFC2A1711148CBB909640F80B1FBE36D7FA0C",
-      "lines": 2755,
-      "bytes": 404307,
+      "sha256": "CAFE68D3F541D920045F9A550E7D82ABAEE147C38409C5C656084D2F4B4BEFA2",
+      "lines": 2756,
+      "bytes": 404482,
       "utf8": true
     },
     {
@@ -8215,6 +8215,13 @@
       "sha256": "397383A04AD95EF01CDBD05DD9181AC9F74E06A89C8DAA60EBED0873A476F7F6",
       "lines": 63,
       "bytes": 3088,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-423-stock-cost-local-date-and-leftover-notes.md",
+      "sha256": "5965BD7582725FFB33110F3074BB3121144CA2BDEC3726A1F5D6928E99B466C4",
+      "lines": 64,
+      "bytes": 2875,
       "utf8": true
     },
     {
