@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1441,
-  "markdown_line_count": 110496,
-  "markdown_byte_count": 6369605,
+  "markdown_file_count": 1442,
+  "markdown_line_count": 110531,
+  "markdown_byte_count": 6371010,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2577,9 +2577,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "860D018716CA92B48CD306A8A1B1B18422D116D2AF1050DB62F32C571A4E7F10",
-      "lines": 2717,
-      "bytes": 398242,
+      "sha256": "E7D5FFF9A647C68B1250957A0F609E905972B4207F701F995BDC9512A2A4EEB6",
+      "lines": 2718,
+      "bytes": 398423,
       "utf8": true
     },
     {
@@ -7956,6 +7956,13 @@
       "sha256": "1AC5E9E69E047001419F48D51B98141592D415E29D51D91FE41DD4AA47A37F44",
       "lines": 93,
       "bytes": 4246,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-395-production-experience-registers-unit-converter.md",
+      "sha256": "6C83D31EFC6780254D74E7612B1E3AEAE0942A5B1CD952B61F7DDC1049B64A7B",
+      "lines": 34,
+      "bytes": 1224,
       "utf8": true
     },
     {
