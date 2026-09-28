@@ -1,0 +1,47 @@
+# HEAD 08bc5c68 + V1-RMD-424 working diff, PostgreSQL 18, Release
+## tests/Host/Experience/Orders/VoidSent/ALKAROS.Host.Experience.Orders.VoidSent.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WithNoMatchingKitchenTicketOrBillAppliesWithBothFlagsFalse [1 s]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemAlreadyServedIsRejected [385 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleWithoutBillsVoidEscalatesToPending [358 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingTheirOwnSentItemIsNotBlockedByTheOwnCheckGuard [348 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnItemStillNotSentIsRejected [367 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnotherServersSentItemIsRefusedByTheOwnCheckGuard [272 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.WhenTheBillIsAlreadyClosedNothingIsMutatedAndTheRequestIsRejected [298 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.CanVoidAndCanVoidSentMatchEachHandlersOwnEligibilityCheck [329 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemBeforeTheKitchenStartedRestoresItsStock [355 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingASentItemRestoresItsModifierStockToo [317 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAHeldLaterCourseItemBeforeItIsEverCalledInRestoresItsStock [316 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.ARoleThatHoldsBillsVoidOutrightAppliesDirectlyAndCancelsKitchenAndBill [344 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AnInvalidReasonCodeIsRejected [261 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.VoidingAPreparingItemDoesNotRestoreItsStock [350 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard [269 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.NoSessionCookieIsUnauthorized [255 ms]
+  Passed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing [335 ms]
+Total tests: 17
+     Passed: 17
+## tests/Modules/Inventory/MovementReversal/ALKAROS.Inventory.MovementReversal.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.GetReversalForMovementReturnsExistingReversalOrNull [29 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.ReversalOfNonExistentMovementThrowsStockMovementNotFoundException [13 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.DuplicateReversalAttemptThrowsDuplicateReversalException [18 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.ReversalRejectsEmptyGuid [4 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.ReversalRestoresReservedQuantityForReservationMovement [6 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.ReversalPreservesOriginalMovementRecordCompletelyUnchanged [4 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.ReversalRequiresNonEmptyReason [3 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.ReversingAReversalThrowsReversalNotEligibleException [3 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.ReversalRestoresExactQuantityAndInvertsDirectionForOutMovement [2 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.ReversalRestoresExactQuantityAndInvertsDirectionForInMovement [2 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDomainTests.CanReverseAsyncReturnsTrueForEligibleAndFalseOnceReversed [2 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDatabaseTests.OriginalMovementRowInDatabaseRemainsCompletelyImmutableAfterReversal [146 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDatabaseTests.ConcurrentReversalAttemptsOnSameMovementEnforcesSingleReversalWithoutRaces [48 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDatabaseTests.DeletingStockItemReferencedByReversalMovementThrowsForeignKeyRestriction [30 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDatabaseTests.Migration062RollbackAndReapplyWorksCleanly [13 ms]
+  Passed ALKAROS.Inventory.MovementReversal.Tests.StockMovementReversalDatabaseTests.ReversalPersistsToDatabaseAndRestoresProjectedOnHandBalance [27 ms]
+Total tests: 16
+     Passed: 16
+## src/Host/ALKAROS.Host.csproj (build)
+    0 Warning(s)
+    0 Error(s)

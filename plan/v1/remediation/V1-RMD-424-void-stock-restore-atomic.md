@@ -1,7 +1,7 @@
 # V1-RMD-424 - Mutfağa gitmiş kalemin void'inde stok iadesinin sipariş kaydıyla tek işlemde yapılması
 
 - Task ID: V1-RMD-424
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -51,7 +51,17 @@ bu görevin kapsamı dışında, eskisi gibi ayrı adımlardır.
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Host.Experience.Orders.VoidSent.Tests` 17/17, `ALKAROS.Inventory.MovementReversal.Tests` 16/16 ve
+  `ALKAROS.Host` derlemesi (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata; `evidence/V1-RMD-424/tests.log`). Sent,
+  Held ve ek malzemeli kalemlerin stok iadesini sınayan mevcut testler değişmeden geçer.
+- Yeni test `AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing`: stok kalemi pasife alınmış Sent kalemin
+  void'i 409 `STOCK_RESTORE_FAILED` döner; kalem `Active`/`Sent` kalır, stok 9'da kalır. Üretim değişikliği geri
+  alınınca kırmızı (409 beklenirken 500; `evidence/V1-RMD-424/red-without-fix.log`).
+- V1-RMD-398 probe'u S11 (çok satırlı void iadesi) düzeltilmiş kopyada geçer; S02'nin stok iadesi kontrol adımı geçer,
+  son adımı V1-RMD-418'de açıklanan değiştirilemez defter nedeniyle başarısızdır (`evidence/V1-RMD-424/stock-flow-probes.log`).
+- Semih'in elle deneyebileceği senaryo: mutfağa gitmiş ama hazırlanmamış bir kalemi void edin; stok geri gelir. Stok
+  geri verilemeyecek bir durumda (ör. stok kalemi pasif) "Ürünün stoğu geri verilemedi; iptal yapılmadı." uyarısı
+  çıkar ve kalem siparişte kalır.
 
 ## Handoff
 

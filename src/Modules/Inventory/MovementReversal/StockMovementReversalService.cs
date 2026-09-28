@@ -31,6 +31,57 @@ public sealed class StockMovementReversalService : IStockMovementReversalService
         StockMovementReversalRequest request,
         CancellationToken ct = default)
     {
+        var (reversal, original) = await PrepareReversalAsync(request, ct);
+
+        try
+        {
+            await _movementRepo.AppendAsync(reversal, ct);
+        }
+        catch (PostgresException ex) when (ex.SqlState == "23505")
+        {
+            // Database-level race protection via unique index uq_stock_movements_single_reversal
+            throw new DuplicateReversalException($"Stock movement '{original.Id}' has already been reversed.");
+        }
+
+        var restoredBalance = await _balanceProjector.ApplyMovementAsync(reversal, ct);
+        if (restoredBalance == null)
+        {
+            restoredBalance = await _balanceRepo.GetByItemAndLocationAsync(reversal.StockItemId, reversal.StockLocationId, ct)
+                ?? throw new InvalidOperationException("Failed to retrieve restored stock balance.");
+        }
+
+        return new StockMovementReversalResult(reversal, original, restoredBalance);
+    }
+
+    public async Task<StockMovementReversalResult> ReverseMovementAsync(
+        StockMovementReversalRequest request,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        var (reversal, original) = await PrepareReversalAsync(request, ct);
+
+        try
+        {
+            await _movementRepo.AppendAsync(reversal, connection, transaction, ct);
+        }
+        catch (PostgresException ex) when (ex.SqlState == "23505")
+        {
+            throw new DuplicateReversalException($"Stock movement '{original.Id}' has already been reversed.");
+        }
+
+        var restoredBalance = await _balanceRepo.ApplyOnHandDeltaAsync(
+            reversal.StockItemId, reversal.StockLocationId, reversal.Effect.OnHandDelta, connection, transaction, ct);
+        return new StockMovementReversalResult(reversal, original, restoredBalance);
+    }
+
+    /// <summary>Validates the request and builds the reversal movement; writes nothing.</summary>
+    private async Task<(StockMovement Reversal, StockMovement Original)> PrepareReversalAsync(
+        StockMovementReversalRequest request,
+        CancellationToken ct)
+    {
         ArgumentNullException.ThrowIfNull(request);
 
         if (request.OriginalMovementId == Guid.Empty)
@@ -66,25 +117,7 @@ public sealed class StockMovementReversalService : IStockMovementReversalService
             originalMovement: original,
             reason: request.Reason.Trim(),
             createdBy: request.ActorId);
-
-        try
-        {
-            await _movementRepo.AppendAsync(reversal, ct);
-        }
-        catch (PostgresException ex) when (ex.SqlState == "23505")
-        {
-            // Database-level race protection via unique index uq_stock_movements_single_reversal
-            throw new DuplicateReversalException($"Stock movement '{original.Id}' has already been reversed.");
-        }
-
-        var restoredBalance = await _balanceProjector.ApplyMovementAsync(reversal, ct);
-        if (restoredBalance == null)
-        {
-            restoredBalance = await _balanceRepo.GetByItemAndLocationAsync(reversal.StockItemId, reversal.StockLocationId, ct)
-                ?? throw new InvalidOperationException("Failed to retrieve restored stock balance.");
-        }
-
-        return new StockMovementReversalResult(reversal, original, restoredBalance);
+        return (reversal, original);
     }
 
     public async Task<bool> CanReverseAsync(

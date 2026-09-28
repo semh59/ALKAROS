@@ -233,6 +233,36 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
     /// on void instead of staying a permanent, unearned Waste deduction.
     /// </summary>
     [Fact]
+    public async Task AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing()
+    {
+        // V1-RMD-424 (V1-RMD-398 G-12): the restore was a best-effort step after the Order write, so a failed restore
+        // left the item voided and its stock gone. The stock item is deactivated here, so the reversal is refused.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Sent);
+        var (stockItemId, _) = await _database.SeedConsumedStockForItemAsync(itemId, onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        await using (var deactivate = _database.DataSource.CreateCommand(
+            "UPDATE inventory.stock_items SET is_active = false WHERE id = @id;"))
+        {
+            deactivate.Parameters.AddWithValue("id", stockItemId);
+            await deactivate.ExecuteNonQueryAsync();
+        }
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("STOCK_RESTORE_FAILED", await response.Content.ReadAsStringAsync());
+        var (status, kitchenState) = await _database.ReloadItemStateAsync(orderId, itemId);
+        Assert.Equal(OrderItemState.Active, status);
+        Assert.Equal(KitchenState.Sent, kitchenState);
+        Assert.Equal(9m, await _database.GetOnHandQuantityAsync(stockItemId));
+    }
+
+    [Fact]
     public async Task VoidingASentItemBeforeTheKitchenStartedRestoresItsStock()
     {
         var terminalId = Guid.NewGuid();

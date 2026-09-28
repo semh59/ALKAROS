@@ -1165,6 +1165,7 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         ItemNotYetSentException => (409, "NOT_YET_SENT", "Ürün henüz mutfağa gönderilmedi."),
         ItemAlreadyServedException => (409, "ALREADY_SERVED", "Ürün zaten servis edildi."),
         BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
+        VoidStockRestoreFailedException => (409, "STOCK_RESTORE_FAILED", "Ürünün stoğu geri verilemedi; iptal yapılmadı."),
         OrderNotAwaitingConfirmationException => (409, "ORDER_NOT_PENDING_CONFIRMATION", "Sipariş onay bekleyen durumda değil."),
         // V1-RMD-143: Semih's decision (2026-09-09) — Accept refuses outright
         // rather than silently skipping stock consumption, either because a
