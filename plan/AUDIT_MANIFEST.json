@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1490,
-  "markdown_line_count": 113396,
-  "markdown_byte_count": 6534836,
+  "markdown_file_count": 1491,
+  "markdown_line_count": 113458,
+  "markdown_byte_count": 6537715,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "DED575331232197A0ABB77F61BF3F5822F8699C484F4C0969DBE61DDD97DA2C3",
-      "lines": 2766,
-      "bytes": 406150,
+      "sha256": "C1795D1901F49B4D44C90C4DF8EF8BD0EA800DDB5CEB50D563AC2CE6BCEA7191",
+      "lines": 2767,
+      "bytes": 406320,
       "utf8": true
     },
     {
@@ -8292,6 +8292,13 @@
       "sha256": "28C26795CCFA05FC85FEC3CFE8DC19851ACA7622D1FB8E6C42F2B8F7B83298B5",
       "lines": 39,
       "bytes": 1658,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-434-renumber-master-layer-quality-tasks.md",
+      "sha256": "36E7C07C206F48F89A0111730999C527C3FB238A331ECA1F130264927768F0FD",
+      "lines": 61,
+      "bytes": 2709,
       "utf8": true
     },
     {
