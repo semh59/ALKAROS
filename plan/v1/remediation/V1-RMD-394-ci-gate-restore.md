@@ -1,7 +1,7 @@
 # V1-RMD-394 - CI kapısını yeniden çalışır hale getir (kilitli restore, Windows Python, manifest)
 
 - Task ID: V1-RMD-394
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
