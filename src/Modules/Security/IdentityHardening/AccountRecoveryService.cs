@@ -76,4 +76,46 @@ public sealed class AccountRecoveryService
 
         return true;
     }
+
+    /// <summary>
+    /// V1-RMD-405: offboarding. Closes the account (login refused) and revokes every device session, so a leaver
+    /// can neither keep a session nor sign in again. Returns <c>false</c> when no such user exists.
+    /// </summary>
+    public async Task<bool> DeactivateAsync(Guid userId, string actor, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(actor);
+
+        var user = await _store.GetByIdAsync(userId, cancellationToken);
+        if (!await _store.SetActiveAsync(userId, active: false, cancellationToken))
+            return false;
+        await _sessions.RevokeAllAsync(userId, cancellationToken);
+
+        await RecordAsync(userId, user, SuspiciousLoginReason.AccountDeactivated, actor, cancellationToken);
+        return true;
+    }
+
+    /// <summary>V1-RMD-405: reopens a deactivated account. Returns <c>false</c> when no such user exists.</summary>
+    public async Task<bool> ReactivateAsync(Guid userId, string actor, CancellationToken cancellationToken = default)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(actor);
+
+        var user = await _store.GetByIdAsync(userId, cancellationToken);
+        if (!await _store.SetActiveAsync(userId, active: true, cancellationToken))
+            return false;
+
+        await RecordAsync(userId, user, SuspiciousLoginReason.AccountReactivated, actor, cancellationToken);
+        return true;
+    }
+
+    private Task RecordAsync(
+        Guid userId, StoredUser? user, SuspiciousLoginReason reason, string actor, CancellationToken cancellationToken)
+        => _sink.RecordAsync(
+            new SuspiciousLoginEvent(
+                userId,
+                user?.Username ?? userId.ToString(),
+                reason,
+                PriorFailedAttempts: 0,
+                DateTimeOffset.UtcNow,
+                Actor: actor),
+            cancellationToken);
 }

@@ -78,6 +78,9 @@ public sealed class AuthenticationTimingContractTests
 
         public Task<bool> ForceUnlockAsync(Guid userId, CancellationToken cancellationToken = default)
             => Task.FromResult(true);
+
+        public Task<bool> SetActiveAsync(Guid userId, bool active, CancellationToken cancellationToken = default)
+            => Task.FromResult(true);
     }
 
     private static StoredUser ActiveUser(string passwordHash) => new(

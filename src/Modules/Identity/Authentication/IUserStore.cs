@@ -71,6 +71,12 @@ public interface IUserStore
     /// no such user exists.
     /// </summary>
     Task<bool> ForceUnlockAsync(Guid userId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V1-RMD-405: an administrative deactivation (a leaver) or reactivation. An inactive account cannot sign in
+    /// and every session check already refuses it. Returns <c>false</c> when no such user exists.
+    /// </summary>
+    Task<bool> SetActiveAsync(Guid userId, bool active, CancellationToken cancellationToken = default);
 }
 
 public sealed record LoginFailureUpdate(int FailedLoginAttempts, DateTimeOffset? LockedUntil);

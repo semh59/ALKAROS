@@ -84,6 +84,49 @@ public sealed class AccountRecoveryServiceTests : IClassFixture<IdentityHardenin
     }
 
     [Fact]
+    public async Task DeactivateClosesTheAccountRevokesEverySessionAndAudits()
+    {
+        // V1-RMD-405: offboarding a leaver — no session survives and the account is closed for sign-in.
+        var userId = await _database.InsertUserAsync();
+        var (_, token) = await _sessions.CreateSessionAsync(userId, DeviceA);
+
+        var deactivated = await _recovery.DeactivateAsync(userId, actor: "manager-1");
+
+        deactivated.Should().BeTrue();
+        (await _store.GetByIdAsync(userId))!.Active.Should().BeFalse();
+        await Assert.ThrowsAsync<DeviceSessionRevokedException>(
+            () => _sessions.AuthenticateAsync(userId, DeviceA, token));
+        _sink.Events.Should().ContainSingle(e =>
+            e.UserId == userId
+            && e.Reason == SuspiciousLoginReason.AccountDeactivated
+            && e.Actor == "manager-1");
+    }
+
+    [Fact]
+    public async Task ReactivateReopensADeactivatedAccountAndAudits()
+    {
+        var userId = await _database.InsertUserAsync();
+        await _recovery.DeactivateAsync(userId, actor: "manager-1");
+
+        var reactivated = await _recovery.ReactivateAsync(userId, actor: "manager-2");
+
+        reactivated.Should().BeTrue();
+        (await _store.GetByIdAsync(userId))!.Active.Should().BeTrue();
+        _sink.Events.Should().ContainSingle(e =>
+            e.UserId == userId
+            && e.Reason == SuspiciousLoginReason.AccountReactivated
+            && e.Actor == "manager-2");
+    }
+
+    [Fact]
+    public async Task DeactivateOrReactivateOnAnUnknownUserReturnsFalseAndDoesNotAudit()
+    {
+        (await _recovery.DeactivateAsync(Guid.NewGuid(), actor: "manager-1")).Should().BeFalse();
+        (await _recovery.ReactivateAsync(Guid.NewGuid(), actor: "manager-1")).Should().BeFalse();
+        _sink.Events.Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task ForceUnlockOnAnUnknownUserReturnsFalseAndDoesNotAudit()
     {
         var unlocked = await _recovery.ForceUnlockAsync(Guid.NewGuid(), actor: "manager-1");

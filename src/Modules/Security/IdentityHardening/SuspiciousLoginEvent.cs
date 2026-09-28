@@ -17,6 +17,12 @@ public enum SuspiciousLoginReason
 
     /// <summary>An administrator force-unlocked an account before its lockout window expired.</summary>
     AccountForceUnlocked,
+
+    /// <summary>V1-RMD-405: an administrator deactivated an account (a leaver); its sessions were revoked.</summary>
+    AccountDeactivated,
+
+    /// <summary>V1-RMD-405: an administrator reactivated a previously deactivated account.</summary>
+    AccountReactivated,
 }
 
 public sealed record SuspiciousLoginEvent(

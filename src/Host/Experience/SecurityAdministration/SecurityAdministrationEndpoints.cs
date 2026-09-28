@@ -116,6 +116,45 @@ public static class SecurityAdministrationEndpoints
                     statusCode: StatusCodes.Status404NotFound);
         });
 
+        // V1-RMD-405 (V1-RMD-399 N-2): offboarding. revoke-sessions alone let a leaver sign straight back in.
+        group.MapPost("/users/{userId:guid}/deactivate", async (
+            Guid userId,
+            AccountRecoveryService recovery,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = SecurityAdministrationEndpointFilter.RequireActorId(context);
+            if (actorId == userId)
+            {
+                return Results.Json(
+                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                        "SELF_DEACTIVATION", "Kendi hesabınızı pasifleştiremezsiniz.", StatusCodes.Status409Conflict, context.TraceIdentifier)),
+                    statusCode: StatusCodes.Status409Conflict);
+            }
+
+            return await recovery.DeactivateAsync(userId, actorId.ToString("D"), cancellationToken)
+                ? Results.Ok(new AccountActiveResultV1(userId, false))
+                : Results.Json(
+                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                        "NOT_FOUND", "İstenen kullanıcı bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
+                    statusCode: StatusCodes.Status404NotFound);
+        });
+
+        group.MapPost("/users/{userId:guid}/reactivate", async (
+            Guid userId,
+            AccountRecoveryService recovery,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = SecurityAdministrationEndpointFilter.RequireActorId(context);
+            return await recovery.ReactivateAsync(userId, actorId.ToString("D"), cancellationToken)
+                ? Results.Ok(new AccountActiveResultV1(userId, true))
+                : Results.Json(
+                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                        "NOT_FOUND", "İstenen kullanıcı bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
+                    statusCode: StatusCodes.Status404NotFound);
+        });
+
         group.MapGet("/maintenance/jobs", (MaintenanceJobRunner runner) => Results.Ok(runner.GetStatuses()));
 
         group.MapPost("/maintenance/jobs/{name}/run", async (
@@ -223,6 +262,9 @@ public sealed record UserLookupResultV1(Guid UserId, string DisplayName, bool Ac
 public sealed record RevokeSessionsResultV1(Guid UserId, int RevokedSessions);
 
 public sealed record ForceUnlockResultV1(Guid UserId, bool Unlocked);
+
+/// <summary>V1-RMD-405: the account's active flag after a deactivate/reactivate call.</summary>
+public sealed record AccountActiveResultV1(Guid UserId, bool Active);
 
 public sealed record SecurityAdministrationApiErrorV1(string Code, string Message, int Status, string TraceId);
 

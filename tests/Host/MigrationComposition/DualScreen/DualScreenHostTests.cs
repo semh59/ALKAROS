@@ -596,6 +596,36 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADeactivatedUsersExistingCashierSessionIsRefusedOnTheNextRequest()
+    {
+        // V1-RMD-405 (V1-RMD-399 T-01): the session check itself refuses an inactive account, even for a session
+        // nobody revoked — the audit's blind calibration removed exactly this and no existing test noticed.
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent(new { terminalId, username = "cashier", password = Password }),
+        };
+        AddTrustedForwarding(login, "198.51.100.43");
+        using var loginResponse = await client.SendAsync(login);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+        var cashierCookie = loginResponse.Headers.GetValues("Set-Cookie")
+            .Single(value => value.StartsWith(DualScreenApplication.CashierCookieName + "=", StringComparison.Ordinal))
+            .Split(';', 2)[0];
+
+        await ExecuteAsync("UPDATE identity.users SET active = false WHERE user_id = @user_id;", ("user_id", userId));
+
+        using var session = CreateForwardedRequest(
+            HttpMethod.Get, $"/api/v1/auth/session?terminalId={terminalId:D}", "198.51.100.43", cashierCookie);
+        using var sessionResponse = await client.SendAsync(session);
+        Assert.Equal(HttpStatusCode.Unauthorized, sessionResponse.StatusCode);
+    }
+
+    [Fact]
     public async Task CatalogHttpContractKeepsLegacyArrayAndProvidesFilteredStableBoundedContinuation()
     {
         var userId = Guid.NewGuid();

@@ -1,7 +1,7 @@
 # V1-RMD-405 - Personeli pasifleştirme ve yeniden etkinleştirme
 
 - Task ID: V1-RMD-405
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -64,7 +64,19 @@ pasifleştiremez. Her iki işlem de mevcut güvenlik denetim akışına (`securi
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- Dört test projesi Release, 0 uyarı / 0 hata; gerçek PostgreSQL 18 (`evidence/V1-RMD-405/tests.log`):
+  `ALKAROS.Identity.Authentication.Tests` 59/59, `ALKAROS.Security.IdentityHardening.Tests` 15/15,
+  `ALKAROS.Host.Experience.SecurityAdministration.Tests` 28/29 — düşen tek test yedekten geri yükleme tatbikatıdır ve
+  değişikliksiz tabanda da aynı nedenle düşer (kapsayıcıda `pg_dump` 16, sunucu 18; aynı dosyada not edildi).
+  `ALKAROS.Host.Tests` seçili giriş testleri 3/3.
+- Yeni testler: servis — pasifleştirme hesabı kapatır, bütün oturumları iptal eder, denetler; yeniden etkinleştirme;
+  bilinmeyen kullanıcı `false` ve denetim yok. HTTP — `security.manage` tutmayan yönetici 403; yönetici pasifleştirir
+  (oturum sayısı 0, `active = false`, `security.account-deactivated`), yeniden etkinleştirir
+  (`security.account-reactivated`), bilinmeyen kullanıcı 404; kendi hesabını pasifleştirme 409 `SELF_DEACTIVATION`.
+- T-01: `ADeactivatedUsersExistingCashierSessionIsRefusedOnTheNextRequest` (iptal edilmemiş oturum, hesap pasif → 401);
+  V1-RMD-399 kalibrasyon tohumu uygulanınca bu test kırmızıya döner (`evidence/V1-RMD-405/calibration-seed-caught.log`).
+- Semih'in elle deneyebileceği senaryo: ayrılan bir personeli kullanıcı aramadan bulup pasifleştirmek; o kişinin açık
+  tableti bir sonraki işlemde oturumdan düşer ve kişi parolasıyla giriş yapamaz; yeniden etkinleştirince tekrar girer.
 
 ## Handoff
 
