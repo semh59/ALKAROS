@@ -163,6 +163,39 @@ public sealed class PostgresAccountTransactionLedgerTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task RecordingInsideAnExternalTransactionThatCommitsPersistsTheRow()
+    {
+        // V14-ACC-003's own reason for this overload existing: a Payment and
+        // a PaymentAllocation can be inserted in the SAME connection's
+        // transaction as this ledger row.
+        var request = ChargeRequest(Guid.NewGuid(), Guid.NewGuid());
+
+        await using var connection = await _database.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        var recorded = await _ledger.RecordAsync(request, connection, transaction);
+        await transaction.CommitAsync();
+
+        var fetched = await _ledger.GetAsync(recorded.Id);
+        Assert.NotNull(fetched);
+    }
+
+    [Fact]
+    public async Task RecordingInsideAnExternalTransactionThatRollsBackPersistsNothing()
+    {
+        var request = ChargeRequest(Guid.NewGuid(), Guid.NewGuid());
+
+        await using (var connection = await _database.DataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _ledger.RecordAsync(request, connection, transaction);
+            await transaction.RollbackAsync();
+        }
+
+        var all = await _ledger.GetByCustomerAsync(request.CustomerId);
+        Assert.Empty(all);
+    }
+
+    [Fact]
     public async Task TheDatabaseRejectsANegativeAdjustmentWithNoNoteOrCreatedBy()
     {
         await using var insert = _database.DataSource.CreateCommand(

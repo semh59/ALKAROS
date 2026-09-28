@@ -57,6 +57,9 @@ public static class ModuleRegistry
         typeof(ALKAROS.Cash.TransactionLedger.CashTransactionLedgerModule),
         typeof(ALKAROS.Payments.Allocations.Persistence.PaymentAllocationPersistenceModule),
         typeof(ALKAROS.Cash.TenderHandler.CashTenderHandlerModule),
+        // V14-ACC-003: the account-charge tender handler, exercising row
+        // 16's pre-approved Bill/Payment edges for the first time.
+        typeof(ALKAROS.CustomerAccounts.BillCharges.CustomerAccountsBillChargesModule),
         typeof(ALKAROS.Payments.CardSettlement.CardSettlementModule),
         typeof(ALKAROS.Payments.EftTender.EftTenderModule),
         typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule),

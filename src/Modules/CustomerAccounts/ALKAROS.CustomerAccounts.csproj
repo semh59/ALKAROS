@@ -7,8 +7,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <!-- CustomerAccountsModule.cs registers this module into ModuleRegistry.DefaultCatalog. -->
+    <!-- CustomerAccountsModule.cs/CustomerAccountsBillChargesModule.cs register
+         these into ModuleRegistry.DefaultCatalog. -->
     <ProjectReference Include="..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+    <!-- V14-ACC-003: BillCharges composes Payment/PaymentAllocation (and,
+         transitively, Bill/BillAdjustment) alongside its own AccountTransaction
+         ledger write - mirrors ALKAROS.Cash.csproj's own single-reference
+         pattern for the exact same reason (referencing ALKAROS.Payments.csproj
+         alone already brings Billing and Payments.Allocations.Persistence
+         along, since neither is excluded from that assembly). -->
+    <ProjectReference Include="..\Payments\ALKAROS.Payments.csproj" />
+    <!-- V14-ACC-003: eligibility checks the customer profile exists and is
+         not anonymized before a charge can be posted against their account. -->
+    <ProjectReference Include="..\CustomerData\ALKAROS.CustomerData.csproj" />
   </ItemGroup>
 
   <ItemGroup>

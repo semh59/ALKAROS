@@ -20,17 +20,36 @@ public sealed class PostgresAccountTransactionLedger : IAccountTransactionLedger
 
     public async Task<AccountTransaction> RecordAsync(RecordAccountTransactionRequest request, CancellationToken cancellationToken = default)
     {
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        var recorded = await RecordAsync(request, connection, transaction, cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+        return recorded;
+    }
+
+    public async Task<AccountTransaction> RecordAsync(
+        RecordAccountTransactionRequest request,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
         ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
         var id = Guid.NewGuid();
 
-        await using var insert = _dataSource.CreateCommand(
+        var insert = connection.CreateCommand();
+        insert.Transaction = transaction;
+        insert.CommandText =
             """
             INSERT INTO customer_account.account_transactions
                 (id, customer_id, transaction_type, amount, source_reference_type, source_reference_id, note, created_by, occurred_at)
             VALUES (@id, @customer_id, @transaction_type, @amount, @source_reference_type, @source_reference_id, @note, @created_by, @occurred_at)
             ON CONFLICT (customer_id, transaction_type, source_reference_type, source_reference_id) DO NOTHING
             RETURNING id, customer_id, transaction_type, direction, amount, source_reference_type, source_reference_id, note, created_by, occurred_at;
-            """);
+            """;
         insert.Parameters.Add("id", NpgsqlDbType.Uuid).Value = id;
         insert.Parameters.Add("customer_id", NpgsqlDbType.Uuid).Value = request.CustomerId;
         insert.Parameters.Add("transaction_type", NpgsqlDbType.Text).Value = request.TransactionType.ToString();
@@ -41,6 +60,7 @@ public sealed class PostgresAccountTransactionLedger : IAccountTransactionLedger
         insert.Parameters.Add("created_by", NpgsqlDbType.Uuid).Value = (object?)request.CreatedBy ?? DBNull.Value;
         insert.Parameters.Add("occurred_at", NpgsqlDbType.TimestampTz).Value = request.OccurredAt;
 
+        await using (insert)
         await using (var reader = await insert.ExecuteReaderAsync(cancellationToken))
         {
             if (await reader.ReadAsync(cancellationToken))
@@ -50,20 +70,25 @@ public sealed class PostgresAccountTransactionLedger : IAccountTransactionLedger
         // ON CONFLICT DO NOTHING hit the idempotency key - the same source
         // event was already recorded. Return the existing row rather than
         // creating a duplicate or raising an error.
-        await using var existing = _dataSource.CreateCommand(
+        var existing = connection.CreateCommand();
+        existing.Transaction = transaction;
+        existing.CommandText =
             """
             SELECT id, customer_id, transaction_type, direction, amount, source_reference_type, source_reference_id, note, created_by, occurred_at
             FROM customer_account.account_transactions
             WHERE customer_id = @customer_id AND transaction_type = @transaction_type
                 AND source_reference_type = @source_reference_type AND source_reference_id = @source_reference_id;
-            """);
+            """;
         existing.Parameters.Add("customer_id", NpgsqlDbType.Uuid).Value = request.CustomerId;
         existing.Parameters.Add("transaction_type", NpgsqlDbType.Text).Value = request.TransactionType.ToString();
         existing.Parameters.Add("source_reference_type", NpgsqlDbType.Text).Value = request.SourceReferenceType;
         existing.Parameters.Add("source_reference_id", NpgsqlDbType.Uuid).Value = request.SourceReferenceId;
-        await using var existingReader = await existing.ExecuteReaderAsync(cancellationToken);
-        if (await existingReader.ReadAsync(cancellationToken))
-            return ReadRecord(existingReader);
+        await using (existing)
+        await using (var existingReader = await existing.ExecuteReaderAsync(cancellationToken))
+        {
+            if (await existingReader.ReadAsync(cancellationToken))
+                return ReadRecord(existingReader);
+        }
 
         throw new InvalidOperationException(
             "Insert conflicted on the idempotency key but no existing row was found; this should be unreachable.");

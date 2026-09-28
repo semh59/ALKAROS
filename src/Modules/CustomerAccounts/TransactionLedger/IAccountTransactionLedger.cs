@@ -1,3 +1,5 @@
+using Npgsql;
+
 namespace ALKAROS.CustomerAccounts.TransactionLedger;
 
 /// <summary>
@@ -10,12 +12,27 @@ namespace ALKAROS.CustomerAccounts.TransactionLedger;
 public interface IAccountTransactionLedger
 {
     /// <summary>
-    /// Idempotent on (CustomerId, TransactionType, SourceReferenceType,
-    /// SourceReferenceId): retrying the same source event (a webhook retry,
-    /// an at-least-once outbox delivery) returns the already-recorded
-    /// transaction instead of creating a duplicate.
+    /// Inserts inside its own transaction. Idempotent on (CustomerId,
+    /// TransactionType, SourceReferenceType, SourceReferenceId): retrying
+    /// the same source event (a webhook retry, an at-least-once outbox
+    /// delivery) returns the already-recorded transaction instead of
+    /// creating a duplicate.
     /// </summary>
     Task<AccountTransaction> RecordAsync(RecordAccountTransactionRequest request, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Same as <see cref="RecordAsync(RecordAccountTransactionRequest, CancellationToken)"/>
+    /// inside the caller's transaction (V14-ACC-003's AccountChargeHandler
+    /// composes with this, mirroring
+    /// ALKAROS.Cash.TenderHandler.CashTenderHandler's own pattern - the
+    /// Payment, the PaymentAllocation and this ledger row must all commit
+    /// together or not at all).
+    /// </summary>
+    Task<AccountTransaction> RecordAsync(
+        RecordAccountTransactionRequest request,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 
     Task<AccountTransaction?> GetAsync(Guid transactionId, CancellationToken cancellationToken = default);
 
