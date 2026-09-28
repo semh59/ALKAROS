@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1449,
-  "markdown_line_count": 110841,
-  "markdown_byte_count": 6391162,
+  "markdown_file_count": 1455,
+  "markdown_line_count": 111174,
+  "markdown_byte_count": 6415848,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2338,6 +2338,41 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-399/REPORT.md",
+      "sha256": "747EA1B282AD7E4840A5E0DC968A9BD40A458C0F0ECA7F42CF750A86F021358D",
+      "lines": 176,
+      "bytes": 12769,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-399/calibration/VERDICT.md",
+      "sha256": "0E4B203EF8910109A75F589509677604C6D3A506143FEC97F4AF4504478E940F",
+      "lines": 9,
+      "bytes": 677,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-399/coverage-matrix.md",
+      "sha256": "49AE78B6F970EDF01FD497EEC4A962E88BFD69776112BF2A2AEF186990EDA5B5",
+      "lines": 32,
+      "bytes": 3087,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-399/probes/README.md",
+      "sha256": "2F51A098D697053043E9D86F1A18F1BD14E883C788A83FA9A78BE24393D5655D",
+      "lines": 30,
+      "bytes": 1990,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-399/refutation.md",
+      "sha256": "63D366CBB5C49F97E3B8D2B4D83E4EECB8D259D8DB93698236114B7B99076596",
+      "lines": 21,
+      "bytes": 2284,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2605,9 +2640,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "DE9781C130E6E94061A6A71657D76D9659DC456A2A6EC4BAF67D603D33282474",
-      "lines": 2725,
-      "bytes": 399478,
+      "sha256": "628A374A9C6B9606EF9C256F9868344A581C63DB1E7A2F97DA99F2A23C6CCAE4",
+      "lines": 2731,
+      "bytes": 400324,
       "utf8": true
     },
     {
@@ -8005,6 +8040,13 @@
       "sha256": "8507AAEEA69B194058049138C32931D73D0C684FCD10B95E0D19CA0BD2502233",
       "lines": 55,
       "bytes": 2393,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-399-authorization-targeted-audit.md",
+      "sha256": "BFFE2600D737F13D19BCD1B1F5AEE8768CFE6590A6C6D4D02123760297DD8A09",
+      "lines": 59,
+      "bytes": 3033,
       "utf8": true
     },
     {
