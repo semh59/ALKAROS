@@ -66,6 +66,13 @@ export function Cashier() {
   const [session, setSession] = useState<CashierSession>("checking");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  // V1-RMD-388 (Tur 2, T7): only set by the session-expired handler below,
+  // never by restoreSession's own first-load 401 (that one is a normal
+  // "not signed in yet", not a real mid-shift kick). A cashier who WAS
+  // signed in and gets bounced here - by another manager revoking their
+  // sessions from SecurityAdministration.tsx, or by the cookie simply
+  // expiring - used to land on an unexplained login form with no clue why.
+  const [sessionEndedMessage, setSessionEndedMessage] = useState("");
   const [notice, setNotice] = useState("");
   const [feedbackKind, setFeedbackKind] = useState<FeedbackKind>("success");
   const [search, setSearch] = useState("");
@@ -122,7 +129,10 @@ export function Cashier() {
   // harmless: the session is already anonymous, and login()'s own catch
   // still owns the Turkish message shown for it.
   useEffect(() => {
-    registerSessionExpiredHandler(() => setSession("anonymous"));
+    registerSessionExpiredHandler(() => {
+      setSession("anonymous");
+      setSessionEndedMessage("Oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.");
+    });
     return () => registerSessionExpiredHandler(null);
   }, []);
 
@@ -297,6 +307,7 @@ export function Cashier() {
     setBusy(true);
     setError("");
     setFeedbackKind("error");
+    setSessionEndedMessage("");
     try {
       const result = await api.login(username, password, terminalId);
       setDisplayName(result.displayName);
@@ -387,6 +398,7 @@ export function Cashier() {
           {session === "checking" && (
             <div className="alert information" role="status">Oturum ve bağlantı doğrulanıyor…</div>
           )}
+          {sessionEndedMessage && <div className="alert error" role="alert">{sessionEndedMessage}</div>}
           {error && <div className={`alert ${feedbackKind}`} role="alert">{error}</div>}
           <button className="primary login-submit" disabled={busy || session === "checking" || backendStatus === "offline"}>
             {session === "checking" ? "Oturum kontrol ediliyor…" : busy ? "Giriş yapılıyor…" : "Giriş yap"}
