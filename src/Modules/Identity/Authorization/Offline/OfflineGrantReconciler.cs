@@ -1,4 +1,5 @@
 using ALKAROS.Identity.Authorization.Behavioural;
+using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Policies;
 using Npgsql;
@@ -89,6 +90,18 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
         int priorInThisBatch,
         CancellationToken cancellationToken)
     {
+        // V1-RMD-404 (V1-RMD-399 H-06): the same own-check the online grant path applies (model §3 decision #1,
+        // V1-RMD-402) — a waiter's offline void/comp on a check they do not serve, unassigned or subject-less
+        // included, never reaches a manager. SubjectServingUserId is the server's own value (the endpoint reads it
+        // from the order), never the device's.
+        if ((string.Equals(action.PermissionCode, ApplicationPermissions.BillsVoid, StringComparison.Ordinal)
+                || string.Equals(action.PermissionCode, ApplicationPermissions.BillsComp, StringComparison.Ordinal))
+            && string.Equals(action.RequesterRoleCode, ApplicationPermissions.RoleWaiter, StringComparison.Ordinal)
+            && action.SubjectServingUserId != action.RequesterUserId)
+        {
+            return (GrantStatus.Denied, "a waiter may void or comp only a check they serve");
+        }
+
         if (budget.IsExpiredAt(action.OfflineAuthorizedAt))
             return (GrantStatus.Denied, "offline authority budget had expired when the action was taken");
 

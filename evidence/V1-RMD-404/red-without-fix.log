@@ -1,0 +1,7 @@
+  Failed ALKAROS.Identity.Authorization.Tests.Offline.OfflineGrantReconcilerTests.AWaitersOfflineCompOnAnotherServersCheckIsDeniedBeforeAManager [120 ms]
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 296 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0)
+HTTP tests without the fix:
+--- without fix:
+  Failed ALKAROS.Host.Experience.OfflineReconciliation.Tests.OfflineReconciliationHttpTests.AWaitersOfflineCompIsJudgedAgainstTheOrdersRealServer [629 ms]
+  Failed ALKAROS.Host.Experience.OfflineReconciliation.Tests.OfflineReconciliationHttpTests.AClaimedRoleTheUserDoesNotHoldIsRefused [75 ms]
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 1 s - ALKAROS.Host.Experience.OfflineReconciliation.Tests.dll (net8.0)

@@ -6,6 +6,7 @@ using ALKAROS.Host.Experience.OfflineReconciliation;
 using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Offline;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -80,7 +81,7 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
             IdempotencyKey: "http-recon-" + Guid.NewGuid().ToString("N"),
             PermissionCode: "bills.comp",
             RequesterUserId: userId,
-            RequesterRoleCode: "waiter",
+            RequesterRoleCode: "cashier",
             ReasonCode: "CustomerChange",
             Amount: 40m,
             OfflineAuthorizedAt: issuedAt.AddMinutes(30));
@@ -121,10 +122,10 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
         // The unflagged action is listed first in the request; the response
         // must still put the flagged one first.
         var unflagged = new OfflineAuthorizedActionV1(
-            "http-recon-unflagged-" + Guid.NewGuid().ToString("N"), "bills.void", userId, "waiter",
+            "http-recon-unflagged-" + Guid.NewGuid().ToString("N"), "bills.void", userId, "cashier",
             "CustomerChange", 0m, issuedAt.AddMinutes(10));
         var flagged = new OfflineAuthorizedActionV1(
-            "http-recon-flagged-" + Guid.NewGuid().ToString("N"), "bills.comp", userId, "waiter",
+            "http-recon-flagged-" + Guid.NewGuid().ToString("N"), "bills.comp", userId, "cashier",
             "CustomerChange", 40m, issuedAt.AddMinutes(30));
 
         using var request = JsonRequest(
@@ -167,12 +168,12 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
 
         var pending = new OfflineAuthorizedActionV1(
-            "http-recon-pending-" + Guid.NewGuid().ToString("N"), "bills.void", userId, "waiter",
+            "http-recon-pending-" + Guid.NewGuid().ToString("N"), "bills.void", userId, "cashier",
             "CustomerChange", 0m, issuedAt.AddMinutes(10));
         // Flagged (active tightening on bills.comp) but over the budget
         // line's 150m limit, so the reconciler denies it despite the flag.
         var flaggedButDenied = new OfflineAuthorizedActionV1(
-            "http-recon-flagged-denied-" + Guid.NewGuid().ToString("N"), "bills.comp", userId, "waiter",
+            "http-recon-flagged-denied-" + Guid.NewGuid().ToString("N"), "bills.comp", userId, "cashier",
             "CustomerChange", 500m, issuedAt.AddMinutes(30));
 
         using var request = JsonRequest(
@@ -218,7 +219,7 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
             IdempotencyKey: "http-recon-mismatch-" + Guid.NewGuid().ToString("N"),
             PermissionCode: "bills.comp",
             RequesterUserId: ownerId,
-            RequesterRoleCode: "waiter",
+            RequesterRoleCode: "cashier",
             ReasonCode: "CustomerChange",
             Amount: 40m,
             OfflineAuthorizedAt: issuedAt.AddMinutes(30));
@@ -230,6 +231,60 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<OfflineReconciliationErrorV1>();
         Assert.Equal("IDENTITY_MISMATCH", body!.Code);
+    }
+
+    [Fact]
+    public async Task AClaimedRoleTheUserDoesNotHoldIsRefused()
+    {
+        // V1-RMD-404 (V1-RMD-399 H-05): a waiter device claiming "manager" used to dodge a live always_deny policy.
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter");
+        var issuedAt = DateTimeOffset.UtcNow.AddHours(-2);
+        var budget = await _database.SeedOfflineBudgetAsync(
+            userId, issuedAt, issuedAt.AddHours(4), new OfflineAuthorityBudgetLine("bills.void", 150m, 5));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var forged = new OfflineAuthorizedActionV1(
+            "http-recon-forged-" + Guid.NewGuid().ToString("N"), "bills.void", userId, "manager",
+            "CustomerChange", 20m, issuedAt.AddMinutes(10));
+        using var response = await client.SendAsync(JsonRequest(
+            Path(terminalId), cookie, new ReconcileOfflineActionsRequest(budget.BudgetId, [forged])));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal("IDENTITY_MISMATCH", (await response.Content.ReadFromJsonAsync<OfflineReconciliationErrorV1>())!.Code);
+    }
+
+    [Fact]
+    public async Task AWaitersOfflineCompIsJudgedAgainstTheOrdersRealServer()
+    {
+        // V1-RMD-404 (V1-RMD-399 H-06): the device's SubjectServingUserId is ignored; the order says who serves it.
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter");
+        var (otherWaiterId, _) = await _database.SeedCashierSessionAsync(Guid.NewGuid(), "waiter");
+        var otherWaiterItem = await _database.SeedOrderItemServedByAsync(otherWaiterId);
+        var ownItem = await _database.SeedOrderItemServedByAsync(userId);
+        var issuedAt = DateTimeOffset.UtcNow.AddHours(-2);
+        var budget = await _database.SeedOfflineBudgetAsync(
+            userId, issuedAt, issuedAt.AddHours(4), new OfflineAuthorityBudgetLine("bills.comp", 150m, 5));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var onOthersCheck = new OfflineAuthorizedActionV1(
+            "http-recon-others-" + Guid.NewGuid().ToString("N"), "bills.comp", userId, "waiter",
+            "CustomerChange", 40m, issuedAt.AddMinutes(10),
+            SubjectType: "OrderItem", SubjectId: otherWaiterItem, SubjectServingUserId: userId);
+        var onOwnCheck = new OfflineAuthorizedActionV1(
+            "http-recon-own-" + Guid.NewGuid().ToString("N"), "bills.comp", userId, "waiter",
+            "CustomerChange", 40m, issuedAt.AddMinutes(20),
+            SubjectType: "OrderItem", SubjectId: ownItem);
+        using var response = await client.SendAsync(JsonRequest(
+            Path(terminalId), cookie, new ReconcileOfflineActionsRequest(budget.BudgetId, [onOthersCheck, onOwnCheck])));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<OfflineReconciliationResponseV1>();
+        Assert.Equal("Denied", Assert.Single(body!.Results, r => r.IdempotencyKey == onOthersCheck.IdempotencyKey).Status);
+        Assert.Equal("Pending", Assert.Single(body.Results, r => r.IdempotencyKey == onOwnCheck.IdempotencyKey).Status);
     }
 
     private static string Path(Guid terminalId)
@@ -343,7 +398,11 @@ internal sealed class OfflineReconciliationTestDatabase
         await ExecuteAsync(maintenance, $"DROP DATABASE IF EXISTS {_databaseName} WITH (FORCE);");
     }
 
-    public async Task<(Guid UserId, string Cookie)> SeedCashierSessionAsync(Guid terminalId)
+    /// <summary>
+    /// A user in the migration-seeded <paramref name="roleCode"/> role with a cashier device session. V1-RMD-404:
+    /// the endpoint now checks every action's role against the caller's real role, so the user needs one.
+    /// </summary>
+    public async Task<(Guid UserId, string Cookie)> SeedCashierSessionAsync(Guid terminalId, string roleCode = "cashier")
     {
         var userId = Guid.NewGuid();
         var suffix = userId.ToString("N");
@@ -355,14 +414,39 @@ internal sealed class OfflineReconciliationTestDatabase
             VALUES (@user_id, @username, 'not-used', 'Offline Reconciliation API Test', true);
             INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, created_at, expires_at)
             VALUES (@session_id, @user_id, @device_id, @token_hash, now(), now() + interval '1 hour');
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
+            SELECT gen_random_uuid(), @user_id, role_id FROM identity.roles WHERE code = @role_code;
             """,
             ("user_id", userId),
+            ("role_code", roleCode),
             ("username", "offline-recon-api-" + suffix),
             ("session_id", Guid.NewGuid()),
             ("device_id", $"cashier:{terminalId:D}"),
             ("token_hash", hash));
 
         return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
+    }
+
+    /// <summary>V1-RMD-404: a real order with one item served by <paramref name="servingUserId"/>; returns the item id.</summary>
+    public async Task<Guid> SeedOrderItemServedByAsync(Guid? servingUserId)
+    {
+        var productId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, current_price)
+            VALUES (@product_id, @sku, 'Offline Recon Item', 1, 1, 40.00);
+            """,
+            ("product_id", productId),
+            ("sku", "RMD404-" + Guid.NewGuid().ToString("N")[..10]));
+        var orderId = Guid.NewGuid();
+        var item = new OrderItem(
+            id: Guid.NewGuid(), orderId: orderId, productId: productId, productNameSnapshot: "Offline Recon Item",
+            quantity: 1, unitPrice: 40.00m, taxRate: 0m);
+        await new PostgresOrderRepository(DataSource).AddAsync(new Order(
+            orderId, OrderSource.Cashier, "RMD404-" + Guid.NewGuid().ToString("N")[..10], [item],
+            servingUserId: servingUserId));
+        return item.Id;
     }
 
     public async Task<OfflineAuthorityBudget> SeedOfflineBudgetAsync(

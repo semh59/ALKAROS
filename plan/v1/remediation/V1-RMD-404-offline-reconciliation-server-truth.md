@@ -1,7 +1,7 @@
 # V1-RMD-404 - Çevrimdışı mutabakatta rolü ve hesap sahibini sunucudan almak; kendi hesabı kuralını uygulamak
 
 - Task ID: V1-RMD-404
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -54,7 +54,20 @@ kararı) yöneticiye ulaşmadan `Denied` olur.
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- Gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata (`evidence/V1-RMD-404/tests.log`):
+  `ALKAROS.Identity.Authorization.Tests` 211/211, `ALKAROS.Host.Experience.OfflineReconciliation.Tests` 9/9.
+- Yeni testler: `AWaitersOfflineCompOnAnotherServersCheckIsDeniedBeforeAManager` (başka garsonun ve sahipsiz hesap →
+  `Denied`), `ACashiersOfflineCompOnAnotherServersCheckIsNotOwnCheckDenied` (kasiyer → `Pending`),
+  `AClaimedRoleTheUserDoesNotHoldIsRefused` (garson "manager" iddia eder → 403 `IDENTITY_MISMATCH`),
+  `AWaitersOfflineCompIsJudgedAgainstTheOrdersRealServer` (cihaz kendini hesap sahibi gösterse de sunucudaki sipariş
+  başka garsona ait → `Denied`; kendi hesabı → `Pending`).
+- Bu testler üretim değişikliği geri alınınca kırmızı (`evidence/V1-RMD-404/red-without-fix.log`); kasiyer testi
+  kural olmadan da geçer, çünkü kuralın dokunmaması gereken durumu sınar.
+- Mevcut testler: kullanıcılar gerçek `cashier` rolüne bağlandı ve eylemleri `cashier` rolüyle gönderir; birim test
+  yardımcısı eylemi varsayılan olarak garsonun kendi hesabına bağlar.
+- Yan not (bu görevde değiştirilmedi): `OfflineGrantReconciler`, grant ekleme sırasındaki her yabancı anahtar
+  ihlalini "bütçe bulunamadı" (404) olarak raporluyor; hesap sahibi alanının kullanıcı yabancı anahtarı da bu yola
+  düşer.
 
 ## Handoff
 
