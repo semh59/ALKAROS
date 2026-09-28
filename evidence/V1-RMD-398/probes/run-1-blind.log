@@ -1,0 +1,183 @@
+Test run for /work/evidence/V1-RMD-398/probes/StockFlowProbes/bin/Release/net8.0/ALKAROS.Audit.StockFlowProbes.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.30)
+[xUnit.net 00:00:00.20]   Discovering: ALKAROS.Audit.StockFlowProbes
+[xUnit.net 00:00:00.29]   Discovered:  ALKAROS.Audit.StockFlowProbes
+[xUnit.net 00:00:00.30]   Starting:    ALKAROS.Audit.StockFlowProbes
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:46379
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /work/evidence/V1-RMD-398/probes/StockFlowProbes/bin/Release/net8.0
+[xUnit.net 00:00:06.48]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S05ProductionConsumptionIsNotReportedAsUnexplainedVariance [FAIL]
+[xUnit.net 00:00:06.49]       Assert.Single() Failure: The collection did not contain any matching items
+[xUnit.net 00:00:06.49]       Expected:   (predicate expression)
+[xUnit.net 00:00:06.49]       Collection: []
+[xUnit.net 00:00:06.49]       Stack Trace:
+[xUnit.net 00:00:06.49]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(270,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S05ProductionConsumptionIsNotReportedAsUnexplainedVariance()
+[xUnit.net 00:00:06.49]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:06.53]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S06UnconvertibleRecipeUnitDoesNotSilentlyDropTheoreticalConsumption [FAIL]
+[xUnit.net 00:00:06.53]       ALKAROS.Measurements.UnknownUnitException : Measurement unit 'tbsp' is not registered.
+[xUnit.net 00:00:06.53]       Stack Trace:
+[xUnit.net 00:00:06.53]         /work/src/BuildingBlocks/Measurements/UnitConverter.cs(100,0): at ALKAROS.Measurements.UnitConverter.GetDimension(String unitCode)
+[xUnit.net 00:00:06.53]         /work/src/Modules/Recipes/Versioning/RecipeLifecycleService.cs(106,0): at ALKAROS.Recipes.Versioning.RecipeLifecycleService.AddIngredientToDraftAsync(Guid versionId, Guid ingredientItemId, Decimal quantity, String unitCode, Decimal lossPercentage, Int32 sortOrder, String notes, CancellationToken ct)
+[xUnit.net 00:00:06.53]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(82,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.SeedActiveRecipeAsync(Decimal yieldQuantity, String yieldUnit, ValueTuple`4[] ingredients)
+[xUnit.net 00:00:06.53]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(84,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.SeedActiveRecipeAsync(Decimal yieldQuantity, String yieldUnit, ValueTuple`4[] ingredients)
+[xUnit.net 00:00:06.53]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(288,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S06UnconvertibleRecipeUnitDoesNotSilentlyDropTheoreticalConsumption()
+[xUnit.net 00:00:06.53]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(289,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S06UnconvertibleRecipeUnitDoesNotSilentlyDropTheoreticalConsumption()
+[xUnit.net 00:00:06.53]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:06.67]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce [FAIL]
+[xUnit.net 00:00:06.67]       ALKAROS.Inventory.WasteRecording.WasteRecordingException : Invalid waste source 'Kitchen'.
+[xUnit.net 00:00:06.67]       Stack Trace:
+[xUnit.net 00:00:06.67]         /work/src/Modules/Inventory/WasteRecording/WasteRecordingService.cs(78,0): at ALKAROS.Inventory.WasteRecording.WasteRecordingService.RecordWasteCoreAsync(RecordWasteRequest request, NpgsqlConnection callerConnection, NpgsqlTransaction callerTransaction, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.67]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(341,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.<>c__DisplayClass19_0.<<S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce>b__1>d.MoveNext()
+[xUnit.net 00:00:06.67]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:06.67]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(341,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.<>c__DisplayClass19_0.<<S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce>b__1>d.MoveNext()
+[xUnit.net 00:00:06.67]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:06.67]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(338,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce()
+[xUnit.net 00:00:06.67]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(348,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce()
+[xUnit.net 00:00:06.67]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:06.72]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S03ActualVsTheoreticalDoesNotRepeatTheoreticalUsageForEveryCountedLocation [FAIL]
+[xUnit.net 00:00:06.72]       Npgsql.PostgresException : 23502: null value in column "recipe_id" of relation "theoretical_consumption_records" violates not-null constraint
+[xUnit.net 00:00:06.72]       
+[xUnit.net 00:00:06.72]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+[xUnit.net 00:00:06.72]       Stack Trace:
+[xUnit.net 00:00:06.72]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+[xUnit.net 00:00:06.72]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+[xUnit.net 00:00:06.72]            at Npgsql.NpgsqlDataReader.<ReadMessage>g__ReadMessageSequential|49_0(NpgsqlConnector connector, Boolean async)
+[xUnit.net 00:00:06.72]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.72]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.72]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.72]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.72]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.72]            at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.72]            at Npgsql.NpgsqlCommand.ExecuteScalar(Boolean async, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.72]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/ProbeHarness.cs(231,0): at ALKAROS.Audit.StockFlowProbes.ProbeHarness.ScalarAsync[T](String sql, ValueTuple`2[] parameters)
+[xUnit.net 00:00:06.72]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/ProbeHarness.cs(231,0): at ALKAROS.Audit.StockFlowProbes.ProbeHarness.ScalarAsync[T](String sql, ValueTuple`2[] parameters)
+[xUnit.net 00:00:06.72]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(186,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S03ActualVsTheoreticalDoesNotRepeatTheoreticalUsageForEveryCountedLocation()
+[xUnit.net 00:00:06.72]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:06.98]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S01PhysicalCountResultEqualsTheCountedQuantityUnderAConcurrentWrite [FAIL]
+[xUnit.net 00:00:06.98]       1/40 counts did not land on the counted quantity: counted 900, count result on-hand 899.0000 (read 1000.0000)
+[xUnit.net 00:00:06.98]       Stack Trace:
+[xUnit.net 00:00:06.98]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(132,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S01PhysicalCountResultEqualsTheCountedQuantityUnderAConcurrentWrite()
+[xUnit.net 00:00:06.98]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:46379/api/v1/terminals/cf79fead-2133-40ee-956e-581a3a3c394b/orders/f7030e01-853a-4b23-9a48-6a8c6e67af29/items/025b9e22-68a9-4112-926c-28d8ce885b78/void-sent - application/json;+charset=utf-8 89
+  Passed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S07ControlRacingOrdersNeverOversellTheLastUnits [370 ms]
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S05ProductionConsumptionIsNotReportedAsUnexplainedVariance [224 ms]
+  Error Message:
+   Assert.Single() Failure: The collection did not contain any matching items
+Expected:   (predicate expression)
+Collection: []
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S05ProductionConsumptionIsNotReportedAsUnexplainedVariance() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 270
+--- End of stack trace from previous location ---
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S06UnconvertibleRecipeUnitDoesNotSilentlyDropTheoreticalConsumption [49 ms]
+  Error Message:
+   ALKAROS.Measurements.UnknownUnitException : Measurement unit 'tbsp' is not registered.
+  Stack Trace:
+     at ALKAROS.Measurements.UnitConverter.GetDimension(String unitCode) in /work/src/BuildingBlocks/Measurements/UnitConverter.cs:line 100
+   at ALKAROS.Recipes.Versioning.RecipeLifecycleService.AddIngredientToDraftAsync(Guid versionId, Guid ingredientItemId, Decimal quantity, String unitCode, Decimal lossPercentage, Int32 sortOrder, String notes, CancellationToken ct) in /work/src/Modules/Recipes/Versioning/RecipeLifecycleService.cs:line 106
+   at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.SeedActiveRecipeAsync(Decimal yieldQuantity, String yieldUnit, ValueTuple`4[] ingredients) in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 82
+   at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.SeedActiveRecipeAsync(Decimal yieldQuantity, String yieldUnit, ValueTuple`4[] ingredients) in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 84
+   at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S06UnconvertibleRecipeUnitDoesNotSilentlyDropTheoreticalConsumption() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 288
+   at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S06UnconvertibleRecipeUnitDoesNotSilentlyDropTheoreticalConsumption() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 289
+--- End of stack trace from previous location ---
+  Passed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S09CompletingAProductionBatchTwiceConsumesOnce [112 ms]
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce [22 ms]
+  Error Message:
+   ALKAROS.Inventory.WasteRecording.WasteRecordingException : Invalid waste source 'Kitchen'.
+  Stack Trace:
+     at ALKAROS.Inventory.WasteRecording.WasteRecordingService.RecordWasteCoreAsync(RecordWasteRequest request, NpgsqlConnection callerConnection, NpgsqlTransaction callerTransaction, CancellationToken cancellationToken) in /work/src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:line 78
+   at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.<>c__DisplayClass19_0.<<S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce>b__1>d.MoveNext() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 341
+--- End of stack trace from previous location ---
+   at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.<>c__DisplayClass19_0.<<S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce>b__1>d.MoveNext() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 341
+--- End of stack trace from previous location ---
+   at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 338
+   at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 348
+--- End of stack trace from previous location ---
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S03ActualVsTheoreticalDoesNotRepeatTheoreticalUsageForEveryCountedLocation [46 ms]
+  Error Message:
+   Npgsql.PostgresException : 23502: null value in column "recipe_id" of relation "theoretical_consumption_records" violates not-null constraint
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+  Stack Trace:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.<ReadMessage>g__ReadMessageSequential|49_0(NpgsqlConnector connector, Boolean async)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteScalar(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.Audit.StockFlowProbes.ProbeHarness.ScalarAsync[T](String sql, ValueTuple`2[] parameters) in /work/evidence/V1-RMD-398/probes/StockFlowProbes/ProbeHarness.cs:line 231
+   at ALKAROS.Audit.StockFlowProbes.ProbeHarness.ScalarAsync[T](String sql, ValueTuple`2[] parameters) in /work/evidence/V1-RMD-398/probes/StockFlowProbes/ProbeHarness.cs:line 231
+   at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S03ActualVsTheoreticalDoesNotRepeatTheoreticalUsageForEveryCountedLocation() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 186
+--- End of stack trace from previous location ---
+  Passed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S10ProductionAppliesLossBeforeUnitConversion [53 ms]
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S01PhysicalCountResultEqualsTheCountedQuantityUnderAConcurrentWrite [200 ms]
+  Error Message:
+   1/40 counts did not land on the counted quantity: counted 900, count result on-hand 899.0000 (read 1000.0000)
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S01PhysicalCountResultEqualsTheCountedQuantityUnderAConcurrentWrite() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 132
+--- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'VoidSentItemResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:46379/api/v1/terminals/cf79fead-2133-40ee-956e-581a3a3c394b/orders/f7030e01-853a-4b23-9a48-6a8c6e67af29/items/025b9e22-68a9-4112-926c-28d8ce885b78/void-sent - 200 - application/json;+charset=utf-8 2058.7702ms
+  Passed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S11MultipleLinesAndMappingsConsumeAndRestoreExactly [2 s]
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:46379/api/v1/terminals/9c17c89f-6e76-4759-8578-d202ffe6c847/orders/8b01f369-2163-4ff0-a17d-e45cd3deb57a/items/9bc6cbf5-f1b6-4a31-bc00-f0a6c33a3c5a/void-sent - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'VoidSentItemResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:46379/api/v1/terminals/9c17c89f-6e76-4759-8578-d202ffe6c847/orders/8b01f369-2163-4ff0-a17d-e45cd3deb57a/items/9bc6cbf5-f1b6-4a31-bc00-f0a6c33a3c5a/void-sent - 200 - application/json;+charset=utf-8 54.3095ms
+[xUnit.net 00:00:09.41]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S02VoidingASentItemAlsoWithdrawsItsTheoreticalConsumption [FAIL]
+[xUnit.net 00:00:09.41]       Voided item still carries 0.4000 kg of theoretical consumption; the actual-vs-theoretical report will show a false shortage of that amount.
+[xUnit.net 00:00:09.41]       Stack Trace:
+[xUnit.net 00:00:09.41]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(166,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S02VoidingASentItemAlsoWithdrawsItsTheoreticalConsumption()
+[xUnit.net 00:00:09.41]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:09.45]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S04ProductionRefusesOrConvertsABatchUnitThatDiffersFromTheRecipeYieldUnit [FAIL]
+[xUnit.net 00:00:09.45]       A 4 'portion' batch of a recipe whose yield is 2 kg was executed without any unit check and consumed 2.0000 kg of flour (scale = 4 / 2 with the units ignored).
+[xUnit.net 00:00:09.45]       Stack Trace:
+[xUnit.net 00:00:09.45]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(239,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S04ProductionRefusesOrConvertsABatchUnitThatDiffersFromTheRecipeYieldUnit()
+[xUnit.net 00:00:09.45]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:09.62]   Finished:    ALKAROS.Audit.StockFlowProbes
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S02VoidingASentItemAlsoWithdrawsItsTheoreticalConsumption [156 ms]
+  Error Message:
+   Voided item still carries 0.4000 kg of theoretical consumption; the actual-vs-theoretical report will show a false shortage of that amount.
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S02VoidingASentItemAlsoWithdrawsItsTheoreticalConsumption() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 166
+--- End of stack trace from previous location ---
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S04ProductionRefusesOrConvertsABatchUnitThatDiffersFromTheRecipeYieldUnit [38 ms]
+  Error Message:
+   A 4 'portion' batch of a recipe whose yield is 2 kg was executed without any unit check and consumed 2.0000 kg of flour (scale = 4 / 2 with the units ignored).
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S04ProductionRefusesOrConvertsABatchUnitThatDiffersFromTheRecipeYieldUnit() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 239
+--- End of stack trace from previous location ---
+
+Test Run Failed.
+Total tests: 11
+     Passed: 4
+     Failed: 7
+ Total time: 10.7499 Seconds
+dotnet-test-exit=1

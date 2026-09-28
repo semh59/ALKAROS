@@ -1,0 +1,7 @@
+    0 Error(s)
+== seeded
+  Error Message:
+   Moving-average cost as of the day of the 50 TL receipt is 30.0000000000000000; expected 40 (both receipts).
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 274 ms - ALKAROS.Audit.StockFlowProbes.dll (net8.0)
+== clean
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration:
