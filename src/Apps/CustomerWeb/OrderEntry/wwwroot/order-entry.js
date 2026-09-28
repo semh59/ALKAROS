@@ -28,6 +28,15 @@ const SUBMISSION_ACCEPTED_STORAGE_KEY = "alkaros.qr.submissionAccepted";
 const GENERIC_ERROR_MESSAGE = "Siparişiniz şu anda gönderilemedi, lütfen daha sonra tekrar deneyin.";
 const POLL_INTERVAL_MS = 2000;
 const MAX_POLL_ATTEMPTS = 30;
+// V1-RMD-391 (Tur 2, P2): the outbox delivery genuinely can take longer than
+// 60s under real load, and the order keeps materializing server-side either
+// way - stopping outright here used to leave the customer's screen frozen on
+// "taking a bit long" forever, with no further updates and no hint that
+// reloading would resume watching it. A slower cadence keeps this page
+// checking, without hammering the server, for a further 20 minutes (a real
+// guest is expected to have moved on well before that).
+const SLOW_POLL_INTERVAL_MS = 10000;
+const MAX_SLOW_POLL_ATTEMPTS = 120;
 
 function readCart() {
   try {
@@ -242,8 +251,25 @@ async function pollUntilMaterialized(submissionId) {
 
   // Still Pending after MAX_POLL_ATTEMPTS - the outbox delivery is just slow,
   // not failed; the customer's own submission already succeeded (202) and
-  // is not resubmitted.
-  statusMessageEl.textContent = "Siparişiniz alındı, mutfağa iletilmesi biraz uzun sürüyor.";
+  // is not resubmitted. V1-RMD-391: keep watching at a slower cadence rather
+  // than freezing this message forever.
+  for (let attempt = 0; attempt < MAX_SLOW_POLL_ATTEMPTS; attempt++) {
+    statusMessageEl.textContent = "Siparişiniz alındı, mutfağa iletilmesi biraz uzun sürüyor. Güncellemeler gelmeye devam ediyor…";
+    await new Promise((resolve) => setTimeout(resolve, SLOW_POLL_INTERVAL_MS));
+    const outcome = await pollOrderOnce(submissionId);
+    if (!isStillMaterializing(outcome.status)) {
+      statusMessageEl.textContent = statusMessage(outcome.status);
+      clearCart();
+      clearSubmissionId();
+      return;
+    }
+  }
+
+  // Gave up watching after a further 20 minutes - the submission is still
+  // safe (idempotent, already accepted), but this page will not learn its
+  // outcome on its own anymore. Tell the customer what actually helps,
+  // instead of leaving them on a message that quietly stopped being true.
+  statusMessageEl.textContent = "Siparişinizin işlenmesi beklenenden uzun sürüyor. Sayfayı yenileyin veya garsonu çağırın.";
 }
 
 function formatPrice(amount) {

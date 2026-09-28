@@ -94,6 +94,26 @@ def test_customer_web_order_entry_renders_the_business_own_identity():
     assert "--cw-accent" in app_code
 
 
+def test_customer_web_order_entry_keeps_watching_after_the_fast_poll_window():
+    """V1-RMD-391 (Tur 2, P2): before this, pollUntilMaterialized() gave up for
+    good after MAX_POLL_ATTEMPTS (60s) and froze #orderStatusMessage on "biraz
+    uzun sürüyor" forever, even though the order kept materializing
+    server-side (the comment right above it already said so). It must now
+    keep polling at a slower cadence, and only give up with an actionable
+    message (reload or call staff) after a much longer window."""
+    app_code = (WWWROOT / "order-entry.js").read_text(encoding="utf-8")
+
+    assert "SLOW_POLL_INTERVAL_MS" in app_code
+    assert "MAX_SLOW_POLL_ATTEMPTS" in app_code
+    # The slow-phase loop must call pollOrderOnce again, not just wait -
+    # otherwise the interval constant would exist without ever being used to
+    # actually keep checking.
+    slow_phase_start = app_code.index("MAX_SLOW_POLL_ATTEMPTS", app_code.index("async function pollUntilMaterialized"))
+    slow_phase_body = app_code[slow_phase_start:]
+    assert slow_phase_body.count("pollOrderOnce(submissionId)") >= 1
+    assert "Sayfayı yenileyin" in app_code or "sayfayı yenileyin" in app_code
+
+
 def test_customer_web_order_entry_status_section_is_announced_live():
     """V1-RMD-375 (module-by-module UI audit, 2026-09-27): #orderStatusMessage's
     text changes live while pollUntilMaterialized() polls (submitted ->
