@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1467,
-  "markdown_line_count": 111995,
-  "markdown_byte_count": 6463506,
+  "markdown_file_count": 1468,
+  "markdown_line_count": 112052,
+  "markdown_byte_count": 6466031,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9BE992EBC76FE859E8D6B9DF30A8F1FF70A083D57D84BE44D6D235815ECF60CB",
-      "lines": 2743,
-      "bytes": 402297,
+      "sha256": "970801C7C7560455771101D19E58DC3BC829E8629D0DF9412A6ACAFDE10F4F26",
+      "lines": 2744,
+      "bytes": 402463,
       "utf8": true
     },
     {
@@ -8131,6 +8131,13 @@
       "sha256": "97CC8745FFE46811CAB331EAB37E5D0D6E3B8A94D40E845D5054D8C09FB01BD6",
       "lines": 63,
       "bytes": 3109,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-411-cash-session-terminal-ownership.md",
+      "sha256": "02A22E6F0CE49E0BB2E74A75CDA99AEBB6D538F133701B53A9AD7C8936690D44",
+      "lines": 56,
+      "bytes": 2359,
       "utf8": true
     },
     {
