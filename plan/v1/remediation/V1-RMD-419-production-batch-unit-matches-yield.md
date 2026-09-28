@@ -1,7 +1,7 @@
 # V1-RMD-419 - Üretim partisi biriminin reçete verim birimine çevrilmesi ya da reddedilmesi
 
 - Task ID: V1-RMD-419
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -48,7 +48,17 @@ Bu görev: tamamlamada partinin gerçekleşen miktarı reçetenin verim birimine
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Production.StockEffects.Tests` 9/9 ve `ALKAROS.Host.Experience.Production.Tests` 4/4 (gerçek PostgreSQL 18,
+  Release, 0 uyarı / 0 hata; `evidence/V1-RMD-419/tests.log`). Parti ve verim birimi aynı olan mevcut testler
+  değişmeden geçer.
+- Yeni testler: `ABatchWhoseUnitCannotBeConvertedToTheRecipeYieldUnitIsRefusedAndConsumesNothing` (`kg` parti,
+  `portion` verim → reddedilir, stok 50 kalır) ve `ABatchInAConvertibleUnitIsScaledInTheRecipeYieldUnit` (4000 g parti,
+  2 kg verim, 1 kg domates → 2 kg tüketim). Üretim değişikliği geri alınınca ikisi de kırmızı
+  (`evidence/V1-RMD-419/red-without-fix.log`).
+- V1-RMD-398 probe'u S04 düzeltilmiş kopyada geçer (`evidence/V1-RMD-419/stock-flow-probe-s04.log`).
+- Semih'in elle deneyebileceği senaryo: verimi kilogram olan bir reçeteyle porsiyon cinsinden açılmış bir partiyi
+  tamamlamayı deneyin; "Partinin birimi reçetenin verim birimine çevrilemiyor; partiyi reçetenin verim biriminde
+  açın." uyarısı çıkar ve stok düşmez.
 
 ## Handoff
 

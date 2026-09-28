@@ -323,6 +323,8 @@ public sealed class ProductionManagerEndpointFilter : IEndpointFilter
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             InsufficientProductionStockException =>
                 (StatusCodes.Status409Conflict, "INSUFFICIENT_STOCK", "Reçete bileşenleri için yeterli stok yok."),
+            ProductionBatchUnitMismatchException =>
+                (StatusCodes.Status409Conflict, "BATCH_UNIT_MISMATCH", "Partinin birimi reçetenin verim birimine çevrilemiyor; partiyi reçetenin verim biriminde açın."),
             InvalidProductionStockEffectException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>

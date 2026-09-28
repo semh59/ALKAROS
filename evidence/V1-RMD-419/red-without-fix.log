@@ -1,0 +1,5 @@
+# Production changes stashed (src/), tests kept; the new exception type is restored as a minimal stub so the tests compile
+[xUnit.net 00:00:00.68]     ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchInAConvertibleUnitIsScaledInTheRecipeYieldUnit [FAIL]
+[xUnit.net 00:00:00.81]     ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchWhoseUnitCannotBeConvertedToTheRecipeYieldUnitIsRefusedAndConsumesNothing [FAIL]
+   Expected a <ALKAROS.Production.StockEffects.ProductionBatchUnitMismatchException> to be thrown, but no exception was thrown.
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 280 ms - ALKAROS.Production.StockEffects.Tests.dll (net8.0)

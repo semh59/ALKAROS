@@ -128,6 +128,7 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
             """;
 
         decimal recipeYieldQty;
+        string recipeYieldUnitCode;
         await using (var rCmd = new NpgsqlCommand(rcpSql, conn, tx))
         {
             rCmd.Parameters.AddWithValue("id", recipeVersionId);
@@ -137,6 +138,7 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
                 throw new InvalidProductionStockEffectException($"Recipe version '{recipeVersionId}' was not found.");
             }
             recipeYieldQty = rReader.GetDecimal(0);
+            recipeYieldUnitCode = rReader.GetString(1);
         }
 
         if (recipeYieldQty <= 0)
@@ -179,7 +181,8 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
         // Quantity order-of-operations:
         // effectiveNativeQuantity = quantity * scale * (1 + waste_factor) in recipe's native unit,
         // then converted to the stock item's tracked unit as the final step.
-        var scale = command.ActualQuantity / recipeYieldQty;
+        var scale = ActualQuantityInYieldUnit(command.BatchId, command.ActualQuantity, portionUnitCode, recipeYieldUnitCode)
+            / recipeYieldQty;
         var plannedConsumptions = new List<PlannedConsumption>();
 
         foreach (var ing in ingredients)
@@ -574,4 +577,26 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
         decimal WasteFactor,
         decimal StockQuantity,
         string StockUnitCode);
+
+    /// <summary>
+    /// V1-RMD-419 (V1-RMD-398 G-04): the batch's quantity expressed in the recipe's yield unit. The scale used to be
+    /// <c>actual / yield</c> with the two units never compared, so a 4 "portion" batch of a recipe yielding 2 kg
+    /// consumed ingredients for 4 kg. A unit the converter cannot turn into the yield unit refuses the batch.
+    /// </summary>
+    private decimal ActualQuantityInYieldUnit(Guid batchId, decimal actualQuantity, string batchUnitCode, string yieldUnitCode)
+    {
+        if (string.Equals(batchUnitCode, yieldUnitCode, StringComparison.OrdinalIgnoreCase))
+            return actualQuantity;
+
+        try
+        {
+            return _unitConverter.Convert(actualQuantity, batchUnitCode, yieldUnitCode);
+        }
+        catch (Exception exception) when (
+            exception is ALKAROS.Measurements.UnknownUnitException
+            or ALKAROS.Measurements.IncompatibleUnitDimensionException)
+        {
+            throw new ProductionBatchUnitMismatchException(batchId, batchUnitCode, yieldUnitCode, exception);
+        }
+    }
 }

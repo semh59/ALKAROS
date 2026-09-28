@@ -1,0 +1,24 @@
+# HEAD 286654e1 + V1-RMD-419 working diff, PostgreSQL 18, Release
+## tests/Modules/Production/StockEffects/ALKAROS.Production.StockEffects.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ExecuteBatchStockEffectsCreatesTraceableConsumptionsAndMovements [170 ms]
+  Passed ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchInAConvertibleUnitIsScaledInTheRecipeYieldUnit [26 ms]
+  Passed ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ExecutionFailsForCancelledBatch [51 ms]
+  Passed ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.InsufficientStockFailsAtomicallyWithoutSideEffects [30 ms]
+  Passed ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ReplayExecutionIsIdempotentAndCreatesZeroAdditionalMovements [42 ms]
+  Passed ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.RollbackAndReapplyMigration072SucceedsWithoutErrors [23 ms]
+  Passed ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchWhoseUnitCannotBeConvertedToTheRecipeYieldUnitIsRefusedAndConsumesNothing [18 ms]
+  Passed ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ExecuteBatchStockEffectsWithOutputStockItemCreatesOutputMovementAndIncrementsStock [22 ms]
+  Passed ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ACountDimensionCrossUnitIngredientConvertsThroughTheSharedUnitConverterWithNoCustomDbRow [28 ms]
+Total tests: 9
+     Passed: 9
+## tests/Host/Experience/Production/ALKAROS.Host.Experience.Production.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Host.Experience.Production.Tests.ProductionManagementHttpTests.CompletingABatchOverHttpReallyConsumesIngredientsAndProducesOutput [608 ms]
+  Passed ALKAROS.Host.Experience.Production.Tests.ProductionManagementHttpTests.CancelledBatchCannotBeStarted [100 ms]
+  Passed ALKAROS.Host.Experience.Production.Tests.ProductionManagementHttpTests.InsufficientStockRejectsCompletionWithoutPartiallyApplyingEffects [108 ms]
+  Passed ALKAROS.Host.Experience.Production.Tests.ProductionManagementHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation [70 ms]
+Total tests: 4
+     Passed: 4
