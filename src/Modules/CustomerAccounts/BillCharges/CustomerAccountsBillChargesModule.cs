@@ -1,5 +1,7 @@
 namespace ALKAROS.CustomerAccounts.BillCharges;
 
+using ALKAROS.CustomerAccounts.Retention;
+using ALKAROS.CustomerData.AnonymizationState;
 using ALKAROS.ModuleComposition;
 
 /// <summary>
@@ -22,6 +24,11 @@ public sealed class CustomerAccountsBillChargesModule : IModule
     public void Register(ModuleContext context)
     {
         context.RegisterTransient<ICustomerCreditPolicy, AlwaysApproveCreditPolicy>();
+
+        // V1-RMD-435: registered here because this module already depends on
+        // both CustomerAccounts (the balance it reads) and CustomerData (the
+        // seam it implements) - no new module edge.
+        context.RegisterTransient<IAnonymizationRetentionGuard, OutstandingBalanceRetentionGuard>();
         context.RegisterTransient<IAccountChargeHandler, AccountChargeHandler>();
     }
 }

@@ -3,7 +3,7 @@
   "ICustomerProfileStore": "V14-CST-001: bu gorevin kendi kapsami yalniz PII sinirini (domain + Postgres store) kurmak; bir HTTP endpoint'i V14-ACC/V14-INV/V14-UI musteri kimligine ihtiyac duydugunda ekleyecek.",
   "PostgresCustomerProfileStore": "V14-CST-001: bu gorevin kendi kapsami yalniz PII sinirini (domain + Postgres store) kurmak; bir HTTP endpoint'i V14-ACC/V14-INV/V14-UI musteri kimligine ihtiyac duydugunda ekleyecek.",
   "IAnonymizationRetentionGuard": "V14-CST-002: bu gorevin kendi kapsami yalniz durum makinesini kurmak; bir HTTP endpoint'i V14-ACC/V14-INV/V14-UI musteri kimligine ihtiyac duydugunda ekleyecek (V14-CST-001 ile ayni gerekce).",
-  "NoKnownBlockingReferencesGuard": "V14-CST-002: bilincli yer tutucu - gercek bir engelleme kontrolu V14-ACC/V14-INV kod olarak var olunca eklenecek.",
+  "OutstandingBalanceRetentionGuard": "V1-RMD-435: CustomerAnonymizationService'in gercek saklama korumasi; anonimlestirmeyi cagiran HTTP endpoint'i eklendiginde (V14-CST-001 ile ayni gerekce) erisilebilir olur.",
   "ICustomerAnonymizationRequestStore": "V14-CST-002: bu gorevin kendi kapsami yalniz durum makinesini kurmak; bir HTTP endpoint'i V14-ACC/V14-INV/V14-UI musteri kimligine ihtiyac duydugunda ekleyecek (V14-CST-001 ile ayni gerekce).",
   "PostgresCustomerAnonymizationRequestStore": "V14-CST-002: bu gorevin kendi kapsami yalniz durum makinesini kurmak; bir HTTP endpoint'i V14-ACC/V14-INV/V14-UI musteri kimligine ihtiyac duydugunda ekleyecek (V14-CST-001 ile ayni gerekce).",
   "CustomerAnonymizationService": "V14-CST-002: bu gorevin kendi kapsami yalniz durum makinesini kurmak; bir HTTP endpoint'i V14-ACC/V14-INV/V14-UI musteri kimligine ihtiyac duydugunda ekleyecek (V14-CST-001 ile ayni gerekce).",

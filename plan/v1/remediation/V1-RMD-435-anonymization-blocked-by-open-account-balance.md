@@ -1,7 +1,7 @@
 # V1-RMD-435 - Açık cari bakiyesi olan müşterinin anonimleştirilmesinin engellenmesi
 
 - Task ID: V1-RMD-435
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -36,6 +36,8 @@ olmayan müşteri engellenmez.
   (V14-ACC-003 sahipliğinde) — yalnız korumanın kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/CustomerAccounts/BillCharges/OutstandingBalanceRetentionGuardTests.cs
   (V14-ACC-003 test projesinde yeni dosya)
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tools/consistency-audit/unreachable_services_allowlist.json (V1-RMD-272
+  sahipliğinde) — yalnız kaldırılan yer tutucunun satırının yeni korumayla değiştirilmesi
 
 ## In scope
 
