@@ -16,6 +16,9 @@
          exact pattern (its own private resolver/cipher/protector chain -
          ISensitiveDataAccessPolicy has no shared DI registration by design). -->
     <ProjectReference Include="..\..\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj" />
+    <!-- V14-CST-002: CustomerAnonymizationService records CustomerAnonymizationRequested/
+         Blocked/Unblocked/CustomerAnonymized audit events. -->
+    <ProjectReference Include="..\Audit\ALKAROS.Audit.csproj" />
   </ItemGroup>
 
   <ItemGroup>

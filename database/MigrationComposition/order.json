@@ -1363,6 +1363,14 @@
         "profiles"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "160",
+      "phase": "B",
+      "tables": [
+        "anonymization_requests"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

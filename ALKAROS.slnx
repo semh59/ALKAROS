@@ -92,6 +92,7 @@
   <Project Path="tests/Modules/Catalog/Pricing/ALKAROS.Catalog.Pricing.Tests.csproj" />
   <Project Path="tests/Modules/Catalog/ProductCatalog/ALKAROS.Catalog.ProductCatalog.Tests.csproj" />
   <Project Path="tests/Modules/CustomerData/Profiles/ALKAROS.CustomerData.Profiles.Tests.csproj" />
+  <Project Path="tests/Modules/CustomerData/AnonymizationState/ALKAROS.CustomerData.AnonymizationState.Tests.csproj" />
   <Project Path="tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj" />
   <Project Path="tests/Modules/Identity/Authorization/ALKAROS.Identity.Authorization.Tests.csproj" />
   <Project Path="tests/Modules/Identity/DeviceSessions/ALKAROS.Identity.DeviceSessions.Tests.csproj" />

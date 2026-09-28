@@ -130,6 +130,9 @@ public static class ModuleBoundaryTests
             // ("Security") - Identity for session/lockout hardening, Audit
             // for the disposal/purge/re-encryption trail.
             ["Security"] = ["Identity", "Audit"],
+            // V14-CST-002: module-dependency-rules.md row 30 (Customer Data) -
+            // CustomerAnonymizationService records its own audit trail.
+            ["CustomerData"] = ["Audit"],
             // V13-REC-001: reads payments.*/cash.* tables directly via
             // plain SQL (the same "read model" pattern as Tables' own
             // CurrentOrderTotal read) rather than a C# ProjectReference to
