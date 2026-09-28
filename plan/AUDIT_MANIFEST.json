@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1473,
-  "markdown_line_count": 112385,
-  "markdown_byte_count": 6483948,
+  "markdown_file_count": 1474,
+  "markdown_line_count": 112457,
+  "markdown_byte_count": 6487892,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "1BA06B32C601326BD58A382827A74A992A5FFE3612103FB288C43D683E94EE0D",
-      "lines": 2749,
-      "bytes": 403289,
+      "sha256": "15AD73332F7A870422303024312EDF4A8A593624A992F35EB0ACD6CAABBBE6D6",
+      "lines": 2750,
+      "bytes": 403449,
       "utf8": true
     },
     {
@@ -8173,6 +8173,13 @@
       "sha256": "B6A25FE6C63A4DC8AE6C42E4D83CE17B350B0766620F0E516B43470F671B2CFC",
       "lines": 64,
       "bytes": 3127,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-417-cash-close-requires-count.md",
+      "sha256": "E4D2A0B07812916137EDE8CAD16E916F43E2B603975CC411597F17353A518A7F",
+      "lines": 71,
+      "bytes": 3784,
       "utf8": true
     },
     {
