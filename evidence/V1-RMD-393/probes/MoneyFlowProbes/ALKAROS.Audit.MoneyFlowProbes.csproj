@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!--
+    V1-RMD-393 audit evidence only: not part of ALKAROS.slnx and never built by CI.
+    Each probe asserts the CORRECT money-flow invariant; a failing probe is a finding,
+    a passing probe is a verified-sound matrix cell. Run instructions: ../README.md.
+  -->
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSTest>true</ALKAROSTest>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>ALKAROS.Audit.MoneyFlowProbes</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../../../src/Host/ALKAROS.Host.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,7 @@
+d1d9586c plan(tooling): regenerate AUDIT_MANIFEST/AUDIT_REPORT for V1-RMD-393
+restore-exit=1
+116
+39
+/lock/tests/Modules/CustomerData/Profiles/ALKAROS.CustomerData.Profiles.Tests.csproj : error NU1004: The project reference alkaros.customerdata has changed. Current dependencies: /lock/src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj,/lock/src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj,/lock/src/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.csproj,/lo
+/lock/tests/Modules/CustomerData/Profiles/ALKAROS.CustomerData.Profiles.Tests.csproj : error NU1004: A new project reference to ALKAROS.Audit was found for net8.0 target framework.The packages lock file is inconsistent with the project dependencies so restore can't be run in locked mode. Disable the RestoreLockedMode MSBuild property or pass an explicit --force-evaluate option to run restore to up
+/lock/tests/Modules/CustomerAccounts/TransactionLedger/ALKAROS.CustomerAccounts.TransactionLedger.Tests.csproj : error NU1004: The project reference alkaros.customeraccounts has changed. Current dependencies: /lock/src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj,/lock/src/Modules/CustomerData/ALKAROS.CustomerData.csproj,/lock/src/Modules/Payments/ALKAROS.Payments.csproj,Npgsq

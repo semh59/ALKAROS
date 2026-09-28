@@ -1,0 +1,1384 @@
+d1d9586c plan(tooling): regenerate AUDIT_MANIFEST/AUDIT_REPORT for V1-RMD-393
+    0 Warning(s)
+    0 Error(s)
+Test run for /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/bin/Release/net8.0/ALKAROS.Audit.MoneyFlowProbes.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.30)
+[xUnit.net 00:00:00.10]   Discovering: ALKAROS.Audit.MoneyFlowProbes
+[xUnit.net 00:00:00.15]   Discovered:  ALKAROS.Audit.MoneyFlowProbes
+[xUnit.net 00:00:00.15]   Starting:    ALKAROS.Audit.MoneyFlowProbes
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:41799
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/bin/Release/net8.0
+[xUnit.net 00:00:04.47]     ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P06EndOfDayRevenueIsDerivedFromRecordedPaymentsNotFromTheCaller [FAIL]
+[xUnit.net 00:00:04.47]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:04.47]       Expected: 0
+[xUnit.net 00:00:04.47]       Actual:   987654.32
+[xUnit.net 00:00:04.47]       Stack Trace:
+[xUnit.net 00:00:04.47]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(154,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P06EndOfDayRevenueIsDerivedFromRecordedPaymentsNotFromTheCaller()
+[xUnit.net 00:00:04.47]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(154,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P06EndOfDayRevenueIsDerivedFromRecordedPaymentsNotFromTheCaller()
+[xUnit.net 00:00:04.47]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/4c2d98ec-b3e5-43ca-8b82-fb5c88b4b9e4/cash-sessions - application/json;+charset=utf-8 20
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P06EndOfDayRevenueIsDerivedFromRecordedPaymentsNotFromTheCaller [91 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: 0
+Actual:   987654.32
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P06EndOfDayRevenueIsDerivedFromRecordedPaymentsNotFromTheCaller() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 154
+   at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P06EndOfDayRevenueIsDerivedFromRecordedPaymentsNotFromTheCaller() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 154
+--- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/4c2d98ec-b3e5-43ca-8b82-fb5c88b4b9e4/cash-sessions - 201 - application/json;+charset=utf-8 1630.8273ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/d4664989-2035-471b-9147-c1bce10ac3c1/cash-sessions/95625b08-40ea-47ea-89d0-5acb50ef56a1/cash-tender - application/json;+charset=utf-8 140
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/d4664989-2035-471b-9147-c1bce10ac3c1/cash-sessions/95625b08-40ea-47ea-89d0-5acb50ef56a1/cash-tender - 200 - application/json;+charset=utf-8 180.0401ms
+[xUnit.net 00:00:06.44]     ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P04ACashierOfAnotherTerminalCannotTenderIntoThisTerminalsDrawer [FAIL]
+[xUnit.net 00:00:06.44]       Assert.NotEqual() Failure: Values are equal
+[xUnit.net 00:00:06.44]       Expected: Not OK
+[xUnit.net 00:00:06.44]       Actual:       OK
+[xUnit.net 00:00:06.44]       Stack Trace:
+[xUnit.net 00:00:06.44]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(119,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P04ACashierOfAnotherTerminalCannotTenderIntoThisTerminalsDrawer()
+[xUnit.net 00:00:06.44]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/cash-sessions - application/json;+charset=utf-8 20
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/cash-sessions - 201 - application/json;+charset=utf-8 5.8434ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/billing/bills/20c8a6e3-df7c-429f-a163-d604800754c4/tenders/ - application/json;+charset=utf-8 90
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/billing/bills/20c8a6e3-df7c-429f-a163-d604800754c4/tenders/ - 200 - application/json;+charset=utf-8 39.5241ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/billing/bills/20c8a6e3-df7c-429f-a163-d604800754c4/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/billing/bills/20c8a6e3-df7c-429f-a163-d604800754c4/tenders/ - 200 - application/json;+charset=utf-8 23.9277ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/cash-sessions/999e1d32-7a13-4557-9cf7-0f4af4bff8bf/cash-tender - application/json;+charset=utf-8 140
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/cash-sessions/999e1d32-7a13-4557-9cf7-0f4af4bff8bf/cash-tender - 200 - application/json;+charset=utf-8 49.5320ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/billing/bills/20c8a6e3-df7c-429f-a163-d604800754c4/tenders/unsettled/04ab021f-ceae-4ae7-9ad6-3ad88df2bb4c/not-charged - application/json;+charset=utf-8 39
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/unsettled/{paymentId:guid}/not-charged'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ResolveUnsettledPaymentResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/unsettled/{paymentId:guid}/not-charged'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/billing/bills/20c8a6e3-df7c-429f-a163-d604800754c4/tenders/unsettled/04ab021f-ceae-4ae7-9ad6-3ad88df2bb4c/not-charged - 200 - application/json;+charset=utf-8 574.5408ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/billing/bills/20c8a6e3-df7c-429f-a163-d604800754c4/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/37f6f4d2-a421-40d3-8c8e-e43166c9d1ad/billing/bills/20c8a6e3-df7c-429f-a163-d604800754c4/tenders/ - 200 - application/json;+charset=utf-8 16.6130ms
+[xUnit.net 00:00:07.28]     ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P09ResolvingTheBlockingCardAttemptClosesAnAlreadyCoveredBill [FAIL]
+[xUnit.net 00:00:07.28]       Assert.Equal() Failure: Strings differ
+[xUnit.net 00:00:07.29]                  ↓ (pos 0)
+[xUnit.net 00:00:07.29]       Expected: "Paid"
+[xUnit.net 00:00:07.29]       Actual:   "Open"
+[xUnit.net 00:00:07.29]                  ↑ (pos 0)
+[xUnit.net 00:00:07.29]       Stack Trace:
+[xUnit.net 00:00:07.29]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(230,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P09ResolvingTheBlockingCardAttemptClosesAnAlreadyCoveredBill()
+[xUnit.net 00:00:07.29]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/9fb4b991-dcdc-4929-b014-820e2918c9f4/billing/bills/9b94720b-6e79-46a9-9b57-2af0a51d51ee/discount - application/json;+charset=utf-8 133
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P04ACashierOfAnotherTerminalCannotTenderIntoThisTerminalsDrawer [1 s]
+  Error Message:
+   Assert.NotEqual() Failure: Values are equal
+Expected: Not OK
+Actual:       OK
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P04ACashierOfAnotherTerminalCannotTenderIntoThisTerminalsDrawer() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 119
+--- End of stack trace from previous location ---
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P09ResolvingTheBlockingCardAttemptClosesAnAlreadyCoveredBill [837 ms]
+  Error Message:
+   Assert.Equal() Failure: Strings differ
+           ↓ (pos 0)
+Expected: "Paid"
+Actual:   "Open"
+           ↑ (pos 0)
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P09ResolvingTheBlockingCardAttemptClosesAnAlreadyCoveredBill() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 230
+--- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/9fb4b991-dcdc-4929-b014-820e2918c9f4/billing/bills/9b94720b-6e79-46a9-9b57-2af0a51d51ee/discount - 200 - application/json;+charset=utf-8 239.7689ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/9fb4b991-dcdc-4929-b014-820e2918c9f4/billing/bills/9b94720b-6e79-46a9-9b57-2af0a51d51ee/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/9fb4b991-dcdc-4929-b014-820e2918c9f4/billing/bills/9b94720b-6e79-46a9-9b57-2af0a51d51ee/tenders/ - 200 - application/json;+charset=utf-8 12.7997ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/9fb4b991-dcdc-4929-b014-820e2918c9f4/billing/bills/9b94720b-6e79-46a9-9b57-2af0a51d51ee/split-design - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/9fb4b991-dcdc-4929-b014-820e2918c9f4/billing/bills/9b94720b-6e79-46a9-9b57-2af0a51d51ee/split-design - 200 - application/json;+charset=utf-8 48.3960ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:41799/api/v1/terminals/9fb4b991-dcdc-4929-b014-820e2918c9f4/billing/bills/9b94720b-6e79-46a9-9b57-2af0a51d51ee/split-design/amounts - application/json;+charset=utf-8 249
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/amounts'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 400.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/amounts'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT https://127.0.0.1:41799/api/v1/terminals/9fb4b991-dcdc-4929-b014-820e2918c9f4/billing/bills/9b94720b-6e79-46a9-9b57-2af0a51d51ee/split-design/amounts - 400 - application/json;+charset=utf-8 54.0891ms
+[xUnit.net 00:00:07.68]     ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P14SplitDesignUsesTheSamePayableAsTheTenderPathAfterADiscount [FAIL]
+[xUnit.net 00:00:07.68]       Split design shows payable 100.00, tender path enforces 90.00; saving a ByAmount split that sums to the displayed payable returned 400.
+[xUnit.net 00:00:07.68]       Stack Trace:
+[xUnit.net 00:00:07.68]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(428,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P14SplitDesignUsesTheSamePayableAsTheTenderPathAfterADiscount()
+[xUnit.net 00:00:07.68]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7c0a75fd-5601-4a07-8292-5819d258e955/tenders/ - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7c0a75fd-5601-4a07-8292-5819d258e955/discount - application/json;+charset=utf-8 136
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7c0a75fd-5601-4a07-8292-5819d258e955/tenders/ - 200 - application/json;+charset=utf-8 68.4511ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7c0a75fd-5601-4a07-8292-5819d258e955/discount - 200 - application/json;+charset=utf-8 204.1186ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7c0a75fd-5601-4a07-8292-5819d258e955/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7c0a75fd-5601-4a07-8292-5819d258e955/tenders/ - 200 - application/json;+charset=utf-8 7.3400ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c637dbe5-0654-43d0-8fcf-61e59950624d/tenders/ - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c637dbe5-0654-43d0-8fcf-61e59950624d/discount - application/json;+charset=utf-8 136
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c637dbe5-0654-43d0-8fcf-61e59950624d/tenders/ - 200 - application/json;+charset=utf-8 47.7666ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c637dbe5-0654-43d0-8fcf-61e59950624d/discount - 200 - application/json;+charset=utf-8 188.9951ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c637dbe5-0654-43d0-8fcf-61e59950624d/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c637dbe5-0654-43d0-8fcf-61e59950624d/tenders/ - 200 - application/json;+charset=utf-8 11.0167ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/99d74264-9af5-48b9-b058-2610e2b05652/tenders/ - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/99d74264-9af5-48b9-b058-2610e2b05652/discount - application/json;+charset=utf-8 136
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/99d74264-9af5-48b9-b058-2610e2b05652/tenders/ - 200 - application/json;+charset=utf-8 30.9325ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/99d74264-9af5-48b9-b058-2610e2b05652/discount - 200 - application/json;+charset=utf-8 159.1258ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/99d74264-9af5-48b9-b058-2610e2b05652/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/99d74264-9af5-48b9-b058-2610e2b05652/tenders/ - 200 - application/json;+charset=utf-8 12.3602ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c695b097-499f-4e02-a656-1e7abcff3a89/tenders/ - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c695b097-499f-4e02-a656-1e7abcff3a89/discount - application/json;+charset=utf-8 136
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c695b097-499f-4e02-a656-1e7abcff3a89/tenders/ - 409 - application/json;+charset=utf-8 35.4580ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c695b097-499f-4e02-a656-1e7abcff3a89/discount - 200 - application/json;+charset=utf-8 117.9396ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c695b097-499f-4e02-a656-1e7abcff3a89/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c695b097-499f-4e02-a656-1e7abcff3a89/tenders/ - 200 - application/json;+charset=utf-8 6.6679ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/5aaf338c-2395-4957-84e1-c1c03b8da74d/tenders/ - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/5aaf338c-2395-4957-84e1-c1c03b8da74d/discount - application/json;+charset=utf-8 136
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/5aaf338c-2395-4957-84e1-c1c03b8da74d/tenders/ - 200 - application/json;+charset=utf-8 73.5305ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/5aaf338c-2395-4957-84e1-c1c03b8da74d/discount - 200 - application/json;+charset=utf-8 299.9757ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/5aaf338c-2395-4957-84e1-c1c03b8da74d/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/5aaf338c-2395-4957-84e1-c1c03b8da74d/tenders/ - 200 - application/json;+charset=utf-8 15.7525ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/e64a28ef-22e0-4d4b-bd81-a9cc0d8886c1/tenders/ - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/e64a28ef-22e0-4d4b-bd81-a9cc0d8886c1/discount - application/json;+charset=utf-8 136
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/e64a28ef-22e0-4d4b-bd81-a9cc0d8886c1/tenders/ - 409 - application/json;+charset=utf-8 52.4523ms
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P14SplitDesignUsesTheSamePayableAsTheTenderPathAfterADiscount [391 ms]
+  Error Message:
+   Split design shows payable 100.00, tender path enforces 90.00; saving a ByAmount split that sums to the displayed payable returned 400.
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P14SplitDesignUsesTheSamePayableAsTheTenderPathAfterADiscount() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 428
+--- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/e64a28ef-22e0-4d4b-bd81-a9cc0d8886c1/discount - 200 - application/json;+charset=utf-8 218.1964ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/e64a28ef-22e0-4d4b-bd81-a9cc0d8886c1/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/e64a28ef-22e0-4d4b-bd81-a9cc0d8886c1/tenders/ - 200 - application/json;+charset=utf-8 18.0883ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/27b1177a-1f88-46e9-9c7a-c5bf4703e8f7/tenders/ - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/27b1177a-1f88-46e9-9c7a-c5bf4703e8f7/discount - application/json;+charset=utf-8 136
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/27b1177a-1f88-46e9-9c7a-c5bf4703e8f7/tenders/ - 409 - application/json;+charset=utf-8 51.3263ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/27b1177a-1f88-46e9-9c7a-c5bf4703e8f7/discount - 200 - application/json;+charset=utf-8 211.8274ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/27b1177a-1f88-46e9-9c7a-c5bf4703e8f7/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/27b1177a-1f88-46e9-9c7a-c5bf4703e8f7/tenders/ - 200 - application/json;+charset=utf-8 16.0721ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7f6eacc5-2dd8-44eb-8960-d76cbacc846a/tenders/ - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7f6eacc5-2dd8-44eb-8960-d76cbacc846a/discount - application/json;+charset=utf-8 136
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7f6eacc5-2dd8-44eb-8960-d76cbacc846a/tenders/ - 409 - application/json;+charset=utf-8 23.6724ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7f6eacc5-2dd8-44eb-8960-d76cbacc846a/discount - 200 - application/json;+charset=utf-8 239.4347ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7f6eacc5-2dd8-44eb-8960-d76cbacc846a/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7f6eacc5-2dd8-44eb-8960-d76cbacc846a/tenders/ - 200 - application/json;+charset=utf-8 7.5501ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c79f2e39-2a3c-4746-954d-f077eaa1b8b5/tenders/ - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c79f2e39-2a3c-4746-954d-f077eaa1b8b5/discount - application/json;+charset=utf-8 136
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c79f2e39-2a3c-4746-954d-f077eaa1b8b5/tenders/ - 409 - application/json;+charset=utf-8 22.8717ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c79f2e39-2a3c-4746-954d-f077eaa1b8b5/discount - 200 - application/json;+charset=utf-8 105.6652ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c79f2e39-2a3c-4746-954d-f077eaa1b8b5/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/c79f2e39-2a3c-4746-954d-f077eaa1b8b5/tenders/ - 200 - application/json;+charset=utf-8 5.2984ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7a7460c7-76be-40ce-9339-e35bf724d96f/tenders/ - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7a7460c7-76be-40ce-9339-e35bf724d96f/discount - application/json;+charset=utf-8 136
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7a7460c7-76be-40ce-9339-e35bf724d96f/tenders/ - 409 - application/json;+charset=utf-8 14.4127ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7a7460c7-76be-40ce-9339-e35bf724d96f/discount - 200 - application/json;+charset=utf-8 129.0360ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7a7460c7-76be-40ce-9339-e35bf724d96f/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/1663ad3b-1561-4f28-9f1f-6267dc6c455c/billing/bills/7a7460c7-76be-40ce-9339-e35bf724d96f/tenders/ - 200 - application/json;+charset=utf-8 5.8696ms
+[xUnit.net 00:00:09.80]     ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P12ARacingDiscountAndFullPaymentNeverLeaveTheBillOverCollected [FAIL]
+[xUnit.net 00:00:09.80]       Over-collected bills: iteration 0: eft=200 discount=200 remaining=-30.00; iteration 1: eft=200 discount=200 remaining=-30.00; iteration 2: eft=200 discount=200 remaining=-30.00; iteration 4: eft=200 discount=200 remaining=-30.00
+[xUnit.net 00:00:09.80]       Stack Trace:
+[xUnit.net 00:00:09.80]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(309,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P12ARacingDiscountAndFullPaymentNeverLeaveTheBillOverCollected()
+[xUnit.net 00:00:09.80]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/cash-sessions - application/json;+charset=utf-8 20
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/cash-sessions - 201 - application/json;+charset=utf-8 4.7982ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/billing/bills/db80cfd8-bab6-47c4-b7db-13160254cb9d/tenders/ - application/json;+charset=utf-8 90
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/billing/bills/db80cfd8-bab6-47c4-b7db-13160254cb9d/tenders/ - 200 - application/json;+charset=utf-8 14.4903ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/billing/bills/db80cfd8-bab6-47c4-b7db-13160254cb9d/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/billing/bills/db80cfd8-bab6-47c4-b7db-13160254cb9d/tenders/ - 200 - application/json;+charset=utf-8 20.4755ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/billing/bills/db80cfd8-bab6-47c4-b7db-13160254cb9d/tenders/unsettled/ab1c8fad-0c3e-4dd0-8065-99aa7e85c0da/card-charged - application/json;+charset=utf-8 37
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/unsettled/{paymentId:guid}/card-charged'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CardConfirmationResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/unsettled/{paymentId:guid}/card-charged'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/billing/bills/db80cfd8-bab6-47c4-b7db-13160254cb9d/tenders/unsettled/ab1c8fad-0c3e-4dd0-8065-99aa7e85c0da/card-charged - 200 - application/json;+charset=utf-8 441.7084ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/billing/bills/db80cfd8-bab6-47c4-b7db-13160254cb9d/tenders/confirmations/21cd656e-1ddc-41fe-9782-c693b1795b22/approve - application/json;+charset=utf-8 13
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/confirmations/{confirmationId:guid}/approve'
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P12ARacingDiscountAndFullPaymentNeverLeaveTheBillOverCollected [2 s]
+  Error Message:
+   Over-collected bills: iteration 0: eft=200 discount=200 remaining=-30.00; iteration 1: eft=200 discount=200 remaining=-30.00; iteration 2: eft=200 discount=200 remaining=-30.00; iteration 4: eft=200 discount=200 remaining=-30.00
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P12ARacingDiscountAndFullPaymentNeverLeaveTheBillOverCollected() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 309
+--- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CardConfirmationResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/confirmations/{confirmationId:guid}/approve'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/billing/bills/db80cfd8-bab6-47c4-b7db-13160254cb9d/tenders/confirmations/21cd656e-1ddc-41fe-9782-c693b1795b22/approve - 200 - application/json;+charset=utf-8 865.9598ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/billing/bills/db80cfd8-bab6-47c4-b7db-13160254cb9d/tenders/ - application/json;+charset=utf-8 86
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/billing/bills/db80cfd8-bab6-47c4-b7db-13160254cb9d/tenders/ - 200 - application/json;+charset=utf-8 21.3307ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/cash-sessions/048d0a84-f7e1-4402-b44f-0bc32ef87ef2/cash-tender - application/json;+charset=utf-8 142
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/fb7d1e52-6448-4861-80ce-e3809efa7dd5/cash-sessions/048d0a84-f7e1-4402-b44f-0bc32ef87ef2/cash-tender - 200 - application/json;+charset=utf-8 21.8780ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/bed6e4a1-b1e4-41d2-b7fc-6482d4d90ed4/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/bed6e4a1-b1e4-41d2-b7fc-6482d4d90ed4/cash-sessions - 201 - application/json;+charset=utf-8 6.0531ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/bed6e4a1-b1e4-41d2-b7fc-6482d4d90ed4/cash-sessions/66135f8d-d17c-47ca-b304-7d554a88326f/close - application/json;+charset=utf-8 18
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseCashSessionResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/bed6e4a1-b1e4-41d2-b7fc-6482d4d90ed4/cash-sessions/66135f8d-d17c-47ca-b304-7d554a88326f/close - 200 - application/json;+charset=utf-8 14.1828ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/bed6e4a1-b1e4-41d2-b7fc-6482d4d90ed4/cash-sessions/66135f8d-d17c-47ca-b304-7d554a88326f/reconcile - application/json;+charset=utf-8 27
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/reconcile'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/reconcile'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/bed6e4a1-b1e4-41d2-b7fc-6482d4d90ed4/cash-sessions/66135f8d-d17c-47ca-b304-7d554a88326f/reconcile - 200 - application/json;+charset=utf-8 10.1139ms
+[xUnit.net 00:00:11.33]     ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P05APlainCashierCannotReconcileACashSession [FAIL]
+[xUnit.net 00:00:11.33]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:11.33]       Expected: Forbidden
+[xUnit.net 00:00:11.33]       Actual:   OK
+[xUnit.net 00:00:11.33]       Stack Trace:
+[xUnit.net 00:00:11.34]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(136,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P05APlainCashierCannotReconcileACashSession()
+[xUnit.net 00:00:11.34]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/cash-sessions - application/json;+charset=utf-8 20
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/cash-sessions - 201 - application/json;+charset=utf-8 3.3923ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/billing/bills/1e9b99b7-7838-47ff-aa3f-ebaac7fd72a7/tenders/ - application/json;+charset=utf-8 90
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/billing/bills/1e9b99b7-7838-47ff-aa3f-ebaac7fd72a7/tenders/ - 200 - application/json;+charset=utf-8 7.3867ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/billing/bills/1e9b99b7-7838-47ff-aa3f-ebaac7fd72a7/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/billing/bills/1e9b99b7-7838-47ff-aa3f-ebaac7fd72a7/tenders/ - 200 - application/json;+charset=utf-8 5.0564ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/cash-sessions/4b22f451-3311-41b9-a37c-6245ba39f68d/cash-tender - application/json;+charset=utf-8 140
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/cash-sessions/4b22f451-3311-41b9-a37c-6245ba39f68d/cash-tender - 200 - application/json;+charset=utf-8 14.5517ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/billing/bills/1e9b99b7-7838-47ff-aa3f-ebaac7fd72a7/tenders/unsettled/835d00b4-cce9-4793-829a-2203ab5bf8d0/card-charged - application/json;+charset=utf-8 37
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/unsettled/{paymentId:guid}/card-charged'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CardConfirmationResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/unsettled/{paymentId:guid}/card-charged'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/billing/bills/1e9b99b7-7838-47ff-aa3f-ebaac7fd72a7/tenders/unsettled/835d00b4-cce9-4793-829a-2203ab5bf8d0/card-charged - 200 - application/json;+charset=utf-8 445.4742ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/billing/bills/1e9b99b7-7838-47ff-aa3f-ebaac7fd72a7/tenders/confirmations/46b98157-cef0-471a-8cc4-a8ac0d83cc41/approve - application/json;+charset=utf-8 13
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/confirmations/{confirmationId:guid}/approve'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/confirmations/{confirmationId:guid}/approve'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/445a16b5-fc28-4de6-b7ae-9b91ff2719b1/billing/bills/1e9b99b7-7838-47ff-aa3f-ebaac7fd72a7/tenders/confirmations/46b98157-cef0-471a-8cc4-a8ac0d83cc41/approve - 409 - application/json;+charset=utf-8 57.7096ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/10c8008a-0476-4e7a-9b63-70ff3dc643f5/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P16SettlementReportMethodTotalsMatchTheTendersTaken [1 s]
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P05APlainCashierCannotReconcileACashSession [51 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Forbidden
+Actual:   OK
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P05APlainCashierCannotReconcileACashSession() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 136
+--- End of stack trace from previous location ---
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P07ApprovingACardClaimOnAnAlreadyCoveredBillIsATyped409 [566 ms]
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/10c8008a-0476-4e7a-9b63-70ff3dc643f5/cash-sessions - 201 - application/json;+charset=utf-8 35.2345ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/10c8008a-0476-4e7a-9b63-70ff3dc643f5/billing/bills/ff8fbd51-611d-4a33-af11-653cfe6f1ccc/tenders/ - application/json;+charset=utf-8 91
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/10c8008a-0476-4e7a-9b63-70ff3dc643f5/billing/bills/ff8fbd51-611d-4a33-af11-653cfe6f1ccc/tenders/ - 200 - application/json;+charset=utf-8 44.2250ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/10c8008a-0476-4e7a-9b63-70ff3dc643f5/billing/bills/ff8fbd51-611d-4a33-af11-653cfe6f1ccc/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/10c8008a-0476-4e7a-9b63-70ff3dc643f5/billing/bills/ff8fbd51-611d-4a33-af11-653cfe6f1ccc/tenders/ - 200 - application/json;+charset=utf-8 12.6582ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/10c8008a-0476-4e7a-9b63-70ff3dc643f5/cash-sessions/6d640e1f-ebbd-4244-811d-f8e12d8463bc/cash-tender - application/json;+charset=utf-8 142
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/10c8008a-0476-4e7a-9b63-70ff3dc643f5/cash-sessions/6d640e1f-ebbd-4244-811d-f8e12d8463bc/cash-tender - 200 - application/json;+charset=utf-8 23.5612ms
+[xUnit.net 00:00:12.11]     ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P01CashTenderIsRejectedWhileACardAttemptIsUnresolved [FAIL]
+[xUnit.net 00:00:12.11]       Assert.Equal() Failure: Values differ
+[xUnit.net 00:00:12.12]       Expected: Conflict
+[xUnit.net 00:00:12.12]       Actual:   OK
+[xUnit.net 00:00:12.12]       Stack Trace:
+[xUnit.net 00:00:12.12]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(62,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P01CashTenderIsRejectedWhileACardAttemptIsUnresolved()
+[xUnit.net 00:00:12.12]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/3543a9d5-cf48-4ae9-88ee-cc862d8d70fd/cash-sessions - application/json;+charset=utf-8 20
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/3543a9d5-cf48-4ae9-88ee-cc862d8d70fd/cash-sessions - 201 - application/json;+charset=utf-8 6.0062ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/3543a9d5-cf48-4ae9-88ee-cc862d8d70fd/cash-sessions/dde4cd82-de1c-48e1-a6a3-330e7fcd230e/cash-tender - application/json;+charset=utf-8 140
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/3543a9d5-cf48-4ae9-88ee-cc862d8d70fd/cash-sessions/dde4cd82-de1c-48e1-a6a3-330e7fcd230e/cash-tender - 200 - application/json;+charset=utf-8 18.1561ms
+[xUnit.net 00:00:12.17]     ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P03CashTenderIsRejectedOnACancelledBill [FAIL]
+[xUnit.net 00:00:12.18]       Assert.NotEqual() Failure: Values are equal
+[xUnit.net 00:00:12.18]       Expected: Not OK
+[xUnit.net 00:00:12.18]       Actual:       OK
+[xUnit.net 00:00:12.18]       Stack Trace:
+[xUnit.net 00:00:12.18]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(100,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P03CashTenderIsRejectedOnACancelledBill()
+[xUnit.net 00:00:12.18]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/0b53cc4f-fdfd-429d-a086-92df17790566/billing/bills/8b98cbde-590b-48ab-b5cd-65076ab4c1c6/tenders/ - application/json;+charset=utf-8 88
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/0b53cc4f-fdfd-429d-a086-92df17790566/billing/bills/8b98cbde-590b-48ab-b5cd-65076ab4c1c6/tenders/ - 200 - application/json;+charset=utf-8 30.9600ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/0b53cc4f-fdfd-429d-a086-92df17790566/billing/bills/8b98cbde-590b-48ab-b5cd-65076ab4c1c6/discount - application/json;+charset=utf-8 134
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/0b53cc4f-fdfd-429d-a086-92df17790566/billing/bills/8b98cbde-590b-48ab-b5cd-65076ab4c1c6/discount - 200 - application/json;+charset=utf-8 160.0140ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/0b53cc4f-fdfd-429d-a086-92df17790566/billing/bills/8b98cbde-590b-48ab-b5cd-65076ab4c1c6/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/0b53cc4f-fdfd-429d-a086-92df17790566/billing/bills/8b98cbde-590b-48ab-b5cd-65076ab4c1c6/tenders/ - 200 - application/json;+charset=utf-8 6.6336ms
+[xUnit.net 00:00:12.40]     ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P02DiscountCannotDropThePayableBelowTheAmountAlreadyCollected [FAIL]
+[xUnit.net 00:00:12.40]       Discount returned 200; the bill now has 80.00 collected against a payable of 70.00 (remaining -10.00) - an unrecorded overpayment.
+[xUnit.net 00:00:12.40]       Stack Trace:
+[xUnit.net 00:00:12.40]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(82,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P02DiscountCannotDropThePayableBelowTheAmountAlreadyCollected()
+[xUnit.net 00:00:12.40]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/cash-sessions - application/json;+charset=utf-8 20
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/cash-sessions - 201 - application/json;+charset=utf-8 4.5713ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tip - application/json;+charset=utf-8 71
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillTipResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tip - 200 - application/json;+charset=utf-8 118.6812ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tip - application/json;+charset=utf-8 71
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillTipResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tip - 200 - application/json;+charset=utf-8 25.7104ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tip - application/json;+charset=utf-8 70
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillTipResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tip - 200 - application/json;+charset=utf-8 12.8507ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/discount - application/json;+charset=utf-8 134
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/discount - 200 - application/json;+charset=utf-8 150.1833ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/discount - application/json;+charset=utf-8 134
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/discount - 200 - application/json;+charset=utf-8 257.2125ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tenders/ - 200 - application/json;+charset=utf-8 7.5003ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tenders/ - application/json;+charset=utf-8 87
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tenders/ - 200 - application/json;+charset=utf-8 24.3439ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tenders/ - application/json;+charset=utf-8 87
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/billing/bills/f131d272-8d9a-4105-a0b7-93b009e033da/tenders/ - 200 - application/json;+charset=utf-8 18.8077ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/cash-sessions/57de3238-e58a-4d7e-b163-ecaf819eec95/cash-tender - application/json;+charset=utf-8 144
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8bd65ab4-bd05-4ffc-ad79-a51fc1cf73c1/cash-sessions/57de3238-e58a-4d7e-b163-ecaf819eec95/cash-tender - 200 - application/json;+charset=utf-8 35.5310ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions - application/json;+charset=utf-8 20
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions - 201 - application/json;+charset=utf-8 21.4592ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - application/json;+charset=utf-8 141
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 137.0402ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 130.6071ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 149.3368ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 170.0522ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 159.2481ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 159.6096ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 174.9449ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 185.4716ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 173.7221ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 164.2265ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 165.6852ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/8a199764-f1a4-4e80-b371-73dc59a5e0bb/cash-sessions/c78a54cf-6776-4893-a015-ec48d0ac9bdf/cash-tender - 200 - application/json;+charset=utf-8 165.9305ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/09e531db-6b38-4fab-bba0-85b7fe3bea30/cash-sessions - application/json;+charset=utf-8 20
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/09e531db-6b38-4fab-bba0-85b7fe3bea30/cash-sessions - 201 - application/json;+charset=utf-8 9.5311ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/09e531db-6b38-4fab-bba0-85b7fe3bea30/billing/bills/624b8af2-86b8-43f7-bc7e-a92ed12a2ada/tenders/ - application/json;+charset=utf-8 84
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/09e531db-6b38-4fab-bba0-85b7fe3bea30/billing/bills/624b8af2-86b8-43f7-bc7e-a92ed12a2ada/tenders/ - 200 - application/json;+charset=utf-8 31.5676ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/09e531db-6b38-4fab-bba0-85b7fe3bea30/cash-sessions/837a6c73-31af-4704-88ca-51ca4f6474d1/cash-tender - application/json;+charset=utf-8 140
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P01CashTenderIsRejectedWhileACardAttemptIsUnresolved [211 ms]
+  Error Message:
+   Assert.Equal() Failure: Values differ
+Expected: Conflict
+Actual:   OK
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P01CashTenderIsRejectedWhileACardAttemptIsUnresolved() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 62
+--- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/09e531db-6b38-4fab-bba0-85b7fe3bea30/cash-sessions/837a6c73-31af-4704-88ca-51ca4f6474d1/cash-tender - 200 - application/json;+charset=utf-8 12.1642ms
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P03CashTenderIsRejectedOnACancelledBill [51 ms]
+  Error Message:
+   Assert.NotEqual() Failure: Values are equal
+Expected: Not OK
+Actual:       OK
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P03CashTenderIsRejectedOnACancelledBill() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 100
+--- End of stack trace from previous location ---
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P02DiscountCannotDropThePayableBelowTheAmountAlreadyCollected [226 ms]
+  Error Message:
+   Discount returned 200; the bill now has 80.00 collected against a payable of 70.00 (remaining -10.00) - an unrecorded overpayment.
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P02DiscountCannotDropThePayableBelowTheAmountAlreadyCollected() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 82
+--- End of stack trace from previous location ---
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P15MultipleTipsDiscountsAndPartialTendersAllCount [703 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P11ConcurrentIdenticalCashSubmitsRecordExactlyOneSale [251 ms]
+[xUnit.net 00:00:13.44]     ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P08ACashTenderReusingAnEftKeyIsNotReportedAsASuccessfulCashSale [FAIL]
+[xUnit.net 00:00:13.44]       The cash tender answered 200 (a 'successful' sale the cashier will put money in the drawer for) but no cash Sale ledger entry exists - the drawer will be over at close.
+[xUnit.net 00:00:13.44]       Stack Trace:
+[xUnit.net 00:00:13.44]         /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs(204,0): at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P08ACashTenderReusingAnEftKeyIsNotReportedAsASuccessfulCashSale()
+[xUnit.net 00:00:13.44]         --- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/cash-sessions - 201 - application/json;+charset=utf-8 16.2634ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/billing/bills/c0734ea7-dcbd-4ded-ba93-c82a3935827c/discount - application/json;+charset=utf-8 133
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/billing/bills/c0734ea7-dcbd-4ded-ba93-c82a3935827c/discount - 200 - application/json;+charset=utf-8 187.1491ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/billing/bills/c0734ea7-dcbd-4ded-ba93-c82a3935827c/tip - application/json;+charset=utf-8 71
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillTipResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/billing/bills/c0734ea7-dcbd-4ded-ba93-c82a3935827c/tip - 200 - application/json;+charset=utf-8 34.8906ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/billing/bills/c0734ea7-dcbd-4ded-ba93-c82a3935827c/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/billing/bills/c0734ea7-dcbd-4ded-ba93-c82a3935827c/tenders/ - 200 - application/json;+charset=utf-8 14.1899ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/billing/bills/c0734ea7-dcbd-4ded-ba93-c82a3935827c/tenders/ - application/json;+charset=utf-8 86
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SubmitBillTenderResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/billing/bills/c0734ea7-dcbd-4ded-ba93-c82a3935827c/tenders/ - 200 - application/json;+charset=utf-8 22.2843ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/cash-sessions/db6c5b70-67ef-483a-9ef4-663e368b60aa/cash-tender - application/json;+charset=utf-8 142
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/cash-sessions/db6c5b70-67ef-483a-9ef4-663e368b60aa/cash-tender - 200 - application/json;+charset=utf-8 43.3779ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/billing/bills/c0734ea7-dcbd-4ded-ba93-c82a3935827c/tenders/ - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillTenderSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/billing/bills/c0734ea7-dcbd-4ded-ba93-c82a3935827c/tenders/ - 200 - application/json;+charset=utf-8 9.3905ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/cash-sessions/db6c5b70-67ef-483a-9ef4-663e368b60aa/expected-cash - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/expected-cash'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ExpectedCashResponseV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/expected-cash'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:41799/api/v1/terminals/9694403f-8184-45f0-957b-c35bbd429bcd/cash-sessions/db6c5b70-67ef-483a-9ef4-663e368b60aa/expected-cash - 200 - application/json;+charset=utf-8 11.4667ms
+[xUnit.net 00:00:14.03]   Finished:    ALKAROS.Audit.MoneyFlowProbes
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P08ACashTenderReusingAnEftKeyIsNotReportedAsASuccessfulCashSale [72 ms]
+  Error Message:
+   The cash tender answered 200 (a 'successful' sale the cashier will put money in the drawer for) but no cash Sale ledger entry exists - the drawer will be over at close.
+  Stack Trace:
+     at ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P08ACashTenderReusingAnEftKeyIsNotReportedAsASuccessfulCashSale() in /work/evidence/V1-RMD-393/probes/MoneyFlowProbes/MoneyFlowProbes.cs:line 204
+--- End of stack trace from previous location ---
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P10ControlDiscountTipSplitTenderHappyPathSatisfiesEveryInvariant [386 ms]
+
+Test Run Failed.
+Total tests: 15
+     Passed: 5
+     Failed: 10
+ Total time: 14.8201 Seconds
+dotnet-test-exit=1
