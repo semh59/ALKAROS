@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1465,
-  "markdown_line_count": 111847,
-  "markdown_byte_count": 6454919,
+  "markdown_file_count": 1466,
+  "markdown_line_count": 111931,
+  "markdown_byte_count": 6460228,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "118BB3158B72B924B5790150341EB8B37744F499089F533A50BAA9EAAC8EBBE0",
-      "lines": 2741,
-      "bytes": 401948,
+      "sha256": "ED4229A44265DCF37521AF9EA0ED41AE51C3DF59C669BE379C89AA962B8282AE",
+      "lines": 2742,
+      "bytes": 402128,
       "utf8": true
     },
     {
@@ -8117,6 +8117,13 @@
       "sha256": "4EA2A61554623CA4358C4FD95A3EFF8E095AA1E965D36C1F3B370549B70D37C7",
       "lines": 72,
       "bytes": 4058,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-409-no-tender-on-cancelled-bill-or-unsettled-card.md",
+      "sha256": "BB324F5F084F4001F49C732F3F49EC1AB2F38E3445D01C83151470781F9A4B7D",
+      "lines": 83,
+      "bytes": 5129,
       "utf8": true
     },
     {
