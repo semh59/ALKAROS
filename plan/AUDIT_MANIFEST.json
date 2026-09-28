@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1456,
-  "markdown_line_count": 111244,
-  "markdown_byte_count": 6419705,
+  "markdown_file_count": 1457,
+  "markdown_line_count": 111336,
+  "markdown_byte_count": 6425376,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -309,9 +309,9 @@
     },
     {
       "path": "docs/domain/authorization-model.md",
-      "sha256": "82F699027A247516A0B1AC3BBC3DB2160B7C33774F635031D00CA1219AF9BDFC",
-      "lines": 218,
-      "bytes": 12470,
+      "sha256": "2A114EBB056876A6E5BD3312CBD95C3AA91760D050BE85F1BEEADE7453B545BD",
+      "lines": 224,
+      "bytes": 12963,
       "utf8": true
     },
     {
@@ -2640,9 +2640,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "CE79BB0EB85C978C92E68A320EDAF3954672FAFD5ACBC96DAC0F2E0345819B14",
-      "lines": 2732,
-      "bytes": 400493,
+      "sha256": "F9AFE70684BA265592B7849CFE9AC8A0502B5F98187A1B9C39C445E5BBFFD8E7",
+      "lines": 2733,
+      "bytes": 400653,
       "utf8": true
     },
     {
@@ -8054,6 +8054,13 @@
       "sha256": "9606C498743CE87D3FADDCBA52AD22F70F7BFB1E8DA7B226D9FD3EB5C2C766D0",
       "lines": 69,
       "bytes": 3688,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-401-payment-taking-permission.md",
+      "sha256": "BE6AC4C9A162D02915E30595E3AD3C56E16C89156761DE6AF10DBEC81809E7A8",
+      "lines": 85,
+      "bytes": 5018,
       "utf8": true
     },
     {
