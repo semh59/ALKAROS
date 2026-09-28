@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1480,
-  "markdown_line_count": 112867,
-  "markdown_byte_count": 6509102,
+  "markdown_file_count": 1481,
+  "markdown_line_count": 112936,
+  "markdown_byte_count": 6512969,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "CAFE68D3F541D920045F9A550E7D82ABAEE147C38409C5C656084D2F4B4BEFA2",
-      "lines": 2756,
-      "bytes": 404482,
+      "sha256": "3DC9562585C27EF581F89A636F92A2E7D152E0DFC1CB59E5D94E83F8610F7714",
+      "lines": 2757,
+      "bytes": 404642,
       "utf8": true
     },
     {
@@ -8222,6 +8222,13 @@
       "sha256": "5965BD7582725FFB33110F3074BB3121144CA2BDEC3726A1F5D6928E99B466C4",
       "lines": 64,
       "bytes": 2875,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-424-void-stock-restore-atomic.md",
+      "sha256": "6AE7C63F197E7564FB73075411F0E264B17FC2FAB1F944B63272EF0C427ED552",
+      "lines": 68,
+      "bytes": 3707,
       "utf8": true
     },
     {
