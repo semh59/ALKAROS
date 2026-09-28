@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1446,
-  "markdown_line_count": 110632,
-  "markdown_byte_count": 6375717,
+  "markdown_file_count": 1449,
+  "markdown_line_count": 110841,
+  "markdown_byte_count": 6391162,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2324,6 +2324,20 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-398/REPORT.md",
+      "sha256": "F8D0AD7F7D17DAB11F75A26ED2286C35BE2C0D35171A34B99E53A2E43C95637E",
+      "lines": 133,
+      "bytes": 11510,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-398/probes/README.md",
+      "sha256": "8E17CBEE27C96E194B9B94F4E91DF2EB705B9D3645EA69DB6A1CFB4C6F780F8F",
+      "lines": 18,
+      "bytes": 1108,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2591,9 +2605,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F03AFF8489736AA397ABADFF34BAC6CA0993A1231E39F0DB4385A0178911A0CD",
-      "lines": 2722,
-      "bytes": 399044,
+      "sha256": "DE9781C130E6E94061A6A71657D76D9659DC456A2A6EC4BAF67D603D33282474",
+      "lines": 2725,
+      "bytes": 399478,
       "utf8": true
     },
     {
@@ -7984,6 +7998,13 @@
       "sha256": "C242BF4FC364B731703F5054775DE9CFBCFDD0EBD6C14D9442EF06F9FB23D59D",
       "lines": 34,
       "bytes": 1336,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-398-stock-recipe-flow-targeted-audit.md",
+      "sha256": "8507AAEEA69B194058049138C32931D73D0C684FCD10B95E0D19CA0BD2502233",
+      "lines": 55,
+      "bytes": 2393,
       "utf8": true
     },
     {
