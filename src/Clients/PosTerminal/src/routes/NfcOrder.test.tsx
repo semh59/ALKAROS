@@ -179,6 +179,53 @@ describe("NfcOrder", () => {
     expect(document.body.textContent).toContain("garsonu çağırın");
   });
 
+  // V1-RMD-389 (Tur 2, P2): a real customer's phone can lock, ring, or have
+  // the OS reclaim the tab's memory mid-browsing far more often than a staff
+  // terminal ever does. Before this fix, the cart lived only in React state,
+  // so any such ordinary interruption before tapping submit silently wiped
+  // everything the customer had picked.
+  describe("cart survives an interrupted browsing session (V1-RMD-389)", () => {
+    it("picks up a cart a previous (reloaded-away) mount already persisted", async () => {
+      sessionStorage.setItem("alkaros.nfc.cart.table-1", JSON.stringify({ p2: 3 }));
+      vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(CATALOG)));
+
+      await render("/nfc/table-1");
+      await act(async () => Promise.resolve());
+
+      expect(document.body.textContent).toContain("Siparişi Gönder");
+      const kofteDecrease = document.querySelector<HTMLButtonElement>('[aria-label="Köfte adedini azalt"]')!;
+      const count = kofteDecrease.parentElement!.querySelector(".nfc-stepper__count");
+      expect(count?.textContent).toBe("3");
+    });
+
+    it("clears the persisted cart once the order is placed, so a later visit starts fresh", async () => {
+      vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+        const path = String(input);
+        if (path.includes("/catalog")) return jsonResponse(CATALOG);
+        if (path.includes("/orders")) {
+          return jsonResponse({
+            orderId: "o1", tableId: "table-1", tableNumber: "T-01", status: "Accepted", rowVersion: 3,
+            totalAmount: 60, items: [], createdAt: new Date().toISOString(),
+          });
+        }
+        throw new Error(`unexpected fetch: ${path}`);
+      }));
+
+      await render("/nfc/table-1");
+      await act(async () => Promise.resolve());
+      const increase = document.querySelector<HTMLButtonElement>('[aria-label="Çorba adedini artır"]')!;
+      await act(async () => increase.click());
+      expect(sessionStorage.getItem("alkaros.nfc.cart.table-1")).toBe(JSON.stringify({ p1: 1 }));
+
+      const submitButton = [...document.querySelectorAll("button")].find((b) => b.textContent === "Siparişi Gönder")!;
+      await act(async () => submitButton.click());
+      await act(async () => Promise.resolve());
+
+      expect(document.body.textContent).toContain("Siparişiniz alındı");
+      expect(sessionStorage.getItem("alkaros.nfc.cart.table-1")).toBeNull();
+    });
+  });
+
   // V1-RMD-374 (module-by-module UI audit, 2026-09-27): unlike ~13 other
   // feature workspaces, this guest-facing screen had no axe-core scan.
   it("has no critical or serious axe violations", async () => {

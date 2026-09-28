@@ -25,7 +25,24 @@ export function NfcOrder() {
   const [tableId] = useState(() => tableIdFromPath(window.location.pathname));
   const [state, setState] = useState<PageState>("loading");
   const [products, setProducts] = useState<CatalogProduct[]>([]);
-  const [cart, setCart] = useState<Record<string, number>>({});
+  // V1-RMD-389 (Tur 2, P2): a real customer on their own phone gets calls,
+  // locks the screen or has the OS reclaim the tab's memory mid-browsing far
+  // more often than a staff terminal ever does - and unlike this file's own
+  // submissionIdRef (V1-RMD-348, sessionStorage-backed for exactly this
+  // reason), the cart itself lived only in React state, so any of those
+  // ordinary interruptions before the customer tapped submit silently wiped
+  // everything they had picked, with no warning and no way back. Table-scoped
+  // for the same reason submissionId is: nothing stops two tabs on the same
+  // phone pointed at two different tables' NFC tags.
+  const cartStorageKey = `alkaros.nfc.cart.${tableId}`;
+  const [cart, setCart] = useState<Record<string, number>>(() => {
+    try {
+      const raw = sessionStorage.getItem(cartStorageKey);
+      return raw ? (JSON.parse(raw) as Record<string, number>) : {};
+    } catch {
+      return {};
+    }
+  });
   const [message, setMessage] = useState("");
   const [result, setResult] = useState<NfcOrderResult | null>(null);
   // V1-RMD-348 (independent 2026-09-26 audit, orta seviye bulgu): stable for
@@ -62,6 +79,16 @@ export function NfcOrder() {
       // value is still kept for the lifetime of this session either way.
     }
   };
+
+  useEffect(() => {
+    try {
+      if (Object.keys(cart).length === 0) sessionStorage.removeItem(cartStorageKey);
+      else sessionStorage.setItem(cartStorageKey, JSON.stringify(cart));
+    } catch {
+      // sessionStorage may be unavailable (a private tab); the cart still
+      // works for the lifetime of this in-memory session either way.
+    }
+  }, [cart, cartStorageKey]);
 
   const loadCatalog = useCallback(async () => {
     setState("loading");
@@ -120,6 +147,7 @@ export function NfcOrder() {
         submissionIdRef.current!,
       );
       setSubmissionId(null);
+      setCart({});
       setResult(order);
       setState("placed");
     } catch (reason) {
