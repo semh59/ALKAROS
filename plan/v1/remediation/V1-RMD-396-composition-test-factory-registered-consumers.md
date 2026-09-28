@@ -1,7 +1,7 @@
 # V1-RMD-396 - Composition testi factory ile kaydedilmiş çoklu servisleri de doğrulasın
 
 - Task ID: V1-RMD-396
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
