@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1469,
-  "markdown_line_count": 112111,
-  "markdown_byte_count": 6468993,
+  "markdown_file_count": 1470,
+  "markdown_line_count": 112184,
+  "markdown_byte_count": 6473314,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "39ECE1D821D2CB581D4085E953FC0F5D61B61F19B031E677B00DB85BDF2ADDAA",
-      "lines": 2745,
-      "bytes": 402632,
+      "sha256": "5FD0315631BCAC1D009801388F57881B983BD6AF06DDA16D4C57A7BBF905A911",
+      "lines": 2746,
+      "bytes": 402796,
       "utf8": true
     },
     {
@@ -8145,6 +8145,13 @@
       "sha256": "44CA9A6E5CC3AD11900E0A3D9CD2E2C8C4AB442420CF9AA176E70FCA59A62E68",
       "lines": 58,
       "bytes": 2793,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-413-split-design-adjusted-payable.md",
+      "sha256": "041AE3FD97A01586238EEB3BAD44D005F89DC888DCFABB13EB48B658AEE326F5",
+      "lines": 72,
+      "bytes": 4157,
       "utf8": true
     },
     {
