@@ -76,22 +76,22 @@ Kilitsiz restore ile yapılan tam referans koşusu (`dotnet test ALKAROS.slnx -c
 
 | Kod | Probe | Özet | Önem | Doğrulayıcı |
 | --- | --- | --- | --- | --- |
-| F-04 | P01 | Kart ödemesi çözülmemişken (Unknown) nakit tahsilat kabul ediliyor; EFT ve kart bu durumu reddediyor. Kart gerçekte çekildiyse müşteri iki kez ödemiş olur. | Yüksek | ⏳ |
-| F-05 | P02, P12 | Kısmi ödemeden sonra uygulanan indirim, ödenecek tutarı tahsil edilenin altına düşürebiliyor (80 alındı, 30 indirim → ödenecek 70, kalan −10). Fazla tahsilat hiçbir yerde kaydedilmiyor. | Yüksek | ⏳ |
-| F-06 | P09 | Kapanışı engelleyen çözülmemiş kart denemesi "kart çekilmedi" diye çözülünce hesap kapatılmıyor; kalan 0, durum `Open`, kapatacak bir uç nokta yok. | Yüksek | ⏳ |
-| F-07 | P03 | İptal edilmiş hesaba nakit tahsilat kabul ediliyor. Üretimde recall akışı hesabı iptal eder; ekranında eski hesap açık kalan kasiyer ödeme alabilir. | Orta | ⏳ |
-| F-08 | P04 | B terminalinde oturum açmış kasiyer, A terminalinin kasa oturumuna satış yazabiliyor (oturumun terminale ait olduğu kontrol edilmiyor). Aynı açık `/close` ve `/reconcile` için de geçerli (kodda okundu). | Orta | ⏳ |
-| F-09 | P05 | Kasiyer kendi kasa oturumunu mutabakatlayabiliyor; spec yalnız Supervisor/Accountant/Admin diyor. | Orta | ⏳ |
-| F-10 | P06 | Gün sonu kapanışı ciro ve sipariş sayısını istemcinin gönderdiği gövdeden olduğu gibi saklıyor; ödemelerden türetmiyor. İstemcilerde bu uç noktayı çağıran kod yok. | Orta | ⏳ |
-| F-11 | P14 | İndirimden sonra bölme tasarımı indirimsiz tutarı (100) gösteriyor, sunucu indirimli tutarı (90) uyguluyor; arayüzün zorunlu kıldığı toplamla kayıt 400 dönüyor. İndirimli hesapta tutar bazlı bölme arayüzden yapılamıyor. | Orta | ⏳ |
-| F-12 | P08 | EFT'de kullanılmış idempotency anahtarıyla gelen nakit tahsilat 200 "tekrar" olarak dönüyor ama kasaya satış kaydı yazılmıyor. Yalnız ağ hatası + yöntem değişimiyle tetiklenir. | Düşük | ⏳ |
+| F-04 | P01 | Kart ödemesi çözülmemişken (Unknown) nakit tahsilat kabul ediliyor; EFT ve kart bu durumu reddediyor. Kart gerçekte çekildiyse müşteri iki kez ödemiş olur. | Yüksek | KISMİ: Cash'in dışarıda bırakılması V1-RMD-258:142-147'de bilinçli; gerekçe ("nakit kendisi Unknown olmaz") başka bir ödemenin Unknown olmasını kapsamıyor. Arayüzde yalnız tarayıcı kilidi var (`split-payment.js:741-756`). |
+| F-05 | P02, P12 | Kısmi ödemeden sonra uygulanan indirim, ödenecek tutarı tahsil edilenin altına düşürebiliyor (80 alındı, 30 indirim → ödenecek 70, kalan −10). Fazla tahsilat hiçbir yerde kaydedilmiyor. | Yüksek | DOĞRULANDI; normal arayüzden erişilebilir. |
+| F-06 | P09 | Kapanışı engelleyen çözülmemiş kart denemesi "kart çekilmedi" diye çözülünce hesap kapatılmıyor; kalan 0, durum `Open`. Arayüzden kapatma yolu yok (aynı nakit anahtarıyla elle yeniden istek kapanışı tetikler). Yalnız F-04 üzerinden erişilir. | Orta | KISMİ: "hiç uç nokta yok" iddiası düzeltildi (`CashSession.cs:258` tekrar isteğinde de kapanışı dener). |
+| F-07 | P03 | İptal edilmiş hesaba nakit tahsilat kabul ediliyor. Üretimde recall akışı hesabı iptal eder; ekranında eski hesap açık kalan kasiyer ödeme alabilir. Para ölü hesapta kalır (`TryClose` → `NotClosable`), yeniden gönderilen hesap yeni ödeme ister. | Yüksek | DOĞRULANDI; önem Orta'dan Yüksek'e çıkarıldı. |
+| F-08 | P04 | B terminalinde oturum açmış kasiyer, A terminalinin kasa oturumuna satış yazabiliyor (oturumun terminale ait olduğu kontrol edilmiyor). Aynı açık `/close`, `/reconcile`, `/counts`, `/cash-movements` için de geçerli (kodda okundu). | Orta | DOĞRULANDI; içeriden (IDOR) risk, oturum kimliği yalnız kendi terminaline açık. |
+| F-09 | P05 | Kasiyer kendi kasa oturumunu mutabakatlayabiliyor; spec yalnız Supervisor/Accountant/Admin diyor. | Orta | KISMİ: V13-CSH-004:45-49 izni bilinçli eklemedi, CashSession'ın "kendi rol modeline" dayandı; o rol modeli kodda yok. |
+| F-10 | P06 | Gün sonu kapanışı ciro ve sipariş sayısını istemcinin gönderdiği gövdeden olduğu gibi saklıyor; ödemelerden türetmiyor. İstemcilerde bu uç noktayı çağıran kod yok. | Düşük–Orta | KISMİ: V1-RMD-249:57-61'de belgelenmiş sözleşme; yalnız `reports.close-day` (yönetici) çağırabilir. Para hareketi değil, rapor bütünlüğü açığı. |
+| F-11 | P14 | İndirimden sonra bölme tasarımı indirimsiz tutarı (100) gösteriyor, sunucu indirimli tutarı (90) uyguluyor; arayüzün zorunlu kıldığı toplamla kayıt 400 dönüyor. İndirimli hesapta tutar bazlı bölme arayüzden yapılamıyor. | Orta | DOĞRULANDI. |
+| F-12 | P08 | EFT'de kullanılmış idempotency anahtarıyla gelen nakit tahsilat 200 "tekrar" olarak dönüyor ama kasaya satış kaydı yazılmıyor. | Düşük | KISMİ: istemci yöntem/tutar değişince anahtarı sıfırlıyor (`split-payment.js:234,787,808`); yalnız elle hazırlanmış istekle erişilir. |
 
 Tekrarlama senaryoları (Semih'in elle deneyebileceği):
 
 - **F-04:** 100 TL hesap → "Banka kartı" ile öde (sonuç: mutabakat gerekiyor) → aynı hesap için kasa
   ekranından 100 TL nakit al → kabul edilir.
 - **F-05:** 100 TL hesap → 80 TL EFT → 30 TL sabit indirim uygula → özet ekranında kalan −10 görünür.
-- **F-06:** F-04 adımlarının ardından yönetici "kart çekilmedi" der → kalan 0 olduğu halde hesap açık kalır.
+- **F-06:** F-04 adımlarının ardından yönetici "kart çekilmedi" der → kalan 0 olduğu halde hesap açık kalır, masa/sipariş tamamlanmaz.
 - **F-11:** 100 TL hesaba %10 indirim → Bölme ekranında "Kişi tutarları" → toplam 100 (ekranın istediği) →
   Kaydet → sunucu reddeder.
 
@@ -99,7 +99,7 @@ Tekrarlama senaryoları (Semih'in elle deneyebileceği):
 
 | Kod | Özet | Önem |
 | --- | --- | --- |
-| F-13 | `AlwaysApproveCreditPolicy` (hiçbir cari borçlandırmayı reddetmez) ve `NoKnownBlockingReferencesGuard` (hiçbir KVKK anonimleştirmesini engellemez) üretim modül kataloğunda kayıtlı (`ModuleRegistry.cs:27,62`). AGENTS.md'nin placeholder/mock-success yasağına aykırı. Cari tahsilat bugün HTTP'den kapalı (`VersionNotEnabled`). | Orta |
+| F-13 | `AlwaysApproveCreditPolicy` (hiçbir cari borçlandırmayı reddetmez) ve `NoKnownBlockingReferencesGuard` (hiçbir KVKK anonimleştirmesini engellemez) üretim modül kataloğunda kayıtlı (`ModuleRegistry.cs:27,62`). AGENTS.md:52,60'taki placeholder/mock-success yasağına aykırı; buna karşın V14-ACC-003:51-52,64 ve V14-CST-002:49-52 bunları "dürüst yer tutucu" olarak onaylamış. Bugün hiçbir Host/istemci çağırmıyor; ilk anonimleştirme veya cariye yazma uç noktası açıldığında Yüksek olur. Guard'ın gerekçesi ("V14-ACC Planned") artık geçersiz: V14-ACC-001…003 Done. | Düşük (bugün) |
 | F-14 | Kasa açılışında `Opening` defter kaydı oturum kaydından ayrı, atomik olmayan bir yazma (`DualScreenApplication.CashSession.cs:76-86`); ikinci yazma düşerse beklenen kasa 0'dan başlar. | Düşük |
 | F-15 | Spec sapmaları: kapanış `Open` durumdan da yapılabiliyor (spec: Counting/Closing), sayım `Open` durumda da kaydedilebiliyor (spec: Counting) — `CashSessionPolicy.cs`. | Düşük |
 | F-16 | Recall akışında para kontrolü ile hesap iptali aynı transaction'da değil (`OrderManagementEndpoints.cs:398-405`): kontrol ile iptal arasına giren bir tahsilat iptal edilmiş hesaba bağlı kalır. Dar yarış penceresi. | Düşük |
@@ -136,7 +136,19 @@ Tekrarlama senaryoları (Semih'in elle deneyebileceği):
 
 ## 7. Bağımsız çürütme
 
-⏳
+Bağlamı bilmeyen ikinci bir ajana yalnız iddialar (gerekçe değil) verildi; her birini (a) belgelenmiş bilinçli
+karar, (b) üretimde erişilemeyen kurulum, (c) kodun yanlış okunması açısından çürütmesi istendi. Probe'ları
+`alk-sdk` konteynerinde kendisi yeniden koştu ve aynı sonucu aldı (10 başarısız, 5 geçen).
+
+- **Tamamen çürütülen iddia yok.**
+- DOĞRULANDI: F-05, F-07, F-08, F-11.
+- KISMİ: F-04, F-09 (bilinçli karar kaydı var ama gerekçesi tutmuyor), F-10, F-13 (belgelenmiş sözleşme),
+  F-06, F-12 (erişim yolu daraltıldı).
+- Doğrulayıcının düzelttiği iddialarım: F-06'daki "kapatacak hiç uç nokta yok" ifadesi yanlıştı; F-07'nin önemi
+  Orta değil Yüksek.
+- Harness gerçek `DualScreenApplication.Build` kullanıyor (`ProbeHarness.cs:58`); üretimden sapan yalnız iki
+  kısayol var: P03'ün SQL ile iptal etmesi (gerçek recall yoluyla aynı son durum) ve P06'nın servisi doğrudan
+  çağırması (HTTP uç noktası gövdeyi olduğu gibi iletiyor).
 
 ## 8. Kapsam matrisi
 
