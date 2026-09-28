@@ -1,7 +1,7 @@
 # V1-RMD-398 - Stok/reçete akışı hedefli derin denetimi (reçete → porsiyon rezervasyonu → satış tüketimi → iptal/iade → fire/sayım → üretim → satın alma → maliyet)
 
 - Task ID: V1-RMD-398
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: investigation
 - Surface state: Existing
