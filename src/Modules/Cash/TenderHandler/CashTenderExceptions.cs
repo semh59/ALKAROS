@@ -73,3 +73,18 @@ public sealed class CashTenderUnsettledPaymentExistsException : CashTenderExcept
 
     public Guid ExistingPaymentId { get; }
 }
+
+/// <summary>
+/// V1-RMD-415: the idempotency key already names a different command (another tender method, bill, amount or
+/// drawer session), so this cash tender is neither new nor a replay of it.
+/// </summary>
+public sealed class CashTenderIdempotencyKeyReusedException : CashTenderException
+{
+    public CashTenderIdempotencyKeyReusedException(string idempotencyKey)
+        : base($"Idempotency key '{idempotencyKey}' already belongs to a different tender.")
+    {
+        IdempotencyKey = idempotencyKey;
+    }
+
+    public string IdempotencyKey { get; }
+}

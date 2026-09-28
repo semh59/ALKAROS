@@ -1,0 +1,40 @@
+# HEAD e52191a3 + V1-RMD-415 working diff, PostgreSQL 18, Release
+## tests/Modules/Cash/TenderHandler/ALKAROS.Cash.TenderHandler.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncReplaysADuplicateSubmitInsteadOfCreatingASecondSetOfRecords [382 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.ACashKeyReusedForAnotherAmountIsRefusedNotReplayed [55 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncRejectsATenderOnAClosedSessionAndCreatesNothing [28 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncRejectsATenderBelowTheAmountDueAndCreatesNothing [19 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncLeavesNoPartialPaymentOrCashTransactionWhenTheAllocationStepFails [25 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.ACashTenderReusingAKeyAnotherTenderMethodUsedIsRefusedAndRecordsNothing [27 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.ConcurrentSubmitsOfTheSameCommandProduceExactlyOneRealSetOfRecords [45 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncAcceptsATenderThatIncludesATipEvenThoughItExceedsTheOriginalPayable [37 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncCreatesExactlyOnePaymentAllocationAndCashTransactionWithDeterministicChange [48 ms]
+Total tests: 9
+     Passed: 9
+## tests/Host/Experience/CashSession/ALKAROS.Host.Experience.CashSession.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.RetryingACashMovementWithTheSameIdempotencyKeyDoesNotDuplicateIt [4 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ReconcileNeedsASupervisorWhoIsNotTheSessionsOwnCashier [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderNeedsPaymentsTakeOnTopOfCashDrawer [2 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ACashTenderIsRefusedWhileACardAttemptOnTheSameBillIsUnresolved [2 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CloseComputesExpectedCashFromTheOpeningLedgerEntryWithNoVarianceForAMatchingCount [2 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderBelowTheAmountDueIsRejected [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.OpeningASecondSessionOnTheSameTerminalIsRejected [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.StartCountThenRecordCountSucceed [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashMovementsAdjustExpectedCashInBothDirectionsAndRejectOnAClosedSession [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ACashTenderOnACancelledBillIsRefusedAndRecordsNothing [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.WithoutACashierSessionEveryRouteIsUnauthorized [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderSucceedsAndPostsASaleLedgerEntry [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ClosingWithADifferenceOverTheToleranceRequiresSupervisorOverride [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ExpectedCashPreviewMatchesWhatCloseItselfLaterComputes [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderOnAClosedSessionIsRejected [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.GetActiveReturnsTheOpenSessionAndNotFoundOnceClosed [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.OpenSessionSucceedsAndPostsAnOpeningLedgerEntry [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ACashierOnAnotherTerminalCannotTouchThisTerminalsDrawerSession [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderClaimingMoreThanTheBillsRemainingPayableIsRejectedAndPersistsNothing [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ASessionWithoutCashDrawerIsForbiddenOnDrawerRoutes [3 s]
+Total tests: 20
+     Passed: 20

@@ -1,0 +1,6 @@
+# Production changes stashed (src/), tests kept; the exception type is restored as a bare stub so the tests compile
+[xUnit.net 00:00:01.52]     ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.ACashKeyReusedForAnotherAmountIsRefusedNotReplayed [FAIL]
+[xUnit.net 00:00:01.56]     ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.ACashTenderReusingAKeyAnotherTenderMethodUsedIsRefusedAndRecordsNothing [FAIL]
+   Expected a <ALKAROS.Cash.TenderHandler.CashTenderIdempotencyKeyReusedException> to be thrown, but no exception was thrown.
+   Expected a <ALKAROS.Cash.TenderHandler.CashTenderIdempotencyKeyReusedException> to be thrown, but no exception was thrown.
+Failed!  - Failed:     2, Passed:     0, Skipped:     0, Total:     2, Duration: 885 ms - ALKAROS.Cash.TenderHandler.Tests.dll (net8.0)

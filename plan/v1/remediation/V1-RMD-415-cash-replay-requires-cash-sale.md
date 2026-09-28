@@ -1,7 +1,7 @@
 # V1-RMD-415 - Nakit tahsilatta işlem kimliği tekrarının yalnız aynı nakit satışı için geçerli olması
 
 - Task ID: V1-RMD-415
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -49,7 +49,18 @@ nakit satış kaydının bu kasa oturumunda bulunduğunu doğrular; değilse Tü
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Cash.TenderHandler.Tests` 9/9 ve `ALKAROS.Host.Experience.CashSession.Tests` 20/20 (gerçek PostgreSQL 18,
+  Release, 0 uyarı / 0 hata; `evidence/V1-RMD-415/tests.log`). Aynı isteğin gerçek tekrarı ve eşzamanlı iki aynı
+  istek testleri değişmeden geçer.
+- Yeni testler: `ACashTenderReusingAKeyAnotherTenderMethodUsedIsRefusedAndRecordsNothing` (EFT'nin anahtarıyla nakit
+  → reddedilir, kasa defteri boş, ödeme sayısı değişmez) ve `ACashKeyReusedForAnotherAmountIsRefusedNotReplayed`
+  (aynı anahtar başka tutarla → reddedilir, tek satış kaydı). Üretim değişikliği geri alınınca ikisi de kırmızı
+  (istisna beklenirken "tekrar" dönüyordu; `evidence/V1-RMD-415/red-without-fix.log`).
+- V1-RMD-393 probe'u P08 düzeltilmiş kopyada geçer (`evidence/V1-RMD-415/money-flow-probes-after-fix.log`). Aynı
+  koşuda P06 (F-10) açık bulgudur; P07 ve P09 ön koşulları V1-RMD-409'dan beri erişilemez.
+- Semih'in elle deneyebileceği senaryo: yalnız elle hazırlanmış istekle erişilir (kasa ekranı yöntem ya da tutar
+  değişince yeni işlem kimliği üretir); böyle bir istek artık "İşlem kimliği başka bir tahsilat için zaten
+  kullanılmış." uyarısıyla reddedilir.
 
 ## Handoff
 

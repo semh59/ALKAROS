@@ -89,8 +89,9 @@ public sealed class CashTenderHandler : ICashTenderHandler
             request.IdempotencyKey, connection, dbTransaction, cancellationToken);
         if (existingAllocation is not null)
         {
+            var replay = await BuildReplayResultAsync(existingAllocation, request, cancellationToken);
             await dbTransaction.CommitAsync(cancellationToken);
-            return await BuildReplayResultAsync(existingAllocation, request.CashSessionId, cancellationToken);
+            return replay;
         }
 
         // V1-RMD-409 (V1-RMD-393 F-04): V1-RMD-258 left cash out of this guard because a cash payment itself is
@@ -163,19 +164,27 @@ public sealed class CashTenderHandler : ICashTenderHandler
     /// scanning the session's own ledger for the one tied to this
     /// allocation's Payment (only ever exercised on a genuine retry, never
     /// the hot path).
+    ///
+    /// V1-RMD-415 (V1-RMD-393 F-12): a key only replays the cash sale it named. A key another tender method
+    /// (EFT, card) already used, or one reused for another bill, amount or drawer session, has no cash Sale in
+    /// this session behind it; answering 200 there told the cashier to put money in a drawer whose ledger never
+    /// saw it, so the drawer came out over at close.
     /// </summary>
     private async Task<CashTenderResult> BuildReplayResultAsync(
-        PaymentAllocation allocation, Guid cashSessionId, CancellationToken cancellationToken)
+        PaymentAllocation allocation, CashTenderRequest request, CancellationToken cancellationToken)
     {
         var payment = await _paymentRepository.GetByIdAsync(allocation.PaymentId, cancellationToken)
             ?? throw new PaymentNotFoundException(allocation.PaymentId);
-        var ledger = await _ledgerRepository.GetBySessionIdAsync(cashSessionId, cancellationToken);
-        var cashTransaction = ledger.FirstOrDefault(entry => entry.RelatedPaymentId == payment.Id);
+        var ledger = await _ledgerRepository.GetBySessionIdAsync(request.CashSessionId, cancellationToken);
+        var cashTransaction = ledger.FirstOrDefault(entry =>
+            entry.RelatedPaymentId == payment.Id && entry.Type == CashTransactionType.Sale);
+        if (cashTransaction is null || allocation.BillId != request.BillId || allocation.Amount != request.AmountDue)
+            throw new CashTenderIdempotencyKeyReusedException(request.IdempotencyKey);
 
         return new CashTenderResult(
             payment.Id,
             allocation.Id,
-            cashTransaction?.Id ?? Guid.Empty,
+            cashTransaction.Id,
             payment.ApprovedAmount ?? 0m,
             payment.ChangeAmount,
             WasReplayed: true);
