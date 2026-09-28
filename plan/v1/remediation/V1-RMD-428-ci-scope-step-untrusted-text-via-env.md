@@ -1,7 +1,7 @@
 # V1-RMD-428 - CI kapsam adımında PR ve commit metinlerinin betiğe gömülmeden ortam değişkeniyle geçirilmesi
 
 - Task ID: V1-RMD-428
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -44,7 +44,14 @@ betik kaynağına hiçbir metin gömülmez. Davranış (hangi görev kimliklerin
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- Yeniden üretim (`evidence/V1-RMD-428/step-before-after.log`, PowerShell 7): PR #11'in gerçek başlığı ve açıklaması
+  eski adımın kaynağına GitHub'ın yaptığı gibi yapıştırılınca CI'daki hatanın aynısı çıkar ("Unexpected token
+  'kendi'"). Yeni adım aynı metni ortam değişkeninden okur ve açıklamadaki 35 görev kimliğinin tamamını çıkarır.
+  Çift tırnaklı bir commit mesajıyla push (V1-RMD-427 commit'i) ve metinsiz `workflow_dispatch` (girdiye düşme)
+  durumları da doğru sonuç verir.
+- İş akışında artık `run:` betiklerine gömülü `${{ ... }}` ifadesi yok; hepsi adımların `env:` bölümünde.
+- Semih'in elle deneyebileceği senaryo: yok; CI iç düzeltmesi. PR açıklamasında ya da commit mesajında çift tırnak
+  kullanmak artık kapsam denetimini bozmaz.
 
 ## Handoff
 

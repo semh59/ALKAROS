@@ -1,0 +1,19 @@
+# Before (HEAD workflow): PR #11 title and body pasted into the script source, as GitHub does
+ParserError: /tmp/old-step.ps1:42
+Line |
+  42 |  … dışı mutabakatta rol ve hesap sahibi sunucudan okunur; "kendi hesabı" …
+     |                                                            ~~~~~
+     | Unexpected token 'kendi' in expression or statement.
+exit=1
+
+# After (V1-RMD-428): the same title and body passed through env
+exit=0
+task-ids=V1-RMD-393,V1-RMD-398,V1-RMD-399,V1-RMD-394,V1-RMD-395,V1-RMD-396,V14-RMD-001,V1-RMD-400,V1-RMD-401,V1-RMD-402,V1-RMD-403,V1-RMD-404,V1-RMD-405,V1-RMD-406,V1-RMD-407,V1-RMD-408,V1-RMD-411,V1-RMD-426,V1-RMD-427,V1-RMD-409,V1-RMD-410,V1-RMD-412,V1-RMD-413,V1-RMD-414,V1-RMD-415,V1-RMD-416,V1-RMD-417,V1-RMD-421,V1-RMD-425,V1-RMD-418,V1-RMD-419,V1-RMD-420,V1-RMD-422,V1-RMD-423,V1-RMD-424
+
+# After: a push whose commit message holds double quotes (the V1-RMD-427 commit)
+exit=0
+task-ids=V1-RMD-427
+
+# After: workflow_dispatch with no text, falls back to the task-id input
+exit=0
+task-ids=V1-RMD-393,V1-RMD-428
