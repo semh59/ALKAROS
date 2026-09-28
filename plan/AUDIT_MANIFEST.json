@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1485,
-  "markdown_line_count": 113185,
-  "markdown_byte_count": 6525058,
+  "markdown_file_count": 1490,
+  "markdown_line_count": 113396,
+  "markdown_byte_count": 6534836,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "AD547AD8B83A88EBF6A175069974A291F5621F8DC97003C96E552E3E1D5F8D37",
-      "lines": 2761,
-      "bytes": 405318,
+      "sha256": "DED575331232197A0ABB77F61BF3F5822F8699C484F4C0969DBE61DDD97DA2C3",
+      "lines": 2766,
+      "bytes": 406150,
       "utf8": true
     },
     {
@@ -8257,6 +8257,41 @@
       "sha256": "49F939169C94D5661E41B2F4DAB2B9B91A4D00430A04ABB1E4E71180CED5597A",
       "lines": 58,
       "bytes": 2747,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-429-api-route-authorization-architecture-test.md",
+      "sha256": "D197307C3F80851B8B864BC5FC71EFB39C91CDA872AAC593E8A635E23BF9DB45",
+      "lines": 44,
+      "bytes": 2229,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-430-mutating-endpoint-idempotency-test.md",
+      "sha256": "3278E5BA572CD0119CC2469A19C8366A54820276364D2C9F78BAA4414C468803",
+      "lines": 40,
+      "bytes": 1749,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-431-shared-api-error-handler.md",
+      "sha256": "E55A78EA4C6BE1D5041CF583F6E544C8EB466865BF50542729B5949CB774BE2D",
+      "lines": 42,
+      "bytes": 1744,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-432-posterminal-lint-accessibility.md",
+      "sha256": "C81C373584FFFC732C068AF8524DEC832703948AF1C83B7038A2029B0A19BDAE",
+      "lines": 41,
+      "bytes": 1566,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-433-evidence-file-rule-alignment.md",
+      "sha256": "28C26795CCFA05FC85FEC3CFE8DC19851ACA7622D1FB8E6C42F2B8F7B83298B5",
+      "lines": 39,
+      "bytes": 1658,
       "utf8": true
     },
     {
