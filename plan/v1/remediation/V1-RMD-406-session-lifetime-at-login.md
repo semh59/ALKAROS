@@ -1,7 +1,7 @@
 # V1-RMD-406 - 8 saatlik oturum kararını giriş ve PIN ile kilit açmada uygulamak
 
 - Task ID: V1-RMD-406
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -42,7 +42,12 @@ ve yönetim cihaz oturumlarını, PIN ile kilit açma (`/api/v1/auth/unlock`) da
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- `ALKAROS.Host.Tests` DualScreen sınıfları (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata): 78/78
+  (`evidence/V1-RMD-406/tests.log`).
+- Yeni test `LoginIssuesStaffSessionsThatLiveEightHours`: gerçek girişte kasiyer ve yönetim çerezlerinin ikisi de
+  7,9–8,05 saat içinde sona erer. Üretim değişikliği geri alınınca kırmızı: ölçülen 12,0004 saat (aynı dosya).
+- Semih'in elle deneyebileceği senaryo: bir garson oturum açar; 8 saat sonra bir sonraki işlemde oturum düşer ve
+  giriş ekranı gelir (önceden 12 saat sürüyordu). PIN ile kilit açmak oturumu yeniden 8 saatlik ömürle yeniler.
 
 ## Handoff
 

@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Collections.Concurrent;
@@ -623,6 +624,40 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
             HttpMethod.Get, $"/api/v1/auth/session?terminalId={terminalId:D}", "198.51.100.43", cashierCookie);
         using var sessionResponse = await client.SendAsync(session);
         Assert.Equal(HttpStatusCode.Unauthorized, sessionResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task LoginIssuesStaffSessionsThatLiveEightHours()
+    {
+        // V1-RMD-406 (V1-RMD-399 H-01): V1-IAM-031 decided 8 h; login hard-coded 12 h for both staff cookies.
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await SeedUserRoleWithPermissionsAsync(userId, "Şef Garson", "reports.view");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent(new { terminalId, username = "cashier", password = Password }),
+        };
+        AddTrustedForwarding(login, "198.51.100.44");
+        var before = DateTimeOffset.UtcNow;
+        using var loginResponse = await client.SendAsync(login);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+
+        var staffCookies = loginResponse.Headers.GetValues("Set-Cookie")
+            .Where(value => value.StartsWith(DualScreenApplication.CashierCookieName + "=", StringComparison.Ordinal)
+                || value.StartsWith("alkaros.manager=", StringComparison.Ordinal))
+            .ToList();
+        Assert.Equal(2, staffCookies.Count);
+        foreach (var cookie in staffCookies)
+        {
+            var expires = cookie.Split(';').Select(part => part.Trim())
+                .Single(part => part.StartsWith("expires=", StringComparison.OrdinalIgnoreCase))["expires=".Length..];
+            var lifetime = DateTimeOffset.Parse(expires, CultureInfo.InvariantCulture) - before;
+            Assert.InRange(lifetime.TotalHours, 7.9, 8.05);
+        }
     }
 
     [Fact]

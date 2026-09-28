@@ -69,10 +69,12 @@ public static partial class DualScreenApplication
             if (result is not LoginSuccess success)
                 return Error(context, StatusCodes.Status401Unauthorized, "INVALID_CREDENTIALS", "Kullanıcı adı veya parola hatalı.");
 
+            // V1-RMD-406 (V1-RMD-399 H-01): every staff session lives SessionTokenIssuer.DefaultLifetime (8 h,
+            // V1-IAM-031); the literal 12 h here used to override that decision.
             var deviceId = $"cashier:{request.TerminalId:D}";
             await sessions.RevokeDeviceAsync(success.UserId, deviceId, cancellationToken);
             var (session, rawToken) = await sessions.CreateSessionAsync(
-                success.UserId, deviceId, TimeSpan.FromHours(12), cancellationToken);
+                success.UserId, deviceId, SessionTokenIssuer.DefaultLifetime, cancellationToken);
             await store.EnsureTerminalAsync(request.TerminalId, cancellationToken);
             AppendCookie(context, CashierCookieName, rawToken, session.ExpiresAt);
             var capabilities = await roles.GetPermissionCodesForUserAsync(success.UserId, cancellationToken);
@@ -89,7 +91,7 @@ public static partial class DualScreenApplication
             if (managementDevice is not null)
             {
                 var (managerSession, managerToken) = await sessions.CreateSessionAsync(
-                    success.UserId, managementDevice, TimeSpan.FromHours(12), cancellationToken);
+                    success.UserId, managementDevice, SessionTokenIssuer.DefaultLifetime, cancellationToken);
                 AppendCookie(context, CatalogManagementEndpoints.ManagerCookieName, managerToken, managerSession.ExpiresAt);
             }
             else
@@ -195,11 +197,11 @@ public static partial class DualScreenApplication
             if (result is UnlockSuccess)
             {
                 // V1-RMD-277: a correct PIN re-establishes who is holding the device, so the
-                // session token is replaced (same terminal, same 12 h life). A token that leaked
+                // session token is replaced (same terminal, a fresh staff-session life). A token that leaked
                 // while the screen was locked or the tablet was unattended stops working here.
                 var (session, rawToken) = await rotation.RotateAsync(
                     principal.UserId, $"cashier:{terminalId:D}", context.Request.Cookies[CashierCookieName]!,
-                    TimeSpan.FromHours(12), cancellationToken);
+                    SessionTokenIssuer.DefaultLifetime, cancellationToken);
                 AppendCookie(context, CashierCookieName, rawToken, session.ExpiresAt);
             }
 
