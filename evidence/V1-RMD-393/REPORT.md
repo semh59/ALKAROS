@@ -116,7 +116,24 @@ Tekrarlama senaryoları (Semih'in elle deneyebileceği):
 
 ## 5. Mutasyon denetimi
 
-⏳
+Her mutasyon ayrı, atılabilir bir klonda bir korumayı bozdu; o korumanın sahibi olan modül testleri ve aynı
+akışın Host HTTP testleri koşuldu (`mutation/run-mutations.sh`, çıktı `mutation/results.log`).
+
+| Kod | Bozulan koruma | Sonuç |
+| --- | --- | --- |
+| M01 | EFT: çözülmemiş ödeme kilidi | Yakalandı (Host PaymentTender) |
+| M02 | Nakit: idempotency anahtarı kilidi | Yakalandı (Cash.TenderHandler) |
+| M03 | Kapanış: onaysız ödemelerin dağıtımını saymak | Yakalandı (Billing.PaymentClosure) |
+| M04 | Beklenen kasa: sayım düzeltme/kapanış farkını da saymak | **Hayatta kaldı** — ama `CountAdjustment`/`ClosingDifference` üretimde hiçbir kod tarafından yazılmıyor; bugün gözlemlenemeyen yol. |
+| M05 | Dağıtım tavanı (V0-DOM-004) | Yakalandı (Allocations.Persistence) |
+| M06 | Düzeltilmiş ödenecek tutarda bahşişi yok saymak | Yakalandı (Billing.Adjustments, Host Billing) |
+| M07 | Kapanış: Pending/Unknown engelleyicilerini yok saymak | **Hayatta kaldı — gerçek test boşluğu.** "Tam karşılanmış ama çözülmemiş kart ödemesi olan hesap açık kalır" hiçbir testte yok; F-04'te nakit tam bu korumanın arkasından geçiyor. |
+| M08 | Nakit: para üstünü sıfırlamak | Yakalandı (Cash.TenderHandler, Host CashSession) |
+| M09 | Kart: çözülmemiş denemenin üstüne yeni deneme | Yakalandı (Host PaymentTender) |
+| M10 | Elle kart onayında dört göz ilkesi | Yakalandı (Host PaymentTender) |
+
+Özet: 10 mutasyonun 8'i yakalandı. Mevcut korumaların testleri genel olarak güçlü; boşluklar korumaların
+**olmadığı** yerlerde (F-04…F-11) ve kardinalitede (§6).
 
 ## 6. Kör kalibrasyon
 
@@ -160,12 +177,12 @@ Hücre değerleri: `Pnn` geçen probe (sağlam) · `F-nn` bulgu · `Mnn` mutasyo
 | İndirim | P10 | K (V1-RMD-112 anahtar kontrolü) | F-05 (P12) | P15 | F-05 | — | K |
 | Bahşiş | P10 | K | — | P15 | K | — | K |
 | Bölme tasarımı | — | — | — | — | F-11 | — | — |
-| Nakit tahsilat | P10 | P11, F-12 | P11 | P15 | F-04, F-07 | F-08 | ⏳ M02 |
-| EFT tahsilat | P10 | K | — | P15 | ⏳ M01 | — | — |
-| Kart + elle onay | P16 | K | — | — | P07 | ⏳ M10 | P07 |
-| Dağıtım tavanı | P10 | — | K (danışma kilidi) | P15 | F-05 | — | ⏳ M05 |
-| Hesap kapanışı | P10 | — | K (3 deneme) | P15 | F-06 | — | ⏳ M07 |
-| Kasa oturumu | P10 | — | — | — | F-15 (K) | F-08, F-09 | F-14 (K) |
+| Nakit tahsilat | P10 | P11, F-12 | P11 | P15 | F-04, F-07 | F-08 | M02, M08 |
+| EFT tahsilat | P10 | K | — | P15 | M01 | — | — |
+| Kart + elle onay | P16 | K | — | — | P07, M09 | M10 | P07 |
+| Dağıtım tavanı | P10 | — | K (danışma kilidi) | P15 | F-05 | — | M05 |
+| Hesap kapanışı | P10 | — | K (3 deneme) | P15 | F-06, M03, M07 (test yok) | — | — |
+| Kasa oturumu | P10 | — | — | — | F-15 (K) | F-08, F-09 | F-14 (K), M04 (erişilemez) |
 | Gün sonu | — | — | — | — | — | — | F-10 |
 | Mutabakat raporu | P16 | — | — | — | — | — | — |
 
@@ -185,7 +202,7 @@ Her biri ayrı bir görev olarak açılmalı; öncelik sırasıyla:
 
 1. F-01/F-02: CI'ı yeniden çalışır hale getirmek (Actions limit/fatura durumu + lock dosyalarını yeniden üretmek) —
    diğer tüm düzeltmelerin ön koşulu.
-2. F-03: üç kırmızı paketi düzeltmek.
+2. F-03: üç kırmızı paketi düzeltmek; M07 ve kardinalite (P15) için kalıcı testler eklemek.
 3. F-04: nakit tahsilatta çözülmemiş-ödeme kilidi (EFT ile aynı `bill-settlement` kilidi + kontrol).
 4. F-05: indirimde "yeni ödenecek ≥ dağıtılmış" kontrolü, tahsilatla aynı kilit altında.
 5. F-06: "kart çekilmedi" çözümünden sonra kapanışı yeniden denemek.
