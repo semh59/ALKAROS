@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1458,
-  "markdown_line_count": 111406,
-  "markdown_byte_count": 6429315,
+  "markdown_file_count": 1459,
+  "markdown_line_count": 111469,
+  "markdown_byte_count": 6432765,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2640,9 +2640,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "A5E822D3C3E299346A163B53E79AA066D96E92FCE54541C23D119D11A5294B9F",
-      "lines": 2734,
-      "bytes": 400820,
+      "sha256": "9156BBA6A899D2C990D3CAF582D1B477739D55CF7BE37370928AA259609CCD89",
+      "lines": 2735,
+      "bytes": 400984,
       "utf8": true
     },
     {
@@ -8068,6 +8068,13 @@
       "sha256": "9B44ED62B970BCFE25E3C3A76664D4DC55ECE7FBED59FF6EB003775B1D5A2894",
       "lines": 67,
       "bytes": 3626,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-403-supervisor-management-session.md",
+      "sha256": "F8A31117F8FE35DE6876B9C2FE06D0EC0AD80EBC8370B934419C725A56841D1A",
+      "lines": 62,
+      "bytes": 3286,
       "utf8": true
     },
     {
