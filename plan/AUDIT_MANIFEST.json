@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1436,
-  "markdown_line_count": 109865,
-  "markdown_byte_count": 6319399,
+  "markdown_line_count": 109917,
+  "markdown_byte_count": 6324295,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -113,9 +113,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "3B35929373E23FB1E2569BEC7249D87CF7323A9589366C487AAE6FB8EE87B463",
+      "sha256": "458B33D756EE4AAAF0C9082DCA0690D2AF941F8781611A3F9ECB50317892A5EF",
       "lines": 218,
-      "bytes": 17138,
+      "bytes": 17272,
       "utf8": true
     },
     {
@@ -2556,7 +2556,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "1CC9DD7D23E115C2318036E3026155A7E528AB78302292A93CDD3FA0477E31F6",
+      "sha256": "1D06DC906D082E361D99E4C49F1F6AC2633A31D2F43414B808931B5FA19B5CCA",
       "lines": 2712,
       "bytes": 397531,
       "utf8": true
@@ -9647,9 +9647,9 @@
     },
     {
       "path": "plan/v1.4/customer-data/V14-CST-002-customer-anonymization-state.md",
-      "sha256": "B5AC7777DBD688D6465C10D9957F273B2FAAD474375B289F5BCDABCDCC74ECF9",
-      "lines": 56,
-      "bytes": 1441,
+      "sha256": "15DAAB7C3662E7689A72359D9E7F4936B93250B059343B43379454BF39716655",
+      "lines": 108,
+      "bytes": 6203,
       "utf8": true
     },
     {
