@@ -42,11 +42,11 @@ mutate N05 src/Modules/Production/StockEffects/ProductionStockEffectService.cs \
   "Production: ignore the ingredient loss percentage" \
   "tests/Modules/Production/StockEffects tests/Host/Experience/Production"
 mutate N06 src/Modules/Production/StockEffects/ProductionStockEffectService.cs \
-  's/if \(string\.Equals\(status, "Completed", StringComparison\.OrdinalIgnoreCase\)\)/if (false)/' \
+  's/if \(string\.Equals\(status, "Completed", StringComparison\.OrdinalIgnoreCase\)\)/if (status.Length < 0)/' \
   "Production: re-execute a Completed batch (double consumption)" \
   "tests/Modules/Production/StockEffects tests/Host/Experience/Production"
 mutate N07 src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs \
-  's/if \(item\.Status == OrderItemState\.Cancelled\)\n                continue;/if (false)\n                continue;/' \
+  's/if \(item\.Status == OrderItemState\.Cancelled\)\n                continue;/if (item.Id == Guid.Empty)\n                continue;/' \
   "Sale consumption: consume stock for a line voided before acceptance" \
   "tests/Host/Experience/Orders/Confirmation tests/Host/Experience/Orders/VoidSent"
 mutate N08 src/Modules/Recipes/CostSnapshots/IStockCostResolver.cs \

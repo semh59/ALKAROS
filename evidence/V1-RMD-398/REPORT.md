@@ -55,7 +55,23 @@
 
 ## 4. Mutasyon denetimi
 
-⏳
+Her mutasyon atılabilir bir klonda bir korumayı bozdu; korumanın sahibi olan modül testleri ve aynı akışın Host
+testleri koşuldu (`mutation/run-mutations.sh`, çıktı `mutation/results.log`).
+
+| Kod | Bozulan koruma | Sonuç |
+| --- | --- | --- |
+| N01 | Satış: kullanılabilir miktar kontrolünü yok say (fazla satış) | Yakalandı (CrossChannelReservation) |
+| N02 | Bakiye: on-hand negatife düşebilsin (SQL koruması) | **Hayatta kaldı — test boşluğu** |
+| N03 | Void: Held kursun stoğunu geri verme (V1-RMD-318) | Yakalandı (Host VoidSent) |
+| N04 | Fire: idempotent tekrarı kaldır | Yakalandı (WasteRecording) |
+| N05 | Üretim: fire yüzdesini yok say | Yakalandı (Production.StockEffects) |
+| N06 | Üretim: tamamlanmış partiyi yeniden çalıştır | Yakalandı (Production.StockEffects)¹ |
+| N07 | Satış: kabulden önce iptal edilen satırdan da stok düş | Yakalandı (Host Orders.Confirmation)¹ |
+| N08 | Maliyet: maliyet tarihindeki teslimleri dışla (kalibrasyon yamasının kendisi) | **Hayatta kaldı — mevcut test paketi kalibrasyon hatasını yakalamıyor** |
+
+¹ İlk koşuda `if (false)` CS0162 (uyarı=hata) ile derlenmedi; sabit olmayan her zaman-yanlış koşulla yeniden koşuldu.
+
+Özet: 8 mutasyonun 6'sı yakalandı. Boşluklar: negatif bakiye SQL koruması (N02) ve maliyet tarihi sınırı (N08).
 
 ## 5. Kör kalibrasyon
 
