@@ -57,6 +57,6 @@ gerçek test + mutation-check + görev dosyası + dört gate + commit/push.
 | 12 | PosTerminal — system-health | Tamamlandı | 0 | 0 | 2026-09-27 | V1-RMD-387; gerçek bulgu yok (aciliyeti düşük admin panosu) |
 | 13 | PosTerminal — Ayarlar ekranları (Relay/Qnb/Token/Security/BusinessIdentity/Reservation/Screensaver) | Tamamlandı | 1 | 1 | 2026-09-28 | V1-RMD-388; oturum sonlandırıldığında sessiz kalıyordu (T7) |
 | 14 | PosTerminal — NfcOrder + CustomerDisplay | Tamamlandı | 1 | 1 | 2026-09-28 | V1-RMD-389; sepet kalıcı değildi (P2) |
-| 15 | CustomerWeb — Menu | Bekliyor | - | - | - | - |
+| 15 | CustomerWeb — Menu | Tamamlandı | 0 | 0 | 2026-09-28 | V1-RMD-390; gerçek bulgu yok (modifikatör boşluğu V1-RMD-380 ile aynı kök neden) |
 | 16 | CustomerWeb — OrderEntry | Bekliyor | - | - | - | - |
 | 17 | CustomerWeb — Bill | Bekliyor | - | - | - | - |
