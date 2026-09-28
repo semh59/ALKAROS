@@ -65,6 +65,31 @@ public static class AuthorizationDecisionEndpoints
             AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
             Results.Ok(await store.ListActiveDelegationsAsync(cancellationToken)));
 
+        // V1-RMD-407 (V1-RMD-399 H-04): nothing could create a delegation, so the time-boxed hand-off
+        // (model §1, V1-IAM-021) only ever existed on rows inserted by hand.
+        group.MapPost("/delegations", async (
+            CreateDelegationRequestV1 request,
+            HttpContext http,
+            AuthorizationDecisionStore store,
+            IAuthorizationService authorization,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = ActorId(http);
+            if (!AuthorizationDecisionStore.IsDelegable(request.PermissionCode))
+                throw new ArgumentException("Only bills.void, bills.comp and bills.discount can be delegated.", nameof(request));
+            try
+            {
+                await authorization.AuthorizeAsync(actorId, request.PermissionCode!, cancellationToken);
+            }
+            catch (AuthorizationDeniedException)
+            {
+                throw new DelegatorLacksPermissionException(request.PermissionCode!);
+            }
+
+            var created = await store.CreateDelegationAsync(request, actorId, cancellationToken);
+            return Results.Created($"{GroupPrefix}/delegations/{created.DelegationId:D}", created);
+        });
+
         group.MapPost("/delegations/{delegationId:guid}/revoke", async (
             Guid delegationId, HttpContext http, AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
         {
@@ -160,6 +185,14 @@ public sealed class AuthorizationDecisionEndpointFilter : IEndpointFilter
         {
             return MapError(http, exception);
         }
+        catch (DelegatorLacksPermissionException exception)
+        {
+            return MapError(http, exception);
+        }
+        catch (DelegationGranteeNotFoundException exception)
+        {
+            return MapError(http, exception);
+        }
         catch (BadHttpRequestException exception)
         {
             return MapError(http, exception);
@@ -190,6 +223,10 @@ public sealed class AuthorizationDecisionEndpointFilter : IEndpointFilter
                 (StatusCodes.Status409Conflict, "ALREADY_CLEARED", "This tightening is already cleared."),
             BehaviouralTighteningSelfClearException =>
                 (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "You cannot clear your own tightening."),
+            DelegatorLacksPermissionException =>
+                (StatusCodes.Status403Forbidden, "DELEGATOR_LACKS_PERMISSION", "Sahip olmadığınız bir yetkiyi devredemezsiniz."),
+            DelegationGranteeNotFoundException =>
+                (StatusCodes.Status404NotFound, "GRANTEE_NOT_FOUND", "Yetki devredilecek kullanıcı bulunamadı."),
             BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The request is invalid."),
             ArgumentException =>

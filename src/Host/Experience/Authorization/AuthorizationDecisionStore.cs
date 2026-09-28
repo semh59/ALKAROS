@@ -1,4 +1,5 @@
 using ALKAROS.Identity.Authorization.Behavioural;
+using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization.Delegations;
 using ALKAROS.Identity.Authorization.Grants;
 
@@ -89,6 +90,56 @@ public sealed class AuthorizationDecisionStore
                 delegation.GrantedAt,
                 delegation.ExpiresAt))
             .ToArray();
+    }
+
+    /// <summary>
+    /// V1-RMD-407 (V1-RMD-399 H-04): only grant-class permissions (model §3) are delegable, and a delegation is
+    /// time-boxed to one shift at most. The delegator's own right to the permission is checked by the endpoint.
+    /// </summary>
+    public static readonly TimeSpan MaximumDelegationLifetime = TimeSpan.FromHours(24);
+
+    private static readonly HashSet<string> DelegablePermissions = new(StringComparer.Ordinal)
+    {
+        ApplicationPermissions.BillsVoid,
+        ApplicationPermissions.BillsComp,
+        ApplicationPermissions.BillsDiscount,
+    };
+
+    public static bool IsDelegable(string? permissionCode)
+        => permissionCode is not null && DelegablePermissions.Contains(permissionCode);
+
+    public async Task<ActiveDelegationV1> CreateDelegationAsync(
+        CreateDelegationRequestV1 request, Guid delegatorUserId, CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        var now = _nowUtc();
+        if (!IsDelegable(request.PermissionCode))
+            throw new ArgumentException("Only bills.void, bills.comp and bills.discount can be delegated.", nameof(request));
+        if (request.ExpiresAt > now + MaximumDelegationLifetime)
+            throw new ArgumentException("A delegation may last at most 24 hours.", nameof(request));
+
+        var delegationRequest = new DelegationRequest(
+            request.PermissionCode!, request.GranteeUserId, delegatorUserId, request.LimitAmount, request.ExpiresAt);
+        delegationRequest.Validate(now);
+
+        AuthorizationDelegation delegation;
+        try
+        {
+            delegation = await _delegations.CreateAsync(delegationRequest, now, cancellationToken);
+        }
+        catch (Npgsql.PostgresException exception) when (exception.SqlState == Npgsql.PostgresErrorCodes.ForeignKeyViolation)
+        {
+            throw new DelegationGranteeNotFoundException(request.GranteeUserId);
+        }
+
+        return new ActiveDelegationV1(
+            delegation.DelegationId,
+            delegation.PermissionCode,
+            delegation.GranteeUserId,
+            delegation.DelegatorUserId,
+            delegation.LimitAmount,
+            delegation.GrantedAt,
+            delegation.ExpiresAt);
     }
 
     public Task<bool> RevokeDelegationAsync(Guid delegationId, Guid actorUserId, CancellationToken cancellationToken)

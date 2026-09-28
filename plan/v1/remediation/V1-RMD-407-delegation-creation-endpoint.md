@@ -1,7 +1,7 @@
 # V1-RMD-407 - Yöneticinin süreli yetki devri (delegasyon) oluşturabileceği uç
 
 - Task ID: V1-RMD-407
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -52,7 +52,19 @@ negatif olamaz; alıcı var olan bir kullanıcı olmalıdır.
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- `ALKAROS.Host.Experience.Authorization.Tests` (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata): 9/9
+  (`evidence/V1-RMD-407/tests.log`).
+- Yeni testler: `AManagerDelegatesAGrantClassPermissionTheyHoldAndItIsListed` (201, devreden = oturumdaki yönetici,
+  listede görünür) ve `ADelegationIsRefusedWhenItBreaksAnyOfItsBounds` (tutulmayan izin 403
+  `DELEGATOR_LACKS_PERMISSION`; grant sınıfı olmayan izin, kendine devir, 24 saati aşan süre ve negatif tutar 400;
+  bilinmeyen alıcı 404 `GRANTEE_NOT_FOUND`; hiçbir hatalı istek satır bırakmaz).
+- Oluşan delegasyonun grant isteğini gerçekten çözdüğü mevcut `AnActiveDelegationResolvesTheGrantAndAppliesDirectly`
+  (V1-BIL-005) testiyle zaten sınanıyor; bu görev yalnız oluşturma yolunu ekler.
+- V1-RMD-399 probe'larının V1-RMD-400..407 sonrası koşusu (`evidence/V1-RMD-407/audit-probes-after-all-fixes.log` ve
+  `.md`): 25'ten 24'ü geçti, `C4DelegationCanBeCreatedThroughSomeRoute` dahil; kalan tek kırmızı sahte rolün artık
+  bütün istek 403 ile reddedilmesidir (probe'un beklediğinden katı; açıklaması aynı dosyada).
+- Semih'in elle deneyebileceği senaryo: yönetici bir garsona "22:00'ye kadar ₺200'e kadar ikram" yetkisi verir; garsonun
+  bu sınırdaki ikram isteği yöneticiye düşmeden onaylanır; süre bitince ya da yönetici iptal edince yeniden onaya gider.
 
 ## Handoff
 

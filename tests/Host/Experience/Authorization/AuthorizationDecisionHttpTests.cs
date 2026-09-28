@@ -135,6 +135,58 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
         Assert.Equal("ALREADY_CLEARED", error!.Error.Code);
     }
 
+    [Fact]
+    public async Task AManagerDelegatesAGrantClassPermissionTheyHoldAndItIsListed()
+    {
+        // V1-RMD-407 (V1-RMD-399 H-04): the time-boxed hand-off of model §1 can finally be created.
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var (managerId, _) = _database.LastSeededManager;
+        await _database.GrantToUserRoleAsync(managerId, "bills.comp");
+        var granteeId = await _database.SeedGranteeAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AuthorizationDecisionEndpoints.GroupPrefix + "/delegations", manager,
+            new CreateDelegationRequestV1(granteeId, "bills.comp", 200m, DateTimeOffset.UtcNow.AddHours(4))));
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var created = await response.Content.ReadFromJsonAsync<ActiveDelegationV1>();
+        Assert.Equal(managerId, created!.DelegatorUserId);
+        Assert.Equal(granteeId, created.GranteeUserId);
+        var delegations = await GetAsync<List<ActiveDelegationV1>>(
+            client, AuthorizationDecisionEndpoints.GroupPrefix + "/delegations", manager);
+        Assert.Contains(delegations, delegation => delegation.DelegationId == created.DelegationId);
+    }
+
+    [Fact]
+    public async Task ADelegationIsRefusedWhenItBreaksAnyOfItsBounds()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var (managerId, _) = _database.LastSeededManager;
+        await _database.GrantToUserRoleAsync(managerId, "bills.comp");
+        var granteeId = await _database.SeedGranteeAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = AuthorizationDecisionEndpoints.GroupPrefix + "/delegations";
+        var soon = DateTimeOffset.UtcNow.AddHours(2);
+
+        async Task<(HttpStatusCode Status, string? Code)> TryAsync(CreateDelegationRequestV1 body)
+        {
+            using var response = await client.SendAsync(JsonRequest(path, manager, body));
+            var error = response.IsSuccessStatusCode ? null : await response.Content.ReadFromJsonAsync<AuthorizationDecisionErrorEnvelopeV1>();
+            return (response.StatusCode, error?.Error.Code);
+        }
+
+        Assert.Equal((HttpStatusCode.Forbidden, "DELEGATOR_LACKS_PERMISSION"), await TryAsync(new(granteeId, "bills.void", 50m, soon)));
+        Assert.Equal((HttpStatusCode.BadRequest, "VALIDATION_FAILED"), await TryAsync(new(granteeId, "catalog.manage", 0m, soon)));
+        Assert.Equal((HttpStatusCode.BadRequest, "VALIDATION_FAILED"), await TryAsync(new(managerId, "bills.comp", 50m, soon)));
+        Assert.Equal((HttpStatusCode.BadRequest, "VALIDATION_FAILED"), await TryAsync(new(granteeId, "bills.comp", 50m, DateTimeOffset.UtcNow.AddHours(30))));
+        Assert.Equal((HttpStatusCode.BadRequest, "VALIDATION_FAILED"), await TryAsync(new(granteeId, "bills.comp", -1m, soon)));
+        Assert.Equal((HttpStatusCode.NotFound, "GRANTEE_NOT_FOUND"), await TryAsync(new(Guid.NewGuid(), "bills.comp", 50m, soon)));
+        Assert.Empty(await GetAsync<List<ActiveDelegationV1>>(client, path, manager));
+    }
+
     /// <summary>
     /// V1-RMD-316 (independent 2026-09-26 audit, finding K9): a user holding both the requester role and
     /// the manager decision permission (explicitly possible in a small establishment, per V1-IAM-020's own
@@ -226,6 +278,13 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(request);
         Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
         return (await response.Content.ReadFromJsonAsync<T>())!;
+    }
+
+    private static HttpRequestMessage JsonRequest<T>(string path, string cookie, T body)
+    {
+        var request = Request(HttpMethod.Post, path, cookie);
+        request.Content = JsonContent.Create(body);
+        return request;
     }
 
     private static HttpClient CreateClient(WebApplication app)
@@ -442,6 +501,22 @@ internal sealed class AuthorizationDecisionTestDatabase
     // nothing backing it. A minimal identity.users row (no session, no
     // role - the decision endpoints under test here never look at either)
     // is all any of the three actually need.
+    /// <summary>V1-RMD-407: a plain user who can receive a delegation.</summary>
+    public Task<Guid> SeedGranteeAsync() => SeedBareUserAsync();
+
+    /// <summary>V1-RMD-407: adds <paramref name="permissionCode"/> to the roles <paramref name="userId"/> already holds.</summary>
+    public Task GrantToUserRoleAsync(Guid userId, string permissionCode)
+        => ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
+            SELECT gen_random_uuid(), ur.role_id, p.permission_id
+            FROM identity.user_roles ur, identity.permissions p
+            WHERE ur.user_id = @user_id AND p.code = @code;
+            """,
+            ("user_id", userId),
+            ("code", permissionCode));
+
     private async Task<Guid> SeedBareUserAsync()
     {
         var userId = Guid.NewGuid();
