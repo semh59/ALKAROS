@@ -2,6 +2,7 @@ using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Measurements;
 using ALKAROS.Production.BatchLifecycle;
 using ALKAROS.Production.StockEffects;
 using Microsoft.AspNetCore.Builder;
@@ -51,6 +52,9 @@ public static class ProductionManagementEndpoints
         // (V0-ARC-001 row 11) — these must resolve standalone too.
         services.TryAddScoped<IStockBalanceRepository, PostgresStockBalanceRepository>();
         services.TryAddScoped<IStockMovementRepository, PostgresStockMovementRepository>();
+        // V1-RMD-344 made ProductionStockEffectService depend on the shared IUnitConverter; same
+        // TryAddSingleton registration every other experience that converts units makes.
+        services.TryAddSingleton<IUnitConverter, UnitConverter>();
 
         services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
