@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1432,
-  "markdown_line_count": 109520,
-  "markdown_byte_count": 6298770,
+  "markdown_file_count": 1433,
+  "markdown_line_count": 109584,
+  "markdown_byte_count": 6301963,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "EC6AD92CC8F67DAD7C6F80CCAB406695A2C8AC08E27E1865C18BD94EE51E902A",
-      "lines": 2707,
-      "bytes": 396692,
+      "sha256": "9602F82891B4A543AC4BE7F49DEB7B1BC3B69FCAAAF692F3380E117D2665EF45",
+      "lines": 2708,
+      "bytes": 396860,
       "utf8": true
     },
     {
@@ -7889,6 +7889,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-389-nfcorder-customerdisplay-round2-audit.md",
+      "sha256": "CF28DBEBEFBA598C00A9FA8B14BF9582FBD8B64C3119FDCDB4D2001CAD769833",
+      "lines": 63,
+      "bytes": 2974,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -8072,9 +8079,9 @@
     },
     {
       "path": "plan/v1/ui-audit/UI_AUDIT_PROGRESS.md",
-      "sha256": "34AEE83FB7ED83071C30B6DDA2D45139315F1D1854EC2505236AE7DB0D8658BE",
+      "sha256": "A189404330FF63CACA55D1692737EE43A0EF832D25ACF4565259CBCE50A892F4",
       "lines": 62,
-      "bytes": 6619,
+      "bytes": 6670,
       "utf8": true
     },
     {
