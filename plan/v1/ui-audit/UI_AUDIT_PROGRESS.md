@@ -59,4 +59,4 @@ gerçek test + mutation-check + görev dosyası + dört gate + commit/push.
 | 14 | PosTerminal — NfcOrder + CustomerDisplay | Tamamlandı | 1 | 1 | 2026-09-28 | V1-RMD-389; sepet kalıcı değildi (P2) |
 | 15 | CustomerWeb — Menu | Tamamlandı | 0 | 0 | 2026-09-28 | V1-RMD-390; gerçek bulgu yok (modifikatör boşluğu V1-RMD-380 ile aynı kök neden) |
 | 16 | CustomerWeb — OrderEntry | Tamamlandı | 1 | 1 | 2026-09-28 | V1-RMD-391; durum takibi 60 saniye sonra donuyordu (P2) |
-| 17 | CustomerWeb — Bill | Bekliyor | - | - | - | - |
+| 17 | CustomerWeb — Bill | Tamamlandı | 1 | 1 | 2026-09-28 | V1-RMD-392; geçici bir poll hatası kalıcı hale geliyordu (P2) |

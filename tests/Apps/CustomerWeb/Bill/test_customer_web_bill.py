@@ -92,6 +92,31 @@ def test_customer_web_bill_renders_the_business_own_identity():
     assert "--cw-accent" in app_code
 
 
+def test_customer_web_bill_does_not_let_a_transient_poll_failure_stick_forever():
+    """V1-RMD-392 (Tur 2, P2): showError() itself never hid errorState again,
+    and nothing else did either - a guest whose very first poll failed (a
+    genuine one-off network blip, exactly what startPolling()'s own comment
+    already says must not "permanently freeze this page") kept seeing a
+    role="alert" error banner forever, even once later polls started
+    rendering a correct, live-updating bill right next to it. renderBill()
+    must clear the error state on every successful render, and pollOnce()
+    must stop re-showing the error at all once at least one render has
+    actually happened - a guest's own bill staying on screen through a blip
+    is what the header's "canlı güncellenir" promise is actually for."""
+    app_code = (WWWROOT / "bill.js").read_text(encoding="utf-8")
+
+    assert "hasRenderedOnce" in app_code
+
+    render_bill_start = app_code.index("function renderBill(")
+    render_bill_body = app_code[render_bill_start:app_code.index("\n}\n", render_bill_start)]
+    assert '"errorState").hidden = true' in render_bill_body
+
+    poll_once_start = app_code.index("async function pollOnce(")
+    poll_once_body = app_code[poll_once_start:app_code.index("\n}\n", poll_once_start)]
+    assert "hasRenderedOnce = true" in poll_once_body
+    assert "if (!hasRenderedOnce)" in poll_once_body
+
+
 def test_customer_web_bill_live_regions_are_actually_announced():
     """V1-RMD-375 (module-by-module UI audit, 2026-09-27): the header's own
     copy promises "Bu ekran canlı güncellenir" (updates live - bill.js polls

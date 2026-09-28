@@ -122,6 +122,13 @@ function renderBill(bill) {
   const list = document.getElementById("billList");
   const summary = document.getElementById("billSummary");
   loadingState.hidden = true;
+  // V1-RMD-392 (Tur 2, P2): a successful render always means whatever
+  // earlier failure put up the error banner (the very first poll, if that
+  // one failed) no longer applies - showError() itself never clears it, and
+  // nothing else ever did either, so a customer whose FIRST poll failed but
+  // whose second one succeeded used to keep seeing a permanent error banner
+  // sitting right above their own correctly-updating bill.
+  document.getElementById("errorState").hidden = true;
 
   if (!bill.hasActiveOrder || bill.lines.length === 0) {
     list.hidden = true;
@@ -198,12 +205,24 @@ async function loadBranding() {
   }
 }
 
+// V1-RMD-392 (Tur 2, P2): true once any poll has ever rendered a real bill.
+// A later transient failure (the one the header's own "canlı güncellenir"
+// promise and this file's startPolling() comment both already assume is
+// routine) must not bury an already-showing, still-correct bill under a
+// scary permanent error banner - it just keeps the last good total on
+// screen and quietly retries. Only a failure BEFORE the first success ever
+// shows the error state, since there is nothing else to show yet.
+let hasRenderedOnce = false;
+
 async function pollOnce(tableToken) {
   try {
     const bill = await fetchBillWithSessionRetry(tableToken);
+    hasRenderedOnce = true;
     renderBill(bill);
   } catch (error) {
-    showError(error instanceof Error ? error.message : GENERIC_ERROR_MESSAGE);
+    if (!hasRenderedOnce) {
+      showError(error instanceof Error ? error.message : GENERIC_ERROR_MESSAGE);
+    }
   }
 }
 
