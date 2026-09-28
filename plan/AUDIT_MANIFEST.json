@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1493,
-  "markdown_line_count": 113591,
-  "markdown_byte_count": 6544546,
+  "markdown_file_count": 1494,
+  "markdown_line_count": 113656,
+  "markdown_byte_count": 6547786,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "E4C5D183250D29BD582013DF77CCDE47BD25A2B01ED920EEB74A9D1135778CAE",
-      "lines": 2769,
-      "bytes": 406678,
+      "sha256": "00F691A35C8A4BF99E57381E7D8507C222795839AC2C6F6507BBA6891675D08C",
+      "lines": 2770,
+      "bytes": 406856,
       "utf8": true
     },
     {
@@ -8313,6 +8313,13 @@
       "sha256": "1E44D9B950DDA69F9B9603BF319552A6F78E07676C600FE6CBCE5CA479BAAFAD",
       "lines": 61,
       "bytes": 2799,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-437-catalog-stops-offering-untracked-stock-mode.md",
+      "sha256": "247AB2AE260785BC67A22DA11EAF66FFE0EEDF8B3FD9F16F095C0D7CAABD0A07",
+      "lines": 64,
+      "bytes": 3062,
       "utf8": true
     },
     {
