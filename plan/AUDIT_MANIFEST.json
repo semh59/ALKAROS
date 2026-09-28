@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1478,
-  "markdown_line_count": 112738,
-  "markdown_byte_count": 6502797,
+  "markdown_file_count": 1479,
+  "markdown_line_count": 112802,
+  "markdown_byte_count": 6506052,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D105F583ED3F73441AEF7423D95BB1DA6B1D6E252F5BF172E2FAB45A12699C83",
-      "lines": 2754,
-      "bytes": 404140,
+      "sha256": "DEC8685610DED414835E1D7EECABFC2A1711148CBB909640F80B1FBE36D7FA0C",
+      "lines": 2755,
+      "bytes": 404307,
       "utf8": true
     },
     {
@@ -8208,6 +8208,13 @@
       "sha256": "57A2025936729B72AC42FD7AFB005BF334C8592F2269083A945D1A337C3CDCD1",
       "lines": 83,
       "bytes": 4744,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-422-inventory-adjustment-idempotency.md",
+      "sha256": "397383A04AD95EF01CDBD05DD9181AC9F74E06A89C8DAA60EBED0873A476F7F6",
+      "lines": 63,
+      "bytes": 3088,
       "utf8": true
     },
     {
