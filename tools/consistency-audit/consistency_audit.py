@@ -115,6 +115,8 @@ MODULE_SCHEMA = {
     "QrOrdering": "qr_ordering",
     # V14-CST-001, 2026-09-28.
     "CustomerData": "customer_data",
+    # V14-ACC-001, 2026-09-28.
+    "CustomerAccounts": "customer_account",
 }
 _SCHEMA_CONST_RE = re.compile(r'const\s+string\s+(\w+)\s*=\s*"(\w+)\.\w+"')
 _WRITE_TARGET_RE = re.compile(

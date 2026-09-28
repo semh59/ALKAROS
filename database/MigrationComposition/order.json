@@ -1371,6 +1371,14 @@
         "anonymization_requests"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "161",
+      "phase": "B",
+      "tables": [
+        "account_transactions"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

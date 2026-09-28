@@ -25,6 +25,9 @@ public static class ModuleRegistry
         // Account (V14-ACC) and Invoicing (V14-INV) are expected to
         // reference customer identity through this module later.
         typeof(ALKAROS.CustomerData.CustomerDataModule),
+        // V14-ACC-001: the receivable ledger primitive itself; no module
+        // dependency yet (see CustomerAccountsModule's own doc comment).
+        typeof(ALKAROS.CustomerAccounts.CustomerAccountsModule),
         typeof(ALKAROS.Cash.CashModule),
         typeof(ALKAROS.Identity.IdentityModule),
         typeof(ALKAROS.Kitchen.KitchenModule),

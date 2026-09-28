@@ -12,6 +12,7 @@
   <Project Path="src/Modules/Cash/ALKAROS.Cash.csproj" />
   <Project Path="src/Modules/Catalog/ALKAROS.Catalog.csproj" />
   <Project Path="src/Modules/CustomerData/ALKAROS.CustomerData.csproj" />
+  <Project Path="src/Modules/CustomerAccounts/ALKAROS.CustomerAccounts.csproj" />
   <Project Path="src/Modules/Identity/ALKAROS.Identity.csproj" />
   <Project Path="src/Modules/Kitchen/ALKAROS.Kitchen.csproj" />
   <Project Path="src/Modules/Observability/ALKAROS.Observability.csproj" />
@@ -93,6 +94,7 @@
   <Project Path="tests/Modules/Catalog/ProductCatalog/ALKAROS.Catalog.ProductCatalog.Tests.csproj" />
   <Project Path="tests/Modules/CustomerData/Profiles/ALKAROS.CustomerData.Profiles.Tests.csproj" />
   <Project Path="tests/Modules/CustomerData/AnonymizationState/ALKAROS.CustomerData.AnonymizationState.Tests.csproj" />
+  <Project Path="tests/Modules/CustomerAccounts/TransactionLedger/ALKAROS.CustomerAccounts.TransactionLedger.Tests.csproj" />
   <Project Path="tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj" />
   <Project Path="tests/Modules/Identity/Authorization/ALKAROS.Identity.Authorization.Tests.csproj" />
   <Project Path="tests/Modules/Identity/DeviceSessions/ALKAROS.Identity.DeviceSessions.Tests.csproj" />
