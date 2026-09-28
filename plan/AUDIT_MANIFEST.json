@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1482,
-  "markdown_line_count": 112999,
-  "markdown_byte_count": 6515861,
+  "markdown_file_count": 1483,
+  "markdown_line_count": 113065,
+  "markdown_byte_count": 6518999,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "116AA1CB92FB051FA020E765E7823748F10998A94E93122113460B5ECC7B8B85",
-      "lines": 2758,
-      "bytes": 404804,
+      "sha256": "06118A2A7E14463743DFA3AD4E76D779AB2AB7EC3B84C092B60B6C0FE4123C0D",
+      "lines": 2759,
+      "bytes": 404969,
       "utf8": true
     },
     {
@@ -8236,6 +8236,13 @@
       "sha256": "2F37696A44D5E85DAF89FA37F43CC8F0DB886D96777E5FC830D13E9EE1FA47E7",
       "lines": 62,
       "bytes": 2730,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-426-english-error-messages-turkish.md",
+      "sha256": "F6EDBC0C7472A175ADB10DFF99A6DC8DE614881ACC0C751D9C9BDC85BE0AC9B4",
+      "lines": 65,
+      "bytes": 2973,
       "utf8": true
     },
     {
