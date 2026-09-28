@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1483,
-  "markdown_line_count": 113065,
-  "markdown_byte_count": 6518999,
+  "markdown_file_count": 1484,
+  "markdown_line_count": 113126,
+  "markdown_byte_count": 6522140,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "06118A2A7E14463743DFA3AD4E76D779AB2AB7EC3B84C092B60B6C0FE4123C0D",
-      "lines": 2759,
-      "bytes": 404969,
+      "sha256": "1DAA0086C7D29D2901E0B2D0FEEC936292BED5ADA1B7A7D895C64E11D4193E9C",
+      "lines": 2760,
+      "bytes": 405147,
       "utf8": true
     },
     {
@@ -8243,6 +8243,13 @@
       "sha256": "F6EDBC0C7472A175ADB10DFF99A6DC8DE614881ACC0C751D9C9BDC85BE0AC9B4",
       "lines": 65,
       "bytes": 2973,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-427-offline-reconcile-fk-not-all-unknown-budget.md",
+      "sha256": "70620F6ECCAB0888AE167A0ECC125BED187C89CB1F0B335EC7B939222FCCD224",
+      "lines": 60,
+      "bytes": 2963,
       "utf8": true
     },
     {
