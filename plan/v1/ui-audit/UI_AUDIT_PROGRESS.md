@@ -52,7 +52,7 @@ gerçek test + mutation-check + görev dosyası + dört gate + commit/push.
 | 7 | PosTerminal — billing | Tamamlandı | 0 | 0 | 2026-09-27 | V1-RMD-382; gerçek bulgu yok (tek-oturumluk görev, dirty koruması zaten yeterli) |
 | 8 | PosTerminal — catalog | Tamamlandı | 0 (+1 ertelenen) | 0 | 2026-09-27 | V1-RMD-383; toplu CSV içe aktarım yok (P1), Semih'e bırakıldı |
 | 9 | PosTerminal — kitchen-operations | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-384; yeni bilet için sesli uyarı yoktu (P1/P2) |
-| 10 | PosTerminal — pending-checks | Bekliyor | - | - | - | - |
+| 10 | PosTerminal — pending-checks | Tamamlandı | 0 (+1 ertelenen) | 0 | 2026-09-27 | V1-RMD-385; nav'da canlı sayaç yok (T7, paylaşılan kabuk değişikliği), Semih'e bırakıldı |
 | 11 | PosTerminal — online-* (hub/menu/ops/credentials/problems/store-status) | Bekliyor | - | - | - | - |
 | 12 | PosTerminal — system-health | Bekliyor | - | - | - | - |
 | 13 | PosTerminal — Ayarlar ekranları (Relay/Qnb/Token/Security/BusinessIdentity/Reservation/Screensaver) | Bekliyor | - | - | - | - |
