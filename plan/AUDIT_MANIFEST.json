@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1436,
-  "markdown_line_count": 109778,
-  "markdown_byte_count": 6311361,
+  "markdown_line_count": 109865,
+  "markdown_byte_count": 6319399,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -113,9 +113,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "98FFB7F3CC3411B39401C8803269CC2F6E5C299AA7D21F10B51A55A99A531494",
-      "lines": 217,
-      "bytes": 16665,
+      "sha256": "3B35929373E23FB1E2569BEC7249D87CF7323A9589366C487AAE6FB8EE87B463",
+      "lines": 218,
+      "bytes": 17138,
       "utf8": true
     },
     {
@@ -2493,9 +2493,9 @@
     },
     {
       "path": "evidence/V14-GOV-001/README.md",
-      "sha256": "E31E1F273421A26A294A7189B637F80B5D49908E02B2E3E248553AB7ACE9497D",
-      "lines": 62,
-      "bytes": 3099,
+      "sha256": "614B370071C8B3E9447B7A980ACFB613019F3AEE642C02F5BDFBF30F04A8D5AD",
+      "lines": 67,
+      "bytes": 3388,
       "utf8": true
     },
     {
@@ -2556,9 +2556,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D52CA98D2301ED1DB61CB7B64CFB858DB68DE8A182A5B28243E30DADEBA58AC2",
-      "lines": 2711,
-      "bytes": 397366,
+      "sha256": "1CC9DD7D23E115C2318036E3026155A7E528AB78302292A93CDD3FA0477E31F6",
+      "lines": 2712,
+      "bytes": 397531,
       "utf8": true
     },
     {
@@ -9640,9 +9640,9 @@
     },
     {
       "path": "plan/v1.4/customer-data/V14-CST-001-customer-pii-schema.md",
-      "sha256": "3021249146DBEAE7DD8F4214E8AE40E13D451EB09ABBDD3393E798ED94903005",
-      "lines": 69,
-      "bytes": 2243,
+      "sha256": "EAA06785862AA7F925EACFA858102A786D3780A86F1FC9B6DD499E5916D13D43",
+      "lines": 149,
+      "bytes": 9354,
       "utf8": true
     },
     {
