@@ -1379,6 +1379,15 @@
         "account_transactions"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "162",
+      "phase": "B",
+      "tables": [
+        "balances",
+        "balance_snapshots"
+      ],
+      "deferredConstraints": []
     }
   ]
 }
