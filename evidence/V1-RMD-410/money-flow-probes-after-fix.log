@@ -1,0 +1,3 @@
+V1-RMD-393 P02 ve P12 (F-05), V1-RMD-410 uygulanmış kopyada; harness kasiyerine yalnız bu kopyada cash.drawer ve payments.take eklendi (denetim kanıtı değiştirilmedi).
+    0 Error(s)
+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 4 s - ALKAROS.Audit.MoneyFlowProbes.dll (net8.0)

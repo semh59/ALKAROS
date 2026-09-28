@@ -1,0 +1,8 @@
+    0 Warning(s)
+    0 Error(s)
+Passed!  - Failed:     0, Passed:    20, Skipped:     0, Total:    20, Duration: 28 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+--- without fix:
+  Failed ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatWouldUndercutWhatWasAlreadyCollectedIsRefused [1 s]
+Expected: Conflict
+Actual:   OK
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)

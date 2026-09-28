@@ -130,6 +130,27 @@ public sealed class BillingSplitStore
         // bill's payable amount.
         var summary = AdjustmentCalculator.Calculate(bill, [.. existingAdjustments, adjustment]);
 
+        // V1-RMD-410 (V1-RMD-393 F-05): payments do not change the bill's status until it closes, so a partly paid
+        // bill still looks discountable — and a discount could push the payable below what was already collected
+        // (80 taken, 30 off -> 70 payable). The allocation path's own per-bill lock, taken here in this same
+        // transaction, serializes against a concurrent tender (which reads adjustments under that lock too).
+        await using (var allocationLock = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, lockTransaction))
+        {
+            allocationLock.Parameters.AddWithValue($"payment-allocation:{billId:N}");
+            await allocationLock.ExecuteNonQueryAsync(cancellationToken);
+        }
+        decimal collected;
+        await using (var collectedCommand = new NpgsqlCommand(
+            "SELECT COALESCE(SUM(amount), 0) FROM payments.payment_allocations WHERE bill_id = @bill_id;",
+            connection, lockTransaction))
+        {
+            collectedCommand.Parameters.AddWithValue("bill_id", billId);
+            collected = (decimal)(await collectedCommand.ExecuteScalarAsync(cancellationToken))!;
+        }
+        if (summary.AdjustedPayableAmount < collected)
+            throw new BillDiscountBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
+
         // Must use the lock's own connection/transaction: the insert's FK
         // reference to billing.bills otherwise waits on the very lock this
         // method holds, from a second, uncommitted connection — a
@@ -604,6 +625,24 @@ public sealed class BillingSplitStore
 public sealed class BillingSplitNotFoundException : Exception
 {
     public BillingSplitNotFoundException(string message) : base(message) { }
+}
+
+/// <summary>
+/// V1-RMD-410 (V1-RMD-393 F-05): the discount would leave the bill's payable below the amount already collected.
+/// </summary>
+public sealed class BillDiscountBelowCollectedException : Exception
+{
+    public BillDiscountBelowCollectedException(Guid billId, decimal adjustedPayable, decimal collected)
+        : base($"Bill {billId}: a discount leaving {adjustedPayable} payable is below the {collected} already collected.")
+    {
+        BillId = billId;
+        AdjustedPayable = adjustedPayable;
+        Collected = collected;
+    }
+
+    public Guid BillId { get; }
+    public decimal AdjustedPayable { get; }
+    public decimal Collected { get; }
 }
 
 public sealed class BillDiscountUnsupportedBillStateException : Exception

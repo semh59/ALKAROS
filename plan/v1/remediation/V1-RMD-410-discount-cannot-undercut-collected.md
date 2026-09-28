@@ -1,7 +1,7 @@
 # V1-RMD-410 - Kısmi ödemeden sonra indirimin ödenecek tutarı tahsil edilenin altına düşürmesini engellemek
 
 - Task ID: V1-RMD-410
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -48,7 +48,15 @@ okur).
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- `ALKAROS.Host.Experience.Billing.Tests` (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata): 20/20
+  (`evidence/V1-RMD-410/tests.log`).
+- Yeni test `ADiscountThatWouldUndercutWhatWasAlreadyCollectedIsRefused`: 275'lik hesaptan 250 gerçek dağıtımla
+  alınmışken 50 indirim 409 `DISCOUNT_BELOW_COLLECTED` (yazılmaz), 20 indirim uygulanır (ödenecek 255, bir düzeltme
+  satırı). Üretim değişikliği geri alınınca kırmızı (409 beklenirken 200; aynı dosya).
+- V1-RMD-393 denetim probe'ları P02 (F-05) ve P12 (indirim ile tam ödemenin yarışı) düzeltilmiş kopyada geçer
+  (`evidence/V1-RMD-410/money-flow-probes-after-fix.log`).
+- Semih'in elle deneyebileceği senaryo: 100 TL'lik hesaptan 80 TL alındıktan sonra 30 TL indirim denenince "Bu indirim,
+  hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz." görülür; 20 TL'ye kadar indirim uygulanabilir.
 
 ## Handoff
 
