@@ -193,6 +193,23 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AWaiterCompingAnUnassignedCheckIsRefusedByTheOwnCheckGuard()
+    {
+        // V1-RMD-402 (PO 2026-09-28): a check nobody serves is not the waiter's own check — refused, never queued.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(servingUserId: null);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
     public async Task AWaiterCompingTheirOwnCheckIsNotBlockedByTheOwnCheckGuard()
     {
         var terminalId = Guid.NewGuid();

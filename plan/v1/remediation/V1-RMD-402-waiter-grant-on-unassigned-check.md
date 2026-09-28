@@ -1,7 +1,7 @@
 # V1-RMD-402 - Garsonun sahipsiz hesaptaki iptal/ikram isteğini otomatik reddetmek
 
 - Task ID: V1-RMD-402
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -51,7 +51,16 @@ hesap garsonun kendisine ait değilse — sahipsiz olması dahil — yöneticiye
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- Gerçek PostgreSQL 18 (`evidence/V1-RMD-402/tests.log`), üç proje Release, 0 uyarı / 0 hata:
+  `ALKAROS.Identity.Authorization.Tests` 209/209, `ALKAROS.Host.Experience.Orders.Comp.Tests` 15/15,
+  `ALKAROS.Host.Experience.Orders.VoidSent.Tests` 16/16.
+- Yeni testler: `OwnCheckGuardRefusesAWaiterCompOnAnUnassignedCheck` (servis düzeyi, `Refused` / `auto`),
+  `AWaiterCompingAnUnassignedCheckIsRefusedByTheOwnCheckGuard` ve
+  `AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard` (gerçek garson rolü, HTTP 403).
+- Aynı üç test üretim değişikliği geri alınınca kırmızı (`evidence/V1-RMD-402/red-without-fix.log`, 3/3 başarısız).
+- Karar kaydı: `docs/domain/authorization-model.md` §3 karar 1'e sahipsiz hesap notu.
+- Semih'in elle deneyebileceği senaryo: henüz kimsenin almadığı bir QR siparişinde garson ikram istediğinde "İkram talebi
+  reddedildi." görür; istek yöneticinin onay listesine düşmez.
 
 ## Handoff
 

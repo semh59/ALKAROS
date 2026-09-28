@@ -79,12 +79,14 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
         // *waiter* may raise a void/comp grant only on a check they serve — a
         // grant on another server's check is refused before it reaches a
         // manager. cashier/supervisor/manager void/comp is an unrestricted
-        // grant, so the guard is scoped to the waiter role.
+        // grant, so the guard is scoped to the waiter role. V1-RMD-402 (PO
+        // 2026-09-28): an unassigned check (no serving user) is not the
+        // waiter's own check either, so it is refused the same way.
         if (OwnCheckOnly.Contains(request.PermissionCode)
             && string.Equals(
                 request.RequesterRoleCode, ApplicationPermissions.RoleWaiter, StringComparison.Ordinal)
-            && request.SubjectServingUserId is { } serving
-            && serving != request.RequesterUserId)
+            && request.SubjectId is not null
+            && request.SubjectServingUserId != request.RequesterUserId)
         {
             return await StoreAsync(request, GrantStatus.Denied, PolicyPath.Auto, cancellationToken);
         }

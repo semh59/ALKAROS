@@ -88,6 +88,8 @@ authorization request resolved by §4.
 1. A waiter **may** void/comp, but only on **their own** check and only through a
    grant (`context.requester_user_id` must equal the order's serving user; a
    grant on another server's check is auto-denied before it reaches a manager).
+   An unassigned check (no serving user) is not the waiter's own check either and is auto-denied the same way
+   (Semih, 2026-09-28, V1-RMD-402).
 2. There is **no standing discount ladder** — every `bills.discount`, including
    from a `cashier`, is a grant. Only `supervisor` / `manager` hold it outright.
 3. `supervisor` is the **floor role (şef garson)**: a senior waiter who holds

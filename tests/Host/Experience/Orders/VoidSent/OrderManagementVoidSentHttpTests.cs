@@ -380,6 +380,23 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard()
+    {
+        // V1-RMD-402 (PO 2026-09-28): a check nobody serves is not the waiter's own check — refused, never queued.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing, servingUserId: null);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
     public async Task AWaiterVoidingTheirOwnSentItemIsNotBlockedByTheOwnCheckGuard()
     {
         var terminalId = Guid.NewGuid();
