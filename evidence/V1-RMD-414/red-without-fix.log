@@ -1,0 +1,6 @@
+# Production changes stashed (src/), tests kept
+[xUnit.net 00:00:02.82]     ALKAROS.Host.Experience.Orders.TableDraft.Tests.CheckLifecycleHttpTests.ATenderThatHoldsTheBillLockWhenARecallStartsKeepsTheCheckAtTheTill [FAIL]
+   Assert.Equal() Failure: Values differ
+Expected: Conflict
+Actual:   OK
+Failed!  - Failed:     1, Passed:     5, Skipped:     0, Total:     6, Duration: 5 s - ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll (net8.0)

@@ -77,4 +77,16 @@ public interface IBillRepository
         Npgsql.NpgsqlConnection connection,
         Npgsql.NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V1-RMD-414: cancels every still-open (not Paid, not Cancelled) bill of <paramref name="orderId"/> inside the
+    /// caller's transaction, so the caller's own checks (a check recalled from the till has no money on it) and
+    /// the cancellation commit together. Returns the number of bills cancelled.
+    /// </summary>
+    Task<int> CancelActiveBillsForOrderAsync(
+        Guid orderId,
+        DateTimeOffset timestamp,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 }

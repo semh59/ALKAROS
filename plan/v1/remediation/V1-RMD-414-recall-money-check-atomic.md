@@ -1,7 +1,7 @@
 # V1-RMD-414 - Hesabı masaya geri almada para kontrolü ile hesap iptalini tek işlemde yapmak
 
 - Task ID: V1-RMD-414
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -51,7 +51,16 @@ desen).
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Host.Experience.Orders.TableDraft.Tests` (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata): 87/87
+  (`evidence/V1-RMD-414/tests.log`). Geri almanın mevcut testleri (yanlışlıkla gönderilen hesap geri döner ve hesabı
+  iptal edilir, tekrar istek `AlreadyAttached`, paralı hesap 409) değişmeden geçer.
+- Yeni test `ATenderThatHoldsTheBillLockWhenARecallStartsKeepsTheCheckAtTheTill`: bir tahsilat hesabın
+  `bill-settlement` kilidini tutarken geri alma başlar; tahsilat ödemeyi yazıp işlemini bitirir; geri alma 409
+  `CHECK_HAS_PAYMENT` döner, hesap `Open` kalır, masa hesaba bağlanmaz. Üretim değişikliği geri alınınca kırmızı
+  (409 beklenirken 200: geri alma kilidi beklemeden parasız görüp hesabı iptal ediyordu;
+  `evidence/V1-RMD-414/red-without-fix.log`).
+- Semih'in elle deneyebileceği senaryo: kasada ödeme alınırken aynı anda garson hesabı masaya geri almaya çalışırsa
+  "Bu hesapta tahsilat başlamış; masaya geri alınamaz." görür; ödeme iptal edilmiş bir hesapta kalmaz.
 
 ## Handoff
 

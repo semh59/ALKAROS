@@ -395,14 +395,9 @@ public static class OrderManagementEndpoints
 
             try
             {
-                var result = await store.RecallCheckAsync(request.TableId, orderId, cancellationToken);
-                // The till must not keep a ghost bill: a re-send would otherwise reuse it with stale items.
-                // Run on a repeat too, so a request that failed half-way is completed by the retry.
-                foreach (var bill in await bills.GetByOrderIdAsync(orderId, cancellationToken))
-                {
-                    if (bill.Status is not (BillState.Paid or BillState.Cancelled))
-                        await bills.SaveAsync(bill.Cancel(), bill.RowVersion, cancellationToken);
-                }
+                // The till must not keep a ghost bill (a re-send would otherwise reuse it with stale items); the
+                // store cancels it in the same transaction as its money check (V1-RMD-414).
+                var result = await store.RecallCheckAsync(request.TableId, orderId, bills, cancellationToken);
 
                 if (result.Outcome == "Recalled")
                 {

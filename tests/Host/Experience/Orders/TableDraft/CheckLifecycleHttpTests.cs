@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
+using Npgsql;
 using Xunit;
 
 namespace ALKAROS.Host.Experience.Orders.TableDraft.Tests;
@@ -294,6 +295,67 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         Assert.Contains("CHECK_HAS_PAYMENT", await refused.Content.ReadAsStringAsync());
         Assert.False(await _database.TableHasOpenCheckAsync(tableId));
         Assert.Equal("Open", await _database.BillStatusAsync(billId));
+    }
+
+    [Fact]
+    public async Task ATenderThatHoldsTheBillLockWhenARecallStartsKeepsTheCheckAtTheTill()
+    {
+        // V1-RMD-414 (V1-RMD-393 F-16): the recall's money check and its bill cancellation committed separately,
+        // so a tender landing in between stayed on a cancelled bill. Here a tender holds the per-bill settlement
+        // lock every payment path takes; the recall must wait for it and then see the money.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        var billId = await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open");
+
+        await using var tenderConnection = await _database.DataSource.OpenConnectionAsync();
+        await using var tender = await tenderConnection.BeginTransactionAsync();
+        await using (var settlementLock = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", tenderConnection, tender))
+        {
+            settlementLock.Parameters.AddWithValue($"bill-settlement:{billId:N}");
+            await settlementLock.ExecuteNonQueryAsync();
+        }
+
+        var recall = client.SendAsync(JsonRequest(RecallPath(terminalId, check.OrderId), cookie, new RecallCheckRequestV1(tableId)));
+        var deadline = DateTime.UtcNow.AddSeconds(10);
+        while (!recall.IsCompleted && !await AnyAdvisoryLockWaiterAsync() && DateTime.UtcNow < deadline)
+            await Task.Delay(25);
+
+        var paymentId = Guid.NewGuid();
+        await using (var pay = new NpgsqlCommand(
+            """
+            INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, approved_amount, initiated_at, created_at, updated_at)
+            VALUES (@payment, @bill, 'Approved', 100, 100, now(), now(), now());
+            INSERT INTO payments.payment_allocations (payment_allocation_id, payment_id, bill_id, amount, currency_code, idempotency_key, allocated_at)
+            VALUES (gen_random_uuid(), @payment, @bill, 100, 'TRY', @key, now());
+            """, tenderConnection, tender))
+        {
+            pay.Parameters.AddWithValue("payment", paymentId);
+            pay.Parameters.AddWithValue("bill", billId);
+            pay.Parameters.AddWithValue("key", "k-" + paymentId.ToString("N"));
+            await pay.ExecuteNonQueryAsync();
+        }
+        await tender.CommitAsync();
+
+        using var refused = await recall;
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Contains("CHECK_HAS_PAYMENT", await refused.Content.ReadAsStringAsync());
+        Assert.Equal("Open", await _database.BillStatusAsync(billId));
+        Assert.False(await _database.TableHasOpenCheckAsync(tableId));
+    }
+
+    private async Task<bool> AnyAdvisoryLockWaiterAsync()
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT EXISTS (SELECT 1 FROM pg_locks WHERE locktype = 'advisory' AND NOT granted);");
+        return (bool)(await command.ExecuteScalarAsync())!;
     }
 
     [Fact]
