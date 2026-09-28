@@ -393,6 +393,39 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ACashierOnAnotherTerminalCannotTouchThisTerminalsDrawerSession()
+    {
+        // V1-RMD-411 (V1-RMD-393 F-08): the session id in terminal B's route must belong to terminal B.
+        var terminalA = Guid.NewGuid();
+        var terminalB = Guid.NewGuid();
+        var cookieA = await _database.SeedCashierSessionAsync(terminalA, "rmd411-terminal-a");
+        var cookieB = await _database.SeedCashierSessionAsync(terminalB, "rmd411-terminal-b");
+        var billId = await _database.SeedBillAsync(payable: 40m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalA:D}/cash-sessions", cookieA, new { OpeningBalance = 100m });
+        var sessionA = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        var viaB = $"/api/v1/terminals/{terminalB:D}/cash-sessions/{sessionA:D}";
+
+        var responses = new[]
+        {
+            await PostAsync(client, $"{viaB}/cash-movements", cookieB, new { Direction = "Out", Amount = 50m, IdempotencyKey = "rmd411-payout" }),
+            await PostAsync(client, $"{viaB}/cash-tender", cookieB, new { BillId = billId, AmountDue = 40m, TenderedAmount = 40m, IdempotencyKey = "rmd411-sale" }),
+            await PostAsync(client, $"{viaB}/start-count", cookieB, new { }),
+            await PostAsync(client, $"{viaB}/counts", cookieB, new { CountedAmount = 0m }),
+            await PostAsync(client, $"{viaB}/close", cookieB, new { ActualCash = 100m }),
+            await PostAsync(client, $"{viaB}/reconcile", cookieB, new { Notes = "x" }),
+            await GetAsync(client, $"{viaB}/expected-cash", cookieB),
+        };
+
+        Assert.All(responses, response => Assert.Equal(HttpStatusCode.NotFound, response.StatusCode));
+        var expected = await GetAsync(client, $"/api/v1/terminals/{terminalA:D}/cash-sessions/{sessionA:D}/expected-cash", cookieA);
+        Assert.Equal(100m, (await expected.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
+        var active = await GetAsync(client, $"/api/v1/terminals/{terminalA:D}/cash-sessions/active", cookieA);
+        Assert.Equal("Open", (await active.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString());
+    }
+
+    [Fact]
     public async Task ASessionWithoutCashDrawerIsForbiddenOnDrawerRoutes()
     {
         // V1-RMD-400 (V1-RMD-399 H-02): a signed-in waiter or kitchen device must not operate the drawer.

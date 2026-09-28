@@ -1,7 +1,7 @@
 # V1-RMD-411 - Kasa oturumuna yalnız kendi terminalinden erişilmesi
 
 - Task ID: V1-RMD-411
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -42,7 +42,14 @@ alır (404 `CASH_SESSION_NOT_FOUND`).
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- `ALKAROS.Host.Experience.CashSession.Tests` (gerçek PostgreSQL 18, Release, 0 uyarı / 0 hata): 20/20
+  (`evidence/V1-RMD-411/tests.log`).
+- Yeni test `ACashierOnAnotherTerminalCannotTouchThisTerminalsDrawerSession`: B terminalindeki kasiyerin A'nın
+  oturumuna yedi ucun hepsinden istekleri 404; A'nın beklenen nakdi 100'de, oturumu `Open` kalır. Üretim değişikliği geri
+  alınınca kırmızı (aynı dosya).
+- V1-RMD-393 denetim probe'u P04 (F-08) düzeltilmiş kopyada geçer (aynı dosya).
+- Semih'in elle deneyebileceği senaryo: iki kasa açıkken bir kasadaki kasiyer diğer kasanın oturumuna (kimliğini
+  bilse bile) satış ya da para çıkışı yazamaz; kasa oturumu bulunamadı yanıtı alır.
 
 ## Handoff
 

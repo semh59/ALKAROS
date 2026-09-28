@@ -1,0 +1,10 @@
+Not: para akışı probe'u P04, V1-RMD-393 harness kasiyerine yalnız bu kopyada cash.drawer ve payments.take eklenerek koşuldu (denetim kanıtı değiştirilmedi).
+    0 Warning(s)
+    0 Error(s)
+Passed!  - Failed:     0, Passed:    20, Skipped:     0, Total:    20, Duration: 1 m 31 s - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)
+--- without fix:
+  Failed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ACashierOnAnotherTerminalCannotTouchThisTerminalsDrawerSession [4 s]
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 4 s - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)
+    0 Error(s)
+--- money-flow probe P04 (F-08) after fix:
+Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 1 s - ALKAROS.Audit.MoneyFlowProbes.dll (net8.0)
