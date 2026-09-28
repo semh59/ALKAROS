@@ -1,0 +1,11 @@
+163-payments-take-permission.down.sql
+163-payments-take-permission.up.sql
+    0 Error(s)
+    0 Error(s)
+    0 Error(s)
+    0 Error(s)
+Passed!  - Failed:     0, Passed:    17, Skipped:     0, Total:    17, Duration: 1 m 16 s - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    32, Skipped:     0, Total:    32, Duration: 2 m 27 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:   208, Skipped:     0, Total:   208, Duration: 2 s - ALKAROS.Identity.Authorization.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    17, Skipped:     0, Total:    17, Duration: 713 ms - ALKAROS.Host.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:   161, Skipped:     0, Total:   161, Duration: 8 m 26 s - ALKAROS.Host.Tests.dll (net8.0)

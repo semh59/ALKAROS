@@ -268,6 +268,8 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
+            // V1-RMD-401: a cash tender is a payment too — cash.drawer (the money enters the drawer) and payments.take.
+            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsTake, cancellationToken);
             var result = await tenderHandler.HandleAsync(
                 new CashTenderRequest(
                     cashSessionId, request.BillId, request.AmountDue, request.TenderedAmount,

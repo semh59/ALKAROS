@@ -392,11 +392,15 @@ public static partial class DualScreenApplication
             IBillClosureService billClosure,
             OrderSettlementService orderSettlement,
             DualScreenStore store,
+            IAuthorizationService authorization,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            // V1-RMD-401 (V1-RMD-399 Q-01): taking a payment is its own permission, cashier tier by default and
+            // grantable to waiters through role management once they carry a card terminal (PO 2026-09-28).
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
 
             if (!TenderMethodCatalog.TryParse(request.Method, out var method))
                 return Results.Json(

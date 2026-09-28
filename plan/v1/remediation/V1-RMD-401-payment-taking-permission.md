@@ -1,7 +1,7 @@
 # V1-RMD-401 - Ödeme alma iznini (`payments.take`) eklemek ve tahsilat uçlarına bağlamak
 
 - Task ID: V1-RMD-401
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -67,7 +67,18 @@ Tahsilat uçları (kart/EFT tahsilatı ve nakit tahsilat) bu izni ister; nakit t
 
 ## Acceptance evidence
 
-- Görev kapanışında bu bölüm gerçek koşu çıktılarıyla doldurulur.
+- Derleme: dört test projesi Release, 0 hata (`evidence/V1-RMD-401/tests.log`).
+- Gerçek PostgreSQL 18 (`evidence/V1-RMD-401/tests.log`):
+  - `ALKAROS.Host.Experience.PaymentTender.Tests` 32/32. Yeni: `WithoutPaymentsTakeATenderIsForbiddenAndNothingIsPersisted`
+    (izinsiz tahsilat 403, ödeme satırı yok) ve `AManagerCanLetWaitersTakePaymentsThroughRoleManagement` (garson önce
+    403; yönetici rol yönetimi ucuyla garson rolüne `payments.take` verir, 204; aynı garson tahsilat alır, 200).
+  - `ALKAROS.Host.Experience.CashSession.Tests` 17/17. Yeni: `CashTenderNeedsPaymentsTakeOnTopOfCashDrawer`.
+  - `ALKAROS.Identity.Authorization.Tests` 208/208 (katalog 23 kod; 163 up/down zinciri; tohum rol→izin eşlemesi).
+  - `ALKAROS.Host.Tests` (migration kompozisyonu) 161/161; 163 manifestte, `PhaseBMax` 163.
+- Karar kaydı: `docs/domain/authorization-model.md` §2 kod tablosu, §3 rol matrisi ve "Resolved (Semih, 2026-09-28)"
+  notu.
+- Semih'in elle deneyebileceği senaryo: garson hesabıyla bir hesaba kartla ödeme girmeyi denemek "Bu işlem için yetkiniz
+  yok." döner; yönetici garson rolüne "Ödeme alma" iznini verdikten sonra aynı garson ödemeyi alır.
 
 ## Handoff
 

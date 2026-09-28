@@ -57,6 +57,7 @@ removed in the last wave task. New application permission codes:
 | `bills.comp` | zero-price a delivered item |
 | `bills.discount` | apply a line/bill discount above the preset ladder |
 | `cash.drawer` | no-sale / drawer open / count |
+| `payments.take` | take a payment on a bill (card/EFT tender; a cash tender also needs `cash.drawer`) — V1-RMD-401 |
 | `reports.view` | operational reports |
 | `catalog.manage` | menu / price / routing (already exists, unchanged) |
 | `kitchen.advance` | advance a kitchen ticket/item one stage forward (Queued→Preparing→Ready→Served) — split out of `orders.send` (V1-IAM-028) so the narrow `kitchen-staff` role can hold it without also being able to cancel a ticket. A ticket/item transition to `Cancelled` still requires `orders.send` regardless of which role/permission gate is checked; `KitchenOperationsEndpoints.TicketTransitionPermission` branches on the target state. |
@@ -75,6 +76,7 @@ removed in the last wave task. New application permission codes:
 | `bills.comp` | grant (own check) | grant | ✅ | ✅ |
 | `bills.discount` | grant | grant | ✅ | ✅ |
 | `cash.drawer` | ❌ | ✅ | ✅ | ✅ |
+| `payments.take` | ❌ (configurable) | ✅ | ✅ | ✅ |
 | `reports.view` | ❌ | ❌ | ✅ | ✅ |
 | `catalog.manage` | ❌ | ❌ | ❌ | ✅ |
 
@@ -92,6 +94,10 @@ authorization request resolved by §4.
    `bills.void` / `bills.comp` / `bills.discount` / `floorplan.manage` /
    `reports.view` outright so the rush keeps moving without a manager, but never
    `catalog.manage` and never staff/finance settings.
+
+**Resolved (Semih, 2026-09-28, V1-RMD-401):** who may take a payment is a per-business setting, not a fixed
+role rule. `payments.take` is seeded to `cashier` / `supervisor` / `manager`; a business that hands its waiters a
+card terminal grants it to the `waiter` role through role management, with no code change.
 
 ### 3.1 `kitchen.advance` and the `kitchen-staff` role (V1-IAM-028)
 

@@ -368,6 +368,26 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task CashTenderNeedsPaymentsTakeOnTopOfCashDrawer()
+    {
+        // V1-RMD-401: holding the drawer is not enough to take a payment.
+        var terminalId = Guid.NewGuid();
+        var cashierCookie = await _database.SeedCashierSessionAsync(terminalId, "rmd401-drawer-and-payments");
+        var drawerOnlyCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "rmd401-drawer-only", ApplicationPermissions.CashDrawer);
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cashierCookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", drawerOnlyCookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 100m, IdempotencyKey = "rmd401-cash" });
+
+        Assert.Equal(HttpStatusCode.Forbidden, tender.StatusCode);
+    }
+
+    [Fact]
     public async Task ReconcileNeedsASupervisorWhoIsNotTheSessionsOwnCashier()
     {
         // V1-RMD-400 (V1-RMD-393 F-09): cash-session-design.md §6 — reconciliation is a supervisor act, four-eyes.
@@ -501,10 +521,11 @@ internal sealed class CashSessionHttpTestDatabase
     /// <summary>
     /// Seeds a real user + a real cashier device session bound to <paramref name="terminalId"/>, and returns the raw
     /// Cookie header value. V1-RMD-400: the user holds <c>cash.drawer</c>, as a real cashier does — every drawer
-    /// route now requires it.
+    /// route now requires it; V1-RMD-401: and <c>payments.take</c>, which the cash tender requires.
     /// </summary>
     public Task<string> SeedCashierSessionAsync(Guid terminalId, string rawToken)
-        => SeedCashierSessionWithPermissionsAsync(terminalId, rawToken, ApplicationPermissions.CashDrawer);
+        => SeedCashierSessionWithPermissionsAsync(
+            terminalId, rawToken, ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake);
 
     /// <summary>
     /// V1-RMD-236: seeds a real user + device session + role + explicit

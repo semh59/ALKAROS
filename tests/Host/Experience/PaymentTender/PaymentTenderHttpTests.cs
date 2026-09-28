@@ -69,6 +69,50 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task WithoutPaymentsTakeATenderIsForbiddenAndNothingIsPersisted()
+    {
+        // V1-RMD-401 (V1-RMD-399 Q-01): a signed-in waiter without payments.take cannot take a payment.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd401-no-payments", takesPayments: false);
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostAsync(client, TendersPath(terminalId, billId), cookie,
+            new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd401-eft" });
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal("FORBIDDEN", (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(0L, await _database.PaymentCountAsync(billId));
+    }
+
+    [Fact]
+    public async Task AManagerCanLetWaitersTakePaymentsThroughRoleManagement()
+    {
+        // V1-RMD-401 (PO 2026-09-28): who takes payments is a per-business setting. The seeded waiter role cannot,
+        // until a manager grants payments.take to it through the existing role-management API.
+        var terminalId = Guid.NewGuid();
+        var waiterCookie = await _database.SeedUserInSeededRoleAsync(terminalId, "rmd401-waiter", "waiter", "cashier:", "alkaros.cashier");
+        var managerCookie = await _database.SeedUserInSeededRoleAsync(terminalId, "rmd401-manager", "manager", "manager:", "alkaros.manager");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var before = await PostAsync(client, TendersPath(terminalId, billId), waiterCookie,
+            new { Method = "Eft", Amount = 40m, IdempotencyKey = "rmd401-waiter-before" });
+        Assert.Equal(HttpStatusCode.Forbidden, before.StatusCode);
+
+        var waiterRoleId = await _database.RoleIdAsync("waiter");
+        var grant = await PostAsync(client, $"/api/v1/management/roles/roles/{waiterRoleId:D}/permissions", managerCookie,
+            new { PermissionCode = "payments.take" });
+        Assert.Equal(HttpStatusCode.NoContent, grant.StatusCode);
+
+        var after = await PostAsync(client, TendersPath(terminalId, billId), waiterCookie,
+            new { Method = "Eft", Amount = 40m, IdempotencyKey = "rmd401-waiter-after" });
+        Assert.Equal(HttpStatusCode.OK, after.StatusCode);
+    }
+
+    [Fact]
     public async Task EftTenderOverTheRemainingAmountIsRejectedAsAConflict()
     {
         var terminalId = Guid.NewGuid();
@@ -837,18 +881,30 @@ internal sealed class PaymentTenderHttpTestDatabase
     }
 
     /// <summary>Seeds a real user + a real cashier device session bound to <paramref name="terminalId"/>, and returns the raw Cookie header value.</summary>
-    public async Task<string> SeedCashierSessionAsync(Guid terminalId, string rawToken)
+    /// <summary>
+    /// A real cashier: a user with a cashier device session on <paramref name="terminalId"/> whose role holds
+    /// payments.take (V1-RMD-401) unless <paramref name="takesPayments"/> is false.
+    /// </summary>
+    public async Task<string> SeedCashierSessionAsync(Guid terminalId, string rawToken, bool takesPayments = true)
     {
         var userId = Guid.NewGuid();
+        var roleId = Guid.NewGuid();
         await using var command = DataSource.CreateCommand(
             """
             INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
             VALUES (@user_id, @username, 'x', 'PaymentTender Test Cashier', true);
+            INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, 'PaymentTender Test Cashier Role');
+            INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
+            SELECT gen_random_uuid(), @role_id, permission_id FROM identity.permissions WHERE code = 'payments.take' AND @takes_payments;
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (gen_random_uuid(), @user_id, @role_id);
 
             INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, expires_at)
             VALUES (gen_random_uuid(), @user_id, @device_id, @token_hash, now() + interval '1 hour');
             """);
         command.Parameters.AddWithValue("user_id", userId);
+        command.Parameters.AddWithValue("role_id", roleId);
+        command.Parameters.AddWithValue("role_code", "pui001-cashier-" + roleId.ToString("N")[..8]);
+        command.Parameters.AddWithValue("takes_payments", takesPayments);
         command.Parameters.AddWithValue("username", "pui001-cashier-" + userId.ToString("N")[..8]);
         command.Parameters.AddWithValue("device_id", $"cashier:{terminalId:D}");
         command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
@@ -880,6 +936,43 @@ internal sealed class PaymentTenderHttpTestDatabase
         command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
         await command.ExecuteNonQueryAsync();
         return $"alkaros.cashier={rawToken}";
+    }
+
+    /// <summary>A user in a migration-seeded role (e.g. waiter, manager) with a device session of the given kind.</summary>
+    public async Task<string> SeedUserInSeededRoleAsync(
+        Guid terminalId, string rawToken, string roleCode, string devicePrefix, string cookieName)
+    {
+        var userId = Guid.NewGuid();
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, 'x', 'PaymentTender Seeded Role User', true);
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
+            SELECT gen_random_uuid(), @user_id, role_id FROM identity.roles WHERE code = @role_code;
+            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, expires_at)
+            VALUES (gen_random_uuid(), @user_id, @device_id, @token_hash, now() + interval '1 hour');
+            """);
+        command.Parameters.AddWithValue("user_id", userId);
+        command.Parameters.AddWithValue("username", "rmd401-" + roleCode + "-" + userId.ToString("N")[..8]);
+        command.Parameters.AddWithValue("role_code", roleCode);
+        command.Parameters.AddWithValue("device_id", $"{devicePrefix}{terminalId:D}");
+        command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
+        await command.ExecuteNonQueryAsync();
+        return $"{cookieName}={rawToken}";
+    }
+
+    public async Task<Guid> RoleIdAsync(string roleCode)
+    {
+        await using var command = DataSource.CreateCommand("SELECT role_id FROM identity.roles WHERE code = @code;");
+        command.Parameters.AddWithValue("code", roleCode);
+        return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<long> PaymentCountAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM payments.payments WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<string> PaymentStatusAsync(Guid paymentId)
