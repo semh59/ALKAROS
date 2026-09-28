@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useId, useRef, useState } from "react";
+import { playNewItemChime } from "../../audioAlerts";
 import { formatMoney } from "../../format";
 import {
   OnlineOperationsApiError,
@@ -80,6 +81,27 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
     const timer = window.setInterval(() => void load(), REFRESH_MS);
     return () => window.clearInterval(timer);
   }, [load]);
+
+  // V1-RMD-386 (module-by-module UI audit round 2, P1/P2 - competitor comparison/field
+  // reality): a new QR/online order needs a timely accept/reject (an aggregator platform's own
+  // SLA timer keeps running whether staff noticed or not), but this queue's 20s poll was
+  // completely silent - staff on the floor with a customer, or busy at the kitchen line, had no
+  // way to know a new order had just landed short of glancing at this exact screen. See
+  // audioAlerts.ts's own doc comment for why this chimes instead of shipping an audio asset.
+  // Never chimes on the very first load (a shift starting with orders already queued) or a poll
+  // tick with no actual change, only a genuinely new order id after that.
+  const knownOrderIdsRef = useRef<Set<string> | null>(null);
+  useEffect(() => {
+    if (!queue) return;
+    const currentIds = new Set(queue.orders.map((order) => order.orderId));
+    if (knownOrderIdsRef.current === null) {
+      knownOrderIdsRef.current = currentIds;
+      return;
+    }
+    const hasNewOrder = queue.orders.some((order) => !knownOrderIdsRef.current!.has(order.orderId));
+    knownOrderIdsRef.current = currentIds;
+    if (hasNewOrder) playNewItemChime();
+  }, [queue]);
 
   const act = async (order: OnlineOperationsOrder, action: () => Promise<void>, done: string) => {
     setBusyOrderId(order.orderId);

@@ -53,7 +53,7 @@ gerçek test + mutation-check + görev dosyası + dört gate + commit/push.
 | 8 | PosTerminal — catalog | Tamamlandı | 0 (+1 ertelenen) | 0 | 2026-09-27 | V1-RMD-383; toplu CSV içe aktarım yok (P1), Semih'e bırakıldı |
 | 9 | PosTerminal — kitchen-operations | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-384; yeni bilet için sesli uyarı yoktu (P1/P2) |
 | 10 | PosTerminal — pending-checks | Tamamlandı | 0 (+1 ertelenen) | 0 | 2026-09-27 | V1-RMD-385; nav'da canlı sayaç yok (T7, paylaşılan kabuk değişikliği), Semih'e bırakıldı |
-| 11 | PosTerminal — online-* (hub/menu/ops/credentials/problems/store-status) | Bekliyor | - | - | - | - |
+| 11 | PosTerminal — online-* (hub/menu/ops/credentials/problems/store-status) | Tamamlandı | 1 | 1 | 2026-09-27 | V1-RMD-386; yeni online sipariş için sesli uyarı yoktu (P1/P2) |
 | 12 | PosTerminal — system-health | Bekliyor | - | - | - | - |
 | 13 | PosTerminal — Ayarlar ekranları (Relay/Qnb/Token/Security/BusinessIdentity/Reservation/Screensaver) | Bekliyor | - | - | - | - |
 | 14 | PosTerminal — NfcOrder + CustomerDisplay | Bekliyor | - | - | - | - |

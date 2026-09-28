@@ -40,6 +40,7 @@ describe("OnlineOperationsWorkspace", () => {
     act(() => root?.unmount());
     root = null;
     vi.unstubAllGlobals();
+    vi.useRealTimers();
   });
 
   async function render() {
@@ -253,6 +254,41 @@ describe("OnlineOperationsWorkspace", () => {
 
     await act(async () => { noteButtons[1].click(); });
     expect(document.body.textContent).toContain("Müşteri notu yok.");
+  });
+
+  // V1-RMD-386 (module-by-module UI audit round 2, 2026-09-27): a new QR/online order needs a
+  // timely accept/reject, but this queue's poll was completely silent - staff on the floor or
+  // busy at the kitchen line had no way to know a new order landed short of glancing at this
+  // exact screen.
+  it("chimes only when a genuinely new order appears, never on first load or a poll tick with no change", async () => {
+    const audioContextCtor = vi.fn(() => ({
+      currentTime: 0,
+      createOscillator: () => ({ type: "sine", frequency: { value: 0 }, connect: () => ({ connect: vi.fn() }), start: vi.fn(), stop: vi.fn() }),
+      createGain: () => ({ gain: { setValueAtTime: vi.fn(), exponentialRampToValueAtTime: vi.fn() }, connect: vi.fn(() => ({ connect: vi.fn() })) }),
+      close: vi.fn(async () => undefined),
+    }));
+    vi.stubGlobal("AudioContext", audioContextCtor);
+
+    vi.useFakeTimers();
+    fetchMock.mockResolvedValue(ok(queue));
+    await render();
+    // The very first render reflects orders already queued before the screen
+    // opened (a shift starting mid-rush) - must never chime for them.
+    expect(audioContextCtor).not.toHaveBeenCalled();
+
+    // A poll tick with the exact same queue (nothing changed) must stay silent too.
+    await act(async () => { await vi.advanceTimersByTimeAsync(20_000); });
+    expect(audioContextCtor).not.toHaveBeenCalled();
+
+    // A genuinely new order arrives on the next poll.
+    const withNewOrder: OnlineOperationsQueue = {
+      ...queue,
+      orders: [...queue.orders, { orderId: "qr-2", source: "Qr", status: "PendingConfirmation", orderNumber: "QR-002", tableNumber: "7", displayCode: null, total: 90, itemCount: 1, createdAt: "2026-09-26T10:15:00Z", rowVersion: 1, provider: null }],
+    };
+    fetchMock.mockResolvedValue(ok(withNewOrder));
+    await act(async () => { await vi.advanceTimersByTimeAsync(20_000); });
+    expect(audioContextCtor).toHaveBeenCalledTimes(1);
+    vi.useRealTimers();
   });
 
   it("has no critical or serious automated accessibility findings, including the open dialogs", async () => {

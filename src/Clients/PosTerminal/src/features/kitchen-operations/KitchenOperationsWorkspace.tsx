@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { playNewItemChime } from "../../audioAlerts";
 import { Button, ModalDialog, StateMessage, TextField, ValidationSummary } from "../../design-system";
 import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
@@ -39,35 +40,8 @@ const STAGES = ["Queued", "Preparing", "Ready", "Served"] as const;
 // audible alert the moment a new ticket lands - kitchen staff have their hands full and their
 // backs to the screen most of a shift, unlike a cashier who is always looking at their own
 // register. This board had a silent 8s poll and nothing else; a new ticket only got noticed
-// whenever someone next happened to glance at the rail. Synthesized via the Web Audio API
-// rather than shipping an audio asset - two short tones is enough to cut through a loud kitchen
-// without needing a sample file this codebase would otherwise have to bundle and licence.
-function playNewTicketChime() {
-  try {
-    const AudioContextClass = window.AudioContext || (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const context = new AudioContextClass();
-    const playTone = (frequency: number, startOffset: number) => {
-      const oscillator = context.createOscillator();
-      const gain = context.createGain();
-      oscillator.type = "sine";
-      oscillator.frequency.value = frequency;
-      gain.gain.setValueAtTime(0.0001, context.currentTime + startOffset);
-      gain.gain.exponentialRampToValueAtTime(0.3, context.currentTime + startOffset + 0.02);
-      gain.gain.exponentialRampToValueAtTime(0.0001, context.currentTime + startOffset + 0.18);
-      oscillator.connect(gain).connect(context.destination);
-      oscillator.start(context.currentTime + startOffset);
-      oscillator.stop(context.currentTime + startOffset + 0.2);
-    };
-    playTone(880, 0);
-    playTone(1175, 0.14);
-    window.setTimeout(() => void context.close(), 500);
-  } catch {
-    // A browser that refuses to synthesize audio (autoplay policy before any
-    // user gesture, an unsupported engine) must never break the board itself -
-    // the visual ticket still appears either way, this is a convenience on top.
-  }
-}
+// whenever someone next happened to glance at the rail. See audioAlerts.ts's own doc comment
+// for why this is synthesized rather than shipping an audio asset.
 // V1-KIT-009/V1-KDS-003: mirrors KitchenTicketItem.UndoWindow (10s) — the
 // backend is the actual authority (a request past this shows a normal error
 // like any other), this is only how long the affordance stays visible so
@@ -222,7 +196,7 @@ export function KitchenOperationsWorkspace({
     }
     const hasNewTicket = data.tickets.some((ticket) => !knownTicketIdsRef.current!.has(ticket.id));
     knownTicketIdsRef.current = currentIds;
-    if (hasNewTicket) playNewTicketChime();
+    if (hasNewTicket) playNewItemChime();
   }, [data.tickets]);
 
   // V1-KIT-014/V1-KDS-009: fetched on demand, only when the report view is
