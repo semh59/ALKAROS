@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1462,
-  "markdown_line_count": 111683,
-  "markdown_byte_count": 6444974,
+  "markdown_file_count": 1464,
+  "markdown_line_count": 111769,
+  "markdown_byte_count": 6450270,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2373,6 +2373,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-407/audit-probes-after-all-fixes.md",
+      "sha256": "D69EB62802565C9CBE5946199900279A352065A57EA79D07EA60D1A729A11A20",
+      "lines": 13,
+      "bytes": 1092,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2640,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "8E70EA6DB9872968C200A16255CB62A538F95BD1907563F3AA04695EB92F1AAA",
-      "lines": 2738,
-      "bytes": 401467,
+      "sha256": "B0F1CEDE5B14AB366609465A0D33E89E587452E39731C2E19A2583CCF874069A",
+      "lines": 2740,
+      "bytes": 401782,
       "utf8": true
     },
     {
@@ -8096,6 +8103,13 @@
       "sha256": "6D677195A4DE21C0E50B287E0EFBC129CFCC25B3F4331192AC86B5B03BED614A",
       "lines": 54,
       "bytes": 2301,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-407-delegation-creation-endpoint.md",
+      "sha256": "146D56C19FF4D1773F7643806E8EFB77CD1757750EA06CC81A164FF1DEE34488",
+      "lines": 71,
+      "bytes": 3889,
       "utf8": true
     },
     {
