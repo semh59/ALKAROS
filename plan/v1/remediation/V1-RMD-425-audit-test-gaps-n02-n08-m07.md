@@ -1,7 +1,7 @@
 # V1-RMD-425 - Denetimlerde hayatta kalan mutasyonlar için eksik testler (N02, N08, M07)
 
 - Task ID: V1-RMD-425
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -46,7 +46,16 @@ değişmez.
 
 ## Acceptance evidence
 
-- Kapanışta doldurulacak.
+- `ALKAROS.Inventory.BalanceProjection.Tests` 14/14 ve `ALKAROS.Billing.PaymentClosure.Tests` 15/15 (gerçek
+  PostgreSQL 18, Release, 0 uyarı / 0 hata; `evidence/V1-RMD-425/tests.log`).
+- Yeni testler: `ARefusedGuardedDecreaseLeavesTheCallersTransactionUsable` (5 kg bakiyeden 6 kg azaltma aynı işlem
+  içinde reddedilir; ardından 2 kg azaltma uygulanır ve işlem tamamlanır, bakiye 3) ve
+  `ACoveredBillWithAnUnresolvedCardAttemptIsNotClosed` (60 TL tahsil edilmiş, ayrıca `Unknown` bir kart denemesi
+  olan hesap kapatılmaz, engel listesi dolu).
+- Mutasyonlar kopyada tek tek uygulandı ve üçü de yakalandı (`evidence/V1-RMD-425/mutations.log`): N02 (koşulu
+  `WHERE true` yapmak), N08 (`<=` yerine `<`; V1-RMD-423'ün yerel tarih testi yakalıyor; denetimdeki mutasyon metni
+  V1-RMD-423'ten sonraki koda göre uyarlandı) ve M07 (engelleri yok saymak).
+- Semih'in elle deneyebileceği senaryo: yok; yalnız test eklendi, davranış değişmedi.
 
 ## Handoff
 

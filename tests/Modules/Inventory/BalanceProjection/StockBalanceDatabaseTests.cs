@@ -97,6 +97,34 @@ public sealed class StockBalanceDatabaseTests : IClassFixture<StockBalanceTestDb
         loaded.RowVersion.Should().Be(2);
     }
 
+    /// <summary>
+    /// V1-RMD-425 (V1-RMD-398 mutation N02): a guarded decrease that would go negative is refused by the statement's
+    /// own WHERE guard, which leaves the caller's transaction usable. The table's CHECK constraint would also refuse
+    /// it, but a CHECK violation aborts the whole transaction, so the caller's next write would fail.
+    /// </summary>
+    [Fact]
+    public async Task ARefusedGuardedDecreaseLeavesTheCallersTransactionUsable()
+    {
+        var loc = await _masterService.CreateLocationAsync(
+            "LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Guard Store", StockLocationType.Kitchen);
+        var item = await _masterService.CreateStockItemAsync(
+            "SKU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Guard Flour", StockItemType.RawMaterial, "kg");
+        await _balanceRepo.ApplyOnHandDeltaAsync(item.Id, loc.Id, 5m);
+
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            var refused = await _balanceRepo.TryApplyGuardedOnHandDeltaAsync(item.Id, loc.Id, -6m, connection, transaction);
+            refused.Should().BeNull();
+
+            var applied = await _balanceRepo.TryApplyGuardedOnHandDeltaAsync(item.Id, loc.Id, -2m, connection, transaction);
+            applied!.OnHandQuantity.Should().Be(3m);
+            await transaction.CommitAsync();
+        }
+
+        (await _balanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id))!.OnHandQuantity.Should().Be(3m);
+    }
+
     [Fact]
     public async Task ConcurrentWritersApplyingDeltasProduceExactNetSumWithoutLostUpdates()
     {
