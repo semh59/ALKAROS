@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1436,
-  "markdown_line_count": 110017,
-  "markdown_byte_count": 6333202,
+  "markdown_line_count": 110076,
+  "markdown_byte_count": 6339069,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -113,9 +113,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "458B33D756EE4AAAF0C9082DCA0690D2AF941F8781611A3F9ECB50317892A5EF",
-      "lines": 218,
-      "bytes": 17272,
+      "sha256": "AB32CD116ED630B1F9684C55A63D84587B3A26B1CF15C45B52F9990B9A589DBA",
+      "lines": 219,
+      "bytes": 17784,
       "utf8": true
     },
     {
@@ -2556,7 +2556,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "2FA5A497C69F8D63A857762823E34649FE214D51A27A3D9D0AF81B3F648EB0E9",
+      "sha256": "E063FF316A346E29B85288BA88166801A8CCBE62A28E79F748D5C1AA415D8305",
       "lines": 2712,
       "bytes": 397533,
       "utf8": true
@@ -9591,9 +9591,9 @@
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-003-bill-account-charge.md",
-      "sha256": "EF61BB2999857B3B11414F1028EBEF002BD168D5E64BC4C7E1AFDEF81BD10E94",
-      "lines": 56,
-      "bytes": 1376,
+      "sha256": "2AAF737EF61204266DD808B964467B1F14FC6C84FA6E4B8917F52DCB770B715C",
+      "lines": 114,
+      "bytes": 6731,
       "utf8": true
     },
     {
