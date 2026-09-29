@@ -200,9 +200,12 @@ public static partial class DualScreenApplication
             ResolveUnsettledPaymentRequestV1 request,
             IManualPaymentResolutionService resolution,
             IPaymentRepository paymentRepository,
+            IBillClosureService billClosure,
+            OrderSettlementService orderSettlement,
             IAuditEventStore auditEvents,
             IAuthorizationService authorization,
             DualScreenStore store,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -230,7 +233,10 @@ public static partial class DualScreenApplication
                         beforeStateJson: JsonSerializer.Serialize(new { status = result.PreviousStatus, billId }),
                         afterStateJson: JsonSerializer.Serialize(new { status = result.NewStatus, billId })),
                     cancellationToken);
-                return Results.Ok(new ResolveUnsettledPaymentResultV1(paymentId, result.NewStatus));
+                // V1-RMD-412 (V1-RMD-393 F-06): the unresolved attempt was what kept an otherwise settled check
+                // open; like card approval and every tender, try to close it now (a check still short stays open).
+                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
+                return Results.Ok(new ResolveUnsettledPaymentResultV1(paymentId, result.NewStatus, closed));
             }
             catch (ManualResolutionReasonInvalidException)
             {
@@ -392,11 +398,15 @@ public static partial class DualScreenApplication
             IBillClosureService billClosure,
             OrderSettlementService orderSettlement,
             DualScreenStore store,
+            IAuthorizationService authorization,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            // V1-RMD-401 (V1-RMD-399 Q-01): taking a payment is its own permission, cashier tier by default and
+            // grantable to waiters through role management once they carry a card terminal (PO 2026-09-28).
+            var principal = await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
 
             if (!TenderMethodCatalog.TryParse(request.Method, out var method))
                 return Results.Json(
@@ -544,6 +554,14 @@ public static partial class DualScreenApplication
                     },
                     statusCode: StatusCodes.Status409Conflict);
             }
+            catch (BillNotPayableException)
+            {
+                // V1-RMD-409 (V1-RMD-393 F-07): e.g. a till screen still showing a check that was recalled and
+                // cancelled; the money must go to the re-issued check instead.
+                return Results.Json(
+                    new { error = new { code = "TENDER_BILL_NOT_PAYABLE", message = "Bu hesap iptal edilmiş; tahsilat alınamaz. Hesabı yenileyin." } },
+                    statusCode: StatusCodes.Status409Conflict);
+            }
             catch (CrossBillPaymentAllocationException)
             {
                 return Results.Json(
@@ -585,7 +603,7 @@ public sealed record SubmitBillTenderRequestV1(string Method, decimal Amount, st
 
 public sealed record ResolveUnsettledPaymentRequestV1(string? Reason);
 
-public sealed record ResolveUnsettledPaymentResultV1(Guid PaymentId, string Status);
+public sealed record ResolveUnsettledPaymentResultV1(Guid PaymentId, string Status, bool BillClosed = false);
 
 public sealed record SubmitBillTenderResultV1(string Outcome, decimal? ApprovedAmount, string? Reason, bool BillClosed = false);
 

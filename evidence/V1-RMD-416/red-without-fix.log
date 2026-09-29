@@ -1,0 +1,5 @@
+# Production changes stashed (src/), tests kept
+[xUnit.net 00:00:06.60]     ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.AFailedOpeningLedgerWriteLeavesNoSessionBehind [FAIL]
+Expected: 0
+Actual:   1
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 4 s - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)

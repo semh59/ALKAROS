@@ -1,0 +1,11 @@
+M01 | KILLED by: tests/Host/Experience/PaymentTender | EFT: drop the unresolved-payment lock (V1-RMD-258)
+M02 | KILLED by: tests/Modules/Cash/TenderHandler | Cash: drop the per-idempotency-key advisory lock
+M03 | KILLED by: tests/Modules/Billing/PaymentClosure | Closure: count allocations of non-Approved payments as paid
+M04 | SURVIVED | Expected cash: include count adjustments / closing differences
+M05 | KILLED by: tests/Modules/Payments/Allocations/Persistence | Allocation: drop the remaining-payable ceiling (V0-DOM-004)
+M06 | KILLED by: tests/Modules/Billing/Adjustments tests/Host/Experience/Billing | Adjusted payable: ignore tips
+M07 | SURVIVED | Closure: close a bill even with Pending/Unknown payment blockers
+M08 | KILLED by: tests/Modules/Cash/TenderHandler tests/Host/Experience/CashSession | Cash: never return change
+M09 | KILLED by: tests/Host/Experience/PaymentTender | Card: allow a new attempt on top of an unresolved one
+M10 | KILLED by: tests/Host/Experience/PaymentTender | Manual card approval: allow the claimant to approve their own claim (four-eyes)
+exit=0

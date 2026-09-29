@@ -1,0 +1,11 @@
+    0 Error(s)
+tests/Modules/Billing/Adjustments: Passed!  - Failed:     0, Passed:    16, Skipped:     0, Total:    16,
+tests/Modules/Billing/PaymentClosure: Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14,
+tests/Modules/Billing/SplitDesign: Passed!  - Failed:     0, Passed:    29, Skipped:     0, Total:    29,
+tests/Modules/Cash/TenderHandler: Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7,
+tests/Modules/Payments/EftTender: Passed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12,
+tests/Modules/Payments/Allocations/Persistence: Passed!  - Failed:     0, Passed:    15, Skipped:     0, Total:    15,
+tests/Host/Experience/Billing: Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19,
+tests/Host/Experience/PaymentTender: Passed!  - Failed:     0, Passed:    30, Skipped:     0, Total:    30,
+tests/Host/Experience/CashSession: Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14,
+exit=0

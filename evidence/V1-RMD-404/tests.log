@@ -1,0 +1,11 @@
+    0 Warning(s)
+    0 Error(s)
+Passed!  - Failed:     0, Passed:   211, Skipped:     0, Total:   211, Duration: 2 s - ALKAROS.Identity.Authorization.Tests.dll (net8.0)
+    0 Warning(s)
+    0 Error(s)
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 11 s - ALKAROS.Host.Experience.OfflineReconciliation.Tests.dll (net8.0)
+
+HTTP test project after moving the subject constant private (same change set):
+    0 Warning(s)
+    0 Error(s)
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 11 s - ALKAROS.Host.Experience.OfflineReconciliation.Tests.dll (net8.0)

@@ -193,6 +193,44 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AWaiterCompingAnUnassignedCheckIsRefusedByTheOwnCheckGuard()
+    {
+        // V1-RMD-402 (PO 2026-09-28): a check nobody serves is not the waiter's own check — refused, never queued.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(servingUserId: null);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AUserWhoIsBothWaiterAndCashierIsGovernedByTheWaiterRole()
+    {
+        // V1-RMD-408 (PO 2026-09-28): the most restrictive role governs; neither role holds bills.comp outright,
+        // so the grant path runs and the waiter's own-check refuses another server's check every time.
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        await _database.AddSeededRoleAsync(userId, "cashier");
+        await _database.MoveRoleAssignmentLastAsync(userId, "waiter");
+        var (otherServerId, _) = await _database.SeedRealWaiterSessionAsync(Guid.NewGuid());
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync(otherServerId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "CustomerSatisfaction"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    [Fact]
     public async Task AWaiterCompingTheirOwnCheckIsNotBlockedByTheOwnCheckGuard()
     {
         var terminalId = Guid.NewGuid();

@@ -1,0 +1,10 @@
+    0 Error(s)
+N01 | KILLED by: tests/Modules/Inventory/CrossChannelReservation | Consumption guard: ignore the requested quantity (oversell)
+N02 | SURVIVED | Balance guard: allow on-hand to go negative
+N03 | KILLED by: tests/Host/Experience/Orders/VoidSent | Void: do not restore stock of a Held course (V1-RMD-318)
+N04 | KILLED by: tests/Modules/Inventory/WasteRecording | Waste: drop idempotent replay
+N05 | KILLED by: tests/Modules/Production/StockEffects | Production: ignore the ingredient loss percentage
+N08 | SURVIVED | Cost resolver: exclude receipts on the basis date (the blind-calibration seed itself)
+# N06/N07 first run failed to compile (if (false) -> CS0162 as error); re-run with a non-constant always-false condition:
+N06 | KILLED by: tests/Modules/Production/StockEffects | Production: re-execute a Completed batch (double consumption)
+N07 | KILLED by: tests/Host/Experience/Orders/Confirmation | Sale consumption: consume stock for a line voided before acceptance

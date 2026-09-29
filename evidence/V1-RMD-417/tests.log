@@ -1,0 +1,78 @@
+# HEAD 94628ba1 + V1-RMD-417 working diff, PostgreSQL 18, Release
+## tests/Modules/Cash/Contracts/ALKAROS.Cash.Contracts.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.ReconcilePassesOnlyOnClosedSession [27 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.CloseCashSessionCommandValidation [28 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.StartCountPassesWhenSessionIsOpenAndFailsOtherwise [1 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.RecordCountValidatesAmountAndStatus [2 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.CashSessionSnapshotConstructsAndEvaluatesIsActiveCorrectly [6 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionThrowsWhenTerminalHasExistingActiveSession(activeStatus: Closing) [2 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionThrowsWhenTerminalHasExistingActiveSession(activeStatus: Counting) [1 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionThrowsWhenTerminalHasExistingActiveSession(activeStatus: Open) [< 1 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.OpenSessionPassesWhenNoActiveSessionExistsOnTerminal [< 1 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.OpenCashSessionCommandValidation [6 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.CloseSessionExceedingToleranceRequiresSupervisorOverride [3 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.CloseSessionWithinTolerancePassesWithoutSupervisorOverride [< 1 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionLifecycleTests.DomainExceptionsCaptureParametersProperly [1 ms]
+  Passed ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.AnOpenSessionCanNeitherRecordACountNorCloseBeforeCountingStarts [1 ms]
+Total tests: 14
+     Passed: 14
+## tests/Modules/Cash/SessionLifecycle/ALKAROS.Cash.SessionLifecycle.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.CloseSessionAsyncBeyondVarianceToleranceRequiresSupervisorOverride [144 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.ClosedSessionCannotBeSilentlyReopenedByStartingANewCount [19 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.GetSuggestedOpeningBalanceAsyncReturnsTheActualCashOfTheMostRecentClosedSession [13 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.FullLifecycleOpenCountCloseReconcileReachesReconciledWithCorrectDifference [35 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.OpenSessionAsyncPersistsAndRoundTripsAnOpenSession [9 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.CloseSessionAsyncOnAnAlreadyClosedSessionFails [14 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.OpenSessionAsyncAllowsANewSessionOnceThePreviousOneIsClosed [13 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.GetSuggestedOpeningBalanceAsyncReturnsNullWithoutAPriorClosedSession [4 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.SaveAsyncFailsClosedOnAStaleRowVersion [12 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.ReconcileSessionAsyncRejectsANonClosedSession [10 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.OpenSessionAsyncRejectsASecondConflictingSessionOnTheSameTerminal [15 ms]
+  Passed ALKAROS.Cash.SessionLifecycle.Tests.CashSessionLifecycleServiceTests.ConcurrentOpenSessionAsyncCallsOnTheSameTerminalNeverBothSucceed [30 ms]
+Total tests: 12
+     Passed: 12
+## tests/Modules/Cash/TenderHandler/ALKAROS.Cash.TenderHandler.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncReplaysADuplicateSubmitInsteadOfCreatingASecondSetOfRecords [360 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.ACashKeyReusedForAnotherAmountIsRefusedNotReplayed [57 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncRejectsATenderOnAClosedSessionAndCreatesNothing [46 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncRejectsATenderBelowTheAmountDueAndCreatesNothing [24 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncLeavesNoPartialPaymentOrCashTransactionWhenTheAllocationStepFails [25 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.ACashTenderReusingAKeyAnotherTenderMethodUsedIsRefusedAndRecordsNothing [28 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.ConcurrentSubmitsOfTheSameCommandProduceExactlyOneRealSetOfRecords [67 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncAcceptsATenderThatIncludesATipEvenThoughItExceedsTheOriginalPayable [45 ms]
+  Passed ALKAROS.Cash.TenderHandler.Tests.CashTenderHandlerTests.HandleAsyncCreatesExactlyOnePaymentAllocationAndCashTransactionWithDeterministicChange [44 ms]
+Total tests: 9
+     Passed: 9
+## tests/Host/Experience/CashSession/ALKAROS.Host.Experience.CashSession.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.AFailedOpeningLedgerWriteLeavesNoSessionBehind [4 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.RetryingACashMovementWithTheSameIdempotencyKeyDoesNotDuplicateIt [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ReconcileNeedsASupervisorWhoIsNotTheSessionsOwnCashier [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderNeedsPaymentsTakeOnTopOfCashDrawer [2 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ACashTenderIsRefusedWhileACardAttemptOnTheSameBillIsUnresolved [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CloseComputesExpectedCashFromTheOpeningLedgerEntryWithNoVarianceForAMatchingCount [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderBelowTheAmountDueIsRejected [2 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.OpeningASecondSessionOnTheSameTerminalIsRejected [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.StartCountThenRecordCountSucceed [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashMovementsAdjustExpectedCashInBothDirectionsAndRejectOnAClosedSession [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ACashTenderOnACancelledBillIsRefusedAndRecordsNothing [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.WithoutACashierSessionEveryRouteIsUnauthorized [2 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderSucceedsAndPostsASaleLedgerEntry [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ClosingWithADifferenceOverTheToleranceRequiresSupervisorOverride [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ExpectedCashPreviewMatchesWhatCloseItselfLaterComputes [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderOnAClosedSessionIsRejected [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.GetActiveReturnsTheOpenSessionAndNotFoundOnceClosed [2 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.OpenSessionSucceedsAndPostsAnOpeningLedgerEntry [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ACashierOnAnotherTerminalCannotTouchThisTerminalsDrawerSession [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderClaimingMoreThanTheBillsRemainingPayableIsRejectedAndPersistsNothing [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ADrawerCannotBeCountedOrClosedBeforeCountingStarts [3 s]
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ASessionWithoutCashDrawerIsForbiddenOnDrawerRoutes [2 s]
+Total tests: 22
+     Passed: 22

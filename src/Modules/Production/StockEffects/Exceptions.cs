@@ -34,3 +34,21 @@ public sealed class InvalidProductionStockEffectException : ProductionStockEffec
     public InvalidProductionStockEffectException(string message) : base(message) { }
     public InvalidProductionStockEffectException(string message, Exception innerException) : base(message, innerException) { }
 }
+
+/// <summary>
+/// V1-RMD-419: a batch's quantity unit cannot be converted into its recipe's yield unit, so the ingredient scale is
+/// undefined.
+/// </summary>
+public sealed class ProductionBatchUnitMismatchException : ProductionStockEffectException
+{
+    public ProductionBatchUnitMismatchException(Guid batchId, string batchUnitCode, string yieldUnitCode, Exception innerException)
+        : base($"Batch '{batchId}' is measured in '{batchUnitCode}', which cannot be converted to the recipe yield unit '{yieldUnitCode}'.", innerException)
+    {
+        BatchUnitCode = batchUnitCode;
+        YieldUnitCode = yieldUnitCode;
+    }
+
+    public string BatchUnitCode { get; }
+
+    public string YieldUnitCode { get; }
+}

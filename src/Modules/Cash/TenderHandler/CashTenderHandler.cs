@@ -79,15 +79,29 @@ public sealed class CashTenderHandler : ICashTenderHandler
         // until the first one commits, then finds the allocation already
         // recorded below and replays instead of racing its own Payment/
         // CashTransaction insert against the first attempt's.
+        // V1-RMD-409 (V1-RMD-393 F-04): the shared bill-settlement lock FIRST, idempotency-key lock second — the
+        // same fixed order and key EftTenderHandler and CardSettlementOrchestrator use, so a cash tender now
+        // serializes against a concurrent card attempt on the same bill instead of racing it.
+        await LockBillForSettlementAsync(connection, dbTransaction, bill.Id, cancellationToken);
         await LockIdempotencyKeyAsync(connection, dbTransaction, request.IdempotencyKey, cancellationToken);
 
         var existingAllocation = await _allocationRepository.GetByIdempotencyKeyAsync(
             request.IdempotencyKey, connection, dbTransaction, cancellationToken);
         if (existingAllocation is not null)
         {
+            var replay = await BuildReplayResultAsync(existingAllocation, request, cancellationToken);
             await dbTransaction.CommitAsync(cancellationToken);
-            return await BuildReplayResultAsync(existingAllocation, request.CashSessionId, cancellationToken);
+            return replay;
         }
+
+        // V1-RMD-409 (V1-RMD-393 F-04): V1-RMD-258 left cash out of this guard because a cash payment itself is
+        // never Unknown — but another payment on the same bill can be. If that card attempt was really charged,
+        // cash on top of it charges the guest twice. Read under the bill-settlement lock just taken.
+        var existingPayments = await _paymentRepository.GetByBillIdAsync(bill.Id, cancellationToken);
+        var unsettledPayment = existingPayments.FirstOrDefault(p =>
+            p.Status is PaymentStatus.Pending or PaymentStatus.Unknown or PaymentStatus.ReconciliationRequired);
+        if (unsettledPayment is not null)
+            throw new CashTenderUnsettledPaymentExistsException(bill.Id, unsettledPayment.Id);
 
         // Fail-fast check, now that this is confirmed to be a genuinely new
         // command (not a replay of one that already succeeded): a plain
@@ -150,22 +164,43 @@ public sealed class CashTenderHandler : ICashTenderHandler
     /// scanning the session's own ledger for the one tied to this
     /// allocation's Payment (only ever exercised on a genuine retry, never
     /// the hot path).
+    ///
+    /// V1-RMD-415 (V1-RMD-393 F-12): a key only replays the cash sale it named. A key another tender method
+    /// (EFT, card) already used, or one reused for another bill, amount or drawer session, has no cash Sale in
+    /// this session behind it; answering 200 there told the cashier to put money in a drawer whose ledger never
+    /// saw it, so the drawer came out over at close.
     /// </summary>
     private async Task<CashTenderResult> BuildReplayResultAsync(
-        PaymentAllocation allocation, Guid cashSessionId, CancellationToken cancellationToken)
+        PaymentAllocation allocation, CashTenderRequest request, CancellationToken cancellationToken)
     {
         var payment = await _paymentRepository.GetByIdAsync(allocation.PaymentId, cancellationToken)
             ?? throw new PaymentNotFoundException(allocation.PaymentId);
-        var ledger = await _ledgerRepository.GetBySessionIdAsync(cashSessionId, cancellationToken);
-        var cashTransaction = ledger.FirstOrDefault(entry => entry.RelatedPaymentId == payment.Id);
+        var ledger = await _ledgerRepository.GetBySessionIdAsync(request.CashSessionId, cancellationToken);
+        var cashTransaction = ledger.FirstOrDefault(entry =>
+            entry.RelatedPaymentId == payment.Id && entry.Type == CashTransactionType.Sale);
+        if (cashTransaction is null || allocation.BillId != request.BillId || allocation.Amount != request.AmountDue)
+            throw new CashTenderIdempotencyKeyReusedException(request.IdempotencyKey);
 
         return new CashTenderResult(
             payment.Id,
             allocation.Id,
-            cashTransaction?.Id ?? Guid.Empty,
+            cashTransaction.Id,
             payment.ApprovedAmount ?? 0m,
             payment.ChangeAmount,
             WasReplayed: true);
+    }
+
+    private static async Task LockBillForSettlementAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);";
+        await using (command)
+        {
+            command.Parameters.AddWithValue($"bill-settlement:{billId:N}");
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
     }
 
     private static async Task LockIdempotencyKeyAsync(

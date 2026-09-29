@@ -1,0 +1,4 @@
+# Query and formula change reverted (the service file stashed; the model keeps its two new columns, filled with 0 so the tests compile)
+[xUnit.net 00:00:00.95]     ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportCountsProductionConsumptionAndOutput [FAIL]
+   Expected flour.ProductionConsumption to be 5M, but found 0M (difference of -5).
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 182 ms - ALKAROS.Reporting.MenuInventory.Tests.dll (net8.0)

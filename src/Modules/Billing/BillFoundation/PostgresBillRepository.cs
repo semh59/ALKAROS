@@ -129,6 +129,31 @@ public sealed class PostgresBillRepository : IBillRepository
         return await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task<int> CancelActiveBillsForOrderAsync(
+        Guid orderId,
+        DateTimeOffset timestamp,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        await using var command = connection.CreateCommand();
+        command.Transaction = transaction;
+        command.CommandText = $"""
+            UPDATE {BillsTable}
+            SET status = 'Cancelled',
+                cancelled_at = @timestamp,
+                updated_at = @timestamp,
+                row_version = row_version + 1
+            WHERE order_id = @order_id AND status NOT IN ('Paid', 'Cancelled');
+            """;
+        command.Parameters.AddWithValue("order_id", orderId);
+        command.Parameters.AddWithValue("timestamp", timestamp);
+        return await command.ExecuteNonQueryAsync(cancellationToken);
+    }
+
     public async Task<int> ReparentBillToTableAsync(
         Guid billId,
         Guid expectedFromTableId,

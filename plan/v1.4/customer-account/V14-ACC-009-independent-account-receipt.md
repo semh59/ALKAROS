@@ -1,8 +1,8 @@
 # V14-ACC-009 - Record independent account receipts
 
 - Task ID: V14-ACC-009
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Planned
 
@@ -26,6 +26,14 @@ PaymentAllocation oluşturmamak.
 - `database/migrations/V14/V14-ACC-009/**`
 - Bu görev, CashReceipts, CardReceipts, AccountPayments, AccountTransaction veya PaymentAllocation owned surface'ini
   değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/CustomerAccounts/CustomerAccountsModule.cs (V14-ACC-001
+  sahipliğinde) — yalnız AccountReceipt deposunun kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx (V0-GOV-040 sahipliğinde) — yalnız bu görevin test projesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json,
+  src/Host/Composition/Migrations/MigrationManifest.cs ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs —
+  yalnız bu görevin migration'ı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tools/consistency-audit/unreachable_services_allowlist.json (V1-RMD-272
+  sahipliğinde) — yalnız bu görevin HTTP yüzeyi henüz olmayan tipleri
 
 ## In scope
 

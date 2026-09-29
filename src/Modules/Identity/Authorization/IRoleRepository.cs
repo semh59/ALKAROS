@@ -18,6 +18,13 @@ public interface IRoleRepository
 
     Task<IReadOnlyList<Guid>> GetRoleIdsForUserAsync(Guid userId, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// V1-RMD-408: the role that governs a multi-role user's grant requests — the most restrictive one, i.e. the
+    /// role holding the fewest permissions outright; ties go to the ordinally smallest role code. Null when the user
+    /// has no role (PO decision 2026-09-28).
+    /// </summary>
+    Task<Role?> GetGoverningRoleForUserAsync(Guid userId, CancellationToken cancellationToken = default);
+
     Task<IReadOnlyList<string>> GetPermissionCodesForUserAsync(Guid userId, CancellationToken cancellationToken = default);
 
     Task<(bool Exists, bool Active)> GetUserStateAsync(Guid userId, CancellationToken cancellationToken = default);

@@ -64,7 +64,9 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         using var denied = CreateClient(CatalogApiTestDatabase.DeniedToken);
         using var forbidden = await denied.PostAsJsonAsync("/api/v1/management/catalog/categories", request);
         Assert.Equal(HttpStatusCode.Forbidden, forbidden.StatusCode);
-        Assert.Equal("FORBIDDEN", (await ReadErrorAsync(forbidden)).Error.Code);
+        var forbiddenError = (await ReadErrorAsync(forbidden)).Error;
+        Assert.Equal("FORBIDDEN", forbiddenError.Code);
+        Assert.Equal("Katalog yönetimi izni gerekiyor.", forbiddenError.Message); // V1-RMD-426: no English on screen
 
         Assert.Equal(
             0L,

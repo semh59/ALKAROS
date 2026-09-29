@@ -1388,6 +1388,23 @@
         "balance_snapshots"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "163",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "164",
+      "phase": "B",
+      "tables": [
+        "credit_terms"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

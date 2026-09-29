@@ -1,0 +1,17 @@
+# V1-RMD-440 red runs on 72e95a86 + patch
+## red 1: policy approves every charge
+39:        if (terms.CreditLimit == -1m)
+45:            if (overdue < 0m)
+53:        if (balance + amount < 0m)
+  Failed ALKAROS.CustomerAccounts.BillCharges.Tests.AccountChargeHandlerTests.OverdueDebtRefusesANewChargeUntilItIsPaid [305 ms]
+  Failed ALKAROS.CustomerAccounts.BillCharges.Tests.AccountChargeHandlerTests.TwoConcurrentChargesCannotTogetherExceedTheCreditLimit [172 ms]
+  Failed ALKAROS.CustomerAccounts.BillCharges.Tests.AccountChargeHandlerTests.TheProductionCreditPolicyRefusesAChargeWhenNoCreditLimitIsSet [23 ms]
+  Failed ALKAROS.CustomerAccounts.BillCharges.Tests.AccountChargeHandlerTests.AChargeThatWouldExceedTheCreditLimitIsRefusedAndPostsNothing [16 ms]
+Failed!  - Failed:     4, Passed:    16, Skipped:     0, Total:    20, Duration: 746 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+## red 2: per-customer lock removed (credit check still inside the transaction)
+0
+run 1: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 382 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 2: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 395 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 3: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 398 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 4: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 407 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 5: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 404 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)

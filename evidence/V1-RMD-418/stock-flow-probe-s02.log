@@ -1,0 +1,4 @@
+# V1-RMD-398 probe S02 on the fixed copy (unlocked restore in the clone, per the probe README)
+[xUnit.net 00:00:05.92]       Voided item still carries 0.4000 kg of theoretical consumption; the actual-vs-theoretical report will show a false shortage of that amount.
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S02VoidingASentItemAlsoWithdrawsItsTheoreticalConsumption [1 s]
+   Voided item still carries 0.4000 kg of theoretical consumption; the actual-vs-theoretical report will show a false shortage of that amount.

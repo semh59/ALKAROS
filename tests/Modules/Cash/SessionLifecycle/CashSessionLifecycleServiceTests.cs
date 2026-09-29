@@ -64,6 +64,7 @@ public sealed class CashSessionLifecycleServiceTests : IClassFixture<CashSession
         var terminalId = Guid.NewGuid();
         var first = new OpenCashSessionCommand(Guid.NewGuid(), Guid.NewGuid(), terminalId, 100.00m);
         await _service.OpenSessionAsync(first);
+        await _service.StartCountAsync(new StartCashCountCommand(first.CashSessionId, Guid.NewGuid()));
         await _service.CloseSessionAsync(
             new CloseCashSessionCommand(first.CashSessionId, 100.00m, Guid.NewGuid()), expectedCash: 100.00m);
 
@@ -109,6 +110,7 @@ public sealed class CashSessionLifecycleServiceTests : IClassFixture<CashSession
         // Acceptance evidence: "eski kapatma başarısız olur."
         var command = new OpenCashSessionCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 100.00m);
         await _service.OpenSessionAsync(command);
+        await _service.StartCountAsync(new StartCashCountCommand(command.CashSessionId, Guid.NewGuid()));
         await _service.CloseSessionAsync(
             new CloseCashSessionCommand(command.CashSessionId, 100.00m, Guid.NewGuid()), expectedCash: 100.00m);
 
@@ -128,6 +130,7 @@ public sealed class CashSessionLifecycleServiceTests : IClassFixture<CashSession
         // active state) must still refuse it.
         var command = new OpenCashSessionCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 100.00m);
         await _service.OpenSessionAsync(command);
+        await _service.StartCountAsync(new StartCashCountCommand(command.CashSessionId, Guid.NewGuid()));
         await _service.CloseSessionAsync(
             new CloseCashSessionCommand(command.CashSessionId, 100.00m, Guid.NewGuid()), expectedCash: 100.00m);
 
@@ -175,6 +178,7 @@ public sealed class CashSessionLifecycleServiceTests : IClassFixture<CashSession
     {
         var command = new OpenCashSessionCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 100.00m);
         await _service.OpenSessionAsync(command);
+        await _service.StartCountAsync(new StartCashCountCommand(command.CashSessionId, Guid.NewGuid()));
 
         // 200 vs expected 100 => difference 100, over the default 50 tolerance.
         var withoutOverride = () => _service.CloseSessionAsync(
@@ -236,6 +240,7 @@ public sealed class CashSessionLifecycleServiceTests : IClassFixture<CashSession
         var terminalId = Guid.NewGuid();
         var command = new OpenCashSessionCommand(Guid.NewGuid(), Guid.NewGuid(), terminalId, 100.00m);
         await _service.OpenSessionAsync(command);
+        await _service.StartCountAsync(new StartCashCountCommand(command.CashSessionId, Guid.NewGuid()));
         await _service.CloseSessionAsync(
             new CloseCashSessionCommand(command.CashSessionId, 137.50m, Guid.NewGuid()), expectedCash: 100.00m);
 

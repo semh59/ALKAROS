@@ -63,6 +63,28 @@ public sealed class BillPaymentClosureProjectorTests : IClassFixture<BillPayment
         projection.Blockers.Should().BeEmpty();
     }
 
+    /// <summary>
+    /// V1-RMD-425 (V1-RMD-393 mutation M07): a bill whose payable is fully allocated but which still carries an
+    /// unresolved card attempt (Unknown) must stay open; if that attempt was really charged, closing would hide a
+    /// double charge.
+    /// </summary>
+    [Fact]
+    public async Task ACoveredBillWithAnUnresolvedCardAttemptIsNotClosed()
+    {
+        var billId = await SeedBillAsync(payable: 60m);
+        var cash = new Payment(Guid.NewGuid(), billId, 60m, currencyCode: "TRY").Tender(60m).Approve(60m);
+        await _payments.AddAsync(cash);
+        await _allocations.AllocateAsync(cash, (await _bills.GetByIdAsync(billId))!, 60m, "key-" + Guid.NewGuid());
+        var card = new Payment(Guid.NewGuid(), billId, 60m, currencyCode: "TRY").Tender(60m).MarkUnknown();
+        await _payments.AddAsync(card);
+
+        var result = await new BillClosureService(_bills, _projector).TryCloseAsync(billId);
+
+        result.Outcome.Should().Be(BillClosureOutcome.NotSatisfied);
+        result.Blockers.Should().NotBeEmpty();
+        (await _bills.GetByIdAsync(billId))!.Status.Should().NotBe(BillState.Paid);
+    }
+
     [Fact]
     public async Task RebuildAsyncIsDeterministicAcrossRepeatedCalls()
     {

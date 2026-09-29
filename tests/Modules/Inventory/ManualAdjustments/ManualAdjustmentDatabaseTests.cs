@@ -125,6 +125,39 @@ public sealed class ManualAdjustmentDatabaseTests : IClassFixture<ManualAdjustme
     }
 
     [Fact]
+    public async Task RetriesOfAKeyedAdjustmentMoveStockOnceAndAReusedKeyIsRefused()
+    {
+        // V1-RMD-422 (V1-RMD-398 G-07): the idempotency key was accepted and never read.
+        var loc = await _masterService.CreateLocationAsync(
+            "LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Depo", StockLocationType.Warehouse);
+        var item = await _masterService.CreateStockItemAsync(
+            "SKU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Un", StockItemType.RawMaterial, "kg");
+        var managerId = Guid.NewGuid();
+        await _adjustmentService.AdjustInventoryAsync(new InventoryAdjustmentRequest(
+            item.Id, loc.Id, AdjustmentDirection.Increase, 30m, "kg", "Acilis", managerId));
+        var key = "adj-" + Guid.NewGuid().ToString("N");
+        var decrease = new InventoryAdjustmentRequest(
+            item.Id, loc.Id, AdjustmentDirection.Decrease, 1m, "kg", "Sayim farki", managerId, key);
+
+        var first = await _adjustmentService.AdjustInventoryAsync(decrease);
+        var sequentialRetry = await _adjustmentService.AdjustInventoryAsync(decrease);
+        var concurrentRetries = await Task.WhenAll(
+            Enumerable.Range(0, 5).Select(_ => Task.Run(() => _adjustmentService.AdjustInventoryAsync(decrease))));
+
+        first.WasReplayed.Should().BeFalse();
+        sequentialRetry.WasReplayed.Should().BeTrue();
+        sequentialRetry.Movement.Id.Should().Be(first.Movement.Id);
+        concurrentRetries.Should().OnlyContain(r => r.WasReplayed && r.Movement.Id == first.Movement.Id);
+        (await _balanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id))!.OnHandQuantity.Should().Be(29m);
+        (await _movementRepo.GetByStockItemAsync(item.Id)).Should().HaveCount(2);
+
+        var reused = () => _adjustmentService.AdjustInventoryAsync(decrease with { Quantity = 2m });
+        await reused.Should().ThrowAsync<DuplicateAdjustmentException>();
+        (await _balanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id))!.OnHandQuantity.Should().Be(29m);
+        (await _projector.ReplayBalanceForItemAndLocationAsync(item.Id, loc.Id)).Should().Be(29m);
+    }
+
+    [Fact]
     public async Task AdjustmentFailingNegativeConstraintDoesNotPersistAnyMovement()
     {
         var locCode = "LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();

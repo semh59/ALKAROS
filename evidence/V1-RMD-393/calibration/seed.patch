@@ -1,0 +1,11 @@
+--- a/src/Modules/Billing/Adjustments/AdjustmentCalculator.cs	2026-09-28 06:58:05.235230718 +0000
++++ b/src/Modules/Billing/Adjustments/AdjustmentCalculator.cs	2026-09-28 06:58:05.240189557 +0000
+@@ -39,7 +39,7 @@
+             }
+             else if (adj.AdjustmentType == AdjustmentType.Tip)
+             {
+-                tipGross += adj.GrossAmount;
++                tipGross = adj.GrossAmount;
+             }
+             else
+             {

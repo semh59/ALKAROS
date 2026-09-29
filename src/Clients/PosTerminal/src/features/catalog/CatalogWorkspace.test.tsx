@@ -73,6 +73,47 @@ describe("catalog workspace", () => {
     expect(dialog.querySelector<HTMLInputElement>("input")?.value).toBe("ESP-01");
   });
 
+  it("does not offer the untracked stock mode the sale path ignores and shows older records in Turkish", async () => {
+    // V1-RMD-437 (V1-RMD-398 G-11): an order is only accepted for a product with a stock mapping (V1-RMD-143),
+    // whatever its stock mode, so "Untracked" is no longer offered and the raw enum is never shown.
+    const onCreate = vi.fn().mockResolvedValue(undefined);
+    await render(<CatalogWorkspace {...baseProps({ onCreate })} />);
+    const detail = document.querySelector(".catalog-details")!;
+    expect(detail.textContent).toContain("Takipsiz (eski kayıt)");
+    expect(detail.textContent).not.toContain("Untracked");
+
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("Ürün ekle"))!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const stockMode = [...dialog.querySelectorAll("label")].find((label) => label.textContent?.startsWith("Stok modu"))!;
+    const select = stockMode.querySelector("select")!;
+    expect([...select.options].map((option) => option.textContent)).toEqual(["Miktar takipli", "Porsiyon takipli", "Reçeteden"]);
+    expect(select.value).toBe("QuantityTracked");
+    expect(stockMode.textContent).toContain("Siparişin onaylanması için ürünün stok eşlemesi olmalı.");
+
+    const inputs = dialog.querySelectorAll<HTMLInputElement>("input");
+    await fill(inputs[0], "SU-01");
+    await fill(inputs[1], "Su");
+    await fill(inputs[2], "20");
+    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Kaydı oluştur")!);
+    expect(onCreate).toHaveBeenCalledWith({ kind: "products", value: expect.objectContaining({ sku: "SU-01", stockMode: "QuantityTracked" }) });
+  });
+
+  it("shows product type, tax profile and price type in Turkish instead of raw values", async () => {
+    // V1-RMD-438: the product subtitle showed the raw ProductType enum, the detail showed the tax profile id and the
+    // price subtitle showed the raw PriceType enum with a product id fragment.
+    await render(<CatalogWorkspace {...baseProps()} />);
+    const row = document.querySelector(".catalog-row")!;
+    expect(row.textContent).toContain("ESP-01 · Menü ürünü");
+    const detail = document.querySelector(".catalog-details")!;
+    expect(detail.textContent).toContain("KDV %10");
+    expect(document.body.textContent).not.toContain("MenuItem");
+    expect(detail.textContent).not.toContain("tax-1");
+
+    await click([...document.querySelectorAll(".catalog-workspace__tabs button")].find((button) => button.textContent?.includes("Fiyatlar"))!);
+    expect(document.body.textContent).toContain("Satış fiyatı · Espresso");
+    expect(document.body.textContent).not.toContain("SalePrice");
+  });
+
   it("creates a modifier group — the create surface that was entirely unreachable before this fix", async () => {
     // Found by an independent audit (2026-09-07): an operator could create
     // individual modifiers via this same screen but never the group their

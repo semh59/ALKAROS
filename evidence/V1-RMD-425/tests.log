@@ -1,0 +1,40 @@
+# HEAD 3eb2510c + V1-RMD-425 working diff, PostgreSQL 18, Release
+## tests/Modules/Inventory/BalanceProjection/ALKAROS.Inventory.BalanceProjection.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.StockBalanceProjectorReplaysLedgerDeterministically [28 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.NullPolicyRejectsEmptyGuids [30 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.SetOnHandUpdatesOnHandAndAvailablePreservingReserved [< 1 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.StockBalanceProjectorAppliesMovementOnHandDelta [6 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.ApplyOnHandDeltaUpdatesOnHandAndAvailable [< 1 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.StockBalanceProjectorRebuildAllBalancesClearsAndReplaysAllLocations [17 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.CreateStockBalanceInitializesPropertiesCorrectly [1 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ConcurrentWritersApplyingDeltasProduceExactNetSumWithoutLostUpdates [115 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.FullLedgerRebuildFromDatabaseMovementsReconcilesAccurately [82 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.Migration061RollbackAndReapplyWorksCleanly [26 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.DeletingStockItemReferencedByStockBalanceThrowsForeignKeyRestriction [28 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.RebuildAllBalancesPreservesAnActiveReservationInsteadOfSilentlyZeroingIt [44 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ApplyOnHandDeltaCreatesAndUpdatesBalancesAccurately [11 ms]
+  Passed ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ARefusedGuardedDecreaseLeavesTheCallersTransactionUsable [32 ms]
+Total tests: 14
+     Passed: 14
+## tests/Modules/Billing/PaymentClosure/ALKAROS.Billing.PaymentClosure.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeMarksSatisfiedOnTheDiscountAdjustedTotalNotTheOriginalPayable [43 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeReportsHasUnknownPaymentBlockerForAnUnresolvedProviderTimeout [6 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeNeverMarksSatisfiedForANonApprovedPayment(status: Pending) [< 1 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeNeverMarksSatisfiedForANonApprovedPayment(status: Unknown) [< 1 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeNeverMarksSatisfiedForANonApprovedPayment(status: Cancelled) [< 1 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeNeverMarksSatisfiedForANonApprovedPayment(status: Declined) [< 1 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeReportsHasPendingPaymentBlockerForPendingOrReconciliationRequired [< 1 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeMarksSatisfiedWhenAnApprovedPaymentsAllocationExactlyCoversThePayable [< 1 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeReportsAPartialAllocationAsNotYetSatisfied [2 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeExcludesAnAllocationWhosePaymentIsNotApproved [< 1 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureCalculatorTests.ComputeReportsNotFullyAllocatedAndZeroTotalsWithNoPayments [1 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureProjectorTests.ACoveredBillWithAnUnresolvedCardAttemptIsNotClosed [308 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureProjectorTests.RebuildAsyncIsDeterministicAcrossRepeatedCalls [72 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureProjectorTests.RebuildAsyncThrowsWhenTheBillDoesNotExist [17 ms]
+  Passed ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureProjectorTests.RebuildAsyncReflectsARealApprovedPaymentAndAllocationAsSatisfied [22 ms]
+Total tests: 15
+     Passed: 15

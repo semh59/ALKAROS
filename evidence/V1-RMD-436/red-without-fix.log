@@ -1,0 +1,5 @@
+# V1-RMD-436 red run: the production policy approves every charge again (AlwaysApprove behaviour)
+29:        Task.FromResult(new CreditPolicyResult(true, null));
+   Assert.Throws() Failure: No exception was thrown
+  Failed ALKAROS.CustomerAccounts.BillCharges.Tests.AccountChargeHandlerTests.TheProductionCreditPolicyRefusesAChargeUntilACreditLimitExists [19 ms]
+Failed!  - Failed:     1, Passed:    13, Skipped:     0, Total:    14, Duration: 442 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)

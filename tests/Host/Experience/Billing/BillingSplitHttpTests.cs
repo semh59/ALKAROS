@@ -318,6 +318,97 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
             adjustmentsDoc.RootElement.GetProperty("summary").GetProperty("adjustedPayableAmount").GetDecimal());
     }
 
+    [Fact]
+    public async Task ADiscountThatWouldUndercutWhatWasAlreadyCollectedIsRefused()
+    {
+        // V1-RMD-410 (V1-RMD-393 F-05): 250 of a 275 bill already collected; a 50 discount would leave 225 payable.
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 250m, userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount";
+
+        using var tooMuch = await client.SendAsync(JsonRequest(HttpMethod.Post, path, cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "FixedAmount", 50m, "PromotionalOffer")));
+        Assert.Equal(HttpStatusCode.Conflict, tooMuch.StatusCode);
+        using (var error = JsonDocument.Parse(await tooMuch.Content.ReadAsStringAsync()))
+            Assert.Equal("DISCOUNT_BELOW_COLLECTED", error.RootElement.GetProperty("error").GetProperty("code").GetString());
+
+        using var withinRemaining = await client.SendAsync(JsonRequest(HttpMethod.Post, path, cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "FixedAmount", 20m, "PromotionalOffer")));
+        Assert.Equal(HttpStatusCode.OK, withinRemaining.StatusCode);
+        var body = await withinRemaining.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        Assert.Equal(255m, body!.Summary!.AdjustedPayableAmount);
+
+        using var adjustments = await client.SendAsync(Request(
+            HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/adjustments", cookie));
+        using var adjustmentsDoc = JsonDocument.Parse(await adjustments.Content.ReadAsStringAsync());
+        Assert.Equal(1, adjustmentsDoc.RootElement.GetProperty("adjustments").GetArrayLength());
+    }
+
+    [Fact]
+    public async Task ASplitDesignOnADiscountedBillUsesTheDiscountedPayable()
+    {
+        // V1-RMD-413 (V1-RMD-393 F-11): the design showed the undiscounted 275 while the engine sized splits against
+        // the discounted 250 and the repository checked against 275 again, so no split of a discounted bill saved.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = Path(terminalId, seeded.BillId);
+
+        using (var discount = await client.SendAsync(JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
+            cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "FixedAmount", 25m, "PromotionalOffer"))))
+            Assert.Equal(HttpStatusCode.OK, discount.StatusCode);
+
+        BillSplitDesignDto design;
+        using (var get = await client.SendAsync(Request(HttpMethod.Get, path, cookie)))
+        {
+            Assert.Equal(HttpStatusCode.OK, get.StatusCode);
+            design = (await get.Content.ReadFromJsonAsync<BillSplitDesignDto>())!;
+        }
+        Assert.Equal(250m, design.PayableAmount);
+
+        var saved = await PutAsync<BillSplitDesignDto>(
+            client,
+            path + "/amounts",
+            cookie,
+            new SaveAmountSplitRequest(
+                design.BillRowVersion,
+                [],
+                [
+                    new AmountSplitTargetRequest(new SplitOwnerRequest("Seat", seeded.SeatId), 100m),
+                    new AmountSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), 150m),
+                ]));
+        Assert.Equal(250m, saved.PayableAmount);
+        Assert.Equal(250m, saved.Allocations.Sum(allocation => allocation.Amount));
+        Assert.Equal(design.TaxTotal, saved.Allocations.Sum(allocation => allocation.TaxAmount));
+
+        using var items = await client.SendAsync(JsonRequest(
+            HttpMethod.Put,
+            path + "/items",
+            cookie,
+            new SaveItemSplitRequest(
+                saved.BillRowVersion,
+                Versions(saved),
+                [
+                    new ItemSplitTargetRequest(new SplitOwnerRequest("Seat", seeded.SeatId), seeded.FirstItemId, 1m),
+                    new ItemSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), seeded.SecondItemId, 1m),
+                ])));
+        Assert.Equal(HttpStatusCode.Conflict, items.StatusCode);
+        Assert.Equal(
+            "ITEM_SPLIT_ON_ADJUSTED_BILL",
+            (await items.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!.Error.Code);
+        Assert.Equal(saved.Allocations.Select(allocation => allocation.AllocationId), await _database.AllocationIdsAsync(seeded.BillId));
+    }
+
     /// <summary>
     /// V1-RMD-237: IAuditEventStore existed since V1-OPS-001 with zero real
     /// callers anywhere in the codebase — a discounted bill left no audit
@@ -971,6 +1062,21 @@ internal sealed class BillingSplitTestDatabase
         }
 
         return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
+    }
+
+    /// <summary>V1-RMD-410: records an approved payment allocated to the bill through the real repositories.</summary>
+    public async Task SeedCollectedAsync(Guid billId, decimal amount, Guid cashierUserId)
+    {
+        var bill = await new PostgresBillRepository(DataSource).GetByIdAsync(billId)
+            ?? throw new InvalidOperationException("Seeded bill not found.");
+        var actor = cashierUserId;
+        var payment = new ALKAROS.Payments.PaymentAggregate.Payment(Guid.NewGuid(), billId, amount)
+            .Tender(amount, changedBy: actor)
+            .Approve(amount, changedBy: actor);
+        await new ALKAROS.Payments.PaymentAggregate.PostgresPaymentRepository(DataSource).AddAsync(payment);
+        await new ALKAROS.Payments.Allocations.Persistence.PostgresPaymentAllocationRepository(
+                DataSource, new ALKAROS.Billing.Adjustments.PostgresBillAdjustmentRepository(DataSource))
+            .AllocateAsync(payment, bill, amount, "rmd410-" + Guid.NewGuid().ToString("N"));
     }
 
     public async Task<SeededBill> SeedBillAsync()

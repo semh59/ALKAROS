@@ -115,10 +115,37 @@
           "xunit.extensibility.core": "[2.9.2]"
         }
       },
-      "alkaros.customeraccounts": {
+      "alkaros.audit": {
         "type": "Project",
         "dependencies": {
           "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.billing": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Orders": "[1.0.0, )"
+        }
+      },
+      "alkaros.customeraccounts": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.CustomerData": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.customerdata": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Audit": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Secrets": "[1.0.0, )",
+          "ALKAROS.SensitiveData": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
       },
@@ -134,6 +161,44 @@
       },
       "alkaros.modulecomposition": {
         "type": "Project"
+      },
+      "alkaros.orders": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Tables": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.payments": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Billing": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Secrets": "[1.0.0, )",
+          "ALKAROS.SensitiveData": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.secrets": {
+        "type": "Project"
+      },
+      "alkaros.sensitivedata": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Secrets": "[1.0.0, )"
+        }
+      },
+      "alkaros.tables": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
       },
       "alkaros.testhelpers": {
         "type": "Project",

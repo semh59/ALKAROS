@@ -293,25 +293,25 @@ public sealed class CatalogManagerEndpointFilter : IEndpointFilter
         var (status, code, message) = exception switch
         {
             CatalogUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Authentication is required."),
+                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
             AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "The catalog manager permission is required."),
+                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Katalog yönetimi izni gerekiyor."),
             PostgresException { SqlState: PostgresErrorCodes.UniqueViolation, ConstraintName: "products_sku_key" } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_SKU", "The product SKU already exists."),
+                (StatusCodes.Status409Conflict, "DUPLICATE_SKU", "Bu stok koduyla (SKU) bir ürün zaten var."),
             PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "The catalog record already exists."),
+                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Bu katalog kaydı zaten var."),
             PostgresException { SqlState: PostgresErrorCodes.ExclusionViolation } =>
-                (StatusCodes.Status409Conflict, "OVERLAPPING_EFFECTIVE_PRICE", "The effective price interval overlaps an existing interval."),
+                (StatusCodes.Status409Conflict, "OVERLAPPING_EFFECTIVE_PRICE", "Bu fiyatın geçerlilik aralığı mevcut bir aralıkla çakışıyor."),
             PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
-                (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "A referenced catalog record does not exist."),
+                (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan katalog kaydı bulunamadı."),
             PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The catalog request violates a data constraint."),
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The catalog request is invalid."),
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             InvalidOperationException =>
-                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "The catalog record was concurrently modified."),
+                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Katalog kaydı başka bir işlem tarafından değiştirildi."),
             NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "The catalog operation could not be completed."),
+                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => throw exception,
         };
         return Results.Json(

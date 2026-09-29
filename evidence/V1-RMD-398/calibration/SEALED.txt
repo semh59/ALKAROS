@@ -1,0 +1,34 @@
+SEALED SEED DESCRIPTION (calibration398)
+
+Location: src/Modules/Recipes/CostSnapshots/IStockCostResolver.cs:49
+  (PostgresStockCostResolver.ResolveMovingAverageCostAsync, moving-average SQL)
+
+Change:
+-  AND CAST(gr.received_at AS date) <= $2;";
++  AND CAST(gr.received_at AS date) < $2;";
+
+What it does:
+  The moving-average unit cost used by recipe cost snapshots is supposed to include every
+  goods receipt received up to and INCLUDING the cost basis date ("as of" date). The seeded
+  off-by-one boundary excludes all receipts received ON the cost basis date itself.
+
+Concrete scenarios exposing it:
+  1. Stock item "Kiyma": receipt 2026-08-05 10 kg @ 30 TRY, receipt 2026-08-10 10 kg @ 50 TRY.
+     Snapshot with CostBasisDate 2026-08-10 should use avg (300+500)/20 = 40 TRY/kg; with the
+     bug it uses 30 TRY/kg -> recipe cost snapshot (and the menu margin / cost reports built on
+     it) understates cost by 25%.
+  2. First-ever receipt for an item arrives today and the manager snapshots the recipe cost
+     today: resolver returns null (no qualifying rows -> avg 0 -> null), so CreateSnapshotAsync
+     throws MissingCostBasisException (or silently uses the caller's FallbackItemCosts value
+     instead of the real purchase price).
+  The snapshot is immutable per (version, date) (DuplicateCostSnapshotException), so the wrong
+  cost cannot be corrected by re-snapshotting the same day.
+
+Existing tests that would catch it: none expected.
+  - tests/Modules/Recipes/CostSnapshots/RecipeCostSnapshotDatabaseTests.cs moving-average test
+    uses receipts on 2026-08-05 and 2026-08-08 with a basis date of 2026-08-10 and a later
+    receipt on 2026-08-12 - no receipt falls on the basis date, so both <= and < give 35.00.
+  - tests/Host/Experience/Recipes/RecipeCostSnapshotHttpTests.cs uses FallbackItemCosts only
+    (no receipts).
+  - Domain tests use fakes for IStockCostResolver.
+  A test with a receipt dated exactly on CostBasisDate would catch it.

@@ -1,4 +1,5 @@
 using ALKAROS.Cash.Contracts;
+using ALKAROS.Cash.TransactionLedger;
 
 namespace ALKAROS.Cash.SessionLifecycle;
 
@@ -26,6 +27,12 @@ public interface ICashSessionRepository
 
     /// <summary>Inserts a newly opened session.</summary>
     Task AddAsync(CashSessionRecord session, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// V1-RMD-416: inserts a newly opened session and its <c>Opening</c> ledger entry in one transaction, so a
+    /// session never exists without the float it was opened with.
+    /// </summary>
+    Task AddAsync(CashSessionRecord session, CashTransaction openingEntry, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// Persists a state change on an existing session. Fails if the current

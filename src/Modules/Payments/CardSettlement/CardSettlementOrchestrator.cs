@@ -86,6 +86,14 @@ public sealed class CardSettlementOrchestrator : ICardSettlementOrchestrator
         if (unsettled is not null)
             throw new CardSettlementUnsettledPaymentExistsException(bill.Id, unsettled.Id, unsettled.Status.ToString());
 
+        // V1-RMD-409 (V1-RMD-393 F-07): a card attempt that comes back RequiresReconciliation never reaches
+        // AllocateAsync's own cancelled-bill guard, yet it would leave an Unknown payment on a dead bill. Re-read
+        // the bill under the bill-settlement lock just taken; the recall flow may have cancelled it since.
+        var currentBill = await _billRepository.GetByIdAsync(bill.Id, cancellationToken)
+            ?? throw new CardSettlementBillNotFoundException(bill.Id);
+        if (currentBill.Status == BillState.Cancelled)
+            throw new BillNotPayableException(bill.Id, currentBill.Status.ToString());
+
         var attemptId = Guid.NewGuid();
         var payment = new Payment(Guid.NewGuid(), bill.Id, request.AttemptedAmount);
         CardSettlementAttempt attempt;

@@ -1,0 +1,8 @@
+# V1-RMD-437 red run: component, models and strings reverted, new test kept
+     × does not offer the untracked stock mode the sale path ignores and shows older records in Turkish 21ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/features/catalog/CatalogWorkspace.test.tsx > catalog workspace > does not offer the untracked stock mode the sale path ignores and shows older records in Turkish
+AssertionError: expected 'SEÇİLİ KAYITEspressoÜrünlerKod / kiml…' to contain 'Takipsiz (eski kayıt)'
+Expected: "Takipsiz (eski kayıt)"
+Received: "SEÇİLİ KAYITEspressoÜrünlerKod / kimlikESP-01 · MenuItemDurumAktifDeğer95.00 TRYStok moduUntrackedKDV profilitax-1MODİFİKATÖR ATAMALARIBu ürüne modifikatör atanmadı.GEÇERLİ FİYAT ZAMAN ÇİZELGESİ95.00 TRY01.01.2026 → açık uçluBu ekran yalnız kayıt yönetir. Yayınlama veya kasiyer görünürlüğü, aktif ve geçerli fiyat kuralları sağlanmadan değişmez."
+      Tests  1 failed | 19 passed (20)

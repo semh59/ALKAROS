@@ -33,10 +33,9 @@ public sealed class CustomerDataModule : IModule
         context.RegisterTransient<ISecretProvider, EnvironmentVariableSecretProvider>();
         context.RegisterTransient<ICustomerProfileStore, PostgresCustomerProfileStore>();
 
-        // V14-CST-002: NoKnownBlockingReferencesGuard is an honest placeholder
-        // (see its own doc comment) until V14-ACC/V14-INV exist to report a
-        // real blocker.
-        context.RegisterTransient<IAnonymizationRetentionGuard, NoKnownBlockingReferencesGuard>();
+        // V1-RMD-435: IAnonymizationRetentionGuard is registered by the module
+        // that owns the financial records it checks (CustomerAccounts.BillCharges),
+        // not here - see the interface's own doc comment.
         context.RegisterTransient<ICustomerAnonymizationRequestStore, PostgresCustomerAnonymizationRequestStore>();
         context.RegisterTransient<CustomerAnonymizationService, CustomerAnonymizationService>();
     }

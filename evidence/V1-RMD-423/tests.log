@@ -1,0 +1,20 @@
+# HEAD 2fb9f9bf + V1-RMD-423 working diff, PostgreSQL 18, Release
+## tests/Modules/Recipes/CostSnapshots/ALKAROS.Recipes.CostSnapshots.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDomainTests.CreateItemWithInvalidRawQuantityThrowsInvalidCostSnapshotException(invalidQty: -10) [30 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDomainTests.CreateItemWithInvalidRawQuantityThrowsInvalidCostSnapshotException(invalidQty: 0) [1 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDomainTests.CreateItemWithNegativeUnitCostThrowsInvalidCostSnapshotException [1 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDomainTests.OrderOfOperationsCalculatesEffectiveQuantityAndLineCostCorrectly [9 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDomainTests.CreateItemWithNegativeWasteFactorThrowsInvalidCostSnapshotException [1 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDomainTests.SnapshotCalculatedCostSumsAllLineCosts [6 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDatabaseTests.DuplicateSnapshotForSameVersionAndDateThrowsDuplicateCostSnapshotException [140 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDatabaseTests.MovingAverageCostCountsADeliveryOnTheRestaurantsLocalDate [22 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDatabaseTests.EffectiveSnapshotReturnsLastSnapshotOnOrBeforeRequestedDate [33 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDatabaseTests.OmittingTheStockUnitMappingRefusesInsteadOfSilentlyAssumingTheNativeUnitIsCorrect [11 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDatabaseTests.MovingAverageCostDerivedFromPurchasingGoodsReceiptsCorrectlyCalculatesSnapshot [60 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDatabaseTests.MissingCostBasisWithoutFallbackThrowsMissingCostBasisException [14 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDatabaseTests.CreateAndRetrieveSnapshotPersistsCorrectly [21 ms]
+  Passed ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDatabaseTests.Migration070RollbackAndReapplyWorksCleanly [36 ms]
+Total tests: 14
+     Passed: 14

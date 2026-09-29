@@ -19,12 +19,13 @@ namespace ALKAROS.CustomerAccounts.BillCharges;
 /// the customer's own receivable ledger (V14-ACC-001) instead of a cash
 /// drawer.
 ///
-/// The eligibility/credit-policy checks and the Bill lookup happen BEFORE
-/// that transaction opens (plain reads against already-committed state) -
-/// same reasoning as CashTenderHandler's own doc comment: a race in that
-/// narrow window is the same class every other business-rule precondition
-/// in this codebase accepts, and the write itself still cannot corrupt
-/// anything (all three records land, or none do).
+/// The eligibility check and the Bill lookup happen BEFORE that transaction
+/// opens (plain reads against already-committed state) - same reasoning as
+/// CashTenderHandler's own doc comment. The credit policy does not: it is
+/// evaluated inside the transaction under a per-customer advisory lock
+/// (V1-RMD-440), so two concurrent charges to the same customer are
+/// serialized and the second one sees the first one's committed ledger row
+/// instead of both passing against the same balance.
 /// </summary>
 public sealed class AccountChargeHandler : IAccountChargeHandler
 {
@@ -68,12 +69,6 @@ public sealed class AccountChargeHandler : IAccountChargeHandler
         if (profile.Anonymized)
             throw new AccountChargeCustomerAnonymizedException(request.CustomerId);
 
-        // Credit policy: neither the Bill nor the account is touched at all
-        // if this denies the charge (Acceptance evidence).
-        var creditResult = await _creditPolicy.EvaluateAsync(request.CustomerId, request.AmountDue, cancellationToken);
-        if (!creditResult.Approved)
-            throw new AccountChargeCreditPolicyDeniedException(request.CustomerId, request.AmountDue, creditResult.DeniedReason);
-
         var bill = await _billRepository.GetByIdAsync(request.BillId, cancellationToken)
             ?? throw new AccountChargeBillNotFoundException(request.BillId);
 
@@ -83,7 +78,7 @@ public sealed class AccountChargeHandler : IAccountChargeHandler
         // Advisory lock on the idempotency key itself, held for the whole
         // transaction - same pg_advisory_xact_lock pattern
         // CashTenderHandler/PostgresPaymentAllocationRepository already use.
-        await LockIdempotencyKeyAsync(connection, dbTransaction, request.IdempotencyKey, cancellationToken);
+        await LockAsync(connection, dbTransaction, $"account-charge:{request.IdempotencyKey}", cancellationToken);
 
         var existingAllocation = await _allocationRepository.GetByIdempotencyKeyAsync(
             request.IdempotencyKey, connection, dbTransaction, cancellationToken);
@@ -92,6 +87,16 @@ public sealed class AccountChargeHandler : IAccountChargeHandler
             await dbTransaction.CommitAsync(cancellationToken);
             return await BuildReplayResultAsync(existingAllocation, request.CustomerId, cancellationToken);
         }
+
+        // Credit policy (V1-RMD-440): under the customer's own lock, held until
+        // this transaction ends, so a concurrent charge to the same customer
+        // waits here and then evaluates against this charge's committed row.
+        // Neither the Bill nor the account is touched at all if this denies
+        // the charge (V14-ACC-003 Acceptance evidence).
+        await LockAsync(connection, dbTransaction, $"account-charge-customer:{request.CustomerId:N}", cancellationToken);
+        var creditResult = await _creditPolicy.EvaluateAsync(request.CustomerId, request.AmountDue, cancellationToken);
+        if (!creditResult.Approved)
+            throw new AccountChargeCreditPolicyDeniedException(request.CustomerId, request.AmountDue, creditResult.DeniedReason);
 
         // Fail-fast pre-check (same shape and caveat as CashTenderHandler's
         // own comment: AllocateAsync's own per-bill advisory lock below
@@ -152,15 +157,15 @@ public sealed class AccountChargeHandler : IAccountChargeHandler
             WasReplayed: true);
     }
 
-    private static async Task LockIdempotencyKeyAsync(
-        NpgsqlConnection connection, NpgsqlTransaction transaction, string idempotencyKey, CancellationToken cancellationToken)
+    private static async Task LockAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, string lockKey, CancellationToken cancellationToken)
     {
         var command = connection.CreateCommand();
         command.Transaction = transaction;
         command.CommandText = "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);";
         await using (command)
         {
-            command.Parameters.AddWithValue($"account-charge:{idempotencyKey}");
+            command.Parameters.AddWithValue(lockKey);
             await command.ExecuteNonQueryAsync(cancellationToken);
         }
     }

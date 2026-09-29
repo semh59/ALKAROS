@@ -75,3 +75,21 @@ public sealed class OverAllocationException : PaymentAllocationException
     public decimal RequestedAmount { get; }
     public decimal RemainingPayable { get; }
 }
+
+/// <summary>
+/// V1-RMD-409 (V1-RMD-393 F-07): a Bill that is no longer payable (Cancelled — e.g. recalled from the till and
+/// re-issued) cannot take a new allocation; money recorded against it would sit on a dead bill.
+/// </summary>
+public sealed class BillNotPayableException : PaymentAllocationException
+{
+    public BillNotPayableException(Guid billId, string status)
+        : base($"Bill '{billId}' is '{status}' and cannot take a payment.")
+    {
+        BillId = billId;
+        Status = status;
+    }
+
+    public Guid BillId { get; }
+
+    public string Status { get; }
+}

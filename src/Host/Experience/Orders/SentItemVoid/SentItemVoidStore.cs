@@ -2,6 +2,7 @@ using System.Text.Json;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.MovementReversal;
+using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
@@ -115,8 +116,30 @@ public sealed class SentItemVoidStore
             : $"VoidSent:{command.ReasonCode} - {command.Notes}";
 
         var voidedOrder = order.CancelItem(command.OrderItemId, historyReason, command.ActorId, now);
-        var newOrderRowVersion = await _orders.SaveAsync(voidedOrder, command.ExpectedRowVersion, cancellationToken)
-            .ConfigureAwait(false);
+
+        // V1-RMD-424 (V1-RMD-398 G-12): the Order write and the stock restore of an item the kitchen had not started
+        // commit together. The restore used to be a best-effort step after the Order was saved, so a failed restore
+        // left the item voided and its stock gone for good (the audit recorded StockRestored=false). Keyed off
+        // `item.KitchenState` captured BEFORE CancelItem() above - this store's own precondition allows Held, Sent,
+        // Preparing or Ready.
+        //
+        // V1-RMD-318 (independent 2026-09-26 audit, finding K6): a `Held` item (a later course of a multi-course
+        // round - Order.FireRound's own doc comment) is just as much "nothing physically used yet" as `Sent` is (this
+        // whole method's own class doc comment above) - it was activated and had its stock CONSUMED at the same
+        // fire-round moment a Sent item was (OrderSubmissionStockDispatcher filters on IsActive, not KitchenState).
+        var restoresStock = item.KitchenState is KitchenState.Sent or KitchenState.Held;
+        long newOrderRowVersion;
+        bool stockRestored;
+        await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false))
+        await using (var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
+        {
+            newOrderRowVersion = await _orders.SaveAsync(
+                voidedOrder, command.ExpectedRowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
+            stockRestored = restoresStock
+                && await RestoreStockForVoidedItemAsync(item, command, connection, transaction, cancellationToken)
+                    .ConfigureAwait(false);
+            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+        }
 
         var kitchenCancelled = await CancelKitchenTicketItemAsync(
             command.OrderId, command.OrderItemId, historyReason, now, cancellationToken).ConfigureAwait(false);
@@ -125,22 +148,6 @@ public sealed class SentItemVoidStore
                 billContext.Value.Bill, billContext.Value.BillItem, item, command.ReasonCode, cancellationToken)
                 .ConfigureAwait(false)
             : false;
-        // Best-effort, same as the two steps above: the Order write already
-        // decided the item is void regardless of whether this succeeds.
-        // Deliberately keys off `item.KitchenState` captured BEFORE
-        // CancelItem() above, not the voided copy — this store's own
-        // precondition (above) allows Held, Sent, Preparing or Ready.
-        //
-        // V1-RMD-318 (independent 2026-09-26 audit, finding K6): this used to check only
-        // `KitchenState.Sent`, but a `Held` item (a later course of a multi-course round -
-        // Order.FireRound's own doc comment) is just as much "nothing physically used yet" as `Sent` is
-        // (this whole method's own class doc comment above) - it was activated and had its stock
-        // CONSUMED at the same fire-round moment a Sent item was (OrderSubmissionStockDispatcher filters
-        // on IsActive, not KitchenState). Voiding a never-called-in held course therefore permanently
-        // leaked its stock: consumed once at fire time, never given back.
-        var stockRestored = item.KitchenState is KitchenState.Sent or KitchenState.Held
-            && await RestoreStockForVoidedItemAsync(item, command, now, cancellationToken).ConfigureAwait(false);
-
         await AppendAuditAsync(
             order.Id, item, command, kitchenCancelled, wasteConverted, stockRestored, now, cancellationToken).ConfigureAwait(false);
 
@@ -164,7 +171,11 @@ public sealed class SentItemVoidStore
     /// than an expected outcome.
     /// </summary>
     private async Task<bool> RestoreStockForVoidedItemAsync(
-        OrderItem item, SentItemVoidCommand command, DateTimeOffset now, CancellationToken cancellationToken)
+        OrderItem item,
+        SentItemVoidCommand command,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
     {
         var movements = await _stockMovements.GetBySourceAsync(StockMovementSourceType.Order, item.Id, cancellationToken)
             .ConfigureAwait(false);
@@ -177,12 +188,27 @@ public sealed class SentItemVoidStore
             if (!await _stockReversal.CanReverseAsync(movement.Id, cancellationToken).ConfigureAwait(false))
                 continue;
 
-            await _stockReversal.ReverseMovementAsync(
-                new StockMovementReversalRequest(
-                    movement.Id,
-                    Reason: $"VoidSent:{command.ReasonCode} — kitchen had not started (item {item.Id:D})",
-                    ActorId: command.ActorId),
-                cancellationToken).ConfigureAwait(false);
+            try
+            {
+                await _stockReversal.ReverseMovementAsync(
+                    new StockMovementReversalRequest(
+                        movement.Id,
+                        Reason: $"VoidSent:{command.ReasonCode} — kitchen had not started (item {item.Id:D})",
+                        ActorId: command.ActorId),
+                    connection,
+                    transaction,
+                    cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception) when (exception is StockMovementReversalException
+                or DuplicateReversalException
+                or StockMovementNotFoundException
+                or InactiveStockItemException
+                or InactiveStockLocationException
+                or StockItemNotFoundException
+                or StockLocationNotFoundException)
+            {
+                throw new VoidStockRestoreFailedException(item.Id, exception);
+            }
             restoredAny = true;
         }
 
@@ -335,4 +361,18 @@ public sealed class SentItemVoidStore
 
         await cmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
+}
+
+/// <summary>
+/// V1-RMD-424: the stock of an item the kitchen had not started could not be given back, so the void was not made.
+/// </summary>
+public sealed class VoidStockRestoreFailedException : Exception
+{
+    public VoidStockRestoreFailedException(Guid orderItemId, Exception innerException)
+        : base($"Stock of order item '{orderItemId}' could not be restored; the item was not voided.", innerException)
+    {
+        OrderItemId = orderItemId;
+    }
+
+    public Guid OrderItemId { get; }
 }

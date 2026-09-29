@@ -1,5 +1,6 @@
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Reporting.BusinessDayTotals;
 using ALKAROS.Reporting.V1Operations;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -35,6 +36,7 @@ public static class EndOfDayEndpoints
             serviceProvider => serviceProvider.GetRequiredService<NpgsqlDataSource>());
         services.TryAddScoped<IOperationalReportRepository, PostgresOperationalReportRepository>();
         services.TryAddScoped<IOperationalReportService, OperationalReportService>();
+        services.TryAddScoped<IBusinessDayTotalsReader, PostgresBusinessDayTotalsReader>();
 
         services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
@@ -76,8 +78,6 @@ public static class EndOfDayEndpoints
             var result = await reports.CloseBusinessDayAsync(
                 businessDate,
                 DateTimeOffset.UtcNow,
-                request.TotalRevenue,
-                request.TotalOrders,
                 request.CancelledItems,
                 request.PrintFailures,
                 request.WaiterSummaries?.Select(w => w.ToDomain(businessDate)).ToArray(),
@@ -127,9 +127,11 @@ public sealed record PrintErrorSummaryV1(
         => new(Guid.NewGuid(), businessDate, StationName, TotalPrintJobs, FailedPrintJobs, RecoveredPrintJobs, DateTimeOffset.UtcNow);
 }
 
+/// <summary>
+/// V1-RMD-421 (V1-RMD-393 F-10): revenue and order count are no longer part of the request; the server reads them
+/// from the recorded payments and orders of the business-day window.
+/// </summary>
 public sealed record CloseBusinessDayV1(
-    decimal TotalRevenue,
-    int TotalOrders,
     int CancelledItems,
     int PrintFailures,
     IReadOnlyList<WaiterPerformanceV1>? WaiterSummaries = null,

@@ -76,6 +76,23 @@ public sealed class CashSessionPolicyTests
     }
 
     [Fact]
+    public void AnOpenSessionCanNeitherRecordACountNorCloseBeforeCountingStarts()
+    {
+        // V1-RMD-417 (V1-RMD-393 F-15): cash-session-design.md section 5.
+        var openSession = new CashSessionSnapshot(
+            Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), CashSessionStatus.Open,
+            200m, 200m, 0m, 0m, DateTimeOffset.UtcNow, null, 1);
+
+        var count = () => _policy.ValidateCanRecordCount(openSession, 200m);
+        count.Should().Throw<InvalidCashSessionStateException>();
+        var close = () => _policy.ValidateCanCloseSession(openSession, 200m, 200m, isSupervisorOverride: false);
+        close.Should().Throw<InvalidCashSessionStateException>();
+
+        var counting = openSession with { Status = CashSessionStatus.Counting };
+        _policy.ValidateCanCloseSession(counting, 200m, 200m, isSupervisorOverride: false).Should().Be(0m);
+    }
+
+    [Fact]
     public void RecordCountValidatesAmountAndStatus()
     {
         var sessionId = Guid.NewGuid();

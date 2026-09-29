@@ -65,6 +65,31 @@ public static class AuthorizationDecisionEndpoints
             AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
             Results.Ok(await store.ListActiveDelegationsAsync(cancellationToken)));
 
+        // V1-RMD-407 (V1-RMD-399 H-04): nothing could create a delegation, so the time-boxed hand-off
+        // (model §1, V1-IAM-021) only ever existed on rows inserted by hand.
+        group.MapPost("/delegations", async (
+            CreateDelegationRequestV1 request,
+            HttpContext http,
+            AuthorizationDecisionStore store,
+            IAuthorizationService authorization,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = ActorId(http);
+            if (!AuthorizationDecisionStore.IsDelegable(request.PermissionCode))
+                throw new ArgumentException("Only bills.void, bills.comp and bills.discount can be delegated.", nameof(request));
+            try
+            {
+                await authorization.AuthorizeAsync(actorId, request.PermissionCode!, cancellationToken);
+            }
+            catch (AuthorizationDeniedException)
+            {
+                throw new DelegatorLacksPermissionException(request.PermissionCode!);
+            }
+
+            var created = await store.CreateDelegationAsync(request, actorId, cancellationToken);
+            return Results.Created($"{GroupPrefix}/delegations/{created.DelegationId:D}", created);
+        });
+
         group.MapPost("/delegations/{delegationId:guid}/revoke", async (
             Guid delegationId, HttpContext http, AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
         {
@@ -160,6 +185,14 @@ public sealed class AuthorizationDecisionEndpointFilter : IEndpointFilter
         {
             return MapError(http, exception);
         }
+        catch (DelegatorLacksPermissionException exception)
+        {
+            return MapError(http, exception);
+        }
+        catch (DelegationGranteeNotFoundException exception)
+        {
+            return MapError(http, exception);
+        }
         catch (BadHttpRequestException exception)
         {
             return MapError(http, exception);
@@ -179,23 +212,27 @@ public sealed class AuthorizationDecisionEndpointFilter : IEndpointFilter
         var (status, code, message) = exception switch
         {
             AuthorizationDecisionUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "A manager or supervisor session is required."),
+                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Yönetici ya da vardiya sorumlusu oturumu gerekiyor."),
             AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "The reports.view permission is required."),
+                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Bu ekran için rapor görüntüleme izni gerekiyor."),
             AuthorizationGrantAlreadyResolvedException =>
-                (StatusCodes.Status409Conflict, "ALREADY_RESOLVED", "Another responder already resolved this request."),
+                (StatusCodes.Status409Conflict, "ALREADY_RESOLVED", "Bu talep başka biri tarafından zaten yanıtlandı."),
             AuthorizationSelfApprovalException =>
-                (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "You cannot resolve your own request."),
+                (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamaz ya da reddedemezsiniz."),
             BehaviouralTighteningAlreadyClearedException =>
-                (StatusCodes.Status409Conflict, "ALREADY_CLEARED", "This tightening is already cleared."),
+                (StatusCodes.Status409Conflict, "ALREADY_CLEARED", "Bu kısıtlama zaten kaldırılmış."),
             BehaviouralTighteningSelfClearException =>
-                (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "You cannot clear your own tightening."),
+                (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "Kendinize uygulanan kısıtlamayı kaldıramazsınız."),
+            DelegatorLacksPermissionException =>
+                (StatusCodes.Status403Forbidden, "DELEGATOR_LACKS_PERMISSION", "Sahip olmadığınız bir yetkiyi devredemezsiniz."),
+            DelegationGranteeNotFoundException =>
+                (StatusCodes.Status404NotFound, "GRANTEE_NOT_FOUND", "Yetki devredilecek kullanıcı bulunamadı."),
             BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The request is invalid."),
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             ArgumentException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "The request is invalid."),
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "The decision could not be recorded."),
+                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Karar kaydedilemedi."),
             _ => throw exception,
         };
         return Results.Json(

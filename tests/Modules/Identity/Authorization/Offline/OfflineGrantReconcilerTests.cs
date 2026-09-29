@@ -3,6 +3,7 @@ using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Offline;
 using ALKAROS.Identity.Authorization.Policies;
 using FluentAssertions;
+using Npgsql;
 using Xunit;
 
 namespace ALKAROS.Identity.Authorization.Tests.Offline;
@@ -38,12 +39,19 @@ public sealed class OfflineGrantReconcilerTests : IClassFixture<OfflineBudgetDat
     private Task<OfflineAuthorityBudget> BudgetAsync(TimeSpan ttl, params OfflineAuthorityBudgetLine[] lines)
         => _budgets.CreateAsync(Guid.NewGuid(), Guid.NewGuid(), lines, _issuedAt, _issuedAt + ttl);
 
+    // V1-RMD-404: by default the action is on the requester's own check (the waiter serves it), so the
+    // own-check rule stays out of the way of the budget/policy tests; servedBy overrides it.
     private OfflineAuthorizedAction Action(
         string key, string permission = "bills.comp", decimal amount = 100m,
-        string role = "waiter", TimeSpan? takenAfter = null, Guid? requesterUserId = null)
-        => new(key, permission, requesterUserId ?? Guid.NewGuid(), role, "CustomerChange", amount,
+        string role = "waiter", TimeSpan? takenAfter = null, Guid? requesterUserId = null,
+        bool unassigned = false, Guid? servedBy = null)
+    {
+        var requester = requesterUserId ?? Guid.NewGuid();
+        return new(key, permission, requester, role, "CustomerChange", amount,
             _issuedAt + (takenAfter ?? TimeSpan.FromHours(1)),
-            SubjectType: "bill", SubjectId: Guid.NewGuid());
+            SubjectType: "OrderItem", SubjectId: Guid.NewGuid(),
+            SubjectServingUserId: unassigned ? null : servedBy ?? requester);
+    }
 
     private async Task<int> ReplayCountAsync(Guid grantId)
         => (int)await _db.ScalarAsync<long>(
@@ -125,6 +133,38 @@ public sealed class OfflineGrantReconcilerTests : IClassFixture<OfflineBudgetDat
 
         results[0].Status.Should().Be(GrantStatus.Denied);
         results[0].Detail.Should().Contain("not in the offline authority budget");
+    }
+
+    [Fact]
+    public async Task AWaitersOfflineCompOnAnotherServersCheckIsDeniedBeforeAManager()
+    {
+        // V1-RMD-404 (V1-RMD-399 H-06): model §3 decision #1 applies offline too.
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(4), new OfflineAuthorityBudgetLine("bills.comp", 150m, 5));
+
+        var results = await Reconciler().ReconcileAsync(budget.BudgetId, new[]
+        {
+            Action("recon-own-check-other", amount: 20m, servedBy: Guid.NewGuid()),
+            Action("recon-own-check-unassigned", amount: 20m, unassigned: true),
+        });
+
+        results.Should().OnlyContain(result => result.Status == GrantStatus.Denied);
+        results.Should().OnlyContain(result => result.Detail.Contains("only a check they serve"));
+    }
+
+    [Fact]
+    public async Task ACashiersOfflineCompOnAnotherServersCheckIsNotOwnCheckDenied()
+    {
+        // Model §3: cashier void/comp is a plain grant, not "(own check)".
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(4), new OfflineAuthorityBudgetLine("bills.comp", 150m, 5));
+
+        var results = await Reconciler().ReconcileAsync(budget.BudgetId, new[]
+        {
+            Action("recon-cashier-other", amount: 20m, role: "cashier", servedBy: Guid.NewGuid()),
+        });
+
+        results[0].Status.Should().Be(GrantStatus.Pending);
     }
 
     [Fact]
@@ -221,6 +261,32 @@ public sealed class OfflineGrantReconcilerTests : IClassFixture<OfflineBudgetDat
             .Invoking(() => reconciler.ReconcileAsync(budget.BudgetId, new[] { Action("recon-vanished-budget") }))
             .Should().ThrowAsync<UnknownOfflineAuthorityBudgetException>()
             .Where(exception => exception.BudgetId == budget.BudgetId);
+    }
+
+    [Fact]
+    public async Task AForeignKeyFailureOtherThanTheBudgetsIsNotReportedAsAnUnknownBudget()
+    {
+        // V1-RMD-427: the module schema carries no user foreign keys (V1-RMD-189 adds them in the full database), so
+        // a test-only constraint on the grant's subject stands in for "a referenced row does not exist".
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(4), new OfflineAuthorityBudgetLine("bills.comp", 150m, 2));
+        await _db.ExecuteAsync(
+            """
+            ALTER TABLE identity.authorization_grants
+                ADD CONSTRAINT fk_rmd427_test_subject FOREIGN KEY (subject_id)
+                REFERENCES identity.offline_authority_budgets (budget_id) NOT VALID;
+            """);
+        try
+        {
+            var failure = await FluentActions
+                .Invoking(() => Reconciler().ReconcileAsync(budget.BudgetId, new[] { Action("recon-other-fk") }))
+                .Should().ThrowAsync<PostgresException>();
+            failure.Which.ConstraintName.Should().Be("fk_rmd427_test_subject");
+        }
+        finally
+        {
+            await _db.ExecuteAsync("ALTER TABLE identity.authorization_grants DROP CONSTRAINT fk_rmd427_test_subject;");
+        }
     }
 
     /// <summary>Always answers <see cref="GetAsync"/> from a fixed snapshot, regardless of DB state.</summary>

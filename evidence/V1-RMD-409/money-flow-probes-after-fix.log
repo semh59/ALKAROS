@@ -1,0 +1,4 @@
+V1-RMD-393 P01 (F-04) ve P03 (F-07), V1-RMD-409 düzeltmesi uygulanmış kopyada. Denetim harness'inin tohumladığı kasiyer rolüne, V1-RMD-400/401'den beri bir kasiyerin tuttuğu cash.drawer ve payments.take izinleri yalnız bu kopyada eklendi (sed ile; denetim kanıtı değiştirilmedi).
+1
+    0 Error(s)
+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 2 s - ALKAROS.Audit.MoneyFlowProbes.dll (net8.0)

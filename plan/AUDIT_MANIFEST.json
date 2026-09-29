@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1441,
-  "markdown_line_count": 110287,
-  "markdown_byte_count": 6348848,
+  "markdown_file_count": 1498,
+  "markdown_line_count": 113956,
+  "markdown_byte_count": 6564771,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -74,6 +74,20 @@
       "sha256": "DE0D53C116B7EA5C889997C3A1C854A9E7A104234EA3C265927C108E0588F2C6",
       "lines": 88,
       "bytes": 5817,
+      "utf8": true
+    },
+    {
+      "path": "docs/CONSISTENCY_AUDIT.md",
+      "sha256": "347F7895451B79C973235AD0CA5F82B402DA6ED74CA14307A5488AB537535FF7",
+      "lines": 81,
+      "bytes": 6167,
+      "utf8": true
+    },
+    {
+      "path": "docs/UI_STYLE_GUIDE.md",
+      "sha256": "48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79",
+      "lines": 71,
+      "bytes": 2977,
       "utf8": true
     },
     {
@@ -217,13 +231,6 @@
       "utf8": true
     },
     {
-      "path": "docs/CONSISTENCY_AUDIT.md",
-      "sha256": "347F7895451B79C973235AD0CA5F82B402DA6ED74CA14307A5488AB537535FF7",
-      "lines": 81,
-      "bytes": 6167,
-      "utf8": true
-    },
-    {
       "path": "docs/data/canonical-value-catalog.md",
       "sha256": "FBA59F8FF920F9B7452F5FFD2F99852AFF4DD05F267E53DBF8955D985097AA77",
       "lines": 139,
@@ -302,9 +309,9 @@
     },
     {
       "path": "docs/domain/authorization-model.md",
-      "sha256": "82F699027A247516A0B1AC3BBC3DB2160B7C33774F635031D00CA1219AF9BDFC",
-      "lines": 218,
-      "bytes": 12470,
+      "sha256": "7900978ACB38896695F751AAE20C896FF0D80AA9DE28171A60455EF313437C44",
+      "lines": 231,
+      "bytes": 13534,
       "utf8": true
     },
     {
@@ -609,13 +616,6 @@
       "utf8": true
     },
     {
-      "path": "docs/UI_STYLE_GUIDE.md",
-      "sha256": "48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79",
-      "lines": 71,
-      "bytes": 2977,
-      "utf8": true
-    },
-    {
       "path": "docs/versioning-strategy.md",
       "sha256": "9FCBDE0EC857B39FD540091297EBDFD3AF4256711151489AFA68ECA741A1A1AC",
       "lines": 173,
@@ -641,90 +641,6 @@
       "sha256": "3764164120418A5E35E34D16E8A758494792290E0E407C011EC6011D6C81105E",
       "lines": 34,
       "bytes": 1347,
-      "utf8": true
-    },
-    {
-      "path": "evidence/reference/2026-09-19-competitor-ui-comparison/README.md",
-      "sha256": "614A60D783AAC5396DD0A65E5769F0960FAC63A291A1226D39BEC7A51F838817",
-      "lines": 17,
-      "bytes": 977,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md",
-      "sha256": "47E6A9489D70393590D4456C3ADDF465F29E6C264CB5FDC5178B4A673234CA77",
-      "lines": 71,
-      "bytes": 4055,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
-      "sha256": "31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA",
-      "lines": 35,
-      "bytes": 2012,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md",
-      "sha256": "D54F38781EA98102E461CE3152C53CB4C71D7BE88A0272E3036E6D3EF1C39277",
-      "lines": 47,
-      "bytes": 2593,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/gate-v0-exit-closure.md",
-      "sha256": "DA96D961795A1C70DAFBF2E170BF588395F184FBEC6DC769B2B2D4257B3B6142",
-      "lines": 95,
-      "bytes": 4479,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-operator-id-and-void-schema.md",
-      "sha256": "50D945968B7E9434EF6DC6D2315BAE6A892C9F5A238F8DF80265020075D8FE9A",
-      "lines": 109,
-      "bytes": 4868,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-postman-collection-schema.md",
-      "sha256": "901E27EA032A94ED4C1C8374783FD592F25E3FE7F9F71CD9C879354CBCDFE0A4",
-      "lines": 128,
-      "bytes": 5778,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-public-docs-research.md",
-      "sha256": "32CF2BE94D5DAAB3035B367BE1BBBF23DBEE1090DFCD91886A53B6947B6836E3",
-      "lines": 92,
-      "bytes": 4709,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-QNB-001/2026-09-18-public-docs-research.md",
-      "sha256": "CA833D389492F2A7351F314B45E2CA257E75AA8D7FA77DAA2DCBD87BA95BD6CD",
-      "lines": 191,
-      "bytes": 8905,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md",
-      "sha256": "BB86F3AE6A38848D8F96E652646E12D7CD91576C06A10C8C3E1729219C633DE6",
-      "lines": 127,
-      "bytes": 5748,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md",
-      "sha256": "9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7",
-      "lines": 68,
-      "bytes": 2507,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/recovery/V0-BKP-001/wave13-disposable-pg18-roundtrip.md",
-      "sha256": "0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F",
-      "lines": 112,
-      "bytes": 4908,
       "utf8": true
     },
     {
@@ -1187,13 +1103,6 @@
       "sha256": "28E3C84328041A2B525BBE17C6AF5CC84CC363632FCA2417C15AC8CC3A3C3C74",
       "lines": 161,
       "bytes": 5834,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v1/gate-v1-exit-closure.md",
-      "sha256": "9C14CC80FBEDA7B8FD33D82101E5C5E94EFF3A31AE4F77588D6A3FCDB08E7C8D",
-      "lines": 69,
-      "bytes": 2685,
       "utf8": true
     },
     {
@@ -2387,6 +2296,90 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-393/REPORT.md",
+      "sha256": "FBDB9AE647845FCC576D1317A822C15E2F391A0DAB5C7A4B20D4731D7E35D42C",
+      "lines": 213,
+      "bytes": 19306,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-393/probes/README.md",
+      "sha256": "4A9CB5C2EB7A01B39581E62D7D55ECEF6FEF4DFED143FD087417B5F80BC3243A",
+      "lines": 18,
+      "bytes": 1069,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-394/ci-runs.md",
+      "sha256": "DD965F90CB29127111C5E9B96A7B51538F2DF21FBE87CAC915DD4E49AFCF9E37",
+      "lines": 30,
+      "bytes": 2258,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-396/verification.md",
+      "sha256": "5A4B28F602975EA4C78D944D00DC12D7500ED5DA0F58DAAEB5EF9E399D5F369E",
+      "lines": 19,
+      "bytes": 1247,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-398/REPORT.md",
+      "sha256": "F8D0AD7F7D17DAB11F75A26ED2286C35BE2C0D35171A34B99E53A2E43C95637E",
+      "lines": 133,
+      "bytes": 11510,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-398/probes/README.md",
+      "sha256": "8E17CBEE27C96E194B9B94F4E91DF2EB705B9D3645EA69DB6A1CFB4C6F780F8F",
+      "lines": 18,
+      "bytes": 1108,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-399/REPORT.md",
+      "sha256": "747EA1B282AD7E4840A5E0DC968A9BD40A458C0F0ECA7F42CF750A86F021358D",
+      "lines": 176,
+      "bytes": 12769,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-399/calibration/VERDICT.md",
+      "sha256": "0E4B203EF8910109A75F589509677604C6D3A506143FEC97F4AF4504478E940F",
+      "lines": 9,
+      "bytes": 677,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-399/coverage-matrix.md",
+      "sha256": "49AE78B6F970EDF01FD497EEC4A962E88BFD69776112BF2A2AEF186990EDA5B5",
+      "lines": 32,
+      "bytes": 3087,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-399/probes/README.md",
+      "sha256": "2F51A098D697053043E9D86F1A18F1BD14E883C788A83FA9A78BE24393D5655D",
+      "lines": 30,
+      "bytes": 1990,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-399/refutation.md",
+      "sha256": "63D366CBB5C49F97E3B8D2B4D83E4EECB8D259D8DB93698236114B7B99076596",
+      "lines": 21,
+      "bytes": 2284,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-407/audit-probes-after-all-fixes.md",
+      "sha256": "D69EB62802565C9CBE5946199900279A352065A57EA79D07EA60D1A729A11A20",
+      "lines": 13,
+      "bytes": 1092,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2506,6 +2499,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V14-RMD-001/verification.md",
+      "sha256": "EC24FE678DFD3EB3F110B265DDCE3E83EEA8D5078B322ADF71C998E580175884",
+      "lines": 11,
+      "bytes": 434,
+      "utf8": true
+    },
+    {
       "path": "evidence/V15-BKP-002/README.md",
       "sha256": "51205A981D5CC4D9649160ABF4B4049BD7134101DA32D0D02054973642CE50C4",
       "lines": 61,
@@ -2548,6 +2548,97 @@
       "utf8": true
     },
     {
+      "path": "evidence/reference/2026-09-19-competitor-ui-comparison/README.md",
+      "sha256": "614A60D783AAC5396DD0A65E5769F0960FAC63A291A1226D39BEC7A51F838817",
+      "lines": 17,
+      "bytes": 977,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md",
+      "sha256": "47E6A9489D70393590D4456C3ADDF465F29E6C264CB5FDC5178B4A673234CA77",
+      "lines": 71,
+      "bytes": 4055,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
+      "sha256": "31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA",
+      "lines": 35,
+      "bytes": 2012,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md",
+      "sha256": "D54F38781EA98102E461CE3152C53CB4C71D7BE88A0272E3036E6D3EF1C39277",
+      "lines": 47,
+      "bytes": 2593,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/gate-v0-exit-closure.md",
+      "sha256": "DA96D961795A1C70DAFBF2E170BF588395F184FBEC6DC769B2B2D4257B3B6142",
+      "lines": 95,
+      "bytes": 4479,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-operator-id-and-void-schema.md",
+      "sha256": "50D945968B7E9434EF6DC6D2315BAE6A892C9F5A238F8DF80265020075D8FE9A",
+      "lines": 109,
+      "bytes": 4868,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-postman-collection-schema.md",
+      "sha256": "901E27EA032A94ED4C1C8374783FD592F25E3FE7F9F71CD9C879354CBCDFE0A4",
+      "lines": 128,
+      "bytes": 5778,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-public-docs-research.md",
+      "sha256": "32CF2BE94D5DAAB3035B367BE1BBBF23DBEE1090DFCD91886A53B6947B6836E3",
+      "lines": 92,
+      "bytes": 4709,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-QNB-001/2026-09-18-public-docs-research.md",
+      "sha256": "CA833D389492F2A7351F314B45E2CA257E75AA8D7FA77DAA2DCBD87BA95BD6CD",
+      "lines": 191,
+      "bytes": 8905,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md",
+      "sha256": "BB86F3AE6A38848D8F96E652646E12D7CD91576C06A10C8C3E1729219C633DE6",
+      "lines": 127,
+      "bytes": 5748,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md",
+      "sha256": "9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7",
+      "lines": 68,
+      "bytes": 2507,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/recovery/V0-BKP-001/wave13-disposable-pg18-roundtrip.md",
+      "sha256": "0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F",
+      "lines": 112,
+      "bytes": 4908,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v1/gate-v1-exit-closure.md",
+      "sha256": "9C14CC80FBEDA7B8FD33D82101E5C5E94EFF3A31AE4F77588D6A3FCDB08E7C8D",
+      "lines": 69,
+      "bytes": 2685,
+      "utf8": true
+    },
+    {
       "path": "plan/ASSUMPTION_POLICY.md",
       "sha256": "0C8AE929DBD8178F655E2E69DC48EB963255FA42B1222F8801594BFC940BE82C",
       "lines": 49,
@@ -2556,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "6BCED9DEE31A5B1420A5B7667C987A9611051B4EA323354FB9FD6DD593589BDB",
-      "lines": 2717,
-      "bytes": 398366,
+      "sha256": "265B9E4795D3858C69D3A42900D3FAD4AA156224101B23652D9671D5EF17324E",
+      "lines": 2774,
+      "bytes": 407558,
       "utf8": true
     },
     {
@@ -2636,6 +2727,20 @@
       "sha256": "8E048FDA72C9A68801EA078525148BB7FF820156AB1CC5CE79BA496DE7329269",
       "lines": 210,
       "bytes": 92834,
+      "utf8": true
+    },
+    {
+      "path": "plan/VALIDATION_CONTRACT.md",
+      "sha256": "D8C1A268F872CC6B72C70DF1A0900E90242CB2B318CEEFB45A306B0B2381E4BC",
+      "lines": 293,
+      "bytes": 20124,
+      "utf8": true
+    },
+    {
+      "path": "plan/v0/README.md",
+      "sha256": "080D35C983EC43DAAE79698B1FD3FAFD916DF542549899346A903C9E30842465",
+      "lines": 33,
+      "bytes": 1374,
       "utf8": true
     },
     {
@@ -3339,13 +3444,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v0/README.md",
-      "sha256": "080D35C983EC43DAAE79698B1FD3FAFD916DF542549899346A903C9E30842465",
-      "lines": 33,
-      "bytes": 1374,
-      "utf8": true
-    },
-    {
       "path": "plan/v0/revalidation/V0-REV-001-dat001-decision-revalidation.md",
       "sha256": "9CC4EE3F479D4C0B12D5F3AD7AEC3BC106F678B12584D9217E86A472FF11F1B2",
       "lines": 66,
@@ -3567,6 +3665,13 @@
       "sha256": "CFD156D379D194E5B2584A384BA9F4DF21B6FC69056021ECF85928EEB732F1B8",
       "lines": 57,
       "bytes": 1544,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/README.md",
+      "sha256": "E3348D922138128DF7341941B61EB2CE850E5DDFBEF2D56F9569FE8D6000EA29",
+      "lines": 317,
+      "bytes": 29428,
       "utf8": true
     },
     {
@@ -5310,13 +5415,6 @@
       "sha256": "481C3EB35A01956BB534D74C67772CFB3C557B74C7AF1744895FBAF215E50CCB",
       "lines": 155,
       "bytes": 8547,
-      "utf8": true
-    },
-    {
-      "path": "plan/v1/README.md",
-      "sha256": "E3348D922138128DF7341941B61EB2CE850E5DDFBEF2D56F9569FE8D6000EA29",
-      "lines": 317,
-      "bytes": 29428,
       "utf8": true
     },
     {
@@ -7917,38 +8015,339 @@
       "utf8": true
     },
     {
-      "path": "plan/v1/remediation/V1-RMD-393-api-route-authorization-architecture-test.md",
-      "sha256": "3BC1F10A6BF4FD3DD6BFCFF684B14FE14EDB74964DD2798CEE21DFFBCBE9AB13",
+      "path": "plan/v1/remediation/V1-RMD-393-money-flow-targeted-audit.md",
+      "sha256": "48A68F3391E07C0B4C930B49808D1324050611A116005C5C903B34C79ACEBF0D",
+      "lines": 61,
+      "bytes": 2948,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-394-ci-gate-restore.md",
+      "sha256": "1AC5E9E69E047001419F48D51B98141592D415E29D51D91FE41DD4AA47A37F44",
+      "lines": 93,
+      "bytes": 4246,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-395-production-experience-registers-unit-converter.md",
+      "sha256": "6C83D31EFC6780254D74E7612B1E3AEAE0942A5B1CD952B61F7DDC1049B64A7B",
+      "lines": 34,
+      "bytes": 1224,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-396-composition-test-factory-registered-consumers.md",
+      "sha256": "C242BF4FC364B731703F5054775DE9CFBCFDD0EBD6C14D9442EF06F9FB23D59D",
+      "lines": 34,
+      "bytes": 1336,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-398-stock-recipe-flow-targeted-audit.md",
+      "sha256": "8507AAEEA69B194058049138C32931D73D0C684FCD10B95E0D19CA0BD2502233",
+      "lines": 55,
+      "bytes": 2393,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-399-authorization-targeted-audit.md",
+      "sha256": "BFFE2600D737F13D19BCD1B1F5AEE8768CFE6590A6C6D4D02123760297DD8A09",
+      "lines": 59,
+      "bytes": 3033,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-400-cash-drawer-permission-enforcement.md",
+      "sha256": "9606C498743CE87D3FADDCBA52AD22F70F7BFB1E8DA7B226D9FD3EB5C2C766D0",
+      "lines": 69,
+      "bytes": 3688,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-401-payment-taking-permission.md",
+      "sha256": "BE6AC4C9A162D02915E30595E3AD3C56E16C89156761DE6AF10DBEC81809E7A8",
+      "lines": 85,
+      "bytes": 5018,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-402-waiter-grant-on-unassigned-check.md",
+      "sha256": "9B44ED62B970BCFE25E3C3A76664D4DC55ECE7FBED59FF6EB003775B1D5A2894",
+      "lines": 67,
+      "bytes": 3626,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-403-supervisor-management-session.md",
+      "sha256": "F8A31117F8FE35DE6876B9C2FE06D0EC0AD80EBC8370B934419C725A56841D1A",
+      "lines": 62,
+      "bytes": 3286,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-404-offline-reconciliation-server-truth.md",
+      "sha256": "D0E626BCFD33045A6EC91A99D757869CD4E6C6D59D0F5E5A8E67F371490BB520",
+      "lines": 74,
+      "bytes": 4334,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-405-staff-deactivation.md",
+      "sha256": "90D2BFC5472A33A95CE604880D8F7297665EC6D5D26AFCBDE377353430CF4B1D",
+      "lines": 83,
+      "bytes": 5091,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-406-session-lifetime-at-login.md",
+      "sha256": "6D677195A4DE21C0E50B287E0EFBC129CFCC25B3F4331192AC86B5B03BED614A",
+      "lines": 54,
+      "bytes": 2301,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-407-delegation-creation-endpoint.md",
+      "sha256": "146D56C19FF4D1773F7643806E8EFB77CD1757750EA06CC81A164FF1DEE34488",
+      "lines": 71,
+      "bytes": 3889,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-408-governing-role-most-restrictive.md",
+      "sha256": "4EA2A61554623CA4358C4FD95A3EFF8E095AA1E965D36C1F3B370549B70D37C7",
+      "lines": 72,
+      "bytes": 4058,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-409-no-tender-on-cancelled-bill-or-unsettled-card.md",
+      "sha256": "BB324F5F084F4001F49C732F3F49EC1AB2F38E3445D01C83151470781F9A4B7D",
+      "lines": 83,
+      "bytes": 5129,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-410-discount-cannot-undercut-collected.md",
+      "sha256": "97CC8745FFE46811CAB331EAB37E5D0D6E3B8A94D40E845D5054D8C09FB01BD6",
+      "lines": 63,
+      "bytes": 3109,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-411-cash-session-terminal-ownership.md",
+      "sha256": "02A22E6F0CE49E0BB2E74A75CDA99AEBB6D538F133701B53A9AD7C8936690D44",
+      "lines": 56,
+      "bytes": 2359,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-412-not-charged-resolution-closes-bill.md",
+      "sha256": "44CA9A6E5CC3AD11900E0A3D9CD2E2C8C4AB442420CF9AA176E70FCA59A62E68",
+      "lines": 58,
+      "bytes": 2793,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-413-split-design-adjusted-payable.md",
+      "sha256": "041AE3FD97A01586238EEB3BAD44D005F89DC888DCFABB13EB48B658AEE326F5",
+      "lines": 72,
+      "bytes": 4157,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-414-recall-money-check-atomic.md",
+      "sha256": "0BDB18D59380EC518D1B2EF9109DF21C109174FF0B24369DA8B0F12984585C1B",
+      "lines": 67,
+      "bytes": 3553,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-415-cash-replay-requires-cash-sale.md",
+      "sha256": "D1A07DA44E9E0CBF686A086867631B07A7127EB8514FBB3730710C09E5668EEC",
+      "lines": 67,
+      "bytes": 3461,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-416-cash-session-opening-entry-atomic.md",
+      "sha256": "B6A25FE6C63A4DC8AE6C42E4D83CE17B350B0766620F0E516B43470F671B2CFC",
+      "lines": 64,
+      "bytes": 3127,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-417-cash-close-requires-count.md",
+      "sha256": "E4D2A0B07812916137EDE8CAD16E916F43E2B603975CC411597F17353A518A7F",
+      "lines": 71,
+      "bytes": 3784,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-418-variance-report-skips-voided-consumption.md",
+      "sha256": "55DA2AEC1DAADE8DE00A3E85C93B2EB59CE99F52C08C3E6210BAC3B46EEF62C9",
+      "lines": 65,
+      "bytes": 3259,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-419-production-batch-unit-matches-yield.md",
+      "sha256": "F0E11D61780871631244E31EF50EDF4FFF062F427E7B0EC7A190597FB857C075",
+      "lines": 65,
+      "bytes": 3134,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-420-variance-report-accounts-for-production.md",
+      "sha256": "35334A85617E0DEEAAEFBA79242EEE739B25931B1621BFD6EBB0F4DCB8C9B3D2",
+      "lines": 64,
+      "bytes": 3077,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-421-end-of-day-totals-derived-server-side.md",
+      "sha256": "57A2025936729B72AC42FD7AFB005BF334C8592F2269083A945D1A337C3CDCD1",
+      "lines": 83,
+      "bytes": 4744,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-422-inventory-adjustment-idempotency.md",
+      "sha256": "397383A04AD95EF01CDBD05DD9181AC9F74E06A89C8DAA60EBED0873A476F7F6",
+      "lines": 63,
+      "bytes": 3088,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-423-stock-cost-local-date-and-leftover-notes.md",
+      "sha256": "5965BD7582725FFB33110F3074BB3121144CA2BDEC3726A1F5D6928E99B466C4",
+      "lines": 64,
+      "bytes": 2875,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-424-void-stock-restore-atomic.md",
+      "sha256": "6AE7C63F197E7564FB73075411F0E264B17FC2FAB1F944B63272EF0C427ED552",
+      "lines": 68,
+      "bytes": 3707,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-425-audit-test-gaps-n02-n08-m07.md",
+      "sha256": "2F37696A44D5E85DAF89FA37F43CC8F0DB886D96777E5FC830D13E9EE1FA47E7",
+      "lines": 62,
+      "bytes": 2730,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-426-english-error-messages-turkish.md",
+      "sha256": "F6EDBC0C7472A175ADB10DFF99A6DC8DE614881ACC0C751D9C9BDC85BE0AC9B4",
+      "lines": 65,
+      "bytes": 2973,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-427-offline-reconcile-fk-not-all-unknown-budget.md",
+      "sha256": "70620F6ECCAB0888AE167A0ECC125BED187C89CB1F0B335EC7B939222FCCD224",
+      "lines": 60,
+      "bytes": 2963,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-428-ci-scope-step-untrusted-text-via-env.md",
+      "sha256": "49F939169C94D5661E41B2F4DAB2B9B91A4D00430A04ABB1E4E71180CED5597A",
+      "lines": 58,
+      "bytes": 2747,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-429-api-route-authorization-architecture-test.md",
+      "sha256": "D197307C3F80851B8B864BC5FC71EFB39C91CDA872AAC593E8A635E23BF9DB45",
       "lines": 44,
       "bytes": 2229,
       "utf8": true
     },
     {
-      "path": "plan/v1/remediation/V1-RMD-394-mutating-endpoint-idempotency-test.md",
-      "sha256": "507453BA4F77B61F9187572F76400130A2DFBB3446B477FEE74F43670EF096C5",
+      "path": "plan/v1/remediation/V1-RMD-430-mutating-endpoint-idempotency-test.md",
+      "sha256": "3278E5BA572CD0119CC2469A19C8366A54820276364D2C9F78BAA4414C468803",
       "lines": 40,
       "bytes": 1749,
       "utf8": true
     },
     {
-      "path": "plan/v1/remediation/V1-RMD-395-shared-api-error-handler.md",
-      "sha256": "C18DEB94FC097B214F26CB0AE34963AD39BA61D2F725232B353358E10630DE65",
+      "path": "plan/v1/remediation/V1-RMD-431-shared-api-error-handler.md",
+      "sha256": "E55A78EA4C6BE1D5041CF583F6E544C8EB466865BF50542729B5949CB774BE2D",
       "lines": 42,
       "bytes": 1744,
       "utf8": true
     },
     {
-      "path": "plan/v1/remediation/V1-RMD-396-posterminal-lint-accessibility.md",
-      "sha256": "033F643178A54F40145C143013EF68DDA488DE437A9B5F7A2F7D61CF96F0A776",
+      "path": "plan/v1/remediation/V1-RMD-432-posterminal-lint-accessibility.md",
+      "sha256": "C81C373584FFFC732C068AF8524DEC832703948AF1C83B7038A2029B0A19BDAE",
       "lines": 41,
       "bytes": 1566,
       "utf8": true
     },
     {
-      "path": "plan/v1/remediation/V1-RMD-397-evidence-file-rule-alignment.md",
-      "sha256": "8E3274A1249BDD7A4DF643B72A26793743C9049B6D5F26E35024B7E3A7A01E7C",
+      "path": "plan/v1/remediation/V1-RMD-433-evidence-file-rule-alignment.md",
+      "sha256": "28C26795CCFA05FC85FEC3CFE8DC19851ACA7622D1FB8E6C42F2B8F7B83298B5",
       "lines": 39,
       "bytes": 1658,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-434-renumber-master-layer-quality-tasks.md",
+      "sha256": "36E7C07C206F48F89A0111730999C527C3FB238A331ECA1F130264927768F0FD",
+      "lines": 61,
+      "bytes": 2709,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-435-anonymization-blocked-by-open-account-balance.md",
+      "sha256": "F06C8619375B2E19B1265B2BF469F8D8D20AE108CF273C235D2EF7B29BF604EF",
+      "lines": 70,
+      "bytes": 3674,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-436-account-charge-refused-without-credit-limit.md",
+      "sha256": "1E44D9B950DDA69F9B9603BF319552A6F78E07676C600FE6CBCE5CA479BAAFAD",
+      "lines": 61,
+      "bytes": 2799,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-437-catalog-stops-offering-untracked-stock-mode.md",
+      "sha256": "247AB2AE260785BC67A22DA11EAF66FFE0EEDF8B3FD9F16F095C0D7CAABD0A07",
+      "lines": 64,
+      "bytes": 3062,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-438-catalog-list-and-detail-english-leaks.md",
+      "sha256": "8B249E7252E0F759BA74C533F26A61C7C5FFCB6F18CBC73A91428686B2AC15C9",
+      "lines": 58,
+      "bytes": 2573,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-439-nfc-concurrent-first-submission-order-number-race.md",
+      "sha256": "81096E6F0E4B1ABF1CEB1B8D9D6C29878047DF473447FF4072E76C87C0D161A1",
+      "lines": 59,
+      "bytes": 2773,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-440-per-customer-credit-limit-and-overdue-refusal.md",
+      "sha256": "FBAA55AE5F3F77DBED0E0678F974107CACBFE6A8DF785E7F6F8B9EBCC018F06D",
+      "lines": 83,
+      "bytes": 4597,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-441-start-v14-account-receipt-chain.md",
+      "sha256": "253654E2BDE1D8C725B03E8C2C4318309BF4686B571B70E1EB113FB28812E5F2",
+      "lines": 58,
+      "bytes": 2475,
       "utf8": true
     },
     {
@@ -8554,6 +8953,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.1/README.md",
+      "sha256": "FB045BA24E506EAD4539A31CD6ADBD7BFD5ECC1A3E95BD9C3AC3982AB2866613",
+      "lines": 36,
+      "bytes": 1588,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.1/daily-menu/V11-MNU-001-daily-menu-lifecycle.md",
       "sha256": "508B02715E83A64D12D202DB888F91A7C30DD2FB99E68F61CFA126FFED4CC099",
       "lines": 59,
@@ -8729,13 +9135,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.1/README.md",
-      "sha256": "FB045BA24E506EAD4539A31CD6ADBD7BFD5ECC1A3E95BD9C3AC3982AB2866613",
-      "lines": 36,
-      "bytes": 1588,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.1/remediation/V11-RMD-001-migration-id-collision-and-live-composition-wiring.md",
       "sha256": "75A3B7660863CEA09F5E6134FF37EE6D220C6A6D2D2AC20C3604AF72DA51D76F",
       "lines": 123,
@@ -8803,6 +9202,13 @@
       "sha256": "DEB25A39A060418C334C4A756BBEF5A026F3E3F569D9DFCCE46761D5CDB28A16",
       "lines": 54,
       "bytes": 1704,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.2/README.md",
+      "sha256": "1D825A4ABA79B76C9BA578DB7FA79AF2874B9E8E3A111F20C138EE3DD9D6DB38",
+      "lines": 75,
+      "bytes": 3936,
       "utf8": true
     },
     {
@@ -9198,13 +9604,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.2/README.md",
-      "sha256": "1D825A4ABA79B76C9BA578DB7FA79AF2874B9E8E3A111F20C138EE3DD9D6DB38",
-      "lines": 75,
-      "bytes": 3936,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.2/reconciliation/V12-REC-001-online-order-reconciliation.md",
       "sha256": "6AB60C241FC789F87C34E95AFB05A94AB06C1C98F248CEC650A1627053B1CA0F",
       "lines": 136,
@@ -9272,6 +9671,13 @@
       "sha256": "6E41FAD16E627C5158318017EF95D01849EA24557DF623931809A75813941540",
       "lines": 50,
       "bytes": 2329,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.3/README.md",
+      "sha256": "56F2CE1E9E86E9C447932917D604ABDED126150E8D1DBF24F6608F1E51D3B767",
+      "lines": 40,
+      "bytes": 1776,
       "utf8": true
     },
     {
@@ -9562,13 +9968,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.3/README.md",
-      "sha256": "56F2CE1E9E86E9C447932917D604ABDED126150E8D1DBF24F6608F1E51D3B767",
-      "lines": 40,
-      "bytes": 1776,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.3/reconciliation/V13-REC-001-payment-reconciliation.md",
       "sha256": "FC14D8CC4BA8C1A927762F87BAEE5F2D2E3D15041B018D083F6F1390FF47019B",
       "lines": 186,
@@ -9587,6 +9986,13 @@
       "sha256": "EE9C97CB93346A85F4DD1047D8D76DE545538A1D671BBDBC58802B4C487FF204",
       "lines": 132,
       "bytes": 7668,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.4/README.md",
+      "sha256": "0C3CD9103C94562BFE2A817091A533C785C73E7B7918B149BAE6D7D842FB4786",
+      "lines": 27,
+      "bytes": 914,
       "utf8": true
     },
     {
@@ -9633,16 +10039,16 @@
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-004-account-payment-posting.md",
-      "sha256": "E361C5CC6E49D04EC30A9AF810134AD92CDBB9B05DCA5A999DFC5A912A8CE66B",
-      "lines": 59,
-      "bytes": 1723,
+      "sha256": "52D6AEC77566B0BEED2776C111EBB5FB60786837889FFA0F1FB11E4DA571F1E5",
+      "lines": 67,
+      "bytes": 2531,
       "utf8": true
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-005-cash-account-receipt.md",
-      "sha256": "41CAC292B67B06127874CBE2DC5DBC77670F13804B29A8865E37711EAB3DCABC",
-      "lines": 61,
-      "bytes": 1658,
+      "sha256": "B04799D31F6184AC02F5EBE6ECBD144FC3F7E2978C0DF88F5C2F74A64B92432A",
+      "lines": 83,
+      "bytes": 3947,
       "utf8": true
     },
     {
@@ -9668,9 +10074,9 @@
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-009-independent-account-receipt.md",
-      "sha256": "9B98AEC536F8A6A6E9A4380171EA7754E4B7D14FF61C2388C1A1856C2973D512",
-      "lines": 63,
-      "bytes": 2000,
+      "sha256": "D75CED633C74AF1C2F8FA421B908B7071F0FE567B7C1FCA81049FAF0F197E4CA",
+      "lines": 71,
+      "bytes": 2768,
       "utf8": true
     },
     {
@@ -9699,6 +10105,13 @@
       "sha256": "D08E895E2DAABBBA52705F3161F4DA1B878BD264B0979F8CD646004FC3EA7D41",
       "lines": 131,
       "bytes": 6408,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.4/customer-data/V14-RMD-001-anonymized-at-test-precision.md",
+      "sha256": "8FCB446249DCB455DA1E09D283B1550AAFD4FD3461CB699DC311B44379736FC6",
+      "lines": 33,
+      "bytes": 1069,
       "utf8": true
     },
     {
@@ -9793,17 +10206,17 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.4/README.md",
-      "sha256": "0C3CD9103C94562BFE2A817091A533C785C73E7B7918B149BAE6D7D842FB4786",
-      "lines": 27,
-      "bytes": 914,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.4/reporting/V14-RPT-001-account-invoice-reports.md",
       "sha256": "29EB5AD9C0D1AB9A942A59D758DA242AEF3E5F309A6183D74B4DD185E7204553",
       "lines": 54,
       "bytes": 1382,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1.5/README.md",
+      "sha256": "BAD547C430CD8918B923FD6A6D285AEE3E3D7E74D5C7AD6BDDBA4E665BD764F1",
+      "lines": 26,
+      "bytes": 836,
       "utf8": true
     },
     {
@@ -9884,13 +10297,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.5/README.md",
-      "sha256": "BAD547C430CD8918B923FD6A6D285AEE3E3D7E74D5C7AD6BDDBA4E665BD764F1",
-      "lines": 26,
-      "bytes": 836,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.5/reconciliation/V15-REC-001-unified-reconciliation-read-model.md",
       "sha256": "77E99DA52456836A86AF034B3815D24A36A3C81FE9B459055269FA1A0A922246",
       "lines": 63,
@@ -9951,6 +10357,13 @@
       "sha256": "D504DF084D5DCCF9E7618CFF23C7E96F4C957D5371394A4BDAC7E92B94CCE465",
       "lines": 134,
       "bytes": 7066,
+      "utf8": true
+    },
+    {
+      "path": "plan/v2.0/README.md",
+      "sha256": "D29552ADECADA935C27F6C160E9BFC8FC469E5D11D71B9309781909F838ED082",
+      "lines": 32,
+      "bytes": 1354,
       "utf8": true
     },
     {
@@ -10073,13 +10486,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v2.0/README.md",
-      "sha256": "D29552ADECADA935C27F6C160E9BFC8FC469E5D11D71B9309781909F838ED082",
-      "lines": 32,
-      "bytes": 1354,
-      "utf8": true
-    },
-    {
       "path": "plan/v2.0/recovery-drill/V20-DRL-001-disaster-restore-drill.md",
       "sha256": "0AE9EDDE1547D2B8558197DBEF68A1261AF9B27DB496A13117C36853E7333B43",
       "lines": 53,
@@ -10147,13 +10553,6 @@
       "sha256": "F4885231A79623375FAC569376D9966C6683896CA1FBA4E0C5E8E3844BD8F70B",
       "lines": 62,
       "bytes": 1398,
-      "utf8": true
-    },
-    {
-      "path": "plan/VALIDATION_CONTRACT.md",
-      "sha256": "D8C1A268F872CC6B72C70DF1A0900E90242CB2B318CEEFB45A306B0B2381E4BC",
-      "lines": 293,
-      "bytes": 20124,
       "utf8": true
     }
   ]

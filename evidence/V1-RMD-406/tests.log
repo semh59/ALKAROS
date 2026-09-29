@@ -1,0 +1,7 @@
+    0 Warning(s)
+    0 Error(s)
+Passed!  - Failed:     0, Passed:    78, Skipped:     0, Total:    78, Duration: 7 m 50 s - ALKAROS.Host.Tests.dll (net8.0)
+--- without fix:
+  Failed ALKAROS.Host.Tests.DualScreen.DualScreenAuthorizationHttpTests.LoginIssuesStaffSessionsThatLiveEightHours [4 s]
+Actual: 12.000358943916666
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 4 s - ALKAROS.Host.Tests.dll (net8.0)

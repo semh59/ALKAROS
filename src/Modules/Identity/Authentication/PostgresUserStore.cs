@@ -244,6 +244,23 @@ public sealed class PostgresUserStore : IUserStore
         return affected == 1;
     }
 
+    public async Task<bool> SetActiveAsync(Guid userId, bool active, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            UPDATE {Table}
+            SET active = @active,
+                updated_at = now(),
+                row_version = row_version + 1
+            WHERE user_id = @user_id;
+            """);
+        command.Parameters.AddWithValue("user_id", userId);
+        command.Parameters.AddWithValue("active", active);
+
+        var affected = await command.ExecuteNonQueryAsync(cancellationToken);
+        return affected == 1;
+    }
+
     public async Task<bool> TryUpgradePasswordHashAsync(
         Guid userId,
         string expectedCurrentHash,

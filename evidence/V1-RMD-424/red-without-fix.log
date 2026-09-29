@@ -1,0 +1,5 @@
+# Production changes reverted (src/ at HEAD), tests kept
+[xUnit.net 00:00:02.34]     ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AVoidWhoseStockCannotBeGivenBackIsRefusedAndChangesNothing [FAIL]
+Expected: Conflict
+Actual:   InternalServerError
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll (net8.0)

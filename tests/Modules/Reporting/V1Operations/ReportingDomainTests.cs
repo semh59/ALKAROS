@@ -1,3 +1,4 @@
+using ALKAROS.Reporting.BusinessDayTotals;
 using FluentAssertions;
 using Xunit;
 
@@ -9,7 +10,7 @@ public sealed class ReportingDomainTests
 
     public ReportingDomainTests()
     {
-        _service = new OperationalReportService(new FakeReportingRepository());
+        _service = new OperationalReportService(new FakeReportingRepository(), new FixedBusinessDayTotalsReader());
     }
 
     [Fact]
@@ -121,4 +122,18 @@ public sealed class ReportingDomainTests
             return Task.FromResult<IReadOnlyList<PrintErrorSummaryRecord>>(_printSummaries.Where(summary => summary.BusinessDate == businessDate).ToList());
         }
     }
+}
+
+/// <summary>V1-RMD-421: the recorded totals the service stores at close; fixed so the store's own behaviour is under test.</summary>
+internal sealed class FixedBusinessDayTotalsReader : IBusinessDayTotalsReader
+{
+    public FixedBusinessDayTotalsReader(decimal revenue = 0m, int orderCount = 0)
+    {
+        Totals = new RecordedBusinessDayTotals(revenue, orderCount);
+    }
+
+    public RecordedBusinessDayTotals Totals { get; }
+
+    public Task<RecordedBusinessDayTotals> ReadAsync(DateOnly businessDate, CancellationToken cancellationToken = default)
+        => Task.FromResult(Totals);
 }

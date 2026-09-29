@@ -57,6 +57,7 @@ removed in the last wave task. New application permission codes:
 | `bills.comp` | zero-price a delivered item |
 | `bills.discount` | apply a line/bill discount above the preset ladder |
 | `cash.drawer` | no-sale / drawer open / count |
+| `payments.take` | take a payment on a bill (card/EFT tender; a cash tender also needs `cash.drawer`) — V1-RMD-401 |
 | `reports.view` | operational reports |
 | `catalog.manage` | menu / price / routing (already exists, unchanged) |
 | `kitchen.advance` | advance a kitchen ticket/item one stage forward (Queued→Preparing→Ready→Served) — split out of `orders.send` (V1-IAM-028) so the narrow `kitchen-staff` role can hold it without also being able to cancel a ticket. A ticket/item transition to `Cancelled` still requires `orders.send` regardless of which role/permission gate is checked; `KitchenOperationsEndpoints.TicketTransitionPermission` branches on the target state. |
@@ -75,6 +76,7 @@ removed in the last wave task. New application permission codes:
 | `bills.comp` | grant (own check) | grant | ✅ | ✅ |
 | `bills.discount` | grant | grant | ✅ | ✅ |
 | `cash.drawer` | ❌ | ✅ | ✅ | ✅ |
+| `payments.take` | ❌ (configurable) | ✅ | ✅ | ✅ |
 | `reports.view` | ❌ | ❌ | ✅ | ✅ |
 | `catalog.manage` | ❌ | ❌ | ❌ | ✅ |
 
@@ -86,12 +88,23 @@ authorization request resolved by §4.
 1. A waiter **may** void/comp, but only on **their own** check and only through a
    grant (`context.requester_user_id` must equal the order's serving user; a
    grant on another server's check is auto-denied before it reaches a manager).
+   An unassigned check (no serving user) is not the waiter's own check either and is auto-denied the same way
+   (Semih, 2026-09-28, V1-RMD-402).
 2. There is **no standing discount ladder** — every `bills.discount`, including
    from a `cashier`, is a grant. Only `supervisor` / `manager` hold it outright.
 3. `supervisor` is the **floor role (şef garson)**: a senior waiter who holds
    `bills.void` / `bills.comp` / `bills.discount` / `floorplan.manage` /
    `reports.view` outright so the rush keeps moving without a manager, but never
    `catalog.manage` and never staff/finance settings.
+
+**Resolved (Semih, 2026-09-28, V1-RMD-401):** who may take a payment is a per-business setting, not a fixed
+role rule. `payments.take` is seeded to `cashier` / `supervisor` / `manager`; a business that hands its waiters a
+card terminal grants it to the `waiter` role through role management, with no code change.
+
+**Resolved (Semih, 2026-09-28, V1-RMD-408):** a user may hold several roles. Outright permissions are the union
+of all of them, but a grant request (and the offline budget) is evaluated under the user's *governing* role — the
+most restrictive one, i.e. the role holding the fewest permissions outright (ties: smallest role code). A user who
+is both `waiter` and `cashier` is therefore held to the waiter's own-check rule.
 
 ### 3.1 `kitchen.advance` and the `kitchen-staff` role (V1-IAM-028)
 

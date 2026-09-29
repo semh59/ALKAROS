@@ -1,0 +1,7 @@
+# V1-RMD-435 red run: the guard never blocks (placeholder behaviour restored by making the no-block branch always taken)
+28:        if (balance is null || balance.CurrentBalance != decimal.MinValue)
+   Expected reason to be "Müşterinin cari hesabında alacağı var (40,00 TL); iade edilmeden anonimleştirilemez.", but found <null>.
+   Expected reason to be "Müşterinin kapanmamış cari borcu var (150,00 TL); borç kapanmadan anonimleştirilemez.", but found <null>.
+  Failed ALKAROS.CustomerAccounts.BillCharges.Tests.OutstandingBalanceRetentionGuardTests.ACustomerTheVenueOwesMoneyToIsBlocked [22 ms]
+  Failed ALKAROS.CustomerAccounts.BillCharges.Tests.OutstandingBalanceRetentionGuardTests.ACustomerWhoStillOwesTheVenueIsBlocked [184 ms]
+Failed!  - Failed:     2, Passed:    10, Skipped:     0, Total:    12, Duration: 462 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)

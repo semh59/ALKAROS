@@ -130,6 +130,27 @@ public sealed class BillingSplitStore
         // bill's payable amount.
         var summary = AdjustmentCalculator.Calculate(bill, [.. existingAdjustments, adjustment]);
 
+        // V1-RMD-410 (V1-RMD-393 F-05): payments do not change the bill's status until it closes, so a partly paid
+        // bill still looks discountable — and a discount could push the payable below what was already collected
+        // (80 taken, 30 off -> 70 payable). The allocation path's own per-bill lock, taken here in this same
+        // transaction, serializes against a concurrent tender (which reads adjustments under that lock too).
+        await using (var allocationLock = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, lockTransaction))
+        {
+            allocationLock.Parameters.AddWithValue($"payment-allocation:{billId:N}");
+            await allocationLock.ExecuteNonQueryAsync(cancellationToken);
+        }
+        decimal collected;
+        await using (var collectedCommand = new NpgsqlCommand(
+            "SELECT COALESCE(SUM(amount), 0) FROM payments.payment_allocations WHERE bill_id = @bill_id;",
+            connection, lockTransaction))
+        {
+            collectedCommand.Parameters.AddWithValue("bill_id", billId);
+            collected = (decimal)(await collectedCommand.ExecuteScalarAsync(cancellationToken))!;
+        }
+        if (summary.AdjustedPayableAmount < collected)
+            throw new BillDiscountBelowCollectedException(billId, summary.AdjustedPayableAmount, collected);
+
         // Must use the lock's own connection/transaction: the insert's FK
         // reference to billing.bills otherwise waits on the very lock this
         // method holds, from a second, uncommitted connection — a
@@ -247,7 +268,7 @@ public sealed class BillingSplitStore
         if (activeBill != null)
         {
             var existingAllocations = await _splitDesigns.GetAllocationsByBillIdAsync(activeBill.Id, cancellationToken);
-            return Map(activeBill, existingAllocations, canMutate);
+            return Map(activeBill, existingAllocations, canMutate, adjustment: await LoadAdjustmentAsync(activeBill, cancellationToken));
         }
 
         var order = await _orders.GetByIdAsync(orderId, cancellationToken)
@@ -281,7 +302,7 @@ public sealed class BillingSplitStore
             if (retryActive != null)
             {
                 var retryAllocations = await _splitDesigns.GetAllocationsByBillIdAsync(retryActive.Id, cancellationToken);
-                return Map(retryActive, retryAllocations, canMutate);
+                return Map(retryActive, retryAllocations, canMutate, adjustment: await LoadAdjustmentAsync(retryActive, cancellationToken));
             }
             throw;
         }
@@ -320,7 +341,7 @@ public sealed class BillingSplitStore
     {
         var bill = await GetBillAsync(billId, cancellationToken);
         var allocations = await _splitDesigns.GetAllocationsByBillIdAsync(billId, cancellationToken);
-        return Map(bill, allocations, canMutate);
+        return Map(bill, allocations, canMutate, adjustment: await LoadAdjustmentAsync(bill, cancellationToken));
     }
 
     public async Task<BillSplitDesignDto> SaveEqualAsync(
@@ -368,6 +389,12 @@ public sealed class BillingSplitStore
         ArgumentNullException.ThrowIfNull(request);
         var bill = await GetBillAsync(billId, cancellationToken);
         var targets = request.Targets ?? throw new ArgumentException("Item targets are required.", nameof(request));
+        // V1-RMD-413 (V1-RMD-393 F-11): an item split sums the items' own prices, which on a discounted (or
+        // fee/tip-adjusted) bill no longer add up to what is owed. Spreading an adjustment over items is a product
+        // decision not taken yet, so such a bill is split by amount, person or custom split instead.
+        var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);
+        if (adjustment is not null && adjustment.AdjustedPayableAmount != bill.PayableAmount)
+            throw new SplitItemsOnAdjustedBillException(billId);
         var allocations = SplitEngine.CreateItemSplit(
             bill,
             targets.Select(target => new ItemSplitTarget(
@@ -450,7 +477,12 @@ public sealed class BillingSplitStore
             versions,
             allocations,
             cancellationToken);
-        return Map(bill, saved.Allocations, canMutate: true, saved.BillRowVersion);
+        return Map(
+            bill,
+            saved.Allocations,
+            canMutate: true,
+            saved.BillRowVersion,
+            await LoadAdjustmentAsync(bill, cancellationToken));
     }
 
     /// <summary>
@@ -554,7 +586,8 @@ public sealed class BillingSplitStore
         Bill bill,
         IReadOnlyList<BillAllocation> allocations,
         bool canMutate,
-        long? billRowVersion = null)
+        long? billRowVersion = null,
+        AdjustedBillSummary? adjustment = null)
     {
         var parsed = allocations.Select(allocation =>
         {
@@ -584,8 +617,9 @@ public sealed class BillingSplitStore
             bill.BillNumber,
             bill.Status.ToString(),
             bill.CurrencyCode,
-            bill.PayableAmount,
-            bill.TaxTotal,
+            // V1-RMD-413: the totals a design must add up to are the adjusted ones (see SplitEngine).
+            adjustment?.AdjustedPayableAmount ?? bill.PayableAmount,
+            adjustment?.AdjustedTaxTotal ?? bill.TaxTotal,
             billRowVersion ?? bill.RowVersion,
             mode,
             "DesignOnly",
@@ -604,6 +638,38 @@ public sealed class BillingSplitStore
 public sealed class BillingSplitNotFoundException : Exception
 {
     public BillingSplitNotFoundException(string message) : base(message) { }
+}
+
+/// <summary>
+/// V1-RMD-413: an item split was requested on a bill whose adjustments (discount, fee, tip) change what is owed.
+/// </summary>
+public sealed class SplitItemsOnAdjustedBillException : Exception
+{
+    public SplitItemsOnAdjustedBillException(Guid billId)
+        : base($"Bill {billId} carries adjustments; an item split cannot account for them.")
+    {
+        BillId = billId;
+    }
+
+    public Guid BillId { get; }
+}
+
+/// <summary>
+/// V1-RMD-410 (V1-RMD-393 F-05): the discount would leave the bill's payable below the amount already collected.
+/// </summary>
+public sealed class BillDiscountBelowCollectedException : Exception
+{
+    public BillDiscountBelowCollectedException(Guid billId, decimal adjustedPayable, decimal collected)
+        : base($"Bill {billId}: a discount leaving {adjustedPayable} payable is below the {collected} already collected.")
+    {
+        BillId = billId;
+        AdjustedPayable = adjustedPayable;
+        Collected = collected;
+    }
+
+    public Guid BillId { get; }
+    public decimal AdjustedPayable { get; }
+    public decimal Collected { get; }
 }
 
 public sealed class BillDiscountUnsupportedBillStateException : Exception

@@ -1,0 +1,7 @@
+# V1-RMD-435 tests on real PostgreSQL 18, Release (patch applied on 2d247f37)
+Passed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12, Duration: 421 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    35, Skipped:     0, Total:    35, Duration: 1 s - ALKAROS.CustomerData.AnonymizationState.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 257 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+# earlier run on the same patch:
+Passed!  - Failed:     0, Passed:   164, Skipped:     0, Total:   164 - ALKAROS.Host.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10 - ALKAROS.Host.Experience.Composition.Tests.dll (net8.0)

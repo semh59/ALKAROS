@@ -25,7 +25,11 @@ env:
 jobs:
   enforce:
     name: Task scope enforcement
-    runs-on: windows-latest
+    # V1-RMD-394: was windows-latest. Python 3.12.11+ ships no Windows builds (source-only security
+    # releases), so once windows-latest moved to Windows Server 2025 setup-python could no longer
+    # provide the pinned 3.12.12 and this job failed before running any step. Every step below is
+    # already pwsh, which ubuntu-latest ships, and the validate job runs the same 3.12.12 on Ubuntu.
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -38,21 +42,36 @@ jobs:
       - name: Resolve diff base
         id: base
         shell: pwsh
+        # V1-RMD-428: event values reach the script through env, never pasted into its source (a quote in any
+        # of them used to end the string and break - or inject into - the script).
+        env:
+          PR_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+          INPUT_DIFF_BASE: ${{ github.event.inputs.diff-base }}
         run: |
-          $base = "${{ github.event.pull_request.base.sha }}"
+          $base = $env:PR_BASE_SHA
           if (-not $base) {
-            $base = "${{ github.event.before }}"
+            $base = $env:PUSH_BEFORE
           }
           if (-not $base -or $base -match '^0+$') {
-            $base = "refs/remotes/origin/${{ github.event.repository.default_branch }}"
+            $base = "refs/remotes/origin/$($env:DEFAULT_BRANCH)"
           }
-          if ("${{ github.event.inputs.diff-base }}" -ne "") {
-            $base = "${{ github.event.inputs.diff-base }}"
+          if ($env:INPUT_DIFF_BASE) {
+            $base = $env:INPUT_DIFF_BASE
           }
           "base=$base" >> $env:GITHUB_OUTPUT
       - name: Resolve Task ID(s)
         id: task
         shell: pwsh
+        # V1-RMD-428: the PR title/body and the commit message are free text (PR #11's body held a quoted phrase
+        # that ended the pasted string and made this step a parse error); they come in through env only.
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          INPUT_TASK_ID: ${{ github.event.inputs.task-id }}
         run: |
           # V1-RMD-321 (independent 2026-09-26 audit, finding K13): this job used to skip itself entirely
           # on a push (`if: github.event_name != 'push'`) - the repository's actual, real-world workflow is
@@ -62,38 +81,40 @@ jobs:
           # several fixes closed together in one commit, each with its own plan task - so every match is
           # collected, not just the first, and the next step validates the union of their allowlists.
           $taskIds = @()
-          if ("${{ github.event_name }}" -eq "pull_request") {
-            $candidates = @(
-              "${{ github.event.pull_request.title }}",
-              "${{ github.event.pull_request.body }}"
-            )
-          } elseif ("${{ github.event_name }}" -eq "push") {
-            $candidates = @("${{ github.event.head_commit.message }}")
+          if ($env:EVENT_NAME -eq "pull_request") {
+            $candidates = @($env:PR_TITLE, $env:PR_BODY)
+          } elseif ($env:EVENT_NAME -eq "push") {
+            $candidates = @($env:HEAD_COMMIT_MESSAGE)
           } else {
             $candidates = @()
           }
           foreach ($candidate in $candidates) {
+            if (-not $candidate) { continue }
             $found = [regex]::Matches($candidate, "V\d+-[A-Z]+-\d+")
             foreach ($m in $found) {
               if ($taskIds -notcontains $m.Value) { $taskIds += $m.Value }
             }
           }
           if ($taskIds.Count -eq 0) {
-            $taskIds = @("${{ github.event.inputs.task-id || 'V1-RMD-007' }}")
+            $taskIds = @($(if ($env:INPUT_TASK_ID) { $env:INPUT_TASK_ID } else { "V1-RMD-007" }))
           }
           "task-ids=$($taskIds -join ',')" >> $env:GITHUB_OUTPUT
       - name: Run task-scope validation
         shell: pwsh
+        # V1-RMD-428: both outputs can carry workflow_dispatch input text, so they come in through env too.
+        env:
+          TASK_IDS: ${{ steps.task.outputs.task-ids }}
+          DIFF_BASE: ${{ steps.base.outputs.base }}
         run: |
           # A path only counts as a genuine scope violation when NONE of the referenced tasks' Owned
           # surfaces cover it - each task is validated independently (task_scope_tool.py's own model is
           # one task per run), then the reported out-of-scope paths are intersected across all of them.
-          $taskIds = "${{ steps.task.outputs.task-ids }}".Split(",")
+          $taskIds = $env:TASK_IDS.Split(",")
           $violationSets = @()
           foreach ($taskId in $taskIds) {
             $raw = python tools/task-scope/task_scope_tool.py `
               --task-id "$taskId" `
-              --diff-base "${{ steps.base.outputs.base }}" `
+              --diff-base "$($env:DIFF_BASE)" `
               --format json
             $parsed = $raw | ConvertFrom-Json
             if ($parsed.metadata_errors.Count -gt 0) {
@@ -115,6 +136,10 @@ jobs:
             exit 1
           }
           Write-Output "OK: every changed path is within scope for at least one of [$($taskIds -join ', ')]"
+          # V1-RMD-394: the Actions pwsh wrapper exits with $LASTEXITCODE, i.e. the last task_scope_tool.py
+          # run - which is 1 whenever that ONE task alone has findings, even though the intersection above
+          # just proved another task covers every one of them. The verdict is the intersection, so exit 0.
+          exit 0
 
   validate:
     name: Locked build, tests and supply chain
@@ -269,6 +294,11 @@ jobs:
       - name: Full .NET tests with line and branch coverage measurement
         shell: bash
         run: |
+          # V1-RMD-394: Actions runs `shell: bash` as `bash -e`, and `set -uo pipefail` never turned -e
+          # off - so the first failing project aborted the step and the per-project loop below never
+          # collected the rest (run 36394844650 stopped after 5 of ~147 projects). The loop records
+          # every failure itself and exits 1 at the end.
+          set +e
           set -uo pipefail
           dotnet tool install --global dotnet-coverage --version 18.10.0
           # V1-RMD-197: found on the first two real runs of this step ever

@@ -1,9 +1,12 @@
 using System.Security.Cryptography;
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.CustomerAccounts.BalanceProjection;
 using ALKAROS.CustomerAccounts.BillCharges.Tests.Fixtures;
+using ALKAROS.CustomerAccounts.CreditTerms;
 using ALKAROS.CustomerAccounts.TransactionLedger;
 using ALKAROS.CustomerData.Profiles;
+using ALKAROS.ModuleComposition;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Payments.PaymentAggregate;
@@ -30,6 +33,7 @@ public sealed class AccountChargeHandlerTests : IClassFixture<AccountChargeTestD
     private readonly PostgresPaymentRepository _payments;
     private readonly PostgresPaymentAllocationRepository _allocations;
     private readonly PostgresAccountTransactionLedger _ledger;
+    private readonly PostgresCustomerCreditTermsStore _creditTerms;
 
     public AccountChargeHandlerTests(AccountChargeTestDatabase database)
     {
@@ -43,10 +47,21 @@ public sealed class AccountChargeHandlerTests : IClassFixture<AccountChargeTestD
         _payments = new PostgresPaymentRepository(_dataSource);
         _allocations = new PostgresPaymentAllocationRepository(_dataSource, _adjustments);
         _ledger = new PostgresAccountTransactionLedger(_dataSource);
+        _creditTerms = new PostgresCustomerCreditTermsStore(_dataSource);
     }
 
     private AccountChargeHandler Handler(ICustomerCreditPolicy? creditPolicy = null) =>
-        new(_profiles, creditPolicy ?? new AlwaysApproveCreditPolicy(), _bills, _adjustments, _payments, _allocations, _ledger, _dataSource);
+        new(_profiles, creditPolicy ?? new ApprovingCreditPolicy(), _bills, _adjustments, _payments, _allocations, _ledger, _dataSource);
+
+    /// <summary>
+    /// The handler's own mechanics are tested with a policy that approves;
+    /// the production policy (V1-RMD-440) is tested below with real credit terms.
+    /// </summary>
+    private sealed class ApprovingCreditPolicy : ICustomerCreditPolicy
+    {
+        public Task<CreditPolicyResult> EvaluateAsync(Guid customerId, decimal amount, CancellationToken cancellationToken) =>
+            Task.FromResult(new CreditPolicyResult(true, null));
+    }
 
     [Fact]
     public async Task HandleAsyncCreatesAPaymentAnAllocationAndAnAccountChargeAtomically()
@@ -121,6 +136,148 @@ public sealed class AccountChargeHandlerTests : IClassFixture<AccountChargeTestD
 
         (await _allocations.GetByBillIdAsync(billId)).Should().BeEmpty();
     }
+
+    private CreditTermsCreditPolicy ProductionPolicy() =>
+        new(_creditTerms, new PostgresAccountBalanceProjection(_dataSource, _ledger), _dataSource);
+
+    [Fact]
+    public async Task TheProductionCreditPolicyRefusesAChargeWhenNoCreditLimitIsSet()
+    {
+        var customerId = await SeedCustomerAsync();
+        var billId = await SeedBillAsync(payable: 100m);
+        var request = new AccountChargeRequest(customerId, billId, AmountDue: 100m, IdempotencyKey: Guid.NewGuid().ToString());
+
+        var denied = await Assert.ThrowsAsync<AccountChargeCreditPolicyDeniedException>(
+            () => Handler(ProductionPolicy()).HandleAsync(request));
+
+        denied.Reason.Should().Be("Müşteri için kredi limiti tanımlanmadığından cari hesaba borç yazılamaz.");
+        (await _allocations.GetByBillIdAsync(billId)).Should().BeEmpty();
+        (await _ledger.GetByCustomerAsync(customerId)).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task AChargeWithinTheCustomersCreditLimitIsPosted()
+    {
+        var customerId = await SeedCustomerAsync();
+        await _creditTerms.SetAsync(customerId, creditLimit: 500m, paymentTermDays: null, updatedBy: Guid.NewGuid());
+        var billId = await SeedBillAsync(payable: 200m);
+
+        var result = await Handler(ProductionPolicy()).HandleAsync(
+            new AccountChargeRequest(customerId, billId, AmountDue: 200m, IdempotencyKey: Guid.NewGuid().ToString()));
+
+        result.ApprovedAmount.Should().Be(200m);
+        (await _ledger.GetByCustomerAsync(customerId)).Should().ContainSingle();
+    }
+
+    [Fact]
+    public async Task AChargeThatWouldExceedTheCreditLimitIsRefusedAndPostsNothing()
+    {
+        var customerId = await SeedCustomerAsync();
+        await _creditTerms.SetAsync(customerId, creditLimit: 500m, paymentTermDays: null, updatedBy: Guid.NewGuid());
+        await RecordAsync(customerId, AccountTransactionType.Charge, 450m, DateTimeOffset.UtcNow);
+        var billId = await SeedBillAsync(payable: 100m);
+
+        var denied = await Assert.ThrowsAsync<AccountChargeCreditPolicyDeniedException>(
+            () => Handler(ProductionPolicy()).HandleAsync(
+                new AccountChargeRequest(customerId, billId, AmountDue: 100m, IdempotencyKey: Guid.NewGuid().ToString())));
+
+        denied.Reason.Should().Be("Cari borç kredi limitini aşıyor: bakiye 450,00 TL, yeni borç 100,00 TL, limit 500,00 TL.");
+        (await _allocations.GetByBillIdAsync(billId)).Should().BeEmpty();
+        (await _ledger.GetByCustomerAsync(customerId)).Should().ContainSingle();
+    }
+
+    [Fact]
+    public async Task OverdueDebtRefusesANewChargeUntilItIsPaid()
+    {
+        var customerId = await SeedCustomerAsync();
+        await _creditTerms.SetAsync(customerId, creditLimit: 1000m, paymentTermDays: 30, updatedBy: Guid.NewGuid());
+        await RecordAsync(customerId, AccountTransactionType.Charge, 120m, DateTimeOffset.UtcNow.AddDays(-40));
+        await RecordAsync(customerId, AccountTransactionType.Payment, 20m, DateTimeOffset.UtcNow.AddDays(-5));
+        var billId = await SeedBillAsync(payable: 50m);
+
+        var denied = await Assert.ThrowsAsync<AccountChargeCreditPolicyDeniedException>(
+            () => Handler(ProductionPolicy()).HandleAsync(
+                new AccountChargeRequest(customerId, billId, AmountDue: 50m, IdempotencyKey: Guid.NewGuid().ToString())));
+        denied.Reason.Should().Be("Müşterinin 30 günlük vadesi geçmiş 100,00 TL cari borcu var; ödenmeden yeni borç yazılamaz.");
+        (await _allocations.GetByBillIdAsync(billId)).Should().BeEmpty();
+
+        await RecordAsync(customerId, AccountTransactionType.Payment, 100m, DateTimeOffset.UtcNow);
+        var result = await Handler(ProductionPolicy()).HandleAsync(
+            new AccountChargeRequest(customerId, billId, AmountDue: 50m, IdempotencyKey: Guid.NewGuid().ToString()));
+        result.ApprovedAmount.Should().Be(50m);
+    }
+
+    [Fact]
+    public async Task ARecentChargeInsideThePaymentTermIsNotOverdue()
+    {
+        var customerId = await SeedCustomerAsync();
+        await _creditTerms.SetAsync(customerId, creditLimit: 1000m, paymentTermDays: 30, updatedBy: Guid.NewGuid());
+        await RecordAsync(customerId, AccountTransactionType.Charge, 120m, DateTimeOffset.UtcNow.AddDays(-10));
+        var billId = await SeedBillAsync(payable: 50m);
+
+        var result = await Handler(ProductionPolicy()).HandleAsync(
+            new AccountChargeRequest(customerId, billId, AmountDue: 50m, IdempotencyKey: Guid.NewGuid().ToString()));
+
+        result.ApprovedAmount.Should().Be(50m);
+    }
+
+    [Fact]
+    public async Task TwoConcurrentChargesCannotTogetherExceedTheCreditLimit()
+    {
+        var customerId = await SeedCustomerAsync();
+        await _creditTerms.SetAsync(customerId, creditLimit: 150m, paymentTermDays: null, updatedBy: Guid.NewGuid());
+        var firstBill = await SeedBillAsync(payable: 100m);
+        var secondBill = await SeedBillAsync(payable: 100m);
+
+        var attempts = await Task.WhenAll(
+            TryChargeAsync(customerId, firstBill, 100m),
+            TryChargeAsync(customerId, secondBill, 100m));
+
+        attempts.Count(approved => approved).Should().Be(1);
+        (await _ledger.GetByCustomerAsync(customerId)).Should().ContainSingle();
+    }
+
+    private async Task<bool> TryChargeAsync(Guid customerId, Guid billId, decimal amount)
+    {
+        try
+        {
+            await Handler(ProductionPolicy()).HandleAsync(
+                new AccountChargeRequest(customerId, billId, AmountDue: amount, IdempotencyKey: Guid.NewGuid().ToString()));
+            return true;
+        }
+        catch (AccountChargeCreditPolicyDeniedException)
+        {
+            return false;
+        }
+    }
+
+    [Fact]
+    public async Task CreditTermsCannotBeSetForAnUnknownOrAnonymizedCustomer()
+    {
+        var anonymized = await SeedCustomerAsync();
+        await _profiles.AnonymizeAsync(anonymized, expectedRowVersion: 1);
+
+        (await _creditTerms.SetAsync(Guid.NewGuid(), 100m, null, Guid.NewGuid())).Should().BeNull();
+        (await _creditTerms.SetAsync(anonymized, 100m, null, Guid.NewGuid())).Should().BeNull();
+        (await _creditTerms.GetAsync(anonymized)).Should().BeNull();
+    }
+
+    [Fact]
+    public void TheProductionModuleRegistersTheCreditTermsPolicy()
+    {
+        var context = new ModuleContext();
+        new CustomerAccountsBillChargesModule().Register(context);
+
+        context.Services
+            .Where(service => service.ServiceType == typeof(ICustomerCreditPolicy))
+            .Should().ContainSingle()
+            .Which.ImplementationType.Should().Be<CreditTermsCreditPolicy>();
+    }
+
+    private async Task RecordAsync(Guid customerId, AccountTransactionType type, decimal amount, DateTimeOffset occurredAt) =>
+        await _ledger.RecordAsync(new RecordAccountTransactionRequest(
+            customerId, type, amount, sourceReferenceType: "Test", sourceReferenceId: Guid.NewGuid(),
+            note: null, createdBy: null, occurredAt: occurredAt));
 
     private sealed class DenyingCreditPolicy(string reason) : ICustomerCreditPolicy
     {

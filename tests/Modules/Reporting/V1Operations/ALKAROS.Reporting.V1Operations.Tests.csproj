@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\..\src\Modules\Reporting\V1Operations\**\*.cs" Link="Source\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\..\..\..\src\Modules\Reporting\BusinessDayTotals\**\*.cs" Link="Source\BusinessDayTotals\%(RecursiveDir)%(Filename)%(Extension)" />
   </ItemGroup>
 
   <ItemGroup>

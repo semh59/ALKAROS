@@ -1,0 +1,740 @@
+Test run for /fix/tests/Host/Experience/CashSession/bin/Release/net8.0/ALKAROS.Host.Experience.CashSession.Tests.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.30)
+[xUnit.net 00:00:00.20]   Discovering: ALKAROS.Host.Experience.CashSession.Tests
+[xUnit.net 00:00:00.34]   Discovered:  ALKAROS.Host.Experience.CashSession.Tests
+[xUnit.net 00:00:00.35]   Starting:    ALKAROS.Host.Experience.CashSession.Tests
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:39727
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:39727/api/v1/terminals/c5517e6e-48e2-4dc4-a73f-af338bfabfb4/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:39727/api/v1/terminals/c5517e6e-48e2-4dc4-a73f-af338bfabfb4/cash-sessions - 201 - application/json;+charset=utf-8 2274.0253ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:39727/api/v1/terminals/c5517e6e-48e2-4dc4-a73f-af338bfabfb4/cash-sessions/e9c1696b-c5cd-41d2-b2b8-8a013cbd2fc8/cash-movements - application/json;+charset=utf-8 99
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashTransaction' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:39727/api/v1/terminals/c5517e6e-48e2-4dc4-a73f-af338bfabfb4/cash-sessions/e9c1696b-c5cd-41d2-b2b8-8a013cbd2fc8/cash-movements - 201 - application/json;+charset=utf-8 101.9947ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:39727/api/v1/terminals/c5517e6e-48e2-4dc4-a73f-af338bfabfb4/cash-sessions/e9c1696b-c5cd-41d2-b2b8-8a013cbd2fc8/cash-movements - application/json;+charset=utf-8 99
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashTransaction' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:39727/api/v1/terminals/c5517e6e-48e2-4dc4-a73f-af338bfabfb4/cash-sessions/e9c1696b-c5cd-41d2-b2b8-8a013cbd2fc8/cash-movements - 201 - application/json;+charset=utf-8 80.7979ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:39727/api/v1/terminals/c5517e6e-48e2-4dc4-a73f-af338bfabfb4/cash-sessions/e9c1696b-c5cd-41d2-b2b8-8a013cbd2fc8/expected-cash - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/expected-cash'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ExpectedCashResponseV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/expected-cash'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:39727/api/v1/terminals/c5517e6e-48e2-4dc4-a73f-af338bfabfb4/cash-sessions/e9c1696b-c5cd-41d2-b2b8-8a013cbd2fc8/expected-cash - 200 - application/json;+charset=utf-8 23.8325ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.RetryingACashMovementWithTheSameIdempotencyKeyDoesNotDuplicateIt [6 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:46859
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:46859/api/v1/terminals/88bfb194-4878-425a-8777-9905588fcf26/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:46859/api/v1/terminals/88bfb194-4878-425a-8777-9905588fcf26/cash-sessions - 201 - application/json;+charset=utf-8 1878.4388ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:46859/api/v1/terminals/88bfb194-4878-425a-8777-9905588fcf26/cash-sessions/919aaa89-4a5a-49d8-bf4a-f3e75d322e00/close - application/json;+charset=utf-8 18
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseCashSessionResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:46859/api/v1/terminals/88bfb194-4878-425a-8777-9905588fcf26/cash-sessions/919aaa89-4a5a-49d8-bf4a-f3e75d322e00/close - 200 - application/json;+charset=utf-8 31.4758ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:46859/api/v1/terminals/88bfb194-4878-425a-8777-9905588fcf26/cash-sessions/919aaa89-4a5a-49d8-bf4a-f3e75d322e00/reconcile - application/json;+charset=utf-8 19
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/reconcile'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/reconcile'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:46859/api/v1/terminals/88bfb194-4878-425a-8777-9905588fcf26/cash-sessions/919aaa89-4a5a-49d8-bf4a-f3e75d322e00/reconcile - 403 - application/json;+charset=utf-8 32.9805ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:46859/api/v1/terminals/88bfb194-4878-425a-8777-9905588fcf26/cash-sessions/919aaa89-4a5a-49d8-bf4a-f3e75d322e00/reconcile - application/json;+charset=utf-8 16
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/reconcile'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/reconcile'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:46859/api/v1/terminals/88bfb194-4878-425a-8777-9905588fcf26/cash-sessions/919aaa89-4a5a-49d8-bf4a-f3e75d322e00/reconcile - 403 - application/json;+charset=utf-8 10.9124ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:46859/api/v1/terminals/88bfb194-4878-425a-8777-9905588fcf26/cash-sessions/919aaa89-4a5a-49d8-bf4a-f3e75d322e00/reconcile - application/json;+charset=utf-8 19
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/reconcile'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/reconcile'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:46859/api/v1/terminals/88bfb194-4878-425a-8777-9905588fcf26/cash-sessions/919aaa89-4a5a-49d8-bf4a-f3e75d322e00/reconcile - 200 - application/json;+charset=utf-8 20.6934ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ReconcileNeedsASupervisorWhoIsNotTheSessionsOwnCashier [4 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:33851
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:33851/api/v1/terminals/6a4b1f98-a704-4ff0-ba93-a562db2b593c/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:33851/api/v1/terminals/6a4b1f98-a704-4ff0-ba93-a562db2b593c/cash-sessions - 201 - application/json;+charset=utf-8 1575.5618ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:33851/api/v1/terminals/6a4b1f98-a704-4ff0-ba93-a562db2b593c/cash-sessions/0097d4f2-ab8a-453f-a24c-6b7e37fdcb8b/close - application/json;+charset=utf-8 18
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseCashSessionResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:33851/api/v1/terminals/6a4b1f98-a704-4ff0-ba93-a562db2b593c/cash-sessions/0097d4f2-ab8a-453f-a24c-6b7e37fdcb8b/close - 200 - application/json;+charset=utf-8 22.9038ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CloseComputesExpectedCashFromTheOpeningLedgerEntryWithNoVarianceForAMatchingCount [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:37467
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:37467/api/v1/terminals/661045f1-63d0-4768-9040-faef06ada6cb/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:37467/api/v1/terminals/661045f1-63d0-4768-9040-faef06ada6cb/cash-sessions - 201 - application/json;+charset=utf-8 1517.4679ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:37467/api/v1/terminals/661045f1-63d0-4768-9040-faef06ada6cb/cash-sessions/e3ca148c-8e47-4091-95df-6d5069ef8684/cash-tender - application/json;+charset=utf-8 127
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:37467/api/v1/terminals/661045f1-63d0-4768-9040-faef06ada6cb/cash-sessions/e3ca148c-8e47-4091-95df-6d5069ef8684/cash-tender - 400 - application/json;+charset=utf-8 58.7136ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderBelowTheAmountDueIsRejected [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:34525
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:34525/api/v1/terminals/22095c5e-41e9-4fd5-90d0-269f28cb1500/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:34525/api/v1/terminals/22095c5e-41e9-4fd5-90d0-269f28cb1500/cash-sessions - 201 - application/json;+charset=utf-8 1533.2452ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:34525/api/v1/terminals/22095c5e-41e9-4fd5-90d0-269f28cb1500/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:34525/api/v1/terminals/22095c5e-41e9-4fd5-90d0-269f28cb1500/cash-sessions - 409 - application/json;+charset=utf-8 23.2163ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.OpeningASecondSessionOnTheSameTerminalIsRejected [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:45317
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:45317/api/v1/terminals/c29470d8-75e9-4bc5-95c6-033c34eb6374/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:45317/api/v1/terminals/c29470d8-75e9-4bc5-95c6-033c34eb6374/cash-sessions - 201 - application/json;+charset=utf-8 1513.0791ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:45317/api/v1/terminals/c29470d8-75e9-4bc5-95c6-033c34eb6374/cash-sessions/e9328876-4701-4e3a-af25-1db08f2d76e8/start-count - application/json;+charset=utf-8 2
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/start-count'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/start-count'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:45317/api/v1/terminals/c29470d8-75e9-4bc5-95c6-033c34eb6374/cash-sessions/e9328876-4701-4e3a-af25-1db08f2d76e8/start-count - 200 - application/json;+charset=utf-8 20.7003ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:45317/api/v1/terminals/c29470d8-75e9-4bc5-95c6-033c34eb6374/cash-sessions/e9328876-4701-4e3a-af25-1db08f2d76e8/counts - application/json;+charset=utf-8 39
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/counts'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashCountRecordedEvent' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/counts'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:45317/api/v1/terminals/c29470d8-75e9-4bc5-95c6-033c34eb6374/cash-sessions/e9328876-4701-4e3a-af25-1db08f2d76e8/counts - 200 - application/json;+charset=utf-8 29.5103ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.StartCountThenRecordCountSucceed [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:38589
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions - 201 - application/json;+charset=utf-8 1707.7145ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions/d894551f-675c-40e8-afb3-4e31cc12af4a/cash-movements - application/json;+charset=utf-8 100
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashTransaction' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions/d894551f-675c-40e8-afb3-4e31cc12af4a/cash-movements - 201 - application/json;+charset=utf-8 30.3859ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions/d894551f-675c-40e8-afb3-4e31cc12af4a/cash-movements - application/json;+charset=utf-8 130
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashTransaction' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions/d894551f-675c-40e8-afb3-4e31cc12af4a/cash-movements - 201 - application/json;+charset=utf-8 16.0817ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions/d894551f-675c-40e8-afb3-4e31cc12af4a/expected-cash - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/expected-cash'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ExpectedCashResponseV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/expected-cash'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions/d894551f-675c-40e8-afb3-4e31cc12af4a/expected-cash - 200 - application/json;+charset=utf-8 15.6671ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions/d894551f-675c-40e8-afb3-4e31cc12af4a/close - application/json;+charset=utf-8 18
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseCashSessionResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions/d894551f-675c-40e8-afb3-4e31cc12af4a/close - 200 - application/json;+charset=utf-8 10.6845ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions/d894551f-675c-40e8-afb3-4e31cc12af4a/cash-movements - application/json;+charset=utf-8 99
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:38589/api/v1/terminals/30a612de-e525-4841-b104-22c70af466c9/cash-sessions/d894551f-675c-40e8-afb3-4e31cc12af4a/cash-movements - 409 - application/json;+charset=utf-8 11.0883ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashMovementsAdjustExpectedCashInBothDirectionsAndRejectOnAClosedSession [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:40901
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:40901/api/v1/terminals/70d9d1d3-0a2e-40e0-967a-e37d5c3123df/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:40901/api/v1/terminals/70d9d1d3-0a2e-40e0-967a-e37d5c3123df/cash-sessions - 401 - application/json;+charset=utf-8 1658.8986ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.WithoutACashierSessionEveryRouteIsUnauthorized [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:43329
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:43329/api/v1/terminals/7f92d711-527c-4721-88c8-c04192fc475a/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:43329/api/v1/terminals/7f92d711-527c-4721-88c8-c04192fc475a/cash-sessions - 201 - application/json;+charset=utf-8 1419.8083ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:43329/api/v1/terminals/7f92d711-527c-4721-88c8-c04192fc475a/cash-sessions/54a0ed61-ae50-4e40-9167-3053604731a1/cash-tender - application/json;+charset=utf-8 124
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:43329/api/v1/terminals/7f92d711-527c-4721-88c8-c04192fc475a/cash-sessions/54a0ed61-ae50-4e40-9167-3053604731a1/cash-tender - 200 - application/json;+charset=utf-8 161.7619ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderSucceedsAndPostsASaleLedgerEntry [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:35723
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:35723/api/v1/terminals/6e7c305c-a55b-4833-8ede-c86a4f71460d/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:35723/api/v1/terminals/6e7c305c-a55b-4833-8ede-c86a4f71460d/cash-sessions - 201 - application/json;+charset=utf-8 1553.5405ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:35723/api/v1/terminals/6e7c305c-a55b-4833-8ede-c86a4f71460d/cash-sessions/f441ed45-8b20-4fa7-9823-6efe183d40cc/close - application/json;+charset=utf-8 17
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:35723/api/v1/terminals/6e7c305c-a55b-4833-8ede-c86a4f71460d/cash-sessions/f441ed45-8b20-4fa7-9823-6efe183d40cc/close - 409 - application/json;+charset=utf-8 19.5326ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:35723/api/v1/terminals/6e7c305c-a55b-4833-8ede-c86a4f71460d/cash-sessions/f441ed45-8b20-4fa7-9823-6efe183d40cc/close - application/json;+charset=utf-8 88
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:35723/api/v1/terminals/6e7c305c-a55b-4833-8ede-c86a4f71460d/cash-sessions/f441ed45-8b20-4fa7-9823-6efe183d40cc/close - 403 - application/json;+charset=utf-8 17.0961ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:35723/api/v1/terminals/6e7c305c-a55b-4833-8ede-c86a4f71460d/cash-sessions/f441ed45-8b20-4fa7-9823-6efe183d40cc/close - application/json;+charset=utf-8 88
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseCashSessionResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:35723/api/v1/terminals/6e7c305c-a55b-4833-8ede-c86a4f71460d/cash-sessions/f441ed45-8b20-4fa7-9823-6efe183d40cc/close - 200 - application/json;+charset=utf-8 15.2730ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ClosingWithADifferenceOverTheToleranceRequiresSupervisorOverride [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:38237
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:38237/api/v1/terminals/c5c14469-7183-4f1f-8ec2-21509329f0e2/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:38237/api/v1/terminals/c5c14469-7183-4f1f-8ec2-21509329f0e2/cash-sessions - 201 - application/json;+charset=utf-8 1610.8814ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:38237/api/v1/terminals/c5c14469-7183-4f1f-8ec2-21509329f0e2/cash-sessions/8071dccd-b0e3-4265-9888-f544f4fd17bb/cash-movements - application/json;+charset=utf-8 118
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashTransaction' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:38237/api/v1/terminals/c5c14469-7183-4f1f-8ec2-21509329f0e2/cash-sessions/8071dccd-b0e3-4265-9888-f544f4fd17bb/cash-movements - 201 - application/json;+charset=utf-8 18.1929ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:38237/api/v1/terminals/c5c14469-7183-4f1f-8ec2-21509329f0e2/cash-sessions/8071dccd-b0e3-4265-9888-f544f4fd17bb/expected-cash - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/expected-cash'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ExpectedCashResponseV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/expected-cash'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:38237/api/v1/terminals/c5c14469-7183-4f1f-8ec2-21509329f0e2/cash-sessions/8071dccd-b0e3-4265-9888-f544f4fd17bb/expected-cash - 200 - application/json;+charset=utf-8 8.9563ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:38237/api/v1/terminals/c5c14469-7183-4f1f-8ec2-21509329f0e2/cash-sessions/8071dccd-b0e3-4265-9888-f544f4fd17bb/close - application/json;+charset=utf-8 18
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseCashSessionResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:38237/api/v1/terminals/c5c14469-7183-4f1f-8ec2-21509329f0e2/cash-sessions/8071dccd-b0e3-4265-9888-f544f4fd17bb/close - 200 - application/json;+charset=utf-8 10.1434ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ExpectedCashPreviewMatchesWhatCloseItselfLaterComputes [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:43637
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:43637/api/v1/terminals/e24988e2-7fbd-4917-be19-0daf80b43756/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:43637/api/v1/terminals/e24988e2-7fbd-4917-be19-0daf80b43756/cash-sessions - 201 - application/json;+charset=utf-8 1565.7385ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:43637/api/v1/terminals/e24988e2-7fbd-4917-be19-0daf80b43756/cash-sessions/1fb10d74-6c1c-4dcc-9461-4a3e758acf0f/close - application/json;+charset=utf-8 18
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseCashSessionResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:43637/api/v1/terminals/e24988e2-7fbd-4917-be19-0daf80b43756/cash-sessions/1fb10d74-6c1c-4dcc-9461-4a3e758acf0f/close - 200 - application/json;+charset=utf-8 16.1856ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:43637/api/v1/terminals/e24988e2-7fbd-4917-be19-0daf80b43756/cash-sessions/1fb10d74-6c1c-4dcc-9461-4a3e758acf0f/cash-tender - application/json;+charset=utf-8 128
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:43637/api/v1/terminals/e24988e2-7fbd-4917-be19-0daf80b43756/cash-sessions/1fb10d74-6c1c-4dcc-9461-4a3e758acf0f/cash-tender - 409 - application/json;+charset=utf-8 11.0287ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderOnAClosedSessionIsRejected [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:33809
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:33809/api/v1/terminals/10f86397-778c-47ed-8905-b45d6d7e9a6f/cash-sessions/active - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/active'
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[1]
+      Setting HTTP status code 404.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/active'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:33809/api/v1/terminals/10f86397-778c-47ed-8905-b45d6d7e9a6f/cash-sessions/active - 404 0 - 1904.7097ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:33809/api/v1/terminals/10f86397-778c-47ed-8905-b45d6d7e9a6f/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:33809/api/v1/terminals/10f86397-778c-47ed-8905-b45d6d7e9a6f/cash-sessions - 201 - application/json;+charset=utf-8 30.1570ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:33809/api/v1/terminals/10f86397-778c-47ed-8905-b45d6d7e9a6f/cash-sessions/active - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/active'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/active'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:33809/api/v1/terminals/10f86397-778c-47ed-8905-b45d6d7e9a6f/cash-sessions/active - 200 - application/json;+charset=utf-8 16.9300ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:33809/api/v1/terminals/10f86397-778c-47ed-8905-b45d6d7e9a6f/cash-sessions/8543f67c-dff3-48bb-8950-d1d3ced9f268/close - application/json;+charset=utf-8 18
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseCashSessionResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:33809/api/v1/terminals/10f86397-778c-47ed-8905-b45d6d7e9a6f/cash-sessions/8543f67c-dff3-48bb-8950-d1d3ced9f268/close - 200 - application/json;+charset=utf-8 39.8637ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:33809/api/v1/terminals/10f86397-778c-47ed-8905-b45d6d7e9a6f/cash-sessions/active - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/active'
+info: Microsoft.AspNetCore.Http.Result.NotFoundObjectResult[1]
+      Setting HTTP status code 404.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/active'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:33809/api/v1/terminals/10f86397-778c-47ed-8905-b45d6d7e9a6f/cash-sessions/active - 404 0 - 11.0311ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.GetActiveReturnsTheOpenSessionAndNotFoundOnceClosed [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:41325
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:41325/api/v1/terminals/6f4efdcf-21a7-4263-ad49-939e8086e26b/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:41325/api/v1/terminals/6f4efdcf-21a7-4263-ad49-939e8086e26b/cash-sessions - 201 - application/json;+charset=utf-8 1852.1045ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.OpenSessionSucceedsAndPostsAnOpeningLedgerEntry [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:37463
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:37463/api/v1/terminals/03bef952-9ec4-4d5d-a6d5-72dd9f42ce74/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[1]
+      Setting HTTP status code 201.
+info: Microsoft.AspNetCore.Http.Result.CreatedResult[3]
+      Writing value of type 'CashSessionSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:37463/api/v1/terminals/03bef952-9ec4-4d5d-a6d5-72dd9f42ce74/cash-sessions - 201 - application/json;+charset=utf-8 1651.7651ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:37463/api/v1/terminals/03bef952-9ec4-4d5d-a6d5-72dd9f42ce74/cash-sessions/2e551998-c3df-462b-9ce5-39313425a15a/cash-tender - application/json;+charset=utf-8 130
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:37463/api/v1/terminals/03bef952-9ec4-4d5d-a6d5-72dd9f42ce74/cash-sessions/2e551998-c3df-462b-9ce5-39313425a15a/cash-tender - 409 - application/json;+charset=utf-8 35.2224ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:37463/api/v1/terminals/03bef952-9ec4-4d5d-a6d5-72dd9f42ce74/cash-sessions/2e551998-c3df-462b-9ce5-39313425a15a/cash-tender - application/json;+charset=utf-8 130
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:37463/api/v1/terminals/03bef952-9ec4-4d5d-a6d5-72dd9f42ce74/cash-sessions/2e551998-c3df-462b-9ce5-39313425a15a/cash-tender - 409 - application/json;+charset=utf-8 17.2006ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:37463/api/v1/terminals/03bef952-9ec4-4d5d-a6d5-72dd9f42ce74/cash-sessions/2e551998-c3df-462b-9ce5-39313425a15a/cash-tender - application/json;+charset=utf-8 133
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CashTenderResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-tender'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:37463/api/v1/terminals/03bef952-9ec4-4d5d-a6d5-72dd9f42ce74/cash-sessions/2e551998-c3df-462b-9ce5-39313425a15a/cash-tender - 200 - application/json;+charset=utf-8 60.4591ms
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.CashTenderClaimingMoreThanTheBillsRemainingPayableIsRejectedAndPersistsNothing [3 s]
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:33525
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /fix/tests/Host/Experience/CashSession/bin/Release/net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:33525/api/v1/terminals/fd0f2768-3ca3-4dd0-916c-10a578e50da9/cash-sessions - application/json;+charset=utf-8 22
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:33525/api/v1/terminals/fd0f2768-3ca3-4dd0-916c-10a578e50da9/cash-sessions - 403 - application/json;+charset=utf-8 1450.9013ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:33525/api/v1/terminals/fd0f2768-3ca3-4dd0-916c-10a578e50da9/cash-sessions/active - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/active'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/cash-sessions/active'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET https://127.0.0.1:33525/api/v1/terminals/fd0f2768-3ca3-4dd0-916c-10a578e50da9/cash-sessions/active - 403 - application/json;+charset=utf-8 16.8802ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:33525/api/v1/terminals/fd0f2768-3ca3-4dd0-916c-10a578e50da9/cash-sessions/cb5363f0-f61d-4f14-a6ff-647bed23cc88/cash-movements - application/json;+charset=utf-8 64
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/cash-movements'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:33525/api/v1/terminals/fd0f2768-3ca3-4dd0-916c-10a578e50da9/cash-sessions/cb5363f0-f61d-4f14-a6ff-647bed23cc88/cash-movements - 403 - application/json;+charset=utf-8 10.5570ms
+[xUnit.net 00:01:20.44]   Finished:    ALKAROS.Host.Experience.CashSession.Tests
+  Passed ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ASessionWithoutCashDrawerIsForbiddenOnDrawerRoutes [3 s]
+
+Test Run Successful.
+Total tests: 16
+     Passed: 16
+ Total time: 1.3579 Minutes

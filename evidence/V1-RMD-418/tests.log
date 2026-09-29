@@ -1,0 +1,28 @@
+# HEAD b9a770ef + V1-RMD-418 working diff, PostgreSQL 18, Release
+## tests/Modules/Reporting/MenuInventory/ALKAROS.Reporting.MenuInventory.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.CriticalStockReportPrefersThePersistedReorderPointOverTheCallerSuppliedThreshold [90 ms]
+  Passed ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportDoesNotCountAVoidedItemWhoseStockWasGivenBack [23 ms]
+  Passed ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportExcludesAnItemMissingAnOpeningCount [13 ms]
+  Passed ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.CriticalStockReportDoesNotAlarmOnALocationTheItemIsNeverStockedAt [14 ms]
+  Passed ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.WasteReportAggregatesPortionAndInventoryWaste [32 ms]
+  Passed ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.CriticalStockReportIdentifiesLowStockWithReconciliation [14 ms]
+  Passed ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportComputesVarianceForAFullyCoveredItem [18 ms]
+  Passed ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ProductionYieldReportComputesAccurateYieldRates [19 ms]
+  Passed ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.PortionConsumptionReportReturnsAccurateMetricsAndReconciliation [46 ms]
+Total tests: 9
+     Passed: 9
+## tests/Host/Experience/InventoryReporting/ALKAROS.Host.Experience.InventoryReporting.Tests.csproj
+    0 Warning(s)
+    0 Error(s)
+  Passed ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.SecondScanWithTheSameCriticalItemDoesNotReBroadcast [36 ms]
+  Passed ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.RecoveringThenGoingCriticalAgainReBroadcasts [1 ms]
+  Passed ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.FirstScanBroadcastsEveryCriticalItem [5 ms]
+  Passed ALKAROS.Host.Experience.InventoryReporting.Tests.LowStockAlertHostedServiceTests.NoCriticalItemsBroadcastsNothing [1 ms]
+  Passed ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.ReturnsCriticalStockReportUsingThePersistedReorderPoint [267 ms]
+  Passed ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.ActualVsTheoreticalRequiresFromAndTo [44 ms]
+  Passed ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.ActualVsTheoreticalReturnsAnEmptyReportWhenNoPhysicalCountsExist [56 ms]
+  Passed ALKAROS.Host.Experience.InventoryReporting.Tests.InventoryReportingHttpTests.MissingAndUnpermissionedSessionsAreRejected [37 ms]
+Total tests: 8
+     Passed: 8

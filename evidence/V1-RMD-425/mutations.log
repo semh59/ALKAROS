@@ -1,0 +1,19 @@
+# Each mutation applied alone to a clone at HEAD 3eb2510c + V1-RMD-425 tests; a Failed! line means the mutation is caught (killed)
+## N02: src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs
+-        WHERE inventory.stock_balances.on_hand_quantity + EXCLUDED.on_hand_quantity >= 0
++        WHERE true
+[xUnit.net 00:00:00.78]     ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ARefusedGuardedDecreaseLeavesTheCallersTransactionUsable [FAIL]
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 227 ms - ALKAROS.Inventory.BalanceProjection.Tests.dll (net8.0)
+
+## N08: src/Modules/Recipes/CostSnapshots/IStockCostResolver.cs
+-  AND (gr.received_at AT TIME ZONE 'Europe/Istanbul')::date <= $2;";
++  AND (gr.received_at AT TIME ZONE 'Europe/Istanbul')::date < $2;";
+[xUnit.net 00:00:00.87]     ALKAROS.Recipes.CostSnapshots.Tests.RecipeCostSnapshotDatabaseTests.MovingAverageCostCountsADeliveryOnTheRestaurantsLocalDate [FAIL]
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 201 ms - ALKAROS.Recipes.CostSnapshots.Tests.dll (net8.0)
+
+## M07: src/Modules/Billing/PaymentClosure/BillClosureService.cs
+-            if (!projection.PaymentSatisfied || projection.Blockers.Count > 0)
++            if (!projection.PaymentSatisfied)
+[xUnit.net 00:00:00.99]     ALKAROS.Billing.PaymentClosure.Tests.BillPaymentClosureProjectorTests.ACoveredBillWithAnUnresolvedCardAttemptIsNotClosed [FAIL]
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 443 ms - ALKAROS.Billing.PaymentClosure.Tests.dll (net8.0)
+

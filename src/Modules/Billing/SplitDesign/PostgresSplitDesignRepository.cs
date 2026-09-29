@@ -324,9 +324,14 @@ public sealed class PostgresSplitDesignRepository : ISplitDesignRepository
             throw new ArgumentException("Every allocation must belong to the target bill.", nameof(allocations));
         if (allocations.Select(allocation => allocation.Id).Distinct().Count() != allocations.Count)
             throw new ArgumentException("Allocation IDs must be unique.", nameof(allocations));
-        if (allocations.Sum(allocation => allocation.AllocatedAmount) != bill.PayableAmount)
+        // V1-RMD-413 (V1-RMD-393 F-11): billing.bill_adjustments never mutates the bill's own totals, and the split
+        // engine sizes a design against the discount/fee/tip-adjusted totals. Comparing against the raw bill totals
+        // here refused every design on an adjusted bill. The adjustments are read under this transaction's bill row
+        // lock, which a discount also takes, so they cannot change between this check and the commit.
+        var (adjustedPayable, adjustedTax) = await ReadAdjustedTotalsAsync(connection, transaction, bill, cancellationToken);
+        if (allocations.Sum(allocation => allocation.AllocatedAmount) != adjustedPayable)
             throw new InvalidOperationException("Allocation amounts must exactly equal the current bill payable amount.");
-        if (allocations.Sum(allocation => allocation.TaxAmount) != bill.TaxTotal)
+        if (allocations.Sum(allocation => allocation.TaxAmount) != adjustedTax)
             throw new InvalidOperationException("Allocation taxes must exactly equal the current bill tax total.");
 
         var parsedOwners = new List<OperationalAllocationOwner>(allocations.Count);
@@ -343,6 +348,42 @@ public sealed class PostgresSplitDesignRepository : ISplitDesignRepository
 
         await ValidateItemQuantitiesAsync(connection, transaction, bill.Id, allocations, cancellationToken);
         await ValidateSeatOwnersAsync(connection, transaction, bill, parsedOwners, cancellationToken);
+    }
+
+    /// <summary>
+    /// The bill's payable amount and tax total after its adjustments, with the same arithmetic as
+    /// <c>AdjustmentCalculator.Calculate</c>: deductions lower both, fees raise both, tips raise the payable only.
+    /// </summary>
+    private static async Task<(decimal Payable, decimal Tax)> ReadAdjustedTotalsAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        LockedBill bill,
+        CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT
+                COALESCE(SUM(gross_amount) FILTER (WHERE is_deduction), 0),
+                COALESCE(SUM(tax_amount) FILTER (WHERE is_deduction), 0),
+                COALESCE(SUM(gross_amount) FILTER (WHERE NOT is_deduction AND adjustment_type <> 'Tip'), 0),
+                COALESCE(SUM(tax_amount) FILTER (WHERE NOT is_deduction AND adjustment_type <> 'Tip'), 0),
+                COALESCE(SUM(gross_amount) FILTER (WHERE NOT is_deduction AND adjustment_type = 'Tip'), 0)
+            FROM billing.bill_adjustments
+            WHERE bill_id = @bill_id;
+            """,
+            connection,
+            transaction);
+        command.Parameters.AddWithValue("bill_id", bill.Id);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        await reader.ReadAsync(cancellationToken);
+        var discountGross = BillMath.RoundCurrency(reader.GetDecimal(0));
+        var discountTax = BillMath.RoundCurrency(reader.GetDecimal(1));
+        var feeGross = BillMath.RoundCurrency(reader.GetDecimal(2));
+        var feeTax = BillMath.RoundCurrency(reader.GetDecimal(3));
+        var tipGross = BillMath.RoundCurrency(reader.GetDecimal(4));
+        return (
+            BillMath.RoundCurrency(bill.PayableAmount - discountGross + feeGross + tipGross),
+            BillMath.RoundCurrency(Math.Max(0m, bill.TaxTotal - discountTax + feeTax)));
     }
 
     private static void ValidateModeShape(SplitMode mode, BillAllocation allocation)

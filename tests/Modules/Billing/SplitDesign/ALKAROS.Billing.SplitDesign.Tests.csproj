@@ -31,6 +31,7 @@
     <None Include="..\..\..\..\database\migrations\V1\V1-BIL-001\019-billing.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-BIL-002\020-split-design.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-BIL-002\020-split-design.down.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V1\V1-BIL-003\021-bill-adjustments.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-RMD-026\039-floor-plan.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-RMD-111\056-orders-serving-user-id.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>

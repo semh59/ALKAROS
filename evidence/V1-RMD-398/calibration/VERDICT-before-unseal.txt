@@ -1,0 +1,4 @@
+verdict before unseal: DETECTED-OR-DIFFERENT at 2026-09-28T09:31:28Z
+correction (before unseal, 2026-09-28T09:31:37Z): the only difference is S01, a nondeterministic race probe whose failing
+iteration differs run to run (clean: counted 865, seeded: counted 900). Every deterministic probe's result and message is
+identical with and without the seed. Verdict: MISSED.

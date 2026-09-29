@@ -132,7 +132,7 @@ markdownlint'in raporladığı kesin satırı korur.
 | `plan/v1.3/customer-account/V13-ACC-001-account-transaction-ledger.md` | `1-41 (+EOF 42)` | `8B4F9E342A1BE310C5766E17BCDC8DB0CB925F27BE5A81DFD54B8C8C68A962B9` | `plan/v1.4/customer-account/V14-ACC-001-account-transaction-ledger.md` | `1-115` | `807CFD829F59CC8A0B425953F523B1DAC933C26973AEBFFC9DE381465210A117` | `FIND-SCHEMA-0161@1`; `FIND-SCHEMA-0162@3`; `FIND-SOURCE-0051@9`; `FIND-LANGUAGE-0060@9`; `FIND-DELIVERABLE-0049@30`; `FIND-MD013-0326@9`; `FIND-MD013-0327@13`; `FIND-MD013-0328@18`; `FIND-MD013-0329@36`; `FIND-MD012-0082@42`; `FIND-DEPENDENCY-0010@26` | ✅ |
 | `plan/v1.3/customer-account/V13-ACC-002-account-balance-projection.md` | `1-41 (+EOF 42)` | `148E37EB50899458CC380FE00DD857DDFAA8FA8EA262ECEF2EC3D706D2ECB8BE` | `plan/v1.4/customer-account/V14-ACC-002-account-balance-projection.md` | `1-96` | `4CEA626D2149AF10AC89140C945E934B6EC6F602DDB2AF2B6976453F9C270F5C` | `FIND-SCHEMA-0163@1`; `FIND-SCHEMA-0164@3`; `FIND-SOURCE-0052@9`; `FIND-LANGUAGE-0061@9`; `FIND-DELIVERABLE-0050@30`; `FIND-MD013-0330@13`; `FIND-MD013-0331@36`; `FIND-MD012-0083@42` | ✅ |
 | `plan/v1.3/customer-account/V13-ACC-003-bill-account-charge.md` | `1-41 (+EOF 42)` | `7623F9DE2323215FEC0E013A571CC73A20942434B85BA0FCCADA014BD384F13D` | `plan/v1.4/customer-account/V14-ACC-003-bill-account-charge.md` | `1-114` | `2AAF737EF61204266DD808B964467B1F14FC6C84FA6E4B8917F52DCB770B715C` | `FIND-SCHEMA-0165@1`; `FIND-SCHEMA-0166@3`; `FIND-SOURCE-0053@9`; `FIND-LANGUAGE-0062@9`; `FIND-DELIVERABLE-0051@30`; `FIND-MD013-0332@9`; `FIND-MD013-0333@18`; `FIND-MD013-0334@36`; `FIND-MD012-0084@42` | ✅ |
-| `plan/v1.3/customer-account/V13-ACC-004-account-payment-posting.md` | `1-45 (+EOF 46)` | `A62384878CDF5E8549DCC3229673E2681F6F98ED25295593D32D1BA4EA52F27B` | `plan/v1.4/customer-account/V14-ACC-004-account-payment-posting.md` | `1-59` | `E361C5CC6E49D04EC30A9AF810134AD92CDBB9B05DCA5A999DFC5A912A8CE66B` | `FIND-SCHEMA-0167@1`; `FIND-SCHEMA-0168@3`; `FIND-LANGUAGE-0063@13`; `FIND-DELIVERABLE-0052@34`; `FIND-MD013-0335@9`; `FIND-MD013-0336@13`; `FIND-MD013-0337@22`; `FIND-MD013-0338@40`; `FIND-MD012-0085@46` | ✅ |
+| `plan/v1.3/customer-account/V13-ACC-004-account-payment-posting.md` | `1-45 (+EOF 46)` | `A62384878CDF5E8549DCC3229673E2681F6F98ED25295593D32D1BA4EA52F27B` | `plan/v1.4/customer-account/V14-ACC-004-account-payment-posting.md` | `1-67` | `52D6AEC77566B0BEED2776C111EBB5FB60786837889FFA0F1FB11E4DA571F1E5` | `FIND-SCHEMA-0167@1`; `FIND-SCHEMA-0168@3`; `FIND-LANGUAGE-0063@13`; `FIND-DELIVERABLE-0052@34`; `FIND-MD013-0335@9`; `FIND-MD013-0336@13`; `FIND-MD013-0337@22`; `FIND-MD013-0338@40`; `FIND-MD012-0085@46` | ✅ |
 | `plan/v1.3/customer-data/V13-CST-001-customer-pii-schema.md` | `1-41 (+EOF 42)` | `1CB9CED555F6FECE5C276938AFB0C13362A424E9A6C25594A493E9339A8102DC` | `plan/v1.4/customer-data/V14-CST-001-customer-pii-schema.md` | `1-149` | `EAA06785862AA7F925EACFA858102A786D3780A86F1FC9B6DD499E5916D13D43` | `FIND-SCHEMA-0169@1`; `FIND-SCHEMA-0170@3`; `FIND-SOURCE-0054@9`; `FIND-LANGUAGE-0064@9`; `FIND-DEPENDENCY-0003@26`; `FIND-DELIVERABLE-0053@30`; `FIND-MD013-0339@9`; `FIND-MD013-0340@13`; `FIND-MD013-0341@18`; `FIND-MD013-0342@36`; `FIND-MD012-0086@42` | ✅ |
 | `plan/v1.3/customer-data/V13-CST-002-customer-anonymization-state.md` | `1-41 (+EOF 42)` | `A5AC7F9DC7CC379FA5F3E0B635F56F568ED95BA3A97DA7ED1B36367962914C89` | `plan/v1.4/customer-data/V14-CST-002-customer-anonymization-state.md` | `1-108` | `15DAAB7C3662E7689A72359D9E7F4936B93250B059343B43379454BF39716655` | `FIND-SCHEMA-0171@1`; `FIND-SCHEMA-0172@3`; `FIND-SOURCE-0055@9`; `FIND-LANGUAGE-0065@9`; `FIND-DELIVERABLE-0054@30`; `FIND-MD013-0343@9`; `FIND-MD013-0344@13`; `FIND-MD013-0345@36`; `FIND-MD012-0087@42` | ✅ |
 | `plan/v1.3/invoicing/V13-INV-001-periodic-source-selection.md` | `1-41 (+EOF 42)` | `FB9B6ABBAD566DF1C42FA9B76F9B9680F176A4DF77E961819C5939C4E9EC9FEF` | `plan/v1.4/invoicing/V14-INV-001-periodic-source-selection.md` | `1-57` | `48B6AD10DA1A399B381A45DBD4C8ED77A79EA1CC78CC411B52BB369D069EFA08` | `FIND-SCHEMA-0173@1`; `FIND-SCHEMA-0174@3`; `FIND-SOURCE-0056@9`; `FIND-LANGUAGE-0066@9`; `FIND-DELIVERABLE-0055@30`; `FIND-MD013-0346@9`; `FIND-MD013-0347@13`; `FIND-MD013-0348@36`; `FIND-MD012-0088@42` | ✅ |
@@ -1509,7 +1509,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/design/foundations.md` | ✅ | `A9D1E72AB956A0CA762E232B7075318E868B67145F0FDAB532C6B06D5502445C` | Tek-sahip görev |
 | `docs/design/modules/check-and-table.md` | ✅ | `8F624927E3840F38FCDA9773573BF605BCE661E39B70BDA6309ADB754B93FDCE` | Tek-sahip görev |
 | `docs/design/modules/qr-nfc-ordering.md` | ✅ | `9F01F1C4CC8DF90B90A8B3F1A16729578CD35B34BB81888244B38D38A2C565EF` | Tek-sahip görev |
-| `docs/domain/authorization-model.md` | ✅ | `82F699027A247516A0B1AC3BBC3DB2160B7C33774F635031D00CA1219AF9BDFC` | Tek-sahip görev |
+| `docs/domain/authorization-model.md` | ✅ | `7900978ACB38896695F751AAE20C896FF0D80AA9DE28171A60455EF313437C44` | Tek-sahip görev |
 | `docs/domain/bill-order-cardinality.md` | ✅ | `60B03AEA8D67FC8F816CEB308FE715050CA698E410A7725874140BA3BDAED02A` | Tek-sahip görev |
 | `docs/domain/card-tip-scope-decision.md` | ✅ | `C433D901F42CC365264305DE2198151AD8194C2AB81A14E92B5E00BD15D7A97D` | Tek-sahip görev |
 | `docs/domain/cash-session-design.md` | ✅ | `3ACA34AA1E57DE329483F8D2AD812A31AFCB68350B8171E06416EAC8EB72FFE7` | Tek-sahip görev |
@@ -1793,6 +1793,18 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-RMD-255/verification.md` | ✅ | `B45B512DF0725AB47D6D72E51F94CC3335A683320D570CF98F14409523571109` | Tek-sahip görev |
 | `evidence/V1-RMD-256/verification.md` | ✅ | `790528863C826697AF381FD309F4AA5569AA6D1713AA261CE1E6AF824DE0C48D` | Tek-sahip görev |
 | `evidence/V1-RMD-257/verification.md` | ✅ | `0B456567E5A4D4F1FECAA9D30270C9964E95F2388B3E6862F2548EA3540C90FA` | Tek-sahip görev |
+| `evidence/V1-RMD-393/REPORT.md` | ✅ | `FBDB9AE647845FCC576D1317A822C15E2F391A0DAB5C7A4B20D4731D7E35D42C` | Tek-sahip görev |
+| `evidence/V1-RMD-393/probes/README.md` | ✅ | `4A9CB5C2EB7A01B39581E62D7D55ECEF6FEF4DFED143FD087417B5F80BC3243A` | Tek-sahip görev |
+| `evidence/V1-RMD-394/ci-runs.md` | ✅ | `DD965F90CB29127111C5E9B96A7B51538F2DF21FBE87CAC915DD4E49AFCF9E37` | Tek-sahip görev |
+| `evidence/V1-RMD-396/verification.md` | ✅ | `5A4B28F602975EA4C78D944D00DC12D7500ED5DA0F58DAAEB5EF9E399D5F369E` | Tek-sahip görev |
+| `evidence/V1-RMD-398/REPORT.md` | ✅ | `F8D0AD7F7D17DAB11F75A26ED2286C35BE2C0D35171A34B99E53A2E43C95637E` | Tek-sahip görev |
+| `evidence/V1-RMD-398/probes/README.md` | ✅ | `8E17CBEE27C96E194B9B94F4E91DF2EB705B9D3645EA69DB6A1CFB4C6F780F8F` | Tek-sahip görev |
+| `evidence/V1-RMD-399/REPORT.md` | ✅ | `747EA1B282AD7E4840A5E0DC968A9BD40A458C0F0ECA7F42CF750A86F021358D` | Tek-sahip görev |
+| `evidence/V1-RMD-399/calibration/VERDICT.md` | ✅ | `0E4B203EF8910109A75F589509677604C6D3A506143FEC97F4AF4504478E940F` | Tek-sahip görev |
+| `evidence/V1-RMD-399/coverage-matrix.md` | ✅ | `49AE78B6F970EDF01FD497EEC4A962E88BFD69776112BF2A2AEF186990EDA5B5` | Tek-sahip görev |
+| `evidence/V1-RMD-399/probes/README.md` | ✅ | `2F51A098D697053043E9D86F1A18F1BD14E883C788A83FA9A78BE24393D5655D` | Tek-sahip görev |
+| `evidence/V1-RMD-399/refutation.md` | ✅ | `63D366CBB5C49F97E3B8D2B4D83E4EECB8D259D8DB93698236114B7B99076596` | Tek-sahip görev |
+| `evidence/V1-RMD-407/audit-probes-after-all-fixes.md` | ✅ | `D69EB62802565C9CBE5946199900279A352065A57EA79D07EA60D1A729A11A20` | Tek-sahip görev |
 | `evidence/V1-SEC-003/candidate-remediation-2026-08-03.md` | ✅ | `C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59` | Tek-sahip görev |
 | `evidence/V1-SEC-003/closure-2026-08-05.md` | ✅ | `055205F9C60FFF4EA57BC87F7C21B548C95466BE6FA7F86ACA13C02DF122C66C` | Tek-sahip görev |
 | `evidence/V1-SEC-003/closure-report.md` | ✅ | `B873CEEC58BDC13B7970878719186B4BE54DC6332121D4469DC0F9D8BA311FAC` | Tek-sahip görev |
@@ -1810,6 +1822,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V13-GOV-007/README.md` | ✅ | `8F8A00F358A1041C8CBE314939A718EA5AA8B8761651C7F39EC2B529E85383CC` | Tek-sahip görev |
 | `evidence/V14-GOV-001/README.md` | ✅ | `614B370071C8B3E9447B7A980ACFB613019F3AEE642C02F5BDFBF30F04A8D5AD` | Tek-sahip görev |
 | `evidence/V14-GOV-002/README.md` | ✅ | `63173D250C206AE91817B734436714BD8FCE497A7264B47B187C263506CD87D5` | Tek-sahip görev |
+| `evidence/V14-RMD-001/verification.md` | ✅ | `EC24FE678DFD3EB3F110B265DDCE3E83EEA8D5078B322ADF71C998E580175884` | Tek-sahip görev |
 | `evidence/V15-BKP-002/README.md` | ✅ | `51205A981D5CC4D9649160ABF4B4049BD7134101DA32D0D02054973642CE50C4` | Tek-sahip görev |
 | `evidence/V15-OBS-001/README.md` | ✅ | `9F964FC1EFC983A2DD6942429E4820B87183D49F1107E903F8318A7623A25B1C` | Tek-sahip görev |
 | `evidence/V15-SEC-002/README.md` | ✅ | `B3B8637028F4A556CBE109B0F91B95B4B892861E234E39BEC5D83E4BA532C70A` | Tek-sahip görev |
@@ -2015,13 +2028,14 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1.3/payments/V13-PAY-004-card-settlement-orchestration.md` | ✅ | `4DB44FCAD341C5BE1B78E845428167363A1C692BFC1439BB5C55501E30D4182B` | Tek-sahip görev |
 | `plan/v1.3/payments/V13-PAY-005-eft-tender-handler.md` | ✅ | `9F0AA80E2229A167B1DB1D7243968A8C7842BD2872F19C257608F2E9BAD95628` | Tek-sahip görev |
 | `plan/v1.3/table-payment/V13-TBL-001-payment-aware-table-topology.md` | ✅ | `EE9C97CB93346A85F4DD1047D8D76DE545538A1D671BBDBC58802B4C487FF204` | Tek-sahip görev |
-| `plan/v1.4/customer-account/V14-ACC-005-cash-account-receipt.md` | ✅ | `41CAC292B67B06127874CBE2DC5DBC77670F13804B29A8865E37711EAB3DCABC` | Tek-sahip görev |
+| `plan/v1.4/customer-account/V14-ACC-005-cash-account-receipt.md` | ✅ | `B04799D31F6184AC02F5EBE6ECBD144FC3F7E2978C0DF88F5C2F74A64B92432A` | Tek-sahip görev |
 | `plan/v1.4/customer-account/V14-ACC-006-card-account-receipt.md` | ✅ | `53E8139BBEAB5CCA9964905F7534F37B997C4B9D94B7413A417600382A3436FA` | Tek-sahip görev |
 | `plan/v1.4/customer-account/V14-ACC-007-account-payment-reconciliation.md` | ✅ | `F9DE13FECF9193F5711974C285C563B3017F70902FA605F18BC00E1984E777DB` | Tek-sahip görev |
 | `plan/v1.4/customer-account/V14-ACC-008-customer-account-tender-integration.md` | ✅ | `F4A9EBC5373483FF39AA91EE27DFB7FFBD3000B1229D65F5808525DF14BC25A9` | Tek-sahip görev |
-| `plan/v1.4/customer-account/V14-ACC-009-independent-account-receipt.md` | ✅ | `9B98AEC536F8A6A6E9A4380171EA7754E4B7D14FF61C2388C1A1856C2973D512` | Tek-sahip görev |
+| `plan/v1.4/customer-account/V14-ACC-009-independent-account-receipt.md` | ✅ | `D75CED633C74AF1C2F8FA421B908B7071F0FE567B7C1FCA81049FAF0F197E4CA` | Tek-sahip görev |
 | `plan/v1.4/customer-data/V14-GOV-001-v14-gate-unverified-draft-authorization.md` | ✅ | `A72123210154C8DB2AFEBCC41F70B0B516E460F3CD7C06FD981AD52B5A12E316` | Tek-sahip görev |
 | `plan/v1.4/customer-data/V14-GOV-002-lift-v14-entry-gate-waiver.md` | ✅ | `D08E895E2DAABBBA52705F3161F4DA1B878BD264B0979F8CD646004FC3EA7D41` | Tek-sahip görev |
+| `plan/v1.4/customer-data/V14-RMD-001-anonymized-at-test-precision.md` | ✅ | `8FCB446249DCB455DA1E09D283B1550AAFD4FD3461CB699DC311B44379736FC6` | Tek-sahip görev |
 | `plan/v1.4/qnb-esolutions/V13-GOV-007-qnb-efatura-unverified-draft-authorization.md` | ✅ | `6A87F3A94B6ACF14B1BB67AD9ECF58ACC77D15A9932BF43CE8F658CFF891752B` | Tek-sahip görev |
 | `plan/v1.4/qnb-esolutions/V14-QNB-006-credential-registration.md` | ✅ | `DA7DA508F5E81A00C4523F71AFEE217B48DE132D910B72DD7277232DA538AB97` | Tek-sahip görev |
 | `plan/v1.4/qnb-esolutions/V14-QNB-007-connection-test.md` | ✅ | `B281C9735A602A0E654162C0473F42632E217A812FEF788A1769E6742946923D` | Tek-sahip görev |
@@ -2621,11 +2635,54 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-390-customerweb-menu-round2-audit.md` | ✅ | `5A07EDFC6E6C40DD9A42CA3315526E477EF469281FBC9B36FAF2F8F890A5EE3F` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-391-customerweb-orderentry-round2-audit.md` | ✅ | `E9F3651DEF6A54CBB44C5842C31F51F7D87510FFAFBE990C4D11DC5E5491FD5F` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-392-customerweb-bill-round2-audit.md` | ✅ | `8B79D7A7DBDE6EBFA6479C6FEE870E022AFE9420E4FB3C46B2CA882D68D2730F` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-393-api-route-authorization-architecture-test.md` | ✅ | `3BC1F10A6BF4FD3DD6BFCFF684B14FE14EDB74964DD2798CEE21DFFBCBE9AB13` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-394-mutating-endpoint-idempotency-test.md` | ✅ | `507453BA4F77B61F9187572F76400130A2DFBB3446B477FEE74F43670EF096C5` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-395-shared-api-error-handler.md` | ✅ | `C18DEB94FC097B214F26CB0AE34963AD39BA61D2F725232B353358E10630DE65` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-396-posterminal-lint-accessibility.md` | ✅ | `033F643178A54F40145C143013EF68DDA488DE437A9B5F7A2F7D61CF96F0A776` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-397-evidence-file-rule-alignment.md` | ✅ | `8E3274A1249BDD7A4DF643B72A26793743C9049B6D5F26E35024B7E3A7A01E7C` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-393-money-flow-targeted-audit.md` | ✅ | `48A68F3391E07C0B4C930B49808D1324050611A116005C5C903B34C79ACEBF0D` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-394-ci-gate-restore.md` | ✅ | `1AC5E9E69E047001419F48D51B98141592D415E29D51D91FE41DD4AA47A37F44` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-395-production-experience-registers-unit-converter.md` | ✅ | `6C83D31EFC6780254D74E7612B1E3AEAE0942A5B1CD952B61F7DDC1049B64A7B` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-396-composition-test-factory-registered-consumers.md` | ✅ | `C242BF4FC364B731703F5054775DE9CFBCFDD0EBD6C14D9442EF06F9FB23D59D` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-398-stock-recipe-flow-targeted-audit.md` | ✅ | `8507AAEEA69B194058049138C32931D73D0C684FCD10B95E0D19CA0BD2502233` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-399-authorization-targeted-audit.md` | ✅ | `BFFE2600D737F13D19BCD1B1F5AEE8768CFE6590A6C6D4D02123760297DD8A09` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-400-cash-drawer-permission-enforcement.md` | ✅ | `9606C498743CE87D3FADDCBA52AD22F70F7BFB1E8DA7B226D9FD3EB5C2C766D0` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-401-payment-taking-permission.md` | ✅ | `BE6AC4C9A162D02915E30595E3AD3C56E16C89156761DE6AF10DBEC81809E7A8` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-402-waiter-grant-on-unassigned-check.md` | ✅ | `9B44ED62B970BCFE25E3C3A76664D4DC55ECE7FBED59FF6EB003775B1D5A2894` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-403-supervisor-management-session.md` | ✅ | `F8A31117F8FE35DE6876B9C2FE06D0EC0AD80EBC8370B934419C725A56841D1A` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-404-offline-reconciliation-server-truth.md` | ✅ | `D0E626BCFD33045A6EC91A99D757869CD4E6C6D59D0F5E5A8E67F371490BB520` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-405-staff-deactivation.md` | ✅ | `90D2BFC5472A33A95CE604880D8F7297665EC6D5D26AFCBDE377353430CF4B1D` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-406-session-lifetime-at-login.md` | ✅ | `6D677195A4DE21C0E50B287E0EFBC129CFCC25B3F4331192AC86B5B03BED614A` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-407-delegation-creation-endpoint.md` | ✅ | `146D56C19FF4D1773F7643806E8EFB77CD1757750EA06CC81A164FF1DEE34488` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-408-governing-role-most-restrictive.md` | ✅ | `4EA2A61554623CA4358C4FD95A3EFF8E095AA1E965D36C1F3B370549B70D37C7` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-409-no-tender-on-cancelled-bill-or-unsettled-card.md` | ✅ | `BB324F5F084F4001F49C732F3F49EC1AB2F38E3445D01C83151470781F9A4B7D` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-410-discount-cannot-undercut-collected.md` | ✅ | `97CC8745FFE46811CAB331EAB37E5D0D6E3B8A94D40E845D5054D8C09FB01BD6` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-411-cash-session-terminal-ownership.md` | ✅ | `02A22E6F0CE49E0BB2E74A75CDA99AEBB6D538F133701B53A9AD7C8936690D44` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-412-not-charged-resolution-closes-bill.md` | ✅ | `44CA9A6E5CC3AD11900E0A3D9CD2E2C8C4AB442420CF9AA176E70FCA59A62E68` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-413-split-design-adjusted-payable.md` | ✅ | `041AE3FD97A01586238EEB3BAD44D005F89DC888DCFABB13EB48B658AEE326F5` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-414-recall-money-check-atomic.md` | ✅ | `0BDB18D59380EC518D1B2EF9109DF21C109174FF0B24369DA8B0F12984585C1B` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-415-cash-replay-requires-cash-sale.md` | ✅ | `D1A07DA44E9E0CBF686A086867631B07A7127EB8514FBB3730710C09E5668EEC` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-416-cash-session-opening-entry-atomic.md` | ✅ | `B6A25FE6C63A4DC8AE6C42E4D83CE17B350B0766620F0E516B43470F671B2CFC` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-417-cash-close-requires-count.md` | ✅ | `E4D2A0B07812916137EDE8CAD16E916F43E2B603975CC411597F17353A518A7F` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-418-variance-report-skips-voided-consumption.md` | ✅ | `55DA2AEC1DAADE8DE00A3E85C93B2EB59CE99F52C08C3E6210BAC3B46EEF62C9` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-419-production-batch-unit-matches-yield.md` | ✅ | `F0E11D61780871631244E31EF50EDF4FFF062F427E7B0EC7A190597FB857C075` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-420-variance-report-accounts-for-production.md` | ✅ | `35334A85617E0DEEAAEFBA79242EEE739B25931B1621BFD6EBB0F4DCB8C9B3D2` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-421-end-of-day-totals-derived-server-side.md` | ✅ | `57A2025936729B72AC42FD7AFB005BF334C8592F2269083A945D1A337C3CDCD1` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-422-inventory-adjustment-idempotency.md` | ✅ | `397383A04AD95EF01CDBD05DD9181AC9F74E06A89C8DAA60EBED0873A476F7F6` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-423-stock-cost-local-date-and-leftover-notes.md` | ✅ | `5965BD7582725FFB33110F3074BB3121144CA2BDEC3726A1F5D6928E99B466C4` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-424-void-stock-restore-atomic.md` | ✅ | `6AE7C63F197E7564FB73075411F0E264B17FC2FAB1F944B63272EF0C427ED552` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-425-audit-test-gaps-n02-n08-m07.md` | ✅ | `2F37696A44D5E85DAF89FA37F43CC8F0DB886D96777E5FC830D13E9EE1FA47E7` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-426-english-error-messages-turkish.md` | ✅ | `F6EDBC0C7472A175ADB10DFF99A6DC8DE614881ACC0C751D9C9BDC85BE0AC9B4` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-427-offline-reconcile-fk-not-all-unknown-budget.md` | ✅ | `70620F6ECCAB0888AE167A0ECC125BED187C89CB1F0B335EC7B939222FCCD224` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-428-ci-scope-step-untrusted-text-via-env.md` | ✅ | `49F939169C94D5661E41B2F4DAB2B9B91A4D00430A04ABB1E4E71180CED5597A` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-429-api-route-authorization-architecture-test.md` | ✅ | `D197307C3F80851B8B864BC5FC71EFB39C91CDA872AAC593E8A635E23BF9DB45` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-430-mutating-endpoint-idempotency-test.md` | ✅ | `3278E5BA572CD0119CC2469A19C8366A54820276364D2C9F78BAA4414C468803` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-431-shared-api-error-handler.md` | ✅ | `E55A78EA4C6BE1D5041CF583F6E544C8EB466865BF50542729B5949CB774BE2D` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-432-posterminal-lint-accessibility.md` | ✅ | `C81C373584FFFC732C068AF8524DEC832703948AF1C83B7038A2029B0A19BDAE` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-433-evidence-file-rule-alignment.md` | ✅ | `28C26795CCFA05FC85FEC3CFE8DC19851ACA7622D1FB8E6C42F2B8F7B83298B5` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-434-renumber-master-layer-quality-tasks.md` | ✅ | `36E7C07C206F48F89A0111730999C527C3FB238A331ECA1F130264927768F0FD` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-435-anonymization-blocked-by-open-account-balance.md` | ✅ | `F06C8619375B2E19B1265B2BF469F8D8D20AE108CF273C235D2EF7B29BF604EF` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-436-account-charge-refused-without-credit-limit.md` | ✅ | `1E44D9B950DDA69F9B9603BF319552A6F78E07676C600FE6CBCE5CA479BAAFAD` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-437-catalog-stops-offering-untracked-stock-mode.md` | ✅ | `247AB2AE260785BC67A22DA11EAF66FFE0EEDF8B3FD9F16F095C0D7CAABD0A07` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-438-catalog-list-and-detail-english-leaks.md` | ✅ | `8B249E7252E0F759BA74C533F26A61C7C5FFCB6F18CBC73A91428686B2AC15C9` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-439-nfc-concurrent-first-submission-order-number-race.md` | ✅ | `81096E6F0E4B1ABF1CEB1B8D9D6C29878047DF473447FF4072E76C87C0D161A1` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-440-per-customer-credit-limit-and-overdue-refusal.md` | ✅ | `FBAA55AE5F3F77DBED0E0678F974107CACBFE6A8DF785E7F6F8B9EBCC018F06D` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-441-start-v14-account-receipt-chain.md` | ✅ | `253654E2BDE1D8C725B03E8C2C4318309BF4686B571B70E1EB113FB28812E5F2` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2713,5 +2770,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1441` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1498` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.

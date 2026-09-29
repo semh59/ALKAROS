@@ -1,3 +1,4 @@
+using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
 using System.Collections.Concurrent;
@@ -552,6 +553,114 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ASupervisorLoginReachesTheGrantDecisionSurfaceButNotManagerOnlyAreas()
+    {
+        // V1-RMD-403 (V1-RMD-399 H-03): a floor supervisor holds reports.view but never catalog.manage; login used
+        // to hand them only the cashier cookie, so the grant-decision surface (model §4 step 3) answered 401.
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await SeedUserRoleWithPermissionsAsync(userId, "Şef Garson", "reports.view");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent(new { terminalId, username = "cashier", password = Password }),
+        };
+        AddTrustedForwarding(login, "198.51.100.41");
+        using var loginResponse = await client.SendAsync(login);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+        var cookies = loginResponse.Headers.GetValues("Set-Cookie").Select(value => value.Split(';', 2)[0]).ToList();
+        var managementCookie = Assert.Single(cookies, value => value.StartsWith("alkaros.manager=", StringComparison.Ordinal));
+        var cashierCookie = Assert.Single(cookies, value => value.StartsWith(DualScreenApplication.CashierCookieName + "=", StringComparison.Ordinal));
+
+        using var pending = CreateForwardedRequest(
+            HttpMethod.Get, "/api/v1/management/authorization/pending-grants", "198.51.100.41", managementCookie);
+        using var pendingResponse = await client.SendAsync(pending);
+        Assert.Equal(HttpStatusCode.OK, pendingResponse.StatusCode);
+
+        using var catalog = CreateForwardedRequest(
+            HttpMethod.Get, "/api/v1/management/catalog/products", "198.51.100.41", managementCookie);
+        using var catalogResponse = await client.SendAsync(catalog);
+        Assert.Equal(HttpStatusCode.Unauthorized, catalogResponse.StatusCode);
+
+        using var logout = CreateForwardedRequest(
+            HttpMethod.Post, $"/api/v1/auth/logout?terminalId={terminalId:D}", "198.51.100.41", cashierCookie);
+        using var logoutResponse = await client.SendAsync(logout);
+        Assert.Equal(HttpStatusCode.NoContent, logoutResponse.StatusCode);
+
+        using var afterLogout = CreateForwardedRequest(
+            HttpMethod.Get, "/api/v1/management/authorization/pending-grants", "198.51.100.41", managementCookie);
+        using var afterLogoutResponse = await client.SendAsync(afterLogout);
+        Assert.Equal(HttpStatusCode.Unauthorized, afterLogoutResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task ADeactivatedUsersExistingCashierSessionIsRefusedOnTheNextRequest()
+    {
+        // V1-RMD-405 (V1-RMD-399 T-01): the session check itself refuses an inactive account, even for a session
+        // nobody revoked — the audit's blind calibration removed exactly this and no existing test noticed.
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent(new { terminalId, username = "cashier", password = Password }),
+        };
+        AddTrustedForwarding(login, "198.51.100.43");
+        using var loginResponse = await client.SendAsync(login);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+        var cashierCookie = loginResponse.Headers.GetValues("Set-Cookie")
+            .Single(value => value.StartsWith(DualScreenApplication.CashierCookieName + "=", StringComparison.Ordinal))
+            .Split(';', 2)[0];
+
+        await ExecuteAsync("UPDATE identity.users SET active = false WHERE user_id = @user_id;", ("user_id", userId));
+
+        using var session = CreateForwardedRequest(
+            HttpMethod.Get, $"/api/v1/auth/session?terminalId={terminalId:D}", "198.51.100.43", cashierCookie);
+        using var sessionResponse = await client.SendAsync(session);
+        Assert.Equal(HttpStatusCode.Unauthorized, sessionResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task LoginIssuesStaffSessionsThatLiveEightHours()
+    {
+        // V1-RMD-406 (V1-RMD-399 H-01): V1-IAM-031 decided 8 h; login hard-coded 12 h for both staff cookies.
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await SeedUserRoleWithPermissionsAsync(userId, "Şef Garson", "reports.view");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent(new { terminalId, username = "cashier", password = Password }),
+        };
+        AddTrustedForwarding(login, "198.51.100.44");
+        var before = DateTimeOffset.UtcNow;
+        using var loginResponse = await client.SendAsync(login);
+        Assert.Equal(HttpStatusCode.OK, loginResponse.StatusCode);
+
+        var staffCookies = loginResponse.Headers.GetValues("Set-Cookie")
+            .Where(value => value.StartsWith(DualScreenApplication.CashierCookieName + "=", StringComparison.Ordinal)
+                || value.StartsWith("alkaros.manager=", StringComparison.Ordinal))
+            .ToList();
+        Assert.Equal(2, staffCookies.Count);
+        foreach (var cookie in staffCookies)
+        {
+            var expires = cookie.Split(';').Select(part => part.Trim())
+                .Single(part => part.StartsWith("expires=", StringComparison.OrdinalIgnoreCase))["expires=".Length..];
+            var lifetime = DateTimeOffset.Parse(expires, CultureInfo.InvariantCulture) - before;
+            Assert.InRange(lifetime.TotalHours, 7.9, 8.05);
+        }
+    }
+
+    [Fact]
     public async Task CatalogHttpContractKeepsLegacyArrayAndProvidesFilteredStableBoundedContinuation()
     {
         var userId = Guid.NewGuid();
@@ -770,6 +879,34 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
             ("role_name", roleName),
             ("user_role_id", Guid.NewGuid()),
             ("user_id", userId));
+    }
+
+    // V1-RMD-403: a named role that also holds real permission codes, so login's capability-driven
+    // management-session choice can be exercised.
+    private async Task SeedUserRoleWithPermissionsAsync(Guid userId, string roleName, params string[] permissionCodes)
+    {
+        var roleId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, @role_name);
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (@user_role_id, @user_id, @role_id);
+            """,
+            ("role_id", roleId),
+            ("role_code", "rmd403-role-" + roleId.ToString("N")[..8]),
+            ("role_name", roleName),
+            ("user_role_id", Guid.NewGuid()),
+            ("user_id", userId));
+        foreach (var code in permissionCodes)
+        {
+            await ExecuteAsync(
+                """
+                INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
+                SELECT @id, @role_id, permission_id FROM identity.permissions WHERE code = @code;
+                """,
+                ("id", Guid.NewGuid()),
+                ("role_id", roleId),
+                ("code", code));
+        }
     }
 
     private async Task<WebApplication> StartAsync()

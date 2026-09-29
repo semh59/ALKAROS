@@ -14,6 +14,15 @@ public interface ICashSessionLifecycleService
     Task<(CashSessionSnapshot Session, CashSessionOpenedEvent Event)> OpenSessionAsync(
         OpenCashSessionCommand command, CancellationToken cancellationToken = default);
 
+    /// <summary>
+    /// V1-RMD-416 (V1-RMD-393 F-14): same as <see cref="OpenSessionAsync"/>, and when the opening balance is
+    /// positive also posts the session's <c>Opening</c> ledger entry in the same transaction. The caller used to
+    /// post it as a second, separate write; when that write failed the session stayed open with no float in its
+    /// ledger, and its expected cash started at 0.
+    /// </summary>
+    Task<(CashSessionSnapshot Session, CashSessionOpenedEvent Event)> OpenSessionWithOpeningEntryAsync(
+        OpenCashSessionCommand command, CancellationToken cancellationToken = default);
+
     Task<(CashSessionSnapshot Session, CashCountStartedEvent Event)> StartCountAsync(
         StartCashCountCommand command, CancellationToken cancellationToken = default);
 

@@ -51,6 +51,8 @@ public sealed class AuditEventStoreSuspiciousLoginSink : ISuspiciousLoginAuditSi
         SuspiciousLoginReason.LockoutTriggered => "lockout-triggered",
         SuspiciousLoginReason.AllSessionsRevoked => "all-sessions-revoked",
         SuspiciousLoginReason.AccountForceUnlocked => "account-force-unlocked",
+        SuspiciousLoginReason.AccountDeactivated => "account-deactivated",
+        SuspiciousLoginReason.AccountReactivated => "account-reactivated",
         _ => throw new ArgumentOutOfRangeException(nameof(reason), reason, "Unknown suspicious login reason."),
     };
 }

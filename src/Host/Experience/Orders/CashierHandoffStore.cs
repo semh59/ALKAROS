@@ -1,4 +1,5 @@
 using System.Data;
+using ALKAROS.Billing.BillFoundation;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -74,14 +75,23 @@ public sealed class CashierHandoffStore
     /// its table. Only while no money has moved: any allocation or unresolved payment on the check's bills
     /// closes this door, because the payment is already recorded against that bill. The table must not carry
     /// a newer check (the locked design never lets a pointer be silently replaced); the caller is told instead.
-    /// The caller cancels the check's still-open bills through the Billing module (an Experience store never
-    /// writes another area's schema), so the till has no ghost bill and a re-send builds a fresh one.
+    /// The check's still-open bills are cancelled through the Billing module (an Experience store never writes
+    /// another area's schema), so the till has no ghost bill and a re-send builds a fresh one.
+    ///
+    /// V1-RMD-414 (V1-RMD-393 F-16): the money check and that cancellation used to commit separately, so a tender
+    /// landing between them stayed attached to a cancelled bill. Every payment path takes the per-bill
+    /// <c>bill-settlement</c> lock and re-reads the bill under it; this transaction takes the same locks first
+    /// (before any row lock, the order those paths use) and cancels in the same commit, so a waiting tender finds
+    /// the bill cancelled and is refused.
     /// </summary>
     public async Task<RecallCheckResultV1> RecallCheckAsync(
-        Guid tableId, Guid orderId, CancellationToken cancellationToken = default)
+        Guid tableId, Guid orderId, IBillRepository bills, CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(bills);
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
+        var lockedBillIds = new HashSet<Guid>();
+        await LockOrderBillsAsync(connection, transaction, orderId, lockedBillIds, cancellationToken);
 
         Guid? currentOrderId;
         await using (var lockTable = new NpgsqlCommand(
@@ -96,7 +106,11 @@ public sealed class CashierHandoffStore
 
         if (currentOrderId == orderId)
         {
-            await transaction.RollbackAsync(cancellationToken);
+            // A repeat of a recall: completes one that failed half-way before V1-RMD-414 (bill left open), but
+            // never cancels a bill that money has since moved on.
+            if (!await HasMoneyAsync(connection, transaction, orderId, cancellationToken))
+                await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
             return new RecallCheckResultV1(orderId, tableId, "AlreadyAttached");
         }
         if (currentOrderId is not null)
@@ -113,21 +127,10 @@ public sealed class CashierHandoffStore
                 throw new CheckNotRecallableException("Bu hesap kasa kuyruğunda değil.");
         }
 
-        await using (var money = new NpgsqlCommand(
-            """
-            SELECT EXISTS (
-                SELECT 1 FROM billing.bills b
-                WHERE b.order_id = @order_id
-                  AND (b.status = 'Paid'
-                       OR EXISTS (SELECT 1 FROM payments.payment_allocations a WHERE a.bill_id = b.bill_id)
-                       OR EXISTS (SELECT 1 FROM payments.payments p
-                                  WHERE p.bill_id = b.bill_id AND p.status IN ('Pending', 'Unknown', 'ReconciliationRequired'))));
-            """, connection, transaction))
-        {
-            money.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
-            if ((bool)(await money.ExecuteScalarAsync(cancellationToken))!)
-                throw new CheckHasPaymentException(orderId);
-        }
+        // A bill the till opened after the locks above were taken is locked now; the check below then sees it.
+        await LockOrderBillsAsync(connection, transaction, orderId, lockedBillIds, cancellationToken);
+        if (await HasMoneyAsync(connection, transaction, orderId, cancellationToken))
+            throw new CheckHasPaymentException(orderId);
 
         await using (var attach = new NpgsqlCommand(
             """
@@ -142,8 +145,53 @@ public sealed class CashierHandoffStore
                 throw new TableHasNewerCheckException(tableId);
         }
 
+        await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return new RecallCheckResultV1(orderId, tableId, "Recalled");
+    }
+
+    /// <summary>Takes the <c>bill-settlement</c> lock of every bill of the order not locked yet, in bill-id order.</summary>
+    private static async Task LockOrderBillsAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        Guid orderId,
+        HashSet<Guid> lockedBillIds,
+        CancellationToken cancellationToken)
+    {
+        var billIds = new List<Guid>();
+        await using (var read = new NpgsqlCommand(
+            "SELECT bill_id FROM billing.bills WHERE order_id = @order_id ORDER BY bill_id;", connection, transaction))
+        {
+            read.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+            await using var reader = await read.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+                billIds.Add(reader.GetGuid(0));
+        }
+
+        foreach (var billId in billIds.Where(lockedBillIds.Add))
+        {
+            await using var lockCommand = new NpgsqlCommand(
+                "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, transaction);
+            lockCommand.Parameters.AddWithValue($"bill-settlement:{billId:N}");
+            await lockCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+    }
+
+    private static async Task<bool> HasMoneyAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
+    {
+        await using var money = new NpgsqlCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM billing.bills b
+                WHERE b.order_id = @order_id
+                  AND (b.status = 'Paid'
+                       OR EXISTS (SELECT 1 FROM payments.payment_allocations a WHERE a.bill_id = b.bill_id)
+                       OR EXISTS (SELECT 1 FROM payments.payments p
+                                  WHERE p.bill_id = b.bill_id AND p.status IN ('Pending', 'Unknown', 'ReconciliationRequired'))));
+            """, connection, transaction);
+        money.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+        return (bool)(await money.ExecuteScalarAsync(cancellationToken))!;
     }
 
     public async Task<IReadOnlyList<PendingCheckSummaryV1>> GetChecksAwaitingPaymentAsync(

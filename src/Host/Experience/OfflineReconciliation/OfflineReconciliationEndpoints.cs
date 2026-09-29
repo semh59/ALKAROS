@@ -1,4 +1,5 @@
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Offline;
@@ -36,6 +37,7 @@ public static class OfflineReconciliationEndpoints
         services.TryAddScoped<IOfflineReplayLedger, PostgresOfflineReplayLedger>();
         services.TryAddScoped<IBehaviouralTighteningRepository, PostgresBehaviouralTighteningRepository>();
         services.TryAddScoped<IOfflineGrantReconciler, OfflineGrantReconciler>();
+        services.TryAddScoped<IRoleRepository, PostgresRoleRepository>();
         services.TryAddTransient<OfflineReconciliationExceptionFilter>();
         return services;
     }
@@ -55,6 +57,8 @@ public static class OfflineReconciliationEndpoints
             DualScreenStore sessions,
             IOfflineAuthorityBudgetRepository budgets,
             IOfflineGrantReconciler reconciler,
+            IRoleRepository roles,
+            NpgsqlDataSource dataSource,
             CancellationToken cancellationToken) =>
         {
             ArgumentNullException.ThrowIfNull(request);
@@ -62,14 +66,12 @@ public static class OfflineReconciliationEndpoints
             var principal = await sessions.AuthenticateCashierAsync(cashierToken, terminalId, cancellationToken)
                 ?? throw new OfflineReconciliationUnauthorizedException();
 
-            // Found by an independent audit (2026-09-06): the authenticated
-            // principal was discarded, so a request's BudgetId and every
-            // action's RequesterUserId/RequesterRoleCode (all client-
-            // supplied) flowed straight into the reconciler unchecked — a
-            // cashier who learned another employee's budgetId could inject
-            // offline actions attributed to that employee. The reconciled
-            // budget and every action's requester must belong to the
-            // authenticated caller.
+            // Found by an independent audit (2026-09-06): a request's BudgetId and every action's RequesterUserId
+            // must belong to the authenticated caller — a cashier who learned another employee's budgetId could
+            // otherwise inject offline actions attributed to that employee. V1-RMD-404 (V1-RMD-399 H-05/H-06): the
+            // role and the check's server are server facts too. A device claiming a role its user does not hold
+            // is refused; the live-policy re-check and the own-check read the order's real server, not the
+            // device's copy.
             var budget = await budgets.GetAsync(request.BudgetId, cancellationToken)
                 ?? throw new UnknownOfflineAuthorityBudgetException(request.BudgetId);
             if (budget.UserId != principal.UserId)
@@ -77,25 +79,56 @@ public static class OfflineReconciliationEndpoints
             if (request.Actions.Any(action => action.RequesterUserId != principal.UserId))
                 throw new OfflineReconciliationIdentityMismatchException();
 
-            var actions = request.Actions
-                .Select(action => new OfflineAuthorizedAction(
+            var role = await roles.GetGoverningRoleForUserAsync(principal.UserId, cancellationToken);
+            if (role is null
+                || request.Actions.Any(action => !string.Equals(action.RequesterRoleCode, role.Code, StringComparison.Ordinal)))
+            {
+                throw new OfflineReconciliationIdentityMismatchException();
+            }
+
+            var actions = new List<OfflineAuthorizedAction>(request.Actions.Count);
+            foreach (var action in request.Actions)
+            {
+                var servingUserId = string.Equals(action.SubjectType, OrderItemSubject, StringComparison.Ordinal)
+                    && action.SubjectId is { } itemId
+                        ? await ServingUserOfOrderItemAsync(dataSource, itemId, cancellationToken)
+                        : null;
+                actions.Add(new OfflineAuthorizedAction(
                     action.IdempotencyKey,
                     action.PermissionCode,
                     action.RequesterUserId,
-                    action.RequesterRoleCode,
+                    role.Code,
                     action.ReasonCode,
                     action.Amount,
                     action.OfflineAuthorizedAt,
                     action.SubjectType,
                     action.SubjectId,
-                    action.SubjectServingUserId))
-                .ToList();
+                    servingUserId));
+            }
 
             var results = await reconciler.ReconcileAsync(request.BudgetId, actions, cancellationToken);
             return Results.Ok(BuildResponse(results));
         });
 
         return group;
+    }
+
+    /// <summary>The offline action subject type that names one order item (V1-RMD-404).</summary>
+    private const string OrderItemSubject = "OrderItem";
+
+    private const string ServingUserOfOrderItemSql = """
+        SELECT o.serving_user_id
+        FROM orders.order_items AS i
+        JOIN orders.orders AS o ON o.order_id = i.order_id
+        WHERE i.order_item_id = @item_id;
+        """;
+
+    private static async Task<Guid?> ServingUserOfOrderItemAsync(
+        NpgsqlDataSource dataSource, Guid itemId, CancellationToken cancellationToken)
+    {
+        await using var command = dataSource.CreateCommand(ServingUserOfOrderItemSql);
+        command.Parameters.AddWithValue("item_id", itemId);
+        return await command.ExecuteScalarAsync(cancellationToken) is Guid servingUserId ? servingUserId : null;
     }
 
     // Idea 1: turn a reconnect batch from an undifferentiated list of rows

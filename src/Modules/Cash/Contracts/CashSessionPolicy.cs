@@ -74,7 +74,9 @@ public sealed class CashSessionPolicy : ICashSessionPolicy
     {
         ArgumentNullException.ThrowIfNull(session);
 
-        if (session.Status is not (CashSessionStatus.Open or CashSessionStatus.Counting or CashSessionStatus.Closing))
+        // V1-RMD-417 (V1-RMD-393 F-15): cash-session-design.md section 5 - a count is recorded only once counting
+        // has started (sales locked); Open used to be accepted too.
+        if (session.Status != CashSessionStatus.Counting)
         {
             throw new InvalidCashSessionStateException(session.CashSessionId, session.Status, "RecordCashCount");
         }
@@ -94,7 +96,9 @@ public sealed class CashSessionPolicy : ICashSessionPolicy
     {
         ArgumentNullException.ThrowIfNull(session);
 
-        if (session.Status is not (CashSessionStatus.Open or CashSessionStatus.Counting or CashSessionStatus.Closing))
+        // V1-RMD-417 (V1-RMD-393 F-15): cash-session-design.md section 5 - a session closes from Counting or Closing
+        // only, so it cannot be closed without a count having been started.
+        if (session.Status is not (CashSessionStatus.Counting or CashSessionStatus.Closing))
         {
             throw new InvalidCashSessionStateException(session.CashSessionId, session.Status, "CloseSession");
         }

@@ -1,8 +1,8 @@
 # V14-ACC-004 - Implement AccountPayment aggregate
 
 - Task ID: V14-ACC-004
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Planned
 
@@ -23,7 +23,15 @@ kalıcılaştırmak; bağımsız AccountReceipt'i veya Bill allocation'ını bu 
 
 - `src/Modules/CustomerAccounts/AccountPayments/**`, `tests/Modules/CustomerAccounts/AccountPayments/**`,
   `database/migrations/V14/V14-ACC-004/**`
-- Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/CustomerAccounts/CustomerAccountsModule.cs (V14-ACC-001
+  sahipliğinde) — yalnız AccountPayment deposunun kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx (V0-GOV-040 sahipliğinde) — yalnız bu görevin test projesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json,
+  src/Host/Composition/Migrations/MigrationManifest.cs ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs —
+  yalnız bu görevin migration'ı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tools/consistency-audit/unreachable_services_allowlist.json (V1-RMD-272
+  sahipliğinde) — yalnız bu görevin HTTP yüzeyi henüz olmayan tipleri
+- Bu görev, başka bir task'ın owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 

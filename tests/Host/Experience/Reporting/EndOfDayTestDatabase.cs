@@ -84,6 +84,49 @@ public sealed class EndOfDayTestDatabase : PgTestDatabase
             """);
     }
 
+    /// <summary>
+    /// V1-RMD-421: seeds one approved payment and one submitted order at each given instant. Payments get a bill of
+    /// their own; <paramref name="paymentStatus"/> Declined leaves the amount unapproved.
+    /// </summary>
+    public async Task SeedPaymentAsync(DateTimeOffset at, decimal amount, string paymentStatus = "Approved")
+    {
+        var billId = Guid.NewGuid();
+        var approved = paymentStatus == "Approved";
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO billing.bills (bill_id, bill_number, status, payable_amount, opened_at, created_at, updated_at)
+            VALUES (@bill, @number, 'Open', @amount, @at, @at, @at);
+            INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, tendered_amount, approved_amount,
+                                           initiated_at, tendered_at, approved_at, declined_at, created_at, updated_at)
+            VALUES (gen_random_uuid(), @bill, @status, @amount, @amount, @approvedAmount,
+                    @at, @at, @approvedAt, @declinedAt, @at, @at);
+            """);
+        command.Parameters.AddWithValue("bill", billId);
+        command.Parameters.AddWithValue("number", "EOD-" + billId.ToString("N")[..12]);
+        command.Parameters.AddWithValue("amount", amount);
+        command.Parameters.AddWithValue("at", at);
+        command.Parameters.AddWithValue("status", paymentStatus);
+        command.Parameters.AddWithValue("approvedAmount", approved ? amount : DBNull.Value);
+        command.Parameters.AddWithValue("approvedAt", approved ? at : DBNull.Value);
+        command.Parameters.AddWithValue("declinedAt", approved ? DBNull.Value : at);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task SeedOrderAsync(DateTimeOffset submittedAt, string status)
+    {
+        var orderId = Guid.NewGuid();
+        await using var command = DataSource.CreateCommand(
+            """
+            INSERT INTO orders.orders (order_id, source, status, confirmation_status, order_number, submitted_at, created_at, updated_at)
+            VALUES (@order, 'Cashier', @status, 'NotRequired', @number, @at, @at, @at);
+            """);
+        command.Parameters.AddWithValue("order", orderId);
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("number", "EOD-" + orderId.ToString("N")[..12]);
+        command.Parameters.AddWithValue("at", submittedAt);
+        await command.ExecuteNonQueryAsync();
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

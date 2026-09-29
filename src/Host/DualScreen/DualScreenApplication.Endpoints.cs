@@ -69,18 +69,29 @@ public static partial class DualScreenApplication
             if (result is not LoginSuccess success)
                 return Error(context, StatusCodes.Status401Unauthorized, "INVALID_CREDENTIALS", "Kullanıcı adı veya parola hatalı.");
 
+            // V1-RMD-406 (V1-RMD-399 H-01): every staff session lives SessionTokenIssuer.DefaultLifetime (8 h,
+            // V1-IAM-031); the literal 12 h here used to override that decision.
             var deviceId = $"cashier:{request.TerminalId:D}";
             await sessions.RevokeDeviceAsync(success.UserId, deviceId, cancellationToken);
             var (session, rawToken) = await sessions.CreateSessionAsync(
-                success.UserId, deviceId, TimeSpan.FromHours(12), cancellationToken);
+                success.UserId, deviceId, SessionTokenIssuer.DefaultLifetime, cancellationToken);
             await store.EnsureTerminalAsync(request.TerminalId, cancellationToken);
             AppendCookie(context, CashierCookieName, rawToken, session.ExpiresAt);
             var capabilities = await roles.GetPermissionCodesForUserAsync(success.UserId, cancellationToken);
             await sessions.RevokeDeviceAsync(success.UserId, $"manager:{request.TerminalId:D}", cancellationToken);
-            if (capabilities.Contains(CatalogManagementEndpoints.ManagePermission, StringComparer.Ordinal))
+            await sessions.RevokeDeviceAsync(success.UserId, $"supervisor:{request.TerminalId:D}", cancellationToken);
+            // V1-RMD-403 (V1-RMD-399 H-03): a floor supervisor (the "sef garson" role) holds reports.view but never
+            // catalog.manage (model §3 decision 3); without a supervisor: session the grant-decision surface and
+            // every other allowSupervisor area stayed unreachable for them. Manager-only areas still refuse it.
+            var managementDevice = capabilities.Contains(CatalogManagementEndpoints.ManagePermission, StringComparer.Ordinal)
+                ? $"manager:{request.TerminalId:D}"
+                : capabilities.Contains(ApplicationPermissions.ReportsView, StringComparer.Ordinal)
+                    ? $"supervisor:{request.TerminalId:D}"
+                    : null;
+            if (managementDevice is not null)
             {
                 var (managerSession, managerToken) = await sessions.CreateSessionAsync(
-                    success.UserId, $"manager:{request.TerminalId:D}", TimeSpan.FromHours(12), cancellationToken);
+                    success.UserId, managementDevice, SessionTokenIssuer.DefaultLifetime, cancellationToken);
                 AppendCookie(context, CatalogManagementEndpoints.ManagerCookieName, managerToken, managerSession.ExpiresAt);
             }
             else
@@ -94,16 +105,17 @@ public static partial class DualScreenApplication
             // user with no floor role (should not happen in practice) simply
             // gets no offline budget; that is not a login failure.
             object? offlineBudget = null;
-            var roleIds = await roles.GetRoleIdsForUserAsync(success.UserId, cancellationToken);
+            // V1-RMD-408: the governing (most restrictive) role, the same one the grant endpoints evaluate.
+            var governingRole = await roles.GetGoverningRoleForUserAsync(success.UserId, cancellationToken);
             // V1-RMD-175: found by the 2026-09-10 Garson audit — reuses the
             // exact same role lookup already done here for the offline
             // budget, so #userRole on the client has a real name to show
             // from the moment of sign-in rather than only after the next
             // /auth/session poll.
             Role? loginRole = null;
-            if (roleIds.Count > 0)
+            if (governingRole is not null)
             {
-                var role = await roles.GetByIdAsync(roleIds[0], cancellationToken);
+                var role = governingRole;
                 loginRole = role;
                 if (role is not null)
                 {
@@ -148,11 +160,10 @@ public static partial class DualScreenApplication
             // waiter client's own #userRole element had nothing to read
             // and stayed on its static "Garson" HTML default regardless
             // of who actually signed in (a supervisor's own screen still
-            // said "Garson"). A user's first assigned role's display name
+            // said "Garson"). A user's governing role's display name (V1-RMD-408)
             // is the same source the comp/void grant endpoints already
             // use to resolve "the requester's role" for the same user id.
-            var roleIds = await roles.GetRoleIdsForUserAsync(principal.UserId, cancellationToken);
-            var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+            var role = await roles.GetGoverningRoleForUserAsync(principal.UserId, cancellationToken);
             return Results.Ok(new
             {
                 userId = principal.UserId,
@@ -186,11 +197,11 @@ public static partial class DualScreenApplication
             if (result is UnlockSuccess)
             {
                 // V1-RMD-277: a correct PIN re-establishes who is holding the device, so the
-                // session token is replaced (same terminal, same 12 h life). A token that leaked
+                // session token is replaced (same terminal, a fresh staff-session life). A token that leaked
                 // while the screen was locked or the tablet was unattended stops working here.
                 var (session, rawToken) = await rotation.RotateAsync(
                     principal.UserId, $"cashier:{terminalId:D}", context.Request.Cookies[CashierCookieName]!,
-                    TimeSpan.FromHours(12), cancellationToken);
+                    SessionTokenIssuer.DefaultLifetime, cancellationToken);
                 AppendCookie(context, CashierCookieName, rawToken, session.ExpiresAt);
             }
 
@@ -314,6 +325,7 @@ public static partial class DualScreenApplication
             var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
             await sessions.RevokeAsync(principal.SessionId, cancellationToken);
             await sessions.RevokeDeviceAsync(principal.UserId, $"manager:{terminalId:D}", cancellationToken);
+            await sessions.RevokeDeviceAsync(principal.UserId, $"supervisor:{terminalId:D}", cancellationToken);
             context.Response.Cookies.Delete(CashierCookieName);
             context.Response.Cookies.Delete(CatalogManagementEndpoints.ManagerCookieName);
             return Results.NoContent();

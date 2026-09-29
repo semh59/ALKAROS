@@ -149,6 +149,50 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
     }
 
+    [Fact]
+    public async Task AManagerDeactivatesALeaverAndCanReactivateThemAndBothAreAudited()
+    {
+        // V1-RMD-405 (V1-RMD-399 N-2): revoke-sessions alone let a leaver sign straight back in.
+        var target = SecurityAdministrationTestDatabase.TargetUserId;
+        var manager = SecurityAdministrationTestDatabase.ManagerUserId;
+        var deactivatePath = $"/api/v1/management/security/users/{target:D}/deactivate";
+        var reactivatePath = $"/api/v1/management/security/users/{target:D}/reactivate";
+
+        using var viewOnly = CreateClient(SecurityAdministrationTestDatabase.ViewOnlyManagerToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await viewOnly.PostAsync(deactivatePath, null)).StatusCode);
+
+        using var client = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+        using var deactivated = await client.PostAsync(deactivatePath, null);
+        Assert.Equal(HttpStatusCode.OK, deactivated.StatusCode);
+        Assert.Equal(0, await _database.ActiveSessionCountAsync(target));
+        var afterDeactivate = await client.GetFromJsonAsync<JsonElement>(LookupPath(SecurityAdministrationTestDatabase.TargetUsername));
+        Assert.False(afterDeactivate.GetProperty("active").GetBoolean());
+        Assert.Equal(1, await _database.AuditCountAsync("security.account-deactivated", target, manager));
+
+        using var reactivated = await client.PostAsync(reactivatePath, null);
+        Assert.Equal(HttpStatusCode.OK, reactivated.StatusCode);
+        var afterReactivate = await client.GetFromJsonAsync<JsonElement>(LookupPath(SecurityAdministrationTestDatabase.TargetUsername));
+        Assert.True(afterReactivate.GetProperty("active").GetBoolean());
+        Assert.Equal(1, await _database.AuditCountAsync("security.account-reactivated", target, manager));
+
+        using var missing = await client.PostAsync($"/api/v1/management/security/users/{Guid.NewGuid():D}/deactivate", null);
+        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+    }
+
+    [Fact]
+    public async Task AManagerCannotDeactivateTheirOwnAccount()
+    {
+        var manager = SecurityAdministrationTestDatabase.ManagerUserId;
+        using var client = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        using var response = await client.PostAsync($"/api/v1/management/security/users/{manager:D}/deactivate", null);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("SELF_DEACTIVATION", body.GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(0, await _database.AuditCountAsync("security.account-deactivated", manager, manager));
+    }
+
     private const string BundlePath = "/api/v1/management/security/diagnostic-bundle";
     private static readonly string[] OneCorrelation = ["c"];
     private static readonly string[] BundleCorrelation = ["rmd267-corr"];

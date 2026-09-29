@@ -1,0 +1,6 @@
+  Failed ALKAROS.Identity.Authorization.Tests.Grants.AuthorizationGrantServiceTests.OwnCheckGuardRefusesAWaiterCompOnAnUnassignedCheck [204 ms]
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 204 ms - ALKAROS.Identity.Authorization.Tests.dll (net8.0)
+  Failed ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnUnassignedCheckIsRefusedByTheOwnCheckGuard [1 s]
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - ALKAROS.Host.Experience.Orders.Comp.Tests.dll (net8.0)
+  Failed ALKAROS.Host.Experience.Orders.VoidSent.Tests.OrderManagementVoidSentHttpTests.AWaiterVoidingAnUnassignedChecksSentItemIsRefusedByTheOwnCheckGuard [1 s]
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 1 s - ALKAROS.Host.Experience.Orders.VoidSent.Tests.dll (net8.0)

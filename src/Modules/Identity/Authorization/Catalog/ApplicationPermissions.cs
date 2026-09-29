@@ -26,6 +26,12 @@ public static class ApplicationPermissions
     public const string BillsDiscount = "bills.discount";
     public const string CashDrawer = "cash.drawer";
     /// <summary>
+    /// V1-RMD-401: taking a payment on a bill (card/EFT tender, and the cash tender together with
+    /// <see cref="CashDrawer"/>). Cashier tier by default; a business that hands its waiters a card terminal grants
+    /// it to the waiter role through role management — no code change (PO decision 2026-09-28).
+    /// </summary>
+    public const string PaymentsTake = "payments.take";
+    /// <summary>
     /// V1-RMD-236: closing a cash session with a supervisor override (bypassing
     /// the normal variance-tolerance check) — supervisor-tier, same family as
     /// <see cref="BillsVoid"/>/<see cref="BillsComp"/>/<see cref="BillsDiscount"/>.
@@ -92,7 +98,7 @@ public static class ApplicationPermissions
         BillsDiscount, CashDrawer, ReportsView,
         OrdersTransferServer, OrdersTransferServerAny,
         IntegrationsManage, KitchenAdvance, CashSessionOverride, ReportsCloseDay,
-        ReconciliationManage, ObservabilityManage, SecurityManage,
+        ReconciliationManage, ObservabilityManage, SecurityManage, PaymentsTake,
     };
 
     // orders.transfer-server (self hand-off) sits alongside orders.create/
@@ -109,7 +115,7 @@ public static class ApplicationPermissions
         { OrdersCreate, OrdersSend, TablesStatus, OrdersTransferServer, KitchenAdvance };
 
     private static readonly string[] CashierFloorSet =
-        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny };
+        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake };
 
     private static readonly string[] SupervisorEscalations =
         {

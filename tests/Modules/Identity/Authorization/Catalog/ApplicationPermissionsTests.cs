@@ -7,10 +7,10 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 public sealed class ApplicationPermissionsTests
 {
     [Fact]
-    public void CatalogHasTwentyTwoDistinctCodes()
+    public void CatalogHasTwentyThreeDistinctCodes()
     {
-        // V1-RMD-266 added security.manage, the 22nd code.
-        ApplicationPermissions.Codes.Should().HaveCount(22);
+        // V1-RMD-266 added security.manage, the 22nd code; V1-RMD-401 added payments.take, the 23rd.
+        ApplicationPermissions.Codes.Should().HaveCount(23);
         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
         ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
     }
@@ -46,10 +46,20 @@ public sealed class ApplicationPermissionsTests
     [InlineData("observability.manage")]
     [InlineData("security.manage")]
     [InlineData("orders.transfer-server-any")]
+    [InlineData("payments.take")]
     public void WaiterDoesNotHoldAnyEscalatedGrant(string code)
     {
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter]
             .Should().NotContain(code);
+    }
+
+    [Fact]
+    public void PaymentsTakeIsHeldByCashierSupervisorAndManagerByDefault()
+    {
+        // V1-RMD-401: cashier tier by default; a business grants it to its waiters through role management.
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleCashier].Should().Contain(ApplicationPermissions.PaymentsTake);
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor].Should().Contain(ApplicationPermissions.PaymentsTake);
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager].Should().Contain(ApplicationPermissions.PaymentsTake);
     }
 
     [Fact]

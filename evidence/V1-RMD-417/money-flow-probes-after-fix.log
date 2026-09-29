@@ -1,0 +1,19 @@
+# V1-RMD-393 money-flow probes on the fixed copy (harness grants cash.drawer + payments.take in the clone only)
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P06EndOfDayRevenueIsDerivedFromRecordedPaymentsNotFromTheCaller [56 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P04ACashierOfAnotherTerminalCannotTenderIntoThisTerminalsDrawer [1 s]
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P09ResolvingTheBlockingCardAttemptClosesAnAlreadyCoveredBill [217 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P14SplitDesignUsesTheSamePayableAsTheTenderPathAfterADiscount [428 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P12ARacingDiscountAndFullPaymentNeverLeaveTheBillOverCollected [1 s]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P16SettlementReportMethodTotalsMatchTheTendersTaken [1 s]
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P05APlainCashierCannotReconcileACashSession [37 ms]
+  Failed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P07ApprovingACardClaimOnAnAlreadyCoveredBillIsATyped409 [61 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P01CashTenderIsRejectedWhileACardAttemptIsUnresolved [64 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P03CashTenderIsRejectedOnACancelledBill [52 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P02DiscountCannotDropThePayableBelowTheAmountAlreadyCollected [74 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P15MultipleTipsDiscountsAndPartialTendersAllCount [565 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P11ConcurrentIdenticalCashSubmitsRecordExactlyOneSale [164 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P08ACashTenderReusingAnEftKeyIsNotReportedAsASuccessfulCashSale [73 ms]
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P10ControlDiscountTipSplitTenderHappyPathSatisfiesEveryInvariant [405 ms]
+
+# P05 again with a start-count added before its close (clone only; the probe file itself is V1-RMD-393 evidence and stays unchanged)
+  Passed ALKAROS.Audit.MoneyFlowProbes.MoneyFlowProbes.P05APlainCashierCannotReconcileACashSession [2 s]

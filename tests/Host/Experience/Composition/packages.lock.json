@@ -183,6 +183,25 @@
           "Npgsql": "[9.0.2, )"
         }
       },
+      "alkaros.customeraccounts": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.CustomerData": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
+      "alkaros.customerdata": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.Audit": "[1.0.0, )",
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Secrets": "[1.0.0, )",
+          "ALKAROS.SensitiveData": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
       "alkaros.host": {
         "type": "Project",
         "dependencies": {
@@ -191,6 +210,8 @@
           "ALKAROS.Billing.PaymentClosure": "[1.0.0, )",
           "ALKAROS.Cash": "[1.0.0, )",
           "ALKAROS.Catalog": "[1.0.0, )",
+          "ALKAROS.CustomerAccounts": "[1.0.0, )",
+          "ALKAROS.CustomerData": "[1.0.0, )",
           "ALKAROS.Identity": "[1.0.0, )",
           "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.Inventory": "[1.0.0, )",

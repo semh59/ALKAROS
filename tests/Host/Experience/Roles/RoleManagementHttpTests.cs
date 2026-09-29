@@ -50,6 +50,7 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
         var error = await response.Content.ReadFromJsonAsync<RoleManagementErrorEnvelopeV1>();
         Assert.Equal("FORBIDDEN", error!.Error.Code);
+        Assert.Equal("Rol ya da yetki yönetimi izni gerekiyor.", error.Error.Message); // V1-RMD-426
     }
 
     [Fact]
@@ -69,7 +70,12 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
         using (var duplicateRole = await client.SendAsync(Request(
             HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + "/roles", cookie,
             new CreateRoleRequestV1(roleCode, "Host"))))
+        {
             Assert.Equal(HttpStatusCode.Conflict, duplicateRole.StatusCode);
+            // V1-RMD-426: the repository's English exception text ("Role 'x' already exists.") is not passed through.
+            var conflict = await duplicateRole.Content.ReadFromJsonAsync<RoleManagementErrorEnvelopeV1>();
+            Assert.Equal("Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı.", conflict!.Error.Message);
+        }
 
         using (var addPermission = await client.SendAsync(Request(
             HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + "/permissions", cookie,

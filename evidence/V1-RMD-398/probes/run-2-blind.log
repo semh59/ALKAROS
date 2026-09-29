@@ -1,0 +1,131 @@
+Test run for /work/evidence/V1-RMD-398/probes/StockFlowProbes/bin/Release/net8.0/ALKAROS.Audit.StockFlowProbes.dll (.NETCoreApp,Version=v8.0)
+A total of 1 test files matched the specified pattern.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.30)
+[xUnit.net 00:00:00.15]   Discovering: ALKAROS.Audit.StockFlowProbes
+[xUnit.net 00:00:00.20]   Discovered:  ALKAROS.Audit.StockFlowProbes
+[xUnit.net 00:00:00.20]   Starting:    ALKAROS.Audit.StockFlowProbes
+warn: Microsoft.AspNetCore.Hosting.Diagnostics[15]
+      Overriding HTTP_PORTS '8080' and HTTPS_PORTS ''. Binding to values defined by URLS instead 'http://127.0.0.1:0'.
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:42997
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: /work/evidence/V1-RMD-398/probes/StockFlowProbes/bin/Release/net8.0
+[xUnit.net 00:00:05.45]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S05ProductionConsumptionIsNotReportedAsUnexplainedVariance [FAIL]
+[xUnit.net 00:00:05.45]       5 kg of flour used by a completed production batch is reported as variance 5.0000 kg (actual 5.0000, theoretical 0) - production is not part of the report's formula.
+[xUnit.net 00:00:05.45]       Stack Trace:
+[xUnit.net 00:00:05.45]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(276,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S05ProductionConsumptionIsNotReportedAsUnexplainedVariance()
+[xUnit.net 00:00:05.45]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:05.54]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S06UnconvertibleRecipeUnitDoesNotSilentlyDropTheoreticalConsumption [FAIL]
+[xUnit.net 00:00:05.54]       The sale succeeded and recorded no theoretical consumption for the 'adet' -> 'kg' ingredient; no error, no log entry, no record.
+[xUnit.net 00:00:05.54]       Stack Trace:
+[xUnit.net 00:00:05.54]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(304,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S06UnconvertibleRecipeUnitDoesNotSilentlyDropTheoreticalConsumption()
+[xUnit.net 00:00:05.54]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:05.70]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce [FAIL]
+[xUnit.net 00:00:05.70]       5 concurrent waste submits (same key, 2 kg) left 28.0000 (expected 28); two sequential adjustments (same key, 1 kg) then left 26.0000 (expected 27).
+[xUnit.net 00:00:05.70]       Stack Trace:
+[xUnit.net 00:00:05.70]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(354,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce()
+[xUnit.net 00:00:05.70]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(357,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce()
+[xUnit.net 00:00:05.70]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:05.89]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S03ActualVsTheoreticalDoesNotRepeatTheoreticalUsageForEveryCountedLocation [FAIL]
+[xUnit.net 00:00:05.89]       3 kg of theoretical usage is reported as 6.0000 kg across 2 location rows (Probe Depo: actual 3.0000, theoretical 3.0000, variance 0.0000, Probe Depo B: actual 0.0000, theoretical 3.0000, variance -3.0000).
+[xUnit.net 00:00:05.89]       Stack Trace:
+[xUnit.net 00:00:05.89]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(208,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S03ActualVsTheoreticalDoesNotRepeatTheoreticalUsageForEveryCountedLocation()
+[xUnit.net 00:00:05.89]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:06.23]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S01PhysicalCountResultEqualsTheCountedQuantityUnderAConcurrentWrite [FAIL]
+[xUnit.net 00:00:06.23]       1/40 counts did not land on the counted quantity: counted 865, count result on-hand 864.0000 (read 866.0000)
+[xUnit.net 00:00:06.23]       Stack Trace:
+[xUnit.net 00:00:06.24]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(132,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S01PhysicalCountResultEqualsTheCountedQuantityUnderAConcurrentWrite()
+[xUnit.net 00:00:06.24]         --- End of stack trace from previous location ---
+  Passed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S07ControlRacingOrdersNeverOversellTheLastUnits [366 ms]
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S05ProductionConsumptionIsNotReportedAsUnexplainedVariance [328 ms]
+  Error Message:
+   5 kg of flour used by a completed production batch is reported as variance 5.0000 kg (actual 5.0000, theoretical 0) - production is not part of the report's formula.
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S05ProductionConsumptionIsNotReportedAsUnexplainedVariance() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 276
+--- End of stack trace from previous location ---
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S06UnconvertibleRecipeUnitDoesNotSilentlyDropTheoreticalConsumption [94 ms]
+  Error Message:
+   The sale succeeded and recorded no theoretical consumption for the 'adet' -> 'kg' ingredient; no error, no log entry, no record.
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S06UnconvertibleRecipeUnitDoesNotSilentlyDropTheoreticalConsumption() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 304
+--- End of stack trace from previous location ---
+  Passed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S09CompletingAProductionBatchTwiceConsumesOnce [77 ms]
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce [82 ms]
+  Error Message:
+   5 concurrent waste submits (same key, 2 kg) left 28.0000 (expected 28); two sequential adjustments (same key, 1 kg) then left 26.0000 (expected 27).
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 354
+   at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S08WasteAndAdjustmentRetriesWithTheSameKeyApplyOnce() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 357
+--- End of stack trace from previous location ---
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S03ActualVsTheoreticalDoesNotRepeatTheoreticalUsageForEveryCountedLocation [186 ms]
+  Error Message:
+   3 kg of theoretical usage is reported as 6.0000 kg across 2 location rows (Probe Depo: actual 3.0000, theoretical 3.0000, variance 0.0000, Probe Depo B: actual 0.0000, theoretical 3.0000, variance -3.0000).
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S03ActualVsTheoreticalDoesNotRepeatTheoreticalUsageForEveryCountedLocation() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 208
+--- End of stack trace from previous location ---
+  Passed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S10ProductionAppliesLossBeforeUnitConversion [56 ms]
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S01PhysicalCountResultEqualsTheCountedQuantityUnderAConcurrentWrite [285 ms]
+  Error Message:
+   1/40 counts did not land on the counted quantity: counted 865, count result on-hand 864.0000 (read 866.0000)
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S01PhysicalCountResultEqualsTheCountedQuantityUnderAConcurrentWrite() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 132
+--- End of stack trace from previous location ---
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:42997/api/v1/terminals/34f1a1b0-0242-4f08-8462-ca1f76432eac/orders/b09a982f-803d-4292-86ca-588d678a487e/items/f3f8be0a-e2f6-43c0-a3f3-dfa882f1386e/void-sent - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'VoidSentItemResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:42997/api/v1/terminals/34f1a1b0-0242-4f08-8462-ca1f76432eac/orders/b09a982f-803d-4292-86ca-588d678a487e/items/f3f8be0a-e2f6-43c0-a3f3-dfa882f1386e/void-sent - 200 - application/json;+charset=utf-8 2060.0572ms
+  Passed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S11MultipleLinesAndMappingsConsumeAndRestoreExactly [2 s]
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:42997/api/v1/terminals/93963cff-6ee4-460b-96d9-4d0d1b96bf49/orders/4127f839-31eb-4bcb-b298-8b5b2a8e4cc1/items/a26536bf-6ba1-42ea-ae43-bde10619308d/void-sent - application/json;+charset=utf-8 89
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'VoidSentItemResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void-sent'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST https://127.0.0.1:42997/api/v1/terminals/93963cff-6ee4-460b-96d9-4d0d1b96bf49/orders/4127f839-31eb-4bcb-b298-8b5b2a8e4cc1/items/a26536bf-6ba1-42ea-ae43-bde10619308d/void-sent - 200 - application/json;+charset=utf-8 40.6190ms
+[xUnit.net 00:00:08.60]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S02VoidingASentItemAlsoWithdrawsItsTheoreticalConsumption [FAIL]
+[xUnit.net 00:00:08.60]       Voided item still carries 0.4000 kg of theoretical consumption; the actual-vs-theoretical report will show a false shortage of that amount.
+[xUnit.net 00:00:08.60]       Stack Trace:
+[xUnit.net 00:00:08.60]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(166,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S02VoidingASentItemAlsoWithdrawsItsTheoreticalConsumption()
+[xUnit.net 00:00:08.60]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:08.64]     ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S04ProductionRefusesOrConvertsABatchUnitThatDiffersFromTheRecipeYieldUnit [FAIL]
+[xUnit.net 00:00:08.64]       A 4 'portion' batch of a recipe whose yield is 2 kg was executed without any unit check and consumed 2.0000 kg of flour (scale = 4 / 2 with the units ignored).
+[xUnit.net 00:00:08.64]       Stack Trace:
+[xUnit.net 00:00:08.64]         /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs(242,0): at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S04ProductionRefusesOrConvertsABatchUnitThatDiffersFromTheRecipeYieldUnit()
+[xUnit.net 00:00:08.64]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:08.83]   Finished:    ALKAROS.Audit.StockFlowProbes
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S02VoidingASentItemAlsoWithdrawsItsTheoreticalConsumption [118 ms]
+  Error Message:
+   Voided item still carries 0.4000 kg of theoretical consumption; the actual-vs-theoretical report will show a false shortage of that amount.
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S02VoidingASentItemAlsoWithdrawsItsTheoreticalConsumption() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 166
+--- End of stack trace from previous location ---
+  Failed ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S04ProductionRefusesOrConvertsABatchUnitThatDiffersFromTheRecipeYieldUnit [40 ms]
+  Error Message:
+   A 4 'portion' batch of a recipe whose yield is 2 kg was executed without any unit check and consumed 2.0000 kg of flour (scale = 4 / 2 with the units ignored).
+  Stack Trace:
+     at ALKAROS.Audit.StockFlowProbes.StockFlowProbes.S04ProductionRefusesOrConvertsABatchUnitThatDiffersFromTheRecipeYieldUnit() in /work/evidence/V1-RMD-398/probes/StockFlowProbes/StockFlowProbes.cs:line 242
+--- End of stack trace from previous location ---
+
+Test Run Failed.
+Total tests: 11
+     Passed: 4
+     Failed: 7
+ Total time: 9.4962 Seconds
+dotnet-test-exit=1

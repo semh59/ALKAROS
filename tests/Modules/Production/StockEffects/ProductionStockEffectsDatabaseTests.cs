@@ -206,6 +206,77 @@ public sealed class ProductionStockEffectsDatabaseTests : IClassFixture<Producti
     }
 
     [Fact]
+    public async Task ABatchWhoseUnitCannotBeConvertedToTheRecipeYieldUnitIsRefusedAndConsumesNothing()
+    {
+        // V1-RMD-419 (V1-RMD-398 G-04): the scale was actual / yield with the units never compared.
+        var (_, versionId, tomatoId, _, locationId) = await SeedRecipeAndStockAsync(); // yield: 4 portion
+        var batchId = await CreateBatchAsync(versionId, locationId, plannedQuantity: 8.0m);
+        await SetBatchUnitAsync(batchId, "kg");
+
+        var act = () => _service.ExecuteBatchStockEffectsAsync(
+            new ExecuteBatchStockEffectsCommand(BatchId: batchId, ActualQuantity: 8.0m, SourceLocationId: locationId));
+
+        var refused = (await act.Should().ThrowAsync<ProductionBatchUnitMismatchException>()).Which;
+        refused.BatchUnitCode.Should().Be("kg");
+        refused.YieldUnitCode.Should().Be("portion");
+        (await OnHandAsync(tomatoId, locationId)).Should().Be(50.0000m);
+    }
+
+    [Fact]
+    public async Task ABatchInAConvertibleUnitIsScaledInTheRecipeYieldUnit()
+    {
+        // V1-RMD-419: 4000 g of a recipe that yields 2 kg from 1 kg of tomatoes is a scale of 2, not 2000.
+        var (_, _, tomatoId, _, locationId) = await SeedRecipeAndStockAsync();
+        var versionId = Guid.NewGuid();
+        await using (var conn = await _db.DataSource.OpenConnectionAsync())
+        await using (var cmd = new NpgsqlCommand(
+            """
+            INSERT INTO recipe.recipes (id, code, name, created_at, row_version)
+            VALUES (@recipe, @code, 'Tomato Paste', NOW(), 1);
+            INSERT INTO recipe.recipe_versions (id, recipe_id, version_number, status, yield_quantity, yield_unit_code, created_at, row_version)
+            VALUES (@version, @recipe, 1, 'Active', 2.0000, 'kg', NOW(), 1);
+            INSERT INTO recipe.recipe_ingredients (id, recipe_version_id, ingredient_item_id, quantity, unit_code, loss_percentage, created_at)
+            VALUES (gen_random_uuid(), @version, @tomato, 1.0000, 'kg', 0.00, NOW());
+            """, conn))
+        {
+            var recipeId = Guid.NewGuid();
+            cmd.Parameters.AddWithValue("recipe", recipeId);
+            cmd.Parameters.AddWithValue("code", "RCP-" + Guid.NewGuid().ToString("N")[..8]);
+            cmd.Parameters.AddWithValue("version", versionId);
+            cmd.Parameters.AddWithValue("tomato", tomatoId);
+            await cmd.ExecuteNonQueryAsync();
+        }
+        var batchId = await CreateBatchAsync(versionId, locationId, plannedQuantity: 4000m);
+        await SetBatchUnitAsync(batchId, "g");
+
+        var result = await _service.ExecuteBatchStockEffectsAsync(
+            new ExecuteBatchStockEffectsCommand(BatchId: batchId, ActualQuantity: 4000m, SourceLocationId: locationId));
+
+        result.Consumptions.Should().ContainSingle(c => c.StockItemId == tomatoId).Which.Quantity.Should().Be(2.0000m);
+        (await OnHandAsync(tomatoId, locationId)).Should().Be(48.0000m);
+    }
+
+    private async Task SetBatchUnitAsync(Guid batchId, string unitCode)
+    {
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var cmd = new NpgsqlCommand(
+            "UPDATE production.production_batches SET portion_unit_code = @unit WHERE production_batch_id = @id;", conn);
+        cmd.Parameters.AddWithValue("unit", unitCode);
+        cmd.Parameters.AddWithValue("id", batchId);
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+    private async Task<decimal> OnHandAsync(Guid stockItemId, Guid locationId)
+    {
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var cmd = new NpgsqlCommand(
+            "SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = $1 AND stock_location_id = $2;", conn);
+        cmd.Parameters.AddWithValue(stockItemId);
+        cmd.Parameters.AddWithValue(locationId);
+        return Convert.ToDecimal(await cmd.ExecuteScalarAsync(), System.Globalization.CultureInfo.InvariantCulture);
+    }
+
+    [Fact]
     public async Task ExecuteBatchStockEffectsCreatesTraceableConsumptionsAndMovements()
     {
         var (_, versionId, tomatoId, bayLeafId, locationId) = await SeedRecipeAndStockAsync();

@@ -1,0 +1,8 @@
+# Production changes stashed (src/), tests kept
+[xUnit.net 00:00:00.37]     ALKAROS.Cash.Contracts.Tests.CashSessionPolicyTests.AnOpenSessionCanNeitherRecordACountNorCloseBeforeCountingStarts [FAIL]
+   Expected a <ALKAROS.Cash.Contracts.InvalidCashSessionStateException> to be thrown, but no exception was thrown.
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 94 ms - ALKAROS.Cash.Contracts.Tests.dll (net8.0)
+[xUnit.net 00:00:07.33]     ALKAROS.Host.Experience.CashSession.Tests.CashSessionHttpTests.ADrawerCannotBeCountedOrClosedBeforeCountingStarts [FAIL]
+Expected: Conflict
+Actual:   OK
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 5 s - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)

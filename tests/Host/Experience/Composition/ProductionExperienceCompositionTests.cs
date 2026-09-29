@@ -367,7 +367,13 @@ public sealed class ProductionExperienceCompositionTests
                 if (multiRegistered.Contains(descriptor.ServiceType))
                 {
                     var all = scope.ServiceProvider.GetServices(descriptor.ServiceType);
-                    Assert.Contains(all, r => r is not null && r.GetType() == descriptor.ImplementationType);
+                    // V1-RMD-396: a factory registration (e.g. V12-TGO-003's Trendyol consumer) carries
+                    // no concrete ImplementationType, so run the module's own factory against the serve
+                    // container and require an instance of the type it produces among the resolved ones.
+                    var expectedType = descriptor.ImplementationFactory is not null
+                        ? descriptor.ImplementationFactory(scope.ServiceProvider).GetType()
+                        : descriptor.ImplementationType;
+                    Assert.Contains(all, r => r is not null && r.GetType() == expectedType);
                     continue;
                 }
 

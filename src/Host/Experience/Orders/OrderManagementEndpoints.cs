@@ -395,14 +395,9 @@ public static class OrderManagementEndpoints
 
             try
             {
-                var result = await store.RecallCheckAsync(request.TableId, orderId, cancellationToken);
-                // The till must not keep a ghost bill: a re-send would otherwise reuse it with stale items.
-                // Run on a repeat too, so a request that failed half-way is completed by the retry.
-                foreach (var bill in await bills.GetByOrderIdAsync(orderId, cancellationToken))
-                {
-                    if (bill.Status is not (BillState.Paid or BillState.Cancelled))
-                        await bills.SaveAsync(bill.Cancel(), bill.RowVersion, cancellationToken);
-                }
+                // The till must not keep a ghost bill (a re-send would otherwise reuse it with stale items); the
+                // store cancels it in the same transaction as its money check (V1-RMD-414).
+                var result = await store.RecallCheckAsync(request.TableId, orderId, bills, cancellationToken);
 
                 if (result.Outcome == "Recalled")
                 {
@@ -696,8 +691,7 @@ public static class OrderManagementEndpoints
             var permissions = await roles.GetPermissionCodesForUserAsync(userId, cancellationToken);
             if (!permissions.Contains(ApplicationPermissions.BillsComp, StringComparer.Ordinal))
             {
-                var roleIds = await roles.GetRoleIdsForUserAsync(userId, cancellationToken);
-                var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+                var role = await roles.GetGoverningRoleForUserAsync(userId, cancellationToken);
                 if (role is null)
                     throw new AuthorizationDeniedException(userId, ApplicationPermissions.BillsComp, "Requester has no assigned role.");
 
@@ -809,8 +803,7 @@ public static class OrderManagementEndpoints
             var permissions = await roles.GetPermissionCodesForUserAsync(userId, cancellationToken);
             if (!permissions.Contains(ApplicationPermissions.BillsVoid, StringComparer.Ordinal))
             {
-                var roleIds = await roles.GetRoleIdsForUserAsync(userId, cancellationToken);
-                var role = roleIds.Count > 0 ? await roles.GetByIdAsync(roleIds[0], cancellationToken) : null;
+                var role = await roles.GetGoverningRoleForUserAsync(userId, cancellationToken);
                 if (role is null)
                     throw new AuthorizationDeniedException(userId, ApplicationPermissions.BillsVoid, "Requester has no assigned role.");
 
@@ -1172,6 +1165,7 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         ItemNotYetSentException => (409, "NOT_YET_SENT", "Ürün henüz mutfağa gönderilmedi."),
         ItemAlreadyServedException => (409, "ALREADY_SERVED", "Ürün zaten servis edildi."),
         BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
+        VoidStockRestoreFailedException => (409, "STOCK_RESTORE_FAILED", "Ürünün stoğu geri verilemedi; iptal yapılmadı."),
         OrderNotAwaitingConfirmationException => (409, "ORDER_NOT_PENDING_CONFIRMATION", "Sipariş onay bekleyen durumda değil."),
         // V1-RMD-143: Semih's decision (2026-09-09) — Accept refuses outright
         // rather than silently skipping stock consumption, either because a

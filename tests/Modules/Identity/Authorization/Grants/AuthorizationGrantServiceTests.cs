@@ -221,6 +221,25 @@ public sealed class AuthorizationGrantServiceTests : IClassFixture<GrantDatabase
     }
 
     [Fact]
+    public async Task OwnCheckGuardRefusesAWaiterCompOnAnUnassignedCheck()
+    {
+        // V1-RMD-402 (PO 2026-09-28): a check nobody serves is not the waiter's own check.
+        var result = await Service().RequestAsync(new GrantRequest(
+            IdempotencyKey: "svc-guard-unassigned",
+            PermissionCode: "bills.comp",
+            RequesterUserId: Guid.NewGuid(),
+            RequesterRoleCode: "waiter",
+            ReasonCode: "CustomerChange",
+            Amount: 20m,
+            SubjectType: "OrderItem",
+            SubjectId: Guid.NewGuid(),
+            SubjectServingUserId: null));
+
+        result.Outcome.Should().Be(GrantOutcome.Refused);
+        result.Grant.Path.Should().Be(PolicyPath.Auto);
+    }
+
+    [Fact]
     public async Task OwnCheckGuardDoesNotFireOnTheServersOwnCheck()
     {
         var waiter = Guid.NewGuid();

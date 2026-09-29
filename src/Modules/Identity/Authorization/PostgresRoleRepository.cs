@@ -184,6 +184,27 @@ public sealed class PostgresRoleRepository : IRoleRepository
         return result;
     }
 
+    public async Task<Role?> GetGoverningRoleForUserAsync(Guid userId, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            SELECT r.role_id, r.code, r.name
+            FROM {UserRoles} ur
+            JOIN {Roles} r ON r.role_id = ur.role_id
+            LEFT JOIN {RolePermissions} rp ON rp.role_id = r.role_id
+            WHERE ur.user_id = @user_id
+            GROUP BY r.role_id, r.code, r.name
+            ORDER BY count(rp.permission_id), r.code COLLATE "C"
+            LIMIT 1;
+            """);
+        command.Parameters.AddWithValue("user_id", userId);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        return await reader.ReadAsync(cancellationToken)
+            ? new Role(reader.GetGuid(0), reader.GetString(1), reader.GetString(2))
+            : null;
+    }
+
     public async Task<IReadOnlyList<string>> GetPermissionCodesForUserAsync(Guid userId, CancellationToken cancellationToken = default)
     {
         var result = new List<string>();

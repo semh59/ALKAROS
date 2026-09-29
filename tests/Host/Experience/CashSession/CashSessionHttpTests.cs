@@ -59,6 +59,70 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AFailedOpeningLedgerWriteLeavesNoSessionBehind()
+    {
+        // V1-RMD-416 (V1-RMD-393 F-14): the session and its Opening ledger entry were two separate writes. When the
+        // second failed the session stayed open with no float in its ledger and expected cash started at 0; the
+        // terminal could not even open a fresh session over it.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd416-open-atomic");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await using (var failOpening = _database.DataSource.CreateCommand(
+            """
+            CREATE FUNCTION cash.rmd416_fail_opening() RETURNS trigger LANGUAGE plpgsql AS
+            $$ BEGIN RAISE EXCEPTION 'opening ledger write failed'; END $$;
+            CREATE TRIGGER rmd416_fail_opening BEFORE INSERT ON cash.cash_transactions
+            FOR EACH ROW WHEN (NEW.type = 'Opening') EXECUTE FUNCTION cash.rmd416_fail_opening();
+            """))
+            await failOpening.ExecuteNonQueryAsync();
+
+        var failed = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 500m });
+
+        Assert.False(failed.IsSuccessStatusCode);
+        await using (var count = _database.DataSource.CreateCommand(
+            "SELECT count(*) FROM cash.cash_sessions WHERE terminal_id = @terminal;"))
+        {
+            count.Parameters.AddWithValue("terminal", terminalId);
+            Assert.Equal(0L, (long)(await count.ExecuteScalarAsync())!);
+        }
+
+        await using (var restore = _database.DataSource.CreateCommand(
+            "DROP TRIGGER rmd416_fail_opening ON cash.cash_transactions; DROP FUNCTION cash.rmd416_fail_opening();"))
+            await restore.ExecuteNonQueryAsync();
+        var retried = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 500m });
+        Assert.Equal(HttpStatusCode.Created, retried.StatusCode);
+    }
+
+    [Fact]
+    public async Task ADrawerCannotBeCountedOrClosedBeforeCountingStarts()
+    {
+        // V1-RMD-417 (V1-RMD-393 F-15): cash-session-design.md section 5 - count in Counting, close from Counting.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd417-close-open");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        var sessionPath = $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}";
+
+        var count = await PostAsync(client, sessionPath + "/counts", cookie, new { CountedAmount = 100m });
+        var close = await PostAsync(client, sessionPath + "/close", cookie, new { ActualCash = 100m });
+
+        foreach (var refused in new[] { count, close })
+        {
+            Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+            var error = (await refused.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+            Assert.Equal("INVALID_CASH_SESSION_STATE", error.GetProperty("code").GetString());
+        }
+        var active = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/active", cookie);
+        Assert.Equal("Open", (await active.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString());
+
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, sessionPath + "/start-count", cookie, new { })).StatusCode);
+        Assert.Equal(HttpStatusCode.OK, (await PostAsync(client, sessionPath + "/close", cookie, new { ActualCash = 100m })).StatusCode);
+    }
+
+    [Fact]
     public async Task OpeningASecondSessionOnTheSameTerminalIsRejected()
     {
         var terminalId = Guid.NewGuid();
@@ -90,6 +154,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, active.StatusCode);
         Assert.Equal(sessionId, (await active.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid());
 
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 100m });
 
@@ -107,6 +172,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 300m });
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
 
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         var close = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 300m });
 
@@ -171,6 +237,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
         var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
         var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie, new { ActualCash = 100m });
 
         var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,
@@ -252,6 +319,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, preview.StatusCode);
         Assert.Equal(350m, (await preview.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
 
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         var close = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 350m });
         Assert.Equal(0m, (await close.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("difference").GetDecimal());
@@ -278,6 +346,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         var preview = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/expected-cash", cookie);
         Assert.Equal(260m, (await preview.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
 
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie, new { ActualCash = 260m });
 
         var afterClose = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements", cookie,
@@ -325,6 +394,7 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
 
         // Default tolerance (CashSessionPolicy.ValidateCanCloseSession) is
         // 50.00 - a 60 TL shortage must be rejected without an override.
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", cookie, new { });
         var rejected = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", cookie,
             new { ActualCash = 40m });
         Assert.Equal(HttpStatusCode.Conflict, rejected.StatusCode);
@@ -339,11 +409,161 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, deniedOverride.StatusCode);
 
         var supervisorCookie = await _database.SeedCashierSessionWithPermissionsAsync(
-            terminalId, "csh004-variance-supervisor", ApplicationPermissions.CashSessionOverride);
+            terminalId, "csh004-variance-supervisor", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride);
         var overridden = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", supervisorCookie,
             new { ActualCash = 40m, IsSupervisorOverride = true, OverrideReason = "recount confirmed short" });
         Assert.Equal(HttpStatusCode.OK, overridden.StatusCode);
         Assert.Equal(-60m, (await overridden.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("difference").GetDecimal());
+    }
+
+    [Fact]
+    public async Task ACashTenderOnACancelledBillIsRefusedAndRecordsNothing()
+    {
+        // V1-RMD-409 (V1-RMD-393 F-07): the recall flow cancels a check; a till still showing it must not take cash.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd409-cancelled");
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await _database.SetBillStatusAsync(billId, "Cancelled");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 100m, IdempotencyKey = "rmd409-cash-cancelled" });
+
+        Assert.Equal(HttpStatusCode.Conflict, tender.StatusCode);
+        Assert.Equal("TENDER_BILL_NOT_PAYABLE", (await tender.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(0L, await _database.CountPaymentsAsync(billId));
+        var expected = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/expected-cash", cookie);
+        Assert.Equal(100m, (await expected.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
+    }
+
+    [Fact]
+    public async Task ACashTenderIsRefusedWhileACardAttemptOnTheSameBillIsUnresolved()
+    {
+        // V1-RMD-409 (V1-RMD-393 F-04): if the card was really charged, cash on top would charge the guest twice.
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd409-unsettled");
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var card = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/tenders", cookie,
+            new { Method = "BankCard", Amount = 80m, IdempotencyKey = "rmd409-card" });
+        Assert.Equal("RequiresReconciliation", (await card.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("outcome").GetString());
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", cookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 100m, IdempotencyKey = "rmd409-cash-after-card" });
+
+        Assert.Equal(HttpStatusCode.Conflict, tender.StatusCode);
+        Assert.Equal("TENDER_UNSETTLED_PAYMENT_EXISTS", (await tender.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        Assert.Equal(1L, await _database.CountPaymentsAsync(billId));
+    }
+
+    [Fact]
+    public async Task ACashierOnAnotherTerminalCannotTouchThisTerminalsDrawerSession()
+    {
+        // V1-RMD-411 (V1-RMD-393 F-08): the session id in terminal B's route must belong to terminal B.
+        var terminalA = Guid.NewGuid();
+        var terminalB = Guid.NewGuid();
+        var cookieA = await _database.SeedCashierSessionAsync(terminalA, "rmd411-terminal-a");
+        var cookieB = await _database.SeedCashierSessionAsync(terminalB, "rmd411-terminal-b");
+        var billId = await _database.SeedBillAsync(payable: 40m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalA:D}/cash-sessions", cookieA, new { OpeningBalance = 100m });
+        var sessionA = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        var viaB = $"/api/v1/terminals/{terminalB:D}/cash-sessions/{sessionA:D}";
+
+        var responses = new[]
+        {
+            await PostAsync(client, $"{viaB}/cash-movements", cookieB, new { Direction = "Out", Amount = 50m, IdempotencyKey = "rmd411-payout" }),
+            await PostAsync(client, $"{viaB}/cash-tender", cookieB, new { BillId = billId, AmountDue = 40m, TenderedAmount = 40m, IdempotencyKey = "rmd411-sale" }),
+            await PostAsync(client, $"{viaB}/start-count", cookieB, new { }),
+            await PostAsync(client, $"{viaB}/counts", cookieB, new { CountedAmount = 0m }),
+            await PostAsync(client, $"{viaB}/close", cookieB, new { ActualCash = 100m }),
+            await PostAsync(client, $"{viaB}/reconcile", cookieB, new { Notes = "x" }),
+            await GetAsync(client, $"{viaB}/expected-cash", cookieB),
+        };
+
+        Assert.All(responses, response => Assert.Equal(HttpStatusCode.NotFound, response.StatusCode));
+        var expected = await GetAsync(client, $"/api/v1/terminals/{terminalA:D}/cash-sessions/{sessionA:D}/expected-cash", cookieA);
+        Assert.Equal(100m, (await expected.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
+        var active = await GetAsync(client, $"/api/v1/terminals/{terminalA:D}/cash-sessions/active", cookieA);
+        Assert.Equal("Open", (await active.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString());
+    }
+
+    [Fact]
+    public async Task ASessionWithoutCashDrawerIsForbiddenOnDrawerRoutes()
+    {
+        // V1-RMD-400 (V1-RMD-399 H-02): a signed-in waiter or kitchen device must not operate the drawer.
+        var terminalId = Guid.NewGuid();
+        var waiterCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "rmd400-no-drawer", ApplicationPermissions.OrdersCreate, ApplicationPermissions.OrdersSend);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var open = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", waiterCookie, new { OpeningBalance = 100m });
+        var active = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/active", waiterCookie);
+        var movement = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{Guid.NewGuid():D}/cash-movements", waiterCookie,
+            new { Direction = "Out", Amount = 50m, IdempotencyKey = "rmd400-payout" });
+
+        Assert.Equal(HttpStatusCode.Forbidden, open.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, active.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, movement.StatusCode);
+        Assert.Equal(0L, await _database.CountCashSessionsAsync(terminalId));
+    }
+
+    [Fact]
+    public async Task CashTenderNeedsPaymentsTakeOnTopOfCashDrawer()
+    {
+        // V1-RMD-401: holding the drawer is not enough to take a payment.
+        var terminalId = Guid.NewGuid();
+        var cashierCookie = await _database.SeedCashierSessionAsync(terminalId, "rmd401-drawer-and-payments");
+        var drawerOnlyCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "rmd401-drawer-only", ApplicationPermissions.CashDrawer);
+        var billId = await _database.SeedBillAsync(payable: 80m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cashierCookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+
+        var tender = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-tender", drawerOnlyCookie,
+            new { BillId = billId, AmountDue = 80m, TenderedAmount = 100m, IdempotencyKey = "rmd401-cash" });
+
+        Assert.Equal(HttpStatusCode.Forbidden, tender.StatusCode);
+    }
+
+    [Fact]
+    public async Task ReconcileNeedsASupervisorWhoIsNotTheSessionsOwnCashier()
+    {
+        // V1-RMD-400 (V1-RMD-393 F-09): cash-session-design.md §6 — reconciliation is a supervisor act, four-eyes.
+        var terminalId = Guid.NewGuid();
+        var ownerCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "rmd400-owner-supervisor", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride);
+        var cashierCookie = await _database.SeedCashierSessionAsync(terminalId, "rmd400-plain-cashier");
+        var otherSupervisorCookie = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "rmd400-other-supervisor", ApplicationPermissions.CashDrawer, ApplicationPermissions.CashSessionOverride);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", ownerCookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/start-count", ownerCookie, new { });
+        var closed = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/close", ownerCookie,
+            new { ActualCash = 100m });
+        Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
+        var reconcilePath = $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/reconcile";
+
+        var byPlainCashier = await PostAsync(client, reconcilePath, cashierCookie, new { Notes = "cashier" });
+        var byOwnCashier = await PostAsync(client, reconcilePath, ownerCookie, new { Notes = "self" });
+        var byOtherSupervisor = await PostAsync(client, reconcilePath, otherSupervisorCookie, new { Notes = "checked" });
+
+        Assert.Equal(HttpStatusCode.Forbidden, byPlainCashier.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, byOwnCashier.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, byOtherSupervisor.StatusCode);
+        Assert.Equal("Reconciled", (await byOtherSupervisor.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("status").GetString());
     }
 
     [Fact]
@@ -448,25 +668,14 @@ internal sealed class CashSessionHttpTestDatabase
         await ExecuteAsync(maintenance, $"DROP DATABASE IF EXISTS {_databaseName} WITH (FORCE);");
     }
 
-    /// <summary>Seeds a real user + a real cashier device session bound to <paramref name="terminalId"/>, and returns the raw Cookie header value.</summary>
-    public async Task<string> SeedCashierSessionAsync(Guid terminalId, string rawToken)
-    {
-        var userId = Guid.NewGuid();
-        await using var command = DataSource.CreateCommand(
-            """
-            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
-            VALUES (@user_id, @username, 'x', 'CashSession Test Cashier', true);
-
-            INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, expires_at)
-            VALUES (gen_random_uuid(), @user_id, @device_id, @token_hash, now() + interval '1 hour');
-            """);
-        command.Parameters.AddWithValue("user_id", userId);
-        command.Parameters.AddWithValue("username", "csh004-cashier-" + userId.ToString("N")[..8]);
-        command.Parameters.AddWithValue("device_id", $"cashier:{terminalId:D}");
-        command.Parameters.AddWithValue("token_hash", DeviceSessionToken.Hash(rawToken));
-        await command.ExecuteNonQueryAsync();
-        return $"alkaros.cashier={rawToken}";
-    }
+    /// <summary>
+    /// Seeds a real user + a real cashier device session bound to <paramref name="terminalId"/>, and returns the raw
+    /// Cookie header value. V1-RMD-400: the user holds <c>cash.drawer</c>, as a real cashier does — every drawer
+    /// route now requires it; V1-RMD-401: and <c>payments.take</c>, which the cash tender requires.
+    /// </summary>
+    public Task<string> SeedCashierSessionAsync(Guid terminalId, string rawToken)
+        => SeedCashierSessionWithPermissionsAsync(
+            terminalId, rawToken, ApplicationPermissions.CashDrawer, ApplicationPermissions.PaymentsTake);
 
     /// <summary>
     /// V1-RMD-236: seeds a real user + device session + role + explicit
@@ -518,6 +727,29 @@ internal sealed class CashSessionHttpTestDatabase
         }
 
         return $"alkaros.cashier={rawToken}";
+    }
+
+    /// <summary>V1-RMD-409: moves a seeded bill to <paramref name="status"/> (e.g. Cancelled by the recall flow).</summary>
+    public async Task SetBillStatusAsync(Guid billId, string status)
+    {
+        await using var command = DataSource.CreateCommand("UPDATE billing.bills SET status = @status WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("id", billId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<long> CountPaymentsAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM payments.payments WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<long> CountCashSessionsAsync(Guid terminalId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM cash.cash_sessions WHERE terminal_id = @terminal_id;");
+        command.Parameters.AddWithValue("terminal_id", terminalId);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     /// <summary>Seeds a real, payable Bill (catalog product + table + order + bill) for a cash-tender test.</summary>

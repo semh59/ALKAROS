@@ -177,6 +177,53 @@ public sealed class CashTenderHandlerTests : IClassFixture<CashTenderHandlerTest
     }
 
     [Fact]
+    public async Task ACashTenderReusingAKeyAnotherTenderMethodUsedIsRefusedAndRecordsNothing()
+    {
+        // V1-RMD-415 (V1-RMD-393 F-12): an EFT tender already recorded under this key; no cash Sale stands behind
+        // it, so a cash tender with the same key is neither new nor a replay.
+        var sessionId = await SeedOpenSessionAsync();
+        var billId = await SeedBillAsync(payable: 100m);
+        var idempotencyKey = Guid.NewGuid().ToString();
+        var eftPaymentId = Guid.NewGuid();
+        await using (var eft = _dataSource.CreateCommand(
+            """
+            INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, tendered_amount, approved_amount, initiated_at, tendered_at, approved_at, created_at, updated_at)
+            VALUES (@payment, @bill, 'Approved', 40, 40, 40, now(), now(), now(), now(), now());
+            INSERT INTO payments.payment_allocations (payment_allocation_id, payment_id, bill_id, amount, currency_code, idempotency_key, allocated_at)
+            VALUES (gen_random_uuid(), @payment, @bill, 40, 'TRY', @key, now());
+            """))
+        {
+            eft.Parameters.AddWithValue("payment", eftPaymentId);
+            eft.Parameters.AddWithValue("bill", billId);
+            eft.Parameters.AddWithValue("key", idempotencyKey);
+            await eft.ExecuteNonQueryAsync();
+        }
+
+        var act = () => _handler.HandleAsync(
+            new CashTenderRequest(sessionId, billId, AmountDue: 40m, TenderedAmount: 40m, IdempotencyKey: idempotencyKey));
+
+        await act.Should().ThrowAsync<CashTenderIdempotencyKeyReusedException>();
+        (await _ledger.GetBySessionIdAsync(sessionId)).Should().BeEmpty();
+        (await _payments.GetByBillIdAsync(billId)).Should().ContainSingle();
+    }
+
+    [Fact]
+    public async Task ACashKeyReusedForAnotherAmountIsRefusedNotReplayed()
+    {
+        var sessionId = await SeedOpenSessionAsync();
+        var billId = await SeedBillAsync(payable: 100m);
+        var idempotencyKey = Guid.NewGuid().ToString();
+        await _handler.HandleAsync(
+            new CashTenderRequest(sessionId, billId, AmountDue: 30m, TenderedAmount: 30m, IdempotencyKey: idempotencyKey));
+
+        var act = () => _handler.HandleAsync(
+            new CashTenderRequest(sessionId, billId, AmountDue: 50m, TenderedAmount: 50m, IdempotencyKey: idempotencyKey));
+
+        await act.Should().ThrowAsync<CashTenderIdempotencyKeyReusedException>();
+        (await _ledger.GetBySessionIdAsync(sessionId)).Should().ContainSingle();
+    }
+
+    [Fact]
     public async Task ConcurrentSubmitsOfTheSameCommandProduceExactlyOneRealSetOfRecords()
     {
         var sessionId = await SeedOpenSessionAsync();
@@ -207,6 +254,7 @@ public sealed class CashTenderHandlerTests : IClassFixture<CashTenderHandlerTest
     private async Task<Guid> SeedClosedSessionAsync()
     {
         var sessionId = await SeedOpenSessionAsync();
+        await _sessionService.StartCountAsync(new StartCashCountCommand(sessionId, Guid.NewGuid()));
         await _sessionService.CloseSessionAsync(
             new CloseCashSessionCommand(sessionId, ActualCash: 100m, ClosedBy: Guid.NewGuid()),
             expectedCash: 100m);

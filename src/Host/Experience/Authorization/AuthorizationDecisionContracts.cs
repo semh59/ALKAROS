@@ -43,3 +43,28 @@ public sealed record ResolvedGrantV1(
 public sealed record AuthorizationDecisionErrorV1(string Code, string Message, int Status, string TraceId);
 
 public sealed record AuthorizationDecisionErrorEnvelopeV1(AuthorizationDecisionErrorV1 Error);
+
+/// <summary>V1-RMD-407: a manager/supervisor hands a grant-class permission to <see cref="GranteeUserId"/> until <see cref="ExpiresAt"/>.</summary>
+public sealed record CreateDelegationRequestV1(
+    Guid GranteeUserId,
+    string? PermissionCode,
+    decimal LimitAmount,
+    DateTimeOffset ExpiresAt);
+
+/// <summary>V1-RMD-407: the delegator does not hold the permission they tried to delegate.</summary>
+public sealed class DelegatorLacksPermissionException : Exception
+{
+    public DelegatorLacksPermissionException(string permissionCode)
+        : base($"The delegator does not hold '{permissionCode}' and cannot delegate it.")
+    {
+    }
+}
+
+/// <summary>V1-RMD-407: the named grantee is not a known user.</summary>
+public sealed class DelegationGranteeNotFoundException : Exception
+{
+    public DelegationGranteeNotFoundException(Guid granteeUserId)
+        : base($"Grantee '{granteeUserId}' is not a known user.")
+    {
+    }
+}

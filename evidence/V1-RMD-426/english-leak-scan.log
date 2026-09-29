@@ -1,0 +1,10 @@
+# UI_STYLE_GUIDE section 4 style scan after the fix: error-map entries whose message is an English sentence (no Turkish letters) in src/Host
+src/Host/Experience/Settings/SettingsManagementEndpoints.cs:218:                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Bu anahtarla bir ayar zaten var."),
+src/Host/Experience/Billing/BillingSplitApplication.cs:468:        BillDiscountUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim uygulanamaz."),
+src/Host/Experience/Authorization/AuthorizationDecisionEndpoints.cs:221:                (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamaz ya da reddedemezsini
+src/Host/Experience/Authorization/AuthorizationDecisionEndpoints.cs:235:                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Karar kaydedilemedi."),
+src/Host/Experience/Inventory/StockMasterEndpoints.cs:392:        DuplicateStockItemException => (409, "DUPLICATE_RESOURCE", "Bu kodla bir stok kalemi zaten var."),
+src/Host/Experience/Inventory/StockMasterEndpoints.cs:393:        DuplicateStockLocationException => (409, "DUPLICATE_RESOURCE", "Bu kodla bir stok konumu zaten var."),
+src/Host/DualScreen/DualScreenApplication.Payments.cs:112:            ManualResolutionReasonInvalidException => (StatusCodes.Status400BadRequest, "NOTE_INVALID", "Not en fazla 500 karakter olabilir.")
+src/Host/DualScreen/DualScreenApplication.cs:765:            NegativeCashAmountException => (400, "VALIDATION_FAILED", "Tutar negatif olamaz."),
+# (the remaining lines, if any, are Turkish sentences without special letters)

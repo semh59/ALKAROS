@@ -1,0 +1,6 @@
+# V1-RMD-438 red run: component, models and strings reverted, new test kept
+     × shows product type, tax profile and price type in Turkish instead of raw values 16ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/features/catalog/CatalogWorkspace.test.tsx > catalog workspace > shows product type, tax profile and price type in Turkish instead of raw values
+AssertionError: expected 'EspressoAktifESP-01 · MenuItem95.00 T…' to contain 'ESP-01 · Menü ürünü'
+      Tests  1 failed | 20 passed (21)
