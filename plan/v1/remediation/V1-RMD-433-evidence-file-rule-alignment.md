@@ -18,6 +18,8 @@
 
 - `plan/v1/remediation/V1-RMD-433-evidence-file-rule-alignment.md`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/TASK_STANDARD.md AGENTS.md
+- Sınırlı ek (paylaşılan, geri-tik olmadan): plan/VALIDATION_CONTRACT.md — yalnız aynı eski ifadeyi ("ayrı dosyaya
+  kaydedilmez") taşıyan kabul kanıtı maddesi
 
 ## In scope
 
