@@ -32,6 +32,13 @@
   denetimi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py
   (yeni) — istemcinin statik testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Endpoints.cs — yalnız giriş
+  yanıtındaki `offlineBudget` nesnesine bütçenin rol kodunun (`roleCode`) eklenmesi: uzlaştırma ucu her eylemde
+  `RequesterRoleCode` ister ve istemci bu kodu başka bir yanıttan öğrenemez; bütçe hizmeti ve uzlaştırıcı değişmez
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/OfflineReconciliation/OfflineReconciliationHttpTests.cs
+  — yalnız giriş yanıtındaki `roleCode` alanının testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/E2E/WaiterPwa/lib/seed.js — yalnız E2E garson rolüne `auto_within`
+  iptal/ikram politikası (varsayılan kurulumda çevrimdışı bütçe satırı yoktur)
 
 ## In scope
 
