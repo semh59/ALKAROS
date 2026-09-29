@@ -2032,7 +2032,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1.4/customer-account/V14-ACC-006-card-account-receipt.md` | ✅ | `53E8139BBEAB5CCA9964905F7534F37B997C4B9D94B7413A417600382A3436FA` | Tek-sahip görev |
 | `plan/v1.4/customer-account/V14-ACC-007-account-payment-reconciliation.md` | ✅ | `F9DE13FECF9193F5711974C285C563B3017F70902FA605F18BC00E1984E777DB` | Tek-sahip görev |
 | `plan/v1.4/customer-account/V14-ACC-008-customer-account-tender-integration.md` | ✅ | `F4A9EBC5373483FF39AA91EE27DFB7FFBD3000B1229D65F5808525DF14BC25A9` | Tek-sahip görev |
-| `plan/v1.4/customer-account/V14-ACC-009-independent-account-receipt.md` | ✅ | `D75CED633C74AF1C2F8FA421B908B7071F0FE567B7C1FCA81049FAF0F197E4CA` | Tek-sahip görev |
+| `plan/v1.4/customer-account/V14-ACC-009-independent-account-receipt.md` | ✅ | `D7D7D4B5DBCBB20137B2FAE399F82AEB77A41EA5F80413B4685FF8B0153D98AB` | Tek-sahip görev |
 | `plan/v1.4/customer-data/V14-GOV-001-v14-gate-unverified-draft-authorization.md` | ✅ | `A72123210154C8DB2AFEBCC41F70B0B516E460F3CD7C06FD981AD52B5A12E316` | Tek-sahip görev |
 | `plan/v1.4/customer-data/V14-GOV-002-lift-v14-entry-gate-waiver.md` | ✅ | `D08E895E2DAABBBA52705F3161F4DA1B878BD264B0979F8CD646004FC3EA7D41` | Tek-sahip görev |
 | `plan/v1.4/customer-data/V14-RMD-001-anonymized-at-test-precision.md` | ✅ | `8FCB446249DCB455DA1E09D283B1550AAFD4FD3461CB699DC311B44379736FC6` | Tek-sahip görev |
