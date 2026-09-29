@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1496,
-  "markdown_line_count": 113775,
-  "markdown_byte_count": 6553488,
+  "markdown_file_count": 1497,
+  "markdown_line_count": 113859,
+  "markdown_byte_count": 6558265,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C764BD458F168DA4F2EB6FCFE76B14352887B5A968A38B6EBA5C3180BD0B9912",
-      "lines": 2772,
-      "bytes": 407212,
+      "sha256": "81CDC57944D38451BE459FA52B0F58592E55F32B32FE006A1226109928E4A7E1",
+      "lines": 2773,
+      "bytes": 407392,
       "utf8": true
     },
     {
@@ -8334,6 +8334,13 @@
       "sha256": "81096E6F0E4B1ABF1CEB1B8D9D6C29878047DF473447FF4072E76C87C0D161A1",
       "lines": 59,
       "bytes": 2773,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-440-per-customer-credit-limit-and-overdue-refusal.md",
+      "sha256": "FBAA55AE5F3F77DBED0E0678F974107CACBFE6A8DF785E7F6F8B9EBCC018F06D",
+      "lines": 83,
+      "bytes": 4597,
       "utf8": true
     },
     {

@@ -2681,6 +2681,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-437-catalog-stops-offering-untracked-stock-mode.md` | ✅ | `247AB2AE260785BC67A22DA11EAF66FFE0EEDF8B3FD9F16F095C0D7CAABD0A07` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-438-catalog-list-and-detail-english-leaks.md` | ✅ | `8B249E7252E0F759BA74C533F26A61C7C5FFCB6F18CBC73A91428686B2AC15C9` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-439-nfc-concurrent-first-submission-order-number-race.md` | ✅ | `81096E6F0E4B1ABF1CEB1B8D9D6C29878047DF473447FF4072E76C87C0D161A1` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-440-per-customer-credit-limit-and-overdue-refusal.md` | ✅ | `FBAA55AE5F3F77DBED0E0678F974107CACBFE6A8DF785E7F6F8B9EBCC018F06D` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2768,5 +2769,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1496` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1497` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.
