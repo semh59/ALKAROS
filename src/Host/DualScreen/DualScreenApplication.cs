@@ -120,6 +120,8 @@ public static partial class DualScreenApplication
         builder.Services.AddOutboxDispatch();
 
         builder.Services.AddSingleton<DualScreenStore>();
+        // V1-RMD-442: the till's customer account read model (list, statement, create).
+        builder.Services.AddScoped<ALKAROS.Host.Experience.CustomerAccounts.CustomerAccountsStore>();
         builder.Services.AddSingleton<SubmitOrderHandler>();
         builder.Services.AddTableManagementExperience();
         builder.Services.AddCatalogManagement();
@@ -629,6 +631,7 @@ public static partial class DualScreenApplication
         app.MapHelpRequestApi();
         app.MapCashSessionApi();
         app.MapPaymentTenderApi();
+        app.MapCustomerAccountApi();
         app.MapHub<CustomerDisplayHub>(CustomerDisplayHub.Route);
         app.MapMethods(
             "/api/{**path}",

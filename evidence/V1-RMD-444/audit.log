@@ -1,0 +1,12 @@
+# V1-RMD-444 audit run (7f6e7a45 + task file edits)
+Validation errors: 0
+Validation warnings: 0
+consistency-audit: clean
+V1-RMD-429 metadata_errors: 0 []
+V1-RMD-431 metadata_errors: 0 []
+V1-RMD-432 metadata_errors: 0 []
+V1-RMD-433 metadata_errors: 0 []
+V1-RMD-296 metadata_errors: 0 []
+V1-RMD-297 metadata_errors: 0 []
+V14-INV-001 metadata_errors: 0 []
+V1-RMD-444 metadata_errors: 1 ["Task status is 'Done', expected 'Planned' or 'InProgress'"]

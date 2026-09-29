@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSTest>true</ALKAROSTest>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>ALKAROS.CustomerAccounts.AccountReceipts.Tests</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" />
+    <PackageReference Include="xunit" />
+    <PackageReference Include="xunit.runner.visualstudio" />
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\src\Modules\CustomerAccounts\ALKAROS.CustomerAccounts.csproj" />
+    <ProjectReference Include="..\..\..\BuildingBlocks\TestHelpers\ALKAROS.TestHelpers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\..\..\..\database\migrations\V14\V14-ACC-001\161-account-transactions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V14\V14-ACC-004\165-account-payments.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V14\V14-ACC-009\166-account-receipts.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+</Project>

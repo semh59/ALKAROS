@@ -1,8 +1,8 @@
 # V1-RMD-297 - Garson çevrimdışı iptal/ikram bütçesini kullanır, bağlanınca uzlaştırır
 
 - Task ID: V1-RMD-297
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: remediation
 - Surface state: Existing
 
@@ -24,6 +24,20 @@
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/js/offline-queue.js
   (yalnız çevrimdışı yetkilendirilmiş eylem kaydı ve uzlaştırma tetikleyicisi)
 - Yeni dosya: tests/E2E/WaiterPwa/specs/10-offline-authorized-void-comp.spec.js
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/E2E/WaiterPwa/specs/10-offline-authorized-void-comp.spec.js (yeni),
+  tests/E2E/WaiterPwa/global-setup.js ve tests/E2E/WaiterPwa/lib/testHelpers.js — yalnız çevrimdışı senaryonun
+  kurulumu
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/js/auth.js, src/Clients/WaiterPwa/wwwroot/js/api.js
+  ve src/Clients/WaiterPwa/wwwroot/js/state.js — yalnız giriş yanıtındaki bütçenin saklanması ve çevrimdışı
+  denetimi
+- `tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py` (yeni) — istemcinin statik testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Endpoints.cs — yalnız giriş
+  yanıtındaki `offlineBudget` nesnesine bütçenin rol kodunun (`roleCode`) eklenmesi: uzlaştırma ucu her eylemde
+  `RequesterRoleCode` ister ve istemci bu kodu başka bir yanıttan öğrenemez; bütçe hizmeti ve uzlaştırıcı değişmez
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/OfflineReconciliation/OfflineReconciliationHttpTests.cs
+  — yalnız giriş yanıtındaki `roleCode` alanının testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/E2E/WaiterPwa/lib/seed.js — yalnız E2E garson rolüne `auto_within`
+  iptal/ikram politikası (varsayılan kurulumda çevrimdışı bütçe satırı yoktur)
 
 ## In scope
 

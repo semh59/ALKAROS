@@ -75,18 +75,28 @@ public sealed class AccountChargeHandler : IAccountChargeHandler
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var dbTransaction = await connection.BeginTransactionAsync(cancellationToken);
 
-        // Advisory lock on the idempotency key itself, held for the whole
-        // transaction - same pg_advisory_xact_lock pattern
-        // CashTenderHandler/PostgresPaymentAllocationRepository already use.
+        // V1-RMD-442: the shared bill-settlement lock FIRST, then the idempotency key - the same fixed order and key
+        // CashTenderHandler, EftTenderHandler and CardSettlementOrchestrator use (V1-RMD-409), so a charge to an
+        // account serializes against a concurrent cash or card tender on the same bill.
+        await LockAsync(connection, dbTransaction, $"bill-settlement:{bill.Id:N}", cancellationToken);
         await LockAsync(connection, dbTransaction, $"account-charge:{request.IdempotencyKey}", cancellationToken);
 
         var existingAllocation = await _allocationRepository.GetByIdempotencyKeyAsync(
             request.IdempotencyKey, connection, dbTransaction, cancellationToken);
         if (existingAllocation is not null)
         {
+            var replay = await BuildReplayResultAsync(existingAllocation, request, cancellationToken);
             await dbTransaction.CommitAsync(cancellationToken);
-            return await BuildReplayResultAsync(existingAllocation, request.CustomerId, cancellationToken);
+            return replay;
         }
+
+        // V1-RMD-442: the same guard cash has since V1-RMD-409 (V1-RMD-393 F-04). If an unresolved card attempt on
+        // this bill was really charged, writing the bill to the customer's account on top of it charges twice.
+        var existingPayments = await _paymentRepository.GetByBillIdAsync(bill.Id, cancellationToken);
+        var unsettledPayment = existingPayments.FirstOrDefault(p =>
+            p.Status is PaymentStatus.Pending or PaymentStatus.Unknown or PaymentStatus.ReconciliationRequired);
+        if (unsettledPayment is not null)
+            throw new AccountChargeUnsettledPaymentExistsException(bill.Id, unsettledPayment.Id);
 
         // Credit policy (V1-RMD-440): under the customer's own lock, held until
         // this transaction ends, so a concurrent charge to the same customer
@@ -141,13 +151,19 @@ public sealed class AccountChargeHandler : IAccountChargeHandler
     /// (only ever exercised on a genuine retry, never the hot path).
     /// </summary>
     private async Task<AccountChargeResult> BuildReplayResultAsync(
-        PaymentAllocation allocation, Guid customerId, CancellationToken cancellationToken)
+        PaymentAllocation allocation, AccountChargeRequest request, CancellationToken cancellationToken)
     {
         var payment = await _paymentRepository.GetByIdAsync(allocation.PaymentId, cancellationToken)
             ?? throw new PaymentNotFoundException(allocation.PaymentId);
-        var ledger = await _ledger.GetByCustomerAsync(customerId, cancellationToken: cancellationToken);
+        var ledger = await _ledger.GetByCustomerAsync(request.CustomerId, cancellationToken: cancellationToken);
         var accountTransaction = ledger.FirstOrDefault(
             entry => entry.SourceReferenceType == "Payment" && entry.SourceReferenceId == payment.Id);
+
+        // V1-RMD-442: a key replays only the same charge - same bill, same amount, posted to this customer's
+        // account. A key already used by a cash or card tender, another bill or another customer is a reuse, not a
+        // retry (the same rule V1-RMD-415 gave the cash tender).
+        if (accountTransaction is null || allocation.BillId != request.BillId || allocation.Amount != request.AmountDue)
+            throw new AccountChargeIdempotencyKeyReusedException(request.IdempotencyKey);
 
         return new AccountChargeResult(
             payment.Id,

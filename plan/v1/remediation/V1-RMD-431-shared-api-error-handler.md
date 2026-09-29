@@ -1,8 +1,8 @@
 # V1-RMD-431 - Tek ortak API hata işleyicisi
 
 - Task ID: V1-RMD-431
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
 
@@ -20,6 +20,8 @@ Host'ta aynı işi yapan 13 ayrı hata çevirme fonksiyonu (`MapError`, `WriteEr
 - `tests/Host/Errors/**`
 - `plan/v1/remediation/V1-RMD-431-shared-api-error-handler.md`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/ src/Host/DualScreen/ src/Host/Program.cs ALKAROS.slnx
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/ — yalnız silinen hata zarfı tiplerine yapılan
+  referansların ortak zarfa çevrilmesi
 
 ## In scope
 

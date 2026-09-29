@@ -1,0 +1,6 @@
+# V14-ACC-004 tests on real PostgreSQL 18, Release (a26746f9 + patch); locked restore
+Passed!  - Failed:     0, Passed:    25, Skipped:     0, Total:    25, Duration: 430 ms - ALKAROS.CustomerAccounts.AccountPayments.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    20, Skipped:     0, Total:    20, Duration: 628 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 291 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 16 s - ALKAROS.Host.Experience.Composition.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:   164, Skipped:     0, Total:   164, Duration: 6 m 40 s - ALKAROS.Host.Tests.dll (net8.0)

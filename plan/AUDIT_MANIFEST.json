@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1498,
-  "markdown_line_count": 113956,
-  "markdown_byte_count": 6564771,
+  "markdown_file_count": 1501,
+  "markdown_line_count": 114213,
+  "markdown_byte_count": 6580459,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -127,9 +127,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "AB32CD116ED630B1F9684C55A63D84587B3A26B1CF15C45B52F9990B9A589DBA",
-      "lines": 219,
-      "bytes": 17784,
+      "sha256": "76299423AB4E9AA4BC7C03E9C0E72B7FA6F382565F267BB4C95A234DBE46A8D7",
+      "lines": 220,
+      "bytes": 18217,
       "utf8": true
     },
     {
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "265B9E4795D3858C69D3A42900D3FAD4AA156224101B23652D9671D5EF17324E",
-      "lines": 2774,
-      "bytes": 407558,
+      "sha256": "0414A5A81007ADB2CAA831913BF56FC30A9654740AE360EAE63A03C38029E850",
+      "lines": 2777,
+      "bytes": 408070,
       "utf8": true
     },
     {
@@ -7414,16 +7414,16 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-296-decision-management-area-ui.md",
-      "sha256": "BA7E4B6C9F6C1B6B8558C522089283249EABCFE46957570EE27976FCC67FCE9F",
-      "lines": 43,
-      "bytes": 1849,
+      "sha256": "B388C93380127941CDBAAA8AE5E098FE511F131242AAD86CA6A4AF9AA8B2AA69",
+      "lines": 45,
+      "bytes": 2013,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-297-offline-authorized-void-comp-reconciliation.md",
-      "sha256": "B9B7C5CFE478D88BDA36C30DCDD8942D42A0208D9FF67EAA034AD64EF5C04177",
-      "lines": 56,
-      "bytes": 3730,
+      "sha256": "F01DFBFFC56AE14A7103F3C1AEE4695A124BFF8FD50DEE3B859506AC6F5ED956",
+      "lines": 70,
+      "bytes": 5148,
       "utf8": true
     },
     {
@@ -8261,9 +8261,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-429-api-route-authorization-architecture-test.md",
-      "sha256": "D197307C3F80851B8B864BC5FC71EFB39C91CDA872AAC593E8A635E23BF9DB45",
+      "sha256": "CD043A32711E14DAB8A82C8FAA29378E7F2A0DC409CAC770845AC4203D931B5E",
       "lines": 44,
-      "bytes": 2229,
+      "bytes": 2245,
       "utf8": true
     },
     {
@@ -8275,23 +8275,23 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-431-shared-api-error-handler.md",
-      "sha256": "E55A78EA4C6BE1D5041CF583F6E544C8EB466865BF50542729B5949CB774BE2D",
-      "lines": 42,
-      "bytes": 1744,
+      "sha256": "5C003CA36556E2346DEFDD414B64F1D45283A0CC43BC361EA99996DD76451540",
+      "lines": 44,
+      "bytes": 1925,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-432-posterminal-lint-accessibility.md",
-      "sha256": "C81C373584FFFC732C068AF8524DEC832703948AF1C83B7038A2029B0A19BDAE",
-      "lines": 41,
-      "bytes": 1566,
+      "sha256": "FA7AC3B31A5CAE00C4201AC914F9EC17EF4F3CD40E0AFD0EF2B161B1F4674645",
+      "lines": 47,
+      "bytes": 2135,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-433-evidence-file-rule-alignment.md",
-      "sha256": "28C26795CCFA05FC85FEC3CFE8DC19851ACA7622D1FB8E6C42F2B8F7B83298B5",
-      "lines": 39,
-      "bytes": 1658,
+      "sha256": "5BA2388F73368B953A72BEB2025A3C14A5A71778D87404CF9FEAC49D0736DC2E",
+      "lines": 41,
+      "bytes": 1848,
       "utf8": true
     },
     {
@@ -8348,6 +8348,27 @@
       "sha256": "253654E2BDE1D8C725B03E8C2C4318309BF4686B571B70E1EB113FB28812E5F2",
       "lines": 58,
       "bytes": 2475,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-442-account-charge-tender-and-customer-account-api.md",
+      "sha256": "366F5D52FAA5BF8FEFC196C2CD7BC681CD4EE585548AB50D33044BF35B9E170B",
+      "lines": 78,
+      "bytes": 4129,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-443-customer-account-ui.md",
+      "sha256": "1D084998D331D58B6726E6FC5AF5DE6781FFA2D5B1DAB7D272D4AAC786AC3D3E",
+      "lines": 71,
+      "bytes": 3766,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-444-start-internal-quality-and-invoicing-tasks.md",
+      "sha256": "E255634ECA2B9F8872DBC362F87A68FBEDAD0F5952A8FA0BF85970ECDAE7EF80",
+      "lines": 61,
+      "bytes": 2671,
       "utf8": true
     },
     {
@@ -10039,16 +10060,16 @@
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-004-account-payment-posting.md",
-      "sha256": "52D6AEC77566B0BEED2776C111EBB5FB60786837889FFA0F1FB11E4DA571F1E5",
+      "sha256": "DF3100A7043A95D8F03745272F1AA0128B2090C38E483E74D724090658A4FEEA",
       "lines": 67,
-      "bytes": 2531,
+      "bytes": 2525,
       "utf8": true
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-005-cash-account-receipt.md",
-      "sha256": "B04799D31F6184AC02F5EBE6ECBD144FC3F7E2978C0DF88F5C2F74A64B92432A",
+      "sha256": "9AA842D362FF541B0AA456CF28C0F98F043573EE4D391AF7D549C1566861CEB6",
       "lines": 83,
-      "bytes": 3947,
+      "bytes": 3941,
       "utf8": true
     },
     {
@@ -10074,9 +10095,9 @@
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-009-independent-account-receipt.md",
-      "sha256": "D75CED633C74AF1C2F8FA421B908B7071F0FE567B7C1FCA81049FAF0F197E4CA",
+      "sha256": "D7D7D4B5DBCBB20137B2FAE399F82AEB77A41EA5F80413B4685FF8B0153D98AB",
       "lines": 71,
-      "bytes": 2768,
+      "bytes": 2762,
       "utf8": true
     },
     {
@@ -10116,9 +10137,9 @@
     },
     {
       "path": "plan/v1.4/invoicing/V14-INV-001-periodic-source-selection.md",
-      "sha256": "48B6AD10DA1A399B381A45DBD4C8ED77A79EA1CC78CC411B52BB369D069EFA08",
-      "lines": 57,
-      "bytes": 1544,
+      "sha256": "A37D4B7E680E890CD87CD038FD568A2D0D0ED4C2305273714BCC0D34759E418F",
+      "lines": 74,
+      "bytes": 3201,
       "utf8": true
     },
     {

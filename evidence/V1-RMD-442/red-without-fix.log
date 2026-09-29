@@ -1,0 +1,6 @@
+# V1-RMD-442 red run: unsettled-payment guard and replay validation disabled in AccountChargeHandler
+1
+  Failed ALKAROS.CustomerAccounts.BillCharges.Tests.AccountChargeHandlerTests.AKeyAlreadyUsedForAnotherBillIsRefusedNotReplayed [53 ms]
+  Failed ALKAROS.CustomerAccounts.BillCharges.Tests.AccountChargeHandlerTests.AKeyAlreadyUsedForADifferentAmountIsRefusedNotReplayed [35 ms]
+  Failed ALKAROS.CustomerAccounts.BillCharges.Tests.AccountChargeHandlerTests.ABillWithAnUnsettledCardAttemptIsNotWrittenToAnAccount [25 ms]
+Failed!  - Failed:     3, Passed:    20, Skipped:     0, Total:    23, Duration: 760 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)

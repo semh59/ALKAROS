@@ -13,7 +13,7 @@
   var money = new Intl.NumberFormat('tr-TR', { style: 'currency', currency: 'TRY' });
   var app = document.getElementById('app');
 
-  var METHOD_LABELS = { Cash: 'Nakit', BankCard: 'Kredi/Banka Kartı', Eft: 'EFT/Havale' };
+  var METHOD_LABELS = { Cash: 'Nakit', BankCard: 'Kredi/Banka Kartı', Eft: 'EFT/Havale', Account: 'Hesaba yaz (cari)' };
 
   var state = {
     phase: 'checking',
@@ -65,6 +65,11 @@
     // discount/tip apply requests.
     discountIdempotencyKey: null,
     tipIdempotencyKey: null,
+    // V1-RMD-443: "Hesaba yaz" - the customer whose receivable account this bill (or part of it) is written to.
+    customerSearch: '',
+    customers: null,
+    customersLoading: false,
+    selectedCustomerId: null,
   };
 
   function escapeHtml(value) {
@@ -475,6 +480,34 @@
     });
   }
 
+  // V1-RMD-443: the till's customer list (V1-RMD-442), filtered server-side by name or phone digits.
+  function loadCustomers() {
+    state.customersLoading = true;
+    render();
+    var query = state.customerSearch.trim() ? '?search=' + encodeURIComponent(state.customerSearch.trim()) : '';
+    return api('/api/v1/terminals/' + state.terminalId + '/customers' + query).then(function (result) {
+      state.customersLoading = false;
+      if (!result.ok) {
+        state.customers = [];
+        state.error = describeHttpFailure(result.status, result.body);
+      } else {
+        state.customers = result.body;
+        if (state.selectedCustomerId && !state.customers.some(function (c) { return c.customerId === state.selectedCustomerId; })) {
+          state.selectedCustomerId = null;
+        }
+      }
+      render();
+    }).catch(function () {
+      state.customersLoading = false;
+      setError('Müşteri listesi okunamadı.');
+    });
+  }
+
+  function selectedCustomer() {
+    if (!state.customers || !state.selectedCustomerId) return null;
+    return state.customers.filter(function (c) { return c.customerId === state.selectedCustomerId; })[0] || null;
+  }
+
   function submitTender() {
     var amount = Number(state.amountDraft);
     if (!(amount > 0)) {
@@ -491,6 +524,10 @@
       setError('Devam etmeden önce tutarı banka hesap hareketinde gördüğünüzü onaylayın.');
       return;
     }
+    if (state.selectedMethod === 'Account' && !selectedCustomer()) {
+      setError('Hesaba yazmak için bir müşteri seçin.');
+      return;
+    }
 
     setBusy(true);
     state.error = null;
@@ -499,7 +536,15 @@
     if (!state.tenderIdempotencyKey) state.tenderIdempotencyKey = crypto.randomUUID();
     var idempotencyKey = state.tenderIdempotencyKey;
 
-    var request = state.selectedMethod === 'Cash'
+    var request = state.selectedMethod === 'Account'
+      ? api(billBase() + '/account-charge', {
+          method: 'POST',
+          body: { CustomerId: state.selectedCustomerId, Amount: amount, IdempotencyKey: idempotencyKey },
+        }).then(function (result) {
+          if (!result.ok) return result;
+          return { ok: true, status: result.status, body: { outcome: 'Approved', approvedAmount: result.body.approvedAmount } };
+        })
+      : state.selectedMethod === 'Cash'
       ? api('/api/v1/terminals/' + state.terminalId + '/cash-sessions/' + state.cashSessionId + '/cash-tender', {
           method: 'POST',
           body: { BillId: state.billId, AmountDue: amount, TenderedAmount: amount, IdempotencyKey: idempotencyKey },
@@ -599,7 +644,7 @@
   // VIEWS, this is a VALUE choice) - role="radiogroup"/"radio" + aria-checked is the correct
   // pattern for "exactly one of these applies" rather than role="tab".
   function renderMethodChips() {
-    var methods = ['Cash', 'BankCard', 'Eft'];
+    var methods = ['Cash', 'BankCard', 'Eft', 'Account'];
     return (
       '<div class="sp-method-chips" role="radiogroup" aria-label="Ödeme yöntemi">' +
       methods.map(function (method) {
@@ -612,6 +657,40 @@
           escapeHtml(METHOD_LABELS[method]) + (disabled ? ' (kasa kapalı)' : '') + '</button>'
         );
       }).join('') +
+      '</div>'
+    );
+  }
+
+  // V1-RMD-443: the customer picker for "Hesaba yaz". Radio semantics for the same reason as the method chips:
+  // exactly one customer applies.
+  function renderCustomerPicker() {
+    var chosen = selectedCustomer();
+    var list = state.customers === null || state.customersLoading
+      ? '<div class="sp-alert-body" role="status">Müşteriler yükleniyor…</div>'
+      : state.customers.length === 0
+        ? '<div class="sp-alert-body" role="status">Eşleşen müşteri yok. Yeni müşteri Cari Hesaplar ekranından eklenir.</div>'
+        : '<div class="sp-customer-list" role="radiogroup" aria-label="Müşteri">' +
+          state.customers.map(function (c) {
+            var active = c.customerId === state.selectedCustomerId;
+            return (
+              '<button type="button" class="sp-customer' + (active ? ' is-active' : '') + '" role="radio" aria-checked="' + active + '" ' +
+              'data-customer-id="' + escapeHtml(c.customerId) + '">' +
+              '<span class="sp-customer-name">' + escapeHtml(c.name) + (c.phoneMasked ? ' · ' + escapeHtml(c.phoneMasked) : '') + '</span>' +
+              '<span class="sp-customer-meta">Borç ' + formatMoney(c.balance) + ' · Kullanılabilir ' + formatMoney(c.availableCredit) + '</span>' +
+              '</button>'
+            );
+          }).join('') +
+          '</div>';
+    return (
+      '<div class="sp-field"><span class="sp-field-label">Müşteri</span>' +
+      '<div class="sp-row">' +
+      '<input class="sp-input" type="search" id="customer-search" placeholder="Ad veya telefon" aria-label="Müşteri ara (ad veya telefon)" value="' +
+      escapeHtml(state.customerSearch) + '">' +
+      '<button class="sp-btn sp-btn-secondary" id="customer-search-submit" type="button">Ara</button>' +
+      '</div>' + list +
+      (chosen && chosen.creditLimit <= 0
+        ? '<div class="sp-alert-body" role="status">Bu müşteri için kredi limiti tanımlı değil; hesaba yazma reddedilir.</div>'
+        : '') +
       '</div>'
     );
   }
@@ -763,16 +842,18 @@
         '<div class="sp-field"><span class="sp-field-label">Tutar</span>' +
         '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
         '<span class="sp-amount-suffix">₺</span></div></div>' +
-        (state.selectedMethod !== 'Cash'
+        (state.selectedMethod !== 'Cash' && state.selectedMethod !== 'Account'
           ? '<div class="sp-field"><span class="sp-field-label">Not <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></span>' +
             '<input class="sp-input" type="text" id="note-draft" aria-label="Ödeme notu (opsiyonel)" value="' + escapeHtml(state.noteDraft) + '"></div>'
           : '') +
+        (state.selectedMethod === 'Account' ? renderCustomerPicker() : '') +
         (state.selectedMethod === 'Eft'
           ? '<div class="sp-confirm-row"><input type="checkbox" id="eft-confirm"' + (state.eftConfirmed ? ' checked' : '') + '>' +
             '<label for="eft-confirm">Tutarı işletmenin banka hesap hareketinde gördüm</label></div>'
           : '') +
         '<button class="sp-btn sp-btn-primary" id="submit-tender" ' +
-        ((state.busy || (state.selectedMethod === 'Eft' && !state.eftConfirmed)) ? 'disabled' : '') + '>' +
+        ((state.busy || (state.selectedMethod === 'Eft' && !state.eftConfirmed)
+          || (state.selectedMethod === 'Account' && !selectedCustomer())) ? 'disabled' : '') + '>' +
         (state.busy ? 'Gönderiliyor…' : 'Ödemeyi Ekle') + '</button>') +
       '</div>';
 
@@ -785,6 +866,7 @@
         // V1-RMD-314: a different method is a genuinely different tender attempt - never replay the
         // previous method's in-flight key onto this one.
         state.tenderIdempotencyKey = null;
+        if (method === 'Account' && state.customers === null) loadCustomers();
         render();
         // render() replaces the whole card's innerHTML, destroying the
         // clicked chip and creating a fresh node in its place - without
@@ -850,6 +932,24 @@
     if (tipNoteInput) tipNoteInput.addEventListener('input', function () { state.tipNoteDraft = this.value; });
     var submitTipButton = document.getElementById('submit-tip');
     if (submitTipButton) submitTipButton.addEventListener('click', submitTip);
+    var customerSearchInput = document.getElementById('customer-search');
+    if (customerSearchInput) {
+      customerSearchInput.addEventListener('input', function () { state.customerSearch = this.value; });
+      customerSearchInput.addEventListener('keydown', function (event) { if (event.key === 'Enter') loadCustomers(); });
+    }
+    var customerSearchButton = document.getElementById('customer-search-submit');
+    if (customerSearchButton) customerSearchButton.addEventListener('click', loadCustomers);
+    document.querySelectorAll('.sp-customer').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var customerId = button.getAttribute('data-customer-id');
+        state.selectedCustomerId = customerId;
+        // A different customer is a different charge attempt - never replay the previous one's key.
+        state.tenderIdempotencyKey = null;
+        render();
+        var refreshed = document.querySelector('.sp-customer[data-customer-id="' + customerId + '"]');
+        if (refreshed) refreshed.focus();
+      });
+    });
   }
 
   function renderPaid() {

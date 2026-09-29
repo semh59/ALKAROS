@@ -274,6 +274,48 @@ public sealed class AccountChargeHandlerTests : IClassFixture<AccountChargeTestD
             .Which.ImplementationType.Should().Be<CreditTermsCreditPolicy>();
     }
 
+    [Fact]
+    public async Task AKeyAlreadyUsedForAnotherBillIsRefusedNotReplayed()
+    {
+        var customerId = await SeedCustomerAsync();
+        var firstBill = await SeedBillAsync(payable: 100m);
+        var secondBill = await SeedBillAsync(payable: 100m);
+        var key = Guid.NewGuid().ToString();
+        await Handler().HandleAsync(new AccountChargeRequest(customerId, firstBill, AmountDue: 100m, IdempotencyKey: key));
+
+        await Assert.ThrowsAsync<AccountChargeIdempotencyKeyReusedException>(
+            () => Handler().HandleAsync(new AccountChargeRequest(customerId, secondBill, AmountDue: 100m, IdempotencyKey: key)));
+
+        (await _allocations.GetByBillIdAsync(secondBill)).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task AKeyAlreadyUsedForADifferentAmountIsRefusedNotReplayed()
+    {
+        var customerId = await SeedCustomerAsync();
+        var billId = await SeedBillAsync(payable: 100m);
+        var key = Guid.NewGuid().ToString();
+        await Handler().HandleAsync(new AccountChargeRequest(customerId, billId, AmountDue: 40m, IdempotencyKey: key));
+
+        await Assert.ThrowsAsync<AccountChargeIdempotencyKeyReusedException>(
+            () => Handler().HandleAsync(new AccountChargeRequest(customerId, billId, AmountDue: 60m, IdempotencyKey: key)));
+    }
+
+    [Fact]
+    public async Task ABillWithAnUnsettledCardAttemptIsNotWrittenToAnAccount()
+    {
+        var customerId = await SeedCustomerAsync();
+        var billId = await SeedBillAsync(payable: 100m);
+        var unknownCard = new Payment(Guid.NewGuid(), billId, 100m).Tender(100m).MarkUnknown("terminal timeout");
+        await _payments.AddAsync(unknownCard);
+
+        await Assert.ThrowsAsync<AccountChargeUnsettledPaymentExistsException>(
+            () => Handler().HandleAsync(new AccountChargeRequest(customerId, billId, AmountDue: 100m, IdempotencyKey: Guid.NewGuid().ToString())));
+
+        (await _allocations.GetByBillIdAsync(billId)).Should().BeEmpty();
+        (await _ledger.GetByCustomerAsync(customerId)).Should().BeEmpty();
+    }
+
     private async Task RecordAsync(Guid customerId, AccountTransactionType type, decimal amount, DateTimeOffset occurredAt) =>
         await _ledger.RecordAsync(new RecordAccountTransactionRequest(
             customerId, type, amount, sourceReferenceType: "Test", sourceReferenceId: Guid.NewGuid(),

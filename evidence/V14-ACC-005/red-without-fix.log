@@ -1,0 +1,11 @@
+# V14-ACC-005 red runs (327543e3 + patch)
+## red 1: overpayment check removed
+  Failed ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.AReceiptLargerThanTheDebtIsRefusedAndChangesNothing [11 ms]
+  Failed ALKAROS.CustomerAccounts.CashReceipts.Tests.CashAccountReceiptHandlerTests.TwoConcurrentReceiptsCannotTogetherPayMoreThanIsOwed [22 ms]
+Failed!  - Failed:     2, Passed:     9, Skipped:     0, Total:    11, Duration: 324 ms - ALKAROS.CustomerAccounts.CashReceipts.Tests.dll (net8.0)
+## red 2: per-customer lock removed (5 runs of the concurrent overpayment test)
+run 1: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 115 ms - ALKAROS.CustomerAccounts.CashReceipts.Tests.dll (net8.0)
+run 2: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 123 ms - ALKAROS.CustomerAccounts.CashReceipts.Tests.dll (net8.0)
+run 3: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 126 ms - ALKAROS.CustomerAccounts.CashReceipts.Tests.dll (net8.0)
+run 4: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 119 ms - ALKAROS.CustomerAccounts.CashReceipts.Tests.dll (net8.0)
+run 5: Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 125 ms - ALKAROS.CustomerAccounts.CashReceipts.Tests.dll (net8.0)

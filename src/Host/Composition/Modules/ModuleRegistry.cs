@@ -60,6 +60,8 @@ public static class ModuleRegistry
         // V14-ACC-003: the account-charge tender handler, exercising row
         // 16's pre-approved Bill/Payment edges for the first time.
         typeof(ALKAROS.CustomerAccounts.BillCharges.CustomerAccountsBillChargesModule),
+        // V14-ACC-005: the bill-independent cash account receipt.
+        typeof(ALKAROS.CustomerAccounts.CashReceipts.CustomerAccountsCashReceiptsModule),
         typeof(ALKAROS.Payments.CardSettlement.CardSettlementModule),
         typeof(ALKAROS.Payments.EftTender.EftTenderModule),
         typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule),

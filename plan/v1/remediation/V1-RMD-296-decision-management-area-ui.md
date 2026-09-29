@@ -1,8 +1,8 @@
 # V1-RMD-296 - Karar: yönetici ekranları tek 'Yönetim' alanı altında toplanır
 
 - Task ID: V1-RMD-296
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: decision
 - Surface state: Existing
 
@@ -17,6 +17,8 @@
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-296-decision-management-area-ui.md`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/ — yalnız bu kararın açtığı yeni bölüm görevleri
+  (yeni dosyalar)
 
 ## In scope
 

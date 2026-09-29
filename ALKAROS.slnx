@@ -49,6 +49,7 @@
   <Project Path="tests/Host/Experience/Roles/ALKAROS.Host.Experience.Roles.Tests.csproj" />
   <Project Path="tests/Host/Experience/Composition/ALKAROS.Host.Experience.Composition.Tests.csproj" />
   <Project Path="tests/Host/Experience/CashSession/ALKAROS.Host.Experience.CashSession.Tests.csproj" />
+  <Project Path="tests/Host/Experience/CustomerAccounts/ALKAROS.Host.Experience.CustomerAccounts.Tests.csproj" />
   <Project Path="tests/Host/Experience/PaymentTender/ALKAROS.Host.Experience.PaymentTender.Tests.csproj" />
   <Project Path="tests/Host/Experience/Catalog/ALKAROS.Host.Experience.Catalog.Tests.csproj" />
   <Project Path="tests/Host/Experience/Tables/ALKAROS.Host.Experience.Tables.Tests.csproj" />
@@ -96,7 +97,10 @@
   <Project Path="tests/Modules/CustomerData/AnonymizationState/ALKAROS.CustomerData.AnonymizationState.Tests.csproj" />
   <Project Path="tests/Modules/CustomerAccounts/TransactionLedger/ALKAROS.CustomerAccounts.TransactionLedger.Tests.csproj" />
   <Project Path="tests/Modules/CustomerAccounts/BalanceProjection/ALKAROS.CustomerAccounts.BalanceProjection.Tests.csproj" />
+  <Project Path="tests/Modules/CustomerAccounts/AccountPayments/ALKAROS.CustomerAccounts.AccountPayments.Tests.csproj" />
+  <Project Path="tests/Modules/CustomerAccounts/AccountReceipts/ALKAROS.CustomerAccounts.AccountReceipts.Tests.csproj" />
   <Project Path="tests/Modules/CustomerAccounts/BillCharges/ALKAROS.CustomerAccounts.BillCharges.Tests.csproj" />
+  <Project Path="tests/Modules/CustomerAccounts/CashReceipts/ALKAROS.CustomerAccounts.CashReceipts.Tests.csproj" />
   <Project Path="tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj" />
   <Project Path="tests/Modules/Identity/Authorization/ALKAROS.Identity.Authorization.Tests.csproj" />
   <Project Path="tests/Modules/Identity/DeviceSessions/ALKAROS.Identity.DeviceSessions.Tests.csproj" />

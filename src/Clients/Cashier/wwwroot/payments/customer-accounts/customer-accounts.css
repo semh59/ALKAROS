@@ -1,0 +1,15 @@
+/* V1-RMD-443: Cari Hesaplar page. Builds on split-payment.css's tokens and .sp-* components (linked first). */
+.ca-shell .sp-card { width: min(980px, 100%); }
+.ca-header { display: flex; flex-direction: column; gap: 4px; }
+.ca-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr); gap: 24px; align-items: start; }
+@media (max-width: 820px) { .ca-grid { grid-template-columns: minmax(0, 1fr); } }
+.ca-grid section { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.ca-grid .sp-row > * { min-width: 0; }
+.ca-grid .sp-row > .sp-btn { flex: 0 0 auto; padding: 0 18px; }
+.ca-list { display: flex; flex-direction: column; gap: 6px; max-height: 520px; overflow-y: auto; }
+.ca-list .sp-customer { width: 100%; }
+.ca-table { width: 100%; border-collapse: collapse; font-size: 0.9375rem; }
+.ca-table th, .ca-table td { padding: 8px 6px; border-bottom: 1px solid var(--color-border); text-align: left; }
+.ca-table td.ca-amount, .ca-table th.ca-amount { text-align: right; font-variant-numeric: tabular-nums; }
+.ca-back { color: var(--color-brand); font-weight: 600; text-decoration: none; }
+.ca-back:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }

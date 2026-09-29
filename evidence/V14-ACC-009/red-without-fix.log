@@ -1,0 +1,7 @@
+# V14-ACC-009 red run: one-receipt-per-payment (constraint and lookup) and the Approved-only check removed
+  Failed ALKAROS.CustomerAccounts.AccountReceipts.Tests.PostgresAccountReceiptServiceTests.AnUnverifiedPaymentIsNotReceiptedAndYieldsReconciliationEvidence(status: Requested) [8 ms]
+  Failed ALKAROS.CustomerAccounts.AccountReceipts.Tests.PostgresAccountReceiptServiceTests.AnUnverifiedPaymentIsNotReceiptedAndYieldsReconciliationEvidence(status: Unknown) [9 ms]
+  Failed ALKAROS.CustomerAccounts.AccountReceipts.Tests.PostgresAccountReceiptServiceTests.AnUnverifiedPaymentIsNotReceiptedAndYieldsReconciliationEvidence(status: Declined) [5 ms]
+  Failed ALKAROS.CustomerAccounts.AccountReceipts.Tests.PostgresAccountReceiptServiceTests.ConcurrentRequestsForOnePaymentIssueOneReceipt [33 ms]
+  Failed ALKAROS.CustomerAccounts.AccountReceipts.Tests.PostgresAccountReceiptServiceTests.ASecondRequestForTheSamePaymentWithANewKeyReturnsTheExistingReceipt [17 ms]
+Failed!  - Failed:     5, Passed:     5, Skipped:     0, Total:    10, Duration: 278 ms - ALKAROS.CustomerAccounts.AccountReceipts.Tests.dll (net8.0)

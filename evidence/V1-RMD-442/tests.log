@@ -1,0 +1,8 @@
+# V1-RMD-442 tests on real PostgreSQL 18, Release (work branch: V14-ACC-004/005/009 code + this task)
+locked restore: ok
+Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7, Duration: 23 s - ALKAROS.Host.Experience.CustomerAccounts.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    23, Skipped:     0, Total:    23, Duration: 717 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    34, Skipped:     0, Total:    34, Duration: 1 m 57 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    22, Skipped:     0, Total:    22, Duration: 1 m 10 s - ALKAROS.Host.Experience.CashSession.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 17 s - ALKAROS.Host.Experience.Composition.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 433 ms - ALKAROS.Architecture.Tests.dll (net8.0)
