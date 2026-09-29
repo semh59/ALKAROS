@@ -1,7 +1,7 @@
 # V1-RMD-441 - Cari tahsilat zincirinin (V14-ACC-004, 005, 009) başlatılması
 
 - Task ID: V1-RMD-441
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: governance
 - Surface state: Existing
