@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1501,
-  "markdown_line_count": 114218,
-  "markdown_byte_count": 6580792,
+  "markdown_file_count": 1509,
+  "markdown_line_count": 114607,
+  "markdown_byte_count": 6598864,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2296,6 +2296,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-296/decision.md",
+      "sha256": "03B8FA839DF3942288D82A2FE8081C8D6949F66AA4C613C8C61B920BCEB0D1E5",
+      "lines": 35,
+      "bytes": 2366,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-393/REPORT.md",
       "sha256": "FBDB9AE647845FCC576D1317A822C15E2F391A0DAB5C7A4B20D4731D7E35D42C",
       "lines": 213,
@@ -2647,9 +2654,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "0173BB2DAC370FF94714AD5F15D8DC25B92257F405050DC3A2114A997357AA55",
-      "lines": 2777,
-      "bytes": 408070,
+      "sha256": "E8851F9134A37B29A637465ECE6B47D129C6822E7C7E9FCCD4C84EECC3F04FC9",
+      "lines": 2785,
+      "bytes": 409379,
       "utf8": true
     },
     {
@@ -7414,9 +7421,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-296-decision-management-area-ui.md",
-      "sha256": "B388C93380127941CDBAAA8AE5E098FE511F131242AAD86CA6A4AF9AA8B2AA69",
+      "sha256": "35C229F511A5D11649268FABFE6AC73FA053C816EE3C4D1A5BBF41A659CA46F9",
       "lines": 45,
-      "bytes": 2013,
+      "bytes": 2007,
       "utf8": true
     },
     {
@@ -8369,6 +8376,55 @@
       "sha256": "E255634ECA2B9F8872DBC362F87A68FBEDAD0F5952A8FA0BF85970ECDAE7EF80",
       "lines": 61,
       "bytes": 2671,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-445-management-area-shell-and-closing.md",
+      "sha256": "CB47E31A7192B0DF5EAD5AA49B29034BA0E715C6364F30C2F8A24CEDFBDEFADD",
+      "lines": 50,
+      "bytes": 2229,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-446-management-stock-section.md",
+      "sha256": "F7B2FF07A91DBC1849D2D137D890D724AC4ACC4756F798E3C6A1BE29B2D25E36",
+      "lines": 49,
+      "bytes": 1959,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-447-management-purchasing-production-section.md",
+      "sha256": "234A505233D314B3906C896154ED710B83B092EEF5ECFFD79A5A8A96F852865E",
+      "lines": 49,
+      "bytes": 1948,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-448-management-menus-recipe-cost-section.md",
+      "sha256": "6440BFDDE60E35D79A3E268EF29EFE13DF189712798FFA7686E849B596ABE441",
+      "lines": 49,
+      "bytes": 1996,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-449-management-staff-roles-section.md",
+      "sha256": "8042EFA3B2CAE75D8124125C70EADFA643C32E4DA9F05BB1FC07AE129BA88C66",
+      "lines": 49,
+      "bytes": 2022,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-450-management-security-system-section.md",
+      "sha256": "83D4C65122184818F8958E99B294C6A31C75077D0D265B603BAB10CBED58ADB7",
+      "lines": 51,
+      "bytes": 2367,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-451-management-settings-history-section.md",
+      "sha256": "888E5575327C180E6D4F5AF0D8236CD99574060EE6567230B4C301E4EF62B8CD",
+      "lines": 49,
+      "bytes": 1882,
       "utf8": true
     },
     {
