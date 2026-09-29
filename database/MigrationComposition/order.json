@@ -1422,6 +1422,16 @@
         "account_receipts"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "167",
+      "phase": "B",
+      "tables": [
+        "invoice_periods",
+        "invoice_source_sets",
+        "invoice_source_lines"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

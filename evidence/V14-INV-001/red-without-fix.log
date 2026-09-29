@@ -1,0 +1,4 @@
+# Mutation: the period window uses UTC midnight instead of Europe/Istanbul (reverted after the run)
+  Failed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.ConcurrentSelectionsOfOneCustomerResolveToOneSet [144 ms]
+  Failed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.SelectionTakesOnlyThisCustomersUninvoicedRowsInsideTheIstanbulWindow [25 ms]
+Failed!  - Failed:     2, Passed:    10, Skipped:     0, Total:    12, Duration: 1 s - ALKAROS.Invoicing.SourceSelection.Tests.dll (net8.0)

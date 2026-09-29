@@ -1,0 +1,22 @@
+$ dotnet test -c Release tests/Modules/Invoicing/SourceSelection (real PostgreSQL 18)
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.AnOverlappingARunningOrAnEmptyPeriodCannotBeClosed [90 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.ACustomerWithNothingToInvoiceOrAnUnknownPeriodIsRefused [40 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.ConcurrentSelectionsOfOneCustomerResolveToOneSet [165 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.SelectionNeverWritesTheAccountLedger [40 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.TheDatabaseRefusesATransactionInTwoLiveSets [27 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.SelectAllSelectsEveryCustomerWithUninvoicedRowsAndSkipsTheRest [29 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.ARerunReturnsTheSameLockedSetEvenAfterNewRowsInThePeriod [47 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.ASignedAdjustmentCountsByItsDirection [21 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.ARowOfTheNextPeriodIsSelectedThereNotInTheClosedOne [28 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.CancellingASetFreesItsTransactionsAndKeepsTheRecord [42 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.ClosingAPeriodRecordsWhoAndWhenAndClosingItAgainReturnsTheSamePeriod [20 ms]
+  Passed ALKAROS.Invoicing.SourceSelection.Tests.InvoiceSourceSelectionTests.SelectionTakesOnlyThisCustomersUninvoicedRowsInsideTheIstanbulWindow [29 ms]
+
+$ dotnet build ALKAROS.slnx -c Release; dotnet test tests/Host/MigrationComposition (manifest/composition/reachability); dotnet test tests/Architecture/ModuleBoundaries
+    0 Error(s)
+    0 Warning(s)
+Passed!  - Failed:     0, Passed:    42, Skipped:     0, Total:    42, Duration: 20 s - ALKAROS.Host.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 306 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+
+$ python tools/consistency-audit/consistency_audit.py
+consistency-audit: clean
