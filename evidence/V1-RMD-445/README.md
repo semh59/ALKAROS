@@ -10,7 +10,7 @@
   (`mutation-permission-gate.log`); dosya geri yüklendi ve `cmp` ile aynı doğrulandı.
 - Sunucunun Türkçe gerekçesi ekranda aynen görünür (409 örneği testte); ham enum değeri ekrana çıkmaz, Türkçe karşılıkları
   kullanılır; online sipariş vakası bu ekrandan "çözüldü" yapılamaz (sunucu bunu ayrı ekrana yönlendirir).
-- Ekran görüntüsü: `yonetim-gun-sonu.png` (yönetici yetkileriyle, sunucu yanıtları taklit edilerek alındı).
+- Ekran görüntüsü: `yonetim-gun-sonu.png` (taklit yanıtlarla). Gerçek Host + veritabanı denemesi: `gercek-deneme.log` ve `gercek-deneme.png`; aç, tara, kapat akışı gerçek uçlarda çalıştı. Bulgu: ana Kasa ekranı üst çubuğunda Yönetim bağlantısı yok (log sonu).
 - Bilinen sınır: iş günü kapanışında iptal ve yazdırma hatası sayısını sunucu hesaplamıyor, kapanış isteği bunları
   istemciden bekliyor; ekran iki sayı alanı sunar (varsayılan 0) ve bunu açıkça belirtir.
 - Semih'in elle deneyebileceği senaryo: yönetici oturumuyla "Yönetim" sekmesini açıp bir tarih için iş gününü açın ve

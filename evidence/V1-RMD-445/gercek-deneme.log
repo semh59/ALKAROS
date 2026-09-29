@@ -1,0 +1,26 @@
+Gerçek deneme (2026-09-29): temiz PostgreSQL veritabanı (tüm migration'lar + E2E tohum verisi), gerçek ALKAROS.Host,
+gerçek PosTerminal paketi, tarayıcıdan gerçek giriş (kasiyer/yönetici yetkili E2E hesabı). Sunucu yanıtı taklit edilmedi.
+
+giriş: başarılı
+ana Kasa ekranı üst çubuğunda "Yönetim" bağlantısı: 0 adet (BULGU - aşağıya bakın)
+/management adresi: "Bu tarih için iş günü kaydı yok." görüldü
+"İş gününü aç"   -> durum Açık, notice "İş günü açıldı."
+"Ödeme taraması yap" -> notice "Tarama tamamlandı; vaka listesi yenilendi."
+"İş gününü kapat" -> notice "İş günü kapatıldı."; durum Kapalı, kapanış zamanı dolu
+
+yönetim uçları (gerçek):
+  GET  /api/v1/management/reporting/business-day/2026-09-29 -> 404 (kayıt yok; beklenen)
+  POST /api/v1/management/reporting/business-day/open -> 201
+  GET  /api/v1/management/reporting/business-day/2026-09-29 -> 200
+  GET  /api/v1/management/payments/settlement-report?businessDate=2026-09-29 -> 200
+  GET  /api/v1/management/payments/manual-confirmations -> 200
+  GET  /api/v1/management/reconciliation/cases?status=Open&limit=50 -> 200
+  POST /api/v1/management/payments/reconciliation-scan -> 200
+  POST /api/v1/management/reporting/business-day/2026-09-29/close -> 200
+  GET  /api/v1/management/reporting/business-day/2026-09-29/full-report -> 200
+
+konsol: yalnız dış yazı tipi (Google Fonts) CSP engeli ve giriş öncesi oturum kontrolünün 401'leri; ekran hatası yok.
+
+BULGU: Ana Kasa ekranının üst çubuğundaki bağlantılar (src/Clients/PosTerminal/src/routes/Cashier.tsx) "Yönetim"i
+içermiyor; sekme yalnız başka bir çalışma alanına geçildikten sonra kenar menüde görünüyor. Bu görevin sahip olduğu
+yüzeyde (workspace.tsx) düzeltilemez; Cashier.tsx için ayrı onay/kapsam gerekir.
