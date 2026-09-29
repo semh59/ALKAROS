@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.Experience.Catalog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -43,6 +44,7 @@ public static partial class DualScreenApplication
     public static RouteGroupBuilder MapCustomerDisplayScreensaverApi(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
+        ApiErrorHandling.EnsureFor(app);
 
         // V1-RMD-235: this group's own PUT binds an IFormFile, which ASP.NET
         // Core's minimal-API model binder reads eagerly as part of argument

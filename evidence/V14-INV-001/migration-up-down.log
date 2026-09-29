@@ -1,0 +1,15 @@
+# 161 up, 167 up, 167 down, 167 up on an empty database
+$ psql -f database/migrations/V14/V14-ACC-001/161-account-transactions.up.sql
+NOTICE:  trigger "trg_account_transactions_immutable" for relation "customer_account.account_transactions" does not exist, skipping
+exit=0
+$ psql -f database/migrations/V14/V14-INV-001/167-invoice-source-selection.up.sql
+exit=0
+$ psql -f database/migrations/V14/V14-INV-001/167-invoice-source-selection.down.sql
+exit=0
+$ psql -f database/migrations/V14/V14-INV-001/167-invoice-source-selection.up.sql
+NOTICE:  schema "invoicing" already exists, skipping
+exit=0
+$ \dt invoicing.*
+ invoicing | invoice_periods      | table | postgres
+ invoicing | invoice_source_lines | table | postgres
+ invoicing | invoice_source_sets  | table | postgres

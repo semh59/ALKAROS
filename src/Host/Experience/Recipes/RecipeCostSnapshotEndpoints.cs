@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Measurements;
 using ALKAROS.Recipes.CostSnapshots;
@@ -44,6 +45,7 @@ public static class RecipeCostSnapshotEndpoints
     public static RouteGroupBuilder MapRecipeCostSnapshotApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots");
         group.AddEndpointFilter<RecipeCostSnapshotEndpointFilter>();
 
@@ -150,80 +152,18 @@ public sealed class RecipeCostSnapshotEndpointFilter : IEndpointFilter
         EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(
-                context.HttpContext,
-                context.HttpContext.RequestAborted);
-            await _authorization.AuthorizeAsync(
-                actorId,
-                RecipeCostSnapshotEndpoints.ManagePermission,
-                context.HttpContext.RequestAborted);
-            return await next(context);
-        }
-        catch (RecipeCostSnapshotUnauthorizedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (RecipeCostSnapshotException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PostgresException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.RecipeCostSnapshots);
+        var actorId = await _authentication.AuthenticateAsync(
+            context.HttpContext,
+            context.HttpContext.RequestAborted);
+        await _authorization.AuthorizeAsync(
+            actorId,
+            RecipeCostSnapshotEndpoints.ManagePermission,
+            context.HttpContext.RequestAborted);
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            RecipeCostSnapshotUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Reçete maliyeti yönetimi izni gerekiyor."),
-            RecipeVersionNotFoundException =>
-                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen reçete sürümü bulunamadı."),
-            DuplicateCostSnapshotException =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Bu tarihte bir maliyet anlık görüntüsü zaten var."),
-            MissingCostBasisException =>
-                (StatusCodes.Status400BadRequest, "MISSING_COST_BASIS", "Bir malzeme için maliyet verisi bulunamadı."),
-            MissingStockUnitMappingException =>
-                (StatusCodes.Status400BadRequest, "MISSING_STOCK_UNIT_MAPPING", "Bir malzeme için stok takip birimi belirtilmedi."),
-            InvalidCostSnapshotException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
-            PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
-                (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
-            ArgumentException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new RecipeCostSnapshotApiErrorEnvelopeV1(new RecipeCostSnapshotApiErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
-
-public sealed record RecipeCostSnapshotApiErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record RecipeCostSnapshotApiErrorEnvelopeV1(RecipeCostSnapshotApiErrorV1 Error);
 
 public sealed class RecipeCostSnapshotUnauthorizedException : Exception
 {

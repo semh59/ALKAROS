@@ -1,0 +1,3 @@
+# Mutation: the DUPLICATE_SKU message is changed in ApiErrorCatalog (reverted after the run)
+Failed!  - Failed:     1, Passed:   179, Skipped:     0, Total:   180, Duration: 103 ms - ALKAROS.Host.Errors.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12, Duration: 2 s - ALKAROS.Host.Experience.Catalog.Tests.dll (net8.0)

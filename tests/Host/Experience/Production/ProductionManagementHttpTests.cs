@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -175,8 +176,8 @@ public sealed class ProductionManagementHttpTests : IAsyncLifetime
         return client;
     }
 
-    private static async Task<ProductionApiErrorEnvelopeV1> ReadErrorAsync(HttpResponseMessage response)
-        => await response.Content.ReadFromJsonAsync<ProductionApiErrorEnvelopeV1>()
+    private static async Task<ApiErrorEnvelope> ReadErrorAsync(HttpResponseMessage response)
+        => await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>()
             ?? throw new InvalidOperationException("Expected a production management error response.");
 }
 

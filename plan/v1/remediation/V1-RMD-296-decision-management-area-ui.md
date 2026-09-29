@@ -1,7 +1,7 @@
 # V1-RMD-296 - Karar: yönetici ekranları tek 'Yönetim' alanı altında toplanır
 
 - Task ID: V1-RMD-296
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: decision
 - Surface state: Existing

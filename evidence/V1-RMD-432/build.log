@@ -1,0 +1,8 @@
+$ pnpm build
+dist/assets/Cashier-B1P_caet.js                               17.74 kB │ gzip:  5.49 kB
+dist/assets/HubConnectionBuilder-1O9QmF_w.js                  54.78 kB │ gzip: 14.03 kB
+dist/assets/workspace-Q9I3Yd0j.js                            172.92 kB │ gzip: 44.66 kB
+dist/assets/index-_pcxzZ-x.js                                195.89 kB │ gzip: 61.68 kB
+
+✓ built in 1.29s
+exit=0

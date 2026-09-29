@@ -1,0 +1,5 @@
+# Mutation: src/Rmd432Mutation.tsx with <button type="button" onClick={...}></button> (removed after the run)
+$ pnpm run lint
+src/Rmd432Mutation.tsx:2:10: error jsx-a11y(control-has-associated-label): A control must be associated with a text label. help: Add a text label to the control element. This can be done by adding text content, an `aria-label` attribute, or an `aria-labelledby` attribute.
+[ELIFECYCLE] Command failed with exit code 1.
+exit=1

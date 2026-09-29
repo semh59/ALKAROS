@@ -1,0 +1,6 @@
+# Mutation: DualScreenApplication.cs gets app.MapGet("/rmd429-mutation", () => Results.Ok("unauthorized")); (reverted after the run)
+Failed!  - Failed:     2, Passed:     1, Skipped:     0, Total:     3, Duration: 7 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+   Endpoints that answered a caller without a session with something other than 401/403 (add the authorization check, or record a deliberately public endpoint with a reason):
+GET /rmd429-mutation -> 200
+   Endpoints outside /api/v1 (move them under the prefix or record them with a reason):
+GET /rmd429-mutation

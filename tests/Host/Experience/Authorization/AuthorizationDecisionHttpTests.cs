@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -68,7 +69,7 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
         using var lateRequest = Request(HttpMethod.Post, GrantPath(grantId, "approve"), managerOne);
         using var late = await client.SendAsync(lateRequest);
         Assert.Equal(HttpStatusCode.Conflict, late.StatusCode);
-        var error = await late.Content.ReadFromJsonAsync<AuthorizationDecisionErrorEnvelopeV1>();
+        var error = await late.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
         Assert.Equal("ALREADY_RESOLVED", error!.Error.Code);
 
         // The resolved grant is gone from the pending list.
@@ -131,7 +132,7 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
             AuthorizationDecisionEndpoints.GroupPrefix + $"/behavioural-tightenings/{tighteningId:D}/clear",
             manager));
         Assert.Equal(HttpStatusCode.Conflict, clearAgain.StatusCode);
-        var error = await clearAgain.Content.ReadFromJsonAsync<AuthorizationDecisionErrorEnvelopeV1>();
+        var error = await clearAgain.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
         Assert.Equal("ALREADY_CLEARED", error!.Error.Code);
     }
 
@@ -174,7 +175,7 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
         async Task<(HttpStatusCode Status, string? Code)> TryAsync(CreateDelegationRequestV1 body)
         {
             using var response = await client.SendAsync(JsonRequest(path, manager, body));
-            var error = response.IsSuccessStatusCode ? null : await response.Content.ReadFromJsonAsync<AuthorizationDecisionErrorEnvelopeV1>();
+            var error = response.IsSuccessStatusCode ? null : await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
             return (response.StatusCode, error?.Error.Code);
         }
 
@@ -203,7 +204,7 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
 
         using var approve = await client.SendAsync(Request(HttpMethod.Post, GrantPath(grantId, "approve"), manager));
         Assert.Equal(HttpStatusCode.Forbidden, approve.StatusCode);
-        var approveError = await approve.Content.ReadFromJsonAsync<AuthorizationDecisionErrorEnvelopeV1>();
+        var approveError = await approve.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
         Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", approveError!.Error.Code);
         Assert.Equal("Kendi talebinizi onaylayamaz ya da reddedemezsiniz.", approveError.Error.Message); // V1-RMD-426
 
@@ -234,7 +235,7 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
             AuthorizationDecisionEndpoints.GroupPrefix + $"/behavioural-tightenings/{tighteningId:D}/clear",
             manager));
         Assert.Equal(HttpStatusCode.Forbidden, clear.StatusCode);
-        var error = await clear.Content.ReadFromJsonAsync<AuthorizationDecisionErrorEnvelopeV1>();
+        var error = await clear.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
         Assert.Equal("SELF_APPROVAL_NOT_ALLOWED", error!.Error.Code);
 
         // Still genuinely open - the attempt did not actually clear it.

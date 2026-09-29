@@ -1,0 +1,13 @@
+# V1-RMD-433 acceptance run
+$ python tools/plan-audit/plan_audit_tool.py validate
+Validation errors: 0
+Validation warnings: 0
+exit=0
+$ python tools/consistency-audit/consistency_audit.py
+consistency-audit: clean
+$ markdownlint-cli2 plan/TASK_STANDARD.md AGENTS.md
+Summary: 0 issues in 0 files
+$ python tools/task-scope/task_scope_tool.py --task-id V1-RMD-433 --diff-base HEAD
+  "metadata_errors": [],
+  "findings": []
+}

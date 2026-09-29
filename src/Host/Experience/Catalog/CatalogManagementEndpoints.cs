@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Catalog.Pricing;
 using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.Identity.Authorization;
@@ -50,6 +51,7 @@ public static class CatalogManagementEndpoints
     public static RouteGroupBuilder MapCatalogManagement(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var catalog = endpoints.MapGroup("/api/v1/management/catalog");
         catalog.AddEndpointFilter<CatalogManagerEndpointFilter>();
 
@@ -247,78 +249,17 @@ public sealed class CatalogManagerEndpointFilter : IEndpointFilter
         EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(
-                context.HttpContext,
-                context.HttpContext.RequestAborted);
-            await _authorization.AuthorizeAsync(
-                actorId,
-                CatalogManagementEndpoints.ManagePermission,
-                context.HttpContext.RequestAborted);
-            return await next(context);
-        }
-        catch (CatalogUnauthorizedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PostgresException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (InvalidOperationException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.CatalogManagement);
+        var actorId = await _authentication.AuthenticateAsync(
+            context.HttpContext,
+            context.HttpContext.RequestAborted);
+        await _authorization.AuthorizeAsync(
+            actorId,
+            CatalogManagementEndpoints.ManagePermission,
+            context.HttpContext.RequestAborted);
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            CatalogUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Katalog yönetimi izni gerekiyor."),
-            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation, ConstraintName: "products_sku_key" } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_SKU", "Bu stok koduyla (SKU) bir ürün zaten var."),
-            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Bu katalog kaydı zaten var."),
-            PostgresException { SqlState: PostgresErrorCodes.ExclusionViolation } =>
-                (StatusCodes.Status409Conflict, "OVERLAPPING_EFFECTIVE_PRICE", "Bu fiyatın geçerlilik aralığı mevcut bir aralıkla çakışıyor."),
-            PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
-                (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan katalog kaydı bulunamadı."),
-            PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
-            ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            InvalidOperationException =>
-                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Katalog kaydı başka bir işlem tarafından değiştirildi."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new CatalogApiErrorEnvelopeV1(
-                new CatalogApiErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
 
 public sealed class CatalogUnauthorizedException : Exception

@@ -62,6 +62,8 @@ public static class ModuleRegistry
         typeof(ALKAROS.CustomerAccounts.BillCharges.CustomerAccountsBillChargesModule),
         // V14-ACC-005: the bill-independent cash account receipt.
         typeof(ALKAROS.CustomerAccounts.CashReceipts.CustomerAccountsCashReceiptsModule),
+        // V14-INV-001: periodic invoice source selection (reads the account ledger by SQL).
+        typeof(ALKAROS.Invoicing.SourceSelection.InvoicingSourceSelectionModule),
         typeof(ALKAROS.Payments.CardSettlement.CardSettlementModule),
         typeof(ALKAROS.Payments.EftTender.EftTenderModule),
         typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule),

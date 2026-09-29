@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Inventory.BalanceProjection;
@@ -55,6 +56,7 @@ public static class PurchasingManagementEndpoints
     public static RouteGroupBuilder MapPurchasingManagement(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/purchasing");
         group.AddEndpointFilter<PurchasingManagerEndpointFilter>();
 
@@ -292,97 +294,19 @@ public sealed class PurchasingManagerEndpointFilter : IEndpointFilter
         EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {
-        try
-        {
-            var (actorId, displayName) = await _authentication.AuthenticateAsync(
-                context.HttpContext,
-                context.HttpContext.RequestAborted);
-            await _authorization.AuthorizeAsync(
-                actorId,
-                PurchasingManagementEndpoints.ManagePermission,
-                context.HttpContext.RequestAborted);
-            context.HttpContext.Items[ActorRoleItemKey] = "Manager";
-            context.HttpContext.Items[ActorDisplayNameItemKey] = displayName;
-            return await next(context);
-        }
-        catch (PurchasingManagementUnauthorizedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (SupplierException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PurchasingException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PostgresException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.PurchasingManagement);
+        var (actorId, displayName) = await _authentication.AuthenticateAsync(
+            context.HttpContext,
+            context.HttpContext.RequestAborted);
+        await _authorization.AuthorizeAsync(
+            actorId,
+            PurchasingManagementEndpoints.ManagePermission,
+            context.HttpContext.RequestAborted);
+        context.HttpContext.Items[ActorRoleItemKey] = "Manager";
+        context.HttpContext.Items[ActorDisplayNameItemKey] = displayName;
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            PurchasingManagementUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Satın alma yönetimi izni gerekiyor."),
-            SupplierNotFoundException or PurchaseOrderNotFoundException or GoodsReceiptNotFoundException =>
-                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen kayıt bulunamadı."),
-            DuplicateSupplierCodeException =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_CODE", "Bu kodla bir tedarikçi zaten var."),
-            DuplicateSupplierTaxNumberException =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_TAX_NUMBER", "Bu vergi numarasıyla bir tedarikçi zaten var."),
-            DuplicateGoodsReceiptException =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RECEIPT_NUMBER", "Bu numarayla bir mal kabul fişi zaten var."),
-            InactiveSupplierException =>
-                (StatusCodes.Status409Conflict, "SUPPLIER_INACTIVE", "Tedarikçi pasif; sipariş kabul edemez."),
-            PurchaseOrderStatusException =>
-                (StatusCodes.Status409Conflict, "INVALID_STATUS", "Sipariş bu durumda bu işlemi kabul etmiyor."),
-            VarianceReasonRequiredException =>
-                (StatusCodes.Status400BadRequest, "VARIANCE_REASON_REQUIRED", "Sipariş edilenden farklı miktar için gerekçe zorunlu."),
-            OverReceiptApprovalRequiredException =>
-                (StatusCodes.Status409Conflict, "APPROVAL_REQUIRED", "Tolerans üstü fazla teslimat için yönetici onayı gerekiyor."),
-            InvalidSupplierDataException or InvalidPurchaseOrderException or InvalidGoodsReceiptException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            SupplierAccessDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Bu tedarikçi verisine erişim izniniz yok."),
-            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
-            PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
-                (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
-            PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
-            ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new PurchasingApiErrorEnvelopeV1(new PurchasingApiErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
 
 public sealed class PurchasingManagementUnauthorizedException : Exception

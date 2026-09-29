@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
 using Microsoft.AspNetCore.Builder;
@@ -85,7 +86,7 @@ public static class OutboxAdministration
                 await using var reader = await readCommand.ExecuteReaderAsync(cancellationToken);
                 if (!await reader.ReadAsync(cancellationToken))
                     return Results.Json(
-                        new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                        new ApiErrorEnvelope(new ApiError(
                             "NOT_FOUND", "Ölü mektup bulunamadı ya da zaten yeniden kuyruğa alınmış.",
                             StatusCodes.Status404NotFound, context.TraceIdentifier)),
                         statusCode: StatusCodes.Status404NotFound);
@@ -109,7 +110,7 @@ public static class OutboxAdministration
                 var affected = await updateCommand.ExecuteNonQueryAsync(cancellationToken);
                 if (affected != 1)
                     return Results.Json(
-                        new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                        new ApiErrorEnvelope(new ApiError(
                             "NOT_FOUND", "Ölü mektup bulunamadı ya da zaten yeniden kuyruğa alınmış.",
                             StatusCodes.Status404NotFound, context.TraceIdentifier)),
                         statusCode: StatusCodes.Status404NotFound);

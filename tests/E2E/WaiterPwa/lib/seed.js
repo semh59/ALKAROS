@@ -161,6 +161,24 @@ export async function seedDatabase(client) {
     offlineTableIds.push(offlineTableId);
   }
 
+  // V1-RMD-297: the offline void/comp spec. The login's offline budget is derived only from the role's auto_within
+  // policies and no migration seeds one, so the E2E role gets a bills.comp line (one comp up to 300 TL); bills.void
+  // is deliberately absent, so an offline void is refused.
+  await client.query(
+    `INSERT INTO identity.authorization_policies (permission_code, role_code, mode, limit_amount, max_count, window_seconds)
+     VALUES ('bills.comp', 'e2e-waiter-role', 'auto_within', 300.00, 1, 86400)`,
+  );
+  const offlineAuthorityTableIds = [];
+  for (let i = 1; i <= 2; i++) {
+    const offlineAuthorityTableId = randomUUID();
+    await client.query(
+      `INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
+       VALUES ($1, $2, $3, 4, 'Available')`,
+      [offlineAuthorityTableId, zoneId, `OFA-${i}`],
+    );
+    offlineAuthorityTableIds.push(offlineAuthorityTableId);
+  }
+
   // Untouched tables for the send-to-cashier / undo specs (08): each scenario sends its own check.
   const sendTableIds = [];
   for (let i = 1; i <= 3; i++) {
@@ -248,6 +266,7 @@ export async function seedDatabase(client) {
     timingSeatIds,
     loadTableIds,
     offlineTableIds,
+    offlineAuthorityTableIds,
     sendTableIds,
     zoneId,
     seatOneId,

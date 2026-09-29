@@ -124,6 +124,9 @@ public static partial class DualScreenApplication
                     offlineBudget = new
                     {
                         budgetId = budget.BudgetId,
+                        // V1-RMD-297: the reconnect endpoint requires RequesterRoleCode on every replayed action and
+                        // checks it against this same governing role; no other response carries the code.
+                        roleCode = role.Code,
                         expiresAt = budget.ExpiresAt,
                         lines = budget.Lines.Select(line => new
                         {

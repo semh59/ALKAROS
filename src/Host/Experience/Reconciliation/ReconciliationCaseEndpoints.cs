@@ -1,3 +1,5 @@
+using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Reconciliation.CaseFoundation;
@@ -45,6 +47,7 @@ public static class ReconciliationCaseEndpoints
     public static RouteGroupBuilder MapReconciliationCaseApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/reconciliation/cases");
         group.AddEndpointFilter<ReconciliationCaseEndpointFilter>();
 
@@ -85,7 +88,7 @@ public static class ReconciliationCaseEndpoints
                 && (await reconciliation.GetCaseByIdAsync(caseId, cancellationToken))?.CaseType == CaseType.OnlineOrderMismatch)
             {
                 return Results.Json(
-                    new ReconciliationCaseApiErrorEnvelopeV1(new ReconciliationCaseApiErrorV1(
+                    new ApiErrorEnvelope(new ApiError(
                         "USE_ONLINE_RESOLUTION",
                         "Online sipariş vakaları yalnız online mutabakat ekranından, bir çözüm notuyla kapatılabilir.",
                         StatusCodes.Status409Conflict,
@@ -213,74 +216,14 @@ public sealed class ReconciliationCaseEndpointFilter : IEndpointFilter
 
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(context.HttpContext, context.HttpContext.RequestAborted);
-            await _authorization.AuthorizeAsync(actorId, ReconciliationCaseEndpoints.ViewPermission, context.HttpContext.RequestAborted);
-            context.HttpContext.Items[ActorIdItemKey] = actorId;
-            return await next(context);
-        }
-        catch (ReconciliationCaseUnauthorizedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ReconciliationException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PostgresException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.ReconciliationCases);
+        var actorId = await _authentication.AuthenticateAsync(context.HttpContext, context.HttpContext.RequestAborted);
+        await _authorization.AuthorizeAsync(actorId, ReconciliationCaseEndpoints.ViewPermission, context.HttpContext.RequestAborted);
+        context.HttpContext.Items[ActorIdItemKey] = actorId;
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            ReconciliationCaseUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Mutabakat vakası yönetimi için yeterli izin yok."),
-            CaseNotFoundException =>
-                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen mutabakat vakası bulunamadı."),
-            InvalidCaseStatusTransitionException =>
-                (StatusCodes.Status409Conflict, "INVALID_OPERATION", "Bu durum geçişi şu anki vaka durumuyla uyumlu değil."),
-            ReconciliationConcurrencyException =>
-                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Vaka başka bir işlem tarafından değiştirildi."),
-            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
-            ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new ReconciliationCaseApiErrorEnvelopeV1(new ReconciliationCaseApiErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
-
-public sealed record ReconciliationCaseApiErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record ReconciliationCaseApiErrorEnvelopeV1(ReconciliationCaseApiErrorV1 Error);
 
 public sealed class ReconciliationCaseUnauthorizedException : Exception
 {

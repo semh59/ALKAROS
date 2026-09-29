@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Catalog.Pricing;
@@ -531,8 +532,8 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         return page.Items.Select(id).ToArray();
     }
 
-    private static async Task<CatalogApiErrorEnvelopeV1> ReadErrorAsync(HttpResponseMessage response)
-        => await response.Content.ReadFromJsonAsync<CatalogApiErrorEnvelopeV1>()
+    private static async Task<ApiErrorEnvelope> ReadErrorAsync(HttpResponseMessage response)
+        => await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>()
             ?? throw new InvalidOperationException("Expected a catalog error response.");
 
     private async Task<T> ScalarAsync<T>(string sql, object value)

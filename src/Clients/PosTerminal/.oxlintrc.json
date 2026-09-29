@@ -1,0 +1,75 @@
+{
+  // V1-RMD-432: PosTerminal lint and accessibility gate. Oxlint replaces ESLint + eslint-plugin-jsx-a11y because
+  // typescript-eslint cannot parse TSX under TypeScript 7 (decision 2026-09-29).
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["react", "jsx-a11y", "typescript"],
+  "categories": {
+    "correctness": "error"
+  },
+  "rules": {
+    "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    // Baseline matches eslint-plugin-jsx-a11y's recommended set: prefer-tag-over-role is not part of it.
+    "jsx-a11y/prefer-tag-over-role": "off",
+    // React Compiler advisory, not a correctness rule of eslint-plugin-react-hooks' classic set.
+    "react/set-state-in-effect": "off"
+  },
+  "ignorePatterns": ["dist/**", "dist-nfc/**", "node_modules/**"],
+  // Transition list: violations that existed when the gate was added. They are downgraded to warnings file by file,
+  // and `pnpm run lint` caps the warning count (--max-warnings), so the list can only shrink: a new violation of the
+  // same rule in these files, or any violation elsewhere, fails the build. Fixing one lowers the count; lower the cap
+  // in package.json in the same change.
+  "overrides": [
+    {
+      // Manager re-authentication and settings dialogs focus the username field on open; the dialog is the whole
+      // screen's single task. Replace with an explicit focus on open (dialog focus management) before removing.
+      "files": [
+        "src/routes/BusinessIdentitySettings.tsx",
+        "src/routes/Cashier.tsx",
+        "src/routes/CustomerDisplayScreensaverSettings.tsx",
+        "src/routes/QnbCredentialSettings.tsx",
+        "src/routes/RelaySettings.tsx",
+        "src/routes/ReservationStation.tsx",
+        "src/routes/SecurityAdministration.tsx",
+        "src/routes/TokenTerminalSettings.tsx"
+      ],
+      "rules": { "jsx-a11y/no-autofocus": "warn" }
+    },
+    {
+      // Modal dialog and drawer handle Escape/Tab on their own container (focus trap); the backdrop closes on click.
+      "files": ["src/design-system/primitives.tsx", "src/routes/Cashier.tsx"],
+      "rules": {
+        "jsx-a11y/no-noninteractive-element-interactions": "warn",
+        "jsx-a11y/no-static-element-interactions": "warn"
+      }
+    },
+    {
+      // The category rail is a nav landmark that also carries role="tablist"; splitting landmark and tablist is a
+      // markup change of the cashier screen.
+      "files": ["src/routes/Cashier.tsx"],
+      "rules": {
+        "jsx-a11y/no-noninteractive-element-to-interactive-role": "warn",
+        "react/exhaustive-deps": "warn"
+      }
+    },
+    {
+      // The owner checkbox label's text comes from runtime expressions ({owner.label}) the rule cannot resolve.
+      "files": ["src/features/billing/BillSplitWorkspace.tsx"],
+      "rules": { "jsx-a11y/label-has-associated-control": "warn" }
+    },
+    {
+      // Unused helper and test imports left behind by earlier refactors.
+      "files": [
+        "src/features/kitchen-operations/KitchenOperationsWorkspace.tsx",
+        "src/features/tables/TableWorkspace.test.tsx",
+        "src/routes/Cashier.logout-clears-storage.test.tsx"
+      ],
+      "rules": { "no-unused-vars": "warn" }
+    },
+    {
+      // The test captures the hook result into an outer variable on purpose.
+      "files": ["src/router.test.tsx"],
+      "rules": { "react/globals": "warn" }
+    }
+  ]
+}

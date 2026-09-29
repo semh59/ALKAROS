@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.Experience.Menu;
@@ -222,8 +223,8 @@ public sealed class MenuManagementHttpTests : IAsyncLifetime
         return client;
     }
 
-    private static async Task<MenuApiErrorEnvelopeV1> ReadErrorAsync(HttpResponseMessage response)
-        => await response.Content.ReadFromJsonAsync<MenuApiErrorEnvelopeV1>()
+    private static async Task<ApiErrorEnvelope> ReadErrorAsync(HttpResponseMessage response)
+        => await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>()
             ?? throw new InvalidOperationException("Expected a menu management error response.");
 
     private async Task<T> ScalarAsync<T>(string sql, object value)

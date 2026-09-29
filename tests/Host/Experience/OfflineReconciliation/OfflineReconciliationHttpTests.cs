@@ -287,6 +287,42 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
         Assert.Equal("Pending", Assert.Single(body.Results, r => r.IdempotencyKey == onOwnCheck.IdempotencyKey).Status);
     }
 
+    [Fact]
+    public async Task TheLoginBudgetCarriesTheRoleCodeTheReconnectEndpointRequires()
+    {
+        // V1-RMD-297: the waiter client replays offline actions with RequesterRoleCode, which must equal the governing
+        // role's code; the login response is the only place the device can learn it.
+        var terminalId = Guid.NewGuid();
+        const string password = "rmd297-login-password";
+        await _database.SeedLoginUserAsync("rmd297-waiter", password, "waiter");
+        await _database.SeedAutoWithinPolicyAsync("bills.comp", "waiter", 50m, 3);
+        var webRoot = Directory.CreateTempSubdirectory("alkaros-rmd297-").FullName;
+        File.WriteAllText(System.IO.Path.Combine(webRoot, "index.html"), "<!doctype html><html></html>");
+        await using var app = DualScreenApplication.Build(new DualScreenOptions(
+            _database.ConnectionString, webRoot, "http://127.0.0.1:0", TrustedProxies: [IPAddress.Loopback]));
+        await app.StartAsync();
+        using var client = CreateClient(app);
+
+        using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent.Create(new { terminalId, username = "rmd297-waiter", password }),
+        };
+        // The host serves staff sessions over HTTPS only; the trusted proxy says the request came in that way.
+        login.Headers.TryAddWithoutValidation("X-Forwarded-For", "198.51.100.40");
+        login.Headers.TryAddWithoutValidation("X-Forwarded-Proto", "https");
+        using var response = await client.SendAsync(login);
+        Directory.Delete(webRoot, recursive: true);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        var budget = body.GetProperty("offlineBudget");
+        Assert.Equal("waiter", budget.GetProperty("roleCode").GetString());
+        var line = Assert.Single(budget.GetProperty("lines").EnumerateArray());
+        Assert.Equal("bills.comp", line.GetProperty("permissionCode").GetString());
+        Assert.Equal(50m, line.GetProperty("limitAmount").GetDecimal());
+        Assert.Equal(3, line.GetProperty("maxCount").GetInt32());
+    }
+
     private static string Path(Guid terminalId)
         => OfflineReconciliationEndpoints.RoutePrefix.Replace("{terminalId:guid}", terminalId.ToString("D"));
 
@@ -426,6 +462,37 @@ internal sealed class OfflineReconciliationTestDatabase
 
         return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
     }
+
+    /// <summary>V1-RMD-297: a user who can sign in with <paramref name="password"/> and holds <paramref name="roleCode"/>.</summary>
+    public async Task SeedLoginUserAsync(string username, string password, string roleCode)
+    {
+        var userId = Guid.NewGuid();
+        await ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@user_id, @username, @password_hash, 'Offline Budget Login Test', true);
+            INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
+            SELECT gen_random_uuid(), @user_id, role_id FROM identity.roles WHERE code = @role_code;
+            """,
+            ("user_id", userId),
+            ("username", username),
+            ("password_hash", new ALKAROS.Identity.Authentication.PasswordHasher(10_000).Hash(password)),
+            ("role_code", roleCode));
+    }
+
+    /// <summary>V1-RMD-297: an auto_within policy, the only kind an offline budget line is derived from.</summary>
+    public Task SeedAutoWithinPolicyAsync(string permissionCode, string roleCode, decimal limitAmount, int maxCount)
+        => ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.authorization_policies (permission_code, role_code, mode, limit_amount, max_count, window_seconds)
+            VALUES (@permission_code, @role_code, 'auto_within', @limit_amount, @max_count, 86400);
+            """,
+            ("permission_code", permissionCode),
+            ("role_code", roleCode),
+            ("limit_amount", limitAmount),
+            ("max_count", maxCount));
 
     /// <summary>V1-RMD-404: a real order with one item served by <paramref name="servingUserId"/>; returns the item id.</summary>
     public async Task<Guid> SeedOrderItemServedByAsync(Guid? servingUserId)

@@ -10,7 +10,7 @@
 // real behavior is broadly covered, unlike push.js/kiosk-lock.js's own
 // documented E2E gaps.
 
-import { state, el, renderRibbon } from './state.js';
+import { state, el, renderRibbon, persistOfflineActions } from './state.js';
 import { randomUUID } from './util.js';
 import { apiUrl, api } from './api.js';
 import { toast } from './toast.js';
@@ -323,5 +323,64 @@ export async function sendDraft() {
   } finally {
     state.sendInFlight = false;
     afterDraftChange();
+  }
+}
+
+// ══ Offline-authorized void/comp (V1-RMD-297) ══════════════════════
+// A void or comp the waiter authorized against the offline budget while the
+// server was unreachable. The idempotency key is the one the online request
+// would have used, so the grant the reconnect endpoint records for manager
+// review is the same grant a later retry of that request resolves to.
+export function queueOfflineAuthorizedAction({ permissionCode, reasonCode, amount, itemId, idempotencyKey }) {
+  const budget = state.offlineBudget;
+  state.offlineActions.push({
+    idempotencyKey,
+    permissionCode,
+    requesterUserId: budget.userId,
+    requesterRoleCode: budget.roleCode,
+    reasonCode,
+    amount,
+    offlineAuthorizedAt: new Date().toISOString(),
+    subjectType: 'OrderItem',
+    subjectId: itemId
+  });
+  budget.used = Object.assign({}, budget.used, {
+    [permissionCode]: ((budget.used && budget.used[permissionCode]) || 0) + 1
+  });
+  persistOfflineActions();
+}
+
+let reconcileInFlight = false;
+
+// Sends every queued offline action to the reconnect endpoint once the server
+// answers again, then tells the waiter the server's own Turkish summary. A
+// network failure keeps the queue for the next attempt; a refusal the server
+// will never accept (unknown budget, identity mismatch) drops it with the
+// server's reason, so it cannot retry forever. A 401 keeps it: api() opens the
+// login overlay and the same user's budget is still valid after signing in.
+export async function reconcileOfflineActions() {
+  const budget = state.offlineBudget;
+  if (reconcileInFlight || !budget || state.offlineActions.length === 0) return null;
+  reconcileInFlight = true;
+  try {
+    const actions = state.offlineActions.slice();
+    const result = await api(apiUrl('/offline-reconciliation'), {
+      method: 'POST',
+      body: { budgetId: budget.budgetId, actions }
+    });
+    if (result.offline || result.status === 401) return null;
+
+    const sent = new Set(actions.map((action) => action.idempotencyKey));
+    state.offlineActions = state.offlineActions.filter((action) => !sent.has(action.idempotencyKey));
+    persistOfflineActions();
+    if (!result.ok) {
+      toast(`Çevrimdışı işlemler uzlaştırılamadı: ${result.message}`, { warning: true });
+      return null;
+    }
+    const brief = result.data && result.data.summary && result.data.summary.brief;
+    toast(brief || 'Çevrimdışı işlemler uzlaştırıldı.', { warning: true });
+    return result.data;
+  } finally {
+    reconcileInFlight = false;
   }
 }

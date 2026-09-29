@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Menu.CounterProjection;
@@ -57,6 +58,7 @@ public static class MenuManagementEndpoints
     public static RouteGroupBuilder MapMenuManagement(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/menus-and-specials");
         group.AddEndpointFilter<MenuManagerEndpointFilter>();
 
@@ -300,92 +302,18 @@ public sealed class MenuManagerEndpointFilter : IEndpointFilter
         EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(
-                context.HttpContext,
-                context.HttpContext.RequestAborted);
-            await _authorization.AuthorizeAsync(
-                actorId,
-                MenuManagementEndpoints.ManagePermission,
-                context.HttpContext.RequestAborted);
-            context.HttpContext.Items[ActorIdItemKey] = actorId;
-            return await next(context);
-        }
-        catch (MenuManagementUnauthorizedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (MenuException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (DailyMenuException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PostgresException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.MenuManagement);
+        var actorId = await _authentication.AuthenticateAsync(
+            context.HttpContext,
+            context.HttpContext.RequestAborted);
+        await _authorization.AuthorizeAsync(
+            actorId,
+            MenuManagementEndpoints.ManagePermission,
+            context.HttpContext.RequestAborted);
+        context.HttpContext.Items[ActorIdItemKey] = actorId;
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            MenuManagementUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Menü yönetimi izni gerekiyor."),
-            MenuNotFoundException or MenuItemNotFoundException
-                or DailyMenuNotFoundException or ALKAROS.Menu.DailyMenuLifecycle.DailyMenuItemNotFoundException
-                or CatalogProductNotFoundException =>
-                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen kayıt bulunamadı."),
-            DuplicateMenuCodeException =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_CODE", "Bu kodla bir menü zaten var."),
-            DuplicateMenuItemProductException or DuplicateDailyMenuItemException =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_PRODUCT", "Bu ürün menüye zaten eklendi."),
-            DuplicateDailyMenuBusinessDateException =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_BUSINESS_DATE", "Bu tarih için zaten bir günlük menü var."),
-            DailyMenuClosedException =>
-                (StatusCodes.Status409Conflict, "DAILY_MENU_CLOSED", "Günlük menü kapatıldığı için değiştirilemez."),
-            InvalidDailyMenuTransitionException =>
-                (StatusCodes.Status409Conflict, "INVALID_TRANSITION", "Günlük menü bu durumda bu işlemi kabul etmiyor."),
-            InvalidMenuCommandException or InvalidDailyMenuOperationException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
-            PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
-                (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
-            PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
-            ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new MenuApiErrorEnvelopeV1(new MenuApiErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
 
 public sealed class MenuManagementUnauthorizedException : Exception

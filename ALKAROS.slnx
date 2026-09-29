@@ -38,12 +38,14 @@
   <Project Path="src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj" />
   <Project Path="src/Clients/Cashier/ALKAROS.Cashier.csproj" />
   <Project Path="src/Clients/WaiterPwa/ALKAROS.WaiterPwa.csproj" />
+  <Project Path="tests/Architecture/ApiConventions/ALKAROS.Architecture.ApiConventions.Tests.csproj" />
   <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Messaging/ALKAROS.Messaging.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Measurements/ALKAROS.Measurements.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj" />
+  <Project Path="tests/Host/Errors/ALKAROS.Host.Errors.Tests.csproj" />
   <Project Path="tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj" />
   <Project Path="tests/Host/Experience/Authorization/ALKAROS.Host.Experience.Authorization.Tests.csproj" />
   <Project Path="tests/Host/Experience/Roles/ALKAROS.Host.Experience.Roles.Tests.csproj" />
@@ -128,6 +130,7 @@
   <Project Path="tests/Modules/Payments/Token/TerminalCredential/ALKAROS.Payments.Token.TerminalCredential.Tests.csproj" />
   <Project Path="tests/Modules/Invoicing/Qnb/CredentialRegistration/ALKAROS.Invoicing.Qnb.CredentialRegistration.Tests.csproj" />
   <Project Path="tests/Modules/Invoicing/Qnb/Client/ALKAROS.Invoicing.Qnb.Client.Tests.csproj" />
+  <Project Path="tests/Modules/Invoicing/SourceSelection/ALKAROS.Invoicing.SourceSelection.Tests.csproj" />
   <Project Path="tests/Modules/Reconciliation/CaseFoundation/ALKAROS.Reconciliation.CaseFoundation.Tests.csproj" />
   <Project Path="tests/Modules/Reconciliation/Payments/ALKAROS.Reconciliation.Payments.Tests.csproj" />
   <Project Path="tests/Modules/Reconciliation/OnlineOrders/ALKAROS.Reconciliation.OnlineOrders.Tests.csproj" />

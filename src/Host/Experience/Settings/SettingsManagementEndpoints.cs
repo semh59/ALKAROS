@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Settings.TypedSettings;
@@ -45,6 +46,7 @@ public static class SettingsManagementEndpoints
     public static RouteGroupBuilder MapSettingsManagement(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/settings");
         group.AddEndpointFilter<SettingsManagerEndpointFilter>();
 
@@ -156,82 +158,18 @@ public sealed class SettingsManagerEndpointFilter : IEndpointFilter
         EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(
-                context.HttpContext,
-                context.HttpContext.RequestAborted);
-            await _authorization.AuthorizeAsync(
-                actorId,
-                SettingsManagementEndpoints.ManagePermission,
-                context.HttpContext.RequestAborted);
-            context.HttpContext.Items[ActorIdItemKey] = actorId;
-            return await next(context);
-        }
-        catch (SettingsManagementUnauthorizedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (SettingsException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PostgresException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.SettingsManagement);
+        var actorId = await _authentication.AuthenticateAsync(
+            context.HttpContext,
+            context.HttpContext.RequestAborted);
+        await _authorization.AuthorizeAsync(
+            actorId,
+            SettingsManagementEndpoints.ManagePermission,
+            context.HttpContext.RequestAborted);
+        context.HttpContext.Items[ActorIdItemKey] = actorId;
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            SettingsManagementUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Ayar yönetimi izni gerekiyor."),
-            SettingNotFoundException =>
-                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen ayar bulunamadı."),
-            SecretSettingsStorageBanException =>
-                (StatusCodes.Status400BadRequest, "SECRET_KEY_BANNED", "Bu anahtar gizli bilgi deposu kuralını ihlal ediyor."),
-            SettingTypeValidationException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "Değer, ayarın türüyle uyuşmuyor."),
-            SettingConcurrencyException =>
-                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Ayar başka bir işlem tarafından değiştirildi."),
-            DuplicateSettingKeyException =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Bu anahtarla bir ayar zaten var."),
-            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
-            PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
-                (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
-            PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
-            ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new SettingsApiErrorEnvelopeV1(new SettingsApiErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
 
 public sealed class SettingsManagementUnauthorizedException : Exception

@@ -81,6 +81,3 @@ public sealed record GoodsReceiptV1(
             value.Items.Select(GoodsReceiptItemV1.From).ToArray());
 }
 
-public sealed record PurchasingApiErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record PurchasingApiErrorEnvelopeV1(PurchasingApiErrorV1 Error);

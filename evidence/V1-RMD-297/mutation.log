@@ -1,0 +1,6 @@
+# Mutation: offlineAuthorityFor always returns { allowed: true } (reverted after the run)
+    Error: expect(locator).toBeVisible() failed
+    Expected: visible
+    Error: element(s) not found
+    test-results/10-offline-authorized-void-4f048-lir-bağlanınca-uzlaştırılır-chromium/test-failed-1.png
+  1 failed

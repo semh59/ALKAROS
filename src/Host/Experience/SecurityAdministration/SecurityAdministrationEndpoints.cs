@@ -1,3 +1,5 @@
+using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
@@ -64,6 +66,7 @@ public static class SecurityAdministrationEndpoints
     public static RouteGroupBuilder MapSecurityAdministrationApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/security");
         group.AddEndpointFilter<SecurityAdministrationEndpointFilter>();
 
@@ -82,7 +85,7 @@ public static class SecurityAdministrationEndpoints
             var user = await users.GetByUsernameAsync(username, cancellationToken);
             return user is null
                 ? Results.Json(
-                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                    new ApiErrorEnvelope(new ApiError(
                         "NOT_FOUND", "İstenen kullanıcı bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
                     statusCode: StatusCodes.Status404NotFound)
                 : Results.Ok(new UserLookupResultV1(
@@ -111,7 +114,7 @@ public static class SecurityAdministrationEndpoints
             return unlocked
                 ? Results.Ok(new ForceUnlockResultV1(userId, true))
                 : Results.Json(
-                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                    new ApiErrorEnvelope(new ApiError(
                         "NOT_FOUND", "İstenen kullanıcı bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
                     statusCode: StatusCodes.Status404NotFound);
         });
@@ -127,7 +130,7 @@ public static class SecurityAdministrationEndpoints
             if (actorId == userId)
             {
                 return Results.Json(
-                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                    new ApiErrorEnvelope(new ApiError(
                         "SELF_DEACTIVATION", "Kendi hesabınızı pasifleştiremezsiniz.", StatusCodes.Status409Conflict, context.TraceIdentifier)),
                     statusCode: StatusCodes.Status409Conflict);
             }
@@ -135,7 +138,7 @@ public static class SecurityAdministrationEndpoints
             return await recovery.DeactivateAsync(userId, actorId.ToString("D"), cancellationToken)
                 ? Results.Ok(new AccountActiveResultV1(userId, false))
                 : Results.Json(
-                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                    new ApiErrorEnvelope(new ApiError(
                         "NOT_FOUND", "İstenen kullanıcı bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
                     statusCode: StatusCodes.Status404NotFound);
         });
@@ -150,7 +153,7 @@ public static class SecurityAdministrationEndpoints
             return await recovery.ReactivateAsync(userId, actorId.ToString("D"), cancellationToken)
                 ? Results.Ok(new AccountActiveResultV1(userId, true))
                 : Results.Json(
-                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                    new ApiErrorEnvelope(new ApiError(
                         "NOT_FOUND", "İstenen kullanıcı bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
                     statusCode: StatusCodes.Status404NotFound);
         });
@@ -166,7 +169,7 @@ public static class SecurityAdministrationEndpoints
             var status = await runner.RunAsync(name, cancellationToken);
             return status is null
                 ? Results.Json(
-                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(
+                    new ApiErrorEnvelope(new ApiError(
                         "NOT_FOUND", "İstenen bakım işi bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
                     statusCode: StatusCodes.Status404NotFound)
                 : Results.Ok(status);
@@ -232,7 +235,7 @@ public static class SecurityAdministrationEndpoints
                     _ => (StatusCodes.Status500InternalServerError, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
                 };
                 return Results.Json(
-                    new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(code, message, status, context.TraceIdentifier)),
+                    new ApiErrorEnvelope(new ApiError(code, message, status, context.TraceIdentifier)),
                     statusCode: status);
             }
         });
@@ -265,10 +268,6 @@ public sealed record ForceUnlockResultV1(Guid UserId, bool Unlocked);
 
 /// <summary>V1-RMD-405: the account's active flag after a deactivate/reactivate call.</summary>
 public sealed record AccountActiveResultV1(Guid UserId, bool Active);
-
-public sealed record SecurityAdministrationApiErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record SecurityAdministrationApiErrorEnvelopeV1(SecurityAdministrationApiErrorV1 Error);
 
 public sealed class SecurityAdministrationUnauthorizedException : Exception
 {
@@ -315,67 +314,11 @@ public sealed class SecurityAdministrationEndpointFilter : IEndpointFilter
 
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(context.HttpContext, context.HttpContext.RequestAborted);
-            await _authorization.AuthorizeAsync(actorId, SecurityAdministrationEndpoints.ManagePermission, context.HttpContext.RequestAborted);
-            context.HttpContext.Items[ActorIdItemKey] = actorId;
-            return await next(context);
-        }
-        catch (SecurityAdministrationUnauthorizedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (SecretRotationConflictException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (SecretRotationConcurrencyException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PostgresException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.SecurityAdministration);
+        var actorId = await _authentication.AuthenticateAsync(context.HttpContext, context.HttpContext.RequestAborted);
+        await _authorization.AuthorizeAsync(actorId, SecurityAdministrationEndpoints.ManagePermission, context.HttpContext.RequestAborted);
+        context.HttpContext.Items[ActorIdItemKey] = actorId;
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            SecurityAdministrationUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Güvenlik yönetimi için yeterli izin yok."),
-            SecretRotationConflictException =>
-                (StatusCodes.Status409Conflict, "INVALID_OPERATION", "Bu işlem sürümün mevcut durumuyla uyumlu değil."),
-            SecretRotationConcurrencyException =>
-                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Sürüm kaydı başka bir işlem tarafından değiştirildi."),
-            ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
