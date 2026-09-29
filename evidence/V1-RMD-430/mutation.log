@@ -1,0 +1,13 @@
+== Mutation 1: temporary POST /api/v1/terminals/{terminalId:guid}/customers/rmd430-probe whose body (Rmd430Probe(string Name)) has no IdempotencyKey
+  Failed ALKAROS.Architecture.ApiConventions.Tests.MutatingEndpointIdempotencyTests.EveryMutatingEndpointTakesAnIdempotencyKey [14 ms]
+POST /api/v1/terminals/{terminalId:guid}/customers/rmd430-probe
+Failed!  - Failed:     1, Passed:     1, Skipped:     0, Total:     2, Duration: 2 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+
+== Mutation 2: the same probe with an IdempotencyKey body property (not in the allowlist)
+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 2 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+
+== Probe removed (git diff of the endpoint file is empty)
+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 3 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+
+== Mutation 3: the probe without a body key but with an X-Idempotency-Key header parameter
+Passed!  - Failed:     0, Passed:     2, Skipped:     0, Total:     2, Duration: 2 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
