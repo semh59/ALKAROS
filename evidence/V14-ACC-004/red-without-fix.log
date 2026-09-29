@@ -1,0 +1,7 @@
+# V14-ACC-004 red run: idempotency ON CONFLICT and the evidence unique index removed
+evidence index lines left: 0
+  Failed ALKAROS.CustomerAccounts.AccountPayments.Tests.PostgresAccountPaymentRepositoryTests.TheSameIdempotencyKeyProducesOneAccountPayment [7 ms]
+  Failed ALKAROS.CustomerAccounts.AccountPayments.Tests.PostgresAccountPaymentRepositoryTests.OneCashTransactionCannotProveTwoAccountPayments [11 ms]
+  Failed ALKAROS.CustomerAccounts.AccountPayments.Tests.PostgresAccountPaymentRepositoryTests.ConcurrentRequestsWithOneKeyProduceOneAccountPayment [14 ms]
+  Failed ALKAROS.CustomerAccounts.AccountPayments.Tests.PostgresAccountPaymentRepositoryTests.AKeyReusedForADifferentPaymentIsRejected [5 ms]
+Failed!  - Failed:     4, Passed:    21, Skipped:     0, Total:    25, Duration: 368 ms - ALKAROS.CustomerAccounts.AccountPayments.Tests.dll (net8.0)

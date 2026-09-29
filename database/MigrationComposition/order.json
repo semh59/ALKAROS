@@ -1405,6 +1405,15 @@
         "credit_terms"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "165",
+      "phase": "B",
+      "tables": [
+        "account_payments",
+        "account_payment_status_history"
+      ],
+      "deferredConstraints": []
     }
   ]
 }
