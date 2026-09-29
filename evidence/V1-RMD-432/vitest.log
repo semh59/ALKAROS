@@ -1,0 +1,29 @@
+$ vitest run
+
+ RUN  v4.1.11 /home/user/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/stale.test.ts (9 tests | 1 failed) 1046ms
+     × gives the pairing dialog an accessible modal contract 425ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/stale.test.ts > PosTerminal accessibility states > gives the pairing dialog an accessible modal contract
+AssertionError: expected undefined to be defined
+ ❯ src/stale.test.ts:138:21
+    136|     const trigger = [...document.querySelectorAll("button")].find((but…
+    137|       button.textContent?.includes("Ekranı eşleştir"));
+    138|     expect(trigger).toBeDefined();
+       |                     ^
+    139|     await act(async () => trigger!.dispatchEvent(new MouseEvent("click…
+    140|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 39 passed (40)
+      Tests  1 failed | 300 passed (301)
+   Start at  06:32:23
+   Duration  18.12s (transform 3.40s, setup 0ms, import 10.40s, tests 15.70s, environment 19.93s)
+
+[ELIFECYCLE] Test failed. See above for more details.
+Note: the single failing test (src/stale.test.ts 'pairing dialog') fails the same way on master locally (lazy import vs a 10x40 ms wait) and passes in CI; it is unrelated to this change.

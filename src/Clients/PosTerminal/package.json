@@ -9,9 +9,10 @@
   },
   "scripts": {
     "typecheck": "tsc --noEmit",
-    "build": "tsc --noEmit && vite build",
+    "build": "pnpm run lint && tsc --noEmit && vite build",
     "build:nfc-standalone": "vite build --config vite.nfc.config.ts && node -e \"require('fs').renameSync('dist-nfc/nfc.html','dist-nfc/index.html')\"",
-    "test": "vitest run"
+    "test": "vitest run",
+    "lint": "oxlint -c .oxlintrc.json --max-warnings=20 src"
   },
   "dependencies": {
     "@microsoft/signalr": "10.0.0",
@@ -24,6 +25,7 @@
     "@types/react-dom": "19.2.5",
     "axe-core": "4.10.3",
     "jsdom": "26.1.0",
+    "oxlint": "1.85.0",
     "typescript": "7.0.2",
     "vite": "8.2.2",
     "vitest": "4.1.11"
