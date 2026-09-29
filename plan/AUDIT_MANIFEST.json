@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1509,
-  "markdown_line_count": 114607,
-  "markdown_byte_count": 6598858,
+  "markdown_line_count": 114608,
+  "markdown_byte_count": 6599222,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -127,9 +127,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "76299423AB4E9AA4BC7C03E9C0E72B7FA6F382565F267BB4C95A234DBE46A8D7",
-      "lines": 220,
-      "bytes": 18217,
+      "sha256": "C50F2D42C15868FFBC83F27347826AAAE9C24720762E5C3EE726B2AC458BDB5C",
+      "lines": 221,
+      "bytes": 18587,
       "utf8": true
     },
     {
@@ -2654,7 +2654,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "85EE00D7A3BDC7D789A457355DD76A5F68903D87E723414EA472C2DFE5E2254E",
+      "sha256": "64F032DAD9D4C4FD23FCFE942A6131DA00B47DE5DFD615151BB54B08B5CF36F8",
       "lines": 2785,
       "bytes": 409379,
       "utf8": true
@@ -10193,9 +10193,9 @@
     },
     {
       "path": "plan/v1.4/invoicing/V14-INV-001-periodic-source-selection.md",
-      "sha256": "A37D4B7E680E890CD87CD038FD568A2D0D0ED4C2305273714BCC0D34759E418F",
+      "sha256": "3DA44648C50490D4D4BC25A307066215303B32F4678348D7738D62324EA57430",
       "lines": 74,
-      "bytes": 3201,
+      "bytes": 3195,
       "utf8": true
     },
     {
