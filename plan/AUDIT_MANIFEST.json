@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1515,
-  "markdown_line_count": 114851,
-  "markdown_byte_count": 6614285,
+  "markdown_file_count": 1516,
+  "markdown_line_count": 114865,
+  "markdown_byte_count": 6615675,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2492,6 +2492,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-454/README.md",
+      "sha256": "95CB2B72905A00B43D4C8AF586C1BD06438CD19ABFCF29F7495A998D28E5D2F3",
+      "lines": 11,
+      "bytes": 1080,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2675,9 +2682,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C813DCC72A4655482F015F50A6B2F5F33C4A9B8268310169CA432F4EAFCFE138",
-      "lines": 2790,
-      "bytes": 410105,
+      "sha256": "14C1E3C359B6033B50123112E55274CE2A030CA1BFE0F8D1AE6EADBF46C9F6E9",
+      "lines": 2792,
+      "bytes": 410394,
       "utf8": true
     },
     {
@@ -8457,9 +8464,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-454-task-scope-push-task-ids.md",
-      "sha256": "6087611CF28CBA7AD00D986BD1432F705ADA25DC1B5235CFA8516D5520E14426",
-      "lines": 48,
-      "bytes": 1453,
+      "sha256": "943BCBB7A4BC1A2CB5BBB619F266D67D3D6C72863BE5AF1500B13D4B1175362E",
+      "lines": 49,
+      "bytes": 1474,
       "utf8": true
     },
     {
