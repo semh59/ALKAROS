@@ -1,0 +1,7 @@
+# V1-RMD-443 PosTerminal typecheck and full vitest (node v22.22.2)
+$ tsc --noEmit
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/stale.test.ts > PosTerminal accessibility states > gives the pairing dialog an accessible modal contract
+ Test Files  1 failed | 39 passed (40)
+      Tests  1 failed | 300 passed (301)
+# stale.test.ts's pairing-dialog case is timing-sensitive in this container (lazy route import vs a 400 ms wait, see evidence/V1-RMD-438/tests.log); it is unrelated to this task and passes in CI.

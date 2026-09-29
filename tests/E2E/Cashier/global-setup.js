@@ -15,6 +15,7 @@
 // in-process cleanup) that stops the Host and drops the database, so
 // nothing outlives the run and no separate global-teardown file is needed.
 import { spawn } from 'node:child_process';
+import { randomBytes } from 'node:crypto';
 import { cpSync, existsSync, writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
@@ -112,6 +113,10 @@ export default async function globalSetup() {
         // (all from 127.0.0.1). A generous test-only override; production's
         // own default is untouched when this variable is unset.
         ALKAROS_LOGIN_RATE_LIMIT_PERMITS: '1000',
+        // V1-RMD-443: customer contact details are an encrypted envelope (V14-CST-001) keyed like every other
+        // stored credential; production sets this secret, a run without one gets a throwaway key.
+        ALKAROS_SECRET_ENVELOPE_MASTER_KEY:
+          process.env.ALKAROS_SECRET_ENVELOPE_MASTER_KEY || randomBytes(32).toString('base64'),
       },
       stdio: ['ignore', 'pipe', 'pipe'],
     },

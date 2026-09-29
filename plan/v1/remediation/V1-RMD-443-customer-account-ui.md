@@ -1,7 +1,7 @@
 # V1-RMD-443 - Kasiyerin cari hesap arayüzü: hesaba yaz, müşteriler, ekstre, nakit tahsilat ve kredi limiti
 
 - Task ID: V1-RMD-443
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
