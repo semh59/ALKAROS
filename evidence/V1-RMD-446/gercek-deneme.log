@@ -1,0 +1,36 @@
+db ready, seeded
+host ready
+location: Stok konumu eklendi.
+item: Stok kalemi eklendi.
+forms: ["null:stock__toolbar","Un:stock__form","Yeni stok kalemi:stock__form","Yeni stok konumu:stock__form"]
+count: Sayım kaydedildi.
+waste too much: Rafta bu kadar stok yok; fire miktarı mevcut stoktan büyük olamaz.
+waste ok: Fire kaydedildi.
+reorder: Yeniden sipariş noktası kaydedildi.
+critical table: Kritik stok | AD	KONUM	ELDEKİ MİKTAR	KULLANILABİLİR	EŞİK	DURUM | E2E Kasa Stock Item	E2E Kasa Stock Location	500 adet	500 adet	0	Yeterli | E2E Kasa Stock Item	E2E Kasa Stock Location	5.000 adet	5.000 adet	0	Yeterli | E2E Kasa Stock Item	E2E Kasa Stock Location	3 adet	3 adet	0	Yeterli | E2E Kasa Stock Item	E2E Kasa Stock Location	500 adet	500 adet	0	Yeterli | Un	Ana depo	10,5 kg	10,5 kg	20	Kritik
+items table: KOD	AD	TÜR	BİRİM	YENİDEN SİPARİŞ NOKTASI	İŞLEM | E2EKASASTK-17AC3B59	E2E Kasa Stock Item	Porsiyon	adet	Yok	 | Sayım gir | Fire kaydet | Sipariş noktası |  | E2EKASASTK-22D079F0	E2E Kasa Stock Item	Porsiyon	adet	Yok	 | Sayım gir | Fire kaydet | Sipariş noktası |  | E2EKASASTK-9881A782	E2E Kasa Stock Item	Porsiyon	adet	Yok	 | Sayım gir | Fire kaydet | Sipariş noktası |  | E2EKASASTK-B1C9557A	E2E Kasa Stock Item	Porsiyon	adet	Yok	 | Sayım gir | Fire kaydet | Sipariş noktası |  | UN-01	Un	Hammadde	kg	20	 | Sayım gir | Fire kaydet | Sipariş noktası
+management calls:
+  GET /api/v1/management/reconciliation/cases?status=Open&limit=50 -> 200
+  GET /api/v1/management/payments/manual-confirmations -> 200
+  GET /api/v1/management/reporting/business-day/2026-09-29 -> 404
+  GET /api/v1/management/payments/settlement-report?businessDate=2026-09-29 -> 200
+  GET /api/v1/management/inventory/reports/critical-stock -> 200
+  GET /api/v1/management/inventory/stock-locations -> 200
+  GET /api/v1/management/inventory/stock-items -> 200
+  GET /api/v1/management/inventory/reports/actual-vs-theoretical?from=2026-09-29T00%3A00%3A00Z&to=2026-09-29T23%3A59%3A59Z -> 200
+  POST /api/v1/management/inventory/stock-locations -> 201
+  GET /api/v1/management/inventory/stock-locations -> 200
+  POST /api/v1/management/inventory/stock-items -> 201
+  GET /api/v1/management/inventory/stock-items -> 200
+  GET /api/v1/management/inventory/reports/critical-stock -> 200
+  POST /api/v1/management/inventory/stock-items/ef59f3e6-c524-48ac-a224-23adf7e33c59/physical-counts -> 200
+  GET /api/v1/management/inventory/reports/critical-stock -> 200
+  GET /api/v1/management/inventory/stock-items -> 200
+  POST /api/v1/management/inventory/stock-items/ef59f3e6-c524-48ac-a224-23adf7e33c59/waste -> 409
+  POST /api/v1/management/inventory/stock-items/ef59f3e6-c524-48ac-a224-23adf7e33c59/waste -> 200
+  GET /api/v1/management/inventory/stock-items -> 200
+  GET /api/v1/management/inventory/reports/critical-stock -> 200
+  PUT /api/v1/management/inventory/stock-items/ef59f3e6-c524-48ac-a224-23adf7e33c59/reorder-point -> 200
+  GET /api/v1/management/inventory/stock-items -> 200
+  GET /api/v1/management/inventory/reports/critical-stock -> 200
+console errors (non-font): ["Failed to load resource: the server responded with a status of 404 (Not Found)","Failed to load resource: the server responded with a status of 409 (Conflict)"]

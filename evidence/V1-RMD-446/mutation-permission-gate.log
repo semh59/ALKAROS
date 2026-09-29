@@ -1,0 +1,42 @@
+﻿
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-stock/StockSection.test.tsx (8 tests | 1 failed) 462ms
+     × a view-only session sees the reports and never reads or changes stock items 106ms
+corepack : 
+At line:1 char:452
++ ... 1-RMD-446"; corepack pnpm exec vitest run src/features/management-sto ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-stock/StockSection.test.tsx > stock section > a view-only session sees the reports and n
+ever reads or changes stock items
+AssertionError: expected 'Kritik stokAdKonumEldeki miktarKullan…' not to contain 'Stok kalemleri'
+
+Expected: "Stok kalemleri"
+Received: "Kritik stokAdKonumEldeki miktarKullanılabilirEşikUnAna depo3 kg2 kg5KritikGerçek ve teorik kullanım farkıBaş
+langıçBitişRaporu getirAdKonumGerçek kullanımTeorik kullanımFarkFark %UnAna depo10 kg8 kg2 kg%25Açılış veya kapanış say
+ımı eksik olduğu için dışarıda kalan kalem sayısı: 4Stok kalemleriKodAdTürBirimYeniden sipariş noktasıUN-01UnHammaddekg
+5Sayım girFire kaydetSipariş noktasıYeni stok kalemiKodAdTürHammaddePorsiyonAmbalajHizmet kalemiBirimVarsayılan konumYo
+kAna depoYeniden sipariş noktasıEkleStok konumlarıKodAdTürDEPOAna depoSoğuk hava deposuAktifYeni stok konumuKodAdTürDep
+oMutfakBarSoğuk hava deposuKuru depoKasa reyonuEkle"
+
+ ❯ src/features/management-stock/StockSection.test.tsx:68:43
+     66|     expect(document.body.textContent).toContain("Kritik stok");
+     67|     expect(document.body.textContent).toContain("Gerçek ve teorik kull…
+     68|     expect(document.body.textContent).not.toContain("Stok kalemleri");
+       |                                           ^
+     69|     expect(client.listItems).not.toHaveBeenCalled();
+     70|     for (const forbidden of ["Sayım gir", "Fire kaydet", "Sipariş nokt…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  23:22:19
+   Duration  1.49s (transform 144ms, setup 0ms, import 225ms, tests 462ms, environment 581ms)
+

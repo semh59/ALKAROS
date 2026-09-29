@@ -1,8 +1,8 @@
 # V1-RMD-446 - Yönetim alanı: Stok bölümü
 
 - Task ID: V1-RMD-446
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Planned
 
