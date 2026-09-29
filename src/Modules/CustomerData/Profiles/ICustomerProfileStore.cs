@@ -1,13 +1,15 @@
 namespace ALKAROS.CustomerData.Profiles;
 
-/// <summary>All four fields are optional - a customer record may be created with only some contact details known.</summary>
-public sealed record CreateCustomerProfileRequest(string? Name, string? Phone, string? Email, string? Address);
+/// <summary>Every field is optional - a customer record may be created with only some details known.</summary>
+public sealed record CreateCustomerProfileRequest(
+    string? Name, string? Phone, string? Email, string? Address, CustomerTaxIdentity? TaxIdentity = null);
 
-public sealed record UpdateCustomerContactRequest(string? Name, string? Phone, string? Email, string? Address);
+public sealed record UpdateCustomerContactRequest(
+    string? Name, string? Phone, string? Email, string? Address, CustomerTaxIdentity? TaxIdentity = null);
 
 /// <summary>
 /// Persistence for customer PII (`customer_data.profiles`, migration 159).
-/// Name/phone/email/address are never stored in plaintext - see
+/// Name/phone/email/address and the tax identity are never stored in plaintext - see
 /// <see cref="CustomerProfileEncryptionPolicy"/> and
 /// `PostgresCustomerProfileStore`. Every mutation is optimistic-concurrency-
 /// checked against the caller's last-known <see cref="CustomerProfile.RowVersion"/>.
@@ -26,7 +28,7 @@ public interface ICustomerProfileStore
     Task<CustomerProfile?> GetAsync(Guid customerId, CustomerAccessRole role, CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Replaces the stored contact fields entirely. Throws
+    /// Replaces the stored contact fields and tax identity entirely. Throws
     /// <see cref="CustomerProfileConcurrencyException"/> if
     /// <paramref name="expectedRowVersion"/> is stale, or
     /// <see cref="CustomerProfileNotFoundException"/> if the customer does

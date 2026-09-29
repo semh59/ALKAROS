@@ -8,7 +8,7 @@ namespace ALKAROS.CustomerData.Profiles;
 /// <summary>
 /// Postgres-backed <see cref="ICustomerProfileStore"/> against
 /// <c>customer_data.profiles</c> (migration 159, V14-CST-001). name/phone/
-/// email/address are protected together as a single AES-256-GCM envelope
+/// email/address and the tax identity (V1-RMD-453) are protected together as a single AES-256-GCM envelope
 /// (<see cref="ALKAROS.SensitiveData.SensitivePayloadProtector"/>,
 /// <see cref="SensitiveCategory.Pii"/>) - mirrors
 /// `ALKAROS.Security.DataProtectionRetention.PostgresRetentionSubjectStore`'s
@@ -20,6 +20,9 @@ public sealed class PostgresCustomerProfileStore : ICustomerProfileStore
     private const string PhoneField = "phone";
     private const string EmailField = "email";
     private const string AddressField = "address";
+    private const string TaxIdKindField = "tax_id_kind";
+    private const string TaxIdNumberField = "tax_id_number";
+    private const string TaxOfficeField = "tax_office";
     private static readonly SecretReference MasterKey = new("envelope-master-key");
 
     /// <summary>
@@ -51,7 +54,7 @@ public sealed class PostgresCustomerProfileStore : ICustomerProfileStore
     {
         ArgumentNullException.ThrowIfNull(request);
         var id = Guid.NewGuid();
-        var envelope = ProtectContact(request.Name, request.Phone, request.Email, request.Address);
+        var envelope = ProtectContact(request.Name, request.Phone, request.Email, request.Address, request.TaxIdentity);
 
         await using var command = _dataSource.CreateCommand(
             """
@@ -84,6 +87,7 @@ public sealed class PostgresCustomerProfileStore : ICustomerProfileStore
         var rowVersion = reader.GetFieldValue<int>(3);
 
         string? name = null, phone = null, email = null, address = null;
+        CustomerTaxIdentity? taxIdentity = null;
         if (!anonymized)
         {
             var envelope = SensitiveEnvelope.FromPersistenceBytes((byte[])reader[0]);
@@ -92,9 +96,10 @@ public sealed class PostgresCustomerProfileStore : ICustomerProfileStore
             payload.Fields.TryGetValue(PhoneField, out phone);
             payload.Fields.TryGetValue(EmailField, out email);
             payload.Fields.TryGetValue(AddressField, out address);
+            taxIdentity = ReadTaxIdentity(payload.Fields);
         }
 
-        var profile = new CustomerProfile(customerId, name, phone, email, address, createdAt, anonymized, rowVersion);
+        var profile = new CustomerProfile(customerId, name, phone, email, address, createdAt, anonymized, rowVersion, taxIdentity);
         return CustomerProfileAccessPolicy.Project(profile, role);
     }
 
@@ -105,7 +110,7 @@ public sealed class PostgresCustomerProfileStore : ICustomerProfileStore
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(request);
-        var envelope = ProtectContact(request.Name, request.Phone, request.Email, request.Address);
+        var envelope = ProtectContact(request.Name, request.Phone, request.Email, request.Address, request.TaxIdentity);
 
         await using var command = _dataSource.CreateCommand(
             """
@@ -172,14 +177,30 @@ public sealed class PostgresCustomerProfileStore : ICustomerProfileStore
         throw new CustomerProfileConcurrencyException(customerId);
     }
 
-    private SensitiveEnvelope ProtectContact(string? name, string? phone, string? email, string? address)
+    /// <summary>Profiles written before V1-RMD-453 carry no tax fields and read back without a tax identity.</summary>
+    private static CustomerTaxIdentity? ReadTaxIdentity(IReadOnlyDictionary<string, string> fields)
     {
+        if (!fields.TryGetValue(TaxIdKindField, out var kind) || !fields.TryGetValue(TaxIdNumberField, out var number))
+            return null;
+        fields.TryGetValue(TaxOfficeField, out var office);
+        return CustomerTaxIdentity.Restore(Enum.Parse<CustomerTaxIdKind>(kind), number, office);
+    }
+
+    private SensitiveEnvelope ProtectContact(
+        string? name, string? phone, string? email, string? address, CustomerTaxIdentity? taxIdentity)
+    {
+        if (taxIdentity is { IsMasked: true })
+            throw new ArgumentException("A masked tax identity cannot be stored.", nameof(taxIdentity));
+
         var fields = new Dictionary<string, string>();
         var categories = new Dictionary<string, SensitiveCategory>();
         AddIfPresent(fields, categories, NameField, name);
         AddIfPresent(fields, categories, PhoneField, phone);
         AddIfPresent(fields, categories, EmailField, email);
         AddIfPresent(fields, categories, AddressField, address);
+        AddIfPresent(fields, categories, TaxIdKindField, taxIdentity?.Kind.ToString());
+        AddIfPresent(fields, categories, TaxIdNumberField, taxIdentity?.Number);
+        AddIfPresent(fields, categories, TaxOfficeField, taxIdentity?.TaxOffice);
 
         var payload = new SensitivePayload(fields, categories);
         return _protector.Protect(payload, MasterKey, CustomerProfileEncryptionPolicy.Accessor);

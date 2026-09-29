@@ -38,7 +38,7 @@ test.describe('Cari hesap: müşteri, kredi limiti, hesaba yaz ve nakit tahsilat
     await expect(page.getByText('*******2233').first()).toBeVisible();
     await page.getByLabel('Kredi limiti (TL)').fill('500');
     await page.getByLabel('Vade (gün, boş bırakılırsa vade takibi yok)').fill('30');
-    await page.getByRole('button', { name: 'Kaydet' }).click();
+    await page.getByRole('button', { name: 'Kaydet', exact: true }).click();
     await expect(page.getByText('Kredi limiti kaydedildi.')).toBeVisible({ timeout: 10_000 });
 
     const billId = await createBill(page, terminalId, seed);
@@ -70,5 +70,36 @@ test.describe('Cari hesap: müşteri, kredi limiti, hesaba yaz ve nakit tahsilat
     await expect(page.getByRole('alert')).toContainText('Müşteri için kredi limiti tanımlanmadığından cari hesaba borç yazılamaz.');
     await expect(page.getByRole('heading', { name: 'Hesap Ödendi' })).toHaveCount(0);
     expect((await readTenderSummary(page, terminalId, billId)).allocations).toHaveLength(0);
+  });
+
+  // V1-RMD-453: the invoice tax identity is entered here, checked by the server, and only ever shown masked.
+  test('şirket müşterisi VKN ve vergi dairesiyle eklenir; hatalı numara Türkçe gerekçeyle reddedilir; kayıt maskeli görünür', async ({ page }) => {
+    const seed = readSeed();
+    await loginViaApi(page, seed);
+    const name = `E2E Şirket ${randomUUID().slice(0, 6)}`;
+    await page.goto(CUSTOMER_ACCOUNTS_PATH);
+    await expect(page.getByRole('heading', { name: 'Cari Hesaplar' })).toBeVisible({ timeout: 15_000 });
+
+    await page.getByLabel('Yeni müşterinin adı').fill(name);
+    await page.getByLabel('Yeni müşterinin vergi kimlik türü').selectOption('Vkn');
+    await page.getByLabel('Yeni müşterinin vergi kimlik numarası').fill('1234567891');
+    await page.getByLabel('Yeni müşterinin vergi dairesi').fill('Kadıköy');
+    await page.getByRole('button', { name: 'Müşteri ekle' }).click();
+    await expect(page.getByRole('alert')).toContainText('Vergi kimlik numarası geçersiz; rakamları kontrol edin.');
+    await expect(page.getByRole('heading', { name })).toHaveCount(0);
+
+    await page.getByLabel('Yeni müşterinin vergi kimlik numarası').fill('1234567890');
+    await page.getByRole('button', { name: 'Müşteri ekle' }).click();
+    await expect(page.getByRole('heading', { name })).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('#ca-tax-identity')).toHaveText('VKN *******890 · Kadıköy V.D.');
+    await expect(page.getByRole('button', { name: new RegExp(name) })).toContainText('VKN *******890');
+    await expect(page.locator('body')).not.toContainText('1234567890');
+
+    await page.getByLabel('Müşterinin vergi kimlik türü', { exact: true }).selectOption('Tckn');
+    await page.getByLabel('Müşterinin T.C. kimlik numarası', { exact: true }).fill('10000000146');
+    await page.getByLabel('Müşterinin vergi dairesi', { exact: true }).fill('');
+    await page.getByRole('button', { name: 'Vergi kimliğini kaydet' }).click();
+    await expect(page.getByText('Vergi kimliği kaydedildi.')).toBeVisible({ timeout: 10_000 });
+    await expect(page.locator('#ca-tax-identity')).toHaveText('TCKN ********146');
   });
 });

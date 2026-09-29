@@ -21,7 +21,8 @@ namespace ALKAROS.Host.DualScreen;
 /// V1-RMD-442: the till's customer account surface. A bill is written to a customer's account through the V14-ACC-003
 /// handler (credit terms from V1-RMD-440) and closes exactly like a cash or card tender (no fiscal document - the
 /// planned V14-ACC-008 route waits on the fiscal decision). A customer pays their debt in cash into this terminal's
-/// open drawer session (V14-ACC-005) and gets a receipt (V14-ACC-009).
+/// open drawer session (V14-ACC-005) and gets a receipt (V14-ACC-009). The customer's invoice tax identity is entered
+/// here and shown masked (V1-RMD-453).
 /// </summary>
 public static partial class DualScreenApplication
 {
@@ -64,6 +65,35 @@ public static partial class DualScreenApplication
             catch (CustomerAccountValidationException exception)
             {
                 return AccountError(context, StatusCodes.Status400BadRequest, "VALIDATION_FAILED", exception.TurkishMessage);
+            }
+        }).RequireRateLimiting("terminal-write");
+
+        customers.MapPut("/{customerId:guid}/tax-identity", async (
+            Guid terminalId,
+            Guid customerId,
+            UpdateCustomerTaxIdentityV1 request,
+            CustomerAccountsStore accounts,
+            DualScreenStore store,
+            IAuthorizationService authorization,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierPermissionAsync(context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
+            try
+            {
+                var updated = await accounts.UpdateTaxIdentityAsync(customerId, request, cancellationToken);
+                return updated is null
+                    ? AccountError(context, StatusCodes.Status404NotFound, "CUSTOMER_NOT_FOUND", "Müşteri bulunamadı.")
+                    : Results.Ok(updated);
+            }
+            catch (CustomerAccountValidationException exception)
+            {
+                return AccountError(context, StatusCodes.Status400BadRequest, "VALIDATION_FAILED", exception.TurkishMessage);
+            }
+            catch (CustomerProfileConcurrencyException)
+            {
+                return AccountError(context, StatusCodes.Status409Conflict, "CONCURRENT_UPDATE",
+                    "Müşteri kaydı başka bir kasada değişti. Listeyi yenileyip tekrar deneyin.");
             }
         }).RequireRateLimiting("terminal-write");
 

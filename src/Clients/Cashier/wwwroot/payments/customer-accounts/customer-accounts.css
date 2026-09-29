@@ -13,3 +13,5 @@
 .ca-table td.ca-amount, .ca-table th.ca-amount { text-align: right; font-variant-numeric: tabular-nums; }
 .ca-back { color: var(--color-brand); font-weight: 600; text-decoration: none; }
 .ca-back:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
+.ca-tax-row { flex-wrap: wrap; }
+.ca-tax-row > .sp-input { flex: 1 1 160px; }

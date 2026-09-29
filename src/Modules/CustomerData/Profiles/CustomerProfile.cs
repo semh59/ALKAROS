@@ -3,23 +3,23 @@ namespace ALKAROS.CustomerData.Profiles;
 /// <summary>
 /// V14-CST-001. Field set matches V0-CMP-003's own KVKK inventory
 /// (evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md) "Customer
-/// PII" row EXACTLY: name, phone, email, address - retention 10 years,
-/// disposal "Anonymize after retention". Deliberately does NOT include a
-/// tax identity number: that field is listed under the inventory's
-/// SEPARATE "Invoice data" row (customer name, tax ID, amount - Manager/
-/// Finance only, not Cashier), which is V14-INV-002's own domain, not this
-/// one (see evidence/V14-GOV-001/README.md for the full comparison this
-/// task's own draft first established).
+/// PII" row: name, phone, email, address - retention 10 years, disposal
+/// "Anonymize after retention". V1-RMD-453 adds the buyer's tax identity
+/// (Semih, 2026-09-29: an invoice takes it from the customer record). The
+/// inventory lists the tax ID under its "Invoice data" row (Manager/Finance,
+/// not Cashier), so <see cref="CustomerProfileAccessPolicy"/> masks it for the
+/// cashier; it shares the envelope and the anonymization of the other fields.
 /// </summary>
 public sealed record CustomerProfile
 {
     public Guid CustomerId { get; }
     // init (not plain get) so CustomerProfileAccessPolicy.Project's `with`
-    // expression can redact these four fields without a copy constructor.
+    // expression can redact these fields without a copy constructor.
     public string? Name { get; init; }
     public string? Phone { get; init; }
     public string? Email { get; init; }
     public string? Address { get; init; }
+    public CustomerTaxIdentity? TaxIdentity { get; init; }
     public DateTimeOffset CreatedAt { get; }
     public bool Anonymized { get; }
     public int RowVersion { get; }
@@ -35,7 +35,8 @@ public sealed record CustomerProfile
         string? address,
         DateTimeOffset createdAt,
         bool anonymized,
-        int rowVersion)
+        int rowVersion,
+        CustomerTaxIdentity? taxIdentity = null)
     {
         if (customerId == Guid.Empty)
             throw new ArgumentException("CustomerId must not be empty.", nameof(customerId));
@@ -47,6 +48,7 @@ public sealed record CustomerProfile
         Phone = phone;
         Email = email;
         Address = address;
+        TaxIdentity = taxIdentity;
         CreatedAt = createdAt;
         Anonymized = anonymized;
         RowVersion = rowVersion;

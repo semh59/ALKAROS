@@ -1,0 +1,11 @@
+$ npx playwright test specs/30-customer-accounts.spec.js --reporter=line   (tests/E2E/Cashier, real Host + PostgreSQL 18)
+[global-setup] applied 166 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 3 tests using 1 worker
+
+[1/3] [chromium] › specs/30-customer-accounts.spec.js:31:3 › Cari hesap: müşteri, kredi limiti, hesaba yaz ve nakit tahsilat (V1-RMD-443) › limitli müşteriye hesaba yazılan adisyon kapanır; borcun bir kısmı nakit tahsil edilip makbuz verilir
+[2/3] [chromium] › specs/30-customer-accounts.spec.js:61:3 › Cari hesap: müşteri, kredi limiti, hesaba yaz ve nakit tahsilat (V1-RMD-443) › kredi limiti olmayan müşteriye hesaba yazma sunucunun Türkçe gerekçesiyle reddedilir; hesap açık kalır
+[3/3] [chromium] › specs/30-customer-accounts.spec.js:76:3 › Cari hesap: müşteri, kredi limiti, hesaba yaz ve nakit tahsilat (V1-RMD-443) › şirket müşterisi VKN ve vergi dairesiyle eklenir; hatalı numara Türkçe gerekçeyle reddedilir; kayıt maskeli görünür
+[global-teardown] Host stopped, database dropped
+  3 passed (13.9s)
