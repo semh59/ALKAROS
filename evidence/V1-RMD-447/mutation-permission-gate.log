@@ -1,0 +1,33 @@
+﻿
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-purchasing-production/PurchasingSection.test.tsx (7 tests | 1 failed) 398ms
+     × the shell lists the purchasing tab only for a session holding purchasing.manage 105ms
+corepack : 
+At line:1 char:452
++ ... 1-RMD-447"; corepack pnpm exec vitest run src/features/management-pur ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-purchasing-production/PurchasingSection.test.tsx > purchasing section > the shell lists 
+the purchasing tab only for a session holding purchasing.manage
+AssertionError: expected [ 'Gün sonu ve mutabakat', …(7) ] to not include 'Satın alma'
+ ❯ src/features/management-purchasing-production/PurchasingSection.test.tsx:38:27
+     36|   it("the shell lists the purchasing tab only for a session holding pu…
+     37|     await render(<ManagementArea capabilities={new Set(["reports.view"…
+     38|     expect(buttons()).not.toContain("Satın alma");
+       |                           ^
+     39|     await render(<ManagementArea capabilities={new Set(["reports.view"…
+     40|     expect(buttons()).toContain("Satın alma");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 13 passed (14)
+   Start at  23:49:54
+   Duration  1.63s (transform 499ms, setup 0ms, import 743ms, tests 688ms, environment 1.26s)
+

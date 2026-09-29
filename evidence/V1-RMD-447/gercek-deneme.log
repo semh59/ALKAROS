@@ -1,0 +1,23 @@
+db ready, seeded
+host ready
+prepared: location, 2 items, 100 kg count, active recipe version
+supplier: Tedarikçi eklendi.
+order created: Sipariş oluşturuldu.
+orders table: SİPARİŞ NO	TEDARİKÇİ	DURUM	TUTAR	İŞLEM | PO-1	Un Fabrikası	Taslak	₺250,00	 | Gönder | İptal et
+order submit: Sipariş gönderildi.
+receipt: Mal kabul kaydedildi.
+orders table after receipt: SİPARİŞ NO	TEDARİKÇİ	DURUM	TUTAR	İŞLEM | PO-1	Un Fabrikası	Tamamlandı	₺250,00	
+batch created: Parti oluşturuldu.
+batch started: Parti başlatıldı.
+batch complete: Parti tamamlandı.
+batches table: PARTİ NO	DURUM	PLANLANAN	GERÇEKLEŞEN	İŞLEM | PRT-1	Tamamlandı	10 portion	9,5 portion	
+stock after: ["Çorba=9.5portion","E2E Kasa Stock Item=500adet","E2E Kasa Stock Item=5000adet","E2E Kasa Stock Item=3adet","E2E Kasa Stock Item=500adet","Un=108.1kg"]
+management calls (non-GET only):
+  POST /api/v1/management/purchasing/suppliers -> 201
+  POST /api/v1/management/purchasing/purchase-orders -> 201
+  POST /api/v1/management/purchasing/purchase-orders/af37e882-38b7-468d-8164-faa59fc3378a/submit -> 200
+  POST /api/v1/management/purchasing/purchase-orders/af37e882-38b7-468d-8164-faa59fc3378a/receipts -> 201
+  POST /api/v1/management/production/batches -> 201
+  POST /api/v1/management/production/batches/f2e6842f-9fba-4ce2-8015-d6efc8b0d6f9/start -> 200
+  POST /api/v1/management/production/batches/f2e6842f-9fba-4ce2-8015-d6efc8b0d6f9/complete -> 200
+console errors (non-font/401): ["Failed to load resource: the server responded with a status of 404 (Not Found)"]

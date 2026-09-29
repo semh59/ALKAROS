@@ -1,6 +1,7 @@
 import type { ComponentType } from "react";
 import { ClosingSection } from "../management-closing";
 import { StockSection } from "../management-stock";
+import { ProductionSection, PurchasingSection } from "../management-purchasing-production";
 import { managementText } from "../../strings";
 
 export interface ManagementSectionProps {
@@ -19,4 +20,6 @@ export interface ManagementSection {
 export const managementSections: readonly ManagementSection[] = [
   { id: "closing", label: managementText.closing.tab, requiredCapability: "reports.view", component: ClosingSection },
   { id: "stock", label: managementText.stock.tab, requiredCapability: "reports.view", component: StockSection },
+  { id: "purchasing", label: managementText.purchasing.tab, requiredCapability: "purchasing.manage", component: PurchasingSection },
+  { id: "production", label: managementText.production.tab, requiredCapability: "production.manage", component: ProductionSection },
 ];

@@ -1,0 +1,16 @@
+﻿corepack : $ vitest run
+At line:2 char:144
++ ...  "lint $LASTEXITCODE"; corepack pnpm test *> "$ev\vitest.log"; "test  ...
++                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ vitest run:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+
+ Test Files  46 passed (46)
+      Tests  338 passed (338)
+   Start at  23:52:33
+   Duration  12.22s (transform 6.67s, setup 0ms, import 14.02s, tests 35.55s, environment 56.52s)
+

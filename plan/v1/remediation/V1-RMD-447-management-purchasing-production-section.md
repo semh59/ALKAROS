@@ -1,8 +1,8 @@
 # V1-RMD-447 - Yönetim alanı: Satın alma ve üretim bölümü
 
 - Task ID: V1-RMD-447
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: Done
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Planned
 
