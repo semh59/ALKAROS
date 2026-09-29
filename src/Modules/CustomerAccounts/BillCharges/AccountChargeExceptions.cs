@@ -54,3 +54,32 @@ public sealed class AccountChargeCreditPolicyDeniedException : AccountChargeExce
     public decimal Amount { get; }
     public string? Reason { get; }
 }
+
+/// <summary>
+/// V1-RMD-442: the bill has a card attempt whose outcome is not settled yet (Pending, Unknown or
+/// ReconciliationRequired); it must be resolved before the bill is written to an account.
+/// </summary>
+public sealed class AccountChargeUnsettledPaymentExistsException : AccountChargeException
+{
+    public AccountChargeUnsettledPaymentExistsException(Guid billId, Guid paymentId)
+        : base($"Bill '{billId}' has an unsettled payment '{paymentId}'.")
+    {
+        BillId = billId;
+        PaymentId = paymentId;
+    }
+
+    public Guid BillId { get; }
+    public Guid PaymentId { get; }
+}
+
+/// <summary>V1-RMD-442: the idempotency key already belongs to a different payment (another bill, amount or tender).</summary>
+public sealed class AccountChargeIdempotencyKeyReusedException : AccountChargeException
+{
+    public AccountChargeIdempotencyKeyReusedException(string idempotencyKey)
+        : base($"Idempotency key '{idempotencyKey}' already belongs to a different payment.")
+    {
+        IdempotencyKey = idempotencyKey;
+    }
+
+    public string IdempotencyKey { get; }
+}

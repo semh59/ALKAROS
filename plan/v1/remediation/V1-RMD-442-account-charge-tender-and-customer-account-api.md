@@ -1,7 +1,7 @@
 # V1-RMD-442 - "Hesaba yaz" ödeme yolu ve kasiyerin cari hesap API'si
 
 - Task ID: V1-RMD-442
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
