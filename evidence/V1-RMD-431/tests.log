@@ -1,0 +1,166 @@
+$ dotnet test tests/Host/Errors (177 former mappings + 3 resolution cases)
+Passed!  - Failed:     0, Passed:   180, Skipped:     0, Total:   180, Duration: 148 ms - ALKAROS.Host.Errors.Tests.dll (net8.0)
+
+# Every Host HTTP suite, before (baseline) and after the change; the only failure is the pre-existing restore drill (needs pg_restore in this container) on both sides
+## before
+## tests/Host/Experience/Authorization/ALKAROS.Host.Experience.Authorization.Tests.csproj
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9
+## tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj
+Passed!  - Failed:     0, Passed:    21, Skipped:     0, Total:    21
+## tests/Host/Experience/CashSession/ALKAROS.Host.Experience.CashSession.Tests.csproj
+Passed!  - Failed:     0, Passed:    22, Skipped:     0, Total:    22
+## tests/Host/Experience/Catalog/ALKAROS.Host.Experience.Catalog.Tests.csproj
+Passed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12
+## tests/Host/Experience/Composition/ALKAROS.Host.Experience.Composition.Tests.csproj
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10
+## tests/Host/Experience/CustomerAccounts/ALKAROS.Host.Experience.CustomerAccounts.Tests.csproj
+Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7
+## tests/Host/Experience/HelpRequests/ALKAROS.Host.Experience.HelpRequests.Tests.csproj
+Passed!  - Failed:     0, Passed:    11, Skipped:     0, Total:    11
+## tests/Host/Experience/Inventory/ALKAROS.Host.Experience.Inventory.Tests.csproj
+Passed!  - Failed:     0, Passed:    20, Skipped:     0, Total:    20
+## tests/Host/Experience/InventoryReporting/ALKAROS.Host.Experience.InventoryReporting.Tests.csproj
+Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8
+## tests/Host/Experience/KitchenOperations/ALKAROS.Host.Experience.KitchenOperations.Tests.csproj
+Passed!  - Failed:     0, Passed:    36, Skipped:     0, Total:    36
+## tests/Host/Experience/Menu/ALKAROS.Host.Experience.Menu.Tests.csproj
+Passed!  - Failed:     0, Passed:     5, Skipped:     0, Total:     5
+## tests/Host/Experience/NfcOrdering/ALKAROS.Host.Experience.NfcOrdering.Tests.csproj
+Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19
+## tests/Host/Experience/Observability/ALKAROS.Host.Experience.Observability.Tests.csproj
+Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8
+## tests/Host/Experience/OfflineReconciliation/ALKAROS.Host.Experience.OfflineReconciliation.Tests.csproj
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10
+## tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj
+Passed!  - Failed:     0, Passed:   173, Skipped:     0, Total:   173
+## tests/Host/Experience/Orders/Comp/ALKAROS.Host.Experience.Orders.Comp.Tests.csproj
+Passed!  - Failed:     0, Passed:    16, Skipped:     0, Total:    16
+## tests/Host/Experience/Orders/Confirmation/ALKAROS.Host.Experience.Orders.Confirmation.Tests.csproj
+Passed!  - Failed:     0, Passed:    30, Skipped:     0, Total:    30
+## tests/Host/Experience/Orders/TableDraft/ALKAROS.Host.Experience.Orders.TableDraft.Tests.csproj
+Passed!  - Failed:     0, Passed:    87, Skipped:     0, Total:    87
+## tests/Host/Experience/Orders/Void/ALKAROS.Host.Experience.Orders.Void.Tests.csproj
+Passed!  - Failed:     0, Passed:     5, Skipped:     0, Total:     5
+## tests/Host/Experience/Orders/VoidSent/ALKAROS.Host.Experience.Orders.VoidSent.Tests.csproj
+Passed!  - Failed:     0, Passed:    17, Skipped:     0, Total:    17
+## tests/Host/Experience/PaymentTender/ALKAROS.Host.Experience.PaymentTender.Tests.csproj
+Passed!  - Failed:     0, Passed:    34, Skipped:     0, Total:    34
+## tests/Host/Experience/PendingOrderNotifications/ALKAROS.Host.Experience.PendingOrderNotifications.Tests.csproj
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10
+## tests/Host/Experience/Production/ALKAROS.Host.Experience.Production.Tests.csproj
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4
+## tests/Host/Experience/Purchasing/ALKAROS.Host.Experience.Purchasing.Tests.csproj
+Passed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3
+## tests/Host/Experience/QnbCredentialSettings/ALKAROS.Host.Experience.QnbCredentialSettings.Tests.csproj
+Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14
+## tests/Host/Experience/QrOrdering/ALKAROS.Host.Experience.QrOrdering.Tests.csproj
+Passed!  - Failed:     0, Passed:    32, Skipped:     0, Total:    32
+## tests/Host/Experience/Recipes/ALKAROS.Host.Experience.Recipes.Tests.csproj
+Passed!  - Failed:     0, Passed:    17, Skipped:     0, Total:    17
+## tests/Host/Experience/Reconciliation/ALKAROS.Host.Experience.Reconciliation.Tests.csproj
+Passed!  - Failed:     0, Passed:    21, Skipped:     0, Total:    21
+## tests/Host/Experience/RelaySettings/ALKAROS.Host.Experience.RelaySettings.Tests.csproj
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9
+## tests/Host/Experience/Reporting/ALKAROS.Host.Experience.Reporting.Tests.csproj
+Passed!  - Failed:     0, Passed:     6, Skipped:     0, Total:     6
+## tests/Host/Experience/Roles/ALKAROS.Host.Experience.Roles.Tests.csproj
+Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8
+## tests/Host/Experience/SecurityAdministration/ALKAROS.Host.Experience.SecurityAdministration.Tests.csproj
+  Failed ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.TheRestoreDrillRestoresARealShippedDumpIntoAThrowawayDatabaseAndRecordsTheAttempt [282 ms]
+Failed!  - Failed:     1, Passed:    28, Skipped:     0, Total:    29
+## tests/Host/Experience/Settings/ALKAROS.Host.Experience.Settings.Tests.csproj
+Passed!  - Failed:     0, Passed:    22, Skipped:     0, Total:    22
+## tests/Host/Experience/Tables/ALKAROS.Host.Experience.Tables.Tests.csproj
+Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14
+## tests/Host/Experience/TokenTerminalSettings/ALKAROS.Host.Experience.TokenTerminalSettings.Tests.csproj
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10
+## tests/Host/Experience/WaiterNotifications/ALKAROS.Host.Experience.WaiterNotifications.Tests.csproj
+Passed!  - Failed:     0, Passed:    11, Skipped:     0, Total:    11
+## tests/Host/Experience/WebPush/ALKAROS.Host.Experience.WebPush.Tests.csproj
+Passed!  - Failed:     0, Passed:    24, Skipped:     0, Total:    24
+## tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj
+Passed!  - Failed:     0, Passed:   164, Skipped:     0, Total:   164
+## after
+## tests/Host/Experience/Authorization/ALKAROS.Host.Experience.Authorization.Tests.csproj
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9
+## tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj
+Passed!  - Failed:     0, Passed:    21, Skipped:     0, Total:    21
+## tests/Host/Experience/CashSession/ALKAROS.Host.Experience.CashSession.Tests.csproj
+Passed!  - Failed:     0, Passed:    22, Skipped:     0, Total:    22
+## tests/Host/Experience/Catalog/ALKAROS.Host.Experience.Catalog.Tests.csproj
+Passed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12
+## tests/Host/Experience/Composition/ALKAROS.Host.Experience.Composition.Tests.csproj
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10
+## tests/Host/Experience/CustomerAccounts/ALKAROS.Host.Experience.CustomerAccounts.Tests.csproj
+Passed!  - Failed:     0, Passed:     7, Skipped:     0, Total:     7
+## tests/Host/Experience/HelpRequests/ALKAROS.Host.Experience.HelpRequests.Tests.csproj
+Passed!  - Failed:     0, Passed:    11, Skipped:     0, Total:    11
+## tests/Host/Experience/Inventory/ALKAROS.Host.Experience.Inventory.Tests.csproj
+Passed!  - Failed:     0, Passed:    20, Skipped:     0, Total:    20
+## tests/Host/Experience/InventoryReporting/ALKAROS.Host.Experience.InventoryReporting.Tests.csproj
+Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8
+## tests/Host/Experience/KitchenOperations/ALKAROS.Host.Experience.KitchenOperations.Tests.csproj
+Passed!  - Failed:     0, Passed:    36, Skipped:     0, Total:    36
+## tests/Host/Experience/Menu/ALKAROS.Host.Experience.Menu.Tests.csproj
+Passed!  - Failed:     0, Passed:     5, Skipped:     0, Total:     5
+## tests/Host/Experience/NfcOrdering/ALKAROS.Host.Experience.NfcOrdering.Tests.csproj
+Passed!  - Failed:     0, Passed:    19, Skipped:     0, Total:    19
+## tests/Host/Experience/Observability/ALKAROS.Host.Experience.Observability.Tests.csproj
+Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8
+## tests/Host/Experience/OfflineReconciliation/ALKAROS.Host.Experience.OfflineReconciliation.Tests.csproj
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10
+## tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj
+Passed!  - Failed:     0, Passed:   173, Skipped:     0, Total:   173
+## tests/Host/Experience/Orders/Comp/ALKAROS.Host.Experience.Orders.Comp.Tests.csproj
+Passed!  - Failed:     0, Passed:    16, Skipped:     0, Total:    16
+## tests/Host/Experience/Orders/Confirmation/ALKAROS.Host.Experience.Orders.Confirmation.Tests.csproj
+Passed!  - Failed:     0, Passed:    30, Skipped:     0, Total:    30
+## tests/Host/Experience/Orders/TableDraft/ALKAROS.Host.Experience.Orders.TableDraft.Tests.csproj
+Passed!  - Failed:     0, Passed:    87, Skipped:     0, Total:    87
+## tests/Host/Experience/Orders/Void/ALKAROS.Host.Experience.Orders.Void.Tests.csproj
+Passed!  - Failed:     0, Passed:     5, Skipped:     0, Total:     5
+## tests/Host/Experience/Orders/VoidSent/ALKAROS.Host.Experience.Orders.VoidSent.Tests.csproj
+Passed!  - Failed:     0, Passed:    17, Skipped:     0, Total:    17
+## tests/Host/Experience/PaymentTender/ALKAROS.Host.Experience.PaymentTender.Tests.csproj
+Passed!  - Failed:     0, Passed:    34, Skipped:     0, Total:    34
+## tests/Host/Experience/PendingOrderNotifications/ALKAROS.Host.Experience.PendingOrderNotifications.Tests.csproj
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10
+## tests/Host/Experience/Production/ALKAROS.Host.Experience.Production.Tests.csproj
+Passed!  - Failed:     0, Passed:     4, Skipped:     0, Total:     4
+## tests/Host/Experience/Purchasing/ALKAROS.Host.Experience.Purchasing.Tests.csproj
+Passed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3
+## tests/Host/Experience/QnbCredentialSettings/ALKAROS.Host.Experience.QnbCredentialSettings.Tests.csproj
+Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14
+## tests/Host/Experience/QrOrdering/ALKAROS.Host.Experience.QrOrdering.Tests.csproj
+Passed!  - Failed:     0, Passed:    32, Skipped:     0, Total:    32
+## tests/Host/Experience/Recipes/ALKAROS.Host.Experience.Recipes.Tests.csproj
+Passed!  - Failed:     0, Passed:    17, Skipped:     0, Total:    17
+## tests/Host/Experience/Reconciliation/ALKAROS.Host.Experience.Reconciliation.Tests.csproj
+Passed!  - Failed:     0, Passed:    21, Skipped:     0, Total:    21
+## tests/Host/Experience/RelaySettings/ALKAROS.Host.Experience.RelaySettings.Tests.csproj
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9
+## tests/Host/Experience/Reporting/ALKAROS.Host.Experience.Reporting.Tests.csproj
+Passed!  - Failed:     0, Passed:     6, Skipped:     0, Total:     6
+## tests/Host/Experience/Roles/ALKAROS.Host.Experience.Roles.Tests.csproj
+Passed!  - Failed:     0, Passed:     8, Skipped:     0, Total:     8
+## tests/Host/Experience/SecurityAdministration/ALKAROS.Host.Experience.SecurityAdministration.Tests.csproj
+  Failed ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.TheRestoreDrillRestoresARealShippedDumpIntoAThrowawayDatabaseAndRecordsTheAttempt [114 ms]
+Failed!  - Failed:     1, Passed:    28, Skipped:     0, Total:    29
+## tests/Host/Experience/Settings/ALKAROS.Host.Experience.Settings.Tests.csproj
+Passed!  - Failed:     0, Passed:    22, Skipped:     0, Total:    22
+## tests/Host/Experience/Tables/ALKAROS.Host.Experience.Tables.Tests.csproj
+Passed!  - Failed:     0, Passed:    14, Skipped:     0, Total:    14
+## tests/Host/Experience/TokenTerminalSettings/ALKAROS.Host.Experience.TokenTerminalSettings.Tests.csproj
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10
+## tests/Host/Experience/WaiterNotifications/ALKAROS.Host.Experience.WaiterNotifications.Tests.csproj
+Passed!  - Failed:     0, Passed:    11, Skipped:     0, Total:    11
+## tests/Host/Experience/WebPush/ALKAROS.Host.Experience.WebPush.Tests.csproj
+Passed!  - Failed:     0, Passed:    24, Skipped:     0, Total:    24
+## tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj
+Passed!  - Failed:     0, Passed:   164, Skipped:     0, Total:   164
+
+$ dotnet test tests/Architecture/ApiConventions
+Passed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3
+
+$ npx playwright test (tests/E2E/Cashier, real Host + Chromium)
+  70 passed (2.4m)
