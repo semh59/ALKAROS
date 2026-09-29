@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1511,
-  "markdown_line_count": 114764,
-  "markdown_byte_count": 6608942,
+  "markdown_line_count": 114779,
+  "markdown_byte_count": 6611003,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -127,9 +127,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "C50F2D42C15868FFBC83F27347826AAAE9C24720762E5C3EE726B2AC458BDB5C",
-      "lines": 221,
-      "bytes": 18587,
+      "sha256": "051F7E1ABB5C2F26C8AB085448D7760199F68EF466DFD34BA9BE96BD2DA0A01D",
+      "lines": 222,
+      "bytes": 19074,
       "utf8": true
     },
     {
@@ -2654,7 +2654,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "608CD50DEF52D5AA1EBAA9AA539C4FC32EF5AD70F7CC8A68176E0BC4D09837A0",
+      "sha256": "85079FCD4235AD3A41803C085194C69FE3EBA16CED2BF2F579FC9736518898F0",
       "lines": 2787,
       "bytes": 409714,
       "utf8": true
@@ -10214,9 +10214,9 @@
     },
     {
       "path": "plan/v1.4/invoicing/V14-INV-002-invoice-generation.md",
-      "sha256": "B08F582ED9146C8FC0AAB73D5E783CB1A7BCEC5EC07FDBB4AD0CEE57D678DAF8",
-      "lines": 71,
-      "bytes": 2878,
+      "sha256": "0362E387D7628C8C587A93D3C2D8CFB196480EEBA196A604BF1F7AEEC5675A8B",
+      "lines": 85,
+      "bytes": 4452,
       "utf8": true
     },
     {
