@@ -104,8 +104,10 @@ tek görev kalabilir.
   değişebilir. `Blocked` ile `Planned` veya `InProgress` arasındaki geçişte zorunlu
   `Blocker` bölümü de eklenebilir veya silinebilir. Scope değişikliği ayrı plan
   değişikliğidir.
-- Her görev `evidence/<Task-ID>/**` altında ek arşiv kanıtı bırakabilir;
-  bu klasör zorunlu değildir ve başka görev kanıtlarına erişim vermez.
+- Bir görev `Done` olurken kabul komutlarının gerçek çıktısı `evidence/<Task-ID>/`
+  altında bulunur (V1-RMD-433, 2026-09-28 kararı). Klasör başka görev kanıtlarına
+  erişim vermez. Kural ileriye dönüktür: bu karardan önce kanıt klasörü olmadan
+  kapanmış görevler yeniden açılmaz.
 - Allowlist dışı ihtiyaç, kullanıcıya kesin path ve gerekçeyle blocker olarak
   bildirilir; görev kendiliğinden genişletilmez.
 - Repository-wide formatter, dependency upgrade veya unrelated cleanup ancak
@@ -154,8 +156,9 @@ kullanılmaz.
 
 Bir görev şu üçü sağlanmadan Done olamaz:
 
-1. `dotnet build` ve ilgili testler exit code 0 ile geçer (komut çıktısı
-   final cevapta gösterilir, ayrı dosyaya kaydedilmez).
+1. `dotnet build` ve ilgili testler exit code 0 ile geçer; komutların gerçek
+   çıktısı `evidence/<Task-ID>/` altına kaydedilir (ör. `tests.log`) ve final
+   cevapta özetlenir.
 2. Migration varsa ileri/geri (up/down) ikisi de boş veritabanında denenir.
 3. Semih'in elle deneyebileceği en az bir gerçek senaryo tarif edilir
    (örn. "masaya sipariş al, mutfağa gönder, öde, kapat").

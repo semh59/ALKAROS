@@ -187,8 +187,9 @@ npx --yes markdownlint-cli2@0.23.2
 zorunluluğuna bağlı değildir (TASK_STANDARD.md "Kabul kanıtı (sadeleştirilmiş)"
 ile değiştirildi). Bir görev şu üçü sağlanmadan `Done` olamaz:
 
-1. `dotnet build` ve ilgili testler exit code 0 ile geçer (komut çıktısı final
-   cevapta gösterilir, ayrı dosyaya kaydedilmez).
+1. `dotnet build` ve ilgili testler exit code 0 ile geçer; komutların gerçek
+   çıktısı `evidence/<Task-ID>/` altına kaydedilir (V1-RMD-433) ve final cevapta
+   özetlenir.
 2. Migration varsa ileri/geri (up/down) ikisi de boş veritabanında denenir.
 3. Semih'in elle deneyebileceği en az bir gerçek senaryo tarif edilir.
 

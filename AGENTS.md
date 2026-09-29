@@ -79,7 +79,8 @@ Görev `Done` yapılmadan önce:
 - Allowlist dışındaki tek bir değişiklik bile görevi başarısız yapar.
 - Görevdeki acceptance komutları ve ilgili testler gerçek exit code ile çalıştırılır.
 - Migration varsa ileri/geri kanıtı; dış entegrasyon varsa gerçek sandbox/device transcript'i bulunur.
-- `evidence/<Task-ID>/**` altında komut, exit code, ilgili hash ve sonuç kaydedilir.
+- `evidence/<Task-ID>/**` altında komut, exit code, ilgili hash ve sonuç kaydedilir; bu, `Done` için zorunludur
+  (`plan/TASK_STANDARD.md` "Kabul kanıtı" ile aynı kural, V1-RMD-433).
 - Final cevap değişen yolları, çalıştırılan kontrolleri ve kalan blocker'ları açıkça listeler.
 
 `V1-FND-001`, `V1-FND-010`, `V1-FND-003`, `V1-FND-004`, `V1-FND-005`, `V1-SEC-001`, `V1-SEC-002`, `V1-FND-002` ve `V1-FND-006`
