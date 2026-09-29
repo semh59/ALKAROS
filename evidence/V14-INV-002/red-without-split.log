@@ -1,0 +1,5 @@
+== Mutation: every charge is booked at its bill's highest KDV rate instead of being split by the bill's rates
+  Failed ALKAROS.Invoicing.Generation.Tests.InvoiceGenerationTests.PartialChargesOnSeveralBillsAreSplitByEachBillsRatesAndAddUpToWhatWasCharged [46 ms]
+  Failed ALKAROS.Invoicing.Generation.Tests.InvoiceGenerationTests.AFullyChargedBillBecomesOneLinePerKdvRateThatReconcilesWithTheCharge [62 ms]
+  Failed ALKAROS.Invoicing.Generation.Tests.InvoiceGenerationTests.ADiscountLowersItsRatesShareAndATipIsNotAKdvWeight [46 ms]
+Failed!  - Failed:     3, Passed:    18, Skipped:     0, Total:    21, Duration: 11 s - ALKAROS.Invoicing.Generation.Tests.dll (net8.0)

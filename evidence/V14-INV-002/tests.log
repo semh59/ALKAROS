@@ -1,0 +1,15 @@
+== dotnet test tests/Modules/Invoicing/Generation/ALKAROS.Invoicing.Generation.Tests.csproj -c Release
+Passed!  - Failed:     0, Passed:    21, Skipped:     0, Total:    21, Duration: 11 s - ALKAROS.Invoicing.Generation.Tests.dll (net8.0)
+exit=0
+== dotnet test tests/Modules/Invoicing/SourceSelection/ALKAROS.Invoicing.SourceSelection.Tests.csproj -c Release
+Passed!  - Failed:     0, Passed:    12, Skipped:     0, Total:    12, Duration: 1 s - ALKAROS.Invoicing.SourceSelection.Tests.dll (net8.0)
+exit=0
+== dotnet test tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj -c Release
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 337 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+exit=0
+== dotnet test tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj -c Release
+Passed!  - Failed:     0, Passed:   164, Skipped:     0, Total:   164, Duration: 7 m 52 s - ALKAROS.Host.Tests.dll (net8.0)
+exit=0
+== dotnet test tests/Architecture/ApiConventions/ALKAROS.Architecture.ApiConventions.Tests.csproj -c Release
+Passed!  - Failed:     0, Passed:     5, Skipped:     0, Total:     5, Duration: 12 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+exit=0
