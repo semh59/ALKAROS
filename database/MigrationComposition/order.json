@@ -1397,6 +1397,14 @@
         "role_permissions"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "164",
+      "phase": "B",
+      "tables": [
+        "credit_terms"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

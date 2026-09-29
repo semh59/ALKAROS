@@ -1,0 +1,18 @@
+# V1-RMD-440 tests on real PostgreSQL 18, Release (72e95a86 + patch)
+Passed!  - Failed:     0, Passed:    20, Skipped:     0, Total:    20, Duration: 579 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:    22, Skipped:     0, Total:    22, Duration: 15 s - ALKAROS.Host.Experience.Settings.Tests.dll (net8.0)
+Passed!  - Failed:     0, Passed:     9, Skipped:     0, Total:     9, Duration: 332 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+## concurrency test with the per-customer lock, 10 runs
+run 1: Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 347 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 2: Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 334 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 3: Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 304 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 4: Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 339 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 5: Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 347 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 6: Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 316 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 7: Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 330 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 8: Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 332 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 9: Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 324 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+run 10: Passed!  - Failed:     0, Passed:     1, Skipped:     0, Total:     1, Duration: 318 ms - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+# same patch, run earlier:
+Passed!  - Failed:     0, Passed:   164, Skipped:     0, Total:   164 - ALKAROS.Host.Tests.dll (net8.0) (migration manifest incl. 164)
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10 - ALKAROS.Host.Experience.Composition.Tests.dll (net8.0)

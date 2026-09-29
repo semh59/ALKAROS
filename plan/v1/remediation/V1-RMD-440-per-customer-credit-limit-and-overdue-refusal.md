@@ -1,7 +1,7 @@
 # V1-RMD-440 - Müşteri başına kredi limiti ve vadesi geçmiş borçta cariye yazmanın reddi
 
 - Task ID: V1-RMD-440
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
@@ -71,8 +71,9 @@ Bu görev:
   aşan borç reddedilir ve hiçbir kayıt oluşmaz; vadesi geçmiş ödenmemiş borç varken ret, o borç ödenince kabul;
   aynı müşteriye eşzamanlı iki borç limiti birlikte aşamaz. `evidence/V1-RMD-440/tests.log`.
 - HTTP testleri: yönetici limiti yazar ve okur; oturumsuz 401, izinsiz 403, olmayan müşteri 404, negatif limit 400.
-- Düzeltme geri alınınca (her borcu onaylayan politika) limit ve vade testleri kırmızı
-  (`evidence/V1-RMD-440/red-without-fix.log`).
+- Düzeltme geri alınınca (her borcu onaylayan politika) limit, vade ve eşzamanlılık testleri kırmızı; müşteri kilidi
+  kaldırılınca eşzamanlılık testi 5 koşunun 5'inde kırmızı, kilitle 10 koşunun 10'unda yeşil
+  (`evidence/V1-RMD-440/red-without-fix.log`, `evidence/V1-RMD-440/tests.log`).
 - Semih'in elle deneyebileceği senaryo: yönetici oturumuyla `PUT /api/v1/management/customers/{id}/credit-terms`
   gövdesi `{"creditLimit": 500, "paymentTermDays": 30}`; bu müşteriye 500 TL'yi aşan cari borç ya da 30 günden eski
   ödenmemiş borcu varken yeni cari borç reddedilir.

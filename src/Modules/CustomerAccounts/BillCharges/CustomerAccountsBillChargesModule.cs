@@ -1,5 +1,6 @@
 namespace ALKAROS.CustomerAccounts.BillCharges;
 
+using ALKAROS.CustomerAccounts.CreditTerms;
 using ALKAROS.CustomerAccounts.Retention;
 using ALKAROS.CustomerData.AnonymizationState;
 using ALKAROS.ModuleComposition;
@@ -23,8 +24,10 @@ public sealed class CustomerAccountsBillChargesModule : IModule
 
     public void Register(ModuleContext context)
     {
-        // V1-RMD-436: no charge is approved until a credit limit exists.
-        context.RegisterTransient<ICustomerCreditPolicy, NoCreditLimitDefinedPolicy>();
+        // V1-RMD-440: per-customer credit limit and payment term (a customer
+        // without stored terms has a limit of 0, so nothing is charged to them).
+        context.RegisterTransient<ICustomerCreditTermsStore, PostgresCustomerCreditTermsStore>();
+        context.RegisterTransient<ICustomerCreditPolicy, CreditTermsCreditPolicy>();
 
         // V1-RMD-435: registered here because this module already depends on
         // both CustomerAccounts (the balance it reads) and CustomerData (the

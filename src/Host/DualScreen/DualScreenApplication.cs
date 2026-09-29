@@ -18,6 +18,7 @@ using ALKAROS.Host.Composition.Modules;
 using ALKAROS.Host.Experience.Authorization;
 using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Host.Experience.Catalog;
+using ALKAROS.Host.Experience.CustomerCredit;
 using ALKAROS.Host.Experience.Inventory;
 using ALKAROS.Host.Experience.KitchenOperations;
 using ALKAROS.Host.Experience.Menu;
@@ -137,6 +138,8 @@ public static partial class DualScreenApplication
         // since V1-SET-001 with zero HTTP surface — a setting could only
         // ever change via direct database access.
         builder.Services.AddSettingsManagementExperience();
+        // V1-RMD-440: per-customer credit limit and payment term (manager-only).
+        builder.Services.AddCustomerCreditTermsExperience();
         // V1-SET-008: the business's own QR-page logo — same manager gate
         // V1-RMD-246 just built for business.name/business.accent_theme.
         builder.Services.AddBusinessIdentityLogoExperience();
@@ -586,6 +589,7 @@ public static partial class DualScreenApplication
         app.MapPurchasingManagement();
         app.MapProductionManagement();
         app.MapSettingsManagement();
+        app.MapCustomerCreditTerms();
         app.MapBusinessIdentityLogoApi();
         app.MapStockMasterApi();
         app.MapRecipeCatalogMappingApi();
