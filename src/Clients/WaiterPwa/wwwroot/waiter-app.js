@@ -20,7 +20,7 @@
 //   POST /api/v1/terminals/{t}/orders/{o}/items/{i}/void
 //   POST /api/v1/terminals/{t}/orders/{o}/accept | /reject
 import { isFullscreen } from './js/util.js';
-import { state, el, measureChrome, renderRibbon } from './js/state.js';
+import { state, el, measureChrome, renderRibbon, rememberOfflineBudget, forgetOfflineBudget } from './js/state.js';
 import { applyUser, releaseTrap, showLogin } from './js/auth.js';
 import { apiUrl, api } from './js/api.js';
 import { toast } from './js/toast.js';
@@ -53,7 +53,7 @@ import {
   openSendToCashierSheet, confirmSendToCashier,
 } from './js/sheets/pending-orders.js';
 import { openFailedOrdersSheet, dismissFailedOrder, clearAllFailedOrders } from './js/sheets/failed-orders.js';
-import { sendDraft, flushQueue } from './js/offline-queue.js';
+import { sendDraft, flushQueue, reconcileOfflineActions } from './js/offline-queue.js';
 import { refreshPushState, enablePush, unsubscribePush, disablePush } from './js/push.js';
 import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js';
 
@@ -124,6 +124,9 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
         return;
       }
       applyUser(result.data);
+      // V1-RMD-297: keep the offline authority budget the server issued with
+      // this session, so a void/comp can still be authorized offline.
+      rememberOfflineBudget(result.data.offlineBudget, result.data.userId);
       el.loginPassword.value = '';
       el.loginOverlay.hidden = true;
       releaseTrap();
@@ -140,6 +143,7 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     await unsubscribePush();
     await api(`/api/v1/auth/logout?terminalId=${state.terminalId}`, { method: 'POST', body: {} });
     localStorage.removeItem('alkaros_waiter_pin_armed');
+    forgetOfflineBudget();
     window.location.reload();
   }
 
@@ -319,6 +323,7 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       state.isOnline = true;
       renderRibbon();
       void flushQueue();
+      void reconcileOfflineActions();
       // V1-RMD-172: if the app started offline (hasValidSession() could
       // not reach the server, see its own comment), state.user was never
       // populated. Backfilling it once the network is actually back is
@@ -362,6 +367,7 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       // round to go out, and a backgrounded PWA's timers may have been
       // throttled to nothing while it was away.
       void flushQueue();
+      void reconcileOfflineActions();
       // V1-RMD-175: same "coming back to the app" moment, opportunistically
       // catches up a catalog that has sat unrefreshed since start().
       void refreshCatalogIfStaleAsync();
@@ -748,6 +754,9 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
 
   async function catchUpAfterReconnect() {
     try { await loadPending(); } catch { /* the next event or reconnect retries */ }
+    // V1-RMD-297: the live connection coming back (V1-RMD-285) is also the
+    // server answering again, even when the browser never fired `online`.
+    void reconcileOfflineActions();
   }
 
   function startHub() {

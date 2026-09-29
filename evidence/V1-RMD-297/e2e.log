@@ -1,0 +1,6 @@
+$ npx playwright test (tests/E2E/WaiterPwa, real Host + PostgreSQL 18 + Chromium)
+[global-setup] applied 165 migrations, seeded database alkaros_e2e_waiterpwa
+[global-setup] Host ready at http://127.0.0.1:5099
+  "failed": 0,
+[47/49] [chromium] › specs/10-offline-authorized-void-comp.spec.js:30:3 › Çevrimdışı iptal/ikram bütçesi (V1-RMD-297) › bütçe içindeki ikram çevrimdışı kuyruğa girer, bütçe dışı iptal reddedilir, bağlanınca uzlaştırılır
+  49 passed (3.7m)

@@ -2,13 +2,37 @@
 // item sheets (V1-WTR-047, step 11/? of
 // docs/engineering/garson-refactor-plan.md's Section 2).
 
-import { state, el } from '../state.js';
+import { state, el, offlineAuthorityFor } from '../state.js';
 import { escapeHtml, formatMoney, formatQuantity, randomUUID } from '../util.js';
 import { activeItems, KITCHEN_STATE, renderBill, loadOrder } from './bill.js';
 import { loadTables } from '../screens/tables.js';
 import { openOptions, closeOptions } from '../options-sheet.js';
 import { toast } from '../toast.js';
 import { apiUrl, api } from '../api.js';
+import { queueOfflineAuthorizedAction } from '../offline-queue.js';
+
+// V1-RMD-297: the server cannot be reached. Within the offline budget the
+// action is authorized locally and queued for reconciliation under the same
+// idempotency key the online request used; outside it the waiter is told to
+// retry once connected. Nothing is ever shown as approved by a manager.
+function authorizeOffline(permissionCode, context, amount, pendingKeys, successText) {
+  const authority = offlineAuthorityFor(permissionCode, amount);
+  if (!authority.allowed) {
+    toast(authority.message, { warning: true });
+    el.optionsConfirm.disabled = false;
+    return;
+  }
+  queueOfflineAuthorizedAction({
+    permissionCode,
+    reasonCode: context.reason,
+    amount,
+    itemId: context.itemId,
+    idempotencyKey: context.idempotencyKey
+  });
+  pendingKeys.set(context.itemId, context.idempotencyKey);
+  closeOptions();
+  toast(successText, { warning: true });
+}
 
 // VoidReasonCatalog (src/Modules/Orders/ItemExceptions/ReasonCatalogs.cs).
 // The codes are the server's; only the wording is ours.
@@ -128,6 +152,13 @@ export async function confirmVoidSent() {
       }
     });
 
+  if (!result.ok && result.offline) {
+    // The void-sent grant is requested with amount 0 (OrderManagementEndpoints),
+    // so the offline action carries 0 too and a later retry matches it.
+    authorizeOffline('bills.void', context, 0, pendingVoidKeys,
+      'İptal çevrimdışı kaydedildi; bağlanınca uzlaştırılacak ve yönetici onayına gidecek.');
+    return;
+  }
   if (!result.ok) {
     toast(result.message, { warning: true });
     el.optionsConfirm.disabled = false;
@@ -204,6 +235,14 @@ export async function confirmComp() {
       }
     });
 
+  if (!result.ok && result.offline) {
+    // The comp grant is requested with the item's gross amount, which is the
+    // order line's totalPrice here.
+    const item = activeItems().find((candidate) => candidate.itemId === context.itemId);
+    authorizeOffline('bills.comp', context, item ? item.totalPrice : 0, pendingCompKeys,
+      'İkram çevrimdışı kaydedildi; bağlanınca uzlaştırılacak ve yönetici onayına gidecek.');
+    return;
+  }
   if (!result.ok) {
     toast(result.message, { warning: true });
     el.optionsConfirm.disabled = false;

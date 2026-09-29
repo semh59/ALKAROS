@@ -50,6 +50,17 @@ function loadJsonArray(key) {
   }
 }
 
+// V1-RMD-297: same never-crash-at-import rule for the cached offline budget.
+function loadJsonObject(key) {
+  try {
+    const raw = localStorage.getItem(key);
+    const parsed = raw ? JSON.parse(raw) : null;
+    return parsed && typeof parsed === 'object' && !Array.isArray(parsed) ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 // ══ State ══════════════════════════════════════════════════════════
 // Everything under `server` is a copy of a DTO. Everything under `draft` is
 // the round being composed on this device and not yet sent.
@@ -112,6 +123,13 @@ export const state = {
   pending: [],
   offlineQueue: loadJsonArray('alkaros_waiter_offline_queue'),
   failedOrders: loadJsonArray('alkaros_waiter_failed_orders'),
+  // V1-RMD-297: the bounded offline authority the login response hands out
+  // (budget id, governing role code, expiry, one line per auto_within
+  // permission) and the void/comp actions authorized against it while the
+  // server was unreachable. Both survive a reload; the budget belongs to the
+  // user who signed in, so signing out forgets it.
+  offlineBudget: loadJsonObject('alkaros_waiter_offline_budget'),
+  offlineActions: loadJsonArray('alkaros_waiter_offline_actions'),
 
   sendInFlight: false,
   optionsMode: null,
@@ -215,4 +233,65 @@ export function renderRibbon() {
   el.ribbonQueue.setAttribute('aria-label',
     `${parts.join(', ')} - sipariş kuyruğunu göster`);
   measureChrome();
+}
+
+// ══ Offline authority budget (V1-RMD-297) ══════════════════════════
+// The server issues the budget at sign-in (docs/domain/authorization-model.md
+// §5): offline, a device may self-approve exactly what its role's
+// auto_within policies already auto-approve online, counted and time-boxed.
+// This is only the local pre-check; the server re-judges every action on
+// reconnect and never trusts the device's own verdict.
+
+export function rememberOfflineBudget(budget, userId) {
+  if (!budget || !budget.budgetId || !budget.roleCode || !userId) {
+    forgetOfflineBudget();
+    return;
+  }
+  state.offlineBudget = {
+    budgetId: budget.budgetId,
+    roleCode: budget.roleCode,
+    userId,
+    expiresAt: budget.expiresAt,
+    lines: Array.isArray(budget.lines) ? budget.lines : [],
+    used: {}
+  };
+  localStorage.setItem('alkaros_waiter_offline_budget', JSON.stringify(state.offlineBudget));
+}
+
+export function forgetOfflineBudget() {
+  state.offlineBudget = null;
+  localStorage.removeItem('alkaros_waiter_offline_budget');
+}
+
+export function persistOfflineActions() {
+  localStorage.setItem('alkaros_waiter_offline_actions', JSON.stringify(state.offlineActions));
+  if (state.offlineBudget) {
+    localStorage.setItem('alkaros_waiter_offline_budget', JSON.stringify(state.offlineBudget));
+  }
+}
+
+// Mirrors OfflineAuthorityBudgetLine.Admits: fewer than maxCount prior
+// actions on this permission, a non-negative amount, and within limitAmount
+// when the line has one. Never answers yes without a live, unexpired budget.
+export function offlineAuthorityFor(permissionCode, amount, now = Date.now()) {
+  const budget = state.offlineBudget;
+  if (!budget) {
+    return { allowed: false, message: 'Çevrimdışı yetki bütçeniz yok. Bağlanınca tekrar deneyin.' };
+  }
+  const expiresAt = Date.parse(budget.expiresAt);
+  if (!Number.isFinite(expiresAt) || now >= expiresAt) {
+    return { allowed: false, message: 'Çevrimdışı yetki bütçenizin süresi doldu. Bağlanınca tekrar deneyin.' };
+  }
+  const line = budget.lines.find((candidate) => candidate.permissionCode === permissionCode);
+  if (!line) {
+    return { allowed: false, message: 'Bu işlem çevrimdışı yapılamaz. Bağlanınca tekrar deneyin.' };
+  }
+  const used = (budget.used && budget.used[permissionCode]) || 0;
+  if (used >= line.maxCount) {
+    return { allowed: false, message: 'Çevrimdışı işlem hakkınız doldu. Bağlanınca tekrar deneyin.' };
+  }
+  if (amount < 0 || (line.limitAmount !== null && line.limitAmount !== undefined && amount > line.limitAmount)) {
+    return { allowed: false, message: 'Tutar çevrimdışı yetki sınırını aşıyor. Bağlanınca tekrar deneyin.' };
+  }
+  return { allowed: true };
 }

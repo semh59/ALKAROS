@@ -1,0 +1,13 @@
+$ dotnet test -c Release tests/Host/Experience/OfflineReconciliation (real PostgreSQL 18)
+Passed!  - Failed:     0, Passed:    10, Skipped:     0, Total:    10, Duration: 13 s - ALKAROS.Host.Experience.OfflineReconciliation.Tests.dll (net8.0)
+
+$ python -m pytest tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py -v
+tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_nothing_is_authorized_without_a_budget PASSED [ 12%]
+tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_the_login_budget_is_kept_with_its_role_code_and_user PASSED [ 25%]
+tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_an_action_within_the_line_is_authorized PASSED [ 37%]
+tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_anything_outside_the_budget_is_refused_not_approved PASSED [ 50%]
+tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_the_spent_count_survives_a_reload PASSED [ 62%]
+tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_a_budget_without_a_role_code_is_not_kept PASSED [ 75%]
+tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_signing_out_forgets_the_budget PASSED [ 87%]
+tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_confirm_paths_queue_offline_and_reconnect_reconciles PASSED [100%]
+============================== 8 passed in 0.10s ===============================

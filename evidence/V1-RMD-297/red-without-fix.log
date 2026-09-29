@@ -1,0 +1,4 @@
+# roleCode removed from the login offlineBudget (fix reverted for this run)
+  Failed ALKAROS.Host.Experience.OfflineReconciliation.Tests.OfflineReconciliationHttpTests.TheLoginBudgetCarriesTheRoleCodeTheReconnectEndpointRequires [4 s]
+   System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.
+Failed!  - Failed:     1, Passed:     0, Skipped:     0, Total:     1, Duration: 4 s - ALKAROS.Host.Experience.OfflineReconciliation.Tests.dll (net8.0)

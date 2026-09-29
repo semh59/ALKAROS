@@ -1,7 +1,7 @@
 # V1-RMD-297 - Garson çevrimdışı iptal/ikram bütçesini kullanır, bağlanınca uzlaştırır
 
 - Task ID: V1-RMD-297
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: remediation
 - Surface state: Existing
