@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1520,
-  "markdown_line_count": 114962,
-  "markdown_byte_count": 6622635,
+  "markdown_file_count": 1521,
+  "markdown_line_count": 114984,
+  "markdown_byte_count": 6624859,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2499,6 +2499,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-447/README.md",
+      "sha256": "BEE739E0BEDBAD8345DF3C0AE56C7F0D637CDCCB575132A72A39E8879FBC7267",
+      "lines": 21,
+      "bytes": 2084,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-453/README.md",
       "sha256": "DE46229E8FBBD682E19B289CD7D56C1D66E89B7FB197AC1828C757D21220D9B4",
       "lines": 20,
@@ -2703,9 +2710,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "8226ABFE91C0C6084DF1F574CF7547BC81BF645533781C0BBDE70DACDA2D3A99",
-      "lines": 2796,
-      "bytes": 410939,
+      "sha256": "203ABEB3DB71706C82534A2BDD96083D27122BBB588381AB380EE1B834D93542",
+      "lines": 2797,
+      "bytes": 411069,
       "utf8": true
     },
     {
@@ -8436,9 +8443,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-447-management-purchasing-production-section.md",
-      "sha256": "234A505233D314B3906C896154ED710B83B092EEF5ECFFD79A5A8A96F852865E",
+      "sha256": "1E776B80C4E0504FD74CF6FDDF951AD0D1D579C6F664A9AA83030B69761DB1A1",
       "lines": 49,
-      "bytes": 1948,
+      "bytes": 1958,
       "utf8": true
     },
     {
