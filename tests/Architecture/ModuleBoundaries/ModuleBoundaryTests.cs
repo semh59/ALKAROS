@@ -139,6 +139,10 @@ public static class ModuleBoundaryTests
             // 16's pre-approved Bill/Payment edges for the first time; the
             // CustomerData edge (eligibility check) is new.
             ["CustomerAccounts.BillCharges"] = ["CustomerAccounts", "CustomerData", "Payments", "Payments.Allocations.Persistence", "Billing"],
+            // V14-ACC-005: module-dependency-rules.md row 32 - the cash account
+            // receipt writes its own ledger/account payment, checks the
+            // customer and records the drawer's CashIn movement.
+            ["CustomerAccounts.CashReceipts"] = ["CustomerAccounts", "CustomerData", "Cash.TransactionLedger"],
             // V13-REC-001: reads payments.*/cash.* tables directly via
             // plain SQL (the same "read model" pattern as Tables' own
             // CurrentOrderTotal read) rather than a C# ProjectReference to

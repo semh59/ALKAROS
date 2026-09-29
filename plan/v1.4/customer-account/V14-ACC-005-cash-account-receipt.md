@@ -1,7 +1,7 @@
 # V14-ACC-005 - Implement cash customer-account receipt
 
 - Task ID: V14-ACC-005
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Planned

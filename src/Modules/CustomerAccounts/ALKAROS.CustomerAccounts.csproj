@@ -20,6 +20,8 @@
     <!-- V14-ACC-003: eligibility checks the customer profile exists and is
          not anonymized before a charge can be posted against their account. -->
     <ProjectReference Include="..\CustomerData\ALKAROS.CustomerData.csproj" />
+    <!-- V14-ACC-005: a cash account receipt records its CashIn movement through the Cash ledger. -->
+    <ProjectReference Include="..\Cash\ALKAROS.Cash.csproj" />
   </ItemGroup>
 
   <ItemGroup>

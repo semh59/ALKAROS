@@ -31,6 +31,14 @@
           "ALKAROS.Orders": "[1.0.0, )"
         }
       },
+      "alkaros.cash": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Payments": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
+        }
+      },
       "alkaros.customerdata": {
         "type": "Project",
         "dependencies": {

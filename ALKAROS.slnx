@@ -98,6 +98,7 @@
   <Project Path="tests/Modules/CustomerAccounts/BalanceProjection/ALKAROS.CustomerAccounts.BalanceProjection.Tests.csproj" />
   <Project Path="tests/Modules/CustomerAccounts/AccountPayments/ALKAROS.CustomerAccounts.AccountPayments.Tests.csproj" />
   <Project Path="tests/Modules/CustomerAccounts/BillCharges/ALKAROS.CustomerAccounts.BillCharges.Tests.csproj" />
+  <Project Path="tests/Modules/CustomerAccounts/CashReceipts/ALKAROS.CustomerAccounts.CashReceipts.Tests.csproj" />
   <Project Path="tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj" />
   <Project Path="tests/Modules/Identity/Authorization/ALKAROS.Identity.Authorization.Tests.csproj" />
   <Project Path="tests/Modules/Identity/DeviceSessions/ALKAROS.Identity.DeviceSessions.Tests.csproj" />
