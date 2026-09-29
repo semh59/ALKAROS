@@ -12,3 +12,12 @@ $ dotnet build ALKAROS.slnx -c Release
 
 Time Elapsed 00:00:38.33
 exit=0
+
+# CI (PR #13) ran without ALKAROS_KITCHEN_STATION_ID: the three order submit routes answered 500 before their
+# authorization check (SubmitOrderHandler is resolved while binding parameters). Reproduced locally with the variable unset:
+POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/fire-course -> 500
+POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit -> 500
+POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit-draft -> 500
+Failed!  - Failed:     1, Passed:     2, Skipped:     0, Total:     3, Duration: 9 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+# After the test configures the kitchen station like a real host (variable still unset in the environment):
+Passed!  - Failed:     0, Passed:     3, Skipped:     0, Total:     3, Duration: 8 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)

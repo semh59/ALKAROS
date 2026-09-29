@@ -39,6 +39,10 @@ public sealed class ApiRouteAuthorizationTests : IAsyncLifetime
         // The customer endpoints resolve the PII envelope key like production (V14-CST-001).
         Environment.SetEnvironmentVariable(
             "ALKAROS_SECRET_ENVELOPE_MASTER_KEY", Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)));
+        // The order submit routes resolve SubmitOrderHandler, which needs the kitchen station, while binding their
+        // parameters, before the handler's authorization check runs; a real host always configures it. Without it
+        // those routes answer 500 to everyone, which says nothing about their authorization.
+        Environment.SetEnvironmentVariable(DualScreenApplication.KitchenStationEnvironmentVariable, "kitchen-main");
     }
 
     public async Task InitializeAsync()
