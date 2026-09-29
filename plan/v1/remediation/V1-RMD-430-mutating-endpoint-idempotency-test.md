@@ -1,8 +1,8 @@
 # V1-RMD-430 - Veri değiştiren endpoint'lerde idempotency anahtarı testi
 
 - Task ID: V1-RMD-430
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Planned
 
