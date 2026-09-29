@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1497,
-  "markdown_line_count": 113859,
-  "markdown_byte_count": 6558265,
+  "markdown_file_count": 1498,
+  "markdown_line_count": 113956,
+  "markdown_byte_count": 6564771,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "81CDC57944D38451BE459FA52B0F58592E55F32B32FE006A1226109928E4A7E1",
-      "lines": 2773,
-      "bytes": 407392,
+      "sha256": "265B9E4795D3858C69D3A42900D3FAD4AA156224101B23652D9671D5EF17324E",
+      "lines": 2774,
+      "bytes": 407558,
       "utf8": true
     },
     {
@@ -8344,6 +8344,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-441-start-v14-account-receipt-chain.md",
+      "sha256": "253654E2BDE1D8C725B03E8C2C4318309BF4686B571B70E1EB113FB28812E5F2",
+      "lines": 58,
+      "bytes": 2475,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -10032,16 +10039,16 @@
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-004-account-payment-posting.md",
-      "sha256": "E361C5CC6E49D04EC30A9AF810134AD92CDBB9B05DCA5A999DFC5A912A8CE66B",
-      "lines": 59,
-      "bytes": 1723,
+      "sha256": "52D6AEC77566B0BEED2776C111EBB5FB60786837889FFA0F1FB11E4DA571F1E5",
+      "lines": 67,
+      "bytes": 2531,
       "utf8": true
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-005-cash-account-receipt.md",
-      "sha256": "41CAC292B67B06127874CBE2DC5DBC77670F13804B29A8865E37711EAB3DCABC",
-      "lines": 61,
-      "bytes": 1658,
+      "sha256": "B04799D31F6184AC02F5EBE6ECBD144FC3F7E2978C0DF88F5C2F74A64B92432A",
+      "lines": 83,
+      "bytes": 3947,
       "utf8": true
     },
     {
@@ -10067,9 +10074,9 @@
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-009-independent-account-receipt.md",
-      "sha256": "9B98AEC536F8A6A6E9A4380171EA7754E4B7D14FF61C2388C1A1856C2973D512",
-      "lines": 63,
-      "bytes": 2000,
+      "sha256": "D75CED633C74AF1C2F8FA421B908B7071F0FE567B7C1FCA81049FAF0F197E4CA",
+      "lines": 71,
+      "bytes": 2768,
       "utf8": true
     },
     {
