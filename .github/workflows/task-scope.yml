@@ -71,6 +71,7 @@ jobs:
           PR_TITLE: ${{ github.event.pull_request.title }}
           PR_BODY: ${{ github.event.pull_request.body }}
           HEAD_COMMIT_MESSAGE: ${{ github.event.head_commit.message }}
+          PUSH_COMMIT_MESSAGES: ${{ join(github.event.commits.*.message, ' ') }}
           INPUT_TASK_ID: ${{ github.event.inputs.task-id }}
         run: |
           # V1-RMD-321 (independent 2026-09-26 audit, finding K13): this job used to skip itself entirely
@@ -84,7 +85,9 @@ jobs:
           if ($env:EVENT_NAME -eq "pull_request") {
             $candidates = @($env:PR_TITLE, $env:PR_BODY)
           } elseif ($env:EVENT_NAME -eq "push") {
-            $candidates = @($env:HEAD_COMMIT_MESSAGE)
+            # V1-RMD-454: the diff spans every commit of the push (a merged PR's whole branch), so the IDs
+            # of all of them count, not only the merge commit's message.
+            $candidates = @($env:HEAD_COMMIT_MESSAGE, $env:PUSH_COMMIT_MESSAGES)
           } else {
             $candidates = @()
           }

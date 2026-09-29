@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1514,
-  "markdown_line_count": 114803,
-  "markdown_byte_count": 6612832,
+  "markdown_file_count": 1515,
+  "markdown_line_count": 114851,
+  "markdown_byte_count": 6614285,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -74,20 +74,6 @@
       "sha256": "5916F57A73CA9C6E1610E60B0EECA52280B68328D93D793D5266BB0475A1D845",
       "lines": 89,
       "bytes": 5919,
-      "utf8": true
-    },
-    {
-      "path": "docs/CONSISTENCY_AUDIT.md",
-      "sha256": "347F7895451B79C973235AD0CA5F82B402DA6ED74CA14307A5488AB537535FF7",
-      "lines": 81,
-      "bytes": 6167,
-      "utf8": true
-    },
-    {
-      "path": "docs/UI_STYLE_GUIDE.md",
-      "sha256": "48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79",
-      "lines": 71,
-      "bytes": 2977,
       "utf8": true
     },
     {
@@ -228,6 +214,13 @@
       "sha256": "3C4B1463C67F1BA1A269BCAA57A4CC3CC5F2DEE08A11F39C0FCC41AFC4A91C17",
       "lines": 75,
       "bytes": 4618,
+      "utf8": true
+    },
+    {
+      "path": "docs/CONSISTENCY_AUDIT.md",
+      "sha256": "347F7895451B79C973235AD0CA5F82B402DA6ED74CA14307A5488AB537535FF7",
+      "lines": 81,
+      "bytes": 6167,
       "utf8": true
     },
     {
@@ -616,6 +609,13 @@
       "utf8": true
     },
     {
+      "path": "docs/UI_STYLE_GUIDE.md",
+      "sha256": "48849DEA1963E2158366CD9F693D0EC183C951AD6AFE730C5241C9B14184BB79",
+      "lines": 71,
+      "bytes": 2977,
+      "utf8": true
+    },
+    {
       "path": "docs/versioning-strategy.md",
       "sha256": "9FCBDE0EC857B39FD540091297EBDFD3AF4256711151489AFA68ECA741A1A1AC",
       "lines": 173,
@@ -641,6 +641,90 @@
       "sha256": "3764164120418A5E35E34D16E8A758494792290E0E407C011EC6011D6C81105E",
       "lines": 34,
       "bytes": 1347,
+      "utf8": true
+    },
+    {
+      "path": "evidence/reference/2026-09-19-competitor-ui-comparison/README.md",
+      "sha256": "614A60D783AAC5396DD0A65E5769F0960FAC63A291A1226D39BEC7A51F838817",
+      "lines": 17,
+      "bytes": 977,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md",
+      "sha256": "47E6A9489D70393590D4456C3ADDF465F29E6C264CB5FDC5178B4A673234CA77",
+      "lines": 71,
+      "bytes": 4055,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
+      "sha256": "31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA",
+      "lines": 35,
+      "bytes": 2012,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md",
+      "sha256": "D54F38781EA98102E461CE3152C53CB4C71D7BE88A0272E3036E6D3EF1C39277",
+      "lines": 47,
+      "bytes": 2593,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/gate-v0-exit-closure.md",
+      "sha256": "DA96D961795A1C70DAFBF2E170BF588395F184FBEC6DC769B2B2D4257B3B6142",
+      "lines": 95,
+      "bytes": 4479,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-operator-id-and-void-schema.md",
+      "sha256": "50D945968B7E9434EF6DC6D2315BAE6A892C9F5A238F8DF80265020075D8FE9A",
+      "lines": 109,
+      "bytes": 4868,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-postman-collection-schema.md",
+      "sha256": "901E27EA032A94ED4C1C8374783FD592F25E3FE7F9F71CD9C879354CBCDFE0A4",
+      "lines": 128,
+      "bytes": 5778,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-public-docs-research.md",
+      "sha256": "32CF2BE94D5DAAB3035B367BE1BBBF23DBEE1090DFCD91886A53B6947B6836E3",
+      "lines": 92,
+      "bytes": 4709,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-QNB-001/2026-09-18-public-docs-research.md",
+      "sha256": "CA833D389492F2A7351F314B45E2CA257E75AA8D7FA77DAA2DCBD87BA95BD6CD",
+      "lines": 191,
+      "bytes": 8905,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md",
+      "sha256": "BB86F3AE6A38848D8F96E652646E12D7CD91576C06A10C8C3E1729219C633DE6",
+      "lines": 127,
+      "bytes": 5748,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md",
+      "sha256": "9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7",
+      "lines": 68,
+      "bytes": 2507,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v0/recovery/V0-BKP-001/wave13-disposable-pg18-roundtrip.md",
+      "sha256": "0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F",
+      "lines": 112,
+      "bytes": 4908,
       "utf8": true
     },
     {
@@ -1103,6 +1187,13 @@
       "sha256": "28E3C84328041A2B525BBE17C6AF5CC84CC363632FCA2417C15AC8CC3A3C3C74",
       "lines": 161,
       "bytes": 5834,
+      "utf8": true
+    },
+    {
+      "path": "evidence/v1/gate-v1-exit-closure.md",
+      "sha256": "9C14CC80FBEDA7B8FD33D82101E5C5E94EFF3A31AE4F77588D6A3FCDB08E7C8D",
+      "lines": 69,
+      "bytes": 2685,
       "utf8": true
     },
     {
@@ -2303,17 +2394,17 @@
       "utf8": true
     },
     {
-      "path": "evidence/V1-RMD-393/REPORT.md",
-      "sha256": "FBDB9AE647845FCC576D1317A822C15E2F391A0DAB5C7A4B20D4731D7E35D42C",
-      "lines": 213,
-      "bytes": 19306,
-      "utf8": true
-    },
-    {
       "path": "evidence/V1-RMD-393/probes/README.md",
       "sha256": "4A9CB5C2EB7A01B39581E62D7D55ECEF6FEF4DFED143FD087417B5F80BC3243A",
       "lines": 18,
       "bytes": 1069,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-393/REPORT.md",
+      "sha256": "FBDB9AE647845FCC576D1317A822C15E2F391A0DAB5C7A4B20D4731D7E35D42C",
+      "lines": 213,
+      "bytes": 19306,
       "utf8": true
     },
     {
@@ -2331,13 +2422,6 @@
       "utf8": true
     },
     {
-      "path": "evidence/V1-RMD-398/REPORT.md",
-      "sha256": "F8D0AD7F7D17DAB11F75A26ED2286C35BE2C0D35171A34B99E53A2E43C95637E",
-      "lines": 133,
-      "bytes": 11510,
-      "utf8": true
-    },
-    {
       "path": "evidence/V1-RMD-398/probes/README.md",
       "sha256": "8E17CBEE27C96E194B9B94F4E91DF2EB705B9D3645EA69DB6A1CFB4C6F780F8F",
       "lines": 18,
@@ -2345,10 +2429,10 @@
       "utf8": true
     },
     {
-      "path": "evidence/V1-RMD-399/REPORT.md",
-      "sha256": "747EA1B282AD7E4840A5E0DC968A9BD40A458C0F0ECA7F42CF750A86F021358D",
-      "lines": 176,
-      "bytes": 12769,
+      "path": "evidence/V1-RMD-398/REPORT.md",
+      "sha256": "F8D0AD7F7D17DAB11F75A26ED2286C35BE2C0D35171A34B99E53A2E43C95637E",
+      "lines": 133,
+      "bytes": 11510,
       "utf8": true
     },
     {
@@ -2377,6 +2461,13 @@
       "sha256": "63D366CBB5C49F97E3B8D2B4D83E4EECB8D259D8DB93698236114B7B99076596",
       "lines": 21,
       "bytes": 2284,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-399/REPORT.md",
+      "sha256": "747EA1B282AD7E4840A5E0DC968A9BD40A458C0F0ECA7F42CF750A86F021358D",
+      "lines": 176,
+      "bytes": 12769,
       "utf8": true
     },
     {
@@ -2576,97 +2667,6 @@
       "utf8": true
     },
     {
-      "path": "evidence/reference/2026-09-19-competitor-ui-comparison/README.md",
-      "sha256": "614A60D783AAC5396DD0A65E5769F0960FAC63A291A1226D39BEC7A51F838817",
-      "lines": 17,
-      "bytes": 977,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md",
-      "sha256": "47E6A9489D70393590D4456C3ADDF465F29E6C264CB5FDC5178B4A673234CA77",
-      "lines": 71,
-      "bytes": 4055,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
-      "sha256": "31372EFF94C00B8AEC61A1D681EDC3836A9D6567DD89F94D71A8FF727D25F7EA",
-      "lines": 35,
-      "bytes": 2012,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/compliance/V0-CMP-004/restaurant-fees-and-tips.md",
-      "sha256": "D54F38781EA98102E461CE3152C53CB4C71D7BE88A0272E3036E6D3EF1C39277",
-      "lines": 47,
-      "bytes": 2593,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/gate-v0-exit-closure.md",
-      "sha256": "DA96D961795A1C70DAFBF2E170BF588395F184FBEC6DC769B2B2D4257B3B6142",
-      "lines": 95,
-      "bytes": 4479,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-operator-id-and-void-schema.md",
-      "sha256": "50D945968B7E9434EF6DC6D2315BAE6A892C9F5A238F8DF80265020075D8FE9A",
-      "lines": 109,
-      "bytes": 4868,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-postman-collection-schema.md",
-      "sha256": "901E27EA032A94ED4C1C8374783FD592F25E3FE7F9F71CD9C879354CBCDFE0A4",
-      "lines": 128,
-      "bytes": 5778,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-HUG-001/2026-09-18-public-docs-research.md",
-      "sha256": "32CF2BE94D5DAAB3035B367BE1BBBF23DBEE1090DFCD91886A53B6947B6836E3",
-      "lines": 92,
-      "bytes": 4709,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-QNB-001/2026-09-18-public-docs-research.md",
-      "sha256": "CA833D389492F2A7351F314B45E2CA257E75AA8D7FA77DAA2DCBD87BA95BD6CD",
-      "lines": 191,
-      "bytes": 8905,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/integrations/V0-QRG-001/2026-09-07-cloudflare-tunnel-feasibility.md",
-      "sha256": "BB86F3AE6A38848D8F96E652646E12D7CD91576C06A10C8C3E1729219C633DE6",
-      "lines": 127,
-      "bytes": 5748,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/recovery/V0-BKP-001/backup-restore-proof.md",
-      "sha256": "9EDA5521C9D4EF26EFDE6797327FCC095155B411C23AE2E50CC41F248B37CDA7",
-      "lines": 68,
-      "bytes": 2507,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v0/recovery/V0-BKP-001/wave13-disposable-pg18-roundtrip.md",
-      "sha256": "0AE845E374DFE8D9C61A3F04815446D0B4BEF12C88F40F1D224870614856B11F",
-      "lines": 112,
-      "bytes": 4908,
-      "utf8": true
-    },
-    {
-      "path": "evidence/v1/gate-v1-exit-closure.md",
-      "sha256": "9C14CC80FBEDA7B8FD33D82101E5C5E94EFF3A31AE4F77588D6A3FCDB08E7C8D",
-      "lines": 69,
-      "bytes": 2685,
-      "utf8": true
-    },
-    {
       "path": "plan/ASSUMPTION_POLICY.md",
       "sha256": "0C8AE929DBD8178F655E2E69DC48EB963255FA42B1222F8801594BFC940BE82C",
       "lines": 49,
@@ -2755,20 +2755,6 @@
       "sha256": "8E048FDA72C9A68801EA078525148BB7FF820156AB1CC5CE79BA496DE7329269",
       "lines": 210,
       "bytes": 92834,
-      "utf8": true
-    },
-    {
-      "path": "plan/VALIDATION_CONTRACT.md",
-      "sha256": "3DA184FFC54ABD801ED6046B209705597FCB2268D4BA245013597AB2FB462F5A",
-      "lines": 294,
-      "bytes": 20169,
-      "utf8": true
-    },
-    {
-      "path": "plan/v0/README.md",
-      "sha256": "080D35C983EC43DAAE79698B1FD3FAFD916DF542549899346A903C9E30842465",
-      "lines": 33,
-      "bytes": 1374,
       "utf8": true
     },
     {
@@ -3472,6 +3458,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v0/README.md",
+      "sha256": "080D35C983EC43DAAE79698B1FD3FAFD916DF542549899346A903C9E30842465",
+      "lines": 33,
+      "bytes": 1374,
+      "utf8": true
+    },
+    {
       "path": "plan/v0/revalidation/V0-REV-001-dat001-decision-revalidation.md",
       "sha256": "9CC4EE3F479D4C0B12D5F3AD7AEC3BC106F678B12584D9217E86A472FF11F1B2",
       "lines": 66,
@@ -3693,13 +3686,6 @@
       "sha256": "CFD156D379D194E5B2584A384BA9F4DF21B6FC69056021ECF85928EEB732F1B8",
       "lines": 57,
       "bytes": 1544,
-      "utf8": true
-    },
-    {
-      "path": "plan/v1/README.md",
-      "sha256": "E3348D922138128DF7341941B61EB2CE850E5DDFBEF2D56F9569FE8D6000EA29",
-      "lines": 317,
-      "bytes": 29428,
       "utf8": true
     },
     {
@@ -5443,6 +5429,13 @@
       "sha256": "481C3EB35A01956BB534D74C67772CFB3C557B74C7AF1744895FBAF215E50CCB",
       "lines": 155,
       "bytes": 8547,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/README.md",
+      "sha256": "E3348D922138128DF7341941B61EB2CE850E5DDFBEF2D56F9569FE8D6000EA29",
+      "lines": 317,
+      "bytes": 29428,
       "utf8": true
     },
     {
@@ -8463,6 +8456,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-454-task-scope-push-task-ids.md",
+      "sha256": "6087611CF28CBA7AD00D986BD1432F705ADA25DC1B5235CFA8516D5520E14426",
+      "lines": 48,
+      "bytes": 1453,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -9065,13 +9065,6 @@
       "utf8": true
     },
     {
-      "path": "plan/v1.1/README.md",
-      "sha256": "FB045BA24E506EAD4539A31CD6ADBD7BFD5ECC1A3E95BD9C3AC3982AB2866613",
-      "lines": 36,
-      "bytes": 1588,
-      "utf8": true
-    },
-    {
       "path": "plan/v1.1/daily-menu/V11-MNU-001-daily-menu-lifecycle.md",
       "sha256": "508B02715E83A64D12D202DB888F91A7C30DD2FB99E68F61CFA126FFED4CC099",
       "lines": 59,
@@ -9247,6 +9240,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.1/README.md",
+      "sha256": "FB045BA24E506EAD4539A31CD6ADBD7BFD5ECC1A3E95BD9C3AC3982AB2866613",
+      "lines": 36,
+      "bytes": 1588,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.1/remediation/V11-RMD-001-migration-id-collision-and-live-composition-wiring.md",
       "sha256": "75A3B7660863CEA09F5E6134FF37EE6D220C6A6D2D2AC20C3604AF72DA51D76F",
       "lines": 123,
@@ -9314,13 +9314,6 @@
       "sha256": "DEB25A39A060418C334C4A756BBEF5A026F3E3F569D9DFCCE46761D5CDB28A16",
       "lines": 54,
       "bytes": 1704,
-      "utf8": true
-    },
-    {
-      "path": "plan/v1.2/README.md",
-      "sha256": "1D825A4ABA79B76C9BA578DB7FA79AF2874B9E8E3A111F20C138EE3DD9D6DB38",
-      "lines": 75,
-      "bytes": 3936,
       "utf8": true
     },
     {
@@ -9716,6 +9709,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.2/README.md",
+      "sha256": "1D825A4ABA79B76C9BA578DB7FA79AF2874B9E8E3A111F20C138EE3DD9D6DB38",
+      "lines": 75,
+      "bytes": 3936,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.2/reconciliation/V12-REC-001-online-order-reconciliation.md",
       "sha256": "6AB60C241FC789F87C34E95AFB05A94AB06C1C98F248CEC650A1627053B1CA0F",
       "lines": 136,
@@ -9783,13 +9783,6 @@
       "sha256": "6E41FAD16E627C5158318017EF95D01849EA24557DF623931809A75813941540",
       "lines": 50,
       "bytes": 2329,
-      "utf8": true
-    },
-    {
-      "path": "plan/v1.3/README.md",
-      "sha256": "56F2CE1E9E86E9C447932917D604ABDED126150E8D1DBF24F6608F1E51D3B767",
-      "lines": 40,
-      "bytes": 1776,
       "utf8": true
     },
     {
@@ -10080,6 +10073,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.3/README.md",
+      "sha256": "56F2CE1E9E86E9C447932917D604ABDED126150E8D1DBF24F6608F1E51D3B767",
+      "lines": 40,
+      "bytes": 1776,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.3/reconciliation/V13-REC-001-payment-reconciliation.md",
       "sha256": "FC14D8CC4BA8C1A927762F87BAEE5F2D2E3D15041B018D083F6F1390FF47019B",
       "lines": 186,
@@ -10098,13 +10098,6 @@
       "sha256": "EE9C97CB93346A85F4DD1047D8D76DE545538A1D671BBDBC58802B4C487FF204",
       "lines": 132,
       "bytes": 7668,
-      "utf8": true
-    },
-    {
-      "path": "plan/v1.4/README.md",
-      "sha256": "0C3CD9103C94562BFE2A817091A533C785C73E7B7918B149BAE6D7D842FB4786",
-      "lines": 27,
-      "bytes": 914,
       "utf8": true
     },
     {
@@ -10318,17 +10311,17 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.4/README.md",
+      "sha256": "0C3CD9103C94562BFE2A817091A533C785C73E7B7918B149BAE6D7D842FB4786",
+      "lines": 27,
+      "bytes": 914,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.4/reporting/V14-RPT-001-account-invoice-reports.md",
       "sha256": "29EB5AD9C0D1AB9A942A59D758DA242AEF3E5F309A6183D74B4DD185E7204553",
       "lines": 54,
       "bytes": 1382,
-      "utf8": true
-    },
-    {
-      "path": "plan/v1.5/README.md",
-      "sha256": "BAD547C430CD8918B923FD6A6D285AEE3E3D7E74D5C7AD6BDDBA4E665BD764F1",
-      "lines": 26,
-      "bytes": 836,
       "utf8": true
     },
     {
@@ -10409,6 +10402,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1.5/README.md",
+      "sha256": "BAD547C430CD8918B923FD6A6D285AEE3E3D7E74D5C7AD6BDDBA4E665BD764F1",
+      "lines": 26,
+      "bytes": 836,
+      "utf8": true
+    },
+    {
       "path": "plan/v1.5/reconciliation/V15-REC-001-unified-reconciliation-read-model.md",
       "sha256": "77E99DA52456836A86AF034B3815D24A36A3C81FE9B459055269FA1A0A922246",
       "lines": 63,
@@ -10469,13 +10469,6 @@
       "sha256": "D504DF084D5DCCF9E7618CFF23C7E96F4C957D5371394A4BDAC7E92B94CCE465",
       "lines": 134,
       "bytes": 7066,
-      "utf8": true
-    },
-    {
-      "path": "plan/v2.0/README.md",
-      "sha256": "D29552ADECADA935C27F6C160E9BFC8FC469E5D11D71B9309781909F838ED082",
-      "lines": 32,
-      "bytes": 1354,
       "utf8": true
     },
     {
@@ -10598,6 +10591,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v2.0/README.md",
+      "sha256": "D29552ADECADA935C27F6C160E9BFC8FC469E5D11D71B9309781909F838ED082",
+      "lines": 32,
+      "bytes": 1354,
+      "utf8": true
+    },
+    {
       "path": "plan/v2.0/recovery-drill/V20-DRL-001-disaster-restore-drill.md",
       "sha256": "0AE9EDDE1547D2B8558197DBEF68A1261AF9B27DB496A13117C36853E7333B43",
       "lines": 53,
@@ -10665,6 +10665,13 @@
       "sha256": "F4885231A79623375FAC569376D9966C6683896CA1FBA4E0C5E8E3844BD8F70B",
       "lines": 62,
       "bytes": 1398,
+      "utf8": true
+    },
+    {
+      "path": "plan/VALIDATION_CONTRACT.md",
+      "sha256": "3DA184FFC54ABD801ED6046B209705597FCB2268D4BA245013597AB2FB462F5A",
+      "lines": 294,
+      "bytes": 20169,
       "utf8": true
     }
   ]
