@@ -1,8 +1,8 @@
 # V1-RMD-445 - Yönetim alanı kabuğu ve Gün sonu ve mutabakat bölümü
 
 - Task ID: V1-RMD-445
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Planned
 
@@ -22,6 +22,8 @@ görünür; izni olmayan işlem düğmesi gösterilmez ve sunucunun Türkçe hat
 - `src/Clients/PosTerminal/src/features/management/**` (Yönetim alanı kabuğu ve bölüm kaydı)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.tsx ve
   src/Clients/PosTerminal/src/strings.ts — yalnız "Yönetim" gezinme öğesi, rota yetkisi ve Türkçe etiketler
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.test.tsx ve
+  src/Clients/PosTerminal/src/design-system/Icon.tsx — yalnız "Yönetim" sekmesinin testi ve simgesi
 
 ## In scope
 
