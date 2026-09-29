@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1499,
-  "markdown_line_count": 114036,
-  "markdown_byte_count": 6569496,
+  "markdown_file_count": 1500,
+  "markdown_line_count": 114108,
+  "markdown_byte_count": 6573416,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,9 +2647,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9EDCCC0C2EBD014148BA55D84170DE0DC2ADE971EEB2B09AD4FB179F590F0A7E",
-      "lines": 2775,
-      "bytes": 407739,
+      "sha256": "B5EE8A754E9591BEADCED23AE5F99EA01364EFFBBE159275AD0DE3129A500AB2",
+      "lines": 2776,
+      "bytes": 407893,
       "utf8": true
     },
     {
@@ -8355,6 +8355,13 @@
       "sha256": "366F5D52FAA5BF8FEFC196C2CD7BC681CD4EE585548AB50D33044BF35B9E170B",
       "lines": 78,
       "bytes": 4129,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-443-customer-account-ui.md",
+      "sha256": "1D084998D331D58B6726E6FC5AF5DE6781FFA2D5B1DAB7D272D4AAC786AC3D3E",
+      "lines": 71,
+      "bytes": 3766,
       "utf8": true
     },
     {
