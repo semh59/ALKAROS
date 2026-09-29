@@ -1,8 +1,8 @@
 # V1-RMD-432 - PosTerminal için lint ve erişilebilirlik denetimi
 
 - Task ID: V1-RMD-432
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Existing
 

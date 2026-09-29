@@ -1,8 +1,8 @@
 # V1-RMD-429 - API rota ve yetki kuralı için mimari test
 
 - Task ID: V1-RMD-429
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Planned
 

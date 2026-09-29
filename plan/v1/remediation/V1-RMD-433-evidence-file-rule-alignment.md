@@ -1,8 +1,8 @@
 # V1-RMD-433 - Kanıt dosyası kuralının tek standarda bağlanması
 
 - Task ID: V1-RMD-433
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: documentation
 - Surface state: Existing
 
