@@ -2670,7 +2670,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-426-english-error-messages-turkish.md` | ✅ | `F6EDBC0C7472A175ADB10DFF99A6DC8DE614881ACC0C751D9C9BDC85BE0AC9B4` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-427-offline-reconcile-fk-not-all-unknown-budget.md` | ✅ | `70620F6ECCAB0888AE167A0ECC125BED187C89CB1F0B335EC7B939222FCCD224` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-428-ci-scope-step-untrusted-text-via-env.md` | ✅ | `49F939169C94D5661E41B2F4DAB2B9B91A4D00430A04ABB1E4E71180CED5597A` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-429-api-route-authorization-architecture-test.md` | ✅ | `CD043A32711E14DAB8A82C8FAA29378E7F2A0DC409CAC770845AC4203D931B5E` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-429-api-route-authorization-architecture-test.md` | ✅ | `F290A225FA969BD3082A44C961F93D4879C67C53D2DE46497441E846A1D09635` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-430-mutating-endpoint-idempotency-test.md` | ✅ | `3278E5BA572CD0119CC2469A19C8366A54820276364D2C9F78BAA4414C468803` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-431-shared-api-error-handler.md` | ✅ | `5C003CA36556E2346DEFDD414B64F1D45283A0CC43BC361EA99996DD76451540` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-432-posterminal-lint-accessibility.md` | ✅ | `FA7AC3B31A5CAE00C4201AC914F9EC17EF4F3CD40E0AFD0EF2B161B1F4674645` | Tek-sahip görev |

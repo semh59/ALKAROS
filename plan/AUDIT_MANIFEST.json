@@ -3,7 +3,7 @@
   "audit_date": "2026-07-30",
   "markdown_file_count": 1501,
   "markdown_line_count": 114218,
-  "markdown_byte_count": 6580804,
+  "markdown_byte_count": 6580798,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,7 +2647,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "7D916497E79D5C63A1301E6382B0FDD45A006DBCBD45FBE518353A225E8982AE",
+      "sha256": "F4174088484E96F84E4845385B8A1AEEAA367ACFAD64C32FACD093727B1C9156",
       "lines": 2777,
       "bytes": 408070,
       "utf8": true
@@ -8261,9 +8261,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-429-api-route-authorization-architecture-test.md",
-      "sha256": "CD043A32711E14DAB8A82C8FAA29378E7F2A0DC409CAC770845AC4203D931B5E",
+      "sha256": "F290A225FA969BD3082A44C961F93D4879C67C53D2DE46497441E846A1D09635",
       "lines": 44,
-      "bytes": 2245,
+      "bytes": 2239,
       "utf8": true
     },
     {
