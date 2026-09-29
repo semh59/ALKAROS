@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1501,
-  "markdown_line_count": 114201,
-  "markdown_byte_count": 6579178,
+  "markdown_line_count": 114206,
+  "markdown_byte_count": 6579659,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2647,7 +2647,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "99BE1422643B1280823998CA0B510E9A8258B816B3300E5B925C9D2BFAC4BC69",
+      "sha256": "A42812F22BA9901E3E158A7DF241ABAB8CEB77B30CA777BE5A9ED668513011EF",
       "lines": 2777,
       "bytes": 408070,
       "utf8": true
@@ -8282,9 +8282,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-432-posterminal-lint-accessibility.md",
-      "sha256": "7ED724ECC91A4EEE9BF5C5587DAF8EB870CBC9B9DBE841D77F7F01FAAC962189",
-      "lines": 41,
-      "bytes": 1582,
+      "sha256": "B30B23DA69A8AB75F78D16D04ACF1FDC82ED7437FD4BA29069F220DF427A3F1F",
+      "lines": 46,
+      "bytes": 2063,
       "utf8": true
     },
     {
