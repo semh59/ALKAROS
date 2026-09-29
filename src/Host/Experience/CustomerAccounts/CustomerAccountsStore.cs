@@ -10,7 +10,8 @@ namespace ALKAROS.Host.Experience.CustomerAccounts;
 /// <summary>
 /// V1-RMD-442: the till's read model over customers and their accounts. Contact details are stored encrypted
 /// (V14-CST-001), so names and phones are decrypted per customer through <see cref="ICustomerProfileStore"/> with the
-/// Cashier role; the phone is masked to its last four digits before it leaves the server.
+/// Cashier role; the phone is masked to its last four digits before it leaves the server, and the tax number
+/// (V1-RMD-453) arrives already masked by the profile access policy.
 /// </summary>
 public sealed class CustomerAccountsStore
 {
@@ -74,11 +75,77 @@ public sealed class CustomerAccountsStore
         var phone = request.Phone?.Trim();
         if (!string.IsNullOrEmpty(phone) && (Digits(phone).Length is < 7 or > 15 || phone.Length > 25))
             throw new CustomerAccountValidationException("Telefon numarası 7-15 rakam olmalı.");
+        var taxIdentity = ParseTaxIdentity(request.TaxIdKind, request.TaxIdNumber, request.TaxOffice);
 
         var customerId = await _profiles.CreateAsync(
-            new CreateCustomerProfileRequest(name, string.IsNullOrEmpty(phone) ? null : phone, null, null), cancellationToken);
+            new CreateCustomerProfileRequest(name, string.IsNullOrEmpty(phone) ? null : phone, null, null, taxIdentity),
+            cancellationToken);
         return await GetAsync(customerId, cancellationToken)
             ?? throw new InvalidOperationException($"Customer {customerId} vanished right after it was created.");
+    }
+
+    /// <summary>
+    /// V1-RMD-453: replaces the customer's tax identity and keeps every other field. Reads the full profile with the
+    /// Manager role on the server only, because the update rewrites the whole envelope; the answer is the masked
+    /// summary. Returns null for an unknown or anonymized customer.
+    /// </summary>
+    public async Task<CustomerAccountSummaryV1?> UpdateTaxIdentityAsync(
+        Guid customerId, UpdateCustomerTaxIdentityV1 request, CancellationToken cancellationToken)
+    {
+        var taxIdentity = ParseTaxIdentity(request.TaxIdKind, request.TaxIdNumber, request.TaxOffice);
+        var profile = await _profiles.GetAsync(customerId, CustomerAccessRole.Manager, cancellationToken);
+        if (profile is null || profile.Anonymized)
+            return null;
+
+        try
+        {
+            await _profiles.UpdateContactAsync(
+                customerId,
+                new UpdateCustomerContactRequest(profile.Name, profile.Phone, profile.Email, profile.Address, taxIdentity),
+                profile.RowVersion,
+                cancellationToken);
+        }
+        catch (CustomerProfileAnonymizedException)
+        {
+            return null;
+        }
+
+        return await GetAsync(customerId, cancellationToken);
+    }
+
+    /// <summary>No kind, number or office means "no tax identity"; anything else must be a complete, valid one.</summary>
+    public static CustomerTaxIdentity? ParseTaxIdentity(string? kindText, string? number, string? taxOffice)
+    {
+        if (string.IsNullOrWhiteSpace(kindText) && string.IsNullOrWhiteSpace(number) && string.IsNullOrWhiteSpace(taxOffice))
+            return null;
+        var kindName = kindText?.Trim() ?? string.Empty;
+        if (!kindName.All(char.IsAsciiLetter)
+            || !Enum.TryParse<CustomerTaxIdKind>(kindName, ignoreCase: true, out var kind)
+            || !Enum.IsDefined(kind))
+            throw new CustomerAccountValidationException("Vergi kimlik türünü seçin (VKN ya da TCKN).");
+        if (string.IsNullOrWhiteSpace(number))
+            throw new CustomerAccountValidationException(kind == CustomerTaxIdKind.Vkn
+                ? "Vergi kimlik numarası gerekli."
+                : "T.C. kimlik numarası gerekli.");
+
+        try
+        {
+            return CustomerTaxIdentity.Create(kind, number, taxOffice);
+        }
+        catch (InvalidCustomerTaxIdentityException exception)
+        {
+            throw new CustomerAccountValidationException(exception.Error switch
+            {
+                CustomerTaxIdentityError.VknLength => "Vergi kimlik numarası 10 rakam olmalı.",
+                CustomerTaxIdentityError.VknChecksum => "Vergi kimlik numarası geçersiz; rakamları kontrol edin.",
+                CustomerTaxIdentityError.TcknLength => "T.C. kimlik numarası 11 rakam olmalı ve 0 ile başlamamalı.",
+                CustomerTaxIdentityError.TcknChecksum => "T.C. kimlik numarası geçersiz; rakamları kontrol edin.",
+                CustomerTaxIdentityError.TaxOfficeRequired => "Vergi kimlik numarası için vergi dairesi gerekli.",
+                CustomerTaxIdentityError.TaxOfficeTooLong =>
+                    $"Vergi dairesi en çok {CustomerTaxIdentity.TaxOfficeMaxLength} karakter olabilir.",
+                _ => "Vergi kimliği geçersiz.",
+            });
+        }
     }
 
     public async Task<CustomerStatementV1?> GetStatementAsync(Guid customerId, CancellationToken cancellationToken)
@@ -129,7 +196,10 @@ public sealed class CustomerAccountsStore
             row.Balance,
             row.CreditLimit,
             Math.Max(0m, row.CreditLimit - row.Balance),
-            row.PaymentTermDays);
+            row.PaymentTermDays,
+            profile.TaxIdentity?.Kind.ToString(),
+            profile.TaxIdentity?.Masked().Number,
+            profile.TaxIdentity?.TaxOffice);
 
     private sealed record AccountRow(Guid CustomerId, decimal Balance, decimal CreditLimit, int? PaymentTermDays);
 

@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1511,
-  "markdown_line_count": 114745,
-  "markdown_byte_count": 6607031,
+  "markdown_file_count": 1514,
+  "markdown_line_count": 114803,
+  "markdown_byte_count": 6612832,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -127,9 +127,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "C50F2D42C15868FFBC83F27347826AAAE9C24720762E5C3EE726B2AC458BDB5C",
-      "lines": 221,
-      "bytes": 18587,
+      "sha256": "051F7E1ABB5C2F26C8AB085448D7760199F68EF466DFD34BA9BE96BD2DA0A01D",
+      "lines": 222,
+      "bytes": 19074,
       "utf8": true
     },
     {
@@ -2387,6 +2387,20 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-430/README.md",
+      "sha256": "25CE5CD8122BA548CA1A2A4E0B60E3B6919859CCD32AD207D8C713FD4E688B49",
+      "lines": 14,
+      "bytes": 1175,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-453/README.md",
+      "sha256": "DE46229E8FBBD682E19B289CD7D56C1D66E89B7FB197AC1828C757D21220D9B4",
+      "lines": 20,
+      "bytes": 1900,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2503,6 +2517,13 @@
       "sha256": "63173D250C206AE91817B734436714BD8FCE497A7264B47B187C263506CD87D5",
       "lines": 18,
       "bytes": 863,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V14-INV-002/README.md",
+      "sha256": "8F750D85A5502FDEAC4F931C35DDF5632C1495337A260BBFF3E1701A27B1AE9D",
+      "lines": 20,
+      "bytes": 1866,
       "utf8": true
     },
     {
@@ -2654,9 +2675,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "4AE92F57AC828FCB68BC093B91CB16D415DDB91643BA113B942B072D26149A60",
-      "lines": 2787,
-      "bytes": 409714,
+      "sha256": "C813DCC72A4655482F015F50A6B2F5F33C4A9B8268310169CA432F4EAFCFE138",
+      "lines": 2790,
+      "bytes": 410105,
       "utf8": true
     },
     {
@@ -8275,9 +8296,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-430-mutating-endpoint-idempotency-test.md",
-      "sha256": "737034E15765DE618FE0C1225362E24A6C67A0EB8DFC2263CDDA9A87B309A5DE",
+      "sha256": "7572D83DCF850EF1535FA80682AA4BAEEED77623EE701E150B9ED8694F113C2D",
       "lines": 40,
-      "bytes": 1765,
+      "bytes": 1759,
       "utf8": true
     },
     {
@@ -8436,9 +8457,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-453-customer-tax-identity.md",
-      "sha256": "402F9CC8F16F197188A41AB4528E0B1ED91D1198904B6E54E573703806F9F820",
+      "sha256": "19DB4063F03AEF95D59BDFEE6294A7E48EDDCD48822B5F3DFDA0815C3BEEC883",
       "lines": 56,
-      "bytes": 2459,
+      "bytes": 2453,
       "utf8": true
     },
     {
@@ -10214,9 +10235,9 @@
     },
     {
       "path": "plan/v1.4/invoicing/V14-INV-002-invoice-generation.md",
-      "sha256": "B08F582ED9146C8FC0AAB73D5E783CB1A7BCEC5EC07FDBB4AD0CEE57D678DAF8",
+      "sha256": "763DD930D14C81D59535A785FE604CA2DAC508E9963E570E767A9F3FA0B9E5DD",
       "lines": 71,
-      "bytes": 2878,
+      "bytes": 2872,
       "utf8": true
     },
     {

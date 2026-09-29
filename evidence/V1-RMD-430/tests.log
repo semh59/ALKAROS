@@ -1,0 +1,3 @@
+$ dotnet test tests/Architecture/ApiConventions/ALKAROS.Architecture.ApiConventions.Tests.csproj -c Release
+Passed!  - Failed:     0, Passed:     5, Skipped:     0, Total:     5, Duration: 12 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+exit=0

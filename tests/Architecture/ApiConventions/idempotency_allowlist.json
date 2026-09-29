@@ -1,0 +1,769 @@
+{
+  "_comment": "V1-RMD-430: bugün tekrar anahtarı almayan veri değiştiren uçlar. Anahtar \"METOD /rota\" biçimindedir; görev, ucu tanımlayan dosyanın plan sahibidir. Liste yalnız küçülebilir: anahtar eklenen ya da kaldırılan bir uç listede kalırsa MutatingEndpointIdempotencyTests kırılır.",
+  "withoutIdempotencyKey": {
+    "DELETE /api/v1/management/business-identity/logo": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V1-RMD-246"
+    },
+    "DELETE /api/v1/management/customer-display/screensaver": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V1-CDP-004"
+    },
+    "DELETE /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings/{stockItemId:guid}": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V1-RMD-143"
+    },
+    "DELETE /api/v1/management/inventory/products/{productId:guid}/stock-mappings/{stockItemId:guid}": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V1-RMD-143"
+    },
+    "DELETE /api/v1/management/recipes/products/{productId:guid}/mapping": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V11-RCP-003"
+    },
+    "DELETE /api/v1/management/recipes/versions/{versionId:guid}/ingredients/{ingredientItemId:guid}": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V11-RCP-003"
+    },
+    "DELETE /api/v1/management/roles/roles/{roleId:guid}/permissions/{permissionCode}": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V1-RMD-102"
+    },
+    "DELETE /api/v1/management/roles/roles/{roleId:guid}/users/{userId:guid}": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V1-RMD-102"
+    },
+    "DELETE /api/v1/management/settings/{key}": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V1-RMD-246"
+    },
+    "DELETE /api/v1/terminals/{terminalId:guid}/online-menu/{provider}/mappings/{productId:guid}": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V12-OUI-005"
+    },
+    "DELETE /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V1-IAM-024"
+    },
+    "DELETE /api/v1/terminals/{terminalId:guid}/push/subscriptions": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V1-WTR-011"
+    },
+    "DELETE /api/v1/terminals/{terminalId:guid}/table-management/zones/{zoneId:guid}": {
+      "reason": "Silme ucu; isteğinde X-Idempotency-Key başlığı yok (standart tüm veri değiştiren komutlarda ister).",
+      "task": "V1-IAM-024"
+    },
+    "DELETE /api/{**path}": {
+      "reason": "Bilinmeyen API adresi için Türkçe 404 zarfı; hiçbir veriyi değiştirmez, anahtar gerekmez.",
+      "task": "V1-RMD-098"
+    },
+    "PATCH /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}": {
+      "reason": "Kısmi güncelleme (PATCH) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-IAM-024"
+    },
+    "PATCH /api/{**path}": {
+      "reason": "Bilinmeyen API adresi için Türkçe 404 zarfı; hiçbir veriyi değiştirmez, anahtar gerekmez.",
+      "task": "V1-RMD-098"
+    },
+    "POST /api/v1/auth/login": {
+      "reason": "Oturum işlemi (giriş, çıkış, PIN, kilit açma); isteğinde tekrar anahtarı yok. Anahtar, deneme sayacı ve oturum güvenliğiyle birlikte tasarlanmalı.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/auth/logout": {
+      "reason": "Oturum işlemi (giriş, çıkış, PIN, kilit açma); isteğinde tekrar anahtarı yok. Anahtar, deneme sayacı ve oturum güvenliğiyle birlikte tasarlanmalı.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/auth/pin": {
+      "reason": "Oturum işlemi (giriş, çıkış, PIN, kilit açma); isteğinde tekrar anahtarı yok. Anahtar, deneme sayacı ve oturum güvenliğiyle birlikte tasarlanmalı.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/auth/unlock": {
+      "reason": "Oturum işlemi (giriş, çıkış, PIN, kilit açma); isteğinde tekrar anahtarı yok. Anahtar, deneme sayacı ve oturum güvenliğiyle birlikte tasarlanmalı.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/customer-displays/pairing-requests": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/customer-displays/pairing-requests/{requestId:guid}/complete": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/integrations/trendyol-go/orders/webhook/{eventType}": {
+      "reason": "Sağlayıcı webhook'u: tekrar teslimatlar sağlayıcının kendi olay kimliğiyle ayıklanır (\"duplicate\" yanıtı); istemci anahtarı taşımaz.",
+      "task": "V12-TGO-002"
+    },
+    "POST /api/v1/integrations/yemeksepeti/orders/webhook": {
+      "reason": "Sağlayıcı webhook'u: tekrar teslimatlar sağlayıcının kendi olay kimliğiyle ayıklanır (\"duplicate\" yanıtı); istemci anahtarı taşımaz.",
+      "task": "V12-ONL-001"
+    },
+    "POST /api/v1/management/authorization/behavioural-tightenings/{tighteningId:guid}/clear": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-025"
+    },
+    "POST /api/v1/management/authorization/delegations": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-025"
+    },
+    "POST /api/v1/management/authorization/delegations/{delegationId:guid}/revoke": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-025"
+    },
+    "POST /api/v1/management/authorization/grants/{grantId:guid}/approve": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-025"
+    },
+    "POST /api/v1/management/authorization/grants/{grantId:guid}/deny": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-025"
+    },
+    "POST /api/v1/management/catalog/categories": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/catalog/modifier-groups": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/catalog/modifiers": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/catalog/prices": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/catalog/product-modifier-assignments": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/catalog/products": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/catalog/products/{productId:guid}/availability": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/catalog/products/{productId:guid}/prep-time": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/catalog/tax-profiles": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/inventory/modifiers/{modifierId:guid}/stock-mappings": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-143"
+    },
+    "POST /api/v1/management/inventory/products/{productId:guid}/stock-mappings": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-143"
+    },
+    "POST /api/v1/management/inventory/stock-items": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-143"
+    },
+    "POST /api/v1/management/inventory/stock-items/{stockItemId:guid}/physical-counts": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-143"
+    },
+    "POST /api/v1/management/inventory/stock-locations": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-143"
+    },
+    "POST /api/v1/management/menus-and-specials/daily-menus": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-131"
+    },
+    "POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/close": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-131"
+    },
+    "POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/items": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-131"
+    },
+    "POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/open": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-131"
+    },
+    "POST /api/v1/management/menus-and-specials/menus": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-131"
+    },
+    "POST /api/v1/management/menus-and-specials/menus/{menuId:guid}/items": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-131"
+    },
+    "POST /api/v1/management/menus-and-specials/menus/{menuId:guid}/items/reorder": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-131"
+    },
+    "POST /api/v1/management/observability/alerts/raise": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-251"
+    },
+    "POST /api/v1/management/observability/alerts/{alertId:guid}/acknowledge": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-251"
+    },
+    "POST /api/v1/management/observability/alerts/{alertId:guid}/escalate": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-251"
+    },
+    "POST /api/v1/management/observability/alerts/{alertId:guid}/resolve": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-251"
+    },
+    "POST /api/v1/management/observability/alerts/{alertId:guid}/suppress": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-251"
+    },
+    "POST /api/v1/management/observability/health-checks": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-251"
+    },
+    "POST /api/v1/management/payments/reconciliation-scan": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-265"
+    },
+    "POST /api/v1/management/production/batches": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-133"
+    },
+    "POST /api/v1/management/production/batches/{batchId:guid}/cancel": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-133"
+    },
+    "POST /api/v1/management/production/batches/{batchId:guid}/complete": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-133"
+    },
+    "POST /api/v1/management/production/batches/{batchId:guid}/start": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-133"
+    },
+    "POST /api/v1/management/purchasing/purchase-orders": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-132"
+    },
+    "POST /api/v1/management/purchasing/purchase-orders/{orderId:guid}/cancel": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-132"
+    },
+    "POST /api/v1/management/purchasing/purchase-orders/{orderId:guid}/receipts": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-132"
+    },
+    "POST /api/v1/management/purchasing/purchase-orders/{orderId:guid}/submit": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-132"
+    },
+    "POST /api/v1/management/purchasing/suppliers": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-132"
+    },
+    "POST /api/v1/management/purchasing/suppliers/{supplierId:guid}/activate": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-132"
+    },
+    "POST /api/v1/management/purchasing/suppliers/{supplierId:guid}/deactivate": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-132"
+    },
+    "POST /api/v1/management/recipes/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V11-RCP-003"
+    },
+    "POST /api/v1/management/recipes/products/{productId:guid}/mapping": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V11-RCP-003"
+    },
+    "POST /api/v1/management/recipes/unit-conversions": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V11-RCP-003"
+    },
+    "POST /api/v1/management/recipes/versions/{versionId:guid}/ingredients": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V11-RCP-003"
+    },
+    "POST /api/v1/management/recipes/versions/{versionId:guid}/lock": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V11-RCP-003"
+    },
+    "POST /api/v1/management/recipes/{recipeId:guid}/versions": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V11-RCP-003"
+    },
+    "POST /api/v1/management/recipes/{recipeId:guid}/versions/next": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V11-RCP-003"
+    },
+    "POST /api/v1/management/recipes/{recipeId:guid}/versions/{versionNumber:int}/activate": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V11-RCP-003"
+    },
+    "POST /api/v1/management/recipes/{recipeVersionId:guid}/cost-snapshots/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V11-RCP-003"
+    },
+    "POST /api/v1/management/reconciliation/cases/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-250"
+    },
+    "POST /api/v1/management/reconciliation/cases/{caseId:guid}/notes": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-250"
+    },
+    "POST /api/v1/management/reconciliation/cases/{caseId:guid}/transition": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-250"
+    },
+    "POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/resolve": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-REC-001"
+    },
+    "POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/retry": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-REC-001"
+    },
+    "POST /api/v1/management/reconciliation/online-orders/scan": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-REC-001"
+    },
+    "POST /api/v1/management/reporting/business-day/open": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-249"
+    },
+    "POST /api/v1/management/reporting/business-day/{businessDate}/close": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-249"
+    },
+    "POST /api/v1/management/roles/permissions": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/roles/roles": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/roles/roles/{roleId:guid}/permissions": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/roles/roles/{roleId:guid}/users/{userId:guid}": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/management/security/diagnostic-bundle": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/maintenance/jobs/{name}/run": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/orders/close-settled": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/secrets/{name}/rotation/initialize": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/secrets/{name}/rotation/revoke": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/secrets/{name}/rotation/rollback": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/secrets/{name}/rotation/rotate": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/users/{userId:guid}/deactivate": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/users/{userId:guid}/force-unlock": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/users/{userId:guid}/reactivate": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/security/users/{userId:guid}/revoke-sessions": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-266"
+    },
+    "POST /api/v1/management/users/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-102"
+    },
+    "POST /api/v1/nfc/tables/{tableId:guid}/orders": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-NFC-001"
+    },
+    "POST /api/v1/qr/orders": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-CWB-001"
+    },
+    "POST /api/v1/qr/sessions": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-CWB-001"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/billing/bills/from-order/{orderId:guid}": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-103"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/clear": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-103"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/confirmations/{confirmationId:guid}/approve": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V13-PUI-001"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/confirmations/{confirmationId:guid}/reject": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V13-PUI-001"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/unsettled/{paymentId:guid}/card-charged": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V13-PUI-001"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tenders/unsettled/{paymentId:guid}/not-charged": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V13-PUI-001"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/cash-sessions/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V13-CSH-004"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/close": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V13-CSH-004"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/counts": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V13-CSH-004"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/reconcile": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V13-CSH-004"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/cash-sessions/{cashSessionId:guid}/start-count": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V13-CSH-004"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/customers/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-RMD-442"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/display-sessions/revoke": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/help-requests/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-WTR-014"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/kitchen-operations/deliveries/{deliveryId:guid}/reprint-approval": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-KIT-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/kitchen-operations/deliveries/{deliveryId:guid}/reprint-rejection": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-KIT-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/kitchen-operations/operations/backups": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-KIT-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/kitchen-operations/products/{productId:guid}/suspend": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-KIT-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/kitchen-operations/routes/{routeId:guid}": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-KIT-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/kitchen-operations/tickets/{ticketId:guid}/items/{itemId:guid}/transition": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-KIT-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/kitchen-operations/tickets/{ticketId:guid}/items/{itemId:guid}/undo": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-KIT-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/kitchen-operations/tickets/{ticketId:guid}/transition": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-KIT-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/offline-reconciliation/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-025"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/online-operations/orders/{orderId:guid}/cancel": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-OUI-001"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/online-operations/orders/{orderId:guid}/hand-over": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-OUI-001"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/online-ordering/catalog-publications/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-ONL-004"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/resolve": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-RMD-010"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/retry": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-RMD-010"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/handoff-note/pop": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-ORD-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/table": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/table-draft": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-ORD-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/transfer-server": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-ORD-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-ORD-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/fire-course": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-ORD-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/void": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-ORD-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/recall-from-cashier": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-ORD-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-ORD-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/send-to-cashier": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-ORD-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/submit-draft": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-ORD-005"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/pairings/approve": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/push/subscriptions": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-WTR-011"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/qnb-credential/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V14-QNB-006"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/qnb-credential/test-connection": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V14-QNB-006"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/relay-credential/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-QRT-003"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/relay-credential/provision": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V12-QRT-003"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/table-management/merges": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/table-management/merges/{mergeGroupId:guid}/unmerge": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/table-management/reservations": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/table-management/reservations/{reservationId:guid}/cancel": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/table-management/reservations/{reservationId:guid}/claim": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/table-management/reservations/{reservationId:guid}/expire": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/table-management/tables": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/table-management/tables/{tableId:guid}/status": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/table-management/transfers": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/table-management/zones": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V1-IAM-024"
+    },
+    "POST /api/v1/terminals/{terminalId:guid}/token-credential/": {
+      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
+      "task": "V13-HUG-005"
+    },
+    "POST /api/{**path}": {
+      "reason": "Bilinmeyen API adresi için Türkçe 404 zarfı; hiçbir veriyi değiştirmez, anahtar gerekmez.",
+      "task": "V1-RMD-098"
+    },
+    "PUT /api/v1/management/business-identity/logo": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-246"
+    },
+    "PUT /api/v1/management/customer-display/screensaver": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-CDP-004"
+    },
+    "PUT /api/v1/management/customers/{customerId:guid}/credit-terms/": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-440"
+    },
+    "PUT /api/v1/management/inventory/stock-items/{stockItemId:guid}/reorder-point": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-143"
+    },
+    "PUT /api/v1/management/menus-and-specials/daily-menus/items/{dailyMenuItemId:guid}/planned-portions": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-131"
+    },
+    "PUT /api/v1/management/menus-and-specials/daily-menus/items/{dailyMenuItemId:guid}/price": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-131"
+    },
+    "PUT /api/v1/management/menus-and-specials/daily-menus/items/{dailyMenuItemId:guid}/status": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-131"
+    },
+    "PUT /api/v1/management/menus-and-specials/menus/{menuId:guid}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-131"
+    },
+    "PUT /api/v1/management/menus-and-specials/menus/{menuId:guid}/items/{menuItemId:guid}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-131"
+    },
+    "PUT /api/v1/management/production/batches/{batchId:guid}/recipe-version": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-133"
+    },
+    "PUT /api/v1/management/purchasing/suppliers/{supplierId:guid}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-132"
+    },
+    "PUT /api/v1/management/settings/{key}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-246"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/amounts": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-103"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/custom": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-103"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-103"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/items": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-103"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/customers/{customerId:guid}/tax-identity": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-RMD-442"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/kitchen-operations/printers/{printerId:guid}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-KIT-005"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/kitchen-operations/routes/{routeId:guid}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-KIT-005"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/online-menu/{provider}/mappings/{productId:guid}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V12-OUI-005"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/online-platform-credentials/{provider}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V12-OUI-003"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/online-store-status/{provider}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V12-ONL-011"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/table-management/floor-plans/{zoneId:guid}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-IAM-024"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/table-management/tables/{tableId:guid}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-IAM-024"
+    },
+    "PUT /api/v1/terminals/{terminalId:guid}/table-management/zones/{zoneId:guid}": {
+      "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
+      "task": "V1-IAM-024"
+    },
+    "PUT /api/{**path}": {
+      "reason": "Bilinmeyen API adresi için Türkçe 404 zarfı; hiçbir veriyi değiştirmez, anahtar gerekmez.",
+      "task": "V1-RMD-098"
+    }
+  }
+}

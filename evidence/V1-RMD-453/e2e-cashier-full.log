@@ -1,0 +1,8 @@
+$ npx playwright test --reporter=line   (tests/E2E/Cashier, full suite, real Host + PostgreSQL 18)
+[global-setup] applied 166 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 71 tests using 1 worker
+
+[global-teardown] Host stopped, database dropped
+  71 passed (2.7m)

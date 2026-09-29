@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.CustomerData.Profiles;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.CustomerAccounts;
 using ALKAROS.Identity.Authorization.Catalog;
@@ -194,6 +195,125 @@ public sealed class CustomerAccountsHttpTests : IAsyncLifetime
         Assert.Equal("Müşteri adı gerekli (en çok 120 karakter).", error.GetProperty("message").GetString());
     }
 
+    // V1-RMD-453: the invoice tax identity is entered at the till and only ever leaves the server masked.
+
+    [Fact]
+    public async Task ACompanyCustomerIsCreatedWithItsVknAndTheTillOnlySeesItMasked()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd453-create");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/customers", cookie,
+            new CreateCustomerV1("Deniz Gıda Ltd.", null, "Vkn", "1234567890", "Kadıköy"));
+
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var created = (await response.Content.ReadFromJsonAsync<CustomerAccountSummaryV1>())!;
+        Assert.Equal("Vkn", created.TaxIdKind);
+        Assert.Equal("*******890", created.TaxIdMasked);
+        Assert.Equal("Kadıköy", created.TaxOffice);
+        var raw = await (await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/customers", cookie)).Content.ReadAsStringAsync();
+        Assert.Contains("*******890", raw);
+        Assert.DoesNotContain("1234567890", raw);
+        var stored = await app.Services.GetRequiredService<ICustomerProfileStore>()
+            .GetAsync(created.CustomerId, CustomerAccessRole.Manager);
+        Assert.Equal("1234567890", stored!.TaxIdentity!.Number);
+    }
+
+    [Theory]
+    [InlineData("Vkn", "1234567891", "Kadıköy", "Vergi kimlik numarası geçersiz; rakamları kontrol edin.")]
+    [InlineData("Vkn", "12345", "Kadıköy", "Vergi kimlik numarası 10 rakam olmalı.")]
+    [InlineData("Vkn", "1234567890", " ", "Vergi kimlik numarası için vergi dairesi gerekli.")]
+    [InlineData("Tckn", "10000000147", null, "T.C. kimlik numarası geçersiz; rakamları kontrol edin.")]
+    [InlineData("Tckn", "01234567890", null, "T.C. kimlik numarası 11 rakam olmalı ve 0 ile başlamamalı.")]
+    [InlineData(null, "1234567890", "Kadıköy", "Vergi kimlik türünü seçin (VKN ya da TCKN).")]
+    [InlineData("0", "1234567890", "Kadıköy", "Vergi kimlik türünü seçin (VKN ya da TCKN).")]
+    [InlineData("Tckn", " ", null, "T.C. kimlik numarası gerekli.")]
+    public async Task AnInvalidTaxIdentityIsRefusedInTurkishAndNoCustomerIsCreated(
+        string? kind, string number, string? taxOffice, string expectedMessage)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd453-invalid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/customers", cookie,
+            new CreateCustomerV1("Deniz Gıda Ltd.", null, kind, number, taxOffice));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var error = (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+        Assert.Equal("VALIDATION_FAILED", error.GetProperty("code").GetString());
+        Assert.Equal(expectedMessage, error.GetProperty("message").GetString());
+        Assert.Empty(await ListAsync(client, terminalId, cookie, "Deniz"));
+    }
+
+    [Fact]
+    public async Task AnExistingCustomersTaxIdentityIsSetReplacedAndRemovedKeepingTheirOtherDetails()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd453-update");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var customer = await CreateCustomerAsync(client, terminalId, cookie, "Ayşe Yılmaz", "0555 444 33 22");
+        var path = $"/api/v1/terminals/{terminalId:D}/customers/{customer.CustomerId:D}/tax-identity";
+
+        var set = await SendJsonAsync(client, HttpMethod.Put, path, cookie, new UpdateCustomerTaxIdentityV1("Tckn", "10000000146", null));
+        var replaced = await SendJsonAsync(client, HttpMethod.Put, path, cookie, new UpdateCustomerTaxIdentityV1("VKN", "9876543217", "Çankaya"));
+        var afterReplace = await app.Services.GetRequiredService<ICustomerProfileStore>()
+            .GetAsync(customer.CustomerId, CustomerAccessRole.Manager);
+        var removed = await SendJsonAsync(client, HttpMethod.Put, path, cookie, new UpdateCustomerTaxIdentityV1(null, null, null));
+
+        Assert.Equal(HttpStatusCode.OK, set.StatusCode);
+        Assert.Equal("********146", (await set.Content.ReadFromJsonAsync<CustomerAccountSummaryV1>())!.TaxIdMasked);
+        Assert.Equal(HttpStatusCode.OK, replaced.StatusCode);
+        Assert.Equal("9876543217", afterReplace!.TaxIdentity!.Number);
+        Assert.Equal("Çankaya", afterReplace.TaxIdentity.TaxOffice);
+        Assert.Equal("0555 444 33 22", afterReplace.Phone);
+        Assert.Equal(HttpStatusCode.OK, removed.StatusCode);
+        var final = (await removed.Content.ReadFromJsonAsync<CustomerAccountSummaryV1>())!;
+        Assert.Null(final.TaxIdKind);
+        Assert.Null(final.TaxIdMasked);
+        Assert.Equal("Ayşe Yılmaz", final.Name);
+        Assert.Equal("*******3322", final.PhoneMasked);
+    }
+
+    [Fact]
+    public async Task UpdatingTheTaxIdentityOfAnUnknownCustomerOrWithABadNumberIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd453-refuse");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var customer = await CreateCustomerAsync(client, terminalId, cookie, "Ayşe Yılmaz", null);
+
+        var unknown = await SendJsonAsync(client, HttpMethod.Put,
+            $"/api/v1/terminals/{terminalId:D}/customers/{Guid.NewGuid():D}/tax-identity", cookie,
+            new UpdateCustomerTaxIdentityV1("Tckn", "10000000146", null));
+        var invalid = await SendJsonAsync(client, HttpMethod.Put,
+            $"/api/v1/terminals/{terminalId:D}/customers/{customer.CustomerId:D}/tax-identity", cookie,
+            new UpdateCustomerTaxIdentityV1("Tckn", "10000000147", null));
+
+        Assert.Equal(HttpStatusCode.NotFound, unknown.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
+        Assert.Null(Assert.Single(await ListAsync(client, terminalId, cookie, "Ayşe")).TaxIdMasked);
+    }
+
+    [Fact]
+    public async Task ACashierWithoutPaymentsTakeCannotChangeATaxIdentity()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionWithPermissionsAsync(terminalId, "rmd453-no-take", ApplicationPermissions.CashDrawer);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await SendJsonAsync(client, HttpMethod.Put,
+            $"/api/v1/terminals/{terminalId:D}/customers/{Guid.NewGuid():D}/tax-identity", cookie,
+            new UpdateCustomerTaxIdentityV1("Tckn", "10000000146", null));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
     private static async Task<CustomerAccountSummaryV1> CreateCustomerAsync(HttpClient client, Guid terminalId, string cookie, string name, string? phone)
     {
         var response = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/customers", cookie, new CreateCustomerV1(name, phone));
@@ -233,9 +353,12 @@ public sealed class CustomerAccountsHttpTests : IAsyncLifetime
         return new HttpClient { BaseAddress = new Uri(address) };
     }
 
-    private static async Task<HttpResponseMessage> PostAsync(HttpClient client, string path, string? cookie, object body)
+    private static Task<HttpResponseMessage> PostAsync(HttpClient client, string path, string? cookie, object body)
+        => SendJsonAsync(client, HttpMethod.Post, path, cookie, body);
+
+    private static async Task<HttpResponseMessage> SendJsonAsync(HttpClient client, HttpMethod method, string path, string? cookie, object body)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, path)
+        using var request = new HttpRequestMessage(method, path)
         {
             Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json"),
         };

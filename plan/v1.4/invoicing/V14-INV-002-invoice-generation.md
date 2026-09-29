@@ -1,7 +1,7 @@
 # V14-INV-002 - Implement outgoing invoice generation
 
 - Task ID: V14-INV-002
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_012a6DqV4367gGp1Uk8TUam1
 - Work type: implementation
 - Surface state: Planned

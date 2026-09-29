@@ -153,6 +153,10 @@ public static class ModuleBoundaryTests
             // V12-REC-001: same read-model pattern for online order sources
             // (online_ordering.*, orders.*, outbox_messages by plain SQL).
             ["Reconciliation.OnlineOrders"] = ["Reconciliation"],
+            // V14-INV-002: module-dependency-rules.md row 34 - the invoice's buyer
+            // snapshot is read through CustomerData's profile store (decryption
+            // stays inside CustomerData); every other source is read by SQL.
+            ["Invoicing.Generation"] = ["CustomerData"],
         };
 
     private static List<(IModule Module, Assembly Assembly)> CatalogModules()

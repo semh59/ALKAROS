@@ -1,5 +1,6 @@
 // V1-RMD-443: Cari Hesaplar standalone page - customers, their account statement, cash collection towards the
-// account (V14-ACC-005/009 through V1-RMD-442) and the manager's credit limit (V1-RMD-440). Same conventions as
+// account (V14-ACC-005/009 through V1-RMD-442), the manager's credit limit (V1-RMD-440) and the invoice tax identity
+// (V1-RMD-453; the server only ever returns its number masked). Same conventions as
 // split-payment.js and cash-session.js: no bundler, IIFE module, credentials:'include' fetch, Turkish messages.
 (function () {
   'use strict';
@@ -18,6 +19,12 @@
     statement: null,
     newName: '',
     newPhone: '',
+    newTaxKind: '',
+    newTaxNumber: '',
+    newTaxOffice: '',
+    taxKindDraft: '',
+    taxNumberDraft: '',
+    taxOfficeDraft: '',
     receiptAmount: '',
     receiptKey: null,
     lastReceipt: null,
@@ -35,6 +42,34 @@
   }
 
   function formatMoney(amount) { return money.format(Number(amount || 0)); }
+
+  var taxKindLabels = { Vkn: 'VKN', Tckn: 'TCKN' };
+
+  function describeTaxIdentity(c) {
+    if (!c.taxIdKind) return null;
+    return (taxKindLabels[c.taxIdKind] || 'Vergi no') + ' ' + c.taxIdMasked +
+      (c.taxOffice ? ' · ' + c.taxOffice + ' V.D.' : '');
+  }
+
+  function taxBody(kind, number, office) {
+    return { TaxIdKind: kind || null, TaxIdNumber: kind ? number.trim() || null : null, TaxOffice: kind ? office.trim() || null : null };
+  }
+
+  function taxFields(prefix, kind, number, office, subject) {
+    return (
+      '<select class="sp-input" id="' + prefix + '-tax-kind" aria-label="' + subject + ' vergi kimlik türü">' +
+      [['', 'Vergi kimliği yok'], ['Vkn', 'VKN (şirket)'], ['Tckn', 'TCKN (şahıs)']].map(function (option) {
+        return '<option value="' + option[0] + '"' + (option[0] === kind ? ' selected' : '') + '>' + option[1] + '</option>';
+      }).join('') + '</select>' +
+      (kind
+        ? '<input class="sp-input" type="text" inputmode="numeric" id="' + prefix + '-tax-number" maxlength="11" placeholder="' +
+          (kind === 'Vkn' ? 'Vergi kimlik no (10 rakam)' : 'T.C. kimlik no (11 rakam)') + '" aria-label="' + subject + ' ' +
+          (kind === 'Vkn' ? 'vergi kimlik numarası' : 'T.C. kimlik numarası') + '" value="' + escapeHtml(number) + '">' +
+          '<input class="sp-input" type="text" id="' + prefix + '-tax-office" maxlength="80" placeholder="Vergi dairesi' +
+          (kind === 'Vkn' ? '' : ' (isteğe bağlı)') + '" aria-label="' + subject + ' vergi dairesi" value="' + escapeHtml(office) + '">'
+        : '')
+    );
+  }
 
   function describeHttpFailure(status, body) {
     if (body && body.error && body.error.message) return body.error.message;
@@ -109,6 +144,9 @@
       if (!result.ok) { fail(result); return; }
       state.statement = result.body;
       state.limitDraft = String(result.body.customer.creditLimit);
+      state.taxKindDraft = result.body.customer.taxIdKind || '';
+      state.taxNumberDraft = '';
+      state.taxOfficeDraft = result.body.customer.taxOffice || '';
       state.termDraft = result.body.customer.paymentTermDays == null ? '' : String(result.body.customer.paymentTermDays);
       render();
       var heading = document.getElementById('ca-customer-heading');
@@ -122,12 +160,16 @@
     render();
     api(base() + '/customers', {
       method: 'POST',
-      body: { Name: state.newName, Phone: state.newPhone || null },
+      body: Object.assign({ Name: state.newName, Phone: state.newPhone || null },
+        taxBody(state.newTaxKind, state.newTaxNumber, state.newTaxOffice)),
     }).then(function (result) {
       state.busy = false;
       if (!result.ok) { fail(result); return; }
       state.newName = '';
       state.newPhone = '';
+      state.newTaxKind = '';
+      state.newTaxNumber = '';
+      state.newTaxOffice = '';
       return loadCustomers().then(function () {
         return openCustomer(result.body.customerId, 'Müşteri eklendi: ' + result.body.name);
       });
@@ -183,6 +225,22 @@
     }).catch(function () { state.busy = false; state.error = 'Sunucuya ulaşılamadı.'; render(); });
   }
 
+  // The number is never shown back in full, so changing the identity means typing the whole number again.
+  function saveTaxIdentity() {
+    state.busy = true;
+    state.error = null;
+    render();
+    api(base() + '/customers/' + state.selectedId + '/tax-identity', {
+      method: 'PUT',
+      body: taxBody(state.taxKindDraft, state.taxNumberDraft, state.taxOfficeDraft),
+    }).then(function (result) {
+      state.busy = false;
+      if (!result.ok) { fail(result); return; }
+      var notice = result.body.taxIdKind ? 'Vergi kimliği kaydedildi.' : 'Vergi kimliği kaldırıldı.';
+      return Promise.all([loadCustomers(), openCustomer(state.selectedId, notice)]).then(render);
+    }).catch(function () { state.busy = false; state.error = 'Sunucuya ulaşılamadı.'; render(); });
+  }
+
   // ---- rendering ----------------------------------------------------------
 
   function alerts() {
@@ -205,11 +263,13 @@
         ? '<div class="sp-alert-body" role="status">Müşteri bulunamadı.</div>'
         : '<div class="ca-list" role="list">' + state.customers.map(function (c) {
           var active = c.customerId === state.selectedId;
+          var tax = describeTaxIdentity(c);
           return (
             '<div role="listitem"><button type="button" class="sp-customer' + (active ? ' is-active' : '') + '" ' +
             (active ? 'aria-current="true" ' : '') + 'data-customer-id="' + escapeHtml(c.customerId) + '">' +
             '<span class="sp-customer-name">' + escapeHtml(c.name) + (c.phoneMasked ? ' · ' + escapeHtml(c.phoneMasked) : '') + '</span>' +
-            '<span class="sp-customer-meta">Borç ' + formatMoney(c.balance) + ' · Limit ' + formatMoney(c.creditLimit) + '</span>' +
+            '<span class="sp-customer-meta">Borç ' + formatMoney(c.balance) + ' · Limit ' + formatMoney(c.creditLimit) +
+            (tax ? ' · ' + escapeHtml(tax) : '') + '</span>' +
             '</button></div>'
           );
         }).join('') + '</div>') +
@@ -217,6 +277,7 @@
       '<h2 class="sp-field-label">Yeni müşteri</h2>' +
       '<input class="sp-input" type="text" id="ca-new-name" maxlength="120" placeholder="Ad soyad" aria-label="Yeni müşterinin adı" value="' + escapeHtml(state.newName) + '">' +
       '<input class="sp-input" type="tel" id="ca-new-phone" maxlength="25" placeholder="Telefon (isteğe bağlı)" aria-label="Yeni müşterinin telefonu (isteğe bağlı)" value="' + escapeHtml(state.newPhone) + '">' +
+      taxFields('ca-new', state.newTaxKind, state.newTaxNumber, state.newTaxOffice, 'Yeni müşterinin') +
       '<button class="sp-btn sp-btn-secondary" id="ca-create" type="button"' + (state.busy ? ' disabled' : '') + '>Müşteri ekle</button>' +
       '</section>'
     );
@@ -236,6 +297,7 @@
       '<div class="sp-summary-row"><span>Kredi limiti</span><span class="value">' + formatMoney(c.creditLimit) + '</span></div>' +
       '<div class="sp-summary-row"><span>Kullanılabilir</span><span class="value">' + formatMoney(c.availableCredit) + '</span></div>' +
       '<div class="sp-summary-row"><span>Vade</span><span class="value">' + (c.paymentTermDays ? c.paymentTermDays + ' gün' : 'Tanımsız') + '</span></div>' +
+      '<div class="sp-summary-row"><span>Vergi kimliği</span><span class="value" id="ca-tax-identity">' + escapeHtml(describeTaxIdentity(c) || 'Tanımsız') + '</span></div>' +
       '<div class="sp-divider"></div>' +
       '<div class="sp-field"><span class="sp-field-label">Nakit tahsilat</span>' +
       (state.lastReceipt
@@ -256,6 +318,10 @@
       '<input class="sp-input" type="number" step="0.01" min="0" id="ca-limit" aria-label="Kredi limiti (TL)" value="' + escapeHtml(state.limitDraft) + '">' +
       '<input class="sp-input" type="number" step="1" min="1" max="365" id="ca-term" placeholder="Vade (gün)" aria-label="Vade (gün, boş bırakılırsa vade takibi yok)" value="' + escapeHtml(state.termDraft) + '">' +
       '<button class="sp-btn sp-btn-secondary" id="ca-save-limit" type="button"' + disabled + '>Kaydet</button>' +
+      '</div></div>' +
+      '<div class="sp-field"><span class="sp-field-label">Fatura için vergi kimliği</span>' +
+      '<div class="sp-row ca-tax-row">' + taxFields('ca-edit', state.taxKindDraft, state.taxNumberDraft, state.taxOfficeDraft, 'Müşterinin') +
+      '<button class="sp-btn sp-btn-secondary" id="ca-save-tax" type="button"' + disabled + '>Vergi kimliğini kaydet</button>' +
       '</div></div>' +
       '<div class="sp-divider"></div>' +
       '<h3 class="sp-field-label">Hareketler</h3>' +
@@ -294,6 +360,12 @@
       '<a class="sp-btn sp-btn-primary" href="/" style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">Giriş ekranına dön</a></div>';
   }
 
+  // Choosing a kind re-renders the form (the number field depends on it); keep the keyboard on the chooser.
+  function focusAfterRender(id) {
+    var el = document.getElementById(id);
+    if (el) el.focus();
+  }
+
   function bind() {
     function on(id, event, handler) {
       var el = document.getElementById(id);
@@ -305,6 +377,13 @@
     on('ca-new-name', 'input', function () { state.newName = this.value; });
     on('ca-new-phone', 'input', function () { state.newPhone = this.value; });
     on('ca-create', 'click', createCustomer);
+    on('ca-new-tax-kind', 'change', function () { state.newTaxKind = this.value; render(); focusAfterRender('ca-new-tax-kind'); });
+    on('ca-new-tax-number', 'input', function () { state.newTaxNumber = this.value; });
+    on('ca-new-tax-office', 'input', function () { state.newTaxOffice = this.value; });
+    on('ca-edit-tax-kind', 'change', function () { state.taxKindDraft = this.value; render(); focusAfterRender('ca-edit-tax-kind'); });
+    on('ca-edit-tax-number', 'input', function () { state.taxNumberDraft = this.value; });
+    on('ca-edit-tax-office', 'input', function () { state.taxOfficeDraft = this.value; });
+    on('ca-save-tax', 'click', saveTaxIdentity);
     on('ca-receipt-amount', 'input', function () { state.receiptAmount = this.value; state.receiptKey = null; });
     on('ca-receive', 'click', receiveCash);
     on('ca-limit', 'input', function () { state.limitDraft = this.value; });

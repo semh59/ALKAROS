@@ -64,6 +64,8 @@ public static class ModuleRegistry
         typeof(ALKAROS.CustomerAccounts.CashReceipts.CustomerAccountsCashReceiptsModule),
         // V14-INV-001: periodic invoice source selection (reads the account ledger by SQL).
         typeof(ALKAROS.Invoicing.SourceSelection.InvoicingSourceSelectionModule),
+        // V14-INV-002: invoice drafts from a source set (buyer from CustomerData, sources by SQL).
+        typeof(ALKAROS.Invoicing.Generation.InvoicingGenerationModule),
         typeof(ALKAROS.Payments.CardSettlement.CardSettlementModule),
         typeof(ALKAROS.Payments.EftTender.EftTenderModule),
         typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule),

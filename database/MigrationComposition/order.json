@@ -1432,6 +1432,15 @@
         "invoice_source_lines"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "168",
+      "phase": "B",
+      "tables": [
+        "invoices",
+        "invoice_lines"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

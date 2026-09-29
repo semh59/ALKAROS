@@ -270,6 +270,7 @@
       "alkaros.invoicing": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.CustomerData": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "ALKAROS.Secrets": "[1.0.0, )",
           "ALKAROS.SensitiveData": "[1.0.0, )",

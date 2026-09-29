@@ -1,0 +1,4 @@
+  Failed ALKAROS.CustomerData.Profiles.Tests.CustomerTaxIdentityTests.AVknWithAWrongCheckDigitIsRefused(vkn: "9876543210") [3 ms]
+  Failed ALKAROS.CustomerData.Profiles.Tests.CustomerTaxIdentityTests.AVknWithAWrongCheckDigitIsRefused(vkn: "1234567891") [< 1 ms]
+  Failed ALKAROS.CustomerData.Profiles.Tests.CustomerTaxIdentityTests.AVknWithAWrongCheckDigitIsRefused(vkn: "4567890120") [< 1 ms]
+Failed!  - Failed:     3, Passed:    57, Skipped:     0, Total:    60, Duration: 1 s - ALKAROS.CustomerData.Profiles.Tests.dll (net8.0)

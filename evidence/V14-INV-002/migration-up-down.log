@@ -1,0 +1,24 @@
+# 161, 167 up; 168 up, 168 down, 168 up on an empty database
+$ psql -f database/migrations/V14/V14-ACC-001/161-account-transactions.up.sql
+exit=0
+$ psql -f database/migrations/V14/V14-INV-001/167-invoice-source-selection.up.sql
+exit=0
+$ psql -f database/migrations/V14/V14-INV-002/168-invoice-generation.up.sql
+exit=0
+$ psql -f database/migrations/V14/V14-INV-002/168-invoice-generation.down.sql
+exit=0
+$ \dt invoicing.*   (after 168 down)
+invoicing|invoice_periods|table|postgres
+invoicing|invoice_source_lines|table|postgres
+invoicing|invoice_source_sets|table|postgres
+$ psql -f database/migrations/V14/V14-INV-002/168-invoice-generation.up.sql
+exit=0
+$ \dt invoicing.*
+invoicing|invoice_lines|table|postgres
+invoicing|invoice_periods|table|postgres
+invoicing|invoice_source_lines|table|postgres
+invoicing|invoice_source_sets|table|postgres
+invoicing|invoices|table|postgres
+$ trigger names
+tr_invoice_lines_immutable
+tr_invoices_immutable
