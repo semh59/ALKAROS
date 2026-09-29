@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1498,
-  "markdown_line_count": 113956,
-  "markdown_byte_count": 6564765,
+  "markdown_line_count": 113957,
+  "markdown_byte_count": 6565192,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -127,9 +127,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "AB32CD116ED630B1F9684C55A63D84587B3A26B1CF15C45B52F9990B9A589DBA",
-      "lines": 219,
-      "bytes": 17784,
+      "sha256": "76299423AB4E9AA4BC7C03E9C0E72B7FA6F382565F267BB4C95A234DBE46A8D7",
+      "lines": 220,
+      "bytes": 18217,
       "utf8": true
     },
     {
@@ -2647,7 +2647,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "739FD616798380E90DBE58015CDD1B34A38D70CF4F51F7425BFF7DD0FB2CA49F",
+      "sha256": "233D3D481F737307F023B0A30448C4BCF428B64237757B3DAA481DBB30D90E91",
       "lines": 2774,
       "bytes": 407558,
       "utf8": true
@@ -10046,9 +10046,9 @@
     },
     {
       "path": "plan/v1.4/customer-account/V14-ACC-005-cash-account-receipt.md",
-      "sha256": "B04799D31F6184AC02F5EBE6ECBD144FC3F7E2978C0DF88F5C2F74A64B92432A",
+      "sha256": "9AA842D362FF541B0AA456CF28C0F98F043573EE4D391AF7D549C1566861CEB6",
       "lines": 83,
-      "bytes": 3947,
+      "bytes": 3941,
       "utf8": true
     },
     {

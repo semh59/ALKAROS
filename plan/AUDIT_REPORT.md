@@ -1483,7 +1483,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `docs/architecture/dual-screen-pos-topology.md` | ✅ | `1872F1A491C1E084E26681E91942E5BF21AB62BB655589CCDC34A91A5C5BFC2B` | Tek-sahip görev |
 | `docs/architecture/idempotency-inbox-outbox.md` | ✅ | `F4D0F14703633F6CF015AAE9CB505E7BD7097FCFD87B1B41E145B5B8B8B82499` | Tek-sahip görev |
 | `docs/architecture/local-first-sync-contract.md` | ✅ | `0AB1382E141D087F181C73711B2A42ED4A738D30212A667B44C0DAA984B53C92` | Tek-sahip görev |
-| `docs/architecture/module-dependency-rules.md` | ✅ | `AB32CD116ED630B1F9684C55A63D84587B3A26B1CF15C45B52F9990B9A589DBA` | Tek-sahip görev |
+| `docs/architecture/module-dependency-rules.md` | ✅ | `76299423AB4E9AA4BC7C03E9C0E72B7FA6F382565F267BB4C95A234DBE46A8D7` | Tek-sahip görev |
 | `docs/architecture/notification-delivery-matrix.md` | ✅ | `98972801E93FA0053B40FF2539DCC376D4B86CDFFE36399C6BC4AAF129556731` | Tek-sahip görev |
 | `docs/architecture/qr-relay-provider-decision.md` | ✅ | `CE6E7A42BDD5B3CF5E914F1A2053DC9A2D6BF1349D9761E244F43413B9256DE9` | Tek-sahip görev |
 | `docs/architecture/qr-relay-topology.md` | ✅ | `7B96E7E2DB417EDDD762D38220F2A94EF6A8A8536B643D2301AB61BFF0C19EF3` | Tek-sahip görev |
@@ -2028,7 +2028,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1.3/payments/V13-PAY-004-card-settlement-orchestration.md` | ✅ | `4DB44FCAD341C5BE1B78E845428167363A1C692BFC1439BB5C55501E30D4182B` | Tek-sahip görev |
 | `plan/v1.3/payments/V13-PAY-005-eft-tender-handler.md` | ✅ | `9F0AA80E2229A167B1DB1D7243968A8C7842BD2872F19C257608F2E9BAD95628` | Tek-sahip görev |
 | `plan/v1.3/table-payment/V13-TBL-001-payment-aware-table-topology.md` | ✅ | `EE9C97CB93346A85F4DD1047D8D76DE545538A1D671BBDBC58802B4C487FF204` | Tek-sahip görev |
-| `plan/v1.4/customer-account/V14-ACC-005-cash-account-receipt.md` | ✅ | `B04799D31F6184AC02F5EBE6ECBD144FC3F7E2978C0DF88F5C2F74A64B92432A` | Tek-sahip görev |
+| `plan/v1.4/customer-account/V14-ACC-005-cash-account-receipt.md` | ✅ | `9AA842D362FF541B0AA456CF28C0F98F043573EE4D391AF7D549C1566861CEB6` | Tek-sahip görev |
 | `plan/v1.4/customer-account/V14-ACC-006-card-account-receipt.md` | ✅ | `53E8139BBEAB5CCA9964905F7534F37B997C4B9D94B7413A417600382A3436FA` | Tek-sahip görev |
 | `plan/v1.4/customer-account/V14-ACC-007-account-payment-reconciliation.md` | ✅ | `F9DE13FECF9193F5711974C285C563B3017F70902FA605F18BC00E1984E777DB` | Tek-sahip görev |
 | `plan/v1.4/customer-account/V14-ACC-008-customer-account-tender-integration.md` | ✅ | `F4A9EBC5373483FF39AA91EE27DFB7FFBD3000B1229D65F5808525DF14BC25A9` | Tek-sahip görev |
