@@ -11,7 +11,7 @@ import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { ApiError, api, registerSessionExpiredHandler } from "../api";
 import type { CatalogProduct, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
-import { stateText } from "../strings";
+import { navLabels, stateText } from "../strings";
 import { formatMoney, formatQuantity, grossUnitPrice } from "../format";
 import { savedId } from "../storage";
 import { ExperiencePage, type BackendStatus } from "./workspace";
@@ -462,6 +462,7 @@ export function Cashier() {
           <a className="header-action" href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
           <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
           {capabilities.includes("catalog.manage") && <a className="header-action" href="/catalog" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/catalog"); } }}>Menü</a>}
+          {capabilities.includes("reports.view") && <a className="header-action" href="/management" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/management"); } }}>{navLabels.management}</a>}
           <button
             className="header-action"
             ref={pairingTrigger}
