@@ -30,8 +30,7 @@
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/js/auth.js, src/Clients/WaiterPwa/wwwroot/js/api.js
   ve src/Clients/WaiterPwa/wwwroot/js/state.js — yalnız giriş yanıtındaki bütçenin saklanması ve çevrimdışı
   denetimi
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py
-  (yeni) — istemcinin statik testi
+- `tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py` (yeni) — istemcinin statik testi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Endpoints.cs — yalnız giriş
   yanıtındaki `offlineBudget` nesnesine bütçenin rol kodunun (`roleCode`) eklenmesi: uzlaştırma ucu her eylemde
   `RequesterRoleCode` ister ve istemci bu kodu başka bir yanıttan öğrenemez; bütçe hizmeti ve uzlaştırıcı değişmez
