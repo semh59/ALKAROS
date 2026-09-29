@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1516,
-  "markdown_line_count": 114864,
-  "markdown_byte_count": 6615648,
+  "markdown_file_count": 1517,
+  "markdown_line_count": 114883,
+  "markdown_byte_count": 6617537,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2485,6 +2485,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-445/README.md",
+      "sha256": "EF40F2A3A9542BB928EFD4595A93F0C016D382D87F16900CBB3F104C3099E299",
+      "lines": 18,
+      "bytes": 1765,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-453/README.md",
       "sha256": "DE46229E8FBBD682E19B289CD7D56C1D66E89B7FB197AC1828C757D21220D9B4",
       "lines": 20,
@@ -2682,9 +2689,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "95667C5E144FA046A4FF682C4918CB86F71876FAB78D86E385ECF728DE5B9A40",
-      "lines": 2792,
-      "bytes": 410394,
+      "sha256": "AAD941DED5E2350DA42C0C15D75239DFA12E4C47B9D73FAC1137D337219E51F3",
+      "lines": 2793,
+      "bytes": 410524,
       "utf8": true
     },
     {
@@ -8401,9 +8408,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-445-management-area-shell-and-closing.md",
-      "sha256": "21FEE7DE45DE92E05ED5C6A1A854C192646CBE4581954BAF76D47E354CAEBF25",
+      "sha256": "145F661DB056240614D3D5F9D789250A445BDF653907D639DAAE156DBD617786",
       "lines": 52,
-      "bytes": 2456,
+      "bytes": 2450,
       "utf8": true
     },
     {
