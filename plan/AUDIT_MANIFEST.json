@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1501,
-  "markdown_line_count": 114213,
-  "markdown_byte_count": 6580459,
+  "markdown_line_count": 114218,
+  "markdown_byte_count": 6580804,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -20,9 +20,9 @@
   "validation_files": [
     {
       "path": "AGENTS.md",
-      "sha256": "DE0D53C116B7EA5C889997C3A1C854A9E7A104234EA3C265927C108E0588F2C6",
-      "lines": 88,
-      "bytes": 5817,
+      "sha256": "5916F57A73CA9C6E1610E60B0EECA52280B68328D93D793D5266BB0475A1D845",
+      "lines": 89,
+      "bytes": 5919,
       "utf8": true
     },
     {
@@ -71,9 +71,9 @@
   "files": [
     {
       "path": "AGENTS.md",
-      "sha256": "DE0D53C116B7EA5C889997C3A1C854A9E7A104234EA3C265927C108E0588F2C6",
-      "lines": 88,
-      "bytes": 5817,
+      "sha256": "5916F57A73CA9C6E1610E60B0EECA52280B68328D93D793D5266BB0475A1D845",
+      "lines": 89,
+      "bytes": 5919,
       "utf8": true
     },
     {
@@ -2647,7 +2647,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "0414A5A81007ADB2CAA831913BF56FC30A9654740AE360EAE63A03C38029E850",
+      "sha256": "7D916497E79D5C63A1301E6382B0FDD45A006DBCBD45FBE518353A225E8982AE",
       "lines": 2777,
       "bytes": 408070,
       "utf8": true
@@ -2717,9 +2717,9 @@
     },
     {
       "path": "plan/TASK_STANDARD.md",
-      "sha256": "03DE755D3FF9304DAF2EDA739FB1559BE9724D0B88B4295BB59B1E1D030695F2",
-      "lines": 185,
-      "bytes": 9908,
+      "sha256": "C5EE753C6C9ED2F10DBCE47613235A0B7AF9FE3EED8C8F9E0B4133F2D83A7EF7",
+      "lines": 188,
+      "bytes": 10112,
       "utf8": true
     },
     {
@@ -2731,9 +2731,9 @@
     },
     {
       "path": "plan/VALIDATION_CONTRACT.md",
-      "sha256": "D8C1A268F872CC6B72C70DF1A0900E90242CB2B318CEEFB45A306B0B2381E4BC",
-      "lines": 293,
-      "bytes": 20124,
+      "sha256": "3DA184FFC54ABD801ED6046B209705597FCB2268D4BA245013597AB2FB462F5A",
+      "lines": 294,
+      "bytes": 20169,
       "utf8": true
     },
     {
@@ -8289,9 +8289,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-433-evidence-file-rule-alignment.md",
-      "sha256": "5BA2388F73368B953A72BEB2025A3C14A5A71778D87404CF9FEAC49D0736DC2E",
+      "sha256": "E472867281A335881E0ACF030E57DD65D42958527C3311B8E03928EC2A33BABE",
       "lines": 41,
-      "bytes": 1848,
+      "bytes": 1842,
       "utf8": true
     },
     {
