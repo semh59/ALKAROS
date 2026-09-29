@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Observability.AlertFoundation;
@@ -49,6 +50,7 @@ public static class ObservabilityEndpoints
     public static RouteGroupBuilder MapObservabilityApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/observability");
         group.AddEndpointFilter<ObservabilityEndpointFilter>();
 
@@ -301,86 +303,14 @@ public sealed class ObservabilityEndpointFilter : IEndpointFilter
 
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(context.HttpContext, context.HttpContext.RequestAborted);
-            await _authorization.AuthorizeAsync(actorId, ObservabilityEndpoints.ViewPermission, context.HttpContext.RequestAborted);
-            context.HttpContext.Items[ActorIdItemKey] = actorId;
-            return await next(context);
-        }
-        catch (ObservabilityUnauthorizedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (HealthCheckNotFoundException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AlertException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ObservabilityException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PostgresException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.Observability);
+        var actorId = await _authentication.AuthenticateAsync(context.HttpContext, context.HttpContext.RequestAborted);
+        await _authorization.AuthorizeAsync(actorId, ObservabilityEndpoints.ViewPermission, context.HttpContext.RequestAborted);
+        context.HttpContext.Items[ActorIdItemKey] = actorId;
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            ObservabilityUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Gözlemlenebilirlik yönetimi için yeterli izin yok."),
-            AlertNotFoundException =>
-                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen alarm bulunamadı."),
-            HealthCheckNotFoundException =>
-                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen sağlık kontrolü bulunamadı."),
-            InvalidAlertStateException =>
-                (StatusCodes.Status409Conflict, "INVALID_OPERATION", "Bu işlem alarmın şu anki durumuyla uyumlu değil."),
-            AlertConcurrencyException =>
-                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Alarm başka bir işlem tarafından değiştirildi."),
-            UnapprovedRetentionPolicyException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "Onaylanmamış bir saklama politikası kimliği kullanıldı."),
-            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
-            ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new ObservabilityApiErrorEnvelopeV1(new ObservabilityApiErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
-
-public sealed record ObservabilityApiErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record ObservabilityApiErrorEnvelopeV1(ObservabilityApiErrorV1 Error);
 
 public sealed class ObservabilityUnauthorizedException : Exception
 {

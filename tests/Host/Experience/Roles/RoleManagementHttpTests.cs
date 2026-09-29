@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
@@ -48,7 +49,7 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
             new CreateRoleRequestV1("host", "Host"));
         using var response = await client.SendAsync(request);
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        var error = await response.Content.ReadFromJsonAsync<RoleManagementErrorEnvelopeV1>();
+        var error = await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
         Assert.Equal("FORBIDDEN", error!.Error.Code);
         Assert.Equal("Rol ya da yetki yönetimi izni gerekiyor.", error.Error.Message); // V1-RMD-426
     }
@@ -73,7 +74,7 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
         {
             Assert.Equal(HttpStatusCode.Conflict, duplicateRole.StatusCode);
             // V1-RMD-426: the repository's English exception text ("Role 'x' already exists.") is not passed through.
-            var conflict = await duplicateRole.Content.ReadFromJsonAsync<RoleManagementErrorEnvelopeV1>();
+            var conflict = await duplicateRole.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
             Assert.Equal("Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı.", conflict!.Error.Message);
         }
 

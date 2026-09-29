@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using System.Net;
 using System.Globalization;
 using System.Text.Json.Serialization;
@@ -101,6 +102,8 @@ public static partial class DualScreenApplication
             json.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
         var dataSource = NpgsqlDataSource.Create(options.ConnectionString);
         builder.Services.AddSingleton(dataSource);
+        // V1-RMD-431: every API exception becomes the shared error envelope through one IExceptionHandler.
+        builder.Services.AddApiErrorHandling();
         builder.Services.AddSingleton(new HostDatabaseConnection(options.ConnectionString));
         builder.Services.AddSingleton<System.Data.Common.DbDataSource>(dataSource);
 
@@ -670,21 +673,12 @@ public static partial class DualScreenApplication
 
     public static string TerminalGroup(Guid terminalId) => $"terminal:{terminalId:D}";
 
+    /// <summary>
+    /// V1-RMD-431: the Host's error pipeline, ASP.NET Core's exception handler middleware with the shared
+    /// <see cref="ApiExceptionHandler"/> (ALKAROS.Host.Composition.Errors).
+    /// </summary>
     public static IApplicationBuilder UseDualScreenErrorHandling(IApplicationBuilder application)
-    {
-        ArgumentNullException.ThrowIfNull(application);
-        return application.Use(async (context, next) =>
-        {
-            try
-            {
-                await next();
-            }
-            catch (Exception exception)
-            {
-                await WriteErrorAsync(context, exception);
-            }
-        });
-    }
+        => application.UseApiErrorHandling();
 
     private static RateLimitPartition<string> FixedWindow(string partitionKey, int permitLimit)
         => RateLimitPartition.GetFixedWindowLimiter(partitionKey, _ => new FixedWindowRateLimiterOptions
@@ -739,78 +733,9 @@ public static partial class DualScreenApplication
         return $"{operation}:{(string.IsNullOrEmpty(headerValue) ? "missing" : headerValue)}";
     }
 
-    private static readonly Action<ILogger, string, string, Exception?> LogServerError =
-        LoggerMessage.Define<string, string>(
-            LogLevel.Error,
-            new EventId(5000, nameof(LogServerError)),
-            "Unhandled error on {Path} (TraceIdentifier: {TraceIdentifier})");
-
     private static IResult Error(HttpContext context, int status, string code, string message)
         => Results.Json(
             new ApiErrorEnvelope(new ApiError(code, message, status, context.TraceIdentifier)),
             statusCode: status);
 
-    private static async Task WriteErrorAsync(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            DualScreenUnauthorizedException => (401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            DualScreenForbiddenException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
-            AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
-            DualScreenNotFoundException => (404, "NOT_FOUND", "İstenen kayıt bulunamadı."),
-            DualScreenConflictException => (409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."),
-            SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_CONFLICT", "İşlem anahtarı farklı bir istekle kullanılmış."),
-            OrderNotFoundException => (404, "ORDER_NOT_FOUND", "Sipariş bulunamadı."),
-            // V13-CSH-004: Cash/CashTender domain exceptions, most specific
-            // first (CashVarianceThresholdExceededException/
-            // ActiveCashSessionExistsException/InvalidCashSessionStateException
-            // all derive from CashSessionException, so they must precede it).
-            CashSessionNotFoundException => (404, "CASH_SESSION_NOT_FOUND", "Kasa oturumu bulunamadı."),
-            ActiveCashSessionExistsException => (409, "ACTIVE_CASH_SESSION_EXISTS", "Bu terminalde zaten açık bir kasa oturumu var."),
-            InvalidCashSessionStateException => (409, "INVALID_CASH_SESSION_STATE", "Kasa oturumu bu işlem için uygun durumda değil."),
-            CashVarianceThresholdExceededException => (409, "CASH_VARIANCE_THRESHOLD_EXCEEDED", "Fark tolerans sınırını aşıyor; süpervizör onayı gerekiyor."),
-            NegativeCashAmountException => (400, "VALIDATION_FAILED", "Tutar negatif olamaz."),
-            CashSessionException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            CashTenderBillNotFoundException => (404, "BILL_NOT_FOUND", "Hesap bulunamadı."),
-            ClosedCashSessionException => (409, "CLOSED_CASH_SESSION", "Kasa oturumu açık değil."),
-            InsufficientCashTenderException => (400, "INSUFFICIENT_CASH_TENDER", "Verilen tutar hesaplanan tutarı karşılamıyor."),
-            // V1-RMD-409 (V1-RMD-393 F-04, F-07) and V1-RMD-415 (F-12): the same codes the card/EFT tender route
-            // already returns.
-            CashTenderIdempotencyKeyReusedException => (409, "TENDER_IDEMPOTENCY_KEY_REUSED", "İşlem kimliği başka bir tahsilat için zaten kullanılmış."),
-            CashTenderUnsettledPaymentExistsException => (409, "TENDER_UNSETTLED_PAYMENT_EXISTS", "Bu hesapta çözülmemiş bir kart ödemesi var; nakit almadan önce kart ödemesinin sonucu netleştirilmeli."),
-            BillNotPayableException => (409, "TENDER_BILL_NOT_PAYABLE", "Bu hesap iptal edilmiş; tahsilat alınamaz. Hesabı yenileyin."),
-            CashTenderException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            // V13-CSH-004: OverAllocationException (V13-ALC-001) is reachable
-            // through the cash-tender endpoint - both this handler's own
-            // fail-fast check and AllocateAsync's deeper, lock-guarded one
-            // can throw it when the requested amount exceeds what the bill
-            // actually has left.
-            OverAllocationException => (409, "OVER_ALLOCATION", "İstenen tutar hesabın kalan bakiyesini aşıyor."),
-            ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            PostgresException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
-        };
-
-        if (status >= 500)
-        {
-            var logger = context.RequestServices.GetService<ILogger<DualScreenOptions>>();
-            if (logger is not null)
-            {
-                LogServerError(logger, context.Request.Path, context.TraceIdentifier, exception);
-            }
-        }
-
-        if (context.Response.HasStarted)
-        {
-            context.Abort();
-            return;
-        }
-
-        context.Response.Clear();
-        context.Response.StatusCode = status;
-        context.Response.ContentType = "application/json; charset=utf-8";
-        await context.Response.WriteAsJsonAsync(
-            new ApiErrorEnvelope(new ApiError(code, message, status, context.TraceIdentifier)),
-            cancellationToken: context.RequestAborted);
-    }
 }

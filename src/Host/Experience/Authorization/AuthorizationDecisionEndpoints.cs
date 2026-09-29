@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Catalog;
@@ -46,6 +47,7 @@ public static class AuthorizationDecisionEndpoints
     public static RouteGroupBuilder MapAuthorizationDecisionApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup(GroupPrefix);
         group.AddEndpointFilter<AuthorizationDecisionEndpointFilter>();
 
@@ -153,93 +155,14 @@ public sealed class AuthorizationDecisionEndpointFilter : IEndpointFilter
         EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var http = context.HttpContext;
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(http, http.RequestAborted);
-            await _authorization.AuthorizeAsync(
-                actorId, AuthorizationDecisionEndpoints.DecisionPermission, http.RequestAborted);
-            http.Items[AuthorizationDecisionEndpoints.ActorItemKey] = actorId;
-            return await next(context);
-        }
-        catch (AuthorizationDecisionUnauthorizedException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (AuthorizationGrantAlreadyResolvedException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (AuthorizationSelfApprovalException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (BehaviouralTighteningAlreadyClearedException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (BehaviouralTighteningSelfClearException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (DelegatorLacksPermissionException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (DelegationGranteeNotFoundException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(http, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.AuthorizationDecisions);
+        var actorId = await _authentication.AuthenticateAsync(http, http.RequestAborted);
+        await _authorization.AuthorizeAsync(
+            actorId, AuthorizationDecisionEndpoints.DecisionPermission, http.RequestAborted);
+        http.Items[AuthorizationDecisionEndpoints.ActorItemKey] = actorId;
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            AuthorizationDecisionUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Yönetici ya da vardiya sorumlusu oturumu gerekiyor."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Bu ekran için rapor görüntüleme izni gerekiyor."),
-            AuthorizationGrantAlreadyResolvedException =>
-                (StatusCodes.Status409Conflict, "ALREADY_RESOLVED", "Bu talep başka biri tarafından zaten yanıtlandı."),
-            AuthorizationSelfApprovalException =>
-                (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "Kendi talebinizi onaylayamaz ya da reddedemezsiniz."),
-            BehaviouralTighteningAlreadyClearedException =>
-                (StatusCodes.Status409Conflict, "ALREADY_CLEARED", "Bu kısıtlama zaten kaldırılmış."),
-            BehaviouralTighteningSelfClearException =>
-                (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "Kendinize uygulanan kısıtlamayı kaldıramazsınız."),
-            DelegatorLacksPermissionException =>
-                (StatusCodes.Status403Forbidden, "DELEGATOR_LACKS_PERMISSION", "Sahip olmadığınız bir yetkiyi devredemezsiniz."),
-            DelegationGranteeNotFoundException =>
-                (StatusCodes.Status404NotFound, "GRANTEE_NOT_FOUND", "Yetki devredilecek kullanıcı bulunamadı."),
-            BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            ArgumentException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Karar kaydedilemedi."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new AuthorizationDecisionErrorEnvelopeV1(
-                new AuthorizationDecisionErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
 
 public sealed class AuthorizationDecisionUnauthorizedException : Exception

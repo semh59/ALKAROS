@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Payments.ManualResolution;
 using ALKAROS.Reconciliation.Payments;
@@ -22,6 +23,7 @@ public static class PaymentSettlementEndpoints
     public static RouteGroupBuilder MapPaymentSettlementApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/payments");
         group.AddEndpointFilter<ReconciliationCaseEndpointFilter>();
 

@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.Experience.CustomerCredit;
@@ -151,7 +152,7 @@ public sealed class CustomerCreditTermsHttpTests : IAsyncLifetime
         return client;
     }
 
-    private static async Task<CustomerCreditApiErrorEnvelopeV1> ReadErrorAsync(HttpResponseMessage response)
-        => await response.Content.ReadFromJsonAsync<CustomerCreditApiErrorEnvelopeV1>()
+    private static async Task<ApiErrorEnvelope> ReadErrorAsync(HttpResponseMessage response)
+        => await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>()
             ?? throw new InvalidOperationException("Expected a customer credit error response.");
 }

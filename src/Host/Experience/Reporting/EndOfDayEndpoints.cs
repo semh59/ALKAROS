@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Reporting.BusinessDayTotals;
@@ -48,6 +49,7 @@ public static class EndOfDayEndpoints
     public static RouteGroupBuilder MapEndOfDayApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/reporting/business-day");
         group.AddEndpointFilter<EndOfDayEndpointFilter>();
 
@@ -208,74 +210,14 @@ public sealed class EndOfDayEndpointFilter : IEndpointFilter
 
     public async ValueTask<object?> InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(context.HttpContext, context.HttpContext.RequestAborted);
-            await _authorization.AuthorizeAsync(actorId, EndOfDayEndpoints.ViewPermission, context.HttpContext.RequestAborted);
-            context.HttpContext.Items[ActorIdItemKey] = actorId;
-            return await next(context);
-        }
-        catch (EndOfDayUnauthorizedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ReportingException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PostgresException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.EndOfDay);
+        var actorId = await _authentication.AuthenticateAsync(context.HttpContext, context.HttpContext.RequestAborted);
+        await _authorization.AuthorizeAsync(actorId, EndOfDayEndpoints.ViewPermission, context.HttpContext.RequestAborted);
+        context.HttpContext.Items[ActorIdItemKey] = actorId;
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            EndOfDayUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Gün sonu raporu/işlemi için yeterli izin yok."),
-            BusinessDayNotFoundException =>
-                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen iş günü bulunamadı."),
-            BusinessDayAlreadyOpenException =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Bu tarih için iş günü zaten açık."),
-            InvalidBusinessDayOperationException =>
-                (StatusCodes.Status409Conflict, "INVALID_OPERATION", "Bu işlem şu anki gün durumuyla uyumlu değil."),
-            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
-            ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new EndOfDayApiErrorEnvelopeV1(new EndOfDayApiErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
-
-public sealed record EndOfDayApiErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record EndOfDayApiErrorEnvelopeV1(EndOfDayApiErrorV1 Error);
 
 public sealed class EndOfDayUnauthorizedException : Exception
 {

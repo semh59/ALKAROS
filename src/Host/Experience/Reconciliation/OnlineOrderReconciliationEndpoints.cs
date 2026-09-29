@@ -1,3 +1,5 @@
+using ALKAROS.Host.Composition.Errors;
+using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Reconciliation.OnlineOrders;
 using Microsoft.AspNetCore.Builder;
@@ -27,6 +29,7 @@ public static class OnlineOrderReconciliationEndpoints
     public static RouteGroupBuilder MapOnlineOrderReconciliationApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/reconciliation/online-orders");
         group.AddEndpointFilter<ReconciliationCaseEndpointFilter>();
 
@@ -92,7 +95,7 @@ public static class OnlineOrderReconciliationEndpoints
 
     private static IResult Error(HttpContext context, int status, string code, string message) =>
         Results.Json(
-            new ReconciliationCaseApiErrorEnvelopeV1(new ReconciliationCaseApiErrorV1(code, message, status, context.TraceIdentifier)),
+            new ApiErrorEnvelope(new ApiError(code, message, status, context.TraceIdentifier)),
             statusCode: status);
 }
 

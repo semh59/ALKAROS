@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.Experience.Settings;
@@ -161,8 +162,8 @@ public sealed class SettingsManagementHttpTests : IAsyncLifetime
         return client;
     }
 
-    private static async Task<SettingsApiErrorEnvelopeV1> ReadErrorAsync(HttpResponseMessage response)
-        => await response.Content.ReadFromJsonAsync<SettingsApiErrorEnvelopeV1>()
+    private static async Task<ApiErrorEnvelope> ReadErrorAsync(HttpResponseMessage response)
+        => await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>()
             ?? throw new InvalidOperationException("Expected a settings management error response.");
 }
 

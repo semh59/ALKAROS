@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.Experience.Purchasing;
@@ -157,8 +158,8 @@ public sealed class PurchasingManagementHttpTests : IAsyncLifetime
         return client;
     }
 
-    private static async Task<PurchasingApiErrorEnvelopeV1> ReadErrorAsync(HttpResponseMessage response)
-        => await response.Content.ReadFromJsonAsync<PurchasingApiErrorEnvelopeV1>()
+    private static async Task<ApiErrorEnvelope> ReadErrorAsync(HttpResponseMessage response)
+        => await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>()
             ?? throw new InvalidOperationException("Expected a purchasing management error response.");
 }
 

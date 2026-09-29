@@ -261,7 +261,6 @@ public sealed class CustomerAccountsHttpTests : IAsyncLifetime
     }
 }
 
-
 [CollectionDefinition("CustomerAccounts HTTP", DisableParallelization = true)]
 public sealed class CustomerAccountsHttpDefinition;
 

@@ -40,10 +40,6 @@ public sealed record ResolvedGrantV1(
     Guid ApproverUserId,
     DateTimeOffset ResolvedAt);
 
-public sealed record AuthorizationDecisionErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record AuthorizationDecisionErrorEnvelopeV1(AuthorizationDecisionErrorV1 Error);
-
 /// <summary>V1-RMD-407: a manager/supervisor hands a grant-class permission to <see cref="GranteeUserId"/> until <see cref="ExpiresAt"/>.</summary>
 public sealed record CreateDelegationRequestV1(
     Guid GranteeUserId,

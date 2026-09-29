@@ -54,6 +54,3 @@ public sealed record ProductionOutputV1(
         => new(value.Id, value.StockItemId, value.StockLocationId, value.Quantity, value.UnitCode);
 }
 
-public sealed record ProductionApiErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record ProductionApiErrorEnvelopeV1(ProductionApiErrorV1 Error);

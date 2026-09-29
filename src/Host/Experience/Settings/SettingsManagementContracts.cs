@@ -31,6 +31,3 @@ public sealed record SettingHistoryRecordV1(
             value.Reason, value.ChangedBy, value.ChangedAt);
 }
 
-public sealed record SettingsApiErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record SettingsApiErrorEnvelopeV1(SettingsApiErrorV1 Error);

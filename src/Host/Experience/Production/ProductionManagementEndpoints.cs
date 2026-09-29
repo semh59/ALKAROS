@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Inventory.BalanceProjection;
@@ -66,6 +67,7 @@ public static class ProductionManagementEndpoints
     public static RouteGroupBuilder MapProductionManagement(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/production");
         group.AddEndpointFilter<ProductionManagerEndpointFilter>();
 
@@ -255,94 +257,18 @@ public sealed class ProductionManagerEndpointFilter : IEndpointFilter
         EndpointFilterInvocationContext context,
         EndpointFilterDelegate next)
     {
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(
-                context.HttpContext,
-                context.HttpContext.RequestAborted);
-            await _authorization.AuthorizeAsync(
-                actorId,
-                ProductionManagementEndpoints.ManagePermission,
-                context.HttpContext.RequestAborted);
-            context.HttpContext.Items[ActorIdItemKey] = actorId;
-            return await next(context);
-        }
-        catch (ProductionManagementUnauthorizedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ProductionBatchException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ProductionStockEffectException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (PostgresException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(context.HttpContext, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.ProductionManagement);
+        var actorId = await _authentication.AuthenticateAsync(
+            context.HttpContext,
+            context.HttpContext.RequestAborted);
+        await _authorization.AuthorizeAsync(
+            actorId,
+            ProductionManagementEndpoints.ManagePermission,
+            context.HttpContext.RequestAborted);
+        context.HttpContext.Items[ActorIdItemKey] = actorId;
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            ProductionManagementUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Üretim yönetimi izni gerekiyor."),
-            ProductionBatchNotFoundException =>
-                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen üretim partisi bulunamadı."),
-            ProductionBatchDuplicateNumberException =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_BATCH_NUMBER", "Bu numarayla bir üretim partisi zaten var."),
-            InvalidProductionBatchTransitionException =>
-                (StatusCodes.Status409Conflict, "INVALID_TRANSITION", "Üretim partisi bu durumda bu işlemi kabul etmiyor."),
-            RecipeVersionImmutableException =>
-                (StatusCodes.Status409Conflict, "RECIPE_VERSION_IMMUTABLE", "Reçete sürümü bu partide değiştirilemez."),
-            ProductionBatchConcurrencyException =>
-                (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Üretim partisi başka bir işlem tarafından değiştirildi."),
-            InvalidProductionBatchQuantityException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            InsufficientProductionStockException =>
-                (StatusCodes.Status409Conflict, "INSUFFICIENT_STOCK", "Reçete bileşenleri için yeterli stok yok."),
-            ProductionBatchUnitMismatchException =>
-                (StatusCodes.Status409Conflict, "BATCH_UNIT_MISMATCH", "Partinin birimi reçetenin verim birimine çevrilemiyor; partiyi reçetenin verim biriminde açın."),
-            InvalidProductionStockEffectException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            PostgresException { SqlState: PostgresErrorCodes.UniqueViolation } =>
-                (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
-            PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
-                (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
-            PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
-            ArgumentException or BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new ProductionApiErrorEnvelopeV1(new ProductionApiErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
 
 public sealed class ProductionManagementUnauthorizedException : Exception

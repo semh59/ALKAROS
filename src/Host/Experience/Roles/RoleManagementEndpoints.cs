@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Host.Experience;
 using ALKAROS.Host.Experience.Catalog;
@@ -48,6 +49,7 @@ public static class RoleManagementEndpoints
     public static RouteGroupBuilder MapRoleManagementApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup(GroupPrefix);
         group.AddEndpointFilter<RoleManagementEndpointFilter>();
 
@@ -188,69 +190,13 @@ public sealed class RoleManagementEndpointFilter : IEndpointFilter
         EndpointFilterInvocationContext context, EndpointFilterDelegate next)
     {
         var http = context.HttpContext;
-        try
-        {
-            var actorId = await _authentication.AuthenticateAsync(http, http.RequestAborted);
-            http.Items[RoleManagementEndpoints.ActorItemKey] = actorId;
-            return await next(context);
-        }
-        catch (RoleManagementUnauthorizedException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (AuthorizationDeniedException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (InvalidOperationException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (BadHttpRequestException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (ArgumentException exception)
-        {
-            return MapError(http, exception);
-        }
-        catch (NpgsqlException exception)
-        {
-            return MapError(http, exception);
-        }
+        ApiErrorScope.Enter(context.HttpContext, ApiErrorCatalog.RoleManagement);
+        var actorId = await _authentication.AuthenticateAsync(http, http.RequestAborted);
+        http.Items[RoleManagementEndpoints.ActorItemKey] = actorId;
+        return await next(context);
     }
 
-    private static IResult MapError(HttpContext context, Exception exception)
-    {
-        var (status, code, message) = exception switch
-        {
-            RoleManagementUnauthorizedException =>
-                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Yönetici ya da vardiya sorumlusu oturumu gerekiyor."),
-            AuthorizationDeniedException =>
-                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Rol ya da yetki yönetimi izni gerekiyor."),
-            // V1-RMD-426: the exception's own text is English and names internal codes (UI_STYLE_GUIDE); the
-            // cases behind it are an existing role, permission or username, or a missing permission code.
-            InvalidOperationException =>
-                (StatusCodes.Status409Conflict, "ROLE_MANAGEMENT_CONFLICT",
-                    "Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı."),
-            BadHttpRequestException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            ArgumentException =>
-                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
-                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
-            _ => throw exception,
-        };
-        return Results.Json(
-            new RoleManagementErrorEnvelopeV1(
-                new RoleManagementErrorV1(code, message, status, context.TraceIdentifier)),
-            statusCode: status);
-    }
 }
-
-public sealed record RoleManagementErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record RoleManagementErrorEnvelopeV1(RoleManagementErrorV1 Error);
 
 public sealed class RoleManagementUnauthorizedException : Exception
 {

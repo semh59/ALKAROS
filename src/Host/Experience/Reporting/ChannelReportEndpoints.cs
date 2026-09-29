@@ -1,3 +1,4 @@
+using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.Experience.Reconciliation;
 using ALKAROS.Reporting.Channels;
 using Microsoft.AspNetCore.Builder;
@@ -16,6 +17,7 @@ public static class ChannelReportEndpoints
     public static RouteGroupBuilder MapChannelReportApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
+        ApiErrorHandling.EnsureFor(endpoints);
         var group = endpoints.MapGroup("/api/v1/management/reports/channels");
         group.AddEndpointFilter<ReconciliationCaseEndpointFilter>();
 

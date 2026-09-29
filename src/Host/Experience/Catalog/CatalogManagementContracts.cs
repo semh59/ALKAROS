@@ -128,7 +128,3 @@ public sealed record CreateProductPriceV1(
     string CurrencyCode = "TRY",
     DateTimeOffset? EffectiveTo = null);
 
-public sealed record CatalogApiErrorEnvelopeV1(
-    [property: JsonPropertyName("error")] CatalogApiErrorV1 Error);
-
-public sealed record CatalogApiErrorV1(string Code, string Message, int Status, string TraceId);

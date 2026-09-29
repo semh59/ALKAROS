@@ -119,6 +119,3 @@ public sealed record DailyMenuDetailsV1(DailyMenuV1 Menu, IReadOnlyList<DailyMen
         => new(DailyMenuV1.From(value.Menu), value.Items.Select(DailyMenuItemV1.From).ToArray());
 }
 
-public sealed record MenuApiErrorV1(string Code, string Message, int Status, string TraceId);
-
-public sealed record MenuApiErrorEnvelopeV1(MenuApiErrorV1 Error);

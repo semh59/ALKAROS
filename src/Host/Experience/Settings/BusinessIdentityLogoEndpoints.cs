@@ -1,3 +1,5 @@
+using ALKAROS.Host.Composition.Errors;
+using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Settings.BusinessIdentity;
@@ -59,6 +61,7 @@ public static class BusinessIdentityLogoEndpoints
     public static RouteGroupBuilder MapBusinessIdentityLogoApi(this WebApplication app)
     {
         ArgumentNullException.ThrowIfNull(app);
+        ApiErrorHandling.EnsureFor(app);
 
         // V1-RMD-235's own screensaver comment applies identically here: an
         // IFormFile parameter is bound eagerly by the minimal-API model
@@ -140,7 +143,7 @@ public static class BusinessIdentityLogoEndpoints
 
     private static IResult LogoValidationError(HttpContext context, string message)
         => Results.Json(
-            new SettingsApiErrorEnvelopeV1(new SettingsApiErrorV1("INVALID_LOGO", message, StatusCodes.Status400BadRequest, context.TraceIdentifier)),
+            new ApiErrorEnvelope(new ApiError("INVALID_LOGO", message, StatusCodes.Status400BadRequest, context.TraceIdentifier)),
             statusCode: StatusCodes.Status400BadRequest);
 
     // Checks the content's magic number against the SPECIFIC type declared

@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -159,7 +160,7 @@ public static class SecretRotationAdministration
 
     private static IResult Error(HttpContext context, int status, string code, string message)
         => Results.Json(
-            new SecurityAdministrationApiErrorEnvelopeV1(new SecurityAdministrationApiErrorV1(code, message, status, context.TraceIdentifier)),
+            new ApiErrorEnvelope(new ApiError(code, message, status, context.TraceIdentifier)),
             statusCode: status);
 
     private static IResult NotFound(HttpContext context, string message)

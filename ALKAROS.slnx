@@ -45,6 +45,7 @@
   <Project Path="tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Measurements/ALKAROS.Measurements.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj" />
+  <Project Path="tests/Host/Errors/ALKAROS.Host.Errors.Tests.csproj" />
   <Project Path="tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj" />
   <Project Path="tests/Host/Experience/Authorization/ALKAROS.Host.Experience.Authorization.Tests.csproj" />
   <Project Path="tests/Host/Experience/Roles/ALKAROS.Host.Experience.Roles.Tests.csproj" />
