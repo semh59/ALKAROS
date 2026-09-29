@@ -20,7 +20,6 @@ Push olayında ID'ler push'taki tüm commit mesajlarından toplanır.
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-454-task-scope-push-task-ids.md`
-- `evidence/V1-RMD-454/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan):
   .github/workflows/task-scope.yml
   plan/AUDIT_MANIFEST.json
