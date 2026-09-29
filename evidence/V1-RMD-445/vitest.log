@@ -1,0 +1,16 @@
+﻿corepack : $ vitest run
+At line:1 char:452
++ ... \evidence\V1-RMD-445"; corepack pnpm test *> "$ev\vitest.log"; "test  ...
++                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ vitest run:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+
+ Test Files  42 passed (42)
+      Tests  314 passed (314)
+   Start at  22:07:52
+   Duration  10.95s (transform 5.76s, setup 0ms, import 14.16s, tests 29.97s, environment 49.85s)
+

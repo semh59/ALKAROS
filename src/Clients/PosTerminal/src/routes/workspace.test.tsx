@@ -667,3 +667,60 @@ describe("KitchenRoute's performance report survives the board's own poll cycle"
     expect(reportCalls).toHaveLength(1);
   });
 });
+
+/** V1-RMD-445: the "Yönetim" route opens for reports.view, lists its sections by capability, and is closed otherwise. */
+describe("workspace /management route", () => {
+  let root: Root | null = null;
+
+  async function renderManagementRoute(capabilities: readonly string[]) {
+    window.history.replaceState({}, "", "/management");
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage
+          terminalId="22222222-2222-2222-2222-222222222222"
+          displayName="Deniz Kaya"
+          capabilities={capabilities}
+          path="/management"
+          backendStatus="online"
+          onLogout={async () => {}}
+        />
+      </RouterProvider>,
+    ));
+  }
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+  });
+
+  it("with reports.view, shows the closing section and reads the day, report, confirmations and cases", async () => {
+    const fetch = vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/business-day/")) return jsonResponse({ message: "yok" }, 404);
+      if (path.includes("/settlement-report")) return jsonResponse({ paymentMix: [], unsettledPayments: { unknownCount: 0, unknownAmount: 0, reconciliationRequiredCount: 0, reconciliationRequiredAmount: 0 }, cashSessions: [], reconciliationTotals: [] });
+      return jsonResponse([]);
+    });
+    vi.stubGlobal("fetch", fetch);
+
+    await renderManagementRoute(["reports.view"]);
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("Gün sonu ve mutabakat");
+    expect(document.body.textContent).toContain("Bu tarih için iş günü kaydı yok.");
+    expect(fetch).toHaveBeenCalled();
+    expect([...document.querySelectorAll("button")].map((button) => button.textContent)).not.toContain("İş gününü aç");
+  });
+
+  it("without reports.view, never calls the management API", async () => {
+    const fetch = vi.fn(async () => jsonResponse([]));
+    vi.stubGlobal("fetch", fetch);
+
+    await renderManagementRoute(["orders.create"]);
+
+    expect(fetch).not.toHaveBeenCalled();
+  });
+});
