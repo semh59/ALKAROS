@@ -2550,7 +2550,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-294-customer-display-refresh-on-payment.md` | ✅ | `EA58F299920EE452EE673FA980F36A92896EDBA0BFCB04A59B5E338B5D310258` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-295-offline-reconciliation-client-decision.md` | ✅ | `A05596D2DFBC27B7042CB08FDCF123BC9010DB3AD88FEA45B7F7BEFA713D11F3` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-296-decision-management-area-ui.md` | ✅ | `B388C93380127941CDBAAA8AE5E098FE511F131242AAD86CA6A4AF9AA8B2AA69` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-297-offline-authorized-void-comp-reconciliation.md` | ✅ | `1367F96204782C1073E840098470638E4108E01916C6B689186C30D7C1010B86` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-297-offline-authorized-void-comp-reconciliation.md` | ✅ | `BD5689ABE0E0A0550A96CB34894E490A0E05C30E1BD0778F0DD46D8741984A69` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-298-adjustment-aware-payment-ceiling.md` | ✅ | `D6214CF55304FD084AC41222106B6FEDF381E3D0CD0625FD7A9BFC432700DE81` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-310-atomic-portion-cancellation.md` | ✅ | `EB9790F9717402BF0F1217CC0B8C8A3D4098BD2854D8549F40F7858CFA17DB6C` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-311-refund-intent-idempotency-race.md` | ✅ | `B0648733CFD357473326C4DBC3DF2029AEEC733EB8AE1480AA0B84D7B21F8F24` | Tek-sahip görev |
