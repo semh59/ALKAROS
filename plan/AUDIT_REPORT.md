@@ -2673,7 +2673,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-429-api-route-authorization-architecture-test.md` | ✅ | `CD043A32711E14DAB8A82C8FAA29378E7F2A0DC409CAC770845AC4203D931B5E` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-430-mutating-endpoint-idempotency-test.md` | ✅ | `3278E5BA572CD0119CC2469A19C8366A54820276364D2C9F78BAA4414C468803` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-431-shared-api-error-handler.md` | ✅ | `5C003CA36556E2346DEFDD414B64F1D45283A0CC43BC361EA99996DD76451540` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-432-posterminal-lint-accessibility.md` | ✅ | `B30B23DA69A8AB75F78D16D04ACF1FDC82ED7437FD4BA29069F220DF427A3F1F` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-432-posterminal-lint-accessibility.md` | ✅ | `FA7AC3B31A5CAE00C4201AC914F9EC17EF4F3CD40E0AFD0EF2B161B1F4674645` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-433-evidence-file-rule-alignment.md` | ✅ | `5BA2388F73368B953A72BEB2025A3C14A5A71778D87404CF9FEAC49D0736DC2E` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-434-renumber-master-layer-quality-tasks.md` | ✅ | `36E7C07C206F48F89A0111730999C527C3FB238A331ECA1F130264927768F0FD` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-435-anonymization-blocked-by-open-account-balance.md` | ✅ | `F06C8619375B2E19B1265B2BF469F8D8D20AE108CF273C235D2EF7B29BF604EF` | Tek-sahip görev |
