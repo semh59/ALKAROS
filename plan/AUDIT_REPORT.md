@@ -2683,6 +2683,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-439-nfc-concurrent-first-submission-order-number-race.md` | ✅ | `81096E6F0E4B1ABF1CEB1B8D9D6C29878047DF473447FF4072E76C87C0D161A1` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-440-per-customer-credit-limit-and-overdue-refusal.md` | ✅ | `FBAA55AE5F3F77DBED0E0678F974107CACBFE6A8DF785E7F6F8B9EBCC018F06D` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-441-start-v14-account-receipt-chain.md` | ✅ | `253654E2BDE1D8C725B03E8C2C4318309BF4686B571B70E1EB113FB28812E5F2` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-442-account-charge-tender-and-customer-account-api.md` | ✅ | `366F5D52FAA5BF8FEFC196C2CD7BC681CD4EE585548AB50D33044BF35B9E170B` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2770,5 +2771,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1498` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1499` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.
