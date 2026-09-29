@@ -1,6 +1,7 @@
 namespace ALKAROS.CustomerAccounts;
 
 using ALKAROS.CustomerAccounts.AccountPayments;
+using ALKAROS.CustomerAccounts.AccountReceipts;
 using ALKAROS.CustomerAccounts.BalanceProjection;
 using ALKAROS.CustomerAccounts.TransactionLedger;
 using ALKAROS.ModuleComposition;
@@ -36,5 +37,8 @@ public sealed class CustomerAccountsModule : IModule
         // V14-ACC-004: the bill-independent account payment aggregate; only
         // the method-specific receipt flows move it out of Requested.
         context.RegisterTransient<IAccountPaymentRepository, PostgresAccountPaymentRepository>();
+
+        // V14-ACC-009: receipts for verified, bill-independent account payments.
+        context.RegisterTransient<IAccountReceiptService, PostgresAccountReceiptService>();
     }
 }

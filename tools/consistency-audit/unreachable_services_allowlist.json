@@ -20,6 +20,8 @@
   "PostgresAccountPaymentRepository": "V14-ACC-004: cari tahsilat aggregate deposu; nakit cari tahsilat HTTP ucu (V14-ACC-005 sonrasi arayuz gorevi) eklendiginde erisilebilir olur.",
   "ICashAccountReceiptHandler": "V14-ACC-005: nakit cari tahsilat isleyicisi; musteri hesabi arayuz gorevindeki tahsilat HTTP ucu eklendiginde erisilebilir olur.",
   "CashAccountReceiptHandler": "V14-ACC-005: nakit cari tahsilat isleyicisi; musteri hesabi arayuz gorevindeki tahsilat HTTP ucu eklendiginde erisilebilir olur.",
+  "IAccountReceiptService": "V14-ACC-009: cari tahsilat makbuzu servisi; musteri hesabi arayuz gorevindeki tahsilat HTTP ucu eklendiginde erisilebilir olur.",
+  "PostgresAccountReceiptService": "V14-ACC-009: cari tahsilat makbuzu servisi; musteri hesabi arayuz gorevindeki tahsilat HTTP ucu eklendiginde erisilebilir olur.",
   "CreditTermsCreditPolicy": "V1-RMD-440: musteri basina kredi limiti ve vade politikasi; hesaba yaz HTTP endpoint'i eklendiginde (AccountChargeHandler ile ayni gerekce) erisilebilir olur.",
   "IKitchenRoutingService": "V1-RMD-278: mutfak yonlendirmesi Host tarafindan depolar ve yonlendirici uzerinden zaten calisiyor; sarmalayici servis gereksiz.",
   "IPortionReservationArbitrator": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",

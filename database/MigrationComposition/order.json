@@ -1414,6 +1414,14 @@
         "account_payment_status_history"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "166",
+      "phase": "B",
+      "tables": [
+        "account_receipts"
+      ],
+      "deferredConstraints": []
     }
   ]
 }
