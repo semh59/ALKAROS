@@ -1,0 +1,14 @@
+$ dotnet test -c Release tests/Architecture/ApiConventions (real Host + PostgreSQL 18)
+  Passed ALKAROS.Architecture.ApiConventions.Tests.ApiRouteAuthorizationTests.EveryAllowlistEntryNamesItsReasonAndResponsibleTask [13 ms]
+  Passed ALKAROS.Architecture.ApiConventions.Tests.ApiRouteAuthorizationTests.EveryEndpointRefusesACallerWithoutASession [2 s]
+  Passed ALKAROS.Architecture.ApiConventions.Tests.ApiRouteAuthorizationTests.EveryEndpointIsUnderTheVersionedApiPrefix [3 ms]
+exit=0
+
+Allowlist: outsideApiPrefix=16, answersWithoutSession=27 (see api_convention_allowlist.json)
+
+$ dotnet build ALKAROS.slnx -c Release
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:38.33
+exit=0

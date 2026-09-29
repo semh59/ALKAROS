@@ -1,0 +1,179 @@
+{
+  "_comment": "V1-RMD-429: bugun kurala uymayan uclar. Anahtar 'METOD /rota' bicimindedir. Liste yalniz kuculebilir: ihlal etmeyen bir kayit kalirsa ApiRouteAuthorizationTests kirilir.",
+  "outsideApiPrefix": {
+    "DELETE /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    },
+    "GET /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    },
+    "GET /health/ready": {
+      "reason": "Yerel hazirlik yoklamasi (ters vekil ve kurulum denetimi); API sozlesmesinin parcasi degil.",
+      "task": "V1-RMD-098"
+    },
+    "GET /hubs/customer-display": {
+      "reason": "SignalR hub'i; baglanti hub'in OnConnectedAsync icinde oturum cerezine gore dogrulanir, yetkisiz baglanti kapatilir. Gercek zamanli kanal /api/v1 altinda degil.",
+      "task": "V1-RMD-006"
+    },
+    "GET /hubs/customer-display/negotiate": {
+      "reason": "SignalR negotiate ucu (customer-display); baglanti kararini hub verir.",
+      "task": "V1-RMD-006"
+    },
+    "GET /hubs/help-requests": {
+      "reason": "SignalR hub'i; baglanti hub'in OnConnectedAsync icinde oturum cerezine gore dogrulanir, yetkisiz baglanti kapatilir. Gercek zamanli kanal /api/v1 altinda degil.",
+      "task": "V1-WTR-014"
+    },
+    "GET /hubs/help-requests/negotiate": {
+      "reason": "SignalR negotiate ucu (help-requests); baglanti kararini hub verir.",
+      "task": "V1-WTR-014"
+    },
+    "GET /hubs/low-stock-alerts": {
+      "reason": "SignalR hub'i; baglanti hub'in OnConnectedAsync icinde oturum cerezine gore dogrulanir, yetkisiz baglanti kapatilir. Gercek zamanli kanal /api/v1 altinda degil.",
+      "task": "V11-RPT-002"
+    },
+    "GET /hubs/low-stock-alerts/negotiate": {
+      "reason": "SignalR negotiate ucu (low-stock-alerts); baglanti kararini hub verir.",
+      "task": "V11-RPT-002"
+    },
+    "GET /hubs/waiter-order-status": {
+      "reason": "SignalR hub'i; baglanti hub'in OnConnectedAsync icinde oturum cerezine gore dogrulanir, yetkisiz baglanti kapatilir. Gercek zamanli kanal /api/v1 altinda degil.",
+      "task": "V1-WTR-009"
+    },
+    "GET /hubs/waiter-order-status/negotiate": {
+      "reason": "SignalR negotiate ucu (waiter-order-status); baglanti kararini hub verir.",
+      "task": "V1-WTR-009"
+    },
+    "GET /{*path:nonfile}": {
+      "reason": "Istemci uygulama kabugu (index.html) icin SPA yedegi; API degil.",
+      "task": "V1-RMD-098"
+    },
+    "OPTIONS /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    },
+    "PATCH /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    },
+    "POST /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    },
+    "PUT /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    }
+  },
+  "answersWithoutSession": {
+    "DELETE /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    },
+    "GET /api/v1/nfc/tables/{tableId:guid}/catalog": {
+      "reason": "Masadaki NFC etiketiyle gelen misafirin menusu; bilincli olarak oturumsuz, masa kimligi ve guvenilir gonderim kurallariyla korunur.",
+      "task": "V12-NFC-001"
+    },
+    "GET /api/v1/qr/branding": {
+      "reason": "QR menu sayfasinin isletme adi ve renkleri; herkese acik vitrin bilgisi.",
+      "task": "V1-SET-008"
+    },
+    "GET /api/v1/qr/logo": {
+      "reason": "QR menu sayfasinin isletme logosu; herkese acik vitrin bilgisi.",
+      "task": "V1-SET-008"
+    },
+    "GET /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    },
+    "GET /health/ready": {
+      "reason": "Yerel hazirlik yoklamasi (ters vekil ve kurulum denetimi); API sozlesmesinin parcasi degil.",
+      "task": "V1-RMD-098"
+    },
+    "GET /hubs/customer-display": {
+      "reason": "SignalR hub'i; baglanti hub'in OnConnectedAsync icinde oturum cerezine gore dogrulanir, yetkisiz baglanti kapatilir. Gercek zamanli kanal /api/v1 altinda degil.",
+      "task": "V1-RMD-006"
+    },
+    "GET /hubs/customer-display/negotiate": {
+      "reason": "SignalR negotiate ucu (customer-display); baglanti kararini hub verir.",
+      "task": "V1-RMD-006"
+    },
+    "GET /hubs/help-requests": {
+      "reason": "SignalR hub'i; baglanti hub'in OnConnectedAsync icinde oturum cerezine gore dogrulanir, yetkisiz baglanti kapatilir. Gercek zamanli kanal /api/v1 altinda degil.",
+      "task": "V1-WTR-014"
+    },
+    "GET /hubs/help-requests/negotiate": {
+      "reason": "SignalR negotiate ucu (help-requests); baglanti kararini hub verir.",
+      "task": "V1-WTR-014"
+    },
+    "GET /hubs/low-stock-alerts": {
+      "reason": "SignalR hub'i; baglanti hub'in OnConnectedAsync icinde oturum cerezine gore dogrulanir, yetkisiz baglanti kapatilir. Gercek zamanli kanal /api/v1 altinda degil.",
+      "task": "V11-RPT-002"
+    },
+    "GET /hubs/low-stock-alerts/negotiate": {
+      "reason": "SignalR negotiate ucu (low-stock-alerts); baglanti kararini hub verir.",
+      "task": "V11-RPT-002"
+    },
+    "GET /hubs/waiter-order-status": {
+      "reason": "SignalR hub'i; baglanti hub'in OnConnectedAsync icinde oturum cerezine gore dogrulanir, yetkisiz baglanti kapatilir. Gercek zamanli kanal /api/v1 altinda degil.",
+      "task": "V1-WTR-009"
+    },
+    "GET /hubs/waiter-order-status/negotiate": {
+      "reason": "SignalR negotiate ucu (waiter-order-status); baglanti kararini hub verir.",
+      "task": "V1-WTR-009"
+    },
+    "GET /{*path:nonfile}": {
+      "reason": "Istemci uygulama kabugu (index.html) icin SPA yedegi; API degil.",
+      "task": "V1-RMD-098"
+    },
+    "OPTIONS /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    },
+    "PATCH /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    },
+    "POST /api/v1/auth/login": {
+      "reason": "Personel girisi; oturum bu ucla acilir.",
+      "task": "V1-IAM-025"
+    },
+    "POST /api/v1/customer-displays/pairing-requests": {
+      "reason": "Musteri ekraninin eslestirme istegi; ekran henuz oturumsuzdur, kasiyer onayi ayri ve yetkili uctur.",
+      "task": "V1-RMD-006"
+    },
+    "POST /api/v1/customer-displays/pairing-requests/{requestId:guid}/complete": {
+      "reason": "Musteri ekrani, kasiyerin onayladigi eslestirmeyi gizli anahtarla tamamlar; yetki bu gizli anahtardir.",
+      "task": "V1-RMD-006"
+    },
+    "POST /api/v1/integrations/trendyol-go/orders/webhook/{eventType}": {
+      "reason": "Trendyol Go siparis webhook'u; yetki platform imzasi ve yapilandirilmis kimlik bilgisidir, personel oturumu degil.",
+      "task": "V12-TGO-001"
+    },
+    "POST /api/v1/integrations/yemeksepeti/orders/webhook": {
+      "reason": "Yemeksepeti siparis webhook'u; yetki platform imzasidir, personel oturumu degil.",
+      "task": "V12-ONL-001"
+    },
+    "POST /api/v1/nfc/tables/{tableId:guid}/orders": {
+      "reason": "Masadaki NFC etiketiyle gelen misafirin siparisi; bilincli olarak oturumsuz, gonderim kimligi ve masa kilidiyle korunur.",
+      "task": "V12-NFC-001"
+    },
+    "POST /api/v1/qr/orders": {
+      "reason": "QR menu oturumundaki misafirin siparisi; yetki QR oturum belirteciyle, personel oturumu olmadan verilir.",
+      "task": "V12-CWB-001"
+    },
+    "POST /api/v1/qr/sessions": {
+      "reason": "Misafirin QR menu oturumunu acar; oturumsuz cagri bu ucun amacidir.",
+      "task": "V12-CWB-001"
+    },
+    "POST /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    },
+    "PUT /api/{**path}": {
+      "reason": "Bilinmeyen API adresi icin Turkce 404 zarfi; hicbir veri dondurmez.",
+      "task": "V1-RMD-098"
+    }
+  }
+}

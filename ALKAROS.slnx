@@ -38,6 +38,7 @@
   <Project Path="src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj" />
   <Project Path="src/Clients/Cashier/ALKAROS.Cashier.csproj" />
   <Project Path="src/Clients/WaiterPwa/ALKAROS.WaiterPwa.csproj" />
+  <Project Path="tests/Architecture/ApiConventions/ALKAROS.Architecture.ApiConventions.Tests.csproj" />
   <Project Path="tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Messaging/ALKAROS.Messaging.Tests.csproj" />
   <Project Path="tests/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.Tests.csproj" />
