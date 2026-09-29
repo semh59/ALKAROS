@@ -2695,7 +2695,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-450-management-security-system-section.md` | ✅ | `83D4C65122184818F8958E99B294C6A31C75077D0D265B603BAB10CBED58ADB7` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-451-management-settings-history-section.md` | ✅ | `888E5575327C180E6D4F5AF0D8236CD99574060EE6567230B4C301E4EF62B8CD` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-452-start-idempotency-invoicing-management-tasks.md` | ✅ | `C23514682A94AAE6CA83F8D4914CDE42803AFF97873DC8C27964C70206DFE8C4` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-453-customer-tax-identity.md` | ✅ | `402F9CC8F16F197188A41AB4528E0B1ED91D1198904B6E54E573703806F9F820` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-453-customer-tax-identity.md` | ✅ | `474CFEC3EDD27C2F851C4F5F9C0AF9B59449B672BDCDEAE24ED78CDFB830BB8D` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
