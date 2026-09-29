@@ -19,11 +19,12 @@ PosTerminal istemcisine, bugünkü `tsc --noEmit` tip denetimine ek olarak ESLin
 - `src/Clients/PosTerminal/eslint.config.js`
 - `plan/v1/remediation/V1-RMD-432-posterminal-lint-accessibility.md`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/.oxlintrc.json ve
-  src/Clients/PosTerminal/pnpm-workspace.yaml — Semih'in 2026-09-29 kararı: PosTerminal TypeScript 7 kullandığı ve
-  ESLint'in TSX ayrıştırıcısı (typescript-eslint) TypeScript 6.1 altını desteklediği için ESLint ve
+- `src/Clients/PosTerminal/.oxlintrc.json` (yeni) — Semih'in 2026-09-29 kararı: PosTerminal TypeScript 7 kullandığı
+  ve ESLint'in TSX ayrıştırıcısı (typescript-eslint) TypeScript 6.1 altını desteklediği için ESLint ve
   eslint-plugin-jsx-a11y yerine jsx-a11y ve React kuralları yerleşik tek geliştirme bağımlılığı Oxlint kullanılır;
   yapılandırma bu dosyadadır
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/pnpm-workspace.yaml — yalnız Oxlint sürümünün
+  yayın yaşı ayarı gerekirse
 
 ## In scope
 
