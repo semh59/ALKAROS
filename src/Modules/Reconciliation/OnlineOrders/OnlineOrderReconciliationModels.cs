@@ -34,6 +34,9 @@ public static class OnlineOrderDivergenceKind
 
     /// <summary>V12-ONL-009: a platform's order polling keeps failing; orders its webhook missed are not arriving.</summary>
     public const string ProviderPollingFailing = "ProviderPollingFailing";
+
+    /// <summary>An accepted online order stayed open for hours: nobody handed it over or cancelled it.</summary>
+    public const string NotHandedOver = "NotHandedOver";
 }
 
 /// <summary>The safe next action each case carries; only the first three can be retried from the case.</summary>
@@ -53,6 +56,9 @@ public static class OnlineOrderNextAction
 
     /// <summary>The availability publisher already retries every round; check the channel's connection.</summary>
     public const string CheckChannelConnection = "CheckChannelConnection";
+
+    /// <summary>Nothing to retry: hand the order over or cancel it on the online orders screen.</summary>
+    public const string HandOverOrCancelOrder = "HandOverOrCancelOrder";
 }
 
 /// <summary>What a case's details carry: the kind, the next action and the source identifiers it came from.</summary>

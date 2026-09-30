@@ -40,6 +40,19 @@ describe("OnlineProblemsTab", () => {
   const button = (text: string) => [...document.querySelectorAll("button")].filter((b) => b.textContent === text);
   const posts = () => fetchMock.mock.calls.filter(([, init]) => (init as RequestInit | undefined)?.method === "POST");
 
+  it("says in Turkish that an online order was left open and offers nothing to retry", async () => {
+    fetchMock.mockImplementation(async () => ok([
+      { caseId: "c-9", kind: "NotHandedOver", provider: "yemeksepeti", externalOrderId: "ys-9", amount: 75, severity: "High",
+        status: "Open", openedAt: "2026-09-27T10:00:00Z", rowVersion: 1, nextAction: "HandOverOrCancelOrder", canRetry: false },
+    ]));
+    await render(true);
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("Sipariş saatlerdir teslim edilmedi ya da iptal edilmedi");
+    expect(text).toContain("Önerilen: Siparişi teslim edin ya da iptal edin");
+    for (const raw of ["NotHandedOver", "HandOverOrCancelOrder"]) expect(text).not.toContain(raw);
+    expect(button("Yeniden dene")).toHaveLength(0);
+  });
+
   it("lists every open problem in Turkish and lets a viewer only read", async () => {
     await render(false);
     const text = document.body.textContent ?? "";
