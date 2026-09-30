@@ -2,10 +2,11 @@
 
 import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { StaffApiError, type StaffClient } from "./api";
+import { type StaffClient } from "./api";
 import { permissionLabel } from "./models";
 import { StaffSection } from "./index";
-import { alertText, buttons, press, render, submit, type, unmount } from "./testKit";
+import { alertText, buttons, press, render, submit, type, unmount } from "../management/testKit";
+import { ManagementApiError } from "../management/http";
 
 const codes = [
   "bills.comp", "bills.discount", "bills.split", "bills.void", "cash.drawer", "cash.session.override", "catalog.manage", "floorplan.manage",
@@ -133,7 +134,7 @@ describe("roles and permissions panels", () => {
   });
 
   it("shows the Turkish reason from the server as is", async () => {
-    const client = fakeClient({ assignPermission: vi.fn().mockRejectedValue(new StaffApiError(409, "X", "Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı.")) });
+    const client = fakeClient({ assignPermission: vi.fn().mockRejectedValue(new ManagementApiError(409, "X", "Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı.")) });
     await render(<StaffSection capabilities={caps} client={client} />);
     await tick();
     await pressIn(rowFor("Salon sorumlusu"), "İzinleri düzenle");

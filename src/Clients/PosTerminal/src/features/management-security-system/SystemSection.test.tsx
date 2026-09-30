@@ -2,9 +2,10 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ManagementArea } from "../management";
-import { SecurityApiError, type SystemClient } from "./api";
+import { type SystemClient } from "./api";
 import { SystemSection } from "./index";
-import { alertText, buttons, press, render, submit, type, unmount } from "./testKit";
+import { alertText, buttons, press, render, submit, type, unmount } from "../management/testKit";
+import { ManagementApiError } from "../management/http";
 
 const alert = { alertId: "a1", alertType: "x", severity: "Critical", status: "Open", title: "Yazıcı yanıt vermiyor", message: "Mutfak yazıcısına ulaşılamıyor.", openedAt: "2026-09-30T08:00:00Z", rowVersion: 7 };
 
@@ -61,7 +62,7 @@ describe("system section", () => {
   });
 
   it("shows the Turkish reason from the server when the alert changed meanwhile", async () => {
-    const client = fakeClient({ actOnAlert: vi.fn().mockRejectedValue(new SecurityApiError(409, "X", "Uyarı başka biri tarafından değiştirildi.")) });
+    const client = fakeClient({ actOnAlert: vi.fn().mockRejectedValue(new ManagementApiError(409, "X", "Uyarı başka biri tarafından değiştirildi.")) });
     await render(<SystemSection capabilities={manager} client={client} />);
     await press("Sustur");
     await submit("Yazıcı yanıt vermiyor");

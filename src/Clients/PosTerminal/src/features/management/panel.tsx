@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState, type ReactNode } from "react";
 import { Button, StateMessage } from "../../design-system";
 import { commonActions } from "../../strings";
-import { StaffApiError } from "./api";
+import { ManagementApiError } from "./http";
+import "./management.css";
 
-export const errorText = (reason: unknown, fallback: string) => (reason instanceof StaffApiError ? reason.message : fallback);
+export const errorText = (reason: unknown, fallback: string) => (reason instanceof ManagementApiError ? reason.message : fallback);
 
 export type Panel<T> = { state: "loading" } | { state: "error"; message: string } | { state: "ready"; data: T };
 
@@ -20,7 +21,7 @@ export function usePanel<T>(load: () => Promise<T>, failed: string, refreshKey =
 export function PanelView<T>({ title, loading, failed, panel, onRetry, children }: {
   title: string; loading: string; failed: string; panel: Panel<T>; onRetry: () => void; children: (data: T) => ReactNode;
 }) {
-  return <section className="msr__panel" aria-label={title}>
+  return <section className="management__panel" aria-label={title}>
     <h3>{title}</h3>
     {panel.state === "loading" && <p aria-busy="true">{loading}</p>}
     {panel.state === "error" && <StateMessage tone="error" title={failed} actions={<Button variant="secondary" onClick={onRetry}>{commonActions.retry}</Button>}><p>{panel.message}</p></StateMessage>}
@@ -29,5 +30,5 @@ export function PanelView<T>({ title, loading, failed, panel, onRetry, children 
 }
 
 export function Notice({ notice }: { notice: { tone: "success" | "error"; text: string } | undefined }) {
-  return notice ? <div role={notice.tone === "error" ? "alert" : "status"} className={`msr__notice msr__notice--${notice.tone}`}>{notice.text}</div> : null;
+  return notice ? <div role={notice.tone === "error" ? "alert" : "status"} className={`management__notice management__notice--${notice.tone}`}>{notice.text}</div> : null;
 }

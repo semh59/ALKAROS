@@ -3,9 +3,10 @@
 import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ManagementArea } from "../management";
-import { ManagementApiError, type PurchasingClient } from "./api";
+import { type PurchasingClient } from "./api";
 import { PurchasingSection } from "./index";
-import { alertText, buttons, press, render, submit, type, unmount } from "./testKit";
+import { alertText, buttons, press, render, submit, type, unmount } from "../management/testKit";
+import { ManagementApiError } from "../management/http";
 
 const order = (status: string) => ({
   id: "o1", orderNumber: "PO-1", supplierId: "s1", status, destinationLocationId: "l1", totalAmount: 250, currency: "TRY",

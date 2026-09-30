@@ -3,8 +3,9 @@
 import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { StockApiError, type StockClient } from "./stockApi";
+import { type StockClient } from "./stockApi";
 import { StockSection } from "./index";
+import { ManagementApiError } from "../management/http";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -118,7 +119,7 @@ describe("stock section", () => {
   });
 
   it("the server's Turkish reason is shown as is", async () => {
-    const client = fakeClient({ recordWaste: vi.fn().mockRejectedValue(new StockApiError(409, "INSUFFICIENT_STOCK", "Rafta bu kadar stok yok.")) });
+    const client = fakeClient({ recordWaste: vi.fn().mockRejectedValue(new ManagementApiError(409, "INSUFFICIENT_STOCK", "Rafta bu kadar stok yok.")) });
     await render(<StockSection client={client} capabilities={manager} />);
     await press("Fire kaydet");
     await type("stock-quantity", "99");

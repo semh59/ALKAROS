@@ -2,15 +2,15 @@ import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNo
 import { Button, SelectField, StateMessage, TextField } from "../../design-system";
 import { formatQuantity } from "../../format";
 import { commonActions, managementText } from "../../strings";
-import { StockApiError, createStockClient, type StockClient } from "./stockApi";
+import { createStockClient, type StockClient } from "./stockApi";
 import {
   itemTypeLabel, itemTypes, locationTypeLabel, locationTypes, parseQuantity, wasteSourceLabel, wasteSources,
   type CriticalStockReport, type StockItem, type StockLocation, type VarianceReport,
 } from "./models";
+import { errorText } from "../management/panel";
 import "./management-stock.css";
 
 const t = managementText.stock;
-const errorText = (reason: unknown, fallback: string) => (reason instanceof StockApiError ? reason.message : fallback);
 const today = () => new Date().toLocaleDateString("sv-SE");
 
 type Panel<T> = { state: "loading" } | { state: "error"; message: string } | { state: "ready"; data: T };

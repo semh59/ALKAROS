@@ -2,18 +2,18 @@ import { useCallback, useEffect, useMemo, useState, type ReactNode } from "react
 import { Button, SelectField, StateMessage, TextField } from "../../design-system";
 import { formatMoney } from "../../format";
 import { commonActions, managementText } from "../../strings";
-import { ClosingApiError, createClosingClient, type ClosingClient } from "./closingApi";
+import { createClosingClient, type ClosingClient } from "./closingApi";
 import {
   caseStatusLabel, caseStatuses, caseTypeLabel, confirmationStatusLabel, dayStatusLabel, nextStatuses, severityLabel,
   tenderLabel, transitionActionLabel, type BusinessDay, type BusinessDayReport, type CaseStatus, type ManualConfirmation,
   type ReconciliationCase, type SettlementReport,
 } from "./models";
+import { errorText } from "../management/panel";
 import "./management-closing.css";
 
 const t = managementText.closing;
 const stamp = (iso: string | null) => (iso ? new Date(iso).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" }) : "—");
 const localToday = () => new Date().toLocaleDateString("sv-SE");
-const errorText = (reason: unknown, fallback: string) => (reason instanceof ClosingApiError ? reason.message : fallback);
 
 type Panel<T> = { state: "loading" } | { state: "error"; message: string } | { state: "ready"; data: T };
 

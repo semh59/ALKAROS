@@ -5,8 +5,9 @@ import { createRoot, type Root } from "react-dom/client";
 import type { ReactElement } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ManagementArea } from "../management";
-import { StaffApiError, createStaffClient, type StaffClient } from "./api";
+import { createStaffClient, type StaffClient } from "./api";
 import { StaffSection } from "./index";
+import { ManagementApiError } from "../management/http";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -79,7 +80,7 @@ describe("staff section", () => {
   });
 
   it("shows the server's Turkish reason when the account cannot be created", async () => {
-    const client = fakeClient({ createUser: vi.fn().mockRejectedValue(new StaffApiError(409, "X", "Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı.")) });
+    const client = fakeClient({ createUser: vi.fn().mockRejectedValue(new ManagementApiError(409, "X", "Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı.")) });
     await render(<StaffSection capabilities={manager} client={client} />);
     await type("u-username", "ayse");
     await type("u-display", "Ayşe");
@@ -114,7 +115,7 @@ describe("staff section", () => {
   });
 
   it("shows the server's Turkish reason when the deactivation is refused", async () => {
-    const client = fakeClient({ setActive: vi.fn().mockRejectedValue(new StaffApiError(409, "SELF_DEACTIVATION", "Kendi hesabınızı pasifleştiremezsiniz.")) });
+    const client = fakeClient({ setActive: vi.fn().mockRejectedValue(new ManagementApiError(409, "SELF_DEACTIVATION", "Kendi hesabınızı pasifleştiremezsiniz.")) });
     await render(<StaffSection capabilities={manager} client={client} />);
     await type("u-search", "ayse");
     await submit("Personel bul");

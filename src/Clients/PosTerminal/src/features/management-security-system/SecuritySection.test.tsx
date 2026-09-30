@@ -2,9 +2,10 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ManagementArea } from "../management";
-import { SecurityApiError, type SecurityClient } from "./api";
+import { type SecurityClient } from "./api";
 import { SecuritySection } from "./index";
-import { alertText, buttons, press, render, submit, type, unmount } from "./testKit";
+import { alertText, buttons, press, render, submit, type, unmount } from "../management/testKit";
+import { ManagementApiError } from "../management/http";
 
 const job = { name: "retention-sweep", description: "Saklama süresi dolan kayıtları imha eder.", intervalSeconds: 86_400, enabled: true, disabledReason: null, lastStatus: "NeverRun", lastRunAt: null, lastDurationMilliseconds: null, lastSummary: null };
 
@@ -124,7 +125,7 @@ describe("security section", () => {
   });
 
   it("the Turkish reason for a refused bundle is shown as is", async () => {
-    const client = fakeClient({ diagnosticBundle: vi.fn().mockRejectedValue(new SecurityApiError(400, "TIME_WINDOW_TOO_LARGE", "Zaman aralığı en fazla 30 gün olabilir.")) });
+    const client = fakeClient({ diagnosticBundle: vi.fn().mockRejectedValue(new ManagementApiError(400, "TIME_WINDOW_TOO_LARGE", "Zaman aralığı en fazla 30 gün olabilir.")) });
     await render(<SecuritySection capabilities={caps} client={client} />);
     await type("dg-ids", "abc-1");
     await type("dg-from", "2026-01-01T08:00");

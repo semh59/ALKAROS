@@ -2,9 +2,10 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ManagementArea } from "../management";
-import { MenuApiError, type MenusClient } from "./api";
+import { type MenusClient } from "./api";
 import { MenusSection } from "./index";
-import { alertText, buttons, press, render, submit, type, unmount } from "./testKit";
+import { alertText, buttons, press, render, submit, type, unmount } from "../management/testKit";
+import { ManagementApiError } from "../management/http";
 
 const dailyItem = { id: "di1", productNameSnapshot: "Mercimek çorbası", price: 45, plannedPortions: 20, preparedPortions: 5, availablePortions: 0, isOutOfStock: true, isActive: true };
 const daily = (status: string) => ({ menu: { id: "dm1", businessDate: "2026-09-30", status, note: null }, items: [dailyItem] });
@@ -160,7 +161,7 @@ describe("menus section", () => {
   });
 
   it("the server's Turkish reason is shown as is", async () => {
-    const client = fakeClient("Draft", { openDailyMenu: vi.fn().mockRejectedValue(new MenuApiError(409, "X", "Menüde ürün olmadan açılamaz.")) });
+    const client = fakeClient("Draft", { openDailyMenu: vi.fn().mockRejectedValue(new ManagementApiError(409, "X", "Menüde ürün olmadan açılamaz.")) });
     await render(<MenusSection capabilities={none} client={client} />);
     await press("Menüyü aç");
     expect(alertText()).toBe("Menüde ürün olmadan açılamaz.");

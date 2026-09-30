@@ -2,9 +2,10 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ManagementArea } from "../management";
-import { SettingsApiError, createSettingsClient, type SettingsClient } from "./api";
+import { createSettingsClient, type SettingsClient } from "./api";
 import { SettingsHistorySection } from "./index";
-import { alertText, buttons, press, render, unmount } from "./testKit";
+import { alertText, buttons, press, render, unmount } from "../management/testKit";
+import { ManagementApiError } from "../management/http";
 
 const toggle = { settingId: "s1", key: "kitchen.live_sync_enabled", value: "true", dataType: "Toggle", requiresRestart: true, active: true, updatedAt: "2026-09-30T08:00:00Z", rowVersion: 3 };
 const name = { settingId: "s2", key: "business.name", value: "Lokanta", dataType: "Text", requiresRestart: false, active: false, updatedAt: "2026-09-29T08:00:00Z", rowVersion: 1 };
@@ -89,7 +90,7 @@ describe("settings history section", () => {
   });
 
   it("shows the Turkish reason from the server when the list cannot be read", async () => {
-    const client = fakeClient({ listSettings: vi.fn().mockRejectedValue(new SettingsApiError(403, "FORBIDDEN", "Ayar yönetimi izni gerekiyor.")) });
+    const client = fakeClient({ listSettings: vi.fn().mockRejectedValue(new ManagementApiError(403, "FORBIDDEN", "Ayar yönetimi izni gerekiyor.")) });
     await render(<SettingsHistorySection client={client} />);
     expect(document.body.textContent).toContain("Ayar yönetimi izni gerekiyor.");
     expect(alertText()).toContain("Ayar yönetimi izni gerekiyor.");

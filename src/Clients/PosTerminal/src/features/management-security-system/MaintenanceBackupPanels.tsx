@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "../../design-system";
 import { managementText } from "../../strings";
-import { createSecurityClient, SecurityApiError, type SecurityClient } from "./api";
+import { createSecurityClient, type SecurityClient } from "./api";
 import { dataClassLabel, formatDuration, formatWhen, jobStatusLabel, type MaintenanceJob } from "./models";
-import { Notice, PanelView, usePanel } from "./panel";
+import { Notice, PanelView, usePanel } from "../management/panel";
+import { ManagementApiError } from "../management/http";
 
 const t = managementText.security;
 
@@ -20,7 +21,7 @@ export function MaintenancePanel({ client }: { client?: SecurityClient }) {
       setNotice({ tone: "success", text: `${t.maintenance.ran}: ${jobStatusLabel(status.lastStatus)}.` });
       reload();
     } catch (reason) {
-      setNotice({ tone: "error", text: reason instanceof SecurityApiError ? reason.message : t.maintenance.failed });
+      setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.maintenance.failed });
     } finally {
       setBusy(false);
     }

@@ -3,7 +3,7 @@ import { Button, SelectField, TextField } from "../../design-system";
 import { managementText } from "../../strings";
 import type { StaffClient } from "./api";
 import { permissionLabel, roleLabel, type PermissionInfo, type RoleInfo, type UserInfo } from "./models";
-import { PanelView, errorText, usePanel } from "./panel";
+import { PanelView, errorText, usePanel } from "../management/panel";
 
 const t = managementText.staff.roles;
 type Note = { tone: "success" | "error"; text: string };

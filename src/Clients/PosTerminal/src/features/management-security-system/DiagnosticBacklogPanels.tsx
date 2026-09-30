@@ -1,9 +1,10 @@
 import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { Button, TextField } from "../../design-system";
 import { managementText } from "../../strings";
-import { createSecurityClient, SecurityApiError, type SecurityClient } from "./api";
+import { createSecurityClient, type SecurityClient } from "./api";
 import { fill, formatWhen, type CloseSettledResult, type DiagnosticBundle, type OrderBacklog } from "./models";
-import { Notice, PanelView, usePanel } from "./panel";
+import { Notice, PanelView, usePanel } from "../management/panel";
+import { ManagementApiError } from "../management/http";
 
 const t = managementText.security;
 const asIso = (local: string) => new Date(local).toISOString();
@@ -29,7 +30,7 @@ export function DiagnosticPanel({ client }: { client?: SecurityClient }) {
       setBundle(await api.diagnosticBundle({ correlationIds, windowStart: asIso(field("from")), windowEnd: asIso(field("to")), reason: field("reason").trim() }));
       setNotice({ tone: "success", text: t.diagnostic.created });
     } catch (reason) {
-      setNotice({ tone: "error", text: reason instanceof SecurityApiError ? reason.message : t.diagnostic.failed });
+      setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.diagnostic.failed });
     } finally {
       setBusy(false);
     }
@@ -42,7 +43,7 @@ export function DiagnosticPanel({ client }: { client?: SecurityClient }) {
     URL.revokeObjectURL(url);
   }
 
-  return <section className="msys__panel" aria-label={t.diagnostic.heading}>
+  return <section className="management__panel" aria-label={t.diagnostic.heading}>
     <h3>{t.diagnostic.heading}</h3>
     <Notice notice={notice} />
     <form className="msys__form" aria-label={t.diagnostic.heading} onSubmit={(event) => void submit(event)}>
@@ -71,7 +72,7 @@ export function BacklogPanel({ client }: { client?: SecurityClient }) {
     try {
       await work();
     } catch (reason) {
-      setNotice({ tone: "error", text: reason instanceof SecurityApiError ? reason.message : t.backlog.failed });
+      setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.backlog.failed });
     } finally {
       setBusy(false);
     }

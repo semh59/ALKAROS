@@ -4,7 +4,7 @@ import { formatMoney, formatQuantity } from "../../format";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { createCostClient, type CostClient } from "./api";
-import { Notice, PanelView, errorText, usePanel } from "./panel";
+import { Notice, PanelView, errorText, usePanel } from "../management/panel";
 import { recipeStatusLabel, type CostSnapshot, type RecipeVersionOption } from "./models";
 import "./management-menus-recipe-cost.css";
 

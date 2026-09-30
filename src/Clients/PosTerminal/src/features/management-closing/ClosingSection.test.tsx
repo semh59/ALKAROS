@@ -3,9 +3,10 @@
 import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ClosingApiError, type ClosingClient } from "./closingApi";
+import { type ClosingClient } from "./closingApi";
 import { ClosingSection } from "./index";
 import type { BusinessDay } from "./models";
+import { ManagementApiError } from "../management/http";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -89,7 +90,7 @@ describe("closing and reconciliation section", () => {
   });
 
   it("the server's Turkish reason is shown as is", async () => {
-    const client = fakeClient({ closeDay: vi.fn().mockRejectedValue(new ClosingApiError(409, "OPEN_BILLS", "Açık hesaplar varken gün kapatılamaz.")) });
+    const client = fakeClient({ closeDay: vi.fn().mockRejectedValue(new ManagementApiError(409, "OPEN_BILLS", "Açık hesaplar varken gün kapatılamaz.")) });
     await render(<ClosingSection client={client} capabilities={new Set(["reports.view", "reports.close-day"])} />);
     const close = [...document.querySelectorAll("button")].find((candidate) => candidate.textContent === "İş gününü kapat")!;
     await act(async () => close.click());
@@ -106,7 +107,7 @@ describe("closing and reconciliation section", () => {
   });
 
   it("a failed panel shows its error while the others keep working", async () => {
-    const client = fakeClient({ getSettlement: vi.fn().mockRejectedValue(new ClosingApiError(500, "X", "Rapor şu an hazırlanamıyor.")) });
+    const client = fakeClient({ getSettlement: vi.fn().mockRejectedValue(new ManagementApiError(500, "X", "Rapor şu an hazırlanamıyor.")) });
     await render(<ClosingSection client={client} capabilities={new Set(["reports.view"])} />);
     expect(document.body.textContent).toContain("Rapor şu an hazırlanamıyor.");
     expect(document.body.textContent).toContain("SLP-9");

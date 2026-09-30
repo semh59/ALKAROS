@@ -2,10 +2,11 @@ import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { Button, TextField } from "../../design-system";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
-import { createSystemClient, SecurityApiError, type SystemClient } from "./api";
+import { createSystemClient, type SystemClient } from "./api";
 import { alertSeverityLabel, alertStatusLabel, formatWhen, healthStatusLabel, type Alert, type AlertAction } from "./models";
-import { Notice, PanelView, usePanel } from "./panel";
+import { Notice, PanelView, usePanel } from "../management/panel";
 import "./management-security-system.css";
+import { ManagementApiError } from "../management/http";
 
 const t = managementText.system;
 const actions: readonly { action: AlertAction; label: string }[] = [
@@ -36,7 +37,7 @@ export function SystemSection({ capabilities, client }: ManagementSectionProps &
       setPending(undefined);
       reloadAlerts();
     } catch (failure) {
-      setNotice({ tone: "error", text: failure instanceof SecurityApiError ? failure.message : t.actionFailed });
+      setNotice({ tone: "error", text: failure instanceof ManagementApiError ? failure.message : t.actionFailed });
     } finally {
       setBusy(false);
     }

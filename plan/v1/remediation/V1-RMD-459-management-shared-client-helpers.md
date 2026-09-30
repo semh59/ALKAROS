@@ -1,7 +1,7 @@
 # V1-RMD-459 - Yönetim ekranları: tekrarlanan istemci yardımcılarını tek yerde toplama
 
 - Task ID: V1-RMD-459
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
@@ -22,9 +22,13 @@ bileşenlerini (`usePanel`, `PanelView`, `Notice`) ve aynı test yardımcısın�
 
 - `plan/v1/remediation/V1-RMD-459-management-shared-client-helpers.md`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/ - yalnız ortak `http.ts`, `panel.tsx` ve `testKit.tsx`
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-closing/, management-stock/,
-  management-menus-recipe-cost/, management-purchasing-production/, management-security-system/,
-  management-settings-history/ ve management-staff-roles/ - yalnız kopya yardımcıların ortak olanla değiştirilmesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-closing/ - yalnız kopya yardımcıların ortak olanla değiştirilmesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-stock/ - yalnız kopya yardımcıların ortak olanla değiştirilmesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-menus-recipe-cost/ - yalnız kopya yardımcıların ortak olanla değiştirilmesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-purchasing-production/ - yalnız kopya yardımcıların ortak olanla değiştirilmesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-security-system/ - yalnız kopya yardımcıların ortak olanla değiştirilmesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-settings-history/ - yalnız kopya yardımcıların ortak olanla değiştirilmesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-staff-roles/ - yalnız kopya yardımcıların ortak olanla değiştirilmesi
 
 ## In scope
 

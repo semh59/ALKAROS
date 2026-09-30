@@ -1,33 +1,5 @@
 import type { CostSnapshot, DailyMenu, DailyMenuDetails, Menu, MenuComposition, ProductOption, RecipeVersionOption } from "./models";
-
-export class MenuApiError extends Error {
-  constructor(public readonly status: number, public readonly code: string, message: string) { super(message); }
-}
-
-const fallbackByStatus = (status: number): string =>
-  status === 401 ? "Oturum sona erdi; yeniden giriş yapın."
-    : status === 403 ? "Bu işlem için yetkiniz yok."
-    : status === 409 ? "Kayıt başka biri tarafından değiştirildi; yenileyip tekrar deneyin."
-    : "İşlem tamamlanamadı.";
-
-function createRequester(fetcher: typeof fetch) {
-  return async function call(path: string, init: RequestInit = {}): Promise<Response> {
-    let response: Response;
-    try {
-      response = await fetcher(`/api/v1/management${path}`, {
-        ...init,
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json", "X-Correlation-Id": crypto.randomUUID() },
-        signal: AbortSignal.timeout(8_000),
-      });
-    } catch {
-      throw new MenuApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.");
-    }
-    if (response.ok) return response;
-    const body = await response.json().catch(() => undefined) as { error?: { code?: string; message?: string } } | undefined;
-    throw new MenuApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? fallbackByStatus(response.status));
-  };
-}
+import { ManagementApiError, createRequester } from "../management/http";
 
 export interface MenusClient {
   listMenus: () => Promise<readonly Menu[]>;
@@ -64,7 +36,7 @@ export function createMenusClient(fetcher: typeof fetch = fetch): MenusClient {
       try {
         return await json<DailyMenuDetails>(`${base}/daily-menus/by-date/${date}`);
       } catch (reason) {
-        if (reason instanceof MenuApiError && reason.status === 404) return null;
+        if (reason instanceof ManagementApiError && reason.status === 404) return null;
         throw reason;
       }
     },
@@ -109,7 +81,7 @@ export function createCostClient(fetcher: typeof fetch = fetch): CostClient {
       try {
         return await json<CostSnapshot>(`/recipes/${versionId}/cost-snapshots/effective?asOfDate=${asOf}`);
       } catch (reason) {
-        if (reason instanceof MenuApiError && reason.status === 404) return null;
+        if (reason instanceof ManagementApiError && reason.status === 404) return null;
         throw reason;
       }
     },

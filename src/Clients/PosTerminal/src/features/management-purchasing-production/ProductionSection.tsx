@@ -4,7 +4,7 @@ import { formatQuantity } from "../../format";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { createProductionClient, type ProductionClient } from "./api";
-import { Notice, PanelView, errorText, usePanel } from "./panel";
+import { Notice, PanelView, errorText, usePanel } from "../management/panel";
 import { batchStatusLabel, batchStatuses, parseQuantity, type Batch, type LookupItem, type LookupLocation, type RecipeVersionOption } from "./models";
 import "./management-purchasing-production.css";
 

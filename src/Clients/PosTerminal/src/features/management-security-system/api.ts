@@ -1,35 +1,7 @@
 import type {
   Alert, AlertAction, CloseSettledResult, DiagnosticBundle, HealthCheck, MaintenanceJob, OrderBacklog, RestoreAttempt, RpoStatus, UserLookup,
 } from "./models";
-
-export class SecurityApiError extends Error {
-  constructor(public readonly status: number, public readonly code: string, message: string) { super(message); }
-}
-
-const fallbackByStatus = (status: number): string =>
-  status === 401 ? "Oturum sona erdi; yeniden giriş yapın."
-    : status === 403 ? "Bu işlem için yetkiniz yok."
-    : status === 409 ? "Kayıt başka biri tarafından değiştirildi; yenileyip tekrar deneyin."
-    : "İşlem tamamlanamadı.";
-
-function createRequester(fetcher: typeof fetch) {
-  return async function call(path: string, init: RequestInit = {}): Promise<Response> {
-    let response: Response;
-    try {
-      response = await fetcher(`/api/v1/management${path}`, {
-        ...init,
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json", "X-Correlation-Id": crypto.randomUUID() },
-        signal: AbortSignal.timeout(15_000),
-      });
-    } catch {
-      throw new SecurityApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.");
-    }
-    if (response.ok) return response;
-    const body = await response.json().catch(() => undefined) as { error?: { code?: string; message?: string } } | undefined;
-    throw new SecurityApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? fallbackByStatus(response.status));
-  };
-}
+import { ManagementApiError, createRequester } from "../management/http";
 
 export interface SecurityClient {
   lookupUser: (username: string) => Promise<UserLookup | null>;
@@ -45,7 +17,7 @@ export interface SecurityClient {
 }
 
 export function createSecurityClient(fetcher: typeof fetch = fetch): SecurityClient {
-  const call = createRequester(fetcher);
+  const call = createRequester(fetcher, { timeoutMs: 15_000 });
   const json = async <T>(path: string, init?: RequestInit): Promise<T> => (await call(path, init)).json() as Promise<T>;
   const post = <T>(path: string, body: unknown = {}) => json<T>(path, { method: "POST", body: JSON.stringify(body) });
   return {
@@ -53,7 +25,7 @@ export function createSecurityClient(fetcher: typeof fetch = fetch): SecurityCli
       try {
         return await json<UserLookup>(`/security/users/lookup?username=${encodeURIComponent(username)}`);
       } catch (reason) {
-        if (reason instanceof SecurityApiError && reason.status === 404) return null;
+        if (reason instanceof ManagementApiError && reason.status === 404) return null;
         throw reason;
       }
     },
@@ -76,7 +48,7 @@ export interface SystemClient {
 }
 
 export function createSystemClient(fetcher: typeof fetch = fetch): SystemClient {
-  const call = createRequester(fetcher);
+  const call = createRequester(fetcher, { timeoutMs: 15_000 });
   const json = async <T>(path: string): Promise<T> => (await call(path)).json() as Promise<T>;
   return {
     activeAlerts: () => json("/observability/alerts/active"),

@@ -1,8 +1,5 @@
 import type { PermissionInfo, RoleInfo, UserInfo } from "./models";
-
-export class StaffApiError extends Error {
-  constructor(public readonly status: number, public readonly code: string, message: string) { super(message); }
-}
+import { ManagementApiError, createRequester } from "../management/http";
 
 export interface UserLookup { userId: string; displayName: string; active: boolean; isLocked: boolean }
 
@@ -20,28 +17,8 @@ export interface StaffClient {
   revokeUser: (roleId: string, userId: string) => Promise<void>;
 }
 
-const fallbackByStatus = (status: number): string =>
-  status === 401 ? "Oturum sona erdi; yeniden giriş yapın."
-    : status === 403 ? "Bu işlem için yetkiniz yok."
-    : "İşlem tamamlanamadı.";
-
 export function createStaffClient(fetcher: typeof fetch = fetch): StaffClient {
-  async function call(path: string, init: RequestInit = {}): Promise<Response> {
-    let response: Response;
-    try {
-      response = await fetcher(`/api/v1/management${path}`, {
-        ...init,
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json", "X-Correlation-Id": crypto.randomUUID() },
-        signal: AbortSignal.timeout(8_000),
-      });
-    } catch {
-      throw new StaffApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.");
-    }
-    if (response.ok) return response;
-    const body = await response.json().catch(() => undefined) as { error?: { code?: string; message?: string } } | undefined;
-    throw new StaffApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? fallbackByStatus(response.status));
-  }
+  const call = createRequester(fetcher);
   const json = async <T>(path: string): Promise<T> => (await call(path)).json() as Promise<T>;
   const send = (method: string, path: string, body?: unknown) =>
     call(path, { method, body: body === undefined ? undefined : JSON.stringify(body) }).then(() => undefined);
@@ -52,7 +29,7 @@ export function createStaffClient(fetcher: typeof fetch = fetch): StaffClient {
       try {
         return await json<UserLookup>(`/security/users/lookup?username=${encodeURIComponent(username)}`);
       } catch (reason) {
-        if (reason instanceof StaffApiError && reason.status === 404) return null;
+        if (reason instanceof ManagementApiError && reason.status === 404) return null;
         throw reason;
       }
     },

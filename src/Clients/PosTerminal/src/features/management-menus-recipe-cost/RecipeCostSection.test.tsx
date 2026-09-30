@@ -2,9 +2,10 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ManagementArea } from "../management";
-import { MenuApiError, type CostClient } from "./api";
+import { type CostClient } from "./api";
 import { RecipeCostSection } from "./index";
-import { alertText, buttons, press, render, submit, type, unmount } from "./testKit";
+import { alertText, buttons, press, render, submit, type, unmount } from "../management/testKit";
+import { ManagementApiError } from "../management/http";
 
 const snapshot = {
   id: "s1", costBasisDate: "2026-09-30", calculatedCost: 200, costPerPortion: 10, currency: "TRY",
@@ -70,7 +71,7 @@ describe("recipe cost section", () => {
   });
 
   it("shows the server's Turkish reason when the calculation is refused", async () => {
-    const client = fakeClient({ calculate: vi.fn().mockRejectedValue(new MenuApiError(409, "X", "Malzeme için fiyat bulunamadı.")) });
+    const client = fakeClient({ calculate: vi.fn().mockRejectedValue(new ManagementApiError(409, "X", "Malzeme için fiyat bulunamadı.")) });
     await render(<RecipeCostSection capabilities={none} client={client} />);
     await type("c-version", "v1");
     await press("Bugünkü maliyeti hesapla");

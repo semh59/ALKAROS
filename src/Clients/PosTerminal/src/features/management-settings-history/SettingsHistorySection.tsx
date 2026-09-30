@@ -4,7 +4,7 @@ import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { createSettingsClient, type SettingsClient } from "./api";
 import { formatReason, formatSettingValue, formatWhen, settingLabel, type SettingRecord } from "./models";
-import { PanelView, usePanel } from "./panel";
+import { PanelView, usePanel } from "../management/panel";
 import "./management-settings-history.css";
 
 const t = managementText.settingsHistory;

@@ -1,36 +1,7 @@
 import type {
   Batch, BatchCompletion, LookupItem, LookupLocation, NewOrderLine, PurchaseOrder, ReceiptLine, Supplier, NewSupplier, RecipeVersionOption,
 } from "./models";
-
-export class ManagementApiError extends Error {
-  constructor(public readonly status: number, public readonly code: string, message: string) { super(message); }
-}
-
-const fallbackByStatus = (status: number): string =>
-  status === 401 ? "Oturum sona erdi; yeniden giriş yapın."
-    : status === 403 ? "Bu işlem için yetkiniz yok."
-    : status === 409 ? "Kayıt başka biri tarafından değiştirildi; yenileyip tekrar deneyin."
-    : "İşlem tamamlanamadı.";
-
-/** One requester for every call of this feature; the server's own Turkish reason is shown as is. */
-function createRequester(fetcher: typeof fetch) {
-  return async function call(path: string, init: RequestInit = {}): Promise<Response> {
-    let response: Response;
-    try {
-      response = await fetcher(`/api/v1/management${path}`, {
-        ...init,
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json", "X-Correlation-Id": crypto.randomUUID() },
-        signal: AbortSignal.timeout(8_000),
-      });
-    } catch {
-      throw new ManagementApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.");
-    }
-    if (response.ok) return response;
-    const body = await response.json().catch(() => undefined) as { error?: { code?: string; message?: string } } | undefined;
-    throw new ManagementApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? fallbackByStatus(response.status));
-  };
-}
+import { createRequester } from "../management/http";
 
 export interface PurchasingClient {
   listSuppliers: () => Promise<readonly Supplier[]>;

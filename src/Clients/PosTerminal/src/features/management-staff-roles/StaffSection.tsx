@@ -2,9 +2,10 @@ import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { Button, TextField } from "../../design-system";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
-import { createStaffClient, StaffApiError, type StaffClient, type UserLookup } from "./api";
+import { createStaffClient, type StaffClient, type UserLookup } from "./api";
 import { RolesPanel, UserRolesPanel } from "./RolesPanels";
 import "./management-staff-roles.css";
+import { ManagementApiError } from "../management/http";
 
 const t = managementText.staff;
 const minimumPasswordLength = 8;
@@ -26,7 +27,7 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
       await work();
       if (success) setNotice({ tone: "success", text: success });
     } catch (reason) {
-      setNotice({ tone: "error", text: reason instanceof StaffApiError ? reason.message : t.actionFailed });
+      setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.actionFailed });
     } finally {
       setBusy(false);
     }
@@ -50,9 +51,9 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
   }
 
   return <div className="msr">
-    {notice && <div role={notice.tone === "error" ? "alert" : "status"} className={`msr__notice msr__notice--${notice.tone}`}>{notice.text}</div>}
+    {notice && <div role={notice.tone === "error" ? "alert" : "status"} className={`management__notice management__notice--${notice.tone}`}>{notice.text}</div>}
 
-    <section className="msr__panel" aria-label={t.createHeading}>
+    <section className="management__panel" aria-label={t.createHeading}>
       <h3>{t.createHeading}</h3>
       <p className="msr__hint">{t.createHint}</p>
       <form className="msr__form" aria-label={t.createHeading} onSubmit={submitCreate}>
@@ -63,7 +64,7 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
       </form>
     </section>
 
-    {capabilities.has("security.manage") && <section className="msr__panel" aria-label={t.findHeading}>
+    {capabilities.has("security.manage") && <section className="management__panel" aria-label={t.findHeading}>
       <h3>{t.findHeading}</h3>
       <form className="msr__toolbar" aria-label={t.findHeading} onSubmit={(event) => { event.preventDefault(); search(); }}>
         <TextField id="u-search" label={t.username} autoComplete="off" value={field("search")} onChange={set("search")} />

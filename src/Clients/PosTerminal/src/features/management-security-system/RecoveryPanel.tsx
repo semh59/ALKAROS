@@ -1,10 +1,11 @@
 import { useMemo, useState, type FormEvent } from "react";
 import { Button, TextField } from "../../design-system";
 import { managementText } from "../../strings";
-import { createSecurityClient, SecurityApiError, type SecurityClient } from "./api";
+import { createSecurityClient, type SecurityClient } from "./api";
 import { fill, type UserLookup } from "./models";
-import { Notice } from "./panel";
+import { Notice } from "../management/panel";
 import "./management-security-system.css";
+import { ManagementApiError } from "../management/http";
 
 const t = managementText.security.recovery;
 
@@ -21,7 +22,7 @@ export function RecoveryPanel({ client }: { client?: SecurityClient }) {
     try {
       await work();
     } catch (reason) {
-      setNotice({ tone: "error", text: reason instanceof SecurityApiError ? reason.message : t.failed });
+      setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.failed });
     } finally {
       setBusy(false);
     }
@@ -39,7 +40,7 @@ export function RecoveryPanel({ client }: { client?: SecurityClient }) {
     });
   }
 
-  return <section className="msys__panel" aria-label={t.heading} aria-busy={busy}>
+  return <section className="management__panel" aria-label={t.heading} aria-busy={busy}>
     <h3>{t.heading}</h3>
     <p className="msys__hint">{t.hint}</p>
     <form className="msys__toolbar" onSubmit={search}>

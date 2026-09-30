@@ -2,9 +2,10 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ManagementArea } from "../management";
-import { ManagementApiError, type ProductionClient } from "./api";
+import { type ProductionClient } from "./api";
 import { ProductionSection } from "./index";
-import { alertText, buttons, press, render, submit, type, unmount } from "./testKit";
+import { alertText, buttons, press, render, submit, type, unmount } from "../management/testKit";
+import { ManagementApiError } from "../management/http";
 
 const batch = (status: string) => ({
   id: "b1", batchNumber: "PRT-1", recipeVersionId: "v1", status, plannedQuantity: 20, actualQuantity: 0, portionUnitCode: "portion", cancellationReason: null,

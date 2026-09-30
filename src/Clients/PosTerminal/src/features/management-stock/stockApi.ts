@@ -1,14 +1,5 @@
 import type { CriticalStockReport, StockItem, StockLocation, VarianceReport } from "./models";
-
-export class StockApiError extends Error {
-  constructor(public readonly status: number, public readonly code: string, message: string) { super(message); }
-}
-
-const fallbackByStatus = (status: number): string =>
-  status === 401 ? "Oturum sona erdi; yeniden giriş yapın."
-    : status === 403 ? "Bu işlem için yetkiniz yok."
-    : status === 409 ? "Kayıt başka biri tarafından değiştirildi; yenileyip tekrar deneyin."
-    : "İşlem tamamlanamadı.";
+import { createRequester } from "../management/http";
 
 export interface NewStockItem { code: string; name: string; itemType: string; trackingUnitCode: string; defaultLocationId: string | null; reorderPoint: number | null }
 export interface NewStockLocation { code: string; name: string; locationType: string }
@@ -27,25 +18,7 @@ export interface StockClient {
 }
 
 export function createStockClient(fetcher: typeof fetch = fetch): StockClient {
-  const prefix = "/api/v1/management/inventory";
-
-  async function call(path: string, init: RequestInit = {}): Promise<Response> {
-    let response: Response;
-    try {
-      response = await fetcher(`${prefix}${path}`, {
-        ...init,
-        credentials: "same-origin",
-        headers: { "Content-Type": "application/json", "X-Correlation-Id": crypto.randomUUID() },
-        signal: AbortSignal.timeout(8_000),
-      });
-    } catch {
-      throw new StockApiError(0, "NETWORK_UNAVAILABLE", "Sunucuya ulaşılamadı. Bağlantıyı kontrol edip tekrar deneyin.");
-    }
-    if (response.ok) return response;
-    const body = await response.json().catch(() => undefined) as { error?: { code?: string; message?: string } } | undefined;
-    // The server's own Turkish reason is shown as is; only a missing one falls back to a generic Turkish line.
-    throw new StockApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? fallbackByStatus(response.status));
-  }
+  const call = createRequester(fetcher, { prefix: "/inventory" });
 
   const json = async <T>(path: string): Promise<T> => (await call(path)).json() as Promise<T>;
   const send = (method: string, path: string, body: unknown) => call(path, { method, body: JSON.stringify(body) }).then(() => undefined);

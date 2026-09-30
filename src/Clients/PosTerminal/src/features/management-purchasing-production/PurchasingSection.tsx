@@ -4,7 +4,7 @@ import { formatMoney, formatQuantity } from "../../format";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { createPurchasingClient, type PurchasingClient } from "./api";
-import { Notice, PanelView, errorText, usePanel } from "./panel";
+import { Notice, PanelView, errorText, usePanel } from "../management/panel";
 import {
   orderStatusLabel, orderStatuses, parseQuantity, type LookupItem, type LookupLocation, type NewOrderLine, type PurchaseOrder, type Supplier,
 } from "./models";
