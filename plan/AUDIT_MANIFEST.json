@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1525,
-  "markdown_line_count": 115144,
-  "markdown_byte_count": 6635769,
+  "markdown_file_count": 1526,
+  "markdown_line_count": 115168,
+  "markdown_byte_count": 6638523,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2520,6 +2520,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-450/README.md",
+      "sha256": "B93EE044046D19006E85B61D9BA0B0299637BDFD8460BD7FB1A51DAA649610FC",
+      "lines": 23,
+      "bytes": 2630,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-453/README.md",
       "sha256": "DE46229E8FBBD682E19B289CD7D56C1D66E89B7FB197AC1828C757D21220D9B4",
       "lines": 20,
@@ -2724,9 +2731,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "9636EEE1EEEEDF1DC5907BA39861ABCF0A2BC793FA97B95684CD44E76C3FB3AD",
-      "lines": 2801,
-      "bytes": 411661,
+      "sha256": "6D2CD177DE775102D5526CC1547B169D000C3C45A70E68F578A9CEA00FE30717",
+      "lines": 2802,
+      "bytes": 411791,
       "utf8": true
     },
     {
@@ -8478,9 +8485,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-450-management-security-system-section.md",
-      "sha256": "AEB2D31E7BB09281012D2F834A3FABDBDFEEA0CC6E8856D707C08D222E0406EB",
+      "sha256": "A82C6FDE47373EA94A61763606B720A067BB630CA83831DEB8291715E8099BD8",
       "lines": 51,
-      "bytes": 2383,
+      "bytes": 2377,
       "utf8": true
     },
     {
