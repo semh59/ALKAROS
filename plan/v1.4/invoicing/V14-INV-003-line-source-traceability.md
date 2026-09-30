@@ -1,8 +1,8 @@
 # V14-INV-003 - Implement invoice line to source traceability
 
 - Task ID: V14-INV-003
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Planned
 
