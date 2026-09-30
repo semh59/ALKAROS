@@ -1832,6 +1832,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-RMD-469/README.md` | ✅ | `DF05D15C820CA7EB2DB968D4DA5D540ABF383DC6013589CAB7B5921A74E6F230` | Tek-sahip görev |
 | `evidence/V1-RMD-470/README.md` | ✅ | `03664785BF48079CA232F8166D951CF67A6B5207A98B9CD2040E9CD4265BA779` | Tek-sahip görev |
 | `evidence/V1-RMD-471/README.md` | ✅ | `6C1C301D8F22745B9B4CEAF8355C8A26BE23FD134209CCDEE3D6D46CED659800` | Tek-sahip görev |
+| `evidence/V1-RMD-472/README.md` | ✅ | `0A26B4F79D87C2BF21F8C552CD83288193DC4143389EC8B5269E4DF6AAD150E1` | Tek-sahip görev |
 | `evidence/V1-SEC-003/candidate-remediation-2026-08-03.md` | ✅ | `C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59` | Tek-sahip görev |
 | `evidence/V1-SEC-003/closure-2026-08-05.md` | ✅ | `055205F9C60FFF4EA57BC87F7C21B548C95466BE6FA7F86ACA13C02DF122C66C` | Tek-sahip görev |
 | `evidence/V1-SEC-003/closure-report.md` | ✅ | `B873CEEC58BDC13B7970878719186B4BE54DC6332121D4469DC0F9D8BA311FAC` | Tek-sahip görev |
@@ -2743,9 +2744,10 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-469-tax-inclusive-client-screens.md` | ✅ | `8FD667F7943D82785977A73CD0B2E3316A31F6D6C74512913BE8F0C6C581F4CF` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-470-online-order-invoice-draft-core.md` | ✅ | `3B6FEEDFD6569E01A93E42C0F05C5316B16123303DB3944992F45B665B548243` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-471-seller-profile-settings.md` | ✅ | `BF39BB1448A608D844AA24943C3472FCFD103147AA5DAA8CE89396AC9821FD9E` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-472-online-order-invoice-on-hand-over.md` | ✅ | `C0B47DF7516E29B8D615B3828593D190CE1068CE4EA3792EE05549396DDEC06B` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-472-online-order-invoice-on-hand-over.md` | ✅ | `DFC49149E3B808F6FC4A18BCCC3639D116B6603AC5A324DAC0A20F8EA97B8F6B` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-473-online-order-invoice-list-screen.md` | ✅ | `9B556EBB95BFFE43DE0B5F21EAFD45EF0CCD1192A9A362A0F47AE53F6EFD9BD3` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-474-online-order-discount-and-payment-capture.md` | ✅ | `CB5BC5CE72187D9026671C913F8A560BCC39FCA0BCC398931277D6B2433058D4` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-475-online-order-invoice-missing-case.md` | ✅ | `7FC4EA105FBB6E644C7AD461383401569F0D25AF96BE26DB126F51EE5619DC88` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2833,5 +2835,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1561` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1563` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.
