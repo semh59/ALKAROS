@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1540,
-  "markdown_line_count": 115607,
-  "markdown_byte_count": 6671512,
+  "markdown_file_count": 1543,
+  "markdown_line_count": 115721,
+  "markdown_byte_count": 6677758,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2597,6 +2597,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-463/README.md",
+      "sha256": "D5C57964C996DE8BD6FB9783A487585B9EDAEA738C1726EA1E10832F8715A82D",
+      "lines": 5,
+      "bytes": 658,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2794,9 +2801,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "4A77C32B004CF724545EA2018203C9DE0B7214FD52D978C39CE35F84F40C5338",
-      "lines": 2816,
-      "bytes": 413801,
+      "sha256": "5ED33D34D9D6B5CBAFB961E67F0A97F018E6CC2B7E62E5B8DE3D2284AAC96178",
+      "lines": 2819,
+      "bytes": 414276,
       "utf8": true
     },
     {
@@ -8635,6 +8642,20 @@
       "sha256": "942C623149F5FE34ED3C1C4BF0E09E6E974A3CF221582027C255896B9641F2A3",
       "lines": 45,
       "bytes": 1695,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-463-online-order-reconciliation-scheduled-scan.md",
+      "sha256": "C356722B86E3C1658236B712A9CA9D7170CE268DB44B18B25D0051272AD3E6BE",
+      "lines": 51,
+      "bytes": 2128,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-464-online-order-not-handed-over-case.md",
+      "sha256": "4BF488D1F447D4E1ED7972BACCBF3AB7586C458662BD97441948048FDC4850E9",
+      "lines": 55,
+      "bytes": 2985,
       "utf8": true
     },
     {

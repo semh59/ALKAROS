@@ -1823,6 +1823,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `evidence/V1-RMD-460/README.md` | ✅ | `1A31597AF28498022B75936DCD37F96A4938B7A297C112370997435B98D1ABFC` | Tek-sahip görev |
 | `evidence/V1-RMD-461/README.md` | ✅ | `59F07E30BD1E1A28D4B9CE84C453A3417F8CB40E1333216F546F6896DD2EDE58` | Tek-sahip görev |
 | `evidence/V1-RMD-462/README.md` | ✅ | `59C1BB1DEA5615F535CC6D4DF3FAA7B8382902D36DB74993B239102D1B3FCF50` | Tek-sahip görev |
+| `evidence/V1-RMD-463/README.md` | ✅ | `D5C57964C996DE8BD6FB9783A487585B9EDAEA738C1726EA1E10832F8715A82D` | Tek-sahip görev |
 | `evidence/V1-SEC-003/candidate-remediation-2026-08-03.md` | ✅ | `C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59` | Tek-sahip görev |
 | `evidence/V1-SEC-003/closure-2026-08-05.md` | ✅ | `055205F9C60FFF4EA57BC87F7C21B548C95466BE6FA7F86ACA13C02DF122C66C` | Tek-sahip görev |
 | `evidence/V1-SEC-003/closure-report.md` | ✅ | `B873CEEC58BDC13B7970878719186B4BE54DC6332121D4469DC0F9D8BA311FAC` | Tek-sahip görev |
@@ -2725,6 +2726,8 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-460-trendyol-go-product-mapping-screen.md` | ✅ | `2C192AC155FDA7B9BD6B461B7F3C81450E23C694203A241A66BF14831CDDBF52` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-461-admit-kvkk-retention-ahead-of-v14-exit.md` | ✅ | `9CBD8993302DF3EB895FCF08BC03E823D01EA2B4E4F011949DC7A86B4600217D` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-462-online-menu-unmapped-codes-screen.md` | ✅ | `942C623149F5FE34ED3C1C4BF0E09E6E974A3CF221582027C255896B9641F2A3` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-463-online-order-reconciliation-scheduled-scan.md` | ✅ | `C356722B86E3C1658236B712A9CA9D7170CE268DB44B18B25D0051272AD3E6BE` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-464-online-order-not-handed-over-case.md` | ✅ | `4BF488D1F447D4E1ED7972BACCBF3AB7586C458662BD97441948048FDC4850E9` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md` | ✅ | `D8F3B6D28682C327E19C42B1BD45F44E1D8246BA52759AAD3247F35BB7653950` | Tek-sahip görev |
@@ -2812,5 +2815,5 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 - Provider kararı: `0 approved provider`; provider-specific `V12-MCD-1xx` ve `V20-INT-1xx` görevi üretilmedi.
 - Licensing kararı: sonuç henüz yok; `V20-LIC-001` açık koşulla `Blocked` tutuldu ve dosya korunur.
 - Agent execution contract: repository kökündeki `AGENTS.md`; hash değeri detached manifestte kayıtlıdır.
-- Kayıtlı Markdown dosyası sayısı: `1540` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
+- Kayıtlı Markdown dosyası sayısı: `1543` (bu rapor dahil; disk üzerinden hesaplanır, sabit değer kullanılmaz).
 - Bu rapor Git, commit veya application code yetkisi vermez; yürürlükteki gate ve task-scope kuralları uygulanır.
