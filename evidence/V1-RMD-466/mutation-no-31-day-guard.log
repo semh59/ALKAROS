@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-channel-report/ChannelReportSection.test.tsx (8 tests | 1 failed) 389ms
+     × refuses a range over 31 days or an inverted one in Turkish without asking the server 25ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-channel-report/ChannelReportSection.test.tsx > channel report section > refuses a range over 31 days or an inverted one in Turkish without asking the server
+AssertionError: expected undefined to be 'Rapor en çok 31 günü kapsayabilir.' // Object.is equality
+
+- Expected:
+"Rapor en çok 31 günü kapsayabilir."
+
++ Received:
+undefined
+
+ ❯ src/features/management-channel-report/ChannelReportSection.test.tsx:73:25
+     71|     await type("mcr-to", "2026-09-10");
+     72|     await press("Raporu getir");
+     73|     expect(alertText()).toBe("Rapor en çok 31 günü kapsayabilir.");
+       |                         ^
+     74|     await type("mcr-from", "2026-09-10");
+     75|     await type("mcr-to", "2026-09-01");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  18:30:15
+   Duration  1.92s (transform 477ms, setup 0ms, import 714ms, tests 389ms, environment 590ms)
+

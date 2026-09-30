@@ -1,0 +1,5 @@
+db ready, seeded
+host ready
+seed keys: cashierUsername,cashierPassword,limitedUsername,secondManagerUsername,kasa1TableId,kasa1TableNumber,lowStockProductId,normalStockProductId,paymentProductId,modifierProductId,modifierGroupId,modifierSmallId,modifierLargeId,transferTables
+seeded 2 online + 1 QR orders
+rapor: QR ve online sipariş raporu TARİH KANAL PLATFORM ALINAN KABUL REDDEDİLEN İPTAL OLUŞTURULAMAYAN KABUL TUTARI (BRÜT) KABUL TUTARI (NET) 30.09.2026 Online Trendyol Go 1 1 0 0 0 ₺130,00 ₺130,00 30.09.2026 Online Yemeksepeti 1 1 0 0 0 ₺240,00 ₺240,00 30.09.2026 QR — 1 1 0 0 0 ₺90,00 ₺90,00 Toplam 3 3 0 0 0 ₺460,00 ₺460,00 Bu tutarlar ciroya ve kasaya dahil değildir; online satışlar yalnız bu raporda izlenir.

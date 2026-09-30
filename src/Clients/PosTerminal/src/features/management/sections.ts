@@ -6,6 +6,7 @@ import { MenusSection, RecipeCostSection } from "../management-menus-recipe-cost
 import { StaffSection } from "../management-staff-roles";
 import { SecuritySection, SystemSection } from "../management-security-system";
 import { SettingsHistorySection } from "../management-settings-history";
+import { ChannelReportSection } from "../management-channel-report";
 import { managementText } from "../../strings";
 
 export interface ManagementSectionProps {
@@ -31,5 +32,6 @@ export const managementSections: readonly ManagementSection[] = [
   { id: "staff", label: managementText.staff.tab, requiredCapability: "identity.users.manage", component: StaffSection },
   { id: "security", label: managementText.security.tab, requiredCapability: "security.manage", component: SecuritySection },
   { id: "system", label: managementText.system.tab, requiredCapability: "reports.view", component: SystemSection },
+  { id: "channel-report", label: managementText.channelReport.tab, requiredCapability: "reports.view", component: ChannelReportSection },
   { id: "settings-history", label: managementText.settingsHistory.tab, requiredCapability: "settings.manage", component: SettingsHistorySection },
 ];
