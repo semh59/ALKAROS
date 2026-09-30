@@ -1,7 +1,7 @@
 # V1-RMD-461 - V15-KVK-001'i GATE-V14-EXIT kapanmadan tamamlanabilir kılmak
 
 - Task ID: V1-RMD-461
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
