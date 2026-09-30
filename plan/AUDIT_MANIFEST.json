@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1535,
-  "markdown_line_count": 115477,
-  "markdown_byte_count": 6660149,
+  "markdown_file_count": 1536,
+  "markdown_line_count": 115498,
+  "markdown_byte_count": 6662087,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2576,6 +2576,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-461/README.md",
+      "sha256": "59F07E30BD1E1A28D4B9CE84C453A3417F8CB40E1333216F546F6896DD2EDE58",
+      "lines": 4,
+      "bytes": 348,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2766,9 +2773,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "8DEC1A748B41AE283EB95464D7276418EF5CCB3B3ABD5F93435E3C630F347147",
-      "lines": 2811,
-      "bytes": 413112,
+      "sha256": "63DD6224238F2666E29CC023DE99B90654C92160EA393EB6F004F1EB2362553F",
+      "lines": 2812,
+      "bytes": 413242,
       "utf8": true
     },
     {
@@ -2787,9 +2794,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "93ADF55432EF68DA7CAFF84AD78027A6A3272C3CB7916A463BFD263E833F5767",
-      "lines": 577,
-      "bytes": 145580,
+      "sha256": "66244C9BA8FAF43AC9527A214D922962BFFFD967330E0143FDE8BDABC39E075C",
+      "lines": 591,
+      "bytes": 146613,
       "utf8": true
     },
     {
@@ -2843,9 +2850,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "8E048FDA72C9A68801EA078525148BB7FF820156AB1CC5CE79BA496DE7329269",
-      "lines": 210,
-      "bytes": 92834,
+      "sha256": "29D8B74CE2E462C2A54CEE0EB80FF926E20805B72B46C8201D482D712390F54B",
+      "lines": 211,
+      "bytes": 93321,
       "utf8": true
     },
     {
@@ -8597,9 +8604,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-461-admit-kvkk-retention-ahead-of-v14-exit.md",
-      "sha256": "4CD64A9784FF59D286BD27BBB83134A204E264A502F1B388CF08D53D518E6B22",
+      "sha256": "9CBD8993302DF3EB895FCF08BC03E823D01EA2B4E4F011949DC7A86B4600217D",
       "lines": 49,
-      "bytes": 2151,
+      "bytes": 2078,
       "utf8": true
     },
     {
@@ -10487,9 +10494,9 @@
     },
     {
       "path": "plan/v1.5/kvkk/V15-KVK-001-retention-execution.md",
-      "sha256": "E63CEC17133BB62396560E1A05E9EE2A768CB9235634A70589590967903E1751",
-      "lines": 78,
-      "bytes": 3954,
+      "sha256": "9F92CF064DF30573F45A6AE35ADE628E37DA4FE38AD0C8CE4BFB0ACE29F1F063",
+      "lines": 79,
+      "bytes": 3967,
       "utf8": true
     },
     {
