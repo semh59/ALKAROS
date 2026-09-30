@@ -1,0 +1,6 @@
+db ready, seeded
+host ready
+seed keys: cashierUsername,cashierPassword,limitedUsername,secondManagerUsername,kasa1TableId,kasa1TableNumber,lowStockProductId,normalStockProductId,paymentProductId,modifierProductId,modifierGroupId,modifierSmallId,modifierLargeId,transferTables
+seeded today: 1 Cashier, 1 Qr, 2 Online orders
+open 2026-09-30 -> 201
+close -> 200 totalOrdersCount=2 (caller sent 999)

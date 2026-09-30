@@ -112,15 +112,16 @@ public sealed class EndOfDayTestDatabase : PgTestDatabase
         await command.ExecuteNonQueryAsync();
     }
 
-    public async Task SeedOrderAsync(DateTimeOffset submittedAt, string status)
+    public async Task SeedOrderAsync(DateTimeOffset submittedAt, string status, string source = "Cashier")
     {
         var orderId = Guid.NewGuid();
         await using var command = DataSource.CreateCommand(
             """
             INSERT INTO orders.orders (order_id, source, status, confirmation_status, order_number, submitted_at, created_at, updated_at)
-            VALUES (@order, 'Cashier', @status, 'NotRequired', @number, @at, @at, @at);
+            VALUES (@order, @source, @status, 'NotRequired', @number, @at, @at, @at);
             """);
         command.Parameters.AddWithValue("order", orderId);
+        command.Parameters.AddWithValue("source", source);
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("number", "EOD-" + orderId.ToString("N")[..12]);
         command.Parameters.AddWithValue("at", submittedAt);

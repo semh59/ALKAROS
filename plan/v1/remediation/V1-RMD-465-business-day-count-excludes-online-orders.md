@@ -1,7 +1,7 @@
 # V1-RMD-465 - Gün sonu sipariş sayısından online siparişleri çıkarmak
 
 - Task ID: V1-RMD-465
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing

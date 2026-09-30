@@ -13,7 +13,8 @@ public interface IBusinessDayTotalsReader
 
 /// <summary>What the business day recorded.</summary>
 /// <param name="Revenue">Approved amount of every payment approved inside the business-day window.</param>
-/// <param name="OrderCount">Orders submitted inside the window, excluding drafts, rejected and cancelled orders.</param>
+/// <param name="OrderCount">Orders submitted inside the window, excluding drafts, rejected and cancelled orders and
+/// platform (online) orders, which carry no payment here and are reported per channel instead.</param>
 public sealed record RecordedBusinessDayTotals(decimal Revenue, int OrderCount);
 
 /// <summary>
@@ -45,7 +46,8 @@ public sealed class PostgresBusinessDayTotalsReader : IBusinessDayTotalsReader
                 (SELECT COUNT(*)
                  FROM orders.orders
                  WHERE submitted_at >= $1 AND submitted_at < $2
-                   AND status NOT IN ('Draft', 'Rejected', 'Cancelled'));
+                   AND status NOT IN ('Draft', 'Rejected', 'Cancelled')
+                   AND source <> 'Online');
             """);
         command.Parameters.AddWithValue(start.UtcDateTime);
         command.Parameters.AddWithValue(end.UtcDateTime);

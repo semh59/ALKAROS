@@ -121,6 +121,29 @@ public sealed class EndOfDayHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task CloseCountsTableAndQrOrdersButNotPlatformOrders()
+    {
+        var businessDate = new DateOnly(2026, 1, 6);
+        var windowStart = new DateTimeOffset(2026, 1, 6, 3, 0, 0, TimeSpan.Zero);
+        await _database.SeedOrderAsync(windowStart.AddHours(2), "Completed");
+        await _database.SeedOrderAsync(windowStart.AddHours(3), "Completed", "Qr");
+        await _database.SeedOrderAsync(windowStart.AddHours(4), "Completed", "Online");
+        await _database.SeedOrderAsync(windowStart.AddHours(5), "Accepted", "Online");
+        using var client = CreateClient(EndOfDayTestDatabase.ManagerToken);
+        using (var opened = await client.PostAsJsonAsync(
+            "/api/v1/management/reporting/business-day/open", new OpenBusinessDayV1(businessDate)))
+            Assert.Equal(HttpStatusCode.Created, opened.StatusCode);
+
+        using var closed = await client.PostAsJsonAsync(
+            $"/api/v1/management/reporting/business-day/{businessDate:yyyy-MM-dd}/close",
+            new { TotalRevenue = 0m, TotalOrders = 4, CancelledItems = 0, PrintFailures = 0 });
+
+        Assert.Equal(HttpStatusCode.OK, closed.StatusCode);
+        var report = await closed.Content.ReadFromJsonAsync<BusinessDayReportV1>();
+        Assert.Equal(2, report!.BusinessDay.TotalOrdersCount);
+    }
+
+    [Fact]
     public async Task AManagerCanOpenCloseAndReadTheFullReport()
     {
         var businessDate = new DateOnly(2026, 1, 3);
