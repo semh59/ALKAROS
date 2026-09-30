@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1564,
-  "markdown_line_count": 116508,
-  "markdown_byte_count": 6726776,
+  "markdown_file_count": 1567,
+  "markdown_line_count": 116625,
+  "markdown_byte_count": 6734068,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2674,6 +2674,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-476/README.md",
+      "sha256": "43FA4A795E07ECB79D29DA9C41EBBA8A462E34AACEBE73105B407098DFE3775F",
+      "lines": 21,
+      "bytes": 1996,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2871,9 +2878,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "5B454E01996B1DC746E004B7BC5EFD0FBBF26302AFDD9ED41FE66C7DCAECE548",
-      "lines": 2840,
-      "bytes": 417428,
+      "sha256": "AB32251DA9BBAF321B8B8E7FEA189EF83CFD0CC25215B1DE0197E994B261051E",
+      "lines": 2843,
+      "bytes": 417906,
       "utf8": true
     },
     {
@@ -8803,6 +8810,20 @@
       "sha256": "66961977F1BC22251F89CD4AEB992EF55F4A206B14A96809CA971D0A08095801",
       "lines": 41,
       "bytes": 1224,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-476-online-order-chime-and-tab-permissions.md",
+      "sha256": "66705E4C23316ADDAE2B1C2B0D917C0C008B3E7D1048719CFB3881C1957BB1EE",
+      "lines": 51,
+      "bytes": 3084,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-477-publish-products-with-optional-modifiers.md",
+      "sha256": "970D78D75F090BC8F5BAA36DC4D9E2AB16EF983D085F3EC1A9376313ACBF376D",
+      "lines": 42,
+      "bytes": 1734,
       "utf8": true
     },
     {
