@@ -44,7 +44,7 @@
 | `GATE-V13-EXIT` | V1.3 ödeme, fiscal ve cash görevlerinin uygulanabilir kapsamı tamamlanır. |
 | `GATE-V14-ENTRY` | `GATE-V13-EXIT` kapanır. **2026-09-22 Semih onaylı waiver:** dış sözleşmeye zincirli 14 V13 görevi (aşağıdaki `V13_EXIT_ENTRY_WAIVER` tablosu) açık kaldığı sürece bu koşulu artık kapalı saymıyor — `TRACEABILITY.md` C100.** |
 | `GATE-V14-EXIT` | V1.4 hesap ve invoicing görevlerinin uygulanabilir kapsamı tamamlanır. |
-| `GATE-V15-ENTRY` | `GATE-V14-EXIT` kapanır. **2026-09-22 Semih onaylı waiver (`V15-GOV-001`, `TRACEABILITY.md` C101):** `V14-GOV-002`'nin kaydettiği aynı karar bu sıralamaya da uygulandı — v1.4'ün 24 görevi henüz ele alınmadığı (Faz 4 bekliyor) için `V15-SEC-001/002/003`, `V15-OBS-001`, `V15-BKP-001/002`, `V15-SUP-001` bu koşul kapalı değilken `Done` oldu. V13'ün aksine burada mekanik bir waiver tablosu YOK — bu geçici bir durum, Faz 4 ilerledikçe kendiliğinden kapanacak. |
+| `GATE-V15-ENTRY` | `GATE-V14-EXIT` kapanır. **2026-09-22 Semih onaylı waiver (`V15-GOV-001`, `TRACEABILITY.md` C101):** `V14-GOV-002`'nin kaydettiği aynı karar bu sıralamaya da uygulandı — v1.4'ün 24 görevi henüz ele alınmadığı (Faz 4 bekliyor) için `V15-SEC-001/002/003`, `V15-OBS-001`, `V15-BKP-001/002`, `V15-SUP-001` bu koşul kapalı değilken `Done` oldu. V13'ün aksine burada mekanik bir waiver tablosu YOK — bu geçici bir durum, Faz 4 ilerledikçe kendiliğinden kapanacak. **2026-09-30:** `V15-KVK-001` için ayrıca mekanik kabul tablosu eklendi (`V1-RMD-461`, aşağıdaki `V14_EXIT_AHEAD_ADMISSION`). |
 | `GATE-V15-EXIT` | V1.5 hardening, recovery ve runbook doğrulamaları tamamlanır. |
 | `GATE-V20-ENTRY` | `GATE-V15-EXIT` kapanır. |
 | `GATE-V20-EXIT` | `V20-REL-003` signed Approve; `V20-REL-004` ve `V20-REL-005` kanıtla `Done` olur. |
@@ -212,6 +212,20 @@ Bu waiver yalnız `GATE-V14-ENTRY` türetimini etkiler; `GATE-V13-EXIT`in
 kendisi (yukarıdaki satır) yalnız bu 14 görev gerçek kanıtla `Done` veya
 tarihli/onaylı `NotApplicable` olduğunda fiilen kapanır. Yeni product
 behavior başlatma izni vermez; yalnızca V14 task-seçim sırasını değiştirir.
+
+## 2026-09-30 Semih onaylı v1.5 görevi kabulü (V1-RMD-461)
+
+`GATE-V14-EXIT` v1.4'ün 14 açık görevi (çoğu QNB ve dış sözleşmeye bağlı) yüzünden kapanmıyor; buna rağmen dış bağımlılığı
+olmayan `V15-KVK-001` (KVKK saklama yürütmesi) kodlanıp doğrulandı. Semih 2026-09-30'da yalnız bu görev için istisna verdi.
+Tablo `tools/task-scope/task_scope_tool.py`'deki sabit kayıtlarla BİREBİR eşleşmelidir; başka bir görev eklemek yeni bir Semih
+onayı ve aracın güncellenmesini gerektirir. Bu kabul yalnız `GATE-V14-EXIT`'in bu görev için giriş denetimini etkiler; kapının
+kendisi v1.4 gerçekten bitince kapanır.
+
+<!-- V14_EXIT_AHEAD_ADMISSION:START -->
+| Task ID | Approval date | Reason |
+| --- | --- | --- |
+| `V15-KVK-001` | `2026-09-30` | KVKK saklama yurutmesi dis bagimlilik gerektirmez; v1.4 kapanisini beklemez |
+<!-- V14_EXIT_AHEAD_ADMISSION:END -->
 
 ## 2026-09-23 Semih onaylı ödeme orkestrasyonu bağımlılık waiver'ı (V13-GOV-008)
 

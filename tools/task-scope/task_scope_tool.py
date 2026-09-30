@@ -182,6 +182,24 @@ _V13_EXIT_WAIVER_RECORDS = {
 }
 _V13_EXIT_WAIVER_TASK_IDS = {record[0] for record in _V13_EXIT_WAIVER_RECORDS}
 
+# 2026-09-30 Semih onayi: GATE-V14-EXIT hala acikken (v1.4'un 14 gorevi, cogu
+# QNB ve dis sozlesmeye bagli) asagidaki v1.5 gorevlerinin Done olmasina izin
+# verilir. Ayni fail-closed desen: tablo GATES.md'deki isaretli bloktan
+# ayristirilir ve bu sabit kumeyle TAM eslesmelidir; baska bir gorev ya da
+# baska bir kapi bu istisnadan etkilenmez.
+_V14_EXIT_ADMISSION_START = "<!-- V14_EXIT_AHEAD_ADMISSION:START -->"
+_V14_EXIT_ADMISSION_END = "<!-- V14_EXIT_AHEAD_ADMISSION:END -->"
+_V14_EXIT_ADMISSION_HEADER = "| Task ID | Approval date | Reason |"
+_V14_EXIT_ADMISSION_SEPARATOR = "| --- | --- | --- |"
+_V14_EXIT_ADMISSION_ROW = re.compile(
+    r"^\|\s*`(?P<task_id>V15-[A-Z]+-\d+)`\s*\|\s*`(?P<approval_date>\d{4}-\d{2}-\d{2})`\s*\|\s*"
+    r"(?P<reason>[^|]+?)\s*\|$"
+)
+_V14_EXIT_ADMISSION_RECORDS = {
+    ("V15-KVK-001", "2026-09-30", "KVKK saklama yurutmesi dis bagimlilik gerektirmez; v1.4 kapanisini beklemez"),
+}
+_V14_EXIT_ADMISSION_TASK_IDS = {record[0] for record in _V14_EXIT_ADMISSION_RECORDS}
+
 # 2026-09-23 (TRACEABILITY C102, V13-GOV-008): Semih approved a formal,
 # per-edge waiver of the per-task Dependencies-must-be-Done check for
 # exactly these 12 (consumer, waived dependency) pairs. Mirrors
@@ -582,6 +600,51 @@ def parse_v13_exit_waiver_ids(plan_dir: Path) -> Set[str]:
     return _V13_EXIT_WAIVER_TASK_IDS
 
 
+def parse_v14_exit_admission_ids(plan_dir: Path) -> Set[str]:
+    """Return the Semih-approved v1.5 task IDs admitted ahead of GATE-V14-EXIT.
+
+    Same strictness as ``parse_v13_exit_waiver_ids``: a malformed, duplicate,
+    missing or non-approved record cannot widen the exemption.
+    """
+    gates_file = plan_dir / "GATES.md"
+    if not gates_file.is_file():
+        raise TaskParseError("V14 exit admission table not found in GATES.md")
+
+    lines = gates_file.read_text(encoding="utf-8").splitlines()
+    starts = [index for index, line in enumerate(lines) if line == _V14_EXIT_ADMISSION_START]
+    ends = [index for index, line in enumerate(lines) if line == _V14_EXIT_ADMISSION_END]
+    if len(starts) != 1 or len(ends) != 1:
+        raise TaskParseError("V14 exit admission table markers must occur exactly once")
+    if starts[0] >= ends[0]:
+        raise TaskParseError("V14 exit admission table markers are out of order")
+
+    table_lines = lines[starts[0] + 1:ends[0]]
+    if len(table_lines) < 3:
+        raise TaskParseError("V14 exit admission table is incomplete")
+    if table_lines[0] != _V14_EXIT_ADMISSION_HEADER:
+        raise TaskParseError("V14 exit admission table header is invalid")
+    if table_lines[1] != _V14_EXIT_ADMISSION_SEPARATOR:
+        raise TaskParseError("V14 exit admission table separator is invalid")
+
+    records: Set[tuple] = set()
+    for line in table_lines[2:]:
+        match = _V14_EXIT_ADMISSION_ROW.fullmatch(line)
+        if match is None:
+            raise TaskParseError("V14 exit admission table contains an invalid record")
+        record = (match.group("task_id"), match.group("approval_date"), match.group("reason"))
+        if record in records:
+            raise TaskParseError(
+                f"V14 exit admission table contains a duplicate Task ID: {record[0]}"
+            )
+        records.add(record)
+
+    if records != _V14_EXIT_ADMISSION_RECORDS:
+        raise TaskParseError(
+            "V14 exit admission table records must exactly match the 2026-09-30 user approval"
+        )
+    return _V14_EXIT_ADMISSION_TASK_IDS
+
+
 def check_entry_gate(task: TaskMetadata, plan_dir: Path) -> List[str]:
     """Return closure errors for the release gate immediately before *task*.
 
@@ -651,6 +714,15 @@ def check_entry_gate(task: TaskMetadata, plan_dir: Path) -> List[str]:
             if still_open:
                 return [f"Entry gate {gate_id} is open: " + ", ".join(still_open)]
             return []
+        if gate_id == "GATE-V14-EXIT" and task.task_id in _V14_EXIT_ADMISSION_TASK_IDS:
+            try:
+                admitted_ids = parse_v14_exit_admission_ids(plan_dir)
+            except TaskParseError as exc:
+                if not (plan_dir / "GATES.md").is_file():
+                    return [f"Entry gate {gate_id} is open: " + ", ".join(unfinished)]
+                return [f"Entry gate {gate_id} admission table rejected: {exc}"]
+            if task.task_id in admitted_ids:
+                return []
         return [f"Entry gate {gate_id} is open: " + ", ".join(unfinished)]
     return []
 
