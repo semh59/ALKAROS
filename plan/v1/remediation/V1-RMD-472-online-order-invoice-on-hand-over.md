@@ -20,8 +20,7 @@ engellemez: taslak teslim işlemi tamamlandıktan sonra ayrı açılır; başar�
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-472-online-order-invoice-on-hand-over.md`
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/OnlineOrdering/OnlineOrderInvoiceDrafting.cs - yeni dosya: sipariş ve kalemleri okuyup taslağı açar
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/OnlineOrdering/OnlineOrderInvoiceDraftingTests.cs - yeni dosya: taslak açma testleri
+- `src/Host/Experience/OnlineOrdering/OnlineOrderInvoiceDrafting.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/OnlineOrdering/OnlineOperationsEndpoints.cs - yalnız teslimden sonra taslak çağrısı ve kayıt
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Reconciliation/OnlineOrderReconciliationHostedService.cs - yalnız faturasız sipariş taraması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız taramanın bağımlılık kaydı gerekirse
