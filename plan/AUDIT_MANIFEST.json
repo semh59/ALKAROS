@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1560,
-  "markdown_line_count": 116370,
-  "markdown_byte_count": 6715802,
+  "markdown_file_count": 1561,
+  "markdown_line_count": 116399,
+  "markdown_byte_count": 6718709,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2653,6 +2653,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-471/README.md",
+      "sha256": "6C1C301D8F22745B9B4CEAF8355C8A26BE23FD134209CCDEE3D6D46CED659800",
+      "lines": 24,
+      "bytes": 1913,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2850,9 +2857,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D66C98E1537E99F5D6C0498331EF1117424EF4C9A3237CBC48C1FD30D682C6ED",
-      "lines": 2836,
-      "bytes": 416870,
+      "sha256": "29DFB6B6ED425110803FAB477AF0F8D0DB39FF3863B3849AFF0B77A29A18F9BD",
+      "lines": 2837,
+      "bytes": 417000,
       "utf8": true
     },
     {
@@ -8751,23 +8758,23 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-471-seller-profile-settings.md",
-      "sha256": "17E4FEAC33AD403158B0673F23234EF8AC7162188D8315E6701EFF504A49A179",
-      "lines": 49,
-      "bytes": 2089,
+      "sha256": "BF39BB1448A608D844AA24943C3472FCFD103147AA5DAA8CE89396AC9821FD9E",
+      "lines": 53,
+      "bytes": 2821,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-472-online-order-invoice-on-hand-over.md",
-      "sha256": "61E86F20E1F862823234456CEB4DB711370B05E8D783876888C291D33B604C90",
+      "sha256": "C0B47DF7516E29B8D615B3828593D190CE1068CE4EA3792EE05549396DDEC06B",
       "lines": 48,
-      "bytes": 2223,
+      "bytes": 2261,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-473-online-order-invoice-list-screen.md",
-      "sha256": "1624E33B01C6CF79BBB0DA18F0AF0E404FCD860A24E0F397EA756B9BE41DA296",
+      "sha256": "9B556EBB95BFFE43DE0B5F21EAFD45EF0CCD1192A9A362A0F47AE53F6EFD9BD3",
       "lines": 49,
-      "bytes": 1947,
+      "bytes": 2041,
       "utf8": true
     },
     {
