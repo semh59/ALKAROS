@@ -1,6 +1,6 @@
- Test Files  1 failed | 52 passed (53)
-      Tests  1 failed | 393 passed (394)
-   Start at  09:36:43
-   Duration  13.55s (transform 6.93s, setup 0ms, import 17.31s, tests 37.82s, environment 62.13s)
 
-[ELIFECYCLE] Test failed. See above for more details.
+ Test Files  53 passed (53)
+      Tests  394 passed (394)
+   Start at  09:37:18
+   Duration  13.82s (transform 8.36s, setup 0ms, import 18.71s, tests 40.79s, environment 59.00s)
+
