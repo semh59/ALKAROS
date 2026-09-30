@@ -1,0 +1,19 @@
+db ready, seeded
+host ready
+cash session keys: cashSessionId,cashierUserId,terminalId,status,openingBalance,expectedCash,actualCash,difference,openedAt,closedAt,rowVersion,isActive
+paid bill 0: {"paymentId":"4e2fa67d-2b94-4918-9d53-3723ec6ea542","paymentAllocationId":"fab9ca68-ef3a-4be6-8e8b-b46ef0b70738","cashTr
+paid bill 1: {"paymentId":"342bc502-5115-4ba9-aefc-d5bcd785199e","paymentAllocationId":"2e0610b3-afd7-4870-b9c8-e438e0f72e70","cashTr
+orders after payment (server closes them itself): [{"order_number":"TBL-TRF-1-06094835-77558063","status":"Completed"},{"order_number":"TBL-TRF-2-06094878-75d12361","status":"Completed"}]
+simulated legacy: both orders reset to Served
+wrong-password attempts done, last status 401
+backlog: Eski sipariş yığını | AÇIK SİPARİŞ | 2 | ÖDEMESİ TAMAMLANMIŞ | 2 | HESABI OLMAYAN | 0 | AÇIK HESABI OLAN | 0 | EN ESKİ ÖDENMİŞ SİPARİŞ | 30.09.2026 09:09:48 | Kapatılabilecekleri göster
+preview: Eski sipariş yığını | AÇIK SİPARİŞ | 2 | ÖDEMESİ TAMAMLANMIŞ | 2 | HESABI OLMAYAN | 0 | AÇIK HESABI OLAN | 0 | EN ESKİ ÖDENMİŞ SİPARİŞ | 30.09.2026 09:09:48 | Kapatılabilecekleri göster |  | Kapatılabilecek 2 sipariş var (TBL-TRF-1-06094835-77558063, TBL-TRF-2-06094878-75d12361) |  | 2 siparişi kapat
+closed: Eski sipariş yığını | Kapatılan: 2, kapatılamayan: 0. | AÇIK SİPARİŞ | 0 | ÖDEMESİ TAMAMLANMIŞ | 0 | HESABI OLMAYAN | 0 | AÇIK HESABI OLAN | 0 | EN ESKİ ÖDENMİŞ SİPARİŞ | — | Kapatılabilecekleri göster
+orders after closing: [{"order_number":"TBL-TRF-1-06094835-77558063","status":"Completed"},{"order_number":"TBL-TRF-2-06094878-75d12361","status":"Completed"}]
+locked lookup: Kullanıcı Ara |  | Oturumları sonlandırmak veya hesap kilidini kaldırmak için bir kullanıcı adı girin. |  | Kullanıcı adı | Ara | Kilitli Kişi |  | ● Aktif — ● Kilitli |  | Tüm Oturumları Sonlandır | Hesap Kilidini Kaldır
+unlock: Kullanıcı Ara |  | Oturumları sonlandırmak veya hesap kilidini kaldırmak için bir kullanıcı adı girin. |  | Kullanıcı adı | Ara | Hesap kilidi kaldırıldı. | Kilitli Kişi |  | ● Aktif |  | Tüm Oturumları Sonlandır | Hesap Kilidini Kaldır
+login with the right password after unlock: 200
+management calls (non-GET only):
+  POST /api/v1/management/security/orders/close-settled?dryRun=true -> 200
+  POST /api/v1/management/security/orders/close-settled?dryRun=false -> 200
+  POST /api/v1/management/security/users/d0305a47-a5ce-434c-8398-c44d8787233a/force-unlock -> 200
