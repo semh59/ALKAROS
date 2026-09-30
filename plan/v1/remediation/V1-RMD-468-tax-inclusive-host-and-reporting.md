@@ -31,7 +31,7 @@ ekleme formülü taşıyor (`birim x (1 + oran)`); brüt = birim x adet olur.
 ## In scope
 
 - Kanal raporu net = toplam - KDV; çift ekran ikram satırı brütü; ilgili testlerin ve ham SQL tohumlarının 100 TL = 100 TL beklentisi.
-- Ödeme, split ve müşteri hesabı Host testlerinden `V1-RMD-467` sonrası kırılanlar gerekçesiyle bu göreve eklenir (plan düzeltmesi).
+- Adisyon bölme (split) testleri `V1-RMD-467` içinde düzeltildi; başka Host testi `V1-RMD-467` sonrası kırılırsa gerekçesiyle bu göreve eklenir (plan düzeltmesi).
 
 ## Out of scope
 

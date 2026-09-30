@@ -30,6 +30,8 @@ kuralla tutarlı olur. Veri tabanı kısıtları biçimden bağımsızdır, gö�
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Orders/ItemExceptions/ItemExceptionsTests.cs - yalnız ikram beklentisi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Billing/BillFoundation/BillDomainTests.cs - yalnız KDV dahil beklentiler
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Billing/Adjustments/AdjustmentsDomainTests.cs - yalnız KDV dahil beklentiler
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs - yalnız KDV dahil beklentiler
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/BillingSplitHttpTests.cs - yalnız KDV dahil beklentiler
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/domain/complimentary-line-fiscal-representation.md - yalnız KDV dahil örnek tutarlar
 
 ## In scope
