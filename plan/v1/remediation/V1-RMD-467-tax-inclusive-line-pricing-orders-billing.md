@@ -1,8 +1,8 @@
 # V1-RMD-467 - KDV dahil satır fiyatı: sipariş ve adisyon çekirdeği
 
 - Task ID: V1-RMD-467
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
 
