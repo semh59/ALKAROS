@@ -1,0 +1,16 @@
+﻿# all migrations up to 169 on an empty database, then 169 down and up again
+$ after full migration run
+tables: invoice_line_sources, invoice_lines, invoice_periods, invoice_source_lines, invoice_source_sets, invoices, qnb_credentials
+triggers: tr_invoice_line_sources_complete, tr_invoice_line_sources_immutable, tr_invoice_lines_immutable, tr_invoices_immutable
+functions: assert_invoice_trace_complete, refuse_invoice_content_change, refuse_invoice_line_change, refuse_invoice_line_source_change
+$ 169 down  exit=0
+$ after 169 down
+tables: invoice_lines, invoice_periods, invoice_source_lines, invoice_source_sets, invoices, qnb_credentials
+triggers: tr_invoice_lines_immutable, tr_invoices_immutable
+functions: refuse_invoice_content_change, refuse_invoice_line_change
+$ 169 up  exit=0
+$ after 169 up again
+tables: invoice_line_sources, invoice_lines, invoice_periods, invoice_source_lines, invoice_source_sets, invoices, qnb_credentials
+triggers: tr_invoice_line_sources_complete, tr_invoice_line_sources_immutable, tr_invoice_lines_immutable, tr_invoices_immutable
+functions: assert_invoice_trace_complete, refuse_invoice_content_change, refuse_invoice_line_change, refuse_invoice_line_source_change
+$ 169 up a second time (idempotent)  exit=0

@@ -16,7 +16,7 @@ public sealed class HostModuleReachabilityTests
         var catalog = ModuleRegistry.DefaultCatalog;
 
         Assert.NotEmpty(catalog);
-        Assert.Equal(39, catalog.Count); // V14-INV-002: Invoicing.Generation joined the catalog (38 after V14-INV-001)
+        Assert.Equal(40, catalog.Count); // Invoicing.SourceTraceability joined the catalog (39 before it)
         Assert.All(catalog, type =>
         {
             Assert.True(typeof(IModule).IsAssignableFrom(type));

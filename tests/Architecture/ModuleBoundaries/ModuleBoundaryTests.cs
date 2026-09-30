@@ -157,6 +157,9 @@ public static class ModuleBoundaryTests
             // snapshot is read through CustomerData's profile store (decryption
             // stays inside CustomerData); every other source is read by SQL.
             ["Invoicing.Generation"] = ["CustomerData"],
+            // module-dependency-rules.md row 35 - the links reuse
+            // Generation's public KDV split so they reproduce its lines exactly.
+            ["Invoicing.SourceTraceability"] = ["Invoicing.Generation"],
         };
 
     private static List<(IModule Module, Assembly Assembly)> CatalogModules()

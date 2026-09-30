@@ -66,6 +66,8 @@ public static class ModuleRegistry
         typeof(ALKAROS.Invoicing.SourceSelection.InvoicingSourceSelectionModule),
         // V14-INV-002: invoice drafts from a source set (buyer from CustomerData, sources by SQL).
         typeof(ALKAROS.Invoicing.Generation.InvoicingGenerationModule),
+        // The ledger charges behind every invoice line.
+        typeof(ALKAROS.Invoicing.SourceTraceability.InvoicingSourceTraceabilityModule),
         typeof(ALKAROS.Payments.CardSettlement.CardSettlementModule),
         typeof(ALKAROS.Payments.EftTender.EftTenderModule),
         typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule),

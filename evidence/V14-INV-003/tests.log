@@ -1,0 +1,25 @@
+﻿
+== tests\Modules\Invoicing\SourceTraceability
+
+Başarılı!  - Başarısız:     0, Başarılı:     8, Atlanan:     0, Toplam:     8, Süre: 14 s - ALKAROS.Invoicing.SourceTra
+ceability.Tests.dll (net8.0)
+
+
+== tests\Architecture\ModuleBoundaries
+
+Başarılı!  - Başarısız:     0, Başarılı:     9, Atlanan:     0, Toplam:     9, Süre: 3 s - ALKAROS.Architecture.Tests.d
+ll (net8.0)
+
+
+== tests\Host\MigrationComposition
+
+Başarılı!  - Başarısız:     0, Başarılı:   164, Atlanan:     0, Toplam:   164, Süre: 11 m 27 s - ALKAROS.Host.Tests.dll
+ (net8.0)
+
+
+== tests\Modules\Invoicing\Generation
+
+Başarılı!  - Başarısız:     0, Başarılı:    21, Atlanan:     0, Toplam:    21, Süre: 23 s - ALKAROS.Invoicing.Generatio
+n.Tests.dll (net8.0)
+
+

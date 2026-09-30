@@ -1,0 +1,4 @@
+== Mutation: the completeness trigger is a plain per-statement trigger instead of a deferred per-row constraint trigger
+  Failed ALKAROS.Invoicing.SourceTraceability.Tests.InvoiceTraceabilityTests.LinksThatDoNotCoverEveryLineAndChargeCannotBeCommitted [72 ms]
+Failed!  - Failed: 1, Passed: 7, Skipped: 0, Total: 8 - ALKAROS.Invoicing.SourceTraceability.Tests.dll (net8.0)
+== Restored, cmp identical, 8/8 green again
