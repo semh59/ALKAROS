@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1532,
-  "markdown_line_count": 115303,
-  "markdown_byte_count": 6650609,
+  "markdown_file_count": 1534,
+  "markdown_line_count": 115398,
+  "markdown_byte_count": 6654458,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2766,9 +2766,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "FB4DC20976AD60E984A9DC1E725873DBAB7B50630815E82BBCB17594CEA57797",
-      "lines": 2808,
-      "bytes": 412603,
+      "sha256": "FB3F4B3B5AF3EDA3201ED8D228B56FE7996F9A5A1893D50B90B50D4BBFC2E05A",
+      "lines": 2810,
+      "bytes": 412939,
       "utf8": true
     },
     {
@@ -8579,6 +8579,20 @@
       "sha256": "6853CDD4740CFAD5B64519142633440E7D53CBEF93DA44AE598381697C434CC5",
       "lines": 45,
       "bytes": 1609,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-459-management-shared-client-helpers.md",
+      "sha256": "4BC0BE77CDE7B278521A71021E234125285EC83F9656F8605C54AE239571C751",
+      "lines": 51,
+      "bytes": 2311,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-460-trendyol-go-product-mapping-screen.md",
+      "sha256": "50D65FEBA5851D65584583CA60F3BEB3D0D4D380EC90893807BC204691F8D84B",
+      "lines": 42,
+      "bytes": 1202,
       "utf8": true
     },
     {
