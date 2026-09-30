@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1548,
-  "markdown_line_count": 115842,
-  "markdown_byte_count": 6685167,
+  "markdown_file_count": 1552,
+  "markdown_line_count": 116032,
+  "markdown_byte_count": 6696297,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -330,9 +330,9 @@
     },
     {
       "path": "docs/domain/complimentary-line-fiscal-representation.md",
-      "sha256": "C9F2D212B0F3D6989B0EEEA80E683E4E0B5F0A90F8E1FA46BDB25BC0859F3B87",
+      "sha256": "F51EB3645B71ECAB516400D4709C24DBEF556AAB94408E9B0AE71CFE837FC555",
       "lines": 94,
-      "bytes": 4436,
+      "bytes": 4477,
       "utf8": true
     },
     {
@@ -2625,6 +2625,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-467/README.md",
+      "sha256": "01391CCB3D26E7B75616640A7A0108E3907FFA40A9C7D778B7998E2E4DD62A35",
+      "lines": 26,
+      "bytes": 2026,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2822,9 +2829,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "1027821A483714B647CAE32B4437838103280D30EA608C9AEACD6FB44A6A0477",
-      "lines": 2824,
-      "bytes": 415009,
+      "sha256": "279B99E09C60CC1645FB859CFC7A992D689D0514EA3649E4AB8774A6605B4FEE",
+      "lines": 2828,
+      "bytes": 415645,
       "utf8": true
     },
     {
@@ -8691,6 +8698,27 @@
       "sha256": "A1A55A7FF8E9177003E465CD34BC688282C38CC5211F04379812DBEFD4B658A9",
       "lines": 51,
       "bytes": 2310,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-467-tax-inclusive-line-pricing-orders-billing.md",
+      "sha256": "961C7E02CBA2204AED80637A3C16A2C03F5F8DCD7E93D56131596CB80986A777",
+      "lines": 59,
+      "bytes": 3680,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-468-tax-inclusive-host-and-reporting.md",
+      "sha256": "506796D8DBA7F8057C49B065D7ACDCE221A49A13351D20217D9E2361F1A37238",
+      "lines": 50,
+      "bytes": 2487,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-469-tax-inclusive-client-screens.md",
+      "sha256": "6CCBBBE890C69FB13116E355469551308679B84EA998F85B985FE7F65850F40D",
+      "lines": 51,
+      "bytes": 2260,
       "utf8": true
     },
     {
