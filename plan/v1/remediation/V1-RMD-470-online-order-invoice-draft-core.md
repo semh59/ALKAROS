@@ -38,6 +38,7 @@ faturada değildir (platform kuryesi ise platform keser).
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Invoicing/Generation/InvoicingGenerationModule.cs - yalnız yeni servislerin kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Invoicing/Generation/OrderInvoiceDraftTests.cs - yalnız yeni davranışın testleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Invoicing/Generation/SellerProfileTests.cs - yalnız satıcı bilgisi testleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tools/consistency-audit/unreachable_services_allowlist.json - yalnız yeni iki servisin, bağlayacak görevler (`V1-RMD-471`, `V1-RMD-472`) gelene kadar geçici kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json - yalnız bu görevin migration'ı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs - yalnız bu görevin migration'ı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs - yalnız bu görevin migration'ı

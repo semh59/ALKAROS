@@ -30,7 +30,7 @@ ekranındaki "Fatura bilgileri" bölümünü ekler. VKN 10 haneli, TCKN 11 hanel
 ## In scope
 
 - `GET`/`PUT` satıcı bilgileri (yetki: `integrations.manage`), doğrulama, Türkçe hata gerekçeleri; Yönetim bölümü (yükleniyor, boş, hata).
-- Testler: uç nokta (yetki, doğrulama, kalıcılık), istemci (Türkçe, axe).
+- Testler: uç nokta (yetki, doğrulama, kalıcılık), istemci (Türkçe, axe). Uç nokta gelince `ISellerProfileStore` erişilebilir olur ve `V1-RMD-470` içindeki geçici izin listesi kaydı kalkar.
 
 ## Out of scope
 
