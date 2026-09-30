@@ -1,8 +1,8 @@
 # V1-RMD-472 - Teslimde online sipariş fatura taslağını açmak
 
 - Task ID: V1-RMD-472
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
 
