@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1528,
-  "markdown_line_count": 115236,
-  "markdown_byte_count": 6643006,
+  "markdown_file_count": 1529,
+  "markdown_line_count": 115246,
+  "markdown_byte_count": 6644022,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2555,6 +2555,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-458/README.md",
+      "sha256": "5C79E5BAC9032EB7152B861A2622FB3C7A8E58898ADB86CE42F5F127A8284608",
+      "lines": 9,
+      "bytes": 892,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2738,9 +2745,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "F6A842C895BF7DA2A80FCFCFB52DF89DAF11A4EA62B80302D78063555357F4B9",
-      "lines": 2804,
-      "bytes": 412082,
+      "sha256": "71E5B285FE78380EA5B01C2805265BC56784B25CF6C515F5DD5E26D2973B66F5",
+      "lines": 2805,
+      "bytes": 412212,
       "utf8": true
     },
     {
@@ -8548,9 +8555,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-458-stale-test-lazy-route-wait.md",
-      "sha256": "F41332E834EC27DDC1433873C0BF3068CD5105525AB711E7F871E03B6485DF59",
+      "sha256": "6853CDD4740CFAD5B64519142633440E7D53CBEF93DA44AE598381697C434CC5",
       "lines": 45,
-      "bytes": 1615,
+      "bytes": 1609,
       "utf8": true
     },
     {
