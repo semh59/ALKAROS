@@ -309,6 +309,60 @@ public sealed class PostgresRoleRepository : IRoleRepository
         return result;
     }
 
+    public async Task<IReadOnlyList<RoleListing>> ListRolesAsync(CancellationToken cancellationToken = default)
+    {
+        var result = new List<RoleListing>();
+
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            SELECT r.role_id, r.code, r.name,
+                   COALESCE(array_agg(p.code ORDER BY p.code) FILTER (WHERE p.code IS NOT NULL), ARRAY[]::text[])
+            FROM {Roles} r
+            LEFT JOIN {RolePermissions} rp ON rp.role_id = r.role_id
+            LEFT JOIN {PermissionTable} p ON p.permission_id = rp.permission_id
+            GROUP BY r.role_id, r.code, r.name
+            ORDER BY r.name, r.code COLLATE "C"
+            LIMIT {MaxUnpagedRows + 1};
+            """);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result.Add(new RoleListing(reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetFieldValue<string[]>(3)));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"ListRolesAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+
+        return result;
+    }
+
+    public async Task<IReadOnlyList<UserListing>> ListUsersAsync(CancellationToken cancellationToken = default)
+    {
+        var result = new List<UserListing>();
+
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            SELECT u.user_id, u.username, u.display_name, u.active,
+                   COALESCE(array_agg(ur.role_id ORDER BY ur.role_id) FILTER (WHERE ur.role_id IS NOT NULL), ARRAY[]::uuid[])
+            FROM identity.users u
+            LEFT JOIN {UserRoles} ur ON ur.user_id = u.user_id
+            GROUP BY u.user_id, u.username, u.display_name, u.active
+            ORDER BY u.display_name, u.username COLLATE "C"
+            LIMIT {MaxUnpagedRows + 1};
+            """);
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result.Add(new UserListing(
+                reader.GetGuid(0), reader.GetString(1), reader.GetString(2), reader.GetBoolean(3), reader.GetFieldValue<Guid[]>(4)));
+
+        if (result.Count > MaxUnpagedRows)
+            throw new InvalidOperationException(
+                $"ListUsersAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+
+        return result;
+    }
+
     private static Role ReadRole(NpgsqlDataReader reader)
         => new(reader.GetGuid(0), reader.GetString(1), reader.GetString(2));
 }

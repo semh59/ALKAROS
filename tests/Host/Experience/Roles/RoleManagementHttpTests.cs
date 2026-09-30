@@ -21,6 +21,7 @@ namespace ALKAROS.Host.Experience.Roles.Tests;
 public sealed class RoleManagementHttpTests : IAsyncLifetime
 {
     private readonly RoleManagementTestDatabase _database = new();
+    private static readonly JsonSerializerOptions WebJson = new(JsonSerializerDefaults.Web);
 
     public Task InitializeAsync() => _database.InitializeAsync();
 
@@ -66,7 +67,7 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
         using (var createRole = await client.SendAsync(Request(
             HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + "/roles", cookie,
             new CreateRoleRequestV1(roleCode, "Host"))))
-            Assert.Equal(HttpStatusCode.NoContent, createRole.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, createRole.StatusCode);
 
         using (var duplicateRole = await client.SendAsync(Request(
             HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + "/roles", cookie,
@@ -110,7 +111,7 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
         using (var createRole = await client.SendAsync(Request(
             HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + "/roles", cookie,
             new CreateRoleRequestV1(roleCode, "Waiter"))))
-            Assert.Equal(HttpStatusCode.NoContent, createRole.StatusCode);
+            Assert.Equal(HttpStatusCode.OK, createRole.StatusCode);
         var roleId = await _database.GetRoleIdAsync(roleCode);
         var userId = await _database.SeedPlainUserAsync();
 
@@ -180,6 +181,91 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
+    [Fact]
+    public async Task CreatingARoleReturnsItsIdAndTheListShowsItWithItsPermissions()
+    {
+        var cookie = await _database.SeedRealManagerRoleSessionAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var roleCode = "host-" + Guid.NewGuid().ToString("N")[..8];
+
+        using var create = await client.SendAsync(Request(
+            HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + "/roles", cookie, new CreateRoleRequestV1(roleCode, "Host")));
+        Assert.Equal(HttpStatusCode.OK, create.StatusCode);
+        var created = await create.Content.ReadFromJsonAsync<CreateRoleResultV1>();
+        Assert.Equal(await _database.GetRoleIdAsync(roleCode), created!.RoleId);
+
+        using (var assign = await client.SendAsync(Request(
+            HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + $"/roles/{created.RoleId:D}/permissions", cookie,
+            new AssignPermissionRequestV1("identity.users.manage"))))
+            Assert.Equal(HttpStatusCode.NoContent, assign.StatusCode);
+
+        using var roles = await client.SendAsync(Request(HttpMethod.Get, RoleManagementEndpoints.GroupPrefix + "/roles", cookie));
+        Assert.Equal(HttpStatusCode.OK, roles.StatusCode);
+        var listed = (await roles.Content.ReadFromJsonAsync<RoleV1[]>())!.Single(role => role.RoleId == created.RoleId);
+        Assert.Equal(roleCode, listed.Code);
+        Assert.Equal(["identity.users.manage"], listed.PermissionCodes);
+
+        using var permissions = await client.SendAsync(Request(HttpMethod.Get, RoleManagementEndpoints.GroupPrefix + "/permissions", cookie));
+        Assert.Equal(HttpStatusCode.OK, permissions.StatusCode);
+        Assert.Contains((await permissions.Content.ReadFromJsonAsync<PermissionV1[]>())!, permission => permission.Code == "identity.users.manage");
+    }
+
+    [Fact]
+    public async Task ActorWithoutRolesManagePermissionIsForbiddenFromListingRolesAndPermissions()
+    {
+        var cookie = await _database.SeedManagerSessionAsync(withRolesManage: false, withPermissionsManage: true);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        foreach (var path in new[] { "/roles", "/permissions" })
+        {
+            using var response = await client.SendAsync(Request(HttpMethod.Get, RoleManagementEndpoints.GroupPrefix + path, cookie));
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        }
+    }
+
+    [Fact]
+    public async Task ManagerListsUsersWithTheirRolesAndNeverSeesAPasswordHash()
+    {
+        var cookie = await _database.SeedRealManagerRoleSessionAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var username = "waiter-" + Guid.NewGuid().ToString("N")[..8];
+        var roleCode = "floor-" + Guid.NewGuid().ToString("N")[..8];
+
+        using var createdUser = await client.SendAsync(Request(
+            HttpMethod.Post, "/api/v1/management/users", cookie, new CreateUserRequestV1(username, "correct-horse-battery", "Garson Ahmet")));
+        var userId = (await createdUser.Content.ReadFromJsonAsync<CreateUserResultV1>())!.UserId;
+        using var createdRole = await client.SendAsync(Request(
+            HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + "/roles", cookie, new CreateRoleRequestV1(roleCode, "Salon")));
+        var roleId = (await createdRole.Content.ReadFromJsonAsync<CreateRoleResultV1>())!.RoleId;
+        using (var assign = await client.SendAsync(Request(
+            HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + $"/roles/{roleId:D}/users/{userId:D}", cookie)))
+            Assert.Equal(HttpStatusCode.NoContent, assign.StatusCode);
+
+        using var response = await client.SendAsync(Request(HttpMethod.Get, "/api/v1/management/users", cookie));
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var raw = await response.Content.ReadAsStringAsync();
+        Assert.DoesNotContain("password", raw, StringComparison.OrdinalIgnoreCase);
+        var listed = JsonSerializer.Deserialize<UserV1[]>(raw, WebJson)!.Single(user => user.UserId == userId);
+        Assert.Equal(username, listed.Username);
+        Assert.Equal("Garson Ahmet", listed.DisplayName);
+        Assert.True(listed.Active);
+        Assert.Equal([roleId], listed.RoleIds);
+    }
+
+    [Fact]
+    public async Task ActorWithoutUsersManagePermissionIsForbiddenFromListingUsers()
+    {
+        var cookie = await _database.SeedManagerSessionAsync(withRolesManage: true, withPermissionsManage: true);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(Request(HttpMethod.Get, "/api/v1/management/users", cookie));
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
@@ -238,6 +324,9 @@ public sealed class RoleManagementRegistrationTests
         AssertRoute(routes, "POST", prefix + "/roles/{roleId:guid}/users/{userId:guid}");
         AssertRoute(routes, "DELETE", prefix + "/roles/{roleId:guid}/users/{userId:guid}");
         AssertRoute(routes, "POST", "/api/v1/management/users");
+        AssertRoute(routes, "GET", prefix + "/roles");
+        AssertRoute(routes, "GET", prefix + "/permissions");
+        AssertRoute(routes, "GET", "/api/v1/management/users");
     }
 
     private static void AssertRoute(IEnumerable<dynamic> routes, string method, string pattern)

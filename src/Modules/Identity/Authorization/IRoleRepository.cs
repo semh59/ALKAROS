@@ -1,5 +1,11 @@
 namespace ALKAROS.Identity.Authorization;
 
+/// <summary>A role with the codes of the permissions currently granted to it.</summary>
+public sealed record RoleListing(Guid Id, string Code, string Name, IReadOnlyList<string> PermissionCodes);
+
+/// <summary>A staff account as management sees it; never carries the password hash.</summary>
+public sealed record UserListing(Guid UserId, string Username, string DisplayName, bool Active, IReadOnlyList<Guid> RoleIds);
+
 public interface IRoleRepository
 {
     Task<Role?> GetByIdAsync(Guid roleId, CancellationToken cancellationToken = default);
@@ -54,4 +60,8 @@ public interface IRoleRepository
     /// </summary>
     Task<IReadOnlyList<(Guid UserId, string DisplayName)>> ListActiveUsersAsync(
         Guid excludingUserId, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<RoleListing>> ListRolesAsync(CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<UserListing>> ListUsersAsync(CancellationToken cancellationToken = default);
 }

@@ -69,8 +69,26 @@ public static class RoleManagementEndpoints
             IRoleManagementService roles,
             CancellationToken cancellationToken) =>
         {
-            await roles.CreateRoleAsync(ActorId(http), request.Code, request.Name, cancellationToken);
-            return Results.NoContent();
+            var roleId = await roles.CreateRoleAsync(ActorId(http), request.Code, request.Name, cancellationToken);
+            return Results.Ok(new CreateRoleResultV1(roleId));
+        });
+
+        group.MapGet("/roles", async (
+            HttpContext http,
+            IRoleManagementService roles,
+            CancellationToken cancellationToken) =>
+        {
+            var listing = await roles.ListRolesAsync(ActorId(http), cancellationToken);
+            return Results.Ok(listing.Select(role => new RoleV1(role.Id, role.Code, role.Name, role.PermissionCodes)).ToArray());
+        });
+
+        group.MapGet("/permissions", async (
+            HttpContext http,
+            IRoleManagementService roles,
+            CancellationToken cancellationToken) =>
+        {
+            var listing = await roles.ListPermissionsAsync(ActorId(http), cancellationToken);
+            return Results.Ok(listing.Select(permission => new PermissionV1(permission.Code, permission.Name)).ToArray());
         });
 
         group.MapPost("/roles/{roleId:guid}/permissions", async (
@@ -138,6 +156,15 @@ public static class RoleManagementEndpoints
             return Results.Ok(new CreateUserResultV1(userId));
         });
 
+        usersGroup.MapGet("", async (
+            HttpContext http,
+            IRoleManagementService roles,
+            CancellationToken cancellationToken) =>
+        {
+            var listing = await roles.ListUsersAsync(ActorId(http), cancellationToken);
+            return Results.Ok(listing.Select(user => new UserV1(user.UserId, user.Username, user.DisplayName, user.Active, user.RoleIds)).ToArray());
+        });
+
         return group;
     }
 
@@ -158,6 +185,14 @@ public sealed record AssignPermissionRequestV1(string PermissionCode);
 public sealed record CreateUserRequestV1(string Username, string Password, string DisplayName);
 
 public sealed record CreateUserResultV1(Guid UserId);
+
+public sealed record CreateRoleResultV1(Guid RoleId);
+
+public sealed record RoleV1(Guid RoleId, string Code, string Name, IReadOnlyList<string> PermissionCodes);
+
+public sealed record PermissionV1(string Code, string Name);
+
+public sealed record UserV1(Guid UserId, string Username, string DisplayName, bool Active, IReadOnlyList<Guid> RoleIds);
 
 public sealed class RoleManagementAuthentication
 {

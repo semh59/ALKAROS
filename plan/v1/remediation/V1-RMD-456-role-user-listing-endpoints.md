@@ -1,7 +1,7 @@
 # V1-RMD-456 - Rol, izin ve kullanıcı listeleme uçları; rol oluşturma yeni rolün kimliğini döndürür
 
 - Task ID: V1-RMD-456
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing

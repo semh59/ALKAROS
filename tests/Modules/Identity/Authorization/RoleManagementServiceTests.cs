@@ -48,6 +48,48 @@ public sealed class RoleManagementServiceTests : IClassFixture<AuthorizationTest
     }
 
     [Fact]
+    public async Task CreatingARoleReturnsTheStoredRoleId()
+    {
+        var (manager, _) = await InsertActorsAsync();
+        var code = "waiter_" + Guid.NewGuid().ToString("N")[..8];
+
+        var roleId = await _service.CreateRoleAsync(manager, code, "Waiter");
+
+        (await _roles.GetByCodeAsync(code))!.Id.Should().Be(roleId);
+    }
+
+    [Fact]
+    public async Task AllowedActorListsRolesWithPermissionsAndDeniedActorIsRefused()
+    {
+        var (manager, staff) = await InsertActorsAsync();
+        var ownRoleId = (await _roles.GetRoleIdsForUserAsync(manager)).Single();
+
+        var listing = await _service.ListRolesAsync(manager);
+
+        listing.Single(role => role.Id == ownRoleId).PermissionCodes.Should().Contain(PermissionCodes.RolesManage);
+        (await _service.ListPermissionsAsync(manager)).Should().Contain(permission => permission.Code == PermissionCodes.RolesManage);
+        var rolesAct = () => _service.ListRolesAsync(staff);
+        await rolesAct.Should().ThrowAsync<AuthorizationDeniedException>();
+        var permissionsAct = () => _service.ListPermissionsAsync(staff);
+        await permissionsAct.Should().ThrowAsync<AuthorizationDeniedException>();
+    }
+
+    [Fact]
+    public async Task ListingUsersNeedsUsersManageAndReturnsRoleIds()
+    {
+        var suffix = Guid.NewGuid().ToString("N")[..8];
+        var admin = await _database.InsertUserAsync("usersadmin_" + suffix);
+        await _database.SeedRoleWithPermissionAsync("usersadmin_role_" + suffix, admin, PermissionCodes.UsersManage);
+        var (_, staff) = await InsertActorsAsync();
+
+        var listing = await _service.ListUsersAsync(admin);
+
+        listing.Should().Contain(user => user.UserId == admin && user.Active && user.RoleIds.Count == 1);
+        var act = () => _service.ListUsersAsync(staff);
+        await act.Should().ThrowAsync<AuthorizationDeniedException>();
+    }
+
+    [Fact]
     public async Task DeniedActorCannotCreateRoleAndStateIsUnchanged()
     {
         var (_, staff) = await InsertActorsAsync();

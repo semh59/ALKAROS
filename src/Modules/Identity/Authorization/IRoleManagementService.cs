@@ -10,7 +10,7 @@ public interface IRoleManagementService
 {
     Task AddPermissionAsync(Guid actorUserId, string code, string name, CancellationToken cancellationToken = default);
 
-    Task CreateRoleAsync(Guid actorUserId, string code, string name, CancellationToken cancellationToken = default);
+    Task<Guid> CreateRoleAsync(Guid actorUserId, string code, string name, CancellationToken cancellationToken = default);
 
     Task AssignPermissionAsync(Guid actorUserId, Guid roleId, string permissionCode, CancellationToken cancellationToken = default);
 
@@ -26,4 +26,10 @@ public interface IRoleManagementService
     /// </summary>
     Task<Guid> CreateUserAsync(
         Guid actorUserId, string username, string password, string displayName, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<RoleListing>> ListRolesAsync(Guid actorUserId, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<PermissionEntry>> ListPermissionsAsync(Guid actorUserId, CancellationToken cancellationToken = default);
+
+    Task<IReadOnlyList<UserListing>> ListUsersAsync(Guid actorUserId, CancellationToken cancellationToken = default);
 }

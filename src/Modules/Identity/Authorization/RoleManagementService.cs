@@ -52,7 +52,7 @@ public sealed class RoleManagementService : IRoleManagementService
         await _permissionRepository.AddAsync(new PermissionEntry(Guid.NewGuid(), code, name), cancellationToken);
     }
 
-    public async Task CreateRoleAsync(Guid actorUserId, string code, string name, CancellationToken cancellationToken = default)
+    public async Task<Guid> CreateRoleAsync(Guid actorUserId, string code, string name, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(code);
         ArgumentNullException.ThrowIfNull(name);
@@ -64,7 +64,9 @@ public sealed class RoleManagementService : IRoleManagementService
             throw new InvalidOperationException($"Role '{code}' already exists.");
         }
 
-        await _roleRepository.AddAsync(new Role(Guid.NewGuid(), code, name), cancellationToken);
+        var role = new Role(Guid.NewGuid(), code, name);
+        await _roleRepository.AddAsync(role, cancellationToken);
+        return role.Id;
     }
 
     public async Task AssignPermissionAsync(Guid actorUserId, Guid roleId, string permissionCode, CancellationToken cancellationToken = default)
@@ -126,5 +128,23 @@ public sealed class RoleManagementService : IRoleManagementService
 
         var passwordHash = new PasswordHasher().Hash(password);
         return await _roleRepository.CreateUserAsync(username, passwordHash, displayName, cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<RoleListing>> ListRolesAsync(Guid actorUserId, CancellationToken cancellationToken = default)
+    {
+        await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.RolesManage, cancellationToken);
+        return await _roleRepository.ListRolesAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<PermissionEntry>> ListPermissionsAsync(Guid actorUserId, CancellationToken cancellationToken = default)
+    {
+        await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.RolesManage, cancellationToken);
+        return await _permissionRepository.GetAllAsync(cancellationToken);
+    }
+
+    public async Task<IReadOnlyList<UserListing>> ListUsersAsync(Guid actorUserId, CancellationToken cancellationToken = default)
+    {
+        await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.UsersManage, cancellationToken);
+        return await _roleRepository.ListUsersAsync(cancellationToken);
     }
 }

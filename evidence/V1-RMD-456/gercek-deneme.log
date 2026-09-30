@@ -1,0 +1,8 @@
+db ready, seeded
+host ready
+GET roles: 200 [{"roleId":"2b000000-0000-0000-0000-000000000001","code":"cashier","name":"Cashier","permissionCodes":["bills.split","cash.drawer","kitchen.advance","orders.create","orders.send","orders.transfer-server","orders.transfer-server-any","payments.take","tables.merge","tables.reserve","tables.status","ta
+GET permissions: 200 count=37 first={"code":"bills.comp","name":"Zero-price a delivered item"}
+POST role: {"roleId":"087dbf98-d80a-4ae0-8b63-79f087385c75"}
+roles after: [{"roleId":"087dbf98-d80a-4ae0-8b63-79f087385c75","code":"salon","name":"Salon","permissionCodes":["tables.status"]}]
+users after: [{"userId":"8b7ef669-1d50-4d52-a961-ffa7aa4f2128","username":"ayse","displayName":"Ayşe Yılmaz","active":true,"roleIds":["087dbf98-d80a-4ae0-8b63-79f087385c75"]},{"userId":"96a738ec-262e-45eb-9748-7f070a73ec71","username":"e2e.mudur.ikinci","displayName":"E2E İkinci Müdür","active":true,"roleIds":["829a4201-0857-432a-997c-11d3c3ab8ea0"]},{"userId":"b37a284f-70b6-4742-b070-721af46ae475","username":"e2e.kasiyer","displayName":"E2E Kasiyer","active":true,"roleIds":["fdc0891a-ae3a-4fb7-b1a1-594244ba9383"]},{"userId":"b5e207b3-296f-48bc-bfe4-04126efbda56","username":"e2e.kasiyer.sinirli","displayName":"E2E Sınırlı Kasiyer","active":true,"roleIds":["e72c964c-162c-49fb-953d-25c1a4cc40d1"]}]
+password hash leaked in users? false
