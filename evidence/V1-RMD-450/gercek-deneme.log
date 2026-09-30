@@ -1,0 +1,23 @@
+db ready, seeded
+host ready
+lookup: Kullanıcı Ara |  | Oturumları sonlandırmak veya hesap kilidini kaldırmak için bir kullanıcı adı girin. |  | Kullanıcı adı | Ara | Hedef Kişi |  | ● Aktif |  | Tüm Oturumları Sonlandır | Hesap Kilidini Kaldır
+revoke: Tüm oturumlar sonlandırıldı (0 oturum).
+maintenance: Bakım işleri | Yerel yedek dosyalarını doğrular, şifreler ve uzak hedefe yükler. | Hiç çalışmadı · Son çalışma: — · her 1 sa | Kapalı: ALKAROS_BACKUP_DIR ayarlanmamış ya da dizin yok; yerel yedek kaynağı bilinmiyor. | Şimdi çalıştır | En yeni uzak yedeği yalıtılmış geçici bir veritabanına geri yükleyip doğrular. | Hiç çalışmadı · Son çalışma: — · her 24 sa | Kapalı: Yedek şifreleme anahtarı henüz başlatılmamış; uzak yedekler çözülemez. | Şimdi çalıştır | Saklama süresi dolan hassas kayıtları imha eder ve silme kuyruğunu boşaltır. | Hiç çalışmadı · Son çalışma: — · her 24 sa | Şimdi çalıştır
+maintenance after run: Bakım işleri | İş çalıştırıldı: Başarılı. | Yerel yedek dosyalarını doğrular, şifreler ve uzak hedefe yükler. | Hiç çalışmadı · Son çalışma: — · her 1 sa | Kapalı: ALKAROS_BACKUP_DIR ayarlanmamış ya da dizin yok; yerel yedek kaynağı bilinmiyor. | Şimdi çalıştır | En yeni uzak yedeği yalıtılmış geçici bir veritabanına geri yükleyip doğrular. | Hiç çalışmadı · Son çalışma: — · her 24 sa | Kapalı: Yedek şifreleme anahtarı henüz başlatılmamış; uzak yedekler çözülemez. | Şimdi çalıştır | Saklama süresi dolan hassas kayıtları imha eder ve silme kuyruğunu boşaltır. | Başarılı · Son çalışma: 30.09.2026 08:25:23 · her 24 sa | 0 kayıt imha edildi, 0 kayıt kalıcı silindi; 0 yasal tutuklu, 0 saklanan, 0 süresi dolmamış kayıt atlandı. | Şimdi çalıştır
+backup: Yedekleme | VERİ TÜRÜ	HEDEF ARALIK	ÖLÇÜLEN ARALIK	DURUM | Mali kayıtlar	5 dk	Yedek makbuzu yok	Hedefin dışında | Sipariş ve stok	1 sa	Yedek makbuzu yok	Hedefin dışında | Ayarlar	24 sa	Yedek makbuzu yok	Hedefin dışında | Geri yükleme denemeleri |  | Kayıtlı geri yükleme denemesi yok.
+backlog: Eski sipariş yığını | AÇIK SİPARİŞ | 0 | ÖDEMESİ TAMAMLANMIŞ | 0 | HESABI OLMAYAN | 0 | AÇIK HESABI OLAN | 0 | EN ESKİ ÖDENMİŞ SİPARİŞ | — | Kapatılabilecekleri göster
+backlog preview: Eski sipariş yığını | AÇIK SİPARİŞ | 0 | ÖDEMESİ TAMAMLANMIŞ | 0 | HESABI OLMAYAN | 0 | AÇIK HESABI OLAN | 0 | EN ESKİ ÖDENMİŞ SİPARİŞ | — | Kapatılabilecekleri göster |  | Kapatılabilecek sipariş yok.
+diagnostic: Tanılama paketi | Tanılama paketi hazırlandı. | Korelasyon kimlikleri | Virgül veya boşlukla ayırın. | Başlangıç | Bitiş | Gerekçe | Paketi oluştur |  | 0 kayıt, 0 sağlıksız kontrol, yaklaşık 1 KB. |  | Paketi indir
+system: Etkin uyarılar | Yazıcı yanıt vermiyor | Kritik · Açık · 30.09.2026 08:25:19 | Mutfak yazıcısına ulaşılamıyor. | Gördüm | Üst seviyeye taşı | Sustur | Çözüldü | Sağlıksız kontroller |  | Tüm kontroller sağlıklı.
+acknowledged: Uyarı güncellendi. | Etkin uyarılar | Yazıcı yanıt vermiyor | Kritik · Görüldü · 30.09.2026 08:25:19 | Mutfak yazıcısına ulaşılamıyor. | Gördüm | Üst seviyeye taşı | Sustur | Çözüldü | Sağlıksız kontroller |  | Tüm kontroller sağlıklı.
+resolve w/o reason: Çözüm gerekçesini yazın.
+resolved: Uyarı güncellendi. | Etkin uyarılar |  | Etkin uyarı yok. |  | Sağlıksız kontroller |  | Tüm kontroller sağlıklı.
+old route: Kullanıcı Ara |  | Oturumları sonlandırmak veya hesap kilidini kaldırmak için bir kullanıcı adı girin. |  | Kullanıcı adı | Ara
+management calls (non-GET only):
+  POST /api/v1/management/security/users/610e48ab-89d3-4e68-8bad-c309101784ff/revoke-sessions -> 200
+  POST /api/v1/management/security/maintenance/jobs/retention-sweep/run -> 200
+  POST /api/v1/management/security/orders/close-settled?dryRun=true -> 200
+  POST /api/v1/management/security/diagnostic-bundle -> 200
+  POST /api/v1/management/observability/alerts/aa38cd35-a06d-47f0-bf1f-b21169e086b5/acknowledge -> 200
+  POST /api/v1/management/observability/alerts/aa38cd35-a06d-47f0-bf1f-b21169e086b5/resolve -> 200
+console errors (non-font/401): ["Failed to load resource: the server responded with a status of 404 (Not Found)"]

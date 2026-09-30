@@ -1,0 +1,5 @@
+requiredCapability security.manage -> reports.view:
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/features/management-security-system/SecuritySection.test.tsx > security section > the shell lists the security tab only for a session holding security.manage
+      Tests  1 failed | 8 passed (9)
+restored, cmp identical

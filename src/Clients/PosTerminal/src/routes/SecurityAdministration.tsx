@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ApiError, api } from "../api";
-import type { UserLookupResult } from "../contracts";
+import { RecoveryPanel } from "../features/management-security-system";
 import { savedId } from "../storage";
 
 type StationSession = "checking" | "anonymous" | "forbidden" | "ready";
@@ -28,13 +28,6 @@ export function SecurityAdministration() {
   const [session, setSession] = useState<StationSession>("checking");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
-
-  const [lookupUsername, setLookupUsername] = useState("");
-  const [lookupBusy, setLookupBusy] = useState(false);
-  const [lookupError, setLookupError] = useState("");
-  const [found, setFound] = useState<UserLookupResult | null>(null);
-  const [actionBusy, setActionBusy] = useState(false);
-  const [actionMessage, setActionMessage] = useState("");
 
   const restoreSession = useCallback(async () => {
     try {
@@ -70,60 +63,6 @@ export function SecurityAdministration() {
       setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
     } finally {
       setBusy(false);
-    }
-  };
-
-  const lookup = async (event: FormEvent) => {
-    event.preventDefault();
-    if (!lookupUsername.trim()) return;
-    setLookupBusy(true);
-    setLookupError("");
-    setActionMessage("");
-    setFound(null);
-    try {
-      const result = await api.lookupUser(lookupUsername.trim());
-      setFound(result);
-    } catch (reason) {
-      setLookupError(
-        reason instanceof ApiError && reason.status === 404
-          ? "Bu kullanıcı adıyla bir hesap bulunamadı."
-          : reason instanceof ApiError
-            ? reason.message
-            : "Kullanıcı aranamadı.",
-      );
-    } finally {
-      setLookupBusy(false);
-    }
-  };
-
-  const revokeSessions = async () => {
-    if (!found) return;
-    setActionBusy(true);
-    setActionMessage("");
-    setLookupError("");
-    try {
-      const result = await api.revokeAllSessions(found.userId);
-      setActionMessage(`Tüm oturumlar sonlandırıldı (${result.revokedSessions} oturum).`);
-    } catch (reason) {
-      setLookupError(reason instanceof ApiError ? reason.message : "Oturumlar sonlandırılamadı.");
-    } finally {
-      setActionBusy(false);
-    }
-  };
-
-  const forceUnlock = async () => {
-    if (!found) return;
-    setActionBusy(true);
-    setActionMessage("");
-    setLookupError("");
-    try {
-      await api.forceUnlockUser(found.userId);
-      setActionMessage("Hesap kilidi kaldırıldı.");
-      setFound({ ...found, isLocked: false });
-    } catch (reason) {
-      setLookupError(reason instanceof ApiError ? reason.message : "Kilit kaldırılamadı.");
-    } finally {
-      setActionBusy(false);
     }
   };
 
@@ -176,51 +115,7 @@ export function SecurityAdministration() {
 
   return (
     <main className="login-shell">
-      <section className="login-card" aria-busy={lookupBusy}>
-        <div className="login-card-heading">
-          <span>Hesap kurtarma</span>
-          <h2>Kullanıcı Ara</h2>
-          <p>Oturumları sonlandırmak veya hesap kilidini kaldırmak için bir kullanıcı adı girin.</p>
-        </div>
-        <form onSubmit={lookup}>
-          <label>
-            Kullanıcı adı
-            <input
-              value={lookupUsername}
-              onChange={(event) => setLookupUsername(event.target.value)}
-              autoComplete="off"
-              autoFocus
-            />
-          </label>
-          {lookupError && <div className="alert error" role="alert">{lookupError}</div>}
-          <button className="primary login-submit" disabled={lookupBusy || !lookupUsername.trim()}>
-            {lookupBusy ? "Aranıyor…" : "Ara"}
-          </button>
-        </form>
-      </section>
-      {found && (
-        <section className="login-card" aria-busy={actionBusy}>
-          <div className="login-card-heading">
-            <span>Bulunan hesap</span>
-            <h2>{found.displayName}</h2>
-            <p>
-              {found.active ? "● Aktif" : "● Devre dışı"}
-              {found.isLocked ? " — ● Kilitli" : ""}
-            </p>
-          </div>
-          {actionMessage && <div className="alert information" role="status">{actionMessage}</div>}
-          <button className="primary login-submit" disabled={actionBusy} onClick={revokeSessions}>
-            {actionBusy ? "İşleniyor…" : "Tüm Oturumları Sonlandır"}
-          </button>
-          <button
-            className="primary login-submit"
-            disabled={actionBusy || !found.isLocked}
-            onClick={forceUnlock}
-          >
-            {actionBusy ? "İşleniyor…" : "Hesap Kilidini Kaldır"}
-          </button>
-        </section>
-      )}
+      <RecoveryPanel />
     </main>
   );
 }
