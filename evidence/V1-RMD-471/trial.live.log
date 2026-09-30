@@ -1,0 +1,7 @@
+db ready, seeded
+host ready
+initial state: Bilgiler okunuyor…
+empty save -> Şu alanlar eksik ya da hatalı: Ticari ünvan, Vergi dairesi, Adres, İlçe, İl, Vergi veya TC kimlik numarası.
+save -> İşletme bilgileri kaydedildi.
+after reload: ● Kayıtlı | unvan=Deniz Lokantası Ltd. Şti. | vergi dairesi=Kadıköy
+db row: [{"legal_name":"Deniz Lokantası Ltd. Şti.","tax_id_kind":"Vkn","tax_id_number":"1234567890","tax_office":"Kadıköy","city":"İstanbul"}]

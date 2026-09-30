@@ -179,6 +179,31 @@ describe("QnbCredentialSettings", () => {
     expect(document.body.textContent).not.toContain("EF0003");
   });
 
+  it("shows the business details card for a manager and keeps it away from a session without integrations.manage", async () => {
+    const stub = (capabilities: string[]) => vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/auth/session")) {
+        return jsonResponse({ userId: "u1", displayName: "Zeynep", terminalId: "t1", capabilities });
+      }
+      if (path.endsWith("/qnb-credential/status")) return jsonResponse(emptyStatus);
+      if (path.endsWith("/invoice-settings/seller-profile")) return jsonResponse({ configured: false, profile: null });
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    stub(["integrations.manage"]);
+    await render(<QnbCredentialSettings />);
+    await act(async () => Promise.resolve());
+    expect(document.body.textContent).toContain("İşletme bilgileri");
+    expect(document.body.textContent).toContain("Ticari ünvan");
+
+    await act(async () => root!.unmount());
+    root = null;
+    stub(["orders.create"]);
+    await render(<QnbCredentialSettings />);
+    await act(async () => Promise.resolve());
+    expect(document.body.textContent).not.toContain("Ticari ünvan");
+  });
+
   it("does not show the 'Test Connection' button before a credential is saved", async () => {
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);

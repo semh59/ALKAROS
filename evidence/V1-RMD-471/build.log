@@ -1,0 +1,36 @@
+﻿vite v8.2.2 building client environment for production...
+transforming...
+✓ 189 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                1.25 kB │ gzip:  0.62 kB
+dist/assets/alkaros-logo-on-dark-CmVDjlL_.png                 32.94 kB
+dist/assets/CustomerDisplayScreensaverSettings-C7nv96pV.css    0.50 kB │ gzip:  0.27 kB
+dist/assets/BusinessIdentitySettings-D6KWlPnp.css              0.93 kB │ gzip:  0.43 kB
+dist/assets/management-security-system-C6fZZsnO.css            2.33 kB │ gzip:  0.69 kB
+dist/assets/NfcOrder-CBydcfmS.css                              4.24 kB │ gzip:  1.24 kB
+dist/assets/design-system-CFu97vtJ.css                         6.32 kB │ gzip:  1.88 kB
+dist/assets/index-CkekQFWV.css                                27.28 kB │ gzip:  6.86 kB
+dist/assets/workspace-KRaxNFmT.css                            84.05 kB │ gzip: 12.87 kB
+dist/assets/format-C2ZSrFr6.js                                 0.18 kB │ gzip:  0.14 kB
+dist/assets/storage-Ck3mJz4b.js                                0.27 kB │ gzip:  0.17 kB
+dist/assets/rolldown-runtime-C4N-s-pu.js                       0.47 kB │ gzip:  0.30 kB
+dist/assets/SecurityAdministration-oc90W10U.js                 2.37 kB │ gzip:  1.00 kB
+dist/assets/ReservationStation-2-UQW3B9.js                     3.21 kB │ gzip:  1.25 kB
+dist/assets/NfcOrder-BJ2A1vxB.js                               5.28 kB │ gzip:  1.86 kB
+dist/assets/TokenTerminalSettings-BKXkEd-H.js                  5.44 kB │ gzip:  1.91 kB
+dist/assets/CustomerDisplayScreensaverSettings-DharqPJe.js     5.96 kB │ gzip:  2.06 kB
+dist/assets/RelaySettings-BEpvcIaZ.js                          6.00 kB │ gzip:  1.87 kB
+dist/assets/api-4GtB4rQ3.js                                    6.02 kB │ gzip:  1.84 kB
+dist/assets/design-system-MFhTAMol.js                          6.76 kB │ gzip:  2.51 kB
+dist/assets/BusinessIdentitySettings-CKBE3n4k.js               7.90 kB │ gzip:  2.45 kB
+dist/assets/QnbCredentialSettings-82RWrGaC.js                  8.37 kB │ gzip:  2.74 kB
+dist/assets/CustomerDisplay-CFLXp8aq.js                       10.04 kB │ gzip:  3.25 kB
+dist/assets/management-security-system-DrRLCs5I.js            15.10 kB │ gzip:  4.77 kB
+dist/assets/strings-YR_Oomtz.js                               17.72 kB │ gzip:  6.44 kB
+dist/assets/Cashier-BLoPJVCv.js                               17.93 kB │ gzip:  5.52 kB
+dist/assets/HubConnectionBuilder-1O9QmF_w.js                  54.78 kB │ gzip: 14.03 kB
+dist/assets/index-CWWTkZCP.js                                196.08 kB │ gzip: 61.76 kB
+dist/assets/workspace-DcczF3Zu.js                            246.35 kB │ gzip: 60.55 kB
+
+✓ built in 1.24s

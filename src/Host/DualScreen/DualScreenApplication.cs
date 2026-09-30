@@ -38,6 +38,7 @@ using ALKAROS.Host.Experience.QrOrdering;
 using ALKAROS.Host.Experience.RelaySettings;
 using ALKAROS.Host.Experience.TokenTerminalSettings;
 using ALKAROS.Host.Experience.OnlineOrdering;
+using ALKAROS.Host.Experience.InvoiceSettings;
 using ALKAROS.Host.Experience.QnbCredentialSettings;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
@@ -193,6 +194,7 @@ public static partial class DualScreenApplication
         builder.Services.AddRelaySettingsExperience();
         builder.Services.AddTokenTerminalSettingsExperience();
         builder.Services.AddQnbCredentialSettingsExperience();
+        builder.Services.AddInvoiceSettingsExperience();
         builder.Services.AddYemeksepetiWebhookExperience();
         builder.Services.AddOnlineCatalogPublishingExperience();
         builder.Services.AddOnlineOperationsExperience();
@@ -615,6 +617,7 @@ public static partial class DualScreenApplication
         app.MapRelaySettingsApi();
         app.MapTokenTerminalSettingsApi();
         app.MapQnbCredentialSettingsApi();
+        app.MapInvoiceSettingsApi();
         app.MapYemeksepetiWebhookApi();
         app.MapTrendyolGoWebhookApi();
         app.MapOnlineCatalogPublishingApi();

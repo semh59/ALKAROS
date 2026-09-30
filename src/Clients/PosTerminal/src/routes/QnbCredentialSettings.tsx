@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState, type FormEvent } from "react";
 import { ApiError, api } from "../api";
 import type { QnbConnectionTestResult, QnbCredentialStatus } from "../contracts";
+import { SellerProfileCard } from "../features/invoice-settings";
 import { savedId } from "../storage";
 
 type StationSession = "checking" | "anonymous" | "forbidden" | "ready";
@@ -236,6 +237,7 @@ export function QnbCredentialSettings() {
           </>
         )}
       </section>
+      <SellerProfileCard terminalId={terminalId} />
     </main>
   );
 }

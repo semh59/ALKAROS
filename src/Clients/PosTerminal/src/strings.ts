@@ -740,3 +740,24 @@ export const tableActionLabels: Partial<Record<TableAction, string>> = {
   SetCleaning: "Temizliğe al",
   SetOutOfService: "Servis dışı yap",
 };
+
+export const invoiceSettingsText = {
+  kicker: "e-Arşiv fatura ayarları",
+  heading: "İşletme bilgileri",
+  loading: "Bilgiler okunuyor…",
+  configured: "● Kayıtlı",
+  notConfigured: "● Henüz girilmedi — online sipariş faturaları için gerekli",
+  legalName: "Ticari ünvan",
+  taxIdKind: "Numara türü",
+  vkn: "Vergi kimlik numarası (VKN)",
+  tckn: "T.C. kimlik numarası",
+  taxIdNumber: "Vergi veya TC kimlik numarası",
+  taxOffice: "Vergi dairesi",
+  address: "Adres",
+  district: "İlçe",
+  city: "İl",
+  email: "E-posta (isteğe bağlı)",
+  save: "Kaydet",
+  saving: "Kaydediliyor…",
+  savedMessage: "İşletme bilgileri kaydedildi.",
+} as const;

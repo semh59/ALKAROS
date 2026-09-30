@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/invoice-settings/SellerProfileCard.test.tsx (4 tests | 1 failed) 151ms
+     × sends the edited profile with an empty e-mail as null and confirms in Turkish 43ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/invoice-settings/SellerProfileCard.test.tsx > SellerProfileCard > sends the edited profile with an empty e-mail as null and confirms in Turkish
+AssertionError: expected '' to be null
+
+- Expected:
+null
+
++ Received:
+""
+
+ ❯ src/features/invoice-settings/SellerProfileCard.test.tsx:64:24
+     62|     const sent = JSON.parse(calls[0].body!);
+     63|     expect(sent.legalName).toBe("Yeni Ünvan");
+     64|     expect(sent.email).toBeNull();
+       |                        ^
+     65|     expect(document.body.textContent).toContain("İşletme bilgileri kay…
+     66|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  21:06:09
+   Duration  1.18s (transform 100ms, setup 0ms, import 197ms, tests 151ms, environment 599ms)
+
