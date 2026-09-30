@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1530,
-  "markdown_line_count": 115262,
-  "markdown_byte_count": 6645703,
+  "markdown_file_count": 1531,
+  "markdown_line_count": 115284,
+  "markdown_byte_count": 6648205,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2562,6 +2562,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-457/README.md",
+      "sha256": "3595EB358404922EDEE92DAEAAAFC59B6F42BB569C9159B744E6370C0AC118D9",
+      "lines": 21,
+      "bytes": 2378,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-458/README.md",
       "sha256": "5C79E5BAC9032EB7152B861A2622FB3C7A8E58898ADB86CE42F5F127A8284608",
       "lines": 9,
@@ -2752,9 +2759,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "8A32DDA6DEF5D57EC77FB9DC6D1DCEF8B72219C64735D3B707ADE68B1087C75C",
-      "lines": 2806,
-      "bytes": 412342,
+      "sha256": "4CD4B962C48B163FCE7D4EA7688FC37A8C2D4E8CD2F61113712F46263DDA2552",
+      "lines": 2807,
+      "bytes": 412472,
       "utf8": true
     },
     {
@@ -8555,9 +8562,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md",
-      "sha256": "FA5523B39DE147291D980FDA68AAAF148DCC0DB15586A104E88EC5FC747413B5",
+      "sha256": "5648C0C88EAA89B428A777A83CDF97A3EBC8D30D259A7AA5AB5B4CBA524BEB0F",
       "lines": 51,
-      "bytes": 2246,
+      "bytes": 2240,
       "utf8": true
     },
     {
