@@ -4,6 +4,7 @@ using System.Security.Cryptography;
 using System.Text;
 using ALKAROS.Host.Experience.OnlineOrdering;
 using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Invoicing.Generation.OrderInvoices;
 using ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox;
 using ALKAROS.Secrets;
 using Microsoft.AspNetCore.Builder;
@@ -209,6 +210,77 @@ public sealed class OnlineOperationsHttpTests : IAsyncLifetime, IDisposable
         Assert.Contains("HANDOVER_NOT_SUPPORTED", body);
         Assert.Contains("teslimat türü tanınmadığı", body);
         Assert.Equal("Accepted", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
+    }
+
+    private static readonly SellerProfile Seller = new(
+        "Deniz Lokantası Ltd. Şti.", SellerProfile.Vkn, "1234567890", "Kadıköy", "Moda Cad. 1", "Kadıköy", "İstanbul", null);
+
+    private Task<string?> InvoiceScalarAsync(Guid orderId, string column) =>
+        _database.ScalarTextAsync($"SELECT {column}::text FROM invoicing.order_invoices WHERE order_id = '{orderId:D}'");
+
+    [Fact]
+    public async Task HandingOverDraftsTheOrdersInvoiceOnceAndAnotherHandoverDraftsNothingMore()
+    {
+        var cookie = await _database.SeedStaffSessionAsync(_terminalId, "orders.create");
+        var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        await _app!.Services.GetRequiredService<ISellerProfileStore>().SaveAsync(Seller, null);
+        var (orderId, _, _) = await AcceptedOnlineOrderAsync(sku, productId);
+        var version = await _database.RowVersionAsync(orderId);
+
+        using var first = await _client!.SendAsync(Post(Action(orderId, "hand-over"), cookie, new OnlineOrderActionRequestV1(version)));
+        using var again = await _client.SendAsync(Post(Action(orderId, "hand-over"), cookie, new OnlineOrderActionRequestV1(version)));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal("1", await _database.ScalarTextAsync($"SELECT count(*)::text FROM invoicing.order_invoices WHERE order_id = '{orderId:D}'"));
+        Assert.Equal("yemeksepeti", await InvoiceScalarAsync(orderId, "provider"));
+        Assert.Equal("https://www.yemeksepeti.com", await InvoiceScalarAsync(orderId, "web_address"));
+        Assert.Equal(await _database.ScalarTextAsync($"SELECT total::text FROM orders.orders WHERE order_id = '{orderId:D}'"), await InvoiceScalarAsync(orderId, "payable_amount"));
+        Assert.Equal("Draft", await InvoiceScalarAsync(orderId, "status"));
+    }
+
+    [Fact]
+    public async Task AHandoverStillSucceedsWithoutASellerProfileAndTheScheduledPassDraftsItLater()
+    {
+        var cookie = await _database.SeedStaffSessionAsync(_terminalId, "orders.create");
+        var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var (orderId, _, externalId) = await AcceptedOnlineOrderAsync(sku, productId);
+
+        using var response = await _client!.SendAsync(
+            Post(Action(orderId, "hand-over"), cookie, new OnlineOrderActionRequestV1(await _database.RowVersionAsync(orderId))));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Completed", Assert.Single(await _database.OnlineOrdersAsync(externalId)).Status);
+        Assert.Null(await InvoiceScalarAsync(orderId, "invoice_id"));
+
+        var drafting = _app!.Services.GetRequiredService<OnlineOrderInvoiceDrafting>();
+        Assert.Equal(0, await drafting.DraftMissingAsync());
+        await _app.Services.GetRequiredService<ISellerProfileStore>().SaveAsync(Seller, null);
+        Assert.Equal(1, await drafting.DraftMissingAsync());
+        Assert.Equal(0, await drafting.DraftMissingAsync());
+        Assert.NotNull(await InvoiceScalarAsync(orderId, "invoice_id"));
+        Assert.Null(await InvoiceScalarAsync(orderId, "created_by"));
+    }
+
+    [Fact]
+    public async Task ThePassLeavesAnOrderHandedOverMoreThanSevenDaysAgoAloneAndUsesTheTrendyolAddressForThatPlatform()
+    {
+        var cookie = await _database.SeedStaffSessionAsync(_terminalId, "orders.create");
+        var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var (old, _, _) = await AcceptedOnlineOrderAsync(sku, productId);
+        using var oldHandover = await _client!.SendAsync(
+            Post(Action(old, "hand-over"), cookie, new OnlineOrderActionRequestV1(await _database.RowVersionAsync(old))));
+        Assert.Equal(HttpStatusCode.OK, oldHandover.StatusCode);
+        await _database.ExecAsync(
+            "UPDATE orders.orders SET closed_at = now() - interval '8 days', updated_at = now() - interval '8 days' WHERE order_id = @id;", ("id", old));
+        await _app!.Services.GetRequiredService<ISellerProfileStore>().SaveAsync(Seller, null);
+
+        var drafting = _app.Services.GetRequiredService<OnlineOrderInvoiceDrafting>();
+        Assert.Equal(0, await drafting.DraftMissingAsync());
+
+        await _database.ExecAsync("UPDATE online_ordering.online_orders SET provider = 'trendyol-go' WHERE order_id = @id;", ("id", old));
+        await _database.ExecAsync("UPDATE orders.orders SET closed_at = now(), updated_at = now() WHERE order_id = @id;", ("id", old));
+        Assert.Equal(1, await drafting.DraftMissingAsync());
+        Assert.Equal("https://www.trendyol.com", await InvoiceScalarAsync(old, "web_address"));
     }
 
     [Fact]

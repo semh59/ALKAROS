@@ -1,0 +1,16 @@
+﻿D:\PROJECT\ALKAROS\tests\Host\Experience\OnlineOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.OnlineOrdering.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+dotnet : [xUnit.net 00:00:02.68]     ALKAROS.Host.Experience.OnlineOrdering.Tests.OnlineOperationsHttpTests.HandingOver
+UsesTheStatusSyncAndShowsItsPersistedResult [FAIL]
+At line:10 char:1
++ dotnet test tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experie ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([xUnit.net 00:0...edResult [FAIL]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[xUnit.net 00:00:08.55]     ALKAROS.Host.Experience.OnlineOrdering.Tests.OnlineOperationsHttpTests.AHandoverStillSuccee
+dsWithoutASellerProfileAndTheScheduledPassDraftsItLater [FAIL]
+[xUnit.net 00:00:09.42]     ALKAROS.Host.Experience.OnlineOrdering.Tests.OnlineOperationsHttpTests.ThePassLeavesAnOrder
+HandedOverMoreThanSevenDaysAgoAloneAndUsesTheTrendyolAddressForThatPlatform [FAIL]
+
+Başarısız! - Başarısız:     3, Başarılı:     9, Atlanan:     0, Toplam:    12, Süre: 8 s - ALKAROS.Host.Experience.OnlineOrdering.Tests.dll (net8.0)

@@ -20,7 +20,5 @@
   "PostgresPortionReservationArbitratorRepository": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi.",
   "PostgresRefundIntentRepository": "V13-HUG-003: iade niyeti gercek terminal ister (dis bagimlilik); terminal gelince baglanacak.",
   "RotatingSecretResolver": "V1-RMD-278: tuketicisi yok; yedek sifreleyici surum kaydini dogrudan okuyor, cozumleyici kullanilmiyor.",
-  "IOrderInvoiceDraftService": "V1-RMD-470: online siparis fatura taslagi servisi; teslimde cagiran Host kodu V1-RMD-472 ile gelir.",
-  "PostgresOrderInvoiceDraftService": "V1-RMD-470: IOrderInvoiceDraftService gerceklemesi; teslimde cagiran Host kodu V1-RMD-472 ile gelir.",
   "StockMovementService": "V1-RMD-278: siparis kabulunde stok dusumu OrderStockConsumptionService ile tek yoldan calisiyor; bu paralel tasarim baglanirsa cift dusum riski var, bilincli olarak baglanmadi."
 }

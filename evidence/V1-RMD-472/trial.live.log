@@ -1,0 +1,11 @@
+db ready, seeded
+host ready
+webhook 1e87 -> 200
+A hand-over without seller profile -> 200 {"outcome":"Applied"}
+A drafts right after: []
+seller profile saved -> 204
+webhook 78f7 -> 200
+B hand-over with seller profile -> 200 {"outcome":"Applied"}
+drafts after B: [{"order_id":"4b192477-a0ef-4df7-9b80-5b85912ffd50","status":"Draft","provider":"yemeksepeti","web_address":"https://www.yemeksepeti.com","payable_amount":"200.00","tax_total":"18.18","by_scan":false}]
+waiting for the scheduled pass (up to 110 s) to draft A
+drafts after the pass: [{"order_id":"4b192477-a0ef-4df7-9b80-5b85912ffd50","status":"Draft","provider":"yemeksepeti","web_address":"https://www.yemeksepeti.com","payable_amount":"200.00","tax_total":"18.18","by_scan":false},{"order_id":"77819a53-f999-4009-ae28-2ef16a44fc92","status":"Draft","provider":"yemeksepeti","web_address":"https://www.yemeksepeti.com","payable_amount":"200.00","tax_total":"18.18","by_scan":true}]

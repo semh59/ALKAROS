@@ -1,3 +1,4 @@
+using ALKAROS.Host.Experience.OnlineOrdering;
 using ALKAROS.Reconciliation.OnlineOrders;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -60,6 +61,9 @@ public sealed class OnlineOrderReconciliationHostedService : BackgroundService
         try
         {
             await using var scope = _scopeFactory.CreateAsyncScope();
+            // Only hosts that run the online operations experience have the invoice drafting registered.
+            if (scope.ServiceProvider.GetService<OnlineOrderInvoiceDrafting>() is { } drafting)
+                await drafting.DraftMissingAsync(cancellationToken).ConfigureAwait(false);
             await scope.ServiceProvider.GetRequiredService<OnlineOrderReconciliationScanner>()
                 .ScanAllAsync(cancellationToken).ConfigureAwait(false);
         }

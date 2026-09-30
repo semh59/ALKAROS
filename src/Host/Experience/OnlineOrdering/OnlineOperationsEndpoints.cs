@@ -3,6 +3,7 @@ using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Inventory.StockMaster;
+using ALKAROS.Invoicing.Generation.OrderInvoices;
 using ALKAROS.OnlineOrdering.AvailabilityPublishing;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
 using ALKAROS.OnlineOrdering.Providers.Inbox;
@@ -42,6 +43,9 @@ public static class OnlineOperationsEndpoints
         services.TryAddSingleton<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddSingleton<IAuthorizationService, AuthorizationService>();
         services.TryAddTransient<OnlineOperationsExceptionFilter>();
+        services.TryAddTransient<ISellerProfileStore, PostgresSellerProfileStore>();
+        services.TryAddTransient<IOrderInvoiceDraftService, PostgresOrderInvoiceDraftService>();
+        services.TryAddTransient<OnlineOrderInvoiceDrafting>();
         return services;
     }
 
@@ -83,13 +87,17 @@ public static class OnlineOperationsEndpoints
             Guid orderId,
             OnlineOrderActionRequestV1 request,
             YemeksepetiStatusSyncService sync,
+            OnlineOrderInvoiceDrafting invoiceDrafting,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var userId = await RequireStaffAsync(context, terminalId, dualStore, authorization, cancellationToken);
-            return Reply(await sync.HandOverAsync(orderId, userId, request.ExpectedRowVersion, cancellationToken));
+            var outcome = await sync.HandOverAsync(orderId, userId, request.ExpectedRowVersion, cancellationToken);
+            if (outcome == OnlineOrderActionOutcome.Applied)
+                await invoiceDrafting.TryDraftAsync(orderId, userId, cancellationToken);
+            return Reply(outcome);
         }).RequireRateLimiting("terminal-write");
 
         group.MapPost("/orders/{orderId:guid}/cancel", async (
