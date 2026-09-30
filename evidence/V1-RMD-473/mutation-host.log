@@ -1,0 +1,14 @@
+﻿D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+dotnet : [xUnit.net 00:00:06.41]     ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.TheListHoldsThe
+DraftsOfTheRangeAndTheDeliveredOrdersStillWaitingForOne [FAIL]
+At line:11 char:1
++ dotnet test tests/Host/Experience/Reconciliation/ALKAROS.Host.Experie ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([xUnit.net 00:0...ngForOne [FAIL]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[xUnit.net 00:00:11.31]     ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.AReversedOrTooLongRangeI
+sRefusedInTurkish(query: "from=2026-08-01&to=2026-09-26") [FAIL]
+
+Başarısız! - Başarısız:     2, Başarılı:     3, Atlanan:     0, Toplam:     5, Süre: 10 s - ALKAROS.Host.Experience.Reconciliation.Tests.dll (net8.0)

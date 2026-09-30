@@ -29,6 +29,7 @@ using ALKAROS.Host.Experience.Purchasing;
 using ALKAROS.Host.Experience.Settings;
 using ALKAROS.Host.Experience.Recipes;
 using ALKAROS.Host.Experience.InventoryReporting;
+using ALKAROS.Host.Experience.OrderInvoices;
 using ALKAROS.Host.Experience.Reporting;
 using ALKAROS.Host.Experience.Reconciliation;
 using ALKAROS.Host.Experience.SecurityAdministration;
@@ -607,6 +608,7 @@ public static partial class DualScreenApplication
         app.MapPaymentSettlementApi();
         app.MapOnlineOrderReconciliationApi();
         app.MapChannelReportApi();
+        app.MapOrderInvoiceApi();
         app.MapSecurityAdministrationApi();
         app.MapObservabilityApi();
         app.MapTableManagementApi();

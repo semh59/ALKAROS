@@ -1,0 +1,12 @@
+db ready, seeded
+host ready
+webhook 6df9 -> 200
+A hand-over without seller profile -> 200 {"outcome":"Applied"}
+A drafts right after: []
+seller profile saved -> 204
+webhook 560f -> 200
+B hand-over with seller profile -> 200 {"outcome":"Applied"}
+drafts after B: [{"order_id":"95e15bdc-5da9-49c7-96ff-06bbe018dbd8","status":"Draft","provider":"yemeksepeti","web_address":"https://www.yemeksepeti.com","payable_amount":"200.00","tax_total":"18.18","by_scan":false}]
+screen tables: ["SİPARİŞ PLATFORM TESLİM TARİHİ TOPLAM (KDV DAHİL) KALAN GÜN YS-6df9adeb-46a8-42c8-a9dc-ef537bf0e821 Yemeksepeti 30.09.2026 ₺200,00 7","HİZMET TARİHİ SİPARİŞ PLATFORM DURUM NET KDV TOPLAM (KDV DAHİL) AYRINTI 30.09.2026 YS-560fbd57-7f0a-4b2e-a0fc-b032e1fc2e6c Yemeksepeti Taslak ₺181,82 ₺18,18 ₺200,00 Göster"]
+screen warning: Bu siparişlerin taslağı açılamadı. Ayarlar ekranında işletme bilgilerini girin; taslak kendiliğinden açılır. Süre dolmadan faturayı elle düzenlemeniz gerekir.
+detail: Fatura ayrıntısı Satıcı: Deniz Lokantası Ltd. Şti. — Kadıköy — 1234567890 Moda Cad. 1, Kadıköy/İstanbul Satış yapılan adres: https://www.yemeksepeti.com KALEM ADET KDV ORANI TOPLAM (KDV DAHİL) E2E Ödeme Ürünü 2 %10 ₺200,00

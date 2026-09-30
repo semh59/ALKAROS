@@ -1,0 +1,123 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/management-order-invoices/OrderInvoicesSection.test.tsx (9 tests | 5 failed) 258ms
+     × the shell lists the tab for a session holding reports.view only 93ms
+     × asks for nothing until requested, then lists the drafts and the waiting orders in Turkish without raw values 47ms
+     × shows no waiting section when every delivered order has a draft 16ms
+     × says so when the range has no draft 13ms
+     × the client asks the order invoice addresses 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/management-order-invoices/OrderInvoicesSection.test.tsx > online order invoices section > the shell lists the tab for a session holding reports.view only
+AssertionError: expected [ 'Gün sonu ve mutabakat', …(8) ] to include 'Online faturalar'
+ ❯ src/features/management-order-invoices/OrderInvoicesSection.test.tsx:37:23
+     35|   it("the shell lists the tab for a session holding reports.view only"…
+     36|     await render(<ManagementArea capabilities={new Set(["reports.view"…
+     37|     expect(buttons()).toContain("Online faturalar");
+       |                       ^
+     38|     await render(<ManagementArea capabilities={new Set(["orders.create…
+     39|     expect(buttons()).not.toContain("Online faturalar");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/features/management-order-invoices/OrderInvoicesSection.test.tsx > online order invoices section > asks for nothing until requested, then lists the drafts and the waiting orders in Turkish without raw values
+AssertionError: expected '28.09.2026YS-1YemeksepetiBilinmiyor₺1…' to contain 'Taslak'
+
+Expected: "Taslak"
+Received: "28.09.2026YS-1YemeksepetiBilinmiyor₺100,00₺10,00₺110,00Göster"
+
+ ❯ src/features/management-order-invoices/OrderInvoicesSection.test.tsx:50:21
+     48|     expect(rows).toHaveLength(2);
+     49|     expect(rows[0]).toContain("Yemeksepeti");
+     50|     expect(rows[0]).toContain("Taslak");
+       |                     ^
+     51|     expect(rows[1]).toContain("Trendyol Go");
+     52|     const waiting = document.querySelector("section[aria-label='Fatura…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/features/management-order-invoices/OrderInvoicesSection.test.tsx > online order invoices section > shows no waiting section when every delivered order has a draft
+AssertionError: expected 'BaşlangıçBitişListeleFaturası henüz a…' not to contain 'Faturası henüz açılmamış siparişler'
+
+Expected: "Faturası henüz açılmamış siparişler"
+Received: "BaşlangıçBitişListeleFaturası henüz açılmamış siparişlerBu siparişlerin taslağı açılamadı. Ayarlar ekranında işletme bilgilerini girin; taslak kendiliğinden açılır. Süre dolmadan faturayı elle düzenlemeniz gerekir.SiparişPlatformTeslim tarihiToplam (KDV dahil)Kalan günOnline sipariş fatura taslaklarıHizmet tarihiSiparişPlatformDurumNetKDVToplam (KDV dahil)Ayrıntı28.09.2026YS-1YemeksepetiBilinmiyor₺100,00₺10,00₺110,00Göster29.09.2026TG-2Trendyol GoBilinmiyor₺50,00₺5,00₺55,00GösterBunlar taslaktır; e-Arşiv'e gönderim henüz yapılmaz."
+
+ ❯ src/features/management-order-invoices/OrderInvoicesSection.test.tsx:65:43
+     63|     await render(<OrderInvoicesSection client={client({ list: vi.fn().…
+     64|     await press("Listele");
+     65|     expect(document.body.textContent).not.toContain("Faturası henüz aç…
+       |                                           ^
+     66|   });
+     67|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/features/management-order-invoices/OrderInvoicesSection.test.tsx > online order invoices section > says so when the range has no draft
+AssertionError: expected <table><thead>…(1)</thead>
+…(1)</table> to be null
+
+- Expected:
+null
+
++ Received:
+<table>
+  <thead>
+    <tr>
+      <th>
+        Sipariş
+      </th>
+      <th>
+        Platform
+      </th>
+      <th>
+        Teslim tarihi
+      </th>
+      <th
+        class="moi__num"
+      >
+        Toplam (KDV dahil)
+      </th>
+      <th
+        class="moi__num"
+      >
+        Kalan gün
+      </th>
+    </tr>
+  </thead>
+  <tbody />
+</table>
+
+ ❯ src/features/management-order-invoices/OrderInvoicesSection.test.tsx:108:45
+    106|     await press("Listele");
+    107|     expect(document.body.textContent).toContain("Bu aralıkta fatura ta…
+    108|     expect(document.querySelector("table")).toBeNull();
+       |                                             ^
+    109|   });
+    110|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/features/management-order-invoices/OrderInvoicesSection.test.tsx > online order invoices section > the client asks the order invoice addresses
+AssertionError: expected '/api/v1/management/order-invoices/ord…' to be '/api/v1/management/order-invoices/by-…' // Object.is equality
+
+Expected: "/api/v1/management/order-invoices/by-order/o1"
+Received: "/api/v1/management/order-invoices/order/o1"
+
+ ❯ src/features/management-order-invoices/OrderInvoicesSection.test.tsx:131:53
+    129|     await api.detail("o1");
+    130|     expect((fetcher.mock.calls[0] as unknown[])[0]).toBe("/api/v1/mana…
+    131|     expect((fetcher.mock.calls[1] as unknown[])[0]).toBe("/api/v1/mana…
+       |                                                     ^
+    132|   });
+    133| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed | 4 passed (9)
+   Start at  21:58:45
+   Duration  1.94s (transform 546ms, setup 0ms, import 810ms, tests 258ms, environment 627ms)
+
