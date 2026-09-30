@@ -22,15 +22,16 @@ olan oturum adresi elle açınca 403 alan boş sekme görür) ve Sorunlar sekmes
 - `plan/v1/remediation/V1-RMD-476-online-order-chime-and-tab-permissions.md`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-operations/useNewOrderChime.ts - yeni dosya: sırayı okuyup yeni sipariş sesini çalan kanca
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-operations/useNewOrderChime.test.tsx - yeni dosya: kanca testleri
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.tsx - yalnız kancanın bağlanması
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.tsx - yalnız kancanın bağlanması (ana satış ekranı ve diğer yollar buradan geçer)
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.new-order-chime.test.tsx - yeni dosya: satış ekranında yeni sipariş sesi testi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.test.tsx - yalnız yeni davranışın testleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-hub/onlineHubApi.ts - yalnız sekme yetkileri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.test.tsx - yalnız sekme yetki beklentileri
 
 ## In scope
 
-- Kanca: yetkiliyse ve Siparişler sekmesinde değilse `loadOnlineOperations(terminalId, "all")` ile 20 saniyede bir okur; ilk okuma temel alınır, sonraki yeni sipariş kimliği için `playNewItemChime`.
-- Yetki tablosu değişikliği ve `workspace.tsx` rota kapısının ona uyması.
+- Kanca: `Cashier.tsx` içinde çağrılır (ana satış ekranı `ExperiencePage` kullanmaz); yetkiliyse ve Siparişler sekmesinde değilse `loadOnlineOperations(terminalId, "all")` ile 20 saniyede bir okur; ilk okuma temel alınır, sonraki yeni sipariş kimliği için `playNewItemChime`.
+- Yetki tablosu değişikliği (`workspace.tsx` rota kapısı tabloyu zaten okur).
 - Testler: ses yalnız yeni sipariş için ve yalnız Siparişler sekmesi dışında çalar, yetkisiz oturum hiç istek atmaz, sekme yetkileri.
 
 ## Out of scope

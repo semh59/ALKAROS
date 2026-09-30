@@ -13,7 +13,7 @@
 ## Goal
 
 Menü yayımlama, etkin herhangi bir seçenek grubu olan ürünü "zorunlu seçimleri platforma aktarılamıyor" diye atlıyor. Sipariş tarafı yalnızca zorunlu seçimi olan (`min_selections > 0`) ürünü reddediyor;
-isteğe bağlı grubu olan ürün siparişte sorunsuz alınır. Yayımlama kuralı sipariş kuralıyla aynı olur: yalnız zorunlu seçim grubu olan ürün atlanır, isteğe bağlı gruplu ürün fiyat ve stok bilgisiyle yayımlanır.
+isteğe bağlı grubu olan ürün siparişte sorunsuz alınır (seçenekler platforma iletilmediği için ürün seçeneksiz satılır). Yayımlama kuralı sipariş kuralıyla aynı olur: yalnız zorunlu seçim grubu olan ürün atlanır, isteğe bağlı gruplu ürün fiyat ve stok bilgisiyle yayımlanır.
 
 ## Owned surface
 
