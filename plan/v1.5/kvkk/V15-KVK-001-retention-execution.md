@@ -60,6 +60,7 @@ Onaylanan veri envanterini değerlendirin ve tüm mağazalarda uygun silme/anoni
 - V0-CMP-003
 - V14-CST-002
 - V15-SEC-003
+- V1-RMD-461
 
 ## Deliverables
 

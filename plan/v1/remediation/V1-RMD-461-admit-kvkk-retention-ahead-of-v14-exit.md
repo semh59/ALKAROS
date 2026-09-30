@@ -24,7 +24,7 @@ tablosu eklenir; tablo yalnız `V15-KVK-001` içerir. Kural diğer bütün v1.5 
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tools/task-scope/task_scope_tool.py - yalnız yeni kabul tablosunun ayrıştırılması ve giriş kapısında uygulanması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/GATES.md - yalnız `GATE-V15-ENTRY` notu ve yeni işaretli tablo
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/TRACEABILITY.md - yalnız yeni izlenebilirlik kaydı
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/TaskScope/test_task_scope_v14_exit_admission.py - yeni test dosyası
+- `tests/Architecture/TaskScope/test_task_scope_v14_exit_admission.py`
 
 ## In scope
 
