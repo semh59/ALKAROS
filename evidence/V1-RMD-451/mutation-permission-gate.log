@@ -1,0 +1,5 @@
+requiredCapability settings.manage -> reports.view:
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/features/management-settings-history/SettingsHistorySection.test.tsx > settings history section > the shell lists the settings history tab only for a session holding settings.manage
+      Tests  1 failed | 8 passed (9)
+restored, cmp identical
