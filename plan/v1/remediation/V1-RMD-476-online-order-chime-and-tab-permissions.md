@@ -23,7 +23,7 @@ olan oturum adresi elle açınca 403 alan boş sekme görür) ve Sorunlar sekmes
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-operations/useNewOrderChime.ts - yeni dosya: sırayı okuyup yeni sipariş sesini çalan kanca
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-operations/useNewOrderChime.test.tsx - yeni dosya: kanca testleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.tsx - yalnız kancanın bağlanması (ana satış ekranı ve diğer yollar buradan geçer)
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.new-order-chime.test.tsx - yeni dosya: satış ekranında yeni sipariş sesi testi
+- `src/Clients/PosTerminal/src/routes/Cashier.new-order-chime.test.tsx`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.test.tsx - yalnız yeni davranışın testleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-hub/onlineHubApi.ts - yalnız sekme yetkileri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.test.tsx - yalnız sekme yetki beklentileri

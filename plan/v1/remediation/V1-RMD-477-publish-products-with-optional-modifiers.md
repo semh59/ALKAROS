@@ -23,7 +23,7 @@ isteğe bağlı grubu olan ürün siparişte sorunsuz alınır (seçenekler plat
 
 ## In scope
 
-- `has_modifiers` sorgusunu zorunlu gruba daraltmak; testler: yalnız isteğe bağlı gruplu ürün yayımlanır, zorunlu gruplu ürün `ModifiersNotSupported` ile atlanır.
+- `has_modifiers` sorgusunu zorunlu gruba daraltmak (etiket zaten "zorunlu seçimler" diyor); testler: yalnız isteğe bağlı gruplu ürün yayımlanır, zorunlu gruplu ürün `ModifiersNotSupported` ile atlanır.
 
 ## Out of scope
 
