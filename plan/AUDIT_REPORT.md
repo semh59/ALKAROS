@@ -2717,7 +2717,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-456-role-user-listing-endpoints.md` | ✅ | `74ED88D4C8FBE42F61D75DB9B0B108C2A8642B21DF2B6FF67198C4D4259B56B4` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md` | ✅ | `5648C0C88EAA89B428A777A83CDF97A3EBC8D30D259A7AA5AB5B4CBA524BEB0F` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-458-stale-test-lazy-route-wait.md` | ✅ | `6853CDD4740CFAD5B64519142633440E7D53CBEF93DA44AE598381697C434CC5` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-459-management-shared-client-helpers.md` | ✅ | `4BC0BE77CDE7B278521A71021E234125285EC83F9656F8605C54AE239571C751` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-459-management-shared-client-helpers.md` | ✅ | `51D09E064F0ED635DFB7B4B6F17AC88F7EC0AF34EB83A1C2CC4BB4F1CE207843` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-460-trendyol-go-product-mapping-screen.md` | ✅ | `50D65FEBA5851D65584583CA60F3BEB3D0D4D380EC90893807BC204691F8D84B` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
