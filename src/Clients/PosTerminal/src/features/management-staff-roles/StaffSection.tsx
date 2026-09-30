@@ -1,8 +1,9 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useCallback, useMemo, useState, type FormEvent } from "react";
 import { Button, TextField } from "../../design-system";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { createStaffClient, StaffApiError, type StaffClient, type UserLookup } from "./api";
+import { RolesPanel, UserRolesPanel } from "./RolesPanels";
 import "./management-staff-roles.css";
 
 const t = managementText.staff;
@@ -14,6 +15,8 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
   const [busy, setBusy] = useState(false);
   const [fields, setFields] = useState<Record<string, string>>({});
   const [found, setFound] = useState<UserLookup | null>();
+  const [revision, setRevision] = useState(0);
+  const changed = useCallback(() => setRevision((current) => current + 1), []);
   const field = (key: string) => fields[key] ?? "";
   const set = (key: string) => (event: { target: { value: string } }) => setFields((current) => ({ ...current, [key]: event.target.value }));
 
@@ -76,6 +79,7 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
       </div>}
     </section>}
 
-    <p className="msr__hint">{t.rolesNote}</p>
+    {capabilities.has("identity.roles.manage") && <RolesPanel api={api} revision={revision} onChanged={changed} setNotice={setNotice} />}
+    {capabilities.has("identity.roles.manage") && <UserRolesPanel api={api} revision={revision} onChanged={changed} setNotice={setNotice} />}
   </div>;
 }

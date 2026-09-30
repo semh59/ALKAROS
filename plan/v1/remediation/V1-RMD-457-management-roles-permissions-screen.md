@@ -1,7 +1,7 @@
 # V1-RMD-457 - Yönetim alanı: Roller ve izinler ekranı
 
 - Task ID: V1-RMD-457
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Planned

@@ -7,3 +7,11 @@
 .msr__notice--success { color: #126637; background: #d9f7e5; }
 .msr__notice--error { color: #8b2a24; background: #ffe0dc; }
 .msr__hint { margin: 0; color: var(--ds-color-muted); }
+.msr__panel h4 { margin: 0; }
+.msr table { width: 100%; border-collapse: collapse; }
+.msr th, .msr td { padding: .5rem .6rem; text-align: left; border-bottom: 1px solid var(--ds-color-line); }
+.msr th { color: var(--ds-color-muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+.msr__permissions { display: grid; gap: .4rem; border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); margin: var(--ds-space-3) 0; }
+.msr__check { display: flex; align-items: center; gap: .5rem; }
+.msr__confirm { display: flex; align-items: center; gap: var(--ds-space-3); flex-wrap: wrap; font-weight: 700; }
+.msr__empty { margin: 0; color: var(--ds-color-muted); }

@@ -1,0 +1,5 @@
+roles panel permission check removed:
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/features/management-staff-roles/RolesPanels.test.tsx > roles and permissions panels > the role tools are absent without identity.roles.manage
+      Tests  1 failed | 9 passed (10)
+restored, cmp identical

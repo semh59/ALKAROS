@@ -1,0 +1,16 @@
+db ready, seeded
+host ready
+roles table: Roller ve izinler | ROL	İZİN SAYISI	İŞLEM | Kasiyer	12	İzinleri düzenle | E2E İkinci Müdür Rolü	37	İzinleri düzenle | E2E Kasiyer Rolü	37	İzinleri düzenle | E2E Sınırlı Kasiyer Rolü	36	İzinleri düzenle | Mutfak şefi	5	İzinleri düzenle | Mutfak personeli	1	İzinleri düzenle | Yönetici	37	İzinleri düzenle | Şef garson	21	İzinleri düzenle | Garson	5	İzinleri düzenle | Yeni rol | Rol kodu | Küçük harf, rakam ve tire kullanın (ör. salon-sorumlusu). | Rol adı | Rolü oluştur
+invalid code: Rol kodu (küçük harf, rakam, tire) ve rol adı girin.
+create: Rol oluşturuldu.
+duplicate: Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı.
+granted: İzin verildi.
+confirm shown: Raporları görüntüleme: Bu izin geri alınsın mı? | Evet, geri al | Vazgeç
+revoked: İzin geri alındı.
+server role permissions: ["tables.status"]
+assigned: Rol atandı.
+users table: PERSONEL	KULLANICI ADI	DURUM	ROLLER	İŞLEM | Ayşe Yılmaz	ayse	Etkin	Salon sorumlusu	Rolleri düzenle | E2E İkinci Müdür	e2e.mudur.ikinci	Etkin	E2E İkinci Müdür Rolü	Rolleri düzenle | E2E Kasiyer	e2e.kasiyer	Etkin	E2E Kasiyer Rolü	Rolleri düzenle | E2E Sınırlı Kasiyer	e2e.kasiyer.sinirli	Etkin	E2E Sınırlı Kasiyer Rolü	Rolleri düzenle
+server user roles: ["13584609-22f6-4e1f-981c-2bbd1ccf7459"] expected 13584609-22f6-4e1f-981c-2bbd1ccf7459
+new person logs in: 200 capabilities=["tables.status"]
+page text has raw codes: false
+console errors (non-font/401): ["Failed to load resource: the server responded with a status of 404 (Not Found)","Failed to load resource: the server responded with a status of 409 (Conflict)"]
