@@ -1,0 +1,16 @@
+# all migrations up to 171 on an empty database, then 171 down and up again
+$ after full migration run
+tables: order_invoice_lines, order_invoices, seller_profile
+triggers: tr_order_invoice_lines_immutable, tr_order_invoices_immutable
+functions: refuse_order_invoice_content_change, refuse_order_invoice_line_change
+$ 171 down  exit=0
+$ after 171 down
+tables: 
+triggers: 
+functions: 
+$ 171 up  exit=0
+$ after 171 up again
+tables: order_invoice_lines, order_invoices, seller_profile
+triggers: tr_order_invoice_lines_immutable, tr_order_invoices_immutable
+functions: refuse_order_invoice_content_change, refuse_order_invoice_line_change
+$ 171 up a second time (idempotent)  exit=0

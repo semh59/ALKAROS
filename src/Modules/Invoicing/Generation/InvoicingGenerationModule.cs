@@ -1,5 +1,6 @@
 namespace ALKAROS.Invoicing.Generation;
 
+using ALKAROS.Invoicing.Generation.OrderInvoices;
 using ALKAROS.ModuleComposition;
 
 /// <summary>
@@ -15,5 +16,9 @@ public sealed class InvoicingGenerationModule : IModule
     public IReadOnlyCollection<string> DependsOn => ["CustomerData"];
 
     public void Register(ModuleContext context)
-        => context.RegisterTransient<IInvoiceGenerationService, PostgresInvoiceGenerationService>();
+    {
+        context.RegisterTransient<IInvoiceGenerationService, PostgresInvoiceGenerationService>();
+        context.RegisterTransient<ISellerProfileStore, PostgresSellerProfileStore>();
+        context.RegisterTransient<IOrderInvoiceDraftService, PostgresOrderInvoiceDraftService>();
+    }
 }

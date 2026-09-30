@@ -1462,6 +1462,16 @@
         "retention_work_items"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "171",
+      "phase": "B",
+      "tables": [
+        "seller_profile",
+        "order_invoices",
+        "order_invoice_lines"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

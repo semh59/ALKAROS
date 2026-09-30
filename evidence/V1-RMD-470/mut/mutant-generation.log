@@ -1,0 +1,161 @@
+﻿  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.CustomerData -> D:\PROJECT\ALKAROS\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
+  ALKAROS.Invoicing -> D:\PROJECT\ALKAROS\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
+  ALKAROS.Invoicing.Generation.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Invoicing\Generation\bin\Debug\net8.0\ALKAROS.Invoicing.Generation.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Invoicing\Generation\bin\Debug\net8.0\ALKAROS.Invoicing.Generation.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)
+[xUnit.net 00:00:00.21]   Discovering: ALKAROS.Invoicing.Generation.Tests
+[xUnit.net 00:00:00.27]   Discovered:  ALKAROS.Invoicing.Generation.Tests
+[xUnit.net 00:00:00.28]   Starting:    ALKAROS.Invoicing.Generation.Tests
+dotnet : [xUnit.net 00:00:02.61]     ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.ARepeatedCallReturnsTheS
+ameInvoice [FAIL]
+At line:3 char:1
++ dotnet test tests/Modules/Invoicing/Generation --nologo --logger "con ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([xUnit.net 00:0...eInvoice [FAIL]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[xUnit.net 00:00:02.61]       Npgsql.PostgresException : 23505: duplicate key value violates unique constraint "ux_order_invoices_order"
+[xUnit.net 00:00:02.61]       
+[xUnit.net 00:00:02.61]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+[xUnit.net 00:00:02.61]       Stack Trace:
+[xUnit.net 00:00:02.61]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+[xUnit.net 00:00:02.62]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+[xUnit.net 00:00:02.62]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+[xUnit.net 00:00:02.62]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+[xUnit.net 00:00:02.62]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+[xUnit.net 00:00:02.62]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+[xUnit.net 00:00:02.62]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+[xUnit.net 00:00:02.62]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(75,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:02.62]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(82,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:02.62]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(108,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:02.62]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(108,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:02.62]         D:\PROJECT\ALKAROS\tests\Modules\Invoicing\Generation\OrderInvoiceDraftTests.cs(85,0): at ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.ARepeatedCallReturnsTheSameInvoice()
+[xUnit.net 00:00:02.62]         --- End of stack trace from previous location ---
+  Başarısız ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.ARepeatedCallReturnsTheSameInvoice [105 ms]
+  Hata İletisi:
+   Npgsql.PostgresException : 23505: duplicate key value violates unique constraint "ux_order_invoices_order"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 75
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 82
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 108
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 108
+   at ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.ARepeatedCallReturnsTheSameInvoice() in D:\PROJECT\ALKAROS\tests\Modules\Invoicing\Generation\OrderInvoiceDraftTests.cs:line 85
+--- End of stack trace from previous location ---
+  Başarılı ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.WithoutACompleteSellerProfileNothingIsDrafted [38 ms]
+[xUnit.net 00:00:06.71]     ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.ConcurrentCallsForOneOrderDraftEx
+actlyOneInvoice [FAIL]
+[xUnit.net 00:00:06.71]       Npgsql.PostgresException : 23505: duplicate key value violates unique constraint "ux_order_invoices_order"
+[xUnit.net 00:00:06.71]       
+[xUnit.net 00:00:06.71]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+[xUnit.net 00:00:06.71]       Stack Trace:
+[xUnit.net 00:00:06.71]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+[xUnit.net 00:00:06.71]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+[xUnit.net 00:00:06.71]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.71]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.71]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.71]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.71]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.71]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(75,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.71]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(82,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.71]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(108,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.71]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(108,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:06.71]         D:\PROJECT\ALKAROS\tests\Modules\Invoicing\Generation\OrderInvoiceDraftTests.cs(99,0): at ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.ConcurrentCallsForOneOrderDraftExactlyOneInvoice()
+[xUnit.net 00:00:06.71]         --- End of stack trace from previous location ---
+  Başarısız ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.ConcurrentCallsForOneOrderDraftExactlyOneInvoice [33 ms]
+  Hata İletisi:
+   Npgsql.PostgresException : 23505: duplicate key value violates unique constraint "ux_order_invoices_order"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 75
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 82
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 108
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 108
+   at ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.ConcurrentCallsForOneOrderDraftExactlyOneInvoice() in D:\PROJECT\ALKAROS\tests\Modules\Invoicing\Generation\OrderInvoiceDraftTests.cs:line 99
+--- End of stack trace from previous location ---
+  Başarılı ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.ADraftCannotBeChangedOrDeleted [33 ms]
+  Başarılı ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.TheSellerIsCopiedOntoTheDraftAndLaterEditsDoNotChangeIt [28 ms]
+  Başarılı ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.AnOrderWithNoLineIsRefused [5 ms]
+  Başarılı ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.AnInvalidOrderIsRefusedAndNothingIsStored(problem: "unknown-provider") [6 ms]
+  Başarılı ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.AnInvalidOrderIsRefusedAndNothingIsStored(problem: "zero-gross") [5 ms]
+[xUnit.net 00:00:18.55]     ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.AnInvalidOrderIsRefusedAndNothing
+IsStored(problem: "net-plus-tax-is-not-gross") [FAIL]
+[xUnit.net 00:00:18.55]       Assert.Throws() Failure: Exception type was not an exact match
+[xUnit.net 00:00:18.55]       Expected: typeof(System.ArgumentException)
+[xUnit.net 00:00:18.55]       Actual:   typeof(Npgsql.PostgresException)
+[xUnit.net 00:00:18.55]       ---- Npgsql.PostgresException : 23514: new row for relation "order_invoice_lines" violates check constraint "ck_order_invoice_lines_amounts"
+[xUnit.net 00:00:18.55]       
+[xUnit.net 00:00:18.55]       DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+[xUnit.net 00:00:18.55]       Stack Trace:
+[xUnit.net 00:00:18.55]         D:\PROJECT\ALKAROS\tests\Modules\Invoicing\Generation\OrderInvoiceDraftTests.cs(132,0): at ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.AnInvalidOrderIsRefusedAndNothingIsStored(String problem)
+[xUnit.net 00:00:18.55]         --- End of stack trace from previous location ---
+[xUnit.net 00:00:18.55]         ----- Inner Stack Trace -----
+[xUnit.net 00:00:18.55]            at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+[xUnit.net 00:00:18.55]            at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+[xUnit.net 00:00:18.55]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+[xUnit.net 00:00:18.55]            at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+[xUnit.net 00:00:18.55]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+[xUnit.net 00:00:18.55]            at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+[xUnit.net 00:00:18.55]            at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+[xUnit.net 00:00:18.55]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(102,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:18.55]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(102,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:18.55]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(108,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+[xUnit.net 00:00:18.55]         D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs(108,0): at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken)
+  Başarısız ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.AnInvalidOrderIsRefusedAndNothingIsStored(problem: "net-plus-tax-is-not-gross") [10 ms]
+  Hata İletisi:
+   Assert.Throws() Failure: Exception type was not an exact match
+Expected: typeof(System.ArgumentException)
+Actual:   typeof(Npgsql.PostgresException)
+---- Npgsql.PostgresException : 23514: new row for relation "order_invoice_lines" violates check constraint "ck_order_invoice_lines_amounts"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+  Yığın İzleme:
+     at ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.AnInvalidOrderIsRefusedAndNothingIsStored(String problem) in D:\PROJECT\ALKAROS\tests\Modules\Invoicing\Generation\OrderInvoiceDraftTests.cs:line 132
+--- End of stack trace from previous location ---
+----- Inner Stack Trace -----
+   at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteNonQuery(Boolean async, CancellationToken cancellationToken)
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 102
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 102
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 108
+   at ALKAROS.Invoicing.Generation.OrderInvoices.PostgresOrderInvoiceDraftService.CreateAsync(OrderInvoiceInput input, Nullable`1 createdBy, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Invoicing\Generation\OrderInvoices\PostgresOrderInvoiceDraftService.cs:line 108
+  Başarılı ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.TheDatabaseRefusesTotalsThatDoNotReconcile [3 ms]
+[xUnit.net 00:00:22.19]   Finished:    ALKAROS.Invoicing.Generation.Tests
+  Başarılı ALKAROS.Invoicing.Generation.Tests.OrderInvoiceDraftTests.ATaxInclusiveOrderIsDraftedWithLinesThatReconcileToTheGross [43 ms]
+
+Test Çalıştırması Başarısız.
+Toplam test sayısı: 11
+     Geçti: 8
+     Başarısız: 3
+ Toplam süre: 22,8025 Saniye
