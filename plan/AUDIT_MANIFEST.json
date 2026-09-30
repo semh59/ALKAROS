@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1529,
-  "markdown_line_count": 115246,
-  "markdown_byte_count": 6644022,
+  "markdown_file_count": 1530,
+  "markdown_line_count": 115262,
+  "markdown_byte_count": 6645687,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2555,6 +2555,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-456/README.md",
+      "sha256": "6405FA4F743C195B57E38C9EBB2BF343FA1D2E5B605B3F3B9D74D8CB83387C5F",
+      "lines": 15,
+      "bytes": 1541,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-458/README.md",
       "sha256": "5C79E5BAC9032EB7152B861A2622FB3C7A8E58898ADB86CE42F5F127A8284608",
       "lines": 9,
@@ -2745,9 +2752,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "71E5B285FE78380EA5B01C2805265BC56784B25CF6C515F5DD5E26D2973B66F5",
-      "lines": 2805,
-      "bytes": 412212,
+      "sha256": "F4F7030A3F8FCED7CA13DC6E76A6F11109EB247D31DE0211E17D1F4D865612D8",
+      "lines": 2806,
+      "bytes": 412342,
       "utf8": true
     },
     {
@@ -8541,9 +8548,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-456-role-user-listing-endpoints.md",
-      "sha256": "E6DC78DE9ECAF5D6548BCEA5C5B30BDF159B448198B68115AFA5D8B18981A749",
+      "sha256": "74ED88D4C8FBE42F61D75DB9B0B108C2A8642B21DF2B6FF67198C4D4259B56B4",
       "lines": 61,
-      "bytes": 3281,
+      "bytes": 3275,
       "utf8": true
     },
     {
