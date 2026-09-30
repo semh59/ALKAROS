@@ -61,12 +61,12 @@ public sealed class CatalogPublishingTestDatabase : PgTestDatabase
     public Task SetActiveAsync(Guid productId, bool active) =>
         ExecAsync("UPDATE catalog.products SET active = $2 WHERE product_id = $1;", productId, active);
 
-    public async Task AttachModifierGroupAsync(Guid productId)
+    public async Task AttachModifierGroupAsync(Guid productId, int minSelections = 1)
     {
         var groupId = Guid.NewGuid();
         await ExecAsync(
-            "INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections) VALUES ($1, $2, 'Ekstralar', 2, 0, 3);",
-            groupId, "MG-" + groupId.ToString("N")[..8]);
+            "INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections) VALUES ($1, $2, 'Ekstralar', 2, $3, 3);",
+            groupId, "MG-" + groupId.ToString("N")[..8], minSelections);
         await ExecAsync(
             "INSERT INTO catalog.product_modifier_groups (product_modifier_group_id, product_id, modifier_group_id) VALUES ($1, $2, $3);",
             Guid.NewGuid(), productId, groupId);
@@ -252,6 +252,21 @@ public sealed class CatalogPublicationTests : IClassFixture<CatalogPublishingTes
         });
         (await _db.Mappings.FindOpenSkuForProductAsync(fine)).Should().NotBeNull();
         (await _db.Mappings.FindOpenSkuForProductAsync(withModifiers)).Should().BeNull();
+    }
+
+    [Fact]
+    public async Task AProductWithOnlyOptionalModifierGroupsIsPublishedWithoutThem()
+    {
+        var menu = await _db.SeedMenuAsync();
+        var (optionalOnly, sku) = await _db.SeedMenuProductAsync(menu, 100m);
+        await _db.AttachModifierGroupAsync(optionalOnly, minSelections: 0);
+
+        var summary = await PublishAsync(menu);
+        await _service.DeliverAsync(summary.PublicationId);
+
+        summary.ItemCount.Should().Be(1);
+        summary.ValidationErrors.Should().BeEmpty();
+        _provider.CatalogUpdates.Last().Should().Equal(new YemeksepetiCatalogProductUpdate(sku, 100m, true, null));
     }
 
     [Fact]

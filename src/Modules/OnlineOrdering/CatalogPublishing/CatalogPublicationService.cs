@@ -253,7 +253,7 @@ public sealed class CatalogPublicationService
                    EXISTS (
                        SELECT 1 FROM catalog.product_modifier_groups pmg
                        JOIN catalog.modifier_groups g ON g.modifier_group_id = pmg.modifier_group_id
-                       WHERE pmg.product_id = p.product_id AND g.active) AS has_modifiers
+                       WHERE pmg.product_id = p.product_id AND g.active AND g.min_selections > 0) AS has_modifiers
             FROM menu.menu_items mi
             JOIN menu.menus m ON m.menu_id = mi.menu_id
             JOIN catalog.products p ON p.product_id = mi.product_id
