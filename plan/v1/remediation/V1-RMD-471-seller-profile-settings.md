@@ -25,7 +25,8 @@ ekranındaki "Fatura bilgileri" bölümünü ekler. VKN 10 haneli, TCKN 11 hanel
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/sections.ts - yalnız yeni bölümün kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts - yalnız yeni bölümün Türkçe metinleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/ManagementArea.test.tsx - yalnız bölüm listesi beklentisi
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Program.cs - yalnız yeni uç noktaların kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tools/consistency-audit/unreachable_services_allowlist.json - yalnız `ISellerProfileStore` ve gerçeklemesinin geçici kaydının kaldırılması
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız yeni uç noktaların ve servislerin kaydı
 
 ## In scope
 
