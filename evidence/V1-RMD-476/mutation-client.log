@@ -1,0 +1,123 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.new-order-chime.test.tsx (2 tests | 2 failed) 2027ms
+     × chimes on the sales screen when an order the till has not seen lands, and only after the first read 1945ms
+     × does not watch the queue for a session that cannot accept orders 80ms
+ ❯ src/routes/workspace.test.tsx (21 tests | 1 failed) 1189ms
+     × closes the online food screen to a session that only holds tables.status 63ms
+ ❯ src/features/online-hub/OnlineFoodHub.test.tsx (6 tests | 1 failed) 697ms
+     × shows the problems to staff who see reports, and lets only a reconciliation manager act on them 59ms
+ ❯ src/features/online-operations/useNewOrderChime.test.tsx (3 tests | 2 failed) 52ms
+     × stays quiet on the first read and on an unchanged queue, and chimes once for an order it has not seen 40ms
+     × keeps polling after a failed read and stops once the screen is left 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 6 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.new-order-chime.test.tsx > Cashier new order sound > chimes on the sales screen when an order the till has not seen lands, and only after the first read
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ src/routes/Cashier.new-order-chime.test.tsx:74:19
+     72|     expect(chime).not.toHaveBeenCalled();
+     73|     await act(async () => { await vi.advanceTimersByTimeAsync(20_000);…
+     74|     expect(chime).toHaveBeenCalledTimes(1);
+       |                   ^
+     75|   });
+     76|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+ FAIL  src/routes/Cashier.new-order-chime.test.tsx > Cashier new order sound > does not watch the queue for a session that cannot accept orders
+AssertionError: expected [ …(3) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "/api/v1/terminals/3231da96-2972-4ed3-b043-2920c4765466/online-operations?source=all",
++   "/api/v1/terminals/3231da96-2972-4ed3-b043-2920c4765466/online-operations?source=all",
++   "/api/v1/terminals/3231da96-2972-4ed3-b043-2920c4765466/online-operations?source=all",
++ ]
+
+ ❯ src/routes/Cashier.new-order-chime.test.tsx:81:18
+     79|     const urls = await renderSalesScreen(["tables.status"], [queueOf("…
+     80|     await act(async () => { await vi.advanceTimersByTimeAsync(40_000);…
+     81|     expect(urls).toEqual([]);
+       |                  ^
+     82|   });
+     83| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  src/routes/workspace.test.tsx > workspace route gating uses granular permission codes, not the removed pos.cashier.mutate > closes the online food screen to a session that only holds tables.status
+TypeError: Cannot read properties of undefined (reading 'pendingProviderEvents')
+ ❯ OnlineOperationsWorkspace src/features/online-operations/OnlineOperationsWorkspace.tsx:313:70
+    311|           {queue && (
+    312|             <ul className="online-ops__retries" aria-label="Yeniden de…
+    313|               <li>İşlenmeyi bekleyen sağlayıcı olayı: {queue.retries.p…
+       |                                                                      ^
+    314|               <li>Yeniden denenen katalog yayını: {queue.retries.catal…
+    315|               <li>Stok bilgisi gönderilemeyen ürün: {queue.retries.ava…
+ ❯ Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:25904:20
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:7662:22
+ ❯ updateFunctionComponent node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:10166:19
+ ❯ beginWork node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:11778:18
+ ❯ runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ performUnitOfWork node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:17641:22
+ ❯ workLoopSync node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:17469:41
+ ❯ renderRootSync node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:17450:11
+ ❯ performWorkOnRoot node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:16583:35
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  src/features/online-hub/OnlineFoodHub.test.tsx > OnlineFoodHub > shows the problems to staff who see reports, and lets only a reconciliation manager act on them
+AssertionError: expected [ 'Siparişler', 'Sorunlar' ] to deeply equal [ 'Siparişler' ]
+
+- Expected
++ Received
+
+  [
+    "Siparişler",
++   "Sorunlar",
+  ]
+
+ ❯ src/features/online-hub/OnlineFoodHub.test.tsx:107:20
+    105|
+    106|     await render("problems", ["orders.create", "reconciliation.manage"…
+    107|     expect(tabs()).toEqual(["Siparişler"]);
+       |                    ^
+    108|     act(() => root?.unmount());
+    109|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  src/features/online-operations/useNewOrderChime.test.tsx > useNewOrderChime > stays quiet on the first read and on an unchanged queue, and chimes once for an order it has not seen
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ src/features/online-operations/useNewOrderChime.test.tsx:47:19
+     45|     expect(chime).not.toHaveBeenCalled();
+     46|     await tick();
+     47|     expect(chime).toHaveBeenCalledTimes(1);
+       |                   ^
+     48|     await tick();
+     49|     expect(chime).toHaveBeenCalledTimes(1);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  src/features/online-operations/useNewOrderChime.test.tsx > useNewOrderChime > keeps polling after a failed read and stops once the screen is left
+AssertionError: expected "vi.fn()" to be called 1 times, but got 0 times
+ ❯ src/features/online-operations/useNewOrderChime.test.tsx:70:19
+     68|     await tick();
+     69|     await tick();
+     70|     expect(chime).toHaveBeenCalledTimes(1);
+       |                   ^
+     71|
+     72|     await act(async () => root!.unmount());
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+
+ Test Files  4 failed | 15 passed (19)
+      Tests  6 failed | 108 passed (114)
+   Start at  22:22:23
+   Duration  6.13s (transform 8.55s, setup 0ms, import 7.40s, tests 19.64s, environment 22.68s)
+

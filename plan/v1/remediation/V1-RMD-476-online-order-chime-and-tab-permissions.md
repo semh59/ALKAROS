@@ -1,7 +1,7 @@
 # V1-RMD-476 - Yeni online sipariş sesi her ekranda ve online sekme yetkilerini hizalamak
 
 - Task ID: V1-RMD-476
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing

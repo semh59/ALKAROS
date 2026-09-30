@@ -36,12 +36,12 @@ export function onlineHubTabFor(path: string): OnlineHubTab | null {
 /**
  * The capabilities a session needs to see each tab (any one of them); null means the screen's own permission is enough.
  * A tab a session may not see is never shown and its data is never requested. Menu and settings are a manager's
- * (V12-GOV-009); problems are for staff who see reports, and only a reconciliation manager acts on them.
+ * (V12-GOV-009); problems are for staff who see reports (the list needs reports.view), and only a reconciliation manager acts on them.
  */
 export const onlineTabCapabilities: Record<OnlineHubTab, readonly string[] | null> = {
-  orders: null,
+  orders: ["orders.create"],
   menu: ["integrations.manage"],
-  problems: ["reports.view", "reconciliation.manage"],
+  problems: ["reports.view"],
   settings: ["integrations.manage"],
 };
 

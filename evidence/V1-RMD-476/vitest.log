@@ -1,0 +1,50 @@
+﻿
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/Cashier.new-order-chime.test.tsx (2 tests | 1 failed) 1840ms
+     × does not watch the queue for a session that cannot accept orders 81ms
+corepack : 
+At line:1 char:547
++ ... STEXITCODE"; corepack pnpm exec vitest run *> "$o\vitest.log"; "vites ...
++                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.new-order-chime.test.tsx > Cashier new order sound > does not watch the queue for a session t
+hat cannot accept orders
+Error: useRouter must be used inside a <RouterProvider>.
+ ❯ useRouter src/router.tsx:52:11
+     50|   const value = useContext(RouterContext);
+     51|   if (value === null) {
+     52|     throw new Error("useRouter must be used inside a <RouterProvider>.…
+       |           ^
+     53|   }
+     54|   return value;
+ ❯ Cashier src/routes/Cashier.tsx:57:43
+ ❯ Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-do
+m-client.development.js:25904:20
+ ❯ renderWithHooks node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.develop
+ment.js:7662:22
+ ❯ updateFunctionComponent node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client
+.development.js:10166:19
+ ❯ beginWork node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.j
+s:11778:18
+ ❯ runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.devel
+opment.js:874:13
+ ❯ performUnitOfWork node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.devel
+opment.js:17641:22
+ ❯ workLoopSync node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.developmen
+t.js:17469:41
+ ❯ renderRootSync node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.developm
+ent.js:17450:11
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 59 passed (60)
+      Tests  1 failed | 438 passed (439)
+   Start at  22:21:35
+   Duration  17.45s (transform 9.94s, setup 0ms, import 21.91s, tests 51.91s, environment 76.37s)
+

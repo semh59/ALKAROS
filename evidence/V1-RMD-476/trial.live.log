@@ -1,0 +1,7 @@
+db ready, seeded
+host ready
+on the sales screen: http://127.0.0.1:5199/
+queue requests so far: ["v1/terminals/7fd9900b-e962-406c-b8e6-626f6dcdaa4c/online-operations?source=all"] chimes=0
+webhook a95e -> 200
+order landed in the database; waiting for the next poll (up to 30 s)
+chimes after the order=1 queue requests=2 still on http://127.0.0.1:5199/

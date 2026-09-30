@@ -14,6 +14,8 @@ import { isPlainClick, useRouter } from "../router";
 import { navLabels, stateText } from "../strings";
 import { formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
+import { onlineHubTabFor } from "../features/online-hub";
+import { useNewOrderChime } from "../features/online-operations/useNewOrderChime";
 import { ExperiencePage, type BackendStatus } from "./workspace";
 
 type CashierSession = "checking" | "anonymous" | "ready";
@@ -58,6 +60,8 @@ export function Cashier() {
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [capabilities, setCapabilities] = useState<string[]>([]);
+  // The queue screen chimes for itself; the sales screen and every other one still have to tell the till that an order landed.
+  useNewOrderChime(terminalId, capabilities.includes("orders.create") && onlineHubTabFor(currentPath) !== "orders");
   const [catalog, setCatalog] = useState<CatalogProduct[]>([]);
   const [order, setOrder] = useState<DisplaySnapshot | null>(null);
   const [pairingCode, setPairingCode] = useState("");

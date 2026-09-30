@@ -180,6 +180,13 @@ describe("workspace route gating uses granular permission codes, not the removed
     },
   );
 
+  it("closes the online food screen to a session that only holds tables.status", async () => {
+    await renderRoute("/online", ["tables.status"]);
+    expect(document.body.textContent).toContain(forbiddenText);
+    const urls = (vi.mocked(fetch).mock.calls as unknown[][]).map(([url]) => String(url));
+    expect(urls.some((url) => url.includes("/online-operations"))).toBe(false);
+  });
+
   // V12-OUI-003: platform API settings open only for integrations.manage, and a forbidden session never asks for them.
   it("opens the online platform settings for integrations.manage and forbids them to a cashier", async () => {
     await renderRoute("/online-platforms", ["integrations.manage"]);
@@ -721,6 +728,6 @@ describe("workspace /management route", () => {
 
     await renderManagementRoute(["orders.create"]);
 
-    expect(fetch).not.toHaveBeenCalled();
+    expect((fetch.mock.calls as unknown[][]).map(([url]) => String(url)).filter((url) => url.includes("/api/v1/management"))).toEqual([]);
   });
 });

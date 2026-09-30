@@ -99,8 +99,12 @@ describe("OnlineFoodHub", () => {
     expect([...document.querySelectorAll("button")].some((b) => b.textContent === "Yeniden dene")).toBe(false);
     act(() => root?.unmount());
 
-    await render("problems", ["orders.create", "reconciliation.manage"]);
+    await render("problems", ["orders.create", "reports.view", "reconciliation.manage"]);
     expect([...document.querySelectorAll("button")].some((b) => b.textContent === "Yeniden dene")).toBe(true);
+    act(() => root?.unmount());
+
+    await render("problems", ["orders.create", "reconciliation.manage"]);
+    expect(tabs()).toEqual(["Siparişler"]);
     act(() => root?.unmount());
 
     await render("problems", ["orders.create"]);
