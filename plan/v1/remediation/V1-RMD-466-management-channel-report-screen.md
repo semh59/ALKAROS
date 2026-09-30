@@ -35,7 +35,7 @@ ve toplam; brüt ve net tutar; rapor dengesiz ise (`check.isBalanced` false) Tü
 
 ## Out of scope
 
-- Komisyon ve platform ödeme uzlaştırması; dışa aktarma; sunucu tarafı değişiklik.
+- Komisyon ve platform ödeme uzlaştırması; dışa aktarma; sunucu tarafı değişiklik. Gün sonu sipariş sayısı `V1-RMD-465`tedir.
 
 ## Dependencies
 

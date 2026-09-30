@@ -22,7 +22,8 @@ Bu görev gün sonunda saklanan sipariş sayısından `source = 'Online'` sipari
 
 - `plan/v1/remediation/V1-RMD-465-business-day-count-excludes-online-orders.md`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Reporting/BusinessDayTotals/BusinessDayTotalsReader.cs - yalnız sipariş sayısı sorgusu ve açıklaması
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Reporting/V1Operations/PostgresOperationalReportRepositoryTests.cs - yalnız yeni davranışın testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Reporting/EndOfDayHttpTests.cs - yalnız yeni davranışın testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Reporting/EndOfDayTestDatabase.cs - yalnız siparişin kaynağını seçen isteğe bağlı parametre
 
 ## In scope
 
