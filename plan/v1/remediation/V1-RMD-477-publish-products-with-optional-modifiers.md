@@ -1,8 +1,8 @@
 # V1-RMD-477 - Yalnız isteğe bağlı seçeneği olan ürünleri platforma yayımlamak
 
 - Task ID: V1-RMD-477
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
 
