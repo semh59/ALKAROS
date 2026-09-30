@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1526,
-  "markdown_line_count": 115168,
-  "markdown_byte_count": 6638523,
+  "markdown_line_count": 115172,
+  "markdown_byte_count": 6639043,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2521,9 +2521,9 @@
     },
     {
       "path": "evidence/V1-RMD-450/README.md",
-      "sha256": "B93EE044046D19006E85B61D9BA0B0299637BDFD8460BD7FB1A51DAA649610FC",
-      "lines": 23,
-      "bytes": 2630,
+      "sha256": "F21E4517AADE71E86829A089A34975799D018985BB1ACFA7554F3A8293B9B636",
+      "lines": 27,
+      "bytes": 3134,
       "utf8": true
     },
     {
@@ -2731,7 +2731,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "6D2CD177DE775102D5526CC1547B169D000C3C45A70E68F578A9CEA00FE30717",
+      "sha256": "70E6E9BB536EAF581026BDC4F1DA23EBF197DE606D01BCB72F860A6678B16F8E",
       "lines": 2802,
       "bytes": 411791,
       "utf8": true
@@ -8492,9 +8492,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-451-management-settings-history-section.md",
-      "sha256": "888E5575327C180E6D4F5AF0D8236CD99574060EE6567230B4C301E4EF62B8CD",
+      "sha256": "6B51CCFDD81888F5634D3552C31C73E8B1E669722BB5A8CF534C199F946AD336",
       "lines": 49,
-      "bytes": 1882,
+      "bytes": 1898,
       "utf8": true
     },
     {
