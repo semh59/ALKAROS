@@ -12,7 +12,7 @@
 
 ## Goal
 
-Faturanın satıcı bölümü (ticari ünvan, VKN, vergi dairesi, adres, e-Arşiv mükellefiyeti) bugün hiçbir yerde saklanmıyor; yalnız işletme adı
+Faturanın satıcı bölümü (ticari ünvan, VKN, vergi dairesi, adres) bugün hiçbir yerde saklanmıyor; yalnız işletme adı
 ayarı ve QNB kimlik bilgisindeki VKN var. `V1-RMD-470` tabloyu açar; bu görev bilgileri okuyup yazan uç noktaları ve Yönetim
 ekranındaki "Fatura bilgileri" bölümünü ekler. VKN 10 haneli, TCKN 11 haneli doğrulanır; eksik bilgiyle fatura taslağı açılmaz.
 
