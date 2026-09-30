@@ -12,15 +12,16 @@
 
 ## Goal
 
-Açılan fatura taslaklarını görmek için liste ve ayrıntı uç noktası ile Yönetim alanında "Online faturalar" bölümü: sipariş, tarih,
-platform, tutar (brüt, KDV), durum (Türkçe: Taslak, Gönderilmedi), "alıcı bilgisi eksik" uyarısı, faturasız (taslağı açılamamış)
-siparişlerin listesi ve yasal süreye kalan gün. Yalnız okur; gönderim yoktur (`V0-QNB-001` engelli).
+Açılan fatura taslaklarını görmek için liste (`GET /api/v1/management/order-invoices?from&to`, hizmet tarihine göre) ve sipariş başına ayrıntı (`GET .../by-order/{orderId}`) uç noktası ile Yönetim alanında "Online faturalar" bölümü: sipariş, tarih,
+platform, tutar (brüt, KDV), durum (Türkçe: Taslak), faturasız (taslağı açılamamış)
+siparişlerin listesi ve yasal süreye kalan gün. "Alıcı bilgisi eksik" uyarısı eşik tutarı doğrulanmadığı için yoktur. Yalnız okur; gönderim yoktur (`V0-QNB-001` engelli).
 
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-473-online-order-invoice-list-screen.md`
 - `src/Host/Experience/OrderInvoices/**`
-- `tests/Host/Experience/OrderInvoices/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Reconciliation/OrderInvoiceHttpTests.cs - yeni dosya: uç nokta testleri (yönetici oturumu ve gerçek modül bileşimi burada hazır)
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Reconciliation/ALKAROS.Host.Experience.Reconciliation.Tests.csproj - yalnız fatura şeması ve migration 171 fixture satırları
 - `src/Clients/PosTerminal/src/features/management-order-invoices/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/sections.ts - yalnız yeni bölümün kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts - yalnız yeni bölümün Türkçe metinleri

@@ -14,7 +14,7 @@
 
 Restoran, platform kullanıcısına teslimden sonra en geç 7 gün içinde e-Arşiv fatura düzenlemek zorundadır. Teslim edilmiş ama taslağı açılamamış (satıcı bilgisi eksik, hata) sipariş
 süre dolmadan önce Sorunlar listesinde vaka olarak görünür: Türkçe etiket, sonraki adım ("İşletme bilgilerini girin" ya da "Faturayı elle düzenleyin"). Kaynak çifti
-`NotHandedOverSourcePair` kalıbıyla yazılır; taslak açılınca vaka kendiliğinden kapanır.
+`NotHandedOverSourcePair` kalıbıyla yazılır; taslak açılınca vaka kendiliğinden kapanır. Yönetim ekranındaki faturasız sipariş listesi ayrıdır ve vakayı beklemez.
 
 ## Owned surface
 
