@@ -29,7 +29,7 @@ siparişlerin listesi ve yasal süreye kalan gün. Yalnız okur; gönderim yoktu
 
 ## In scope
 
-- `GET` liste (tarih aralığı, en çok 31 gün) ve ayrıntı; yetki `reports.view`; ekran durumları; İngilizce sözcük ekrana çıkmaz.
+- `GET` liste (tarih aralığı, en çok 31 gün) ve ayrıntı; yetki `reports.view` (kanal raporu uç noktasıyla aynı yönetim oturumu); ekran durumları; İngilizce sözcük ekrana çıkmaz.
 - Testler: uç nokta (yetki, aralık), istemci (tablo, uyarı, axe).
 
 ## Out of scope
