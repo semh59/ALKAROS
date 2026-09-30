@@ -1,7 +1,7 @@
 # V1-RMD-458 - stale.test.ts: tembel yüklenen ekran için sabit bekleme yerine koşula bağlı bekleme
 
 - Task ID: V1-RMD-458
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
