@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1521,
-  "markdown_line_count": 114984,
-  "markdown_byte_count": 6624859,
+  "markdown_file_count": 1522,
+  "markdown_line_count": 115009,
+  "markdown_byte_count": 6627551,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2506,6 +2506,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-448/README.md",
+      "sha256": "0FB6E9E9A16C1A822A427D7EBC3FDE24C8712673793E24A17B2C5A4AEB8EAF4B",
+      "lines": 24,
+      "bytes": 2552,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-453/README.md",
       "sha256": "DE46229E8FBBD682E19B289CD7D56C1D66E89B7FB197AC1828C757D21220D9B4",
       "lines": 20,
@@ -2710,9 +2717,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "203ABEB3DB71706C82534A2BDD96083D27122BBB588381AB380EE1B834D93542",
-      "lines": 2797,
-      "bytes": 411069,
+      "sha256": "C888F41024220E78193E01C299724FAE49D3F5542818E0F24FEF8AB55D8BBF5B",
+      "lines": 2798,
+      "bytes": 411199,
       "utf8": true
     },
     {
@@ -8450,9 +8457,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-448-management-menus-recipe-cost-section.md",
-      "sha256": "6440BFDDE60E35D79A3E268EF29EFE13DF189712798FFA7686E849B596ABE441",
+      "sha256": "BCC9F5F399C7A0F62EFEC01C797F70282CA24784D831EFAEE65839B4ACB6CB4A",
       "lines": 49,
-      "bytes": 1996,
+      "bytes": 2006,
       "utf8": true
     },
     {
