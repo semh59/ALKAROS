@@ -1,0 +1,57 @@
+﻿
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (4 tests | 1 failed) 428ms
+     × renders an active order's lines and total, authoritative from the snapshot 48ms
+ ❯ src/routes/Cashier.category-tabs.test.tsx (3 tests | 1 failed) 1583ms
+     × shows a product at its menu price because that price already includes KDV 72ms
+corepack : 
+At line:3 char:1
++ corepack pnpm exec vitest run src/routes/CustomerDisplay.test.tsx src ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/routes/Cashier.category-tabs.test.tsx > Cashier category rail tabs (V1-RMD-364) > shows a product at its men
+u price because that price already includes KDV
+AssertionError: expected '₺110,00KDV dahil' to contain '100,00'
+
+Expected: "100,00"
+Received: "₺110,00KDV dahil"
+
+ ❯ src/routes/Cashier.category-tabs.test.tsx:100:19
+     98|
+     99|     const price = document.querySelector(".product-price")!.textConten…
+    100|     expect(price).toContain("100,00");
+       |                   ^
+    101|     expect(price).toContain("KDV dahil");
+    102|     expect(price).not.toContain("110,00");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > renders an active order's lines and total, authoritative
+ from the snapshot
+AssertionError: expected 'AALKAROSSiparişS-042Sipariş güncellen…' to contain 'İçindeki KDV'
+
+Expected: "İçindeki KDV"
+Received: "AALKAROSSiparişS-042Sipariş güncelleniyorSİPARİŞİNİZÜrünler2 adetÜrünAdetTutarKöfte₺280,00 · KDV dahil2₺560,
+00ÖDENECEK TOPLAM₺560,00Ara toplam₺560,00KDV₺50,91✓Siparişiniz hazırlanıyor.Canlı güncelleme · v3"
+
+ ❯ src/routes/CustomerDisplay.test.tsx:100:39
+     98|     expect(document.body.textContent).toContain("Köfte");
+     99|     expect(document.body.textContent).toContain("560,00");
+    100|     expect(document.body.textContent).toContain("İçindeki KDV");
+       |                                       ^
+    101|     expect(document.body.textContent).toContain("50,91");
+    102|     expect(document.body.textContent).not.toContain("616,00");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  2 failed | 5 passed (7)
+   Start at  19:41:47
+   Duration  2.66s (transform 1.19s, setup 0ms, import 411ms, tests 2.01s, environment 1.24s)
+

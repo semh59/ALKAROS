@@ -12,7 +12,7 @@ import { ApiError, api, registerSessionExpiredHandler } from "../api";
 import type { CatalogProduct, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
 import { navLabels, stateText } from "../strings";
-import { formatMoney, formatQuantity, grossUnitPrice } from "../format";
+import { formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
 import { ExperiencePage, type BackendStatus } from "./workspace";
 
@@ -614,7 +614,7 @@ export function Cashier() {
                 <strong>{product.name}</strong>
                 <span className="product-card-footer">
                   <small>{product.sku}</small>
-                  <span className="product-price"><b>{formatMoney(grossUnitPrice(product.unitPrice, product.taxRate))}</b><small>KDV dahil</small></span>
+                  <span className="product-price"><b>{formatMoney(product.unitPrice)}</b><small>KDV dahil</small></span>
                 </span>
               </button>
             ))}
@@ -687,7 +687,7 @@ export function Cashier() {
                 {activeOrder.discountTotal > 0 && (
                   <div><span>İndirim</span><span>−{formatMoney(activeOrder.discountTotal)}</span></div>
                 )}
-                <div><span>KDV</span><span>{formatMoney(activeOrder.taxTotal)}</span></div>
+                <div><span>İçindeki KDV</span><span>{formatMoney(activeOrder.taxTotal)}</span></div>
                 <div className="grand-total"><span>Toplam</span><strong>{formatMoney(activeOrder.total)}</strong></div>
               </div>
               {activeOrder.editable ? (

@@ -1,0 +1,6 @@
+db ready, seeded
+host ready
+seed keys: cashierUsername,cashierPassword,limitedUsername,secondManagerUsername,kasa1TableId,kasa1TableNumber,lowStockProductId,normalStockProductId,paymentProductId,modifierProductId,modifierGroupId,modifierSmallId,modifierLargeId,transferTables
+payment product: 100 TL with KDV %10 profile
+cards: ["DİĞER E2E Boylu Ürün E2E-KASA-BOYLU ₺150,00 KDV dahil","DİĞER E2E Kasa Düşük Stok E2E-KASA-DUSUK ₺190,00 KDV dahil","DİĞER E2E Kasa Normal Stok E2E-KASA-NORMAL ₺220,00 KDV dahil","DİĞER E2E Ödeme Ürünü E2E-ODEME-URUN ₺100,00 KDV dahil"]
+totals: Ara toplam ₺100,00 İçindeki KDV ₺9,09 Toplam ₺100,00

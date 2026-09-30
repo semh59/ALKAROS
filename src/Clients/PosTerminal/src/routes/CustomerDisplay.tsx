@@ -313,7 +313,7 @@ export function CustomerDisplay() {
             {snapshot.discountTotal > 0 && (
               <div><span>İndirim</span><span>−{formatMoney(snapshot.discountTotal, snapshot.currency)}</span></div>
             )}
-            <div><span>KDV</span><span>{formatMoney(snapshot.taxTotal, snapshot.currency)}</span></div>
+            <div><span>İçindeki KDV</span><span>{formatMoney(snapshot.taxTotal, snapshot.currency)}</span></div>
           </div>
           <div className="display-message"><span>{paying ? "…" : "✓"}</span><p>{snapshot.message}</p></div>
           <small>Canlı güncelleme · v{snapshot.revision}</small>

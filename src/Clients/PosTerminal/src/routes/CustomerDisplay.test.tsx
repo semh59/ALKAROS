@@ -36,7 +36,7 @@ const snapshot = {
   displayId: "d-1", terminalId: "t-1", orderId: "o-1", revision: 3, state: "Active", editable: true,
   orderNumber: "S-042",
   lines: [{ itemId: "i-1", name: "Köfte", quantity: 2, lineTotal: 560 }],
-  subtotal: 560, discountTotal: 0, taxTotal: 56, total: 616, currency: "TRY",
+  subtotal: 560, discountTotal: 0, taxTotal: 50.91, total: 560, currency: "TRY",
   serverTimestamp: "2026-09-27T12:00:00Z", message: "Siparişiniz hazırlanıyor.",
 };
 
@@ -96,7 +96,10 @@ describe("CustomerDisplay", () => {
 
     expect(document.body.textContent).toContain("S-042");
     expect(document.body.textContent).toContain("Köfte");
-    expect(document.body.textContent).toContain("616,00");
+    expect(document.body.textContent).toContain("560,00");
+    expect(document.body.textContent).toContain("İçindeki KDV");
+    expect(document.body.textContent).toContain("50,91");
+    expect(document.body.textContent).not.toContain("616,00");
     expect(startMock).toHaveBeenCalled();
   });
 

@@ -1,7 +1,7 @@
 # V1-RMD-469 - KDV dahil satır fiyatı: kasa, müşteri ekranı ve adisyon sayfası
 
 - Task ID: V1-RMD-469
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing

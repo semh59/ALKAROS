@@ -70,6 +70,38 @@ describe("Cashier category rail tabs (V1-RMD-364)", () => {
     expect(tabs[1].getAttribute("aria-selected")).toBe("true");
   });
 
+  it("shows a product at its menu price because that price already includes KDV", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/auth/session")) {
+        return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
+      }
+      if (path.endsWith("/catalog")) {
+        return jsonResponse([
+          { productId: "p1", sku: "SKU-1", name: "Köfte", categoryCode: "ANA", categoryName: "Ana Yemek", unitPrice: 100, taxRate: 10 },
+        ]);
+      }
+      if (path.endsWith("/orders/active")) return jsonResponse(null);
+      if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
+      return jsonResponse({});
+    }));
+
+    const { Cashier } = await import("./Cashier");
+    const { RouterProvider: FreshRouterProvider } = await import("../router");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => {
+      root!.render(createElement(FreshRouterProvider, null, createElement(Cashier)));
+    });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+
+    const price = document.querySelector(".product-price")!.textContent!;
+    expect(price).toContain("100,00");
+    expect(price).toContain("KDV dahil");
+    expect(price).not.toContain("110,00");
+  });
+
   // Cashier.tsx - arguably the highest-traffic screen in the whole system -
   // had no axe-core scan at all, unlike ~13 other feature workspaces
   // (CatalogWorkspace, BillSplitWorkspace, TableWorkspace, etc., see their
