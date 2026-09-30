@@ -1,8 +1,8 @@
 # V1-RMD-463 - Online sipariş uzlaştırma taramasını zamanlı çalıştırmak
 
 - Task ID: V1-RMD-463
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Planned
 
