@@ -109,7 +109,8 @@ public static class OnlineMenuEndpoints
 
             return Results.Ok(new OnlineMenuV1(
                 provider, channel, products, platformProducts, platformMenuUnavailable,
-                await ReadMenusAsync(dataSource, cancellationToken), await ReadPublicationsAsync(dataSource, channel, cancellationToken)));
+                await ReadMenusAsync(dataSource, cancellationToken), await ReadPublicationsAsync(dataSource, channel, cancellationToken),
+                await ReadUnmappedCodesAsync(dataSource, provider, cancellationToken)));
         }).RequireRateLimiting("terminal-read");
 
         group.MapPut("/{provider}/mappings/{productId:guid}", async (
@@ -208,6 +209,30 @@ public static class OnlineMenuEndpoints
         return rows;
     }
 
+    /// <summary>Platform codes that orders of the last 30 days were rejected for and that still stand for no product.</summary>
+    private static async Task<IReadOnlyList<OnlineMenuUnmappedCodeV1>> ReadUnmappedCodesAsync(
+        NpgsqlDataSource dataSource, string provider, CancellationToken cancellationToken)
+    {
+        await using var command = dataSource.CreateCommand(
+            """
+            SELECT i.outcome_detail->>'detail', count(DISTINCT i.external_order_id), max(i.received_at)
+            FROM online_ordering.provider_inbox i
+            WHERE i.provider = $1 AND i.processing_outcome = 'Rejected' AND i.outcome_detail->>'rejection' = 'UnmappedSku'
+              AND i.outcome_detail->>'detail' IS NOT NULL AND i.received_at > now() - interval '30 days'
+              AND NOT EXISTS (SELECT 1 FROM online_ordering.provider_product_mappings m
+                              WHERE m.provider = i.provider AND m.external_sku = i.outcome_detail->>'detail' AND m.effective_to IS NULL)
+            GROUP BY 1
+            ORDER BY 3 DESC, 1
+            LIMIT 100;
+            """);
+        command.Parameters.AddWithValue(provider);
+        var codes = new List<OnlineMenuUnmappedCodeV1>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            codes.Add(new OnlineMenuUnmappedCodeV1(reader.GetString(0), (int)reader.GetInt64(1), reader.GetFieldValue<DateTimeOffset>(2)));
+        return codes;
+    }
+
     private static async Task<IReadOnlyList<OnlineMenuCatalogMenuV1>> ReadMenusAsync(NpgsqlDataSource dataSource, CancellationToken cancellationToken)
     {
         await using var command = dataSource.CreateCommand("SELECT menu_id, name FROM menu.menus WHERE active ORDER BY name, menu_id LIMIT 100;");
@@ -286,7 +311,10 @@ public sealed record OnlineMenuV1(
     IReadOnlyList<OnlineMenuPlatformProductV1>? PlatformProducts,
     bool PlatformMenuUnavailable,
     IReadOnlyList<OnlineMenuCatalogMenuV1> Menus,
-    IReadOnlyList<OnlineMenuPublicationV1> Publications);
+    IReadOnlyList<OnlineMenuPublicationV1> Publications,
+    IReadOnlyList<OnlineMenuUnmappedCodeV1> UnmappedCodes);
+
+public sealed record OnlineMenuUnmappedCodeV1(string Code, int OrderCount, DateTimeOffset LastSeenAt);
 
 public sealed record SaveOnlineMappingRequestV1(string? ExternalSku);
 

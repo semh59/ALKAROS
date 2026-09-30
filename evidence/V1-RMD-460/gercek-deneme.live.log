@@ -1,0 +1,7 @@
+db ready, seeded
+host ready
+seed keys: cashierUsername,cashierPassword,limitedUsername,secondManagerUsername,kasa1TableId,kasa1TableNumber,lowStockProductId,normalStockProductId,paymentProductId,modifierProductId,modifierGroupId,modifierSmallId,modifierLargeId,transferTables
+trendyol-go GET 200 unmappedCodes: [{"code":"31","orderCount":2,"lastSeenAt":"2026-09-30T12:38:46.340418+00:00"},{"code":"32","orderCount":1,"lastSeenAt":"2026-09-30T10:38:46.342313+00:00"}]
+yemeksepeti GET 200 unmappedCodes: [{"code":"SKU-9","orderCount":1,"lastSeenAt":"2026-09-30T12:38:46.34581+00:00"}]
+PUT mapping code 31 -> 200 {"productId":"9fab5c30-6b8c-4465-880c-167156028007","externalSku":"31"} product E2E Ödeme Ürünü sku null
+after mapping unmappedCodes: [{"code":"32","orderCount":1,"lastSeenAt":"2026-09-30T10:38:46.342313+00:00"}]

@@ -177,6 +177,40 @@ public sealed class OnlineMenuHttpTests : IAsyncLifetime, IDisposable
     }
 
     [Fact]
+    public async Task RejectedOrdersNameTheirUnmappedCodesPerPlatformUntilTheCodeIsMapped()
+    {
+        var manager = await ManagerAsync();
+        var (productId, _) = await _database.SeedSellableProductAsync(onHand: 1m);
+        await _database.ExecuteAsync(
+            """
+            INSERT INTO online_ordering.provider_inbox
+                (inbox_id, event_key, external_order_id, provider_status, body_sha256, payload_envelope, provider, received_at, processed_at, processing_outcome, outcome_detail)
+            VALUES
+                (gen_random_uuid(), repeat('1', 64), 'o-1', 'RECEIVED', repeat('b', 64), '\x00'::bytea, 'trendyol-go', now() - interval '2 hours', now(), 'Rejected', '{"rejection":"UnmappedSku","detail":"31"}'),
+                (gen_random_uuid(), repeat('2', 64), 'o-2', 'RECEIVED', repeat('b', 64), '\x00'::bytea, 'trendyol-go', now() - interval '1 hour', now(), 'Rejected', '{"rejection":"UnmappedSku","detail":"31"}'),
+                (gen_random_uuid(), repeat('3', 64), 'o-3', 'RECEIVED', repeat('b', 64), '\x00'::bytea, 'trendyol-go', now() - interval '3 hours', now(), 'Rejected', '{"rejection":"UnmappedSku","detail":"32"}'),
+                (gen_random_uuid(), repeat('4', 64), 'o-4', 'RECEIVED', repeat('b', 64), '\x00'::bytea, 'trendyol-go', now() - interval '40 days', now(), 'Rejected', '{"rejection":"UnmappedSku","detail":"33"}'),
+                (gen_random_uuid(), repeat('5', 64), 'o-5', 'RECEIVED', repeat('b', 64), '\x00'::bytea, 'trendyol-go', now() - interval '1 hour', now(), 'Rejected', '{"rejection":"ItemUnavailable","detail":"34"}'),
+                (gen_random_uuid(), repeat('6', 64), 'o-6', 'RECEIVED', repeat('b', 64), '\x00'::bytea, 'yemeksepeti', now() - interval '1 hour', now(), 'Rejected', '{"rejection":"UnmappedSku","detail":"SKU-9"}');
+            """);
+
+        async Task<List<(string Code, int Orders)>> CodesAsync(string provider)
+        {
+            using var response = await SendAsync(HttpMethod.Get, "/" + provider, manager);
+            var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+            return body.GetProperty("unmappedCodes").EnumerateArray()
+                .Select(c => (c.GetProperty("code").GetString()!, c.GetProperty("orderCount").GetInt32())).ToList();
+        }
+
+        Assert.Equal([("31", 2), ("32", 1)], await CodesAsync("trendyol-go"));
+        Assert.Equal([("SKU-9", 1)], await CodesAsync("yemeksepeti"));
+
+        using var mapped = await SendAsync(HttpMethod.Put, $"/trendyol-go/mappings/{productId:D}", manager, new { externalSku = "31" });
+        Assert.Equal(HttpStatusCode.OK, mapped.StatusCode);
+        Assert.Equal([("32", 1)], await CodesAsync("trendyol-go"));
+    }
+
+    [Fact]
     public async Task AManagerMapsAndUnmapsAndACodeIsNeverMovedBetweenProductsSilently()
     {
         var manager = await ManagerAsync();

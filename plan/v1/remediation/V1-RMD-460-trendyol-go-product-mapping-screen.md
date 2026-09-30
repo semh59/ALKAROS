@@ -1,7 +1,7 @@
 # V1-RMD-460 - Trendyol Go: eşlenmemiş ürün kodlarını Yönetim menü yanıtına eklemek
 
 - Task ID: V1-RMD-460
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
