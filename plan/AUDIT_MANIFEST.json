@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1537,
-  "markdown_line_count": 115547,
-  "markdown_byte_count": 6667485,
+  "markdown_file_count": 1539,
+  "markdown_line_count": 115602,
+  "markdown_byte_count": 6670881,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2576,6 +2576,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-460/README.md",
+      "sha256": "1A31597AF28498022B75936DCD37F96A4938B7A297C112370997435B98D1ABFC",
+      "lines": 4,
+      "bytes": 673,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-461/README.md",
       "sha256": "59F07E30BD1E1A28D4B9CE84C453A3417F8CB40E1333216F546F6896DD2EDE58",
       "lines": 4,
@@ -2780,9 +2787,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C225B1D7065D1D304981D8501DDF164746AC322954E4C7ED7943E5633F1A1CC2",
-      "lines": 2813,
-      "bytes": 413373,
+      "sha256": "BF441B239AE4A624FDA08E4BD4AFF1E8766AA9786FB2854E96FF4C1BB80E9098",
+      "lines": 2815,
+      "bytes": 413671,
       "utf8": true
     },
     {
@@ -8604,9 +8611,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-460-trendyol-go-product-mapping-screen.md",
-      "sha256": "C711BD87A0461A3B509639577300561C5D925727F2899C4636F893882C57FE68",
-      "lines": 43,
-      "bytes": 1249,
+      "sha256": "2C192AC155FDA7B9BD6B461B7F3C81450E23C694203A241A66BF14831CDDBF52",
+      "lines": 47,
+      "bytes": 1989,
       "utf8": true
     },
     {
@@ -8614,6 +8621,13 @@
       "sha256": "9CBD8993302DF3EB895FCF08BC03E823D01EA2B4E4F011949DC7A86B4600217D",
       "lines": 49,
       "bytes": 2078,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-462-online-menu-unmapped-codes-screen.md",
+      "sha256": "11C5931A0BEEF4B85768FC7065B30592C60F3E964ACFD3A8778FB6A45BDA9CEA",
+      "lines": 45,
+      "bytes": 1685,
       "utf8": true
     },
     {
