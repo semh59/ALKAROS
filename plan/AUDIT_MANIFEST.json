@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1531,
-  "markdown_line_count": 115284,
-  "markdown_byte_count": 6648221,
+  "markdown_file_count": 1532,
+  "markdown_line_count": 115303,
+  "markdown_byte_count": 6650609,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -113,9 +113,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "051F7E1ABB5C2F26C8AB085448D7760199F68EF466DFD34BA9BE96BD2DA0A01D",
-      "lines": 222,
-      "bytes": 19074,
+      "sha256": "D5624E86493DCB7CF4EA5F4DB33F70754D2490D441F0E7A07674A5B5C1BE731F",
+      "lines": 223,
+      "bytes": 19571,
       "utf8": true
     },
     {
@@ -2702,6 +2702,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V14-INV-003/README.md",
+      "sha256": "30012F559344E18582F1ADDAE940363C8BB04ED5EC678EE169E71213E41AF14A",
+      "lines": 17,
+      "bytes": 1766,
+      "utf8": true
+    },
+    {
       "path": "evidence/V14-RMD-001/verification.md",
       "sha256": "EC24FE678DFD3EB3F110B265DDCE3E83EEA8D5078B322ADF71C998E580175884",
       "lines": 11,
@@ -2759,9 +2766,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "28F6AE2548E44D7651A2D2FECA8231671471031CDEBBA70B5B9F27567DF9FBBF",
-      "lines": 2807,
-      "bytes": 412472,
+      "sha256": "FB4DC20976AD60E984A9DC1E725873DBAB7B50630815E82BBCB17594CEA57797",
+      "lines": 2808,
+      "bytes": 412603,
       "utf8": true
     },
     {
@@ -10347,9 +10354,9 @@
     },
     {
       "path": "plan/v1.4/invoicing/V14-INV-003-line-source-traceability.md",
-      "sha256": "C6EBB0AE043D6D4918FE6C80D528D46C45241C6F68D31E4A99081DFF800F1CAD",
+      "sha256": "39F17C68152A58F17C92D662A6CEF90E8752F69822B61FBC35D348FFC916F513",
       "lines": 64,
-      "bytes": 2377,
+      "bytes": 2371,
       "utf8": true
     },
     {
