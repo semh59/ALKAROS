@@ -28,6 +28,7 @@ kayıtlarıdır (Trendyol'a çağrı yapılmaz).
 ## Out of scope
 
 - Trendyol'a gerçek çağrı (V12-TGO-001 gerçek satıcı hesabı bekliyor).
+- Yemeksepeti ürün eşlemesi (mevcut ekran).
 
 ## Dependencies
 
