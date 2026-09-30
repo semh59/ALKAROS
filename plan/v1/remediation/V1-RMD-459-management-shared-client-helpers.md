@@ -1,8 +1,8 @@
 # V1-RMD-459 - Yönetim ekranları: tekrarlanan istemci yardımcılarını tek yerde toplama
 
 - Task ID: V1-RMD-459
-- Status: Planned
-- Assignee: Unassigned (exactly one person)
+- Status: InProgress
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
 
