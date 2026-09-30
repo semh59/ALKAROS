@@ -3,7 +3,7 @@
   "audit_date": "2026-07-30",
   "markdown_file_count": 1522,
   "markdown_line_count": 115009,
-  "markdown_byte_count": 6627551,
+  "markdown_byte_count": 6627567,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2717,7 +2717,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C888F41024220E78193E01C299724FAE49D3F5542818E0F24FEF8AB55D8BBF5B",
+      "sha256": "69C94ECCD748732DF439943E042A602D261B1FDBB558A39EF70D44894C751B0F",
       "lines": 2798,
       "bytes": 411199,
       "utf8": true
@@ -8464,9 +8464,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-449-management-staff-roles-section.md",
-      "sha256": "8042EFA3B2CAE75D8124125C70EADFA643C32E4DA9F05BB1FC07AE129BA88C66",
+      "sha256": "59E366CF253141278005AA5710426B22E02B935EF40E8724BC7D1F4B3C3A1646",
       "lines": 49,
-      "bytes": 2022,
+      "bytes": 2038,
       "utf8": true
     },
     {

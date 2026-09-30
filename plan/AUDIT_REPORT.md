@@ -2700,7 +2700,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-446-management-stock-section.md` | ✅ | `01BAFDBA1896C67AA20BA86A9AD95A91650F8B059BFA4AA3B1026F7D75F03C5B` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-447-management-purchasing-production-section.md` | ✅ | `1E776B80C4E0504FD74CF6FDDF951AD0D1D579C6F664A9AA83030B69761DB1A1` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-448-management-menus-recipe-cost-section.md` | ✅ | `BCC9F5F399C7A0F62EFEC01C797F70282CA24784D831EFAEE65839B4ACB6CB4A` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-449-management-staff-roles-section.md` | ✅ | `8042EFA3B2CAE75D8124125C70EADFA643C32E4DA9F05BB1FC07AE129BA88C66` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-449-management-staff-roles-section.md` | ✅ | `59E366CF253141278005AA5710426B22E02B935EF40E8724BC7D1F4B3C3A1646` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-450-management-security-system-section.md` | ✅ | `83D4C65122184818F8958E99B294C6A31C75077D0D265B603BAB10CBED58ADB7` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-451-management-settings-history-section.md` | ✅ | `888E5575327C180E6D4F5AF0D8236CD99574060EE6567230B4C301E4EF62B8CD` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-452-start-idempotency-invoicing-management-tasks.md` | ✅ | `C23514682A94AAE6CA83F8D4914CDE42803AFF97873DC8C27964C70206DFE8C4` | Tek-sahip görev |
