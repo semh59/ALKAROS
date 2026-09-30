@@ -26,6 +26,7 @@ bilgileri" kartını ekler. VKN 10 haneli, TCKN 11 haneli doğrulanır; eksik bi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/QnbCredentialSettings.test.tsx - yalnız kartın varlığı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts - yalnız yeni kartın Türkçe metinleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/QnbCredentialSettings/SellerProfileSettingsHttpTests.cs - yalnız yeni uç noktaların testleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/QnbCredentialSettings/ALKAROS.Host.Experience.QnbCredentialSettings.Tests.csproj - yalnız 171 numaralı migration'ın test şeması listesine eklenmesi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız yeni uç noktaların ve servislerin kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tools/consistency-audit/unreachable_services_allowlist.json - yalnız `ISellerProfileStore` ve gerçeklemesinin geçici kaydının kaldırılması
 

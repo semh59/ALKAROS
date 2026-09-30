@@ -12,7 +12,7 @@
 
 ## Goal
 
-Online sipariş teslim edildiğinde (`HandOverAsync`) sipariş ve kalemleri okunup `V1-RMD-470` taslağı açılır. Fatura başarısızlığı teslimi
+Online sipariş teslim edildiğinde (`HandOverAsync`, iki platform da aynı yolu kullanır) sipariş ve kalemleri okunup `V1-RMD-470` taslağı açılır. Fatura başarısızlığı teslimi
 engellemez: taslak teslimden sonra açılır, başarısız ya da satıcı bilgisi eksik ise sipariş "faturasız" kalır ve zamanlanmış bir tarama
 (`V1-RMD-463` kalıbı) eksik taslakları tamamlar; 7 günlük yasal süre yaklaşan faturasız sipariş uzlaştırma vakası olur (Türkçe
 etiket). Tekrar çağrı idempotenttir. Yemeksepeti ve Trendyol Go aynı teslim yolunu kullanır.
