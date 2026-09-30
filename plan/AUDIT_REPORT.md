@@ -2713,7 +2713,7 @@ ile dondurulan ilk bağımsız denetim anlık görüntüsündeki kesin ilk satı
 | `plan/v1/remediation/V1-RMD-454-task-scope-push-task-ids.md` | ✅ | `9E6C8DF097EF87024AC0DF9F85097D91EA4B51C044B9146A8290CC98BAF8E49E` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-455-management-home-link.md` | ✅ | `15C686690B7B159E04E8C03F40CB1DB8827806C8B9FA30DE7F62CC5D5623DC03` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-456-role-user-listing-endpoints.md` | ✅ | `74ED88D4C8FBE42F61D75DB9B0B108C2A8642B21DF2B6FF67198C4D4259B56B4` | Tek-sahip görev |
-| `plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md` | ✅ | `F549B748F1CDB2AC64FA1164D2FC7105D2FAB27957E562355889BE7DCFD65867` | Tek-sahip görev |
+| `plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md` | ✅ | `FA5523B39DE147291D980FDA68AAAF148DCC0DB15586A104E88EC5FC747413B5` | Tek-sahip görev |
 | `plan/v1/remediation/V1-RMD-458-stale-test-lazy-route-wait.md` | ✅ | `6853CDD4740CFAD5B64519142633440E7D53CBEF93DA44AE598381697C434CC5` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md` | ✅ | `F2FED60EC5A81BA0222876413A4EAC393315B2C32D7C689030F73E393D7C4B75` | Tek-sahip görev |
 | `plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md` | ✅ | `6F0152751CE85053F0B9A64BDFDB85640E5C20339617877D410BCBD1F7B40E8A` | Tek-sahip görev |
