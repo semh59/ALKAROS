@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1523,
-  "markdown_line_count": 115030,
-  "markdown_byte_count": 6629926,
+  "markdown_file_count": 1525,
+  "markdown_line_count": 115144,
+  "markdown_byte_count": 6635753,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2724,9 +2724,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "2F6C91715AE497BD331EEA1934261A23AD35A03388A3AF1078522B30E880022D",
-      "lines": 2799,
-      "bytes": 411329,
+      "sha256": "C9C8F27523DE410D78840B8E701D863520FBD9E71A86110E9A316A622AAF368B",
+      "lines": 2801,
+      "bytes": 411661,
       "utf8": true
     },
     {
@@ -8516,6 +8516,20 @@
       "sha256": "15C686690B7B159E04E8C03F40CB1DB8827806C8B9FA30DE7F62CC5D5623DC03",
       "lines": 49,
       "bytes": 1772,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-456-role-user-listing-endpoints.md",
+      "sha256": "71DE84840A4B764D8D3BD043B4BA99F2BF388EDEC7ED58B29F340A7EE55297AB",
+      "lines": 61,
+      "bytes": 3265,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md",
+      "sha256": "F549B748F1CDB2AC64FA1164D2FC7105D2FAB27957E562355889BE7DCFD65867",
+      "lines": 51,
+      "bytes": 2230,
       "utf8": true
     },
     {
