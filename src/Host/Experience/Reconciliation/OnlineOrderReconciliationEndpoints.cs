@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace ALKAROS.Host.Experience.Reconciliation;
 
@@ -23,6 +25,11 @@ public static class OnlineOrderReconciliationEndpoints
     {
         ArgumentNullException.ThrowIfNull(services);
         services.TryAddSingleton<IProviderEventReprocessing, OnlineOrderingInboxReprocessing>();
+        services.AddHostedService(provider => new OnlineOrderReconciliationHostedService(
+            provider.GetRequiredService<IServiceScopeFactory>(),
+            provider.GetRequiredService<ILogger<OnlineOrderReconciliationHostedService>>(),
+            OnlineOrderReconciliationHostedService.DefaultInitialDelay,
+            OnlineOrderReconciliationHostedService.DefaultInterval));
         return services;
     }
 

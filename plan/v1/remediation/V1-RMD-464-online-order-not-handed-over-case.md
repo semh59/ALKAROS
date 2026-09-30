@@ -25,6 +25,7 @@ kontrolde kendiliğinden çözülür.
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Reconciliation/OnlineOrders/OnlineOrderReconciliationModels.cs - yalnız yeni ayrışma türü ve önerilen eylem
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Reconciliation/OnlineOrders/OnlineOrderReconciliationModule.cs - yalnız yeni kaynak çiftinin kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Reconciliation/OnlineOrders/NotHandedOverSourcePairTests.cs - yeni test dosyası
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Reconciliation/OnlineOrderReconciliationHttpTests.cs - yalnız tarama sonucundaki kaynak çifti sayısı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-problems/onlineProblemsApi.ts - yalnız yeni tür ve eylem için Türkçe etiketler
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-problems/OnlineProblemsTab.test.tsx - yalnız yeni etiketlerin testi
 

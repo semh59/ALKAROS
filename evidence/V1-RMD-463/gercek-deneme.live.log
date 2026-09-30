@@ -1,0 +1,6 @@
+db ready, seeded
+host ready
+seed keys: cashierUsername,cashierPassword,limitedUsername,secondManagerUsername,kasa1TableId,kasa1TableNumber,lowStockProductId,normalStockProductId,paymentProductId,modifierProductId,modifierGroupId,modifierSmallId,modifierLargeId,transferTables
+rejected order recorded at 2026-09-30T15:04:46.781Z; no scan endpoint will be called
+cases found by the scheduled scan: [{"case_type":"OnlineOrderMismatch","deduplication_key":"online-order:provider-accepted-locally-refused:yemeksepeti:o-1","status":"Open"}]
+scan endpoint calls in host log: 0
