@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1534,
-  "markdown_line_count": 115427,
-  "markdown_byte_count": 6657841,
+  "markdown_file_count": 1535,
+  "markdown_line_count": 115477,
+  "markdown_byte_count": 6660149,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2766,9 +2766,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "29C2F1778563D3A14460E76CABA0DE68FF1AF0C9E45A383C77B095E2F99AB4DE",
-      "lines": 2810,
-      "bytes": 412939,
+      "sha256": "8DEC1A748B41AE283EB95464D7276418EF5CCB3B3ABD5F93435E3C630F347147",
+      "lines": 2811,
+      "bytes": 413112,
       "utf8": true
     },
     {
@@ -8596,6 +8596,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-461-admit-kvkk-retention-ahead-of-v14-exit.md",
+      "sha256": "4CD64A9784FF59D286BD27BBB83134A204E264A502F1B388CF08D53D518E6B22",
+      "lines": 49,
+      "bytes": 2151,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -10480,9 +10487,9 @@
     },
     {
       "path": "plan/v1.5/kvkk/V15-KVK-001-retention-execution.md",
-      "sha256": "6B3E58FA5BBD546F44C4B11F577E19A9EA2B0888865C08A824DFA3E90F53A0F9",
+      "sha256": "E63CEC17133BB62396560E1A05E9EE2A768CB9235634A70589590967903E1751",
       "lines": 78,
-      "bytes": 3970,
+      "bytes": 3954,
       "utf8": true
     },
     {
