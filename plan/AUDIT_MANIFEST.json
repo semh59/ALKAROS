@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1522,
-  "markdown_line_count": 115009,
-  "markdown_byte_count": 6627567,
+  "markdown_file_count": 1523,
+  "markdown_line_count": 115030,
+  "markdown_byte_count": 6629926,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2513,6 +2513,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-449/README.md",
+      "sha256": "77EA2D02E70E122D755BECAD5721F1B21360862B5FC65FC74C02C10032B35860",
+      "lines": 20,
+      "bytes": 2235,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-453/README.md",
       "sha256": "DE46229E8FBBD682E19B289CD7D56C1D66E89B7FB197AC1828C757D21220D9B4",
       "lines": 20,
@@ -2717,9 +2724,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "69C94ECCD748732DF439943E042A602D261B1FDBB558A39EF70D44894C751B0F",
-      "lines": 2798,
-      "bytes": 411199,
+      "sha256": "2F6C91715AE497BD331EEA1934261A23AD35A03388A3AF1078522B30E880022D",
+      "lines": 2799,
+      "bytes": 411329,
       "utf8": true
     },
     {
@@ -8464,9 +8471,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-449-management-staff-roles-section.md",
-      "sha256": "59E366CF253141278005AA5710426B22E02B935EF40E8724BC7D1F4B3C3A1646",
+      "sha256": "9B3EB8256931017D310EF7F969FCEF58B5631E77DD7B652C9E3514D84B60B61D",
       "lines": 49,
-      "bytes": 2038,
+      "bytes": 2032,
       "utf8": true
     },
     {
