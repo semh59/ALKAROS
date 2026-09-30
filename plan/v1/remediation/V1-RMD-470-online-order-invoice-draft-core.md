@@ -1,8 +1,8 @@
 # V1-RMD-470 - Online siparişin e-Arşiv fatura taslağı: çekirdek
 
 - Task ID: V1-RMD-470
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Planned
 
