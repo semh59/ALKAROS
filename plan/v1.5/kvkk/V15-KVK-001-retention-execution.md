@@ -1,8 +1,8 @@
 # V15-KVK-001 - Implement KVKK retention execution
 
 - Task ID: V15-KVK-001
-- Status: InProgress
-- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
+- Status: Planned
+- Assignee: Unassigned (exactly one person)
 - Work type: implementation
 - Surface state: Planned
 
