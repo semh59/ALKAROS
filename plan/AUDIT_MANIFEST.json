@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1527,
-  "markdown_line_count": 115190,
-  "markdown_byte_count": 6641214,
+  "markdown_file_count": 1528,
+  "markdown_line_count": 115236,
+  "markdown_byte_count": 6643003,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2738,9 +2738,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "3BFDD4457BBE60FD6A0C089934BE14B8EA1ECBA255456BBCF1BF47CBA0261444",
-      "lines": 2803,
-      "bytes": 411921,
+      "sha256": "D4CE4BE7C27587FD6A244044D85795C4E0936AAF3DDCE217A4A56E8674210C1A",
+      "lines": 2804,
+      "bytes": 412082,
       "utf8": true
     },
     {
@@ -8534,9 +8534,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-456-role-user-listing-endpoints.md",
-      "sha256": "71DE84840A4B764D8D3BD043B4BA99F2BF388EDEC7ED58B29F340A7EE55297AB",
+      "sha256": "E6DC78DE9ECAF5D6548BCEA5C5B30BDF159B448198B68115AFA5D8B18981A749",
       "lines": 61,
-      "bytes": 3265,
+      "bytes": 3281,
       "utf8": true
     },
     {
@@ -8544,6 +8544,13 @@
       "sha256": "F549B748F1CDB2AC64FA1164D2FC7105D2FAB27957E562355889BE7DCFD65867",
       "lines": 51,
       "bytes": 2230,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-458-stale-test-lazy-route-wait.md",
+      "sha256": "5BA844AC4FBACEAB88D592CC0EF55CF2920D7D49629A9CB1330C2E6594C5EC11",
+      "lines": 45,
+      "bytes": 1612,
       "utf8": true
     },
     {
