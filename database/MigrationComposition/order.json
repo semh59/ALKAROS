@@ -1449,6 +1449,19 @@
         "invoice_line_sources"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "170",
+      "phase": "B",
+      "tables": [
+        "retention_policies",
+        "retention_rules",
+        "legal_holds",
+        "retention_runs",
+        "retention_run_items",
+        "retention_work_items"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

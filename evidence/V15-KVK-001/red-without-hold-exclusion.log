@@ -1,0 +1,4 @@
+﻿== Mutation: the selection no longer leaves out records under a legal hold
+    + FullyQualifiedErrorId : NativeCommandError
+  Başarısız ALKAROS.Privacy.RetentionExecution.Tests.RetentionExecutionTests.ALegalHoldKeepsARecordOutOfBothThePlanAndTheRun [58 ms]
+Başarısız! - Başarısız:     1, Başarılı:    10, Atlanan:     0, Toplam:    11, Süre: 19 s - ALKAROS.Privacy.RetentionExecution.Tests.dll (net8.0)

@@ -4,8 +4,11 @@
 > Owner task: V1-RMD-094 · Inventory authority: `evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md`
 
 The `kvkk-retention` verb anonymizes personal data once it is past the retention
-window set by the approved `V0-CMP-003` inventory. It is the V1 core of
-`V15-KVK-001`; the multi-store checkpoint/resume workflow is `V15-KVK-002`.
+window set by the approved `V0-CMP-003` inventory. Which records are due is decided
+by the `Privacy.RetentionExecution` module (`V15-KVK-001`) from a versioned policy
+(`privacy.retention_rules`, policy 1 = the approved inventory); the dry run and the
+apply always pick the same records. The multi-store checkpoint/resume workflow is
+`V15-KVK-002`.
 
 ## What it anonymizes
 
@@ -15,6 +18,14 @@ window set by the approved `V0-CMP-003` inventory. It is the V1 core of
 | Order note | `orders.orders.notes` | order `status IN (Completed, Cancelled, Rejected)` **and** `created_at` older than **5 years** | `notes -> '[anonymized]'` |
 | Order line note | `orders.order_items.notes` | parent order past the same window | `notes -> '[anonymized]'` |
 | Reservation reason | `table_mgmt.table_reservations.reason`, `release_reason` | `status IN (Claimed, Cancelled, Expired)` **and** `reserved_at` older than **5 years** | both `-> '[anonymized]'` |
+
+### Customers and suppliers — queued, not scrubbed here
+
+Customer profiles (10 years after the last ledger movement or invoice; never with an open
+balance or a pending anonymization request) and suppliers (10 years after the last purchase
+order) past their window are only written as pending work items in
+`privacy.retention_work_items`; the field-level anonymization of those records is
+`V15-KVK-002`. Every run is recorded in `privacy.retention_runs` / `retention_run_items`.
 
 ### Audit events — out of scope here
 
@@ -42,7 +53,10 @@ Provider raw payload retention is a separate workstream (`V15-SEC-003`).
 
 ## Legal hold
 
-Pass `--exclude-order-ids-file <path>` — a text file of order GUIDs, one per
+A legal hold placed in `privacy.legal_holds` (per data class and record) keeps that record out
+of every plan and run, the database refuses a work item for a held record, and a held record's
+work item cannot be completed until the hold is released. For orders you can also pass
+`--exclude-order-ids-file <path>` — a text file of order GUIDs, one per
 line (`#` comments allowed). Any order in that list, and its line items, are
 skipped (litigation, tax audit, active dispute). Maintain this list from your
 open-cases register before every run.
@@ -61,7 +75,7 @@ Output:
 
 ```text
 kvkk-retention: staff=<n> order_notes=<n> item_notes=<n> reservation_reasons=<n> \
-                as_of=<date> excluded_orders=<n> apply=false
+                customers=<n> suppliers=<n> policy=<version> as_of=<date> excluded_orders=<n> apply=false
 ```
 
 Review the counts. When they look right, add `--apply` to write. The verb is

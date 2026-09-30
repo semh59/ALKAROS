@@ -111,6 +111,7 @@ MODULE_SCHEMA = {
     # never added.
     "Security": "security",
     "Invoicing": "invoicing",
+    "Privacy": "privacy",
     "Payments": "payments",
     "QrOrdering": "qr_ordering",
     # V14-CST-001, 2026-09-28.

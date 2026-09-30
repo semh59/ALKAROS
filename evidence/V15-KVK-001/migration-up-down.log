@@ -1,0 +1,16 @@
+# all migrations up to 170 on an empty database, then 170 down and up again
+$ after full migration run
+tables: legal_holds, retention_policies, retention_rules, retention_run_items, retention_runs, retention_work_items
+triggers: tr_legal_holds_guard, tr_retention_policies_complete, tr_retention_policies_immutable, tr_retention_rules_immutable, tr_retention_run_items_immutable, tr_retention_runs_immutable, tr_retention_work_items_guard
+functions: assert_policy_complete, guard_legal_hold_change, guard_work_item_change, refuse_audit_change
+$ 170 down  exit=0
+$ after 170 down
+tables: 
+triggers: 
+functions: 
+$ 170 up  exit=0
+$ after 170 up again
+tables: legal_holds, retention_policies, retention_rules, retention_run_items, retention_runs, retention_work_items
+triggers: tr_legal_holds_guard, tr_retention_policies_complete, tr_retention_policies_immutable, tr_retention_rules_immutable, tr_retention_run_items_immutable, tr_retention_runs_immutable, tr_retention_work_items_guard
+functions: assert_policy_complete, guard_legal_hold_change, guard_work_item_change, refuse_audit_change
+$ 170 up a second time (idempotent)  exit=0

@@ -16,7 +16,7 @@ public sealed class HostModuleReachabilityTests
         var catalog = ModuleRegistry.DefaultCatalog;
 
         Assert.NotEmpty(catalog);
-        Assert.Equal(40, catalog.Count); // Invoicing.SourceTraceability joined the catalog (39 before it)
+        Assert.Equal(41, catalog.Count); // Privacy.RetentionExecution joined the catalog (40 before it)
         Assert.All(catalog, type =>
         {
             Assert.True(typeof(IModule).IsAssignableFrom(type));

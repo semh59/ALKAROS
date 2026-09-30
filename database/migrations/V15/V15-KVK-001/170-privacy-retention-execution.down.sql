@@ -1,0 +1,10 @@
+DROP TABLE IF EXISTS privacy.retention_work_items;
+DROP TABLE IF EXISTS privacy.retention_run_items;
+DROP TABLE IF EXISTS privacy.retention_runs;
+DROP TABLE IF EXISTS privacy.legal_holds;
+DROP TABLE IF EXISTS privacy.retention_rules;
+DROP TABLE IF EXISTS privacy.retention_policies;
+DROP FUNCTION IF EXISTS privacy.refuse_audit_change();
+DROP FUNCTION IF EXISTS privacy.assert_policy_complete();
+DROP FUNCTION IF EXISTS privacy.guard_legal_hold_change();
+DROP FUNCTION IF EXISTS privacy.guard_work_item_change();

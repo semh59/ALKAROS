@@ -1,0 +1,11 @@
+﻿
+== tests\Modules\Privacy\RetentionExecution
+Başarılı!  - Başarısız:     0, Başarılı:    11, Atlanan:     0, Toplam:    11, Süre: 19 s - ALKAROS.Privacy.RetentionExecution.Tests.dll (net8.0)
+== tests\Architecture\ModuleBoundaries
+Başarılı!  - Başarısız:     0, Başarılı:     9, Atlanan:     0, Toplam:     9, Süre: 3 s - ALKAROS.Architecture.Tests.dll (net8.0)
+== tests\Architecture\ApiConventions
+Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 15 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+== tests\Host\MigrationComposition
+Başarılı!  - Başarısız:     0, Başarılı:   164, Atlanan:     0, Toplam:   164, Süre: 11 m 32 s - ALKAROS.Host.Tests.dll (net8.0)
+== tests\Host\MigrationComposition KvkkRetentionTests (after adding the recovery test)
+Başarılı!  - Başarısız:     0, Başarılı:     4, Atlanan:     0, Toplam:     4, Süre: 35 s - ALKAROS.Host.Tests.dll (net8.0)

@@ -1,5 +1,6 @@
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.Tests.Fixtures;
+using ALKAROS.Privacy.RetentionExecution;
 using Npgsql;
 using Xunit;
 
@@ -57,6 +58,8 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
         await SeedReservationAsync(tableId, status: "Expired", reservedAgoYears: 6, reason: "Mehmet Aile - 6 kişi");
         await SeedReservationAsync(tableId, status: "Active", reservedAgoYears: 0, reason: "aktif rezervasyon");
 
+        var oldCustomer = await SeedOldCustomerAndSupplierAsync();
+
         var excludeFile = Path.Combine(Path.GetTempPath(), $"kvkk-hold-{Guid.NewGuid():N}.txt");
         await File.WriteAllTextAsync(excludeFile, $"# legal hold\n{heldOrder}\n");
 
@@ -84,6 +87,8 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
             Assert.Contains("item_notes=1", dryLine, StringComparison.Ordinal);
             Assert.Contains("reservation_reasons=1", dryLine, StringComparison.Ordinal);
             Assert.Contains("apply=false", dryLine, StringComparison.Ordinal);
+            Assert.Contains("customers=1 suppliers=1 policy=1", dryLine, StringComparison.Ordinal);
+            Assert.Equal(0L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items;"));
 
             Assert.NotEqual(Marker, await ScalarAsync<string>(
                 "SELECT notes FROM orders.orders WHERE order_id = @id;", ("id", oldOrder)));
@@ -117,6 +122,14 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
                 "SELECT email IS NULL AND phone IS NULL FROM identity.users WHERE user_id = @id;", ("id", oldStaff)));
             Assert.Equal(1L, await ScalarAsync<long>(
                 "SELECT count(*) FROM table_mgmt.table_reservations WHERE reason = @m AND status = 'Expired';", ("m", Marker)));
+
+            // customers and suppliers past their window are queued for the field-level workflow, not scrubbed here
+            Assert.Equal(2L, await ScalarAsync<long>(
+                "SELECT count(*) FROM privacy.retention_work_items WHERE status = 'Pending' AND data_class IN ('CustomerProfile', 'Supplier');"));
+            Assert.Equal(3L, await ScalarAsync<long>(
+                "SELECT count(*) FROM privacy.retention_work_items WHERE status = 'Done' AND data_class IN ('StaffAccount', 'OrderNotes', 'ReservationReason');"));
+            Assert.False(await ScalarAsync<bool>(
+                "SELECT anonymized FROM customer_data.profiles WHERE customer_id = @id;", ("id", oldCustomer)));
 
             // untouched: recent, active, wrong-status, legal-held
             Assert.NotEqual(Marker, await ScalarAsync<string>(
@@ -157,6 +170,33 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnApplyFinishesWorkItemsThatWereQueuedButNeverScrubbed()
+    {
+        var oldStaff = await SeedUserAsync(active: false, updatedAgoDays: 800);
+        var order = await SeedOrderAsync(await SeedProductAsync(), status: "Completed", createdAgoYears: 6, note: "Ahmet Bey");
+        var queued = await new PostgresRetentionExecutionService(_dataSource!).ExecuteAsync(DateTimeOffset.UtcNow, "interrupted-run");
+        Assert.Equal(2, queued.Plan.Candidates.Count);
+        Assert.NotEqual(Marker, await ScalarAsync<string>("SELECT notes FROM orders.orders WHERE order_id = @id;", ("id", order)));
+
+        using var applyOut = new StringWriter();
+        var originalOut = Console.Out;
+        try
+        {
+            Console.SetOut(applyOut);
+            Assert.Equal((int)HostExitCode.Success, ALKAROS.Host.Program.Main(["kvkk-retention", "--db-url", _database.Url, "--apply"]));
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+        }
+
+        Assert.Contains("staff=1 order_notes=1 item_notes=1 reservation_reasons=0", applyOut.ToString(), StringComparison.Ordinal);
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT notes FROM orders.orders WHERE order_id = @id;", ("id", order)));
+        Assert.Equal(Marker, await ScalarAsync<string>("SELECT display_name FROM identity.users WHERE user_id = @id;", ("id", oldStaff)));
+        Assert.Equal(2L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items WHERE status = 'Done';"));
+    }
+
+    [Fact]
     public void MissingDbUrlFailsClosed()
     {
         var exit = ALKAROS.Host.Program.Main(["kvkk-retention"]);
@@ -185,6 +225,24 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
         command.Parameters.AddWithValue("ago", updatedAgoDays);
         await command.ExecuteNonQueryAsync();
         return id;
+    }
+
+    private async Task<Guid> SeedOldCustomerAndSupplierAsync()
+    {
+        var customerId = Guid.NewGuid();
+        await using (var customer = _dataSource!.CreateCommand(
+            "INSERT INTO customer_data.profiles (customer_id, envelope_bytes, created_at) VALUES (@id, '\\x00'::bytea, now() - interval '11 years');"))
+        {
+            customer.Parameters.AddWithValue("id", customerId);
+            await customer.ExecuteNonQueryAsync();
+        }
+
+        await using var supplier = _dataSource!.CreateCommand(
+            "INSERT INTO purchasing.suppliers (supplier_id, code, name, created_at, updated_at) VALUES (@id, @code, 'Tedarikci', now() - interval '11 years', now() - interval '11 years');");
+        supplier.Parameters.AddWithValue("id", Guid.NewGuid());
+        supplier.Parameters.AddWithValue("code", $"S-{customerId:N}"[..16]);
+        await supplier.ExecuteNonQueryAsync();
+        return customerId;
     }
 
     private async Task<Guid> SeedProductAsync()

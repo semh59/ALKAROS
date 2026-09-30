@@ -44,6 +44,7 @@
     <ProjectReference Include="..\Modules\Payments\ALKAROS.Payments.csproj" />
     <ProjectReference Include="..\Modules\Payments\TenderComposition\ALKAROS.Payments.TenderComposition.csproj" />
     <ProjectReference Include="..\Modules\Invoicing\ALKAROS.Invoicing.csproj" />
+    <ProjectReference Include="..\Modules\Privacy\RetentionExecution\ALKAROS.Privacy.RetentionExecution.csproj" />
   </ItemGroup>
 
 </Project>

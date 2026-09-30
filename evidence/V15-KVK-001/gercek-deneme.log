@@ -1,0 +1,19 @@
+seeded: 1 inactive staff (3y), 2 old orders, 1 old reservation, 2 old customers (one owes 250), 1 old supplier
+$ kvkk-retention   (dry run)
+kvkk-retention: staff=1 order_notes=2 item_notes=0 reservation_reasons=1 customers=1 suppliers=1 policy=1 as_of=2026-09-30 excluded_orders=0 apply=false
+work items after dry run: [{"n":0}]
+legal hold placed on the second order
+$ kvkk-retention --apply  (apply)
+kvkk-retention: staff=1 order_notes=1 item_notes=0 reservation_reasons=1 customers=1 suppliers=1 policy=1 as_of=2026-09-30 excluded_orders=0 apply=true
+order notes: [{"notes":"[anonymized]"},{"notes":"dava konusu siparis"}]
+staff: [{"username":"anon-b6ebb7d8","display_name":"[anonymized]","email":null}]
+reservation: [{"reason":"[anonymized]"}]
+work items: [{"data_class":"CustomerProfile","status":"Pending"},{"data_class":"OrderNotes","status":"Done"},{"data_class":"ReservationReason","status":"Done"},{"data_class":"StaffAccount","status":"Done"},{"data_class":"Supplier","status":"Pending"}]
+customers (profile untouched, only queued): [{"is_old_free_customer":false,"anonymized":false},{"is_old_free_customer":true,"anonymized":false}]
+$ kvkk-retention --apply  (apply again)
+kvkk-retention: staff=0 order_notes=0 item_notes=0 reservation_reasons=0 customers=0 suppliers=0 policy=1 as_of=2026-09-30 excluded_orders=0 apply=true
+runs: [{"item_count":5},{"item_count":0}]
+hold released
+$ kvkk-retention --apply  (apply after release)
+kvkk-retention: staff=0 order_notes=1 item_notes=0 reservation_reasons=0 customers=0 suppliers=0 policy=1 as_of=2026-09-30 excluded_orders=0 apply=true
+order notes after release: [{"notes":"[anonymized]"},{"notes":"[anonymized]"}]

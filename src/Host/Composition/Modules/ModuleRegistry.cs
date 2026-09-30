@@ -68,6 +68,8 @@ public static class ModuleRegistry
         typeof(ALKAROS.Invoicing.Generation.InvoicingGenerationModule),
         // The ledger charges behind every invoice line.
         typeof(ALKAROS.Invoicing.SourceTraceability.InvoicingSourceTraceabilityModule),
+        // Retention windows, legal holds and work items for records past their KVKK retention.
+        typeof(ALKAROS.Privacy.RetentionExecution.PrivacyRetentionExecutionModule),
         typeof(ALKAROS.Payments.CardSettlement.CardSettlementModule),
         typeof(ALKAROS.Payments.EftTender.EftTenderModule),
         typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule),

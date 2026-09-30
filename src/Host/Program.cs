@@ -2,6 +2,7 @@ using ALKAROS.Host.Composition;
 using ALKAROS.Host.Composition.Migrations;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authentication;
+using ALKAROS.Privacy.RetentionExecution;
 using Npgsql;
 
 namespace ALKAROS.Host;
@@ -296,6 +297,9 @@ public static class Program
     /// Fiscal receipts, Z reports, invoices and the financial columns are
     /// legal-retention and are never touched. Default is a dry run; pass
     /// --apply to write. Idempotent (an already-'[anonymized]' row is skipped).
+    /// The windows and the choice of records come from the versioned policy of
+    /// Privacy.RetentionExecution, so the dry run and the apply always agree;
+    /// customers and suppliers past their window are only queued as work items.
     /// Usage: kvkk-retention --db-url &lt;url&gt; [--apply] [--as-of &lt;ISO date&gt;]
     ///        [--exclude-order-ids-file &lt;path&gt;]
     /// </summary>
@@ -350,84 +354,103 @@ public static class Program
         var databasePassword = RequiredEnvironmentValue(PasswordEnvironmentVariable, 1, 256, allowWhitespace: false);
         var connectionString = BuildConnectionString(databaseUrl, databasePassword, "ALKAROS.KvkkRetention");
 
-        await using var connection = new NpgsqlConnection(connectionString);
-        await connection.OpenAsync();
-        await using var transaction = await connection.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
+        await using var dataSource = NpgsqlDataSource.Create(connectionString);
+        var retention = new PostgresRetentionExecutionService(dataSource);
+        var heldSet = excludedOrderIds.ToHashSet();
 
-        // Dry run counts with the same predicate; --apply runs the UPDATE and
-        // reports the affected-row count. Both run inside the transaction; the
-        // dry run rolls back, so it can never change data.
-        async Task<int> RunAsync(string countSql, string updateSql, Action<NpgsqlParameterCollection> bind)
+        // The dry run and the apply pick their records through the same versioned policy; only the apply writes.
+        var staff = 0;
+        var orderNotes = 0;
+        var itemNotes = 0;
+        var reservations = 0;
+        RetentionPlan plan;
+        if (apply)
         {
-            if (apply)
-            {
-                await using var update = new NpgsqlCommand(updateSql, connection, transaction);
-                bind(update.Parameters);
-                return await update.ExecuteNonQueryAsync();
-            }
-
-            await using var count = new NpgsqlCommand(countSql, connection, transaction);
-            bind(count.Parameters);
-            var result = await count.ExecuteScalarAsync();
-            return result is null or DBNull
-                ? 0
-                : Convert.ToInt32(result, System.Globalization.CultureInfo.InvariantCulture);
+            plan = (await retention.ExecuteAsync(asOf, "kvkk-retention", heldSet)).Plan;
+            (staff, orderNotes, itemNotes, reservations) = await ScrubPendingAsync(dataSource, retention, heldSet, Marker);
+        }
+        else
+        {
+            plan = await retention.PlanAsync(asOf, heldSet);
+            var orderIds = plan.Candidates.Where(c => c.DataClass == RetentionClass.OrderNotes).Select(c => c.SubjectId).ToArray();
+            staff = plan.Candidates.Count(c => c.DataClass == RetentionClass.StaffAccount);
+            reservations = plan.Candidates.Count(c => c.DataClass == RetentionClass.ReservationReason);
+            await using var counts = dataSource.CreateCommand(
+                """
+                SELECT (SELECT count(*) FROM orders.orders WHERE order_id = ANY(@ids) AND notes IS NOT NULL AND notes <> @m),
+                       (SELECT count(*) FROM orders.order_items WHERE order_id = ANY(@ids) AND notes IS NOT NULL AND notes <> @m);
+                """);
+            counts.Parameters.AddWithValue("ids", orderIds);
+            counts.Parameters.AddWithValue("m", Marker);
+            await using var reader = await counts.ExecuteReaderAsync();
+            await reader.ReadAsync();
+            orderNotes = Convert.ToInt32(reader.GetInt64(0), System.Globalization.CultureInfo.InvariantCulture);
+            itemNotes = Convert.ToInt32(reader.GetInt64(1), System.Globalization.CultureInfo.InvariantCulture);
         }
 
-        var cutStaff = asOf.AddYears(-1);
-        var cutNotes = asOf.AddYears(-5);
-        var excluded = excludedOrderIds.ToArray();
+        Console.Out.WriteLine(
+            $"kvkk-retention: staff={staff} order_notes={orderNotes} item_notes={itemNotes} "
+            + $"reservation_reasons={reservations} "
+            + $"customers={plan.Candidates.Count(c => c.DataClass == RetentionClass.CustomerProfile)} "
+            + $"suppliers={plan.Candidates.Count(c => c.DataClass == RetentionClass.Supplier)} "
+            + $"policy={plan.PolicyVersion} "
+            + $"as_of={asOf:yyyy-MM-dd} excluded_orders={excludedOrderIds.Count} apply={apply.ToString().ToLowerInvariant()}");
+        return (int)HostExitCode.Success;
+    }
 
-        var staff = await RunAsync(
-            "SELECT count(*) FROM identity.users WHERE active = false AND updated_at < @cut AND display_name <> @m;",
+    /// <summary>
+    /// Scrubs the free-text fields of every pending staff, order-note and reservation work item (customers and suppliers
+    /// stay pending for the field-level anonymization workflow) and completes the items in the same transaction.
+    /// </summary>
+    private static async Task<(int Staff, int OrderNotes, int ItemNotes, int Reservations)> ScrubPendingAsync(
+        NpgsqlDataSource dataSource, PostgresRetentionExecutionService retention, HashSet<Guid> held, string marker)
+    {
+        async Task<Guid[]> PendingIdsAsync(RetentionClass dataClass)
+            => (await retention.PendingAsync(dataClass, 1_000_000)).Select(item => item.SubjectId).Where(id => !held.Contains(id)).ToArray();
+
+        var staffIds = await PendingIdsAsync(RetentionClass.StaffAccount);
+        var orderIds = await PendingIdsAsync(RetentionClass.OrderNotes);
+        var reservationIds = await PendingIdsAsync(RetentionClass.ReservationReason);
+
+        await using var connection = await dataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
+
+        async Task<int> UpdateAsync(string sql, Guid[] ids)
+        {
+            await using var update = new NpgsqlCommand(sql, connection, transaction);
+            update.Parameters.AddWithValue("ids", ids);
+            update.Parameters.AddWithValue("m", marker);
+            return await update.ExecuteNonQueryAsync();
+        }
+
+        var staff = await UpdateAsync(
             """
             UPDATE identity.users
             SET username = 'anon-' || left(user_id::text, 8),
                 display_name = @m, email = NULL, phone = NULL,
                 password_hash = '!kvkk-retention-disabled', updated_at = now()
-            WHERE active = false AND updated_at < @cut AND display_name <> @m;
+            WHERE user_id = ANY(@ids) AND active = false AND display_name <> @m;
             """,
-            p => { p.AddWithValue("cut", cutStaff); p.AddWithValue("m", Marker); });
-
-        var orderNotes = await RunAsync(
-            "SELECT count(*) FROM orders.orders WHERE notes IS NOT NULL AND notes <> @m AND status IN ('Completed','Cancelled','Rejected') AND created_at < @cut AND NOT (order_id = ANY(@ex));",
-            """
-            UPDATE orders.orders SET notes = @m, updated_at = now()
-            WHERE notes IS NOT NULL AND notes <> @m AND status IN ('Completed','Cancelled','Rejected')
-              AND created_at < @cut AND NOT (order_id = ANY(@ex));
-            """,
-            p => { p.AddWithValue("cut", cutNotes); p.AddWithValue("m", Marker); p.AddWithValue("ex", excluded); });
-
-        var itemNotes = await RunAsync(
-            "SELECT count(*) FROM orders.order_items oi JOIN orders.orders o USING (order_id) WHERE oi.notes IS NOT NULL AND oi.notes <> @m AND o.status IN ('Completed','Cancelled','Rejected') AND o.created_at < @cut AND NOT (o.order_id = ANY(@ex));",
-            """
-            UPDATE orders.order_items oi SET notes = @m, updated_at = now()
-            FROM orders.orders o
-            WHERE oi.order_id = o.order_id AND oi.notes IS NOT NULL AND oi.notes <> @m
-              AND o.status IN ('Completed','Cancelled','Rejected') AND o.created_at < @cut
-              AND NOT (o.order_id = ANY(@ex));
-            """,
-            p => { p.AddWithValue("cut", cutNotes); p.AddWithValue("m", Marker); p.AddWithValue("ex", excluded); });
-
-        var reservations = await RunAsync(
-            "SELECT count(*) FROM table_mgmt.table_reservations WHERE status IN ('Claimed','Cancelled','Expired') AND reserved_at < @cut AND reason <> @m;",
+            staffIds);
+        var orderNotes = await UpdateAsync(
+            "UPDATE orders.orders SET notes = @m, updated_at = now() WHERE order_id = ANY(@ids) AND notes IS NOT NULL AND notes <> @m;",
+            orderIds);
+        var itemNotes = await UpdateAsync(
+            "UPDATE orders.order_items SET notes = @m, updated_at = now() WHERE order_id = ANY(@ids) AND notes IS NOT NULL AND notes <> @m;",
+            orderIds);
+        var reservations = await UpdateAsync(
             """
             UPDATE table_mgmt.table_reservations
             SET reason = @m, release_reason = CASE WHEN release_reason IS NOT NULL THEN @m END, row_version = row_version + 1
-            WHERE status IN ('Claimed','Cancelled','Expired') AND reserved_at < @cut AND reason <> @m;
+            WHERE table_reservation_id = ANY(@ids) AND reason <> @m;
             """,
-            p => { p.AddWithValue("cut", cutNotes); p.AddWithValue("m", Marker); });
+            reservationIds);
 
-        if (apply)
-            await transaction.CommitAsync();
-        else
-            await transaction.RollbackAsync();
-
-        Console.Out.WriteLine(
-            $"kvkk-retention: staff={staff} order_notes={orderNotes} item_notes={itemNotes} "
-            + $"reservation_reasons={reservations} "
-            + $"as_of={asOf:yyyy-MM-dd} excluded_orders={excludedOrderIds.Count} apply={apply.ToString().ToLowerInvariant()}");
-        return (int)HostExitCode.Success;
+        await retention.CompleteAsync(RetentionClass.StaffAccount, staffIds, "kvkk-retention", transaction);
+        await retention.CompleteAsync(RetentionClass.OrderNotes, orderIds, "kvkk-retention", transaction);
+        await retention.CompleteAsync(RetentionClass.ReservationReason, reservationIds, "kvkk-retention", transaction);
+        await transaction.CommitAsync();
+        return (staff, orderNotes, itemNotes, reservations);
     }
 
     private static string RequiredEnvironmentValue(
