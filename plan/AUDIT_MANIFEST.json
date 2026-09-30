@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1536,
-  "markdown_line_count": 115498,
-  "markdown_byte_count": 6662087,
+  "markdown_file_count": 1537,
+  "markdown_line_count": 115547,
+  "markdown_byte_count": 6667485,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -113,9 +113,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "D5624E86493DCB7CF4EA5F4DB33F70754D2490D441F0E7A07674A5B5C1BE731F",
-      "lines": 223,
-      "bytes": 19571,
+      "sha256": "2ED5B296990151EE547DF5F744A04FA3CCEC2987B17469438F00806B67E10D08",
+      "lines": 224,
+      "bytes": 20054,
       "utf8": true
     },
     {
@@ -204,9 +204,9 @@
     },
     {
       "path": "docs/compliance/kvkk-retention-runbook.md",
-      "sha256": "ED99F2899E688272544A033EB2DAD155BD0A61E4197A26E572868505284A8A8C",
-      "lines": 89,
-      "bytes": 4235,
+      "sha256": "418BC1B6A46816A9247CA520097646A412BB36DA8AC84EFE82479E75FC06293A",
+      "lines": 103,
+      "bytes": 5233,
       "utf8": true
     },
     {
@@ -2730,6 +2730,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V15-KVK-001/README.md",
+      "sha256": "F9424B9DB3B51E1B8437962AC45366A6F0B2EBFA2154AA9C66F26678ECB12AC2",
+      "lines": 33,
+      "bytes": 3776,
+      "utf8": true
+    },
+    {
       "path": "evidence/V15-OBS-001/README.md",
       "sha256": "9F964FC1EFC983A2DD6942429E4820B87183D49F1107E903F8318A7623A25B1C",
       "lines": 20,
@@ -2773,9 +2780,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "63DD6224238F2666E29CC023DE99B90654C92160EA393EB6F004F1EB2362553F",
-      "lines": 2812,
-      "bytes": 413242,
+      "sha256": "C225B1D7065D1D304981D8501DDF164746AC322954E4C7ED7943E5633F1A1CC2",
+      "lines": 2813,
+      "bytes": 413373,
       "utf8": true
     },
     {
@@ -10494,9 +10501,9 @@
     },
     {
       "path": "plan/v1.5/kvkk/V15-KVK-001-retention-execution.md",
-      "sha256": "9F92CF064DF30573F45A6AE35ADE628E37DA4FE38AD0C8CE4BFB0ACE29F1F063",
+      "sha256": "B2B6CD8DCF144CB66D8C59E716208BC4A155EBC9C282A83AB401B51C28186081",
       "lines": 79,
-      "bytes": 3967,
+      "bytes": 3977,
       "utf8": true
     },
     {
