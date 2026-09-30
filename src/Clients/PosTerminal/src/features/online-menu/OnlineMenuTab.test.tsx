@@ -31,6 +31,7 @@ const tgoMenu: OnlineMenu = {
     { publicationId: "pub-1", status: "Delivered", requestedAt: "2026-09-27T10:00:00Z", itemCount: 2, validationErrorCount: 1, hasError: false, deliveredAt: "2026-09-27T10:00:05Z" },
     { publicationId: "pub-2", status: "Pending", requestedAt: "2026-09-27T09:00:00Z", itemCount: 2, validationErrorCount: 0, hasError: true, deliveredAt: null },
   ],
+  unmappedCodes: [],
 };
 
 const yspMenu: OnlineMenu = { ...tgoMenu, provider: "yemeksepeti", channel: "Yemeksepeti", platformProducts: null, publications: [],
@@ -137,6 +138,24 @@ describe("OnlineMenuTab", () => {
     await choose(document.querySelector('input[type="search"]') as HTMLInputElement, "");
     await act(async () => { (document.querySelector('input[type="checkbox"]') as HTMLInputElement).click(); });
     expect([...document.querySelectorAll("tbody tr td:first-child")].map((c) => c.textContent)).toEqual(["Mercimek Çorbası"]);
+  });
+
+  it("names the codes rejected orders arrived with and offers them when a code is typed", async () => {
+    fetchMock.mockImplementation(async (url: string) =>
+      url.endsWith("/online-channels") ? ok({ platforms: [channels.platforms[0]] })
+        : ok({ ...tgoMenu, platformProducts: null, platformMenuUnavailable: true,
+          unmappedCodes: [{ code: "31", orderCount: 2, lastSeenAt: "2026-09-29T10:00:00Z" }, { code: "32", orderCount: 1, lastSeenAt: "2026-09-28T10:00:00Z" }] }));
+    await render();
+    const list = labelled("Eşlenmemiş platform kodları");
+    expect(list.textContent).toContain("31 — 2 sipariş");
+    expect(list.textContent).toContain("32 — 1 sipariş");
+    const input = labelled("Mercimek Çorbası için platform ürün kodu") as HTMLInputElement;
+    expect([...document.querySelectorAll(`datalist[id="${input.getAttribute("list")}"] option`)].map((o) => o.getAttribute("value"))).toEqual(["31", "32"]);
+  });
+
+  it("shows no unmapped-code section when every rejected code is mapped", async () => {
+    await render();
+    expect(labelled("Eşlenmemiş platform kodları")).toBeNull();
   });
 
   it("says when the platform menu cannot be read so the code can be typed", async () => {

@@ -28,6 +28,12 @@ export interface OnlineMenuPublication {
   deliveredAt: string | null;
 }
 
+export interface OnlineMenuUnmappedCode {
+  code: string;
+  orderCount: number;
+  lastSeenAt: string;
+}
+
 export interface OnlineMenu {
   provider: string;
   channel: string;
@@ -36,6 +42,7 @@ export interface OnlineMenu {
   platformMenuUnavailable: boolean;
   menus: { menuId: string; name: string }[];
   publications: OnlineMenuPublication[];
+  unmappedCodes: OnlineMenuUnmappedCode[];
 }
 
 export interface OnlinePlatform {

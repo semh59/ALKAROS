@@ -1,7 +1,7 @@
 # V1-RMD-462 - Online menü sekmesinde eşlenmemiş platform kodlarını göstermek
 
 - Task ID: V1-RMD-462
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing

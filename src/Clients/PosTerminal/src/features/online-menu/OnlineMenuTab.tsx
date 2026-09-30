@@ -40,6 +40,7 @@ export function OnlineMenuTab({ terminalId }: { terminalId: string }) {
   const [drafts, setDrafts] = useState<Record<string, string>>({});
   const searchId = useId();
   const menuSelectId = useId();
+  const codesListId = useId();
 
   useEffect(() => {
     void (async () => {
@@ -160,6 +161,18 @@ export function OnlineMenuTab({ terminalId }: { terminalId: string }) {
           {menu.platformMenuUnavailable && (
             <p className="online-menu__hint">Platform menüsü okunamadı; platform ürün kodunu elle yazabilirsiniz.</p>
           )}
+          {menu.unmappedCodes.length > 0 && (
+            <section className="online-menu__warning" aria-label="Eşlenmemiş platform kodları">
+              <p>Bu kodlar için gelen siparişler reddedildi; ilgili ürüne eşleyin:</p>
+              <ul>
+                {menu.unmappedCodes.map((c) => (
+                  <li key={c.code}>
+                    {platformNames.get(c.code) ? `${platformNames.get(c.code)} (${c.code})` : c.code} — {c.orderCount} sipariş, son {when(c.lastSeenAt)}
+                  </li>
+                ))}
+              </ul>
+            </section>
+          )}
           {unmappedPlatform.length > 0 && (
             <p className="online-menu__hint">
               Platformda eşlenmemiş {unmappedPlatform.length} ürün var: {unmappedPlatform.slice(0, 8).map((p) => p.name || p.id).join(", ")}
@@ -180,6 +193,10 @@ export function OnlineMenuTab({ terminalId }: { terminalId: string }) {
               Yalnız eşlenmemişler
             </label>
           </div>
+
+          <datalist id={codesListId}>
+            {menu.unmappedCodes.map((c) => <option key={c.code} value={c.code}>{c.code}</option>)}
+          </datalist>
 
           <table className="online-menu__table">
             <caption className="online-menu__sr">{displayName} ürün eşlemeleri</caption>
@@ -212,7 +229,7 @@ export function OnlineMenuTab({ terminalId }: { terminalId: string }) {
                             {unmappedPlatform.map((p) => <option key={p.id} value={p.id}>{p.name || p.id}</option>)}
                           </select>
                         ) : (
-                          <input aria-label={`${product.name} için platform ürün kodu`} value={drafts[product.productId] ?? ""} disabled={busy}
+                          <input aria-label={`${product.name} için platform ürün kodu`} list={codesListId} value={drafts[product.productId] ?? ""} disabled={busy}
                             onChange={(event) => { const value = event.target.value; setDrafts((current) => ({ ...current, [product.productId]: value })); }} />
                         )}
                         <button type="button" disabled={busy || !product.active} aria-label={`${product.name} ürününü eşle`} onClick={() => void map(product)}>Eşle</button>
