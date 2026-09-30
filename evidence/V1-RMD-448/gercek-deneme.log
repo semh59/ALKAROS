@@ -1,0 +1,32 @@
+db ready, seeded
+host ready
+prepared: location, 2 items, 100 kg count, active recipe version
+catalog product used: E2E Boylu Ürün
+receipt: Mal kabul kaydedildi.
+menu: Menü eklendi.
+menu item: Ürün menüye eklendi.
+composition: Ana menü | ÜRÜN	SIRA	DURUM	İŞLEM | E2E Boylu Ürün	0	Aktif	Pasifleştir | Ürün | Seçin | E2E Boylu Ürün | E2E Kasa Düşük Stok | E2E Kasa Normal Stok | E2E Ödeme Ürünü | Sıra | Ekle
+daily create: Günün menüsü oluşturuldu.
+daily item: Ürün günün menüsüne eklendi.
+bad price: Geçerli bir sayı girin.
+price: Fiyat güncellendi.
+open: Günün menüsü açıldı.
+daily: Günün menüsü | Tarih | Getir |  | Açık |  | Menüyü kapat | ÜRÜN	FİYAT	PLANLANAN PORSİYON	HAZIRLANAN	KALAN	İŞLEM | E2E Boylu Ürün	₺52,50	12	0	0	 | Fiyatı değiştir | Porsiyonu değiştir | Pasifleştir | Güne ürün ekle | Ürün | Seçin | E2E Boylu Ürün | E2E Kasa Düşük Stok | E2E Kasa Normal Stok | E2E Ödeme Ürünü | Fiyat (boşsa katalog fiyatı) | Planlanan porsiyon | Tarif sürümü (isteğe bağlı) | Yok | M
+close: Günün menüsü kapatıldı.
+before calc: k çorbası · sürüm 1 (Etkin) | Geçerlilik tarihi | Geçerli maliyeti göster | Bugünkü maliyeti hesapla |  | Bu sürüm için seçilen tarihte kayıtlı bir maliyet yok.
+calc: Maliyet hesaplandı.
+cost: n) | Geçerlilik tarihi | Geçerli maliyeti göster | Bugünkü maliyeti hesapla | MALİYET TARİHİ | 2026-09-30 | PARTİ MALİYETİ | ₺50,00 | PORSİYON MALİYETİ | ₺5,00 | MALZEME	MİKTAR	BİRİM MALİYET	TUTAR | Un	2 kg	₺25,00	₺50,00
+management calls (non-GET only):
+  POST /api/v1/management/purchasing/suppliers -> 201
+  POST /api/v1/management/purchasing/purchase-orders -> 201
+  POST /api/v1/management/purchasing/purchase-orders/e6650edc-c28a-4649-a105-64f91dbbee18/submit -> 200
+  POST /api/v1/management/purchasing/purchase-orders/e6650edc-c28a-4649-a105-64f91dbbee18/receipts -> 201
+  POST /api/v1/management/menus-and-specials/menus -> 201
+  POST /api/v1/management/menus-and-specials/menus/1a2f95fa-aacd-43f5-8109-15a22b0c02c8/items -> 201
+  POST /api/v1/management/menus-and-specials/daily-menus -> 201
+  POST /api/v1/management/menus-and-specials/daily-menus/18d5896f-8a59-4a8a-aa0a-330d5b854b35/items -> 201
+  PUT /api/v1/management/menus-and-specials/daily-menus/items/93e1810e-3ebf-4e9a-a79b-541e0a17a74b/price -> 200
+  POST /api/v1/management/menus-and-specials/daily-menus/18d5896f-8a59-4a8a-aa0a-330d5b854b35/open -> 200
+  POST /api/v1/management/menus-and-specials/daily-menus/18d5896f-8a59-4a8a-aa0a-330d5b854b35/close -> 200
+  POST /api/v1/management/recipes/a32c1861-5b3e-4b09-ad7a-a417fc94e032/cost-snapshots -> 201
+console errors (non-font/401): ["Failed to load resource: the server responded with a status of 404 (Not Found)","Failed to load resource: the server responded with a status of 404 (Not Found)","Failed to load resource: the server responded with a status of 404 (Not Found)"]

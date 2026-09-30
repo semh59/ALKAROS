@@ -1,0 +1,5 @@
+requiredCapability menu.manage -> purchasing.manage:
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/features/management-menus-recipe-cost/MenusSection.test.tsx > menus section > the shell lists the menus tab only for a session holding menu.manage
+      Tests  1 failed | 12 passed (13)
+restored and cmp identical

@@ -1,0 +1,7 @@
+﻿corepack : $ tsc --noEmit
+At line:1 char:431
++ ... PosTerminal; corepack pnpm run typecheck *> "$env:TEMP\t.log"; "tc $L ...
++                  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ tsc --noEmit:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
