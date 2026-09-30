@@ -1,0 +1,21 @@
+﻿D:\PROJECT\ALKAROS\tests\Modules\Orders\OrderAggregate\bin\Debug\net8.0\ALKAROS.Orders.OrderAggregate.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+dotnet : [xUnit.net 00:00:01.72]     ALKAROS.Orders.OrderAggregate.Tests.OrderDomainTests.OrderDefaultsMatchPdfSchema [
+FAIL]
+At line:5 char:3
++   dotnet test "tests/Modules/$p" -v q --nologo *> "evidence/V1-RMD-46 ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([xUnit.net 00:0...dfSchema [FAIL]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[xUnit.net 00:00:01.73]     ALKAROS.Orders.OrderAggregate.Tests.OrderItemStateTests.SnapshotValuesAreFrozenAtConstructi
+on [FAIL]
+[xUnit.net 00:00:01.73]     ALKAROS.Orders.OrderAggregate.Tests.OrderItemQuantityAndRemovalTests.ChangeQuantityRecomput
+esNetTaxAndGrossFromScratch [FAIL]
+[xUnit.net 00:00:01.74]     ALKAROS.Orders.OrderAggregate.Tests.OrderItemStateTests.ModifiersParticipateInLineSubtotal 
+[FAIL]
+[xUnit.net 00:00:01.74]     ALKAROS.Orders.OrderAggregate.Tests.OrderItemQuantityAndRemovalTests.OrderChangeItemQuantit
+yUpdatesTheMatchingItemAndRecomputesOrderTotals [FAIL]
+[xUnit.net 00:00:01.74]     ALKAROS.Orders.OrderAggregate.Tests.OrderItemStateTests.DiscountReducesNetBeforeTax [FAIL]
+
+Başarısız! - Başarısız:     6, Başarılı:   132, Atlanan:     0, Toplam:   138, Süre: 1 s - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0)

@@ -1,0 +1,68 @@
+﻿  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.Payments.PaymentAggregate.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Payments\PaymentAggregate\bin\Debug\net8.0\ALKAROS.Payments.PaymentAggregate.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Payments\PaymentAggregate\bin\Debug\net8.0\ALKAROS.Payments.PaymentAggregate.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)
+[xUnit.net 00:00:01.12]   Discovering: ALKAROS.Payments.PaymentAggregate.Tests
+[xUnit.net 00:00:01.17]   Discovered:  ALKAROS.Payments.PaymentAggregate.Tests
+[xUnit.net 00:00:01.17]   Starting:    ALKAROS.Payments.PaymentAggregate.Tests
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.TimeoutRecoveryFlowGoesThroughUnknownAndReconciliationBeforeApproval [243 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorAcceptsAValidApprovedPaymentWithOverpaymentChange [5 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorRejectsEmptyCurrencyCode [1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorRejectsTenderedAmountWhileStillInitiated [4 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorRejectsZeroRequestedAmount [1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ReconciliationRequiredCanAlsoDeclineOrCancel [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ApproveMoreThanTenderedIsRejected [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ApproveBeforeTenderingIsRejected [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.NoImplicitTimeoutOutcomeUnknownCannotBeApprovedDirectly [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ApproveComputesChangeAsTenderedMinusApproved [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorRejectsNegativeRequestedAmount [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorRejectsChangeAmountBeforeApproval [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.TenderFromAnythingOtherThanInitiatedIsRejected [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.TenderTransitionsFromInitiatedToPendingAndReturnsANewInstance [3 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.RefundedAndPartiallyRefundedAreNeverReachableThroughThisAggregate [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorRejectsApprovedAmountGreaterThanTendered [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.CancelFromPendingSucceeds [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ApprovedIsATerminalStateForThisAggregateNoOpOrBackwardTransitionsAreForbidden [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.MarkUnknownFromPendingSucceeds [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.TenderRejectsNegativeAmount [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.DeclineFromPendingSucceeds [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.DeclineFromApprovedIsRejected [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.TenderRejectsZeroAmount [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorRejectsPendingWithoutATenderedAmount [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.CancelFromApprovedIsRejected [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.MarkUnknownBeforeTenderingIsRejected [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorRejectsChangeAmountThatDoesNotReconcile [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ApproveWithNoOverpaymentLeavesZeroChange [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorRejectsEmptyId [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PaymentDomainTests.ConstructorRejectsEmptyBillId [< 1 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.RoundTripPersistsAndLoadsAnInitiatedPayment [339 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.InsertRejectsAPaymentAgainstANonExistentBill [12 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.DatabaseRejectsApprovedStatusWithNoApprovedAmount [21 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.SaveAfterTenderPersistsTheNewStatusAmountAndOneHistoryRow [47 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.DatabaseRejectsChangeAmountThatDoesNotReconcileWithTenderedMinusApproved [26 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.DatabaseRejectsAZeroRequestedAmountEvenIfSomeFutureCallerBypassesTheAggregate [31 ms]
+[xUnit.net 00:00:02.65]   Finished:    ALKAROS.Payments.PaymentAggregate.Tests
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.DatabaseRejectsPendingStatusWithNoTenderedAmount [26 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.SaveWithStaleRowVersionFailsClosed [45 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.DatabaseRejectsPendingStatusWithAnApprovedAmount [22 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.DatabaseRejectsInitiatedStatusWithATenderedAmount [27 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.GetByBillIdReturnsEveryPaymentAgainstThatBill [56 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.DatabaseRejectsApprovedAmountExceedingTenderedAmount [31 ms]
+  Başarılı ALKAROS.Payments.PaymentAggregate.Tests.PostgresPaymentTests.SaveAfterApproveWithOverpaymentPersistsChangeAndBothHistoryRows [45 ms]
+
+Test Çalıştırması Başarılı.
+Toplam test sayısı: 43
+     Geçti: 43
+ Toplam süre: 4,8713 Saniye

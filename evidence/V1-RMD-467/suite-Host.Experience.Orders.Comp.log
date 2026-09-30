@@ -1,0 +1,473 @@
+﻿  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Observability -> D:\PROJECT\ALKAROS\src\Modules\Observability\bin\Debug\net8.0\ALKAROS.Observability.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\PROJECT\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Settings -> D:\PROJECT\ALKAROS\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Reconciliation -> D:\PROJECT\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
+  ALKAROS.Recipes -> D:\PROJECT\ALKAROS\src\Modules\Recipes\bin\Debug\net8.0\ALKAROS.Recipes.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.CustomerData -> D:\PROJECT\ALKAROS\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.Menu -> D:\PROJECT\ALKAROS\src\Modules\Menu\bin\Debug\net8.0\ALKAROS.Menu.dll
+  ALKAROS.Support -> D:\PROJECT\ALKAROS\src\Modules\Support\bin\Debug\net8.0\ALKAROS.Support.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Security -> D:\PROJECT\ALKAROS\src\Modules\Security\bin\Debug\net8.0\ALKAROS.Security.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Invoicing -> D:\PROJECT\ALKAROS\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
+  ALKAROS.QrOrdering -> D:\PROJECT\ALKAROS\src\Modules\QrOrdering\bin\Debug\net8.0\ALKAROS.QrOrdering.dll
+  ALKAROS.Purchasing -> D:\PROJECT\ALKAROS\src\Modules\Purchasing\bin\Debug\net8.0\ALKAROS.Purchasing.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Production -> D:\PROJECT\ALKAROS\src\Modules\Production\bin\Debug\net8.0\ALKAROS.Production.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.OnlineOrdering -> D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\bin\Debug\net8.0\ALKAROS.OnlineOrdering.dll
+  ALKAROS.Billing.PaymentClosure -> D:\PROJECT\ALKAROS\src\Modules\Billing\PaymentClosure\bin\Debug\net8.0\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+  ALKAROS.QrRelay -> D:\PROJECT\ALKAROS\src\Integrations\QrRelay\bin\Debug\net8.0\ALKAROS.QrRelay.dll
+  ALKAROS.Operations -> D:\PROJECT\ALKAROS\src\Modules\Operations\bin\Debug\net8.0\ALKAROS.Operations.dll
+  ALKAROS.CustomerAccounts -> D:\PROJECT\ALKAROS\src\Modules\CustomerAccounts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Payments.TenderComposition -> D:\PROJECT\ALKAROS\src\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.Host -> D:\PROJECT\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+  ALKAROS.Host.Experience.Orders.Comp.Tests -> D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll
+D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Comp.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)
+[xUnit.net 00:00:00.83]   Discovering: ALKAROS.Host.Experience.Orders.Comp.Tests
+[xUnit.net 00:00:00.86]   Discovered:  ALKAROS.Host.Experience.Orders.Comp.Tests
+[xUnit.net 00:00:00.86]   Starting:    ALKAROS.Host.Experience.Orders.Comp.Tests
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55415
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55415/api/v1/terminals/8df2213f-b6bf-4398-9a82-a65c7def2dfb/orders/4e2f0ac6-03a1-40a9-b61a-931b571d956b/items/3cd81e6e-1118-43f1-abb0-1ca80be3a8a8/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 403.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55415/api/v1/terminals/8df2213f-b6bf-4398-9a82-a65c7def2dfb/orders/4e2f0ac6-03a1-40a9-b61a-931b571d956b/items/3cd81e6e-1118-43f1-abb0-1ca80be3a8a8/comp - 403 - application/json;+charset=utf-8 348.2165ms
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AUserWhoIsBothWaiterAndCashierIsGovernedByTheWaiterRole [2 s]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55420
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55420/api/v1/terminals/86466f2e-3f91-4fd3-aa81-8abee86a1fc2/orders/7f420a95-c33b-4317-a1b2-8742984a508d/items/736d94a7-90be-442b-8e54-dd45337c0c58/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55420/api/v1/terminals/86466f2e-3f91-4fd3-aa81-8abee86a1fc2/orders/7f420a95-c33b-4317-a1b2-8742984a508d/items/736d94a7-90be-442b-8e54-dd45337c0c58/comp - 200 - application/json;+charset=utf-8 637.1986ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55420/api/v1/terminals/86466f2e-3f91-4fd3-aa81-8abee86a1fc2/orders/50f35c18-d154-407d-9462-32e76ced94c6/items/0ee3e57e-cdcc-4cb5-83cf-038d88804f18/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55420/api/v1/terminals/86466f2e-3f91-4fd3-aa81-8abee86a1fc2/orders/50f35c18-d154-407d-9462-32e76ced94c6/items/0ee3e57e-cdcc-4cb5-83cf-038d88804f18/comp - 200 - application/json;+charset=utf-8 342.9886ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55420/api/v1/terminals/86466f2e-3f91-4fd3-aa81-8abee86a1fc2/orders/5535c6fd-68af-4a23-88b7-b859f06ffb2c/items/fe1edc94-035f-4601-94b7-5d46bbbe36bb/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55420/api/v1/terminals/86466f2e-3f91-4fd3-aa81-8abee86a1fc2/orders/5535c6fd-68af-4a23-88b7-b859f06ffb2c/items/fe1edc94-035f-4601-94b7-5d46bbbe36bb/comp - 200 - application/json;+charset=utf-8 283.1975ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55420/api/v1/terminals/86466f2e-3f91-4fd3-aa81-8abee86a1fc2/orders/47d8088c-8a22-4a52-9cba-f938b0a40ef5/items/0ddc6681-cf40-45a4-a452-89d3049b4601/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]
+      Setting HTTP status code 202.
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55420/api/v1/terminals/86466f2e-3f91-4fd3-aa81-8abee86a1fc2/orders/47d8088c-8a22-4a52-9cba-f938b0a40ef5/items/0ddc6681-cf40-45a4-a452-89d3049b4601/comp - 202 - application/json;+charset=utf-8 27.2608ms
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterAtTheDailyCapEscalatesTheNextCompToPendingInsteadOfOverspendingTheBudget [1 s]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55426
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55426/api/v1/terminals/4c7e1686-f9f7-4a69-af3a-2da4b4203581/orders/fdd357ce-a74a-4900-a45c-e8bd0a0bfa2e/items/48990530-a74a-4cfe-9e26-5e22c01ec329/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]
+      Setting HTTP status code 202.
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55426/api/v1/terminals/4c7e1686-f9f7-4a69-af3a-2da4b4203581/orders/fdd357ce-a74a-4900-a45c-e8bd0a0bfa2e/items/48990530-a74a-4cfe-9e26-5e22c01ec329/comp - 202 - application/json;+charset=utf-8 196.1377ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55426/api/v1/terminals/4c7e1686-f9f7-4a69-af3a-2da4b4203581/orders/fdd357ce-a74a-4900-a45c-e8bd0a0bfa2e/items/48990530-a74a-4cfe-9e26-5e22c01ec329/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55426/api/v1/terminals/4c7e1686-f9f7-4a69-af3a-2da4b4203581/orders/fdd357ce-a74a-4900-a45c-e8bd0a0bfa2e/items/48990530-a74a-4cfe-9e26-5e22c01ec329/comp - 200 - application/json;+charset=utf-8 282.0673ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55433
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55433/api/v1/terminals/52aef369-b2a5-48bc-a9e2-bea8950ea7e6/orders/fa453f16-cd25-4c26-aefa-9c2165e9f70b/items/0061282c-ad9c-4cbf-a82a-23b6702cde73/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]
+      Setting HTTP status code 202.
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55433/api/v1/terminals/52aef369-b2a5-48bc-a9e2-bea8950ea7e6/orders/fa453f16-cd25-4c26-aefa-9c2165e9f70b/items/0061282c-ad9c-4cbf-a82a-23b6702cde73/comp - 202 - application/json;+charset=utf-8 191.3475ms
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ApprovingAPendingGrantThenRetryingTheSameIdempotencyKeyCompletesIt [613 ms]
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterOverThePerItemCapStillEscalatesToPendingInsteadOfUsingTheBudget [338 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55439
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55439/api/v1/terminals/4083f146-a3fa-4be2-83d6-9ac205870254/orders/a26c7479-0b4c-4b96-9a2a-c50c2faab311/items/3fac3868-d3fb-4c3f-8eb9-5fd27e2f26ac/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]
+      Setting HTTP status code 202.
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55439/api/v1/terminals/4083f146-a3fa-4be2-83d6-9ac205870254/orders/a26c7479-0b4c-4b96-9a2a-c50c2faab311/items/3fac3868-d3fb-4c3f-8eb9-5fd27e2f26ac/comp - 202 - application/json;+charset=utf-8 183.3268ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55445
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55445/api/v1/terminals/e593e6a2-87b9-46a9-adfa-c47dbc91f050/orders/a0700b3e-5ea6-49a0-b3a5-717c03d33772/items/55314b26-99ef-44ef-81f8-94a7bbbe5614/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55445/api/v1/terminals/e593e6a2-87b9-46a9-adfa-c47dbc91f050/orders/a0700b3e-5ea6-49a0-b3a5-717c03d33772/items/55314b26-99ef-44ef-81f8-94a7bbbe5614/comp - 200 - application/json;+charset=utf-8 364.8847ms
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnOpenBehaviouralTighteningForcesEscalationEvenWithAnAlwaysAllowPolicy [329 ms]
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnActiveDelegationResolvesTheGrantAndAppliesDirectly [523 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55451
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55451/api/v1/terminals/8660812d-7b49-4ef6-86da-38acc5a37b66/orders/cbaedd7f-d0d6-40ea-8308-0eff1bdd045f/items/4ec71a45-cff2-46fe-8643-088158b767d1/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55451/api/v1/terminals/8660812d-7b49-4ef6-86da-38acc5a37b66/orders/cbaedd7f-d0d6-40ea-8308-0eff1bdd045f/items/4ec71a45-cff2-46fe-8643-088158b767d1/comp - 200 - application/json;+charset=utf-8 364.7462ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55456
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55456/api/v1/terminals/7e9cdf8c-ab7e-4d61-a600-74331e1475a7/orders/439cf7f2-89e7-49de-a5bf-295670bf5f32/items/d7af2cb6-3ab6-4a84-8f53-41916aa546b0/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]
+      Setting HTTP status code 202.
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55456/api/v1/terminals/7e9cdf8c-ab7e-4d61-a600-74331e1475a7/orders/439cf7f2-89e7-49de-a5bf-295670bf5f32/items/d7af2cb6-3ab6-4a84-8f53-41916aa546b0/comp - 202 - application/json;+charset=utf-8 164.2256ms
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ARoleThatHoldsBillsCompOutrightAppliesDirectly [511 ms]
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ARoleWithoutBillsCompAndNoPolicyOrDelegationEscalatesToPending [294 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55462
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55462/api/v1/terminals/c9677f08-b5b5-4a4c-9929-d2e57e05ad35/orders/2d57610d-0d30-404f-97f0-f168d9a50f3e/items/712f8c32-0004-469a-ab5b-befabc47d13a/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 401.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55462/api/v1/terminals/c9677f08-b5b5-4a4c-9929-d2e57e05ad35/orders/2d57610d-0d30-404f-97f0-f168d9a50f3e/items/712f8c32-0004-469a-ab5b-befabc47d13a/comp - 401 - application/json;+charset=utf-8 125.0610ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55467
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55467/api/v1/terminals/b30e1730-c15b-499d-84a3-4e9022d7740c/orders/cbe28dbd-f3b2-4d08-8768-238e83ee36f5/items/87caac44-9534-48e0-89c7-8b5b156b400a/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55467/api/v1/terminals/b30e1730-c15b-499d-84a3-4e9022d7740c/orders/cbe28dbd-f3b2-4d08-8768-238e83ee36f5/items/87caac44-9534-48e0-89c7-8b5b156b400a/comp - 200 - application/json;+charset=utf-8 465.0398ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55473
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55473/api/v1/terminals/d7c6d894-10b8-4395-bd93-6034c3635b1e/orders/95669a47-6985-41f9-b6e4-ab9bb5a5e9d5/items/931bef0c-a7e4-4615-9d83-5f37a23d7748/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.NoSessionCookieIsUnauthorized [264 ms]
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterWithinTheDailyPersonalBudgetAppliesDirectlyWithoutAManager [600 ms]
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55473/api/v1/terminals/d7c6d894-10b8-4395-bd93-6034c3635b1e/orders/95669a47-6985-41f9-b6e4-ab9bb5a5e9d5/items/931bef0c-a7e4-4615-9d83-5f37a23d7748/comp - 200 - application/json;+charset=utf-8 347.2251ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55478
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55478/api/v1/terminals/f458df79-814b-4454-946b-a3e5a99ed0fe/orders/5d093ebf-1047-417c-85f5-2be3f17dc308/items/b10dc994-5d5c-41e8-a8c2-6f4aeb5e0526/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 400.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55478/api/v1/terminals/f458df79-814b-4454-946b-a3e5a99ed0fe/orders/5d093ebf-1047-417c-85f5-2be3f17dc308/items/b10dc994-5d5c-41e8-a8c2-6f4aeb5e0526/comp - 400 - application/json;+charset=utf-8 99.8376ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55483
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55483/api/v1/terminals/0e58085a-ad8d-4690-bf48-fc90d4f2310d/orders/91d3ec8e-017d-4841-b9a4-b51eac3828ed/items/941d57b8-3e5f-409d-9f2d-9f1eb83de63a/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55483/api/v1/terminals/0e58085a-ad8d-4690-bf48-fc90d4f2310d/orders/91d3ec8e-017d-4841-b9a4-b51eac3828ed/items/941d57b8-3e5f-409d-9f2d-9f1eb83de63a/comp - 200 - application/json;+charset=utf-8 429.6902ms
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.ARoleThatHoldsBillsCompOutrightNeverReportsAPersonalBudgetRemainder [478 ms]
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AnInvalidReasonCodeIsRejected [232 ms]
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55483/api/v1/terminals/0e58085a-ad8d-4690-bf48-fc90d4f2310d/orders/8cbd5a61-386e-46e4-9781-66ab51a424c0/items/07623357-9e68-4412-acc3-4f93dc5ea15a/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55483/api/v1/terminals/0e58085a-ad8d-4690-bf48-fc90d4f2310d/orders/8cbd5a61-386e-46e4-9781-66ab51a424c0/items/07623357-9e68-4412-acc3-4f93dc5ea15a/comp - 200 - application/json;+charset=utf-8 230.7646ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55483/api/v1/terminals/0e58085a-ad8d-4690-bf48-fc90d4f2310d/orders/2c638a51-b22f-41db-b911-7fa840f8b455/items/0ec11c6d-bd56-4ba3-8057-b27d68fd61f2/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55483/api/v1/terminals/0e58085a-ad8d-4690-bf48-fc90d4f2310d/orders/0a65aad8-55f9-40b6-aa2a-e68cd97ca1fc/items/849e20d2-cdc7-44e2-85fa-82bd81b9dcdf/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]
+      Setting HTTP status code 202.
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55483/api/v1/terminals/0e58085a-ad8d-4690-bf48-fc90d4f2310d/orders/0a65aad8-55f9-40b6-aa2a-e68cd97ca1fc/items/849e20d2-cdc7-44e2-85fa-82bd81b9dcdf/comp - 202 - application/json;+charset=utf-8 43.9249ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55483/api/v1/terminals/0e58085a-ad8d-4690-bf48-fc90d4f2310d/orders/2c638a51-b22f-41db-b911-7fa840f8b455/items/0ec11c6d-bd56-4ba3-8057-b27d68fd61f2/comp - 200 - application/json;+charset=utf-8 286.9346ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55491
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55491/api/v1/terminals/37b6c3fc-4940-4a15-9f9d-acaccc4320b2/orders/6187a43f-c493-4551-bfcb-dc07f93d31ea/items/bfea87eb-79a5-49d5-8348-cde7406e470f/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 403.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55491/api/v1/terminals/37b6c3fc-4940-4a15-9f9d-acaccc4320b2/orders/6187a43f-c493-4551-bfcb-dc07f93d31ea/items/bfea87eb-79a5-49d5-8348-cde7406e470f/comp - 403 - application/json;+charset=utf-8 104.9364ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55496
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55496/api/v1/terminals/5e4f6afc-f172-433d-b699-f2639fc7fe75/orders/6c38cbab-9a75-4845-94d3-3e782bf9385c/items/fc9986b1-2766-4d9b-adf0-6487cc965087/comp - application/json;+charset=utf-8 -
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.TwoGenuinelyConcurrentCompsThatWouldTogetherExceedTheDailyCapProduceExactlyOneWinner [1 s]
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnUnassignedCheckIsRefusedByTheOwnCheckGuard [248 ms]
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 403.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type '<>f__AnonymousType5`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55496/api/v1/terminals/5e4f6afc-f172-433d-b699-f2639fc7fe75/orders/6c38cbab-9a75-4845-94d3-3e782bf9385c/items/fc9986b1-2766-4d9b-adf0-6487cc965087/comp - 403 - application/json;+charset=utf-8 151.3817ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55501
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Comp\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55501/api/v1/terminals/d5356e66-7555-4844-9461-cf81251cd179/orders/086fec30-210d-43b4-a96f-5b032e339238/items/00968196-7492-4016-b3db-f90352e68397/comp - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]
+      Setting HTTP status code 202.
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]
+      Writing value of type 'ApplyComplimentaryResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/items/{itemId:guid}/comp'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55501/api/v1/terminals/d5356e66-7555-4844-9461-cf81251cd179/orders/086fec30-210d-43b4-a96f-5b032e339238/items/00968196-7492-4016-b3db-f90352e68397/comp - 202 - application/json;+charset=utf-8 163.6777ms
+[xUnit.net 00:00:15.42]   Finished:    ALKAROS.Host.Experience.Orders.Comp.Tests
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingAnotherServersCheckIsRefusedByTheOwnCheckGuard [281 ms]
+  Başarılı ALKAROS.Host.Experience.Orders.Comp.Tests.OrderManagementCompHttpTests.AWaiterCompingTheirOwnCheckIsNotBlockedByTheOwnCheckGuard [305 ms]
+
+Test Çalıştırması Başarılı.
+Toplam test sayısı: 16
+     Geçti: 16
+ Toplam süre: 17,6638 Saniye

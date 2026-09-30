@@ -1,0 +1,28 @@
+﻿D:\PROJECT\ALKAROS\tests\Modules\Billing\BillFoundation\bin\Debug\net8.0\ALKAROS.Billing.BillFoundation.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+dotnet : [xUnit.net 00:00:00.60]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillItemFromOrderItemPreserve
+sFrozenSnapshots [FAIL]
+At line:5 char:3
++   dotnet test "tests/Modules/$p" -v q --nologo *> "evidence/V1-RMD-46 ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([xUnit.net 00:0...napshots [FAIL]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[xUnit.net 00:00:00.61]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillSourceOperationsCreateMergedBillCo
+mbinesMultipleOrders [FAIL]
+[xUnit.net 00:00:00.65]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.ComplimentaryFromOrderItemRejectsADisc
+ountThatDoesNotMatchTheTrueGross [FAIL]
+[xUnit.net 00:00:00.66]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillFromOrderCreatesBillWithActiveItem
+sOnly [FAIL]
+[xUnit.net 00:00:00.66]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.MoneyTaxRoundingMatchesV0Cmp002KurusIn
+variant [FAIL]
+[xUnit.net 00:00:00.66]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillSourceOperationsCreateSplitBillsEx
+actDisjointPartition [FAIL]
+[xUnit.net 00:00:00.66]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.AddItemWhenOpenOrReopenedSucceeds [FAI
+L]
+[xUnit.net 00:00:00.66]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillItemFromOrderItemWithModifiersAndD
+iscountCalculatesAccurately [FAIL]
+[xUnit.net 00:00:00.67]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillCreationWithValidArgumentsInitiali
+zesCorrectly [FAIL]
+
+Başarısız! - Başarısız:     9, Başarılı:    35, Atlanan:     0, Toplam:    44, Süre: 805 ms - ALKAROS.Billing.BillFoundation.Tests.dll (net8.0)

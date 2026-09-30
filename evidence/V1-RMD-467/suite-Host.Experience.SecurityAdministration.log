@@ -1,0 +1,1341 @@
+﻿  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.Observability -> D:\PROJECT\ALKAROS\src\Modules\Observability\bin\Debug\net8.0\ALKAROS.Observability.dll
+  ALKAROS.Reconciliation -> D:\PROJECT\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Settings -> D:\PROJECT\ALKAROS\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\PROJECT\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Menu -> D:\PROJECT\ALKAROS\src\Modules\Menu\bin\Debug\net8.0\ALKAROS.Menu.dll
+  ALKAROS.Security -> D:\PROJECT\ALKAROS\src\Modules\Security\bin\Debug\net8.0\ALKAROS.Security.dll
+  ALKAROS.OnlineOrdering -> D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\bin\Debug\net8.0\ALKAROS.OnlineOrdering.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.Recipes -> D:\PROJECT\ALKAROS\src\Modules\Recipes\bin\Debug\net8.0\ALKAROS.Recipes.dll
+  ALKAROS.Support -> D:\PROJECT\ALKAROS\src\Modules\Support\bin\Debug\net8.0\ALKAROS.Support.dll
+  ALKAROS.CustomerData -> D:\PROJECT\ALKAROS\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
+  ALKAROS.Operations -> D:\PROJECT\ALKAROS\src\Modules\Operations\bin\Debug\net8.0\ALKAROS.Operations.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Production -> D:\PROJECT\ALKAROS\src\Modules\Production\bin\Debug\net8.0\ALKAROS.Production.dll
+  ALKAROS.Purchasing -> D:\PROJECT\ALKAROS\src\Modules\Purchasing\bin\Debug\net8.0\ALKAROS.Purchasing.dll
+  ALKAROS.Invoicing -> D:\PROJECT\ALKAROS\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.QrOrdering -> D:\PROJECT\ALKAROS\src\Modules\QrOrdering\bin\Debug\net8.0\ALKAROS.QrOrdering.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.QrRelay -> D:\PROJECT\ALKAROS\src\Integrations\QrRelay\bin\Debug\net8.0\ALKAROS.QrRelay.dll
+  ALKAROS.Billing.PaymentClosure -> D:\PROJECT\ALKAROS\src\Modules\Billing\PaymentClosure\bin\Debug\net8.0\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+  ALKAROS.Payments.TenderComposition -> D:\PROJECT\ALKAROS\src\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.CustomerAccounts -> D:\PROJECT\ALKAROS\src\Modules\CustomerAccounts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Host -> D:\PROJECT\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+  ALKAROS.Host.Experience.SecurityAdministration.Tests -> D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0\ALKAROS.Host.Experience.SecurityAdministration.Tests.dll
+D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0\ALKAROS.Host.Experience.SecurityAdministration.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)
+[xUnit.net 00:00:01.24]   Discovering: ALKAROS.Host.Experience.SecurityAdministration.Tests
+[xUnit.net 00:00:01.29]   Discovered:  ALKAROS.Host.Experience.SecurityAdministration.Tests
+[xUnit.net 00:00:01.30]   Starting:    ALKAROS.Host.Experience.SecurityAdministration.Tests
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.MaintenanceJobRunnerTests.AThrowingJobIsRecordedAsFailedWithoutLeakingTheMessageOrCrashingTheCaller [171 ms]
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.MaintenanceJobRunnerTests.AnUnknownJobNameReturnsNull [< 1 ms]
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.MaintenanceJobRunnerTests.ASecondRunWhileTheFirstIsStillRunningIsSkippedNotOverlapped [8 ms]
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.MaintenanceJobRunnerTests.ADisabledJobReportsWhyItDidNotRunInsteadOfSucceeding [1 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52140
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52140/api/v1/management/security/maintenance/jobs/offsite-backup/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52140/api/v1/management/security/maintenance/jobs/offsite-backup/run - 200 - application/json;+charset=utf-8 309.5399ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52140/api/v1/management/security/maintenance/jobs/offsite-backup/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52140/api/v1/management/security/maintenance/jobs/offsite-backup/run - 200 - application/json;+charset=utf-8 10.8385ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.TheBackupJobReportsWhyItCannotRunInsteadOfSilentlySucceeding [402 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52145
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52145/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/force-unlock - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/force-unlock'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ForceUnlockResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/force-unlock'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52145/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/force-unlock - 200 - application/json;+charset=utf-8 271.7964ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52145/api/v1/management/security/users/ed3477e0-50b9-4572-839e-2130757bf448/force-unlock - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/force-unlock'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 404.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/force-unlock'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52145/api/v1/management/security/users/ed3477e0-50b9-4572-839e-2130757bf448/force-unlock - 404 - application/json;+charset=utf-8 15.5939ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.AManagerClearsALockoutBeforeItExpiresAndAnUnknownUserIsNotFound [305 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52150
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52150/api/v1/management/security/secrets/offsite-backup/rotation/initialize - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SecretRotationSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52150/api/v1/management/security/secrets/offsite-backup/rotation/initialize - 200 - application/json;+charset=utf-8 103.0925ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52150/api/v1/management/security/maintenance/jobs/offsite-backup/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner[5820]
+      Maintenance job offsite-backup finished: 1 yedek y�klendi, 0 yedek zaten uzakta. Ba�ar�s�z: alkaros_b_20260924T020000Z.dump (OffsiteBackupSourceIntegrityException).
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52150/api/v1/management/security/maintenance/jobs/offsite-backup/run - 200 - application/json;+charset=utf-8 53.4503ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52150/api/v1/management/security/backup/rpo - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/backup/rpo'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SelectArrayIterator`2' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/backup/rpo'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52150/api/v1/management/security/backup/rpo - 200 - application/json;+charset=utf-8 28.8561ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52150/api/v1/management/security/maintenance/jobs/offsite-backup/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner[5820]
+      Maintenance job offsite-backup finished: 1 yedek y�klendi, 1 yedek zaten uzakta.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52150/api/v1/management/security/maintenance/jobs/offsite-backup/run - 200 - application/json;+charset=utf-8 15.3755ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52150/api/v1/management/security/maintenance/jobs/offsite-backup/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner[5820]
+      Maintenance job offsite-backup finished: 0 yedek y�klendi, 2 yedek zaten uzakta.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52150/api/v1/management/security/maintenance/jobs/offsite-backup/run - 200 - application/json;+charset=utf-8 7.4934ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.TheBackupJobEncryptsAndShipsVerifiedArtifactsOnceRecordsReceiptsAndTheRpoReportIsHonest [223 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52155
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52155/api/v1/management/security/diagnostic-bundle - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationUnauthorizedException: A valid manager session is required.
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 293
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 318
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+      --- End of stack trace from previous location ---
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52155/api/v1/management/security/diagnostic-bundle - 401 - application/json;+charset=utf-8 109.0026ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52155/api/v1/management/security/diagnostic-bundle - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '7c0cdc02-494c-42a9-9aaf-adff283896e8' denied permission 'security.manage': No assigned role grants the permission
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 319
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+      --- End of stack trace from previous location ---
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52155/api/v1/management/security/diagnostic-bundle - 403 - application/json;+charset=utf-8 25.0130ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.ADiagnosticBundleNeedsAManagerSessionWithSecurityManage [143 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52161
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/initialize - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SecretRotationSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/initialize - 200 - application/json;+charset=utf-8 65.5774ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/initialize - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/initialize - 409 - application/json;+charset=utf-8 8.0465ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/rotate - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/rotate'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/rotate'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/rotate - 409 - application/json;+charset=utf-8 9.5367ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/rotate - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/rotate'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SecretRotationSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/rotate'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/rotate - 200 - application/json;+charset=utf-8 11.1158ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/revoke - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/revoke'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/revoke'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/revoke - 409 - application/json;+charset=utf-8 6.2871ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/rotate - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/rotate'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 400.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/rotate'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/rotate - 400 - application/json;+charset=utf-8 5.0992ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/rollback - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/rollback'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SecretRotationSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/rollback'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52161/api/v1/management/security/secrets/offsite-backup/rotation/rollback - 200 - application/json;+charset=utf-8 10.5246ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52161/api/v1/management/security/secrets - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/secrets'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SelectIPartitionIterator`2' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/secrets'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52161/api/v1/management/security/secrets - 200 - application/json;+charset=utf-8 8.9631ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.TheFullRotationLifecycleIsGuardedAuditedAndNeverEchoesKeyMaterial [141 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52166
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52166/api/v1/management/security/maintenance/jobs - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/maintenance/jobs'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/maintenance/jobs'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationUnauthorizedException: A valid manager session is required.
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 293
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 318
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52166/api/v1/management/security/maintenance/jobs - 401 - application/json;+charset=utf-8 54.4843ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52166/api/v1/management/security/maintenance/jobs/retention-sweep/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '7c0cdc02-494c-42a9-9aaf-adff283896e8' denied permission 'security.manage': No assigned role grants the permission
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 319
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52166/api/v1/management/security/maintenance/jobs/retention-sweep/run - 403 - application/json;+charset=utf-8 10.2588ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52166/api/v1/management/security/maintenance/jobs - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/maintenance/jobs'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'List`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/maintenance/jobs'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52166/api/v1/management/security/maintenance/jobs - 200 - application/json;+charset=utf-8 8.9794ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52166/api/v1/management/security/maintenance/jobs/no-such-job/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 404.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52166/api/v1/management/security/maintenance/jobs/no-such-job/run - 404 - application/json;+charset=utf-8 4.5594ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.MaintenanceJobsAreListedRunOnDemandAndRefuseUnknownNamesAndUnauthorizedCallers [84 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52173
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52173/api/v1/management/security/outbox/dead-letters - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/outbox/dead-letters'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/outbox/dead-letters'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationUnauthorizedException: A valid manager session is required.
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 293
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 318
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52173/api/v1/management/security/outbox/dead-letters - 401 - application/json;+charset=utf-8 66.2309ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52173/api/v1/management/security/outbox/dead-letters - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/outbox/dead-letters'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/outbox/dead-letters'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '7c0cdc02-494c-42a9-9aaf-adff283896e8' denied permission 'security.manage': No assigned role grants the permission
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 319
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52173/api/v1/management/security/outbox/dead-letters - 403 - application/json;+charset=utf-8 10.1385ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52173/api/v1/management/security/outbox/dead-letters/ad489cf0-9e0d-4838-86aa-25b07a8eaa90/requeue?dryRun=false - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '7c0cdc02-494c-42a9-9aaf-adff283896e8' denied permission 'security.manage': No assigned role grants the permission
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 319
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52173/api/v1/management/security/outbox/dead-letters/ad489cf0-9e0d-4838-86aa-25b07a8eaa90/requeue?dryRun=false - 403 - application/json;+charset=utf-8 10.5405ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52173/api/v1/management/security/outbox/dead-letters - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/outbox/dead-letters'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/outbox/dead-letters'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationUnauthorizedException: A valid manager session is required.
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 293
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 318
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52173/api/v1/management/security/outbox/dead-letters - 401 - application/json;+charset=utf-8 2.4220ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.TheOutboxDeadLetterToolsAreManagerOnly [99 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52180
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52180/api/v1/management/security/outbox/dead-letters/0ab836c3-a2e5-44f7-b2b5-c3d5b9c876cc/requeue?dryRun=false - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 404.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52180/api/v1/management/security/outbox/dead-letters/0ab836c3-a2e5-44f7-b2b5-c3d5b9c876cc/requeue?dryRun=false - 404 - application/json;+charset=utf-8 66.3017ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.RequeuingAnUnknownDeadLetterIsNotFound [68 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52185
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52185/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/deactivate - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/deactivate'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/deactivate'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '7c0cdc02-494c-42a9-9aaf-adff283896e8' denied permission 'security.manage': No assigned role grants the permission
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 319
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52185/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/deactivate - 403 - application/json;+charset=utf-8 61.0008ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52185/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/deactivate - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/deactivate'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'AccountActiveResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/deactivate'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52185/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/deactivate - 200 - application/json;+charset=utf-8 207.7428ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52185/api/v1/management/security/users/lookup?username=rmd266-target-df2cb46d69724204aaee3075e81f30fc - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'UserLookupResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52185/api/v1/management/security/users/lookup?username=rmd266-target-df2cb46d69724204aaee3075e81f30fc - 200 - application/json;+charset=utf-8 11.9820ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52185/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/reactivate - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/reactivate'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'AccountActiveResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/reactivate'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52185/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/reactivate - 200 - application/json;+charset=utf-8 173.4811ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52185/api/v1/management/security/users/lookup?username=rmd266-target-df2cb46d69724204aaee3075e81f30fc - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'UserLookupResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52185/api/v1/management/security/users/lookup?username=rmd266-target-df2cb46d69724204aaee3075e81f30fc - 200 - application/json;+charset=utf-8 10.2136ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52185/api/v1/management/security/users/c65958dc-56d4-4c4e-873b-02e2b0d68589/deactivate - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/deactivate'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 404.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/deactivate'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52185/api/v1/management/security/users/c65958dc-56d4-4c4e-873b-02e2b0d68589/deactivate - 404 - application/json;+charset=utf-8 6.2415ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.AManagerDeactivatesALeaverAndCanReactivateThemAndBothAreAudited [480 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52191
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52191/api/v1/management/security/diagnostic-bundle - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'DiagnosticBundleResult' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52191/api/v1/management/security/diagnostic-bundle - 200 - application/json;+charset=utf-8 518.2524ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.ADiagnosticBundleIsRedactedBoundedAndItsOwnGenerationIsAudited [595 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52196
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52196/api/v1/management/security/users/b408e6bc-e052-4e58-9fa5-5c9efbc590a3/deactivate - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/deactivate'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/deactivate'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52196/api/v1/management/security/users/b408e6bc-e052-4e58-9fa5-5c9efbc590a3/deactivate - 409 - application/json;+charset=utf-8 62.9594ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.AManagerCannotDeactivateTheirOwnAccount [67 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52201
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52201/api/v1/management/security/secrets/offsite-backup/rotation/initialize - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SecretRotationSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52201/api/v1/management/security/secrets/offsite-backup/rotation/initialize - 200 - application/json;+charset=utf-8 63.5355ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52201/api/v1/management/security/maintenance/jobs/offsite-backup/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner[5820]
+      Maintenance job offsite-backup finished: 1 yedek y�klendi, 0 yedek zaten uzakta.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52201/api/v1/management/security/maintenance/jobs/offsite-backup/run - 200 - application/json;+charset=utf-8 19.0068ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52201/api/v1/management/security/maintenance/jobs/restore-verification/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+fail: ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner[5821]
+      Maintenance job restore-verification failed.
+      ALKAROS.Operations.OffsiteBackup.OffsiteBackupDecryptionFailedException: Artifact 'alkaros_t_20260924T050000Z.dump' could not be decrypted.
+       ---> ALKAROS.SensitiveData.SensitiveDataEncryptionException: Envelope decryption failed; ciphertext integrity check failed.
+       ---> System.Security.Cryptography.AuthenticationTagMismatchException: The computed authentication tag did not match the input authentication tag.
+         at System.Security.Cryptography.AeadCommon.Decrypt(SafeKeyHandle keyHandle, ReadOnlySpan`1 nonce, ReadOnlySpan`1 associatedData, ReadOnlySpan`1 ciphertext, ReadOnlySpan`1 tag, Span`1 plaintext, Boolean clearPlaintextOnFailure)
+         at System.Security.Cryptography.AesGcm.Decrypt(ReadOnlySpan`1 nonce, ReadOnlySpan`1 ciphertext, ReadOnlySpan`1 tag, Span`1 plaintext, ReadOnlySpan`1 associatedData)
+         at ALKAROS.SensitiveData.AesGcmEnvelopeCipher.Decrypt(SecretReference key, String accessor, EnvelopeCiphertext ciphertext, ReadOnlyMemory`1 associatedData) in D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\AesGcmEnvelopeCipher.cs:line 71
+         --- End of inner exception stack trace ---
+         at ALKAROS.SensitiveData.AesGcmEnvelopeCipher.Decrypt(SecretReference key, String accessor, EnvelopeCiphertext ciphertext, ReadOnlyMemory`1 associatedData) in D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\AesGcmEnvelopeCipher.cs:line 80
+         at ALKAROS.Operations.OffsiteBackup.OffsiteBackupCipher.Decrypt(String artifactId, DataClass dataClass, EncryptedBackupEnvelope envelope) in D:\PROJECT\ALKAROS\src\Modules\Operations\OffsiteBackup\OffsiteBackupCipher.cs:line 60
+         --- End of inner exception stack trace ---
+         at ALKAROS.Operations.OffsiteBackup.OffsiteBackupCipher.Decrypt(String artifactId, DataClass dataClass, EncryptedBackupEnvelope envelope) in D:\PROJECT\ALKAROS\src\Modules\Operations\OffsiteBackup\OffsiteBackupCipher.cs:line 64
+         at ALKAROS.Operations.OffsiteBackup.OffsiteBackupRestoreVerificationService.DownloadAndVerifyAsync(OffsiteBackupReceipt receipt, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Operations\OffsiteBackup\OffsiteBackupRestoreVerificationService.cs:line 36
+         at ALKAROS.Operations.RestoreVerification.RestoreVerificationOrchestrator.RunAsync(DataClass dataClass, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Operations\RestoreVerification\RestoreVerificationOrchestrator.cs:line 59
+         at ALKAROS.Operations.RestoreVerification.RestoreVerificationOrchestrator.RunAsync(DataClass dataClass, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Operations\RestoreVerification\RestoreVerificationOrchestrator.cs:line 70
+         at ALKAROS.Host.Experience.SecurityAdministration.Maintenance.RestoreVerificationMaintenanceJob.ExecuteAsync(IServiceProvider scopedServices, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\Maintenance\RestoreVerificationMaintenanceJob.cs:line 48
+         at ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner.RunAsync(String name, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\Maintenance\MaintenanceJobs.cs:line 146
+         at ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner.RunAsync(String name, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\Maintenance\MaintenanceJobs.cs:line 148
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52201/api/v1/management/security/maintenance/jobs/restore-verification/run - 200 - application/json;+charset=utf-8 45.7364ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52201/api/v1/management/security/backup/restore-attempts - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/backup/restore-attempts'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SelectIPartitionIterator`2' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/backup/restore-attempts'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52201/api/v1/management/security/backup/restore-attempts - 200 - application/json;+charset=utf-8 21.0944ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.ATamperedOffsiteCopyFailsTheRestoreDrillAndTheFailureIsRecorded [159 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52206
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52206/api/v1/management/security/outbox/dead-letters/6a6e9402-d498-4161-b329-48fd7dc5c6aa/requeue - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'OutboxRequeueResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52206/api/v1/management/security/outbox/dead-letters/6a6e9402-d498-4161-b329-48fd7dc5c6aa/requeue - 200 - application/json;+charset=utf-8 68.1376ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52206/api/v1/management/security/outbox/dead-letters/6a6e9402-d498-4161-b329-48fd7dc5c6aa/requeue?dryRun=false - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'OutboxRequeueResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52206/api/v1/management/security/outbox/dead-letters/6a6e9402-d498-4161-b329-48fd7dc5c6aa/requeue?dryRun=false - 200 - application/json;+charset=utf-8 611.6598ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52206/api/v1/management/security/outbox/dead-letters/6a6e9402-d498-4161-b329-48fd7dc5c6aa/requeue?dryRun=false - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 404.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/outbox/dead-letters/{id:guid}/requeue'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52206/api/v1/management/security/outbox/dead-letters/6a6e9402-d498-4161-b329-48fd7dc5c6aa/requeue?dryRun=false - 404 - application/json;+charset=utf-8 7.6265ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.RequeuingADeadLetterIsADryRunByDefaultAndTheRealRunMakesItPendingAgain [699 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52211
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52211/api/v1/management/security/orders/backlog - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/orders/backlog'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'OrderBacklogV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/orders/backlog'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52211/api/v1/management/security/orders/backlog - 200 - application/json;+charset=utf-8 94.2658ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.TheBacklogReportSeparatesProvablySettledOrdersFromThoseNeedingABusinessDecision [211 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52216
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52216/api/v1/management/security/secrets - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/secrets'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/secrets'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationUnauthorizedException: A valid manager session is required.
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 293
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 318
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52216/api/v1/management/security/secrets - 401 - application/json;+charset=utf-8 69.4458ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52216/api/v1/management/security/secrets - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/secrets'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/secrets'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '7c0cdc02-494c-42a9-9aaf-adff283896e8' denied permission 'security.manage': No assigned role grants the permission
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 319
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52216/api/v1/management/security/secrets - 403 - application/json;+charset=utf-8 11.5673ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52216/api/v1/management/security/secrets/not-a-known-secret/rotation - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/secrets/{name}/rotation'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 404.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/secrets/{name}/rotation'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52216/api/v1/management/security/secrets/not-a-known-secret/rotation - 404 - application/json;+charset=utf-8 6.4684ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52216/api/v1/management/security/etc/rotation/initialize - - 0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52216/api/v1/management/security/etc/rotation/initialize - 404 0 - 0.1907ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[16]
+      Request reached the end of the middleware pipeline without being handled by application code. Request path: POST http://127.0.0.1:52216/api/v1/management/security/etc/rotation/initialize, Response status code: 404
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.SecretRotationNeedsAManagerAndOnlyKnownSecretsAreManageable [93 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52223
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52223/api/v1/management/security/orders/backlog - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/orders/backlog'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/orders/backlog'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationUnauthorizedException: A valid manager session is required.
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 293
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 318
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52223/api/v1/management/security/orders/backlog - 401 - application/json;+charset=utf-8 73.1344ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52223/api/v1/management/security/orders/close-settled?dryRun=false - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/orders/close-settled'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/orders/close-settled'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '7c0cdc02-494c-42a9-9aaf-adff283896e8' denied permission 'security.manage': No assigned role grants the permission
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 319
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52223/api/v1/management/security/orders/close-settled?dryRun=false - 403 - application/json;+charset=utf-8 10.8817ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52223/api/v1/management/security/orders/backlog - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/orders/backlog'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/orders/backlog'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationUnauthorizedException: A valid manager session is required.
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 293
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 318
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52223/api/v1/management/security/orders/backlog - 401 - application/json;+charset=utf-8 3.5699ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.TheOrderBacklogToolsAreManagerOnly [92 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52230
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52230/api/v1/management/security/maintenance/jobs/retention-sweep/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner[5820]
+      Maintenance job retention-sweep finished: 1 kay�t imha edildi, 0 kay�t kal�c� silindi; 1 yasal tutuklu, 0 saklanan, 1 s�resi dolmam�� kay�t atland�.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52230/api/v1/management/security/maintenance/jobs/retention-sweep/run - 200 - application/json;+charset=utf-8 242.6519ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52230/api/v1/management/security/maintenance/jobs/retention-sweep/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner[5820]
+      Maintenance job retention-sweep finished: 0 kay�t imha edildi, 0 kay�t kal�c� silindi; 1 yasal tutuklu, 0 saklanan, 1 s�resi dolmam�� kay�t atland�.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52230/api/v1/management/security/maintenance/jobs/retention-sweep/run - 200 - application/json;+charset=utf-8 13.8376ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.TheRetentionSweepDisposesOnlyExpiredUnheldSubjectsAndIsIdempotent [300 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52235
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52235/api/v1/management/security/maintenance/jobs/restore-verification/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52235/api/v1/management/security/maintenance/jobs/restore-verification/run - 200 - application/json;+charset=utf-8 60.6821ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52235/api/v1/management/security/secrets/offsite-backup/rotation/initialize - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SecretRotationSnapshot' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52235/api/v1/management/security/secrets/offsite-backup/rotation/initialize - 200 - application/json;+charset=utf-8 11.2970ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52235/api/v1/management/security/maintenance/jobs/restore-verification/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner[5820]
+      Maintenance job restore-verification finished: Do�rulanacak uzak yedek yok; �nce 'offsite-backup' i�i bir yedek y�klemeli.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52235/api/v1/management/security/maintenance/jobs/restore-verification/run - 200 - application/json;+charset=utf-8 9.4647ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52235/api/v1/management/security/maintenance/jobs/offsite-backup/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner[5820]
+      Maintenance job offsite-backup finished: 1 yedek y�klendi, 0 yedek zaten uzakta.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52235/api/v1/management/security/maintenance/jobs/offsite-backup/run - 200 - application/json;+charset=utf-8 15.3421ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52235/api/v1/management/security/maintenance/jobs/restore-verification/run - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: ALKAROS.Host.Experience.SecurityAdministration.Maintenance.MaintenanceJobRunner[5820]
+      Maintenance job restore-verification finished: alkaros_real_20260924T040000Z.dump geri y�klendi: 2/2 kontrol ge�ti, 2,5 sn, RTO hedefi i�inde.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MaintenanceJobStatusV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/maintenance/jobs/{name}/run'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52235/api/v1/management/security/maintenance/jobs/restore-verification/run - 200 - application/json;+charset=utf-8 3829.6549ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52235/api/v1/management/security/backup/restore-attempts - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/backup/restore-attempts'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'SelectIPartitionIterator`2' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/backup/restore-attempts'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52235/api/v1/management/security/backup/restore-attempts - 200 - application/json;+charset=utf-8 8.4872ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.TheRestoreDrillRestoresARealShippedDumpIntoAThrowawayDatabaseAndRecordsTheAttempt [4 s]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52245
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52245/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/revoke-sessions - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/revoke-sessions'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'RevokeSessionsResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/revoke-sessions'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52245/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/revoke-sessions - 200 - application/json;+charset=utf-8 221.7593ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.AManagerSignsAUserOutEverywhereAndTheActionIsAudited [226 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52250
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52250/api/v1/management/security/outbox/dead-letters - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/outbox/dead-letters'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'OutboxDeadLetterListV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/outbox/dead-letters'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52250/api/v1/management/security/outbox/dead-letters - 200 - application/json;+charset=utf-8 71.2216ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.ARealDeadLetterIsListedWithItsAttemptCountAndLastError [80 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52255
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52255/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/revoke-sessions - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/revoke-sessions'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/revoke-sessions'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationUnauthorizedException: A valid manager session is required.
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 293
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 318
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52255/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/revoke-sessions - 401 - application/json;+charset=utf-8 71.1163ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52255/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/revoke-sessions - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/revoke-sessions'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/revoke-sessions'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '7c0cdc02-494c-42a9-9aaf-adff283896e8' denied permission 'security.manage': No assigned role grants the permission
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 319
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52255/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/revoke-sessions - 403 - application/json;+charset=utf-8 11.1523ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52255/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/force-unlock - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/force-unlock'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/force-unlock'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '7c0cdc02-494c-42a9-9aaf-adff283896e8' denied permission 'security.manage': No assigned role grants the permission
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 319
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52255/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/force-unlock - 403 - application/json;+charset=utf-8 8.2420ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52255/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/revoke-sessions - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/revoke-sessions'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/users/{userId:guid}/revoke-sessions'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationUnauthorizedException: A valid manager session is required.
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 293
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 318
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52255/api/v1/management/security/users/df2cb46d-6972-4204-aaee-3075e81f30fc/revoke-sessions - 401 - application/json;+charset=utf-8 2.7753ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.OnlyAManagerSessionHoldingSecurityManageMayUseTheSurface [101 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52262
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52262/api/v1/management/security/orders/close-settled - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/orders/close-settled'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseSettledOrdersResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/orders/close-settled'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52262/api/v1/management/security/orders/close-settled - 200 - application/json;+charset=utf-8 93.9128ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52262/api/v1/management/security/orders/close-settled?dryRun=false - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/orders/close-settled'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseSettledOrdersResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/orders/close-settled'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52262/api/v1/management/security/orders/close-settled?dryRun=false - 200 - application/json;+charset=utf-8 238.2866ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52262/api/v1/management/security/orders/close-settled?dryRun=false - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/orders/close-settled'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'CloseSettledOrdersResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/orders/close-settled'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52262/api/v1/management/security/orders/close-settled?dryRun=false - 200 - application/json;+charset=utf-8 12.2736ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.ClosingSettledOrdersIsADryRunByDefaultAndTheRealRunTouchesOnlyProvablySettledOnes [390 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52268
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52268/api/v1/management/security/diagnostic-bundle - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 400.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52268/api/v1/management/security/diagnostic-bundle - 400 - application/json;+charset=utf-8 65.3052ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52268/api/v1/management/security/diagnostic-bundle - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 400.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52268/api/v1/management/security/diagnostic-bundle - 400 - application/json;+charset=utf-8 6.8181ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52268/api/v1/management/security/diagnostic-bundle - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/diagnostic-bundle'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      System.ArgumentException: A reason must be recorded for the bundle's own audit trail. (Parameter 'Reason')
+         at ALKAROS.Support.DiagnosticBundle.DiagnosticBundleRequest.Validate() in D:\PROJECT\ALKAROS\src\Modules\Support\DiagnosticBundle\DiagnosticBundleModels.cs:line 35
+         at ALKAROS.Support.DiagnosticBundle.DiagnosticBundleService.GenerateAsync(DiagnosticBundleRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Support\DiagnosticBundle\DiagnosticBundleService.cs:line 52
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpoints.<>c.<<MapSecurityAdministrationApi>b__3_9>d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 215
+      --- End of stack trace from previous location ---
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<TaskOfTToValueTaskOfObject>g__ExecuteAwaited|92_0[T](Task`1 task)
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 321
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<>c__DisplayClass102_2.<<HandleRequestBodyAndCompileRequestDelegateForJson>b__2>d.MoveNext()
+      --- End of stack trace from previous location ---
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52268/api/v1/management/security/diagnostic-bundle - 400 - application/json;+charset=utf-8 17.2607ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.ABundleRequestWithoutCorrelationIdsAnOversizedWindowOrNoReasonIsRejected [93 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52273
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:52273/api/v1/management/security/secrets/offsite-backup/rotation/initialize - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/management/security/secrets/{name}/rotation/initialize'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:52273/api/v1/management/security/secrets/offsite-backup/rotation/initialize - 409 - application/json;+charset=utf-8 79.6123ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52273/api/v1/management/security/secrets/offsite-backup/rotation - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/secrets/{name}/rotation'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 404.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/secrets/{name}/rotation'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52273/api/v1/management/security/secrets/offsite-backup/rotation - 404 - application/json;+charset=utf-8 5.8445ms
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.ARotationCannotActivateAVersionWhoseKeyMaterialIsNotInTheEnvironment [88 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:52278
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\SecurityAdministration\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52278/api/v1/management/security/users/lookup?username=rmd266-target-df2cb46d69724204aaee3075e81f30fc - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationUnauthorizedException: A valid manager session is required.
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 293
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 318
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52278/api/v1/management/security/users/lookup?username=rmd266-target-df2cb46d69724204aaee3075e81f30fc - 401 - application/json;+charset=utf-8 67.6135ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52278/api/v1/management/security/users/lookup?username=rmd266-target-df2cb46d69724204aaee3075e81f30fc - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]
+      An unhandled exception has occurred while executing the request.
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '7c0cdc02-494c-42a9-9aaf-adff283896e8' denied permission 'security.manage': No assigned role grants the permission
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39
+         at ALKAROS.Host.Experience.SecurityAdministration.SecurityAdministrationEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\SecurityAdministration\SecurityAdministrationEndpoints.cs:line 319
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.<ExecuteValueTaskOfObject>g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.<Invoke>g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.<Invoke>g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52278/api/v1/management/security/users/lookup?username=rmd266-target-df2cb46d69724204aaee3075e81f30fc - 403 - application/json;+charset=utf-8 9.7659ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52278/api/v1/management/security/users/lookup?username=rmd266-target-df2cb46d69724204aaee3075e81f30fc - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'UserLookupResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52278/api/v1/management/security/users/lookup?username=rmd266-target-df2cb46d69724204aaee3075e81f30fc - 200 - application/json;+charset=utf-8 7.2544ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:52278/api/v1/management/security/users/lookup?username=no-such-user-rmd331 - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 404.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'ApiErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/management/security/users/lookup'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:52278/api/v1/management/security/users/lookup?username=no-such-user-rmd331 - 404 - application/json;+charset=utf-8 5.7548ms
+[xUnit.net 00:01:05.90]   Finished:    ALKAROS.Host.Experience.SecurityAdministration.Tests
+  Başarılı ALKAROS.Host.Experience.SecurityAdministration.Tests.SecurityAdministrationHttpTests.LookupResolvesAUsernameToTheUserIdTheOtherTwoActionsRequireAndOnlyAManagerMayUseIt [95 ms]
+
+Test Çalıştırması Başarılı.
+Toplam test sayısı: 29
+     Geçti: 29
+ Toplam süre: 1,1392 Dakika

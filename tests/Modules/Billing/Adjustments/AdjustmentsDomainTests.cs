@@ -95,6 +95,23 @@ public sealed class AdjustmentsDomainTests
     }
 
     [Fact]
+    public void AdjustmentTaxIsRoundedFirstLikeEveryOtherLine()
+    {
+        // 10.05 at 20%: the contained tax is 1.675 -> 1.68 (half-up), net is the rest, 8.37 (net-first would give 8.38 / 1.67).
+        var discount = BillAdjustment.CreateDiscountAmount(
+            id: Guid.NewGuid(),
+            billId: Guid.NewGuid(),
+            discountAmount: 10.05m,
+            taxRate: 20m,
+            reason: "Rounding",
+            authorizedBy: Guid.NewGuid());
+
+        Assert.Equal(1.68m, discount.TaxAmount);
+        Assert.Equal(8.37m, discount.NetAmount);
+        Assert.Equal(10.05m, discount.GrossAmount);
+    }
+
+    [Fact]
     public void CreateServiceFeeCalculatesGrossNetTaxAndSetsAddition()
     {
         var billId = Guid.NewGuid();

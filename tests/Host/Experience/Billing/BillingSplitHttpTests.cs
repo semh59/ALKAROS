@@ -183,7 +183,7 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
                     Versions(current),
                     [
                         new AmountSplitTargetRequest(new SplitOwnerRequest("Seat", seeded.SeatId), 100m),
-                        new AmountSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), 175m),
+                        new AmountSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), 150m),
                     ]));
             Assert.Equal("ByAmount", current.Mode);
 
@@ -196,7 +196,7 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
                     Versions(current),
                     [
                         new CustomSplitTargetRequest(new SplitOwnerRequest("Seat", seeded.SeatId), 120m, null, null),
-                        new CustomSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), 155m, null, null),
+                        new CustomSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), 130m, null, null),
                     ]));
             Assert.Equal("Custom", current.Mode);
         }
@@ -321,11 +321,11 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     [Fact]
     public async Task ADiscountThatWouldUndercutWhatWasAlreadyCollectedIsRefused()
     {
-        // V1-RMD-410 (V1-RMD-393 F-05): 250 of a 275 bill already collected; a 50 discount would leave 225 payable.
+        // 225 of a 250 bill already collected; a 50 discount would leave 200 payable.
         var terminalId = Guid.NewGuid();
         var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
         var seeded = await _database.SeedBillAsync();
-        await _database.SeedCollectedAsync(seeded.BillId, 250m, userId);
+        await _database.SeedCollectedAsync(seeded.BillId, 225m, userId);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var path = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount";
@@ -340,7 +340,7 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
             new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "FixedAmount", 20m, "PromotionalOffer")));
         Assert.Equal(HttpStatusCode.OK, withinRemaining.StatusCode);
         var body = await withinRemaining.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
-        Assert.Equal(255m, body!.Summary!.AdjustedPayableAmount);
+        Assert.Equal(230m, body!.Summary!.AdjustedPayableAmount);
 
         using var adjustments = await client.SendAsync(Request(
             HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/adjustments", cookie));
@@ -351,8 +351,8 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     [Fact]
     public async Task ASplitDesignOnADiscountedBillUsesTheDiscountedPayable()
     {
-        // V1-RMD-413 (V1-RMD-393 F-11): the design showed the undiscounted 275 while the engine sized splits against
-        // the discounted 250 and the repository checked against 275 again, so no split of a discounted bill saved.
+        // The design showed the undiscounted 250 while the engine sized splits against
+        // the discounted 225 and the repository checked against 250 again, so no split of a discounted bill saved.
         var terminalId = Guid.NewGuid();
         var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
             terminalId, "supervisor", "bills.discount", "bills.split");
@@ -374,7 +374,7 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
             Assert.Equal(HttpStatusCode.OK, get.StatusCode);
             design = (await get.Content.ReadFromJsonAsync<BillSplitDesignDto>())!;
         }
-        Assert.Equal(250m, design.PayableAmount);
+        Assert.Equal(225m, design.PayableAmount);
 
         var saved = await PutAsync<BillSplitDesignDto>(
             client,
@@ -385,10 +385,10 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
                 [],
                 [
                     new AmountSplitTargetRequest(new SplitOwnerRequest("Seat", seeded.SeatId), 100m),
-                    new AmountSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), 150m),
+                    new AmountSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), 125m),
                 ]));
-        Assert.Equal(250m, saved.PayableAmount);
-        Assert.Equal(250m, saved.Allocations.Sum(allocation => allocation.Amount));
+        Assert.Equal(225m, saved.PayableAmount);
+        Assert.Equal(225m, saved.Allocations.Sum(allocation => allocation.Amount));
         Assert.Equal(design.TaxTotal, saved.Allocations.Sum(allocation => allocation.TaxAmount));
 
         using var items = await client.SendAsync(JsonRequest(

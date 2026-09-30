@@ -20,8 +20,8 @@ discount):
   discount still recovers the true original subtotal).
 - `net_amount = 0`, `tax_amount = 0`, `gross_amount = 0` — the customer's
   payable stays exactly 0, unchanged from before this decision.
-- `line_subtotal` (`net_amount + discount_amount`) therefore equals the
-  item's real gross value, not 0.
+- `line_subtotal` (`gross_amount + discount_amount`; menu prices are
+  tax-inclusive) therefore equals the item's real gross value, not 0.
 
 Enforced as a hard invariant on `BillItem` construction: a `Complimentary`
 line whose `discount_amount` does not equal its own subtotal fails
@@ -51,7 +51,7 @@ in `Bill.Subtotal`/`Bill.DiscountTotal`.
 
 Positive 2: a ₺50 item with a modifier (+₺20) marked Complimentary →
 `DiscountAmount = 70` (unit price × quantity plus the modifier delta, via
-the order item's own already-modifier-inclusive `NetAmount`), not just the
+the order item's own already-modifier-inclusive `LineSubtotalValue`), not just the
 base ₺50 — modifiers are not lost.
 
 Negative 1 (rejected alternative): silently forcing `NetAmount`/

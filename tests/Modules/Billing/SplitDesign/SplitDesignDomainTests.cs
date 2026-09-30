@@ -242,32 +242,32 @@ public sealed class SplitDesignDomainTests
             productNameSnapshot: "Kebab",
             quantity: 1,
             unitPrice: 200m,
-            taxRate: 10m); // Gross = 220.00
+            taxRate: 10m); // Gross = 200.00 (tax-inclusive)
 
         var bill = new Bill(item.BillId, "BILL-004", new[] { item });
 
-        // Sum matches 220.00
+        // Sum matches 200.00
         var validTargets = new[]
         {
             ("Guest 1", 100.00m),
-            ("Guest 2", 120.00m)
+            ("Guest 2", 100.00m)
         };
         var allocations = SplitEngine.CreateAmountSplit(bill, validTargets);
         Assert.Equal(2, allocations.Count);
-        Assert.Equal(220.00m, allocations.Sum(a => a.AllocatedAmount));
+        Assert.Equal(200.00m, allocations.Sum(a => a.AllocatedAmount));
         Assert.Equal(bill.TaxTotal, allocations.Sum(a => a.TaxAmount));
 
-        // Sum does not match (210 != 220)
+        // Sum does not match (190 != 200)
         var invalidTargets = new[]
         {
             ("Guest 1", 100.00m),
-            ("Guest 2", 110.00m)
+            ("Guest 2", 90.00m)
         };
         Assert.Throws<InvalidOperationException>(() => SplitEngine.CreateAmountSplit(bill, invalidTargets));
 
         // Less than 2 targets
         Assert.Throws<ArgumentException>(() =>
-            SplitEngine.CreateAmountSplit(bill, new[] { ("Guest 1", 220m) }));
+            SplitEngine.CreateAmountSplit(bill, new[] { ("Guest 1", 200m) }));
     }
 
     [Fact]
@@ -303,7 +303,7 @@ public sealed class SplitDesignDomainTests
     {
         var billId = Guid.NewGuid();
 
-        // Item 1: Pizza, Qty 2, UnitPrice 100, TaxRate 10% (Gross = 220, Tax = 20)
+        // Item 1: Pizza, Qty 2, UnitPrice 100, TaxRate 10% (Gross = 200, tax-inclusive)
         var item1 = new BillItem(
             id: Guid.NewGuid(),
             billId: billId,
@@ -314,7 +314,7 @@ public sealed class SplitDesignDomainTests
             unitPrice: 100m,
             taxRate: 10m);
 
-        // Item 2: Kola, Qty 1, UnitPrice 40, TaxRate 10% (Gross = 44, Tax = 4)
+        // Item 2: Kola, Qty 1, UnitPrice 40, TaxRate 10% (Gross = 40)
         var item2 = new BillItem(
             id: Guid.NewGuid(),
             billId: billId,
@@ -346,10 +346,10 @@ public sealed class SplitDesignDomainTests
         Assert.Equal(2, personAAllocations.Count);
         Assert.Single(personBAllocations);
 
-        // Person A total = 110 (half pizza) + 44 (kola) = 154
-        Assert.Equal(154.00m, personAAllocations.Sum(a => a.AllocatedAmount));
-        // Person B total = 110 (half pizza)
-        Assert.Equal(110.00m, personBAllocations.Sum(a => a.AllocatedAmount));
+        // Person A total = 100 (half pizza) + 40 (kola) = 140
+        Assert.Equal(140.00m, personAAllocations.Sum(a => a.AllocatedAmount));
+        // Person B total = 100 (half pizza)
+        Assert.Equal(100.00m, personBAllocations.Sum(a => a.AllocatedAmount));
 
         // Total matches bill
         Assert.Equal(bill.PayableAmount, allocations.Sum(a => a.AllocatedAmount));
@@ -361,7 +361,7 @@ public sealed class SplitDesignDomainTests
     {
         var billId = Guid.NewGuid();
 
-        // 0.750 kg meat at 800 TRY/kg, 10% tax (Net 600.00, Tax 60.00, Gross 660.00)
+        // 0.750 kg meat at 800 TRY/kg, 10% tax-inclusive (Gross 600.00, Tax 54.55, Net 545.45)
         var item = new BillItem(
             id: Guid.NewGuid(),
             billId: billId,
@@ -384,13 +384,13 @@ public sealed class SplitDesignDomainTests
         var allocations = SplitEngine.CreateItemSplit(bill, targets);
         Assert.Equal(2, allocations.Count);
 
-        // Person 1 = 1/3 of 660 = 220.00
-        Assert.Equal(220.00m, allocations[0].AllocatedAmount);
-        Assert.Equal(20.00m, allocations[0].TaxAmount);
+        // Person 1 = 1/3 of 600 = 200.00, tax 1/3 of 54.55 = 18.18
+        Assert.Equal(200.00m, allocations[0].AllocatedAmount);
+        Assert.Equal(18.18m, allocations[0].TaxAmount);
 
-        // Person 2 = 2/3 of 660 = 440.00
-        Assert.Equal(440.00m, allocations[1].AllocatedAmount);
-        Assert.Equal(40.00m, allocations[1].TaxAmount);
+        // Person 2 = 2/3 of 600 = 400.00, tax remainder 36.37
+        Assert.Equal(400.00m, allocations[1].AllocatedAmount);
+        Assert.Equal(36.37m, allocations[1].TaxAmount);
 
         Assert.Equal(item.GrossAmount, allocations.Sum(a => a.AllocatedAmount));
         Assert.Equal(item.TaxAmount, allocations.Sum(a => a.TaxAmount));
@@ -573,8 +573,8 @@ public sealed class SplitDesignDomainTests
         var allocations = SplitEngine.CreateCustomSplit(
             bill,
             [
-                new CustomSplitTarget(firstOwner, 100m, item.Id, 0.5m),
-                new CustomSplitTarget(secondOwner, 120m, item.Id, 1.5m),
+                new CustomSplitTarget(firstOwner, 50m, item.Id, 0.5m),
+                new CustomSplitTarget(secondOwner, 150m, item.Id, 1.5m),
             ]);
 
         Assert.Equal(bill.PayableAmount, allocations.Sum(allocation => allocation.AllocatedAmount));
@@ -582,8 +582,8 @@ public sealed class SplitDesignDomainTests
         Assert.Throws<InvalidOperationException>(() => SplitEngine.CreateCustomSplit(
             bill,
             [
-                new CustomSplitTarget(firstOwner, 100m, item.Id, 1.5m),
-                new CustomSplitTarget(secondOwner, 120m, item.Id, 1m),
+                new CustomSplitTarget(firstOwner, 150m, item.Id, 1.5m),
+                new CustomSplitTarget(secondOwner, 100m, item.Id, 1m),
             ]));
     }
 }

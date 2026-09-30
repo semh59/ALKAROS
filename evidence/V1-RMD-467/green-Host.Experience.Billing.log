@@ -1,0 +1,789 @@
+﻿  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.Observability -> D:\PROJECT\ALKAROS\src\Modules\Observability\bin\Debug\net8.0\ALKAROS.Observability.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
+  ALKAROS.Identity -> D:\PROJECT\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Reconciliation -> D:\PROJECT\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Catalog -> D:\PROJECT\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Settings -> D:\PROJECT\ALKAROS\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Recipes -> D:\PROJECT\ALKAROS\src\Modules\Recipes\bin\Debug\net8.0\ALKAROS.Recipes.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.Support -> D:\PROJECT\ALKAROS\src\Modules\Support\bin\Debug\net8.0\ALKAROS.Support.dll
+  ALKAROS.Security -> D:\PROJECT\ALKAROS\src\Modules\Security\bin\Debug\net8.0\ALKAROS.Security.dll
+  ALKAROS.CustomerData -> D:\PROJECT\ALKAROS\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
+  ALKAROS.QrOrdering -> D:\PROJECT\ALKAROS\src\Modules\QrOrdering\bin\Debug\net8.0\ALKAROS.QrOrdering.dll
+  ALKAROS.Production -> D:\PROJECT\ALKAROS\src\Modules\Production\bin\Debug\net8.0\ALKAROS.Production.dll
+  ALKAROS.Menu -> D:\PROJECT\ALKAROS\src\Modules\Menu\bin\Debug\net8.0\ALKAROS.Menu.dll
+  ALKAROS.Invoicing -> D:\PROJECT\ALKAROS\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
+  ALKAROS.Purchasing -> D:\PROJECT\ALKAROS\src\Modules\Purchasing\bin\Debug\net8.0\ALKAROS.Purchasing.dll
+  ALKAROS.QrRelay -> D:\PROJECT\ALKAROS\src\Integrations\QrRelay\bin\Debug\net8.0\ALKAROS.QrRelay.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Operations -> D:\PROJECT\ALKAROS\src\Modules\Operations\bin\Debug\net8.0\ALKAROS.Operations.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Kitchen -> D:\PROJECT\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Payments -> D:\PROJECT\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\PROJECT\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Cash -> D:\PROJECT\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+  ALKAROS.Billing.PaymentClosure -> D:\PROJECT\ALKAROS\src\Modules\Billing\PaymentClosure\bin\Debug\net8.0\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.OnlineOrdering -> D:\PROJECT\ALKAROS\src\Modules\OnlineOrdering\bin\Debug\net8.0\ALKAROS.OnlineOrdering.dll
+  ALKAROS.Payments.TenderComposition -> D:\PROJECT\ALKAROS\src\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.CustomerAccounts -> D:\PROJECT\ALKAROS\src\Modules\CustomerAccounts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Host -> D:\PROJECT\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+  ALKAROS.Host.Experience.Billing.Tests -> D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll
+D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0\ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)
+[xUnit.net 00:00:00.49]   Discovering: ALKAROS.Host.Experience.Billing.Tests
+[xUnit.net 00:00:00.53]   Discovered:  ALKAROS.Host.Experience.Billing.Tests
+[xUnit.net 00:00:00.53]   Starting:    ALKAROS.Host.Experience.Billing.Tests
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitRegistrationTests.RegistrationPublishesVersionedDesignOnlyRoutes [702 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55488
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55488/api/v1/terminals/6007d02f-a2bf-4549-8b24-1ab617e1a810/billing/bills/28c4c421-9628-4273-a059-16d0052634c5/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55488/api/v1/terminals/6007d02f-a2bf-4549-8b24-1ab617e1a810/billing/bills/28c4c421-9628-4273-a059-16d0052634c5/discount - 200 - application/json;+charset=utf-8 460.1768ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:55488/api/v1/terminals/6007d02f-a2bf-4549-8b24-1ab617e1a810/billing/bills/28c4c421-9628-4273-a059-16d0052634c5/adjustments - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/adjustments'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type '<>f__AnonymousType22`2' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/adjustments'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:55488/api/v1/terminals/6007d02f-a2bf-4549-8b24-1ab617e1a810/billing/bills/28c4c421-9628-4273-a059-16d0052634c5/adjustments - 200 - application/json;+charset=utf-8 23.3650ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleThatHoldsBillsDiscountAppliesDirectly [724 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55495
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55495/api/v1/terminals/45de91f5-cdcf-4369-985b-4b7defe29658/billing/bills/3647af5e-c78e-4106-a29a-87e027cc1138/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55495/api/v1/terminals/45de91f5-cdcf-4369-985b-4b7defe29658/billing/bills/3647af5e-c78e-4106-a29a-87e027cc1138/discount - 200 - application/json;+charset=utf-8 214.0752ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55495/api/v1/terminals/45de91f5-cdcf-4369-985b-4b7defe29658/billing/bills/3647af5e-c78e-4106-a29a-87e027cc1138/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55495/api/v1/terminals/45de91f5-cdcf-4369-985b-4b7defe29658/billing/bills/3647af5e-c78e-4106-a29a-87e027cc1138/discount - 200 - application/json;+charset=utf-8 123.5723ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.RetryingADiscountWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment [394 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55502
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55502/api/v1/terminals/33037784-65d4-4bb4-af56-719353a59e9b/billing/bills/from-order/a3489cd8-e263-45a8-9afa-a16eb4332ed3 - - 0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55502/api/v1/terminals/33037784-65d4-4bb4-af56-719353a59e9b/billing/bills/from-order/a3489cd8-e263-45a8-9afa-a16eb4332ed3 - - 0
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/from-order/{orderId:guid}'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/from-order/{orderId:guid}'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/from-order/{orderId:guid}'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55502/api/v1/terminals/33037784-65d4-4bb4-af56-719353a59e9b/billing/bills/from-order/a3489cd8-e263-45a8-9afa-a16eb4332ed3 - 200 - application/json;+charset=utf-8 130.6371ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/from-order/{orderId:guid}'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55502/api/v1/terminals/33037784-65d4-4bb4-af56-719353a59e9b/billing/bills/from-order/a3489cd8-e263-45a8-9afa-a16eb4332ed3 - 200 - application/json;+charset=utf-8 130.8451ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ConcurrentBillCreationForTheSameOrderHasOneWinnerAndNoDuplicateBill [165 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55510
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55510/api/v1/terminals/48570205-fceb-4722-89e3-3660490c8511/billing/bills/3e3383b1-b019-4737-90cc-76f729de809f/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55510/api/v1/terminals/48570205-fceb-4722-89e3-3660490c8511/billing/bills/3e3383b1-b019-4737-90cc-76f729de809f/discount - 409 - application/json;+charset=utf-8 83.0582ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOnAPaidBillIsRejected [122 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55516
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55516/api/v1/terminals/e3d33086-eafb-4035-8be5-56ea4db2a9fc/billing/bills/63c63fa6-157d-46bc-86ef-c6ff9ec18394/tip - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 403.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55516/api/v1/terminals/e3d33086-eafb-4035-8be5-56ea4db2a9fc/billing/bills/63c63fa6-157d-46bc-86ef-c6ff9ec18394/tip - 403 - application/json;+charset=utf-8 96.6524ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleWithoutBillsSplitIsRejectedFromRecordingATip [130 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55522
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55522/api/v1/terminals/8e94ddb9-de1a-482f-9b23-c75d36a951f7/billing/bills/e5d6fc99-f24a-4aac-80a3-fd5538deafaf/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55522/api/v1/terminals/8e94ddb9-de1a-482f-9b23-c75d36a951f7/billing/bills/e5d6fc99-f24a-4aac-80a3-fd5538deafaf/discount - 200 - application/json;+charset=utf-8 212.5449ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ApplyingADiscountWritesARealAuditEvent [269 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55530
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55530/api/v1/terminals/05202ae5-0d56-4dfa-9f29-17b6dac576a2/billing/bills/69af03d3-060e-4048-ae64-961b4f02a50b/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55530/api/v1/terminals/05202ae5-0d56-4dfa-9f29-17b6dac576a2/billing/bills/69af03d3-060e-4048-ae64-961b4f02a50b/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 400.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55530/api/v1/terminals/05202ae5-0d56-4dfa-9f29-17b6dac576a2/billing/bills/69af03d3-060e-4048-ae64-961b4f02a50b/discount - 400 - application/json;+charset=utf-8 102.6139ms
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55530/api/v1/terminals/05202ae5-0d56-4dfa-9f29-17b6dac576a2/billing/bills/69af03d3-060e-4048-ae64-961b4f02a50b/discount - 200 - application/json;+charset=utf-8 223.1083ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ConcurrentDiscountsOnTheSameBillDoNotExceedThePayableAmount [257 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55540
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55540/api/v1/terminals/308dc6be-df69-465b-90a1-32bc41f56c08/billing/bills/d176ef7c-698d-41bb-94ec-8a738fff584e/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55540/api/v1/terminals/308dc6be-df69-465b-90a1-32bc41f56c08/billing/bills/d176ef7c-698d-41bb-94ec-8a738fff584e/discount - 409 - application/json;+charset=utf-8 90.8758ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55540/api/v1/terminals/308dc6be-df69-465b-90a1-32bc41f56c08/billing/bills/d176ef7c-698d-41bb-94ec-8a738fff584e/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55540/api/v1/terminals/308dc6be-df69-465b-90a1-32bc41f56c08/billing/bills/d176ef7c-698d-41bb-94ec-8a738fff584e/discount - 200 - application/json;+charset=utf-8 125.5455ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:55540/api/v1/terminals/308dc6be-df69-465b-90a1-32bc41f56c08/billing/bills/d176ef7c-698d-41bb-94ec-8a738fff584e/adjustments - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/adjustments'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type '<>f__AnonymousType22`2' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/adjustments'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:55540/api/v1/terminals/308dc6be-df69-465b-90a1-32bc41f56c08/billing/bills/d176ef7c-698d-41bb-94ec-8a738fff584e/adjustments - 200 - application/json;+charset=utf-8 7.6982ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatWouldUndercutWhatWasAlreadyCollectedIsRefused [310 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55547
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55547/api/v1/terminals/4194f4ec-d6f5-4c99-af53-30f86d605676/billing/bills/cd7fcd70-fd1b-4ccc-9c07-449b1f2f441c/tip - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillTipResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55547/api/v1/terminals/4194f4ec-d6f5-4c99-af53-30f86d605676/billing/bills/cd7fcd70-fd1b-4ccc-9c07-449b1f2f441c/tip - 200 - application/json;+charset=utf-8 145.6971ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55547/api/v1/terminals/4194f4ec-d6f5-4c99-af53-30f86d605676/billing/bills/cd7fcd70-fd1b-4ccc-9c07-449b1f2f441c/tip - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillTipResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55547/api/v1/terminals/4194f4ec-d6f5-4c99-af53-30f86d605676/billing/bills/cd7fcd70-fd1b-4ccc-9c07-449b1f2f441c/tip - 200 - application/json;+charset=utf-8 17.7486ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.RetryingATipWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment [197 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55554
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55554/api/v1/terminals/72de5b23-17fd-4730-b641-5a5c8f01b5b2/billing/bills/9b5948cc-4d81-428e-bea8-8d0e69bc4b2a/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55554/api/v1/terminals/72de5b23-17fd-4730-b641-5a5c8f01b5b2/billing/bills/9b5948cc-4d81-428e-bea8-8d0e69bc4b2a/discount - 200 - application/json;+charset=utf-8 221.3820ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:55554/api/v1/terminals/72de5b23-17fd-4730-b641-5a5c8f01b5b2/billing/bills/9b5948cc-4d81-428e-bea8-8d0e69bc4b2a/split-design - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:55554/api/v1/terminals/72de5b23-17fd-4730-b641-5a5c8f01b5b2/billing/bills/9b5948cc-4d81-428e-bea8-8d0e69bc4b2a/split-design - 200 - application/json;+charset=utf-8 14.3554ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55554/api/v1/terminals/72de5b23-17fd-4730-b641-5a5c8f01b5b2/billing/bills/9b5948cc-4d81-428e-bea8-8d0e69bc4b2a/split-design/amounts - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/amounts'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/amounts'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55554/api/v1/terminals/72de5b23-17fd-4730-b641-5a5c8f01b5b2/billing/bills/9b5948cc-4d81-428e-bea8-8d0e69bc4b2a/split-design/amounts - 200 - application/json;+charset=utf-8 66.6247ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55554/api/v1/terminals/72de5b23-17fd-4730-b641-5a5c8f01b5b2/billing/bills/9b5948cc-4d81-428e-bea8-8d0e69bc4b2a/split-design/items - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/items'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/items'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55554/api/v1/terminals/72de5b23-17fd-4730-b641-5a5c8f01b5b2/billing/bills/9b5948cc-4d81-428e-bea8-8d0e69bc4b2a/split-design/items - 409 - application/json;+charset=utf-8 12.7719ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ASplitDesignOnADiscountedBillUsesTheDiscountedPayable [369 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55561
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55561/api/v1/terminals/cec25f5d-2880-40c9-ad34-874b9446f90d/billing/bills/5d97b84b-f9e4-4dcc-af50-acefa3ad3039/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]
+      Setting HTTP status code 202.
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55561/api/v1/terminals/cec25f5d-2880-40c9-ad34-874b9446f90d/billing/bills/5d97b84b-f9e4-4dcc-af50-acefa3ad3039/discount - 202 - application/json;+charset=utf-8 144.0069ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleWithoutBillsDiscountAndNoPolicyOrDelegationEscalatesToPending [177 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55568
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55568/api/v1/terminals/f323f2de-b8af-49e7-aa3d-c944d3b2e672/billing/bills/1e4e7fa2-4f45-462a-97f9-fbcd8ca524a0/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 400.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55568/api/v1/terminals/f323f2de-b8af-49e7-aa3d-c944d3b2e672/billing/bills/1e4e7fa2-4f45-462a-97f9-fbcd8ca524a0/discount - 400 - application/json;+charset=utf-8 77.3320ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AnInvalidDiscountReasonCodeIsRejected [111 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55574
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55574/api/v1/terminals/ebefec19-b1d3-4d93-a77d-ee28c7829dfd/billing/bills/9db6ddf7-3e4d-4290-9ff5-24d993308919/tip - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillTipResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55574/api/v1/terminals/ebefec19-b1d3-4d93-a77d-ee28c7829dfd/billing/bills/9db6ddf7-3e4d-4290-9ff5-24d993308919/tip - 200 - application/json;+charset=utf-8 124.7064ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleThatHoldsBillsSplitRecordsATipDirectly [156 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55582
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55582/api/v1/terminals/2fd3478e-ce46-489f-ab0b-a4bc571eaa4f/billing/bills/f405cec1-403d-4579-baf3-fcf5814f2c43/tip - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillTipResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55582/api/v1/terminals/2fd3478e-ce46-489f-ab0b-a4bc571eaa4f/billing/bills/f405cec1-403d-4579-baf3-fcf5814f2c43/tip - 200 - application/json;+charset=utf-8 190.5358ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:55582/api/v1/terminals/2fd3478e-ce46-489f-ab0b-a4bc571eaa4f/orders/my-shift-summary - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/my-shift-summary'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MyShiftSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/my-shift-summary'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:55582/api/v1/terminals/2fd3478e-ce46-489f-ab0b-a4bc571eaa4f/orders/my-shift-summary - 200 - application/json;+charset=utf-8 19.6709ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AWaiterWhoseOnlyOrderTodayWasCancelledDoesNotDiluteTheTipPool [843 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55588
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55588/api/v1/terminals/3d93135c-cebb-4c3e-836a-7a2785729901/billing/bills/8af3ab41-ec6a-4e3f-979e-fe070cfc41c0/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 400.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55588/api/v1/terminals/3d93135c-cebb-4c3e-836a-7a2785729901/billing/bills/8af3ab41-ec6a-4e3f-979e-fe070cfc41c0/discount - 400 - application/json;+charset=utf-8 92.4085ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountExceedingThePayableAmountIsRejectedAndNotPersisted [135 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55596
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55596/api/v1/terminals/ab02afe2-1dbf-458c-b047-e417ea15ca22/billing/bills/50a4fb68-abcc-4613-9b51-084f1192f281/tip - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillTipResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55596/api/v1/terminals/ab02afe2-1dbf-458c-b047-e417ea15ca22/billing/bills/50a4fb68-abcc-4613-9b51-084f1192f281/tip - 200 - application/json;+charset=utf-8 216.5766ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:55596/api/v1/terminals/ab02afe2-1dbf-458c-b047-e417ea15ca22/orders/my-shift-summary - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/my-shift-summary'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'MyShiftSummaryV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/my-shift-summary'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:55596/api/v1/terminals/ab02afe2-1dbf-458c-b047-e417ea15ca22/orders/my-shift-summary - 200 - application/json;+charset=utf-8 11.7333ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AVoluntaryTipTodayAppearsInTheServingWaitersShiftSummary [421 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55602
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55602/api/v1/terminals/6411b13d-d3c3-4696-865b-94d12614a82d/billing/bills/70268221-3362-497c-85f4-840e2a16d9d9/split-design/equal - application/json;+charset=utf-8 16
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55602/api/v1/terminals/6411b13d-d3c3-4696-865b-94d12614a82d/billing/bills/70268221-3362-497c-85f4-840e2a16d9d9/split-design/equal - 400 0 - 48.7430ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.MalformedJsonBodyReturns400WithoutReachingTheEndpointFilter [80 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55607
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55607/api/v1/terminals/acdeccc9-d14a-4ea1-90fd-7f387071cf9f/billing/bills/5baabac5-41b3-4cf3-bdd2-ff4b93cb78bc/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]
+      Setting HTTP status code 202.
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55607/api/v1/terminals/acdeccc9-d14a-4ea1-90fd-7f387071cf9f/billing/bills/5baabac5-41b3-4cf3-bdd2-ff4b93cb78bc/discount - 202 - application/json;+charset=utf-8 96.0375ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55607/api/v1/terminals/acdeccc9-d14a-4ea1-90fd-7f387071cf9f/billing/bills/5baabac5-41b3-4cf3-bdd2-ff4b93cb78bc/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55607/api/v1/terminals/acdeccc9-d14a-4ea1-90fd-7f387071cf9f/billing/bills/5baabac5-41b3-4cf3-bdd2-ff4b93cb78bc/discount - 409 - application/json;+charset=utf-8 9.9191ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55607/api/v1/terminals/acdeccc9-d14a-4ea1-90fd-7f387071cf9f/billing/bills/5baabac5-41b3-4cf3-bdd2-ff4b93cb78bc/discount - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55607/api/v1/terminals/acdeccc9-d14a-4ea1-90fd-7f387071cf9f/billing/bills/5baabac5-41b3-4cf3-bdd2-ff4b93cb78bc/discount - 200 - application/json;+charset=utf-8 136.1184ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied [277 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55614
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 401.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design - 401 - application/json;+charset=utf-8 54.4364ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design - 200 - application/json;+charset=utf-8 35.3201ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design/owners - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/owners'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'List`1' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/owners'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design/owners - 200 - application/json;+charset=utf-8 19.1213ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design/equal - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 403.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design/equal - 403 - application/json;+charset=utf-8 12.0959ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design/equal - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design/equal - 200 - application/json;+charset=utf-8 33.5563ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design/equal - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design/equal - 409 - application/json;+charset=utf-8 21.7502ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design/equal - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55614/api/v1/terminals/a8fb07be-e930-4e01-965a-a5076f1a4360/billing/bills/34659b79-a411-43a9-8f4e-8c7fcc32a002/split-design/equal - 409 - application/json;+charset=utf-8 14.3517ms
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.EndpointsEnforceSessionPermissionAndAtomicConcurrency [232 ms]
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55620
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55620/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/items - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/items'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/items'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55620/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/items - 200 - application/json;+charset=utf-8 102.0983ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55620/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/items - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/items'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 400.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/items'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55620/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/items - 400 - application/json;+charset=utf-8 8.9066ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55620/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/amounts - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/amounts'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/amounts'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55620/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/amounts - 200 - application/json;+charset=utf-8 16.4427ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55620/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/custom - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/custom'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/custom'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55620/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/custom - 200 - application/json;+charset=utf-8 25.1819ms
+info: Microsoft.Hosting.Lifetime[14]
+      Now listening on: http://127.0.0.1:55623
+info: Microsoft.Hosting.Lifetime[0]
+      Application started. Press Ctrl+C to shut down.
+info: Microsoft.Hosting.Lifetime[0]
+      Hosting environment: Production
+info: Microsoft.Hosting.Lifetime[0]
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Billing\bin\Debug\net8.0
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 GET http://127.0.0.1:55623/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design - - -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 GET http://127.0.0.1:55623/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design - 200 - application/json;+charset=utf-8 81.8698ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 POST http://127.0.0.1:55623/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/clear - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/clear'
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]
+      Setting HTTP status code 200.
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]
+      Writing value of type 'BillSplitDesignDto' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/clear'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 POST http://127.0.0.1:55623/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/clear - 200 - application/json;+charset=utf-8 21.0715ms
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]
+      Request starting HTTP/1.1 PUT http://127.0.0.1:55623/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/equal - application/json;+charset=utf-8 -
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]
+      Setting HTTP status code 409.
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/equal'
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]
+      Request finished HTTP/1.1 PUT http://127.0.0.1:55623/api/v1/terminals/60a792e6-322e-4654-b28f-ac556b242c6d/billing/bills/8e874b09-a6fd-4d51-9eef-cedda0723193/split-design/equal - 409 - application/json;+charset=utf-8 12.1678ms
+[xUnit.net 00:00:43.38]   Finished:    ALKAROS.Host.Experience.Billing.Tests
+  Başarılı ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AllModesPersistRejectOverflowSurviveRestartAndClear [314 ms]
+
+Test Çalıştırması Başarılı.
+Toplam test sayısı: 21
+     Geçti: 21
+ Toplam süre: 43,9299 Saniye

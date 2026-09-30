@@ -149,10 +149,8 @@ public sealed class BillAdjustment
             throw new ArgumentException("Base gross amount must be positive to apply discount.", nameof(baseGrossAmount));
 
         var discountGross = BillMath.RoundCurrency(baseGrossAmount * (rate / 100m));
-        var discountNet = taxRate > 0
-            ? BillMath.RoundCurrency(discountGross / (1m + (taxRate / 100m)))
-            : discountGross;
-        var discountTax = BillMath.RoundCurrency(discountGross - discountNet);
+        var discountTax = BillItem.TaxIncludedIn(discountGross, taxRate);
+        var discountNet = discountGross - discountTax;
 
         return new BillAdjustment(
             id: id,
@@ -193,10 +191,8 @@ public sealed class BillAdjustment
             throw new ArgumentException("Discount amount must be positive.", nameof(discountAmount));
 
         var discountGross = BillMath.RoundCurrency(discountAmount);
-        var discountNet = taxRate > 0
-            ? BillMath.RoundCurrency(discountGross / (1m + (taxRate / 100m)))
-            : discountGross;
-        var discountTax = BillMath.RoundCurrency(discountGross - discountNet);
+        var discountTax = BillItem.TaxIncludedIn(discountGross, taxRate);
+        var discountNet = discountGross - discountTax;
 
         return new BillAdjustment(
             id: id,
@@ -246,10 +242,8 @@ public sealed class BillAdjustment
             throw new ArgumentException("Service fee / Kuver amount must be positive.", nameof(amount));
 
         var feeGross = BillMath.RoundCurrency(amount);
-        var feeNet = taxRate > 0
-            ? BillMath.RoundCurrency(feeGross / (1m + (taxRate / 100m)))
-            : feeGross;
-        var feeTax = BillMath.RoundCurrency(feeGross - feeNet);
+        var feeTax = BillItem.TaxIncludedIn(feeGross, taxRate);
+        var feeNet = feeGross - feeTax;
 
         return new BillAdjustment(
             id: id,

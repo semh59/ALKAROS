@@ -1,0 +1,18 @@
+﻿D:\PROJECT\ALKAROS\tests\Modules\Billing\SplitDesign\bin\Debug\net8.0\ALKAROS.Billing.SplitDesign.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+dotnet : [xUnit.net 00:00:00.44]     ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitWithFractionalQu
+antitiesDistributesLosslessly [FAIL]
+At line:5 char:3
++   dotnet test "tests/Modules/$p" -v q --nologo *> "evidence/V1-RMD-46 ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([xUnit.net 00:0...sslessly [FAIL]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+[xUnit.net 00:00:00.48]     ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitDistributesGrossAndTaxAcr
+ossOwnersLosslessly [FAIL]
+[xUnit.net 00:00:00.48]     ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.CustomSplitIsLosslessAndRejectsCum
+ulativeQuantityOverflow [FAIL]
+[xUnit.net 00:00:00.48]     ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountSplitValidatesTotalSumMatche
+sBillPayable [FAIL]
+
+Başarısız! - Başarısız:     4, Başarılı:    25, Atlanan:     0, Toplam:    29, Süre: 954 ms - ALKAROS.Billing.SplitDesign.Tests.dll (net8.0)

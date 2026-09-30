@@ -97,9 +97,10 @@ public sealed class OrderItem
             throw new ArgumentException(
                 "Discount amount cannot exceed the order item subtotal.",
                 nameof(discountAmount));
-        NetAmount = netAmount ?? OrderMath.RoundCurrency(lineSubtotal - DiscountAmount);
-        TaxAmount = taxAmount ?? OrderMath.RoundCurrency(NetAmount * TaxRate / 100m);
-        GrossAmount = grossAmount ?? OrderMath.RoundCurrency(NetAmount + TaxAmount);
+        // Menu prices are tax-inclusive: the discounted line subtotal is the gross the customer pays.
+        GrossAmount = grossAmount ?? OrderMath.RoundCurrency(lineSubtotal - DiscountAmount);
+        TaxAmount = taxAmount ?? OrderMath.TaxIncludedIn(GrossAmount, TaxRate);
+        NetAmount = netAmount ?? OrderMath.RoundCurrency(GrossAmount - TaxAmount);
         if (NetAmount < 0 || TaxAmount < 0 || GrossAmount < 0)
             throw new ArgumentException("Persisted order item amounts cannot be negative.");
     }

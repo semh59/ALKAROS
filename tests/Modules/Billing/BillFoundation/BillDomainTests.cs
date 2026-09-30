@@ -39,11 +39,11 @@ public sealed class BillDomainTests
         Assert.Equal(1, bill.RowVersion);
         Assert.Single(bill.Items);
 
-        // Monetary calculations: 2 * 200 = 400 net; tax 10% = 40; gross = 440
+        // Tax-inclusive: 2 * 200 = 400 gross; the 10% tax contained in it is 400 * 10 / 110 = 36.36
         Assert.Equal(400m, bill.Subtotal);
         Assert.Equal(0m, bill.DiscountTotal);
-        Assert.Equal(40m, bill.TaxTotal);
-        Assert.Equal(440m, bill.PayableAmount);
+        Assert.Equal(36.36m, bill.TaxTotal);
+        Assert.Equal(400m, bill.PayableAmount);
     }
 
     [Theory]
@@ -142,10 +142,10 @@ public sealed class BillDomainTests
         Assert.Equal(BillLineType.Sale, billItem.LineType);
         Assert.Equal("Extra tereyag", billItem.Notes);
 
-        // 3 * 250 = 750; net = 750 - 50 = 700; tax = 700 * 10% = 70; gross = 770
-        Assert.Equal(700m, billItem.NetAmount);
-        Assert.Equal(70m, billItem.TaxAmount);
-        Assert.Equal(770m, billItem.GrossAmount);
+        // 3 * 250 = 750; gross = 750 - 50 = 700; tax contained = 700 * 10 / 110 = 63.64; net = 636.36
+        Assert.Equal(636.36m, billItem.NetAmount);
+        Assert.Equal(63.64m, billItem.TaxAmount);
+        Assert.Equal(700m, billItem.GrossAmount);
     }
 
     [Fact]
@@ -263,7 +263,7 @@ public sealed class BillDomainTests
     {
         var billId = Guid.NewGuid();
 
-        // 1 line with 9.99 net at 10% tax -> tax = 1.00 (or 9.99 * 0.10 = 0.999 -> 1.00), gross = 10.99
+        // 1 line priced 9.99 tax-inclusive at 10%: tax = 9.99 * 10 / 110 = 0.908 -> 0.91, net = 9.08
         var item = new BillItem(
             id: Guid.NewGuid(),
             billId: billId,
@@ -274,14 +274,14 @@ public sealed class BillDomainTests
             unitPrice: 9.99m,
             taxRate: 10m);
 
-        Assert.Equal(9.99m, item.NetAmount);
-        Assert.Equal(1.00m, item.TaxAmount);
-        Assert.Equal(10.99m, item.GrossAmount);
+        Assert.Equal(9.08m, item.NetAmount);
+        Assert.Equal(0.91m, item.TaxAmount);
+        Assert.Equal(9.99m, item.GrossAmount);
 
         var bill = new Bill(billId, "BILL-ROUND-01", new[] { item });
         Assert.Equal(9.99m, bill.Subtotal);
-        Assert.Equal(1.00m, bill.TaxTotal);
-        Assert.Equal(10.99m, bill.PayableAmount);
+        Assert.Equal(0.91m, bill.TaxTotal);
+        Assert.Equal(9.99m, bill.PayableAmount);
     }
 
     [Fact]
@@ -368,9 +368,9 @@ public sealed class BillDomainTests
 
         var billItem = BillItem.FromOrderItem(Guid.NewGuid(), orderItem);
 
-        Assert.Equal(120m, billItem.NetAmount);
-        Assert.Equal(12m, billItem.TaxAmount);
-        Assert.Equal(132m, billItem.GrossAmount);
+        Assert.Equal(109.09m, billItem.NetAmount);
+        Assert.Equal(10.91m, billItem.TaxAmount);
+        Assert.Equal(120m, billItem.GrossAmount);
         Assert.Equal(150m, billItem.LineSubtotal);
     }
 
@@ -382,7 +382,7 @@ public sealed class BillDomainTests
 
         var updated = bill.AddItem(item1);
         Assert.Single(updated.Items);
-        Assert.Equal(55m, updated.PayableAmount);
+        Assert.Equal(50m, updated.PayableAmount);
 
         // Duplicate item throws
         Assert.Throws<InvalidOperationException>(() => updated.AddItem(item1));
@@ -436,7 +436,7 @@ public sealed class BillDomainTests
         Assert.Equal(order.Id, bill.OrderId);
         Assert.Single(bill.Items);
         Assert.Equal(activeItem.Id, bill.Items[0].OrderItemId);
-        Assert.Equal(220m, bill.PayableAmount);
+        Assert.Equal(200m, bill.PayableAmount);
     }
 
     [Fact]
@@ -454,8 +454,8 @@ public sealed class BillDomainTests
         Assert.Equal(2, mergedBill.Items.Count);
         Assert.Null(mergedBill.OrderId); // Merged bill has no single origin order dominance
 
-        // 150*1.10 = 165; 50*1.10 = 55; total = 220
-        Assert.Equal(220m, mergedBill.PayableAmount);
+        // Tax-inclusive: 150 + 2 * 25 = 200
+        Assert.Equal(200m, mergedBill.PayableAmount);
     }
 
     [Fact]
@@ -485,9 +485,9 @@ public sealed class BillDomainTests
         Assert.Equal(2, bills[1].Items.Count);
 
         // Sum of split bills payable equals original order total
-        // item1: 80 * 1.1 = 88; item2: 180 * 1.1 = 198; item3: 40 * 1.1 = 44; total = 330
-        Assert.Equal(88m, bills[0].PayableAmount);
-        Assert.Equal(242m, bills[1].PayableAmount);
+        // Tax-inclusive: item1 = 80; item2 + item3 = 180 + 40 = 220; total = 300
+        Assert.Equal(80m, bills[0].PayableAmount);
+        Assert.Equal(220m, bills[1].PayableAmount);
         Assert.Equal(order.Total, bills[0].PayableAmount + bills[1].PayableAmount);
     }
 

@@ -63,8 +63,9 @@ public sealed class BillItem
         CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
         UpdatedAt = updatedAt ?? CreatedAt;
 
-        var lineSubtotal = netAmount.HasValue
-            ? BillMath.RoundCurrency(netAmount.Value + DiscountAmount)
+        var pricedAmount = grossAmount ?? netAmount;
+        var lineSubtotal = pricedAmount.HasValue
+            ? BillMath.RoundCurrency(pricedAmount.Value + DiscountAmount)
             : BillMath.RoundCurrency(Quantity * UnitPrice);
         if (DiscountAmount > lineSubtotal)
             throw new ArgumentException(
@@ -92,9 +93,9 @@ public sealed class BillItem
                 "A complimentary line must be fully discounted (discount amount must equal the line's true gross value) " +
                 "so its real gross value stays visible for fiscal reporting.",
                 nameof(discountAmount));
-        NetAmount = netAmount ?? BillMath.RoundCurrency(lineSubtotal - DiscountAmount);
-        TaxAmount = taxAmount ?? BillMath.RoundCurrency(NetAmount * TaxRate / 100m);
-        GrossAmount = grossAmount ?? BillMath.RoundCurrency(NetAmount + TaxAmount);
+        GrossAmount = grossAmount ?? BillMath.RoundCurrency(lineSubtotal - DiscountAmount);
+        TaxAmount = taxAmount ?? TaxIncludedIn(GrossAmount, TaxRate);
+        NetAmount = netAmount ?? BillMath.RoundCurrency(GrossAmount - TaxAmount);
         if (NetAmount < 0 || TaxAmount < 0 || GrossAmount < 0)
             throw new ArgumentException("Persisted bill item amounts cannot be negative.");
     }
@@ -133,7 +134,11 @@ public sealed class BillItem
 
     public DateTimeOffset UpdatedAt { get; }
 
-    public decimal LineSubtotal => BillMath.RoundCurrency(NetAmount + DiscountAmount);
+    public decimal LineSubtotal => BillMath.RoundCurrency(GrossAmount + DiscountAmount);
+
+    /// <summary>Tax contained in a tax-inclusive gross amount (tax first, half-up; net is gross minus this).</summary>
+    internal static decimal TaxIncludedIn(decimal gross, decimal taxRatePercent)
+        => BillMath.RoundCurrency(gross * taxRatePercent / (100m + taxRatePercent));
 
     /// <summary>
     /// Creates a BillItem instance bound to a target Bill from an active OrderItem.
@@ -155,15 +160,13 @@ public sealed class BillItem
             : BillLineType.Sale);
 
         // V1-RMD-228: a complimentary line's discount is the item's full
-        // pre-discount subtotal (orderItem.NetAmount already reflects any
-        // modifiers and prior discount, so adding the discount back
-        // recovers the true gross including modifiers) — the real gross
-        // value stays visible via LineSubtotal for fiscal reporting, only
-        // the customer's payable stays 0. netAmount/taxAmount/grossAmount
-        // are still passed explicitly (not left to recompute from
-        // quantity * unitPrice) so a modifier's price delta is not lost.
+        // pre-discount subtotal (the persisted gross plus its discount, cross-checked
+        // against trueGrossAmount below), so its real gross value stays visible via
+        // LineSubtotal for fiscal reporting while the customer's payable stays 0.
+        // Amounts are passed explicitly (not recomputed from quantity * unitPrice)
+        // so a modifier's price delta is not lost.
         var discountAmount = effectiveLineType == BillLineType.Complimentary
-            ? orderItem.NetAmount + orderItem.DiscountAmount
+            ? orderItem.GrossAmount + orderItem.DiscountAmount
             : orderItem.DiscountAmount;
 
         return new BillItem(

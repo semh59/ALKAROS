@@ -1,0 +1,64 @@
+﻿  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Tables -> D:\PROJECT\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Orders -> D:\PROJECT\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Billing -> D:\PROJECT\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Billing.BillFoundation.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Billing\BillFoundation\bin\Debug\net8.0\ALKAROS.Billing.BillFoundation.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Billing\BillFoundation\bin\Debug\net8.0\ALKAROS.Billing.BillFoundation.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+dotnet : [xUnit.net 00:00:01.24]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillItemFromOrderItemPreserve
+sFrozenSnapshots [FAIL]
+At line:5 char:3
++   dotnet test "tests/Modules/$p" --nologo *> "evidence/V1-RMD-467/mut ...
++   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([xUnit.net 00:0...napshots [FAIL]:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  Başarısız ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillItemFromOrderItemPreservesFrozenSnapshots [214 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: 636,36
+Actual:   630
+  Yığın İzleme:
+     at ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillItemFromOrderItemPreservesFrozenSnapshots() in D:\PROJECT\ALKAROS\tests\Modules\Billing\BillFoundation\BillDomainTests.cs:line 146
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.30]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.MoneyTaxRoundingMatchesV0Cmp002KurusIn
+variant [FAIL]
+[xUnit.net 00:00:01.30]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillItemFromOrderItemWithModifiersAndD
+iscountCalculatesAccurately [FAIL]
+  Başarısız ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.MoneyTaxRoundingMatchesV0Cmp002KurusInvariant [< 1 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: 9,08
+Actual:   8,99
+  Yığın İzleme:
+     at ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.MoneyTaxRoundingMatchesV0Cmp002KurusInvariant() in D:\PROJECT\ALKAROS\tests\Modules\Billing\BillFoundation\BillDomainTests.cs:line 277
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Başarısız ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillItemFromOrderItemWithModifiersAndDiscountCalculatesAccurately [< 1 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: 109,09
+Actual:   108
+  Yığın İzleme:
+     at ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillItemFromOrderItemWithModifiersAndDiscountCalculatesAccurately() in D:\PROJECT\ALKAROS\tests\Modules\Billing\BillFoundation\BillDomainTests.cs:line 371
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+[xUnit.net 00:00:01.31]     ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillCreationWithValidArgumentsInitiali
+zesCorrectly [FAIL]
+  Başarısız ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillCreationWithValidArgumentsInitializesCorrectly [3 ms]
+  Hata İletisi:
+   Assert.Equal() Failure: Values differ
+Expected: 36,36
+Actual:   40
+  Yığın İzleme:
+     at ALKAROS.Billing.BillFoundation.Tests.BillDomainTests.BillCreationWithValidArgumentsInitializesCorrectly() in D:\PROJECT\ALKAROS\tests\Modules\Billing\BillFoundation\BillDomainTests.cs:line 45
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Başarısız! - Başarısız:     4, Başarılı:    40, Atlanan:     0, Toplam:    44, Süre: 977 ms - ALKAROS.Billing.BillFoundation.Tests.dll (net8.0)

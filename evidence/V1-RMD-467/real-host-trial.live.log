@@ -1,0 +1,6 @@
+db ready, seeded
+host ready
+seed keys: cashierUsername,cashierPassword,limitedUsername,secondManagerUsername,kasa1TableId,kasa1TableNumber,lowStockProductId,normalStockProductId,paymentProductId,modifierProductId,modifierGroupId,modifierSmallId,modifierLargeId,transferTables
+product 100 TL now has KDV %10 profile
+order: [{"subtotal":"100.00","tax_total":"9.09","total":"100.00"}] item: [{"unit_price":"100.00","tax_rate":"10.00","net_amount":"90.91","tax_amount":"9.09","gross_amount":"100.00"}]
+bill: {"billId":"83eecf4b-96d7-4755-ac51-a6c9433ca04e","billNumber":"BILL-TBL-TRF-1-16282738-36922bfb","billStatus":"Open","currencyCode":"TRY","payableAmount":100,"taxTotal":9.09,"billRowVersion":1,"mode":"None","executionState":"DesignOnly","allowedCommands":["SaveEqual","SaveItems","SaveAmounts","SaveCustom","Clear"],"items":[{"billItemId":"56d47ffc-1008-4d2e-82e2-9863e91ac29d","productName":"E2E Öde

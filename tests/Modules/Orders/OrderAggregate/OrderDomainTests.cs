@@ -216,8 +216,8 @@ public class OrderDomainTests
         order.CurrencyCode.Should().Be("TRY");
         order.Subtotal.Should().Be(100m);
         order.DiscountTotal.Should().Be(0m);
-        order.TaxTotal.Should().Be(10m);
-        order.Total.Should().Be(110m);
+        order.TaxTotal.Should().Be(9.09m);
+        order.Total.Should().Be(100m);
         order.SubmittedAt.Should().BeNull();
         order.AcceptedAt.Should().BeNull();
         order.RowVersion.Should().Be(1);
@@ -292,9 +292,9 @@ public class OrderItemQuantityAndRemovalTests
         var changed = item.ChangeQuantity(3);
 
         changed.Quantity.Should().Be(3);
-        changed.NetAmount.Should().Be(150m);
-        changed.TaxAmount.Should().Be(15m);
-        changed.GrossAmount.Should().Be(165m);
+        changed.NetAmount.Should().Be(136.36m);
+        changed.TaxAmount.Should().Be(13.64m);
+        changed.GrossAmount.Should().Be(150m);
     }
 
     [Theory]
@@ -331,7 +331,7 @@ public class OrderItemQuantityAndRemovalTests
 
         updated.Items.Single().Quantity.Should().Be(5);
         updated.Subtotal.Should().Be(100m);
-        updated.Total.Should().Be(110m);
+        updated.Total.Should().Be(100m);
     }
 
     [Fact]
@@ -529,9 +529,9 @@ public class OrderItemStateTests
         item.UnitPrice.Should().Be(250m);
 
         item.LineSubtotalValue.Should().Be(500m);
-        item.NetAmount.Should().Be(500m);
-        item.TaxAmount.Should().Be(50m);
-        item.GrossAmount.Should().Be(550m);
+        item.NetAmount.Should().Be(454.55m);
+        item.TaxAmount.Should().Be(45.45m);
+        item.GrossAmount.Should().Be(500m);
     }
 
     [Fact]
@@ -549,13 +549,13 @@ public class OrderItemStateTests
             modifiers: [modifier]);
 
         item.LineSubtotalValue.Should().Be(215m);
-        item.NetAmount.Should().Be(215m);
-        item.TaxAmount.Should().Be(21.5m);
-        item.GrossAmount.Should().Be(236.5m);
+        item.NetAmount.Should().Be(195.45m);
+        item.TaxAmount.Should().Be(19.55m);
+        item.GrossAmount.Should().Be(215m);
     }
 
     [Fact]
-    public void DiscountReducesNetBeforeTax()
+    public void DiscountReducesGrossBeforeTaxIsSplitOut()
     {
         var item = new OrderItem(
             Guid.NewGuid(),
@@ -567,9 +567,9 @@ public class OrderItemStateTests
             10m,
             discountAmount: 10m);
 
-        item.NetAmount.Should().Be(90m);
-        item.TaxAmount.Should().Be(9m);
-        item.GrossAmount.Should().Be(99m);
+        item.NetAmount.Should().Be(81.82m);
+        item.TaxAmount.Should().Be(8.18m);
+        item.GrossAmount.Should().Be(90m);
     }
 
     [Theory]

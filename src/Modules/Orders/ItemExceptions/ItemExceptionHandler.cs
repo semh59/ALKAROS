@@ -221,7 +221,7 @@ public sealed class ItemExceptionHandler
             targetItem.UnitPrice,
             targetItem.TaxRate,
             targetItem.SkuSnapshot,
-            discountAmount: targetItem.NetAmount + targetItem.DiscountAmount,
+            discountAmount: targetItem.LineSubtotalValue,
             modifiers: targetItem.Modifiers,
             status: OrderItemState.Complimentary,
             kitchenState: targetItem.KitchenState,

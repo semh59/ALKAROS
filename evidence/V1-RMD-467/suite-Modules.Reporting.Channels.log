@@ -1,0 +1,28 @@
+﻿  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Reporting -> D:\PROJECT\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Reporting.Channels.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Reporting\Channels\bin\Debug\net8.0\ALKAROS.Reporting.Channels.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)
+[xUnit.net 00:00:00.25]   Discovering: ALKAROS.Reporting.Channels.Tests
+[xUnit.net 00:00:00.28]   Discovered:  ALKAROS.Reporting.Channels.Tests
+[xUnit.net 00:00:00.29]   Starting:    ALKAROS.Reporting.Channels.Tests
+[xUnit.net 00:00:02.68]   Finished:    ALKAROS.Reporting.Channels.Tests
+  Başarılı ALKAROS.Reporting.Channels.Tests.ChannelReportTests.ADayWithOnlyProviderRefusalsStillAppears [93 ms]
+  Başarılı ALKAROS.Reporting.Channels.Tests.ChannelReportTests.TheGoldenDatasetProducesExactlyTheExpectedChannelReportAndBalancesToTheLedger [112 ms]
+  Başarılı ALKAROS.Reporting.Channels.Tests.ChannelReportTests.AnOrderStatusNoBucketKnowsUnbalancesTheReport [19 ms]
+  Başarılı ALKAROS.Reporting.Channels.Tests.ChannelReportTests.AnInvalidRangeOrSourceIsRefused [15 ms]
+  Başarılı ALKAROS.Reporting.Channels.Tests.ChannelReportTests.AnOrderFirstRefusedBeforeTheRangeIsNotARefusalInIt [19 ms]
+  Başarılı ALKAROS.Reporting.Channels.Tests.ChannelReportTests.APlatformsRefusalCountsEvenWhenAnotherPlatformHasAnOrderWithThatNumber [13 ms]
+  Başarılı ALKAROS.Reporting.Channels.Tests.ChannelReportTests.EachPlatformHasItsOwnOnlineRowEvenWithTheSameOrderNumber [17 ms]
+  Başarılı ALKAROS.Reporting.Channels.Tests.ChannelReportTests.ASourceFilterKeepsOnlyThatChannelAndItsOwnLedgerTotal [22 ms]
+
+Test Çalıştırması Başarılı.
+Toplam test sayısı: 8
+     Geçti: 8
+ Toplam süre: 3,2491 Saniye
