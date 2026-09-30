@@ -227,7 +227,7 @@ public sealed partial class DualScreenStore
         var lines = new List<CustomerDisplayLineDto>();
         await using (var lineCommand = _dataSource.CreateCommand(
             """
-            SELECT order_item_id, product_name_snapshot, quantity, unit_price, gross_amount, status, tax_rate
+            SELECT order_item_id, product_name_snapshot, quantity, unit_price, gross_amount, status
             FROM orders.order_items
             WHERE order_id = @order_id AND status IN ('Draft', 'Active', 'Complimentary')
             ORDER BY created_at, order_item_id;
@@ -248,13 +248,13 @@ public sealed partial class DualScreenStore
                 // price with the discount surfaced separately in
                 // DiscountTotal (same "real price + separate discount line"
                 // contract as BillItem.cs, V1-RMD-228). Reconstructed from
-                // unit_price/quantity/tax_rate, the same inputs
-                // OrderItem's own constructor derives GrossAmount from for
-                // a non-discounted line; like the rest of this query, it
-                // does not account for modifiers (gross_amount already
-                // didn't for any status before this fix either).
+                // unit_price/quantity (menu prices are tax-inclusive, so that
+                // is the gross OrderItem's own constructor derives for a
+                // non-discounted line); like the rest of this query, it does
+                // not account for modifiers (gross_amount already didn't for
+                // any status before this fix either).
                 var lineTotal = status == "Complimentary"
-                    ? Math.Round(unitPrice * quantity * (1 + reader.GetDecimal(6) / 100m), 2, MidpointRounding.AwayFromZero)
+                    ? Math.Round(unitPrice * quantity, 2, MidpointRounding.AwayFromZero)
                     : storedGrossAmount;
                 lines.Add(new CustomerDisplayLineDto(
                     reader.GetGuid(0), reader.GetString(1), quantity, unitPrice, lineTotal));

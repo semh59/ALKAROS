@@ -57,7 +57,7 @@ public static class ChannelSource
 /// order (counted once per provider order however many webhooks carried it); it is not part of
 /// <see cref="OrdersReceived"/>, which counts local orders only.
 /// <para>Accepted value is given both gross and net (Semih 2026-09-26): <see cref="AcceptedValue"/> is the
-/// gross <c>orders.total</c>; <see cref="AcceptedNetValue"/> is <c>subtotal - discount_total</c>,
+/// gross <c>orders.total</c>; <see cref="AcceptedNetValue"/> is <c>total - tax_total</c> (menu prices are tax-inclusive, so <c>subtotal - discount_total</c> is gross),
 /// <see cref="AcceptedTaxValue"/> is <c>tax_total</c> and <see cref="AcceptedDiscount"/> is
 /// <c>discount_total</c>, each exactly as the order stored it (per-line rounding means net + tax can
 /// differ from gross by a cent; neither is recomputed here).</para>

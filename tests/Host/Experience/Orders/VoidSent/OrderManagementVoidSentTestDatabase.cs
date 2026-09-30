@@ -108,7 +108,7 @@ public sealed class OrderManagementVoidSentTestDatabase : PgTestDatabase
         return (userId, $"{DualScreenApplication.CashierCookieName}={raw}");
     }
 
-    /// <summary>Seeds a catalog product and an Active order with a single Active item (unit price 100, tax 10% -> gross 110) at the given kitchen state.</summary>
+    /// <summary>Seeds a catalog product and an Active order with a single Active item (unit price 100, tax-inclusive 10% -> gross 100) at the given kitchen state.</summary>
     public Task<(Guid OrderId, Guid ItemId, Guid ProductId, OrderItem Item)> SeedActiveOrderWithOneItemAsync(KitchenState kitchenState)
         => SeedActiveOrderWithOneItemAsync(kitchenState, servingUserId: null);
 

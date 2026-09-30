@@ -103,6 +103,30 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AComplimentaryLineIsShownAtItsTaxInclusivePriceNotWithTaxAddedOnTop()
+    {
+        var terminalId = Guid.NewGuid();
+        var displayId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, displayId, CancellationToken.None);
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 4m, order.Revision), CancellationToken.None);
+        await using (var comp = _dataSource!.CreateCommand(
+            """
+            UPDATE orders.order_items
+            SET status = 'Complimentary', tax_rate = 10, discount_amount = 4, net_amount = 0, tax_amount = 0, gross_amount = 0
+            WHERE order_id = @order_id;
+            """))
+        {
+            comp.Parameters.AddWithValue("order_id", order.OrderId);
+            await comp.ExecuteNonQueryAsync();
+        }
+
+        var snapshot = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
+
+        Assert.Equal(4.00m, Assert.Single(snapshot.Lines).LineTotal);
+    }
+
+    [Fact]
     public async Task TableBoundOrderCommitsOrderAndTablePointersTogether()
     {
         var terminalId = Guid.NewGuid();

@@ -33,7 +33,7 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
         }
     }
 
-    /// <summary>An order whose stored amounts follow the Order aggregate: net = subtotal - discount, gross = net + tax (20%).</summary>
+    /// <summary>An order whose stored amounts follow the Order aggregate: prices are tax-inclusive, so total = subtotal - discount and the 20% tax is contained in it.</summary>
     public async Task SeedOrderAsync(
         string source, string status, decimal total, DateTimeOffset createdAt, string? externalOrderId = null, decimal discount = 0m,
         string provider = "yemeksepeti")
@@ -44,7 +44,7 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
             INSERT INTO orders.orders
                 (order_id, source, source_external_id, status, confirmation_status, order_number,
                  subtotal, discount_total, tax_total, total, created_at, updated_at)
-            VALUES ($1, $2, $3, $4, 'NotRequired', $5, $8 + $9, $9, $6 - $8, $6, $7, $7);
+            VALUES ($1, $2, $3, $4, 'NotRequired', $5, $6 + $9, $9, $8, $6, $7, $7);
             """);
         command.Parameters.AddWithValue(orderId);
         command.Parameters.AddWithValue(source);
@@ -53,7 +53,7 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
         command.Parameters.AddWithValue("T-" + orderId.ToString("N")[..16]);
         command.Parameters.AddWithValue(total);
         command.Parameters.AddWithValue(createdAt.UtcDateTime);
-        command.Parameters.AddWithValue(Math.Round(total / 1.2m, 2));
+        command.Parameters.AddWithValue(Math.Round(total * 20m / 120m, 2, MidpointRounding.AwayFromZero));
         command.Parameters.AddWithValue(discount);
         await command.ExecuteNonQueryAsync();
 

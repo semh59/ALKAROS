@@ -134,7 +134,7 @@ public sealed class OrderManagementCompTestDatabase : PgTestDatabase
         await AddSeededRoleAsync(userId, roleCode);
     }
 
-    /// <summary>Seeds a catalog product and an Active order with a single Active item (unit price 100, tax 10% -> gross 110).</summary>
+    /// <summary>Seeds a catalog product and an Active order with a single Active item (unit price 100, tax-inclusive 10% -> gross 100).</summary>
     public Task<(Guid OrderId, Guid ItemId)> SeedActiveOrderWithOneItemAsync()
         => SeedActiveOrderWithOneItemAsync(servingUserId: null);
 

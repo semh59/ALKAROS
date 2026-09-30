@@ -65,7 +65,7 @@ public sealed class PostgresChannelReportService : IChannelReportService
                    count(*) FILTER (WHERE o.status = 'Rejected')::int,
                    count(*) FILTER (WHERE o.status = 'Cancelled')::int,
                    COALESCE(sum(o.total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
-                   COALESCE(sum(o.subtotal - o.discount_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
+                   COALESCE(sum(o.total - o.tax_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
                    COALESCE(sum(o.tax_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
                    COALESCE(sum(o.discount_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
                    COALESCE(sum(o.total) FILTER (WHERE o.status = 'Cancelled'), 0)
@@ -201,7 +201,7 @@ public sealed class PostgresChannelReportService : IChannelReportService
         await using var command = _dataSource.CreateCommand(
             $"""
             SELECT count(*)::int, COALESCE(sum(total) FILTER (WHERE status IN ({AcceptedStatuses})), 0),
-                   COALESCE(sum(subtotal - discount_total) FILTER (WHERE status IN ({AcceptedStatuses})), 0)
+                   COALESCE(sum(total - tax_total) FILTER (WHERE status IN ({AcceptedStatuses})), 0)
             FROM orders.orders
             WHERE source IN ('Qr', 'Online')
               AND ($3::text IS NULL OR source = $3)
