@@ -35,7 +35,7 @@ müşteri adisyon sayfası).
 
 ## Out of scope
 
-- Sunucu hesabı (`V1-RMD-467`, `V1-RMD-468`).
+- Sunucu hesabı ve çift ekran sunucu tarafı (`V1-RMD-467`, `V1-RMD-468`).
 
 ## Dependencies
 

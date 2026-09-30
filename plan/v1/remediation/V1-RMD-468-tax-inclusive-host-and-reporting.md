@@ -22,6 +22,7 @@ ekleme formülü taşıyor (`birim x (1 + oran)`); brüt = birim x adet olur.
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Reporting/Channels/ChannelReportService.cs - yalnız net tutar sorguları
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Reporting/Channels/ChannelReportModels.cs - yalnız net tutar açıklaması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenStore.Display.cs - yalnız ikram satırının brüt hesabı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs - yalnız ikram satırı gösterim testi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Reporting/Channels/Fixtures/ChannelReportTestDatabase.cs - yalnız KDV dahil tohum tutarları
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Orders/Comp/OrderManagementCompTestDatabase.cs - yalnız KDV dahil tohum tutarları
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Orders/VoidSent/OrderManagementVoidSentTestDatabase.cs - yalnız KDV dahil tohum tutarları
