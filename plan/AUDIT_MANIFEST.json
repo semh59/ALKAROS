@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1552,
-  "markdown_line_count": 116032,
-  "markdown_byte_count": 6696297,
+  "markdown_file_count": 1553,
+  "markdown_line_count": 116054,
+  "markdown_byte_count": 6698322,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2632,6 +2632,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-468/README.md",
+      "sha256": "7D6FD776357B60A3CA1B29F519580335F570016E15809B35F9E1B6A0EF7DB892",
+      "lines": 20,
+      "bytes": 1676,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2829,9 +2836,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "279B99E09C60CC1645FB859CFC7A992D689D0514EA3649E4AB8774A6605B4FEE",
-      "lines": 2828,
-      "bytes": 415645,
+      "sha256": "EF28045AB35415F9556BA21BBE8952E92632B20C63DE07BE465A765762683905",
+      "lines": 2829,
+      "bytes": 415775,
       "utf8": true
     },
     {
@@ -8709,16 +8716,16 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-468-tax-inclusive-host-and-reporting.md",
-      "sha256": "506796D8DBA7F8057C49B065D7ACDCE221A49A13351D20217D9E2361F1A37238",
-      "lines": 50,
-      "bytes": 2487,
+      "sha256": "07ED8E05601F539159D3AAF058AB7AE5EB85D2598502C9BA11FBDEDEFEA89954",
+      "lines": 51,
+      "bytes": 2676,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-469-tax-inclusive-client-screens.md",
-      "sha256": "6CCBBBE890C69FB13116E355469551308679B84EA998F85B985FE7F65850F40D",
+      "sha256": "37AD0E7BAE31F6B487EEEBC6F145AB5172D079A0401B843E966757A6A3FD83E0",
       "lines": 51,
-      "bytes": 2260,
+      "bytes": 2290,
       "utf8": true
     },
     {
