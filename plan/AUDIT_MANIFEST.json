@@ -2,8 +2,8 @@
   "schema": 2,
   "audit_date": "2026-07-30",
   "markdown_file_count": 1534,
-  "markdown_line_count": 115402,
-  "markdown_byte_count": 6655340,
+  "markdown_line_count": 115427,
+  "markdown_byte_count": 6657841,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2766,7 +2766,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "CFC5480423B4944C3E6355A0F73D5DF7F6F46695C7932F74D69D6B4AE897102E",
+      "sha256": "29C2F1778563D3A14460E76CABA0DE68FF1AF0C9E45A383C77B095E2F99AB4DE",
       "lines": 2810,
       "bytes": 412939,
       "utf8": true
@@ -8590,9 +8590,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-460-trendyol-go-product-mapping-screen.md",
-      "sha256": "50D65FEBA5851D65584583CA60F3BEB3D0D4D380EC90893807BC204691F8D84B",
-      "lines": 42,
-      "bytes": 1202,
+      "sha256": "C711BD87A0461A3B509639577300561C5D925727F2899C4636F893882C57FE68",
+      "lines": 43,
+      "bytes": 1249,
       "utf8": true
     },
     {
@@ -10480,9 +10480,9 @@
     },
     {
       "path": "plan/v1.5/kvkk/V15-KVK-001-retention-execution.md",
-      "sha256": "393B39BA71DBF9BA41C0B379E59F4EC9F74048AB3BBE9864B6A9D7CF35740757",
-      "lines": 54,
-      "bytes": 1516,
+      "sha256": "6B3E58FA5BBD546F44C4B11F577E19A9EA2B0888865C08A824DFA3E90F53A0F9",
+      "lines": 78,
+      "bytes": 3970,
       "utf8": true
     },
     {
