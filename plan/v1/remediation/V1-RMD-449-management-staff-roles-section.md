@@ -1,7 +1,7 @@
 # V1-RMD-449 - Yönetim alanı: Personel ve roller bölümü
 
 - Task ID: V1-RMD-449
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Planned

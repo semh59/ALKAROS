@@ -1,0 +1,5 @@
+requiredCapability identity.users.manage -> menu.manage:
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/features/management-staff-roles/StaffSection.test.tsx > staff section > the shell lists the staff tab only for a session holding identity.users.manage
+      Tests  1 failed | 8 passed (9)
+restored, cmp identical

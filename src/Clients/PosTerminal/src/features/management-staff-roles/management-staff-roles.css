@@ -1,0 +1,9 @@
+.msr { display: grid; gap: var(--ds-space-4); }
+.msr__panel { display: grid; gap: var(--ds-space-3); border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); padding: var(--ds-space-4); background: var(--ds-color-surface); }
+.msr__panel h3 { margin: 0; }
+.msr__form { display: grid; gap: var(--ds-space-3); max-width: 28rem; }
+.msr__toolbar { display: flex; align-items: flex-end; gap: var(--ds-space-3); flex-wrap: wrap; }
+.msr__notice { border-radius: var(--ds-radius-sm); padding: .7rem 1rem; font-weight: 700; }
+.msr__notice--success { color: #126637; background: #d9f7e5; }
+.msr__notice--error { color: #8b2a24; background: #ffe0dc; }
+.msr__hint { margin: 0; color: var(--ds-color-muted); }

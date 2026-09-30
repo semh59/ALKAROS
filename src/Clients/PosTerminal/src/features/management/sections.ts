@@ -3,6 +3,7 @@ import { ClosingSection } from "../management-closing";
 import { StockSection } from "../management-stock";
 import { ProductionSection, PurchasingSection } from "../management-purchasing-production";
 import { MenusSection, RecipeCostSection } from "../management-menus-recipe-cost";
+import { StaffSection } from "../management-staff-roles";
 import { managementText } from "../../strings";
 
 export interface ManagementSectionProps {
@@ -25,4 +26,5 @@ export const managementSections: readonly ManagementSection[] = [
   { id: "production", label: managementText.production.tab, requiredCapability: "production.manage", component: ProductionSection },
   { id: "menus", label: managementText.menus.tab, requiredCapability: "menu.manage", component: MenusSection },
   { id: "recipe-cost", label: managementText.recipeCost.tab, requiredCapability: "inventory.manage", component: RecipeCostSection },
+  { id: "staff", label: managementText.staff.tab, requiredCapability: "identity.users.manage", component: StaffSection },
 ];

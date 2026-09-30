@@ -1,0 +1,16 @@
+db ready, seeded
+host ready
+short password: Kullanıcı adı, görünen ad ve en az 8 karakterli bir parola girin.
+create: Personel hesabı açıldı.
+duplicate: Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı.
+found: Personel bul | Kullanıcı adı | Bul |  | Ayşe Yılmaz · Etkin |  | Pasifleştir
+deactivate: Hesap pasifleştirildi. -> Ayşe Yılmaz · Pasif
+reactivate: Hesap yeniden etkinleştirildi. -> Ayşe Yılmaz · Etkin
+unknown: Personel bul | Kullanıcı adı | Bul |  | Bu kullanıcı adıyla personel bulunamadı.
+new account login status (informational): 400
+management calls (non-GET only):
+  POST /api/v1/management/users -> 200
+  POST /api/v1/management/users -> 409
+  POST /api/v1/management/security/users/54a1fdfd-363e-4254-bf5a-1fbaa751af98/deactivate -> 200
+  POST /api/v1/management/security/users/54a1fdfd-363e-4254-bf5a-1fbaa751af98/reactivate -> 200
+console errors (non-font/401): ["Failed to load resource: the server responded with a status of 404 (Not Found)","Failed to load resource: the server responded with a status of 409 (Conflict)","Failed to load resource: the server responded with a status of 404 (Not Found)"]
