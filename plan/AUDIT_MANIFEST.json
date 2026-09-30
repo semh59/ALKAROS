@@ -3,7 +3,7 @@
   "audit_date": "2026-07-30",
   "markdown_file_count": 1528,
   "markdown_line_count": 115236,
-  "markdown_byte_count": 6643003,
+  "markdown_byte_count": 6643006,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2738,7 +2738,7 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D4CE4BE7C27587FD6A244044D85795C4E0936AAF3DDCE217A4A56E8674210C1A",
+      "sha256": "F6A842C895BF7DA2A80FCFCFB52DF89DAF11A4EA62B80302D78063555357F4B9",
       "lines": 2804,
       "bytes": 412082,
       "utf8": true
@@ -8548,9 +8548,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-458-stale-test-lazy-route-wait.md",
-      "sha256": "5BA844AC4FBACEAB88D592CC0EF55CF2920D7D49629A9CB1330C2E6594C5EC11",
+      "sha256": "F41332E834EC27DDC1433873C0BF3068CD5105525AB711E7F871E03B6485DF59",
       "lines": 45,
-      "bytes": 1612,
+      "bytes": 1615,
       "utf8": true
     },
     {
