@@ -65,6 +65,15 @@ async function settle() {
   await new Promise((resolve) => window.setTimeout(resolve, 40));
 }
 
+async function waitUntil(condition: () => boolean, timeoutMs = 5_000) {
+  const deadline = Date.now() + timeoutMs;
+  while (!condition() && Date.now() < deadline) {
+    await act(async () => {
+      await settle();
+    });
+  }
+}
+
 async function criticalAxeViolations() {
   const report = await axe.run(document, {
     rules: { "color-contrast": { enabled: false } },
@@ -133,8 +142,10 @@ describe("PosTerminal accessibility states", () => {
     }));
 
     await renderApp();
-    const trigger = [...document.querySelectorAll("button")].find((button) =>
+    const findTrigger = () => [...document.querySelectorAll("button")].find((button) =>
       button.textContent?.includes("Ekranı eşleştir"));
+    await waitUntil(() => findTrigger() !== undefined);
+    const trigger = findTrigger();
     expect(trigger).toBeDefined();
     await act(async () => trigger!.dispatchEvent(new MouseEvent("click", { bubbles: true })));
 
