@@ -1,7 +1,7 @@
 # V15-PER-001 - Implement critical-path load tests
 
 - Task ID: V15-PER-001
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01XpoF59o3sDPfb7ZADR4BMf
 - Work type: validation
 - Surface state: Planned
