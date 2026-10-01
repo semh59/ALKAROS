@@ -1,0 +1,16 @@
+{
+  "pass": false,
+  "verdict": {
+    "slowPaths": [
+      "menu.catalog",
+      "order.submit-total",
+      "bill.from-order",
+      "payment.close-total"
+    ],
+    "integrityViolations": [],
+    "lastUnitOverSold": false,
+    "webhookDuplicates": false,
+    "unexpectedFailures": 0
+  }
+}
+exit 1

@@ -1,0 +1,151 @@
+{
+  "startedAt": "2026-10-01T10:28:06.836Z",
+  "environment": {
+    "cpus": 12,
+    "cpuModel": "AMD Ryzen 5 1600 Six-Core Processor            ",
+    "totalMemGB": 16,
+    "platform": "win32",
+    "node": "v24.19.0"
+  },
+  "terminals": 20,
+  "rounds": 40,
+  "thinkMs": 1500,
+  "busyHourSeconds": 69.1752989,
+  "busyHourSamples": {
+    "menu.catalog": {
+      "count": 800,
+      "failed": 0,
+      "p50": 9.115200000000186,
+      "p95": 22.18590000000404,
+      "p99": 97.17300000000068,
+      "max": 107.77369999999974
+    },
+    "order.table-draft": {
+      "count": 800,
+      "failed": 0,
+      "p50": 30.124199999998382,
+      "p95": 45.117499999993015,
+      "p99": 459.58480000000054,
+      "max": 602.192500000001
+    },
+    "order.submit-draft": {
+      "count": 800,
+      "failed": 0,
+      "p50": 58.11000000000058,
+      "p95": 121.36260000000038,
+      "p99": 379.21539999999914,
+      "max": 411.1743000000006
+    },
+    "order.submit-total": {
+      "count": 800,
+      "failed": 0,
+      "p50": 58.11729999999807,
+      "p95": 121.37399999999616,
+      "p99": 379.2358999999997,
+      "max": 411.1941000000006
+    },
+    "bill.from-order": {
+      "count": 800,
+      "failed": 0,
+      "p50": 23.125800000001618,
+      "p95": 33.056200000006356,
+      "p99": 37.83729999999923,
+      "max": 70.9411999999993
+    },
+    "payment.tender": {
+      "count": 800,
+      "failed": 0,
+      "p50": 60.33179999999993,
+      "p95": 83.47469999999157,
+      "p99": 96.18099999999686,
+      "max": 185.7499000000007
+    },
+    "payment.close-total": {
+      "count": 800,
+      "failed": 0,
+      "p50": 60.355899999998655,
+      "p95": 83.48540000000503,
+      "p99": 96.19190000000526,
+      "max": 185.77720000000045
+    },
+    "menu.active-order": {
+      "count": 800,
+      "failed": 0,
+      "p50": 7.644000000000233,
+      "p95": 16.589399999997113,
+      "p99": 20.045799999999872,
+      "max": 24.21259999999893
+    }
+  },
+  "lastUnit": {
+    "stockOnHandAtStart": 3,
+    "rejectedForStock": 17,
+    "concurrentOrders": 20,
+    "accepted": 3,
+    "stockAfter": {
+      "on_hand_quantity": "0.0000",
+      "reserved_quantity": "0.0000",
+      "available_quantity": "0.0000"
+    },
+    "samples": {
+      "order.table-draft": {
+        "count": 20,
+        "failed": 0,
+        "p50": 61.75890000000072,
+        "p95": 69.43989999999758,
+        "p99": 70.06679999998596,
+        "max": 70.06679999998596
+      },
+      "order.submit-draft": {
+        "count": 20,
+        "failed": 17,
+        "p50": 83.51399999999558,
+        "p95": 94.37830000001122,
+        "p99": 94.37830000001122,
+        "max": 94.37830000001122
+      },
+      "order.submit-total": {
+        "count": 20,
+        "failed": 17,
+        "p50": 83.51959999999963,
+        "p95": 94.38509999999951,
+        "p99": 94.38509999999951,
+        "max": 94.38509999999951
+      }
+    }
+  },
+  "webhook": {
+    "distinctOrders": 20,
+    "deliveries": 60,
+    "ordersCreated": 20,
+    "samples": {
+      "webhook.intake": {
+        "count": 60,
+        "failed": 0,
+        "p50": 76.77980000000389,
+        "p95": 79.29130000001169,
+        "p99": 85.16280000000552,
+        "max": 85.16280000000552
+      }
+    }
+  },
+  "integrity": {
+    "ordersWithMoreThanOneBill": 0,
+    "negativeStockBalances": 0,
+    "billsPaidOverPayable": 0,
+    "negativeBillAmounts": 0,
+    "paidBillsNotFullyPaid": 0,
+    "billsPaid": 800
+  },
+  "failures": [],
+  "failureCount": 0,
+  "finishedAt": "2026-10-01T10:29:24.509Z",
+  "pass": true,
+  "verdict": {
+    "slowPaths": [],
+    "integrityViolations": [],
+    "lastUnitOverSold": false,
+    "webhookDuplicates": false,
+    "unexpectedFailures": 0
+  }
+}

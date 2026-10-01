@@ -1,0 +1,10 @@
+{
+  "pass": true,
+  "verdict": {
+    "slowPaths": [],
+    "integrityViolations": [],
+    "lastUnitOverSold": false,
+    "webhookDuplicates": false,
+    "unexpectedFailures": 0
+  }
+}
