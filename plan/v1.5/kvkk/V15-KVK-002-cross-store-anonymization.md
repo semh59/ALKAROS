@@ -17,8 +17,28 @@ Onaylı PII anonymization işlemini idempotent, resumable ve store-checkpoint ta
 
 ## Owned surface
 
-- `src/Modules/Privacy/Anonymization/**`, `tests/Modules/Privacy/Anonymization/**`
-- Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- `src/Modules/Privacy/Anonymization/**`, `tests/Modules/Privacy/Anonymization/**`,
+  `database/migrations/V15/V15-KVK-002/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/ALKAROS.Host.csproj — yalnız yeni proje referansı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/packages.lock.json ve tests/**/packages.lock.json — yalnız yeni proje
+  referansının kilit dosyalarına yansıması
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Modules/ModuleRegistry.cs,
+  tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs ve
+  tests/Host/MigrationComposition/Composition/HostModuleReachabilityTests.cs — yalnız yeni `Privacy.Anonymization`
+  modülünün kaydı, onaylı kenarları ve modül sayısı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/architecture/module-dependency-rules.md — yalnız yeni modülün satırı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx — yalnız bu görevin proje ve test projesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json,
+  src/Host/Composition/Migrations/MigrationManifest.cs ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs —
+  yalnız bu görevin migration'ı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tools/consistency-audit/consistency_audit.py ve
+  tools/consistency-audit/unreachable_services_allowlist.json — yalnız yeni modülün şeması ve HTTP yüzeyi henüz olmayan tipleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Program.cs — yalnız `kvkk-retention` komutunun bekleyen müşteri ve
+  tedarikçi iş kalemlerini bu modülün akışına vermesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs — yalnız komutun
+  yeni çıktı alanları
+- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/compliance/kvkk-retention-runbook.md — yalnız yeni akışın anlatımı
+- Bu görev, başka bir task'ın owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
