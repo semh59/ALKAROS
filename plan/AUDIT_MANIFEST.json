@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1575,
-  "markdown_line_count": 116855,
-  "markdown_byte_count": 6748302,
+  "markdown_file_count": 1577,
+  "markdown_line_count": 116911,
+  "markdown_byte_count": 6752181,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -557,6 +557,13 @@
       "sha256": "A28B13C3EAB4D53557D7F4CBC98D596D87ADAD49B2AC621237A2A5D717A14688",
       "lines": 101,
       "bytes": 4974,
+      "utf8": true
+    },
+    {
+      "path": "docs/performance/V15-PER-001.md",
+      "sha256": "74629D7F263D597FCD6812D3C0EEB69D71BC5063AA663026CF656F8850383F72",
+      "lines": 39,
+      "bytes": 2678,
       "utf8": true
     },
     {
@@ -2877,6 +2884,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V15-PER-001/README.md",
+      "sha256": "B87BFD1CE160EA0E3B238421B71AC06A0DB9E1B2DE318C1C7DEAD9559969FC64",
+      "lines": 15,
+      "bytes": 941,
+      "utf8": true
+    },
+    {
       "path": "evidence/V15-SEC-002/README.md",
       "sha256": "B3B8637028F4A556CBE109B0F91B95B4B892861E234E39BEC5D83E4BA532C70A",
       "lines": 32,
@@ -2913,9 +2927,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "88E6B934A949C06ECB56D5DD76AE9D1888375FA5BE77FAE6DE0F7BA7EBC1B107",
-      "lines": 2851,
-      "bytes": 419068,
+      "sha256": "B824E02533EBFA832E5961F2F33531C878DADCF1B47ECB41600527F84EBFC5E6",
+      "lines": 2853,
+      "bytes": 419331,
       "utf8": true
     },
     {
@@ -10809,9 +10823,9 @@
     },
     {
       "path": "plan/v1.5/performance/V15-PER-001-critical-load-tests.md",
-      "sha256": "42E5E9AE2BAA8B601DEDE1B0A70173153C1DD44D8489B24A5A5CE815562AEF55",
+      "sha256": "42D4899E854DA29A39052D99063A8919DBDDEB2D576B61A42A873CB166BCBA1A",
       "lines": 50,
-      "bytes": 1430,
+      "bytes": 1427,
       "utf8": true
     },
     {
