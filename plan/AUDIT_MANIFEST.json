@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1581,
-  "markdown_line_count": 117121,
-  "markdown_byte_count": 6768106,
+  "markdown_file_count": 1583,
+  "markdown_line_count": 117193,
+  "markdown_byte_count": 6772021,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -204,9 +204,9 @@
     },
     {
       "path": "docs/compliance/kvkk-retention-runbook.md",
-      "sha256": "EE6B9E6C4455ADE67FC344A13D5F5223A3529389B702A2E091F2EEEC77029ABA",
-      "lines": 138,
-      "bytes": 7998,
+      "sha256": "BE10ADEB6F097D76E8871D68EC15A1125688E7E5D0A5328350F2CB84D122CFF5",
+      "lines": 139,
+      "bytes": 8265,
       "utf8": true
     },
     {
@@ -519,9 +519,9 @@
     },
     {
       "path": "docs/operations/production-go-live-checklist.md",
-      "sha256": "87E8D15E44DE3C44F3AD9CB23525667BC04BF114C1C5492040F6D73B083707CE",
-      "lines": 207,
-      "bytes": 12374,
+      "sha256": "E45530C96CBF1D4073F7DFD10C6AD1610518AD9619C68ED05D82256A9FCB6403",
+      "lines": 213,
+      "bytes": 12774,
       "utf8": true
     },
     {
@@ -2730,6 +2730,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-482/README.md",
+      "sha256": "7986D724706513F9676502A8D77A79755DE6376491AE8BF66FB77CAC0A43A2B5",
+      "lines": 16,
+      "bytes": 1143,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2941,9 +2948,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "EC9AFC0127944936700FD654513AA974BE106B80B1732B50D7E868935E1FCF17",
-      "lines": 2857,
-      "bytes": 419916,
+      "sha256": "19F6C78B78DA94DBD2E580E0BE6546BB39629CB8192B75A47B5D80DF93807682",
+      "lines": 2859,
+      "bytes": 420204,
       "utf8": true
     },
     {
@@ -8919,9 +8926,16 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-482-schedule-audit-disposal-run.md",
-      "sha256": "BDA705C69C98FB768AB4D93DC2AFBBA9F0F15787388778518A5EFC3E0155A07D",
+      "sha256": "A5BDED3D6DD737A9581FE053DD8C360FCADE63543E804DF983A1F7B508F92881",
+      "lines": 47,
+      "bytes": 1802,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-483-product-modifier-groups.md",
+      "sha256": "165EFC7F8186D91378A5582CA7368DA8FE199CC6E38FD54198AD69A71B14305E",
       "lines": 40,
-      "bytes": 962,
+      "bytes": 977,
       "utf8": true
     },
     {
