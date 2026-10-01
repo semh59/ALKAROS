@@ -45,6 +45,7 @@ denetlemesini, fiyat farkının KDV dahil toplama yansımasını ve NFC sayfası
 ## Acceptance evidence
 
 - Testler, mutasyon kanıtı ve gerçek Host denemesi; çıktılar `evidence/V1-RMD-484/` altındadır.
+- QR yolundaki aynı boşluk `V1-RMD-485` ile kapatıldı.
 
 ## Handoff
 

@@ -16,6 +16,16 @@ const GENERIC_ERROR_MESSAGE = "Menü şu anda yüklenemedi, lütfen daha sonra t
 // notes). Kept here since this is the page that first creates it.
 const CART_STORAGE_KEY = "alkaros.qr.cart";
 
+/** A cart line is the product alone, or the product with its chosen extras (same product, other extras = other line). */
+function lineKeyFor(productId, modifierIds) {
+  return modifierIds.length === 0 ? productId : `${productId}|${[...modifierIds].sort().join(",")}`;
+}
+
+function groupIsSatisfied(group, chosenIds) {
+  const count = group.modifiers.filter((modifier) => chosenIds.has(modifier.modifierId)).length;
+  return count >= group.minSelections && count <= group.maxSelections;
+}
+
 const CartStore = {
   read() {
     try {
@@ -34,18 +44,21 @@ const CartStore = {
       // works since CartStore.read() falls back to an empty array either way.
     }
   },
-  addItem(product, quantity) {
+  addItem(product, quantity, modifiers = []) {
     const lines = CartStore.read();
-    const existing = lines.find((line) => line.productId === product.productId);
+    const lineKey = lineKeyFor(product.productId, modifiers.map((modifier) => modifier.modifierId));
+    const existing = lines.find((line) => (line.lineKey || line.productId) === lineKey);
     if (existing) {
       existing.quantity += quantity;
     } else {
       lines.push({
+        lineKey,
         productId: product.productId,
         name: product.name,
-        unitPrice: product.unitPrice,
+        unitPrice: product.unitPrice + modifiers.reduce((sum, modifier) => sum + modifier.priceDelta, 0),
         quantity,
         notes: null,
+        modifiers: modifiers.map(({ modifierId, name, priceDelta }) => ({ modifierId, name, priceDelta })),
       });
     }
     CartStore.write(lines);
@@ -263,11 +276,76 @@ function renderProducts(products) {
     item.querySelector(".product-category").textContent = product.categoryName;
     item.querySelector(".product-price").textContent = formatPrice(product.unitPrice);
     item.querySelector(".add-to-cart-button").addEventListener("click", () => {
+      if ((product.modifierGroups || []).length > 0) {
+        openModifierPicker(product);
+        return;
+      }
       CartStore.addItem(product, 1);
       updateCartBar();
     });
     list.appendChild(item);
   }
+}
+
+/** Asks the customer for the product's extras; "Sepete ekle" stays disabled until every group's minimum and maximum hold. */
+function openModifierPicker(product) {
+  const chosen = new Set();
+  const overlay = document.createElement("div");
+  overlay.className = "modifier-picker";
+  overlay.setAttribute("role", "dialog");
+  overlay.setAttribute("aria-modal", "true");
+  overlay.setAttribute("aria-label", `${product.name} seçenekleri`);
+
+  const title = document.createElement("h2");
+  title.textContent = product.name;
+  overlay.appendChild(title);
+
+  const confirmButton = document.createElement("button");
+  confirmButton.type = "button";
+  confirmButton.className = "modifier-picker-confirm";
+  confirmButton.textContent = "Sepete ekle";
+  const refresh = () => {
+    confirmButton.disabled = !product.modifierGroups.every((group) => groupIsSatisfied(group, chosen));
+  };
+
+  for (const group of product.modifierGroups) {
+    const fieldset = document.createElement("fieldset");
+    const legend = document.createElement("legend");
+    legend.textContent = `${group.name}${group.minSelections > 0 ? " (zorunlu)" : " (isteğe bağlı)"}${group.maxSelections > 1 ? ` · en fazla ${group.maxSelections}` : ""}`;
+    fieldset.appendChild(legend);
+    for (const modifier of group.modifiers) {
+      const label = document.createElement("label");
+      const input = document.createElement("input");
+      input.type = group.maxSelections === 1 ? "radio" : "checkbox";
+      input.name = group.modifierGroupId;
+      input.addEventListener("change", () => {
+        if (group.maxSelections === 1) group.modifiers.forEach((other) => chosen.delete(other.modifierId));
+        if (input.checked) chosen.add(modifier.modifierId);
+        else chosen.delete(modifier.modifierId);
+        refresh();
+      });
+      label.appendChild(input);
+      label.appendChild(document.createTextNode(` ${modifier.name}${modifier.priceDelta > 0 ? ` +${formatPrice(modifier.priceDelta)}` : ""}`));
+      fieldset.appendChild(label);
+    }
+    overlay.appendChild(fieldset);
+  }
+
+  const cancelButton = document.createElement("button");
+  cancelButton.type = "button";
+  cancelButton.className = "modifier-picker-cancel";
+  cancelButton.textContent = "Vazgeç";
+  cancelButton.addEventListener("click", () => overlay.remove());
+  confirmButton.addEventListener("click", () => {
+    const picked = product.modifierGroups.flatMap((group) => group.modifiers).filter((modifier) => chosen.has(modifier.modifierId));
+    CartStore.addItem(product, 1, picked);
+    updateCartBar();
+    overlay.remove();
+  });
+  overlay.appendChild(cancelButton);
+  overlay.appendChild(confirmButton);
+  refresh();
+  document.body.appendChild(overlay);
 }
 
 function updateCartBar() {
@@ -310,12 +388,13 @@ async function init() {
 
   try {
     const page = await loadMenuWithSessionRetry(tableToken);
-    const categories = groupByCategory(page.items);
+    const menuItems = Array.isArray(page) ? page : page.items;
+    const categories = groupByCategory(menuItems);
     let activeCategory = null;
 
     const renderActive = () => {
       const products = activeCategory === null
-        ? page.items
+        ? menuItems
         : categories.get(activeCategory).products;
       renderCategories(categories, activeCategory, (code) => {
         activeCategory = code;

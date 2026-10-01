@@ -1,7 +1,7 @@
 # V1-RMD-485 - QR siparişinde ekstra seçim ve zorunlu grup denetimi
 
 - Task ID: V1-RMD-485
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01XpoF59o3sDPfb7ZADR4BMf
 - Work type: implementation
 - Surface state: Existing
@@ -24,7 +24,7 @@ olayının ve siparişe dönüştüren tüketicinin ekstra seçimini taşıması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Orders/Integration/QrOrderSubmittedConsumer.cs — yalnız ekstraları siparişe taşıma
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Apps/CustomerWeb/Menu/wwwroot/menu-app.js ve src/Apps/CustomerWeb/OrderEntry/wwwroot/order-entry.js — yalnız ekstra seçicisi ve sepet satır kimliği
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Apps/CustomerWeb/Menu/wwwroot/menu-app.css ve src/Apps/CustomerWeb/OrderEntry/wwwroot/order-entry.css — yalnız seçici paneli
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/QrOrdering/QrOrderingHttpTests.cs, tests/Modules/QrOrdering/PendingOrders/QrPendingOrderStoreTests.cs, tests/Modules/Orders/OrderAggregate/QrOrderSubmittedConsumerTests.cs ve tests/Apps/CustomerWeb — yalnız ekstra testleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/QrOrdering/QrOrderingHttpTests.cs, tests/Host/Experience/QrOrdering/QrOrderingTestDatabase.cs, tests/Modules/QrOrdering/PendingOrders/QrPendingOrderStoreTests.cs, tests/Modules/Orders/OrderAggregate/QrOrderSubmittedConsumerTests.cs, tests/Apps/CustomerWeb/Menu/test_customer_web_menu.py ve tests/Apps/CustomerWeb/OrderEntry/test_customer_web_order_entry.py — yalnız ekstra testleri ve menü yanıt biçimi testi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope

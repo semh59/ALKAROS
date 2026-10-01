@@ -175,6 +175,7 @@ async function submitOrder(sessionToken, submissionId, cartLines) {
         productId: line.productId,
         quantity: line.quantity,
         specialInstructions: line.notes || null,
+        modifiers: (line.modifiers || []).map((modifier) => ({ modifierId: modifier.modifierId })),
       })),
     }),
   });
@@ -312,17 +313,19 @@ function renderCart(lines, onChange) {
       </div>
       <input type="text" class="notes-input" placeholder="Not ekleyin (opsiyonel)" maxlength="200" />
     `;
-    item.querySelector(".cart-line-name").textContent = line.name;
+    const lineKey = line.lineKey || line.productId;
+    const extras = (line.modifiers || []).map((modifier) => modifier.name).join(", ");
+    item.querySelector(".cart-line-name").textContent = extras ? `${line.name} (${extras})` : line.name;
     item.querySelector(".cart-line-total").textContent = formatPrice(line.unitPrice * line.quantity);
     item.querySelector(".qty-value").textContent = String(line.quantity);
-    item.querySelector('[data-action="decrease"]').addEventListener("click", () => onChange(line.productId, -1));
-    item.querySelector('[data-action="increase"]').addEventListener("click", () => onChange(line.productId, 1));
-    item.querySelector(".remove-line-button").addEventListener("click", () => onChange(line.productId, -Infinity));
+    item.querySelector('[data-action="decrease"]').addEventListener("click", () => onChange(lineKey, -1));
+    item.querySelector('[data-action="increase"]').addEventListener("click", () => onChange(lineKey, 1));
+    item.querySelector(".remove-line-button").addEventListener("click", () => onChange(lineKey, -Infinity));
     const notesInput = item.querySelector(".notes-input");
     notesInput.value = line.notes || "";
     notesInput.addEventListener("change", () => {
       const current = readCart();
-      const target = current.find((candidate) => candidate.productId === line.productId);
+      const target = current.find((candidate) => (candidate.lineKey || candidate.productId) === lineKey);
       if (target) {
         target.notes = notesInput.value.trim() || null;
         writeCart(current);
@@ -399,8 +402,8 @@ function init() {
 
   let lines = readCart();
 
-  const onChange = (productId, delta) => {
-    const target = lines.find((line) => line.productId === productId);
+  const onChange = (lineKey, delta) => {
+    const target = lines.find((line) => (line.lineKey || line.productId) === lineKey);
     if (!target) return;
     target.quantity += delta;
     lines = lines.filter((line) => line.quantity > 0);

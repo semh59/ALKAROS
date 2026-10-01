@@ -174,6 +174,41 @@ public sealed class QrOrderingTestDatabase : PgTestDatabase
     public async Task<string> GetTableStatusAsync(Guid tableId)
         => await ScalarAsync<string>($"SELECT current_status FROM table_mgmt.tables WHERE table_id = '{tableId:D}';");
 
+    /// <summary>Seeds an active modifier group with two options for <paramref name="productId"/> and returns the option ids.</summary>
+    public async Task<(Guid First, Guid Second)> SeedModifierGroupAsync(Guid productId, int minSelections, int maxSelections)
+    {
+        var groupId = Guid.NewGuid();
+        var firstId = Guid.NewGuid();
+        var secondId = Guid.NewGuid();
+        var suffix = groupId.ToString("N")[..8];
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections, active)
+            VALUES (@group_id, @group_code, 'QR Test Group', 2, @min_selections, @max_selections, true);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+            VALUES (@first_id, @group_id, @first_code, 'Ekstra peynir', 10, true);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+            VALUES (@second_id, @group_id, @second_code, 'Ekstra sos', 15, true);
+            INSERT INTO catalog.product_modifier_groups (product_modifier_group_id, product_id, modifier_group_id)
+            VALUES (@pmg_id, @product_id, @group_id);
+            """,
+            ("group_id", groupId),
+            ("group_code", "QRG-" + suffix),
+            ("min_selections", minSelections),
+            ("max_selections", maxSelections),
+            ("first_id", firstId),
+            ("first_code", "QRA-" + suffix),
+            ("second_id", secondId),
+            ("second_code", "QRB-" + suffix),
+            ("pmg_id", Guid.NewGuid()),
+            ("product_id", productId));
+        return (firstId, secondId);
+    }
+
+    public Task<string> ItemsSnapshotAsync(Guid submissionId)
+        => ScalarAsync<string>(
+            $"SELECT items_snapshot::text FROM qr_ordering.pending_order_submissions WHERE submission_id = '{submissionId:D}';");
+
     public async Task<long> OutboxCountAsync()
         => await ScalarAsync<long>("SELECT count(*) FROM outbox_messages;");
 }

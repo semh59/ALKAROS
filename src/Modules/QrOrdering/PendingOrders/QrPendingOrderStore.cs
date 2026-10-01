@@ -82,6 +82,10 @@ public sealed class QrPendingOrderStore
             var catalog = await ResolveCatalogProductsAsync(
                 connection, transaction, request.Items.Select(i => i.ProductId), cancellationToken);
 
+            var modifierCatalog = await ResolveModifiersAsync(connection, transaction, request.Items, cancellationToken);
+            var applicableGroups = await ResolveApplicableModifierGroupsAsync(
+                connection, transaction, request.Items.Select(i => i.ProductId), cancellationToken);
+
             var items = new List<QrOrderSubmittedItem>();
             foreach (var line in request.Items)
             {
@@ -96,8 +100,9 @@ public sealed class QrPendingOrderStore
                 if (!catalog.TryGetValue(line.ProductId, out var product))
                     throw new QrOrderInvalidProductException(line.ProductId);
 
+                var modifiers = ChooseModifiers(line, modifierCatalog, applicableGroups);
                 items.Add(new QrOrderSubmittedItem(
-                    line.Id, line.ProductId, product.Name, line.Quantity, product.Price, product.TaxRate, line.SpecialInstructions));
+                    line.Id, line.ProductId, product.Name, line.Quantity, product.Price, product.TaxRate, line.SpecialInstructions, modifiers));
             }
 
             var submittedAt = DateTimeOffset.UtcNow;
@@ -211,6 +216,106 @@ public sealed class QrPendingOrderStore
         cmd.Parameters.Add("items_snapshot", NpgsqlDbType.Jsonb).Value = JsonSerializer.Serialize(items, JsonOptions);
         cmd.Parameters.Add("submitted_at", NpgsqlDbType.TimestampTz).Value = submittedAt;
         await cmd.ExecuteNonQueryAsync(cancellationToken);
+    }
+
+    /// <summary>
+    /// The extras the customer picked, with name and price from the catalog. Refuses an extra that is not an active
+    /// option of the line's product and a line whose picks break a group's minimum or maximum, including a required
+    /// group with no pick at all. Each extra counts once per portion, like the staff order path.
+    /// </summary>
+    private static List<QrOrderSubmittedModifier>? ChooseModifiers(
+        QrOrderSubmissionItemRequest line,
+        Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta, Guid GroupId)> modifierCatalog,
+        Dictionary<Guid, List<(Guid GroupId, int MinSelections, int MaxSelections)>> applicableGroups)
+    {
+        var picked = new List<QrOrderSubmittedModifier>();
+        var perGroup = new Dictionary<Guid, int>();
+        foreach (var selection in line.Modifiers ?? [])
+        {
+            if (!modifierCatalog.TryGetValue((line.ProductId, selection.ModifierId), out var resolved))
+                throw new ArgumentException($"A selected extra does not belong to product {line.ProductId}.", nameof(line));
+            perGroup[resolved.GroupId] = perGroup.GetValueOrDefault(resolved.GroupId) + 1;
+            picked.Add(new QrOrderSubmittedModifier(selection.ModifierId, resolved.Name, resolved.PriceDelta, line.Quantity));
+        }
+
+        if (applicableGroups.TryGetValue(line.ProductId, out var groups))
+        {
+            foreach (var group in groups)
+            {
+                var count = perGroup.GetValueOrDefault(group.GroupId);
+                if (count < group.MinSelections || count > group.MaxSelections)
+                    throw new ArgumentException(
+                        $"Product {line.ProductId} modifier group {group.GroupId} requires between {group.MinSelections} and {group.MaxSelections} selections; got {count}.",
+                        nameof(line));
+            }
+        }
+
+        return picked.Count == 0 ? null : picked;
+    }
+
+    private static async Task<Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta, Guid GroupId)>> ResolveModifiersAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, IReadOnlyList<QrOrderSubmissionItemRequest> items, CancellationToken cancellationToken)
+    {
+        var result = new Dictionary<(Guid, Guid), (string, decimal, Guid)>();
+        var picks = items
+            .SelectMany(i => (i.Modifiers ?? []).Select(m => (i.ProductId, m.ModifierId)))
+            .ToArray();
+        if (picks.Length == 0)
+            return result;
+
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT p.product_id, m.modifier_id, m.name, m.price_delta, m.modifier_group_id
+            FROM unnest(@product_ids, @modifier_ids) AS p(product_id, modifier_id)
+            JOIN catalog.modifiers m ON m.modifier_id = p.modifier_id AND m.active
+            JOIN catalog.modifier_groups g ON g.modifier_group_id = m.modifier_group_id AND g.active
+            LEFT JOIN catalog.product_modifier_groups pmg
+              ON pmg.modifier_group_id = m.modifier_group_id AND pmg.product_id = p.product_id
+            WHERE m.product_id = p.product_id OR pmg.product_modifier_group_id IS NOT NULL;
+            """, connection, transaction);
+        cmd.Parameters.AddWithValue("product_ids", picks.Select(p => p.ProductId).ToArray());
+        cmd.Parameters.AddWithValue("modifier_ids", picks.Select(p => p.ModifierId).ToArray());
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result[(reader.GetGuid(0), reader.GetGuid(1))] = (reader.GetString(2), reader.GetDecimal(3), reader.GetGuid(4));
+
+        return result;
+    }
+
+    private static async Task<Dictionary<Guid, List<(Guid GroupId, int MinSelections, int MaxSelections)>>> ResolveApplicableModifierGroupsAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, IEnumerable<Guid> productIds, CancellationToken cancellationToken)
+    {
+        var result = new Dictionary<Guid, List<(Guid, int, int)>>();
+        var ids = productIds.Distinct().ToArray();
+        if (ids.Length == 0)
+            return result;
+
+        await using var cmd = new NpgsqlCommand(
+            """
+            SELECT product_id, modifier_group_id, min_selections, max_selections
+            FROM (
+                SELECT m.product_id, g.modifier_group_id, g.min_selections, g.max_selections
+                FROM catalog.modifiers m
+                JOIN catalog.modifier_groups g ON g.modifier_group_id = m.modifier_group_id AND g.active
+                WHERE m.product_id = ANY(@product_ids) AND m.active
+                UNION
+                SELECT pmg.product_id, g.modifier_group_id, g.min_selections, g.max_selections
+                FROM catalog.product_modifier_groups pmg
+                JOIN catalog.modifier_groups g ON g.modifier_group_id = pmg.modifier_group_id AND g.active
+                WHERE pmg.product_id = ANY(@product_ids)
+            ) applicable;
+            """, connection, transaction);
+        cmd.Parameters.AddWithValue("product_ids", ids);
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            var productId = reader.GetGuid(0);
+            if (!result.TryGetValue(productId, out var groups))
+                result[productId] = groups = [];
+            groups.Add((reader.GetGuid(1), reader.GetInt32(2), reader.GetInt32(3)));
+        }
+
+        return result;
     }
 
     private static async Task<Dictionary<Guid, (string Name, decimal Price, decimal TaxRate)>> ResolveCatalogProductsAsync(

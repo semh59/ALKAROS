@@ -1,0 +1,7 @@
+﻿group-minimum-and-maximum-not-checked: Başarısız! - Başarısız:     2, Başarılı:    33, Atlanan:     0, Toplam:    35, Süre: 12 s - ALKAROS.Host.Experience.QrOrdering.Tests.dll (net8.0) || restore: Comparing files C:\USERS\SEMIH\APPDATA\LOCAL\TEMP\mut485.bak and SRC\MODULES\QRORDERING\PENDINGORDERS\QRPENDINGORDERSTORE.CS FC: no differences encountered 
+foreign-extra-resolves-for-any-product: Başarısız! - Başarısız:     1, Başarılı:    34, Atlanan:     0, Toplam:    35, Süre: 12 s - ALKAROS.Host.Experience.QrOrdering.Tests.dll (net8.0) || restore: Comparing files C:\USERS\SEMIH\APPDATA\LOCAL\TEMP\mut485.bak and SRC\MODULES\QRORDERING\PENDINGORDERS\QRPENDINGORDERSTORE.CS FC: no differences encountered 
+consumer-drops-the-extras: Başarısız! - Başarısız:     1, Başarılı:   138, Atlanan:     0, Toplam:   139, Süre: 1 s - ALKAROS.Orders.OrderAggregate.Tests.dll (net8.0) || restore: Comparing files C:\USERS\SEMIH\APPDATA\LOCAL\TEMP\mut485.bak and SRC\MODULES\ORDERS\INTEGRATION\QRORDERSUBMITTEDCONSUMER.CS FC: no differences encountered 
+picker-confirm-never-disabled: FAIL Sepete ekle is disabled while the required group has no pick || restore: Comparing files C:\USERS\SEMIH\APPDATA\LOCAL\TEMP\mut485.bak and SRC\APPS\CUSTOMERWEB\MENU\WWWROOT\MENU-APP.JS FC: no differences encountered 
+FAIL the menu page renders a plain-array menu response (2 products)
+FAIL no error banner for an array response
+mutant array-response-not-handled (page.items): killed by the lines above; restore cmp identical

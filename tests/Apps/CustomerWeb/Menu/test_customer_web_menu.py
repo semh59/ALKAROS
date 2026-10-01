@@ -90,3 +90,25 @@ def test_customer_web_menu_renders_the_business_own_identity():
     assert "businessName" in app_code
     assert "hasLogo" in app_code
     assert "--cw-accent" in app_code
+
+
+def test_customer_web_menu_asks_for_extras_before_adding_a_product_that_has_groups():
+    app_code = (WWWROOT / "menu-app.js").read_text(encoding="utf-8")
+    css = (WWWROOT / "menu-app.css").read_text(encoding="utf-8")
+
+    assert "modifierGroups" in app_code
+    assert "openModifierPicker" in app_code
+    # A required group (minSelections > 0) keeps "Sepete ekle" disabled until it is satisfied.
+    assert "groupIsSatisfied" in app_code
+    assert "confirmButton.disabled" in app_code
+    assert "(zorunlu)" in app_code
+    # Same product with different extras is a different cart line.
+    assert "lineKeyFor" in app_code
+    assert ".modifier-picker" in css
+
+
+def test_customer_web_menu_accepts_the_plain_array_the_menu_endpoint_returns():
+    app_code = (WWWROOT / "menu-app.js").read_text(encoding="utf-8")
+
+    # GET /api/v1/qr/menu answers with a bare JSON array (the next-page cursor travels in a header).
+    assert "Array.isArray(page) ? page : page.items" in app_code

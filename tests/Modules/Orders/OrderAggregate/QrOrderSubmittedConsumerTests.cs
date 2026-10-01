@@ -68,6 +68,29 @@ public sealed class QrOrderSubmittedConsumerTests : IClassFixture<OrdersTestData
         item.Notes.Should().Be("az acılı");
     }
 
+    [Fact]
+    public async Task CarriesTheEventsExtrasOntoTheOrderLine()
+    {
+        var tableId = await SeedTable();
+        var submissionId = Guid.NewGuid();
+        var productId = await SeedProduct();
+        var modifierId = await SeedModifier();
+
+        await DeliverAsync(new QrOrderSubmitted(
+            submissionId, tableId, Guid.NewGuid(),
+            [new QrOrderSubmittedItem(
+                Guid.NewGuid(), productId, "Lahmacun", 2, 120m, 10m, null,
+                [new QrOrderSubmittedModifier(modifierId, "Ekstra peynir", 10m, 2m)])],
+            DateTimeOffset.UtcNow));
+
+        var order = await _orders.GetByIdAsync((await FindOrderId(tableId, submissionId))!.Value);
+        var modifier = order!.Items.Single().Modifiers.Single();
+        modifier.ModifierId.Should().Be(modifierId);
+        modifier.ModifierNameSnapshot.Should().Be("Ekstra peynir");
+        modifier.Total().Should().Be(20m);
+        order.Items.Single().LineSubtotalValue.Should().Be(260m);
+    }
+
     /// <summary>
     /// V12-QRO-002: the table's current_status is already Reserved by QR
     /// Ordering's own reservation policy at submission time (not this
@@ -180,6 +203,25 @@ public sealed class QrOrderSubmittedConsumerTests : IClassFixture<OrdersTestData
         command.Parameters.AddWithValue("current_price", 120m);
         await command.ExecuteNonQueryAsync();
         return productId;
+    }
+
+    private async Task<Guid> SeedModifier()
+    {
+        var groupId = Guid.NewGuid();
+        var modifierId = Guid.NewGuid();
+        await using var command = _dataSource.CreateCommand(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type, min_selections, max_selections, active)
+            VALUES (@group_id, @group_code, 'QR Test Group', 2, 0, 5, true);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta, active)
+            VALUES (@modifier_id, @group_id, @modifier_code, 'Ekstra peynir', 10, true);
+            """);
+        command.Parameters.AddWithValue("group_id", groupId);
+        command.Parameters.AddWithValue("group_code", "QRG-" + groupId.ToString("N")[..8]);
+        command.Parameters.AddWithValue("modifier_id", modifierId);
+        command.Parameters.AddWithValue("modifier_code", "QRM-" + modifierId.ToString("N")[..8]);
+        await command.ExecuteNonQueryAsync();
+        return modifierId;
     }
 
     private async Task<Guid> SeedTable()

@@ -17,7 +17,11 @@ public sealed record QrOrderSubmissionItemRequest(
     Guid Id,
     Guid ProductId,
     int Quantity,
-    string? SpecialInstructions = null);
+    string? SpecialInstructions = null,
+    IReadOnlyList<QrOrderSubmissionModifierRequest>? Modifiers = null);
+
+/// <summary>An extra the customer picked; the server resolves its name and price from the catalog.</summary>
+public sealed record QrOrderSubmissionModifierRequest(Guid ModifierId);
 
 /// <summary>
 /// The observable outcome of <see cref="QrPendingOrderStore.SubmitAsync"/>.

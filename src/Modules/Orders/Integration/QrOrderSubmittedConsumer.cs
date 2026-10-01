@@ -86,7 +86,8 @@ public sealed class QrOrderSubmittedConsumer : IIntegrationEventConsumer
                 i.TaxRate,
                 skuSnapshot: null,
                 discountAmount: 0,
-                modifiers: null,
+                modifiers: i.Modifiers?.Select(m => new OrderItemModifier(
+                    Guid.NewGuid(), i.ItemId, m.ModifierId, m.Name, m.PriceDelta, m.Quantity)).ToList(),
                 status: OrderItemState.Draft,
                 kitchenState: KitchenState.NotSent,
                 portionReservationStatus: PortionReservationStatus.NotApplicable,

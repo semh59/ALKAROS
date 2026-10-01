@@ -353,6 +353,66 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ASelectedExtraIsResolvedFromTheCatalogAndQueuedWithTheOrder()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Pizza", 200m);
+        var (cheese, _) = await _database.SeedModifierGroupAsync(product, minSelections: 0, maxSelections: 2);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+        var submissionId = Guid.NewGuid();
+
+        using var response = await PostOrderWithExtrasAsync(client, sessionToken, submissionId, product, 2, cheese);
+
+        Assert.Equal(HttpStatusCode.Accepted, response.StatusCode);
+        var snapshot = await _database.ItemsSnapshotAsync(submissionId);
+        Assert.Contains("Ekstra peynir", snapshot, StringComparison.Ordinal);
+        Assert.Contains(cheese.ToString("D"), snapshot, StringComparison.OrdinalIgnoreCase);
+        Assert.Equal(1, await _database.OutboxCountAsync());
+    }
+
+    [Fact]
+    public async Task ARequiredGroupWithNoPickIsRefusedAndNothingIsQueuedOrReserved()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Steak", 400m);
+        await _database.SeedModifierGroupAsync(product, minSelections: 1, maxSelections: 1);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+
+        using var response = await PostOrderAsync(client, sessionToken, Guid.NewGuid(), product, 1);
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("Available", await _database.GetTableStatusAsync(tableId));
+        Assert.Equal(0, await _database.OutboxCountAsync());
+    }
+
+    [Fact]
+    public async Task MoreExtrasThanAGroupAllowsAndAnotherProductsExtraAreRefused()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var rawToken = await _database.SeedActiveTableTokenAsync(tableId);
+        var product = await _database.SeedProductAsync("Pizza", 200m);
+        var (first, second) = await _database.SeedModifierGroupAsync(product, minSelections: 0, maxSelections: 1);
+        var other = await _database.SeedProductAsync("Çorba", 60m);
+        var (foreign, _) = await _database.SeedModifierGroupAsync(await _database.SeedProductAsync("Burger", 100m), 0, 2);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var sessionToken = await IssueSessionAsync(client, rawToken);
+
+        using var tooMany = await PostOrderWithExtrasAsync(client, sessionToken, Guid.NewGuid(), product, 1, first, second);
+        using var notYours = await PostOrderWithExtrasAsync(client, sessionToken, Guid.NewGuid(), other, 1, foreign);
+
+        Assert.Equal(HttpStatusCode.BadRequest, tooMany.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, notYours.StatusCode);
+        Assert.Equal(0, await _database.OutboxCountAsync());
+    }
+
+    [Fact]
     public async Task RetryingTheSameSubmissionReplaysTheExistingResultInsteadOfQueuingTwice()
     {
         var tableId = await _database.SeedTableAsync();
@@ -630,6 +690,19 @@ public sealed class QrOrderingHttpTests : IAsyncLifetime
         using var second = await client.SendAsync(request);
 
         Assert.Equal(HttpStatusCode.NotModified, second.StatusCode);
+    }
+
+    private static Task<HttpResponseMessage> PostOrderWithExtrasAsync(
+        HttpClient client, string sessionToken, Guid submissionId, Guid productId, int quantity, params Guid[] modifierIds)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/qr/orders");
+        request.Headers.Add(QrOrderingEndpoints.SessionHeaderName, sessionToken);
+        request.Content = JsonContent.Create(new QrOrderSubmissionRequest(
+            [new QrOrderSubmissionItemRequest(
+                Guid.NewGuid(), productId, quantity,
+                Modifiers: modifierIds.Select(id => new QrOrderSubmissionModifierRequest(id)).ToList())],
+            submissionId));
+        return client.SendAsync(request);
     }
 
     private static Task<HttpResponseMessage> PostOrderAsync(

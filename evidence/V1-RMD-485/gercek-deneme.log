@@ -1,0 +1,6 @@
+menu Steak groups: [{"name":"Pişirme","min":1,"max":1,"options":["Az pişmiş+0","Trüf soslu+25"]}]
+Steak without the required cooking choice: HTTP 400 {"error":{"code":"VALIDATION_FAILED","message":"İstek doğrulanamadı."}}
+Steak with two options of a max-1 group: HTTP 400 {"error":{"code":"VALIDATION_FAILED","message":"İstek doğrulanamadı."}}
+Salata with an extra of Steak (not its own): HTTP 400 {"error":{"code":"VALIDATION_FAILED","message":"İstek doğrulanamadı."}}
+Steak with truffle sauce x2: HTTP 202 {"submissionId":"5b12581c-7bae-4232-9400-0c33efc8239a","tableId":"c732cbff-cd01-4909-aba8-6dafc5a7463e","submittedAt":"2
+after the outbox ran: order_item_modifiers=[{"modifier_name_snapshot":"Trüf soslu","price_delta":"25.00","quantity":"2.000"}]; orders=1; [{"status":"PendingConfirmation","source":"Qr"}]

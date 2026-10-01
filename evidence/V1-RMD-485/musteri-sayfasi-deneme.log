@@ -1,0 +1,12 @@
+PASS a product without groups is added straight to the cart
+PASS plain product line created
+PASS a product with groups opens the picker
+PASS Sepete ekle is disabled while the required group has no pick
+PASS enabled once the required group has its pick
+PASS picker closes after adding
+PASS unit price includes the extras (100 + 5 + 10) -> 115
+PASS line carries the chosen extra ids
+PASS same product with other extras is a separate line
+PASS same product with the same extras merges into one line (quantity 2)
+PASS the menu page renders a plain-array menu response (2 products)
+PASS no error banner for an array response

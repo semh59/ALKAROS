@@ -38,4 +38,8 @@ public sealed record QrOrderSubmittedItem(
     int Quantity,
     decimal UnitPrice,
     decimal TaxRate,
-    string? Notes);
+    string? Notes,
+    IReadOnlyList<QrOrderSubmittedModifier>? Modifiers = null);
+
+/// <summary>One extra chosen on a <see cref="QrOrderSubmittedItem"/>; name and price are the catalog's at submission time.</summary>
+public sealed record QrOrderSubmittedModifier(Guid ModifierId, string Name, decimal PriceDelta, decimal Quantity);

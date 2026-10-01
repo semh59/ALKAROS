@@ -123,3 +123,12 @@ def test_customer_web_order_entry_status_section_is_announced_live():
     html = (WWWROOT / "order-entry.html").read_text(encoding="utf-8")
 
     assert 'id="orderStatus" class="order-status" role="status" aria-live="polite"' in html
+
+
+def test_customer_web_order_entry_sends_the_chosen_extras_and_keeps_lines_apart_by_extras():
+    app_code = (WWWROOT / "order-entry.js").read_text(encoding="utf-8")
+
+    # Only the extra ids are sent: name and price are resolved by the server from the catalog.
+    assert "modifiers: (line.modifiers || []).map((modifier) => ({ modifierId: modifier.modifierId }))" in app_code
+    assert "line.lineKey || line.productId" in app_code
+    assert "onChange(line.productId" not in app_code
