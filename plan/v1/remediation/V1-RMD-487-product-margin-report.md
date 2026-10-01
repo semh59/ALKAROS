@@ -23,7 +23,7 @@ Alış maliyeti bilinmeyen kalem sıfır sayılmaz; "maliyet bilinmiyor" olarak 
 - `src/Modules/Reporting/ProductMargin/**`
 - `tests/Modules/Reporting/ProductMargin/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Reporting/ReportingModule.cs — yalnız servis kaydı
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Reporting/ProductMarginReportEndpoints.cs — yeni uç nokta dosyası
+- `src/Host/Experience/Reporting/ProductMarginReportEndpoints.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs — yalnız uç noktanın eşlenmesi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx — yalnız yeni test projesi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/domain/reporting-metrics.md — yalnız yeni metrik satırı

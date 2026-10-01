@@ -21,7 +21,7 @@ Tüm metinler Türkçe, `management-channel-report` bölümü örnek alınır.
 
 ## In scope
 
-- Kesin yollar görev başlatılırken yazılır.
+- Kesin yollar görev başlatılırken yazılır. Bölüm `management-product-margin-report` adıyla ve `reports.view` yetkisiyle `management/sections.ts` içine eklenir; rapor `product-margin.v1` sürümünü gösterir.
 
 ## Out of scope
 
