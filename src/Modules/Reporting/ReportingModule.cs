@@ -5,6 +5,7 @@ using ALKAROS.Reporting.BusinessDayTotals;
 using ALKAROS.Reporting.Channels;
 using ALKAROS.Reporting.MenuInventory;
 using ALKAROS.Reporting.Payments;
+using ALKAROS.Reporting.ProductMargin;
 using ALKAROS.Reporting.V1Operations;
 
 public sealed class ReportingModule : IModule
@@ -28,5 +29,6 @@ public sealed class ReportingModule : IModule
         context.RegisterTransient<IPaymentSettlementReportService, PaymentSettlementReportService>();
         // V12-RPT-001: QR/online channel report.
         context.RegisterTransient<IChannelReportService, PostgresChannelReportService>();
+        context.RegisterTransient<IProductMarginReportService, PostgresProductMarginReportService>();
     }
 }

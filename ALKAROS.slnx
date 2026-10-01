@@ -142,6 +142,7 @@
   <Project Path="tests/Modules/Reconciliation/OnlineOrders/ALKAROS.Reconciliation.OnlineOrders.Tests.csproj" />
   <Project Path="tests/Modules/Reporting/Channels/ALKAROS.Reporting.Channels.Tests.csproj" />
   <Project Path="tests/Modules/Reporting/Payments/ALKAROS.Reporting.Payments.Tests.csproj" />
+  <Project Path="tests/Modules/Reporting/ProductMargin/ALKAROS.Reporting.ProductMargin.Tests.csproj" />
   <Project Path="tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj" />
   <Project Path="tests/Modules/Security/DataProtectionRetention/ALKAROS.Security.DataProtectionRetention.Tests.csproj" />
   <Project Path="tests/Modules/Security/IdentityHardening/ALKAROS.Security.IdentityHardening.Tests.csproj" />

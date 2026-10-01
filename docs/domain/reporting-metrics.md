@@ -26,6 +26,7 @@ apply to every report.
 | --- | --- | --- | --- |
 | Daily sales | per business date, per bill closure | `billing.bill_closures` + `bill_items` | `SUM(net/gross per line_type Sale/Refund)`; reconciles to `SUM(bills.payable_amount)` for closed bills |
 | Product sales | per product, per business date | `billing.bill_items` | `SUM(quantity)`, `SUM(gross_amount)` per `product_id` |
+| Product margin | per product, per business date range (31 days max) | paid `billing.bills` (service day = Europe/Istanbul date the bill opened) + `bill_items` (Sale, Complimentary) + `inventory.stock_movements` (consumption minus reversals) + `purchasing.goods_receipt_items` | revenue = `SUM(net_amount)` of Sale lines; cost = consumed quantity x weighted-average receipt price up to the service day; unknown cost is flagged, never zero; reconciles to the same lines summed independently (bill-level discounts shown apart) |
 | Category sales | per category, per business date | `bill_items` via product catalog | `SUM(gross_amount)` per category; category sums equal daily sales total |
 | Waiter performance | per user, per business date | `orders`/`bills` waiter attribution | `COUNT(closed bills)`, `SUM(paid_amount)` |
 | Table performance | per table, per business date | `billing.bills.table_id` (truth), `table_mgmt.tables` | `COUNT(bills)`, `SUM(payable)`, occupancy minutes per `table_transfers`/order timestamps |

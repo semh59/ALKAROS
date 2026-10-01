@@ -1,0 +1,32 @@
+no session: HTTP 401
+login: HTTP 200
+report: HTTP 200
+{
+ "reportVersion": "product-margin.v1",
+ "from": "2026-09-25",
+ "to": "2026-09-26",
+ "timeZoneId": "Europe/Istanbul",
+ "rows": [
+  {
+   "productId": "af350f0d-af40-4e51-beb7-5feada9663e3",
+   "productName": "Burger",
+   "soldQuantity": 3,
+   "givenAwayQuantity": 0,
+   "netRevenue": 545.46,
+   "cost": 126,
+   "unknownCostLines": 0,
+   "grossMargin": 419.46,
+   "marginPercent": 76.9
+  }
+ ],
+ "totalNetRevenue": 545.46,
+ "totalCost": 126,
+ "unknownCostLines": 0,
+ "check": {
+  "productNetTotal": 545.46,
+  "linesNetTotal": 545.46,
+  "billLevelDiscounts": 0,
+  "isBalanced": true
+ }
+}
+reversed range: HTTP 400 {"error":{"code":"VALIDATION_FAILED","message":"İstek doğrulanamadı.","status":400,"traceId":"0HNOVU3MM1JIF:00000003"}}
