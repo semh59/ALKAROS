@@ -16,6 +16,26 @@ const CATALOG = [
   { productId: "p2", sku: "kofte", name: "Köfte", categoryCode: "MAIN", categoryName: "Ana Yemek", unitPrice: 280, taxRate: 10 },
 ];
 
+const CATALOG_WITH_EXTRAS = [
+  CATALOG[0],
+  {
+    productId: "p3", sku: "burger", name: "Burger", categoryCode: "MAIN", categoryName: "Ana Yemek", unitPrice: 100, taxRate: 10,
+    modifierGroups: [
+      {
+        modifierGroupId: "g1", code: "SOS", name: "Sos", selectionType: "Single", minSelections: 1, maxSelections: 1,
+        modifiers: [
+          { modifierId: "m1", code: "KETCAP", name: "Ketçap", priceDelta: 0 },
+          { modifierId: "m2", code: "ACI", name: "Acı sos", priceDelta: 5 },
+        ],
+      },
+      {
+        modifierGroupId: "g2", code: "EKS", name: "Ekstra", selectionType: "Multiple", minSelections: 0, maxSelections: 2,
+        modifiers: [{ modifierId: "m3", code: "PEY", name: "Peynir", priceDelta: 10 }],
+      },
+    ],
+  },
+];
+
 /**
  * V12-NFC-003: the customer-facing NFC order page (`/nfc/{tableId}`). No
  * login of any kind — every fetch here is anonymous, matching the real
@@ -177,6 +197,60 @@ describe("NfcOrder", () => {
     await act(async () => Promise.resolve());
 
     expect(document.body.textContent).toContain("garsonu çağırın");
+  });
+
+  describe("extras", () => {
+    const click = async (element: Element | null | undefined) => act(async () => (element as HTMLElement).click());
+    const byText = (text: string) => [...document.querySelectorAll("button")].find((b) => b.textContent === text);
+
+    it("a required group blocks adding until one option is chosen, and the chosen extras are sent with the right total", async () => {
+      const fetchMock = vi.fn(async (input: RequestInfo | URL, _init?: RequestInit) => {
+        const path = String(input);
+        if (path.includes("/catalog")) return jsonResponse(CATALOG_WITH_EXTRAS);
+        return jsonResponse({
+          orderId: "o1", tableId: "table-1", tableNumber: "T-01", status: "Accepted", rowVersion: 3,
+          totalAmount: 115, items: [], createdAt: new Date().toISOString(),
+        });
+      });
+      vi.stubGlobal("fetch", fetchMock);
+      await render("/nfc/table-1");
+      await act(async () => Promise.resolve());
+
+      await click(document.querySelector('[aria-label="Burger için seçenekleri aç"]'));
+      expect(byText("Sepete ekle")!.hasAttribute("disabled")).toBe(true);
+
+      await click(document.querySelector('input[type="radio"][name="g1"]:not(:checked)'));
+      await click(document.querySelectorAll('input[type="radio"][name="g1"]')[1]);
+      await click(document.querySelector('input[type="checkbox"]'));
+      expect(byText("Sepete ekle")!.hasAttribute("disabled")).toBe(false);
+      await click(byText("Sepete ekle"));
+
+      expect(document.body.textContent).toContain("Acı sos, Peynir");
+      expect(document.body.textContent).toContain("115");
+
+      await click(byText("Siparişi Gönder"));
+      const orderCall = fetchMock.mock.calls.find(([url]) => String(url).includes("/orders"))!;
+      const body = JSON.parse((orderCall[1] as RequestInit).body as string);
+      expect(body.items).toHaveLength(1);
+      expect(body.items[0].productId).toBe("p3");
+      expect(body.items[0].modifiers.map((m: { modifierId: string }) => m.modifierId).sort()).toEqual(["m2", "m3"]);
+    });
+
+    it("the same product with different extras becomes separate lines", async () => {
+      vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(CATALOG_WITH_EXTRAS)));
+      await render("/nfc/table-1");
+      await act(async () => Promise.resolve());
+
+      for (const option of [0, 1]) {
+        await click(document.querySelector('[aria-label="Burger için seçenekleri aç"]'));
+        await click(document.querySelectorAll('input[type="radio"][name="g1"]')[option]);
+        await click(byText("Sepete ekle"));
+      }
+
+      expect(document.querySelectorAll('[aria-label$="adedini artır"]').length).toBe(3);
+      expect(document.body.textContent).toContain("Ketçap");
+      expect(document.body.textContent).toContain("Acı sos");
+    });
   });
 
   // V1-RMD-389 (Tur 2, P2): a real customer's phone can lock, ring, or have

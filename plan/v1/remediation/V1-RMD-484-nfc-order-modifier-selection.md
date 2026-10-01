@@ -1,7 +1,7 @@
 # V1-RMD-484 - NFC siparişinde ekstra seçim ve zorunlu grup denetimi
 
 - Task ID: V1-RMD-484
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01XpoF59o3sDPfb7ZADR4BMf
 - Work type: implementation
 - Surface state: Existing

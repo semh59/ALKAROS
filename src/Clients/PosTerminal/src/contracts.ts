@@ -106,6 +106,23 @@ export interface RuntimeConfiguration {
   reservationStationEnabled: boolean;
 }
 
+export interface CatalogModifier {
+  modifierId: string;
+  code: string;
+  name: string;
+  priceDelta: number;
+}
+
+export interface CatalogModifierGroup {
+  modifierGroupId: string;
+  code: string;
+  name: string;
+  selectionType: "Single" | "Multiple";
+  minSelections: number;
+  maxSelections: number;
+  modifiers: CatalogModifier[];
+}
+
 export interface CatalogProduct {
   productId: string;
   sku: string;
@@ -114,6 +131,7 @@ export interface CatalogProduct {
   categoryName: string;
   unitPrice: number;
   taxRate: number;
+  modifierGroups?: CatalogModifierGroup[] | null;
 }
 
 export interface DisplayLine {

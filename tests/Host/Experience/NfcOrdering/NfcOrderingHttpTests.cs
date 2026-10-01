@@ -393,6 +393,92 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }
 
+    [Fact]
+    public async Task ASelectedExtraIsPricedFromTheCatalogAndRecordedOnTheLine()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Burger", 100m);
+        var (cheese, _) = await _database.SeedModifierGroupAsync(product, minSelections: 0, maxSelections: 2);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest(
+                [new NfcOrderItemRequestDto(Guid.NewGuid(), product, 2, Modifiers: [new OrderItemModifierSelectionDto(cheese)])],
+                Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var order = await response.Content.ReadFromJsonAsync<OrderDto>();
+        Assert.Equal(220m, order!.TotalAmount);
+        Assert.Equal(1, await _database.ModifierRowCountAsync(order.OrderId));
+    }
+
+    [Fact]
+    public async Task AnOptionalGroupMayBeLeftEmptyButARequiredOneMayNot()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var optional = await _database.SeedProductAsync("Salata", 50m);
+        await _database.SeedModifierGroupAsync(optional, minSelections: 0, maxSelections: 2);
+        var required = await _database.SeedProductAsync("Steak", 400m);
+        await _database.SeedModifierGroupAsync(required, minSelections: 1, maxSelections: 1);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var ok = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), optional, 1)], Guid.NewGuid()));
+        var ordersBefore = await _database.OrderCountAsync();
+        using var refused = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), required, 1)], Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.OK, ok.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, refused.StatusCode);
+        Assert.Contains("İstek doğrulanamadı.", await refused.Content.ReadAsStringAsync());
+        Assert.Equal(ordersBefore, await _database.OrderCountAsync());
+    }
+
+    [Fact]
+    public async Task MoreExtrasThanAGroupAllowsAreRefused()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Pizza", 200m);
+        var (first, second) = await _database.SeedModifierGroupAsync(product, minSelections: 0, maxSelections: 1);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest(
+                [new NfcOrderItemRequestDto(
+                    Guid.NewGuid(), product, 1,
+                    Modifiers: [new OrderItemModifierSelectionDto(first), new OrderItemModifierSelectionDto(second)])],
+                Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AnExtraOfAnotherProductIsRefusedAsAValidationError()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        var other = await _database.SeedProductAsync("Burger", 100m);
+        var (foreign, _) = await _database.SeedModifierGroupAsync(other, minSelections: 0, maxSelections: 2);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest(
+                [new NfcOrderItemRequestDto(Guid.NewGuid(), product, 1, Modifiers: [new OrderItemModifierSelectionDto(foreign)])],
+                Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Contains("İstek doğrulanamadı.", await response.Content.ReadAsStringAsync());
+    }
+
     private static string OrdersPath(Guid tableId) => $"/api/v1/nfc/tables/{tableId:D}/orders";
 
     private async Task<WebApplication> StartAsync()

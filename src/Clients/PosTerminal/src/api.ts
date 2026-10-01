@@ -273,7 +273,7 @@ export const api = {
     request<CatalogProduct[]>(`/api/v1/nfc/tables/${tableId}/catalog`),
   placeNfcOrder: (
     tableId: string,
-    items: { id: string; productId: string; quantity: number }[],
+    items: { id: string; productId: string; quantity: number; modifiers?: { modifierId: string }[] }[],
     submissionId: string,
   ) =>
     withIdempotentRetry(() =>

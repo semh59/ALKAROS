@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { ApiError, api } from "../api";
-import type { CatalogProduct, NfcOrderResult } from "../contracts";
+import type { CatalogModifierGroup, CatalogProduct, NfcOrderResult } from "../contracts";
 import { formatMoney, formatQuantity } from "../format";
 import { Icon } from "../design-system";
 import "./nfc-order.css";
@@ -20,6 +20,22 @@ function tableIdFromPath(pathname: string): string {
   const match = /^\/nfc\/([^/]+)/.exec(pathname);
   return match ? decodeURIComponent(match[1]) : "";
 }
+
+// A cart line is the product id alone, or the product id and the chosen extras ("productId|modifierId,modifierId").
+const lineKey = (productId: string, modifierIds: string[]) =>
+  modifierIds.length === 0 ? productId : `${productId}|${[...modifierIds].sort().join(",")}`;
+
+const parseLineKey = (key: string) => {
+  const [productId, extras] = key.split("|");
+  return { productId, modifierIds: extras ? extras.split(",") : [] };
+};
+
+const groupsOf = (product: CatalogProduct): CatalogModifierGroup[] => product.modifierGroups ?? [];
+
+const groupIsSatisfied = (group: CatalogModifierGroup, chosen: Set<string>) => {
+  const count = group.modifiers.filter((modifier) => chosen.has(modifier.modifierId)).length;
+  return count >= group.minSelections && count <= group.maxSelections;
+};
 
 export function NfcOrder() {
   const [tableId] = useState(() => tableIdFromPath(window.location.pathname));
@@ -44,6 +60,7 @@ export function NfcOrder() {
     }
   });
   const [message, setMessage] = useState("");
+  const [picking, setPicking] = useState<{ product: CatalogProduct; chosen: Set<string> } | null>(null);
   const [result, setResult] = useState<NfcOrderResult | null>(null);
   // V1-RMD-348 (independent 2026-09-26 audit, orta seviye bulgu): stable for
   // the lifetime of one in-flight submission attempt so a retry after a
@@ -112,24 +129,54 @@ export function NfcOrder() {
     void loadCatalog();
   }, [tableId, loadCatalog]);
 
-  const changeQuantity = (productId: string, delta: number) => {
+  const changeQuantity = (key: string, delta: number) => {
     setCart((previous) => {
-      const next = Math.max(0, (previous[productId] ?? 0) + delta);
+      const next = Math.max(0, (previous[key] ?? 0) + delta);
       const updated = { ...previous };
-      if (next === 0) delete updated[productId];
-      else updated[productId] = next;
+      if (next === 0) delete updated[key];
+      else updated[key] = next;
       return updated;
     });
   };
 
   const cartLines = useMemo(
     () =>
-      products
-        .filter((product) => (cart[product.productId] ?? 0) > 0)
-        .map((product) => ({ product, quantity: cart[product.productId] })),
+      Object.entries(cart)
+        .filter(([, quantity]) => quantity > 0)
+        .flatMap(([key, quantity]) => {
+          const { productId, modifierIds } = parseLineKey(key);
+          const product = products.find((candidate) => candidate.productId === productId);
+          if (!product) return [];
+          const extras = groupsOf(product)
+            .flatMap((group) => group.modifiers)
+            .filter((modifier) => modifierIds.includes(modifier.modifierId));
+          const unitPrice = product.unitPrice + extras.reduce((sum, modifier) => sum + modifier.priceDelta, 0);
+          return [{ key, product, quantity, modifierIds, extras, unitPrice }];
+        }),
     [products, cart],
   );
-  const total = cartLines.reduce((sum, line) => sum + line.product.unitPrice * line.quantity, 0);
+  const total = cartLines.reduce((sum, line) => sum + line.unitPrice * line.quantity, 0);
+
+  const openPicker = (product: CatalogProduct) => setPicking({ product, chosen: new Set() });
+
+  const toggleChoice = (group: CatalogModifierGroup, modifierId: string) =>
+    setPicking((current) => {
+      if (!current) return current;
+      const chosen = new Set(current.chosen);
+      if (chosen.has(modifierId)) {
+        chosen.delete(modifierId);
+      } else {
+        if (group.maxSelections === 1) group.modifiers.forEach((modifier) => chosen.delete(modifier.modifierId));
+        chosen.add(modifierId);
+      }
+      return { ...current, chosen };
+    });
+
+  const confirmPicker = () => {
+    if (!picking) return;
+    changeQuantity(lineKey(picking.product.productId, [...picking.chosen]), 1);
+    setPicking(null);
+  };
 
   const submit = async () => {
     if (cartLines.length === 0) return;
@@ -143,6 +190,9 @@ export function NfcOrder() {
           id: crypto.randomUUID(),
           productId: line.product.productId,
           quantity: line.quantity,
+          ...(line.modifierIds.length > 0
+            ? { modifiers: line.modifierIds.map((modifierId) => ({ modifierId })) }
+            : {}),
         })),
         submissionIdRef.current!,
       );
@@ -245,6 +295,49 @@ export function NfcOrder() {
       <div className="nfc-menu">
         {products.map((product) => {
           const quantity = cart[product.productId] ?? 0;
+          if (groupsOf(product).length > 0) {
+            return (
+              <div className="nfc-product" key={product.productId}>
+                <div className="nfc-product__info">
+                  <span className="nfc-product__name">{product.name}</span>
+                  <span className="nfc-product__price">{formatMoney(product.unitPrice)}</span>
+                  {cartLines
+                    .filter((line) => line.product.productId === product.productId)
+                    .map((line) => (
+                      <div className="nfc-stepper" key={line.key}>
+                        <small>{line.extras.map((extra) => extra.name).join(", ") || "Ekstrasız"}</small>
+                        <button
+                          type="button"
+                          aria-label={`${product.name} (${line.extras.map((extra) => extra.name).join(", ") || "ekstrasız"}) adedini azalt`}
+                          disabled={state === "submitting"}
+                          onClick={() => changeQuantity(line.key, -1)}
+                        >
+                          −
+                        </button>
+                        <span className="nfc-stepper__count" aria-live="polite">{line.quantity}</span>
+                        <button
+                          type="button"
+                          aria-label={`${product.name} (${line.extras.map((extra) => extra.name).join(", ") || "ekstrasız"}) adedini artır`}
+                          disabled={state === "submitting"}
+                          onClick={() => changeQuantity(line.key, 1)}
+                        >
+                          +
+                        </button>
+                      </div>
+                    ))}
+                </div>
+                <button
+                  type="button"
+                  className="nfc-secondary-button"
+                  aria-label={`${product.name} için seçenekleri aç`}
+                  disabled={state === "submitting"}
+                  onClick={() => openPicker(product)}
+                >
+                  Seç
+                </button>
+              </div>
+            );
+          }
           return (
             <div className="nfc-product" key={product.productId}>
               <div className="nfc-product__info">
@@ -274,6 +367,43 @@ export function NfcOrder() {
           );
         })}
       </div>
+      {picking && (
+        <div className="nfc-picker" role="dialog" aria-modal="true" aria-label={`${picking.product.name} seçenekleri`}>
+          <h2>{picking.product.name}</h2>
+          {groupsOf(picking.product).map((group) => (
+            <fieldset key={group.modifierGroupId}>
+              <legend>
+                {group.name}
+                {group.minSelections > 0 ? " (zorunlu)" : " (isteğe bağlı)"}
+                {group.maxSelections > 1 ? ` · en fazla ${group.maxSelections}` : ""}
+              </legend>
+              {group.modifiers.map((modifier) => (
+                <label key={modifier.modifierId}>
+                  <input
+                    type={group.maxSelections === 1 ? "radio" : "checkbox"}
+                    name={group.modifierGroupId}
+                    checked={picking.chosen.has(modifier.modifierId)}
+                    onChange={() => toggleChoice(group, modifier.modifierId)}
+                  />
+                  {modifier.name}
+                  {modifier.priceDelta > 0 ? ` +${formatMoney(modifier.priceDelta)}` : ""}
+                </label>
+              ))}
+            </fieldset>
+          ))}
+          <button type="button" className="nfc-secondary-button" onClick={() => setPicking(null)}>
+            Vazgeç
+          </button>
+          <button
+            type="button"
+            className="nfc-primary-button"
+            disabled={!groupsOf(picking.product).every((group) => groupIsSatisfied(group, picking.chosen))}
+            onClick={confirmPicker}
+          >
+            Sepete ekle
+          </button>
+        </div>
+      )}
       {cartLines.length > 0 && (
         <div className="nfc-cart-bar">
           <span className="nfc-cart-bar__total">

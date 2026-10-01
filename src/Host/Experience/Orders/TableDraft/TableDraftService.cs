@@ -354,7 +354,7 @@ public sealed class TableDraftService
     /// from the request, exactly as the product's own name and price already do.
     /// One round trip for the whole draft.
     /// </summary>
-    private static async Task<Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta, Guid GroupId)>> ResolveModifiersAsync(
+    internal static async Task<Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta, Guid GroupId)>> ResolveModifiersAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         IReadOnlyList<OrderItemDraftDto> items,
@@ -447,7 +447,7 @@ public sealed class TableDraftService
     /// nothing from at all, which the per-selection resolve in
     /// <see cref="ResolveModifiersAsync"/> can never see.
     /// </summary>
-    private static async Task<Dictionary<Guid, List<(Guid GroupId, int MinSelections, int MaxSelections)>>> ResolveApplicableModifierGroupsAsync(
+    internal static async Task<Dictionary<Guid, List<(Guid GroupId, int MinSelections, int MaxSelections)>>> ResolveApplicableModifierGroupsAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         IEnumerable<Guid> productIds,
@@ -496,7 +496,7 @@ public sealed class TableDraftService
     /// above only knows groups that resolved) is not this check's problem;
     /// BuildModifiers already refused an unresolved modifier id outright.
     /// </summary>
-    private static void ValidateModifierGroupSelections(
+    internal static void ValidateModifierGroupSelections(
         OrderItemDraftDto item,
         Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta, Guid GroupId)> modifierCatalog,
         Dictionary<Guid, List<(Guid GroupId, int MinSelections, int MaxSelections)>> applicableGroups)
@@ -615,7 +615,7 @@ public sealed class TableDraftService
     /// Silently dropping it is the defect this task closes, so an unresolved
     /// id must be loud.
     /// </summary>
-    private static List<OrderItemModifier>? BuildModifiers(
+    internal static List<OrderItemModifier>? BuildModifiers(
         OrderItemDraftDto item,
         Dictionary<(Guid ProductId, Guid ModifierId), (string Name, decimal PriceDelta, Guid GroupId)> catalog)
     {

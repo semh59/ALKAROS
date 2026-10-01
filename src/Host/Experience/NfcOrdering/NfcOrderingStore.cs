@@ -2,6 +2,7 @@ using System.Data;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
+using ALKAROS.Host.Experience.Orders.TableDraft;
 using ALKAROS.Orders.Integration;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
@@ -115,17 +116,27 @@ public sealed class NfcOrderingStore
                 throw new NfcTableNotAvailableException(tableId, table.Value.Status);
 
             var catalog = await ResolveCatalogProductsAsync(connection, transaction, request.Items.Select(i => i.ProductId), cancellationToken);
+            var drafts = request.Items
+                .Select(i => new OrderItemDraftDto(i.Id, i.ProductId, string.Empty, i.Quantity, 0m, i.Modifiers))
+                .ToList();
+            var modifierCatalog = await TableDraftService.ResolveModifiersAsync(connection, transaction, drafts, cancellationToken);
+            var applicableGroups = await TableDraftService.ResolveApplicableModifierGroupsAsync(
+                connection, transaction, drafts.Select(d => d.ProductId), cancellationToken);
             var now = DateTimeOffset.UtcNow;
             var orderId = Guid.NewGuid();
             var hasAgeRestrictedItem = request.Items.Any(line =>
                 catalog.TryGetValue(line.ProductId, out var product) && product.IsAgeRestricted);
 
             var items = new List<OrderItem>();
-            foreach (var line in request.Items)
+            foreach (var (line, draft) in request.Items.Zip(drafts))
             {
                 if (!catalog.TryGetValue(line.ProductId, out var product))
                     throw new KeyNotFoundException($"Product {line.ProductId} was not found, is not available, or has no active price.");
                 var (productName, unitPrice, taxRate, _) = product;
+                if (line.Modifiers is { Count: > 0 } && line.Modifiers.Any(m => !modifierCatalog.ContainsKey((line.ProductId, m.ModifierId))))
+                    throw new ArgumentException($"A selected extra does not belong to product {line.ProductId}.", nameof(request));
+                var modifiers = TableDraftService.BuildModifiers(draft, modifierCatalog);
+                TableDraftService.ValidateModifierGroupSelections(draft, modifierCatalog, applicableGroups);
 
                 items.Add(new OrderItem(
                     line.Id,
@@ -137,7 +148,7 @@ public sealed class NfcOrderingStore
                     taxRate,
                     skuSnapshot: null,
                     discountAmount: 0,
-                    modifiers: null,
+                    modifiers: modifiers,
                     status: OrderItemState.Draft,
                     kitchenState: KitchenState.NotSent,
                     portionReservationStatus: PortionReservationStatus.NotApplicable,

@@ -1,3 +1,5 @@
+using ALKAROS.Host.Experience.Orders;
+
 namespace ALKAROS.Host.Experience.NfcOrdering;
 
 /// <summary>
@@ -22,4 +24,5 @@ public sealed record NfcOrderItemRequestDto(
     Guid Id,
     Guid ProductId,
     int Quantity,
-    string? SpecialInstructions = null);
+    string? SpecialInstructions = null,
+    IReadOnlyList<OrderItemModifierSelectionDto>? Modifiers = null);
