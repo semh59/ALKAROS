@@ -70,6 +70,8 @@ public static class ModuleRegistry
         typeof(ALKAROS.Invoicing.SourceTraceability.InvoicingSourceTraceabilityModule),
         // Retention windows, legal holds and work items for records past their KVKK retention.
         typeof(ALKAROS.Privacy.RetentionExecution.PrivacyRetentionExecutionModule),
+        // Store-by-store anonymization of those work items, with checkpoints and a final residue check.
+        typeof(ALKAROS.Privacy.Anonymization.PrivacyAnonymizationModule),
         typeof(ALKAROS.Payments.CardSettlement.CardSettlementModule),
         typeof(ALKAROS.Payments.EftTender.EftTenderModule),
         typeof(ALKAROS.Payments.TenderRouting.TenderCompositionModule),

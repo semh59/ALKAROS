@@ -8,7 +8,7 @@ window set by the approved `V0-CMP-003` inventory. Which records are due is deci
 by the `Privacy.RetentionExecution` module (`V15-KVK-001`) from a versioned policy
 (`privacy.retention_rules`, policy 1 = the approved inventory); the dry run and the
 apply always pick the same records. The multi-store checkpoint/resume workflow is
-`V15-KVK-002`.
+`Privacy.Anonymization` (`V15-KVK-002`).
 
 ## What it anonymizes
 
@@ -19,13 +19,31 @@ apply always pick the same records. The multi-store checkpoint/resume workflow i
 | Order line note | `orders.order_items.notes` | parent order past the same window | `notes -> '[anonymized]'` |
 | Reservation reason | `table_mgmt.table_reservations.reason`, `release_reason` | `status IN (Claimed, Cancelled, Expired)` **and** `reserved_at` older than **5 years** | both `-> '[anonymized]'` |
 
-### Customers and suppliers — queued, not scrubbed here
+### Customers and suppliers
 
 Customer profiles (10 years after the last ledger movement or invoice; never with an open
 balance or a pending anonymization request) and suppliers (10 years after the last purchase
-order) past their window are only written as pending work items in
-`privacy.retention_work_items`; the field-level anonymization of those records is
-`V15-KVK-002`. Every run is recorded in `privacy.retention_runs` / `retention_run_items`.
+order) past their window are written as pending work items in `privacy.retention_work_items`
+and then anonymized by the same `--apply` run:
+
+| Class | Store | Action |
+| --- | --- | --- |
+| Customer | `customer_data.profiles` | the encrypted contact envelope is replaced by a value no key can open; `anonymized = true`. The row and id stay. |
+| Customer | `customer_data.anonymization_requests` | any open request becomes `Anonymized`. |
+| Supplier | `purchasing.suppliers` | `name -> '[anonymized]'`, `phone` and `email` cleared. `tax_number` and `tax_office` stay (the supplier's legal identifiers on incoming invoices). |
+
+A customer whose balance became non-zero after being queued is held back (the run reports `blocked=N`) and picked up
+again once the balance is settled. The account ledger (`customer_account.account_transactions`, append-only) and the invoice
+buyer data are legal retention and are never touched.
+
+### How a record is processed
+
+Every record is one job in `privacy.anonymization_jobs`. Each store it touches is a step: the write, its checkpoint
+(`privacy.anonymization_checkpoints`) and an event (`privacy.anonymization_events`, append-only, no personal data) commit together.
+If a step fails the job is `Failed` with the error class (e.g. an SQLSTATE) and the work item stays pending; the next
+`--apply` resumes at the first store without a checkpoint and does not repeat the finished ones. After the last store every
+store is checked for leftovers; only a clean record is marked done in the retention list (`failed=N` otherwise, and the
+command exits with an error). A legal hold placed meanwhile also stops the job (`blocked`) before the work item is completed.
 
 ### Audit events — out of scope here
 
@@ -33,7 +51,7 @@ The `V0-CMP-003` inventory lists audit logs as *anonymize after 10 years*, but
 `audit.audit_events` is enforced **append-only** by a database trigger (AUD-01):
 `UPDATE`/`DELETE` are rejected. In-place anonymization is therefore impossible by
 design. The 10-year disposal for audit needs a partition-drop approach (partition
-the table by year, drop whole old partitions) and is deferred to `V15-KVK-002`.
+the table by year, drop whole old partitions) and is deferred (planned as `V1-RMD-481`).
 `IAuditSanitizer` already redacts secrets/PII patterns from audit payloads at
 write time, so the highest-risk data is not stored in the first place.
 

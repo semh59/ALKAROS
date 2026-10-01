@@ -160,6 +160,8 @@ public static class ModuleBoundaryTests
             // module-dependency-rules.md row 35 - the links reuse
             // Generation's public KDV split so they reproduce its lines exactly.
             ["Invoicing.SourceTraceability"] = ["Invoicing.Generation"],
+            // module-dependency-rules.md row 37 - the anonymization consumes the retention work items.
+            ["Privacy.Anonymization"] = ["Privacy.RetentionExecution"],
         };
 
     private static List<(IModule Module, Assembly Assembly)> CatalogModules()

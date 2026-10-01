@@ -226,6 +226,7 @@
           "ALKAROS.Orders": "[1.0.0, )",
           "ALKAROS.Payments": "[1.0.0, )",
           "ALKAROS.Payments.TenderComposition": "[1.0.0, )",
+          "ALKAROS.Privacy.Anonymization": "[1.0.0, )",
           "ALKAROS.Privacy.RetentionExecution": "[1.0.0, )",
           "ALKAROS.Production": "[1.0.0, )",
           "ALKAROS.Purchasing": "[1.0.0, )",
@@ -354,6 +355,14 @@
           "ALKAROS.Cash": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "ALKAROS.Payments": "[1.0.0, )"
+        }
+      },
+      "alkaros.privacy.anonymization": {
+        "type": "Project",
+        "dependencies": {
+          "ALKAROS.ModuleComposition": "[1.0.0, )",
+          "ALKAROS.Privacy.RetentionExecution": "[1.0.0, )",
+          "Npgsql": "[9.0.2, )"
         }
       },
       "alkaros.privacy.retentionexecution": {

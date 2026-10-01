@@ -1,0 +1,13 @@
+﻿  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\PROJECT\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Privacy.Anonymization -> D:\PROJECT\ALKAROS\src\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Privacy.Anonymization.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:     9, Atlanan:     0, Toplam:     9, Süre: 15 s - ALKAROS.Privacy.Anonymization.Tests.dll (net8.0)

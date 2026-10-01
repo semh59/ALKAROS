@@ -21,6 +21,7 @@
   <Project Path="src/Modules/Payments/ALKAROS.Payments.csproj" />
   <Project Path="src/Modules/Payments/TenderComposition/ALKAROS.Payments.TenderComposition.csproj" />
   <Project Path="src/Modules/Invoicing/ALKAROS.Invoicing.csproj" />
+  <Project Path="src/Modules/Privacy/Anonymization/ALKAROS.Privacy.Anonymization.csproj" />
   <Project Path="src/Modules/Privacy/RetentionExecution/ALKAROS.Privacy.RetentionExecution.csproj" />
   <Project Path="src/Modules/Reconciliation/ALKAROS.Reconciliation.csproj" />
   <Project Path="src/Modules/Reporting/ALKAROS.Reporting.csproj" />
@@ -134,6 +135,7 @@
   <Project Path="tests/Modules/Invoicing/SourceSelection/ALKAROS.Invoicing.SourceSelection.Tests.csproj" />
   <Project Path="tests/Modules/Invoicing/Generation/ALKAROS.Invoicing.Generation.Tests.csproj" />
   <Project Path="tests/Modules/Invoicing/SourceTraceability/ALKAROS.Invoicing.SourceTraceability.Tests.csproj" />
+  <Project Path="tests/Modules/Privacy/Anonymization/ALKAROS.Privacy.Anonymization.Tests.csproj" />
   <Project Path="tests/Modules/Privacy/RetentionExecution/ALKAROS.Privacy.RetentionExecution.Tests.csproj" />
   <Project Path="tests/Modules/Reconciliation/CaseFoundation/ALKAROS.Reconciliation.CaseFoundation.Tests.csproj" />
   <Project Path="tests/Modules/Reconciliation/Payments/ALKAROS.Reconciliation.Payments.Tests.csproj" />

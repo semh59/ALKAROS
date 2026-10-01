@@ -2,7 +2,9 @@ using ALKAROS.Host.Composition;
 using ALKAROS.Host.Composition.Migrations;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authentication;
+using ALKAROS.Privacy.Anonymization;
 using ALKAROS.Privacy.RetentionExecution;
+using ALKAROS.SensitiveData;
 using Npgsql;
 
 namespace ALKAROS.Host;
@@ -292,14 +294,15 @@ public static class Program
     ///   table_mgmt.table_reservations.reason    (5 years, closed reservation) -> '[anonymized]'
     /// audit.audit_events is out of scope: it is enforced append-only by a
     /// database trigger (AUD-01). Its 10-year anonymization needs a partition-
-    /// drop mechanism and is deferred to V15-KVK-002; IAuditSanitizer already
+    /// drop mechanism and is deferred; IAuditSanitizer already
     /// redacts secrets on write.
     /// Fiscal receipts, Z reports, invoices and the financial columns are
     /// legal-retention and are never touched. Default is a dry run; pass
     /// --apply to write. Idempotent (an already-'[anonymized]' row is skipped).
     /// The windows and the choice of records come from the versioned policy of
     /// Privacy.RetentionExecution, so the dry run and the apply always agree;
-    /// customers and suppliers past their window are only queued as work items.
+    /// customers and suppliers past their window go through the same store-by-store workflow
+    /// (Privacy.Anonymization), which resumes at the first unfinished store and re-checks every store before a record is done.
     /// Usage: kvkk-retention --db-url &lt;url&gt; [--apply] [--as-of &lt;ISO date&gt;]
     ///        [--exclude-order-ids-file &lt;path&gt;]
     /// </summary>
@@ -363,11 +366,27 @@ public static class Program
         var orderNotes = 0;
         var itemNotes = 0;
         var reservations = 0;
+        var blocked = 0;
+        var failed = 0;
         RetentionPlan plan;
         if (apply)
         {
             plan = (await retention.ExecuteAsync(asOf, "kvkk-retention", heldSet)).Plan;
-            (staff, orderNotes, itemNotes, reservations) = await ScrubPendingAsync(dataSource, retention, heldSet, Marker);
+            var workflow = new PostgresAnonymizationWorkflow(dataSource, retention, new KvkkAnonymizationPlans());
+            var fieldsByStore = new Dictionary<string, int>();
+            foreach (var dataClass in Enum.GetValues<RetentionClass>())
+            {
+                var result = await workflow.RunAsync(dataClass, "kvkk-retention", heldSet);
+                blocked += result.Blocked;
+                failed += result.Failed;
+                foreach (var (store, count) in result.FieldsChangedByStore)
+                    fieldsByStore[store] = fieldsByStore.GetValueOrDefault(store) + count;
+            }
+
+            staff = fieldsByStore.GetValueOrDefault("identity.users");
+            orderNotes = fieldsByStore.GetValueOrDefault("orders.orders");
+            itemNotes = fieldsByStore.GetValueOrDefault("orders.order_items");
+            reservations = fieldsByStore.GetValueOrDefault("table_mgmt.table_reservations");
         }
         else
         {
@@ -394,63 +413,9 @@ public static class Program
             + $"customers={plan.Candidates.Count(c => c.DataClass == RetentionClass.CustomerProfile)} "
             + $"suppliers={plan.Candidates.Count(c => c.DataClass == RetentionClass.Supplier)} "
             + $"policy={plan.PolicyVersion} "
-            + $"as_of={asOf:yyyy-MM-dd} excluded_orders={excludedOrderIds.Count} apply={apply.ToString().ToLowerInvariant()}");
-        return (int)HostExitCode.Success;
-    }
-
-    /// <summary>
-    /// Scrubs the free-text fields of every pending staff, order-note and reservation work item (customers and suppliers
-    /// stay pending for the field-level anonymization workflow) and completes the items in the same transaction.
-    /// </summary>
-    private static async Task<(int Staff, int OrderNotes, int ItemNotes, int Reservations)> ScrubPendingAsync(
-        NpgsqlDataSource dataSource, PostgresRetentionExecutionService retention, HashSet<Guid> held, string marker)
-    {
-        async Task<Guid[]> PendingIdsAsync(RetentionClass dataClass)
-            => (await retention.PendingAsync(dataClass, 1_000_000)).Select(item => item.SubjectId).Where(id => !held.Contains(id)).ToArray();
-
-        var staffIds = await PendingIdsAsync(RetentionClass.StaffAccount);
-        var orderIds = await PendingIdsAsync(RetentionClass.OrderNotes);
-        var reservationIds = await PendingIdsAsync(RetentionClass.ReservationReason);
-
-        await using var connection = await dataSource.OpenConnectionAsync();
-        await using var transaction = await connection.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
-
-        async Task<int> UpdateAsync(string sql, Guid[] ids)
-        {
-            await using var update = new NpgsqlCommand(sql, connection, transaction);
-            update.Parameters.AddWithValue("ids", ids);
-            update.Parameters.AddWithValue("m", marker);
-            return await update.ExecuteNonQueryAsync();
-        }
-
-        var staff = await UpdateAsync(
-            """
-            UPDATE identity.users
-            SET username = 'anon-' || left(user_id::text, 8),
-                display_name = @m, email = NULL, phone = NULL,
-                password_hash = '!kvkk-retention-disabled', updated_at = now()
-            WHERE user_id = ANY(@ids) AND active = false AND display_name <> @m;
-            """,
-            staffIds);
-        var orderNotes = await UpdateAsync(
-            "UPDATE orders.orders SET notes = @m, updated_at = now() WHERE order_id = ANY(@ids) AND notes IS NOT NULL AND notes <> @m;",
-            orderIds);
-        var itemNotes = await UpdateAsync(
-            "UPDATE orders.order_items SET notes = @m, updated_at = now() WHERE order_id = ANY(@ids) AND notes IS NOT NULL AND notes <> @m;",
-            orderIds);
-        var reservations = await UpdateAsync(
-            """
-            UPDATE table_mgmt.table_reservations
-            SET reason = @m, release_reason = CASE WHEN release_reason IS NOT NULL THEN @m END, row_version = row_version + 1
-            WHERE table_reservation_id = ANY(@ids) AND reason <> @m;
-            """,
-            reservationIds);
-
-        await retention.CompleteAsync(RetentionClass.StaffAccount, staffIds, "kvkk-retention", transaction);
-        await retention.CompleteAsync(RetentionClass.OrderNotes, orderIds, "kvkk-retention", transaction);
-        await retention.CompleteAsync(RetentionClass.ReservationReason, reservationIds, "kvkk-retention", transaction);
-        await transaction.CommitAsync();
-        return (staff, orderNotes, itemNotes, reservations);
+            + $"as_of={asOf:yyyy-MM-dd} excluded_orders={excludedOrderIds.Count} apply={apply.ToString().ToLowerInvariant()} "
+            + $"blocked={blocked} failed={failed}");
+        return failed == 0 ? (int)HostExitCode.Success : throw new InvalidOperationException("kvkk-retention: some records could not be anonymized and stay pending; run it again after fixing the cause.");
     }
 
     private static string RequiredEnvironmentValue(
@@ -633,3 +598,85 @@ public static class Program
         writer.WriteLine("                    Fiscal / invoice / financial data and append-only audit are never touched.");
     }
 }
+
+/// <summary>
+/// The approved KVKK field actions per data class. They live in the composition root because they write other modules'
+/// stores. Every write only clears or masks fields and keeps the row, so ids, totals and legal identifiers (tax numbers,
+/// invoice buyer data, the account ledger) stay valid; a repeated write changes nothing, and each residue query counts what a
+/// finished step should have cleared.
+/// </summary>
+internal sealed class KvkkAnonymizationPlans : IAnonymizationPlans
+{
+    private const string Marker = "[anonymized]";
+
+    /// <summary>Not decryptable under any key: the value CustomerData writes when it anonymizes a profile.</summary>
+    private static readonly byte[] CustomerEnvelopeSentinel = new SensitiveEnvelope(
+        new Dictionary<string, SensitiveCategory>(),
+        new EnvelopeCiphertext("anonymized", [0], [], [0]),
+        DateTimeOffset.UnixEpoch).ToPersistenceBytes();
+
+    private static readonly Dictionary<string, object> Parameters = new() { ["m"] = Marker, ["sentinel"] = CustomerEnvelopeSentinel };
+
+    private static readonly Dictionary<RetentionClass, AnonymizationPlan> Plans = new()
+    {
+        [RetentionClass.StaffAccount] = new(null,
+        [
+            new("identity.users",
+                """
+                UPDATE identity.users
+                SET username = 'anon-' || left(user_id::text, 8), display_name = @m, email = NULL, phone = NULL,
+                    password_hash = '!kvkk-retention-disabled', updated_at = now()
+                WHERE user_id = @subject AND active = false AND display_name <> @m;
+                """,
+                "SELECT count(*) FROM identity.users WHERE user_id = @subject AND active = false AND (display_name <> @m OR email IS NOT NULL OR phone IS NOT NULL);"),
+        ], Parameters),
+        [RetentionClass.OrderNotes] = new(null,
+        [
+            new("orders.orders",
+                "UPDATE orders.orders SET notes = @m, updated_at = now() WHERE order_id = @subject AND notes IS NOT NULL AND notes <> @m;",
+                "SELECT count(*) FROM orders.orders WHERE order_id = @subject AND notes IS NOT NULL AND notes <> @m;"),
+            new("orders.order_items",
+                "UPDATE orders.order_items SET notes = @m, updated_at = now() WHERE order_id = @subject AND notes IS NOT NULL AND notes <> @m;",
+                "SELECT count(*) FROM orders.order_items WHERE order_id = @subject AND notes IS NOT NULL AND notes <> @m;"),
+        ], Parameters),
+        [RetentionClass.ReservationReason] = new(null,
+        [
+            new("table_mgmt.table_reservations",
+                """
+                UPDATE table_mgmt.table_reservations
+                SET reason = @m, release_reason = CASE WHEN release_reason IS NOT NULL THEN @m END, row_version = row_version + 1
+                WHERE table_reservation_id = @subject AND reason <> @m;
+                """,
+                "SELECT count(*) FROM table_mgmt.table_reservations WHERE table_reservation_id = @subject AND (reason <> @m OR (release_reason IS NOT NULL AND release_reason <> @m));"),
+        ], Parameters),
+        // A balance that appeared after the record was queued keeps the customer for now; the ledger itself is never touched.
+        [RetentionClass.CustomerProfile] = new(
+            "SELECT COALESCE((SELECT b.current_balance FROM customer_account.balances b WHERE b.customer_id = @subject), 0) <> 0;",
+        [
+            new("customer_data.profiles",
+                """
+                UPDATE customer_data.profiles
+                SET anonymized = TRUE, envelope_bytes = @sentinel, row_version = row_version + 1
+                WHERE customer_id = @subject AND anonymized = FALSE;
+                """,
+                "SELECT count(*) FROM customer_data.profiles WHERE customer_id = @subject AND anonymized = FALSE;"),
+            new("customer_data.anonymization_requests",
+                """
+                UPDATE customer_data.anonymization_requests
+                SET status = 'Anonymized', blocked_reason = NULL, anonymized_at = now(), row_version = row_version + 1
+                WHERE customer_id = @subject AND status <> 'Anonymized';
+                """,
+                "SELECT count(*) FROM customer_data.anonymization_requests WHERE customer_id = @subject AND status <> 'Anonymized';"),
+        ], Parameters),
+        // The tax number and office stay: they are the supplier's legal identifiers on incoming invoices.
+        [RetentionClass.Supplier] = new(null,
+        [
+            new("purchasing.suppliers",
+                "UPDATE purchasing.suppliers SET name = @m, phone = NULL, email = NULL, updated_at = now() WHERE supplier_id = @subject AND (name <> @m OR phone IS NOT NULL OR email IS NOT NULL);",
+                "SELECT count(*) FROM purchasing.suppliers WHERE supplier_id = @subject AND (name <> @m OR phone IS NOT NULL OR email IS NOT NULL);"),
+        ], Parameters),
+    };
+
+    public AnonymizationPlan PlanFor(RetentionClass dataClass) => Plans[dataClass];
+}
+

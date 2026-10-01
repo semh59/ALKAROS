@@ -1,0 +1,7 @@
+﻿workflow mutants on 9 engine tests (restored with cp, fc /b: no differences):
+resume-reruns-finished-steps: exit 1 Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 15 s - ALKAROS.Privacy.Anonymization.Tests.dll (net8.0)
+no-final-check: exit 1 Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 15 s - ALKAROS.Privacy.Anonymization.Tests.dll (net8.0)
+no-block-check: exit 1 Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 15 s - ALKAROS.Privacy.Anonymization.Tests.dll (net8.0)
+no-hold-handling: exit 1 Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 15 s - ALKAROS.Privacy.Anonymization.Tests.dll (net8.0)
+skip-inverted: exit 1 Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 15 s - ALKAROS.Privacy.Anonymization.Tests.dll (net8.0)
+host plan mutant (supplier phone kept): exit 1 Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 48 s - ALKAROS.Host.Tests.dll (net8.0)

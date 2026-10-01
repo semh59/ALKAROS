@@ -1472,6 +1472,16 @@
         "order_invoice_lines"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "172",
+      "phase": "B",
+      "tables": [
+        "anonymization_jobs",
+        "anonymization_checkpoints",
+        "anonymization_events"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

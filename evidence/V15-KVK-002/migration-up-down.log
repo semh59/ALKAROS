@@ -1,0 +1,16 @@
+# all migrations up to 172 on an empty database, then 172 down and up again
+$ after full migration run
+tables: anonymization_checkpoints, anonymization_events, anonymization_jobs
+triggers: tr_anonymization_checkpoints_immutable, tr_anonymization_events_immutable, tr_anonymization_jobs_no_delete
+functions: refuse_anonymization_job_delete
+$ 172 down  exit=0
+$ after 172 down
+tables: 
+triggers: 
+functions: 
+$ 172 up  exit=0
+$ after 172 up again
+tables: anonymization_checkpoints, anonymization_events, anonymization_jobs
+triggers: tr_anonymization_checkpoints_immutable, tr_anonymization_events_immutable, tr_anonymization_jobs_no_delete
+functions: refuse_anonymization_job_delete
+$ 172 up a second time (idempotent)  exit=0

@@ -16,7 +16,7 @@ public sealed class HostModuleReachabilityTests
         var catalog = ModuleRegistry.DefaultCatalog;
 
         Assert.NotEmpty(catalog);
-        Assert.Equal(41, catalog.Count); // Privacy.RetentionExecution joined the catalog (40 before it)
+        Assert.Equal(42, catalog.Count); // Privacy.Anonymization joined the catalog (41 before it)
         Assert.All(catalog, type =>
         {
             Assert.True(typeof(IModule).IsAssignableFrom(type));

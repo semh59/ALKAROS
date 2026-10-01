@@ -123,13 +123,12 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
             Assert.Equal(1L, await ScalarAsync<long>(
                 "SELECT count(*) FROM table_mgmt.table_reservations WHERE reason = @m AND status = 'Expired';", ("m", Marker)));
 
-            // customers and suppliers past their window are queued for the field-level workflow, not scrubbed here
-            Assert.Equal(2L, await ScalarAsync<long>(
-                "SELECT count(*) FROM privacy.retention_work_items WHERE status = 'Pending' AND data_class IN ('CustomerProfile', 'Supplier');"));
-            Assert.Equal(3L, await ScalarAsync<long>(
-                "SELECT count(*) FROM privacy.retention_work_items WHERE status = 'Done' AND data_class IN ('StaffAccount', 'OrderNotes', 'ReservationReason');"));
-            Assert.False(await ScalarAsync<bool>(
+            // customers and suppliers past their window go through the same store-by-store workflow
+            Assert.Equal(0L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items WHERE status = 'Pending';"));
+            Assert.Equal(5L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items WHERE status = 'Done';"));
+            Assert.True(await ScalarAsync<bool>(
                 "SELECT anonymized FROM customer_data.profiles WHERE customer_id = @id;", ("id", oldCustomer)));
+            Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM purchasing.suppliers WHERE name = @m;", ("m", Marker)));
 
             // untouched: recent, active, wrong-status, legal-held
             Assert.NotEqual(Marker, await ScalarAsync<string>(
@@ -162,6 +161,7 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
 
             var reLine = reOut.ToString();
             Assert.Contains("staff=0 order_notes=0 item_notes=0 reservation_reasons=0", reLine, StringComparison.Ordinal);
+            Assert.Contains("blocked=0 failed=0", reLine, StringComparison.Ordinal);
         }
         finally
         {
@@ -194,6 +194,72 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
         Assert.Equal(Marker, await ScalarAsync<string>("SELECT notes FROM orders.orders WHERE order_id = @id;", ("id", order)));
         Assert.Equal(Marker, await ScalarAsync<string>("SELECT display_name FROM identity.users WHERE user_id = @id;", ("id", oldStaff)));
         Assert.Equal(2L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items WHERE status = 'Done';"));
+    }
+
+    [Fact]
+    public async Task CustomerAndSupplierAnonymizationKeepsLegalIdentifiersAndTheLedgerAndWaitsForAnOpenBalance()
+    {
+        var customerId = Guid.NewGuid();
+        var supplierId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO customer_data.profiles (customer_id, envelope_bytes, created_at) VALUES (@c, ''::bytea, now() - interval '12 years');
+            INSERT INTO customer_data.anonymization_requests (id, customer_id, status, requested_at, blocked_reason) VALUES (gen_random_uuid(), @c, 'RetentionBlocked', now(), 'open balance');
+            INSERT INTO customer_account.account_transactions (id, customer_id, transaction_type, amount, source_reference_type, source_reference_id, occurred_at)
+            VALUES (@tx, @c, 'Charge', 10, 'Test', @tx, now() - interval '10 years 6 months');
+            INSERT INTO customer_account.balances (customer_id, current_balance, last_transaction_at, updated_at)
+            VALUES (@c, 0, now() - interval '10 years 6 months', now() - interval '10 years 6 months')
+            ON CONFLICT (customer_id) DO UPDATE SET current_balance = 0;
+            INSERT INTO purchasing.suppliers (supplier_id, code, name, tax_number, tax_office, phone, email, created_at, updated_at)
+            VALUES (@s, @code, 'Ahmet Gida', '1234567890', 'Kadikoy', '05001112233', 'a@b.com', now() - interval '12 years', now() - interval '12 years');
+            """,
+            ("c", customerId), ("tx", Guid.NewGuid()), ("s", supplierId), ("code", $"S-{supplierId:N}"[..16]));
+        await new PostgresRetentionExecutionService(_dataSource!).ExecuteAsync(DateTimeOffset.UtcNow, "queued");
+        await ExecuteAsync("UPDATE customer_account.balances SET current_balance = 25 WHERE customer_id = @c;", ("c", customerId));
+
+        var held = Apply();
+
+        Assert.Contains("blocked=1 failed=0", held, StringComparison.Ordinal);
+        Assert.False(await ScalarAsync<bool>("SELECT anonymized FROM customer_data.profiles WHERE customer_id = @c;", ("c", customerId)));
+        Assert.True(await ScalarAsync<bool>(
+            "SELECT name = @m AND phone IS NULL AND email IS NULL AND tax_number = '1234567890' AND tax_office = 'Kadikoy' FROM purchasing.suppliers WHERE supplier_id = @s;",
+            ("m", Marker), ("s", supplierId)));
+
+        await ExecuteAsync("UPDATE customer_account.balances SET current_balance = 0 WHERE customer_id = @c;", ("c", customerId));
+        var released = Apply();
+
+        Assert.Contains("blocked=0 failed=0", released, StringComparison.Ordinal);
+        Assert.True(await ScalarAsync<bool>("SELECT anonymized FROM customer_data.profiles WHERE customer_id = @c;", ("c", customerId)));
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM customer_data.anonymization_requests WHERE customer_id = @c AND status = 'Anonymized';", ("c", customerId)));
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM customer_account.account_transactions WHERE customer_id = @c AND amount = 10;", ("c", customerId)));
+        Assert.Equal(0L, await ScalarAsync<long>("SELECT count(*) FROM privacy.retention_work_items WHERE status = 'Pending';"));
+    }
+
+    private string Apply()
+    {
+        using var output = new StringWriter();
+        var original = Console.Out;
+        try
+        {
+            Console.SetOut(output);
+            Assert.Equal((int)HostExitCode.Success, ALKAROS.Host.Program.Main(["kvkk-retention", "--db-url", _database.Url, "--apply"]));
+        }
+        finally
+        {
+            Console.SetOut(original);
+        }
+
+        return output.ToString();
+    }
+
+    private async Task ExecuteAsync(string sql, params (string Name, object Value)[] parameters)
+    {
+        await using var command = _dataSource!.CreateCommand(sql);
+        foreach (var (name, value) in parameters)
+            command.Parameters.AddWithValue(name, value);
+        await command.ExecuteNonQueryAsync();
     }
 
     [Fact]

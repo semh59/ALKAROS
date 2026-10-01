@@ -1,0 +1,24 @@
+﻿## before
+customer anonymized=false
+supplier {"name":"Ahmet Gida","phone":"05001112233","email":"a@b.com","tax_number":"1234567890","tax_office":"Kadikoy"}
+ledger {"n":1,"total":10}
+$ kvkk-retention   exit=0
+kvkk-retention: staff=0 order_notes=0 item_notes=0 reservation_reasons=0 customers=1 suppliers=1 policy=1 as_of=2026-10-01 excluded_orders=0 apply=false blocked=0 failed=0
+## after dry run (nothing changes)
+customer anonymized=false
+supplier {"name":"Ahmet Gida","phone":"05001112233","email":"a@b.com","tax_number":"1234567890","tax_office":"Kadikoy"}
+ledger {"n":1,"total":10}
+$ kvkk-retention --apply  exit=0
+kvkk-retention: staff=0 order_notes=0 item_notes=0 reservation_reasons=0 customers=1 suppliers=1 policy=1 as_of=2026-10-01 excluded_orders=0 apply=true blocked=0 failed=0
+## after --apply
+customer anonymized=true
+supplier {"name":"[anonymized]","phone":null,"email":null,"tax_number":"1234567890","tax_office":"Kadikoy"}
+ledger {"n":1,"total":10}
+$ kvkk-retention --apply  exit=0
+kvkk-retention: staff=0 order_notes=0 item_notes=0 reservation_reasons=0 customers=0 suppliers=0 policy=1 as_of=2026-10-01 excluded_orders=0 apply=true blocked=0 failed=0
+## audit trail
+CustomerProfile Done StepDone customer_data.profiles
+CustomerProfile Done StepDone customer_data.anonymization_requests
+CustomerProfile Done Completed 
+Supplier Done StepDone purchasing.suppliers
+Supplier Done Completed 

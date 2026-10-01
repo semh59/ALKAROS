@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ALKAROSModule>true</ALKAROSModule>
+    <RootNamespace>ALKAROS.Privacy.Anonymization</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- PrivacyAnonymizationModule.cs registers this module into ModuleRegistry.DefaultCatalog. -->
+    <ProjectReference Include="..\..\..\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj" />
+    <ProjectReference Include="..\RetentionExecution\ALKAROS.Privacy.RetentionExecution.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Npgsql" />
+  </ItemGroup>
+
+</Project>
