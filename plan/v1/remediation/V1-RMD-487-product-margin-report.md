@@ -48,6 +48,7 @@ Alış maliyeti bilinmeyen kalem sıfır sayılmaz; "maliyet bilinmiyor" olarak 
 ## Acceptance evidence
 
 - Testler, mutasyon kanıtı ve gerçek Host denemesi; çıktılar `evidence/V1-RMD-487/` altındadır.
+- Yönetim ekranı bölümü `V1-RMD-488` görevindedir.
 
 ## Handoff
 

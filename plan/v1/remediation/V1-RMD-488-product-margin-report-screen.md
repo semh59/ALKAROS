@@ -1,8 +1,8 @@
 # V1-RMD-488 - Ürün kâr raporu yönetim ekranı bölümü
 
 - Task ID: V1-RMD-488
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01XpoF59o3sDPfb7ZADR4BMf
 - Work type: implementation
 - Surface state: Existing
 
@@ -18,6 +18,10 @@ Tüm metinler Türkçe, `management-channel-report` bölümü örnek alınır.
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-488-product-margin-report-screen.md`
+- `evidence/V1-RMD-488/**`
+- `src/Clients/PosTerminal/src/features/management-product-margin-report/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/sections.ts ve src/Clients/PosTerminal/src/strings.ts — yalnız bu bölümün kaydı ve metinleri
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
