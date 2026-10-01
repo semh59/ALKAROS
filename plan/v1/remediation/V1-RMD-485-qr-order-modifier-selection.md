@@ -44,6 +44,7 @@ olayının ve siparişe dönüştüren tüketicinin ekstra seçimini taşıması
 ## Acceptance evidence
 
 - Testler, mutasyon kanıtı ve gerçek Host denemesi; çıktılar `evidence/V1-RMD-485/` altındadır.
+- Ekstraların kuramsal tüketime yazılması `V1-RMD-486` ile ayrı izlenir.
 
 ## Handoff
 
