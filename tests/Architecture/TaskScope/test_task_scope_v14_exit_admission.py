@@ -5,8 +5,15 @@ from __future__ import annotations
 import subprocess
 from pathlib import Path
 
+import pytest
+
 _REASON = "KVKK saklama yurutmesi dis bagimlilik gerektirmez; v1.4 kapanisini beklemez"
 _ROW = f"| `V15-KVK-001` | `2026-09-30` | {_REASON} |"
+_ROWS = [
+    _ROW,
+    "| `V15-PER-001` | `2026-10-01` | Yuk testi dis bagimlilik gerektirmez; v1.4 kapanisini beklemez |",
+    "| `V15-KVK-002` | `2026-10-01` | Anonimlestirme dis bagimlilik gerektirmez; v1.4 kapanisini beklemez |",
+]
 
 
 def _git(repo: Path, *args: str) -> str:
@@ -44,25 +51,26 @@ def _is_open_for(result: dict, task_id: str) -> bool:
 
 
 class TestV14ExitAheadAdmission:
-    def test_the_admitted_v15_task_passes_while_the_gate_is_open(self, write_task, make_repo, make_plan, run_tool):
-        _write_admission(make_plan, [_ROW])
+    @pytest.mark.parametrize("task_id", ["V15-KVK-001", "V15-PER-001", "V15-KVK-002"])
+    def test_each_admitted_v15_task_passes_while_the_gate_is_open(self, task_id, write_task, make_repo, make_plan, run_tool):
+        _write_admission(make_plan, _ROWS)
         _open_v14_gate(write_task, make_repo)
-        write_task(task_id="V15-KVK-001")
+        write_task(task_id=task_id)
 
-        exit_code, result = run_tool("V15-KVK-001", make_repo, make_plan)
+        exit_code, result = run_tool(task_id, make_repo, make_plan)
 
         assert exit_code == 0
         assert result["metadata_errors"] == []
 
     def test_any_other_v15_task_keeps_the_gate_open(self, write_task, make_repo, make_plan, run_tool):
-        _write_admission(make_plan, [_ROW])
+        _write_admission(make_plan, _ROWS)
         _open_v14_gate(write_task, make_repo)
-        write_task(task_id="V15-KVK-002")
+        write_task(task_id="V15-OBS-002")
 
-        exit_code, result = run_tool("V15-KVK-002", make_repo, make_plan)
+        exit_code, result = run_tool("V15-OBS-002", make_repo, make_plan)
 
         assert exit_code == 1
-        assert _is_open_for(result, "V15-KVK-002")
+        assert _is_open_for(result, "V15-OBS-002")
 
     def test_a_missing_table_keeps_the_gate_open(self, write_task, make_repo, make_plan, run_tool):
         _open_v14_gate(write_task, make_repo)
@@ -74,9 +82,9 @@ class TestV14ExitAheadAdmission:
         assert _is_open_for(result, "V15-KVK-001")
 
     def test_a_table_that_differs_from_the_approval_fails_closed(self, write_task, make_repo, make_plan, run_tool):
-        extra = "| `V15-KVK-002` | `2026-09-30` | baska gorev |"
+        extra = "| `V15-OBS-002` | `2026-10-01` | baska gorev |"
         altered = f"| `V15-KVK-001` | `2026-10-01` | {_REASON} |"
-        for rows in ([_ROW, extra], [altered], [_ROW, _ROW], ["| `V15-KVK-001` | broken |"]):
+        for rows in ([*_ROWS, extra], [altered, *_ROWS[1:]], [*_ROWS, _ROW], _ROWS[:2], ["| `V15-KVK-001` | broken |"]):
             _write_admission(make_plan, rows)
             _open_v14_gate(write_task, make_repo)
             write_task(task_id="V15-KVK-001")
@@ -87,7 +95,7 @@ class TestV14ExitAheadAdmission:
             assert any("admission table rejected" in error for error in result["metadata_errors"])
 
     def test_the_admission_does_not_open_other_gates(self, write_task, make_repo, make_plan, run_tool):
-        _write_admission(make_plan, [_ROW])
+        _write_admission(make_plan, _ROWS)
         write_task(task_id="V1-FND-003", status="Planned")
         _git(make_repo, "checkout", "--", "plan")
         write_task(task_id="V11-ALT-001")

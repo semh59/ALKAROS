@@ -197,6 +197,8 @@ _V14_EXIT_ADMISSION_ROW = re.compile(
 )
 _V14_EXIT_ADMISSION_RECORDS = {
     ("V15-KVK-001", "2026-09-30", "KVKK saklama yurutmesi dis bagimlilik gerektirmez; v1.4 kapanisini beklemez"),
+    ("V15-PER-001", "2026-10-01", "Yuk testi dis bagimlilik gerektirmez; v1.4 kapanisini beklemez"),
+    ("V15-KVK-002", "2026-10-01", "Anonimlestirme dis bagimlilik gerektirmez; v1.4 kapanisini beklemez"),
 }
 _V14_EXIT_ADMISSION_TASK_IDS = {record[0] for record in _V14_EXIT_ADMISSION_RECORDS}
 
@@ -640,7 +642,7 @@ def parse_v14_exit_admission_ids(plan_dir: Path) -> Set[str]:
 
     if records != _V14_EXIT_ADMISSION_RECORDS:
         raise TaskParseError(
-            "V14 exit admission table records must exactly match the 2026-09-30 user approval"
+            "V14 exit admission table records must exactly match the user approvals"
         )
     return _V14_EXIT_ADMISSION_TASK_IDS
 

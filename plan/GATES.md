@@ -213,10 +213,10 @@ kendisi (yukarıdaki satır) yalnız bu 14 görev gerçek kanıtla `Done` veya
 tarihli/onaylı `NotApplicable` olduğunda fiilen kapanır. Yeni product
 behavior başlatma izni vermez; yalnızca V14 task-seçim sırasını değiştirir.
 
-## 2026-09-30 Semih onaylı v1.5 görevi kabulü (V1-RMD-461)
+## 2026-09-30 Semih onaylı v1.5 görevi kabulü (V1-RMD-461, V1-RMD-480)
 
 `GATE-V14-EXIT` v1.4'ün 14 açık görevi (çoğu QNB ve dış sözleşmeye bağlı) yüzünden kapanmıyor; buna rağmen dış bağımlılığı
-olmayan `V15-KVK-001` (KVKK saklama yürütmesi) kodlanıp doğrulandı. Semih 2026-09-30'da yalnız bu görev için istisna verdi.
+olmayan `V15-KVK-001` (KVKK saklama yürütmesi) kodlanıp doğrulandı. Semih 2026-09-30'da yalnız bu görev için istisna verdi; 2026-10-01'de `V15-PER-001` (yük testi) ve `V15-KVK-002` (anonimleştirme) için aynı istisnayı verdi (`V1-RMD-480`).
 Tablo `tools/task-scope/task_scope_tool.py`'deki sabit kayıtlarla BİREBİR eşleşmelidir; başka bir görev eklemek yeni bir Semih
 onayı ve aracın güncellenmesini gerektirir. Bu kabul yalnız `GATE-V14-EXIT`'in bu görev için giriş denetimini etkiler; kapının
 kendisi v1.4 gerçekten bitince kapanır.
@@ -225,6 +225,8 @@ kendisi v1.4 gerçekten bitince kapanır.
 | Task ID | Approval date | Reason |
 | --- | --- | --- |
 | `V15-KVK-001` | `2026-09-30` | KVKK saklama yurutmesi dis bagimlilik gerektirmez; v1.4 kapanisini beklemez |
+| `V15-PER-001` | `2026-10-01` | Yuk testi dis bagimlilik gerektirmez; v1.4 kapanisini beklemez |
+| `V15-KVK-002` | `2026-10-01` | Anonimlestirme dis bagimlilik gerektirmez; v1.4 kapanisini beklemez |
 <!-- V14_EXIT_AHEAD_ADMISSION:END -->
 
 ## 2026-09-23 Semih onaylı ödeme orkestrasyonu bağımlılık waiver'ı (V13-GOV-008)
