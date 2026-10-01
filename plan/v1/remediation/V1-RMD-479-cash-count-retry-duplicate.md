@@ -1,8 +1,8 @@
 # V1-RMD-479 - Kasa sayımı isteği tekrarlanınca ikinci satır yazılmaması
 
 - Task ID: V1-RMD-479
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
 
