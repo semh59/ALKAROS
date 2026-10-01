@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1592,
-  "markdown_line_count": 117523,
-  "markdown_byte_count": 6797209,
+  "markdown_file_count": 1598,
+  "markdown_line_count": 117761,
+  "markdown_byte_count": 6807750,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2772,6 +2772,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-489/README.md",
+      "sha256": "E3A9D761AB0FBFEC1B2F883BC5A43652505A73D4A0A226F1422BD10212054EC0",
+      "lines": 26,
+      "bytes": 2621,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2983,9 +2990,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "2ABB962A38D8131E7C5D327B9D2F28242408E6EAF3A6B09D2C79F51B6DE7EC5B",
-      "lines": 2868,
-      "bytes": 421507,
+      "sha256": "0AB6FD98C39D713604A84D1114A37F8666C723982563918671DB9E5A816357A6",
+      "lines": 2874,
+      "bytes": 422437,
       "utf8": true
     },
     {
@@ -8999,6 +9006,41 @@
       "sha256": "2C8359CE7F118C472E90710B50693EDCA090EA1164709C870CEDE1F4B5A78383",
       "lines": 44,
       "bytes": 1491,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-489-purchase-invoice-intake.md",
+      "sha256": "3E08A18FC0758FD4A0A5A092B0B6CAA583FDA6BFAE487A42AD139EDCA4D204CC",
+      "lines": 50,
+      "bytes": 2590,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-490-purchase-invoice-approval.md",
+      "sha256": "C821964CB45EE473A4BCA9B4844C18D11D7FA1FEA779AD41A5A37FB409E5238F",
+      "lines": 39,
+      "bytes": 1284,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-491-purchase-invoice-screen.md",
+      "sha256": "3A27A7B39A6D52D6B3D528FBD3801CF268915D0A7A282072A982FCA60685EA59",
+      "lines": 39,
+      "bytes": 981,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-492-qnb-purchase-invoice-inbox.md",
+      "sha256": "7ECC17F23E7BF3C7B9066692DB34BC72DF3368E831FE63EF853592210BD5F46A",
+      "lines": 39,
+      "bytes": 1116,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-493-purchase-invoice-credit-note.md",
+      "sha256": "DFB94636DF72FA7408BD8DA71F0A320123F22AE18B7C96951095C784BB8FF6A2",
+      "lines": 39,
+      "bytes": 1019,
       "utf8": true
     },
     {
