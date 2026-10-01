@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1588,
-  "markdown_line_count": 117383,
-  "markdown_byte_count": 6788106,
+  "markdown_file_count": 1591,
+  "markdown_line_count": 117505,
+  "markdown_byte_count": 6795743,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -386,9 +386,9 @@
     },
     {
       "path": "docs/domain/reporting-metrics.md",
-      "sha256": "001E6FD5A12D25A6CDAA5D57F9F471E06F724174EBF12181DC236CF2C840CE81",
-      "lines": 72,
-      "bytes": 5029,
+      "sha256": "1BFA9CED71C63ED2FD411B4E2F6A25FFE9A37EE6A690D1584429CC58A2B3A76A",
+      "lines": 73,
+      "bytes": 5557,
       "utf8": true
     },
     {
@@ -2758,6 +2758,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-487/README.md",
+      "sha256": "BF0322A120976B89397FA84DE6FD69D2ECAA34865D4C0986BC4F201105F2436F",
+      "lines": 24,
+      "bytes": 2621,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2969,9 +2976,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D444DF25EAFA11718E71DBA3B99EC5A33980C3E6AAED6F0E3AECFB7065FE6E5B",
-      "lines": 2864,
-      "bytes": 420928,
+      "sha256": "9FE13525A1653C9A5E01DDFB259B80C67DE38442DD1F14A3E2A459098E977723",
+      "lines": 2867,
+      "bytes": 421377,
       "utf8": true
     },
     {
@@ -8971,6 +8978,20 @@
       "sha256": "BBF87EA4218034AE658D56E0F9C2B1584F275EBFA20A32F9DFA285F9D8130C3A",
       "lines": 51,
       "bytes": 3178,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-487-product-margin-report.md",
+      "sha256": "B59AF41A51EBE33FBFC4FE03A9D703B7F5DF95A186597F2BEBDEC29B8C04AB0D",
+      "lines": 54,
+      "bytes": 2994,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-488-product-margin-report-screen.md",
+      "sha256": "5664BFF3529701616255E3AD8E5E010C3BE883B0509CEDB7FAD44357E2DDE9F7",
+      "lines": 40,
+      "bytes": 1045,
       "utf8": true
     },
     {
