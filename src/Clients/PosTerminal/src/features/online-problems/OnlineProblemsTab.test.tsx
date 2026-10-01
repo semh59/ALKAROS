@@ -53,6 +53,22 @@ describe("OnlineProblemsTab", () => {
     expect(button("Yeniden dene")).toHaveLength(0);
   });
 
+  it("tells the staff in Turkish what to do about a delivered order without an invoice", async () => {
+    fetchMock.mockImplementation(async () => ok([
+      { caseId: "c-10", kind: "MissingInvoice", provider: "trendyol-go", externalOrderId: "tg-10", amount: 120, severity: "Medium",
+        status: "Open", openedAt: "2026-10-01T10:00:00Z", rowVersion: 1, nextAction: "EnterSellerProfile", canRetry: false },
+      { caseId: "c-11", kind: "MissingInvoice", provider: "yemeksepeti", externalOrderId: "ys-11", amount: 80, severity: "Medium",
+        status: "Open", openedAt: "2026-10-01T10:00:00Z", rowVersion: 1, nextAction: "IssueInvoiceManually", canRetry: false },
+    ]));
+    await render(true);
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("Teslim edilen siparişin faturası düzenlenmedi");
+    expect(text).toContain("Önerilen: İşletme bilgilerini girin");
+    expect(text).toContain("Önerilen: Faturayı elle düzenleyin");
+    for (const raw of ["MissingInvoice", "EnterSellerProfile", "IssueInvoiceManually"]) expect(text).not.toContain(raw);
+    expect(button("Yeniden dene")).toHaveLength(0);
+  });
+
   it("lists every open problem in Turkish and lets a viewer only read", async () => {
     await render(false);
     const text = document.body.textContent ?? "";

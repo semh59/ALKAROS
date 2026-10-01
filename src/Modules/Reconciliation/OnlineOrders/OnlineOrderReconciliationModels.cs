@@ -37,6 +37,9 @@ public static class OnlineOrderDivergenceKind
 
     /// <summary>An accepted online order stayed open for hours: nobody handed it over or cancelled it.</summary>
     public const string NotHandedOver = "NotHandedOver";
+
+    /// <summary>A delivered online order has no e-Archive invoice draft although the drafting job had time to make one.</summary>
+    public const string MissingInvoice = "MissingInvoice";
 }
 
 /// <summary>The safe next action each case carries; only the first three can be retried from the case.</summary>
@@ -59,6 +62,12 @@ public static class OnlineOrderNextAction
 
     /// <summary>Nothing to retry: hand the order over or cancel it on the online orders screen.</summary>
     public const string HandOverOrCancelOrder = "HandOverOrCancelOrder";
+
+    /// <summary>Nothing to retry: enter the seller details so the invoice draft can be made.</summary>
+    public const string EnterSellerProfile = "EnterSellerProfile";
+
+    /// <summary>Nothing to retry: the draft keeps failing, so issue this order's invoice by hand.</summary>
+    public const string IssueInvoiceManually = "IssueInvoiceManually";
 }
 
 /// <summary>What a case's details carry: the kind, the next action and the source identifiers it came from.</summary>

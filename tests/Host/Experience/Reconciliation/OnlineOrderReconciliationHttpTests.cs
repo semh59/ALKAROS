@@ -91,7 +91,7 @@ public sealed class OnlineOrderReconciliationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, scan.StatusCode);
         var results = await scan.Content.ReadFromJsonAsync<JsonElement>();
         // The tenth pair is the online order left open without a hand-over.
-        Assert.Equal(10, results.GetArrayLength());
+        Assert.Equal(11, results.GetArrayLength());
         Assert.All(results.EnumerateArray(), r => Assert.Equal(JsonValueKind.Null, r.GetProperty("failureReason").ValueKind));
 
         var caseId = await _database.ScalarAsync<Guid>(

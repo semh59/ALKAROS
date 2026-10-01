@@ -1,0 +1,7 @@
+db ready, seeded
+host ready
+delivered order closed 2h ago, no seller profile, no draft seeded; waiting for the scheduled scan
+case: [{"deduplication_key":"online-order:missing-invoice:yemeksepeti:ys-nodraft-1","status":"Open"}]
+Sorunlar sekmesi: Teslim edilen siparişin faturası düzenlenmedi Yemeksepeti Platform sipariş no: ys-nodraft-1 · Tutar: ₺145,00 · Açık · 01/10 09:27 Önerilen: İşletme bilgilerini girin Çözüldü
+Yeniden dene düğmesi sayısı: 0
+seller profile entered; waiting for the draft job to open the draft and the scan to close the case

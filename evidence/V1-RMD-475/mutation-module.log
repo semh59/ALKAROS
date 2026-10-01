@@ -1,0 +1,5 @@
+MissingInvoiceSourcePair.cs, 4 mutants, each run on the 6 new tests (restored with cp, fc /b: no differences):
+no-draft-check (draft existence check removed): 1 failed, 5 passed
+no-grace (grace period removed): 1 failed, 5 passed
+no-window (7-day window removed): 1 failed, 5 passed
+profile-flip (next step choice inverted): 1 failed, 5 passed

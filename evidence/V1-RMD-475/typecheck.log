@@ -1,0 +1,7 @@
+﻿corepack : $ tsc --noEmit
+At line:7 char:1
++ corepack pnpm run typecheck > "$sp\tc.txt" 2>&1; "tc $LASTEXITCODE"
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ tsc --noEmit:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

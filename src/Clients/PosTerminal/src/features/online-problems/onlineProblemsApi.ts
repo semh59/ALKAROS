@@ -28,6 +28,7 @@ const kindLabels: Record<string, string> = {
   ProviderPriceMismatch: "Platform fiyatı katalog fiyatından farklı",
   ProviderPollingFailing: "Siparişleri çekme sürekli hata veriyor",
   NotHandedOver: "Sipariş saatlerdir teslim edilmedi ya da iptal edilmedi",
+  MissingInvoice: "Teslim edilen siparişin faturası düzenlenmedi",
 };
 const actionLabels: Record<string, string> = {
   ReprocessProviderEvent: "Ürün eşlemesini düzeltip olayı yeniden işleyin",
@@ -36,6 +37,8 @@ const actionLabels: Record<string, string> = {
   SettleWithProvider: "Platformla elle uzlaşın ve sonucu not edin",
   CheckChannelConnection: "Platform bağlantısını ve ayarlarını kontrol edin",
   HandOverOrCancelOrder: "Siparişi teslim edin ya da iptal edin",
+  EnterSellerProfile: "İşletme bilgilerini girin",
+  IssueInvoiceManually: "Faturayı elle düzenleyin",
 };
 const statusLabels: Record<string, string> = { Open: "Açık", Investigating: "İnceleniyor", Escalated: "Üst yönetimde" };
 
