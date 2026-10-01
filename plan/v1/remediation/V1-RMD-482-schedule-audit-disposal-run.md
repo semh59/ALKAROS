@@ -1,7 +1,7 @@
 # V1-RMD-482 - Denetim bölümü bırakma komutunun düzenli çalıştırılması
 
 - Task ID: V1-RMD-482
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01XpoF59o3sDPfb7ZADR4BMf
 - Work type: implementation
 - Surface state: Existing

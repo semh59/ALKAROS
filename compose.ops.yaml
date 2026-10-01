@@ -10,6 +10,7 @@ name: alkaros
 #   docker compose -f compose.yaml -f compose.ops.yaml run --rm basebackup \
 #       /repo/deploy/docker/restore-pitr.sh /backups/base/<dir> /restore/<datadir> "<target time>"
 #   docker compose -f compose.yaml -f compose.ops.yaml run --rm housekeeping
+#   docker compose -f compose.yaml -f compose.ops.yaml run --rm audit-disposal
 #
 # The `ops` profile keeps them inert even if this file is passed to `up`.
 
@@ -70,6 +71,24 @@ services:
       - |
         export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
         exec dotnet ALKAROS.Host.dll housekeeping --db-url postgresql://alkaros@postgres:5432/alkaros
+    restart: "no"
+
+  # Drops audit-log year partitions whose 10-year retention has ended. Schedule from cron at
+  # least every six months (docs/compliance/kvkk-retention-runbook.md). Prints a summary line
+  # (dropped=, default_partition_rows=) to the container log; to preview without dropping, run
+  # `dotnet ALKAROS.Host.dll audit-disposal --db-url ...` without --apply.
+  audit-disposal:
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: api
+    profiles: ["ops"]
+    entrypoint: ["/bin/sh", "-eu", "-c"]
+    secrets: [db_password]
+    command:
+      - |
+        export ALKAROS_DB_PASSWORD="$(tr -d '\r\n' < /run/secrets/db_password)"
+        exec dotnet ALKAROS.Host.dll audit-disposal --db-url postgresql://alkaros@postgres:5432/alkaros --apply
     restart: "no"
 
 secrets:

@@ -1,0 +1,3 @@
+FAILED tests/Deployment/test_container_contract.py::test_operator_tools_are_split_into_an_ops_overlay
+1 failed, 7 deselected, 2 warnings in 0.14s
+mutant: --apply removed from the service command; restore cmp identical

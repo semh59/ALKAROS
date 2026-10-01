@@ -97,12 +97,14 @@ def test_operator_tools_are_split_into_an_ops_overlay() -> None:
     core = (ROOT / "compose.yaml").read_text(encoding="utf-8")
     ops = (ROOT / "compose.ops.yaml").read_text(encoding="utf-8")
 
-    for service in ("backup:", "basebackup:", "housekeeping:"):
+    for service in ("backup:", "basebackup:", "housekeeping:", "audit-disposal:"):
         assert service not in core, f"{service} must not be in the core `up` stack"
         assert service in ops
     assert ops.startswith("name: alkaros\n")
-    assert ops.count('profiles: ["ops"]') == 3
+    assert ops.count('profiles: ["ops"]') == 4
     assert "exec dotnet ALKAROS.Host.dll housekeeping --db-url" in ops
+    assert "exec dotnet ALKAROS.Host.dll audit-disposal --db-url" in ops
+    assert "audit-disposal --db-url postgresql://alkaros@postgres:5432/alkaros --apply" in ops
     assert "/repo/deploy/docker/backup.sh" in ops
     assert "/repo/deploy/docker/basebackup.sh" in ops
 

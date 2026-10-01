@@ -174,6 +174,12 @@ end to end against the live schema — see `evidence/V1-RMD-095/`).
       operator needs dashboards/trends rather than up/down + log alerts, that is a
       `V1-OBS-001` / `V15-RUN-001` follow-up.
 
+### 4a. Audit-log disposal schedule — MANUAL
+
+- [ ] Schedule `docker compose -f compose.yaml -f compose.ops.yaml run --rm audit-disposal` from cron at least every six
+      months (KVKK destruction interval) and keep its log; the summary line shows `dropped=` and `default_partition_rows=`.
+      Nothing can be dropped before 1 January 2031. Details: `docs/compliance/kvkk-retention-runbook.md`.
+
 ## 5. Load / soak — DONE (single-box) / DEFERRED (multi-node)
 
 - Write critical path at 1M orders / 3M items, 20 concurrent terminals: submit

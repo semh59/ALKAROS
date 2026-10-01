@@ -1,0 +1,15 @@
+  audit-disposal:
+    profiles:
+      - ops
+    build:
+      context: D:\PROJECT\ALKAROS
+      dockerfile: deploy/docker/Dockerfile
+      target: api
+    command:
+      - |
+        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
+        exec dotnet ALKAROS.Host.dll audit-disposal --db-url postgresql://alkaros@postgres:5432/alkaros --apply
+    entrypoint:
+      - /bin/sh
+      - -eu
+      - -c

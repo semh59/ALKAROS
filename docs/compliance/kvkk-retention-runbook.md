@@ -135,4 +135,5 @@ dotnet ALKAROS.Host.dll audit-disposal --db-url ... --apply          # drops exp
 - Each drop writes an `audit.partition.disposed` event with the partition name, year and row count only.
 - `audit_events_default` holds any date outside the pre-created years (2020-2060); it is never dropped by the command. After 2060 new partitions must be created before the year starts.
 - There is no legal-hold class for the audit log; a hold would have to be added to `Privacy.RetentionExecution` first.
-- Run it with the same cron cadence as `kvkk-retention` (at least every six months).
+- Schedule it with `docker compose -f compose.yaml -f compose.ops.yaml run --rm audit-disposal` (service in `compose.ops.yaml`, runs with `--apply`) at least every six months, like `kvkk-retention`.
+- A non-zero `default_partition_rows` in its summary line means rows with dates outside 2020-2060; they stay until someone creates a partition for them.
