@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1586,
-  "markdown_line_count": 117305,
-  "markdown_byte_count": 6782231,
+  "markdown_file_count": 1588,
+  "markdown_line_count": 117383,
+  "markdown_byte_count": 6788106,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2751,6 +2751,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-486/README.md",
+      "sha256": "69DBD83AB6054D982A1937459B8BB676C3D49007E2C875E27AA0A56C4AECEDDA",
+      "lines": 24,
+      "bytes": 2322,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2962,9 +2969,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "0EE559BA8C1C48C7A406EF778501EC6C052D96BEBB17935494F6C37EAA8A256B",
-      "lines": 2862,
-      "bytes": 420631,
+      "sha256": "D444DF25EAFA11718E71DBA3B99EC5A33980C3E6AAED6F0E3AECFB7065FE6E5B",
+      "lines": 2864,
+      "bytes": 420928,
       "utf8": true
     },
     {
@@ -8954,9 +8961,16 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-485-qr-order-modifier-selection.md",
-      "sha256": "F09239A66DF83F807B81622FF7588ED7D20E00F9BB45D0AD49B1365D762118FE",
-      "lines": 50,
-      "bytes": 3025,
+      "sha256": "4AD0EF11F026C28C9A15FBAA8281899A832C51A7F79D8DDB9B960090F124FEDC",
+      "lines": 51,
+      "bytes": 3103,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-486-modifier-theoretical-consumption.md",
+      "sha256": "BBF87EA4218034AE658D56E0F9C2B1584F275EBFA20A32F9DFA285F9D8130C3A",
+      "lines": 51,
+      "bytes": 3178,
       "utf8": true
     },
     {
