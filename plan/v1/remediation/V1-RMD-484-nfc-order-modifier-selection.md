@@ -20,11 +20,12 @@ denetlemesini, fiyat farkının KDV dahil toplama yansımasını ve NFC sayfası
 
 - `plan/v1/remediation/V1-RMD-484-nfc-order-modifier-selection.md`
 - `evidence/V1-RMD-484/**`
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/NfcOrdering/NfcOrderingStore.cs, NfcOrderingContracts.cs ve NfcOrderingEndpoints.cs — yalnız ekstra seçimi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/NfcOrdering/NfcOrderingStore.cs, src/Host/Experience/NfcOrdering/NfcOrderingContracts.cs ve src/Host/Experience/NfcOrdering/NfcOrderingEndpoints.cs — yalnız ekstra seçimi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Orders/TableDraft/TableDraftService.cs — yalnız grup denetim yardımcısının Host içinde paylaşılabilir hale gelmesi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/NfcOrder.tsx, src/Clients/PosTerminal/src/api.ts, src/Clients/PosTerminal/src/contracts.ts — yalnız NFC ekstra seçicisi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/nfc-order.css — yalnız seçici paneli
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/NfcOrder.test.tsx, src/Clients/PosTerminal/src/api.test.ts — yalnız bu davranışın testleri
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/NfcOrdering/NfcOrderingHttpTests.cs ve NfcOrderingTestDatabase.cs — yalnız ekstra testleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/NfcOrdering/NfcOrderingHttpTests.cs ve tests/Host/Experience/NfcOrdering/NfcOrderingTestDatabase.cs — yalnız ekstra testleri
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope

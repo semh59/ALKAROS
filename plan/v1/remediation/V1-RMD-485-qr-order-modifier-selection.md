@@ -19,10 +19,11 @@ olayının ve siparişe dönüştüren tüketicinin ekstra seçimini taşıması
 
 - `plan/v1/remediation/V1-RMD-485-qr-order-modifier-selection.md`
 - `evidence/V1-RMD-485/**`
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/QrOrdering/PendingOrders/QrOrderSubmissionContracts.cs ve QrPendingOrderStore.cs — yalnız ekstra seçimi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/QrOrdering/PendingOrders/QrOrderSubmissionContracts.cs ve src/Modules/QrOrdering/PendingOrders/QrPendingOrderStore.cs — yalnız ekstra seçimi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/BuildingBlocks/IntegrationContracts/QrOrderIntegrationEvents.cs — yalnız isteğe bağlı ekstra alanı (eski kuyruktaki iletiler çalışmaya devam eder)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Orders/Integration/QrOrderSubmittedConsumer.cs — yalnız ekstraları siparişe taşıma
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Apps/CustomerWeb/Menu/wwwroot/menu-app.js ve src/Apps/CustomerWeb/OrderEntry/wwwroot/order-entry.js — yalnız ekstra seçicisi ve sepet satır kimliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Apps/CustomerWeb/Menu/wwwroot/menu-app.css ve src/Apps/CustomerWeb/OrderEntry/wwwroot/order-entry.css — yalnız seçici paneli
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/QrOrdering/QrOrderingHttpTests.cs, tests/Modules/QrOrdering/PendingOrders/QrPendingOrderStoreTests.cs, tests/Modules/Orders/OrderAggregate/QrOrderSubmittedConsumerTests.cs ve tests/Apps/CustomerWeb — yalnız ekstra testleri
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
