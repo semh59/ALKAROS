@@ -1,5 +1,6 @@
 using ALKAROS.ModuleComposition;
 using ALKAROS.Purchasing.OrdersAndReceipts;
+using ALKAROS.Purchasing.PurchaseInvoices;
 using ALKAROS.Purchasing.Suppliers;
 
 namespace ALKAROS.Purchasing;
@@ -28,5 +29,8 @@ public sealed class PurchasingModule : IModule
         context.RegisterTransient<IPurchaseOrderRepository, PostgresPurchaseOrderRepository>();
         context.RegisterTransient<IGoodsReceiptRepository, PostgresGoodsReceiptRepository>();
         context.RegisterTransient<IPurchasingService, PurchasingService>();
+
+        context.RegisterTransient<IPurchaseInvoiceRepository, PostgresPurchaseInvoiceRepository>();
+        context.RegisterTransient<IPurchaseInvoiceService, PurchaseInvoiceService>();
     }
 }

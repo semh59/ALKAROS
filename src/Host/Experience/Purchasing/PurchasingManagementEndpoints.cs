@@ -6,6 +6,7 @@ using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Measurements;
 using ALKAROS.Purchasing.OrdersAndReceipts;
+using ALKAROS.Purchasing.PurchaseInvoices;
 using ALKAROS.Purchasing.Suppliers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -35,6 +36,8 @@ public static class PurchasingManagementEndpoints
         services.TryAddScoped<IPurchaseOrderRepository, PostgresPurchaseOrderRepository>();
         services.TryAddScoped<IGoodsReceiptRepository, PostgresGoodsReceiptRepository>();
         services.TryAddScoped<IPurchasingService, PurchasingService>();
+        services.TryAddScoped<IPurchaseInvoiceRepository, PostgresPurchaseInvoiceRepository>();
+        services.TryAddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
         // PurchasingService.ReceiveGoodsAsync posts the stock movement/balance
         // effect through Inventory's own contract in the same transaction
         // (V0-ARC-001 row 27) — these must resolve standalone too.
@@ -234,7 +237,7 @@ public static class PurchasingManagementEndpoints
             return Results.Ok(GoodsReceiptV1.From(receipt));
         });
 
-        return group;
+        return group.MapPurchaseInvoices();
     }
 }
 

@@ -28,6 +28,7 @@ using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Production.BatchLifecycle;
 using ALKAROS.Production.StockEffects;
 using ALKAROS.Purchasing.OrdersAndReceipts;
+using ALKAROS.Purchasing.PurchaseInvoices;
 using ALKAROS.Purchasing.Suppliers;
 using ALKAROS.Recipes.CostSnapshots;
 using ALKAROS.Recipes.Versioning;
@@ -303,8 +304,16 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
             AuthorizationDeniedException =>
                 (StatusCodes.Status403Forbidden, "FORBIDDEN", "Satın alma yönetimi izni gerekiyor."),
-            SupplierNotFoundException or PurchaseOrderNotFoundException or GoodsReceiptNotFoundException =>
+            SupplierNotFoundException or PurchaseOrderNotFoundException or GoodsReceiptNotFoundException or PurchaseInvoiceNotFoundException =>
                 (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen kayıt bulunamadı."),
+            DuplicatePurchaseInvoiceException =>
+                (StatusCodes.Status409Conflict, "DUPLICATE_INVOICE", "Bu fatura (ETTN) daha önce içeri alınmış."),
+            PurchaseInvoiceStatusException =>
+                (StatusCodes.Status409Conflict, "INVALID_STATUS", "Fatura bu durumda bu işlemi kabul etmiyor."),
+            UnsupportedPurchaseDocumentException =>
+                (StatusCodes.Status400BadRequest, "UNSUPPORTED_DOCUMENT", "Yalnız alış faturaları içeri alınabilir; iade ve diğer belgeler desteklenmiyor."),
+            InvalidPurchaseInvoiceException =>
+                (StatusCodes.Status400BadRequest, "INVALID_INVOICE", "Fatura verisi okunamadı, geçersiz veya eksik."),
             DuplicateSupplierCodeException =>
                 (StatusCodes.Status409Conflict, "DUPLICATE_CODE", "Bu kodla bir tedarikçi zaten var."),
             DuplicateSupplierTaxNumberException =>

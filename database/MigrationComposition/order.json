@@ -1498,6 +1498,16 @@
         "theoretical_consumption_records"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "175",
+      "phase": "B",
+      "tables": [
+        "purchase_invoices",
+        "purchase_invoice_lines",
+        "supplier_item_mappings"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

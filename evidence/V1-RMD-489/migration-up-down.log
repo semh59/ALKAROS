@@ -1,0 +1,4 @@
+ileri (175 dahil tum migrationlar): purchase_invoice_lines,purchase_invoices,supplier_item_mappings
+geri (175 down): []
+yeniden ileri (175 up): purchase_invoice_lines,purchase_invoices,supplier_item_mappings
+up ikinci kez (idempotent): hata yok

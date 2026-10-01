@@ -1,0 +1,11 @@
+﻿Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar cmp ile geri yuklenir.
+M1 iade faturasi reddi kaldirildi: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 2 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M2 birim fiyat net tutar yerine satir toplami: Başarısız! - Başarısız:     3, Başarılı:    17, Atlanan:     0, Toplam:    20, Süre: 2 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M3 sifir miktar kabul: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 2 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M4 hatirlanan eslestirme baska tedarikciye de uygulanir: Başarısız! - Başarısız:     7, Başarılı:    13, Atlanan:     0, Toplam:    20, Süre: 2 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M5 onaylanmis fatura da eslenir: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 2 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M6 taslak olmayan fatura eslenebilir: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 2 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M7 sifir katsayi kabul: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 2 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M8 ayni ETTN ikinci kez girer: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 2 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M9 birim farkina bakmadan hatirla: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 2 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+geri yukleme (hash karsilastirma): ayni

@@ -193,6 +193,7 @@
   <Project Path="tests/Modules/Menu/DailyMenuLifecycle/ALKAROS.Menu.DailyMenuLifecycle.Tests.csproj" />
   <Project Path="tests/Modules/Purchasing/Suppliers/ALKAROS.Purchasing.Suppliers.Tests.csproj" />
   <Project Path="tests/Modules/Purchasing/OrdersAndReceipts/ALKAROS.Purchasing.OrdersAndReceipts.Tests.csproj" />
+  <Project Path="tests/Modules/Purchasing/PurchaseInvoices/ALKAROS.Purchasing.PurchaseInvoices.Tests.csproj" />
   <Project Path="tests/Modules/Recipes/CostSnapshots/ALKAROS.Recipes.CostSnapshots.Tests.csproj" />
   <Project Path="tests/Modules/Recipes/CatalogMapping/ALKAROS.Recipes.CatalogMapping.Tests.csproj" />
   <Project Path="tests/Modules/Recipes/TheoreticalConsumption/ALKAROS.Recipes.TheoreticalConsumption.Tests.csproj" />

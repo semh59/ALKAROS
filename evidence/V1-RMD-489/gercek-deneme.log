@@ -1,0 +1,11 @@
+oturumsuz liste: HTTP 401
+giris: HTTP 200
+1. XML yukleme: HTTP 201; durum=Draft; tedarikci bagli=true; satir=1; birim fiyat=150; esleme=null
+2. ayni ETTN tekrar: HTTP 409 {"error":{"code":"DUPLICATE_INVOICE","message":"Bu fatura (ETTN) daha önce içeri alınmış.","status":409,"traceId":"0HNP002SMHH9P:00000003"}}
+3. iade/kredi belgesi: HTTP 400 {"error":{"code":"UNSUPPORTED_DOCUMENT","message":"Yalnız alış faturaları içeri alınabilir; iade ve diğer belgeler desteklenmiyor.","status":400,"traceId":"0HNP002SMHH9Q:00000003"}}
+4. bozuk dosya: HTTP 400 {"error":{"code":"INVALID_INVOICE","message":"Fatura verisi okunamadı, geçersiz veya eksik.","status":400,"traceId":"0HNP002SMHH9P:00000004"}}
+5. satir esleme: HTTP 200; stockItemId=true; katsayi=1
+6. sifir katsayi: HTTP 400 {"error":{"code":"INVALID_INVOICE","message":"Fatura verisi okunamadı, geçersiz veya eksik.","status":400,"traceId":"0HNP002SMHH9P:00000005"}}
+7. ikinci fatura otomatik esleme: HTTP 201; esleme=true; birim fiyat=155
+8. liste: HTTP 200; [{"no":"ABC20260000004","satir":1,"eslesmemis":0,"net":620},{"no":"ABC202600000010","satir":1,"eslesmemis":0,"net":1500}]
+9. gecersiz durum filtresi: HTTP 400
