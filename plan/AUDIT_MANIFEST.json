@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1577,
-  "markdown_line_count": 116911,
-  "markdown_byte_count": 6752181,
+  "markdown_file_count": 1579,
+  "markdown_line_count": 117022,
+  "markdown_byte_count": 6760803,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -113,9 +113,9 @@
     },
     {
       "path": "docs/architecture/module-dependency-rules.md",
-      "sha256": "2ED5B296990151EE547DF5F744A04FA3CCEC2987B17469438F00806B67E10D08",
-      "lines": 224,
-      "bytes": 20054,
+      "sha256": "AA2B73EA5CBA45F032E9ABAAFC00E0993208D6248929724C226594370EBB2110",
+      "lines": 225,
+      "bytes": 20589,
       "utf8": true
     },
     {
@@ -204,9 +204,9 @@
     },
     {
       "path": "docs/compliance/kvkk-retention-runbook.md",
-      "sha256": "418BC1B6A46816A9247CA520097646A412BB36DA8AC84EFE82479E75FC06293A",
-      "lines": 103,
-      "bytes": 5233,
+      "sha256": "D7596D7C6E773F80AF466A566B5FB745B43D13FAB1112CCB0C9D149F410180EB",
+      "lines": 121,
+      "bytes": 6689,
       "utf8": true
     },
     {
@@ -2877,6 +2877,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V15-KVK-002/README.md",
+      "sha256": "18D91B50DE2D208C86C751CEE23067E75BDD33E61D18FA07AA2CDE3A04D9869B",
+      "lines": 28,
+      "bytes": 3104,
+      "utf8": true
+    },
+    {
       "path": "evidence/V15-OBS-001/README.md",
       "sha256": "9F964FC1EFC983A2DD6942429E4820B87183D49F1107E903F8318A7623A25B1C",
       "lines": 20,
@@ -2927,9 +2934,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "B824E02533EBFA832E5961F2F33531C878DADCF1B47ECB41600527F84EBFC5E6",
-      "lines": 2853,
-      "bytes": 419331,
+      "sha256": "C95663D7F5ADC8C76C0D0457183FBEC4A749E5039A5C7B1BD7B169BDCA6C642C",
+      "lines": 2855,
+      "bytes": 419624,
       "utf8": true
     },
     {
@@ -8897,6 +8904,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md",
+      "sha256": "EFAEEA9EBC23DF704CA67540C40A9D175948A0904660D231D2833293CB12B724",
+      "lines": 42,
+      "bytes": 1304,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -10788,9 +10802,9 @@
     },
     {
       "path": "plan/v1.5/kvkk/V15-KVK-002-cross-store-anonymization.md",
-      "sha256": "BA80124DFB9E4B2AF6F68926459393C816AF6C95D9F5555957DE9DF65996E4A3",
-      "lines": 52,
-      "bytes": 1331,
+      "sha256": "47026B29FE899C24452A689DE1995E8D3348948CB04F1DDE86E327751B95A65E",
+      "lines": 72,
+      "bytes": 3261,
       "utf8": true
     },
     {
