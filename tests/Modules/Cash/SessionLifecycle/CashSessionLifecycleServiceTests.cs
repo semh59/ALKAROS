@@ -14,10 +14,12 @@ namespace ALKAROS.Cash.SessionLifecycle.Tests;
 public sealed class CashSessionLifecycleServiceTests : IClassFixture<CashSessionTestDatabase>
 {
     private readonly PostgresCashSessionRepository _repository;
+    private readonly Npgsql.NpgsqlDataSource _dataSource;
     private readonly CashSessionLifecycleService _service;
 
     public CashSessionLifecycleServiceTests(CashSessionTestDatabase database)
     {
+        _dataSource = database.DataSource;
         _repository = new PostgresCashSessionRepository(database.DataSource);
         _service = new CashSessionLifecycleService(_repository, new CashSessionPolicy());
     }
@@ -138,6 +140,56 @@ public sealed class CashSessionLifecycleServiceTests : IClassFixture<CashSession
 
         await act.Should().ThrowAsync<InvalidCashSessionStateException>()
             .Where(ex => ex.CurrentStatus == CashSessionStatus.Closed);
+    }
+
+    private async Task<(Guid SessionId, Guid Counter)> CountingSessionAsync()
+    {
+        var command = new OpenCashSessionCommand(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), 100.00m);
+        await _service.OpenSessionAsync(command);
+        await _service.StartCountAsync(new StartCashCountCommand(command.CashSessionId, Guid.NewGuid()));
+        return (command.CashSessionId, Guid.NewGuid());
+    }
+
+    [Fact]
+    public async Task ARetriedCountRequestFindsTheRowTheFirstAttemptWroteInsteadOfAddingAnotherOne()
+    {
+        var (sessionId, counter) = await CountingSessionAsync();
+
+        var first = await _repository.RecordCountAsync(sessionId, 95.00m, counter, "Sayim 1");
+        var retry = await _repository.RecordCountAsync(sessionId, 95.00m, counter, "Sayim 1");
+
+        retry.Should().Be(first);
+        (await _repository.GetCountsAsync(sessionId)).Should().ContainSingle();
+    }
+
+    [Fact]
+    public async Task ACountWithAnotherAmountCounterOrNoteIsAnotherCount()
+    {
+        var (sessionId, counter) = await CountingSessionAsync();
+
+        await _repository.RecordCountAsync(sessionId, 95.00m, counter, null);
+        await _repository.RecordCountAsync(sessionId, 96.00m, counter, null);
+        await _repository.RecordCountAsync(sessionId, 95.00m, Guid.NewGuid(), null);
+        await _repository.RecordCountAsync(sessionId, 95.00m, counter, "Ikinci sayim");
+
+        (await _repository.GetCountsAsync(sessionId)).Should().HaveCount(4);
+    }
+
+    [Fact]
+    public async Task TheSameCountAfterTheRetryWindowIsARecount()
+    {
+        var (sessionId, counter) = await CountingSessionAsync();
+        var first = await _repository.RecordCountAsync(sessionId, 95.00m, counter, null);
+        await using (var age = _dataSource.CreateCommand("UPDATE cash.cash_counts SET counted_at = counted_at - interval '31 seconds' WHERE cash_count_id = @id;"))
+        {
+            age.Parameters.AddWithValue("id", first);
+            await age.ExecuteNonQueryAsync();
+        }
+
+        var again = await _repository.RecordCountAsync(sessionId, 95.00m, counter, null);
+
+        again.Should().NotBe(first);
+        (await _repository.GetCountsAsync(sessionId)).Should().HaveCount(2);
     }
 
     [Fact]

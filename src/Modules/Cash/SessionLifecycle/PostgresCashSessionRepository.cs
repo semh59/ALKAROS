@@ -9,6 +9,7 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
     private const string Sessions = "cash.cash_sessions";
     private const string Counts = "cash.cash_counts";
     private const int MaxUnpagedRows = 5000;
+    private static readonly TimeSpan CountRetryWindow = TimeSpan.FromSeconds(30);
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -186,21 +187,31 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
         if (cashSessionId == Guid.Empty)
             throw new ArgumentException("Cash session id cannot be empty.", nameof(cashSessionId));
 
-        var countId = Guid.NewGuid();
+        // A retried request (same session, counter, amount and notes within the retry window) finds the row the first
+        // attempt wrote instead of adding a second identical one.
         await using var command = _dataSource.CreateCommand(
             $"""
-            INSERT INTO {Counts} (cash_count_id, cash_session_id, counted_amount, counted_by, notes, counted_at)
-            VALUES (@cash_count_id, @cash_session_id, @counted_amount, @counted_by, @notes, @counted_at);
+            WITH existing AS (
+                SELECT cash_count_id FROM {Counts}
+                WHERE cash_session_id = @cash_session_id AND counted_by = @counted_by AND counted_amount = @counted_amount
+                  AND notes IS NOT DISTINCT FROM @notes::text AND counted_at > @retry_window_start
+                ORDER BY counted_at DESC LIMIT 1),
+            inserted AS (
+                INSERT INTO {Counts} (cash_count_id, cash_session_id, counted_amount, counted_by, notes, counted_at)
+                SELECT @cash_count_id, @cash_session_id, @counted_amount, @counted_by, @notes::text, @counted_at
+                WHERE NOT EXISTS (SELECT 1 FROM existing)
+                RETURNING cash_count_id)
+            SELECT cash_count_id FROM inserted UNION ALL SELECT cash_count_id FROM existing LIMIT 1;
             """);
-        command.Parameters.AddWithValue("cash_count_id", countId);
+        var now = DateTimeOffset.UtcNow;
+        command.Parameters.AddWithValue("cash_count_id", Guid.NewGuid());
         command.Parameters.AddWithValue("cash_session_id", cashSessionId);
         command.Parameters.AddWithValue("counted_amount", countedAmount);
         command.Parameters.AddWithValue("counted_by", countedBy);
         command.Parameters.AddWithValue("notes", (object?)notes ?? DBNull.Value);
-        command.Parameters.AddWithValue("counted_at", DateTimeOffset.UtcNow);
-        await command.ExecuteNonQueryAsync(cancellationToken);
-
-        return countId;
+        command.Parameters.AddWithValue("counted_at", now);
+        command.Parameters.AddWithValue("retry_window_start", now - CountRetryWindow);
+        return (Guid)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 
     public async Task<IReadOnlyList<CashCountEntry>> GetCountsAsync(Guid cashSessionId, CancellationToken cancellationToken = default)
