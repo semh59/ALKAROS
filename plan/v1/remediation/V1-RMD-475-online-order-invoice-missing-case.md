@@ -1,8 +1,8 @@
 # V1-RMD-475 - Faturasız kalan online sipariş için uzlaştırma vakası
 
 - Task ID: V1-RMD-475
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
 
@@ -19,10 +19,17 @@ süre dolmadan önce Sorunlar listesinde vaka olarak görünür: Türkçe etiket
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-475-online-order-invoice-missing-case.md`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Reconciliation/OnlineOrders/MissingInvoiceSourcePair.cs - yeni kaynak çifti
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Reconciliation/OnlineOrders/OnlineOrderReconciliationModels.cs - yalnız yeni ayrışma türü ve önerilen eylemler
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Reconciliation/OnlineOrders/OnlineOrderReconciliationModule.cs - yalnız yeni kaynak çiftinin kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Reconciliation/OnlineOrders/MissingInvoiceSourcePairTests.cs - yeni test dosyası
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Reconciliation/OnlineOrderReconciliationHttpTests.cs - yalnız tarama sonucundaki kaynak çifti sayısı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-problems/onlineProblemsApi.ts - yalnız yeni tür ve eylemler için Türkçe etiketler
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-problems/OnlineProblemsTab.test.tsx - yalnız yeni etiketlerin testi
 
 ## In scope
 
-- Kaynak çifti, vaka ayrıntısı, istemci etiketi ve testler; kapsam başlatılırken kesin yollarla yazılır.
+- Servis edilmiş ya da tamamlanmış, son 7 günde kapanmış, 1 saatten eski ve taslağı olmayan online sipariş için `MissingInvoice` vakası; satıcı bilgisi yoksa eylem `EnterSellerProfile`, varsa `IssueInvoiceManually`; yeniden deneme yok; atlanan vaka yeniden açılmaz.
 
 ## Out of scope
 
