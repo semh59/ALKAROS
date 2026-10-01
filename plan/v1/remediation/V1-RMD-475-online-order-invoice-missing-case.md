@@ -1,7 +1,7 @@
 # V1-RMD-475 - Faturasız kalan online sipariş için uzlaştırma vakası
 
 - Task ID: V1-RMD-475
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing
