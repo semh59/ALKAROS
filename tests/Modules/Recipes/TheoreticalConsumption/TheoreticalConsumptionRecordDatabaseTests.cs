@@ -15,6 +15,7 @@ public sealed class TheoreticalConsumptionTestDb : PgTestDatabase
             "057-unit-conversions.up.sql",
             "058-recipe-versions.up.sql",
             "116-theoretical-consumption-records.up.sql",
+            "174-theoretical-consumption-modifier-source.up.sql",
         })
         {
             var path = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", file);
@@ -59,7 +60,16 @@ public sealed class TheoreticalConsumptionTestDb : PgTestDatabase
 
     public async Task ReapplyMigration116Async()
     {
-        var path = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "116-theoretical-consumption-records.up.sql");
+        foreach (var file in new[] { "116-theoretical-consumption-records.up.sql", "174-theoretical-consumption-modifier-source.up.sql" })
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", file);
+            await RunAsync(DataSource, await File.ReadAllTextAsync(path));
+        }
+    }
+
+    public async Task RunMigration174Async(string direction)
+    {
+        var path = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", $"174-theoretical-consumption-modifier-source.{direction}.sql");
         await RunAsync(DataSource, await File.ReadAllTextAsync(path));
     }
 }
@@ -144,6 +154,82 @@ public sealed class TheoreticalConsumptionRecordDatabaseTests : IClassFixture<Th
         var totals = await _repo.GetTotalsByStockItemAsync(
             DateTimeOffset.UtcNow.AddDays(-2), DateTimeOffset.UtcNow.AddDays(-1));
         totals.Should().NotContain(t => t.StockItemId == stockItemId);
+    }
+
+    [Fact]
+    public async Task AnExtraSourcedRecordNeedsNoRecipeAndCountsInTheTotals()
+    {
+        var stockItemId = Guid.NewGuid();
+        var record = TheoreticalConsumptionRecord.ForModifier(
+            Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), stockItemId, 2m, "kg");
+
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _repo.AppendAsync(record, connection, transaction);
+            await transaction.CommitAsync();
+        }
+
+        var totals = await _repo.GetTotalsByStockItemAsync(
+            DateTimeOffset.UtcNow.AddMinutes(-5), DateTimeOffset.UtcNow.AddMinutes(5));
+        totals.Should().ContainSingle(t => t.StockItemId == stockItemId && t.TotalQuantity == 2m);
+    }
+
+    [Theory]
+    [InlineData(false, false)]
+    [InlineData(true, true)]
+    public async Task ARecordMustComeFromARecipeOrAnExtraButNeverBothNorNeither(bool withRecipe, bool withModifier)
+    {
+        var (recipeId, versionId) = await _db.InsertRecipeWithVersionAsync("RCP-" + Guid.NewGuid().ToString("N")[..8]);
+        await using var cmd = _db.DataSource.CreateCommand(
+            """
+            INSERT INTO recipe.theoretical_consumption_records
+                (id, order_item_id, product_id, recipe_id, recipe_version_id, modifier_id, stock_item_id, quantity, unit_code)
+            VALUES (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), $1, $2, $3, gen_random_uuid(), 1, 'kg');
+            """);
+        cmd.Parameters.AddWithValue(withRecipe ? recipeId : DBNull.Value);
+        cmd.Parameters.AddWithValue(withRecipe ? versionId : DBNull.Value);
+        cmd.Parameters.AddWithValue(withModifier ? Guid.NewGuid() : DBNull.Value);
+
+        var act = () => cmd.ExecuteNonQueryAsync();
+        (await act.Should().ThrowAsync<Npgsql.PostgresException>()).Which.ConstraintName.Should().Be("ck_theoretical_consumption_source");
+    }
+
+    [Fact]
+    public async Task Migration174RollbackKeepsRecipeRecordsAndDropsExtraRecordsAndReapplyIsRepeatable()
+    {
+        var (recipeId, versionId) = await _db.InsertRecipeWithVersionAsync("RCP-" + Guid.NewGuid().ToString("N")[..8]);
+        var recipeItem = Guid.NewGuid();
+        var extraItem = Guid.NewGuid();
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _repo.AppendAsync(
+                new TheoreticalConsumptionRecord(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), recipeId, versionId, recipeItem, 1m, "kg"),
+                connection, transaction);
+            await _repo.AppendAsync(
+                TheoreticalConsumptionRecord.ForModifier(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), extraItem, 1m, "kg"),
+                connection, transaction);
+            await transaction.CommitAsync();
+        }
+
+        await _db.RunMigration174Async("down");
+        try
+        {
+            await using var count = _db.DataSource.CreateCommand(
+                "SELECT count(*) FILTER (WHERE stock_item_id = $1), count(*) FILTER (WHERE stock_item_id = $2) FROM recipe.theoretical_consumption_records;");
+            count.Parameters.AddWithValue(recipeItem);
+            count.Parameters.AddWithValue(extraItem);
+            await using var reader = await count.ExecuteReaderAsync();
+            await reader.ReadAsync();
+            reader.GetInt64(0).Should().Be(1);
+            reader.GetInt64(1).Should().Be(0);
+        }
+        finally
+        {
+            await _db.RunMigration174Async("up");
+            await _db.RunMigration174Async("up");
+        }
     }
 
     [Fact]

@@ -26,19 +26,20 @@ public sealed class PostgresTheoreticalConsumptionRecordRepository : ITheoretica
         const string sql = @"
             INSERT INTO recipe.theoretical_consumption_records (
                 id, order_item_id, product_id, recipe_id, recipe_version_id,
-                stock_item_id, quantity, unit_code, recorded_at
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9);";
+                stock_item_id, quantity, unit_code, recorded_at, modifier_id
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
 
         await using var cmd = new NpgsqlCommand(sql, connection, transaction);
         cmd.Parameters.AddWithValue(record.Id);
         cmd.Parameters.AddWithValue(record.OrderItemId);
         cmd.Parameters.AddWithValue(record.ProductId);
-        cmd.Parameters.AddWithValue(record.RecipeId);
-        cmd.Parameters.AddWithValue(record.RecipeVersionId);
+        cmd.Parameters.AddWithValue((object?)record.RecipeId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue((object?)record.RecipeVersionId ?? DBNull.Value);
         cmd.Parameters.AddWithValue(record.StockItemId);
         cmd.Parameters.AddWithValue(record.Quantity);
         cmd.Parameters.AddWithValue(record.UnitCode);
         cmd.Parameters.AddWithValue(record.RecordedAt);
+        cmd.Parameters.AddWithValue((object?)record.ModifierId ?? DBNull.Value);
 
         await cmd.ExecuteNonQueryAsync(ct);
     }

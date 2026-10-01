@@ -1490,6 +1490,14 @@
         "audit_events"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "174",
+      "phase": "B",
+      "tables": [
+        "theoretical_consumption_records"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

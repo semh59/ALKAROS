@@ -195,6 +195,44 @@ public sealed class OrderStockConsumptionService
 
             await ConsumeModifiersAsync(order, item, trigger, actorId, connection, transaction, cancellationToken);
             await RecordTheoreticalConsumptionAsync(item, connection, transaction, cancellationToken);
+            await RecordModifierTheoreticalConsumptionAsync(item, connection, transaction, cancellationToken);
+        }
+    }
+
+    /// <summary>
+    /// The extras' counterpart of <see cref="RecordTheoreticalConsumptionAsync"/>: an extra mapped to a stock item takes
+    /// stock for real (<see cref="ConsumeModifiersAsync"/>), so the same amount is also what it should have consumed,
+    /// whether or not the product has a recipe. Without it the actual-vs-theoretical report shows that stock as unexplained loss.
+    /// </summary>
+    private async Task RecordModifierTheoreticalConsumptionAsync(
+        OrderItem item,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        if (item.Modifiers.Count == 0)
+            return;
+
+        var mappings = await _modifierMappings.GetByModifierIdsAsync(
+            item.Modifiers.Select(m => m.ModifierId).Distinct().ToArray(), cancellationToken).ConfigureAwait(false);
+        foreach (var modifier in item.Modifiers)
+        {
+            foreach (var mapping in mappings.Where(m => m.ModifierId == modifier.ModifierId))
+            {
+                var stockItem = await _stockItems.GetByIdAsync(mapping.StockItemId, cancellationToken).ConfigureAwait(false);
+                if (stockItem is null)
+                    continue;
+
+                var record = TheoreticalConsumptionRecord.ForModifier(
+                    id: Guid.NewGuid(),
+                    orderItemId: item.Id,
+                    productId: item.ProductId,
+                    modifierId: modifier.ModifierId,
+                    stockItemId: mapping.StockItemId,
+                    quantity: modifier.Quantity * mapping.QuantityMultiplier,
+                    unitCode: stockItem.TrackingUnitCode);
+                await _theoreticalConsumption.AppendAsync(record, connection, transaction, cancellationToken).ConfigureAwait(false);
+            }
         }
     }
 

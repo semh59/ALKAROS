@@ -21,6 +21,33 @@ public sealed class TheoreticalConsumptionRecord
         decimal quantity,
         string unitCode,
         DateTimeOffset? recordedAt = null)
+        : this(id, orderItemId, productId, recipeId, recipeVersionId, null, stockItemId, quantity, unitCode, recordedAt)
+    {
+    }
+
+    /// <summary>What an order-line extra mapped to a stock item should consume; it has no recipe.</summary>
+    public static TheoreticalConsumptionRecord ForModifier(
+        Guid id,
+        Guid orderItemId,
+        Guid productId,
+        Guid modifierId,
+        Guid stockItemId,
+        decimal quantity,
+        string unitCode,
+        DateTimeOffset? recordedAt = null)
+        => new(id, orderItemId, productId, null, null, modifierId, stockItemId, quantity, unitCode, recordedAt);
+
+    private TheoreticalConsumptionRecord(
+        Guid id,
+        Guid orderItemId,
+        Guid productId,
+        Guid? recipeId,
+        Guid? recipeVersionId,
+        Guid? modifierId,
+        Guid stockItemId,
+        decimal quantity,
+        string unitCode,
+        DateTimeOffset? recordedAt)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Id cannot be empty.", nameof(id));
@@ -32,6 +59,8 @@ public sealed class TheoreticalConsumptionRecord
             throw new ArgumentException("RecipeId cannot be empty.", nameof(recipeId));
         if (recipeVersionId == Guid.Empty)
             throw new ArgumentException("RecipeVersionId cannot be empty.", nameof(recipeVersionId));
+        if (modifierId == Guid.Empty)
+            throw new ArgumentException("ModifierId cannot be empty.", nameof(modifierId));
         if (stockItemId == Guid.Empty)
             throw new ArgumentException("StockItemId cannot be empty.", nameof(stockItemId));
         if (quantity <= 0)
@@ -44,6 +73,7 @@ public sealed class TheoreticalConsumptionRecord
         ProductId = productId;
         RecipeId = recipeId;
         RecipeVersionId = recipeVersionId;
+        ModifierId = modifierId;
         StockItemId = stockItemId;
         Quantity = quantity;
         UnitCode = unitCode.Trim().ToLowerInvariant();
@@ -53,8 +83,9 @@ public sealed class TheoreticalConsumptionRecord
     public Guid Id { get; }
     public Guid OrderItemId { get; }
     public Guid ProductId { get; }
-    public Guid RecipeId { get; }
-    public Guid RecipeVersionId { get; }
+    public Guid? RecipeId { get; }
+    public Guid? RecipeVersionId { get; }
+    public Guid? ModifierId { get; }
     public Guid StockItemId { get; }
     public decimal Quantity { get; }
     public string UnitCode { get; }

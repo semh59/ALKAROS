@@ -372,6 +372,10 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
         return (groupId, firstId, secondId);
     }
 
+    public Task<decimal> TheoreticalQuantityAsync(Guid stockItemId, Guid modifierId)
+        => ScalarAsync<decimal>(
+            $"SELECT COALESCE(SUM(quantity), 0) FROM recipe.theoretical_consumption_records WHERE stock_item_id = '{stockItemId:D}' AND modifier_id = '{modifierId:D}';");
+
     /// <summary>
     /// V1-RMD-152: maps a modifier to its own freshly seeded stock item, so a
     /// test can assert that an extra really leaves the store room. Returns the

@@ -1605,6 +1605,34 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AMappedModifierIsAlsoRecordedAsTheoreticalConsumptionEvenWithoutARecipe()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Adana kebap", 520m, 10m);
+        var extraCheese = await _database.SeedModifierAsync(product, "Ekstra peynir", 85m);
+        var cheeseStock = await _database.SeedStockForModifierAsync(extraCheese, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-72",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Adana kebap", 2, 520m,
+                    [new OrderItemModifierSelectionDto(extraCheese)])])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        // The stock really left (10 -> 8) and the same 2 helpings are what the report should have expected.
+        Assert.Equal(8m, await _database.OnHandQuantityAsync(cheeseStock));
+        Assert.Equal(2m, await _database.TheoreticalQuantityAsync(cheeseStock, extraCheese));
+    }
+
+    [Fact]
     public async Task AModifierWithNoStockMappingDoesNotBlockTheOrder()
     {
         // V1-RMD-152: deliberately unlike a product. Most modifiers are an

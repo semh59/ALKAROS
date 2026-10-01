@@ -1,0 +1,4 @@
+NFC order (2 burgers, extra cheese each): HTTP 200 status=Accepted total=420
+real stock movements: [{"code":"CHEESE","qty":3},{"code":"MEAT","qty":2}]
+theoretical records: [{"code":"CHEESE","qty":3,"from_extra":true,"from_recipe":false}]
+balances after: [{"code":"CHEESE","on_hand":97},{"code":"MEAT","on_hand":98}]
