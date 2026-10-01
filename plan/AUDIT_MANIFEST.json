@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1572,
-  "markdown_line_count": 116771,
-  "markdown_byte_count": 6741666,
+  "markdown_file_count": 1573,
+  "markdown_line_count": 116799,
+  "markdown_byte_count": 6744766,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2674,6 +2674,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-475/README.md",
+      "sha256": "F5D3988F4026AC962F3721DF2BD53710341E341F75B060BEDFA189F6D273189A",
+      "lines": 20,
+      "bytes": 1623,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-RMD-476/README.md",
       "sha256": "43FA4A795E07ECB79D29DA9C41EBBA8A462E34AACEBE73105B407098DFE3775F",
       "lines": 21,
@@ -2899,9 +2906,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "44B5A205DC7419169921054AEE92263F28D460310D251B830A9965895EAAD93E",
-      "lines": 2848,
-      "bytes": 418622,
+      "sha256": "D186630820A14F7B1BC36A0B5F3366E2FBF312C76EB527023AE1C1F3FAC3A7F6",
+      "lines": 2849,
+      "bytes": 418752,
       "utf8": true
     },
     {
@@ -8828,9 +8835,9 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-475-online-order-invoice-missing-case.md",
-      "sha256": "66961977F1BC22251F89CD4AEB992EF55F4A206B14A96809CA971D0A08095801",
-      "lines": 41,
-      "bytes": 1224,
+      "sha256": "B25A23D29D4590FEB533905250DD7A8D58401AEA4B018917F62986149745E9DC",
+      "lines": 48,
+      "bytes": 2571,
       "utf8": true
     },
     {
