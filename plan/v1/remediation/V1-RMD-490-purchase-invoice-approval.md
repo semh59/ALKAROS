@@ -24,7 +24,7 @@ Tüm satırları eşleşmiş taslak alış faturasını yönetici onayıyla mal 
 
 ## Out of scope
 
-- Ekran (`V1-RMD-491`), QNB gelen kutusu (`V1-RMD-492`), fatura iptal/iade mahsubu.
+- Yönetim ekranı (`V1-RMD-491`), QNB gelen kutusundan çekme (`V1-RMD-492`) ve fatura iptali ile iade mahsubu bu görevin dışındadır.
 
 ## Dependencies
 
