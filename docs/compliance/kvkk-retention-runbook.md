@@ -119,3 +119,20 @@ will report all zeros — that is expected.
 `evidence/V1-RMD-094/` holds a dry-run + apply transcript and the
 `KvkkRetentionTests` result (old rows anonymized, recent / active / wrong-status
 / legally-held rows untouched, second apply a no-op).
+
+## Audit log disposal (10 years)
+
+`audit.audit_events` is append-only (a trigger refuses UPDATE and DELETE), so its rows are never edited. The table is split into one partition per
+calendar year (`audit.audit_events_y2026`, ...) and a year is removed as a whole:
+
+```
+dotnet ALKAROS.Host.dll audit-disposal --db-url ...                  # dry run: lists partitions, rows and which are expired
+dotnet ALKAROS.Host.dll audit-disposal --db-url ... --as-of 2040-01-01   # preview for a date (never combined with --apply)
+dotnet ALKAROS.Host.dll audit-disposal --db-url ... --apply          # drops expired partitions
+```
+
+- Retention counts from the end of the year: year Y is expired on 1 January of Y+11 (UTC). Nothing can expire before 1 January 2031 (first partition 2020), and the log of 2026 is kept until 2037.
+- Each drop writes an `audit.partition.disposed` event with the partition name, year and row count only.
+- `audit_events_default` holds any date outside the pre-created years (2020-2060); it is never dropped by the command. After 2060 new partitions must be created before the year starts.
+- There is no legal-hold class for the audit log; a hold would have to be added to `Privacy.RetentionExecution` first.
+- Run it with the same cron cadence as `kvkk-retention` (at least every six months).

@@ -1,3 +1,4 @@
+using ALKAROS.Audit.PartitionDisposal;
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.Composition.Migrations;
 using ALKAROS.Host.DualScreen;
@@ -91,6 +92,19 @@ public static class Program
             catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or NpgsqlException or FormatException or IOException)
             {
                 Console.Error.WriteLine($"KVKK-RETENTION: {ex.Message}");
+                return (int)HostExitCode.StartupFailed;
+            }
+        }
+
+        if (args.Length > 0 && string.Equals(args[0], "audit-disposal", StringComparison.Ordinal))
+        {
+            try
+            {
+                return AuditDisposalAsync(args[1..]).GetAwaiter().GetResult();
+            }
+            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or NpgsqlException or FormatException)
+            {
+                Console.Error.WriteLine($"AUDIT-DISPOSAL: {ex.Message}");
                 return (int)HostExitCode.StartupFailed;
             }
         }
@@ -418,6 +432,57 @@ public static class Program
         return failed == 0 ? (int)HostExitCode.Success : throw new InvalidOperationException("kvkk-retention: some records could not be anonymized and stay pending; run it again after fixing the cause.");
     }
 
+    /// <summary>
+    /// Drops the yearly partitions of the append-only audit log whose ten-year retention has ended (the year counts from its
+    /// end, so year Y goes on 1 January of Y+11). Dry run unless --apply; --as-of only previews, so it cannot be combined with --apply.
+    /// Usage: audit-disposal --db-url &lt;url&gt; [--apply] [--as-of &lt;ISO date&gt;]
+    /// </summary>
+    private static async Task<int> AuditDisposalAsync(string[] args)
+    {
+        string? databaseUrl = null;
+        var apply = false;
+        DateTimeOffset? asOf = null;
+        for (var i = 0; i < args.Length; i++)
+        {
+            switch (args[i])
+            {
+                case "--db-url" when i + 1 < args.Length:
+                    databaseUrl = args[++i];
+                    break;
+                case "--apply":
+                    apply = true;
+                    break;
+                case "--as-of" when i + 1 < args.Length:
+                    if (!DateTimeOffset.TryParse(args[++i], System.Globalization.CultureInfo.InvariantCulture,
+                            System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal,
+                            out var parsed))
+                        throw new ArgumentException("--as-of must be an ISO date.");
+                    asOf = parsed;
+                    break;
+                default:
+                    throw new ArgumentException($"Unrecognized audit-disposal argument '{args[i]}'.");
+            }
+        }
+
+        if (string.IsNullOrWhiteSpace(databaseUrl))
+            throw new ArgumentException("audit-disposal requires a --db-url argument.");
+        if (apply && asOf is not null)
+            throw new ArgumentException("--as-of only previews; it cannot be combined with --apply.");
+
+        var databasePassword = RequiredEnvironmentValue(PasswordEnvironmentVariable, 1, 256, allowWhitespace: false);
+        await using var dataSource = NpgsqlDataSource.Create(BuildConnectionString(databaseUrl, databasePassword, "ALKAROS.AuditDisposal"));
+        var now = asOf ?? DateTimeOffset.UtcNow;
+        var result = await new AuditPartitionDisposal(dataSource).RunAsync(now, apply);
+
+        foreach (var partition in result.Partitions.Where(p => p.Rows > 0 || p.Expired))
+            Console.Out.WriteLine($"audit-disposal: partition={partition.Name} rows={partition.Rows} expired={partition.Expired.ToString().ToLowerInvariant()}");
+        Console.Out.WriteLine(
+            $"audit-disposal: partitions={result.Partitions.Count} expired={result.Partitions.Count(p => p.Expired)} "
+            + $"dropped={result.Dropped.Count} dropped_rows={result.Dropped.Sum(p => p.Rows)} default_partition_rows={result.DefaultPartitionRows} "
+            + $"as_of={now:yyyy-MM-dd} apply={apply.ToString().ToLowerInvariant()}");
+        return (int)HostExitCode.Success;
+    }
+
     private static string RequiredEnvironmentValue(
         string variable,
         int minimumLength,
@@ -591,6 +656,8 @@ public static class Program
         writer.WriteLine();
         writer.WriteLine("Verbs: serve | provision-manager --db-url <url> | housekeeping --db-url <url> [--grace-days <N>]");
         writer.WriteLine("       | kvkk-retention --db-url <url> [--apply] [--as-of <ISO date>] [--exclude-order-ids-file <path>]");
+        writer.WriteLine("       | audit-disposal --db-url <url> [--apply] [--as-of <ISO date>]");
+        writer.WriteLine("  audit-disposal    Drop yearly audit-log partitions whose 10-year retention has ended. Dry run unless --apply.");
         writer.WriteLine("  housekeeping      Delete expired idempotency_keys and expired/long-revoked device_sessions");
         writer.WriteLine("                    (operational hygiene only; not KVKK personal-data retention).");
         writer.WriteLine("  kvkk-retention    Anonymize personal data past its V0-CMP-003 retention window");

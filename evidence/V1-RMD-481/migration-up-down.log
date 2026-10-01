@@ -1,0 +1,12 @@
+before: kind=r rows=3
+up: kind=p audit.audit_events_y2014=1 audit.audit_events_y2026=2
+up again (idempotent): kind=p audit.audit_events_y2014=1 audit.audit_events_y2026=2
+update parent: audit_events table is append-only. UPDATE and DELETE operations are strictly forbidden.
+delete parent: audit_events table is append-only. UPDATE and DELETE operations are strictly forbidden.
+update partition directly: audit_events table is append-only. UPDATE and DELETE operations are strictly forbidden.
+delete partition directly: audit_events table is append-only. UPDATE and DELETE operations are strictly forbidden.
+insert years 1999 and 2100 (outside the pre-created range -> default partition): accepted
+after inserts: audit.audit_events_default=2 audit.audit_events_y2014=1 audit.audit_events_y2026=2
+down: kind=r rows=5
+update plain after down: audit_events table is append-only. UPDATE and DELETE operations are strictly forbidden.
+up after down: kind=p audit.audit_events_default=1 audit.audit_events_y1999=1 audit.audit_events_y2014=1 audit.audit_events_y2026=2

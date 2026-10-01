@@ -1482,6 +1482,14 @@
         "anonymization_events"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "173",
+      "phase": "B",
+      "tables": [
+        "audit_events"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

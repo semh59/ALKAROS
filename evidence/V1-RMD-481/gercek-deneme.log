@@ -1,0 +1,20 @@
+## before: audit.audit_events_y2014=1 audit.audit_events_y2015=1 audit.audit_events_y2026=2
+$ audit-disposal   exit=0
+audit-disposal: partition=audit_events_y2014 rows=1 expired=true
+audit-disposal: partition=audit_events_y2015 rows=1 expired=true
+audit-disposal: partition=audit_events_y2026 rows=2 expired=false
+audit-disposal: partitions=43 expired=2 dropped=0 dropped_rows=0 default_partition_rows=0 as_of=2026-10-01 apply=false
+## after dry run (nothing changes): audit.audit_events_y2014=1 audit.audit_events_y2015=1 audit.audit_events_y2026=2
+$ audit-disposal --apply --as-of 2040-01-01  exit=2
+
+AUDIT-DISPOSAL: --as-of only previews; it cannot be combined with --apply.
+$ audit-disposal --apply  exit=0
+audit-disposal: partition=audit_events_y2014 rows=1 expired=true
+audit-disposal: partition=audit_events_y2015 rows=1 expired=true
+audit-disposal: partition=audit_events_y2026 rows=2 expired=false
+audit-disposal: partitions=43 expired=2 dropped=2 dropped_rows=2 default_partition_rows=0 as_of=2026-10-01 apply=true
+## after --apply (2014 and 2015 are expired; today is 2026-10-01): audit.audit_events_y2026=4
+$ audit-disposal --apply  exit=0
+audit-disposal: partition=audit_events_y2026 rows=4 expired=false
+audit-disposal: partitions=41 expired=0 dropped=0 dropped_rows=0 default_partition_rows=0 as_of=2026-10-01 apply=true
+## disposal events: [{"rows":1,"year":2014,"partition":"audit_events_y2014"},{"rows":1,"year":2015,"partition":"audit_events_y2015"}]
