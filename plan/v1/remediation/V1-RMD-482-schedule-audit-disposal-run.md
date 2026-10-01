@@ -21,7 +21,7 @@
 
 ## In scope
 
-- Kesin yollar görev başlatılırken yazılır.
+- Kesin yollar görev başlatılırken yazılır. `audit-disposal` komutunun çıktısı (`dropped=`, `default_partition_rows=`) izlenir; çalışmazsa uyarı üretilir.
 
 ## Out of scope
 

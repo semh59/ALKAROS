@@ -23,12 +23,11 @@ zayıflatmamalı ve yasal saklama gerektiren kayıtları saklama süresinden ön
 - `database/migrations/V1/V1-RMD-481/**`
 - `src/Modules/Audit/PartitionDisposal/**`
 - `evidence/V1-RMD-481/**`
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Audit/EventStore/AuditPartitionDisposalTests.cs - yeni test dosyası
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json,
   src/Host/Composition/Migrations/MigrationManifest.cs ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs —
   yalnız bu görevin migration'ı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Program.cs — yalnız `audit-disposal` komutu
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Program/AuditDisposalTests.cs - yeni test dosyası
+- `tests/Host/MigrationComposition/Program/AuditDisposalTests.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/compliance/kvkk-retention-runbook.md — yalnız denetim kaydı bölümü
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/architecture/module-dependency-rules.md ve tools/consistency-audit/consistency_audit.py — yalnız gerekirse yeni yüzeyin kaydı
 - Bu görev, başka bir task'ın owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
