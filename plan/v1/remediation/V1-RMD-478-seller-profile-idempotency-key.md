@@ -1,7 +1,7 @@
 # V1-RMD-478 - Satıcı bilgisi kaydetme ucunun idempotency anahtarını almasını sağlamak
 
 - Task ID: V1-RMD-478
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Vj7DgrFRRgpSMFfXpfSjwx
 - Work type: implementation
 - Surface state: Existing

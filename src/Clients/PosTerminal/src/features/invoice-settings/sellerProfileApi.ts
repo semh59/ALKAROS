@@ -37,5 +37,5 @@ export async function loadSellerProfile(terminalId: string, fetcher: typeof fetc
 
 export async function saveSellerProfile(terminalId: string, profile: SellerProfile, fetcher: typeof fetch = fetch): Promise<void> {
   await call(base(terminalId),
-    { method: "PUT", headers: { "Content-Type": "application/json" }, body: JSON.stringify(profile) }, "Fatura bilgileri kaydedilemedi.", fetcher);
+    { method: "PUT", headers: { "Content-Type": "application/json", "X-Idempotency-Key": crypto.randomUUID() }, body: JSON.stringify(profile) }, "Fatura bilgileri kaydedilemedi.", fetcher);
 }

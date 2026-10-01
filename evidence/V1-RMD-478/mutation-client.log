@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/invoice-settings/SellerProfileCard.test.tsx (4 tests | 1 failed) 109ms
+     × sends the edited profile with an empty e-mail as null and confirms in Turkish 32ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/invoice-settings/SellerProfileCard.test.tsx > SellerProfileCard > sends the edited profile with an empty e-mail as null and confirms in Turkish
+TypeError: .toMatch() expects to receive a string, but got undefined
+ ❯ src/features/invoice-settings/SellerProfileCard.test.tsx:64:26
+     62|     const sent = JSON.parse(calls[0].body!);
+     63|     expect(sent.legalName).toBe("Yeni Ünvan");
+     64|     expect(calls[0].key).toMatch(/^[0-9a-f-]{36}$/);
+       |                          ^
+     65|     expect(sent.email).toBeNull();
+     66|     expect(document.body.textContent).toContain("İşletme bilgileri kay…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  07:53:56
+   Duration  1.05s (transform 81ms, setup 0ms, import 147ms, tests 109ms, environment 577ms)
+

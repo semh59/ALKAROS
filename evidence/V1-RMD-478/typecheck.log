@@ -1,0 +1,7 @@
+﻿corepack : $ tsc --noEmit
+At line:11 char:167
++ ... TEXITCODE"; corepack pnpm run typecheck *> D:\PROJECT\ALKAROS\evidenc ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ($ tsc --noEmit:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 

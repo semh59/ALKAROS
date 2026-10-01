@@ -47,9 +47,9 @@ describe("SellerProfileCard", () => {
   });
 
   it("sends the edited profile with an empty e-mail as null and confirms in Turkish", async () => {
-    const calls: { method?: string; body?: string }[] = [];
+    const calls: { method?: string; body?: string; key?: string }[] = [];
     await render((async (_url: RequestInfo | URL, init?: RequestInit) => {
-      if (init?.method === "PUT") { calls.push({ method: init.method, body: String(init.body) }); return json(undefined, 204); }
+      if (init?.method === "PUT") { calls.push({ method: init.method, body: String(init.body), key: (init.headers as Record<string, string>)["X-Idempotency-Key"] }); return json(undefined, 204); }
       return json({ configured: true, profile: { ...stored, email: "muhasebe@deniz.example" } });
     }) as unknown as typeof fetch);
 
@@ -61,6 +61,7 @@ describe("SellerProfileCard", () => {
 
     const sent = JSON.parse(calls[0].body!);
     expect(sent.legalName).toBe("Yeni Ünvan");
+    expect(calls[0].key).toMatch(/^[0-9a-f-]{36}$/);
     expect(sent.email).toBeNull();
     expect(document.body.textContent).toContain("İşletme bilgileri kaydedildi.");
   });

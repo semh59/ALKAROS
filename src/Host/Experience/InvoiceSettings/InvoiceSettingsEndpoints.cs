@@ -4,6 +4,7 @@ using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Invoicing.Generation.OrderInvoices;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -69,6 +70,7 @@ public static class InvoiceSettingsEndpoints
         group.MapPut("/seller-profile", async (
             Guid terminalId,
             SellerProfile request,
+            [FromHeader(Name = "X-Idempotency-Key")] string? idempotencyKey,
             ISellerProfileStore store,
             DualScreenStore dualStore,
             IAuthorizationService authorization,
