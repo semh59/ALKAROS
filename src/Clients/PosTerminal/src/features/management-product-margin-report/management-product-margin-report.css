@@ -1,0 +1,9 @@
+.mpm { display: grid; gap: var(--ds-space-4); }
+.mpm__filters { display: flex; align-items: flex-end; gap: var(--ds-space-3); flex-wrap: wrap; }
+.mpm__empty, .mpm__hint { margin: 0; color: var(--ds-color-muted); }
+.mpm__warning { margin: 0; color: var(--ds-color-danger, #b3261e); font-weight: 700; }
+.mpm table { width: 100%; border-collapse: collapse; }
+.mpm th, .mpm td { padding: .5rem .6rem; text-align: left; border-bottom: 1px solid var(--ds-color-line); }
+.mpm th { color: var(--ds-color-muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+.mpm td.mpm__num, .mpm th.mpm__num { text-align: right; font-variant-numeric: tabular-nums; }
+.mpm tfoot td { font-weight: 800; }
