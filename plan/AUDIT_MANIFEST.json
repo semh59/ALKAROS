@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1573,
-  "markdown_line_count": 116799,
-  "markdown_byte_count": 6744766,
+  "markdown_file_count": 1575,
+  "markdown_line_count": 116855,
+  "markdown_byte_count": 6748302,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2709,6 +2709,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-480/README.md",
+      "sha256": "28B3F4B70B5ABDCF92E35C7EB8BE6F6C19FEDF08F2720165F5B8FB128E5F482C",
+      "lines": 5,
+      "bytes": 478,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2906,9 +2913,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "D186630820A14F7B1BC36A0B5F3366E2FBF312C76EB527023AE1C1F3FAC3A7F6",
-      "lines": 2849,
-      "bytes": 418752,
+      "sha256": "88E6B934A949C06ECB56D5DD76AE9D1888375FA5BE77FAE6DE0F7BA7EBC1B107",
+      "lines": 2851,
+      "bytes": 419068,
       "utf8": true
     },
     {
@@ -2927,9 +2934,9 @@
     },
     {
       "path": "plan/GATES.md",
-      "sha256": "66244C9BA8FAF43AC9527A214D922962BFFFD967330E0143FDE8BDABC39E075C",
-      "lines": 591,
-      "bytes": 146613,
+      "sha256": "5FF31FD968DEA7B0FB4EE13EF884CA3F23CDACE2785A22604479EE7AE03DE170",
+      "lines": 593,
+      "bytes": 146947,
       "utf8": true
     },
     {
@@ -2983,9 +2990,9 @@
     },
     {
       "path": "plan/TRACEABILITY.md",
-      "sha256": "29D8B74CE2E462C2A54CEE0EB80FF926E20805B72B46C8201D482D712390F54B",
-      "lines": 211,
-      "bytes": 93321,
+      "sha256": "84309B44C73522C11BB4302039B2387E28E243E7296D48CA95755B0A2FC9483E",
+      "lines": 212,
+      "bytes": 93745,
       "utf8": true
     },
     {
@@ -8869,6 +8876,13 @@
       "utf8": true
     },
     {
+      "path": "plan/v1/remediation/V1-RMD-480-admit-load-test-and-anonymization-ahead-of-v14-exit.md",
+      "sha256": "DA5EBFFDD359C0B3257C55A9CCC3DF3CA23EEE95A25A67170760416C07CF5B38",
+      "lines": 46,
+      "bytes": 1971,
+      "utf8": true
+    },
+    {
       "path": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md",
       "sha256": "6125E2B508FC10E5A281BFEEDF5CABEAB576F1CCDEAEF31D21A3EF5AE98A6DDB",
       "lines": 55,
@@ -10795,9 +10809,9 @@
     },
     {
       "path": "plan/v1.5/performance/V15-PER-001-critical-load-tests.md",
-      "sha256": "6322626C02BD44F0C084D3BB6EEC6EAE9B7C89CFC3E24B93853914F1A64AAB2D",
+      "sha256": "42E5E9AE2BAA8B601DEDE1B0A70173153C1DD44D8489B24A5A5CE815562AEF55",
       "lines": 50,
-      "bytes": 1417,
+      "bytes": 1430,
       "utf8": true
     },
     {
