@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1579,
-  "markdown_line_count": 117022,
-  "markdown_byte_count": 6760803,
+  "markdown_file_count": 1581,
+  "markdown_line_count": 117121,
+  "markdown_byte_count": 6768106,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -204,9 +204,9 @@
     },
     {
       "path": "docs/compliance/kvkk-retention-runbook.md",
-      "sha256": "D7596D7C6E773F80AF466A566B5FB745B43D13FAB1112CCB0C9D149F410180EB",
-      "lines": 121,
-      "bytes": 6689,
+      "sha256": "EE6B9E6C4455ADE67FC344A13D5F5223A3529389B702A2E091F2EEEC77029ABA",
+      "lines": 138,
+      "bytes": 7998,
       "utf8": true
     },
     {
@@ -2723,6 +2723,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-481/README.md",
+      "sha256": "69090F14E7AAF200CD3C10D7C2ACAB866FF0CC3B6BAF07E7B513B34144FD5A66",
+      "lines": 28,
+      "bytes": 2979,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2934,9 +2941,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "C95663D7F5ADC8C76C0D0457183FBEC4A749E5039A5C7B1BD7B169BDCA6C642C",
-      "lines": 2855,
-      "bytes": 419624,
+      "sha256": "EC9AFC0127944936700FD654513AA974BE106B80B1732B50D7E868935E1FCF17",
+      "lines": 2857,
+      "bytes": 419916,
       "utf8": true
     },
     {
@@ -8905,9 +8912,16 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md",
-      "sha256": "EFAEEA9EBC23DF704CA67540C40A9D175948A0904660D231D2833293CB12B724",
-      "lines": 42,
-      "bytes": 1304,
+      "sha256": "46C79B4A274AB6F93FDE3EF09D5D87C724C1431A7667B305207879D15DE6BA0D",
+      "lines": 54,
+      "bytes": 3065,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-482-schedule-audit-disposal-run.md",
+      "sha256": "BDA705C69C98FB768AB4D93DC2AFBBA9F0F15787388778518A5EFC3E0155A07D",
+      "lines": 40,
+      "bytes": 962,
       "utf8": true
     },
     {
