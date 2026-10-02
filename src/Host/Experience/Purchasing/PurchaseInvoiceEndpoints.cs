@@ -15,6 +15,8 @@ public sealed record ApprovePurchaseInvoiceV1(Guid LocationId, string? Idempoten
 
 public sealed record RejectPurchaseInvoiceV1(string? IdempotencyKey = null);
 
+public sealed record FetchQnbPurchaseInvoicesV1(string? IdempotencyKey = null);
+
 public static class PurchaseInvoiceEndpoints
 {
     public static RouteGroupBuilder MapPurchaseInvoices(this RouteGroupBuilder group)
@@ -71,6 +73,13 @@ public static class PurchaseInvoiceEndpoints
             await service.RejectAsync(invoiceId, cancellationToken);
             return Results.NoContent();
         });
+
+        group.MapPost("/purchase-invoices/fetch-qnb", async (
+            FetchQnbPurchaseInvoicesV1 request,
+            HttpContext context,
+            IPurchaseInvoiceInboxService service,
+            CancellationToken cancellationToken) =>
+            Results.Ok(await service.FetchAsync(PurchasingManagerEndpointFilter.RequireActorDisplayName(context), cancellationToken)));
 
         return group;
     }

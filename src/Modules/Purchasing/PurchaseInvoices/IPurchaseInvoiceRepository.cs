@@ -23,6 +23,11 @@ public interface IPurchaseInvoiceRepository
     /// <summary>Writes the order-less goods receipt an approved invoice stands for, in the caller's transaction.</summary>
     Task InsertReceiptAsync(InvoiceReceipt receipt, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default);
 
+    Task<long> GetInboxCursorAsync(string source, CancellationToken ct = default);
+
+    /// <summary>Moves the resume point forward; a lower value never overwrites a higher one.</summary>
+    Task SaveInboxCursorAsync(string source, long lastSequence, CancellationToken ct = default);
+
     Task<int> MapLineAsync(Guid invoiceId, Guid lineId, Guid stockItemId, decimal conversionFactor, CancellationToken ct = default);
 }
 

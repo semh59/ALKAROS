@@ -30,6 +30,7 @@ const client = (over: Partial<PurchaseInvoiceClient> = {}): PurchaseInvoiceClien
   mapLine: vi.fn().mockResolvedValue(invoice({ lines: [line({ stockItemId: "m1", conversionFactor: 24 })] })),
   approve: vi.fn().mockResolvedValue(undefined),
   reject: vi.fn().mockResolvedValue(undefined),
+  fetchFromQnb: vi.fn().mockResolvedValue({ listed: 3, imported: 2, duplicates: 1, skipped: 0, stoppedEarly: false }),
   listLocations: vi.fn().mockResolvedValue([{ id: "d1", name: "Ana depo" }]),
   listStockItems: vi.fn().mockResolvedValue([{ id: "m1", name: "Süt", trackingUnitCode: "l" }]),
   ...over,
@@ -152,5 +153,35 @@ describe("purchase invoices section", () => {
     expect(calls[0][0]).toBe("/api/v1/management/purchasing/purchase-invoices?status=Draft");
     expect(calls[1][0]).toBe("/api/v1/management/purchasing/purchase-invoices/i1/approve");
     expect(JSON.parse(calls[1][1].body as string)).toMatchObject({ locationId: "d1", idempotencyKey: expect.any(String) });
+  });
+
+  it("fetching from QNB reports what was found in Turkish and refreshes the list", async () => {
+    const api = client();
+    await render(<PurchaseInvoicesSection client={api} />);
+    await press("QNB'den çek");
+    expect(api.fetchFromQnb).toHaveBeenCalledTimes(1);
+    expect(document.body.textContent).toContain("QNB: 3 belge bulundu, 2 taslak oluştu, 1 zaten kayıtlıydı, 0 belge alınamadı");
+    expect(api.list).toHaveBeenCalledTimes(2);
+  });
+
+  it("tells the user when the QNB run stopped early, and shows the server's reason when QNB cannot be reached", async () => {
+    const stopped = client({ fetchFromQnb: vi.fn().mockResolvedValue({ listed: 2, imported: 1, duplicates: 0, skipped: 0, stoppedEarly: true }) });
+    await render(<PurchaseInvoicesSection client={stopped} />);
+    await press("QNB'den çek");
+    expect(document.body.textContent).toContain("tekrar çekebilirsiniz");
+    await unmount();
+
+    const down = client({ fetchFromQnb: vi.fn().mockRejectedValue(new ManagementApiError(503, "QNB_UNAVAILABLE", "QNB'ye şu anda ulaşılamıyor.")) });
+    await render(<PurchaseInvoicesSection client={down} />);
+    await press("QNB'den çek");
+    expect(alertText()).toBe("QNB'ye şu anda ulaşılamıyor.");
+  });
+
+  it("the client posts the QNB fetch with an idempotency key", async () => {
+    const fetcher = vi.fn(() => Promise.resolve(new Response("{}", { status: 200 })));
+    await createPurchaseInvoiceClient(fetcher as unknown as typeof fetch).fetchFromQnb();
+    const call = fetcher.mock.calls[0] as unknown as [string, RequestInit];
+    expect(call[0]).toBe("/api/v1/management/purchasing/purchase-invoices/fetch-qnb");
+    expect(JSON.parse(call[1].body as string)).toMatchObject({ idempotencyKey: expect.any(String) });
   });
 });

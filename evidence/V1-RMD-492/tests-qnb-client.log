@@ -1,0 +1,13 @@
+﻿  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Audit -> D:\PROJECT\ALKAROS\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
+  ALKAROS.CustomerData -> D:\PROJECT\ALKAROS\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
+  ALKAROS.Invoicing -> D:\PROJECT\ALKAROS\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
+  ALKAROS.Invoicing.Qnb.Client.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Invoicing\Qnb\Client\bin\Debug\net8.0\ALKAROS.Invoicing.Qnb.Client.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Invoicing\Qnb\Client\bin\Debug\net8.0\ALKAROS.Invoicing.Qnb.Client.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 99 ms - ALKAROS.Invoicing.Qnb.Client.Tests.dll (net8.0)

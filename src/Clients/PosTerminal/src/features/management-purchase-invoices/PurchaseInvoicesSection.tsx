@@ -21,6 +21,7 @@ export function PurchaseInvoicesSection({ client }: Partial<ManagementSectionPro
   const [open, setOpen] = useState<PurchaseInvoice>();
   const [picks, setPicks] = useState<Record<string, { stock: string; factor: string }>>({});
   const [locationId, setLocationId] = useState("");
+  const [qnbSummary, setQnbSummary] = useState<string>();
 
   const [invoices, reload] = usePanel<readonly PurchaseInvoiceSummary[]>(useCallback(() => api.list(statusFilter), [api, statusFilter]), t.loadFailed, refreshKey);
   const [lookups] = usePanel<{ locations: readonly LookupLocation[]; items: readonly LookupItem[] }>(useCallback(
@@ -54,6 +55,12 @@ export function PurchaseInvoicesSection({ client }: Partial<ManagementSectionPro
     }, t.imported);
   };
 
+  const fetchFromQnb = () => void act(async () => {
+    const result = await api.fetchFromQnb();
+    setQnbSummary(t.fetchSummary(result));
+    setRefreshKey((key) => key + 1);
+  }, t.fetched);
+
   const mapLine = (lineId: string) => {
     const pick = picks[lineId];
     const factor = parseQuantity(pick?.factor ?? "1");
@@ -77,12 +84,14 @@ export function PurchaseInvoicesSection({ client }: Partial<ManagementSectionPro
         <label htmlFor="mpi-file">{t.upload}</label>
         <input id="mpi-file" type="file" accept=".xml,text/xml,application/xml" disabled={busy} onChange={upload} />
       </div>
+      <Button variant="secondary" disabled={busy} onClick={fetchFromQnb}>{t.fetchQnb}</Button>
       <SelectField id="mpi-status" label={t.status} value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
         <option value="">{t.allStatuses}</option>
         {invoiceStatuses.map((status) => <option key={status} value={status}>{invoiceStatusLabel(status)}</option>)}
       </SelectField>
     </div>
     <Notice notice={notice} />
+    {qnbSummary && <p className="mpi__hint">{qnbSummary}</p>}
     <PanelView title={t.listHeading} loading={t.loading} failed={t.loadFailed} panel={invoices} onRetry={reload}>
       {(rows) => rows.length === 0 ? <p className="mpi__hint">{t.empty}</p> : <table>
         <thead><tr>

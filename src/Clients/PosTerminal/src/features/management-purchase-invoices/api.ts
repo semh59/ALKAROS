@@ -1,6 +1,8 @@
 import { createRequester } from "../management/http";
 import type { LookupItem, LookupLocation, PurchaseInvoice, PurchaseInvoiceSummary } from "./models";
 
+export interface QnbFetchResult { listed: number; imported: number; duplicates: number; skipped: number; stoppedEarly: boolean }
+
 export interface PurchaseInvoiceClient {
   importXml: (xml: string) => Promise<PurchaseInvoice>;
   list: (status: string) => Promise<readonly PurchaseInvoiceSummary[]>;
@@ -8,6 +10,7 @@ export interface PurchaseInvoiceClient {
   mapLine: (invoiceId: string, lineId: string, stockItemId: string, conversionFactor: number) => Promise<PurchaseInvoice>;
   approve: (invoiceId: string, locationId: string) => Promise<void>;
   reject: (invoiceId: string) => Promise<void>;
+  fetchFromQnb: () => Promise<QnbFetchResult>;
   listLocations: () => Promise<readonly LookupLocation[]>;
   listStockItems: () => Promise<readonly LookupItem[]>;
 }
@@ -26,6 +29,7 @@ export function createPurchaseInvoiceClient(fetcher: typeof fetch = fetch): Purc
       (await send("PUT", `${base}/${invoiceId}/lines/${lineId}/mapping`, { stockItemId, conversionFactor })).json() as Promise<PurchaseInvoice>,
     approve: async (invoiceId, locationId) => { await send("POST", `${base}/${invoiceId}/approve`, { locationId }); },
     reject: async (invoiceId) => { await send("POST", `${base}/${invoiceId}/reject`, {}); },
+    fetchFromQnb: async () => (await send("POST", `${base}/fetch-qnb`, {})).json() as Promise<QnbFetchResult>,
     listLocations: () => json("/inventory/stock-locations?activeOnly=true"),
     listStockItems: () => json("/inventory/stock-items?activeOnly=true"),
   };

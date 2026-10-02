@@ -1,0 +1,4 @@
+ileri (177 dahil tum migrationlar): purchase_invoice_inbox_cursors
+geri (177 down): []
+yeniden ileri (177 up): purchase_invoice_inbox_cursors
+up ikinci kez (idempotent): hata yok

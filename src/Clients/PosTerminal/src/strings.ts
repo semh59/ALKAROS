@@ -520,6 +520,10 @@ export const managementText = {
   purchaseInvoices: {
     tab: "Alış faturaları",
     upload: "Fatura XML dosyası yükle",
+    fetchQnb: "QNB'den çek",
+    fetched: "QNB gelen kutusu tarandı.",
+    fetchSummary: (result: { listed: number; imported: number; duplicates: number; skipped: number; stoppedEarly: boolean }) =>
+      `QNB: ${result.listed} belge bulundu, ${result.imported} taslak oluştu, ${result.duplicates} zaten kayıtlıydı, ${result.skipped} belge alınamadı (iade veya bozuk).${result.stoppedEarly ? " Bağlantı sorunu nedeniyle durdu; tekrar çekebilirsiniz." : ""}`,
     status: "Durum",
     allStatuses: "Hepsi",
     listHeading: "Alış faturaları",

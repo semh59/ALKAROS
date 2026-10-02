@@ -1517,6 +1517,14 @@
         "goods_receipt_items"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "177",
+      "phase": "B",
+      "tables": [
+        "purchase_invoice_inbox_cursors"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

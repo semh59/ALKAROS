@@ -1,0 +1,11 @@
+giris: HTTP 200
+1. kimlik bilgisi yokken cekme: HTTP 409 QNB_NOT_CONFIGURED
+2. kimlik bilgisi kaydi: HTTP 204
+3. ikinci belge once elle yuklendi: HTTP 201
+4. ilk cekme: HTTP 200 {"listed":3,"imported":1,"duplicates":1,"skipped":1,"stoppedEarly":false}
+5. ikinci cekme (yeni belge yok): HTTP 200 {"listed":0,"imported":0,"duplicates":0,"skipped":0,"stoppedEarly":false}
+6. yeni belge gelince: HTTP 200 {"listed":1,"imported":1,"duplicates":0,"skipped":0,"stoppedEarly":false}
+7. QNB girisi reddedince: HTTP 503 QNB_UNAVAILABLE
+8. imlec: 5004
+9. kaynaklar: [{"source":"QnbInbox","count":"2"},{"source":"XmlUpload","count":"1"}]
+10. QNB'ye giden istekler: userService:wsLogin | connectorService:gelenBelgeleriListeleExt |   after=0 | connectorService:gelenBelgeleriIndirExt | connectorService:gelenBelgeleriIndirExt | connectorService:gelenBelgeleriIndirExt | connectorService:gelenBelgeleriListeleExt |   after=5003 | userService:logout | userService:wsLogin | connectorService:gelenBelgeleriListeleExt |   after=5003 | userService:logout | userService:wsLogin | connectorService:gelenBelgeleriListeleExt |   after=5003 | connectorService:gelenBelgeleriIndirExt | connectorService:gelenBelgeleriListeleExt |   after=5004 | userService:logout | userService:wsLogin

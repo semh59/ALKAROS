@@ -220,6 +220,26 @@ public sealed class PostgresPurchaseInvoiceRepository : IPurchaseInvoiceReposito
         }
     }
 
+    public async Task<long> GetInboxCursorAsync(string source, CancellationToken ct = default)
+    {
+        await using var command = _dataSource.CreateCommand("SELECT last_sequence FROM purchasing.purchase_invoice_inbox_cursors WHERE source = @source;");
+        command.Parameters.AddWithValue("source", source);
+        return await command.ExecuteScalarAsync(ct).ConfigureAwait(false) is long value ? value : 0;
+    }
+
+    public async Task SaveInboxCursorAsync(string source, long lastSequence, CancellationToken ct = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            INSERT INTO purchasing.purchase_invoice_inbox_cursors (source, last_sequence) VALUES (@source, @sequence)
+            ON CONFLICT (source) DO UPDATE
+            SET last_sequence = GREATEST(purchasing.purchase_invoice_inbox_cursors.last_sequence, EXCLUDED.last_sequence), updated_at = now();
+            """);
+        command.Parameters.AddWithValue("source", source);
+        command.Parameters.AddWithValue("sequence", lastSequence);
+        await command.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
+    }
+
     public async Task<int> MapLineAsync(Guid invoiceId, Guid lineId, Guid stockItemId, decimal conversionFactor, CancellationToken ct = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);

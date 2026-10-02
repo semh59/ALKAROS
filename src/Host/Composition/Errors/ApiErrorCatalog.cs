@@ -308,6 +308,10 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen kayıt bulunamadı."),
             DuplicatePurchaseInvoiceException =>
                 (StatusCodes.Status409Conflict, "DUPLICATE_INVOICE", "Bu fatura (ETTN) daha önce içeri alınmış."),
+            PurchaseInvoiceSourceNotConfiguredException =>
+                (StatusCodes.Status409Conflict, "QNB_NOT_CONFIGURED", "QNB kullanıcı adı ve parolası tanımlı değil; önce Entegrasyon ayarlarından kaydedin."),
+            PurchaseInvoiceSourceUnavailableException =>
+                (StatusCodes.Status503ServiceUnavailable, "QNB_UNAVAILABLE", "QNB'ye şu anda ulaşılamıyor veya giriş reddedildi; bilgileri kontrol edip daha sonra tekrar deneyin."),
             PurchaseInvoiceNotReadyException =>
                 (StatusCodes.Status409Conflict, "INVOICE_NOT_READY", "Fatura onaya hazır değil: tüm satırlar eşleştirilmeli ve tedarikçi kayıtlı olmalı."),
             PurchaseInvoiceStatusException =>

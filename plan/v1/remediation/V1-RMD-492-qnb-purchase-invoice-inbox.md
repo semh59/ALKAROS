@@ -1,7 +1,7 @@
 # V1-RMD-492 - QNB gelen alış faturası çekme
 
 - Task ID: V1-RMD-492
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01XpoF59o3sDPfb7ZADR4BMf
 - Work type: implementation
 - Surface state: Existing
