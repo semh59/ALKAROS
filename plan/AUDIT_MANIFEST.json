@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1598,
-  "markdown_line_count": 117761,
-  "markdown_byte_count": 6807750,
+  "markdown_file_count": 1599,
+  "markdown_line_count": 117796,
+  "markdown_byte_count": 6811965,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2779,6 +2779,13 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-490/README.md",
+      "sha256": "EC3397C4A6415E771F5668840A7364B013F6C3ABCC6AEA486D77F2704BF46303",
+      "lines": 25,
+      "bytes": 2371,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -2990,9 +2997,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "0AB6FD98C39D713604A84D1114A37F8666C723982563918671DB9E5A816357A6",
-      "lines": 2874,
-      "bytes": 422437,
+      "sha256": "2F2EA2CD7541B0F397F16AE229021B870A352D1F57E5FED23003EAD3DF6B4FE5",
+      "lines": 2875,
+      "bytes": 422567,
       "utf8": true
     },
     {
@@ -9017,23 +9024,23 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-490-purchase-invoice-approval.md",
-      "sha256": "C821964CB45EE473A4BCA9B4844C18D11D7FA1FEA779AD41A5A37FB409E5238F",
-      "lines": 39,
-      "bytes": 1284,
+      "sha256": "C354B6D9A70840FE29CA09FA6B14430DCA658AC5EC74905CA17DA47F64446D61",
+      "lines": 48,
+      "bytes": 2863,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-491-purchase-invoice-screen.md",
-      "sha256": "3A27A7B39A6D52D6B3D528FBD3801CF268915D0A7A282072A982FCA60685EA59",
+      "sha256": "F3E47157B7291C92934C65F0A37DEAA1BA9655CE97E6E2F652D268D1013C26B2",
       "lines": 39,
-      "bytes": 981,
+      "bytes": 1049,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-492-qnb-purchase-invoice-inbox.md",
-      "sha256": "7ECC17F23E7BF3C7B9066692DB34BC72DF3368E831FE63EF853592210BD5F46A",
+      "sha256": "6A651EBF3A9B221E48C4D0849DC99AFC48599226767E75347DC320C72BFD3DDC",
       "lines": 39,
-      "bytes": 1116,
+      "bytes": 1183,
       "utf8": true
     },
     {
