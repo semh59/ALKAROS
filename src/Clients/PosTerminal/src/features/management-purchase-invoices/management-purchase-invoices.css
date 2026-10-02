@@ -1,0 +1,10 @@
+.mpi { display: grid; gap: var(--ds-space-4); }
+.mpi__bar { display: flex; align-items: flex-end; gap: var(--ds-space-3); flex-wrap: wrap; }
+.mpi__hint { margin: 0; color: var(--ds-color-muted); }
+.mpi__warning { margin: 0; color: var(--ds-color-danger, #b3261e); font-weight: 700; }
+.mpi table { width: 100%; border-collapse: collapse; }
+.mpi th, .mpi td { padding: .5rem .6rem; text-align: left; border-bottom: 1px solid var(--ds-color-line); vertical-align: middle; }
+.mpi th { color: var(--ds-color-muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+.mpi td.mpi__num, .mpi th.mpi__num { text-align: right; font-variant-numeric: tabular-nums; }
+.mpi__map { display: flex; align-items: flex-end; gap: var(--ds-space-2); flex-wrap: wrap; }
+.mpi__actions { display: flex; align-items: flex-end; gap: var(--ds-space-3); flex-wrap: wrap; }

@@ -1,0 +1,18 @@
+Her mutant derlenir; testler en az bir yerde kirmizi vermelidir.
+M1 onay eslesmemis satirla acik: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 9 passed (10)
+M2 onay depo secmeden acik: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 9 passed (10)
+M3 sifir katsayi kabul: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 9 passed (10)
+M4 hammadde secmeden eslestirme: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 9 passed (10)
+M5 onayli faturada islem dugmeleri: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 9 passed (10)
+M6 tedarikci uyarisi kaldirildi: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 9 passed (10)
+M7 yukleme metni gonderilmiyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 9 passed (10)
+M8 durum ham gosterilir: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 9 passed (10)
+geri yukleme: ayni
