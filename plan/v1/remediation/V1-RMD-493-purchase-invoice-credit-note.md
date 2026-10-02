@@ -20,7 +20,7 @@ Tedarikçiden gelen iade faturasını (UBL-TR CreditNote) içeri alıp ilgili al
 
 ## In scope
 
-- Kesin yollar görev başlatılırken yazılır. İade faturasının ayrıştırılması, orijinal faturaya bağlanması, stoktan düşme ve maliyet etkisi.
+- Kesin yollar görev başlatılırken yazılır. QNB gelen kutusundan çekilen iade faturaları (`V1-RMD-492` bunları atlayıp sayar) bu görevle işlenir; iade faturasının ayrıştırılması, orijinal faturaya bağlanması, stoktan düşme ve maliyet etkisi.
 
 ## Out of scope
 
