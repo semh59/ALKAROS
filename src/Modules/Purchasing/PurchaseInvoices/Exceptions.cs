@@ -23,6 +23,11 @@ public sealed class PurchaseInvoiceNotFoundException : PurchasingException
     public PurchaseInvoiceNotFoundException(Guid id) : base($"Purchase invoice '{id}' was not found.") { }
 }
 
+public sealed class PurchaseInvoiceNotReadyException : PurchasingException
+{
+    public PurchaseInvoiceNotReadyException(string message) : base(message) { }
+}
+
 public sealed class PurchaseInvoiceStatusException : PurchasingException
 {
     public PurchaseInvoiceStatusException(string message) : base(message) { }

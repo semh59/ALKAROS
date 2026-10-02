@@ -38,6 +38,7 @@ public static class PurchasingManagementEndpoints
         services.TryAddScoped<IPurchasingService, PurchasingService>();
         services.TryAddScoped<IPurchaseInvoiceRepository, PostgresPurchaseInvoiceRepository>();
         services.TryAddScoped<IPurchaseInvoiceService, PurchaseInvoiceService>();
+        services.TryAddScoped<IPurchaseInvoiceApprovalService, PurchaseInvoiceApprovalService>();
         // PurchasingService.ReceiveGoodsAsync posts the stock movement/balance
         // effect through Inventory's own contract in the same transaction
         // (V0-ARC-001 row 27) — these must resolve standalone too.

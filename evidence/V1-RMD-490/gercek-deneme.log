@@ -1,0 +1,11 @@
+oturumsuz liste: HTTP 401
+giris: HTTP 200
+1. eslesmemis satirla onay: HTTP 409 INVOICE_NOT_READY
+2. onay: HTTP 200; receiptId var=true
+3. stok bakiyesi: 120.0000 (5 koli x 24 = 120 bekleniyor)
+4. mal kabul kalemi: miktar=120.0000 birim=kg fiyat=5.0000 siparis=null fatura bagli=true
+5. mal kabul okuma (siparissiz): HTTP 200
+6. ikinci onay: HTTP 409 INVALID_STATUS
+7. stok degismedi: 120.0000
+8. red: HTTP 204
+9. ikinci red: HTTP 409 INVALID_STATUS

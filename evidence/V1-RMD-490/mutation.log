@@ -1,0 +1,8 @@
+﻿Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar cmp ile geri yuklenir.
+M1 eslesmemis satirla onay: Başarısız! - Başarısız:     1, Başarılı:    26, Atlanan:     0, Toplam:    27, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M2 katsayi uygulanmaz: Başarısız! - Başarısız:     2, Başarılı:    25, Atlanan:     0, Toplam:    27, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M3 birim fiyat fatura birimi uzerinden: Başarısız! - Başarısız:     1, Başarılı:    26, Atlanan:     0, Toplam:    27, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M4 durum korumasi kaldirildi: Başarısız! - Başarısız:     1, Başarılı:    26, Atlanan:     0, Toplam:    27, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M5 stok bakiyesi islenmiyor: Başarısız! - Başarısız:     2, Başarılı:    25, Atlanan:     0, Toplam:    27, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M6 mal kabul tarihi fatura tarihi yerine simdi: Başarısız! - Başarısız:     1, Başarılı:    26, Atlanan:     0, Toplam:    27, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+geri yukleme (hash karsilastirma): ayni

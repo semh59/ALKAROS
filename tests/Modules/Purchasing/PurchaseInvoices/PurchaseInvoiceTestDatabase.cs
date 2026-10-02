@@ -46,6 +46,53 @@ public sealed class PurchaseInvoiceTestDatabase : PgTestDatabase
         return id;
     }
 
+    public async Task<Guid> SeedLocationAsync()
+    {
+        var id = Guid.NewGuid();
+        await ExecuteAsync(
+            "INSERT INTO inventory.stock_locations (id, code, name, location_type) VALUES (@id, @code, 'Depo', 'Warehouse');",
+            ("id", id), ("code", "L-" + id.ToString("N")[..10]));
+        return id;
+    }
+
+    public async Task<(decimal Quantity, string Unit, decimal UnitPrice, DateOnly ReceivedAtDate)> ReadReceiptItemAsync(Guid receiptId)
+    {
+        await using var command = DataSource.CreateCommand(
+            """
+            SELECT i.accepted_quantity, i.unit_code, i.unit_price, (r.received_at AT TIME ZONE 'Europe/Istanbul')::date
+            FROM purchasing.goods_receipt_items i JOIN purchasing.goods_receipts r ON r.receipt_id = i.receipt_id
+            WHERE i.receipt_id = @id;
+            """);
+        command.Parameters.AddWithValue("id", receiptId);
+        await using var reader = await command.ExecuteReaderAsync();
+        await reader.ReadAsync();
+        return (reader.GetDecimal(0), reader.GetString(1), reader.GetDecimal(2), reader.GetFieldValue<DateOnly>(3));
+    }
+
+    public async Task<decimal> ReadOnHandAsync(Guid stockItemId, Guid locationId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = @item AND stock_location_id = @location;");
+        command.Parameters.AddWithValue("item", stockItemId);
+        command.Parameters.AddWithValue("location", locationId);
+        return (decimal)(await command.ExecuteScalarAsync() ?? 0m);
+    }
+
+    public async Task<long> CountMovementsAsync(Guid receiptId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT COUNT(*) FROM inventory.stock_movements WHERE source_reference_id = @id AND movement_type = 'PurchaseReceipt';");
+        command.Parameters.AddWithValue("id", receiptId);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<long> CountReceiptsAsync(Guid invoiceId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT COUNT(*) FROM purchasing.goods_receipts WHERE invoice_id = @id;");
+        command.Parameters.AddWithValue("id", invoiceId);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
     public Task SetStatusAsync(Guid invoiceId, string status)
         => ExecuteAsync("UPDATE purchasing.purchase_invoices SET status = @status WHERE invoice_id = @id;", ("id", invoiceId), ("status", status));
 

@@ -1508,6 +1508,15 @@
         "supplier_item_mappings"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "176",
+      "phase": "B",
+      "tables": [
+        "goods_receipts",
+        "goods_receipt_items"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

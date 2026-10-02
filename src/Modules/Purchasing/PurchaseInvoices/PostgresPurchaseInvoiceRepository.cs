@@ -167,6 +167,59 @@ public sealed class PostgresPurchaseInvoiceRepository : IPurchaseInvoiceReposito
         return result;
     }
 
+    public async Task<bool> TryTransitionAsync(
+        Guid invoiceId, string expectedStatus, string newStatus, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            UPDATE purchasing.purchase_invoices
+            SET status = @to, row_version = row_version + 1, updated_at = now()
+            WHERE invoice_id = @id AND status = @from;
+            """, connection, transaction);
+        command.Parameters.AddWithValue("id", invoiceId);
+        command.Parameters.AddWithValue("from", expectedStatus);
+        command.Parameters.AddWithValue("to", newStatus);
+        return await command.ExecuteNonQueryAsync(ct).ConfigureAwait(false) == 1;
+    }
+
+    public async Task InsertReceiptAsync(InvoiceReceipt receipt, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+    {
+        await using (var command = new NpgsqlCommand(
+            """
+            INSERT INTO purchasing.goods_receipts
+                (receipt_id, receipt_number, order_id, invoice_id, supplier_id, destination_location_id, received_at, received_by, approved_by, notes)
+            VALUES (@id, @number, NULL, @invoice, @supplier, @location, @received_at, @by, @by, @notes);
+            """, connection, transaction))
+        {
+            command.Parameters.AddWithValue("id", receipt.ReceiptId);
+            command.Parameters.AddWithValue("number", receipt.ReceiptNumber);
+            command.Parameters.AddWithValue("invoice", receipt.InvoiceId);
+            command.Parameters.AddWithValue("supplier", receipt.SupplierId);
+            command.Parameters.AddWithValue("location", receipt.LocationId);
+            command.Parameters.AddWithValue("received_at", receipt.ReceivedAt);
+            command.Parameters.AddWithValue("by", receipt.ReceivedBy);
+            command.Parameters.AddWithValue("notes", receipt.Notes);
+            await command.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
+        }
+
+        foreach (var line in receipt.Lines)
+        {
+            await using var command = new NpgsqlCommand(
+                """
+                INSERT INTO purchasing.goods_receipt_items
+                    (item_id, receipt_id, order_line_id, stock_item_id, delivered_quantity, accepted_quantity, unit_code, unit_price, is_approved_by_manager)
+                VALUES (@id, @receipt, NULL, @stock, @qty, @qty, @unit, @price, true);
+                """, connection, transaction);
+            command.Parameters.AddWithValue("id", Guid.NewGuid());
+            command.Parameters.AddWithValue("receipt", receipt.ReceiptId);
+            command.Parameters.AddWithValue("stock", line.StockItemId);
+            command.Parameters.AddWithValue("qty", line.Quantity);
+            command.Parameters.AddWithValue("unit", line.UnitCode);
+            command.Parameters.AddWithValue("price", line.UnitPrice);
+            await command.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
+        }
+    }
+
     public async Task<int> MapLineAsync(Guid invoiceId, Guid lineId, Guid stockItemId, decimal conversionFactor, CancellationToken ct = default)
     {
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);

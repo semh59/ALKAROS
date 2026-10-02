@@ -1,7 +1,7 @@
 # V1-RMD-490 - Alış faturası onayı ve stok girişi
 
 - Task ID: V1-RMD-490
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01XpoF59o3sDPfb7ZADR4BMf
 - Work type: implementation
 - Surface state: Existing
@@ -21,6 +21,7 @@ Tüm satırları eşleşmiş taslak alış faturasını yönetici onayıyla mal 
 - `database/migrations/V1/V1-RMD-490/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json, src/Host/Composition/Migrations/MigrationManifest.cs ve tests/Host/MigrationComposition/Manifest/ManifestTests.cs — yalnız bu görevin migration'ı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceService.cs, src/Modules/Purchasing/PurchaseInvoices/IPurchaseInvoiceRepository.cs, src/Modules/Purchasing/PurchaseInvoices/PostgresPurchaseInvoiceRepository.cs ve src/Modules/Purchasing/PurchaseInvoices/Exceptions.cs — yalnız onay ve red
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Purchasing/PurchasingModule.cs ve src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs — yalnız onay servisinin kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs — yalnız siparişsiz mal kabulün okunması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Purchasing/PurchaseInvoiceEndpoints.cs ve src/Host/Composition/Errors/ApiErrorCatalog.cs — yalnız onay ve red uçları
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceApprovalTests.cs ve tests/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceTestDatabase.cs — yalnız onay testleri

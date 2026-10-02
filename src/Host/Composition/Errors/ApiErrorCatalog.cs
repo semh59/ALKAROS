@@ -308,6 +308,8 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen kayıt bulunamadı."),
             DuplicatePurchaseInvoiceException =>
                 (StatusCodes.Status409Conflict, "DUPLICATE_INVOICE", "Bu fatura (ETTN) daha önce içeri alınmış."),
+            PurchaseInvoiceNotReadyException =>
+                (StatusCodes.Status409Conflict, "INVOICE_NOT_READY", "Fatura onaya hazır değil: tüm satırlar eşleştirilmeli ve tedarikçi kayıtlı olmalı."),
             PurchaseInvoiceStatusException =>
                 (StatusCodes.Status409Conflict, "INVALID_STATUS", "Fatura bu durumda bu işlemi kabul etmiyor."),
             UnsupportedPurchaseDocumentException =>

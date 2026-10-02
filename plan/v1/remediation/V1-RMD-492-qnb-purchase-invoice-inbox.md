@@ -20,7 +20,7 @@ QNB gelen kutusundaki alış faturalarını periyodik çekip `V1-RMD-489` taslak
 
 ## In scope
 
-- Kesin yollar görev başlatılırken yazılır. `IQnbSoapClient` genişletmesi (gelen fatura listesi ve XML indirme), kimlik bilgisi mevcut QNB kayıt ekranından, periyodik çekme, ETTN ile mükerrer önleme; gerçek QNB'ye karşı denenemez, sahte sunucuyla sınanır.
+- Kesin yollar görev başlatılırken yazılır. `IQnbSoapClient` genişletmesi (gelen fatura listesi ve XML indirme), kimlik bilgisi mevcut QNB kayıt ekranından, periyodik çekme, ETTN ile mükerrer önleme (içeri alma hattı `ImportAsync` ETTN tekrarını zaten reddeder); gerçek QNB'ye karşı denenemez, sahte sunucuyla sınanır.
 
 ## Out of scope
 

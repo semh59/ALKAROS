@@ -11,6 +11,10 @@ public sealed record ImportPurchaseInvoiceV1(string Xml, string? IdempotencyKey 
 
 public sealed record MapPurchaseInvoiceLineV1(Guid StockItemId, decimal ConversionFactor, string? IdempotencyKey = null);
 
+public sealed record ApprovePurchaseInvoiceV1(Guid LocationId, string? IdempotencyKey = null);
+
+public sealed record RejectPurchaseInvoiceV1(string? IdempotencyKey = null);
+
 public static class PurchaseInvoiceEndpoints
 {
     public static RouteGroupBuilder MapPurchaseInvoices(this RouteGroupBuilder group)
@@ -45,6 +49,28 @@ public static class PurchaseInvoiceEndpoints
             IPurchaseInvoiceService service,
             CancellationToken cancellationToken) =>
             Results.Ok(await service.MapLineAsync(invoiceId, lineId, request.StockItemId, request.ConversionFactor, cancellationToken)));
+
+        group.MapPost("/purchase-invoices/{invoiceId:guid}/approve", async (
+            Guid invoiceId,
+            ApprovePurchaseInvoiceV1 request,
+            HttpContext context,
+            IPurchaseInvoiceApprovalService service,
+            CancellationToken cancellationToken) =>
+        {
+            var actorName = PurchasingManagerEndpointFilter.RequireActorDisplayName(context);
+            var receiptId = await service.ApproveAsync(invoiceId, request.LocationId, actorName, cancellationToken);
+            return Results.Ok(new { receiptId });
+        });
+
+        group.MapPost("/purchase-invoices/{invoiceId:guid}/reject", async (
+            Guid invoiceId,
+            RejectPurchaseInvoiceV1 request,
+            IPurchaseInvoiceApprovalService service,
+            CancellationToken cancellationToken) =>
+        {
+            await service.RejectAsync(invoiceId, cancellationToken);
+            return Results.NoContent();
+        });
 
         return group;
     }

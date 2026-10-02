@@ -234,7 +234,7 @@ ORDER BY created_at ASC;";
         {
             var id = reader.GetGuid(0);
             var rId = reader.GetGuid(1);
-            var lineId = reader.GetGuid(2);
+            var lineId = reader.IsDBNull(2) ? Guid.Empty : reader.GetGuid(2);
             var stockItemId = reader.GetGuid(3);
             var deliveredQty = reader.GetDecimal(4);
             var acceptedQty = reader.GetDecimal(5);
@@ -269,7 +269,7 @@ ORDER BY created_at ASC;";
     {
         var id = reader.GetGuid(0);
         var receiptNumber = reader.GetString(1);
-        var orderId = reader.GetGuid(2);
+        var orderId = reader.IsDBNull(2) ? Guid.Empty : reader.GetGuid(2);
         var supplierId = reader.GetGuid(3);
         var destLocationId = reader.GetGuid(4);
         var receivedAt = reader.GetFieldValue<DateTimeOffset>(5);

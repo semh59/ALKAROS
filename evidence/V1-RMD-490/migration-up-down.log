@@ -1,0 +1,4 @@
+ileri (176 dahil tum migrationlar): invoice_id
+geri (176 down): []
+yeniden ileri (176 up): invoice_id
+up ikinci kez (idempotent): hata yok

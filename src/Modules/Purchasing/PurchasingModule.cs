@@ -32,5 +32,6 @@ public sealed class PurchasingModule : IModule
 
         context.RegisterTransient<IPurchaseInvoiceRepository, PostgresPurchaseInvoiceRepository>();
         context.RegisterTransient<IPurchaseInvoiceService, PurchaseInvoiceService>();
+        context.RegisterTransient<IPurchaseInvoiceApprovalService, PurchaseInvoiceApprovalService>();
     }
 }
