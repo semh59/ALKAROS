@@ -20,7 +20,7 @@ Yönetim ekranına "Alış faturaları" bölümü: XML yükleme, taslak listesi,
 
 ## In scope
 
-- Kesin yollar görev başlatılırken yazılır. Bölüm `purchasing.manage` yetkisiyle `management/sections.ts` içine eklenir; eşleştirilmemiş satır sayısı görünür, onay yalnız tüm satırlar eşleşince açılır.
+- Kesin yollar görev başlatılırken yazılır. Bölüm `purchasing.manage` yetkisiyle `management/sections.ts` içine eklenir; eşleştirilmemiş satır sayısı görünür, onay yalnız tüm satırlar eşleşince açılır; onayda giriş yapılacak depo/konum yönetici tarafından seçilir.
 
 ## Out of scope
 
