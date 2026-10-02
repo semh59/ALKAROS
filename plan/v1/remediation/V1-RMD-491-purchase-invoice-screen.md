@@ -1,8 +1,8 @@
 # V1-RMD-491 - Alış faturaları yönetim ekranı
 
 - Task ID: V1-RMD-491
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01XpoF59o3sDPfb7ZADR4BMf
 - Work type: implementation
 - Surface state: Existing
 
@@ -17,6 +17,10 @@ Yönetim ekranına "Alış faturaları" bölümü: XML yükleme, taslak listesi,
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-491-purchase-invoice-screen.md`
+- `evidence/V1-RMD-491/**`
+- `src/Clients/PosTerminal/src/features/management-purchase-invoices/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/sections.ts ve src/Clients/PosTerminal/src/strings.ts — yalnız bu bölümün kaydı ve metinleri
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 

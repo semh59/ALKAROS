@@ -26,6 +26,8 @@ QNB gelen kutusundaki alış faturalarını periyodik çekip `V1-RMD-489` taslak
 
 - Gerçek QNB hesabıyla doğrulama; fatura onayı otomatikleştirme (onay hep yöneticidedir).
 
+- Çekilen faturalar `V1-RMD-491` ekranında XML ile yüklenenlerle aynı listede görünür.
+
 ## Dependencies
 
 - V1-RMD-489
