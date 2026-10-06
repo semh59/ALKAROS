@@ -86,6 +86,14 @@ public sealed class PurchaseInvoiceTestDatabase : PgTestDatabase
         return (long)(await command.ExecuteScalarAsync())!;
     }
 
+    public async Task<long> CountReturnMovementsAsync(Guid invoiceId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT COUNT(*) FROM inventory.stock_movements WHERE source_reference_id = @id AND movement_type = 'Return' AND direction = 'Out';");
+        command.Parameters.AddWithValue("id", invoiceId);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
     public async Task<long> CountReceiptsAsync(Guid invoiceId)
     {
         await using var command = DataSource.CreateCommand("SELECT COUNT(*) FROM purchasing.goods_receipts WHERE invoice_id = @id;");

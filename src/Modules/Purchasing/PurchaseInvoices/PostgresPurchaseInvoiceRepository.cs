@@ -23,8 +23,8 @@ public sealed class PostgresPurchaseInvoiceRepository : IPurchaseInvoiceReposito
             await using (var command = new NpgsqlCommand(
                 """
                 INSERT INTO purchasing.purchase_invoices
-                    (invoice_id, ettn, invoice_number, issue_date, supplier_tax_number, supplier_name, supplier_id, currency, source, status, imported_by, raw_xml, created_at, updated_at)
-                VALUES (@id, @ettn, @number, @issue_date, @tax, @name, @supplier, @currency, @source, @status, @by, @xml, @created, @created);
+                    (invoice_id, ettn, invoice_number, issue_date, supplier_tax_number, supplier_name, supplier_id, currency, source, status, imported_by, raw_xml, created_at, updated_at, kind, referenced_invoice_number)
+                VALUES (@id, @ettn, @number, @issue_date, @tax, @name, @supplier, @currency, @source, @status, @by, @xml, @created, @created, @kind, @referenced);
                 """, connection, transaction))
             {
                 command.Parameters.AddWithValue("id", invoice.InvoiceId);
@@ -40,6 +40,8 @@ public sealed class PostgresPurchaseInvoiceRepository : IPurchaseInvoiceReposito
                 command.Parameters.AddWithValue("by", invoice.ImportedBy);
                 command.Parameters.AddWithValue("xml", rawXml);
                 command.Parameters.AddWithValue("created", invoice.CreatedAt);
+                command.Parameters.AddWithValue("kind", invoice.Kind);
+                command.Parameters.AddWithValue("referenced", (object?)invoice.ReferencedInvoiceNumber ?? DBNull.Value);
                 await command.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
             }
 
@@ -80,7 +82,7 @@ public sealed class PostgresPurchaseInvoiceRepository : IPurchaseInvoiceReposito
         PurchaseInvoice? header = null;
         await using (var command = new NpgsqlCommand(
             """
-            SELECT invoice_id, ettn, invoice_number, issue_date, supplier_tax_number, supplier_name, supplier_id, currency, source, status, imported_by, created_at
+            SELECT invoice_id, ettn, invoice_number, issue_date, supplier_tax_number, supplier_name, supplier_id, currency, source, status, imported_by, created_at, kind, referenced_invoice_number
             FROM purchasing.purchase_invoices WHERE invoice_id = @id;
             """, connection))
         {
@@ -91,7 +93,8 @@ public sealed class PostgresPurchaseInvoiceRepository : IPurchaseInvoiceReposito
                 header = new PurchaseInvoice(
                     reader.GetGuid(0), reader.GetGuid(1), reader.GetString(2), reader.GetFieldValue<DateOnly>(3),
                     reader.GetString(4), reader.GetString(5), reader.IsDBNull(6) ? null : reader.GetGuid(6), reader.GetString(7),
-                    reader.GetString(8), reader.GetString(9), reader.GetString(10), reader.GetFieldValue<DateTimeOffset>(11), []);
+                    reader.GetString(8), reader.GetString(9), reader.GetString(10), reader.GetFieldValue<DateTimeOffset>(11), [],
+                    reader.GetString(12), reader.IsDBNull(13) ? null : reader.GetString(13));
             }
         }
 
@@ -124,7 +127,7 @@ public sealed class PostgresPurchaseInvoiceRepository : IPurchaseInvoiceReposito
         await using var command = _dataSource.CreateCommand(
             """
             SELECT i.invoice_id, i.invoice_number, i.issue_date, i.supplier_name, i.supplier_id, i.status,
-                   COUNT(l.line_id), COUNT(l.line_id) FILTER (WHERE l.stock_item_id IS NULL), COALESCE(SUM(l.line_net), 0)
+                   COUNT(l.line_id), COUNT(l.line_id) FILTER (WHERE l.stock_item_id IS NULL), COALESCE(SUM(l.line_net), 0), i.kind
             FROM purchasing.purchase_invoices i
             LEFT JOIN purchasing.purchase_invoice_lines l ON l.invoice_id = i.invoice_id
             WHERE @status::text IS NULL OR i.status = @status
@@ -141,7 +144,7 @@ public sealed class PostgresPurchaseInvoiceRepository : IPurchaseInvoiceReposito
         {
             result.Add(new PurchaseInvoiceSummary(
                 reader.GetGuid(0), reader.GetString(1), reader.GetFieldValue<DateOnly>(2), reader.GetString(3),
-                reader.IsDBNull(4) ? null : reader.GetGuid(4), reader.GetString(5), (int)reader.GetInt64(6), (int)reader.GetInt64(7), reader.GetDecimal(8)));
+                reader.IsDBNull(4) ? null : reader.GetGuid(4), reader.GetString(5), (int)reader.GetInt64(6), (int)reader.GetInt64(7), reader.GetDecimal(8), reader.GetString(9)));
         }
 
         return result;

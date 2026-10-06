@@ -1525,6 +1525,14 @@
         "purchase_invoice_inbox_cursors"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "178",
+      "phase": "B",
+      "tables": [
+        "purchase_invoices"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

@@ -1,7 +1,7 @@
 # V1-RMD-493 - Alış iade faturası (iade mahsubu)
 
 - Task ID: V1-RMD-493
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01Q1Zb6gZ32qiWwZMu7oArnd
 - Work type: implementation
 - Surface state: Existing

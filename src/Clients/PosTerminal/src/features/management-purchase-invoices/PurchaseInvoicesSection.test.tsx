@@ -15,12 +15,12 @@ const line = (over: Partial<PurchaseInvoiceLine> = {}): PurchaseInvoiceLine => (
   stockItemId: null, conversionFactor: null, ...over,
 });
 const invoice = (over: Partial<PurchaseInvoice> = {}): PurchaseInvoice => ({
-  invoiceId: "i1", invoiceNumber: "ABC001", issueDate: "2026-09-20", supplierName: "Anadolu Gıda", supplierId: "s1", status: "Draft",
+  invoiceId: "i1", invoiceNumber: "ABC001", issueDate: "2026-09-20", supplierName: "Anadolu Gıda", supplierId: "s1", status: "Draft", kind: "Invoice",
   currency: "TRY", lines: [line()], ...over,
 });
 const summary = (over: Partial<PurchaseInvoiceSummary> = {}): PurchaseInvoiceSummary => ({
   invoiceId: "i1", invoiceNumber: "ABC001", issueDate: "2026-09-20", supplierName: "Anadolu Gıda", supplierId: "s1", status: "Draft",
-  lineCount: 1, unmappedLineCount: 1, netTotal: 600, ...over,
+  lineCount: 1, unmappedLineCount: 1, netTotal: 600, kind: "Invoice", ...over,
 });
 
 const client = (over: Partial<PurchaseInvoiceClient> = {}): PurchaseInvoiceClient => ({
@@ -93,6 +93,20 @@ describe("purchase invoices section", () => {
     await press("Onayla ve stoğa gir");
     expect(api.approve).toHaveBeenCalledWith("i1", "d1");
     expect(document.body.textContent).toContain("Fatura onaylandı ve stoğa girdi.");
+  });
+
+  it("a return invoice is marked and approving it says stock is taken out", async () => {
+    const mapped = invoice({ kind: "Return", lines: [line({ stockItemId: "m1", conversionFactor: 24 })] });
+    const api = client({ list: vi.fn().mockResolvedValue([summary({ kind: "Return", unmappedLineCount: 0 })]), get: vi.fn().mockResolvedValue(mapped) });
+    await render(<PurchaseInvoicesSection client={api} />);
+    expect(document.querySelector("tbody tr")!.textContent).toContain("ABC001 (İade)");
+    await openFirst();
+    expect(document.body.textContent).toContain("İade faturası: ABC001");
+    expect(document.body.textContent).not.toContain("Onayla ve stoğa gir");
+    await type("mpi-location", "d1");
+    await press("Onayla ve stoktan düş");
+    expect(api.approve).toHaveBeenCalledWith("i1", "d1");
+    expect(document.body.textContent).toContain("İade onaylandı ve stoktan düşüldü.");
   });
 
   it("refuses a missing item or a non-positive factor without calling the server", async () => {

@@ -5,8 +5,8 @@ using System.Xml.Linq;
 namespace ALKAROS.Purchasing.PurchaseInvoices;
 
 /// <summary>
-/// Reads a UBL-TR sales invoice as received by the buyer. Navigation is by local name so the prefix and namespace
-/// declarations an issuer happens to use do not matter. Returns, credit notes and any document that is not a plain invoice are refused.
+/// Reads a UBL-TR sales invoice or return (IADE invoice, credit note) as received by the buyer. Navigation is by local name so the
+/// prefix and namespace declarations an issuer happens to use do not matter. Any other document is refused.
 /// </summary>
 public static class UblPurchaseInvoiceParser
 {
@@ -17,10 +17,11 @@ public static class UblPurchaseInvoiceParser
         ArgumentException.ThrowIfNullOrWhiteSpace(xml);
         var root = Load(xml);
 
-        if (root.Name.LocalName != "Invoice")
+        var isCreditNote = root.Name.LocalName == "CreditNote";
+        if (root.Name.LocalName != "Invoice" && !isCreditNote)
             throw new UnsupportedPurchaseDocumentException($"Only invoices can be imported; got '{root.Name.LocalName}'.");
-        if (string.Equals(Text(root, "InvoiceTypeCode"), "IADE", StringComparison.OrdinalIgnoreCase))
-            throw new UnsupportedPurchaseDocumentException("Return invoices cannot be imported.");
+        var kind = isCreditNote || string.Equals(Text(root, "InvoiceTypeCode"), "IADE", StringComparison.OrdinalIgnoreCase)
+            ? PurchaseInvoiceKinds.Return : PurchaseInvoiceKinds.Invoice;
 
         var number = Required(root, "ID", "invoice number");
         var ettnText = Required(root, "UUID", "ETTN");
@@ -39,20 +40,22 @@ public static class UblPurchaseInvoiceParser
         var supplierName = Text(Child(party, "PartyName"), "Name") ?? PersonName(Child(party, "Person"))
             ?? throw new InvalidPurchaseInvoiceException("The supplier name is missing.");
 
-        var lines = root.Elements().Where(e => e.Name.LocalName == "InvoiceLine").Select(ParseLine).ToArray();
+        var lines = root.Elements().Where(e => e.Name.LocalName == (isCreditNote ? "CreditNoteLine" : "InvoiceLine")).Select(ParseLine).ToArray();
         if (lines.Length == 0)
             throw new InvalidPurchaseInvoiceException("The invoice has no lines.");
         if (lines.Select(l => l.LineNumber).Distinct().Count() != lines.Length)
             throw new InvalidPurchaseInvoiceException("The invoice has duplicate line numbers.");
 
-        return new ParsedPurchaseInvoice(ettn, number, issueDate, taxNumber, supplierName, currency.ToUpperInvariant(), lines);
+        var referenced = Text(Child(Child(root, "BillingReference"), "InvoiceDocumentReference"), "ID");
+        return new ParsedPurchaseInvoice(
+            ettn, number, issueDate, taxNumber, supplierName, currency.ToUpperInvariant(), lines, kind, referenced is null ? null : Truncate(referenced, 64));
     }
 
     private static ParsedInvoiceLine ParseLine(XElement line)
     {
         var lineNumber = int.TryParse(Text(line, "ID"), NumberStyles.Integer, CultureInfo.InvariantCulture, out var n)
             ? n : throw new InvalidPurchaseInvoiceException("An invoice line has no valid line number.");
-        var quantityElement = Child(line, "InvoicedQuantity")
+        var quantityElement = Child(line, "InvoicedQuantity") ?? Child(line, "CreditedQuantity")
             ?? throw new InvalidPurchaseInvoiceException($"Line {lineNumber} has no quantity.");
         var quantity = Decimal(quantityElement.Value, $"line {lineNumber} quantity");
         if (quantity <= 0)

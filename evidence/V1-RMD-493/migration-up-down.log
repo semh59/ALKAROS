@@ -1,0 +1,4 @@
+ileri (178 dahil tum migrationlar): kind,referenced_invoice_number
+geri (178 down): []
+yeniden ileri (178 up): kind,referenced_invoice_number
+up ikinci kez (idempotent): hata yok

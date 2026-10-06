@@ -38,13 +38,32 @@ public sealed class UblPurchaseInvoiceParserTests
     }
 
     [Fact]
-    public void ADocumentThatIsNotAPlainInvoiceIsRefused()
+    public void ADocumentThatIsNotAnInvoiceOrReturnIsRefused()
     {
-        var creditNote = () => UblPurchaseInvoiceParser.Parse(Build(Guid.NewGuid(), root: "CreditNote"));
-        var returned = () => UblPurchaseInvoiceParser.Parse(Build(Guid.NewGuid(), typeCode: "IADE"));
+        var order = () => UblPurchaseInvoiceParser.Parse(Build(Guid.NewGuid(), root: "Order"));
 
-        creditNote.Should().Throw<UnsupportedPurchaseDocumentException>();
-        returned.Should().Throw<UnsupportedPurchaseDocumentException>();
+        order.Should().Throw<UnsupportedPurchaseDocumentException>();
+    }
+
+    [Theory]
+    [InlineData("Invoice", "IADE")]
+    [InlineData("CreditNote", "SATIS")]
+    public void AReturnInvoiceOrCreditNoteIsReadAsAReturnWithItsReferencedInvoice(string root, string typeCode)
+    {
+        var parsed = UblPurchaseInvoiceParser.Parse(Build(Guid.NewGuid(), root: root, typeCode: typeCode, referenced: "ABC2026000000099"));
+
+        parsed.Kind.Should().Be(PurchaseInvoiceKinds.Return);
+        parsed.ReferencedInvoiceNumber.Should().Be("ABC2026000000099");
+        parsed.Lines.Should().ContainSingle().Which.Quantity.Should().Be(10m);
+    }
+
+    [Fact]
+    public void APlainInvoiceIsNotAReturn()
+    {
+        var parsed = UblPurchaseInvoiceParser.Parse(Build(Guid.NewGuid()));
+
+        parsed.Kind.Should().Be(PurchaseInvoiceKinds.Invoice);
+        parsed.ReferencedInvoiceNumber.Should().BeNull();
     }
 
     [Theory]

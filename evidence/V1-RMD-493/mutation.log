@@ -1,0 +1,17 @@
+﻿Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar hash ile geri yuklenir.
+M1 CreditNote iade sayilmiyor: Başarısız! - Başarısız:     1, Başarılı:    41, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M2 IADE tipli fatura iade sayilmiyor: Başarısız! - Başarısız:     6, Başarılı:    36, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M3 CreditedQuantity okunmuyor: Başarısız! - Başarısız:     1, Başarılı:    41, Atlanan:     0, Toplam:    42, Süre: 7 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M4 basvuru faturasi okunmuyor: Başarısız! - Başarısız:     3, Başarılı:    39, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M5 CreditNote koku reddediliyor: Başarısız! - Başarısız:     1, Başarılı:    41, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M6 iade stoga ekleniyor: Başarısız! - Başarısız:     4, Başarılı:    38, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M7 stok yetmeyince reddedilmiyor: D:\PROJECT\ALKAROS\src\Modules\Purchasing\PurchaseInvoices\PurchaseInvoiceService.cs(75,94): error CS0103: 'line' adı geçerli bağlamda yok [D:\PROJECT\ALKAROS\src\Modules\Purchasing\ALKAROS.Purchasing.csproj]
+M8 iade icin mal kabul kaydi yaziliyor: Başarısız! - Başarısız:     1, Başarılı:    41, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M9 iade hareketi giris yonunde: Başarısız! - Başarısız:     1, Başarılı:    41, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M10 iade hareketi alis girisi tipinde: Başarısız! - Başarısız:     1, Başarılı:    41, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M11 belge turu kaydedilmiyor: Başarısız! - Başarısız:     5, Başarılı:    37, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M12 liste belge turunu vermiyor: Başarısız! - Başarısız:     1, Başarılı:    41, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M13 basvuru numarasi kaydedilmiyor: Başarısız! - Başarısız:     1, Başarılı:    41, Atlanan:     0, Toplam:    42, Süre: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+geri yukleme (hash karsilastirma): ayni
+M7 (yeniden) stok yetmeyince reddedilmiyor: Ba┼şar─▒s─▒z! - Ba┼şar─▒s─▒z:     2, Ba┼şar─▒l─▒:    40, Atlanan:     0, Toplam:    42, S├╝re: 3 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M7 geri yukleme: ayni

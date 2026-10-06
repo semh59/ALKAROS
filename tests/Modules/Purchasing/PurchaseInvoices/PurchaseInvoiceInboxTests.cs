@@ -70,9 +70,9 @@ public sealed class PurchaseInvoiceInboxTests : IClassFixture<PurchaseInvoiceTes
     }
 
     [Fact]
-    public async Task AReturnInvoiceAndABrokenDocumentAreSkippedAndTheCursorPassesThem()
+    public async Task ABrokenOrForeignDocumentIsSkippedAndTheCursorPassesIt()
     {
-        Offer(xml: Build(Guid.NewGuid(), Tax(), typeCode: "IADE"));
+        Offer(xml: Build(Guid.NewGuid(), Tax(), root: "Order"));
         Offer(xml: "bu xml degil");
         var (_, lastSequence) = Offer();
 
@@ -80,6 +80,18 @@ public sealed class PurchaseInvoiceInboxTests : IClassFixture<PurchaseInvoiceTes
 
         result.Should().Be(new InboxFetchResult(3, 1, 0, 2, false));
         (await _repository.GetInboxCursorAsync(PurchaseInvoiceSources.QnbInbox)).Should().Be(lastSequence);
+    }
+
+    [Fact]
+    public async Task AReturnInvoiceBecomesAReturnDraft()
+    {
+        var number = "IADE" + Guid.NewGuid().ToString("N")[..10];
+        Offer(xml: Build(Guid.NewGuid(), Tax(), number: number, typeCode: "IADE", referenced: "ABC1"));
+
+        var result = await _inbox.FetchAsync("Ayşe");
+
+        result.Should().Be(new InboxFetchResult(1, 1, 0, 0, false));
+        (await _invoices.ListAsync("Draft")).Should().ContainSingle(i => i.InvoiceNumber == number).Which.Kind.Should().Be(PurchaseInvoiceKinds.Return);
     }
 
     [Fact]

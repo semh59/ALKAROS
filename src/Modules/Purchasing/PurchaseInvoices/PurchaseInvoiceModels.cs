@@ -6,6 +6,12 @@ public static class PurchaseInvoiceSources
     public const string QnbInbox = "QnbInbox";
 }
 
+public static class PurchaseInvoiceKinds
+{
+    public const string Invoice = "Invoice";
+    public const string Return = "Return";
+}
+
 public static class PurchaseInvoiceStatuses
 {
     public const string Draft = "Draft";
@@ -22,7 +28,7 @@ public sealed record ParsedInvoiceLine(
 
 public sealed record ParsedPurchaseInvoice(
     Guid Ettn, string InvoiceNumber, DateOnly IssueDate, string SupplierTaxNumber, string SupplierName, string Currency,
-    IReadOnlyList<ParsedInvoiceLine> Lines);
+    IReadOnlyList<ParsedInvoiceLine> Lines, string Kind = PurchaseInvoiceKinds.Invoice, string? ReferencedInvoiceNumber = null);
 
 public sealed record PurchaseInvoiceLine(
     Guid LineId, int LineNumber, string ItemKey, string? SupplierItemCode, string Description, decimal Quantity, string UnitCode,
@@ -31,10 +37,10 @@ public sealed record PurchaseInvoiceLine(
 public sealed record PurchaseInvoice(
     Guid InvoiceId, Guid Ettn, string InvoiceNumber, DateOnly IssueDate, string SupplierTaxNumber, string SupplierName,
     Guid? SupplierId, string Currency, string Source, string Status, string ImportedBy, DateTimeOffset CreatedAt,
-    IReadOnlyList<PurchaseInvoiceLine> Lines);
+    IReadOnlyList<PurchaseInvoiceLine> Lines, string Kind = PurchaseInvoiceKinds.Invoice, string? ReferencedInvoiceNumber = null);
 
 public sealed record PurchaseInvoiceSummary(
     Guid InvoiceId, string InvoiceNumber, DateOnly IssueDate, string SupplierName, Guid? SupplierId, string Status,
-    int LineCount, int UnmappedLineCount, decimal NetTotal);
+    int LineCount, int UnmappedLineCount, decimal NetTotal, string Kind = PurchaseInvoiceKinds.Invoice);
 
 public sealed record SupplierItemMapping(string SupplierTaxNumber, string ItemKey, string PurchaseUnitCode, Guid StockItemId, decimal ConversionFactor);

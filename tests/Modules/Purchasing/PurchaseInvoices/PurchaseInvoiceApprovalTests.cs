@@ -126,6 +126,82 @@ public sealed class PurchaseInvoiceApprovalTests : IClassFixture<PurchaseInvoice
         await approve.Should().ThrowAsync<PurchaseInvoiceStatusException>();
     }
 
+    private async Task<PurchaseInvoice> ReturnInvoiceAsync(string tax, params Line[] lines)
+        => await _imports.ImportAsync(
+            Build(Guid.NewGuid(), tax, issueDate: "2026-09-25", typeCode: "IADE", referenced: "ABC2026000000001", lines: lines),
+            "Ayşe", PurchaseInvoiceSources.XmlUpload);
+
+    [Fact]
+    public async Task ApprovingAReturnTakesTheConvertedQuantityOutOfStockWithoutAReceipt()
+    {
+        var tax = NewTax();
+        var (purchase, stock, location) = await MappedBoxInvoiceAsync(tax);
+        await _approvals.ApproveAsync(purchase.InvoiceId, location, "Müdür");
+        var invoice = await ReturnInvoiceAsync(tax, new Line("1", "SUT-KOLI", "Süt koli", "2", "BX", "240.00"));
+        invoice.Kind.Should().Be(PurchaseInvoiceKinds.Return);
+        (await _imports.GetAsync(invoice.InvoiceId)).Should().Match<PurchaseInvoice>(i => i.Kind == PurchaseInvoiceKinds.Return && i.ReferencedInvoiceNumber == "ABC2026000000001");
+        invoice.Lines[0].StockItemId.Should().Be(stock);
+
+        await _approvals.ApproveAsync(invoice.InvoiceId, location, "Müdür");
+
+        (await _imports.GetAsync(invoice.InvoiceId)).Status.Should().Be("Approved");
+        (await _database.ReadOnHandAsync(stock, location)).Should().Be(72m);
+        (await _database.CountReturnMovementsAsync(invoice.InvoiceId)).Should().Be(1);
+        (await _database.CountReceiptsAsync(invoice.InvoiceId)).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task AReturnThatExceedsTheStockIsNotApprovedAndChangesNothing()
+    {
+        var tax = NewTax();
+        var (purchase, stock, location) = await MappedBoxInvoiceAsync(tax);
+        await _approvals.ApproveAsync(purchase.InvoiceId, location, "Müdür");
+        var invoice = await ReturnInvoiceAsync(tax, new Line("1", "SUT-KOLI", "Süt koli", "6", "BX", "720.00"));
+
+        var act = () => _approvals.ApproveAsync(invoice.InvoiceId, location, "Müdür");
+
+        await act.Should().ThrowAsync<PurchaseInvoiceNotReadyException>();
+        (await _imports.GetAsync(invoice.InvoiceId)).Status.Should().Be("Draft");
+        (await _database.ReadOnHandAsync(stock, location)).Should().Be(120m);
+        (await _database.CountReturnMovementsAsync(invoice.InvoiceId)).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task AReturnWithOneShortLineTakesNothingOutOfStock()
+    {
+        var tax = NewTax();
+        await _database.SeedSupplierAsync(tax);
+        var location = await _database.SeedLocationAsync();
+        var plenty = await _database.SeedStockItemAsync("Un", "kg");
+        var none = await _database.SeedStockItemAsync("Yağ", "l");
+        await new PostgresStockBalanceRepository(_database.DataSource).ApplyOnHandDeltaAsync(plenty, location, 50m);
+        var invoice = await ReturnInvoiceAsync(
+            tax, new Line("1", "UN", "Un", "5", "KGM", "100.00"), new Line("2", "YAG", "Yağ", "1", "LTR", "80.00"));
+        await _imports.MapLineAsync(invoice.InvoiceId, invoice.Lines[0].LineId, plenty, 1m);
+        await _imports.MapLineAsync(invoice.InvoiceId, invoice.Lines[1].LineId, none, 1m);
+
+        var act = () => _approvals.ApproveAsync(invoice.InvoiceId, location, "Müdür");
+
+        await act.Should().ThrowAsync<PurchaseInvoiceNotReadyException>();
+        (await _database.ReadOnHandAsync(plenty, location)).Should().Be(50m);
+        (await _database.CountReturnMovementsAsync(invoice.InvoiceId)).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task ApprovingAReturnTwiceDoesNotTakeStockOutAgain()
+    {
+        var tax = NewTax();
+        var (purchase, stock, location) = await MappedBoxInvoiceAsync(tax);
+        await _approvals.ApproveAsync(purchase.InvoiceId, location, "Müdür");
+        var invoice = await ReturnInvoiceAsync(tax, new Line("1", "SUT-KOLI", "Süt koli", "2", "BX", "240.00"));
+        await _approvals.ApproveAsync(invoice.InvoiceId, location, "Müdür");
+
+        var again = () => _approvals.ApproveAsync(invoice.InvoiceId, location, "Müdür");
+
+        await again.Should().ThrowAsync<PurchaseInvoiceStatusException>();
+        (await _database.ReadOnHandAsync(stock, location)).Should().Be(72m);
+    }
+
     [Fact]
     public async Task AnUnknownInvoiceIsNotFound()
     {

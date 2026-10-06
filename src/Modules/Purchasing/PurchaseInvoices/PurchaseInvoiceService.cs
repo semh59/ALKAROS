@@ -52,7 +52,8 @@ public sealed class PurchaseInvoiceService : IPurchaseInvoiceService
 
         var invoice = new PurchaseInvoice(
             Guid.NewGuid(), parsed.Ettn, parsed.InvoiceNumber, parsed.IssueDate, parsed.SupplierTaxNumber, parsed.SupplierName,
-            supplier?.Id, parsed.Currency, source, PurchaseInvoiceStatuses.Draft, importedBy, DateTimeOffset.UtcNow, lines);
+            supplier?.Id, parsed.Currency, source, PurchaseInvoiceStatuses.Draft, importedBy, DateTimeOffset.UtcNow, lines,
+            parsed.Kind, parsed.ReferencedInvoiceNumber);
         await _invoices.InsertAsync(invoice, xml, ct).ConfigureAwait(false);
         return invoice;
     }
@@ -84,6 +85,7 @@ public interface IPurchaseInvoiceApprovalService
     /// <summary>
     /// Turns a fully mapped draft into an order-less goods receipt and its stock effect in one transaction; returns the receipt id.
     /// Quantities and unit prices are converted to the stock item's tracking unit with each line's conversion factor.
+    /// A return invoice instead takes its quantities out of stock at that location (all or nothing) and returns the invoice id.
     /// </summary>
     Task<Guid> ApproveAsync(Guid invoiceId, Guid locationId, string approvedBy, CancellationToken ct = default);
 
@@ -124,7 +126,8 @@ public sealed class PurchaseInvoiceApprovalService : IPurchaseInvoiceApprovalSer
             ?? (await _suppliers.GetByTaxNumberAsync(invoice.SupplierTaxNumber, ct).ConfigureAwait(false))?.Id
             ?? throw new PurchaseInvoiceNotReadyException($"No supplier is registered for tax number '{invoice.SupplierTaxNumber}'.");
 
-        var receiptId = Guid.NewGuid();
+        var isReturn = invoice.Kind == PurchaseInvoiceKinds.Return;
+        var receiptId = isReturn ? invoiceId : Guid.NewGuid();
         var receivedAt = new DateTimeOffset(invoice.IssueDate.ToDateTime(TimeOnly.MinValue), TimeSpan.FromHours(3)).ToUniversalTime();
         var lines = new List<InvoiceReceiptLine>();
         foreach (var line in invoice.Lines)
@@ -138,20 +141,32 @@ public sealed class PurchaseInvoiceApprovalService : IPurchaseInvoiceApprovalSer
         }
 
         var receipt = new InvoiceReceipt(
-            receiptId, "FAT-" + invoiceId.ToString("N")[..12].ToUpperInvariant(), invoiceId, supplierId, locationId, receivedAt, approvedBy,
+            receiptId, (isReturn ? "IADE-" : "FAT-") + invoiceId.ToString("N")[..12].ToUpperInvariant(), invoiceId, supplierId, locationId, receivedAt, approvedBy,
             $"Alış faturası {invoice.InvoiceNumber}", lines);
 
         await using var connection = await _dataSource.OpenConnectionAsync(ct).ConfigureAwait(false);
         await using var transaction = await connection.BeginTransactionAsync(ct).ConfigureAwait(false);
         if (!await _invoices.TryTransitionAsync(invoiceId, PurchaseInvoiceStatuses.Draft, PurchaseInvoiceStatuses.Approved, connection, transaction, ct).ConfigureAwait(false))
             throw new PurchaseInvoiceStatusException("The purchase invoice is no longer a draft.");
-        await _invoices.InsertReceiptAsync(receipt, connection, transaction, ct).ConfigureAwait(false);
+        if (!isReturn)
+            await _invoices.InsertReceiptAsync(receipt, connection, transaction, ct).ConfigureAwait(false);
         foreach (var line in lines)
         {
-            await _balances.ApplyOnHandDeltaAsync(line.StockItemId, locationId, line.Quantity, connection, transaction, ct).ConfigureAwait(false);
+            if (isReturn)
+            {
+                if (await _balances.TryApplyGuardedOnHandDeltaAsync(line.StockItemId, locationId, -line.Quantity, connection, transaction, ct).ConfigureAwait(false) is null)
+                    throw new PurchaseInvoiceNotReadyException($"Not enough stock at the location to return {line.Quantity} {line.UnitCode} of stock item '{line.StockItemId}'.");
+            }
+            else
+            {
+                await _balances.ApplyOnHandDeltaAsync(line.StockItemId, locationId, line.Quantity, connection, transaction, ct).ConfigureAwait(false);
+            }
+
             await _movements.AppendAsync(new StockMovement(
-                id: Guid.NewGuid(), stockItemId: line.StockItemId, stockLocationId: locationId, movementType: StockMovementType.PurchaseReceipt,
-                direction: MovementDirection.In, quantity: line.Quantity, unitCode: line.UnitCode, sourceType: StockMovementSourceType.GoodsReceipt,
+                id: Guid.NewGuid(), stockItemId: line.StockItemId, stockLocationId: locationId,
+                movementType: isReturn ? StockMovementType.Return : StockMovementType.PurchaseReceipt,
+                direction: isReturn ? MovementDirection.Out : MovementDirection.In, quantity: line.Quantity, unitCode: line.UnitCode,
+                sourceType: isReturn ? StockMovementSourceType.Manual : StockMovementSourceType.GoodsReceipt,
                 sourceReferenceId: receiptId, reason: receipt.ReceiptNumber, createdBy: null, createdAt: DateTimeOffset.UtcNow),
                 connection, transaction, ct).ConfigureAwait(false);
         }

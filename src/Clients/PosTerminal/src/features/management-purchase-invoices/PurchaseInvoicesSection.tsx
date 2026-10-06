@@ -6,7 +6,7 @@ import type { ManagementSectionProps } from "../management/sections";
 import { Notice, PanelView, errorText, usePanel } from "../management/panel";
 import { createPurchaseInvoiceClient, type PurchaseInvoiceClient } from "./api";
 import {
-  invoiceStatusLabel, invoiceStatuses, parseQuantity, type LookupItem, type LookupLocation, type PurchaseInvoice, type PurchaseInvoiceSummary,
+  invoiceStatusLabel, invoiceStatuses, isReturn, parseQuantity, type LookupItem, type LookupLocation, type PurchaseInvoice, type PurchaseInvoiceSummary,
 } from "./models";
 import "./management-purchase-invoices.css";
 
@@ -98,7 +98,7 @@ export function PurchaseInvoicesSection({ client }: Partial<ManagementSectionPro
           <th>{t.invoiceNumber}</th><th>{t.issueDate}</th><th>{t.supplier}</th><th>{t.status}</th>
           <th className="mpi__num">{t.lines}</th><th className="mpi__num">{t.unmappedLines}</th><th className="mpi__num">{t.netTotal}</th><th>{t.action}</th></tr></thead>
         <tbody>{rows.map((row) => <tr key={row.invoiceId}>
-          <td>{row.invoiceNumber}</td><td>{new Date(`${row.issueDate}T00:00:00`).toLocaleDateString("tr-TR")}</td><td>{row.supplierName}</td>
+          <td>{row.invoiceNumber}{isReturn(row.kind) && ` (${t.returnBadge})`}</td><td>{new Date(`${row.issueDate}T00:00:00`).toLocaleDateString("tr-TR")}</td><td>{row.supplierName}</td>
           <td>{invoiceStatusLabel(row.status)}</td>
           <td className="mpi__num">{row.lineCount}</td><td className="mpi__num">{row.unmappedLineCount}</td><td className="mpi__num">{formatMoney(row.netTotal)}</td>
           <td><Button variant="secondary" disabled={busy} onClick={() => void act(async () => { setOpen(await api.get(row.invoiceId)); setPicks({}); }, t.opened)}>{t.open}</Button></td>
@@ -106,7 +106,7 @@ export function PurchaseInvoicesSection({ client }: Partial<ManagementSectionPro
       </table>}
     </PanelView>
     {open && <section aria-label={t.detailHeading}>
-      <h3>{t.detailHeading}: {open.invoiceNumber} — {open.supplierName} ({invoiceStatusLabel(open.status)})</h3>
+      <h3>{isReturn(open.kind) ? t.returnHeading : t.detailHeading}: {open.invoiceNumber} — {open.supplierName} ({invoiceStatusLabel(open.status)})</h3>
       {open.supplierId === null && isDraft && <p role="alert" className="mpi__warning">{t.noSupplier}</p>}
       <table>
         <thead><tr>
@@ -134,11 +134,11 @@ export function PurchaseInvoicesSection({ client }: Partial<ManagementSectionPro
         <p className="mpi__hint">{t.factorHint}</p>
         {unmapped > 0 && <p className="mpi__warning">{t.unmappedWarning(unmapped)}</p>}
         {lookups.state === "ready" && <div className="mpi__actions">
-          <SelectField id="mpi-location" label={t.location} value={locationId} onChange={(event) => setLocationId(event.target.value)}>
+          <SelectField id="mpi-location" label={isReturn(open.kind) ? t.locationReturn : t.location} value={locationId} onChange={(event) => setLocationId(event.target.value)}>
             <option value="">{t.choose}</option>
             {lookups.data.locations.map((location) => <option key={location.id} value={location.id}>{location.name}</option>)}
           </SelectField>
-          <Button disabled={busy || unmapped > 0 || locationId === ""} onClick={() => finish(() => api.approve(open.invoiceId, locationId), t.approved)}>{t.approve}</Button>
+          <Button disabled={busy || unmapped > 0 || locationId === ""} onClick={() => finish(() => api.approve(open.invoiceId, locationId), isReturn(open.kind) ? t.approvedReturn : t.approved)}>{isReturn(open.kind) ? t.approveReturn : t.approve}</Button>
           <Button variant="secondary" disabled={busy} onClick={() => finish(() => api.reject(open.invoiceId), t.rejected)}>{t.reject}</Button>
         </div>}
       </>}

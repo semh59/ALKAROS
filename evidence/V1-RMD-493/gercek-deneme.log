@@ -1,0 +1,10 @@
+giris: HTTP 200
+1. alis faturasi onaylandi, stok: 120 (120 bekleniyor)
+2. IADE faturasi yukleme: HTTP 201 tur=Return basvuru=ALIS1 satir otomatik eslesti=true
+3. taslak listesi: IADE1:Return
+4. iade onayi: HTTP 200; stok: 72 (72 bekleniyor)
+5. stok hareketi: Return/Out/48.0000kg
+6. iade icin mal kabul kaydi: 0 (0 bekleniyor)
+7. ikinci onay: HTTP 409 INVALID_STATUS; stok: 72
+8. CreditNote yukleme: HTTP 201 tur=Return
+9. stoktan fazla iade onayi: HTTP 409 INVOICE_NOT_READY; stok: 72; durum taslak=true
