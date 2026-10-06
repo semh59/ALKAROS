@@ -35,7 +35,7 @@ QNB gelen kutusundaki alış faturalarını periyodik çekip `V1-RMD-489` taslak
 
 ## Out of scope
 
-- Gerçek QNB hesabıyla doğrulama; fatura onayı otomatikleştirme (onay hep yöneticidedir); zamanlanmış otomatik çekme (sözleşme gerçek hesapla doğrulanana kadar yalnız elle çekilir).
+- Gerçek QNB hesabıyla doğrulama; fatura onayı otomatikleştirme (onay hep yöneticidedir); zamanlanmış otomatik çekme (sözleşme gerçek hesapla doğrulanana kadar yalnız elle çekilir); iade faturaları (bunlar `V1-RMD-493` ile işlenir).
 
 - Çekilen faturalar `V1-RMD-491` ekranında XML ile yüklenenlerle aynı listede görünür.
 
