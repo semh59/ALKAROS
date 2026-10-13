@@ -1,0 +1,12 @@
+# Mutasyon sonuçları
+cancel-body: KILLED
+cancel-hide: KILLED
+request-body: KILLED
+reject-note: KILLED
+slip: KILLED
+cancelled-phase: KILLED
+error-text: KILLED
+approved-only: KILLED
+bill-filter: KILLED
+open-request-hide: KILLED
+(approved-only, bill-filter, open-request-hide ilk turda SURVIVED; test eklenip ikinci turda KILLED)

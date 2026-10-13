@@ -1,0 +1,2 @@
+# Test çalıştırmaları (2026-10-13)
+tests/Clients/StaticApps: 4 dosya, 37 test (split-payment-refunds 10 yeni) — vitest exit 0
