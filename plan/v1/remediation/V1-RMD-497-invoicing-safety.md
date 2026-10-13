@@ -19,7 +19,7 @@ Bağımsız taramanın bulduğu iki faturalama riskini kapatmak: faturası üret
 - `plan/v1/remediation/V1-RMD-497-invoicing-safety.md`
 - `evidence/V1-RMD-497/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Invoicing/SourceSelection/PostgresInvoiceSourceSelectionService.cs ve src/Modules/Invoicing/SourceSelection/InvoiceSourceSelectionExceptions.cs — yalnız faturalanmış setin iptalinin reddi
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Invoicing/SourceSelection/InvoiceSourceSelectionTests.cs ve tests/Modules/Invoicing/SourceSelection/Fixtures/InvoiceSourceSelectionTestDatabase.cs — yalnız bu görevin testleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Invoicing/SourceSelection/InvoiceSourceSelectionTests.cs ve tests/Modules/Invoicing/SourceSelection/ALKAROS.Invoicing.SourceSelection.Tests.csproj — yalnız bu görevin testleri (faturalar tablosunun test şemasına eklenmesi dahil)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/OnlineOrdering/OnlineOrderInvoiceDrafting.cs ve tests/Host/Experience/OnlineOrdering/OnlineOperationsHttpTests.cs — yalnız taslak geçişi sıralaması
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
