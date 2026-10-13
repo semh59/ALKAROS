@@ -3,7 +3,7 @@
 import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { type ClosingClient } from "./closingApi";
+import { createClosingClient, type ClosingClient } from "./closingApi";
 import { ClosingSection } from "./index";
 import type { BusinessDay } from "./models";
 import { ManagementApiError } from "../management/http";
@@ -35,6 +35,8 @@ function fakeClient(overrides: Partial<ClosingClient> = {}): ClosingClient {
       { caseId: "c2", caseType: "OnlineOrderMismatch", severity: "Low", status: "Investigating", discrepancyAmount: 5, openedAt: "2026-09-29T09:30:00Z", rowVersion: 1 },
     ]),
     transitionCase: vi.fn().mockResolvedValue(undefined),
+    listCaseActions: vi.fn().mockResolvedValue([]),
+    addCaseNote: vi.fn().mockResolvedValue(undefined),
     ...overrides,
   };
 }
@@ -111,5 +113,69 @@ describe("closing and reconciliation section", () => {
     await render(<ClosingSection client={client} capabilities={new Set(["reports.view"])} />);
     expect(document.body.textContent).toContain("Rapor şu an hazırlanamıyor.");
     expect(document.body.textContent).toContain("SLP-9");
+  });
+  async function renderCases(client: ClosingClient, capabilities = new Set(["reports.view", "reconciliation.manage"])) {
+    await render(<ClosingSection capabilities={capabilities} client={client} />);
+  }
+  const press = async (text: string) => {
+    const button = [...document.querySelectorAll("button")].find((candidate) => candidate.textContent === text)!;
+    await act(async () => button.click());
+  };
+
+  it("shows a case's history with Turkish action names and the stored note or reason", async () => {
+    const client = fakeClient({
+      listCaseActions: vi.fn().mockResolvedValue([
+        { actionId: "a1", actionType: "Created", performedAt: "2026-09-29T09:00:00Z", detailsJson: null },
+        { actionId: "a2", actionType: "NoteAdded", performedAt: "2026-09-29T10:00:00Z", detailsJson: "{\"note\":\"Banka ile görüşüldü\"}" },
+        { actionId: "a3", actionType: "StatusChanged", performedAt: "2026-09-29T11:00:00Z", detailsJson: "{\"reason\":\"Fiş bulundu\"}" },
+      ]),
+    });
+    await renderCases(client, new Set(["reports.view"]));
+    await press("Geçmiş");
+    expect(client.listCaseActions).toHaveBeenCalledWith("c1");
+    const region = document.querySelector('[aria-label="Vaka geçmişi"]')!;
+    expect(region.textContent).toContain("Vaka açıldı");
+    expect(region.textContent).toContain("Banka ile görüşüldü");
+    expect(region.textContent).toContain("Fiş bulundu");
+    expect(region.textContent).not.toContain("NoteAdded");
+    expect(region.textContent).not.toContain("{");
+  });
+
+  it("adds a note without changing the status, only for a manager and never an empty one", async () => {
+    const client = fakeClient();
+    await renderCases(client, new Set(["reports.view"]));
+    expect([...document.querySelectorAll("button")].map((button) => button.textContent)).not.toContain("Not ekle");
+
+    await renderCases(client);
+    await press("Not ekle");
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Önce bir not yazın.");
+    expect(client.addCaseNote).not.toHaveBeenCalled();
+    const input = document.getElementById("closing-case-note") as HTMLInputElement;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!.call(input, "Müşteri arandı");
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await press("Not ekle");
+    expect(client.addCaseNote).toHaveBeenCalledWith("c1", "Müşteri arandı");
+    expect(client.transitionCase).not.toHaveBeenCalled();
+  });
+
+  it("shows the server's Turkish refusal when the history cannot be read", async () => {
+    const client = fakeClient({ listCaseActions: vi.fn().mockRejectedValue(new ManagementApiError(404, "NOT_FOUND", "Vaka bulunamadı.")) });
+    await renderCases(client);
+    await press("Geçmiş");
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Vaka bulunamadı.");
+  });
+
+  it("the client reads actions and posts notes on the case routes", async () => {
+    const fetcher = vi.fn((_url: string, _init?: RequestInit) => Promise.resolve(new Response("[]", { status: 200 })));
+    const api = createClosingClient(fetcher as unknown as typeof fetch);
+    await api.listCaseActions("c1");
+    expect(fetcher.mock.calls.at(-1)![0]).toBe("/api/v1/management/reconciliation/cases/c1/actions");
+    await api.addCaseNote("c1", "  not  ");
+    const [url, init] = fetcher.mock.calls.at(-1)!;
+    expect(url).toBe("/api/v1/management/reconciliation/cases/c1/notes");
+    expect(init?.method).toBe("POST");
+    expect(JSON.parse(init!.body as string)).toEqual({ note: "not" });
   });
 });

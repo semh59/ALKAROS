@@ -5,7 +5,7 @@ import { commonActions, managementText } from "../../strings";
 import { createClosingClient, type ClosingClient } from "./closingApi";
 import {
   caseStatusLabel, caseStatuses, caseTypeLabel, confirmationStatusLabel, dayStatusLabel, nextStatuses, severityLabel,
-  tenderLabel, transitionActionLabel, type BusinessDay, type BusinessDayReport, type CaseStatus, type ManualConfirmation,
+  tenderLabel, transitionActionLabel, caseActionLabel, caseActionText, type CaseAction, type BusinessDay, type BusinessDayReport, type CaseStatus, type ManualConfirmation,
   type ReconciliationCase, type SettlementReport,
 } from "./models";
 import { errorText } from "../management/panel";
@@ -57,6 +57,7 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
   const [cancelledItems, setCancelledItems] = useState("0");
   const [printFailures, setPrintFailures] = useState("0");
   const [caseNote, setCaseNote] = useState("");
+  const [history, setHistory] = useState<{ caseId: string; rows: readonly CaseAction[] }>();
   const [busy, setBusy] = useState(false);
 
   async function act(work: () => Promise<void>, success: string, refresh: () => void) {
@@ -70,6 +71,21 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
     } finally {
       setBusy(false);
     }
+  }
+  async function openHistory(caseId: string) {
+    setNotice(undefined);
+    try {
+      setHistory({ caseId, rows: await api.listCaseActions(caseId) });
+    } catch (reason) {
+      setNotice({ tone: "error", text: errorText(reason, t.actionFailed) });
+    }
+  }
+  function addNote(caseId: string) {
+    if (!caseNote.trim()) return setNotice({ tone: "error", text: t.caseNoteRequired });
+    void act(() => api.addCaseNote(caseId, caseNote), t.caseNoteAdded, () => {
+      setCaseNote("");
+      if (history?.caseId === caseId) void openHistory(caseId);
+    });
   }
   const refreshDay = () => { reloadDay(); reloadReport(); reloadSettlement(); };
   const count = (value: string) => Math.max(0, Math.trunc(Number(value) || 0));
@@ -161,17 +177,29 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
         </div>
         {canManage && <TextField id="closing-case-note" label={t.caseNote} value={caseNote} onChange={(event) => setCaseNote(event.target.value)} />}
         {rows.length === 0 ? <Empty /> : <table>
-          <thead><tr><th>{t.caseType}</th><th>{t.severity}</th><th>{t.status}</th><th>{t.amount}</th><th>{t.opened}</th>{canManage && <th>{t.actions}</th>}</tr></thead>
+          <thead><tr><th>{t.caseType}</th><th>{t.severity}</th><th>{t.status}</th><th>{t.amount}</th><th>{t.opened}</th><th>{t.actions}</th></tr></thead>
           <tbody>{rows.map((row) => <tr key={row.caseId}>
             <td>{caseTypeLabel(row.caseType)}</td><td>{severityLabel(row.severity)}</td><td>{caseStatusLabel(row.status)}</td>
             <td>{formatMoney(row.discrepancyAmount)}</td><td>{stamp(row.openedAt)}</td>
-            {canManage && <td className="closing__actions">{nextStatuses(row.status, row.caseType).map((target) =>
+            <td className="closing__actions">
+              <Button variant="quiet" disabled={busy} onClick={() => void openHistory(row.caseId)}>{t.caseHistory}</Button>
+              {canManage && <Button variant="quiet" disabled={busy} onClick={() => addNote(row.caseId)}>{t.caseAddNote}</Button>}
+              {canManage && nextStatuses(row.status, row.caseType).map((target) =>
               <Button key={target} variant="quiet" disabled={busy}
                 onClick={() => void act(() => api.transitionCase(row.caseId, target, row.rowVersion, caseNote), t.caseUpdated, reloadCases)}>
                 {transitionActionLabel(target)}
-              </Button>)}</td>}
+              </Button>)}</td>
           </tr>)}</tbody>
         </table>}
+        {history && <div className="closing__history" role="region" aria-label={t.caseHistoryHeading}>
+          <h4>{t.caseHistoryHeading}</h4>
+          {history.rows.length === 0 ? <p className="closing__empty">{t.caseHistoryEmpty}</p> : <table>
+            <thead><tr><th>{t.caseActionType}</th><th>{t.caseActionWhen}</th><th>{t.caseActionDetail}</th></tr></thead>
+            <tbody>{history.rows.map((action) => <tr key={action.actionId}>
+              <td>{caseActionLabel(action.actionType)}</td><td>{stamp(action.performedAt)}</td><td>{caseActionText(action.detailsJson)}</td></tr>)}</tbody>
+          </table>}
+          <Button variant="secondary" onClick={() => setHistory(undefined)}>{t.caseHistoryClose}</Button>
+        </div>}
       </div>}
     </PanelView>
   </div>;

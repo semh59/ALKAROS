@@ -1,4 +1,4 @@
-import type { BusinessDay, BusinessDayReport, CaseStatus, ManualConfirmation, ReconciliationCase, SettlementReport } from "./models";
+import type { BusinessDay, CaseAction, BusinessDayReport, CaseStatus, ManualConfirmation, ReconciliationCase, SettlementReport } from "./models";
 import { ManagementApiError, createRequester } from "../management/http";
 
 export interface ClosingClient {
@@ -11,6 +11,8 @@ export interface ClosingClient {
   scanPayments: () => Promise<void>;
   listCases: (status: CaseStatus) => Promise<readonly ReconciliationCase[]>;
   transitionCase: (caseId: string, newStatus: CaseStatus, expectedVersion: number, note: string) => Promise<void>;
+  listCaseActions: (caseId: string) => Promise<readonly CaseAction[]>;
+  addCaseNote: (caseId: string, note: string) => Promise<void>;
 }
 
 export function createClosingClient(fetcher: typeof fetch = fetch): ClosingClient {
@@ -35,6 +37,8 @@ export function createClosingClient(fetcher: typeof fetch = fetch): ClosingClien
     listManualConfirmations: () => json("/payments/manual-confirmations"),
     scanPayments: () => post("/payments/reconciliation-scan", {}),
     listCases: (status) => json(`/reconciliation/cases?status=${status}&limit=50`),
+    listCaseActions: (caseId) => json(`/reconciliation/cases/${caseId}/actions`),
+    addCaseNote: (caseId, note) => post(`/reconciliation/cases/${caseId}/notes`, { note: note.trim() }),
     transitionCase: (caseId, newStatus, expectedVersion, note) =>
       post(`/reconciliation/cases/${caseId}/transition`, { newStatus, expectedVersion, reasonOrNote: note.trim() || null }),
   };

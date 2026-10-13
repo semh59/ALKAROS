@@ -49,6 +49,8 @@ export interface ReconciliationCase {
   rowVersion: number;
 }
 
+export interface CaseAction { actionId: string; actionType: string; performedAt: string; detailsJson: string | null }
+
 export const caseStatuses = ["Open", "Investigating", "Escalated", "Resolved", "Dismissed"] as const;
 export type CaseStatus = (typeof caseStatuses)[number];
 
@@ -64,6 +66,23 @@ export const caseTypeLabel = label({
   OnlineOrderMismatch: "Online sipariş uyuşmazlığı",
   InventoryDiscrepancy: "Stok farkı",
 });
+export const caseActionLabel = label({
+  Created: "Vaka açıldı", Deduplicated: "Tekrar eden kayıt birleştirildi", StatusChanged: "Durum değişti", NoteAdded: "Not eklendi",
+  Resolved: "Çözüldü", Dismissed: "Reddedildi", Escalated: "Üst makama iletildi",
+});
+
+/** The server stores the note or reason as a small JSON object; anything else is not shown. */
+export function caseActionText(detailsJson: string | null): string {
+  if (!detailsJson) return "";
+  try {
+    const parsed = JSON.parse(detailsJson) as { note?: unknown; reason?: unknown };
+    const text = typeof parsed.note === "string" ? parsed.note : typeof parsed.reason === "string" ? parsed.reason : "";
+    return text;
+  } catch {
+    return "";
+  }
+}
+
 export const severityLabel = label({ Low: "Düşük", Medium: "Orta", High: "Yüksek", Critical: "Kritik" });
 export const tenderLabel = label({
   Cash: "Nakit",
