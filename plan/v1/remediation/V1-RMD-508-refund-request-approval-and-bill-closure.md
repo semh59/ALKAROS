@@ -18,12 +18,27 @@ PO kararı (2026-10-13): ödenmiş hesap doğrudan iptal edilmez, önce iade edi
 
 - `plan/v1/remediation/V1-RMD-508-refund-request-approval-and-bill-closure.md`
 - `evidence/V1-RMD-508/**`
+- `database/migrations/V1/V1-RMD-508/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/PaymentRefunds.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/PaymentRefundHttpTests.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillingSplitApplication.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillCancellation.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Identity/Authorization/Catalog/ApplicationPermissions.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Identity/Authorization/Catalog/ApplicationPermissionsTests.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Identity/Authorization/Catalog/PermissionSplitDatabase.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-staff-roles/models.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Not: V1-RMD-507 yalnız tam iade servisini hazırlar; bu görev ödemeyi `PostgresPaymentReversalRepository` ile iade eder.
-- `payments.refund.request` (kasiyer) ve `payments.refund.approve` (süpervizör, müdür) izinleri; iade isteği tablosu ve uçları; nakit iade defteri satırı; kart elle iade kaydı; hesap Paid → Reopened → Cancelled; `payment.refunded` denetim olayı.
+- Migration 183 `payments.refund_requests` (ödeme başına tek açık istek; tam iade), migration 184 `payments.refund.request` (kasiyer, süpervizör, müdür) ve `payments.refund.approve` (süpervizör, müdür) izinleri.
+- Uçlar: iade iste, bekleyenleri listele, onayla, reddet, elle iadeyi tamamla (fiş numarası). İsteyen ile onaylayan aynı kişi olamaz; gerekçe zorunlu.
+- Nakit onayı: iade eden kasiyerin açık kasa oturumuna `Refund` (çıkış) satırı, `PostgresPaymentReversalRepository` ile iade; kart ve diğer yöntemler onayda `AwaitingManualRefund` olur, sonuç girilince iade yazılır.
+- Hesabın tüm ödemeleri iade edilince hesap `Cancelled` olur (iptal gerekçesi iade); iptal ucundaki para kontrolü iade edilmiş ödemeleri para saymaz; `payment.refunded` denetim olayı.
+- Hesaba (müşteri cari) yazılan ödeme bu görevde iade edilmez (409).
 
 ## Out of scope
 

@@ -22,6 +22,7 @@ Kasa ekranında gerekçeli "Hesabı iptal et" düğmesi, ödenmiş hesapta "İad
 
 ## In scope
 
+- Uç sözleşmesi V1-RMD-506/508'de sabittir: iptal `POST .../billing/bills/{id}/cancel`, iade `.../billing/bills/{id}/refund-requests` ve `.../billing/refund-requests/{id}/approve|reject|complete`.
 - Kasiyer arayüzü (`src/Clients/Cashier`) ve PosTerminal faturalama ekranlarında iptal ve iade akışları; Türkçe metin sözlüğü.
 
 ## Out of scope
