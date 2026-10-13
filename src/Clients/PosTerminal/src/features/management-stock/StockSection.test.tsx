@@ -3,7 +3,7 @@
 import { act, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { type StockClient } from "./stockApi";
+import { createStockClient, type StockClient } from "./stockApi";
 import { StockSection } from "./index";
 import { ManagementApiError } from "../management/http";
 
@@ -28,6 +28,14 @@ function fakeClient(overrides: Partial<StockClient> = {}): StockClient {
       items: [{ stockItemId: "i1", stockItemName: "Un", trackingUnitCode: "kg", locationName: "Ana depo", actualUsage: 10, theoreticalUsage: 8, varianceQuantity: 2, variancePercentage: 25 }],
       excludedForMissingCountsCount: 4,
     }),
+    listTargets: vi.fn().mockImplementation(async (kind: string) => kind === "product"
+      ? [{ id: "p1", name: "Mercimek çorbası" }] : [{ id: "m1", name: "Ekstra peynir" }]),
+    listMappings: vi.fn().mockResolvedValue([{ stockItemId: "i1", stockItemName: "Un", quantityMultiplier: 0.25, notes: null, availableQuantity: 12 }]),
+    assignMapping: vi.fn().mockResolvedValue(undefined),
+    removeMapping: vi.fn().mockResolvedValue(undefined),
+    listWaste: vi.fn().mockResolvedValue([
+      { id: "w1", stockItemId: "i1", wasteSource: "Production", quantity: 2, unitCode: "kg", reason: "Yandı", recordedAt: "2026-09-30T10:00:00Z" },
+    ]),
     ...overrides,
   };
 }
@@ -136,5 +144,82 @@ describe("stock section", () => {
     await type("n-unit", "lt");
     await submit("Yeni stok kalemi");
     expect(client.createItem).toHaveBeenCalledWith({ code: "SUT-01", name: "Süt", itemType: "Portion", trackingUnitCode: "lt", defaultLocationId: null, reorderPoint: null });
+  });
+  it("a view-only session never reads mapping targets or waste history", async () => {
+    const client = fakeClient();
+    await render(<StockSection client={client} capabilities={new Set(["reports.view"])} />);
+    expect(client.listTargets).not.toHaveBeenCalled();
+    expect(document.body.textContent).not.toContain("Stok eşlemeleri");
+    expect(document.body.textContent).not.toContain("Fire geçmişi");
+  });
+
+  it("lists a product's stock mappings, adds one with the default multiplier and removes one", async () => {
+    const client = fakeClient();
+    await render(<StockSection client={client} capabilities={manager} />);
+    await type("map-target", "p1");
+    expect(client.listMappings).toHaveBeenCalledWith("product", "p1");
+    expect(document.body.textContent).toContain("0,25");
+    await type("map-item", "i1");
+    await submit("Eşleme ekle");
+    expect(client.assignMapping).toHaveBeenCalledWith("product", "p1", { stockItemId: "i1", quantityMultiplier: 1, notes: null });
+    await press("Eşlemeyi kaldır");
+    expect(client.removeMapping).toHaveBeenCalledWith("product", "p1", "i1");
+  });
+
+  it("rejects a zero or non-numeric multiplier without calling the server", async () => {
+    const client = fakeClient();
+    await render(<StockSection client={client} capabilities={manager} />);
+    await type("map-target", "p1");
+    await type("map-item", "i1");
+    await type("map-multiplier", "0");
+    await submit("Eşleme ekle");
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Geçerli bir sayı girin.");
+    await type("map-multiplier", "abc");
+    await submit("Eşleme ekle");
+    expect(client.assignMapping).not.toHaveBeenCalled();
+  });
+
+  it("switches to modifiers and maps through the modifier route", async () => {
+    const client = fakeClient();
+    await render(<StockSection client={client} capabilities={manager} />);
+    await type("map-kind", "modifier");
+    expect(client.listTargets).toHaveBeenCalledWith("modifier");
+    await type("map-target", "m1");
+    await type("map-item", "i1");
+    await type("map-multiplier", "0,5");
+    await submit("Eşleme ekle");
+    expect(client.assignMapping).toHaveBeenCalledWith("modifier", "m1", { stockItemId: "i1", quantityMultiplier: 0.5, notes: null });
+  });
+
+  it("shows waste history for a valid source reference with Turkish labels and refuses a malformed one", async () => {
+    const client = fakeClient();
+    await render(<StockSection client={client} capabilities={manager} />);
+    await type("w-reference", "not-a-guid");
+    await submit("Fire kayıtlarını göster");
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Geçerli bir kaynak numarası girin.");
+    expect(client.listWaste).not.toHaveBeenCalled();
+    const reference = "3f2b8c1e-4a5d-4e6f-8a9b-0c1d2e3f4a5b";
+    await type("w-reference", reference);
+    await submit("Fire kayıtlarını göster");
+    expect(client.listWaste).toHaveBeenCalledWith("Production", reference);
+    expect(document.body.textContent).toContain("Yandı");
+    expect(document.body.textContent).not.toContain("Bilinmiyor");
+  });
+  it("the client maps mappings and waste history to the server's routes", async () => {
+    const fetcher = vi.fn((_url: string, _init?: RequestInit) => Promise.resolve(new Response("[]", { status: 200 })));
+    const api = createStockClient(fetcher as unknown as typeof fetch);
+    const seen = async (work: () => Promise<unknown>) => {
+      await work();
+      const [url, init] = fetcher.mock.calls.at(-1)!;
+      return `${init?.method ?? "GET"} ${url}${init?.body ? ` ${init.body}` : ""}`;
+    };
+    const base = "/api/v1/management";
+    expect(await seen(() => api.listMappings("product", "p1"))).toBe(`GET ${base}/inventory/products/p1/stock-mappings`);
+    expect(await seen(() => api.listMappings("modifier", "m1"))).toBe(`GET ${base}/inventory/modifiers/m1/stock-mappings`);
+    expect(await seen(() => api.assignMapping("modifier", "m1", { stockItemId: "i1", quantityMultiplier: 2, notes: null })))
+      .toBe(`POST ${base}/inventory/modifiers/m1/stock-mappings {"stockItemId":"i1","quantityMultiplier":2,"notes":null}`);
+    expect(await seen(() => api.removeMapping("product", "p1", "i1"))).toBe(`DELETE ${base}/inventory/products/p1/stock-mappings/i1`);
+    expect(await seen(() => api.listTargets("modifier"))).toBe(`GET ${base}/catalog/modifiers?limit=100`);
+    expect(await seen(() => api.listWaste("Production", "r1"))).toBe(`GET ${base}/inventory/waste?wasteSource=Production&sourceReferenceId=r1`);
   });
 });

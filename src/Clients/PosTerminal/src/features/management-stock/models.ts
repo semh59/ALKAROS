@@ -49,6 +49,13 @@ export interface VarianceReport {
   excludedForMissingCountsCount: number;
 }
 
+export type MappingTarget = "product" | "modifier";
+export interface TargetOption { id: string; name: string }
+export interface StockMapping { stockItemId: string; stockItemName: string | null; quantityMultiplier: number; notes: string | null; availableQuantity: number | null }
+export interface WasteRecord {
+  id: string; stockItemId: string; wasteSource: string; quantity: number; unitCode: string; reason: string; recordedAt: string;
+}
+
 export const itemTypes = ["RawMaterial", "Portion", "Packaging", "ServiceItem"] as const;
 export const locationTypes = ["Warehouse", "Kitchen", "Bar", "ColdStorage", "DryStorage", "Counter"] as const;
 export const wasteSources = ["Manual", "Spoilage", "Expiration", "PreparationDamage"] as const;
@@ -59,7 +66,12 @@ export const itemTypeLabel = label({ RawMaterial: "Hammadde", Portion: "Porsiyon
 export const locationTypeLabel = label({
   Warehouse: "Depo", Kitchen: "Mutfak", Bar: "Bar", ColdStorage: "Soğuk hava deposu", DryStorage: "Kuru depo", Counter: "Kasa reyonu",
 });
-export const wasteSourceLabel = label({ Manual: "Elle kayıt", Spoilage: "Bozulma", Expiration: "Son kullanma tarihi", PreparationDamage: "Hazırlık hasarı" });
+export const wasteSourceLabel = label({
+  Manual: "Elle kayıt", Spoilage: "Bozulma", Expiration: "Son kullanma tarihi", PreparationDamage: "Hazırlık hasarı",
+  Production: "Üretim", PortionReservation: "Porsiyon ayırma",
+});
+export const wasteHistorySources = ["Production", "PortionReservation", "Manual", "Spoilage", "Expiration", "PreparationDamage"] as const;
+export const guidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /** The quantity fields accept a decimal comma; anything that is not a finite number is rejected. */
 export function parseQuantity(text: string): number | null {

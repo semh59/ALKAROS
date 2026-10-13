@@ -1,0 +1,9 @@
+Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar yedekten geri yuklenir.
+M1 seceneklerin eslemesi urun yolunu kullaniyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M2 kaldirma yanlis stok kalemi: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M3 sifir carpan kabul ediliyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M4 bos carpan 1 yerine 0: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M5 gecersiz kaynak numarasi sunucuya gidiyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M6 gorunum yetkisi eslemeleri okuyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M8 fire gecmisi yanlis yol: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M7 fire kaynak etiketi ham: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯

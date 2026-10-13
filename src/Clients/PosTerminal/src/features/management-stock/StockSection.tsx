@@ -4,8 +4,8 @@ import { formatQuantity } from "../../format";
 import { commonActions, managementText } from "../../strings";
 import { createStockClient, type StockClient } from "./stockApi";
 import {
-  itemTypeLabel, itemTypes, locationTypeLabel, locationTypes, parseQuantity, wasteSourceLabel, wasteSources,
-  type CriticalStockReport, type StockItem, type StockLocation, type VarianceReport,
+  guidPattern, itemTypeLabel, itemTypes, locationTypeLabel, locationTypes, parseQuantity, wasteHistorySources, wasteSourceLabel, wasteSources,
+  type CriticalStockReport, type MappingTarget, type StockItem, type StockLocation, type StockMapping, type TargetOption, type VarianceReport, type WasteRecord,
 } from "./models";
 import { errorText } from "../management/panel";
 import "./management-stock.css";
@@ -53,6 +53,14 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
   const [items, reloadItems] = usePanel<readonly StockItem[]>(useCallback(() => canManage ? api.listItems() : Promise.resolve([]), [api, canManage]));
   const [locations, reloadLocations] = usePanel<readonly StockLocation[]>(useCallback(() => canManage ? api.listLocations() : Promise.resolve([]), [api, canManage]));
 
+  const [mapKind, setMapKind] = useState<MappingTarget>("product");
+  const [mapTarget, setMapTarget] = useState("");
+  const [targets, reloadTargets] = usePanel<readonly TargetOption[]>(useCallback(() => canManage ? api.listTargets(mapKind) : Promise.resolve([]), [api, canManage, mapKind]));
+  const [mappings, reloadMappings] = usePanel<readonly StockMapping[]>(useCallback(
+    () => canManage && mapTarget ? api.listMappings(mapKind, mapTarget) : Promise.resolve([]), [api, canManage, mapKind, mapTarget]));
+  const [wasteQuery, setWasteQuery] = useState<{ source: string; reference: string } | null>(null);
+  const [waste, reloadWaste] = usePanel<readonly WasteRecord[]>(useCallback(
+    () => wasteQuery ? api.listWaste(wasteQuery.source, wasteQuery.reference) : Promise.resolve([]), [api, wasteQuery]));
   const [action, setAction] = useState<RowAction>();
   const [fields, setFields] = useState<Record<string, string>>({});
   const set = (key: string) => (event: { target: { value: string } }) => setFields((current) => ({ ...current, [key]: event.target.value }));
@@ -97,6 +105,8 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
       stockLocationId: field("location"), wasteSource: field("source", "Manual"), quantity, unitCode: item.trackingUnitCode, reason: field("reason"),
     }), t.wasteSaved, refreshStock);
   }
+
+  const itemName = (id: string) => items.state === "ready" ? items.data.find((item) => item.id === id)?.name ?? "—" : "—";
 
   const locationOptions = (list: readonly StockLocation[]) => list.map((location) => <option key={location.id} value={location.id}>{location.name}</option>);
 
@@ -193,6 +203,70 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
           <TextField id="n-reorder" label={t.reorderPoint} inputMode="decimal" value={field("n-reorder")} onChange={set("n-reorder")} />
           <Button type="submit" disabled={busy}>{t.add}</Button>
         </form>
+      </div>}
+    </PanelView>}
+
+    {canManage && <PanelView title={t.mappingHeading} panel={targets} onRetry={reloadTargets}>
+      {(options) => <div>
+        <div className="stock__toolbar">
+          <SelectField id="map-kind" label={t.mappingKind} value={mapKind} onChange={(event) => { setMapKind(event.target.value as MappingTarget); setMapTarget(""); }}>
+            <option value="product">{t.kindProduct}</option>
+            <option value="modifier">{t.kindModifier}</option>
+          </SelectField>
+          <SelectField id="map-target" label={t.mappingTarget} value={mapTarget} onChange={(event) => setMapTarget(event.target.value)}>
+            <option value="">{t.pick}</option>
+            {options.map((option) => <option key={option.id} value={option.id}>{option.name}</option>)}
+          </SelectField>
+        </div>
+        {mapTarget && mappings.state === "ready" && (mappings.data.length === 0 ? <p className="stock__empty">{t.noMappings}</p> : <table>
+          <thead><tr><th>{t.stockItem}</th><th>{t.multiplier}</th><th>{t.mappingAvailable}</th><th>{t.actionsColumn}</th></tr></thead>
+          <tbody>{mappings.data.map((mapping) => <tr key={mapping.stockItemId}>
+            <td>{mapping.stockItemName ?? itemName(mapping.stockItemId)}</td><td>{stat(mapping.quantityMultiplier)}</td>
+            <td>{mapping.availableQuantity === null ? t.none : stat(mapping.availableQuantity)}</td>
+            <td><Button variant="quiet" disabled={busy} onClick={() => void act(() => api.removeMapping(mapKind, mapTarget, mapping.stockItemId), t.mappingRemoved, reloadMappings)}>{t.removeMapping}</Button></td>
+          </tr>)}</tbody>
+        </table>)}
+        {mapTarget && <form className="stock__form" aria-label={t.addMapping} onSubmit={(event) => {
+          event.preventDefault();
+          const multiplier = field("map-multiplier").trim() === "" ? 1 : parseQuantity(field("map-multiplier"));
+          if (multiplier === null || multiplier <= 0) return invalid();
+          void act(() => api.assignMapping(mapKind, mapTarget, { stockItemId: field("map-item"), quantityMultiplier: multiplier, notes: field("map-notes").trim() || null }),
+            t.mappingSaved, reloadMappings);
+        }}>
+          <SelectField id="map-item" label={t.stockItem} value={field("map-item")} onChange={set("map-item")}>
+            <option value="">{t.pick}</option>
+            {items.state === "ready" && items.data.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+          </SelectField>
+          <TextField id="map-multiplier" label={t.multiplier} inputMode="decimal" value={field("map-multiplier")} onChange={set("map-multiplier")} />
+          <TextField id="map-notes" label={t.notes} value={field("map-notes")} onChange={set("map-notes")} />
+          <Button type="submit" disabled={busy || !field("map-item")}>{t.add}</Button>
+        </form>}
+      </div>}
+    </PanelView>}
+
+    {canManage && <PanelView title={t.wasteHistoryHeading} panel={waste} onRetry={reloadWaste}>
+      {(records) => <div>
+        <form className="stock__toolbar" aria-label={t.wasteHistoryShow} onSubmit={(event) => {
+          event.preventDefault();
+          const reference = field("w-reference").trim();
+          if (!guidPattern.test(reference)) return setNotice({ tone: "error", text: t.invalidReference });
+          setNotice(undefined);
+          setWasteQuery({ source: field("w-source", "Production"), reference });
+          reloadWaste();
+        }}>
+          <SelectField id="w-source" label={t.wasteHistorySource} value={field("w-source", "Production")} onChange={set("w-source")}>
+            {wasteHistorySources.map((source) => <option key={source} value={source}>{wasteSourceLabel(source)}</option>)}
+          </SelectField>
+          <TextField id="w-reference" label={t.wasteHistoryReference} value={field("w-reference")} onChange={set("w-reference")} />
+          <Button type="submit" variant="secondary">{t.wasteHistoryShow}</Button>
+        </form>
+        {wasteQuery && (records.length === 0 ? <p className="stock__empty">{t.wasteHistoryNone}</p> : <table>
+          <thead><tr><th>{t.name}</th><th>{t.quantity}</th><th>{t.wasteSource}</th><th>{t.reason}</th><th>{t.recordedAt}</th></tr></thead>
+          <tbody>{records.map((record) => <tr key={record.id}>
+            <td>{itemName(record.stockItemId)}</td><td>{stat(record.quantity)} {record.unitCode}</td>
+            <td>{wasteSourceLabel(record.wasteSource)}</td><td>{record.reason}</td><td>{new Date(record.recordedAt).toLocaleString("tr-TR")}</td>
+          </tr>)}</tbody>
+        </table>)}
       </div>}
     </PanelView>}
 
