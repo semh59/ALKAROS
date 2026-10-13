@@ -22,6 +22,7 @@ PO kararı (2026-10-13): ödenmiş hesap doğrudan iptal edilmez, önce iade edi
 
 ## In scope
 
+- Not: V1-RMD-507 yalnız tam iade servisini hazırlar; bu görev ödemeyi `PostgresPaymentReversalRepository` ile iade eder.
 - `payments.refund.request` (kasiyer) ve `payments.refund.approve` (süpervizör, müdür) izinleri; iade isteği tablosu ve uçları; nakit iade defteri satırı; kart elle iade kaydı; hesap Paid → Reopened → Cancelled; `payment.refunded` denetim olayı.
 
 ## Out of scope

@@ -1,8 +1,8 @@
 # V1-RMD-507 - Ödeme iade defteri (payment_reversals) ve iade sonrası raporlama
 
 - Task ID: V1-RMD-507
-- Status: InProgress
-- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
+- Status: Planned
+- Assignee: Unassigned
 - Work type: implementation
 - Surface state: Existing
 
@@ -27,8 +27,8 @@
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Payments/PaymentAggregate/ALKAROS.Payments.PaymentAggregate.Tests.csproj
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Reporting/Payments/PaymentRefundNettingTests.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Reporting/Payments/ALKAROS.Reporting.Payments.Tests.csproj
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Reporting/V1Operations/BusinessDayRefundNettingTests.cs
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Reporting/BusinessDayRefundNettingTests.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Payments/PaymentAggregate/PaymentDomainTests.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
