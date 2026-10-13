@@ -47,4 +47,4 @@ Tedarikçiden gelen iade faturasını (UBL-TR `IADE` tipli fatura veya CreditNot
 
 ## Handoff
 
-- None
+- V1-RMD-494
