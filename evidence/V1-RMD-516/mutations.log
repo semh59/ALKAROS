@@ -1,0 +1,18 @@
+tur 1 (temiz Postgres, altyapı hatası ayrı işaretlenir):
+killed   default-manual
+killed   account-method
+killed   cash-method
+killed   unapproved-listed
+SURVIVED order-by
+killed   subtotal
+killed   payable
+killed   tax
+killed   not-found
+killed   auth
+killed   item-qty
+killed   deduction
+SURVIVED status
+survivors: order-by status
+survivor'lar için test eklendi (onay zamanı sırası, iptal durumu) ve yeniden koşuldu:
+killed   order-by
+killed   status

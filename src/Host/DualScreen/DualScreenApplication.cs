@@ -643,6 +643,7 @@ public static partial class DualScreenApplication
         app.MapHelpRequestApi();
         app.MapCashSessionApi();
         app.MapPaymentTenderApi();
+        app.MapBillReceiptApi();
         app.MapCustomerAccountApi();
         app.MapHub<CustomerDisplayHub>(CustomerDisplayHub.Route);
         app.MapMethods(

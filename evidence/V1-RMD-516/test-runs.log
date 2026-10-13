@@ -1,0 +1,2 @@
+BillReceiptHttpTests (gerçek Host + Postgres): Başarılı 3/3
+Architecture ApiConventions: ApiRouteAuthorizationTests geçti (yeni GET ucu yetki kuralına uyuyor)
