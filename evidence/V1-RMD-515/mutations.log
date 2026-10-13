@@ -1,0 +1,23 @@
+killed   tendered-not-sent
+killed   always-tendered
+SURVIVED cash-only
+killed   short-check
+SURVIVED short-tolerance
+killed   change-lost
+SURVIVED change-only-when-tendered
+SURVIVED tendered-cleared
+SURVIVED change-reset
+killed   paid-banner
+SURVIVED ready-banner
+SURVIVED preview-math
+killed   field-cash-only
+--- survivors re-run after added tests ---
+killed   cash-only
+killed   short-tolerance
+killed   change-only-when-tendered
+killed   tendered-cleared
+SURVIVED change-reset
+killed   ready-banner
+killed   preview-math
+survivors: change-reset
+change-reset: killed (after drop-on-failure test)

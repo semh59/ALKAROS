@@ -82,6 +82,8 @@
     refundListFailed: false,
     confirmKey: null,
     reasonChoices: {},
+    tenderedDraft: '',
+    changeDue: null,
   };
 
   function escapeHtml(value) {
@@ -551,8 +553,16 @@
       return;
     }
 
+    var tendered = Number(state.tenderedDraft);
+    var hasTendered = state.selectedMethod === 'Cash' && String(state.tenderedDraft).trim() !== '' && tendered > 0;
+    if (hasTendered && tendered < amount - 0.004) {
+      setError('Alınan para tutardan az olamaz.');
+      return;
+    }
+
     setBusy(true);
     state.error = null;
+    state.changeDue = null;
     // V1-RMD-314: reuse the in-flight key across a retry of this exact attempt - see the field's own
     // doc comment. A brand-new key is minted only when none is pending.
     if (!state.tenderIdempotencyKey) state.tenderIdempotencyKey = crypto.randomUUID();
@@ -569,10 +579,13 @@
       : state.selectedMethod === 'Cash'
       ? api('/api/v1/terminals/' + state.terminalId + '/cash-sessions/' + state.cashSessionId + '/cash-tender', {
           method: 'POST',
-          body: { BillId: state.billId, AmountDue: amount, TenderedAmount: amount, IdempotencyKey: idempotencyKey },
+          body: { BillId: state.billId, AmountDue: amount, TenderedAmount: hasTendered ? tendered : amount, IdempotencyKey: idempotencyKey },
         }).then(function (result) {
           if (!result.ok) return result;
-          return { ok: true, status: result.status, body: { outcome: 'Approved', approvedAmount: result.body.approvedAmount } };
+          return {
+            ok: true, status: result.status,
+            body: { outcome: 'Approved', approvedAmount: result.body.approvedAmount, changeAmount: result.body.changeAmount },
+          };
         })
       : api(tendersBase(), {
           method: 'POST',
@@ -613,6 +626,8 @@
         return;
       }
       state.lastResult = result.body;
+      state.changeDue = hasTendered && result.body && Number(result.body.changeAmount) > 0 ? Number(result.body.changeAmount) : null;
+      state.tenderedDraft = '';
       state.noteDraft = '';
       state.eftConfirmed = false;
       if (result.body.outcome === 'RequiresReconciliation') {
@@ -1121,6 +1136,29 @@
     }
   }
 
+  function renderChangeDue() {
+    if (!(state.changeDue > 0)) return '';
+    return (
+      '<div class="sp-change-due" role="status" id="change-due">' +
+      '<span>Para üstü</span><strong>' + formatMoney(state.changeDue) + '</strong></div>'
+    );
+  }
+
+  // Alınan para girildikçe sayfayı yeniden çizmeden önizlemeyi ve düğmeyi günceller.
+  function updateChangePreview() {
+    var preview = document.getElementById('change-preview');
+    var amount = Number(state.amountDraft);
+    var tendered = Number(state.tenderedDraft);
+    var filled = String(state.tenderedDraft).trim() !== '' && tendered > 0;
+    var short = filled && tendered < amount - 0.004;
+    if (preview) {
+      preview.textContent = !filled ? ''
+        : short ? 'Alınan para tutardan az.'
+        : 'Para üstü: ' + formatMoney(Math.max(0, tendered - amount));
+      preview.className = 'sp-change-preview' + (short ? ' is-short' : '');
+    }
+  }
+
   function renderLoadError() {
     app.innerHTML =
       '<div class="sp-card sp-center-text">' +
@@ -1160,6 +1198,7 @@
           'eklemeden önce mutabakat tamamlanmalı.</div></div></div>' +
           renderResolution()
         : '') +
+      renderChangeDue() +
       '<div class="sp-summary-row is-total"><span>Toplam</span><span class="value">' + formatMoney(s.payableAmount) + '</span></div>' +
       '<div class="sp-summary-row"><span>Tahsil edilen</span><span class="value">' + formatMoney(s.allocatedTotal) + '</span></div>' +
       '<div class="sp-summary-row is-remaining' + (remaining <= 0.004 ? ' is-zero' : '') + '">' +
@@ -1179,6 +1218,12 @@
         '<div class="sp-field"><span class="sp-field-label">Tutar</span>' +
         '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
         '<span class="sp-amount-suffix">₺</span></div></div>' +
+        (state.selectedMethod === 'Cash'
+          ? '<div class="sp-field"><span class="sp-field-label">Alınan para <span style="font-weight:400;color:var(--color-text-dim)">(isteğe bağlı)</span></span>' +
+            '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="tendered-draft" aria-label="Alınan para (isteğe bağlı)" value="' + escapeHtml(state.tenderedDraft) + '">' +
+            '<span class="sp-amount-suffix">₺</span></div>' +
+            '<div class="sp-change-preview" id="change-preview" role="status"></div></div>'
+          : '') +
         (state.selectedMethod !== 'Cash' && state.selectedMethod !== 'Account'
           ? '<div class="sp-field"><span class="sp-field-label">Not <span style="font-weight:400;color:var(--color-text-dim)">(opsiyonel)</span></span>' +
             '<input class="sp-input" type="text" id="note-draft" aria-label="Ödeme notu (opsiyonel)" value="' + escapeHtml(state.noteDraft) + '"></div>'
@@ -1228,6 +1273,17 @@
     });
     var noteInput = document.getElementById('note-draft');
     if (noteInput) noteInput.addEventListener('input', function () { state.noteDraft = this.value; });
+    var tenderedInput = document.getElementById('tendered-draft');
+    if (tenderedInput) {
+      tenderedInput.addEventListener('input', function () {
+        state.tenderedDraft = this.value;
+        // Farklı bir tahsilat denemesi; önceki anahtar yeniden kullanılmaz.
+        state.tenderIdempotencyKey = null;
+        updateChangePreview();
+      });
+      updateChangePreview();
+    }
+    if (amountInput) amountInput.addEventListener('input', updateChangePreview);
     var eftConfirmInput = document.getElementById('eft-confirm');
     if (eftConfirmInput) eftConfirmInput.addEventListener('change', function () {
       state.eftConfirmed = this.checked;
@@ -1295,6 +1351,7 @@
       '<span class="sp-icon-circle success">✓</span>' +
       '<h1 class="sp-title">Hesap Ödendi</h1>' +
       '<p class="sp-subtitle">Bu hesabın tamamı tahsil edildi.</p>' +
+      renderChangeDue() +
       BACK_LINK +
       '</div>' +
       '<div class="sp-card">' + renderRefundSection(false) + '</div>';

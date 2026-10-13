@@ -201,3 +201,8 @@ body {
 .sp-customer:focus-visible { outline: 3px solid var(--color-brand); outline-offset: 2px; }
 .sp-customer-name { font-weight: 600; }
 .sp-customer-meta { font-size: 0.875rem; color: var(--color-text-muted); }
+
+.sp-change-due { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 14px 16px; border-radius: 10px; background: var(--color-success-soft, #def4ea); color: var(--color-success, #1f6b52); font-size: 1.1rem; }
+.sp-change-due strong { font-size: 1.9rem; font-variant-numeric: tabular-nums; }
+.sp-change-preview { min-height: 1.4em; margin-top: 6px; font-weight: 700; }
+.sp-change-preview.is-short { color: var(--color-danger, #b3261e); }
