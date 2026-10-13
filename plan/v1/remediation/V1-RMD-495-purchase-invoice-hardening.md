@@ -1,8 +1,8 @@
 # V1-RMD-495 - Alış faturası hattı sağlamlaştırma (zehirli belge, reddedilen belge, para birimi, indeks)
 
 - Task ID: V1-RMD-495
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing
 
