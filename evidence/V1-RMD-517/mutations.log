@@ -1,0 +1,18 @@
+killed   print-not-called
+killed   wrong-endpoint
+SURVIVED error-ignored
+killed   no-escape
+killed   note-removed
+killed   deduction-sign
+killed   method-labels
+killed   refund-status
+killed   total
+killed   quantity
+SURVIVED busy-disabled
+killed   button-missing
+killed   screen-hidden
+killed   print-hides-app
+--- survivor'lar için test eklendi, yeniden koşuldu ---
+killed   error-ignored
+killed   busy-disabled
+survivors: none

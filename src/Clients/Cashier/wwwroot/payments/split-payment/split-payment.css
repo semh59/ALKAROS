@@ -206,3 +206,14 @@ body {
 .sp-change-due strong { font-size: 1.9rem; font-variant-numeric: tabular-nums; }
 .sp-change-preview { min-height: 1.4em; margin-top: 6px; font-weight: 700; }
 .sp-change-preview.is-short { color: var(--color-danger, #b3261e); }
+
+#receipt-print { display: none; }
+@media print {
+  body > *:not(#receipt-print) { display: none !important; }
+  #receipt-print { display: block; width: 72mm; margin: 0 auto; color: #000; background: #fff; font-size: 12px; }
+  #receipt-print h1 { font-size: 16px; text-align: center; margin: 0 0 4px; }
+  #receipt-print table { width: 100%; border-collapse: collapse; margin: 6px 0; border-top: 1px dashed #000; }
+  #receipt-print td:last-child { text-align: right; white-space: nowrap; }
+  #receipt-print .sp-receipt-total td { font-weight: 700; }
+  #receipt-print .sp-receipt-note { text-align: center; margin: 4px 0; }
+}

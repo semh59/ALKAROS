@@ -84,6 +84,8 @@
     reasonChoices: {},
     tenderedDraft: '',
     changeDue: null,
+    receiptError: null,
+    receiptBusy: false,
   };
 
   function escapeHtml(value) {
@@ -1101,6 +1103,11 @@
   }
 
   function onRefundClick(event) {
+    var printButton = event.target.closest ? event.target.closest('[data-receipt-action="print"]') : null;
+    if (printButton) {
+      if (!printButton.disabled) printReceipt();
+      return;
+    }
     var element = event.target.closest ? event.target.closest('[data-refund-action]') : null;
     if (element && !element.disabled) refundAction(element.getAttribute('data-refund-action'), element);
   }
@@ -1157,6 +1164,72 @@
         : 'Para üstü: ' + formatMoney(Math.max(0, tendered - amount));
       preview.className = 'sp-change-preview' + (short ? ' is-short' : '');
     }
+  }
+
+  // Bilgi fişi: mali olmayan hesap özeti; sunucudan okunur, #receipt-print içine yazılır ve tarayıcı yazdırma penceresi açılır.
+  var RECEIPT_METHODS = { Cash: 'Nakit', Account: 'Cari hesap', Manual: 'Kart / EFT / diğer' };
+  var RECEIPT_ADJUSTMENTS = {
+    DiscountPercentage: 'İndirim', DiscountAmount: 'İndirim', ServiceFee: 'Hizmet bedeli',
+    Kuver: 'Kuver', Tip: 'Bahşiş', CustomFee: 'Ek ücret',
+  };
+  var RECEIPT_PAYMENT_STATUS = { Refunded: 'İade edildi', PartiallyRefunded: 'Kısmen iade edildi' };
+
+  function receiptHtml(receipt) {
+    var opened = receipt.openedAt ? new Date(receipt.openedAt).toLocaleString('tr-TR') : '';
+    return (
+      '<h1>Bilgi Fişi</h1>' +
+      '<p class="sp-receipt-note">Bu belge mali fiş değildir.</p>' +
+      '<p>Hesap: ' + escapeHtml(receipt.billNumber) + '<br>' + escapeHtml(opened) + '</p>' +
+      '<table>' +
+      receipt.items.map(function (item) {
+        return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + '</td><td>' + formatMoney(item.amount) + '</td></tr>';
+      }).join('') +
+      '</table>' +
+      '<table>' +
+      '<tr><td>Ara toplam</td><td>' + formatMoney(receipt.subtotal) + '</td></tr>' +
+      receipt.adjustments.map(function (adjustment) {
+        return '<tr><td>' + escapeHtml(RECEIPT_ADJUSTMENTS[adjustment.type] || 'Ayarlama') + '</td><td>' +
+          (adjustment.isDeduction ? '-' : '') + formatMoney(adjustment.amount) + '</td></tr>';
+      }).join('') +
+      '<tr class="sp-receipt-total"><td>Toplam</td><td>' + formatMoney(receipt.payableAmount) + '</td></tr>' +
+      '</table>' +
+      '<table>' +
+      receipt.payments.map(function (payment) {
+        var status = RECEIPT_PAYMENT_STATUS[payment.status];
+        return '<tr><td>' + escapeHtml(RECEIPT_METHODS[payment.method] || 'Diğer') +
+          (status ? ' (' + escapeHtml(status) + ')' : '') + '</td><td>' + formatMoney(payment.amount) + '</td></tr>';
+      }).join('') +
+      '</table>' +
+      '<p class="sp-receipt-note">Teşekkür ederiz.</p>'
+    );
+  }
+
+  function printReceipt() {
+    state.receiptBusy = true;
+    state.receiptError = null;
+    render();
+    api(billBase() + '/receipt').then(function (result) {
+      state.receiptBusy = false;
+      if (!result.ok || !result.body) {
+        state.receiptError = 'Fiş verisi okunamadı. Tekrar deneyin.';
+        render();
+        return;
+      }
+      var sheet = document.getElementById('receipt-print');
+      if (!sheet) {
+        sheet = document.createElement('div');
+        sheet.id = 'receipt-print';
+        sheet.className = 'sp-receipt';
+        document.body.appendChild(sheet);
+      }
+      sheet.innerHTML = receiptHtml(result.body);
+      render();
+      window.print();
+    }).catch(function () {
+      state.receiptBusy = false;
+      state.receiptError = 'Fiş verisi okunamadı. Tekrar deneyin.';
+      render();
+    });
   }
 
   function renderLoadError() {
@@ -1352,6 +1425,11 @@
       '<h1 class="sp-title">Hesap Ödendi</h1>' +
       '<p class="sp-subtitle">Bu hesabın tamamı tahsil edildi.</p>' +
       renderChangeDue() +
+      (state.receiptError
+        ? '<div class="sp-alert-body" role="alert">' + escapeHtml(state.receiptError) + '</div>'
+        : '') +
+      '<button class="sp-btn sp-btn-primary" type="button" id="print-receipt" data-receipt-action="print"' +
+      (state.receiptBusy ? ' disabled' : '') + '>' + (state.receiptBusy ? 'Fiş hazırlanıyor…' : 'Fişi yazdır') + '</button>' +
       BACK_LINK +
       '</div>' +
       '<div class="sp-card">' + renderRefundSection(false) + '</div>';
