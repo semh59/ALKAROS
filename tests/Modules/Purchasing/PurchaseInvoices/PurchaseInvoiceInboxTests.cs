@@ -83,6 +83,46 @@ public sealed class PurchaseInvoiceInboxTests : IClassFixture<PurchaseInvoiceTes
     }
 
     [Fact]
+    public async Task ARefusedDocumentIsSkippedOnlyOnceALaterDocumentProvesTheSessionWorks()
+    {
+        var (refused, _) = Offer();
+        var (_, lastSequence) = Offer();
+        _source.Refuse.Add(refused.ToString());
+
+        var result = await _inbox.FetchAsync("Ayşe");
+
+        result.Should().Be(new InboxFetchResult(2, 1, 0, 1, false));
+        (await _repository.GetInboxCursorAsync(PurchaseInvoiceSources.QnbInbox)).Should().Be(lastSequence);
+    }
+
+    [Fact]
+    public async Task ARefusedLastDocumentStopsTheRunAndTheCursorStaysBeforeIt()
+    {
+        var (_, goodSequence) = Offer();
+        var (refused, refusedSequence) = Offer();
+        _source.Refuse.Add(refused.ToString());
+
+        var result = await _inbox.FetchAsync("Ayşe");
+
+        result.Should().Be(new InboxFetchResult(2, 1, 0, 0, true));
+        var cursor = await _repository.GetInboxCursorAsync(PurchaseInvoiceSources.QnbInbox);
+        cursor.Should().Be(goodSequence);
+        cursor.Should().BeLessThan(refusedSequence);
+    }
+
+    [Fact]
+    public async Task ADocumentWhoseFieldsDoNotFitTheStoredFormatIsRefusedAsInvalidNotAsADatabaseOutage()
+    {
+        var invoice = new PurchaseInvoice(
+            Guid.NewGuid(), Guid.NewGuid(), new string('N', 70), new DateOnly(2026, 9, 20), "1234567890", "Tedarikçi", null, "TRY",
+            PurchaseInvoiceSources.XmlUpload, PurchaseInvoiceStatuses.Draft, "Ayşe", DateTimeOffset.UtcNow, []);
+
+        var act = () => _repository.InsertAsync(invoice, "<x/>");
+
+        await act.Should().ThrowAsync<InvalidPurchaseInvoiceException>();
+    }
+
+    [Fact]
     public async Task AReturnInvoiceBecomesAReturnDraft()
     {
         var number = "IADE" + Guid.NewGuid().ToString("N")[..10];
@@ -163,6 +203,8 @@ public sealed class PurchaseInvoiceInboxTests : IClassFixture<PurchaseInvoiceTes
 
         public HashSet<string> FailOnce { get; } = [];
 
+        public HashSet<string> Refuse { get; } = [];
+
         public Task<IPurchaseInvoiceInboxSession> OpenAsync(CancellationToken ct = default) => Task.FromResult<IPurchaseInvoiceInboxSession>(this);
 
         public Task<IReadOnlyList<InboxDocument>> ListAfterAsync(long afterSequenceNo, CancellationToken ct = default)
@@ -173,6 +215,8 @@ public sealed class PurchaseInvoiceInboxTests : IClassFixture<PurchaseInvoiceTes
         {
             if (FailOnce.Remove(ettn))
                 throw new PurchaseInvoiceSourceUnavailableException("temporary");
+            if (Refuse.Contains(ettn))
+                throw new PurchaseInvoiceDocumentRefusedException("refused", new InvalidOperationException());
             Downloads.Add(ettn);
             return Task.FromResult(Documents.Single(d => d.Document.Ettn == ettn).Xml);
         }

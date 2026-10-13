@@ -12,6 +12,9 @@ public static class UblPurchaseInvoiceParser
 {
     private const int MaxCharacters = 5_000_000;
 
+    // Quantities and amounts are NUMERIC(18,4) and the unit price NUMERIC(18,6): anything at or above this cannot be stored.
+    private const decimal MaxAmount = 100_000_000_000_000m;
+
     public static ParsedPurchaseInvoice Parse(string xml)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(xml);
@@ -24,12 +27,16 @@ public static class UblPurchaseInvoiceParser
             ? PurchaseInvoiceKinds.Return : PurchaseInvoiceKinds.Invoice;
 
         var number = Required(root, "ID", "invoice number");
+        if (number.Length > 64)
+            throw new InvalidPurchaseInvoiceException("The invoice number is longer than 64 characters.");
         var ettnText = Required(root, "UUID", "ETTN");
         if (!Guid.TryParse(ettnText, out var ettn))
             throw new InvalidPurchaseInvoiceException($"The ETTN '{ettnText}' is not a valid UUID.");
         if (!DateOnly.TryParseExact(Required(root, "IssueDate", "issue date"), "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out var issueDate))
             throw new InvalidPurchaseInvoiceException("The issue date is not a valid yyyy-MM-dd date.");
         var currency = Text(root, "DocumentCurrencyCode") ?? "TRY";
+        if (!string.Equals(currency, "TRY", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidPurchaseInvoiceException($"Only TRY invoices can be imported; got '{Truncate(currency, 8)}'.");
 
         var party = Child(Child(root, "AccountingSupplierParty"), "Party")
             ?? throw new InvalidPurchaseInvoiceException("The supplier party is missing.");
@@ -37,6 +44,8 @@ public static class UblPurchaseInvoiceParser
             .Select(e => Child(e, "ID"))
             .FirstOrDefault(id => id is not null && IsTaxScheme((string?)id.Attribute("schemeID")) && !string.IsNullOrWhiteSpace(id.Value))?.Value.Trim()
             ?? throw new InvalidPurchaseInvoiceException("The supplier tax number (VKN/TCKN) is missing.");
+        if (taxNumber.Length > 32)
+            throw new InvalidPurchaseInvoiceException("The supplier tax number is longer than 32 characters.");
         var supplierName = Text(Child(party, "PartyName"), "Name") ?? PersonName(Child(party, "Person"))
             ?? throw new InvalidPurchaseInvoiceException("The supplier name is missing.");
 
@@ -48,7 +57,7 @@ public static class UblPurchaseInvoiceParser
 
         var referenced = Text(Child(Child(root, "BillingReference"), "InvoiceDocumentReference"), "ID");
         return new ParsedPurchaseInvoice(
-            ettn, number, issueDate, taxNumber, supplierName, currency.ToUpperInvariant(), lines, kind, referenced is null ? null : Truncate(referenced, 64));
+            ettn, number, issueDate, taxNumber, Truncate(supplierName, 250), "TRY", lines, kind, referenced is null ? null : Truncate(referenced, 64));
     }
 
     private static ParsedInvoiceLine ParseLine(XElement line)
@@ -63,19 +72,28 @@ public static class UblPurchaseInvoiceParser
         var unit = ((string?)quantityElement.Attribute("unitCode"))?.Trim();
         if (string.IsNullOrEmpty(unit))
             throw new InvalidPurchaseInvoiceException($"Line {lineNumber} has no unit code.");
+        if (unit.Length > 16)
+            throw new InvalidPurchaseInvoiceException($"Line {lineNumber} has a unit code longer than 16 characters.");
+        if (quantity >= MaxAmount)
+            throw new InvalidPurchaseInvoiceException($"Line {lineNumber} quantity is too large.");
 
         var item = Child(line, "Item");
         var description = Text(item, "Name") ?? Text(item, "Description")
             ?? throw new InvalidPurchaseInvoiceException($"Line {lineNumber} has no item name.");
         var code = Text(Child(item, "SellersItemIdentification"), "ID");
+        code = code is null ? null : Truncate(code, 100);
 
         var lineNet = Decimal(Required(line, "LineExtensionAmount", $"line {lineNumber} amount"), $"line {lineNumber} amount");
         if (lineNet < 0)
             throw new InvalidPurchaseInvoiceException($"Line {lineNumber} must not have a negative amount.");
+        if (lineNet >= MaxAmount)
+            throw new InvalidPurchaseInvoiceException($"Line {lineNumber} amount is too large.");
 
         // The net amount already carries any line discount, so it is the real cost per invoiced unit.
-        return new ParsedInvoiceLine(lineNumber, code, Truncate(description, 500), quantity, unit.ToUpperInvariant(),
-            Math.Round(lineNet / quantity, 6, MidpointRounding.AwayFromZero), lineNet);
+        var unitPrice = Math.Round(lineNet / quantity, 6, MidpointRounding.AwayFromZero);
+        if (unitPrice >= 1_000_000_000_000m)
+            throw new InvalidPurchaseInvoiceException($"Line {lineNumber} unit price is too large.");
+        return new ParsedInvoiceLine(lineNumber, code, Truncate(description, 500), quantity, unit.ToUpperInvariant(), unitPrice, lineNet);
     }
 
     private static XElement Load(string xml)

@@ -47,7 +47,7 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
 
         var rows = await ReadRowsAsync(filter, cancellationToken).ConfigureAwait(false);
         if (rows.Count > MaxRows)
-            throw new InvalidOperationException($"The product margin report returned more than {MaxRows} rows; narrow the range.");
+            throw new ArgumentException($"The product margin report returned more than {MaxRows} rows; narrow the range.", nameof(filter));
 
         var (linesNet, billDiscounts) = await ReadControlTotalsAsync(filter, cancellationToken).ConfigureAwait(false);
         var productNet = rows.Sum(r => r.NetRevenue);

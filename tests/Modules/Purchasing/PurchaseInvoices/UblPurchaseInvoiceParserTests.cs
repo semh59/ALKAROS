@@ -58,6 +58,42 @@ public sealed class UblPurchaseInvoiceParserTests
     }
 
     [Fact]
+    public void AnInvoiceInAForeignCurrencyIsRefused()
+    {
+        var xml = Build(Guid.NewGuid()).Replace("<cbc:DocumentCurrencyCode>TRY<", "<cbc:DocumentCurrencyCode>USD<", StringComparison.Ordinal);
+
+        var act = () => UblPurchaseInvoiceParser.Parse(xml);
+
+        act.Should().Throw<InvalidPurchaseInvoiceException>();
+    }
+
+    [Theory]
+    [InlineData("number")]
+    [InlineData("tax")]
+    [InlineData("unit")]
+    [InlineData("quantity")]
+    [InlineData("amount")]
+    [InlineData("price")]
+    public void AValueThatCannotBeStoredIsRefusedBeforeItReachesTheDatabase(string field)
+    {
+        var line = field switch
+        {
+            "unit" => new Line("1", "A", "Ürün", "1", new string('X', 17), "10.00"),
+            "quantity" => new Line("1", "A", "Ürün", "100000000000000", "KGM", "10.00"),
+            "amount" => new Line("1", "A", "Ürün", "10000000000000", "KGM", "100000000000000"),
+            "price" => new Line("1", "A", "Ürün", "0.0001", "KGM", "99999999999"),
+            _ => new Line("1", "A", "Ürün", "1", "KGM", "10.00"),
+        };
+        var xml = Build(
+            Guid.NewGuid(), supplierTax: field == "tax" ? new string('1', 33) : "1234567890", number: field == "number" ? new string('N', 65) : "ABC1",
+            lines: [line]);
+
+        var act = () => UblPurchaseInvoiceParser.Parse(xml);
+
+        act.Should().Throw<InvalidPurchaseInvoiceException>();
+    }
+
+    [Fact]
     public void APlainInvoiceIsNotAReturn()
     {
         var parsed = UblPurchaseInvoiceParser.Parse(Build(Guid.NewGuid()));

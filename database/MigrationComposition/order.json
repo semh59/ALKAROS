@@ -1533,6 +1533,14 @@
         "purchase_invoices"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "179",
+      "phase": "B",
+      "tables": [
+        "goods_receipt_items"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

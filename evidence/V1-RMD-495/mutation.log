@@ -1,0 +1,13 @@
+﻿Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar hash ile geri yuklenir.
+M1 para birimi kontrolu yok: Başarısız! - Başarısız:     1, Başarılı:    51, Atlanan:     0, Toplam:    52, Süre: 5 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M2 fatura no uzunlugu sinirsiz: Başarısız! - Başarısız:     1, Başarılı:    51, Atlanan:     0, Toplam:    52, Süre: 5 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M3 vergi no uzunlugu sinirsiz: Başarısız! - Başarısız:     1, Başarılı:    51, Atlanan:     0, Toplam:    52, Süre: 5 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M4 birim kodu uzunlugu sinirsiz: Başarısız! - Başarısız:     1, Başarılı:    51, Atlanan:     0, Toplam:    52, Süre: 5 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M5 miktar tasmasi kontrol edilmiyor: Başarısız! - Başarısız:     1, Başarılı:    51, Atlanan:     0, Toplam:    52, Süre: 5 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M6 tutar tasmasi kontrol edilmiyor: Başarısız! - Başarısız:     1, Başarılı:    51, Atlanan:     0, Toplam:    52, Süre: 5 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M7 birim fiyat tasmasi kontrol edilmiyor: Başarısız! - Başarısız:     1, Başarılı:    51, Atlanan:     0, Toplam:    52, Süre: 5 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M8 veri istisnasi gecersiz belge sayilmiyor: Başarısız! - Başarısız:     1, Başarılı:    51, Atlanan:     0, Toplam:    52, Süre: 5 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M9 reddedilen belge sayilmiyor: Başarısız! - Başarısız:     1, Başarılı:    51, Atlanan:     0, Toplam:    52, Süre: 5 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M10 reddedilen son belgede durulmuyor: Başarısız! - Başarısız:     1, Başarılı:    51, Atlanan:     0, Toplam:    52, Süre: 5 s - ALKAROS.Purchasing.PurchaseInvoices.Tests.dll (net8.0)
+M11 marj satir siniri kontrol edilmiyor: Başarısız! - Başarısız:     1, Başarılı:    13, Atlanan:     0, Toplam:    14, Süre: 2 s - ALKAROS.Reporting.ProductMargin.Tests.dll (net8.0)
+geri yukleme (hash karsilastirma): ayni

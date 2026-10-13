@@ -1,0 +1,6 @@
+1. kimlik bilgisi kaydi: HTTP 204
+2. cekme (iyi, zehirli, USD, reddedilen, iyi): HTTP 200 {"listed":5,"imported":2,"duplicates":0,"skipped":3,"stoppedEarly":false}; imlec 6005 (6005 bekleniyor)
+3. cekme (yalniz reddedilen son belge): HTTP 200 {"listed":1,"imported":0,"duplicates":0,"skipped":0,"stoppedEarly":true}; imlec 6005 (6005'te kalmali)
+4. USD fatura elle yukleme: HTTP 400 INVALID_INVOICE
+5. 80 karakterli fatura no elle yukleme: HTTP 400 INVALID_INVOICE
+6. kayitli faturalar: AAA1, AAA5

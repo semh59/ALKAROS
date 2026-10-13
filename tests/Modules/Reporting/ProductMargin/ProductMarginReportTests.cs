@@ -148,6 +148,20 @@ public sealed class ProductMarginReportTests : IClassFixture<ProductMarginTestDa
     }
 
     [Fact]
+    public async Task ARangeWithMoreThanTheRowLimitIsRefusedAsAValidationError()
+    {
+        for (var i = 0; i < 1001; i++)
+        {
+            var product = await _database.SeedProductAsync("Ürün " + i);
+            await _database.SeedBillLineAsync(product, "Ürün", 1m, 10m, Noon(20));
+        }
+
+        var act = () => _service.GetReportAsync(Day(20));
+
+        await act.Should().ThrowAsync<ArgumentException>();
+    }
+
+    [Fact]
     public async Task TheServiceDayIsTheIstanbulCalendarDay()
     {
         var product = await _database.SeedProductAsync("Gece");

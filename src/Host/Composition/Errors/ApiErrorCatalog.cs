@@ -317,7 +317,7 @@ public static class ApiErrorCatalog
             PurchaseInvoiceStatusException =>
                 (StatusCodes.Status409Conflict, "INVALID_STATUS", "Fatura bu durumda bu işlemi kabul etmiyor."),
             UnsupportedPurchaseDocumentException =>
-                (StatusCodes.Status400BadRequest, "UNSUPPORTED_DOCUMENT", "Yalnız alış faturaları içeri alınabilir; iade ve diğer belgeler desteklenmiyor."),
+                (StatusCodes.Status400BadRequest, "UNSUPPORTED_DOCUMENT", "Yalnız alış faturaları ve iade faturaları içeri alınabilir; diğer belgeler desteklenmiyor."),
             InvalidPurchaseInvoiceException =>
                 (StatusCodes.Status400BadRequest, "INVALID_INVOICE", "Fatura verisi okunamadı, geçersiz veya eksik."),
             DuplicateSupplierCodeException =>

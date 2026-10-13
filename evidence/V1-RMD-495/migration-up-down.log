@@ -1,0 +1,4 @@
+ileri (179 dahil tum migrationlar): idx_goods_receipt_items_stock_item
+geri (179 down): []
+yeniden ileri (179 up): idx_goods_receipt_items_stock_item
+up ikinci kez (idempotent): hata yok

@@ -71,8 +71,7 @@ public sealed class QnbPurchaseInvoiceSource : IPurchaseInvoiceInboxSource
             }
             catch (QnbApiException ex)
             {
-                // QNB answered but would not hand this document over: skipping it keeps one bad document from blocking the rest.
-                throw new InvalidPurchaseInvoiceException("QNB would not deliver the document.", ex);
+                throw new PurchaseInvoiceDocumentRefusedException("QNB would not deliver the document.", ex);
             }
             catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException)
             {

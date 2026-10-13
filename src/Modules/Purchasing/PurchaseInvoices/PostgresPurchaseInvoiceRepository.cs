@@ -74,6 +74,11 @@ public sealed class PostgresPurchaseInvoiceRepository : IPurchaseInvoiceReposito
         {
             throw new DuplicatePurchaseInvoiceException(invoice.Ettn);
         }
+        catch (PostgresException ex) when (ex.SqlState.StartsWith("22", StringComparison.Ordinal))
+        {
+            // A data exception (value too long, number out of range) means this document can never be stored; it is not a database outage.
+            throw new InvalidPurchaseInvoiceException("A document field does not fit the stored format.", ex);
+        }
     }
 
     public async Task<PurchaseInvoice?> GetAsync(Guid invoiceId, CancellationToken ct = default)

@@ -65,6 +65,7 @@ public sealed class PurchaseInvoiceInboxService : IPurchaseInvoiceInboxService
         var cursor = await _repository.GetInboxCursorAsync(PurchaseInvoiceSources.QnbInbox, ct).ConfigureAwait(false);
         int listed = 0, imported = 0, duplicates = 0, skipped = 0;
         var stoppedEarly = false;
+        var refused = 0;
 
         for (var page = 0; page < MaxPages && !stoppedEarly; page++)
         {
@@ -95,10 +96,21 @@ public sealed class PurchaseInvoiceInboxService : IPurchaseInvoiceInboxService
                     stoppedEarly = true;
                     break;
                 }
+                catch (PurchaseInvoiceDocumentRefusedException)
+                {
+                    // A refusal could be this document or a dropped session; only a later success proves it was the document.
+                    refused++;
+                    continue;
+                }
 
+                skipped += refused;
+                refused = 0;
                 cursor = document.SequenceNo;
                 await _repository.SaveInboxCursorAsync(PurchaseInvoiceSources.QnbInbox, cursor, ct).ConfigureAwait(false);
             }
+
+            if (refused > 0)
+                stoppedEarly = true;
         }
 
         return new InboxFetchResult(listed, imported, duplicates, skipped, stoppedEarly);

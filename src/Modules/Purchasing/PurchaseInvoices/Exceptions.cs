@@ -13,6 +13,12 @@ public sealed class UnsupportedPurchaseDocumentException : PurchasingException
     public UnsupportedPurchaseDocumentException(string message) : base(message) { }
 }
 
+/// <summary>The source answered but would not hand this one document over (a session problem looks the same as a bad document).</summary>
+public sealed class PurchaseInvoiceDocumentRefusedException : PurchasingException
+{
+    public PurchaseInvoiceDocumentRefusedException(string message, Exception inner) : base(message, inner) { }
+}
+
 public sealed class DuplicatePurchaseInvoiceException : PurchasingException
 {
     public DuplicatePurchaseInvoiceException(Guid ettn) : base($"A purchase invoice with ETTN '{ettn}' was already imported.") { }
