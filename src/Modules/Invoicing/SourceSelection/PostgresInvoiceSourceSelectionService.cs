@@ -199,6 +199,16 @@ public sealed class PostgresInvoiceSourceSelectionService : IInvoiceSourceSelect
         if (status == nameof(InvoiceSourceSetStatus.Cancelled))
             throw new InvoiceSourceSetAlreadyCancelledException(sourceSetId);
 
+        // Cancelling frees the set's transactions for a new set, which would invoice the same debt twice.
+        await using (var invoiced = Command(connection, transaction, """
+            SELECT EXISTS (SELECT 1 FROM invoicing.invoices WHERE source_set_id = @source_set_id);
+            """))
+        {
+            invoiced.Parameters.AddWithValue("source_set_id", sourceSetId);
+            if ((bool)(await invoiced.ExecuteScalarAsync(cancellationToken))!)
+                throw new InvoiceSourceSetAlreadyInvoicedException(sourceSetId);
+        }
+
         await using (var cancel = Command(connection, transaction, """
             UPDATE invoicing.invoice_source_sets
             SET status = 'Cancelled', cancelled_at = now(), cancelled_by = @cancelled_by, cancel_reason = @reason

@@ -1,0 +1,4 @@
+﻿Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar hash ile geri yuklenir.
+M1 faturalanmis set iptal edilebiliyor: Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:    13, Süre: 7 s - ALKAROS.Invoicing.SourceSelection.Tests.dll (net8.0)
+M2 taslak adaylari en eskiden basliyor: Başarısız! - Başarısız:     1, Başarılı:    12, Atlanan:     0, Toplam:    13, Süre: 16 s - ALKAROS.Host.Experience.OnlineOrdering.Tests.dll (net8.0)
+geri yukleme (hash karsilastirma): ayni

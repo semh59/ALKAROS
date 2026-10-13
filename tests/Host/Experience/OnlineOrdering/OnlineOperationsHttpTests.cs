@@ -262,6 +262,37 @@ public sealed class OnlineOperationsHttpTests : IAsyncLifetime, IDisposable
     }
 
     [Fact]
+    public async Task OrdersThatCanNeverBeDraftedDoNotStarveANewerOrderInThePass()
+    {
+        var cookie = await _database.SeedStaffSessionAsync(_terminalId, "orders.create");
+        var poisoned = new List<Guid>();
+        for (var i = 0; i < 3; i++)
+        {
+            var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 2m);
+            var (orderId, _, _) = await AcceptedOnlineOrderAsync(sku, productId);
+            using var handover = await _client!.SendAsync(
+                Post(Action(orderId, "hand-over"), cookie, new OnlineOrderActionRequestV1(await _database.RowVersionAsync(orderId))));
+            Assert.Equal(HttpStatusCode.OK, handover.StatusCode);
+            poisoned.Add(orderId);
+        }
+
+        var (lastProduct, lastSku) = await _database.SeedSellableProductAsync(onHand: 2m);
+        var (valid, _, _) = await AcceptedOnlineOrderAsync(lastSku, lastProduct);
+        using var lastHandover = await _client!.SendAsync(
+            Post(Action(valid, "hand-over"), cookie, new OnlineOrderActionRequestV1(await _database.RowVersionAsync(valid))));
+        Assert.Equal(HttpStatusCode.OK, lastHandover.StatusCode);
+        foreach (var orderId in poisoned)
+            await _database.ExecAsync("UPDATE online_ordering.online_orders SET provider = 'unknown-platform' WHERE order_id = @id;", ("id", orderId));
+        await _app!.Services.GetRequiredService<ISellerProfileStore>().SaveAsync(Seller, null);
+
+        var drafting = _app.Services.GetRequiredService<OnlineOrderInvoiceDrafting>();
+        for (var pass = 0; pass < 80 && await InvoiceScalarAsync(valid, "invoice_id") is null; pass++)
+            await drafting.DraftMissingAsync(1);
+
+        Assert.NotNull(await InvoiceScalarAsync(valid, "invoice_id"));
+    }
+
+    [Fact]
     public async Task ThePassLeavesAnOrderHandedOverMoreThanSevenDaysAgoAloneAndUsesTheTrendyolAddressForThatPlatform()
     {
         var cookie = await _database.SeedStaffSessionAsync(_terminalId, "orders.create");

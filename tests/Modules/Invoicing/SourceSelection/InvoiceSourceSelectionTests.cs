@@ -174,6 +174,37 @@ public sealed class InvoiceSourceSelectionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ASetThatAlreadyHasAnInvoiceCannotBeCancelledAndKeepsItsLines()
+    {
+        var customer = Guid.NewGuid();
+        await _database.RecordAsync(customer, "Charge", 40m, AugustStartUtc.AddHours(2));
+        var period = await _service.ClosePeriodAsync(August, September, _operator);
+        var set = (await _service.SelectAsync(period.PeriodId, customer)).SourceSet;
+        await using (var insert = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO invoicing.invoices
+                (invoice_id, source_set_id, period_id, customer_id, profile, ubl_profile_id, invoice_type_code, currency_code, issue_date,
+                 buyer_envelope, line_extension_amount, tax_total, payable_amount, created_by)
+            VALUES (gen_random_uuid(), @set, @period, @customer, 'EArsiv', 'EARSIVFATURA', 'SATIS', 'TRY', current_date,
+                    decode('00', 'hex'), 40, 0, 40, @by);
+            """))
+        {
+            insert.Parameters.AddWithValue("set", set.SourceSetId);
+            insert.Parameters.AddWithValue("period", period.PeriodId);
+            insert.Parameters.AddWithValue("customer", customer);
+            insert.Parameters.AddWithValue("by", _operator);
+            await insert.ExecuteNonQueryAsync();
+        }
+
+        await Assert.ThrowsAsync<InvoiceSourceSetAlreadyInvoicedException>(
+            () => _service.CancelAsync(set.SourceSetId, _operator, "Yanlis"));
+
+        var after = await _service.GetSourceSetAsync(set.SourceSetId);
+        Assert.Equal(InvoiceSourceSetStatus.Selected, after!.Status);
+        Assert.Single(after.Lines);
+    }
+
+    [Fact]
     public async Task ConcurrentSelectionsOfOneCustomerResolveToOneSet()
     {
         var customer = Guid.NewGuid();

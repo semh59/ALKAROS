@@ -22,6 +22,9 @@ public sealed class InvoiceSourceSetNotFoundException(Guid sourceSetId)
 public sealed class InvoiceSourceSetAlreadyCancelledException(Guid sourceSetId)
     : InvalidOperationException($"Invoice source set {sourceSetId} is already cancelled.");
 
+public sealed class InvoiceSourceSetAlreadyInvoicedException(Guid sourceSetId)
+    : InvalidOperationException($"Invoice source set {sourceSetId} already has an invoice and cannot be cancelled.");
+
 public sealed class InvoiceSourceSetTooLargeException(Guid periodId, Guid customerId, int limit)
     : InvalidOperationException(
         $"Customer {customerId} has more than {limit} uninvoiced transactions in period {periodId}; split the period.");

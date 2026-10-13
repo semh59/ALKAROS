@@ -73,7 +73,14 @@ public sealed class OnlineOrderInvoiceDrafting(
     }
 
     /// <summary>Drafts the orders handed over within the invoicing window that still have none; returns how many it created.</summary>
-    public async Task<int> DraftMissingAsync(CancellationToken cancellationToken = default)
+    public Task<int> DraftMissingAsync(CancellationToken cancellationToken = default)
+        => DraftMissingAsync(PassLimit, cancellationToken);
+
+    /// <summary>
+    /// Candidates are taken in random order: an order that can never be drafted (no lines, unknown platform) stays a candidate for
+    /// the whole window, and oldest-first would let enough of them fill every pass and starve the newer orders behind them.
+    /// </summary>
+    public async Task<int> DraftMissingAsync(int limit, CancellationToken cancellationToken = default)
     {
         List<Guid> missing = [];
         try
@@ -87,11 +94,11 @@ public sealed class OnlineOrderInvoiceDrafting(
                   AND o.status IN ('Served', 'Completed')
                   AND COALESCE(o.closed_at, o.updated_at) > now() - $1
                   AND NOT EXISTS (SELECT 1 FROM invoicing.order_invoices i WHERE i.order_id = o.order_id)
-                ORDER BY o.created_at, o.order_id
+                ORDER BY random()
                 LIMIT $2;
                 """);
             command.Parameters.AddWithValue(InvoicingWindow);
-            command.Parameters.AddWithValue(PassLimit);
+            command.Parameters.AddWithValue(limit);
             await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
             while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
                 missing.Add(reader.GetGuid(0));
