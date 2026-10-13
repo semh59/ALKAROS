@@ -776,7 +776,7 @@ function HealthPanel({ health, backups }: { health: KitchenHealthSnapshot | null
     {lastBackup && <div className={`kitchen-backup ${lastBackup.status === "Failed" ? "kitchen-backup--failed" : ""}`}>
       <span>{lastBackup.backupType} yedekleme · {formatBackupDate(lastBackup.startedAt)}</span>
       <strong>{lastBackup.status === "Completed" ? "Tamamlandı" : lastBackup.status === "Failed" ? "Başarısız" : "Devam ediyor"}</strong>
-      {lastBackup.status === "Failed" && lastBackup.errorMessage && <p>{lastBackup.errorMessage}</p>}
+      {lastBackup.status === "Failed" && <p>Yedekleme başarısız oldu; ayrıntı sunucu günlüğündedir.</p>}
     </div>}
   </section>;
 }
@@ -843,7 +843,7 @@ function PrinterPanel({
       setSelectedCategoryId("");
       setSelectedPrinterId("");
     } catch (error) {
-      setRouteFeedback({ tone: "error", message: error instanceof Error ? error.message : "Rota kaydedilemedi." });
+      setRouteFeedback({ tone: "error", message: error instanceof KitchenOperationsApiError ? error.message : "Rota kaydedilemedi." });
     } finally {
       setRouteBusy(false);
     }

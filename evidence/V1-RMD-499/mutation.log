@@ -1,8 +1,6 @@
-Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar hash ile geri yuklenir.
-M1 yardimci her hatanin metnini donduruyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
-M2 yedekleme sunucu metnini gosteriyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
-M3 rota hatasi ham mesaj: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
-M4 bekleyen hesap ham mesaj: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
-M5 fatura bilgisi okuma ham mesaj: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
-Not: kaydetme yolundaki sınıf denetimi (saveFailed) denenebilir bir ham hata üretmez; saveSellerProfile yalnız SellerProfileApiError fırlatır, okuma yolu mutantı aynı denetimi kapsar.
-Dosyalar mutant sonrası yedekten geri yüklendi.
+Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar yedekten geri yuklenir.
+M1 yedekleme sunucu metnini gosteriyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M2 rota hatasi ham mesaj: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M3 bekleyen hesap ham mesaj: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M4 fatura bilgisi okuma ham mesaj: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+Not: kaydetme yolundaki sınıf denetimi (saveFailed) için ham hata üretilemez; saveSellerProfile yalnız SellerProfileApiError fırlatır, okuma yolu mutantı aynı denetimi kapsar.

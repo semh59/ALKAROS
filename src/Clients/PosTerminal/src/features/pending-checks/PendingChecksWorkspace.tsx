@@ -1,6 +1,6 @@
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { useCallback, useEffect, useState } from "react";
-import { createBillFromOrder } from "../billing";
+import { BillingSplitApiError, createBillFromOrder } from "../billing";
 import { formatMoney } from "../../format";
 import { PendingChecksApiError, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
 import "./pending-checks.css";
@@ -89,7 +89,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
       navigateTo(collectionHref(billId));
     } catch (reason) {
       setOpeningOrderId(undefined);
-      setError(reason instanceof Error && reason.message ? reason.message : "Hesap açılamadı. Tekrar deneyin.");
+      setError(reason instanceof PendingChecksApiError || reason instanceof BillingSplitApiError ? reason.message : "Hesap açılamadı. Tekrar deneyin.");
     }
   };
 

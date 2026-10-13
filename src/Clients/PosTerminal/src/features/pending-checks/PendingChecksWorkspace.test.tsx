@@ -87,6 +87,21 @@ describe("PendingChecksWorkspace", () => {
     expect(navigateTo).toHaveBeenCalledWith("/cashier/payments/split-payment/index.html?billId=b-new");
   });
 
+  it("shows a Turkish sentence, not the raw network error, when the bill cannot be opened", async () => {
+    fetchMock.mockImplementation(async (url: string) => {
+      if (url.includes("awaiting-payment")) return ok(sample);
+      return { ok: true, status: 200, json: async () => { throw new TypeError("Failed to fetch"); } };
+    });
+    await render();
+
+    await act(async () => {
+      (document.querySelector('button[aria-label="S-001 hesabını tahsil et"]') as HTMLButtonElement).click();
+    });
+
+    expect(document.body.textContent).not.toContain("Failed to fetch");
+    expect(document.body.textContent).toContain("Hesap açılamadı. Tekrar deneyin.");
+  });
+
   it("goes straight to collection when the bill already exists, without creating another", async () => {
     fetchMock.mockResolvedValue(ok(sample));
     const navigateTo = await render();

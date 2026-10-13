@@ -1,6 +1,6 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { invoiceSettingsText as t } from "../../strings";
-import { loadSellerProfile, saveSellerProfile, type SellerProfile } from "./sellerProfileApi";
+import { loadSellerProfile, saveSellerProfile, SellerProfileApiError, type SellerProfile } from "./sellerProfileApi";
 
 const empty: SellerProfile = { legalName: "", taxIdKind: "Vkn", taxIdNumber: "", taxOffice: "", address: "", district: "", city: "", email: null };
 
@@ -17,7 +17,7 @@ export function SellerProfileCard({ terminalId, fetcher = fetch }: { terminalId:
     let current = true;
     loadSellerProfile(terminalId, fetcher)
       .then((loaded) => { if (current && loaded) { setProfile(loaded); setConfigured(true); } })
-      .catch((reason: Error) => { if (current) setProblem(reason.message); })
+      .catch((reason: unknown) => { if (current) setProblem(reason instanceof SellerProfileApiError ? reason.message : t.loadFailed); })
       .finally(() => { if (current) setLoading(false); });
     return () => { current = false; };
   }, [terminalId, fetcher]);
@@ -34,7 +34,7 @@ export function SellerProfileCard({ terminalId, fetcher = fetch }: { terminalId:
       setConfigured(true);
       setSaved(true);
     } catch (reason) {
-      setProblem((reason as Error).message);
+      setProblem(reason instanceof SellerProfileApiError ? reason.message : t.saveFailed);
     } finally {
       setBusy(false);
     }

@@ -196,7 +196,8 @@ describe("kitchen operations workspace", () => {
     // case.
     await render(<KitchenOperationsWorkspace {...baseProps()} />);
     expect(document.body.textContent).toContain("Başarısız");
-    expect(document.body.textContent).toContain("Backup engine unavailable");
+    expect(document.body.textContent).toContain("Yedekleme başarısız oldu; ayrıntı sunucu günlüğündedir.");
+    expect(document.body.textContent).not.toContain("Backup engine unavailable");
   });
 
   it("shows the age-restriction badge and its id-check hint", async () => {
@@ -453,6 +454,25 @@ describe("kitchen operations workspace", () => {
   it("V1-RMD-200: shows the category-printer routing form with kitchen.routing.manage", async () => {
     await render(<KitchenOperationsWorkspace {...baseProps({ canManageRouting: true, onCreateCategoryRoute: vi.fn() })} />);
     expect(document.querySelector(".kitchen-route-form")).not.toBeNull();
+  });
+
+  it("shows a Turkish sentence, not the raw runtime error, when the route cannot be saved", async () => {
+    const onCreateCategoryRoute = vi.fn().mockRejectedValue(new TypeError("Failed to fetch"));
+    await render(<KitchenOperationsWorkspace {...baseProps({ canManageRouting: true, onCreateCategoryRoute })} />);
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")!.set!;
+      for (const [label, value] of [["Ürün grubu", "category-1"], ["Yazıcı", "printer-1"]]) {
+        const select = document.querySelector<HTMLSelectElement>(`select[aria-label="${label}"]`)!;
+        setter.call(select, value);
+        select.dispatchEvent(new Event("change", { bubbles: true }));
+      }
+    });
+    await act(async () => {
+      document.querySelector<HTMLFormElement>(".kitchen-route-form")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
+    });
+    expect(onCreateCategoryRoute).toHaveBeenCalledWith("category-1", "printer-1");
+    expect(document.body.textContent).not.toContain("Failed to fetch");
+    expect(document.body.textContent).toContain("Rota kaydedilemedi.");
   });
 
   it("shows the Ürün Tükendi Bildir button locked for a kitchen-staff session and enabled for the chef", async () => {

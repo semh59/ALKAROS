@@ -80,6 +80,12 @@ describe("SellerProfileCard", () => {
     expect(document.body.textContent).not.toContain("kaydedildi");
   });
 
+  it("falls back to a Turkish sentence when the reply cannot be parsed", async () => {
+    await render((async () => ({ ok: true, status: 200, json: async () => { throw new SyntaxError("Unexpected token <"); } })) as unknown as typeof fetch);
+
+    expect(document.querySelector('[role="alert"]')!.textContent).toBe("Fatura bilgileri okunamadı.");
+  });
+
   it("falls back to a Turkish sentence when the server is unreachable", async () => {
     await render((async () => { throw new TypeError("Failed to fetch"); }) as unknown as typeof fetch);
 

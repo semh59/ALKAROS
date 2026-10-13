@@ -874,4 +874,5 @@ export const invoiceSettingsText = {
   save: "Kaydet",
   saving: "Kaydediliyor…",
   savedMessage: "İşletme bilgileri kaydedildi.",
-} as const;
+  loadFailed: "Fatura bilgileri okunamadı.",
+  saveFailed: "Fatura bilgileri kaydedilemedi.",} as const;
