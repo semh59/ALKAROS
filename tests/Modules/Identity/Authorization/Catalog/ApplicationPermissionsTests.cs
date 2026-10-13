@@ -7,10 +7,10 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 public sealed class ApplicationPermissionsTests
 {
     [Fact]
-    public void CatalogHasTwentyThreeDistinctCodes()
+    public void CatalogHasTwentyFourDistinctCodes()
     {
-        // V1-RMD-266 added security.manage, the 22nd code; V1-RMD-401 added payments.take, the 23rd.
-        ApplicationPermissions.Codes.Should().HaveCount(23);
+        // payments.take is the 23rd code and bills.cancel the 24th.
+        ApplicationPermissions.Codes.Should().HaveCount(24);
         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
         ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
     }
@@ -47,6 +47,7 @@ public sealed class ApplicationPermissionsTests
     [InlineData("security.manage")]
     [InlineData("orders.transfer-server-any")]
     [InlineData("payments.take")]
+    [InlineData("bills.cancel")]
     public void WaiterDoesNotHoldAnyEscalatedGrant(string code)
     {
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter]
@@ -60,6 +61,16 @@ public sealed class ApplicationPermissionsTests
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleCashier].Should().Contain(ApplicationPermissions.PaymentsTake);
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor].Should().Contain(ApplicationPermissions.PaymentsTake);
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager].Should().Contain(ApplicationPermissions.PaymentsTake);
+    }
+
+    [Fact]
+    public void BillsCancelIsHeldByCashierSupervisorAndManagerButNotWaiter()
+    {
+        // Cashier and manager cancel an unpaid bill with a reason.
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleCashier].Should().Contain(ApplicationPermissions.BillsCancel);
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor].Should().Contain(ApplicationPermissions.BillsCancel);
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager].Should().Contain(ApplicationPermissions.BillsCancel);
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter].Should().NotContain(ApplicationPermissions.BillsCancel);
     }
 
     [Fact]

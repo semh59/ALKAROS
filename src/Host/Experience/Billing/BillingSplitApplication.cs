@@ -76,6 +76,7 @@ public static class BillingSplitApplication
         // real callers anywhere in the codebase — this is its first.
         services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
         services.TryAddSingleton<BillingSplitStore>();
+        services.TryAddSingleton<BillCancellationStore>();
         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();
         services.TryAddTransient<BillingSplitExceptionFilter>();
         return services;
@@ -99,6 +100,23 @@ public static class BillingSplitApplication
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
             return Results.Ok(await store.CreateBillFromOrderAsync(orderId, principal.CanMutate, cancellationToken));
+        });
+
+        // bills.cancel is checked directly (cashier tier and up); the reason is mandatory.
+        billsGroup.MapPost("/{billId:guid}/cancel", async (
+            Guid terminalId,
+            Guid billId,
+            CancelBillRequestV1 request,
+            IBillingSplitSessionAuthorizer authorizer,
+            IAuthorizationService authorization,
+            BillCancellationStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.BillsCancel, cancellationToken);
+            return Results.Ok(await store.CancelAsync(
+                billId, request.Reason, principal.UserId, context.TraceIdentifier, cancellationToken));
         });
 
         // V1-RMD-103 (B1): bills.discount is grant-class (model §3), same
@@ -468,6 +486,9 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         BillDiscountUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim uygulanamaz."),
         BillDiscountBelowCollectedException => (409, "DISCOUNT_BELOW_COLLECTED", "Bu indirim, hesaptan şimdiye kadar alınan tutarın altına iniyor; uygulanamaz."),
         SplitItemsOnAdjustedBillException => (409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "İndirim veya ek ücret uygulanmış hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın."),
+        BillCancelHasPaymentException => (409, "BILL_HAS_PAYMENT", "Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli."),
+        BillCancelNotAllowedException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap zaten iptal edilmiş."),
+        BillCancelReasonException => (400, "REASON_REQUIRED", "İptal gerekçesi 1 ile 500 karakter arasında olmalı."),
         IdempotencyKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
         GarsonFeatureDisabledException => (403, "FEATURE_DISABLED", "Bu özellik bu işletme için kapatılmış."),
         ArgumentException or InvalidOperationException or BadHttpRequestException => (400, "VALIDATION_FAILED", "Hesap bölme isteği doğrulanamadı."),

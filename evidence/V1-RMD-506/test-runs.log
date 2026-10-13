@@ -1,0 +1,11 @@
+# Test çalıştırmaları (2026-10-13)
+## final-billing
+Başarılı!  - Başarısız:     0, Başarılı:    33, Atlanan:     0, Toplam:    33, Süre: 2 m 24 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+## t506c
+Başarılı!  - Başarısız:     0, Başarılı:   220, Atlanan:     0, Toplam:   220, Süre: 7 s - ALKAROS.Identity.Authorization.Tests.dll (net8.0)
+## t506e
+Başarılı!  - Başarısız:     0, Başarılı:   174, Atlanan:     0, Toplam:   174, Süre: 19 m 51 s - ALKAROS.Host.Tests.dll (net8.0)
+## ALKAROS.Billing.BillFoundation.Tests
+Başarılı!  - Başarısız:     0, Başarılı:    44, Atlanan:     0, Toplam:    44, Süre: 1 s - ALKAROS.Billing.BillFoundation.Tests.dll (net8.0)
+## ALKAROS.Host.Experience.Orders.TableDraft.Tests
+Başarılı!  - Başarısız:     0, Başarılı:    88, Atlanan:     0, Toplam:    88, Süre: 2 m 4 s - ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll (net8.0)

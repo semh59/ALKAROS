@@ -141,17 +141,27 @@ public sealed class PostgresBillRepository : IBillRepository
 
         await using var command = connection.CreateCommand();
         command.Transaction = transaction;
+        // Superseding the items frees order_item_id for the bill re-created after the order is edited; the
+        // returned count is the bills cancelled, so the item update must not be a separate counted statement.
         command.CommandText = $"""
-            UPDATE {BillsTable}
-            SET status = 'Cancelled',
-                cancelled_at = @timestamp,
-                updated_at = @timestamp,
-                row_version = row_version + 1
-            WHERE order_id = @order_id AND status NOT IN ('Paid', 'Cancelled');
+            WITH cancelled AS (
+                UPDATE {BillsTable}
+                SET status = 'Cancelled',
+                    cancelled_at = @timestamp,
+                    updated_at = @timestamp,
+                    row_version = row_version + 1
+                WHERE order_id = @order_id AND status NOT IN ('Paid', 'Cancelled')
+                RETURNING bill_id),
+            superseded AS (
+                UPDATE {BillItemsTable}
+                SET superseded_at = @timestamp
+                WHERE superseded_at IS NULL AND bill_id IN (SELECT bill_id FROM cancelled)
+                RETURNING 1)
+            SELECT count(*) FROM cancelled;
             """;
         command.Parameters.AddWithValue("order_id", orderId);
         command.Parameters.AddWithValue("timestamp", timestamp);
-        return await command.ExecuteNonQueryAsync(cancellationToken);
+        return (int)(long)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 
     public async Task<int> ReparentBillToTableAsync(
@@ -191,7 +201,7 @@ public sealed class PostgresBillRepository : IBillRepository
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var command = new NpgsqlCommand(
-            $"SELECT 1 FROM {BillItemsTable} WHERE order_item_id = @order_item_id LIMIT 1;",
+            $"SELECT 1 FROM {BillItemsTable} WHERE order_item_id = @order_item_id AND superseded_at IS NULL LIMIT 1;",
             connection);
         command.Parameters.AddWithValue("order_item_id", orderItemId);
 
@@ -208,7 +218,7 @@ public sealed class PostgresBillRepository : IBillRepository
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var command = new NpgsqlCommand(
-            $"SELECT order_item_id FROM {BillItemsTable} WHERE order_item_id = ANY(@ids);",
+            $"SELECT order_item_id FROM {BillItemsTable} WHERE order_item_id = ANY(@ids) AND superseded_at IS NULL;",
             connection);
         command.Parameters.AddWithValue("ids", idList);
 

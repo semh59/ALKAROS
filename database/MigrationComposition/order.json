@@ -1541,6 +1541,24 @@
         "goods_receipt_items"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "180",
+      "phase": "B",
+      "tables": [
+        "bills",
+        "bill_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "181",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

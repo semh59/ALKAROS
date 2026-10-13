@@ -24,6 +24,8 @@ public static class ApplicationPermissions
     public const string BillsVoid = "bills.void";
     public const string BillsComp = "bills.comp";
     public const string BillsDiscount = "bills.discount";
+    /// <summary>Cancelling an unpaid bill with a mandatory reason; cashier tier and up.</summary>
+    public const string BillsCancel = "bills.cancel";
     public const string CashDrawer = "cash.drawer";
     /// <summary>
     /// V1-RMD-401: taking a payment on a bill (card/EFT tender, and the cash tender together with
@@ -98,7 +100,7 @@ public static class ApplicationPermissions
         BillsDiscount, CashDrawer, ReportsView,
         OrdersTransferServer, OrdersTransferServerAny,
         IntegrationsManage, KitchenAdvance, CashSessionOverride, ReportsCloseDay,
-        ReconciliationManage, ObservabilityManage, SecurityManage, PaymentsTake,
+        ReconciliationManage, ObservabilityManage, SecurityManage, PaymentsTake, BillsCancel,
     };
 
     // orders.transfer-server (self hand-off) sits alongside orders.create/
@@ -115,7 +117,7 @@ public static class ApplicationPermissions
         { OrdersCreate, OrdersSend, TablesStatus, OrdersTransferServer, KitchenAdvance };
 
     private static readonly string[] CashierFloorSet =
-        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake };
+        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake, BillsCancel };
 
     private static readonly string[] SupervisorEscalations =
         {

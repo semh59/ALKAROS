@@ -4,6 +4,7 @@ export interface UserInfo { userId: string; username: string; displayName: strin
 
 const permissionLabels: Record<string, string> = {
   "bills.comp": "Teslim edilen kalemi ikram etme",
+  "bills.cancel": "Ödenmemiş hesabı gerekçeyle iptal etme",
   "bills.discount": "Kaleme veya hesaba indirim uygulama",
   "bills.split": "Hesap bölme",
   "bills.void": "Gönderilmiş kalemi iptal etme",

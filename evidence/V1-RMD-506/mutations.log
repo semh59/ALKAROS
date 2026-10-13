@@ -1,0 +1,20 @@
+# Mutasyon sonuçları
+reason-length: SURVIVED
+money-check: KILLED
+paid-check: KILLED
+already-cancelled: KILLED
+supersede-items: KILLED
+clear-pointer: KILLED
+cancelled-by: KILLED
+authorize: KILLED
+recall-supersede: KILLED
+plain-bill-number: KILLED
+plain-order-item: KILLED
+permission-seed: KILLED
+repo-existing-check: SURVIVED
+reason-check: KILLED
+reason-length: KILLED
+audit-append: KILLED
+repo-existing-check: KILLED
+repo-is-billed: KILLED
+(reason-check, audit-append ilk turda derlenmedi; ikinci turda farklı mutantla KILLED; reason-length ve repo-existing-check ilk turda SURVIVED, test eklenip ikinci turda KILLED)
