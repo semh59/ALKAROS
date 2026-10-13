@@ -1,7 +1,7 @@
 # V1-RMD-518 - İptal ve iade uçlarının idempotency kaydı
 
 - Task ID: V1-RMD-518
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing
