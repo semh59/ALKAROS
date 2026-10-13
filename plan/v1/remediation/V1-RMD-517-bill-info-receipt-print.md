@@ -1,7 +1,7 @@
 # V1-RMD-517 - Kasa sayfasında bilgi fişi yazdırma
 
 - Task ID: V1-RMD-517
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing
