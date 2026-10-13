@@ -1,0 +1,6 @@
+tsc --noEmit: exit 0
+oxlint src: 0 error (yalniz onceden var olan uyarilar)
+vite build: exit 0
+ Test Files  66 passed (66)
+      Tests  518 passed (518)
+(refund testleri eklendikten sonra src/features/billing: 24/24)

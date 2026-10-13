@@ -1,7 +1,7 @@
 # V1-RMD-510 - PosTerminal hesap ekranında iptal ve iade
 
 - Task ID: V1-RMD-510
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing

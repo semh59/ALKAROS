@@ -8,7 +8,7 @@ import type { Connectivity, Freshness, RouteAuthorization, ShellIdentity, ShellN
 import { TableManagementApiError, TableWorkspace, createTableManagementClient, type CreateTableInput, type CreateZoneInput, type FloorPlan, type SaveFloorPlanInput, type SaveFloorPlanResult, type TableActionRequest, type TableWorkspaceState } from "../features/tables";
 import { PendingChecksWorkspace } from "../features/pending-checks";
 import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
-import { BillingSplitApiError, BillSplitWorkspace, createBillFromOrder, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
+import { BillingSplitApiError, BillSplitWorkspace, RefundPanel, createBillFromOrder, createBillingRefundClient, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
 import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
 import { KitchenOperationsApiError, KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
 import { SystemHealthWorkspace, type SystemHealthState } from "../features/system-health";
@@ -149,7 +149,7 @@ export function ExperiencePage({
     headerActions={<><a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
   >
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
-    {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} />}
+    {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
     {path === "/pending-checks" && <PendingChecksWorkspace terminalId={terminalId} />}
     {onlineTab !== null && (
       <OnlineFoodHub
@@ -323,7 +323,9 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
   </div>;
 }
 
-function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage: boolean }) {
+function BillingRoute({ terminalId, canManage, canCancel, canRequestRefund, canApproveRefund }: {
+  terminalId: string; canManage: boolean; canCancel: boolean; canRequestRefund: boolean; canApproveRefund: boolean;
+}) {
   const searchParams = useMemo(() => new URLSearchParams(window.location.search), []);
   const orderParam = searchParams.get("orderId");
   const [billId, setBillId] = useState<string>(
@@ -382,6 +384,12 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
 
   useEffect(() => { void load(); }, [load]);
 
+  const designBillId = design?.billId;
+  const refundClient = useMemo(
+    () => (designBillId ? createBillingRefundClient(terminalId, designBillId) : null),
+    [terminalId, designBillId],
+  );
+
   const handleSave = async (request: SaveSplitRequest, currentDesign: BillSplitDesign): Promise<BillSplitDesign> => {
     const targetClient = createBillingSplitClient(terminalId, currentDesign.billId);
     const updated = await targetClient.save(request, currentDesign);
@@ -423,6 +431,15 @@ function BillingRoute({ terminalId, canManage }: { terminalId: string; canManage
         >
           Tahsilata geç
         </a>
+      )}
+      {refundClient && (canCancel || canRequestRefund || canApproveRefund) && (
+        <RefundPanel
+          key={designBillId}
+          client={refundClient}
+          canCancel={canCancel}
+          canRequestRefund={canRequestRefund}
+          canApproveRefund={canApproveRefund}
+        />
       )}
     </div>
   );

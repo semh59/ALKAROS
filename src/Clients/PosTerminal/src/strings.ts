@@ -983,3 +983,39 @@ export const invoiceSettingsText = {
   savedMessage: "İşletme bilgileri kaydedildi.",
   loadFailed: "Fatura bilgileri okunamadı.",
   saveFailed: "Fatura bilgileri kaydedilemedi.",} as const;
+
+export const refundText = {
+  heading: "İptal ve iade",
+  loading: "İptal ve iade bilgileri okunuyor…",
+  loadFailed: "İptal ve iade bilgileri okunamadı.",
+  cancelLabel: "İptal gerekçesi",
+  cancelAction: "Hesabı iptal et",
+  cancelled: "Hesap iptal edildi.",
+  refundHeading: "İade iste",
+  refundReasonLabel: "İade gerekçesi",
+  refundAction: "İade iste",
+  requestsHeading: "İade istekleri",
+  approve: "Onayla",
+  reject: "Reddet",
+  rejectNoteLabel: "Ret gerekçesi",
+  slipLabel: "İade fiş numarası",
+  complete: "İadeyi tamamla",
+  requested: "İade isteği gönderildi; onay bekliyor.",
+  approved: "İade isteği onaylandı.",
+  rejected: "İade isteği reddedildi.",
+  completed: "İade tamamlandı.",
+  refresh: "Yenile",
+  unknown: "Bilinmiyor",
+} as const;
+
+export const refundStatusLabels: Record<string, string> = {
+  Requested: "Onay bekliyor",
+  AwaitingManualRefund: "Elle iade bekliyor",
+  Completed: "Tamamlandı",
+  Rejected: "Reddedildi",
+};
+
+export const refundMethodLabels: Record<string, string> = {
+  Cash: "Nakit",
+  Manual: "Kart / elle iade",
+};
