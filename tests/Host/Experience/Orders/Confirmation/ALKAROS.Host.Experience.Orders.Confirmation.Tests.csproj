@@ -62,6 +62,7 @@
     <None Include="../../../../../database/migrations/V11/V11-RCP-001/058-recipe-versions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V11/V11-RCP-003/115-product-recipe-mappings.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V11/V11-RCP-004/116-theoretical-consumption-records.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-RMD-486/174-theoretical-consumption-modifier-source.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <!-- V1-RMD-184: found by the 2026-09-12 five-agent independent Garson
          audit — without settings.settings, QrOrderExpiryHostedService (a
          background hosted service started with the Host, not this test's

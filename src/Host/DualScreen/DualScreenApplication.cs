@@ -119,6 +119,9 @@ public static partial class DualScreenApplication
         var moduleComposition = ModuleRegistry.ComposeRoot(ModuleRegistry.DefaultCatalog);
         HostComposition.ApplyComposedModuleServices(builder.Services, moduleComposition.Services);
 
+        // The anonymization module takes its field actions from the composition root because they write other modules' stores.
+        builder.Services.AddSingleton<ALKAROS.Privacy.Anonymization.IAnonymizationPlans, ALKAROS.Host.KvkkAnonymizationPlans>();
+
         // Drains the transactional outbox and fans each table event out to the
         // module IIntegrationEventConsumer registrations above (Order, Bill
         // reparent their rows after a table merge/transfer/unmerge).
