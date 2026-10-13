@@ -1,8 +1,8 @@
 # V1-RMD-496 - Müşteri hesabı doğruluk düzeltmeleri (arama kapsamı, tutar ölçeği)
 
 - Task ID: V1-RMD-496
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing
 
