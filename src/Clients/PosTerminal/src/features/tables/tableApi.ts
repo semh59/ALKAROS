@@ -7,6 +7,8 @@ import type {
   TableActionRequest,
   TableRecord,
   TableZone,
+  UpdateTableInput,
+  UpdateZoneInput,
 } from "./models";
 
 export class TableManagementApiError extends Error {
@@ -20,6 +22,9 @@ export interface TableManagementClient {
   listTables: () => Promise<readonly TableRecord[]>;
   createZone: (input: CreateZoneInput) => Promise<TableZone>;
   createTable: (input: CreateTableInput) => Promise<TableRecord>;
+  updateZone: (zone: TableZone, input: UpdateZoneInput) => Promise<TableZone>;
+  deleteZone: (zone: TableZone) => Promise<void>;
+  updateTable: (table: TableRecord, input: UpdateTableInput) => Promise<TableRecord>;
   getFloorPlan: (zoneId: string) => Promise<FloorPlan>;
   saveFloorPlan: (zoneId: string, input: SaveFloorPlanInput) => Promise<SaveFloorPlanResult>;
   execute: (request: TableActionRequest) => Promise<void>;
@@ -59,6 +64,13 @@ function createRequest(terminalId: string, fetcher: typeof fetch): TableManageme
     listTables: () => request<TableRecord[]>("/tables"),
     createZone: (input) => request<TableZone>("/zones", { method: "POST", body: { expectedRowVersion: 0, ...input } }),
     createTable: (input) => request<TableRecord>("/tables", { method: "POST", body: { expectedRowVersion: 0, ...input } }),
+    updateZone: (zone, input) => request<TableZone>(`/zones/${encodeURIComponent(zone.zoneId)}`, {
+      method: "PUT", body: { expectedRowVersion: zone.rowVersion, code: zone.code, ...input },
+    }),
+    deleteZone: (zone) => request<void>(`/zones/${encodeURIComponent(zone.zoneId)}?expectedRowVersion=${zone.rowVersion}`, { method: "DELETE" }),
+    updateTable: (table, input) => request<TableRecord>(`/tables/${encodeURIComponent(table.tableId)}`, {
+      method: "PUT", body: { expectedRowVersion: table.rowVersion, ...input },
+    }),
     getFloorPlan: (zoneId) => request<FloorPlan>(`/floor-plans/${encodeURIComponent(zoneId)}`),
     saveFloorPlan: (zoneId, input) => request<SaveFloorPlanResult>(`/floor-plans/${encodeURIComponent(zoneId)}`, { method: "PUT", body: input }),
     execute: async ({ table, action, reason, partySize, targetTableId, targetTableVersion, participantTableIds, participantTableVersions, mergeGroupId }) => {

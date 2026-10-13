@@ -96,4 +96,27 @@ describe("table management client", () => {
     await expect(client.execute({ table, action: "ClaimReservation" })).rejects.toMatchObject({ code: "RESERVATION_MISSING" } satisfies Partial<TableManagementApiError>);
     expect(fetcher).not.toHaveBeenCalled();
   });
+  it("updates and deletes with the authoritative row version", async () => {
+    const fetcher = vi.fn().mockResolvedValue(response({}));
+    const client = createTableManagementClient("terminal-1", fetcher);
+    const zone = { zoneId: "z1", code: "SALON", name: "Salon", sortOrder: 1, active: true, rowVersion: 4 };
+    const table = {
+      tableId: "t1", tableNumber: "S-1", zoneId: "z1", capacity: 2, active: true, status: "Available" as const,
+      currentOrderId: null, currentBillId: null, rowVersion: 7, allowedCommands: [], activeReservationId: null,
+      reservationRowVersion: null, statusChangedAt: "2026-09-30T10:00:00Z",
+    };
+
+    await client.updateZone(zone, { name: "Salon 2", sortOrder: 2, active: false });
+    await client.updateTable(table, { tableNumber: "S-2", zoneId: null, capacity: 6, active: true });
+    await client.deleteZone(zone);
+
+    const prefix = "/api/v1/terminals/terminal-1/table-management";
+    expect(fetcher).toHaveBeenNthCalledWith(1, `${prefix}/zones/z1`, expect.objectContaining({
+      method: "PUT", body: JSON.stringify({ expectedRowVersion: 4, code: "SALON", name: "Salon 2", sortOrder: 2, active: false }),
+    }));
+    expect(fetcher).toHaveBeenNthCalledWith(2, `${prefix}/tables/t1`, expect.objectContaining({
+      method: "PUT", body: JSON.stringify({ expectedRowVersion: 7, tableNumber: "S-2", zoneId: null, capacity: 6, active: true }),
+    }));
+    expect(fetcher).toHaveBeenNthCalledWith(3, `${prefix}/zones/z1?expectedRowVersion=4`, expect.objectContaining({ method: "DELETE" }));
+  });
 });

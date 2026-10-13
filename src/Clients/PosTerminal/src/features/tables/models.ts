@@ -135,6 +135,19 @@ export interface CreateZoneInput {
   sortOrder: number;
 }
 
+export interface UpdateZoneInput {
+  name: string;
+  sortOrder: number;
+  active: boolean;
+}
+
+export interface UpdateTableInput {
+  tableNumber: string;
+  zoneId: string | null;
+  capacity: number;
+  active: boolean;
+}
+
 export interface CreateTableInput {
   tableNumber: string;
   zoneId: string | null;
@@ -177,6 +190,9 @@ export interface TableWorkspaceProps {
   onRefresh: () => void | Promise<void>;
   onCreateZone?: (input: CreateZoneInput) => void | Promise<void>;
   onCreateTable?: (input: CreateTableInput) => void | Promise<void>;
+  onUpdateZone?: (zone: TableZone, input: UpdateZoneInput) => void | Promise<void>;
+  onDeleteZone?: (zone: TableZone) => void | Promise<void>;
+  onUpdateTable?: (table: TableRecord, input: UpdateTableInput) => void | Promise<void>;
   onAction?: (request: TableActionRequest) => void | Promise<void>;
   floorPlan?: FloorPlan | null;
   floorPlanBusy?: boolean;

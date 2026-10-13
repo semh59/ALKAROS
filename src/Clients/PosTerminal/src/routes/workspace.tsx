@@ -293,6 +293,9 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
       onRefresh={load}
       onCreateZone={canManage ? (input: CreateZoneInput) => mutate(() => client.createZone(input)) : undefined}
       onCreateTable={canManage ? (input: CreateTableInput) => mutate(() => client.createTable(input)) : undefined}
+      onUpdateZone={canManage ? (zone, input) => mutate(() => client.updateZone(zone, input)) : undefined}
+      onDeleteZone={canManage ? (zone) => mutate(() => client.deleteZone(zone)) : undefined}
+      onUpdateTable={canManage ? (table, input) => mutate(() => client.updateTable(table, input)) : undefined}
       onAction={canManage ? (request: TableActionRequest) => mutate(() => client.execute(request)) : undefined}
       floorPlan={floorPlan}
       floorPlanBusy={floorPlanBusy}

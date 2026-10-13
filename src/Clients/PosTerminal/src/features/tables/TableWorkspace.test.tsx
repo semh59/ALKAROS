@@ -296,4 +296,63 @@ describe("table workspace", () => {
     await render(<TableWorkspace {...baseProps({ tables: recentlyOccupied })} />);
     expect(document.querySelector(".table-card__recently-vacated")).toBeNull();
   });
+  const buttonByText = (scope: ParentNode, text: string) => [...scope.querySelectorAll("button")].find((button) => button.textContent === text)!;
+
+  it("offers table and zone editing only to a manager session with the handlers", async () => {
+    await render(<TableWorkspace {...baseProps({ canManage: false, onUpdateTable: vi.fn(), onUpdateZone: vi.fn() })} />);
+    expect([...document.querySelectorAll("button")].map((button) => button.textContent)).not.toContain("Masayı düzenle");
+    expect([...document.querySelectorAll("button")].map((button) => button.textContent)).not.toContain("Bölgeleri yönet");
+  });
+
+  it("edits the selected table with its current values and the table as sent for the row version", async () => {
+    const onUpdateTable = vi.fn().mockResolvedValue(undefined);
+    await render(<TableWorkspace {...baseProps({ onUpdateTable })} />);
+    await click(buttonByText(document, "Masayı düzenle"));
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const inputs = dialog.querySelectorAll<HTMLInputElement>("input");
+    expect(inputs[0].value).toBe("S-09");
+    await fillInput(inputs[0], "");
+    await click(buttonByText(dialog, "Masayı kaydet"));
+    expect(dialog.textContent).toContain("Masa numarası gerekli.");
+    expect(onUpdateTable).not.toHaveBeenCalled();
+    await fillInput(inputs[0], "S-90");
+    await click(buttonByText(dialog, "Masayı kaydet"));
+    expect(onUpdateTable).toHaveBeenCalledWith(tables[0], { tableNumber: "S-90", zoneId: "zone-salon", capacity: 4, active: true });
+    expect(document.querySelector('[role="dialog"]')).toBeNull();
+  });
+
+  it("keeps the table edit open and tells the manager to refresh after a concurrency conflict", async () => {
+    const onUpdateTable = vi.fn().mockRejectedValue(new TableManagementApiError(409, "CONCURRENT_MODIFICATION", "Satır sürümü eski."));
+    await render(<TableWorkspace {...baseProps({ onUpdateTable })} />);
+    await click(buttonByText(document, "Masayı düzenle"));
+    const dialog = document.querySelector('[role="dialog"]')!;
+    await click(buttonByText(dialog, "Masayı kaydet"));
+    expect(dialog.textContent).toContain("Kayıt başka biri tarafından değiştirildi");
+    expect(document.querySelector('[role="dialog"]')).not.toBeNull();
+  });
+
+  it("renames a zone keeping its order and active flag", async () => {
+    const onUpdateZone = vi.fn().mockResolvedValue(undefined);
+    await render(<TableWorkspace {...baseProps({ onUpdateZone })} />);
+    await click(buttonByText(document, "Bölgeleri yönet"));
+    const dialog = document.querySelector('[role="dialog"]')!;
+    await click(buttonByText(dialog, "Düzenle"));
+    await fillInput(dialog.querySelector<HTMLInputElement>('form[aria-label="Bölgeyi düzenle"] input')!, "Salon 2");
+    await click(buttonByText(dialog, "Bölgeyi kaydet"));
+    expect(onUpdateZone).toHaveBeenCalledWith(zones[0], { name: "Salon 2", sortOrder: 1, active: true });
+  });
+
+  it("deletes a zone only after confirmation and shows the server's refusal", async () => {
+    const onDeleteZone = vi.fn().mockRejectedValueOnce(new TableManagementApiError(409, "ZONE_HAS_TABLES", "Bölgede masa var.")).mockResolvedValue(undefined);
+    await render(<TableWorkspace {...baseProps({ onDeleteZone, onUpdateZone: vi.fn() })} />);
+    await click(buttonByText(document, "Bölgeleri yönet"));
+    const dialog = document.querySelector('[role="dialog"]')!;
+    await click(buttonByText(dialog, "Sil"));
+    expect(onDeleteZone).not.toHaveBeenCalled();
+    await click(buttonByText(dialog, "Evet, bölgeyi sil"));
+    expect(onDeleteZone).toHaveBeenCalledWith(zones[0]);
+    expect(dialog.textContent).toContain("Bölgede masa var.");
+    await click(buttonByText(dialog, "Evet, bölgeyi sil"));
+    expect(onDeleteZone).toHaveBeenCalledTimes(2);
+  });
 });

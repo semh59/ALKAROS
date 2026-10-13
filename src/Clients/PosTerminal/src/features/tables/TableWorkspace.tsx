@@ -16,6 +16,8 @@ import {
   tableStatusLabels,
   type CreateTableInput,
   type CreateZoneInput,
+  type UpdateTableInput,
+  type UpdateZoneInput,
   type TableAction,
   type TableRecord,
   type TableWorkspaceProps,
@@ -111,6 +113,9 @@ export function TableWorkspace({
   onRefresh,
   onCreateZone,
   onCreateTable,
+  onUpdateZone,
+  onDeleteZone,
+  onUpdateTable,
   onAction,
   floorPlan,
   floorPlanBusy,
@@ -137,6 +142,12 @@ export function TableWorkspace({
   const [formErrors, setFormErrors] = useState<string[]>([]);
   const [zoneDraft, setZoneDraft] = useState<CreateZoneInput>({ code: "", name: "", sortOrder: 0 });
   const [tableDraft, setTableDraft] = useState<CreateTableInput>({ tableNumber: "", zoneId: null, capacity: 2 });
+  const [zonesDialogOpen, setZonesDialogOpen] = useState(false);
+  const [editZoneId, setEditZoneId] = useState<string | null>(null);
+  const [deleteZoneId, setDeleteZoneId] = useState<string | null>(null);
+  const [zoneEdit, setZoneEdit] = useState<UpdateZoneInput>({ name: "", sortOrder: 0, active: true });
+  const [tableEditOpen, setTableEditOpen] = useState(false);
+  const [tableEdit, setTableEdit] = useState<UpdateTableInput>({ tableNumber: "", zoneId: null, capacity: 2, active: true });
   const [reason, setReason] = useState("");
   const [partySize, setPartySize] = useState(2);
   const [targetTableId, setTargetTableId] = useState("");
@@ -206,6 +217,70 @@ export function TableWorkspace({
       setFeedback({ tone: "success", message: "Masa oluşturuldu." });
     } catch (reason) {
       setFormErrors([errorMessage(reason)]);
+    }
+  };
+
+  const failEdit = (reasonValue: unknown) => {
+    const conflict = isConcurrencyConflict(reasonValue);
+    setFormErrors([conflict ? "Kayıt başka biri tarafından değiştirildi. Listeyi yenileyip tekrar deneyin." : errorMessage(reasonValue)]);
+  };
+
+  const submitZoneEdit = async (event: FormEvent) => {
+    event.preventDefault();
+    const zone = zones.find((candidate) => candidate.zoneId === editZoneId);
+    const errors = [zoneEdit.name.trim() ? "" : "Bölge adı gerekli."].filter(Boolean);
+    if (!zone || !onUpdateZone || errors.length) {
+      setFormErrors(errors);
+      return;
+    }
+    try {
+      await onUpdateZone(zone, { ...zoneEdit, name: zoneEdit.name.trim() });
+      setEditZoneId(null);
+      setFormErrors([]);
+      setFeedback({ tone: "success", message: "Bölge güncellendi." });
+    } catch (reasonValue) {
+      failEdit(reasonValue);
+    }
+  };
+
+  const confirmZoneDelete = async () => {
+    const zone = zones.find((candidate) => candidate.zoneId === deleteZoneId);
+    if (!zone || !onDeleteZone) return;
+    try {
+      await onDeleteZone(zone);
+      setDeleteZoneId(null);
+      setFormErrors([]);
+      setFeedback({ tone: "success", message: "Bölge silindi." });
+    } catch (reasonValue) {
+      failEdit(reasonValue);
+    }
+  };
+
+  const openTableEdit = () => {
+    if (!selectedTable) return;
+    setTableEdit({ tableNumber: selectedTable.tableNumber, zoneId: selectedTable.zoneId, capacity: selectedTable.capacity, active: selectedTable.active });
+    setFormErrors([]);
+    setFeedback(null);
+    setTableEditOpen(true);
+  };
+
+  const submitTableEdit = async (event: FormEvent) => {
+    event.preventDefault();
+    const errors = [
+      tableEdit.tableNumber.trim() ? "" : "Masa numarası gerekli.",
+      tableEdit.capacity > 0 ? "" : "Kapasite 1 veya daha büyük olmalı.",
+    ].filter(Boolean);
+    if (!selectedTable || !onUpdateTable || errors.length) {
+      setFormErrors(errors);
+      return;
+    }
+    try {
+      await onUpdateTable(selectedTable, { ...tableEdit, tableNumber: tableEdit.tableNumber.trim() });
+      setTableEditOpen(false);
+      setFormErrors([]);
+      setFeedback({ tone: "success", message: "Masa güncellendi." });
+    } catch (reasonValue) {
+      failEdit(reasonValue);
     }
   };
 
@@ -281,6 +356,8 @@ export function TableWorkspace({
         </div>
         <div className="table-workspace__toolbar-actions">
           {canCreate && <><Button variant="secondary" onClick={() => { setFormErrors([]); setZoneDialogOpen(true); }}>+ Bölge ekle</Button><Button onClick={() => { setFormErrors([]); setTableDialogOpen(true); }}>+ Masa ekle</Button></>}
+          {canManage && onUpdateTable && selectedTable && <Button variant="secondary" onClick={openTableEdit}>Masayı düzenle</Button>}
+          {canManage && onUpdateZone && <Button variant="secondary" onClick={() => { setFormErrors([]); setEditZoneId(null); setDeleteZoneId(null); setZonesDialogOpen(true); }}>Bölgeleri yönet</Button>}
           <Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
         </div>
       </header>
@@ -355,6 +432,37 @@ export function TableWorkspace({
           <SelectField label="Bölge" value={tableDraft.zoneId ?? ""} onChange={(event) => setTableDraft({ ...tableDraft, zoneId: event.target.value || null })}><option value="">Bölge seçin</option>{zones.filter((zone) => zone.active).map((zone) => <option key={zone.zoneId} value={zone.zoneId}>{zone.name}</option>)}</SelectField>
           <TextField label="Kapasite" type="number" min={1} max={100} value={tableDraft.capacity} onChange={(event) => setTableDraft({ ...tableDraft, capacity: Number(event.target.value) })} />
           <div className="table-form__actions"><Button variant="secondary" onClick={() => setTableDialogOpen(false)}>Vazgeç</Button><Button type="submit">Masa oluştur</Button></div>
+        </form>
+      </ModalDialog>
+
+      <ModalDialog open={zonesDialogOpen} title="Bölgeleri yönet" onClose={() => { setZonesDialogOpen(false); setEditZoneId(null); setDeleteZoneId(null); }}>
+        <ValidationSummary title="İşlem tamamlanamadı" errors={formErrors} />
+        {zones.length === 0 ? <p>Henüz bölge yok.</p> : <ul className="table-form__checklist">{zones.map((zone) => <li key={zone.zoneId}>
+          <strong>{zone.name}</strong> · {zone.code} · {zone.active ? "Etkin" : "Pasif"}
+          <Button variant="quiet" onClick={() => { setFormErrors([]); setDeleteZoneId(null); setEditZoneId(zone.zoneId); setZoneEdit({ name: zone.name, sortOrder: zone.sortOrder, active: zone.active }); }}>Düzenle</Button>
+          <Button variant="quiet" onClick={() => { setFormErrors([]); setEditZoneId(null); setDeleteZoneId(zone.zoneId); }}>Sil</Button>
+        </li>)}</ul>}
+        {deleteZoneId && <div className="table-form__context" role="alert">
+          <p>Bu bölge silinecek. Bölgede masa varsa sunucu işlemi reddeder.</p>
+          <Button onClick={() => void confirmZoneDelete()}>Evet, bölgeyi sil</Button>
+          <Button variant="secondary" onClick={() => setDeleteZoneId(null)}>Vazgeç</Button>
+        </div>}
+        {editZoneId && <form className="table-form" aria-label="Bölgeyi düzenle" onSubmit={(event) => void submitZoneEdit(event)}>
+          <TextField label="Bölge adı" value={zoneEdit.name} onChange={(event) => setZoneEdit({ ...zoneEdit, name: event.target.value })} autoComplete="off" />
+          <TextField label="Sıra" type="number" min={0} value={zoneEdit.sortOrder} onChange={(event) => setZoneEdit({ ...zoneEdit, sortOrder: Number(event.target.value) })} />
+          <label><input type="checkbox" checked={zoneEdit.active} onChange={(event) => setZoneEdit({ ...zoneEdit, active: event.target.checked })} /> Etkin</label>
+          <div className="table-form__actions"><Button variant="secondary" onClick={() => setEditZoneId(null)}>Vazgeç</Button><Button type="submit">Bölgeyi kaydet</Button></div>
+        </form>}
+      </ModalDialog>
+
+      <ModalDialog open={tableEditOpen} title="Masayı düzenle" onClose={() => setTableEditOpen(false)}>
+        <form className="table-form" aria-label="Masayı düzenle" onSubmit={(event) => void submitTableEdit(event)}>
+          <ValidationSummary title="Masa bilgilerini kontrol edin" errors={formErrors} />
+          <TextField label="Masa numarası" value={tableEdit.tableNumber} onChange={(event) => setTableEdit({ ...tableEdit, tableNumber: event.target.value })} autoComplete="off" />
+          <SelectField label="Bölge" value={tableEdit.zoneId ?? ""} onChange={(event) => setTableEdit({ ...tableEdit, zoneId: event.target.value || null })}><option value="">Bölge seçin</option>{zones.map((zone) => <option key={zone.zoneId} value={zone.zoneId}>{zone.name}</option>)}</SelectField>
+          <TextField label="Kapasite" type="number" min={1} max={100} value={tableEdit.capacity} onChange={(event) => setTableEdit({ ...tableEdit, capacity: Number(event.target.value) })} />
+          <label><input type="checkbox" checked={tableEdit.active} onChange={(event) => setTableEdit({ ...tableEdit, active: event.target.checked })} /> Etkin</label>
+          <div className="table-form__actions"><Button variant="secondary" onClick={() => setTableEditOpen(false)}>Vazgeç</Button><Button type="submit">Masayı kaydet</Button></div>
         </form>
       </ModalDialog>
 
