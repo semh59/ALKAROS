@@ -1,5 +1,5 @@
 import type {
-  Batch, BatchCompletion, LookupItem, LookupLocation, NewOrderLine, PurchaseOrder, ReceiptLine, Supplier, NewSupplier, RecipeVersionOption, SupplierDetail, SupplierUpdate,
+  Batch, BatchCompletion, BatchDetail, LookupItem, LookupLocation, NewOrderLine, PurchaseOrder, ReceiptLine, Supplier, NewSupplier, RecipeVersionOption, SupplierDetail, SupplierUpdate,
 } from "./models";
 import { createRequester } from "../management/http";
 
@@ -46,6 +46,7 @@ export interface ProductionClient {
   startBatch: (batchId: string) => Promise<void>;
   completeBatch: (batchId: string, input: BatchCompletion) => Promise<void>;
   cancelBatch: (batchId: string, reason: string) => Promise<void>;
+  getBatchDetail: (batchId: string) => Promise<BatchDetail>;
   listRecipeVersions: () => Promise<readonly RecipeVersionOption[]>;
   listLocations: () => Promise<readonly LookupLocation[]>;
   listStockItems: () => Promise<readonly LookupItem[]>;
@@ -58,6 +59,14 @@ export function createProductionClient(fetcher: typeof fetch = fetch): Productio
   return {
     listBatches: (status) => json(`/production/batches${status ? `?status=${status}` : ""}`),
     createBatch: (input) => post("/production/batches", input),
+    async getBatchDetail(batchId) {
+      const [consumptions, outputs, waste] = await Promise.all([
+        json<BatchDetail["consumptions"]>(`/production/batches/${batchId}/consumptions`),
+        json<BatchDetail["outputs"]>(`/production/batches/${batchId}/outputs`),
+        json<BatchDetail["waste"]>(`/inventory/waste?wasteSource=Production&sourceReferenceId=${batchId}`),
+      ]);
+      return { consumptions, outputs, waste };
+    },
     startBatch: (batchId) => post(`/production/batches/${batchId}/start`, { startedAt: null }),
     completeBatch: (batchId, input) => post(`/production/batches/${batchId}/complete`, input),
     cancelBatch: (batchId, reason) => post(`/production/batches/${batchId}/cancel`, { reason: reason.trim() || null }),

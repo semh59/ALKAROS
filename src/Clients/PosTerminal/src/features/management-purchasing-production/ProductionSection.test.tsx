@@ -2,7 +2,7 @@
 
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { ManagementArea } from "../management";
-import { type ProductionClient } from "./api";
+import { createProductionClient, type ProductionClient } from "./api";
 import { ProductionSection } from "./index";
 import { alertText, buttons, press, render, submit, type, unmount } from "../management/testKit";
 import { ManagementApiError } from "../management/http";
@@ -18,6 +18,7 @@ function fakeClient(status = "InProgress", overrides: Partial<ProductionClient> 
     startBatch: vi.fn().mockResolvedValue(undefined),
     completeBatch: vi.fn().mockResolvedValue(undefined),
     cancelBatch: vi.fn().mockResolvedValue(undefined),
+    getBatchDetail: vi.fn().mockResolvedValue({ consumptions: [], outputs: [], waste: [] }),
     listRecipeVersions: vi.fn().mockResolvedValue([{ id: "v1", label: "Mercimek çorbası · sürüm 2" }]),
     listLocations: vi.fn().mockResolvedValue([{ id: "l1", name: "Mutfak" }, { id: "l2", name: "Soğuk oda" }]),
     listStockItems: vi.fn().mockResolvedValue([{ id: "i1", name: "Çorba", trackingUnitCode: "portion" }]),
@@ -92,5 +93,49 @@ describe("production section", () => {
     await render(<ProductionSection capabilities={none} client={client} />);
     await press("Başlat");
     expect(alertText()).toBe("Parti zaten başlatılmış.");
+  });
+  it("shows what a batch did to stock: consumptions, outputs and waste with names, never raw ids", async () => {
+    const client = fakeClient("Completed", {
+      getBatchDetail: vi.fn().mockResolvedValue({
+        consumptions: [{ id: "c1", stockItemId: "i1", stockLocationId: "l1", quantity: 3, unitCode: "kg", wasteFactor: 1.05 }],
+        outputs: [{ id: "o1", stockItemId: "i1", stockLocationId: "l2", quantity: 20, unitCode: "portion" }],
+        waste: [{ id: "w1", stockItemId: "i1", quantity: 1, unitCode: "portion", reason: "Taştı", recordedAt: "2026-09-30T10:00:00Z" }],
+      }),
+    });
+    await render(<ProductionSection capabilities={none} client={client} />);
+    await press("Ayrıntı");
+    expect(client.getBatchDetail).toHaveBeenCalledWith("b1");
+    const region = document.querySelector('[aria-label="Parti ayrıntısı"]')!;
+    expect(region.textContent).toContain("Çorba");
+    expect(region.textContent).toContain("Mutfak");
+    expect(region.textContent).toContain("Soğuk oda");
+    expect(region.textContent).toContain("Taştı");
+    expect(region.textContent).not.toContain("i1");
+    expect(region.textContent).not.toContain("l1");
+  });
+
+  it("shows an empty note for a batch with no stock effect and the server's refusal when the detail cannot be read", async () => {
+    await render(<ProductionSection capabilities={none} client={fakeClient("Planned", {
+      getBatchDetail: vi.fn().mockResolvedValue({ consumptions: [], outputs: [], waste: [] }),
+    })} />);
+    await press("Ayrıntı");
+    expect((document.querySelector('[aria-label="Parti ayrıntısı"]')!.textContent!.match(/Kayıt yok./g) ?? []).length).toBe(3);
+
+    await render(<ProductionSection capabilities={none} client={fakeClient("Planned", {
+      getBatchDetail: vi.fn().mockRejectedValue(new ManagementApiError(404, "NOT_FOUND", "Parti bulunamadı.")),
+    })} />);
+    await press("Ayrıntı");
+    expect(alertText()).toBe("Parti bulunamadı.");
+  });
+
+  it("the client reads consumptions, outputs and the batch's waste from the server routes", async () => {
+    const fetcher = vi.fn((_url: string, _init?: RequestInit) => Promise.resolve(new Response("[]", { status: 200 })));
+    await createProductionClient(fetcher as unknown as typeof fetch).getBatchDetail("b1");
+    const urls = fetcher.mock.calls.map(([url]) => url).sort();
+    expect(urls).toEqual([
+      "/api/v1/management/inventory/waste?wasteSource=Production&sourceReferenceId=b1",
+      "/api/v1/management/production/batches/b1/consumptions",
+      "/api/v1/management/production/batches/b1/outputs",
+    ]);
   });
 });

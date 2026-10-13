@@ -21,6 +21,10 @@ export interface Batch {
   id: string; batchNumber: string; recipeVersionId: string; status: string; plannedQuantity: number; actualQuantity: number;
   portionUnitCode: string; cancellationReason: string | null;
 }
+export interface BatchConsumption { id: string; stockItemId: string; stockLocationId: string; quantity: number; unitCode: string; wasteFactor: number }
+export interface BatchOutput { id: string; stockItemId: string | null; stockLocationId: string; quantity: number; unitCode: string }
+export interface BatchWaste { id: string; stockItemId: string; quantity: number; unitCode: string; reason: string; recordedAt: string }
+export interface BatchDetail { consumptions: readonly BatchConsumption[]; outputs: readonly BatchOutput[]; waste: readonly BatchWaste[] }
 export interface BatchCompletion { actualQuantity: number; sourceLocationId: string; destinationLocationId: string | null; outputStockItemId: string | null }
 
 export interface LookupLocation { id: string; name: string }

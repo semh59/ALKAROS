@@ -5,7 +5,7 @@ import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { createProductionClient, type ProductionClient } from "./api";
 import { Notice, PanelView, errorText, usePanel } from "../management/panel";
-import { batchStatusLabel, batchStatuses, parseQuantity, type Batch, type LookupItem, type LookupLocation, type RecipeVersionOption } from "./models";
+import { batchStatusLabel, batchStatuses, parseQuantity, type Batch, type BatchDetail, type LookupItem, type LookupLocation, type RecipeVersionOption } from "./models";
 import "./management-purchasing-production.css";
 
 const t = managementText.production;
@@ -18,6 +18,7 @@ export function ProductionSection({ client }: ManagementSectionProps & { client?
   const [statusFilter, setStatusFilter] = useState("");
   const [fields, setFields] = useState<Record<string, string>>({});
   const [action, setAction] = useState<RowAction>();
+  const [detail, setDetail] = useState<{ batch: Batch; data: BatchDetail }>();
   const field = (key: string, fallback = "") => fields[key] ?? fallback;
   const set = (key: string) => (event: { target: { value: string } }) => setFields((current) => ({ ...current, [key]: event.target.value }));
 
@@ -39,6 +40,16 @@ export function ProductionSection({ client }: ManagementSectionProps & { client?
       setBusy(false);
     }
   }
+  async function openDetail(batch: Batch) {
+    setNotice(undefined);
+    try {
+      setDetail({ batch, data: await api.getBatchDetail(batch.id) });
+    } catch (reason) {
+      setNotice({ tone: "error", text: errorText(reason, t.actionFailed) });
+    }
+  }
+  const itemName = (id: string | null) => (id && lookups.state === "ready" ? lookups.data.items.find((item) => item.id === id)?.name : undefined) ?? "—";
+  const locationName = (id: string) => (lookups.state === "ready" ? lookups.data.locations.find((location) => location.id === id)?.name : undefined) ?? "—";
   const open = (next: RowAction) => { setNotice(undefined); setFields({}); setAction(next); };
 
   function submitAction(event: FormEvent) {
@@ -76,11 +87,35 @@ export function ProductionSection({ client }: ManagementSectionProps & { client?
             <td>{batch.batchNumber}</td><td>{batchStatusLabel(batch.status)}</td>
             <td>{formatQuantity(batch.plannedQuantity)} {batch.portionUnitCode}</td><td>{formatQuantity(batch.actualQuantity)} {batch.portionUnitCode}</td>
             <td className="mpp__actions">
+              <Button variant="quiet" disabled={busy} onClick={() => void openDetail(batch)}>{t.detail}</Button>
               {batch.status === "Planned" && <Button variant="quiet" disabled={busy} onClick={() => void act(() => api.startBatch(batch.id), t.batchStarted)}>{t.start}</Button>}
               {batch.status === "InProgress" && <Button variant="quiet" disabled={busy} onClick={() => open({ kind: "complete", batch })}>{t.complete}</Button>}
               {(batch.status === "Planned" || batch.status === "InProgress") && <Button variant="quiet" disabled={busy} onClick={() => open({ kind: "cancel", batch })}>{t.cancel}</Button>}
             </td></tr>)}</tbody>
         </table>}
+
+        {detail && <section className="mpp__sub" aria-label={t.detailHeading}>
+          <h4>{t.detailHeading} · {detail.batch.batchNumber}</h4>
+          <h5>{t.consumptions}</h5>
+          {detail.data.consumptions.length === 0 ? <p className="mpp__empty">{t.detailEmpty}</p> : <table>
+            <thead><tr><th>{t.stockItem}</th><th>{t.location}</th><th>{t.quantity}</th><th>{t.wasteFactor}</th></tr></thead>
+            <tbody>{detail.data.consumptions.map((row) => <tr key={row.id}>
+              <td>{itemName(row.stockItemId)}</td><td>{locationName(row.stockLocationId)}</td><td>{formatQuantity(row.quantity)} {row.unitCode}</td><td>{formatQuantity(row.wasteFactor)}</td></tr>)}</tbody>
+          </table>}
+          <h5>{t.outputs}</h5>
+          {detail.data.outputs.length === 0 ? <p className="mpp__empty">{t.detailEmpty}</p> : <table>
+            <thead><tr><th>{t.stockItem}</th><th>{t.location}</th><th>{t.quantity}</th></tr></thead>
+            <tbody>{detail.data.outputs.map((row) => <tr key={row.id}>
+              <td>{itemName(row.stockItemId)}</td><td>{locationName(row.stockLocationId)}</td><td>{formatQuantity(row.quantity)} {row.unitCode}</td></tr>)}</tbody>
+          </table>}
+          <h5>{t.wasteRecords}</h5>
+          {detail.data.waste.length === 0 ? <p className="mpp__empty">{t.detailEmpty}</p> : <table>
+            <thead><tr><th>{t.stockItem}</th><th>{t.quantity}</th><th>{t.reasonColumn}</th></tr></thead>
+            <tbody>{detail.data.waste.map((row) => <tr key={row.id}>
+              <td>{itemName(row.stockItemId)}</td><td>{formatQuantity(row.quantity)} {row.unitCode}</td><td>{row.reason}</td></tr>)}</tbody>
+          </table>}
+          <Button variant="secondary" onClick={() => setDetail(undefined)}>{t.detailClose}</Button>
+        </section>}
 
         {action && <form className="mpp__form" aria-label={`${action.batch.batchNumber}`} onSubmit={submitAction}>
           <h4>{action.batch.batchNumber} · {action.kind === "complete" ? t.complete : t.cancel}</h4>
