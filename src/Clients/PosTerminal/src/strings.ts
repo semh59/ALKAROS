@@ -1010,6 +1010,10 @@ export const refundText = {
   cancelConfirm: "Evet, hesabı iptal et",
   approveConfirm: "Evet, iadeyi onayla",
   dismiss: "Vazgeç",
+  reasonPlaceholder: "Gerekçe seçin",
+  reasonOther: "Diğer",
+  reasonWrite: "Gerekçeyi yazın",
+  reasonPresets: ["Müşteri vazgeçti", "Yanlış sipariş", "Mutfak hatası", "Ürün sorunlu", "İkram", "Yanlış tutar girildi"],
   listFailed: "İade istekleri okunamadı. İade istemeden önce yenileyin.",
 } as const;
 

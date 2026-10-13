@@ -40,7 +40,21 @@ async function open(routeSet) {
 
 const app = () => document.getElementById("app");
 
+function reasonKey(selector) {
+  if (selector === "#cancel-reason") return "cancel";
+  const refund = selector.match(/data-refund-reason="([^"]+)"/);
+  if (refund) return "refund:" + refund[1];
+  const note = selector.match(/data-refund-note="([^"]+)"/);
+  return note ? "note:" + note[1] : null;
+}
+
 function type(selector, value) {
+  const key = reasonKey(selector);
+  if (key && !document.querySelector(selector)) {
+    const select = document.querySelector('[data-reason-select="' + key + '"]');
+    select.value = "Diğer";
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  }
   const input = document.querySelector(selector);
   input.value = value;
   input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -102,7 +116,7 @@ describe("split-payment.js failure states", () => {
     const fetchMock = await open(routes({
       extra: [{ test: (url, init) => url.endsWith("/cancel") && init?.method === "POST", body: {} }],
     }));
-    await vi.waitFor(() => expect(document.getElementById("cancel-reason")).not.toBeNull());
+    await vi.waitFor(() => expect(document.querySelector('[data-reason-select="cancel"]')).not.toBeNull());
     expect(document.querySelector('[data-refund-action="cancel"]').disabled).toBe(true);
 
     type("#cancel-reason", "Müşteri vazgeçti");
@@ -123,7 +137,7 @@ describe("split-payment.js failure states", () => {
     await open(routes({
       extra: [{ test: (url, init) => url.endsWith("/cancel") && init?.method === "POST", body: {} }],
     }));
-    await vi.waitFor(() => expect(document.getElementById("cancel-reason")).not.toBeNull());
+    await vi.waitFor(() => expect(document.querySelector('[data-reason-select="cancel"]')).not.toBeNull());
     type("#cancel-reason", "Müşteri vazgeçti");
 
     document.querySelector('[data-refund-action="cancel"]').click();

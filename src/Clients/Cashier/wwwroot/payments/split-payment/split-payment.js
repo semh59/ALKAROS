@@ -81,6 +81,7 @@
     refundNotice: null,
     refundListFailed: false,
     confirmKey: null,
+    reasonChoices: {},
   };
 
   function escapeHtml(value) {
@@ -872,6 +873,53 @@
     });
   }
 
+  var REASON_PRESETS = [
+    'Müşteri vazgeçti', 'Yanlış sipariş', 'Mutfak hatası', 'Ürün sorunlu', 'İkram', 'Yanlış tutar girildi',
+  ];
+  var REASON_OTHER = 'Diğer';
+
+  // Hazır gerekçe listesi; "Diğer" seçilirse serbest metin alanı açılır.
+  // key: cancel | refund:<paymentId> | note:<requestId>
+  function reasonValue(key) {
+    if (key === 'cancel') return state.cancelReason;
+    if (key.indexOf('refund:') === 0) return state.refundReasons[key.slice(7)] || '';
+    return state.refundNotes[key.slice(5)] || '';
+  }
+
+  function setReasonValue(key, value) {
+    if (key === 'cancel') state.cancelReason = value;
+    else if (key.indexOf('refund:') === 0) state.refundReasons[key.slice(7)] = value;
+    else state.refundNotes[key.slice(5)] = value;
+  }
+
+  function renderReasonField(key, label) {
+    var choice = state.reasonChoices[key] || '';
+    var textAttr = key === 'cancel' ? 'id="cancel-reason"'
+      : key.indexOf('refund:') === 0 ? 'data-refund-reason="' + escapeHtml(key.slice(7)) + '"'
+      : 'data-refund-note="' + escapeHtml(key.slice(5)) + '"';
+    var options = '<option value="">Gerekçe seçin</option>' +
+      REASON_PRESETS.concat([REASON_OTHER]).map(function (name) {
+        return '<option value="' + escapeHtml(name) + '"' + (choice === name ? ' selected' : '') + '>' + escapeHtml(name) + '</option>';
+      }).join('');
+    return (
+      '<select class="sp-input" data-reason-select="' + escapeHtml(key) + '" aria-label="' + escapeHtml(label) + '"' +
+      (state.refundBusy ? ' disabled' : '') + '>' + options + '</select>' +
+      (choice === REASON_OTHER
+        ? '<input class="sp-input" type="text" maxlength="500" ' + textAttr + ' aria-label="Gerekçeyi yazın" ' +
+          'placeholder="Gerekçeyi yazın" value="' + escapeHtml(reasonValue(key)) + '">'
+        : '')
+    );
+  }
+
+  function onReasonChange(event) {
+    var el = event.target;
+    var key = el.getAttribute && el.getAttribute('data-reason-select');
+    if (!key) return;
+    state.reasonChoices[key] = el.value;
+    setReasonValue(key, el.value === REASON_OTHER ? '' : el.value);
+    render();
+  }
+
   // Yıkıcı eylemler iki adımlı: ilk dokunuş "Emin misiniz?" gösterir, ikincisi çalıştırır.
   function confirmButtons(action, id, label, confirmLabel, disabledAttr, variant) {
     var key = action + ':' + id;
@@ -891,8 +939,7 @@
     var disabled = state.refundBusy ? ' disabled' : '';
     return (
       '<div class="sp-field" id="cancel-section"><span class="sp-field-label">Hesabı iptal et</span>' +
-      '<input class="sp-input" type="text" id="cancel-reason" maxlength="500" aria-label="İptal gerekçesi" ' +
-      'placeholder="İptal gerekçesi (zorunlu)" value="' + escapeHtml(state.cancelReason) + '">' +
+      renderReasonField('cancel', 'İptal gerekçesi') +
       confirmButtons('cancel', '', 'Hesabı iptal et', 'Evet, hesabı iptal et', disabled || (state.cancelReason.trim() ? '' : ' disabled'), 'sp-btn-secondary') +
       '</div>'
     );
@@ -913,9 +960,7 @@
         var id = escapeHtml(line.paymentId);
         return (
           '<div class="sp-line"><span class="sp-line-method">' + formatMoney(line.amount) + '</span>' +
-          '<input class="sp-input" type="text" maxlength="500" data-refund-reason="' + id + '" ' +
-          'aria-label="İade gerekçesi (' + formatMoney(line.amount) + ')" placeholder="İade gerekçesi (zorunlu)" value="' +
-          escapeHtml(state.refundReasons[line.paymentId] || '') + '">' +
+          renderReasonField('refund:' + line.paymentId, 'İade gerekçesi (' + formatMoney(line.amount) + ')') +
           '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request" data-payment-id="' + id + '"' +
           (disabled || (String(state.refundReasons[line.paymentId] || '').trim() ? '' : ' disabled')) + '>İade iste</button></div>'
         );
@@ -935,8 +980,7 @@
         var actions = '';
         if (row.status === 'Requested') {
           actions =
-            '<input class="sp-input" type="text" maxlength="500" data-refund-note="' + id + '" aria-label="Ret gerekçesi" ' +
-            'placeholder="Reddederken gerekçe" value="' + escapeHtml(state.refundNotes[row.requestId] || '') + '">' +
+            renderReasonField('note:' + row.requestId, 'Ret gerekçesi') +
             confirmButtons('approve', id, 'Onayla', 'Evet, iadeyi onayla', disabled, 'sp-btn-primary') +
             '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="reject" data-request-id="' + id + '"' +
             (disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled')) + '>Reddet</button>';
@@ -1276,6 +1320,7 @@
 
   app.addEventListener('click', onRefundClick);
   app.addEventListener('input', onRefundInput);
+  app.addEventListener('change', onReasonChange);
 
   bootstrap();
 })();

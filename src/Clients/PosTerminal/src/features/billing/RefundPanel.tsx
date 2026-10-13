@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { Button, StateMessage, TextField } from "../../design-system";
+import { Button, SelectField, StateMessage, TextField } from "../../design-system";
 import { refundMethodLabels, refundStatusLabels, refundText } from "../../strings";
 import { RefundApiError, describeRefundFailure, type BillTenderSummary, type BillingRefundClient, type RefundRequestRow } from "./refundApi";
 
@@ -26,10 +26,28 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
   const [notice, setNotice] = useState<string>();
   const [cancelled, setCancelled] = useState(false);
   const [confirming, setConfirming] = useState<string | null>(null);
-  const [cancelReason, setCancelReason] = useState("");
   const [texts, setTexts] = useState<Record<string, string>>({});
+  const [choices, setChoices] = useState<Record<string, string>>({});
   const loaded = useRef(false);
   const setText = (key: string, value: string) => setTexts((current) => ({ ...current, [key]: value }));
+  const choose = (key: string, value: string) => {
+    setChoices((current) => ({ ...current, [key]: value }));
+    setText(key, value === refundText.reasonOther ? "" : value);
+  };
+  // Preset reasons; the "other" choice opens a free text field. The final reason string lives in texts[key].
+  const reasonField = (key: string, label: string) => <>
+    <SelectField label={label} value={choices[key] ?? ""} disabled={busy} onChange={(event) => choose(key, event.target.value)}>
+      <option value="">{refundText.reasonPlaceholder}</option>
+      {refundText.reasonPresets.map((preset) => <option key={preset} value={preset}>{preset}</option>)}
+      <option value={refundText.reasonOther}>{refundText.reasonOther}</option>
+    </SelectField>
+    {choices[key] === refundText.reasonOther && <TextField
+      label={refundText.reasonWrite}
+      maxLength={500}
+      value={texts[key] ?? ""}
+      onChange={(event) => setText(key, event.target.value)}
+    />}
+  </>;
 
   const load = useCallback(async () => {
     try {
@@ -120,12 +138,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
       <h3>{refundText.refundHeading}</h3>
       {refundable.map((line) => <div key={line.paymentId} className="refund-panel__row">
         <strong>{money(line.amount)}</strong>
-        <TextField
-          label={refundText.refundReasonLabel}
-          maxLength={500}
-          value={texts[`reason:${line.paymentId}`] ?? ""}
-          onChange={(event) => setText(`reason:${line.paymentId}`, event.target.value)}
-        />
+        {reasonField(`reason:${line.paymentId}`, refundText.refundReasonLabel)}
         <Button variant="secondary" disabled={busy || !filled(texts[`reason:${line.paymentId}`])} onClick={() => void run("request", () => client.requestRefund(line.paymentId, texts[`reason:${line.paymentId}`] ?? ""))}>
           {refundText.refundAction}
         </Button>
@@ -139,12 +152,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
         <span className="refund-panel__status">{refundStatusLabels[row.status] ?? refundText.unknown}</span>
         <span>{row.reason}</span>
         {row.status === "Requested" && canApproveRefund && <>
-          <TextField
-            label={refundText.rejectNoteLabel}
-            maxLength={500}
-            value={texts[`note:${row.requestId}`] ?? ""}
-            onChange={(event) => setText(`note:${row.requestId}`, event.target.value)}
-          />
+          {reasonField(`note:${row.requestId}`, refundText.rejectNoteLabel)}
           {guarded(`approve:${row.requestId}`, refundText.approve, refundText.approveConfirm, "primary", false, "approve", () => client.approve(row.requestId))}
           <Button variant="secondary" disabled={busy || !filled(texts[`note:${row.requestId}`])} onClick={() => void run("reject", () => client.reject(row.requestId, texts[`note:${row.requestId}`] ?? ""))}>
             {refundText.reject}
@@ -165,13 +173,8 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
     </div>}
 
     {showCancel && <div className="refund-panel__group">
-      <TextField
-        label={refundText.cancelLabel}
-        maxLength={500}
-        value={cancelReason}
-        onChange={(event) => setCancelReason(event.target.value)}
-      />
-      {guarded("cancel", refundText.cancelAction, refundText.cancelConfirm, "secondary", !filled(cancelReason), "cancel", () => client.cancelBill(cancelReason))}
+      {reasonField("cancel", refundText.cancelLabel)}
+      {guarded("cancel", refundText.cancelAction, refundText.cancelConfirm, "secondary", !filled(texts.cancel), "cancel", () => client.cancelBill(texts.cancel ?? ""))}
     </div>}
   </section>;
 }

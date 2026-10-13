@@ -1,7 +1,7 @@
 # V1-RMD-514 - Hazır iptal ve iade gerekçeleri
 
 - Task ID: V1-RMD-514
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing

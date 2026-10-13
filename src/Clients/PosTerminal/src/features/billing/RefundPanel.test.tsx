@@ -43,6 +43,13 @@ describe("refund panel", () => {
     const button = [...document.querySelectorAll("button")].find((b) => b.textContent === label)!;
     await act(async () => button.click());
   }
+  async function pick(label: string, option: string) {
+    const select = [...document.querySelectorAll("label")].find((l) => l.textContent?.startsWith(label))!.querySelector("select")!;
+    await act(async () => {
+      select.value = option;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
   async function type(label: string, value: string) {
     const input = [...document.querySelectorAll("label")].find((l) => l.textContent?.startsWith(label))!.querySelector("input")!;
     await act(async () => {
@@ -58,10 +65,10 @@ describe("refund panel", () => {
 
     const ask = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "İade iste")!;
     expect(ask().disabled).toBe(true);
-    await type("İade gerekçesi", "Fazla ödeme");
+    await pick("İade gerekçesi", "Yanlış sipariş");
     await click("İade iste");
 
-    expect(client.requestRefund).toHaveBeenCalledWith("p1", "Fazla ödeme");
+    expect(client.requestRefund).toHaveBeenCalledWith("p1", "Yanlış sipariş");
     expect(document.body.textContent).toContain("İade isteği gönderildi");
     expect(client.getTenders).toHaveBeenCalledTimes(2);
   });
@@ -95,7 +102,7 @@ describe("refund panel", () => {
     const client = makeClient({ getTenders: vi.fn().mockResolvedValue(unpaid) });
     await render({ client });
 
-    await type("İptal gerekçesi", "Müşteri vazgeçti");
+    await pick("İptal gerekçesi", "Müşteri vazgeçti");
     await click("Hesabı iptal et");
     expect(client.cancelBill).not.toHaveBeenCalled();
     await click("Evet, hesabı iptal et");
@@ -119,9 +126,9 @@ describe("refund panel", () => {
     await render({ client });
 
     expect(document.body.textContent).not.toContain("İadeyi tamamla");
-    await type("Ret gerekçesi", "Yetersiz");
+    await pick("Ret gerekçesi", "Mutfak hatası");
     await click("Reddet");
-    expect(client.reject).toHaveBeenCalledWith("r1", "Yetersiz");
+    expect(client.reject).toHaveBeenCalledWith("r1", "Mutfak hatası");
 
     await click("Onayla");
     expect(approve).not.toHaveBeenCalled();
@@ -161,7 +168,7 @@ describe("refund panel", () => {
     });
     await render({ client });
 
-    await type("İade gerekçesi", "x");
+    await pick("İade gerekçesi", "İkram");
     await click("İade iste");
 
     expect(document.body.textContent).toContain("Güncel veriyi alıp yeniden deneyin");
@@ -189,7 +196,7 @@ describe("refund panel", () => {
     expect(button("Hesabı iptal et").disabled).toBe(true);
     expect(button("Reddet").disabled).toBe(true);
 
-    await type("İptal gerekçesi", "Vazgeçti");
+    await pick("İptal gerekçesi", "Müşteri vazgeçti");
     expect(button("Hesabı iptal et").disabled).toBe(false);
     await click("Hesabı iptal et");
     await click("Vazgeç");
@@ -222,18 +229,44 @@ describe("refund panel", () => {
     const getTenders = vi.fn().mockResolvedValue(paid);
     const requestRefund = vi.fn().mockRejectedValue(new RefundApiError(409, "REFUND_STATE", ""));
     await render({ client: makeClient({ getTenders, requestRefund }) });
-    await type("İade gerekçesi", "x");
+    await pick("İade gerekçesi", "İkram");
     await click("İade iste");
     expect(getTenders).toHaveBeenCalledTimes(2);
 
     await act(async () => root!.unmount());
     const flaky = vi.fn().mockResolvedValueOnce(paid).mockRejectedValue(new RefundApiError(0, "NETWORK_UNAVAILABLE", ""));
     await render({ client: makeClient({ getTenders: flaky }) });
-    await type("İade gerekçesi", "x");
+    await pick("İade gerekçesi", "İkram");
     await click("İade iste");
 
     expect(document.body.textContent).toContain("İade gerekçesi");
     expect(document.body.textContent).toContain("Sunucuya ulaşılamadı");
+  });
+
+  it("opens a free text field for Diğer and keeps the button off until it is filled", async () => {
+    const client = makeClient({ getTenders: vi.fn().mockResolvedValue(unpaid) });
+    await render({ client });
+    const cancel = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "Hesabı iptal et")!;
+    expect(document.body.textContent).not.toContain("Gerekçeyi yazın");
+
+    await pick("İptal gerekçesi", "Diğer");
+    expect(document.body.textContent).toContain("Gerekçeyi yazın");
+    expect(cancel().disabled).toBe(true);
+    await type("Gerekçeyi yazın", "Masa değişti");
+    expect(cancel().disabled).toBe(false);
+    await click("Hesabı iptal et");
+    await click("Evet, hesabı iptal et");
+
+    expect(client.cancelBill).toHaveBeenCalledWith("Masa değişti");
+  });
+
+  it("offers the same preset list everywhere", async () => {
+    const client = makeClient({ getTenders: vi.fn().mockResolvedValue(unpaid) });
+    await render({ client });
+
+    const options = [...document.querySelectorAll("select option")].map((option) => option.textContent);
+
+    expect(options).toEqual(["Gerekçe seçin", "Müşteri vazgeçti", "Yanlış sipariş", "Mutfak hatası", "Ürün sorunlu", "İkram", "Yanlış tutar girildi", "Diğer"]);
   });
 
   it("has no accessibility violations", async () => {

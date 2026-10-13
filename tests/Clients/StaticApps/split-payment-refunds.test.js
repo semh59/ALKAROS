@@ -67,7 +67,21 @@ function clickTwice(selector) {
   document.querySelector(selector).click();
 }
 
+function reasonKey(selector) {
+  if (selector === "#cancel-reason") return "cancel";
+  const refund = selector.match(/data-refund-reason="([^"]+)"/);
+  if (refund) return "refund:" + refund[1];
+  const note = selector.match(/data-refund-note="([^"]+)"/);
+  return note ? "note:" + note[1] : null;
+}
+
 function type(selector, value) {
+  const key = reasonKey(selector);
+  if (key && !document.querySelector(selector)) {
+    const select = document.querySelector('[data-reason-select="' + key + '"]');
+    select.value = "Diğer";
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  }
   const input = document.querySelector(selector);
   input.value = value;
   input.dispatchEvent(new Event("input", { bubbles: true }));
@@ -95,7 +109,7 @@ describe("split-payment.js cancel and refund", () => {
 
   it("cancels an unpaid bill with the reason and shows it as cancelled", async () => {
     const fetchMock = await open(routes({ summary: unpaidSummary }));
-    await vi.waitFor(() => expect(document.getElementById("cancel-reason")).not.toBeNull());
+    await vi.waitFor(() => expect(document.querySelector('[data-reason-select="cancel"]')).not.toBeNull());
 
     type("#cancel-reason", "Müşteri vazgeçti");
     clickTwice('[data-refund-action="cancel"]');
@@ -108,7 +122,7 @@ describe("split-payment.js cancel and refund", () => {
     await open(routes({ summary: { ...paidSummary, remainingAmount: 40, allocatedTotal: 60 } }));
     await vi.waitFor(() => expect(app().textContent).toContain("Tahsilat"));
 
-    expect(document.getElementById("cancel-reason")).toBeNull();
+    expect(document.querySelector('[data-reason-select="cancel"]')).toBeNull();
     expect(document.querySelector('[data-refund-action="cancel"]')).toBeNull();
   });
 
@@ -117,7 +131,7 @@ describe("split-payment.js cancel and refund", () => {
       summary: unpaidSummary,
       post: { cancel: { status: 409, body: { error: { code: "BILL_HAS_PAYMENT", message: "Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli." } } } },
     }));
-    await vi.waitFor(() => expect(document.getElementById("cancel-reason")).not.toBeNull());
+    await vi.waitFor(() => expect(document.querySelector('[data-reason-select="cancel"]')).not.toBeNull());
 
     type("#cancel-reason", "Deneme");
     clickTwice('[data-refund-action="cancel"]');
