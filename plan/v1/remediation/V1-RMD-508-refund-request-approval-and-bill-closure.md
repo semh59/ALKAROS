@@ -1,8 +1,8 @@
 # V1-RMD-508 - İade isteği, onayı ve iade sonrası hesabın kapanması
 
 - Task ID: V1-RMD-508
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing
 
