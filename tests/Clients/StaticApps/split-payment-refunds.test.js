@@ -62,6 +62,11 @@ function posted(fetchMock, suffix) {
   return call ? { url: call[0], body: call[1].body ? JSON.parse(call[1].body) : null } : null;
 }
 
+function clickTwice(selector) {
+  document.querySelector(selector).click();
+  document.querySelector(selector).click();
+}
+
 function type(selector, value) {
   const input = document.querySelector(selector);
   input.value = value;
@@ -93,7 +98,7 @@ describe("split-payment.js cancel and refund", () => {
     await vi.waitFor(() => expect(document.getElementById("cancel-reason")).not.toBeNull());
 
     type("#cancel-reason", "Müşteri vazgeçti");
-    document.querySelector('[data-refund-action="cancel"]').click();
+    clickTwice('[data-refund-action="cancel"]');
 
     await vi.waitFor(() => expect(app().textContent).toContain("Hesap İptal Edildi"));
     expect(posted(fetchMock, "/cancel").body).toEqual({ reason: "Müşteri vazgeçti" });
@@ -115,7 +120,7 @@ describe("split-payment.js cancel and refund", () => {
     await vi.waitFor(() => expect(document.getElementById("cancel-reason")).not.toBeNull());
 
     type("#cancel-reason", "Deneme");
-    document.querySelector('[data-refund-action="cancel"]').click();
+    clickTwice('[data-refund-action="cancel"]');
 
     await vi.waitFor(() => expect(app().textContent).toContain("önce ödeme iade edilmeli"));
     expect(app().textContent).not.toContain("409");
@@ -136,7 +141,7 @@ describe("split-payment.js cancel and refund", () => {
     const fetchMock = await open(routes({ summary: paidSummary, requests: [request("Requested")] }));
     await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
 
-    document.querySelector('[data-refund-action="approve"]').click();
+    clickTwice('[data-refund-action="approve"]');
 
     await vi.waitFor(() => expect(posted(fetchMock, "/approve")).not.toBeNull());
     expect(posted(fetchMock, "/approve").url).toContain(`/refund-requests/${REQUEST_ID}/approve`);
@@ -149,7 +154,7 @@ describe("split-payment.js cancel and refund", () => {
     }));
     await vi.waitFor(() => expect(document.querySelector('[data-refund-action="approve"]')).not.toBeNull());
 
-    document.querySelector('[data-refund-action="approve"]').click();
+    clickTwice('[data-refund-action="approve"]');
 
     await vi.waitFor(() => expect(app().textContent).toContain("Hesap İptal Edildi"));
   });

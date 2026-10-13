@@ -1006,6 +1006,11 @@ export const refundText = {
   completed: "İade tamamlandı.",
   refresh: "Yenile",
   unknown: "Bilinmiyor",
+  confirmQuestion: "Emin misiniz? Bu işlem geri alınamaz.",
+  cancelConfirm: "Evet, hesabı iptal et",
+  approveConfirm: "Evet, iadeyi onayla",
+  dismiss: "Vazgeç",
+  listFailed: "İade istekleri okunamadı. İade istemeden önce yenileyin.",
 } as const;
 
 export const refundStatusLabels: Record<string, string> = {

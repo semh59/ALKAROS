@@ -79,6 +79,8 @@
     refundBusy: false,
     refundError: null,
     refundNotice: null,
+    refundListFailed: false,
+    confirmKey: null,
   };
 
   function escapeHtml(value) {
@@ -220,11 +222,18 @@
         render();
         return;
       }
-      if (!summaryResult.ok) {
+      if (summaryResult.status === 401) {
         state.phase = 'login';
         render();
         return;
       }
+      if (!summaryResult.ok) {
+        state.error = describeHttpFailure(summaryResult.status, summaryResult.body);
+        state.phase = 'loadError';
+        render();
+        return;
+      }
+      state.error = null;
 
       state.summary = summaryResult.body;
       state.cashSessionOpen = cashResult.ok;
@@ -249,7 +258,9 @@
       loadRefundRequests();
       render();
     }).catch(function () {
-      setError('Hesap bilgisi okunamadı. Bağlantınızı kontrol edin.');
+      state.error = 'Hesap bilgisi okunamadı. Bağlantınızı kontrol edin.';
+      state.phase = 'loadError';
+      render();
     });
   }
 
@@ -593,6 +604,13 @@
         render();
         return;
       }
+      if (result.body && result.body.outcome === 'Declined') {
+        // Ret para kaydı oluşturmaz; yeniden denemede yeni anahtar kullanılır.
+        state.tenderIdempotencyKey = null;
+        state.error = 'Ödeme reddedildi. Başka bir yöntem deneyin.';
+        render();
+        return;
+      }
       state.lastResult = result.body;
       state.noteDraft = '';
       state.eftConfirmed = false;
@@ -607,7 +625,7 @@
       return refreshSummary().then(render);
     }).catch(function () {
       state.busy = false;
-      setError('Sunucuya ulaşılamadı.');
+      setError('Sunucuya ulaşılamadı. Tahsilat gerçekleşmiş olabilir; hesabı yenileyip kontrol edin.');
     });
   }
 
@@ -836,12 +854,15 @@
   function loadRefundRequests() {
     return api(refundsBase()).then(function (result) {
       // Yetkisi olmayan kullanıcı için liste sessizce boş kalır; işlemler zaten sunucuda 403 ile reddedilir.
+      state.refundListFailed = !result.ok && result.status !== 403;
       state.refundRequests = result.ok && Array.isArray(result.body)
         ? result.body.filter(function (row) { return row.billId === state.billId; })
         : [];
       render();
     }).catch(function () {
+      state.refundListFailed = true;
       state.refundRequests = [];
+      render();
     });
   }
 
@@ -851,6 +872,20 @@
     });
   }
 
+  // Yıkıcı eylemler iki adımlı: ilk dokunuş "Emin misiniz?" gösterir, ikincisi çalıştırır.
+  function confirmButtons(action, id, label, confirmLabel, disabledAttr, variant) {
+    var key = action + ':' + id;
+    var attrs = ' data-refund-action="' + action + '"' + (id ? ' data-request-id="' + id + '"' : '');
+    if (state.confirmKey === key) {
+      return (
+        '<span class="sp-alert-body" role="alert">Emin misiniz? Bu işlem geri alınamaz.</span>' +
+        '<button class="sp-btn sp-btn-danger" type="button"' + attrs + disabledAttr + '>' + confirmLabel + '</button>' +
+        '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="dismiss">Vazgeç</button>'
+      );
+    }
+    return '<button class="sp-btn ' + variant + '" type="button"' + attrs + disabledAttr + '>' + label + '</button>';
+  }
+
   function renderCancelSection() {
     if (state.summary.allocations.length > 0 || state.locked) return '';
     var disabled = state.refundBusy ? ' disabled' : '';
@@ -858,7 +893,7 @@
       '<div class="sp-field" id="cancel-section"><span class="sp-field-label">Hesabı iptal et</span>' +
       '<input class="sp-input" type="text" id="cancel-reason" maxlength="500" aria-label="İptal gerekçesi" ' +
       'placeholder="İptal gerekçesi (zorunlu)" value="' + escapeHtml(state.cancelReason) + '">' +
-      '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="cancel"' + disabled + '>Hesabı iptal et</button>' +
+      confirmButtons('cancel', '', 'Hesabı iptal et', 'Evet, hesabı iptal et', disabled || (state.cancelReason.trim() ? '' : ' disabled'), 'sp-btn-secondary') +
       '</div>'
     );
   }
@@ -868,6 +903,9 @@
       return line.paymentStatus === 'Approved' && !openRefundFor(line.paymentId);
     });
     if (lines.length === 0) return '';
+    if (state.refundListFailed) {
+      return '<div class="sp-alert-body" role="status">İade istekleri okunamadı. İade istemeden önce sayfayı yenileyin.</div>';
+    }
     var disabled = state.refundBusy ? ' disabled' : '';
     return (
       '<div class="sp-field"><span class="sp-field-label">İade iste</span>' +
@@ -879,7 +917,7 @@
           'aria-label="İade gerekçesi (' + formatMoney(line.amount) + ')" placeholder="İade gerekçesi (zorunlu)" value="' +
           escapeHtml(state.refundReasons[line.paymentId] || '') + '">' +
           '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request" data-payment-id="' + id + '"' +
-          disabled + '>İade iste</button></div>'
+          (disabled || (String(state.refundReasons[line.paymentId] || '').trim() ? '' : ' disabled')) + '>İade iste</button></div>'
         );
       }).join('') +
       '</div>'
@@ -899,16 +937,15 @@
           actions =
             '<input class="sp-input" type="text" maxlength="500" data-refund-note="' + id + '" aria-label="Ret gerekçesi" ' +
             'placeholder="Reddederken gerekçe" value="' + escapeHtml(state.refundNotes[row.requestId] || '') + '">' +
-            '<button class="sp-btn sp-btn-primary" type="button" data-refund-action="approve" data-request-id="' + id + '"' +
-            disabled + '>Onayla</button>' +
+            confirmButtons('approve', id, 'Onayla', 'Evet, iadeyi onayla', disabled, 'sp-btn-primary') +
             '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="reject" data-request-id="' + id + '"' +
-            disabled + '>Reddet</button>';
+            (disabled || (String(state.refundNotes[row.requestId] || '').trim() ? '' : ' disabled')) + '>Reddet</button>';
         } else if (row.status === 'AwaitingManualRefund') {
           actions =
             '<input class="sp-input" type="text" maxlength="50" data-refund-slip="' + id + '" aria-label="İade fiş numarası" ' +
             'placeholder="Fiş numarası" value="' + escapeHtml(state.refundSlips[row.requestId] || '') + '">' +
             '<button class="sp-btn sp-btn-primary" type="button" data-refund-action="complete" data-request-id="' + id + '"' +
-            disabled + '>İadeyi tamamla</button>';
+            (disabled || (String(state.refundSlips[row.requestId] || '').trim() ? '' : ' disabled')) + '>İadeyi tamamla</button>';
         }
         return (
           '<div class="sp-line"><span class="sp-line-method">' + formatMoney(row.amount) + ' · ' +
@@ -936,6 +973,27 @@
 
   function refundAction(action, element) {
     var requestId = element.getAttribute('data-request-id');
+    if (action === 'reload') {
+      state.error = null;
+      state.phase = 'checking';
+      render();
+      loadEverything();
+      return;
+    }
+    if (action === 'dismiss') {
+      state.confirmKey = null;
+      render();
+      return;
+    }
+    if (action === 'cancel' || action === 'approve') {
+      var key = action + ':' + (requestId || '');
+      if (state.confirmKey !== key) {
+        state.confirmKey = key;
+        render();
+        return;
+      }
+    }
+    state.confirmKey = null;
     var call;
     if (action === 'cancel') {
       call = api(billBase() + '/cancel', { method: 'POST', body: { reason: state.cancelReason } });
@@ -964,6 +1022,7 @@
       if (!result.ok) {
         state.refundError = describeHttpFailure(result.status, result.body);
         render();
+        if (result.status === 409) loadEverything();
         return;
       }
       if (action === 'cancel' || (result.body && result.body.billCancelled)) {
@@ -989,14 +1048,48 @@
 
   function onRefundInput(event) {
     var el = event.target;
-    if (el.id === 'cancel-reason') { state.cancelReason = el.value; return; }
+    var filled = !!String(el.value || '').trim();
+    function toggle(selector) {
+      var button = app.querySelector(selector);
+      if (button) button.disabled = state.refundBusy || !filled;
+    }
+    if (el.id === 'cancel-reason') {
+      state.cancelReason = el.value;
+      toggle('[data-refund-action="cancel"]');
+      return;
+    }
     var reasonFor = el.getAttribute && el.getAttribute('data-refund-reason');
-    if (reasonFor) { state.refundReasons[reasonFor] = el.value; return; }
+    if (reasonFor) {
+      state.refundReasons[reasonFor] = el.value;
+      toggle('[data-refund-action="request"][data-payment-id="' + reasonFor + '"]');
+      return;
+    }
     var slipFor = el.getAttribute && el.getAttribute('data-refund-slip');
-    if (slipFor) { state.refundSlips[slipFor] = el.value; return; }
+    if (slipFor) {
+      state.refundSlips[slipFor] = el.value;
+      toggle('[data-refund-action="complete"][data-request-id="' + slipFor + '"]');
+      return;
+    }
     var noteFor = el.getAttribute && el.getAttribute('data-refund-note');
-    if (noteFor) state.refundNotes[noteFor] = el.value;
+    if (noteFor) {
+      state.refundNotes[noteFor] = el.value;
+      toggle('[data-refund-action="reject"][data-request-id="' + noteFor + '"]');
+    }
   }
+
+  function renderLoadError() {
+    app.innerHTML =
+      '<div class="sp-card sp-center-text">' +
+      '<span class="sp-icon-circle danger">!</span>' +
+      '<h1 class="sp-title">Hesap Okunamadı</h1>' +
+      errorAlert() +
+      '<button class="sp-btn sp-btn-primary" type="button" data-refund-action="reload">Tekrar dene</button>' +
+      '</div>';
+  }
+
+  var BACK_LINK =
+    '<a class="sp-btn sp-btn-secondary" href="/pending-checks" ' +
+    'style="display:inline-flex;align-items:center;justify-content:center;text-decoration:none;">Bekleyen hesaplara dön</a>';
 
   function renderCancelled() {
     app.innerHTML =
@@ -1004,6 +1097,7 @@
       '<span class="sp-icon-circle danger">!</span>' +
       '<h1 class="sp-title">Hesap İptal Edildi</h1>' +
       '<p class="sp-subtitle">Bu hesap iptal edildi. Sipariş için gerekirse yeni hesap açılabilir.</p>' +
+      BACK_LINK +
       '</div>';
   }
 
@@ -1157,6 +1251,7 @@
       '<span class="sp-icon-circle success">✓</span>' +
       '<h1 class="sp-title">Hesap Ödendi</h1>' +
       '<p class="sp-subtitle">Bu hesabın tamamı tahsil edildi.</p>' +
+      BACK_LINK +
       '</div>' +
       '<div class="sp-card">' + renderRefundSection(false) + '</div>';
   }
@@ -1171,6 +1266,7 @@
     switch (state.phase) {
       case 'missingBill': return renderMissingBill();
       case 'login': return renderLogin();
+      case 'loadError': return renderLoadError();
       case 'ready': return renderReady();
       case 'paid': return renderPaid();
       case 'cancelled': return renderCancelled();

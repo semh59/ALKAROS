@@ -1,0 +1,4 @@
+PosTerminal: tsc exit 0, oxlint 0 error, vite build exit 0
+ Test Files  66 passed (66)
+      Tests  523 passed (523)
+StaticApps: 5 files / 48 tests passed (split-payment-failures: 12 yeni test)

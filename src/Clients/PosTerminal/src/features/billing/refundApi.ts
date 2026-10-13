@@ -9,6 +9,7 @@ export interface BillTenderSummary {
   allocatedTotal: number;
   remainingAmount: number;
   allocations: readonly BillTenderLine[];
+  unsettledPayment?: unknown;
 }
 
 export interface RefundRequestRow {

@@ -56,6 +56,8 @@ describe("refund panel", () => {
     const client = makeClient();
     await render({ client });
 
+    const ask = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "İade iste")!;
+    expect(ask().disabled).toBe(true);
     await type("İade gerekçesi", "Fazla ödeme");
     await click("İade iste");
 
@@ -95,6 +97,8 @@ describe("refund panel", () => {
 
     await type("İptal gerekçesi", "Müşteri vazgeçti");
     await click("Hesabı iptal et");
+    expect(client.cancelBill).not.toHaveBeenCalled();
+    await click("Evet, hesabı iptal et");
 
     expect(client.cancelBill).toHaveBeenCalledWith("Müşteri vazgeçti");
     expect(document.body.textContent).toContain("Hesap iptal edildi.");
@@ -120,6 +124,8 @@ describe("refund panel", () => {
     expect(client.reject).toHaveBeenCalledWith("r1", "Yetersiz");
 
     await click("Onayla");
+    expect(approve).not.toHaveBeenCalled();
+    await click("Evet, iadeyi onayla");
     expect(approve).toHaveBeenCalledWith("r1");
     expect(document.body.textContent).toContain("Hesap iptal edildi.");
   });
@@ -141,6 +147,8 @@ describe("refund panel", () => {
     expect(document.body.textContent).toContain("Elle iade bekliyor");
     expect(document.body.textContent).toContain("Kart / elle iade");
 
+    const complete = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "İadeyi tamamla")!;
+    expect(complete().disabled).toBe(true);
     await type("İade fiş numarası", "POS-4471");
     await click("İadeyi tamamla");
 
@@ -169,6 +177,63 @@ describe("refund panel", () => {
 
     expect(getTenders).toHaveBeenCalledTimes(2);
     expect(document.body.textContent).toContain("İade iste");
+  });
+
+  it("keeps cancel, refund and reject buttons off until their reason is typed, and lets the user back out of a cancel", async () => {
+    const client = makeClient({
+      getTenders: vi.fn().mockResolvedValue({ ...unpaid, allocations: [] }),
+      listRequests: vi.fn().mockResolvedValue([request("Requested", { paymentId: "p9" })]),
+    });
+    await render({ client });
+    const button = (label: string) => [...document.querySelectorAll("button")].find((b) => b.textContent === label)!;
+    expect(button("Hesabı iptal et").disabled).toBe(true);
+    expect(button("Reddet").disabled).toBe(true);
+
+    await type("İptal gerekçesi", "Vazgeçti");
+    expect(button("Hesabı iptal et").disabled).toBe(false);
+    await click("Hesabı iptal et");
+    await click("Vazgeç");
+
+    expect(client.cancelBill).not.toHaveBeenCalled();
+    expect(document.body.textContent).not.toContain("Emin misiniz");
+  });
+
+  it("offers no refund line while the request list is unknown, but a 403 on the list is not a failure", async () => {
+    const failing = makeClient({ listRequests: vi.fn().mockRejectedValue(new RefundApiError(500, "REQUEST_FAILED", "")) });
+    await render({ client: failing });
+    expect(document.body.textContent).toContain("İade istekleri okunamadı");
+    expect(document.body.textContent).not.toContain("İade gerekçesi");
+
+    await act(async () => root!.unmount());
+    const forbidden = makeClient({ listRequests: vi.fn().mockRejectedValue(new RefundApiError(403, "FORBIDDEN", "")) });
+    await render({ client: forbidden });
+    expect(document.body.textContent).not.toContain("İade istekleri okunamadı");
+    expect(document.body.textContent).toContain("İade gerekçesi");
+  });
+
+  it("offers no cancel while an unsettled payment exists", async () => {
+    const client = makeClient({ getTenders: vi.fn().mockResolvedValue({ ...unpaid, unsettledPayment: { paymentId: "p1" } }) });
+    await render({ client });
+
+    expect(document.body.textContent).not.toContain("Hesabı iptal et");
+  });
+
+  it("reloads after a conflict, and keeps the panel when a reload fails after an action", async () => {
+    const getTenders = vi.fn().mockResolvedValue(paid);
+    const requestRefund = vi.fn().mockRejectedValue(new RefundApiError(409, "REFUND_STATE", ""));
+    await render({ client: makeClient({ getTenders, requestRefund }) });
+    await type("İade gerekçesi", "x");
+    await click("İade iste");
+    expect(getTenders).toHaveBeenCalledTimes(2);
+
+    await act(async () => root!.unmount());
+    const flaky = vi.fn().mockResolvedValueOnce(paid).mockRejectedValue(new RefundApiError(0, "NETWORK_UNAVAILABLE", ""));
+    await render({ client: makeClient({ getTenders: flaky }) });
+    await type("İade gerekçesi", "x");
+    await click("İade iste");
+
+    expect(document.body.textContent).toContain("İade gerekçesi");
+    expect(document.body.textContent).toContain("Sunucuya ulaşılamadı");
   });
 
   it("has no accessibility violations", async () => {
