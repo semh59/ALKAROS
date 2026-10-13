@@ -18,16 +18,18 @@ Kasa ekranında gerekçeli "Hesabı iptal et" düğmesi, ödenmiş hesapta "İad
 
 - `plan/v1/remediation/V1-RMD-509-bill-cancel-and-refund-ui.md`
 - `evidence/V1-RMD-509/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/split-payment-refunds.test.js
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
 - Uç sözleşmesi V1-RMD-506/508'de sabittir: iptal `POST .../billing/bills/{id}/cancel`, iade `.../billing/bills/{id}/refund-requests` ve `.../billing/refund-requests/{id}/approve|reject|complete`.
-- Kasiyer arayüzü (`src/Clients/Cashier`) ve PosTerminal faturalama ekranlarında iptal ve iade akışları; Türkçe metin sözlüğü.
+- Kasa hesap sayfası (`split-payment`): gerekçeli hesap iptali, ödeme başına iade isteme, bu hesabın iade isteklerini listeleme, onaylama/reddetme ve elle iade sonucunu fiş numarasıyla tamamlama; Türkçe metinler.
 
 ## Out of scope
 
-- Sunucu uçları (V1-RMD-506/508); iade istekleri `payments.refund_requests` tablosunda tutulur, ekran yalnız uçları çağırır.
+- PosTerminal (React) hesap ekranı (V1-RMD-510); sunucu uçları (V1-RMD-506/508); iade istekleri `payments.refund_requests` tablosunda tutulur, ekran yalnız uçları çağırır.
 
 ## Dependencies
 
