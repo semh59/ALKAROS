@@ -96,6 +96,20 @@ public sealed class RetentionExecutionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ASupplierWithARecentPurchaseInvoiceOrGoodsReceiptIsNotDueEvenWithoutARecentOrder()
+    {
+        var invoiced = await _database.SeedSupplierAsync(Ago(12), lastOrder: Ago(10, 2), lastInvoice: Ago(1));
+        var received = await _database.SeedSupplierAsync(Ago(12), lastOrder: Ago(10, 2), lastReceipt: Ago(1));
+        var idle = await _database.SeedSupplierAsync(Ago(12), lastOrder: Ago(10, 2));
+
+        var keys = Keys(await _service.PlanAsync(AsOf));
+
+        Assert.Contains((RetentionClass.Supplier, idle), keys);
+        Assert.DoesNotContain((RetentionClass.Supplier, invoiced), keys);
+        Assert.DoesNotContain((RetentionClass.Supplier, received), keys);
+    }
+
+    [Fact]
     public async Task ThePlanWritesNothingAndTheExecutedRunSelectsExactlyTheSameRecords()
     {
         await SeedOneDuePerClassAsync();

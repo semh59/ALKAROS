@@ -117,12 +117,37 @@ public sealed class RetentionTestDatabase : PgTestDatabase
             """,
             ("id", Guid.NewGuid()), ("customer", customerId), ("status", status));
 
-    public async Task<Guid> SeedSupplierAsync(DateTimeOffset createdAt, DateTimeOffset? lastOrder = null)
+    public async Task<Guid> SeedSupplierAsync(
+        DateTimeOffset createdAt, DateTimeOffset? lastOrder = null, DateTimeOffset? lastInvoice = null, DateTimeOffset? lastReceipt = null)
     {
         var id = Guid.NewGuid();
+        var tax = Random.Shared.NextInt64(1_000_000_000, 9_999_999_999).ToString(System.Globalization.CultureInfo.InvariantCulture);
         await SeedAsync(
-            "INSERT INTO purchasing.suppliers (supplier_id, code, name, created_at, updated_at) VALUES (@id, @code, 'Tedarikci', @created, @created);",
-            ("id", id), ("code", $"S-{id:N}"[..16]), ("created", createdAt));
+            "INSERT INTO purchasing.suppliers (supplier_id, code, name, tax_number, created_at, updated_at) VALUES (@id, @code, 'Tedarikci', @tax, @created, @created);",
+            ("id", id), ("code", $"S-{id:N}"[..16]), ("tax", tax), ("created", createdAt));
+        if (lastInvoice is { } invoiced)
+        {
+            // Matched by tax number only (supplier_id left empty): an invoice imported before the supplier was registered.
+            await SeedAsync(
+                """
+                INSERT INTO purchasing.purchase_invoices
+                    (invoice_id, ettn, invoice_number, issue_date, supplier_tax_number, supplier_name, currency, source, status, imported_by, raw_xml, created_at, updated_at)
+                VALUES (@invoice, @ettn, 'F1', current_date, @tax, 'Tedarikci', 'TRY', 'XmlUpload', 'Approved', 'test', '<x/>', @at, @at);
+                """,
+                ("invoice", Guid.NewGuid()), ("ettn", Guid.NewGuid()), ("tax", tax), ("at", invoiced));
+        }
+
+        if (lastReceipt is { } received)
+        {
+            await SeedAsync(
+                """
+                INSERT INTO purchasing.goods_receipts (receipt_id, receipt_number, order_id, supplier_id, destination_location_id, received_at, received_by, created_at)
+                VALUES (@receipt, @number, @order, @id, @location, @at, 'test', @at);
+                """,
+                ("receipt", Guid.NewGuid()), ("number", $"GR-{Guid.NewGuid():N}"[..20]), ("order", Guid.NewGuid()), ("id", id),
+                ("location", Guid.NewGuid()), ("at", received));
+        }
+
         if (lastOrder is { } ordered)
         {
             await SeedAsync(

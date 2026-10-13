@@ -60,6 +60,70 @@ public sealed class AnonymizationWorkflowTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ARecordThatBecomesBlockedBetweenStepsStopsBeforeTheNextStepWritesAnything()
+    {
+        var id = await QueuedRecordAsync();
+        await _database.RunSqlAsync(
+            """
+            CREATE FUNCTION public.block_after_a() RETURNS trigger LANGUAGE plpgsql AS $$ BEGIN UPDATE public.anon_scratch SET blocked = true WHERE id = NEW.id; RETURN NULL; END; $$;
+            CREATE TRIGGER block_after_a AFTER UPDATE OF a ON public.anon_scratch FOR EACH ROW EXECUTE FUNCTION public.block_after_a();
+            """);
+
+        var result = await RunAsync();
+
+        Assert.Equal((0, 1, 0), (result.Completed, result.Blocked, result.Failed));
+        Assert.True(await Scalar<bool>($"SELECT a IS NULL AND b IS NOT NULL FROM public.anon_scratch WHERE id = '{id}'"));
+        Assert.Equal("Blocked", await Scalar<string>($"SELECT status FROM privacy.anonymization_jobs WHERE subject_id = '{id}'"));
+        Assert.Equal(1L, await PendingItems(id));
+    }
+
+    [Fact]
+    public async Task AStepWaitsForAChargeInProgressAndThenSeesTheBalanceItLeft()
+    {
+        var id = await QueuedRecordAsync();
+        await using var charge = await _database.DataSource.OpenConnectionAsync();
+        await using var chargeTransaction = await charge.BeginTransactionAsync();
+        await using (var accountLock = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext(@key)::bigint);", charge, chargeTransaction))
+        {
+            accountLock.Parameters.AddWithValue("key", $"account-charge-customer:{id:N}");
+            await accountLock.ExecuteNonQueryAsync();
+        }
+
+        var run = RunAsync();
+        await Task.Delay(700);
+        Assert.False(run.IsCompleted);
+
+        await using (var post = new NpgsqlCommand("UPDATE public.anon_scratch SET blocked = true WHERE id = @id;", charge, chargeTransaction))
+        {
+            post.Parameters.AddWithValue("id", id);
+            await post.ExecuteNonQueryAsync();
+        }
+
+        await chargeTransaction.CommitAsync();
+        var result = await run;
+
+        Assert.Equal((0, 1, 0), (result.Completed, result.Blocked, result.Failed));
+        Assert.True(await Scalar<bool>($"SELECT a IS NOT NULL AND b IS NOT NULL FROM public.anon_scratch WHERE id = '{id}'"));
+    }
+
+    [Fact]
+    public async Task TwoWorkersRunningTheSameQueueAtOnceFinishEveryJobWithoutAFailure()
+    {
+        var ids = new List<Guid>();
+        for (var i = 0; i < 8; i++)
+            ids.Add(await QueuedRecordAsync());
+
+        var results = await Task.WhenAll(RunAsync(), RunAsync());
+
+        Assert.Equal(0, results.Sum(r => r.Failed));
+        foreach (var id in ids)
+        {
+            Assert.Equal("Done", await Scalar<string>($"SELECT status FROM privacy.anonymization_jobs WHERE subject_id = '{id}'"));
+            Assert.Equal(2L, await Scalar<long>($"SELECT count(*) FROM privacy.anonymization_checkpoints c JOIN privacy.anonymization_jobs j USING (job_id) WHERE j.subject_id = '{id}'"));
+        }
+    }
+
+    [Fact]
     public async Task AJobThatStoppedHalfwayResumesAtTheUnfinishedStoreWithoutRepeatingTheFinishedOne()
     {
         var id = await QueuedRecordAsync();

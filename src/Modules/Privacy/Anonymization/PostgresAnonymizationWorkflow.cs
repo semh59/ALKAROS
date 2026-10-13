@@ -54,7 +54,9 @@ public sealed class PostgresAnonymizationWorkflow(
                 try
                 {
                     var changed = await ApplyStepAsync(jobId, plan, step, subject, actor, cancellationToken);
-                    fieldsByStore[step.Key] = fieldsByStore.GetValueOrDefault(step.Key) + changed;
+                    if (changed is null)
+                        return await StopAsync(jobId, "Blocked", "Blocked", null, "open balance", actor, JobOutcome.Blocked, cancellationToken);
+                    fieldsByStore[step.Key] = fieldsByStore.GetValueOrDefault(step.Key) + changed.Value;
                 }
                 catch (NpgsqlException exception)
                 {
@@ -102,11 +104,38 @@ public sealed class PostgresAnonymizationWorkflow(
         return done;
     }
 
-    /// <summary>The write, its checkpoint and its event commit together, so a step is either fully done or not done at all.</summary>
-    private async Task<int> ApplyStepAsync(Guid jobId, AnonymizationPlan plan, AnonymizationStep step, Guid subject, string actor, CancellationToken cancellationToken)
+    /// <summary>
+    /// The write, its checkpoint and its event commit together, so a step is either fully done or not done at all. The step runs
+    /// under the customer's account lock (the same key a charge takes): a charge cannot land between the block check and the
+    /// write, and a second worker on the same subject waits and then finds the step already done.
+    /// Returns null when the record became blocked; nothing was written then.
+    /// </summary>
+    private async Task<int?> ApplyStepAsync(Guid jobId, AnonymizationPlan plan, AnonymizationStep step, Guid subject, string actor, CancellationToken cancellationToken)
     {
         await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await using (var accountLock = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext(@account)::bigint);", connection, transaction))
+        {
+            accountLock.Parameters.Add("account", NpgsqlDbType.Text).Value = $"account-charge-customer:{subject:N}";
+            await accountLock.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await using (var done = new NpgsqlCommand(
+            "SELECT EXISTS (SELECT 1 FROM privacy.anonymization_checkpoints WHERE job_id = @job AND step_key = @step);", connection, transaction))
+        {
+            done.Parameters.Add("job", NpgsqlDbType.Uuid).Value = jobId;
+            done.Parameters.Add("step", NpgsqlDbType.Text).Value = step.Key;
+            if ((bool)(await done.ExecuteScalarAsync(cancellationToken))!)
+                return 0;
+        }
+
+        if (plan.BlockSql is not null)
+        {
+            await using var block = Bind(new NpgsqlCommand(plan.BlockSql, connection, transaction), plan, plan.BlockSql, subject);
+            if ((bool)(await block.ExecuteScalarAsync(cancellationToken))!)
+                return null;
+        }
 
         int changed;
         await using (var write = Bind(new NpgsqlCommand(step.ApplySql, connection, transaction), plan, step.ApplySql, subject))

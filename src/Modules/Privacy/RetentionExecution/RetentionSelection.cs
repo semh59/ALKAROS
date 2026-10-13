@@ -48,7 +48,11 @@ internal static class RetentionSelection
     private const string Supplier =
         """
         SELECT s.supplier_id AS subject_id,
-               GREATEST(s.created_at, COALESCE((SELECT max(o.updated_at) FROM purchasing.purchase_orders o WHERE o.supplier_id = s.supplier_id), s.created_at)) AS basis_at
+               GREATEST(s.created_at,
+                        COALESCE((SELECT max(o.updated_at) FROM purchasing.purchase_orders o WHERE o.supplier_id = s.supplier_id), s.created_at),
+                        COALESCE((SELECT max(i.created_at) FROM purchasing.purchase_invoices i
+                                  WHERE i.supplier_id = s.supplier_id OR (s.tax_number IS NOT NULL AND i.supplier_tax_number = s.tax_number)), s.created_at),
+                        COALESCE((SELECT max(r.received_at) FROM purchasing.goods_receipts r WHERE r.supplier_id = s.supplier_id), s.created_at)) AS basis_at
         FROM purchasing.suppliers s
         WHERE s.name <> @marker
         """;

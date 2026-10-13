@@ -1,0 +1,7 @@
+﻿Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar hash ile geri yuklenir.
+M1 adim icinde engel yeniden degerlendirilmiyor: Başarısız! - Başarısız:     2, Başarılı:    10, Atlanan:     0, Toplam:    12, Süre: 41 s - ALKAROS.Privacy.Anonymization.Tests.dll (net8.0)
+M2 baska iscinin bitirdigi adim atlanmiyor: Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 41 s - ALKAROS.Privacy.Anonymization.Tests.dll (net8.0)
+M3 hesap kilidi alinmiyor: Başarısız! - Başarısız:     2, Başarılı:    10, Atlanan:     0, Toplam:    12, Süre: 41 s - ALKAROS.Privacy.Anonymization.Tests.dll (net8.0)
+M4 tedarikci tabani fatura saymiyor: Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 41 s - ALKAROS.Privacy.RetentionExecution.Tests.dll (net8.0)
+M5 tedarikci tabani mal kabul saymiyor: Başarısız! - Başarısız:     1, Başarılı:    11, Atlanan:     0, Toplam:    12, Süre: 40 s - ALKAROS.Privacy.RetentionExecution.Tests.dll (net8.0)
+geri yukleme (hash karsilastirma): ayni
