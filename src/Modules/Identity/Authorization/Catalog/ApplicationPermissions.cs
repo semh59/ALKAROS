@@ -26,6 +26,10 @@ public static class ApplicationPermissions
     public const string BillsDiscount = "bills.discount";
     /// <summary>Cancelling an unpaid bill with a mandatory reason; cashier tier and up.</summary>
     public const string BillsCancel = "bills.cancel";
+    /// <summary>Asking for a paid bill to be refunded, with a reason; cashier tier and up.</summary>
+    public const string PaymentsRefundRequest = "payments.refund.request";
+    /// <summary>Approving or rejecting a refund request; supervisor tier and up, never the requester.</summary>
+    public const string PaymentsRefundApprove = "payments.refund.approve";
     public const string CashDrawer = "cash.drawer";
     /// <summary>
     /// V1-RMD-401: taking a payment on a bill (card/EFT tender, and the cash tender together with
@@ -101,6 +105,7 @@ public static class ApplicationPermissions
         OrdersTransferServer, OrdersTransferServerAny,
         IntegrationsManage, KitchenAdvance, CashSessionOverride, ReportsCloseDay,
         ReconciliationManage, ObservabilityManage, SecurityManage, PaymentsTake, BillsCancel,
+        PaymentsRefundRequest, PaymentsRefundApprove,
     };
 
     // orders.transfer-server (self hand-off) sits alongside orders.create/
@@ -117,12 +122,12 @@ public static class ApplicationPermissions
         { OrdersCreate, OrdersSend, TablesStatus, OrdersTransferServer, KitchenAdvance };
 
     private static readonly string[] CashierFloorSet =
-        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake, BillsCancel };
+        { TablesReserve, TablesTransfer, TablesMerge, BillsSplit, CashDrawer, OrdersTransferServerAny, PaymentsTake, BillsCancel, PaymentsRefundRequest };
 
     private static readonly string[] SupervisorEscalations =
         {
             FloorplanManage, ReportsView, BillsVoid, BillsComp, BillsDiscount,
-            CashSessionOverride, ReconciliationManage, ObservabilityManage,
+            CashSessionOverride, ReconciliationManage, ObservabilityManage, PaymentsRefundApprove,
         };
 
     /// <summary>

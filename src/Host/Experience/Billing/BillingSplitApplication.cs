@@ -77,6 +77,7 @@ public static class BillingSplitApplication
         services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
         services.TryAddSingleton<BillingSplitStore>();
         services.TryAddSingleton<BillCancellationStore>();
+        services.TryAddSingleton<PaymentRefundStore>();
         services.TryAddSingleton<IBillingSplitSessionAuthorizer, BillingSplitSessionAuthorizer>();
         services.TryAddTransient<BillingSplitExceptionFilter>();
         return services;
@@ -274,6 +275,84 @@ public static class BillingSplitApplication
                     summary.TotalTips,
                     summary.AdjustedPayableAmount),
             });
+        });
+
+        var refundsGroup = endpoints.MapGroup("/api/v1/terminals/{terminalId:guid}/billing")
+            .WithTags("BillingRefunds")
+            .AddEndpointFilter<BillingSplitExceptionFilter>();
+
+        refundsGroup.MapPost("/bills/{billId:guid}/refund-requests", async (
+            Guid terminalId,
+            Guid billId,
+            RefundRequestInputV1 request,
+            IBillingSplitSessionAuthorizer authorizer,
+            IAuthorizationService authorization,
+            PaymentRefundStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
+            return Results.Ok(await store.RequestAsync(billId, request.PaymentId, request.Reason, principal.UserId, cancellationToken));
+        });
+
+        refundsGroup.MapGet("/refund-requests", async (
+            Guid terminalId,
+            string? status,
+            IBillingSplitSessionAuthorizer authorizer,
+            IAuthorizationService authorization,
+            PaymentRefundStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
+            return Results.Ok(await store.ListAsync(status, cancellationToken));
+        });
+
+        refundsGroup.MapPost("/refund-requests/{requestId:guid}/approve", async (
+            Guid terminalId,
+            Guid requestId,
+            IBillingSplitSessionAuthorizer authorizer,
+            IAuthorizationService authorization,
+            PaymentRefundStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
+            return Results.Ok(await store.ApproveAsync(requestId, principal.UserId, cancellationToken));
+        });
+
+        refundsGroup.MapPost("/refund-requests/{requestId:guid}/reject", async (
+            Guid terminalId,
+            Guid requestId,
+            RefundDecisionInputV1 request,
+            IBillingSplitSessionAuthorizer authorizer,
+            IAuthorizationService authorization,
+            PaymentRefundStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
+            return Results.Ok(await store.RejectAsync(requestId, principal.UserId, request.Note, cancellationToken));
+        });
+
+        refundsGroup.MapPost("/refund-requests/{requestId:guid}/complete", async (
+            Guid terminalId,
+            Guid requestId,
+            RefundCompleteInputV1 request,
+            IBillingSplitSessionAuthorizer authorizer,
+            IAuthorizationService authorization,
+            PaymentRefundStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
+            return Results.Ok(await store.CompleteManualAsync(
+                requestId, request.SlipNumber, request.Note, principal.UserId, cancellationToken));
         });
 
         var group = endpoints.MapGroup(RoutePrefix)
@@ -488,6 +567,13 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         SplitItemsOnAdjustedBillException => (409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "İndirim veya ek ücret uygulanmış hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın."),
         BillCancelHasPaymentException => (409, "BILL_HAS_PAYMENT", "Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli."),
         BillCancelNotAllowedException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap zaten iptal edilmiş."),
+        RefundInputException => (400, "REFUND_INPUT_INVALID", "İade bilgisi geçersiz: gerekçe, not ve fiş numarası 1 ile 500 (fiş için 50) karakter olmalı."),
+        RefundPaymentNotRefundableException => (409, "PAYMENT_NOT_REFUNDABLE", "Bu ödeme iade edilemez; yalnızca onaylanmış ve iade edilmemiş ödeme iade istenebilir."),
+        RefundAlreadyRequestedException => (409, "REFUND_ALREADY_REQUESTED", "Bu ödeme için açık bir iade isteği zaten var."),
+        RefundStateException => (409, "REFUND_STATE", "İade isteği bu durumda değil; sayfayı yenileyin."),
+        RefundSelfDecisionException => (403, "SELF_DECISION", "İadeyi isteyen kişi kendi isteğini onaylayamaz veya reddedemez."),
+        RefundNoOpenCashSessionException => (409, "NO_OPEN_CASH_SESSION", "İadeyi ödeyecek kasiyerin açık kasa oturumu yok."),
+        RefundAccountChargeUnsupportedException => (409, "ACCOUNT_REFUND_UNSUPPORTED", "Müşteri hesabına yazılan ödeme buradan iade edilemez."),
         BillCancelReasonException => (400, "REASON_REQUIRED", "İptal gerekçesi 1 ile 500 karakter arasında olmalı."),
         IdempotencyKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
         GarsonFeatureDisabledException => (403, "FEATURE_DISABLED", "Bu özellik bu işletme için kapatılmış."),

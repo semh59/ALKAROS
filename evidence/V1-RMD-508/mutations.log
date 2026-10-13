@@ -1,0 +1,18 @@
+# Mutasyon sonuçları
+self-decision: KILLED
+state-check-complete: KILLED
+account-guard: KILLED
+cash-record: KILLED
+no-session: KILLED
+reversal-cash: KILLED
+reversal-manual: KILLED
+close-all-paid: KILLED
+slip-required: KILLED
+method-cash: KILLED
+authorize-approve: KILLED
+hasmoney: KILLED
+state-check-approve: KILLED
+payment-status: KILLED
+audit-refunded: KILLED
+perm-seed: KILLED
+(ilk turda SURVIVED çıkan dört mutant için test eklendi; ikinci turda hepsi KILLED)

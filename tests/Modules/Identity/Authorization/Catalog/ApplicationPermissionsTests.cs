@@ -7,10 +7,10 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 public sealed class ApplicationPermissionsTests
 {
     [Fact]
-    public void CatalogHasTwentyFourDistinctCodes()
+    public void CatalogHasTwentySixDistinctCodes()
     {
-        // payments.take is the 23rd code and bills.cancel the 24th.
-        ApplicationPermissions.Codes.Should().HaveCount(24);
+        // payments.take is the 23rd code, bills.cancel the 24th, then the two refund permissions.
+        ApplicationPermissions.Codes.Should().HaveCount(26);
         ApplicationPermissions.Codes.Should().OnlyHaveUniqueItems();
         ApplicationPermissions.Codes.Should().NotContain("pos.cashier.mutate");
     }
@@ -48,6 +48,8 @@ public sealed class ApplicationPermissionsTests
     [InlineData("orders.transfer-server-any")]
     [InlineData("payments.take")]
     [InlineData("bills.cancel")]
+    [InlineData("payments.refund.request")]
+    [InlineData("payments.refund.approve")]
     public void WaiterDoesNotHoldAnyEscalatedGrant(string code)
     {
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleWaiter]
@@ -61,6 +63,16 @@ public sealed class ApplicationPermissionsTests
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleCashier].Should().Contain(ApplicationPermissions.PaymentsTake);
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor].Should().Contain(ApplicationPermissions.PaymentsTake);
         ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager].Should().Contain(ApplicationPermissions.PaymentsTake);
+    }
+
+    [Fact]
+    public void RefundRequestIsCashierTierAndApprovalIsSupervisorTierAndUp()
+    {
+        var request = ApplicationPermissions.PaymentsRefundRequest;
+        var approve = ApplicationPermissions.PaymentsRefundApprove;
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleCashier].Should().Contain(request).And.NotContain(approve);
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleSupervisor].Should().Contain(request).And.Contain(approve);
+        ApplicationPermissions.RoleGrants[ApplicationPermissions.RoleManager].Should().Contain(request).And.Contain(approve);
     }
 
     [Fact]

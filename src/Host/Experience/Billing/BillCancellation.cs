@@ -100,13 +100,16 @@ public sealed class BillCancellationStore(NpgsqlDataSource dataSource, IAuditEve
         return new CancelBillResultV1(billId, "Cancelled", trimmed, now);
     }
 
-    // Same predicate as CashierHandoffStore.HasMoneyAsync: an allocation, or a payment still in flight.
+    // Same predicate as CashierHandoffStore.HasMoneyAsync: an allocation, or a payment still in flight; a
+    // payment that has been refunded in full no longer holds money.
     private static async Task<bool> HasMoneyAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
     {
         await using var money = new NpgsqlCommand(
             """
-            SELECT EXISTS (SELECT 1 FROM payments.payment_allocations a WHERE a.bill_id = @bill_id)
+            SELECT EXISTS (SELECT 1 FROM payments.payment_allocations a
+                           JOIN payments.payments ap ON ap.payment_id = a.payment_id
+                           WHERE a.bill_id = @bill_id AND ap.status <> 'Refunded')
                 OR EXISTS (SELECT 1 FROM payments.payments p
                            WHERE p.bill_id = @bill_id AND p.status IN ('Pending', 'Unknown', 'ReconciliationRequired'));
             """, connection, transaction);

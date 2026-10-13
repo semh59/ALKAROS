@@ -54,6 +54,7 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
             Mig("V1-RMD-266", "142-security-manage-permission.up.sql"),
             Mig("V1-RMD-401", "163-payments-take-permission.up.sql"),
             Mig("V1-RMD-506", "181-bills-cancel-permission.up.sql"),
+            Mig("V1-RMD-508", "184-refund-permissions.up.sql"),
         };
 
         foreach (var path in scripts)
@@ -77,6 +78,9 @@ public sealed class PermissionSplitDatabase : PgTestDatabase
     /// </summary>
     public async Task ApplyDownSplitAsync()
     {
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-RMD-508", "184-refund-permissions.down.sql")));
         await RunAsync(
             DataSource,
             await File.ReadAllTextAsync(Mig("V1-RMD-506", "181-bills-cancel-permission.down.sql")));

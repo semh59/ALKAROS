@@ -1,0 +1,8 @@
+# Test çalıştırmaları (2026-10-13)
+## t508g
+Başarılı!  - Başarısız:     0, Başarılı:    46, Atlanan:     0, Toplam:    46, Süre: 3 m 27 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+## t508c
+Başarılı!  - Başarısız:     0, Başarılı:   223, Atlanan:     0, Toplam:   223, Süre: 6 s - ALKAROS.Identity.Authorization.Tests.dll (net8.0)
+## t508d
+Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25, Süre: 12 s - ALKAROS.Host.Tests.dll (net8.0)
+(t508g: istek tablosu yazımları Payments modülüne taşındıktan sonraki son çalıştırma; mutasyonlar taşımadan önce koşuldu, mantık değişmedi)

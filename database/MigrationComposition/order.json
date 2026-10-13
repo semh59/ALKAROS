@@ -1568,6 +1568,23 @@
         "payment_reversals"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "183",
+      "phase": "B",
+      "tables": [
+        "refund_requests"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "184",
+      "phase": "B",
+      "tables": [
+        "permissions",
+        "role_permissions"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

@@ -29,6 +29,8 @@ const permissionLabels: Record<string, string> = {
   "orders.send": "Siparişi veya servisi mutfağa gönderme",
   "orders.transfer-server": "Kendi açık siparişlerini başka garsona devretme",
   "orders.transfer-server-any": "Herhangi bir garsonun açık siparişlerini devretme",
+  "payments.refund.approve": "İade isteğini onaylama veya reddetme",
+  "payments.refund.request": "Ödenmiş hesap için iade isteme",
   "payments.take": "Hesaptan ödeme alma",
   "production.manage": "Üretim partilerini yönetme",
   "purchasing.manage": "Tedarikçi, satın alma siparişi ve mal kabul yönetimi",
