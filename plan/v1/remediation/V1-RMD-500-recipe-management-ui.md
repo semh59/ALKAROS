@@ -18,19 +18,21 @@ Sunucuda hazır olan reçete yazma uçlarının (oluşturma, sürüm, malzeme, e
 
 - `plan/v1/remediation/V1-RMD-500-recipe-management-ui.md`
 - `evidence/V1-RMD-500/**`
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-menus-recipe-cost/** — yalnız reçete yazma ekranı ve istemci çağrıları
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts — yalnız yeni Türkçe metinler
+- `src/Clients/PosTerminal/src/features/management-recipes/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/sections.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Reçete oluşturma, yeni sürüm, malzeme ekleme/çıkarma, etkinleştirme ve kilitleme.
-- Ürün–reçete eşlemesinin ekrandan yapılması.
-- Hata kodlarının Türkçe metne çevrilmesi; 409 için yenileme mesajı.
+- Yeni "Tarifler" yönetim bölümü (`inventory.manage` yetkisi): reçete listesi, oluşturma, sürüm listesi, yeni taslak sürüm, malzeme ekleme/çıkarma, sürümü etkinleştirme ve kilitleme.
+- Özel birim dönüşümlerinin listelenmesi ve eklenmesi.
+- Ürün–reçete eşlemesinin ekrandan yapılması (atama, görüntüleme, kaldırma).
+- Hata kodlarının Türkçe metne çevrilmesi; 409 için yenileme mesajı. Ham sunucu metni ekrana basılmaz (V1-RMD-499).
 
 ## Out of scope
 
-- Sunucu uçlarının değiştirilmesi.
+- Sunucu uçlarının değiştirilmesi; mevcut "Tarif maliyeti" bölümünün değiştirilmesi.
 
 ## Dependencies
 
