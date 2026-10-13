@@ -48,10 +48,17 @@ public sealed class PostgresBusinessDayTotalsReader : IBusinessDayTotalsReader
                    FROM payments.payment_reversals
                    WHERE occurred_at >= $1 AND occurred_at < $2),
                 (SELECT COUNT(*)
-                 FROM orders.orders
-                 WHERE submitted_at >= $1 AND submitted_at < $2
-                   AND status NOT IN ('Draft', 'Rejected', 'Cancelled')
-                   AND source <> 'Online');
+                 FROM orders.orders o
+                 WHERE o.submitted_at >= $1 AND o.submitted_at < $2
+                   AND o.status NOT IN ('Draft', 'Rejected', 'Cancelled')
+                   AND o.source <> 'Online'
+                   AND NOT (
+                    EXISTS (SELECT 1 FROM billing.bills rb
+                            WHERE rb.order_id = o.order_id AND rb.status = 'Cancelled'
+                              AND EXISTS (SELECT 1 FROM payments.payments rp
+                                          WHERE rp.bill_id = rb.bill_id AND rp.status = 'Refunded'))
+                    AND NOT EXISTS (SELECT 1 FROM billing.bills pb
+                                    WHERE pb.order_id = o.order_id AND pb.status = 'Paid')));
             """);
         command.Parameters.AddWithValue(start.UtcDateTime);
         command.Parameters.AddWithValue(end.UtcDateTime);

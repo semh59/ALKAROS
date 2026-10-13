@@ -1,0 +1,8 @@
+# Test çalıştırmaları (2026-10-13)
+## ALKAROS.Host.Experience.Reporting.Tests
+Başarılı!  - Başarısız:     0, Başarılı:    10, Atlanan:     0, Toplam:    10, Süre: 37 s - ALKAROS.Host.Experience.Reporting.Tests.dll (net8.0)
+## ALKAROS.Host.Experience.Billing.Tests
+Başarılı!  - Başarısız:     0, Başarılı:    48, Atlanan:     0, Toplam:    48, Süre: 3 m 47 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)
+## ALKAROS.Reporting.V1Operations.Tests
+Başarılı!  - Başarısız:     0, Başarılı:     6, Atlanan:     0, Toplam:     6, Süre: 2 s - ALKAROS.Reporting.V1Operations.Tests.dll (net8.0)
+(Billing ve Reporting host projelerine 2 + 3 yeni test sonradan eklendi; mutasyon turunda tekrar çalıştı)

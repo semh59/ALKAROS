@@ -1,0 +1,8 @@
+# Mutasyon sonuçları
+shift-sales: KILLED
+day-refunded: KILLED
+day-paid: KILLED
+shift-tips: KILLED
+shift-paid: KILLED
+day-cancelled: KILLED
+(day-cancelled ilk turda SURVIVED, test eklenip KILLED; shift-tips ve shift-paid ilk turda çapa uymadı, ikinci turda KILLED)

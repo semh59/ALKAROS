@@ -45,11 +45,18 @@ public sealed class ShiftSummaryStore
         decimal salesTotal;
         await using (var salesCommand = _dataSource.CreateCommand(
             """
-            SELECT COALESCE(SUM(total), 0)
-            FROM orders.orders
-            WHERE serving_user_id = @waiter_user_id
-              AND status <> 'Cancelled'
-              AND created_at >= @since;
+            SELECT COALESCE(SUM(o.total), 0)
+            FROM orders.orders o
+            WHERE o.serving_user_id = @waiter_user_id
+              AND o.status <> 'Cancelled'
+              AND o.created_at >= @since
+              AND NOT (
+                    EXISTS (SELECT 1 FROM billing.bills rb
+                            WHERE rb.order_id = o.order_id AND rb.status = 'Cancelled'
+                              AND EXISTS (SELECT 1 FROM payments.payments rp
+                                          WHERE rp.bill_id = rb.bill_id AND rp.status = 'Refunded'))
+                    AND NOT EXISTS (SELECT 1 FROM billing.bills pb
+                                    WHERE pb.order_id = o.order_id AND pb.status = 'Paid'));
             """))
         {
             salesCommand.Parameters.AddWithValue("waiter_user_id", waiterUserId);
@@ -84,10 +91,19 @@ public sealed class ShiftSummaryStore
         await using (var tipCommand = _dataSource.CreateCommand(
             """
             SELECT
-                COALESCE((SELECT SUM(amount) FROM billing.bill_adjustments
-                          WHERE adjustment_type = 'Tip' AND created_at >= @since), 0),
-                (SELECT COUNT(DISTINCT serving_user_id) FROM orders.orders
-                 WHERE serving_user_id IS NOT NULL AND status <> 'Cancelled' AND created_at >= @since);
+                COALESCE((SELECT SUM(a.amount) FROM billing.bill_adjustments a
+                          JOIN billing.bills tb ON tb.bill_id = a.bill_id
+                          WHERE a.adjustment_type = 'Tip' AND a.created_at >= @since
+                            AND tb.status <> 'Cancelled'), 0),
+                (SELECT COUNT(DISTINCT o.serving_user_id) FROM orders.orders o
+                 WHERE o.serving_user_id IS NOT NULL AND o.status <> 'Cancelled' AND o.created_at >= @since
+                   AND NOT (
+                    EXISTS (SELECT 1 FROM billing.bills rb
+                            WHERE rb.order_id = o.order_id AND rb.status = 'Cancelled'
+                              AND EXISTS (SELECT 1 FROM payments.payments rp
+                                          WHERE rp.bill_id = rb.bill_id AND rp.status = 'Refunded'))
+                    AND NOT EXISTS (SELECT 1 FROM billing.bills pb
+                                    WHERE pb.order_id = o.order_id AND pb.status = 'Paid')));
             """))
         {
             tipCommand.Parameters.AddWithValue("since", startOfUtcDay);
