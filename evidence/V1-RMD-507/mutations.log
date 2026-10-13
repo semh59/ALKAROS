@@ -1,0 +1,14 @@
+# Mutasyon sonuçları
+over-refund: KILLED
+idempotency: KILLED
+reversal-type: KILLED
+reason-check: KILLED
+full-status: KILLED
+transition-guard: KILLED
+db-append-only: KILLED
+db-over-refund: KILLED
+db-check-relax: KILLED
+mix-status: KILLED
+mix-refunds: KILLED
+day-subtract: KILLED
+day-status: KILLED

@@ -1,0 +1,9 @@
+# Test çalıştırmaları (2026-10-13)
+## ALKAROS.Payments.PaymentAggregate.Tests-507
+Başarılı!  - Başarısız:     0, Başarılı:    51, Atlanan:     0, Toplam:    51, Süre: 1 s - ALKAROS.Payments.PaymentAggregate.Tests.dll (net8.0)
+## ALKAROS.Reporting.Payments.Tests-507
+Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 9 s - ALKAROS.Reporting.Payments.Tests.dll (net8.0)
+## ALKAROS.Host.Experience.Reporting.Tests-507
+Başarılı!  - Başarısız:     0, Başarılı:     8, Atlanan:     0, Toplam:     8, Süre: 30 s - ALKAROS.Host.Experience.Reporting.Tests.dll (net8.0)
+## t507m
+Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25, Süre: 12 s - ALKAROS.Host.Tests.dll (net8.0)

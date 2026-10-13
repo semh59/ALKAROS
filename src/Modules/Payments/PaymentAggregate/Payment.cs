@@ -7,8 +7,8 @@ namespace ALKAROS.Payments.PaymentAggregate;
 /// Unknown→ReconciliationRequired; ReconciliationRequired→Approved|Declined|
 /// Cancelled) and the requested/tendered/approved/change money invariants
 /// (V0-DOM-004, V0-CMP-002). Refund transitions (Approved→Refunded|
-/// PartiallyRefunded) are out of scope for this task — see
-/// <see cref="PaymentStatus"/>.
+/// PartiallyRefunded) are recorded together with a payment_reversals row by
+/// <c>PostgresPaymentReversalRepository</c>.
 ///
 /// Immutable, like Order/Bill: every mutating method returns a new instance
 /// rather than mutating this one, so a caller can never observe a
@@ -58,9 +58,9 @@ public sealed class Payment
                 $"Tendered amount '{tenderedAmount}' must be greater than zero.");
 
         // Approved amount exists exactly when the payment has reached
-        // Approved (this task never produces Refunded/PartiallyRefunded,
-        // the only other states where a settled amount could apply).
-        if ((status == PaymentStatus.Approved) != (approvedAmount is not null))
+        // Approved or one of the refunded states that follow it.
+        if (status is (PaymentStatus.Approved or PaymentStatus.Refunded or PaymentStatus.PartiallyRefunded)
+            != (approvedAmount is not null))
             throw new InvalidPaymentAmountException(
                 $"Payment status '{status}' and approved amount '{approvedAmount?.ToString(System.Globalization.CultureInfo.InvariantCulture) ?? "null"}' are an invalid combination.");
         if (approvedAmount is <= 0)
@@ -136,12 +136,14 @@ public sealed class Payment
     /// <summary>
     /// Checks whether transitioning to <paramref name="target"/> is valid
     /// according to the canonical Payment transition matrix (V0-DOM-001).
-    /// Refunded/PartiallyRefunded are never reachable through this
-    /// aggregate — out of scope, see V0-DOM-003/V13-ALC-003/V13-ALC-004.
+    /// Refunded/PartiallyRefunded follow Approved through <see cref="ApplyRefund"/> only
+    /// (docs/domain/refund-ledger.md).
     /// </summary>
     public bool CanTransitionTo(PaymentStatus target) => target switch
     {
         PaymentStatus.Pending => Status == PaymentStatus.Initiated,
+        PaymentStatus.Refunded or PaymentStatus.PartiallyRefunded
+            => Status is PaymentStatus.Approved or PaymentStatus.PartiallyRefunded,
         PaymentStatus.Approved => Status is PaymentStatus.Pending or PaymentStatus.ReconciliationRequired,
         PaymentStatus.Declined => Status is PaymentStatus.Pending or PaymentStatus.ReconciliationRequired,
         PaymentStatus.Cancelled => Status is PaymentStatus.Pending or PaymentStatus.ReconciliationRequired,
@@ -196,6 +198,33 @@ public sealed class Payment
             PaymentStatus.Approved,
             AppendHistory(PaymentStatus.Approved, reason, changedBy, when),
             InitiatedAt, TenderedAt, when, DeclinedAt, CancelledAt,
+            RowVersion, CreatedAt, when);
+    }
+
+    /// <summary>
+    /// Records that <paramref name="totalRefunded"/> of the approved amount has now been paid back
+    /// (Approved or PartiallyRefunded → PartiallyRefunded, or Refunded once the whole approved amount is back).
+    /// </summary>
+    public Payment ApplyRefund(
+        decimal totalRefunded,
+        string? reason = null,
+        Guid? changedBy = null,
+        DateTimeOffset? at = null)
+    {
+        if (!CanTransitionTo(PaymentStatus.Refunded))
+            throw new InvalidPaymentTransitionException(Id, Status, PaymentStatus.Refunded);
+        if (totalRefunded <= 0 || totalRefunded > ApprovedAmount!.Value)
+            throw new InvalidPaymentAmountException(
+                $"Refunded total '{totalRefunded}' must be greater than zero and not exceed approved amount '{ApprovedAmount}'.");
+
+        var when = at ?? DateTimeOffset.UtcNow;
+        var target = totalRefunded == ApprovedAmount ? PaymentStatus.Refunded : PaymentStatus.PartiallyRefunded;
+        return new Payment(
+            Id, BillId, RequestedAmount, CurrencyCode,
+            TenderedAmount, ApprovedAmount, ChangeAmount,
+            target,
+            AppendHistory(target, reason, changedBy, when),
+            InitiatedAt, TenderedAt, ApprovedAt, DeclinedAt, CancelledAt,
             RowVersion, CreatedAt, when);
     }
 

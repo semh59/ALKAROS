@@ -42,7 +42,11 @@ public sealed class PostgresBusinessDayTotalsReader : IBusinessDayTotalsReader
             SELECT
                 (SELECT COALESCE(SUM(approved_amount), 0)
                  FROM payments.payments
-                 WHERE status = 'Approved' AND approved_at >= $1 AND approved_at < $2),
+                 WHERE status IN ('Approved', 'Refunded', 'PartiallyRefunded')
+                   AND approved_at >= $1 AND approved_at < $2)
+                - (SELECT COALESCE(SUM(amount), 0)
+                   FROM payments.payment_reversals
+                   WHERE occurred_at >= $1 AND occurred_at < $2),
                 (SELECT COUNT(*)
                  FROM orders.orders
                  WHERE submitted_at >= $1 AND submitted_at < $2

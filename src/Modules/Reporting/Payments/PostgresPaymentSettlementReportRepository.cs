@@ -45,7 +45,7 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
                 ON cash_tx.related_payment_id = p.payment_id AND cash_tx.type = 'Sale'
             LEFT JOIN payments.card_settlement_attempts csa
                 ON csa.payment_id = p.payment_id
-            WHERE p.status = 'Approved'
+            WHERE p.status IN ('Approved', 'Refunded', 'PartiallyRefunded')
               AND p.approved_at >= $1 AND p.approved_at < $2
             GROUP BY
                 CASE
@@ -70,6 +70,41 @@ public sealed class PostgresPaymentSettlementReportRepository : IPaymentSettleme
         if (results.Count > MaxScanRows)
             throw new InvalidOperationException(
                 $"Payment mix report returned more than {MaxScanRows} groups; narrow the filter.");
+
+        // A refund lowers the method's amount on the day it was paid back, not on the day of the original payment.
+        await using var refunds = _dataSource.CreateCommand(
+            """
+            SELECT
+                CASE
+                    WHEN cash_tx.related_payment_id IS NOT NULL THEN 'Cash'
+                    WHEN csa.payment_id IS NOT NULL THEN 'BankCard'
+                    ELSE 'Eft'
+                END AS method,
+                COALESCE(SUM(r.amount), 0) AS refunded_amount
+            FROM payments.payment_reversals r
+            JOIN payments.payments p ON p.payment_id = r.payment_id
+            LEFT JOIN cash.cash_transactions cash_tx
+                ON cash_tx.related_payment_id = p.payment_id AND cash_tx.type = 'Sale'
+            LEFT JOIN payments.card_settlement_attempts csa
+                ON csa.payment_id = p.payment_id
+            WHERE r.occurred_at >= $1 AND r.occurred_at < $2
+            GROUP BY 1;
+            """);
+        refunds.Parameters.AddWithValue(windowStart.UtcDateTime);
+        refunds.Parameters.AddWithValue(windowEnd.UtcDateTime);
+        await using (var refundReader = await refunds.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
+        {
+            while (await refundReader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                var method = refundReader.GetString(0);
+                var refunded = refundReader.GetDecimal(1);
+                var index = results.FindIndex(entry => entry.Method == method);
+                if (index >= 0)
+                    results[index] = results[index] with { ApprovedAmount = results[index].ApprovedAmount - refunded };
+                else
+                    results.Add(new PaymentMixEntry(method, 0, -refunded));
+            }
+        }
 
         return results;
     }

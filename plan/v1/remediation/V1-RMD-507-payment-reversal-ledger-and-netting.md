@@ -1,7 +1,7 @@
 # V1-RMD-507 - Ödeme iade defteri (payment_reversals) ve iade sonrası raporlama
 
 - Task ID: V1-RMD-507
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing

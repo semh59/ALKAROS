@@ -1559,6 +1559,15 @@
         "role_permissions"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "182",
+      "phase": "B",
+      "tables": [
+        "payments",
+        "payment_reversals"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

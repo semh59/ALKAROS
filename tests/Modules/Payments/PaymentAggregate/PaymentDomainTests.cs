@@ -264,13 +264,18 @@ public sealed class PaymentDomainTests
     }
 
     [Fact]
-    public void RefundedAndPartiallyRefundedAreNeverReachableThroughThisAggregate()
+    public void RefundedStatesAreReachableOnlyFromApprovedOrPartiallyRefunded()
     {
-        // Out of scope for V13-PAY-001 (V0-DOM-003/V13-ALC-003/V13-ALC-004's
-        // job) even though both are members of the canonical enum.
-        var approved = new Payment(NewId(), NewId(), 80m).Tender(80m).Approve(80m);
+        var pending = new Payment(NewId(), NewId(), 80m).Tender(80m);
+        var approved = pending.Approve(80m);
 
-        Assert.False(approved.CanTransitionTo(PaymentStatus.Refunded));
-        Assert.False(approved.CanTransitionTo(PaymentStatus.PartiallyRefunded));
+        Assert.False(pending.CanTransitionTo(PaymentStatus.Refunded));
+        Assert.False(pending.CanTransitionTo(PaymentStatus.PartiallyRefunded));
+        Assert.True(approved.CanTransitionTo(PaymentStatus.Refunded));
+        Assert.True(approved.CanTransitionTo(PaymentStatus.PartiallyRefunded));
+        Assert.Equal(PaymentStatus.PartiallyRefunded, approved.ApplyRefund(30m).Status);
+        Assert.Equal(PaymentStatus.Refunded, approved.ApplyRefund(80m).Status);
+        Assert.Throws<InvalidPaymentAmountException>(() => approved.ApplyRefund(80.01m));
+        Assert.Throws<InvalidPaymentTransitionException>(() => approved.ApplyRefund(80m).ApplyRefund(1m));
     }
 }
