@@ -1,8 +1,8 @@
 # V1-RMD-505 - Üretim partisi ayrıntı ekranı
 
 - Task ID: V1-RMD-505
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing
 
