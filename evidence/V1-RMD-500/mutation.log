@@ -1,0 +1,9 @@
+Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar yedekten geri yuklenir.
+M1 taslak olmayan surum etkinlestirilebiliyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M2 kilitli surum yeniden kilitlenebiliyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M3 etkin surumde malzeme formu aciliyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M4 gecersiz sayi sunucuya gidiyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M7 ham sunucu hatasi yerine metin kalmiyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M5 etkinlestirme yanlis surum numarasi: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M6 eslemeyi kaldirma yanlis yol: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M8 eslemeyi okuma yanlis yol: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯

@@ -1,0 +1,8 @@
+.mrcp { display: grid; gap: var(--ds-space-4); }
+.mrcp__actions { display: flex; gap: .4rem; flex-wrap: wrap; }
+.mrcp__empty { margin: 0; color: var(--ds-color-muted); }
+.mrcp table { width: 100%; border-collapse: collapse; }
+.mrcp th, .mrcp td { padding: .5rem .6rem; text-align: left; border-bottom: 1px solid var(--ds-color-line); }
+.mrcp th { color: var(--ds-color-muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; }
+.mrcp__form { display: grid; gap: var(--ds-space-3); max-width: 32rem; margin-top: var(--ds-space-3); }
+.mrcp__sub { display: grid; gap: var(--ds-space-3); margin-top: var(--ds-space-3); }

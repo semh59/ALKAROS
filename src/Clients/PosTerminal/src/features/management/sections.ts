@@ -3,6 +3,7 @@ import { ClosingSection } from "../management-closing";
 import { StockSection } from "../management-stock";
 import { ProductionSection, PurchasingSection } from "../management-purchasing-production";
 import { MenusSection, RecipeCostSection } from "../management-menus-recipe-cost";
+import { RecipesSection } from "../management-recipes";
 import { StaffSection } from "../management-staff-roles";
 import { SecuritySection, SystemSection } from "../management-security-system";
 import { SettingsHistorySection } from "../management-settings-history";
@@ -32,6 +33,7 @@ export const managementSections: readonly ManagementSection[] = [
   { id: "production", label: managementText.production.tab, requiredCapability: "production.manage", component: ProductionSection },
   { id: "menus", label: managementText.menus.tab, requiredCapability: "menu.manage", component: MenusSection },
   { id: "recipe-cost", label: managementText.recipeCost.tab, requiredCapability: "inventory.manage", component: RecipeCostSection },
+  { id: "recipes", label: managementText.recipes.tab, requiredCapability: "inventory.manage", component: RecipesSection },
   { id: "staff", label: managementText.staff.tab, requiredCapability: "identity.users.manage", component: StaffSection },
   { id: "security", label: managementText.security.tab, requiredCapability: "security.manage", component: SecuritySection },
   { id: "system", label: managementText.system.tab, requiredCapability: "reports.view", component: SystemSection },
