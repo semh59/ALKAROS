@@ -25,6 +25,7 @@ export function PurchasingSection({ client }: ManagementSectionProps & { client?
   const [received, setReceived] = useState<Record<string, string>>({});
   const [reasons, setReasons] = useState<Record<string, string>>({});
   const [approved, setApproved] = useState(false);
+  const [editingSupplierId, setEditingSupplierId] = useState<string>();
   const field = (key: string) => fields[key] ?? "";
   const set = (key: string) => (event: { target: { value: string } }) => setFields((current) => ({ ...current, [key]: event.target.value }));
 
@@ -34,6 +35,28 @@ export function PurchasingSection({ client }: ManagementSectionProps & { client?
     () => Promise.all([api.listLocations(), api.listStockItems()]).then(([locations, items]) => ({ locations, items })),
     [api]), t.lookupFailed);
 
+
+  async function openSupplierEdit(supplierId: string) {
+    setNotice(undefined);
+    setBusy(true);
+    try {
+      const detail = await api.getSupplier(supplierId);
+      if (detail.isMasked) {
+        setEditingSupplierId(undefined);
+        setNotice({ tone: "error", text: t.supplierMasked });
+        return;
+      }
+      setFields((current) => ({
+        ...current, "e-name": detail.name, "e-tax": detail.taxNumber ?? "", "e-office": detail.taxOffice ?? "",
+        "e-phone": detail.phone ?? "", "e-email": detail.email ?? "",
+      }));
+      setEditingSupplierId(supplierId);
+    } catch (reason) {
+      setNotice({ tone: "error", text: errorText(reason, t.actionFailed) });
+    } finally {
+      setBusy(false);
+    }
+  }
 
   async function act(work: () => Promise<void>, success: string, refresh: () => void, done?: () => void) {
     setBusy(true);
@@ -91,9 +114,30 @@ export function PurchasingSection({ client }: ManagementSectionProps & { client?
           <thead><tr><th>{t.code}</th><th>{t.name}</th><th>{t.status}</th><th>{t.actions}</th></tr></thead>
           <tbody>{list.map((supplier) => <tr key={supplier.id}>
             <td>{supplier.code}</td><td>{supplier.name}</td><td>{supplier.active ? t.active : t.passive}</td>
-            <td><Button variant="quiet" disabled={busy} onClick={() => void act(() => api.setSupplierActive(supplier.id, !supplier.active), t.supplierUpdated, reloadSuppliers)}>
-              {supplier.active ? t.deactivate : t.activate}</Button></td></tr>)}</tbody>
+            <td className="mpp__actions">
+              <Button variant="quiet" disabled={busy} onClick={() => void openSupplierEdit(supplier.id)}>{t.editSupplier}</Button>
+              <Button variant="quiet" disabled={busy} onClick={() => void act(() => api.setSupplierActive(supplier.id, !supplier.active), t.supplierUpdated, reloadSuppliers)}>
+                {supplier.active ? t.deactivate : t.activate}</Button></td></tr>)}</tbody>
         </table>}
+        {editingSupplierId && <form className="mpp__form" aria-label={t.editSupplierForm} onSubmit={(event) => {
+          event.preventDefault();
+          if (!field("e-name").trim()) return setNotice({ tone: "error", text: t.nameRequired });
+          void act(() => api.updateSupplier(editingSupplierId, {
+            name: field("e-name").trim(), taxNumber: field("e-tax").trim() || null, taxOffice: field("e-office").trim() || null,
+            phone: field("e-phone").trim() || null, email: field("e-email").trim() || null,
+          }), t.supplierUpdated, reloadSuppliers, () => setEditingSupplierId(undefined));
+        }}>
+          <h4>{t.editSupplierForm}</h4>
+          <TextField id="e-name" label={t.name} value={field("e-name")} onChange={set("e-name")} />
+          <TextField id="e-tax" label={t.taxNumber} value={field("e-tax")} onChange={set("e-tax")} />
+          <TextField id="e-office" label={t.taxOffice} value={field("e-office")} onChange={set("e-office")} />
+          <TextField id="e-phone" label={t.phone} value={field("e-phone")} onChange={set("e-phone")} />
+          <TextField id="e-email" label={t.email} value={field("e-email")} onChange={set("e-email")} />
+          <div className="mpp__actions">
+            <Button type="submit" disabled={busy}>{t.saveSupplier}</Button>
+            <Button type="button" variant="secondary" onClick={() => setEditingSupplierId(undefined)}>{t.cancelEdit}</Button>
+          </div>
+        </form>}
         <form className="mpp__form" aria-label={t.newSupplier} onSubmit={(event) => {
           event.preventDefault();
           void act(() => api.createSupplier({

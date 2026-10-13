@@ -1,5 +1,5 @@
 import type {
-  Batch, BatchCompletion, LookupItem, LookupLocation, NewOrderLine, PurchaseOrder, ReceiptLine, Supplier, NewSupplier, RecipeVersionOption,
+  Batch, BatchCompletion, LookupItem, LookupLocation, NewOrderLine, PurchaseOrder, ReceiptLine, Supplier, NewSupplier, RecipeVersionOption, SupplierDetail, SupplierUpdate,
 } from "./models";
 import { createRequester } from "../management/http";
 
@@ -7,6 +7,8 @@ export interface PurchasingClient {
   listSuppliers: () => Promise<readonly Supplier[]>;
   createSupplier: (input: NewSupplier) => Promise<void>;
   setSupplierActive: (supplierId: string, active: boolean) => Promise<void>;
+  getSupplier: (supplierId: string) => Promise<SupplierDetail>;
+  updateSupplier: (supplierId: string, input: SupplierUpdate) => Promise<void>;
   listOrders: (status: string) => Promise<readonly PurchaseOrder[]>;
   createOrder: (input: { orderNumber: string; supplierId: string; destinationLocationId: string; lines: readonly NewOrderLine[]; notes: string }) => Promise<void>;
   submitOrder: (orderId: string) => Promise<void>;
@@ -23,6 +25,8 @@ export function createPurchasingClient(fetcher: typeof fetch = fetch): Purchasin
   return {
     listSuppliers: () => json("/purchasing/suppliers"),
     createSupplier: (input) => post("/purchasing/suppliers", input),
+    getSupplier: (supplierId) => json(`/purchasing/suppliers/${supplierId}`),
+    updateSupplier: (supplierId, input) => call(`/purchasing/suppliers/${supplierId}`, { method: "PUT", body: JSON.stringify(input) }).then(() => undefined),
     setSupplierActive: (supplierId, active) => post(`/purchasing/suppliers/${supplierId}/${active ? "activate" : "deactivate"}`),
     listOrders: (status) => json(`/purchasing/purchase-orders${status ? `?status=${status}` : ""}`),
     createOrder: (input) => post("/purchasing/purchase-orders", { ...input, notes: input.notes.trim() || null }),

@@ -1,0 +1,7 @@
+Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar yedekten geri yuklenir.
+M1 maskeli veri duzenlemeye aciliyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M2 bos ad sunucuya gidiyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M3 bos alan bos deger gonderilmiyor: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M4 forma guncel ayrinti yerine liste degeri: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+M5 yanlis yol: ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+Not: sunucu reddinin gosterilmesi ortak act/errorText yolundan gecer ve digger bolum testleriyle kapsanir; bu gorevde ayri mutant uretilmedi.

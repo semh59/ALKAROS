@@ -1,4 +1,9 @@
 export interface Supplier { id: string; code: string; name: string; active: boolean }
+export interface SupplierDetail {
+  id: string; code: string; name: string; taxNumber: string | null; taxOffice: string | null;
+  phone: string | null; email: string | null; active: boolean; isMasked: boolean;
+}
+export interface SupplierUpdate { name: string; taxNumber: string | null; taxOffice: string | null; phone: string | null; email: string | null }
 export interface NewSupplier { code: string; name: string; taxNumber: string | null; taxOffice: string | null; phone: string | null; email: string | null }
 
 export interface PurchaseOrderLine {
