@@ -18,11 +18,19 @@ Kasa sayfasındaki (`split-payment`) iptal ve iade akışının PosTerminal (Rea
 
 - `plan/v1/remediation/V1-RMD-510-posterminal-bill-cancel-and-refund-ui.md`
 - `evidence/V1-RMD-510/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/refundApi.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/RefundPanel.tsx
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/refundApi.test.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/RefundPanel.test.tsx
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/index.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/billing.css
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.tsx
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- İptal gerekçesi, iade isteme, bekleyen iade onayı ve elle iade sonucu girişi; Türkçe metinler `strings.ts` üzerinden.
+- Hesap bölme ekranının altında "İptal ve iade" paneli: hesabın tahsilat satırları (`GET .../tenders/`), gerekçeli iptal (para yoksa), ödeme başına iade isteme, bu hesabın iade istekleri, onayla/reddet ve elle iade sonucunu fiş numarasıyla tamamlama. Düğmeler oturum yetkilerine (`bills.cancel`, `payments.refund.request`, `payments.refund.approve`) göre gösterilir; hata metinleri sabit Türkçe cümlelerdir, ham sunucu mesajı gösterilmez; Türkçe metinler `strings.ts` üzerinden.
 
 ## Out of scope
 
