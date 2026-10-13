@@ -1,8 +1,8 @@
 # V1-RMD-506 - Gerekçeli hesap iptali ve iptalden sonra hesabın yeniden oluşturulabilmesi
 
 - Task ID: V1-RMD-506
-- Status: InProgress
-- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
+- Status: Planned
+- Assignee: Unassigned
 - Work type: implementation
 - Surface state: Existing
 
@@ -31,6 +31,8 @@ PO kararı (2026-10-13): kasiyer ve müdür ödenmemiş hesabı gerekçe yazarak
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillingSplitStore.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-staff-roles/models.ts
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Billing/BillFoundation/ALKAROS.Billing.BillFoundation.Tests.csproj
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Orders/TableDraft/ALKAROS.Host.Experience.Orders.TableDraft.Tests.csproj
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope

@@ -34,6 +34,7 @@
 ## In scope
 
 - `payment_reversals` tablosu, `Payment` iade geçişleri, net ödeme hesabı (allocations toplamı, hesap kapanış hesaplayıcısı, gün sonu ve ödeme dağılımı raporları).
+- Elle seçilmiş migration listesi taşıyan test projeleri (csproj `Fixturessql` bağlantıları) yeni migration'ı eklemek zorundadır; başlamadan önce bu csproj'lar yüzeye yazılır.
 
 ## Out of scope
 
