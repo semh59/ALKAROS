@@ -27,7 +27,7 @@ Kasa ekranında gerekçeli "Hesabı iptal et" düğmesi, ödenmiş hesapta "İad
 
 ## Out of scope
 
-- Sunucu uçları (V1-RMD-506/508).
+- Sunucu uçları (V1-RMD-506/508); iade istekleri `payments.refund_requests` tablosunda tutulur, ekran yalnız uçları çağırır.
 
 ## Dependencies
 

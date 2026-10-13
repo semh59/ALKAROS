@@ -1,8 +1,8 @@
 # V1-RMD-508 - İade isteği, onayı ve iade sonrası hesabın kapanması
 
 - Task ID: V1-RMD-508
-- Status: InProgress
-- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
+- Status: Planned
+- Assignee: Unassigned
 - Work type: implementation
 - Surface state: Existing
 
@@ -19,7 +19,8 @@ PO kararı (2026-10-13): ödenmiş hesap doğrudan iptal edilmez, önce iade edi
 - `plan/v1/remediation/V1-RMD-508-refund-request-approval-and-bill-closure.md`
 - `evidence/V1-RMD-508/**`
 - `database/migrations/V1/V1-RMD-508/**`
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/PaymentRefunds.cs
+- `src/Host/Experience/Billing/PaymentRefunds.cs`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Payments/PaymentAggregate/PostgresRefundRequestRepository.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/PaymentRefundHttpTests.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillingSplitApplication.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillCancellation.cs
