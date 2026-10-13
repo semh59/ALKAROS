@@ -137,6 +137,18 @@ public sealed class AccountChargeHandlerTests : IClassFixture<AccountChargeTestD
         (await _allocations.GetByBillIdAsync(billId)).Should().BeEmpty();
     }
 
+    [Fact]
+    public async Task AnAmountWithMoreThanTwoDecimalsIsRefusedBeforeAnythingIsWritten()
+    {
+        var customerId = Guid.NewGuid();
+        var billId = await SeedBillAsync(payable: 100m);
+        var request = new AccountChargeRequest(customerId, billId, AmountDue: 10.004m, IdempotencyKey: Guid.NewGuid().ToString());
+
+        await Assert.ThrowsAsync<ArgumentException>(() => Handler().HandleAsync(request));
+
+        (await _allocations.GetByBillIdAsync(billId)).Should().BeEmpty();
+    }
+
     private CreditTermsCreditPolicy ProductionPolicy() =>
         new(_creditTerms, new PostgresAccountBalanceProjection(_dataSource, _ledger), _dataSource);
 

@@ -24,6 +24,8 @@ public sealed record AccountChargeRequest(
             throw new ArgumentException("Bill id cannot be empty.", nameof(BillId));
         if (AmountDue <= 0)
             throw new ArgumentException("Amount due must be greater than zero.", nameof(AmountDue));
+        if (decimal.Round(AmountDue, 2) != AmountDue)
+            throw new ArgumentException("Amount due can have at most two decimal places.", nameof(AmountDue));
         if (string.IsNullOrWhiteSpace(IdempotencyKey))
             throw new ArgumentException("Idempotency key cannot be empty.", nameof(IdempotencyKey));
     }

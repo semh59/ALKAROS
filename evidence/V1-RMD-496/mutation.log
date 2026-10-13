@@ -1,0 +1,5 @@
+﻿Her mutant derlenir; testler en az bir yerde kirmizi vermelidir. Sonunda dosyalar hash ile geri yuklenir.
+M1 tutar olcegi kontrol edilmiyor: Başarısız! - Başarısız:     1, Başarılı:    23, Atlanan:     0, Toplam:    24, Süre: 1 s - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+M2 tutar olcegi uc ondalikla kontrol ediliyor: Başarısız! - Başarısız:     1, Başarılı:    23, Atlanan:     0, Toplam:    24, Süre: 1 s - ALKAROS.CustomerAccounts.BillCharges.Tests.dll (net8.0)
+M3 arama genis kapsama bakmiyor: Başarısız! - Başarısız:     1, Başarılı:    19, Atlanan:     0, Toplam:    20, Süre: 2 m 1 s - ALKAROS.Host.Experience.CustomerAccounts.Tests.dll (net8.0)
+geri yukleme (hash karsilastirma): ayni

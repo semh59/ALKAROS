@@ -18,6 +18,9 @@ public sealed class CustomerAccountsStore
     /// <summary>Upper bound on the customers the till lists; search filters within it.</summary>
     public const int MaxListed = 500;
 
+    /// <summary>Profiles are encrypted, so a search reads and decrypts them; it covers more than the plain list does.</summary>
+    public const int MaxSearched = 5000;
+
     private static readonly CultureInfo Turkish = CultureInfo.GetCultureInfo("tr-TR");
 
     private readonly NpgsqlDataSource _dataSource;
@@ -39,8 +42,8 @@ public sealed class CustomerAccountsStore
 
     public async Task<IReadOnlyList<CustomerAccountSummaryV1>> ListAsync(string? search, CancellationToken cancellationToken)
     {
-        var rows = await ReadAccountRowsAsync(null, cancellationToken);
         var term = search?.Trim();
+        var rows = await ReadAccountRowsAsync(null, string.IsNullOrEmpty(term) ? MaxListed : MaxSearched, cancellationToken);
         var digits = term is null ? string.Empty : new string(term.Where(char.IsDigit).ToArray());
         var result = new List<CustomerAccountSummaryV1>();
         foreach (var row in rows)
@@ -60,7 +63,7 @@ public sealed class CustomerAccountsStore
 
     public async Task<CustomerAccountSummaryV1?> GetAsync(Guid customerId, CancellationToken cancellationToken)
     {
-        var row = (await ReadAccountRowsAsync(customerId, cancellationToken)).SingleOrDefault();
+        var row = (await ReadAccountRowsAsync(customerId, 1, cancellationToken)).SingleOrDefault();
         if (row is null)
             return null;
         var profile = await _profiles.GetAsync(customerId, CustomerAccessRole.Cashier, cancellationToken);
@@ -203,7 +206,7 @@ public sealed class CustomerAccountsStore
 
     private sealed record AccountRow(Guid CustomerId, decimal Balance, decimal CreditLimit, int? PaymentTermDays);
 
-    private async Task<IReadOnlyList<AccountRow>> ReadAccountRowsAsync(Guid? customerId, CancellationToken cancellationToken)
+    private async Task<IReadOnlyList<AccountRow>> ReadAccountRowsAsync(Guid? customerId, int limit, CancellationToken cancellationToken)
     {
         await using var command = _dataSource.CreateCommand(
             """
@@ -216,7 +219,7 @@ public sealed class CustomerAccountsStore
             LIMIT @limit;
             """);
         command.Parameters.Add("customer_id", NpgsqlDbType.Uuid).Value = (object?)customerId ?? DBNull.Value;
-        command.Parameters.Add("limit", NpgsqlDbType.Integer).Value = MaxListed;
+        command.Parameters.Add("limit", NpgsqlDbType.Integer).Value = limit;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         var rows = new List<AccountRow>();
         while (await reader.ReadAsync(cancellationToken))

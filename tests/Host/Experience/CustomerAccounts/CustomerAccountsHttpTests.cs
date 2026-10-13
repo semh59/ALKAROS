@@ -181,6 +181,35 @@ public sealed class CustomerAccountsHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ASearchFindsACustomerOlderThanTheFiveHundredNewestWhilePlainListStaysBounded()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd496-old");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var oldest = await CreateCustomerAsync(client, terminalId, cookie, "Eskici Rahmi", null);
+        // Newer profiles are copies of an unrelated customer's profile, so the oldest one falls out of the newest-500 window.
+        var filler = await CreateCustomerAsync(client, terminalId, cookie, "Dolgu Musteri", null);
+        await using (var insert = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO customer_data.profiles (customer_id, envelope_bytes, created_at)
+            SELECT gen_random_uuid(), envelope_bytes, now() + make_interval(secs => g)
+            FROM customer_data.profiles, generate_series(1, @count) AS g WHERE customer_id = @source;
+            """))
+        {
+            insert.Parameters.AddWithValue("count", CustomerAccountsStore.MaxListed);
+            insert.Parameters.AddWithValue("source", filler.CustomerId);
+            await insert.ExecuteNonQueryAsync();
+        }
+
+        var plain = await ListAsync(client, terminalId, cookie, string.Empty);
+        var found = await ListAsync(client, terminalId, cookie, "Rahmi");
+
+        Assert.DoesNotContain(plain, c => c.CustomerId == oldest.CustomerId);
+        Assert.Equal(oldest.CustomerId, Assert.Single(found).CustomerId);
+    }
+
+    [Fact]
     public async Task ACustomerWithoutANameIsRefusedInTurkish()
     {
         var terminalId = Guid.NewGuid();
