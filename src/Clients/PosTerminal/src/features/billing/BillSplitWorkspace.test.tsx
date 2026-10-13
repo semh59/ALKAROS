@@ -90,6 +90,36 @@ describe("bill split workspace", () => {
     expect(document.querySelector('[role="alert"]')?.textContent).toContain("Bir kalemin dağıtılan miktarı sunucuda artık geçerli değil.");
   });
 
+  it("tells a conflict by its status, not by words in the server message", async () => {
+    const onSave = vi.fn().mockRejectedValue(new BillingSplitApiError(422, "VERSION_TEXT", "Sürüm bilgisi geçersiz (version)."));
+    await render(<BillSplitWorkspace {...props({ onSave })} />);
+    const checks = [...document.querySelectorAll<HTMLInputElement>('.bill-split__owner-picker input')];
+    await click(checks[0]); await click(checks[1]);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent === "Dağıtımı kaydet")!);
+    expect(document.querySelector('[role="alert"]')?.textContent).toContain("Sürüm bilgisi geçersiz");
+    expect(document.querySelector('[role="alert"]')?.textContent).not.toContain("Taslağınız korundu");
+  });
+
+  it("shows no English text, version number or raw owner kind", async () => {
+    await render(<BillSplitWorkspace {...props({ state: "loading", design: null })} />);
+    expect(document.body.textContent).toContain("Güncel hesap ve dağıtımlar alınıyor");
+    expect(document.body.textContent).not.toContain("Authoritative");
+
+    await act(async () => root!.unmount());
+    await render(<BillSplitWorkspace {...props()} />);
+    expect(document.body.textContent).toContain("Henüz güncellenmedi");
+    expect(document.body.textContent).not.toMatch(/v7|Person|Seat/);
+    await click([...document.querySelectorAll('[role="tab"]')].find((tab) => tab.textContent === "Tutar gir")!);
+    const guest = [...document.querySelectorAll(".bill-split__amounts label")].find((label) => label.textContent?.includes("Misafir 1"))!;
+    expect(guest.querySelector("small")?.textContent).toBe("Kişi");
+    expect(document.body.textContent).not.toMatch(/Person|Seat/);
+  });
+
+  it("shows when the bill was last refreshed as a local time", async () => {
+    await render(<BillSplitWorkspace {...props({ lastUpdated: "2026-10-13T10:05:00" })} />);
+    expect(document.body.textContent).toContain("Güncellendi 10:05");
+  });
+
   it("has no critical or serious automated accessibility findings", async () => {
     await render(<BillSplitWorkspace {...props()} />);
     const report = await axe.run(document, { rules: { "color-contrast": { enabled: false } } });

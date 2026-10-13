@@ -1,7 +1,7 @@
 # V1-RMD-513 - Hesap bölme ekranında İngilizce ve teknik metin sızıntısı
 
 - Task ID: V1-RMD-513
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing

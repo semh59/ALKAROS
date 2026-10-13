@@ -104,7 +104,8 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
       // failure, not just a 409) was silently replaced with the generic
       // fallback below.
       const message = reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : "Dağıtım kaydedilemedi.";
-      setFeedback({ tone: /409|concurrent|conflict|version/i.test(message) ? "conflict" : "error", message: /409|concurrent|conflict|version/i.test(message) ? "Hesap sunucuda değişti. Taslağınız korundu; güncel hesabı açıp karşılaştırın." : message });
+      const conflict = (reason as { status?: number }).status === 409;
+      setFeedback({ tone: conflict ? "conflict" : "error", message: conflict ? "Hesap başka bir yerde değişti. Taslağınız korundu; hesabı yenileyip karşılaştırın." : message });
     } finally { setBusy(false); }
   };
   const clear = async () => {
@@ -118,7 +119,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
   };
 
   return <section className="bill-split" aria-label="Hesap bölme çalışma alanı">
-    <header className="bill-split__header"><div><span>HESAP / DAĞITIM TASARIMI</span><h2>{design.billNumber}</h2><p>{billStatusLabels[design.billStatus] ?? "Bilinmiyor"} · v{design.billRowVersion} · {lastUpdated ?? "sunucu durumu"}</p></div><div className="bill-split__totals"><span>Ödenecek<strong>{money(design.payableAmount, design.currencyCode)}</strong></span><span>Vergi<strong>{money(design.taxTotal, design.currencyCode)}</strong></span></div></header>
+    <header className="bill-split__header"><div><span>HESAP / DAĞITIM TASARIMI</span><h2>{design.billNumber}</h2><p>{billStatusLabels[design.billStatus] ?? "Bilinmiyor"} · {lastUpdated ? `Güncellendi ${new Date(lastUpdated).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}` : "Henüz güncellenmedi"}</p></div><div className="bill-split__totals"><span>Ödenecek<strong>{money(design.payableAmount, design.currencyCode)}</strong></span><span>Vergi<strong>{money(design.taxTotal, design.currencyCode)}</strong></span></div></header>
     {feedback && <div className={`bill-split__feedback bill-split__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"}>{feedback.message}</div>}
     <div className="bill-split__modes" role="tablist" aria-label="Dağıtım modu">{(Object.keys(modeLabels) as SplitMode[]).map((option) => <button key={option} type="button" role="tab" aria-selected={mode === option} onClick={() => setModeSafely(option)}>{modeLabels[option]}</button>)}</div>
     <div className="bill-split__layout">
@@ -138,8 +139,10 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
   </section>;
 }
 
+const ownerKindLabel = (owner: SplitOwnerOption) => (owner.kind === "Seat" ? "Kalıcı sandalye" : "Kişi");
+
 function OwnerPicker({ owners, selected, onChange }: { owners: readonly SplitOwnerOption[]; selected: readonly string[]; onChange: (next: string[]) => void }) {
-  return <section className="bill-split__owner-picker" aria-labelledby="equal-title"><div><span>1</span><h3 id="equal-title">Sandalye veya kişi seçin</h3></div><p>Sunucu kuruş farkını seçilen sahipler arasında deterministik dağıtır.</p><div>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key}><input type="checkbox" checked={selected.includes(key)} onChange={(event) => onChange(event.target.checked ? [...selected, key] : selected.filter((value) => value !== key))} /><span><strong>{owner.label}</strong><small>{owner.secondaryLabel ?? (owner.kind === "Seat" ? "Kalıcı sandalye" : "Kişi")}</small></span></label>; })}</div></section>;
+  return <section className="bill-split__owner-picker" aria-labelledby="equal-title"><div><span>1</span><h3 id="equal-title">Sandalye veya kişi seçin</h3></div><p>Sunucu kuruş farkını seçilen sahipler arasında deterministik dağıtır.</p><div>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key}><input type="checkbox" checked={selected.includes(key)} onChange={(event) => onChange(event.target.checked ? [...selected, key] : selected.filter((value) => value !== key))} /><span><strong>{owner.label}</strong><small>{owner.secondaryLabel ?? ownerKindLabel(owner)}</small></span></label>; })}</div></section>;
 }
 
 function ItemEditor({ design, owners, draft, onChange }: { design: BillSplitDesign; owners: readonly SplitOwnerOption[]; draft: ItemDraft; onChange: (next: ItemDraft) => void }) {
@@ -147,11 +150,11 @@ function ItemEditor({ design, owners, draft, onChange }: { design: BillSplitDesi
 }
 
 function AmountEditor({ design, owners, draft, onChange }: { design: BillSplitDesign; owners: readonly SplitOwnerOption[]; draft: AmountDraft; onChange: (next: AmountDraft) => void }) {
-  return <section className="bill-split__amounts" aria-labelledby="amount-title"><div><span>1</span><h3 id="amount-title">Kişi tutarlarını girin</h3></div><p>Toplam tam olarak {money(design.payableAmount, design.currencyCode)} olmalıdır.</p>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key}><span><strong>{owner.label}</strong><small>{owner.secondaryLabel ?? owner.kind}</small></span><input aria-label={`${owner.label} tutarı`} type="number" min="0" step="0.01" value={draft[key] ?? ""} onChange={(event) => onChange({ ...draft, [key]: Number(event.target.value) })} /></label>; })}</section>;
+  return <section className="bill-split__amounts" aria-labelledby="amount-title"><div><span>1</span><h3 id="amount-title">Kişi tutarlarını girin</h3></div><p>Toplam tam olarak {money(design.payableAmount, design.currencyCode)} olmalıdır.</p>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key}><span><strong>{owner.label}</strong><small>{owner.secondaryLabel ?? ownerKindLabel(owner)}</small></span><input aria-label={`${owner.label} tutarı`} type="number" min="0" step="0.01" value={draft[key] ?? ""} onChange={(event) => onChange({ ...draft, [key]: Number(event.target.value) })} /></label>; })}</section>;
 }
 
 function BoundedState({ state, message, onRefresh }: { state: BillSplitWorkspaceProps["state"]; message?: string; onRefresh: BillSplitWorkspaceProps["onRefresh"] }) {
-  const content = state === "loading" ? ["info", "Hesap yükleniyor", "Authoritative hesap ve dağıtımlar alınıyor…"] : state === "offline" ? ["offline", stateText.offlineTitle, "Taslak gönderilmedi; sunucuya yeniden bağlanın."] : state === "stale" ? ["stale", "Hesap güncel değil", "Dağıtmadan önce güncel hesap sürümünü alın."] : state === "unauthorized" ? ["unauthorized", stateText.unauthorizedTitle, "Hesap dağıtımını görmek için yeniden giriş yapın."] : ["error", "Hesap alınamadı", message ?? stateText.unexpectedError];
+  const content = state === "loading" ? ["info", "Hesap yükleniyor", "Güncel hesap ve dağıtımlar alınıyor…"] : state === "offline" ? ["offline", stateText.offlineTitle, "Taslak gönderilmedi; sunucuya yeniden bağlanın."] : state === "stale" ? ["stale", "Hesap güncel değil", "Dağıtmadan önce güncel hesap sürümünü alın."] : state === "unauthorized" ? ["unauthorized", stateText.unauthorizedTitle, "Hesap dağıtımını görmek için yeniden giriş yapın."] : ["error", "Hesap alınamadı", message ?? stateText.unexpectedError];
   return <div className="bill-split bill-split--state"><StateMessage tone={content[0] as "info" | "offline" | "stale" | "unauthorized" | "error"} title={content[1]} actions={state === "loading" || state === "unauthorized" ? undefined : <Button onClick={() => void onRefresh()}>{commonActions.retry}</Button>}><p>{content[2]}</p></StateMessage></div>;
 }
 
