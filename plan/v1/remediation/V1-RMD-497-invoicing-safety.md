@@ -1,8 +1,8 @@
 # V1-RMD-497 - Faturalama güvenliği (faturalanmış kaynak seti iptali, online taslak kuyruğu açlığı)
 
 - Task ID: V1-RMD-497
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing
 
