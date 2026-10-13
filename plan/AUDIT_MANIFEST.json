@@ -1,9 +1,9 @@
 {
   "schema": 2,
   "audit_date": "2026-07-30",
-  "markdown_file_count": 1601,
-  "markdown_line_count": 117861,
-  "markdown_byte_count": 6820155,
+  "markdown_file_count": 1604,
+  "markdown_line_count": 117951,
+  "markdown_byte_count": 6828017,
   "source_pdf": {
     "path": "external:restaurant_pos_master_v5.pdf",
     "sha256": "AF0E7F70174AC4006E93CC6E985C50E3F638EA6FC10E3C2EF96E745CDA780822",
@@ -2800,6 +2800,20 @@
       "utf8": true
     },
     {
+      "path": "evidence/V1-RMD-493/README.md",
+      "sha256": "6751524A16A2F97732E49A57591E384681CF2A9DA220B5631E44C61F592BF03C",
+      "lines": 19,
+      "bytes": 2108,
+      "utf8": true
+    },
+    {
+      "path": "evidence/V1-RMD-494/README.md",
+      "sha256": "34DFF42C9B284813472D6642C8679DE4CBFB66FFC798ECADBF608B5BAD76784F",
+      "lines": 13,
+      "bytes": 1031,
+      "utf8": true
+    },
+    {
       "path": "evidence/V1-SEC-003/candidate-remediation-2026-08-03.md",
       "sha256": "C53BF49818B35905907D753FA4E782369A3C6A8BD7D025249EDFE227736CEC59",
       "lines": 38,
@@ -3011,9 +3025,9 @@
     },
     {
       "path": "plan/AUDIT_REPORT.md",
-      "sha256": "08DCA050290B4488CB0C69CEDAB31614EE08791D417C9F1A2DCAD5A7C202FA6A",
-      "lines": 2877,
-      "bytes": 422827,
+      "sha256": "5259BE13660DBCEEBE6E5BA0A70A067E2EFEA743F0A5BA8334FB4783787D538E",
+      "lines": 2880,
+      "bytes": 423247,
       "utf8": true
     },
     {
@@ -9052,16 +9066,23 @@
     },
     {
       "path": "plan/v1/remediation/V1-RMD-492-qnb-purchase-invoice-inbox.md",
-      "sha256": "421758434AA963060A348813F86336C6CB2BB2B5961E394D3BA9E4D979E345E4",
+      "sha256": "4CCAB362BC17BDBA3B9290CFC39B1678BDD5564A6B2ED80BB503AF78C9FD2F60",
       "lines": 52,
-      "bytes": 3976,
+      "bytes": 4029,
       "utf8": true
     },
     {
       "path": "plan/v1/remediation/V1-RMD-493-purchase-invoice-credit-note.md",
-      "sha256": "1210D73D55670FA625A0607D7DA9DF73E74C314741D38E008AB7D67AF0F823B9",
-      "lines": 39,
-      "bytes": 1126,
+      "sha256": "1AB41E65F2E6F0F1552DD507070D3A92B963A1FFC03C9E08638F9406946DE64A",
+      "lines": 50,
+      "bytes": 3603,
+      "utf8": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-494-host-test-baseline-repair.md",
+      "sha256": "336CD2054745BFEE8314B215C1BEDD80DC5DB17F1957A6BD23B46E2BB65B4F41",
+      "lines": 44,
+      "bytes": 1773,
       "utf8": true
     },
     {
