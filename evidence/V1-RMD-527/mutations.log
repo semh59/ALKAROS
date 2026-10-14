@@ -1,0 +1,7 @@
+killed sum-zero
+killed max-not-sum
+killed reversals-unjoined
+killed column-index
+SURVIVED outer-window
+done
+outer-window: equivalent mutant. The sub-select window only bounds the scan of reversals; the outer query already restricts orders to the window, so the result is identical.

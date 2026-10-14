@@ -34,7 +34,7 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
     }
 
     /// <summary>An order whose stored amounts follow the Order aggregate: prices are tax-inclusive, so total = subtotal - discount and the 20% tax is contained in it.</summary>
-    public async Task SeedOrderAsync(
+    public async Task<Guid> SeedOrderAsync(
         string source, string status, decimal total, DateTimeOffset createdAt, string? externalOrderId = null, decimal discount = 0m,
         string provider = "yemeksepeti")
     {
@@ -66,6 +66,33 @@ public sealed class ChannelReportTestDatabase : PgTestDatabase
             link.Parameters.AddWithValue(provider);
             link.Parameters.AddWithValue(externalOrderId);
             await link.ExecuteNonQueryAsync();
+        }
+
+        return orderId;
+    }
+
+    /// <summary>Gives the order a bill with one approved payment of the order's size and pays the given amounts back.</summary>
+    public async Task SeedRefundsAsync(Guid orderId, decimal paid, params decimal[] refunds)
+    {
+        var billId = Guid.NewGuid();
+        var paymentId = Guid.NewGuid();
+        await ExecAsync(
+            $"""
+            INSERT INTO billing.bills (bill_id, bill_number, order_id, status, subtotal, payable_amount, opened_at, created_at, updated_at)
+            VALUES ('{billId}', 'B-{billId:N}', '{orderId}', 'Paid', {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)},
+                    {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)}, now(), now(), now());
+            INSERT INTO payments.payments (payment_id, bill_id, status, requested_amount, tendered_amount, approved_amount, initiated_at, created_at, updated_at)
+            VALUES ('{paymentId}', '{billId}', 'PartiallyRefunded', {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)}, {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)},
+                    {paid.ToString(System.Globalization.CultureInfo.InvariantCulture)}, now(), now(), now());
+            """);
+        foreach (var amount in refunds)
+        {
+            await ExecAsync(
+                $"""
+                INSERT INTO payments.payment_reversals (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
+                VALUES (gen_random_uuid(), '{paymentId}', 'PartialRefund', {amount.ToString(System.Globalization.CultureInfo.InvariantCulture)},
+                        'test', gen_random_uuid(), 'k-' || gen_random_uuid(), now());
+                """);
         }
     }
 

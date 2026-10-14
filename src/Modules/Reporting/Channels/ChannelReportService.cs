@@ -68,8 +68,19 @@ public sealed class PostgresChannelReportService : IChannelReportService
                    COALESCE(sum(o.total - o.tax_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
                    COALESCE(sum(o.tax_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
                    COALESCE(sum(o.discount_total) FILTER (WHERE o.status IN ({AcceptedStatuses})), 0),
-                   COALESCE(sum(o.total) FILTER (WHERE o.status = 'Cancelled'), 0)
+                   COALESCE(sum(o.total) FILTER (WHERE o.status = 'Cancelled'), 0),
+                   COALESCE(sum(rf.refunded), 0)
             FROM orders.orders o
+            -- Money paid back for the order's bill, once per order, on the order's own day.
+            LEFT JOIN (
+                SELECT b.order_id, sum(r.amount) AS refunded
+                FROM billing.bills b
+                JOIN payments.payments p ON p.bill_id = b.bill_id
+                JOIN payments.payment_reversals r ON r.payment_id = p.payment_id
+                WHERE b.order_id IN (SELECT order_id FROM orders.orders
+                                     WHERE source IN ('Qr', 'Online') AND created_at >= $1 AND created_at < $2)
+                GROUP BY b.order_id
+            ) rf ON rf.order_id = o.order_id
             -- V12-REC-002: an online order's platform comes from its V12-ONL-006 link.
             LEFT JOIN online_ordering.online_orders l ON l.order_id = o.order_id
             WHERE o.source IN ('Qr', 'Online')
@@ -90,7 +101,7 @@ public sealed class PostgresChannelReportService : IChannelReportService
                 DateOnly.FromDateTime(reader.GetDateTime(0)), reader.GetString(1),
                 reader.GetInt32(3), reader.GetInt32(4), reader.GetInt32(5), reader.GetInt32(6), reader.GetInt32(7),
                 reader.GetDecimal(8), reader.GetDecimal(9), reader.GetDecimal(10), reader.GetDecimal(11),
-                reader.GetDecimal(12), 0, reader.IsDBNull(2) ? null : reader.GetString(2)));
+                reader.GetDecimal(12), 0, reader.IsDBNull(2) ? null : reader.GetString(2), reader.GetDecimal(13)));
         }
 
         EnsureBounded(rows.Count, "channel order");

@@ -61,6 +61,8 @@ public static class ChannelSource
 /// <see cref="AcceptedTaxValue"/> is <c>tax_total</c> and <see cref="AcceptedDiscount"/> is
 /// <c>discount_total</c>, each exactly as the order stored it (per-line rounding means net + tax can
 /// differ from gross by a cent; neither is recomputed here).</para>
+/// <para><see cref="RefundedValue"/> is the money paid back (payment reversals) for the bills of the day's orders, shown on
+/// the order's day; <see cref="AcceptedValue"/> stays gross.</para>
 /// </summary>
 public sealed record ChannelDayRow(
     DateOnly BusinessDate,
@@ -76,7 +78,8 @@ public sealed record ChannelDayRow(
     decimal AcceptedDiscount,
     decimal CancelledValue,
     int ProviderRefused,
-    string? Provider = null);
+    string? Provider = null,
+    decimal RefundedValue = 0m);
 
 /// <summary>
 /// The reconciliation difference for online orders (V0-DOM-008 "Reconciliation backlog": open cases,

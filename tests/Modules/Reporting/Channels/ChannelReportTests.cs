@@ -57,6 +57,24 @@ public sealed class ChannelReportTests : IClassFixture<ChannelReportTestDatabase
     }
 
     [Fact]
+    public async Task MoneyPaidBackForAnOrdersBillIsShownOnTheOrdersDayAndLeavesTheGrossValueAlone()
+    {
+        var day = new DateOnly(2031, 7, 3);
+        var first = await _database.SeedOrderAsync("Qr", "Accepted", 100m, Utc(2031, 7, 3, 9, 0));
+        var second = await _database.SeedOrderAsync("Qr", "Accepted", 60m, Utc(2031, 7, 3, 10, 0));
+        await _database.SeedOrderAsync("Qr", "Accepted", 40m, Utc(2031, 7, 3, 11, 0));
+        var otherDay = await _database.SeedOrderAsync("Qr", "Accepted", 50m, Utc(2031, 7, 4, 9, 0));
+        await _database.SeedRefundsAsync(first, 100m, 20m, 5.50m);
+        await _database.SeedRefundsAsync(second, 60m, 60m);
+        await _database.SeedRefundsAsync(otherDay, 50m, 10m);
+
+        var report = await _reports.GetReportAsync(new ChannelReportFilter(day, day, ChannelSource.Qr));
+
+        report.Days.Should().Equal(new ChannelDayRow(day, "Qr", 3, 0, 3, 0, 0, 200m, 166.66m, 33.34m, 0m, 0m, 0, null, 85.50m));
+        report.Check.IsBalanced.Should().BeTrue();
+    }
+
+    [Fact]
     public async Task TheGoldenDatasetProducesExactlyTheExpectedChannelReportAndBalancesToTheLedger()
     {
         await SeedGoldenDatasetAsync();
