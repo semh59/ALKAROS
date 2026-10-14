@@ -26,6 +26,8 @@ V1-RMD-524 uçları için kasa sayfası ve PosTerminal iade paneli: kalem ve ade
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/split-payment-item-refund.test.js
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/RefundPanel.test.tsx
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/refundApi.test.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/split-payment-receipt.test.js
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope

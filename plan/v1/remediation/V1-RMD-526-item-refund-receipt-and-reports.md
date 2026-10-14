@@ -32,6 +32,7 @@ Kısmi iade sonrası bilgi fişi iade edilen kalemleri ve net tutarı gösterir;
 ## Dependencies
 
 - V1-RMD-524
+- V1-RMD-525
 
 ## Acceptance evidence
 
