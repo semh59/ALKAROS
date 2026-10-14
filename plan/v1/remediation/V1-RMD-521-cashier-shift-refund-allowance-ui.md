@@ -1,7 +1,7 @@
 # V1-RMD-521 - Kasiyer vardiya iade bütçesi (arayüz)
 
 - Task ID: V1-RMD-521
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing
