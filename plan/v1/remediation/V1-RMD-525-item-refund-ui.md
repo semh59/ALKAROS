@@ -26,6 +26,7 @@ V1-RMD-524 uçları için kasa sayfası ve PosTerminal iade paneli: kalem ve ade
 
 ## In scope
 
+- İade yanıtı ve listesi `items` (kalem kimliği, adet, stoğa dön) alanını taşır; kalem adı hesap kalemlerinden eşlenir.
 - Tüm metinler Türkçe; hata sabit cümlelerle gösterilir; durumlar (yükleniyor, boş, hata) ele alınır.
 
 ## Out of scope
