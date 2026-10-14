@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Button, SelectField, StateMessage, TextField } from "../../design-system";
 import { refundMethodLabels, refundStatusLabels, refundText } from "../../strings";
-import { RefundApiError, describeRefundFailure, type BillTenderSummary, type BillingRefundClient, type RefundRequestRow } from "./refundApi";
+import {
+  RefundApiError, describeAllowanceFailure, describeRefundFailure,
+  type BillTenderSummary, type BillingRefundClient, type RefundAllowance, type RefundRequestRow,
+} from "./refundApi";
 
 export interface RefundPanelProps {
   client: BillingRefundClient;
@@ -10,11 +13,15 @@ export interface RefundPanelProps {
   canApproveRefund: boolean;
 }
 
-type Action = "cancel" | "request" | "approve" | "reject" | "complete";
+type Action = "cancel" | "request" | "approve" | "reject" | "complete" | "allowance";
 
 const money = (value: number) => new Intl.NumberFormat("tr-TR", { style: "currency", currency: "TRY" }).format(value);
 const isOpen = (row: RefundRequestRow) => row.status === "Requested" || row.status === "AwaitingManualRefund";
 const filled = (value: string | undefined) => (value ?? "").trim().length > 0;
+const parseAmount = (value: string | undefined) => {
+  const parsed = Number((value ?? "").trim().replace(",", "."));
+  return filled(value) && Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
+};
 
 export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRefund }: RefundPanelProps) {
   const [tenders, setTenders] = useState<BillTenderSummary | null>(null);
@@ -24,6 +31,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();
   const [notice, setNotice] = useState<string>();
+  const [allowance, setAllowance] = useState<RefundAllowance | null>(null);
   const [cancelled, setCancelled] = useState(false);
   const [confirming, setConfirming] = useState<string | null>(null);
   const [texts, setTexts] = useState<Record<string, string>>({});
@@ -62,7 +70,13 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
           failed = !(reason instanceof RefundApiError && reason.status === 403);
         }
       }
+      let shift: RefundAllowance | null = null;
+      if (canRequestRefund) {
+        // The remaining allowance is a convenience; when it cannot be read the refund flow is unaffected.
+        shift = await client.getAllowance().catch(() => null);
+      }
       setTenders(summary);
+      setAllowance(shift);
       setRequests(rows);
       setListFailed(failed);
       setLoadError(false);
@@ -75,23 +89,31 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
 
   useEffect(() => { void load(); }, [load]);
 
-  async function run(action: Action, call: () => Promise<RefundRequestRow | void>) {
+  async function run(
+    action: Action,
+    call: () => Promise<RefundRequestRow | RefundAllowance | void>,
+    describe: (reason: unknown) => string = describeRefundFailure,
+  ) {
     setConfirming(null);
     setBusy(true);
     setError(undefined);
     setNotice(undefined);
     try {
-      const result = await call();
+      const result = await call() as RefundRequestRow | void;
       if (action === "cancel" || (result && result.billCancelled)) {
         setCancelled(true);
         return;
       }
-      setNotice({
-        request: refundText.requested, approve: refundText.approved, reject: refundText.rejected, complete: refundText.completed,
+      const fromAllowance = action === "request" && result && result.approvedFromAllowance
+        ? (result.status === "Completed" ? refundText.completedFromAllowance : refundText.reservedFromAllowance)
+        : undefined;
+      setNotice(fromAllowance ?? {
+        request: refundText.requested, approve: refundText.approved, reject: refundText.rejected,
+        complete: refundText.completed, allowance: refundText.allowanceGranted,
       }[action as Exclude<Action, "cancel">]);
       await load();
     } catch (reason) {
-      setError(describeRefundFailure(reason));
+      setError(describe(reason));
       if (reason instanceof RefundApiError && reason.status === 409) await load();
     } finally {
       setBusy(false);
@@ -132,6 +154,8 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
     <h2 id="refund-panel-heading">{refundText.heading}</h2>
     {error && <StateMessage tone="error" title={error} />}
     {notice && <p role="status">{notice}</p>}
+    {canRequestRefund && allowance && allowance.hasOpenSession && allowance.allowance > 0 &&
+      <p>{refundText.allowanceRemaining}: <strong>{money(allowance.remaining)}</strong></p>}
     {listBlocksRefund && <StateMessage tone="warning" title={refundText.listFailed} actions={<Button variant="secondary" onClick={() => void load()}>{refundText.refresh}</Button>} />}
 
     {refundable.length > 0 && <div className="refund-panel__group">
@@ -152,6 +176,25 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
         <span className="refund-panel__status">{refundStatusLabels[row.status] ?? refundText.unknown}</span>
         <span>{row.reason}</span>
         {row.status === "Requested" && canApproveRefund && <>
+          {row.requestedBy && <>
+            <TextField
+              label={refundText.allowanceLabel}
+              inputMode="decimal"
+              value={texts[`allowance:${row.requestId}`] ?? ""}
+              onChange={(event) => setText(`allowance:${row.requestId}`, event.target.value)}
+            />
+            <Button
+              variant="secondary"
+              disabled={busy || parseAmount(texts[`allowance:${row.requestId}`]) === null}
+              onClick={() => void run(
+                "allowance",
+                () => client.setAllowance(row.requestedBy ?? "", parseAmount(texts[`allowance:${row.requestId}`]) ?? 0),
+                describeAllowanceFailure,
+              )}
+            >
+              {refundText.allowanceAction}
+            </Button>
+          </>}
           {reasonField(`note:${row.requestId}`, refundText.rejectNoteLabel)}
           {guarded(`approve:${row.requestId}`, refundText.approve, refundText.approveConfirm, "primary", false, "approve", () => client.approve(row.requestId))}
           <Button variant="secondary" disabled={busy || !filled(texts[`note:${row.requestId}`])} onClick={() => void run("reject", () => client.reject(row.requestId, texts[`note:${row.requestId}`] ?? ""))}>

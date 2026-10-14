@@ -1015,6 +1015,12 @@ export const refundText = {
   reasonWrite: "Gerekçeyi yazın",
   reasonPresets: ["Müşteri vazgeçti", "Yanlış sipariş", "Mutfak hatası", "Ürün sorunlu", "İkram", "Yanlış tutar girildi"],
   listFailed: "İade istekleri okunamadı. İade istemeden önce yenileyin.",
+  allowanceLabel: "Bu kasiyerin vardiya iade bütçesi (₺)",
+  allowanceAction: "Bütçe ver",
+  allowanceGranted: "Kasiyerin vardiya iade bütçesi güncellendi.",
+  allowanceRemaining: "Kalan vardiya iade bütçeniz",
+  completedFromAllowance: "İade vardiya bütçenizden tamamlandı.",
+  reservedFromAllowance: "İade vardiya bütçenizden ayrıldı; fiş numarasını girerek tamamlayın.",
 } as const;
 
 export const refundStatusLabels: Record<string, string> = {

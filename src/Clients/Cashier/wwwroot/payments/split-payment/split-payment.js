@@ -80,6 +80,7 @@
     refundError: null,
     refundNotice: null,
     refundListFailed: false,
+    refundAllowance: null,
     confirmKey: null,
     reasonChoices: {},
     tenderedDraft: '',
@@ -869,7 +870,18 @@
     return '/api/v1/terminals/' + state.terminalId + '/billing/refund-requests';
   }
 
+  // The remaining shift allowance is a convenience: when it cannot be read it is simply not shown.
+  function loadRefundAllowance() {
+    return api('/api/v1/terminals/' + state.terminalId + '/billing/refund-allowance').then(function (result) {
+      state.refundAllowance = result.ok && result.body && result.body.hasOpenSession ? result.body : null;
+      render();
+    }).catch(function () {
+      state.refundAllowance = null;
+    });
+  }
+
   function loadRefundRequests() {
+    loadRefundAllowance();
     return api(refundsBase()).then(function (result) {
       // Yetkisi olmayan kullanıcı için liste sessizce boş kalır; işlemler zaten sunucuda 403 ile reddedilir.
       state.refundListFailed = !result.ok && result.status !== 403;
@@ -1019,6 +1031,13 @@
     );
   }
 
+  function renderAllowanceLine() {
+    var shift = state.refundAllowance;
+    if (!shift || !(shift.allowance > 0)) return '';
+    return '<div class="sp-alert-body" id="refund-allowance">Kalan vardiya iade bütçeniz: <strong>' +
+      escapeHtml(formatMoney(shift.remaining)) + '</strong></div>';
+  }
+
   function renderRefundSection(includeCancel) {
     return (
       (state.refundError
@@ -1028,6 +1047,7 @@
       (state.refundNotice
         ? '<div class="sp-alert-body" role="status">' + escapeHtml(state.refundNotice) + '</div>'
         : '') +
+      renderAllowanceLine() +
       renderRefundLines() + renderRefundRequests() + (includeCancel ? renderCancelSection() : '')
     );
   }
@@ -1091,7 +1111,12 @@
         render();
         return;
       }
-      state.refundNotice = action === 'request' ? 'İade isteği gönderildi; onay bekliyor.'
+      var fromAllowance = action === 'request' && result.body && result.body.approvedFromAllowance;
+      state.refundNotice = fromAllowance
+        ? (result.body.status === 'Completed'
+          ? 'İade vardiya bütçenizden tamamlandı.'
+          : 'İade vardiya bütçenizden ayrıldı; fiş numarasını girerek tamamlayın.')
+        : action === 'request' ? 'İade isteği gönderildi; onay bekliyor.'
         : action === 'reject' ? 'İade isteği reddedildi.'
         : action === 'approve' ? 'İade isteği onaylandı.' : 'İade tamamlandı.';
       loadEverything();

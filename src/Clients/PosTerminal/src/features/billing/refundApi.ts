@@ -21,6 +21,15 @@ export interface RefundRequestRow {
   reason: string;
   status: string;
   billCancelled?: boolean;
+  requestedBy?: string;
+  approvedFromAllowance?: boolean;
+}
+
+export interface RefundAllowance {
+  hasOpenSession: boolean;
+  allowance: number;
+  used: number;
+  remaining: number;
 }
 
 export class RefundApiError extends Error {
@@ -35,6 +44,8 @@ export interface BillingRefundClient {
   approve: (requestId: string) => Promise<RefundRequestRow>;
   reject: (requestId: string, note: string) => Promise<RefundRequestRow>;
   complete: (requestId: string, slipNumber: string) => Promise<RefundRequestRow>;
+  getAllowance: () => Promise<RefundAllowance>;
+  setAllowance: (cashierUserId: string, amount: number) => Promise<RefundAllowance>;
 }
 
 /** Fixed Turkish sentence per outcome; the server body and HTTP status never reach the screen. */
@@ -53,6 +64,16 @@ export function describeRefundFailure(error: unknown): string {
     return "Hesap veya iade isteği değişmiş. Güncel veriyi alıp yeniden deneyin.";
   }
   return "İşlem tamamlanamadı. Yeniden deneyin.";
+}
+
+/** Same rule as above for the manager granting a shift allowance. */
+export function describeAllowanceFailure(error: unknown): string {
+  const status = error instanceof RefundApiError ? error.status : -1;
+  const code = error instanceof RefundApiError ? error.code : "";
+  if (status === 403 && code === "SELF_DECISION") return "Kendinize iade bütçesi veremezsiniz.";
+  if (status === 400) return "Tutar geçersiz ya da kasiyerin bu vardiyada harcadığından düşük.";
+  if (status === 409) return "Kasiyerin açık kasa oturumu yok.";
+  return describeRefundFailure(error);
 }
 
 export function createBillingRefundClient(terminalId: string, billId: string, fetcher: typeof fetch = fetch): BillingRefundClient {
@@ -90,5 +111,7 @@ export function createBillingRefundClient(terminalId: string, billId: string, fe
     approve: (requestId) => call(`${refundsBase}/${encodeURIComponent(requestId)}/approve`, "POST"),
     reject: (requestId, note) => call(`${refundsBase}/${encodeURIComponent(requestId)}/reject`, "POST", { note }),
     complete: (requestId, slipNumber) => call(`${refundsBase}/${encodeURIComponent(requestId)}/complete`, "POST", { slipNumber, note: null }),
+    getAllowance: () => call<RefundAllowance>(`${base}/refund-allowance`),
+    setAllowance: (cashierUserId, amount) => call<RefundAllowance>(`${base}/refund-allowance`, "PUT", { cashierUserId, amount }),
   };
 }

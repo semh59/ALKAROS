@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 
 import { describe, expect, it, vi } from "vitest";
-import { RefundApiError, createBillingRefundClient, describeRefundFailure } from "./refundApi";
+import { RefundApiError, createBillingRefundClient, describeAllowanceFailure, describeRefundFailure } from "./refundApi";
 
 function response(body: unknown, status = 200): Response {
   return { ok: status >= 200 && status < 300, status, json: vi.fn().mockResolvedValue(body) } as unknown as Response;
@@ -50,6 +50,26 @@ describe("billing refund client", () => {
 
     const offline = vi.fn().mockRejectedValue(new TypeError("fetch failed"));
     await expect(createBillingRefundClient("t", "b", offline).approve("r")).rejects.toMatchObject({ status: 0 });
+  });
+
+  it("reads the shift allowance and sets it for a cashier on the allowance route", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ hasOpenSession: true, allowance: 150, used: 0, remaining: 150 })));
+    const client = createBillingRefundClient("t 1", "b1", fetcher as unknown as typeof fetch);
+
+    await client.getAllowance();
+    await client.setAllowance("u1", 150);
+
+    expect(fetcher.mock.calls[0][0]).toBe("/api/v1/terminals/t%201/billing/refund-allowance");
+    expect(fetcher.mock.calls[0][1].method).toBe("GET");
+    expect(fetcher.mock.calls[1][1].method).toBe("PUT");
+    expect(JSON.parse(fetcher.mock.calls[1][1].body)).toEqual({ cashierUserId: "u1", amount: 150 });
+  });
+
+  it("describes allowance failures with fixed sentences", () => {
+    expect(describeAllowanceFailure(new RefundApiError(403, "SELF_DECISION", "x"))).toBe("Kendinize iade bütçesi veremezsiniz.");
+    expect(describeAllowanceFailure(new RefundApiError(400, "REFUND_INPUT_INVALID", "x"))).toContain("düşük");
+    expect(describeAllowanceFailure(new RefundApiError(409, "NO_OPEN_CASH_SESSION", "x"))).toBe("Kasiyerin açık kasa oturumu yok.");
+    expect(describeAllowanceFailure(new RefundApiError(0, "NETWORK_UNAVAILABLE", "x"))).toContain("Sunucuya ulaşılamadı");
   });
 
   it("describes failures with fixed Turkish sentences only", () => {

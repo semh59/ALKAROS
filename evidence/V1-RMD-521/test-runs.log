@@ -1,0 +1,2 @@
+PosTerminal: npx tsc --noEmit -> 0; npx vitest run -> 66 files, 535 tests passed; npx vite build -> 0
+StaticApps: npx vitest run -> 9 files, 74 tests passed
