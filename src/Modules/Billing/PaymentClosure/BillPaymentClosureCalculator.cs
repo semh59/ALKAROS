@@ -27,13 +27,11 @@ public static class BillPaymentClosureCalculator
         ArgumentNullException.ThrowIfNull(allocations);
         ArgumentNullException.ThrowIfNull(adjustments);
 
-        // Refunded/PartiallyRefunded are out of this task's scope (V13-ALC-004's
-        // own remit — netting a refund out of what still counts as "paid").
-        // No code anywhere produces either status yet, so only Approved is
-        // ever actually reachable here; Pending/Unknown/Declined/Cancelled
-        // must never contribute (this task's own Acceptance evidence).
+        // A partly refunded payment keeps counting at its approved amount: refunding one item must not turn a
+        // settled bill back into one that asks for money again. A fully refunded payment no longer counts, and
+        // Pending/Unknown/Declined/Cancelled never contribute.
         var approvedPaymentIds = payments
-            .Where(p => p.Status == PaymentStatus.Approved)
+            .Where(p => p.Status is PaymentStatus.Approved or PaymentStatus.PartiallyRefunded)
             .Select(p => p.Id)
             .ToHashSet();
 

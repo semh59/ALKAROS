@@ -1,0 +1,3 @@
+tests/Modules/Billing/PaymentClosure -> Başarılı: 17
+tests/Host/Experience/Billing --filter PaymentRefundHttpTests -> Başarılı: 20
+tests/Host/Experience/PaymentTender -> Başarılı: 37

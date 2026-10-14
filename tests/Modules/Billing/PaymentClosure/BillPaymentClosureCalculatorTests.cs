@@ -44,6 +44,35 @@ public sealed class BillPaymentClosureCalculatorTests
     }
 
     [Fact]
+    public void ComputeKeepsAPartlyRefundedPaymentAndItsAllocationCountingAsPaid()
+    {
+        var bill = MakeBill(payable: 100m);
+        var payment = MakeApprovedPayment(bill.Id, requested: 100m, tendered: 100m, approved: 100m).ApplyRefund(30m);
+        var allocation = MakeAllocation(payment, bill, 100m);
+
+        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], [allocation], adjustments: []);
+
+        payment.Status.Should().Be(PaymentStatus.PartiallyRefunded);
+        projection.PaymentSatisfied.Should().BeTrue();
+        projection.AllocatedTotal.Should().Be(100m);
+        projection.PaidTotal.Should().Be(100m);
+    }
+
+    [Fact]
+    public void ComputeNoLongerCountsAFullyRefundedPayment()
+    {
+        var bill = MakeBill(payable: 100m);
+        var payment = MakeApprovedPayment(bill.Id, requested: 100m, tendered: 100m, approved: 100m).ApplyRefund(100m);
+        var allocation = MakeAllocation(payment, bill, 100m);
+
+        var projection = BillPaymentClosureCalculator.Compute(bill, [payment], [allocation], adjustments: []);
+
+        payment.Status.Should().Be(PaymentStatus.Refunded);
+        projection.PaymentSatisfied.Should().BeFalse();
+        projection.PaidTotal.Should().Be(0m);
+    }
+
+    [Fact]
     public void ComputeReportsHasPendingPaymentBlockerForPendingOrReconciliationRequired()
     {
         var bill = MakeBill(payable: 100m);
