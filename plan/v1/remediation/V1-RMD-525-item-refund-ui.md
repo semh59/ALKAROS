@@ -22,12 +22,19 @@ V1-RMD-524 uçları için kasa sayfası ve PosTerminal iade paneli: kalem ve ade
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/RefundPanel.tsx
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/refundApi.ts
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Receipt.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/split-payment-item-refund.test.js
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/RefundPanel.test.tsx
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
 - İade yanıtı ve listesi `items` (kalem kimliği, adet, stoğa dön) alanını taşır; kalem adı hesap kalemlerinden eşlenir.
 - Tüm metinler Türkçe; hata sabit cümlelerle gösterilir; durumlar (yükleniyor, boş, hata) ele alınır.
+
+- Hesap özeti ucu (`/receipt`) her kalemde `billItemId` ve `refundedQuantity` (reddedilmeyen isteklerdeki adet toplamı) taşır; arayüz kalan adedi buradan hesaplar, tutarı sunucu hesaplar ve iade sonrası gösterilir.
+- Kasa sayfası ve PosTerminal paneli: kalem başına adet (0 ile kalan adet arası), tek "Stoğa geri dön" seçimi, ödeme seçimi (onaylı veya kısmen iade edilmiş ödemeler), gerekçe; kalan adet kalmayan kalem listelenmez.
 
 ## Out of scope
 

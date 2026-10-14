@@ -23,7 +23,7 @@ Kısmi iade sonrası bilgi fişi iade edilen kalemleri ve net tutarı gösterir;
 
 ## In scope
 
-- Fiş yanıtına iade edilen kalem ve adetler; kanal/ürün raporlarının netleme kapsamı bu görevde doğrulanıp kayda geçer; rapor değişikliği gerekiyorsa ek yüzey ayrı plan işleminde eklenir.
+- Fiş yanıtındaki `billItemId` ve `refundedQuantity` V1-RMD-525 ile gelir; bu görevde basılan bilgi fişi iade edilen adetleri ve net tutarı gösterir; kanal/ürün raporlarının netleme kapsamı bu görevde doğrulanıp kayda geçer; rapor değişikliği gerekiyorsa ek yüzey ayrı plan işleminde eklenir.
 
 ## Out of scope
 
