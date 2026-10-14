@@ -21,7 +21,7 @@ Bugün iade yalnız ödemenin tamamı içindir. Ürün bazlı kısmi iade için 
 
 ## In scope
 
-- PO kararları (2026-10-13): iade ürün bazlıdır; her iadede kasiyer ürün için "stoğa geri dön" seçimini yapar; birden fazla ödeme yöntemi olan hesapta kasiyer iadenin hangi ödemeden düşeceğini seçer; PO 2026-10-14 ile limit, iade başına değil vardiya başına iade bütçesidir: müdür her vardiya için tutarı verir, kasiyerin kendi tamamladığı iadeler bütçeden düşer, yetmeyen iade müdür onayına gider (V1-RMD-520 ve V1-RMD-521 bunu uygular; önceki "100 TL varsayılan limit" fikri geçersizdir).
+- PO kararları (2026-10-13): iade ürün bazlıdır; her iadede kasiyer ürün için "stoğa geri dön" seçimini yapar; birden fazla ödeme yöntemi olan hesapta kasiyer iadenin hangi ödemeden düşeceğini seçer; PO 2026-10-14 ile limit, iade başına değil vardiya başına iade bütçesidir: müdür her vardiya için tutarı verir, kasiyerin kendi tamamladığı iadeler bütçeden düşer, yetmeyen iade müdür onayına gider (V1-RMD-520 ve V1-RMD-521 bunu uygular; müdür bütçeyi bekleyen iade isteğinin yanından, isteği açan kasiyere verir; önceki "100 TL varsayılan limit" fikri geçersizdir).
 - Bilinen çelişkiler: veritabanında iade isteğini açanın aynı kişi tarafından karara bağlanmasını yasaklayan kısıt vardır (`ck_refund_requests_decider_not_requester`); nakit iadede "kasiyer ister, müdür onaylar" kararı vardır (2026-10-13). Bütçe içinde kendi kendine tamamlama bu iki kuralı bilerek gevşetir; V1-RMD-520 bunu `approval_mode` ile açıkça ele alır.
 - Doğrulanacaklar: stok geri alma servisinin kalem içinde kısmi miktarı destekleyip desteklemediği; sayısal işletme ayarı için kayıt yeri bulunmadığı (yeni tablo ve yönetim ekranı gerekebilir).
 

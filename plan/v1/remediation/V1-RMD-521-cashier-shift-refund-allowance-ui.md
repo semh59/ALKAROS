@@ -20,13 +20,20 @@ V1-RMD-520 sunucu uçları için arayüz: müdür kasiyerin vardiyasına iade b�
 - `evidence/V1-RMD-521/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/RefundPanel.tsx
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/refundApi.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/RefundPanel.test.tsx
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/refundApi.test.ts
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/split-payment-refunds.test.js
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/split-payment-allowance.test.js
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
 - Kasa sayfası ve PosTerminal iade paneli: iade sonucu Completed ise "İade bütçenizden tamamlandı", AwaitingManualRefund ise fiş numarası ister, Requested ise "Müdür onayına gönderildi".
 - Kalan bütçe gösterimi; bütçe okunamazsa gösterim gizlenir, iade akışı etkilenmez.
-- Müdür tarafı için kasiyere bütçe verme alanı (`PUT /api/v1/terminals/{terminalId}/billing/refund-allowance`; kendine verilemez, kullanılandan az olamaz); kalan bütçe `GET` aynı adresten okunur; iade yanıtında `approvedFromAllowance` alanı bütçeden tamamlamayı gösterir; tüm metinler Türkçe.
+- Müdür tarafı (PosTerminal iade paneli): bekleyen iade isteğinin yanında, isteği açan kasiyere vardiya bütçesi verme alanı (`PUT /api/v1/terminals/{terminalId}/billing/refund-allowance`; kasiyer kimliği isteğin `requestedBy` alanındandır, ayrı kasiyer seçici yoktur); sunucu hataları (kendine verilemez, kullanılandan az olamaz, açık oturum yok) sabit Türkçe cümleyle gösterilir.
+- Kasa sayfasında kalan bütçe `GET` aynı adresten okunur; iade yanıtındaki `approvedFromAllowance` alanı bütçeden tamamlamayı gösterir; tüm metinler Türkçe.
 
 ## Out of scope
 
