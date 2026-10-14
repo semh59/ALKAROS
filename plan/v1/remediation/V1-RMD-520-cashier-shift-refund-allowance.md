@@ -1,7 +1,7 @@
 # V1-RMD-520 - Kasiyer vardiya iade bütçesi (sunucu)
 
 - Task ID: V1-RMD-520
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing
