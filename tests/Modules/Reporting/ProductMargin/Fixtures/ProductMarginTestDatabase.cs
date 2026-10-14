@@ -100,6 +100,30 @@ public sealed class ProductMarginTestDatabase : PgTestDatabase
         return id;
     }
 
+    /// <summary>A refund request that pays back units of the order item's bill line.</summary>
+    public Task SeedItemRefundAsync(Guid orderItemId, decimal quantity, string status = "Completed")
+        => WriteAsync(
+            """
+            WITH item AS (SELECT bill_item_id, bill_id FROM billing.bill_items WHERE order_item_id = @order_item),
+            request AS (
+                INSERT INTO payments.refund_requests
+                    (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at)
+                SELECT @request, bill_id, gen_random_uuid(), 1, 'Cash', 'test', @status, gen_random_uuid(), now() FROM item)
+            INSERT INTO payments.refund_request_items (refund_request_id, bill_item_id, quantity, restore_stock)
+            SELECT @request, bill_item_id, @qty, true FROM item;
+            """,
+            ("order_item", orderItemId), ("request", Guid.NewGuid()), ("status", status), ("qty", quantity));
+
+    /// <summary>Stock put back for units of an order item that were paid back (a return movement, not a reversal).</summary>
+    public Task SeedReturnAsync(Guid orderItemId, Guid stockItemId, decimal quantity, string sourceType = "Order")
+        => WriteAsync(
+            """
+            INSERT INTO inventory.stock_movements
+                (stock_movement_id, stock_item_id, stock_location_id, movement_type, direction, quantity, unit_code, source_type, source_reference_id)
+            VALUES (@id, @stock_item, @location, 'Return', 'In', @qty, 'kg', @source_type, @order_item);
+            """,
+            ("id", Guid.NewGuid()), ("stock_item", stockItemId), ("location", Guid.NewGuid()), ("qty", quantity), ("source_type", sourceType), ("order_item", orderItemId));
+
     public Task SeedReversalAsync(Guid consumptionId, Guid stockItemId, decimal quantity)
         => WriteAsync(
             """

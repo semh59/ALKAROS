@@ -23,10 +23,21 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
     private const string LinesCte =
         """
         WITH lines AS (
-            SELECT bi.order_item_id, bi.product_id, bi.product_name_snapshot, bi.quantity, bi.net_amount, bi.line_type,
+            SELECT bi.order_item_id, bi.product_id, bi.product_name_snapshot,
+                   bi.quantity - COALESCE(rf.quantity, 0) AS quantity,
+                   bi.net_amount - ROUND(bi.net_amount * COALESCE(rf.quantity, 0) / NULLIF(bi.quantity, 0), 2) AS net_amount,
+                   bi.line_type,
                    (b.opened_at AT TIME ZONE 'Europe/Istanbul')::date AS business_date
             FROM billing.bill_items bi
             JOIN billing.bills b ON b.bill_id = bi.bill_id
+            -- Units paid back by a completed item refund leave the line; a request still waiting does not.
+            LEFT JOIN (
+                SELECT ri.bill_item_id, SUM(ri.quantity) AS quantity
+                FROM payments.refund_request_items ri
+                JOIN payments.refund_requests rr ON rr.refund_request_id = ri.refund_request_id
+                WHERE rr.status = 'Completed'
+                GROUP BY ri.bill_item_id
+            ) rf ON rf.bill_item_id = bi.bill_item_id
             WHERE b.status = 'Paid'
               AND bi.line_type IN ('Sale', 'Complimentary')
               AND (b.opened_at AT TIME ZONE 'Europe/Istanbul')::date BETWEEN @from AND @to
@@ -68,13 +79,21 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
         await using var command = _dataSource.CreateCommand(
             LinesCte + """
             , consumed AS (
-                SELECT c.source_reference_id AS order_item_id, c.stock_item_id,
-                       c.quantity - COALESCE((
-                           SELECT SUM(r.quantity) FROM inventory.stock_movements r
-                           WHERE r.movement_type = 'Reversal' AND r.source_reference_id = c.stock_movement_id), 0) AS quantity
-                FROM inventory.stock_movements c
-                WHERE c.movement_type = 'Consumption' AND c.source_type = 'Order'
-                  AND c.source_reference_id IN (SELECT order_item_id FROM lines)
+                SELECT g.order_item_id, g.stock_item_id,
+                       g.quantity - COALESCE((
+                           SELECT SUM(t.quantity) FROM inventory.stock_movements t
+                           WHERE t.movement_type = 'Return' AND t.source_type = 'Order'
+                             AND t.source_reference_id = g.order_item_id AND t.stock_item_id = g.stock_item_id), 0) AS quantity
+                FROM (
+                    SELECT c.source_reference_id AS order_item_id, c.stock_item_id,
+                           SUM(c.quantity - COALESCE((
+                               SELECT SUM(r.quantity) FROM inventory.stock_movements r
+                               WHERE r.movement_type = 'Reversal' AND r.source_reference_id = c.stock_movement_id), 0)) AS quantity
+                    FROM inventory.stock_movements c
+                    WHERE c.movement_type = 'Consumption' AND c.source_type = 'Order'
+                      AND c.source_reference_id IN (SELECT order_item_id FROM lines)
+                    GROUP BY c.source_reference_id, c.stock_item_id
+                ) g
             ),
             valued AS (
                 SELECT l.order_item_id, u.quantity,

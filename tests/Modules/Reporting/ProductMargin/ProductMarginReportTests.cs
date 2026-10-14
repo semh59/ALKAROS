@@ -91,6 +91,80 @@ public sealed class ProductMarginReportTests : IClassFixture<ProductMarginTestDa
         report.Rows.Single().Cost.Should().Be(10m);
     }
 
+    [Fact]
+    public async Task UnitsPaidBackByACompletedItemRefundLeaveTheQuantityTheRevenueAndTheCost()
+    {
+        var product = await _database.SeedProductAsync("Menü");
+        var stock = await _database.SeedStockItemAsync("Ekmek");
+        await _database.SeedReceiptAsync(stock, 10m, 10m, Noon(1));
+        var line = await _database.SeedBillLineAsync(product, "Menü", 4m, 200m, Noon(21));
+        await _database.SeedConsumptionAsync(line, stock, 4m);
+        await _database.SeedItemRefundAsync(line, 1m);
+        await _database.SeedItemRefundAsync(line, 1m);
+        await _database.SeedReturnAsync(line, stock, 2m);
+
+        var report = await _service.GetReportAsync(Day(21));
+
+        var row = report.Rows.Should().ContainSingle().Subject;
+        row.SoldQuantity.Should().Be(2m);
+        row.NetRevenue.Should().Be(100m);
+        row.Cost.Should().Be(20m);
+        report.Check.IsBalanced.Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task ARefundStillWaitingOrRejectedDoesNotChangeTheLine()
+    {
+        var product = await _database.SeedProductAsync("Salata");
+        var line = await _database.SeedBillLineAsync(product, "Salata", 2m, 60m, Noon(22));
+        await _database.SeedItemRefundAsync(line, 1m, "AwaitingManualRefund");
+        await _database.SeedItemRefundAsync(line, 1m, "Rejected");
+
+        var report = await _service.GetReportAsync(Day(22));
+
+        var row = report.Rows.Should().ContainSingle().Subject;
+        row.SoldQuantity.Should().Be(2m);
+        row.NetRevenue.Should().Be(60m);
+    }
+
+    [Fact]
+    public async Task OnlyTheOrderReturnOfTheSameStockItemIsTakenOutOfTheCostOnceAcrossItsConsumptions()
+    {
+        var product = await _database.SeedProductAsync("Tabak");
+        var meat = await _database.SeedStockItemAsync("Et");
+        var rice = await _database.SeedStockItemAsync("Pirinç");
+        await _database.SeedReceiptAsync(meat, 20m, 10m, Noon(1));
+        await _database.SeedReceiptAsync(rice, 20m, 4m, Noon(1));
+        var line = await _database.SeedBillLineAsync(product, "Tabak", 4m, 200m, Noon(24));
+        await _database.SeedConsumptionAsync(line, meat, 2m);
+        await _database.SeedConsumptionAsync(line, meat, 2m);
+        await _database.SeedConsumptionAsync(line, rice, 4m);
+        await _database.SeedItemRefundAsync(line, 2m);
+        await _database.SeedReturnAsync(line, meat, 2m);
+        await _database.SeedReturnAsync(line, rice, 1m, sourceType: "Manual");
+
+        var report = await _service.GetReportAsync(Day(24));
+
+        report.Rows.Single().Cost.Should().Be(36m);
+    }
+
+    [Fact]
+    public async Task ARefundWithoutStockRestoreKeepsTheCostOfTheConsumedStock()
+    {
+        var product = await _database.SeedProductAsync("Çorba");
+        var stock = await _database.SeedStockItemAsync("Mercimek");
+        await _database.SeedReceiptAsync(stock, 10m, 5m, Noon(1));
+        var line = await _database.SeedBillLineAsync(product, "Çorba", 2m, 80m, Noon(23));
+        await _database.SeedConsumptionAsync(line, stock, 2m);
+        await _database.SeedItemRefundAsync(line, 1m);
+
+        var report = await _service.GetReportAsync(Day(23));
+
+        var row = report.Rows.Single();
+        row.NetRevenue.Should().Be(40m);
+        row.Cost.Should().Be(10m);
+    }
+
     [Theory]
     [InlineData(false)]
     [InlineData(true)]

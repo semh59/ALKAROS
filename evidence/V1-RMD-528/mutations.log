@@ -1,0 +1,9 @@
+killed   waiting-counts
+killed   rejected-counts
+killed   quantity-gross
+killed   revenue-gross
+killed   return-ignored
+killed   return-source
+killed   return-stock-item
+killed   group-removed
+done
