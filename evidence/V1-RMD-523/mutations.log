@@ -1,0 +1,2 @@
+killed: skip-reversed-check cumulative-previous ignore-already return-type direction rounding zero-balance total-bound prev-negative reason-required uses-transaction source-id
+removed as equivalent: Math.Min(target, consumed) (hedef doğrulanmış toplam sınırı yüzünden tüketileni aşamaz)

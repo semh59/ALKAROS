@@ -77,6 +77,60 @@ public sealed class StockMovementReversalService : IStockMovementReversalService
         return new StockMovementReversalResult(reversal, original, restoredBalance);
     }
 
+    public async Task<IReadOnlyList<StockMovement>> ReturnConsumedShareAsync(
+        StockShareReturnRequest request,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        if (request.OrderItemId == Guid.Empty)
+            throw new ArgumentException("Order item ID cannot be empty.", nameof(request));
+        if (string.IsNullOrWhiteSpace(request.Reason))
+            throw new InvalidReversalReasonException("Return reason cannot be empty or whitespace.");
+        if (request.TotalQuantity <= 0m || request.ReturnedQuantity <= 0m || request.PreviouslyReturnedQuantity < 0m
+            || request.PreviouslyReturnedQuantity + request.ReturnedQuantity > request.TotalQuantity)
+            throw new InvalidStockMovementException(
+                $"Returned quantity {request.ReturnedQuantity} after {request.PreviouslyReturnedQuantity} must be above zero and not exceed {request.TotalQuantity} in total.");
+
+        var movements = await _movementRepo.GetBySourceAsync(StockMovementSourceType.Order, request.OrderItemId, ct);
+        var consumptions = new List<StockMovement>();
+        foreach (var movement in movements.Where(m => m.MovementType == StockMovementType.Consumption))
+        {
+            if (!await _movementRepo.HasReversalAsync(movement.Id, ct))
+                consumptions.Add(movement);
+        }
+
+        var written = new List<StockMovement>();
+        foreach (var group in consumptions.GroupBy(m => (m.StockItemId, m.StockLocationId)))
+        {
+            var consumed = group.Sum(m => m.Quantity);
+            var alreadyReturned = movements
+                .Where(m => m.MovementType == StockMovementType.Return
+                            && m.StockItemId == group.Key.StockItemId && m.StockLocationId == group.Key.StockLocationId)
+                .Sum(m => m.Quantity);
+            var target = Math.Round(
+                consumed * (request.PreviouslyReturnedQuantity + request.ReturnedQuantity) / request.TotalQuantity,
+                4, MidpointRounding.AwayFromZero);
+            var quantity = target - alreadyReturned;
+            if (quantity <= 0m)
+                continue;
+
+            var first = group.First();
+            var returned = StockMovement.Create(
+                first.StockItemId, first.StockLocationId, StockMovementType.Return, quantity, first.UnitCode,
+                StockMovementSourceType.Order, MovementDirection.In, request.OrderItemId, request.Reason.Trim(), request.ActorId);
+            await _movementRepo.AppendAsync(returned, connection, transaction, ct);
+            await _balanceRepo.ApplyOnHandDeltaAsync(
+                returned.StockItemId, returned.StockLocationId, returned.Effect.OnHandDelta, connection, transaction, ct);
+            written.Add(returned);
+        }
+
+        return written;
+    }
+
     /// <summary>Validates the request and builds the reversal movement; writes nothing.</summary>
     private async Task<(StockMovement Reversal, StockMovement Original)> PrepareReversalAsync(
         StockMovementReversalRequest request,
