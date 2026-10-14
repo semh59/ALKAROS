@@ -20,14 +20,15 @@ PO kararı: müdür, her kasa vardiyası için kasiyere başlangıç kasası gib
 - `evidence/V1-RMD-520/**`
 - `database/migrations/V1/V1-RMD-520/185-refund-allowance.up.sql`
 - `database/migrations/V1/V1-RMD-520/185-refund-allowance.down.sql`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/PaymentRefunds.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillingSplitApplication.cs
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillingSplitApplication.Allowance.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ApiConventions/idempotency_allowlist.json
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Payments/PaymentAggregate/PostgresRefundRequestRepository.cs
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/RefundAllowanceHttpTests.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/PaymentRefundHttpTests.cs
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope

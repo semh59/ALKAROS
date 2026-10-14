@@ -26,7 +26,7 @@ V1-RMD-520 sunucu uçları için arayüz: müdür kasiyerin vardiyasına iade b�
 
 - Kasa sayfası ve PosTerminal iade paneli: iade sonucu Completed ise "İade bütçenizden tamamlandı", AwaitingManualRefund ise fiş numarası ister, Requested ise "Müdür onayına gönderildi".
 - Kalan bütçe gösterimi; bütçe okunamazsa gösterim gizlenir, iade akışı etkilenmez.
-- Müdür tarafı için kasiyere bütçe verme alanı; tüm metinler Türkçe.
+- Müdür tarafı için kasiyere bütçe verme alanı (`PUT /api/v1/terminals/{terminalId}/billing/refund-allowance`; kendine verilemez, kullanılandan az olamaz); kalan bütçe `GET` aynı adresten okunur; iade yanıtında `approvedFromAllowance` alanı bütçeden tamamlamayı gösterir; tüm metinler Türkçe.
 
 ## Out of scope
 
