@@ -114,6 +114,17 @@ public sealed class ProductMarginTestDatabase : PgTestDatabase
             """,
             ("order_item", orderItemId), ("request", Guid.NewGuid()), ("status", status), ("qty", quantity));
 
+    /// <summary>A refund request of an amount that names no bill line.</summary>
+    public Task SeedAmountRefundAsync(Guid orderItemId, decimal amount, string status = "Completed")
+        => WriteAsync(
+            """
+            INSERT INTO payments.refund_requests
+                (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at)
+            SELECT @request, bill_id, gen_random_uuid(), @amount, 'Cash', 'test', @status, gen_random_uuid(), now()
+            FROM billing.bill_items WHERE order_item_id = @order_item;
+            """,
+            ("order_item", orderItemId), ("request", Guid.NewGuid()), ("status", status), ("amount", amount));
+
     /// <summary>Stock put back for units of an order item that were paid back (a return movement, not a reversal).</summary>
     public Task SeedReturnAsync(Guid orderItemId, Guid stockItemId, decimal quantity, string sourceType = "Order")
         => WriteAsync(

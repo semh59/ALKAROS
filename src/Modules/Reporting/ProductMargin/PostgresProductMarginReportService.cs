@@ -61,6 +61,7 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
             throw new ArgumentException($"The product margin report returned more than {MaxRows} rows; narrow the range.", nameof(filter));
 
         var (linesNet, billDiscounts) = await ReadControlTotalsAsync(filter, cancellationToken).ConfigureAwait(false);
+        var unallocatedRefunds = await ReadUnallocatedRefundsAsync(filter, cancellationToken).ConfigureAwait(false);
         var productNet = rows.Sum(r => r.NetRevenue);
         return new ProductMarginReport(
             ReportVersion,
@@ -71,7 +72,25 @@ public sealed class PostgresProductMarginReportService : IProductMarginReportSer
             productNet,
             rows.Sum(r => r.Cost),
             rows.Sum(r => r.UnknownCostLines),
-            new ProductMarginCheck(productNet, linesNet, billDiscounts, productNet == linesNet));
+            new ProductMarginCheck(productNet, linesNet, billDiscounts, productNet == linesNet),
+            unallocatedRefunds);
+    }
+
+    /// <summary>Completed refunds that named no bill line: they cannot be put on a product, so they are reported on their own.</summary>
+    private async Task<decimal> ReadUnallocatedRefundsAsync(ProductMarginFilter filter, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT COALESCE(SUM(rr.amount), 0)
+            FROM payments.refund_requests rr
+            JOIN billing.bills b ON b.bill_id = rr.bill_id
+            WHERE rr.status = 'Completed'
+              AND b.status = 'Paid'
+              AND (b.opened_at AT TIME ZONE 'Europe/Istanbul')::date BETWEEN @from AND @to
+              AND NOT EXISTS (SELECT 1 FROM payments.refund_request_items ri WHERE ri.refund_request_id = rr.refund_request_id);
+            """);
+        AddRange(command, filter);
+        return (decimal)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) ?? 0m);
     }
 
     private async Task<List<ProductMarginRow>> ReadRowsAsync(ProductMarginFilter filter, CancellationToken cancellationToken)

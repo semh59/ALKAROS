@@ -113,6 +113,38 @@ public sealed class ProductMarginReportTests : IClassFixture<ProductMarginTestDa
     }
 
     [Fact]
+    public async Task ACompletedRefundWithoutBillLinesIsReportedApartAndLeavesTheProductRowsAlone()
+    {
+        var product = await _database.SeedProductAsync("Kebap");
+        var line = await _database.SeedBillLineAsync(product, "Kebap", 2m, 120m, Noon(25));
+        await _database.SeedAmountRefundAsync(line, 30m);
+        await _database.SeedAmountRefundAsync(line, 12.50m);
+        await _database.SeedAmountRefundAsync(line, 99m, "AwaitingManualRefund");
+        await _database.SeedItemRefundAsync(line, 1m);
+
+        var report = await _service.GetReportAsync(Day(25));
+
+        report.UnallocatedRefunds.Should().Be(42.50m);
+        report.Rows.Single().NetRevenue.Should().Be(60m);
+    }
+
+    [Fact]
+    public async Task AnAmountRefundOfACancelledBillOrOfAnotherDayIsNotInTheUnallocatedTotal()
+    {
+        var product = await _database.SeedProductAsync("Lahmacun");
+        var kept = await _database.SeedBillLineAsync(product, "Lahmacun", 1m, 40m, Noon(26));
+        var cancelled = await _database.SeedBillLineAsync(product, "Lahmacun", 1m, 40m, Noon(26), billStatus: "Cancelled");
+        var otherDay = await _database.SeedBillLineAsync(product, "Lahmacun", 1m, 40m, Noon(27));
+        await _database.SeedAmountRefundAsync(kept, 5m);
+        await _database.SeedAmountRefundAsync(cancelled, 40m);
+        await _database.SeedAmountRefundAsync(otherDay, 7m);
+
+        var report = await _service.GetReportAsync(Day(26));
+
+        report.UnallocatedRefunds.Should().Be(5m);
+    }
+
+    [Fact]
     public async Task ARefundStillWaitingOrRejectedDoesNotChangeTheLine()
     {
         var product = await _database.SeedProductAsync("Salata");

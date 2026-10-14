@@ -47,4 +47,5 @@ public sealed record ProductMarginReport(
     decimal TotalNetRevenue,
     decimal TotalCost,
     int UnknownCostLines,
-    ProductMarginCheck Check);
+    ProductMarginCheck Check,
+    decimal UnallocatedRefunds = 0m);
