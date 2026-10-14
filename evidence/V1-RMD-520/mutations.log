@@ -1,0 +1,4 @@
+killed: spend-bound spend-inverted completed-always mode-allowance mode-manager audit-flag dto-flag max-bound below-used below-used-ignored self-grant put-permission remaining set-return check-relax session-open-only payout-direction
+equivalent (kabul): neg-bound (negatif tutar kullanılan<=tutar koşuluyla yine 400 verir)
+not applicable: payout-skipped (derleme hatası; payout-direction ile karşılandı)
+after moving the allowance SQL into the Cash module (PostgresRefundAllowanceRepository): killed spend-bound below-used below-used-ignored; refund test class 20/20 again.

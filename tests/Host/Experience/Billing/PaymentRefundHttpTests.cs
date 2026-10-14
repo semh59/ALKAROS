@@ -347,6 +347,204 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, response.StatusCode);
     }
 
+    [Fact]
+    public async Task ARefundWithinTheShiftAllowanceIsCompletedByTheCashierAndDrawsFromTheAllowance()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        var sessionId = await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        Assert.Equal(new RefundAllowanceV1(true, 150m, 0m, 150m), await GrantAsync(client, _cashierId, 150m));
+
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Yanlış tutar alındı");
+
+        Assert.Equal("Completed", request.Status);
+        Assert.True(request.ApprovedFromAllowance);
+        Assert.True(request.BillCancelled);
+        Assert.Equal(_cashierId, request.DecidedBy);
+        Assert.Equal("Refunded", await Scalar<string>("SELECT status FROM payments.payments WHERE payment_id = @p", paymentId));
+        Assert.Equal(1L, await Scalar<long>(
+            """
+            SELECT count(*) FROM cash.cash_transactions
+            WHERE related_payment_id = @p AND type = 'Refund' AND direction = 'Out' AND amount = 100 AND cash_session_id = @s
+            """, paymentId, ("s", sessionId)));
+        Assert.Equal("Allowance", await Scalar<string>(
+            "SELECT approval_mode FROM payments.refund_requests WHERE refund_request_id = @p", request.RequestId));
+        Assert.Equal(1L, await Scalar<long>(
+            """
+            SELECT count(*) FROM audit.audit_events
+            WHERE aggregate_id = @p AND event_name = 'payment.refunded' AND actor_id = @a
+              AND (after_state_json::jsonb ->> 'viaAllowance') = 'true'
+            """, paymentId, ("a", _cashierId)));
+        var allowance = await GetAllowanceAsync(client, _cashierCookie);
+        Assert.Equal(new RefundAllowanceV1(true, 150m, 100m, 50m), allowance);
+    }
+
+    [Fact]
+    public async Task ARefundBeyondTheRemainingAllowanceGoesToTheManagerAndSpendsNothing()
+    {
+        var first = await _database.SeedBillAsync();
+        var firstPayment = await CashPaymentAsync(first.BillId, 100m);
+        var second = await _database.SeedBillAsync();
+        var secondPayment = await CashPaymentAsync(second.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await GrantAsync(client, _cashierId, 150m);
+
+        var inside = await RequestAsync(client, first.BillId, firstPayment, "Birinci");
+        var beyond = await RequestAsync(client, second.BillId, secondPayment, "İkinci");
+
+        Assert.Equal("Completed", inside.Status);
+        Assert.Equal("Requested", beyond.Status);
+        Assert.False(beyond.ApprovedFromAllowance);
+        Assert.Equal(100m, (await GetAllowanceAsync(client, _cashierCookie)).Used);
+
+        var approved = await DecideAsync(client, beyond.RequestId, "approve", _managerCookie);
+        Assert.Equal("Completed", approved.Status);
+        Assert.Equal(100m, (await GetAllowanceAsync(client, _cashierCookie)).Used);
+        Assert.Equal("Manager", await Scalar<string>(
+            "SELECT approval_mode FROM payments.refund_requests WHERE refund_request_id = @p", beyond.RequestId));
+    }
+
+    [Fact]
+    public async Task WithoutAnAllowanceTheRequestWaitsForTheManagerAsBefore()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+
+        Assert.Equal("Requested", request.Status);
+        Assert.Equal(new RefundAllowanceV1(true, 0m, 0m, 0m), await GetAllowanceAsync(client, _cashierCookie));
+    }
+
+    [Fact]
+    public async Task ACardRefundWithinTheAllowanceReservesItAndTheCashierRecordsTheSlip()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 100m, _cashierId);
+        var paymentId = await PaymentIdAsync(seeded.BillId);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await GrantAsync(client, _cashierId, 100m);
+
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Kart iadesi");
+
+        Assert.Equal("Manual", request.Method);
+        Assert.Equal("AwaitingManualRefund", request.Status);
+        Assert.True(request.ApprovedFromAllowance);
+        Assert.Equal(0m, (await GetAllowanceAsync(client, _cashierCookie)).Remaining);
+
+        using var complete = await client.SendAsync(
+            Post($"refund-requests/{request.RequestId:D}/complete", _cashierCookie, new RefundCompleteInputV1("POS-9001", null)));
+        Assert.Equal(HttpStatusCode.OK, complete.StatusCode);
+        Assert.Equal("Refunded", await Scalar<string>("SELECT status FROM payments.payments WHERE payment_id = @p", paymentId));
+        Assert.Equal(1L, await Scalar<long>(
+            """
+            SELECT count(*) FROM audit.audit_events
+            WHERE aggregate_id = @p AND event_name = 'payment.refunded' AND actor_id = @a
+              AND (after_state_json::jsonb ->> 'viaAllowance') = 'true'
+            """, paymentId, ("a", _cashierId)));
+    }
+
+    [Fact]
+    public async Task OnlyAnOpenSessionOfTheRequesterSpendsTheAllowance()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        var closedSession = await OpenSessionAsync(_cashierId, closed: true);
+        await Execute(
+            "UPDATE cash.cash_sessions SET refund_allowance = 500 WHERE cash_session_id = @p", closedSession);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+
+        Assert.Equal("Requested", request.Status);
+        Assert.Equal(0m, await Scalar<decimal>(
+            "SELECT refund_allowance_used FROM cash.cash_sessions WHERE cash_session_id = @p", closedSession));
+    }
+
+    [Fact]
+    public async Task OnlyAManagerGrantsTheAllowanceNotToThemselvesNotBelowWhatIsUsedAndNotWithoutASession()
+    {
+        var (selfId, selfCookie) = await _database.SeedSessionWithPermissionsAsync(
+            _terminalId, "supervisor", "payments.refund.request", "payments.refund.approve");
+        await OpenSessionAsync(_cashierId);
+        await OpenSessionAsync(selfId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var byCashier = await PutAllowanceAsync(client, selfId, 50m, _cashierCookie);
+        using var toSelf = await PutAllowanceAsync(client, selfId, 50m, selfCookie);
+        using var negative = await PutAllowanceAsync(client, _cashierId, -1m, _managerCookie);
+        using var noSession = await PutAllowanceAsync(client, Guid.NewGuid(), 50m, _managerCookie);
+
+        Assert.Equal(HttpStatusCode.Forbidden, byCashier.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, toSelf.StatusCode);
+        Assert.Equal("SELF_DECISION", await ErrorCode(toSelf));
+        Assert.Equal(HttpStatusCode.BadRequest, negative.StatusCode);
+        Assert.Equal("REFUND_INPUT_INVALID", await ErrorCode(negative));
+        Assert.Equal(HttpStatusCode.Conflict, noSession.StatusCode);
+        Assert.Equal("NO_OPEN_CASH_SESSION", await ErrorCode(noSession));
+
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await GrantAsync(client, _cashierId, 100m);
+        await RequestAsync(client, seeded.BillId, paymentId, "Harcama");
+        using var below = await PutAllowanceAsync(client, _cashierId, 40m, _managerCookie);
+        Assert.Equal(HttpStatusCode.BadRequest, below.StatusCode);
+        Assert.Equal(100m, (await GetAllowanceAsync(client, _cashierCookie)).Allowance);
+        using var tooMuch = await PutAllowanceAsync(
+            client, _cashierId, PaymentRefundStore.MaxAllowance + 1m, _managerCookie);
+        Assert.Equal(HttpStatusCode.BadRequest, tooMuch.StatusCode);
+
+        Assert.Equal(new RefundAllowanceV1(true, 100m, 100m, 0m), await GrantAsync(client, _cashierId, 100m));
+        Assert.Equal(2L, await Scalar<long>(
+            "SELECT count(*) FROM audit.audit_events WHERE event_name = 'refund.allowance.set' AND actor_id = @p", _managerId));
+    }
+
+    [Fact]
+    public async Task TheAllowanceReadsEmptyWithoutAnOpenSession()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        Assert.Equal(new RefundAllowanceV1(false, 0m, 0m, 0m), await GetAllowanceAsync(client, _cashierCookie));
+    }
+
+    private async Task<RefundAllowanceV1> GrantAsync(HttpClient client, Guid cashierUserId, decimal amount)
+    {
+        using var response = await PutAllowanceAsync(client, cashierUserId, amount, _managerCookie);
+        Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
+        return (await response.Content.ReadFromJsonAsync<RefundAllowanceV1>())!;
+    }
+
+    private Task<HttpResponseMessage> PutAllowanceAsync(HttpClient client, Guid cashierUserId, decimal amount, string cookie)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Put, $"/api/v1/terminals/{_terminalId:D}/billing/refund-allowance")
+        {
+            Content = JsonContent.Create(new RefundAllowanceInputV1(cashierUserId, amount)),
+        };
+        request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        return client.SendAsync(request);
+    }
+
+    private async Task<RefundAllowanceV1> GetAllowanceAsync(HttpClient client, string cookie)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{_terminalId:D}/billing/refund-allowance");
+        request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        using var response = await client.SendAsync(request);
+        Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
+        return (await response.Content.ReadFromJsonAsync<RefundAllowanceV1>())!;
+    }
+
     private async Task<Guid> CashPaymentAsync(Guid billId, decimal amount)
     {
         await _database.SeedCollectedAsync(billId, amount, _cashierId);

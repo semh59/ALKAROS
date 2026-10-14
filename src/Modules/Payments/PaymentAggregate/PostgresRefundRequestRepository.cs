@@ -16,14 +16,15 @@ public sealed record RefundRequest(
     DateTimeOffset RequestedAt,
     Guid? DecidedBy,
     DateTimeOffset? DecidedAt,
-    string? SlipNumber);
+    string? SlipNumber,
+    string? ApprovalMode = null);
 
 /// <summary>Owns payments.refund_requests; every write runs in the caller's transaction.</summary>
 public static class PostgresRefundRequestRepository
 {
     private const string Columns =
         "refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at, "
-        + "decided_by, decided_at, slip_number";
+        + "decided_by, decided_at, slip_number, approval_mode";
 
     /// <summary>Inserts a Requested row; returns false when the payment already has an open request.</summary>
     public static async Task<bool> TryInsertAsync(
@@ -85,14 +86,14 @@ public static class PostgresRefundRequestRepository
         return result;
     }
 
-    /// <summary>Records the approval: <c>Completed</c> when the money went out at once, else <c>AwaitingManualRefund</c>.</summary>
+    /// <summary>Records the approval (<c>Manager</c> or <c>Allowance</c>): <c>Completed</c> when the money went out at once, else <c>AwaitingManualRefund</c>.</summary>
     public static Task MarkApprovedAsync(
-        Guid requestId, bool completed, Guid deciderId, DateTimeOffset at, NpgsqlConnection connection,
+        Guid requestId, bool completed, Guid deciderId, string approvalMode, DateTimeOffset at, NpgsqlConnection connection,
         NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
         => ExecuteAsync(
             """
             UPDATE payments.refund_requests
-            SET status = @status, decided_by = @by, decided_at = @at,
+            SET status = @status, decided_by = @by, decided_at = @at, approval_mode = @mode,
                 completed_by = CASE WHEN @completed THEN requested_by END,
                 completed_at = CASE WHEN @completed THEN @at END,
                 row_version = row_version + 1
@@ -100,8 +101,8 @@ public static class PostgresRefundRequestRepository
             """, connection, transaction, cancellationToken,
             ("status", NpgsqlDbType.Text, completed ? "Completed" : "AwaitingManualRefund"),
             ("completed", NpgsqlDbType.Boolean, completed),
-            ("by", NpgsqlDbType.Uuid, deciderId), ("at", NpgsqlDbType.TimestampTz, at.UtcDateTime),
-            ("id", NpgsqlDbType.Uuid, requestId));
+            ("by", NpgsqlDbType.Uuid, deciderId), ("mode", NpgsqlDbType.Text, approvalMode),
+            ("at", NpgsqlDbType.TimestampTz, at.UtcDateTime), ("id", NpgsqlDbType.Uuid, requestId));
 
     public static Task MarkRejectedAsync(
         Guid requestId, Guid deciderId, string note, DateTimeOffset at, NpgsqlConnection connection,
@@ -145,5 +146,6 @@ public static class PostgresRefundRequestRepository
         new DateTimeOffset(reader.GetDateTime(8), TimeSpan.Zero),
         reader.IsDBNull(9) ? null : reader.GetGuid(9),
         reader.IsDBNull(10) ? null : new DateTimeOffset(reader.GetDateTime(10), TimeSpan.Zero),
-        reader.IsDBNull(11) ? null : reader.GetString(11));
+        reader.IsDBNull(11) ? null : reader.GetString(11),
+        reader.IsDBNull(12) ? null : reader.GetString(12));
 }

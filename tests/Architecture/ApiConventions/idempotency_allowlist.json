@@ -745,6 +745,10 @@
       "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
       "task": "V1-RMD-103"
     },
+    "PUT /api/v1/terminals/{terminalId:guid}/billing/refund-allowance": {
+      "reason": "Mutlak değer atar (vardiya iade bütçesi); aynı gövdeyle tekrar aynı sonucu verir.",
+      "task": "V1-RMD-520"
+    },
     "PUT /api/v1/terminals/{terminalId:guid}/customers/{customerId:guid}/tax-identity": {
       "reason": "Tam değiştirme (PUT) ucu; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok.",
       "task": "V1-RMD-442"

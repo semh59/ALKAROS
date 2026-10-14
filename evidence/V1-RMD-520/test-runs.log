@@ -1,0 +1,4 @@
+dotnet test tests/Host/Experience/Billing -> Başarılı: 56, Başarısız: 0
+dotnet test tests/Architecture/ApiConventions -> Başarılı: 5
+dotnet test tests/Architecture/ModuleBoundaries -> Başarılı: 9
+dotnet test tests/Host/MigrationComposition --filter ManifestTests -> Başarılı: 16

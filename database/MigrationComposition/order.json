@@ -1585,6 +1585,15 @@
         "role_permissions"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "185",
+      "phase": "B",
+      "tables": [
+        "cash_sessions",
+        "refund_requests"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

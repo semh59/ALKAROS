@@ -355,6 +355,35 @@ public static class BillingSplitApplication
                 requestId, request.SlipNumber, request.Note, principal.UserId, cancellationToken));
         });
 
+        refundsGroup.MapGet("/refund-allowance", async (
+            Guid terminalId,
+            IBillingSplitSessionAuthorizer authorizer,
+            IAuthorizationService authorization,
+            PaymentRefundStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
+            return Results.Ok(await store.GetAllowanceAsync(principal.UserId, cancellationToken));
+        });
+
+        refundsGroup.MapPut("/refund-allowance", async (
+            Guid terminalId,
+            RefundAllowanceInputV1 request,
+            IBillingSplitSessionAuthorizer authorizer,
+            IAuthorizationService authorization,
+            PaymentRefundStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
+            await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundApprove, cancellationToken);
+            if (request.CashierUserId == principal.UserId)
+                throw new RefundSelfDecisionException();
+            return Results.Ok(await store.SetAllowanceAsync(request.CashierUserId, request.Amount, principal.UserId, cancellationToken));
+        });
+
         var group = endpoints.MapGroup(RoutePrefix)
             .WithTags("BillingSplitDesign")
             .AddEndpointFilter<BillingSplitExceptionFilter>();
