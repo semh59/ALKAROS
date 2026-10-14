@@ -1,0 +1,2 @@
+tests/Host/Experience/PaymentTender BillReceiptHttpTests -> 5 passed
+tests/Clients/StaticApps -> 10 files / 85 tests passed

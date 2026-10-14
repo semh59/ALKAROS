@@ -106,6 +106,43 @@ describe("split-payment.js information receipt", () => {
     expect(text).not.toMatch(/Approved|Refunded|Manual|DiscountAmount/);
   });
 
+  it("lists refunded units, the amount paid back per payment and the net amount kept", async () => {
+    const refunded = {
+      ...receipt,
+      items: [
+        { name: "Çay", quantity: 3, unitPrice: 50, amount: 150, billItemId: "i1", refundedQuantity: 2 },
+        { name: "Tost", quantity: 1, unitPrice: 50, amount: 50, billItemId: "i2", refundedQuantity: 0 },
+      ],
+      payments: [
+        { paymentId: "p1", amount: 200, method: "Cash", status: "PartiallyRefunded", at: "2026-10-14T10:30:00Z", refundedAmount: 100 },
+      ],
+    };
+    await open({ body: refunded });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+
+    document.getElementById("print-receipt").click();
+
+    await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    const sheet = document.getElementById("receipt-print").textContent;
+    expect(sheet).toContain("İade edildi: 2 adet");
+    expect(sheet.match(/İade edildi: /g)).toHaveLength(1);
+    expect(sheet).toContain("Kısmen iade edildi");
+    expect(sheet).toContain("-₺100,00");
+    expect(sheet).toMatch(/Net tahsilats*₺100,00/);
+  });
+
+  it("shows no refund rows and no net line when nothing was paid back", async () => {
+    await open({ body: { ...receipt, payments: receipt.payments.map((payment) => ({ ...payment, refundedAmount: 0 })) } });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+
+    document.getElementById("print-receipt").click();
+
+    await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    const sheet = document.getElementById("receipt-print").textContent;
+    expect(sheet).not.toContain("Net tahsilat");
+    expect(sheet).not.toContain("İade edildi:");
+  });
+
   it("shows a fixed Turkish message and prints nothing when the receipt cannot be read", async () => {
     await open({ status: 500, body: {} });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());

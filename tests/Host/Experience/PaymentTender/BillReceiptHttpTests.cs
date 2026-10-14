@@ -104,6 +104,30 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task EachPaymentCarriesWhatWasPaidBackOfIt()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-paid-back");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var actor = await UserIdAsync();
+        await _database.SeedCollectedAsync(billId, 60m);
+        await _database.SeedCollectedAsync(billId, 40m);
+        var refunded = await FirstPaymentIdAsync(billId, 60m);
+        await AddReversalAsync(refunded, 25m, "a");
+        await AddReversalAsync(refunded, 10m, "b");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await GetAsync(client, ReceiptPath(terminalId, billId), cookie);
+
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        var payments = body.GetProperty("payments").EnumerateArray().ToList();
+        Assert.Equal(35m, payments.Single(p => p.GetProperty("amount").GetDecimal() == 60m).GetProperty("refundedAmount").GetDecimal());
+        Assert.Equal(0m, payments.Single(p => p.GetProperty("amount").GetDecimal() == 40m).GetProperty("refundedAmount").GetDecimal());
+        Assert.NotEqual(Guid.Empty, actor);
+    }
+
+    [Fact]
     public async Task ADiscountIsListedAsADeductionAndAnUnapprovedPaymentIsLeftOut()
     {
         var terminalId = Guid.NewGuid();
@@ -156,6 +180,20 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         command.Parameters.AddWithValue("b", billId);
         command.Parameters.AddWithValue("a", amount);
         return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    private async Task AddReversalAsync(Guid paymentId, decimal amount, string key)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO payments.payment_reversals
+                (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
+            VALUES (gen_random_uuid(), @p, 'PartialRefund', @a, 'Test', gen_random_uuid(), @k, now());
+            """);
+        command.Parameters.AddWithValue("p", paymentId);
+        command.Parameters.AddWithValue("a", amount);
+        command.Parameters.AddWithValue("k", "rcpt-" + key + "-" + Guid.NewGuid().ToString("N"));
+        await command.ExecuteNonQueryAsync();
     }
 
     private async Task<Guid> BillItemIdAsync(Guid billId)

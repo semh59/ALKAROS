@@ -13,7 +13,8 @@ public sealed record BillReceiptItemV1(
 
 public sealed record BillReceiptAdjustmentV1(string Type, decimal Amount, bool IsDeduction);
 
-public sealed record BillReceiptPaymentV1(Guid PaymentId, decimal Amount, string Method, string Status, DateTimeOffset? At);
+public sealed record BillReceiptPaymentV1(
+    Guid PaymentId, decimal Amount, string Method, string Status, DateTimeOffset? At, decimal RefundedAmount);
 
 public sealed record BillReceiptV1(
     Guid BillId,
@@ -61,6 +62,7 @@ public static partial class DualScreenApplication
                 var payments = await paymentRepository.GetByBillIdAsync(billId, cancellationToken);
                 var methods = await PaymentMethodsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
                 var refunded = await RefundedQuantitiesAsync(dataSource, billId, cancellationToken);
+                var paidBack = await RefundedAmountsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
 
                 return Results.Ok(new BillReceiptV1(
                     bill.Id,
@@ -87,11 +89,27 @@ public static partial class DualScreenApplication
                             p.ApprovedAmount!.Value,
                             methods.GetValueOrDefault(p.Id, "Manual"),
                             p.Status.ToString(),
-                            p.ApprovedAt))
+                            p.ApprovedAt,
+                            paidBack.GetValueOrDefault(p.Id)))
                         .ToList()));
             })
             .WithTags("BillReceipt")
             .RequireRateLimiting("terminal-read");
+    }
+
+    private static async Task<Dictionary<Guid, decimal>> RefundedAmountsAsync(
+        NpgsqlDataSource dataSource, Guid[] paymentIds, CancellationToken cancellationToken)
+    {
+        var result = new Dictionary<Guid, decimal>();
+        if (paymentIds.Length == 0)
+            return result;
+        await using var command = dataSource.CreateCommand(
+            "SELECT payment_id, SUM(amount) FROM payments.payment_reversals WHERE payment_id = ANY(@ids) GROUP BY payment_id;");
+        command.Parameters.Add("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = paymentIds;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result[reader.GetGuid(0)] = reader.GetDecimal(1);
+        return result;
     }
 
     private static async Task<Dictionary<Guid, decimal>> RefundedQuantitiesAsync(

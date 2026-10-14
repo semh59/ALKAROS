@@ -1,7 +1,7 @@
 # V1-RMD-526 - Kısmi iadenin fiş ve raporlarda görünmesi
 
 - Task ID: V1-RMD-526
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing

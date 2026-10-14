@@ -1333,6 +1333,14 @@
   };
   var RECEIPT_PAYMENT_STATUS = { Refunded: 'İade edildi', PartiallyRefunded: 'Kısmen iade edildi' };
 
+  // Net amount kept after refunds; shown only when something was paid back.
+  function receiptNetRow(receipt) {
+    var refunded = receipt.payments.reduce(function (sum, payment) { return sum + (payment.refundedAmount || 0); }, 0);
+    if (!(refunded > 0)) return '';
+    var paid = receipt.payments.reduce(function (sum, payment) { return sum + payment.amount; }, 0);
+    return '<tr class="sp-receipt-total"><td>Net tahsilat</td><td>' + formatMoney(paid - refunded) + '</td></tr>';
+  }
+
   function receiptHtml(receipt) {
     var opened = receipt.openedAt ? new Date(receipt.openedAt).toLocaleString('tr-TR') : '';
     return (
@@ -1341,7 +1349,10 @@
       '<p>Hesap: ' + escapeHtml(receipt.billNumber) + '<br>' + escapeHtml(opened) + '</p>' +
       '<table>' +
       receipt.items.map(function (item) {
-        return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + '</td><td>' + formatMoney(item.amount) + '</td></tr>';
+        return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + '</td><td>' + formatMoney(item.amount) + '</td></tr>' +
+          (item.refundedQuantity > 0
+            ? '<tr class="sp-receipt-refund"><td>İade edildi: ' + escapeHtml(Number(item.refundedQuantity).toLocaleString('tr-TR')) + ' adet</td><td></td></tr>'
+            : '');
       }).join('') +
       '</table>' +
       '<table>' +
@@ -1356,8 +1367,12 @@
       receipt.payments.map(function (payment) {
         var status = RECEIPT_PAYMENT_STATUS[payment.status];
         return '<tr><td>' + escapeHtml(RECEIPT_METHODS[payment.method] || 'Diğer') +
-          (status ? ' (' + escapeHtml(status) + ')' : '') + '</td><td>' + formatMoney(payment.amount) + '</td></tr>';
+          (status ? ' (' + escapeHtml(status) + ')' : '') + '</td><td>' + formatMoney(payment.amount) + '</td></tr>' +
+          (payment.refundedAmount > 0
+            ? '<tr class="sp-receipt-refund"><td>İade</td><td>-' + formatMoney(payment.refundedAmount) + '</td></tr>'
+            : '');
       }).join('') +
+      receiptNetRow(receipt) +
       '</table>' +
       '<p class="sp-receipt-note">Teşekkür ederiz.</p>'
     );
