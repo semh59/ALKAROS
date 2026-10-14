@@ -1,7 +1,7 @@
 # V1-RMD-524 - Ürün ve adet bazlı kısmi iade isteği (sunucu)
 
 - Task ID: V1-RMD-524
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing

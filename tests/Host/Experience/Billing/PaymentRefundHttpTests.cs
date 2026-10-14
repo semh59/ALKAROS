@@ -545,6 +545,279 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         return (await response.Content.ReadFromJsonAsync<RefundAllowanceV1>())!;
     }
 
+    [Fact]
+    public async Task AnItemRefundPaysBackOnlyTheChosenUnitsAndTheBillStaysOpen()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 250m);
+        var sessionId = await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var request = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 1m, false)]);
+
+        Assert.Equal("Requested", request.Status);
+        Assert.Equal(100m, request.Amount);
+        Assert.Equal(new RefundItemV1(seeded.FirstItemId, 1m, false), Assert.Single(request.Items!));
+        var approved = await DecideAsync(client, request.RequestId, "approve", _managerCookie);
+        Assert.Equal("Completed", approved.Status);
+        Assert.False(approved.BillCancelled);
+        Assert.Equal(1m, Assert.Single(approved.Items!).Quantity);
+        Assert.Equal("PartiallyRefunded", await Scalar<string>("SELECT status FROM payments.payments WHERE payment_id = @p", paymentId));
+        Assert.Equal(100m, await Scalar<decimal>(
+            "SELECT COALESCE(SUM(amount), 0) FROM payments.payment_reversals WHERE payment_id = @p AND reversal_type = 'PartialRefund'",
+            paymentId));
+        Assert.Equal(1L, await Scalar<long>(
+            """
+            SELECT count(*) FROM cash.cash_transactions
+            WHERE related_payment_id = @p AND type = 'Refund' AND direction = 'Out' AND amount = 100 AND cash_session_id = @s
+            """, paymentId, ("s", sessionId)));
+        Assert.NotEqual("Cancelled", await Scalar<string>("SELECT status FROM billing.bills WHERE bill_id = @p", seeded.BillId));
+        var listed = await ListAsync(client);
+        Assert.Equal(1m, Assert.Single(listed.Single(row => row.RequestId == request.RequestId).Items!).Quantity);
+    }
+
+    [Fact]
+    public async Task TheItemRefundIsScaledByTheBillDiscountAndLeavesTipsAndFeesAlone()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await new ALKAROS.Billing.Adjustments.PostgresBillAdjustmentRepository(_source).AddAsync(
+            ALKAROS.Billing.Adjustments.BillAdjustment.CreateDiscountAmount(
+                Guid.NewGuid(), seeded.BillId, 25m, 0m, "Discount", _managerId, createdBy: _managerId));
+        var paymentId = await CashPaymentAsync(seeded.BillId, 225m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var request = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 1m, false)]);
+
+        Assert.Equal(90m, request.Amount);
+    }
+
+    [Fact]
+    public async Task ARejectedItemRequestFreesTheUnitsAndTheRemainingUnitsAreCapped()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 250m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var first = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 2m, false)]);
+        await DecideAsync(client, first.RequestId, "reject", _managerCookie, new RefundDecisionInputV1("Hayır"));
+
+        var again = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 1m, false)]);
+        await DecideAsync(client, again.RequestId, "approve", _managerCookie);
+        using var tooMany = await SendItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 2m, false)]);
+
+        Assert.Equal(HttpStatusCode.Conflict, tooMany.StatusCode);
+        Assert.Equal("REFUND_ITEM_QUANTITY", await ErrorCode(tooMany));
+        var rest = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 1m, false)]);
+        Assert.Equal(100m, rest.Amount);
+    }
+
+    [Fact]
+    public async Task RefusesAnItemRefundThatIsInvalidOrMoreThanThePaymentHolds()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var small = await CashPaymentAsync(seeded.BillId, 100m);
+        await _database.SeedCollectedAsync(seeded.BillId, 150m, _cashierId);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var tooMuch = await SendItemsAsync(client, seeded.BillId, small, [
+            new RefundItemInputV1(seeded.FirstItemId, 2m, false), new RefundItemInputV1(seeded.SecondItemId, 1m, false)]);
+        using var twice = await SendItemsAsync(client, seeded.BillId, small, [
+            new RefundItemInputV1(seeded.FirstItemId, 1m, false), new RefundItemInputV1(seeded.FirstItemId, 1m, false)]);
+        using var zero = await SendItemsAsync(client, seeded.BillId, small, [new RefundItemInputV1(seeded.FirstItemId, 0m, false)]);
+        using var negative = await SendItemsAsync(client, seeded.BillId, small, [
+            new RefundItemInputV1(seeded.FirstItemId, 2m, false), new RefundItemInputV1(seeded.SecondItemId, -1m, false)]);
+        using var fraction = await SendItemsAsync(client, seeded.BillId, small, [
+            new RefundItemInputV1(seeded.FirstItemId, 1m, false), new RefundItemInputV1(seeded.SecondItemId, 0.0004m, false)]);
+        using var foreign = await SendItemsAsync(client, seeded.BillId, small, [new RefundItemInputV1(Guid.NewGuid(), 1m, false)]);
+        using var noStockService = await SendItemsAsync(client, seeded.BillId, small, [new RefundItemInputV1(seeded.SecondItemId, 1m, true)]);
+
+        Assert.Equal(HttpStatusCode.Conflict, tooMuch.StatusCode);
+        Assert.Equal("REFUND_AMOUNT_EXCEEDS_PAYMENT", await ErrorCode(tooMuch));
+        foreach (var response in new[] { twice, zero, negative, fraction, foreign, noStockService })
+        {
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("REFUND_INPUT_INVALID", await ErrorCode(response));
+        }
+
+        Assert.Equal(0L, await Scalar<long>(
+            "SELECT count(*) FROM payments.refund_requests WHERE bill_id = @p", seeded.BillId));
+    }
+
+    [Fact]
+    public async Task OpenRequestsReserveUnitsAcrossPaymentsAndTheRestCanBeRefundedWhole()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var first = await CashPaymentAsync(seeded.BillId, 100m);
+        var second = await CashPaymentAsync(seeded.BillId, 150m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await RequestItemsAsync(client, seeded.BillId, first, [new RefundItemInputV1(seeded.FirstItemId, 1m, false)]);
+
+        using var reserved = await SendItemsAsync(client, seeded.BillId, second, [new RefundItemInputV1(seeded.FirstItemId, 2m, false)]);
+
+        Assert.Equal(HttpStatusCode.Conflict, reserved.StatusCode);
+        Assert.Equal("REFUND_ITEM_QUANTITY", await ErrorCode(reserved));
+
+        var partial = await RequestItemsAsync(client, seeded.BillId, second, [new RefundItemInputV1(seeded.SecondItemId, 1m, false)]);
+        await DecideAsync(client, partial.RequestId, "approve", _managerCookie);
+        var rest = await RequestAsync(client, seeded.BillId, second, "Kalanı iade");
+        Assert.Equal(100m, rest.Amount);
+        Assert.Empty(rest.Items ?? []);
+    }
+
+    [Fact]
+    public async Task AnItemRefundWithinTheAllowanceIsCompletedByTheCashierAndDrawsFromIt()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 250m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await GrantAsync(client, _cashierId, 120m);
+
+        var inside = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 1m, false)]);
+
+        Assert.Equal("Completed", inside.Status);
+        Assert.True(inside.ApprovedFromAllowance);
+        Assert.Equal(20m, (await GetAllowanceAsync(client, _cashierCookie)).Remaining);
+        Assert.Equal("PartiallyRefunded", await Scalar<string>("SELECT status FROM payments.payments WHERE payment_id = @p", paymentId));
+    }
+
+    [Fact]
+    public async Task TheChosenUnitsGoBackToStockInTheCompletingTransactionAndTheOthersDoNot()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 250m);
+        await OpenSessionAsync(_cashierId);
+        var stockItemId = await SeedConsumptionAsync(seeded.FirstItemId, 20m);
+        await using var app = await StartAsync(withStock: true);
+        using var client = CreateClient(app);
+
+        var kept = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 1m, false)]);
+        await DecideAsync(client, kept.RequestId, "approve", _managerCookie);
+        Assert.Equal(0L, await Scalar<long>("SELECT count(*) FROM inventory.stock_movements WHERE movement_type = 'Return' AND stock_item_id = @p", stockItemId));
+
+        var restored = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 1m, true)]);
+        var approved = await DecideAsync(client, restored.RequestId, "approve", _managerCookie);
+
+        Assert.Equal("Completed", approved.Status);
+        Assert.Equal(10m, await Scalar<decimal>(
+            "SELECT COALESCE(SUM(quantity), 0) FROM inventory.stock_movements WHERE movement_type = 'Return' AND stock_item_id = @p",
+            stockItemId));
+        Assert.Equal(90m, await Scalar<decimal>(
+            "SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = @p", stockItemId));
+
+        var last = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.SecondItemId, 1m, false)]);
+        await DecideAsync(client, last.RequestId, "approve", _managerCookie);
+        Assert.Equal(10m, await Scalar<decimal>(
+            "SELECT COALESCE(SUM(quantity), 0) FROM inventory.stock_movements WHERE movement_type = 'Return' AND stock_item_id = @p",
+            stockItemId));
+    }
+
+    [Fact]
+    public async Task SuccessiveRestoringRefundsOfOneItemReturnEachShareOnce()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 250m);
+        await OpenSessionAsync(_cashierId);
+        var stockItemId = await SeedConsumptionAsync(seeded.FirstItemId, 20m);
+        await using var app = await StartAsync(withStock: true);
+        using var client = CreateClient(app);
+
+        for (var round = 0; round < 2; round++)
+        {
+            var request = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 1m, true)]);
+            await DecideAsync(client, request.RequestId, "approve", _managerCookie);
+        }
+
+        Assert.Equal(20m, await Scalar<decimal>(
+            "SELECT COALESCE(SUM(quantity), 0) FROM inventory.stock_movements WHERE movement_type = 'Return' AND stock_item_id = @p",
+            stockItemId));
+        Assert.Equal(100m, await Scalar<decimal>(
+            "SELECT on_hand_quantity FROM inventory.stock_balances WHERE stock_item_id = @p", stockItemId));
+    }
+
+    [Fact]
+    public async Task ACardItemRefundPutsStockBackWhenTheSlipIsRecorded()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 250m, _cashierId);
+        var paymentId = await PaymentIdAsync(seeded.BillId);
+        var stockItemId = await SeedConsumptionAsync(seeded.FirstItemId, 20m);
+        await using var app = await StartAsync(withStock: true);
+        using var client = CreateClient(app);
+        var request = await RequestItemsAsync(client, seeded.BillId, paymentId, [new RefundItemInputV1(seeded.FirstItemId, 2m, true)]);
+        await DecideAsync(client, request.RequestId, "approve", _managerCookie);
+        Assert.Equal(0L, await Scalar<long>(
+            "SELECT count(*) FROM inventory.stock_movements WHERE movement_type = 'Return' AND stock_item_id = @p", stockItemId));
+
+        using var complete = await client.SendAsync(
+            Post($"refund-requests/{request.RequestId:D}/complete", _cashierCookie, new RefundCompleteInputV1("POS-7001", null)));
+
+        Assert.Equal(HttpStatusCode.OK, complete.StatusCode);
+        Assert.Equal(20m, await Scalar<decimal>(
+            "SELECT COALESCE(SUM(quantity), 0) FROM inventory.stock_movements WHERE movement_type = 'Return' AND stock_item_id = @p",
+            stockItemId));
+    }
+
+    private async Task<Guid> SeedConsumptionAsync(Guid billItemId, decimal consumed)
+    {
+        var orderItemId = await Scalar<Guid>("SELECT order_item_id FROM billing.bill_items WHERE bill_item_id = @p", billItemId);
+        var converter = new ALKAROS.Measurements.UnitConverter();
+        var locations = new ALKAROS.Inventory.StockMaster.PostgresStockLocationRepository(_source);
+        var items = new ALKAROS.Inventory.StockMaster.PostgresStockItemRepository(_source);
+        var movements = new ALKAROS.Inventory.MovementLedger.PostgresStockMovementRepository(_source);
+        var balances = new ALKAROS.Inventory.BalanceProjection.PostgresStockBalanceRepository(_source);
+        var projector = new ALKAROS.Inventory.BalanceProjection.StockBalanceProjector(balances, movements, locations);
+        var master = new ALKAROS.Inventory.StockMaster.StockMasterService(
+            locations, items, new ALKAROS.Inventory.StockMaster.PostgresProductStockMappingRepository(_source), converter);
+        var recorder = new ALKAROS.Inventory.MovementLedger.StockMovementService(movements, items, locations, converter);
+        var location = await master.CreateLocationAsync(
+            "LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Kitchen",
+            ALKAROS.Inventory.StockMaster.StockLocationType.Kitchen);
+        var item = await master.CreateStockItemAsync(
+            "SKU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Beef",
+            ALKAROS.Inventory.StockMaster.StockItemType.RawMaterial, "kg");
+        var receipt = await recorder.RecordMovementAsync(
+            item.Id, location.Id, ALKAROS.Inventory.MovementLedger.StockMovementType.PurchaseReceipt, 100m, "kg",
+            ALKAROS.Inventory.MovementLedger.StockMovementSourceType.PurchaseOrder);
+        await projector.ApplyMovementAsync(receipt);
+        var consumption = await recorder.RecordMovementAsync(
+            item.Id, location.Id, ALKAROS.Inventory.MovementLedger.StockMovementType.Consumption, consumed, "kg",
+            ALKAROS.Inventory.MovementLedger.StockMovementSourceType.Order, sourceReferenceId: orderItemId, reason: "Order accepted");
+        await projector.ApplyMovementAsync(consumption);
+        return item.Id;
+    }
+
+    private Task<HttpResponseMessage> SendItemsAsync(
+        HttpClient client, Guid billId, Guid paymentId, IReadOnlyList<RefundItemInputV1> items)
+        => client.SendAsync(Post(
+            $"bills/{billId:D}/refund-requests", _cashierCookie, new RefundRequestInputV1(paymentId, "İkram", items)));
+
+    private async Task<RefundRequestV1> RequestItemsAsync(
+        HttpClient client, Guid billId, Guid paymentId, IReadOnlyList<RefundItemInputV1> items)
+    {
+        using var response = await SendItemsAsync(client, billId, paymentId, items);
+        Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
+        return (await response.Content.ReadFromJsonAsync<RefundRequestV1>())!;
+    }
+
+    private async Task<IReadOnlyList<RefundRequestV1>> ListAsync(HttpClient client)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{_terminalId:D}/billing/refund-requests");
+        request.Headers.TryAddWithoutValidation("Cookie", _cashierCookie);
+        using var response = await client.SendAsync(request);
+        Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
+        return (await response.Content.ReadFromJsonAsync<List<RefundRequestV1>>())!;
+    }
+
     private async Task<Guid> CashPaymentAsync(Guid billId, decimal amount)
     {
         await _database.SeedCollectedAsync(billId, amount, _cashierId);
@@ -618,9 +891,10 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         return (await response.Content.ReadFromJsonAsync<RefundRequestV1>())!;
     }
 
-    private async Task<RefundRequestV1> DecideAsync(HttpClient client, Guid requestId, string action, string cookie)
+    private async Task<RefundRequestV1> DecideAsync(
+        HttpClient client, Guid requestId, string action, string cookie, RefundDecisionInputV1? body = null)
     {
-        using var response = await client.SendAsync(Post($"refund-requests/{requestId:D}/{action}", cookie));
+        using var response = await client.SendAsync(Post($"refund-requests/{requestId:D}/{action}", cookie, body));
         Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
         return (await response.Content.ReadFromJsonAsync<RefundRequestV1>())!;
     }
@@ -640,11 +914,24 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         return document.RootElement.GetProperty("error").GetProperty("code").GetString();
     }
 
-    private async Task<WebApplication> StartAsync()
+    private async Task<WebApplication> StartAsync(bool withStock = false)
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Services.AddSingleton(NpgsqlDataSource.Create(_database.ConnectionString));
+        if (withStock)
+        {
+            builder.Services.AddSingleton<ALKAROS.Inventory.MovementReversal.IStockMovementReversalService>(_ =>
+            {
+                var locations = new ALKAROS.Inventory.StockMaster.PostgresStockLocationRepository(_source);
+                var movements = new ALKAROS.Inventory.MovementLedger.PostgresStockMovementRepository(_source);
+                var balances = new ALKAROS.Inventory.BalanceProjection.PostgresStockBalanceRepository(_source);
+                return new ALKAROS.Inventory.MovementReversal.StockMovementReversalService(
+                    movements, new ALKAROS.Inventory.StockMaster.PostgresStockItemRepository(_source), locations,
+                    new ALKAROS.Inventory.BalanceProjection.StockBalanceProjector(balances, movements, locations), balances);
+            });
+        }
+
         builder.Services.AddBillingSplitExperience();
         var app = builder.Build();
         app.MapBillingSplitApi();

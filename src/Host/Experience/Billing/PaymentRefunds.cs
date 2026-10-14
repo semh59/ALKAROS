@@ -1,7 +1,10 @@
 using ALKAROS.Audit.EventStore;
+using ALKAROS.Billing.Adjustments;
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
 using ALKAROS.Cash.TransactionLedger;
+using ALKAROS.Inventory.MovementReversal;
 using ALKAROS.Payments.PaymentAggregate;
 using Npgsql;
 using NpgsqlTypes;
@@ -10,7 +13,12 @@ using System.Text.Json;
 
 namespace ALKAROS.Host.Experience.Billing;
 
-public sealed record RefundRequestInputV1(Guid PaymentId, string? Reason);
+public sealed record RefundItemInputV1(Guid BillItemId, decimal Quantity, bool RestoreStock);
+
+public sealed record RefundItemV1(Guid BillItemId, decimal Quantity, bool RestoreStock);
+
+/// <summary>Without <paramref name="Items"/> the whole remaining payment is refunded; with them only those units.</summary>
+public sealed record RefundRequestInputV1(Guid PaymentId, string? Reason, IReadOnlyList<RefundItemInputV1>? Items = null);
 
 public sealed record RefundDecisionInputV1(string? Note);
 
@@ -30,7 +38,8 @@ public sealed record RefundRequestV1(
     DateTimeOffset? DecidedAt,
     string? SlipNumber,
     bool BillCancelled,
-    bool ApprovedFromAllowance = false);
+    bool ApprovedFromAllowance = false,
+    IReadOnlyList<RefundItemV1>? Items = null);
 
 public sealed record RefundAllowanceInputV1(Guid CashierUserId, decimal Amount);
 
@@ -40,6 +49,12 @@ public sealed class RefundInputException(string message) : Exception(message);
 
 public sealed class RefundPaymentNotRefundableException(Guid paymentId)
     : Exception($"Payment {paymentId} is not an approved payment of this bill.");
+
+public sealed class RefundItemQuantityException(Guid billItemId)
+    : Exception($"Bill item {billItemId} has fewer units left to refund than asked for.");
+
+public sealed class RefundAmountExceedsPaymentException(Guid paymentId)
+    : Exception($"The refund is more than what is left to refund of payment {paymentId}.");
 
 public sealed class RefundAlreadyRequestedException(Guid paymentId)
     : Exception($"Payment {paymentId} already has an open refund request.");
@@ -71,17 +86,25 @@ public sealed class PaymentRefundStore
     private readonly IAuditEventStore _audit;
     private readonly PostgresPaymentReversalRepository _reversals;
     private readonly PostgresCashTransactionLedgerRepository _cash;
+    private readonly PostgresBillRepository _bills;
+    private readonly PostgresBillAdjustmentRepository _adjustments;
+    private readonly IStockMovementReversalService? _stockReturn;
 
-    public PaymentRefundStore(NpgsqlDataSource dataSource, IAuditEventStore audit)
+    public PaymentRefundStore(
+        NpgsqlDataSource dataSource, IAuditEventStore audit, IStockMovementReversalService? stockReturn = null)
     {
         _dataSource = dataSource;
         _audit = audit;
+        _stockReturn = stockReturn;
+        _bills = new PostgresBillRepository(dataSource);
+        _adjustments = new PostgresBillAdjustmentRepository(dataSource);
         _reversals = new PostgresPaymentReversalRepository(dataSource, new PostgresPaymentRepository(dataSource));
         _cash = new PostgresCashTransactionLedgerRepository(dataSource);
     }
 
     public async Task<RefundRequestV1> RequestAsync(
-        Guid billId, Guid paymentId, string? reason, Guid userId, CancellationToken cancellationToken)
+        Guid billId, Guid paymentId, string? reason, Guid userId, IReadOnlyList<RefundItemInputV1>? items,
+        CancellationToken cancellationToken)
     {
         var text = RequireText(reason, MaxTextLength, "Refund reason");
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -90,15 +113,22 @@ public sealed class PaymentRefundStore
 
         decimal amount;
         await using (var read = new NpgsqlCommand(
-            "SELECT status, approved_amount FROM payments.payments WHERE payment_id = @id AND bill_id = @bill FOR UPDATE;",
+            """
+            SELECT p.status, p.approved_amount,
+                   COALESCE((SELECT SUM(r.amount) FROM payments.payment_reversals r WHERE r.payment_id = p.payment_id), 0)
+            FROM payments.payments p WHERE p.payment_id = @id AND p.bill_id = @bill FOR UPDATE;
+            """,
             connection, transaction))
         {
             read.Parameters.Add("id", NpgsqlDbType.Uuid).Value = paymentId;
             read.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = billId;
             await using var reader = await read.ExecuteReaderAsync(cancellationToken);
-            if (!await reader.ReadAsync(cancellationToken) || reader.GetString(0) != "Approved" || reader.IsDBNull(1))
+            if (!await reader.ReadAsync(cancellationToken)
+                || reader.GetString(0) is not ("Approved" or "PartiallyRefunded") || reader.IsDBNull(1))
                 throw new RefundPaymentNotRefundableException(paymentId);
-            amount = reader.GetDecimal(1);
+            amount = reader.GetDecimal(1) - reader.GetDecimal(2);
+            if (amount <= 0m)
+                throw new RefundPaymentNotRefundableException(paymentId);
         }
 
         string method;
@@ -119,14 +149,28 @@ public sealed class PaymentRefundStore
         if (method == "Account")
             throw new RefundAccountChargeUnsupportedException(paymentId);
 
+        IReadOnlyList<RefundRequestItem>? priced = null;
+        if (items is { Count: > 0 })
+        {
+            var itemsAmount = 0m;
+            (itemsAmount, priced) = await PriceItemsAsync(connection, transaction, billId, items, cancellationToken);
+            if (itemsAmount > amount)
+                throw new RefundAmountExceedsPaymentException(paymentId);
+            amount = itemsAmount;
+        }
+
         var requestId = Guid.NewGuid();
         var now = DateTimeOffset.UtcNow;
         var created = new RefundRequest(
             requestId, billId, paymentId, amount, method, text, "Requested", userId, now, null, null, null);
         if (!await PostgresRefundRequestRepository.TryInsertAsync(created, connection, transaction, cancellationToken))
             throw new RefundAlreadyRequestedException(paymentId);
+        if (priced is not null)
+            await PostgresRefundRequestRepository.InsertItemsAsync(requestId, priced, connection, transaction, cancellationToken);
 
-        var request = new RefundRequestV1(requestId, billId, paymentId, amount, method, text, "Requested", userId, now, null, null, null, false);
+        var request = new RefundRequestV1(
+            requestId, billId, paymentId, amount, method, text, "Requested", userId, now, null, null, null, false,
+            Items: priced?.Select(item => new RefundItemV1(item.BillItemId, item.Quantity, item.RestoreStock)).ToList());
         var sessionId = await FindOpenSessionAsync(connection, transaction, userId, cancellationToken);
         if (sessionId is null || !await PostgresRefundAllowanceRepository.TrySpendAsync(sessionId.Value, amount, connection, transaction, cancellationToken))
         {
@@ -150,6 +194,62 @@ public sealed class PaymentRefundStore
         if (completed)
             await AuditRefundAsync(result, userId, null, billCancelled, cancellationToken);
         return result;
+    }
+
+    /// <summary>
+    /// Checks the asked items against the bill and what was already refunded, and prices them: the line's gross
+    /// share for the units, scaled by the bill-level discount ratio; tips and fees are not refunded.
+    /// </summary>
+    private async Task<(decimal Amount, IReadOnlyList<RefundRequestItem> Items)> PriceItemsAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, IReadOnlyList<RefundItemInputV1> items,
+        CancellationToken cancellationToken)
+    {
+        if (items.Select(item => item.BillItemId).Distinct().Count() != items.Count)
+            throw new RefundInputException("Each bill item may appear once.");
+        if (items.Any(item => item.Quantity <= 0m || decimal.Round(item.Quantity, 3) != item.Quantity))
+            throw new RefundInputException("Quantity must be above zero with at most 3 decimals.");
+        if (_stockReturn is null && items.Any(item => item.RestoreStock))
+            throw new RefundInputException("Stock return is not available.");
+
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+        var summary = AdjustmentCalculator.Calculate(bill, await _adjustments.GetByBillIdAsync(billId, cancellationToken));
+        var ratio = summary.OriginalPayableAmount > 0m
+            ? (summary.OriginalPayableAmount - summary.TotalDiscounts) / summary.OriginalPayableAmount
+            : 1m;
+        var refunded = await PostgresRefundRequestRepository.RefundedQuantitiesAsync(billId, connection, transaction, cancellationToken);
+
+        var total = 0m;
+        foreach (var item in items)
+        {
+            var line = bill.Items.FirstOrDefault(candidate => candidate.Id == item.BillItemId)
+                ?? throw new RefundInputException($"Bill item {item.BillItemId} is not on this bill.");
+            var left = line.Quantity - refunded.GetValueOrDefault(item.BillItemId);
+            if (item.Quantity > left)
+                throw new RefundItemQuantityException(item.BillItemId);
+            total += decimal.Round(line.GrossAmount * item.Quantity / line.Quantity * ratio, 2, MidpointRounding.AwayFromZero);
+        }
+
+        if (total <= 0m)
+            throw new RefundInputException("The refund amount must be above zero.");
+        return (total, items.Select(item => new RefundRequestItem(item.BillItemId, item.Quantity, item.RestoreStock)).ToList());
+    }
+
+    /// <summary>Puts the refunded units that were marked for it back to stock, in the caller's transaction.</summary>
+    private async Task ReturnStockAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, RefundRequestV1 request, Guid actorId,
+        CancellationToken cancellationToken)
+    {
+        if (_stockReturn is null)
+            return;
+        foreach (var line in await PostgresRefundRequestRepository.StockReturnsAsync(
+                     request.RequestId, connection, transaction, cancellationToken))
+        {
+            await _stockReturn.ReturnConsumedShareAsync(
+                new StockShareReturnRequest(
+                    line.OrderItemId, line.Quantity, line.PreviouslyRestored, line.TotalQuantity, request.Reason, actorId),
+                connection, transaction, cancellationToken);
+        }
     }
 
     /// <summary>Gives the cashier's open shift a refund budget the cashier may spend without a second person.</summary>
@@ -201,7 +301,9 @@ public sealed class PaymentRefundStore
     public async Task<IReadOnlyList<RefundRequestV1>> ListAsync(string? status, CancellationToken cancellationToken)
     {
         var rows = await PostgresRefundRequestRepository.ListAsync(_dataSource, status, cancellationToken);
-        return rows.Select(row => ToDto(row)).ToList();
+        var items = await PostgresRefundRequestRepository.LoadItemsForAsync(
+            _dataSource, rows.Select(row => row.Id).ToArray(), cancellationToken);
+        return rows.Select(row => WithItems(ToDto(row), items.GetValueOrDefault(row.Id))).ToList();
     }
 
     public async Task<RefundRequestV1> ApproveAsync(Guid requestId, Guid deciderId, CancellationToken cancellationToken)
@@ -284,6 +386,7 @@ public sealed class PaymentRefundStore
         await _reversals.AppendAsync(
             request.PaymentId, request.Amount, request.Reason, userId, "refund-" + requestId.ToString("N"),
             connection, transaction, now, cancellationToken);
+        await ReturnStockAsync(connection, transaction, request, userId, cancellationToken);
         var billCancelled = await CancelBillWhenFullyRefundedAsync(
             connection, transaction, request.BillId, userId, now, cancellationToken);
 
@@ -309,6 +412,7 @@ public sealed class PaymentRefundStore
             connection, transaction, cancellationToken);
         await _reversals.AppendAsync(
             request.PaymentId, request.Amount, request.Reason, deciderId, key, connection, transaction, now, cancellationToken);
+        await ReturnStockAsync(connection, transaction, request, deciderId, cancellationToken);
         return await CancelBillWhenFullyRefundedAsync(
             connection, transaction, request.BillId, deciderId, now, cancellationToken);
     }
@@ -393,8 +497,13 @@ public sealed class PaymentRefundStore
     {
         var row = await PostgresRefundRequestRepository.LoadForUpdateAsync(requestId, connection, transaction, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Refund request {requestId} was not found.");
-        return ToDto(row);
+        return WithItems(ToDto(row), await PostgresRefundRequestRepository.LoadItemsAsync(requestId, connection, transaction, cancellationToken));
     }
+
+    private static RefundRequestV1 WithItems(RefundRequestV1 request, IReadOnlyList<RefundRequestItem>? items)
+        => items is null or { Count: 0 }
+            ? request
+            : request with { Items = items.Select(item => new RefundItemV1(item.BillItemId, item.Quantity, item.RestoreStock)).ToList() };
 
     private static RefundRequestV1 ToDto(RefundRequest row) => new(
         row.Id, row.BillId, row.PaymentId, row.Amount, row.Method, row.Reason, row.Status, row.RequestedBy,

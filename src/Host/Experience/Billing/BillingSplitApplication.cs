@@ -293,7 +293,8 @@ public static class BillingSplitApplication
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
-            return Results.Ok(await store.RequestAsync(billId, request.PaymentId, request.Reason, principal.UserId, cancellationToken));
+            return Results.Ok(await store.RequestAsync(
+                billId, request.PaymentId, request.Reason, principal.UserId, request.Items, cancellationToken));
         });
 
         refundsGroup.MapGet("/refund-requests", async (
@@ -602,6 +603,8 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         RefundStateException => (409, "REFUND_STATE", "İade isteği bu durumda değil; sayfayı yenileyin."),
         RefundSelfDecisionException => (403, "SELF_DECISION", "İadeyi isteyen kişi kendi isteğini onaylayamaz veya reddedemez."),
         RefundNoOpenCashSessionException => (409, "NO_OPEN_CASH_SESSION", "İadeyi ödeyecek kasiyerin açık kasa oturumu yok."),
+        RefundItemQuantityException => (409, "REFUND_ITEM_QUANTITY", "Bu kalemden istenen adet iade edilebilir adedi aşıyor."),
+        RefundAmountExceedsPaymentException => (409, "REFUND_AMOUNT_EXCEEDS_PAYMENT", "İade tutarı seçilen ödemenin kalan tutarını aşıyor."),
         RefundAccountChargeUnsupportedException => (409, "ACCOUNT_REFUND_UNSUPPORTED", "Müşteri hesabına yazılan ödeme buradan iade edilemez."),
         BillCancelReasonException => (400, "REASON_REQUIRED", "İptal gerekçesi 1 ile 500 karakter arasında olmalı."),
         IdempotencyKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),

@@ -19,6 +19,13 @@ public sealed record RefundRequest(
     string? SlipNumber,
     string? ApprovalMode = null);
 
+/// <summary>One bill item (and quantity) a refund request pays back.</summary>
+public sealed record RefundRequestItem(Guid BillItemId, decimal Quantity, bool RestoreStock);
+
+/// <summary>Where one refunded item came from, for putting its share back to stock.</summary>
+public sealed record RefundStockReturn(
+    Guid BillItemId, Guid OrderItemId, decimal Quantity, decimal TotalQuantity, decimal PreviouslyRestored);
+
 /// <summary>Owns payments.refund_requests; every write runs in the caller's transaction.</summary>
 public static class PostgresRefundRequestRepository
 {
@@ -129,6 +136,112 @@ public static class PostgresRefundRequestRepository
             ("slip", NpgsqlDbType.Text, slipNumber), ("note", NpgsqlDbType.Text, (object?)note ?? DBNull.Value),
             ("by", NpgsqlDbType.Uuid, completedBy), ("at", NpgsqlDbType.TimestampTz, at.UtcDateTime),
             ("id", NpgsqlDbType.Uuid, requestId));
+
+    public static async Task InsertItemsAsync(
+        Guid requestId, IReadOnlyList<RefundRequestItem> items, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        foreach (var item in items)
+        {
+            await ExecuteAsync(
+                """
+                INSERT INTO payments.refund_request_items (refund_request_id, bill_item_id, quantity, restore_stock)
+                VALUES (@request, @item, @quantity, @restore);
+                """, connection, transaction, cancellationToken,
+                ("request", NpgsqlDbType.Uuid, requestId), ("item", NpgsqlDbType.Uuid, item.BillItemId),
+                ("quantity", NpgsqlDbType.Numeric, item.Quantity), ("restore", NpgsqlDbType.Boolean, item.RestoreStock));
+        }
+    }
+
+    /// <summary>Quantity of each bill item already asked for or paid back by a request that was not rejected.</summary>
+    public static async Task<Dictionary<Guid, decimal>> RefundedQuantitiesAsync(
+        Guid billId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT i.bill_item_id, SUM(i.quantity)
+            FROM payments.refund_request_items i
+            JOIN payments.refund_requests r ON r.refund_request_id = i.refund_request_id
+            WHERE r.bill_id = @bill AND r.status IN ('Requested', 'AwaitingManualRefund', 'Completed')
+            GROUP BY i.bill_item_id;
+            """, connection, transaction);
+        command.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = billId;
+        var result = new Dictionary<Guid, decimal>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result[reader.GetGuid(0)] = reader.GetDecimal(1);
+        return result;
+    }
+
+    public static async Task<IReadOnlyList<RefundRequestItem>> LoadItemsAsync(
+        Guid requestId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        await using var command = new NpgsqlCommand(
+            "SELECT bill_item_id, quantity, restore_stock FROM payments.refund_request_items WHERE refund_request_id = @id ORDER BY bill_item_id;",
+            connection, transaction);
+        command.Parameters.Add("id", NpgsqlDbType.Uuid).Value = requestId;
+        var result = new List<RefundRequestItem>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result.Add(new RefundRequestItem(reader.GetGuid(0), reader.GetDecimal(1), reader.GetBoolean(2)));
+        return result;
+    }
+
+    public static async Task<IReadOnlyDictionary<Guid, IReadOnlyList<RefundRequestItem>>> LoadItemsForAsync(
+        NpgsqlDataSource dataSource, IReadOnlyCollection<Guid> requestIds, CancellationToken cancellationToken = default)
+    {
+        var result = new Dictionary<Guid, List<RefundRequestItem>>();
+        if (requestIds.Count > 0)
+        {
+            await using var command = dataSource.CreateCommand(
+                """
+                SELECT refund_request_id, bill_item_id, quantity, restore_stock
+                FROM payments.refund_request_items
+                WHERE refund_request_id = ANY(@ids)
+                ORDER BY refund_request_id, bill_item_id;
+                """);
+            command.Parameters.Add("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid).Value = requestIds.ToArray();
+            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                var id = reader.GetGuid(0);
+                if (!result.TryGetValue(id, out var list))
+                    result[id] = list = [];
+                list.Add(new RefundRequestItem(reader.GetGuid(1), reader.GetDecimal(2), reader.GetBoolean(3)));
+            }
+        }
+
+        return result.ToDictionary(pair => pair.Key, pair => (IReadOnlyList<RefundRequestItem>)pair.Value);
+    }
+
+    /// <summary>
+    /// The items of a request that go back to stock, with the order item behind each and how many units of it were
+    /// already put back by earlier completed requests.
+    /// </summary>
+    public static async Task<IReadOnlyList<RefundStockReturn>> StockReturnsAsync(
+        Guid requestId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT i.bill_item_id, b.order_item_id, i.quantity, b.quantity,
+                   COALESCE((SELECT SUM(x.quantity)
+                             FROM payments.refund_request_items x
+                             JOIN payments.refund_requests rr ON rr.refund_request_id = x.refund_request_id
+                             WHERE x.bill_item_id = i.bill_item_id AND x.restore_stock
+                               AND rr.status = 'Completed' AND rr.refund_request_id <> i.refund_request_id), 0)
+            FROM payments.refund_request_items i
+            JOIN billing.bill_items b ON b.bill_item_id = i.bill_item_id
+            WHERE i.refund_request_id = @id AND i.restore_stock
+            ORDER BY i.bill_item_id;
+            """, connection, transaction);
+        command.Parameters.Add("id", NpgsqlDbType.Uuid).Value = requestId;
+        var result = new List<RefundStockReturn>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result.Add(new RefundStockReturn(
+                reader.GetGuid(0), reader.GetGuid(1), reader.GetDecimal(2), reader.GetDecimal(3), reader.GetDecimal(4)));
+        return result;
+    }
 
     private static async Task ExecuteAsync(
         string sql, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken,
