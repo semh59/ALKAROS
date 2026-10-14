@@ -1,0 +1,2 @@
+killed: j-left j-refunded j-partly j-open j-listfailed j-restore j-stock-required j-reason-required j-payment-required j-amount j-clear j-zero j-nan j-body p-left p-restore p-partly p-stock-required p-payment-required p-amount c-rejected c-open
+removed as equivalent: p-over (fazla adet zaten itemsInvalid ile engelleniyor; yinelenen süzgeç kaldırıldı)

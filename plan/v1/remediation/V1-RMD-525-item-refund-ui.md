@@ -1,7 +1,7 @@
 # V1-RMD-525 - Ürün ve adet bazlı kısmi iade (arayüz)
 
 - Task ID: V1-RMD-525
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing

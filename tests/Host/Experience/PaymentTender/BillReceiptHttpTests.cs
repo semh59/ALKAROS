@@ -80,6 +80,30 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task EachItemCarriesItsIdAndTheUnitsAlreadyAskedToBeRefundedButNotTheRejectedOnes()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-refunded");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var actor = await UserIdAsync();
+        await _database.SeedCollectedAsync(billId, 100m);
+        var paymentId = await FirstPaymentIdAsync(billId, 100m);
+        var billItemId = await BillItemIdAsync(billId);
+        await AddRefundAsync(billId, paymentId, billItemId, "Completed", actor);
+        await AddRefundAsync(billId, paymentId, billItemId, "Rejected", actor);
+        await AddRefundAsync(billId, paymentId, billItemId, "Requested", actor);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await GetAsync(client, ReceiptPath(terminalId, billId), cookie);
+
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        var item = Assert.Single(body.GetProperty("items").EnumerateArray());
+        Assert.Equal(billItemId, item.GetProperty("billItemId").GetGuid());
+        Assert.Equal(2m, item.GetProperty("refundedQuantity").GetDecimal());
+    }
+
+    [Fact]
     public async Task ADiscountIsListedAsADeductionAndAnUnapprovedPaymentIsLeftOut()
     {
         var terminalId = Guid.NewGuid();
@@ -132,6 +156,34 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         command.Parameters.AddWithValue("b", billId);
         command.Parameters.AddWithValue("a", amount);
         return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    private async Task<Guid> BillItemIdAsync(Guid billId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT bill_item_id FROM billing.bill_items WHERE bill_id = @b LIMIT 1;");
+        command.Parameters.AddWithValue("b", billId);
+        return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    private async Task AddRefundAsync(Guid billId, Guid paymentId, Guid billItemId, string status, Guid actor)
+    {
+        var requestId = Guid.NewGuid();
+        await using var command = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO payments.refund_requests
+                (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at)
+            VALUES (@r, @b, @p, 10, 'Manual', 'Test', @s, @u, now());
+            INSERT INTO payments.refund_request_items (refund_request_id, bill_item_id, quantity, restore_stock)
+            VALUES (@r, @i, 1, false);
+            """);
+        command.Parameters.AddWithValue("r", requestId);
+        command.Parameters.AddWithValue("b", billId);
+        command.Parameters.AddWithValue("p", paymentId);
+        command.Parameters.AddWithValue("s", status);
+        command.Parameters.AddWithValue("u", actor);
+        command.Parameters.AddWithValue("i", billItemId);
+        await command.ExecuteNonQueryAsync();
     }
 
     private async Task MarkCashAsync(Guid paymentId, Guid actor)

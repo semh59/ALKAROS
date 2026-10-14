@@ -5,7 +5,9 @@ import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { RefundPanel, type RefundPanelProps } from "./RefundPanel";
-import { RefundApiError, type BillTenderSummary, type BillingRefundClient, type RefundAllowance, type RefundRequestRow } from "./refundApi";
+import {
+  RefundApiError, type BillReceiptItem, type BillTenderSummary, type BillingRefundClient, type RefundAllowance, type RefundRequestRow,
+} from "./refundApi";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -14,6 +16,9 @@ const paid: BillTenderSummary = {
   allocations: [{ allocationId: "a1", paymentId: "p1", amount: 100, paymentStatus: "Approved" }],
 };
 const unpaid: BillTenderSummary = { allocatedTotal: 0, remainingAmount: 100, allocations: [] };
+const lineItem = (id: string, name: string, quantity: number, refundedQuantity = 0): BillReceiptItem => ({
+  billItemId: id, name, quantity, unitPrice: 50, amount: 50 * quantity, refundedQuantity,
+});
 const shift = (allowance: number, used: number): RefundAllowance => ({
   hasOpenSession: true, allowance, used, remaining: allowance - used,
 });
@@ -32,6 +37,7 @@ describe("refund panel", () => {
     reject: vi.fn().mockResolvedValue(request("Rejected")),
     complete: vi.fn().mockResolvedValue(request("Completed")),
     getAllowance: vi.fn().mockResolvedValue({ hasOpenSession: true, allowance: 0, used: 0, remaining: 0 }),
+    getItems: vi.fn().mockResolvedValue([]),
     setAllowance: vi.fn().mockResolvedValue(shift(150, 0)),
     ...overrides,
   });
@@ -355,6 +361,97 @@ describe("refund panel", () => {
 
     expect(document.body.textContent).toContain("Kendinize iade bütçesi veremezsiniz.");
     expect(document.body.textContent).not.toContain("SELF_DECISION");
+  });
+
+  it("refunds chosen units of items from a chosen payment with the stock choice and shows the computed amount", async () => {
+    const client = makeClient({
+      getItems: vi.fn().mockResolvedValue([lineItem("i1", "Çay", 3, 1), lineItem("i2", "Tost", 1)]),
+      requestRefund: vi.fn().mockResolvedValue(request("Requested", { amount: 90, items: [{ billItemId: "i1", quantity: 2, restoreStock: true }] })),
+    });
+    await render({ client });
+    const action = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "Seçilen ürünleri iade et")!;
+    expect(document.body.textContent).toContain("Çay · kalan 2");
+    expect(action().disabled).toBe(true);
+
+    await type("Çay · kalan 2", "2");
+    await pick("İadenin düşeceği ödeme", "p1");
+    await pick("Stoğa geri dönüş", "yes");
+    expect(action().disabled).toBe(true);
+    const reason = [...document.querySelectorAll("select")].filter((s) => s.closest("label")?.textContent?.startsWith("İade gerekçesi"))[1]!;
+    await act(async () => {
+      reason.value = "İkram";
+      reason.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    expect(action().disabled).toBe(false);
+    await act(async () => action().click());
+
+    expect(client.requestRefund).toHaveBeenCalledWith("p1", "İkram", [{ billItemId: "i1", quantity: 2, restoreStock: true }]);
+    expect(document.body.textContent).toContain("İade tutarı");
+  });
+
+  it("needs every piece before the item refund can be sent and sends an explicit no for stock", async () => {
+    const requestRefund = vi.fn().mockResolvedValue(request("Requested", { amount: 50 }));
+    const client = makeClient({ getItems: vi.fn().mockResolvedValue([lineItem("i1", "Çay", 3)]), requestRefund });
+    await render({ client });
+    const action = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "Seçilen ürünleri iade et")!;
+    const reasonSelect = () => [...document.querySelectorAll("select")]
+      .filter((s) => s.closest("label")?.textContent?.startsWith("İade gerekçesi"))[1]!;
+    const setSelect = async (select: HTMLSelectElement, value: string) => act(async () => {
+      select.value = value;
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+
+    await type("Çay · kalan 3", "1");
+    await pick("Stoğa geri dönüş", "no");
+    await setSelect(reasonSelect(), "İkram");
+    expect(action().disabled).toBe(true);
+    await pick("İadenin düşeceği ödeme", "p1");
+    expect(action().disabled).toBe(false);
+    await pick("Stoğa geri dönüş", "");
+    expect(action().disabled).toBe(true);
+    await pick("Stoğa geri dönüş", "no");
+    await click("Seçilen ürünleri iade et");
+
+    expect(requestRefund).toHaveBeenCalledWith("p1", "İkram", [{ billItemId: "i1", quantity: 1, restoreStock: false }]);
+  });
+
+  it("blocks a quantity above what is left and keeps the stock choice explicit", async () => {
+    const client = makeClient({ getItems: vi.fn().mockResolvedValue([lineItem("i1", "Çay", 3, 1)]) });
+    await render({ client });
+    const action = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "Seçilen ürünleri iade et")!;
+
+    await type("Çay · kalan 2", "3");
+    await pick("İadenin düşeceği ödeme", "p1");
+    await pick("Stoğa geri dönüş", "no");
+
+    expect(action().disabled).toBe(true);
+  });
+
+  it("offers a partly refunded payment and hides the block when nothing is left or no payment can take it", async () => {
+    const partly: BillTenderSummary = {
+      ...paid, allocations: [{ allocationId: "a1", paymentId: "p1", amount: 100, paymentStatus: "PartiallyRefunded" }],
+    };
+    await render({ client: makeClient({ getTenders: vi.fn().mockResolvedValue(partly), getItems: vi.fn().mockResolvedValue([lineItem("i1", "Çay", 3)]) }) });
+    expect(document.body.textContent).toContain("Ürün bazlı iade");
+
+    await act(async () => root!.unmount());
+    await render({ client: makeClient({ getItems: vi.fn().mockResolvedValue([lineItem("i1", "Çay", 3, 3)]) }) });
+    expect(document.body.textContent).not.toContain("Ürün bazlı iade");
+
+    await act(async () => root!.unmount());
+    await render({ client: makeClient({ getTenders: vi.fn().mockResolvedValue(unpaid), getItems: vi.fn().mockResolvedValue([lineItem("i1", "Çay", 3)]) }) });
+    expect(document.body.textContent).not.toContain("Ürün bazlı iade");
+
+    await act(async () => root!.unmount());
+    await render({ client: makeClient({ getItems: vi.fn().mockResolvedValue([lineItem("i1", "Çay", 3)]) }), canRequestRefund: false });
+    expect(document.body.textContent).not.toContain("Ürün bazlı iade");
+  });
+
+  it("keeps the whole-payment refund working when the item list cannot be read", async () => {
+    await render({ client: makeClient({ getItems: vi.fn().mockRejectedValue(new RefundApiError(500, "X", "x")) }) });
+
+    expect(document.body.textContent).toContain("İade iste");
+    expect(document.body.textContent).not.toContain("Ürün bazlı iade");
   });
 
   it("has no accessibility violations", async () => {

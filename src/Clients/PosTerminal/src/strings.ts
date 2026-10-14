@@ -1021,6 +1021,18 @@ export const refundText = {
   allowanceRemaining: "Kalan vardiya iade bütçeniz",
   completedFromAllowance: "İade vardiya bütçenizden tamamlandı.",
   reservedFromAllowance: "İade vardiya bütçenizden ayrıldı; fiş numarasını girerek tamamlayın.",
+  itemsHeading: "Ürün bazlı iade",
+  itemsLeft: "kalan",
+  itemsQuantityLabel: "iade adedi",
+  itemsPaymentLabel: "İadenin düşeceği ödeme",
+  itemsPaymentPlaceholder: "Ödeme seçin",
+  itemsPaymentOption: "Ödeme",
+  itemsStockLabel: "Stoğa geri dönüş",
+  itemsStockPlaceholder: "Seçin",
+  itemsStockYes: "Evet, stoğa geri dönsün",
+  itemsStockNo: "Hayır, stoğa dönmesin",
+  itemsAction: "Seçilen ürünleri iade et",
+  itemsAmount: "İade tutarı",
 } as const;
 
 export const refundStatusLabels: Record<string, string> = {

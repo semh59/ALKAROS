@@ -131,13 +131,16 @@ describe("split-payment.js information receipt", () => {
   it("disables the button while the receipt is being read so it is read once", async () => {
     const fetchMock = await open({ body: receipt, delayMs: 50 });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+    const receiptReads = () => fetchMock.mock.calls.filter(([url]) => url.endsWith("/receipt")).length;
+    await vi.waitFor(() => expect(receiptReads()).toBe(1));
+    await new Promise((done) => setTimeout(done, 100));
 
     document.getElementById("print-receipt").click();
     expect(document.getElementById("print-receipt").disabled).toBe(true);
     document.getElementById("print-receipt").click();
 
     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
-    expect(fetchMock.mock.calls.filter(([url]) => url.endsWith("/receipt")).length).toBe(1);
+    expect(receiptReads()).toBe(2);
   });
 
   it("keeps the sheet out of the screen layout and only the sheet in the printed page", async () => {

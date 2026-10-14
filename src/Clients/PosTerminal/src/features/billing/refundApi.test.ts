@@ -65,6 +65,25 @@ describe("billing refund client", () => {
     expect(JSON.parse(fetcher.mock.calls[1][1].body)).toEqual({ cashierUserId: "u1", amount: 150 });
   });
 
+  it("reads the bill items and sends item lines with a refund request", async () => {
+    const fetcher = vi.fn().mockResolvedValue(new Response(JSON.stringify({ items: [{ billItemId: "i1", name: "Çay", quantity: 3, unitPrice: 50, amount: 150, refundedQuantity: 0 }] })));
+    const client = createBillingRefundClient("t1", "b1", fetcher as unknown as typeof fetch);
+
+    const items = await client.getItems();
+    await client.requestRefund("p1", "İkram", [{ billItemId: "i1", quantity: 2, restoreStock: true }]);
+
+    expect(items).toHaveLength(1);
+    expect(fetcher.mock.calls[0][0]).toBe("/api/v1/terminals/t1/billing/bills/b1/receipt");
+    expect(JSON.parse(fetcher.mock.calls[1][1].body)).toEqual({
+      paymentId: "p1", reason: "İkram", items: [{ billItemId: "i1", quantity: 2, restoreStock: true }],
+    });
+  });
+
+  it("describes item refund conflicts with their own sentences", () => {
+    expect(describeRefundFailure(new RefundApiError(409, "REFUND_ITEM_QUANTITY", "x"))).toContain("adet");
+    expect(describeRefundFailure(new RefundApiError(409, "REFUND_AMOUNT_EXCEEDS_PAYMENT", "x"))).toContain("ödemenin kalan tutarını");
+  });
+
   it("describes allowance failures with fixed sentences", () => {
     expect(describeAllowanceFailure(new RefundApiError(403, "SELF_DECISION", "x"))).toBe("Kendinize iade bütçesi veremezsiniz.");
     expect(describeAllowanceFailure(new RefundApiError(400, "REFUND_INPUT_INVALID", "x"))).toContain("düşük");

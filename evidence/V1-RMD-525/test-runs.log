@@ -1,0 +1,4 @@
+PosTerminal: tsc 0; vitest 66 files / 542 tests; vite build 0
+StaticApps: vitest 10 files / 83 tests
+PaymentTender BillReceiptHttpTests: 4 passed
+consistency_audit: clean

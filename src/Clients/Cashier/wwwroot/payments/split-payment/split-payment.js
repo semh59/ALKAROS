@@ -81,6 +81,11 @@
     refundNotice: null,
     refundListFailed: false,
     refundAllowance: null,
+    billItems: [],
+    itemQty: {},
+    itemPayment: '',
+    itemStock: '',
+    itemReason: '',
     confirmKey: null,
     reasonChoices: {},
     tenderedDraft: '',
@@ -880,8 +885,19 @@
     });
   }
 
+  // Item lines come from the receipt summary; without them only whole-payment refunds are offered.
+  function loadBillItems() {
+    return api(billBase() + '/receipt').then(function (result) {
+      state.billItems = result.ok && result.body && Array.isArray(result.body.items) ? result.body.items : [];
+      render();
+    }).catch(function () {
+      state.billItems = [];
+    });
+  }
+
   function loadRefundRequests() {
     loadRefundAllowance();
+    loadBillItems();
     return api(refundsBase()).then(function (result) {
       // Yetkisi olmayan kullanıcı için liste sessizce boş kalır; işlemler zaten sunucuda 403 ile reddedilir.
       state.refundListFailed = !result.ok && result.status !== 403;
@@ -911,12 +927,14 @@
   // key: cancel | refund:<paymentId> | note:<requestId>
   function reasonValue(key) {
     if (key === 'cancel') return state.cancelReason;
+    if (key === 'items') return state.itemReason;
     if (key.indexOf('refund:') === 0) return state.refundReasons[key.slice(7)] || '';
     return state.refundNotes[key.slice(5)] || '';
   }
 
   function setReasonValue(key, value) {
     if (key === 'cancel') state.cancelReason = value;
+    else if (key === 'items') state.itemReason = value;
     else if (key.indexOf('refund:') === 0) state.refundReasons[key.slice(7)] = value;
     else state.refundNotes[key.slice(5)] = value;
   }
@@ -924,6 +942,7 @@
   function renderReasonField(key, label) {
     var choice = state.reasonChoices[key] || '';
     var textAttr = key === 'cancel' ? 'id="cancel-reason"'
+      : key === 'items' ? 'data-item-reason="1"'
       : key.indexOf('refund:') === 0 ? 'data-refund-reason="' + escapeHtml(key.slice(7)) + '"'
       : 'data-refund-note="' + escapeHtml(key.slice(5)) + '"';
     var options = '<option value="">Gerekçe seçin</option>' +
@@ -942,6 +961,16 @@
 
   function onReasonChange(event) {
     var el = event.target;
+    if (el.getAttribute && el.getAttribute('data-item-payment') !== null) {
+      state.itemPayment = el.value;
+      render();
+      return;
+    }
+    if (el.getAttribute && el.getAttribute('data-item-stock') !== null) {
+      state.itemStock = el.value;
+      render();
+      return;
+    }
     var key = el.getAttribute && el.getAttribute('data-reason-select');
     if (!key) return;
     state.reasonChoices[key] = el.value;
@@ -971,6 +1000,79 @@
       renderReasonField('cancel', 'İptal gerekçesi') +
       confirmButtons('cancel', '', 'Hesabı iptal et', 'Evet, hesabı iptal et', disabled || (state.cancelReason.trim() ? '' : ' disabled'), 'sp-btn-secondary') +
       '</div>'
+    );
+  }
+
+  function parseQuantity(value) {
+    var text = String(value || '').trim().replace(',', '.');
+    if (!text) return null;
+    var parsed = Number(text);
+    return isFinite(parsed) && parsed >= 0 ? parsed : NaN;
+  }
+
+  function itemLeft(item) {
+    return item.quantity - (item.refundedQuantity || 0);
+  }
+
+  function itemPayments() {
+    return state.summary.allocations.filter(function (line) {
+      return (line.paymentStatus === 'Approved' || line.paymentStatus === 'PartiallyRefunded') && !openRefundFor(line.paymentId);
+    });
+  }
+
+  function refundableItems() {
+    if (state.refundListFailed || itemPayments().length === 0) return [];
+    return state.billItems.filter(function (item) { return itemLeft(item) > 0; });
+  }
+
+  // Selected lines, or null when any typed quantity is not a number within what is left.
+  function chosenItems() {
+    var chosen = [];
+    var valid = true;
+    refundableItems().forEach(function (item) {
+      var quantity = parseQuantity(state.itemQty[item.billItemId]);
+      if (quantity === null || quantity === 0) return;
+      if (isNaN(quantity) || quantity > itemLeft(item)) {
+        valid = false;
+        return;
+      }
+      chosen.push({ billItemId: item.billItemId, quantity: quantity, restoreStock: state.itemStock === 'yes' });
+    });
+    return valid ? chosen : null;
+  }
+
+  function itemsReady() {
+    var chosen = chosenItems();
+    return !!chosen && chosen.length > 0 && !!state.itemPayment && !!state.itemStock && !!state.itemReason.trim();
+  }
+
+  function renderItemRefund() {
+    var items = refundableItems();
+    if (items.length === 0) return '';
+    var disabled = state.refundBusy ? ' disabled' : '';
+    var quantities = items.map(function (item) {
+      return (
+        '<label class="sp-field"><span class="sp-field-label">' + escapeHtml(item.name) + ' · kalan ' + itemLeft(item) +
+        ' · iade adedi</span>' +
+        '<input class="sp-input" type="text" inputmode="decimal" data-item-qty="' + escapeHtml(item.billItemId) + '" value="' +
+        escapeHtml(state.itemQty[item.billItemId] || '') + '"' + disabled + '></label>'
+      );
+    }).join('');
+    var paymentOptions = '<option value="">Ödeme seçin</option>' + itemPayments().map(function (line) {
+      return '<option value="' + escapeHtml(line.paymentId) + '"' + (state.itemPayment === line.paymentId ? ' selected' : '') + '>' +
+        'Ödeme · ' + escapeHtml(formatMoney(line.amount)) + '</option>';
+    }).join('');
+    var stockOptions =
+      '<option value="">Seçin</option>' +
+      '<option value="yes"' + (state.itemStock === 'yes' ? ' selected' : '') + '>Evet, stoğa geri dönsün</option>' +
+      '<option value="no"' + (state.itemStock === 'no' ? ' selected' : '') + '>Hayır, stoğa dönmesin</option>';
+    return (
+      '<div class="sp-field" id="item-refund"><span class="sp-field-label">Ürün bazlı iade</span>' + quantities +
+      '<select class="sp-input" data-item-payment="1" aria-label="İadenin düşeceği ödeme"' + disabled + '>' + paymentOptions + '</select>' +
+      '<select class="sp-input" data-item-stock="1" aria-label="Stoğa geri dönüş"' + disabled + '>' + stockOptions + '</select>' +
+      renderReasonField('items', 'İade gerekçesi') +
+      '<button class="sp-btn sp-btn-secondary" type="button" data-refund-action="request-items"' +
+      (state.refundBusy || !itemsReady() ? ' disabled' : '') + '>Seçilen ürünleri iade et</button></div>'
     );
   }
 
@@ -1048,7 +1150,7 @@
         ? '<div class="sp-alert-body" role="status">' + escapeHtml(state.refundNotice) + '</div>'
         : '') +
       renderAllowanceLine() +
-      renderRefundLines() + renderRefundRequests() + (includeCancel ? renderCancelSection() : '')
+      renderRefundLines() + renderItemRefund() + renderRefundRequests() + (includeCancel ? renderCancelSection() : '')
     );
   }
 
@@ -1083,6 +1185,11 @@
       call = api(billBase() + '/refund-requests', {
         method: 'POST', body: { paymentId: paymentId, reason: state.refundReasons[paymentId] || '' },
       });
+    } else if (action === 'request-items') {
+      call = api(billBase() + '/refund-requests', {
+        method: 'POST',
+        body: { paymentId: state.itemPayment, reason: state.itemReason, items: chosenItems() || [] },
+      });
     } else if (action === 'approve') {
       call = api(refundsBase() + '/' + requestId + '/approve', { method: 'POST' });
     } else if (action === 'reject') {
@@ -1111,14 +1218,25 @@
         render();
         return;
       }
-      var fromAllowance = action === 'request' && result.body && result.body.approvedFromAllowance;
+      var asksRefund = action === 'request' || action === 'request-items';
+      var fromAllowance = asksRefund && result.body && result.body.approvedFromAllowance;
       state.refundNotice = fromAllowance
         ? (result.body.status === 'Completed'
           ? 'İade vardiya bütçenizden tamamlandı.'
           : 'İade vardiya bütçenizden ayrıldı; fiş numarasını girerek tamamlayın.')
-        : action === 'request' ? 'İade isteği gönderildi; onay bekliyor.'
+        : asksRefund ? 'İade isteği gönderildi; onay bekliyor.'
         : action === 'reject' ? 'İade isteği reddedildi.'
         : action === 'approve' ? 'İade isteği onaylandı.' : 'İade tamamlandı.';
+      if (action === 'request-items') {
+        if (result.body && result.body.amount != null) {
+          state.refundNotice += ' İade tutarı: ' + formatMoney(result.body.amount);
+        }
+        state.itemQty = {};
+        state.itemPayment = '';
+        state.itemStock = '';
+        state.itemReason = '';
+        delete state.reasonChoices.items;
+      }
       loadEverything();
     }).catch(function () {
       state.refundBusy = false;
@@ -1137,6 +1255,11 @@
     if (element && !element.disabled) refundAction(element.getAttribute('data-refund-action'), element);
   }
 
+  function toggleItemsButton() {
+    var button = app.querySelector('[data-refund-action="request-items"]');
+    if (button) button.disabled = state.refundBusy || !itemsReady();
+  }
+
   function onRefundInput(event) {
     var el = event.target;
     var filled = !!String(el.value || '').trim();
@@ -1153,6 +1276,17 @@
     if (reasonFor) {
       state.refundReasons[reasonFor] = el.value;
       toggle('[data-refund-action="request"][data-payment-id="' + reasonFor + '"]');
+      return;
+    }
+    var qtyFor = el.getAttribute && el.getAttribute('data-item-qty');
+    if (qtyFor) {
+      state.itemQty[qtyFor] = el.value;
+      toggleItemsButton();
+      return;
+    }
+    if (el.getAttribute && el.getAttribute('data-item-reason') !== null) {
+      state.itemReason = el.value;
+      toggleItemsButton();
       return;
     }
     var slipFor = el.getAttribute && el.getAttribute('data-refund-slip');

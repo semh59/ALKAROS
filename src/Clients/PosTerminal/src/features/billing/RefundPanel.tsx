@@ -3,7 +3,7 @@ import { Button, SelectField, StateMessage, TextField } from "../../design-syste
 import { refundMethodLabels, refundStatusLabels, refundText } from "../../strings";
 import {
   RefundApiError, describeAllowanceFailure, describeRefundFailure,
-  type BillTenderSummary, type BillingRefundClient, type RefundAllowance, type RefundRequestRow,
+  type BillReceiptItem, type BillTenderSummary, type BillingRefundClient, type RefundAllowance, type RefundRequestRow,
 } from "./refundApi";
 
 export interface RefundPanelProps {
@@ -32,6 +32,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
   const [error, setError] = useState<string>();
   const [notice, setNotice] = useState<string>();
   const [allowance, setAllowance] = useState<RefundAllowance | null>(null);
+  const [billItems, setBillItems] = useState<readonly BillReceiptItem[]>([]);
   const [cancelled, setCancelled] = useState(false);
   const [confirming, setConfirming] = useState<string | null>(null);
   const [texts, setTexts] = useState<Record<string, string>>({});
@@ -75,8 +76,11 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
         // The remaining allowance is a convenience; when it cannot be read the refund flow is unaffected.
         shift = await client.getAllowance().catch(() => null);
       }
+      // The item list only feeds the item refund block; without it the whole-payment refund still works.
+      const lines = canRequestRefund && !failed ? await client.getItems().catch(() => []) : [];
       setTenders(summary);
       setAllowance(shift);
+      setBillItems(lines);
       setRequests(rows);
       setListFailed(failed);
       setLoadError(false);
@@ -107,10 +111,13 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
       const fromAllowance = action === "request" && result && result.approvedFromAllowance
         ? (result.status === "Completed" ? refundText.completedFromAllowance : refundText.reservedFromAllowance)
         : undefined;
-      setNotice(fromAllowance ?? {
+      const base = fromAllowance ?? {
         request: refundText.requested, approve: refundText.approved, reject: refundText.rejected,
         complete: refundText.completed, allowance: refundText.allowanceGranted,
-      }[action as Exclude<Action, "cancel">]);
+      }[action as Exclude<Action, "cancel">];
+      setNotice(action === "request" && result && result.items?.length
+        ? `${base} ${refundText.itemsAmount}: ${money(result.amount)}`
+        : base);
       await load();
     } catch (reason) {
       setError(describe(reason));
@@ -136,7 +143,23 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
     : [];
   const listBlocksRefund = canRequestRefund && listFailed && approvedLines.length > 0;
   const showCancel = canCancel && tenders.allocations.length === 0 && !tenders.unsettledPayment;
-  if (!showCancel && refundable.length === 0 && requests.length === 0 && !notice && !error && !listBlocksRefund) return null;
+  const itemPayments = canRequestRefund && !listFailed
+    ? tenders.allocations.filter((line) =>
+      (line.paymentStatus === "Approved" || line.paymentStatus === "PartiallyRefunded")
+      && !requests.some((row) => row.paymentId === line.paymentId && isOpen(row)))
+    : [];
+  const refundableItems = itemPayments.length > 0 ? billItems.filter((item) => item.quantity - item.refundedQuantity > 0) : [];
+  const chosenItems = refundableItems
+    .map((item) => ({ item, quantity: parseAmount(texts[`qty:${item.billItemId}`]) ?? 0 }))
+    .filter(({ quantity }) => quantity > 0);
+  const itemsInvalid = refundableItems.some((item) => {
+    const quantity = parseAmount(texts[`qty:${item.billItemId}`]);
+    return filled(texts[`qty:${item.billItemId}`]) && (quantity === null || quantity > item.quantity - item.refundedQuantity);
+  });
+  const itemsReady = chosenItems.length > 0 && !itemsInvalid && filled(texts["items-payment"])
+    && filled(texts["items-stock"]) && filled(texts["items-reason"]);
+  if (!showCancel && refundable.length === 0 && requests.length === 0 && !notice && !error && !listBlocksRefund
+    && refundableItems.length === 0) return null;
 
   // Destructive buttons ask once more instead of acting on the first tap.
   function guarded(key: string, label: string, confirmLabel: string, variant: "primary" | "secondary", disabled: boolean, action: Action, call: () => Promise<RefundRequestRow | void>) {
@@ -167,6 +190,34 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
           {refundText.refundAction}
         </Button>
       </div>)}
+    </div>}
+
+    {refundableItems.length > 0 && <div className="refund-panel__group">
+      <h3>{refundText.itemsHeading}</h3>
+      {refundableItems.map((item) => <TextField
+        key={item.billItemId}
+        label={`${item.name} · ${refundText.itemsLeft} ${item.quantity - item.refundedQuantity} · ${refundText.itemsQuantityLabel}`}
+        inputMode="decimal"
+        value={texts[`qty:${item.billItemId}`] ?? ""}
+        onChange={(event) => setText(`qty:${item.billItemId}`, event.target.value)}
+      />)}
+      <SelectField label={refundText.itemsPaymentLabel} value={texts["items-payment"] ?? ""} disabled={busy} onChange={(event) => setText("items-payment", event.target.value)}>
+        <option value="">{refundText.itemsPaymentPlaceholder}</option>
+        {itemPayments.map((line) => <option key={line.paymentId} value={line.paymentId}>{refundText.itemsPaymentOption} · {money(line.amount)}</option>)}
+      </SelectField>
+      <SelectField label={refundText.itemsStockLabel} value={texts["items-stock"] ?? ""} disabled={busy} onChange={(event) => setText("items-stock", event.target.value)}>
+        <option value="">{refundText.itemsStockPlaceholder}</option>
+        <option value="yes">{refundText.itemsStockYes}</option>
+        <option value="no">{refundText.itemsStockNo}</option>
+      </SelectField>
+      {reasonField("items-reason", refundText.refundReasonLabel)}
+      <Button variant="secondary" disabled={busy || !itemsReady} onClick={() => void run("request", () => client.requestRefund(
+        texts["items-payment"] ?? "",
+        texts["items-reason"] ?? "",
+        chosenItems.map(({ item, quantity }) => ({ billItemId: item.billItemId, quantity, restoreStock: texts["items-stock"] === "yes" })),
+      ))}>
+        {refundText.itemsAction}
+      </Button>
     </div>}
 
     {requests.length > 0 && <div className="refund-panel__group">
