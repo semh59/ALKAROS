@@ -21,6 +21,9 @@ PosTerminal ekranındaki yakalanmamış hatalar ve ağ hataları sunucuya raporl
 - `src/Clients/PosTerminal/src/features/error-reporting/**`
 - `src/Host/Observability/BrowserErrors/**`
 - `tests/Host/Observability/BrowserErrors/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız uç nokta ve servis kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/main.tsx - yalnız raporlayıcıyı başlatan satır
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
