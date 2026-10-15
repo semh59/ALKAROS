@@ -23,6 +23,7 @@ Yetki reddi yağmuru, kaba kuvvet giriş denemesi ve outbox kalıcı başarısı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız dedektör kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Endpoints.cs - yalnız giriş başarısızlığı bildirimi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Observability/ServerDetectors/ServerDetectors.cs - yalnız ara katmanın yazıcı yokken çalışabilmesi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
