@@ -1,0 +1,6 @@
+disk threshold raised: KILLED 
+critical threshold lost: KILLED 
+memory threshold raised: KILLED 
+clean close counted: KILLED 
+disconnect swallowed: KILLED 
+error disconnect uncounted: KILLED
