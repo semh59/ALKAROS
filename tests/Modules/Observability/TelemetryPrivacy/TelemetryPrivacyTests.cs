@@ -24,35 +24,57 @@ public sealed class TelemetryPrivacyTests : IClassFixture<RetentionDatabase>
 
     public TelemetryPrivacyTests(RetentionDatabase database) => _database = database;
 
-    public static TheoryData<string> Sensitive => new()
+    public static TheoryData<string> Secret => new()
     {
-        "ali@example.com", "0532 123 45 67", "+90 532 123 45 67", "05321234567", "10000000146",
-        "TR33 0006 1005 1978 6457 8413 26", "4111 1111 1111 1111", "kart 4111111111111111 hata",
-        "musteri ayse.yilmaz@firma.com.tr", "tel:(532) 123 45 67", "TR330006100519786457841326", "tc 10000000146 bulundu",
+        "4111 1111 1111 1111", "kart 4111111111111111 hata", "Bearer abcdefgh12345678",
+        "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.dBjftJeZ4CVPmB92K27uhbUJU1p1r",
+    };
+
+    public static TheoryData<string> PersonalContext => new()
+    {
+        "ali@example.com", "0532 123 45 67", "+90 532 123 45 67", "10000000146",
+        "TR33 0006 1005 1978 6457 8413 26", "musteri ayse.yilmaz@firma.com.tr", "tutar 125,50 TL siparis 1042",
     };
 
     [Theory]
-    [MemberData(nameof(Sensitive))]
-    public void ASensitiveValueIsReplacedAndNeverStored(string value)
+    [MemberData(nameof(Secret))]
+    public void ASecretLookingValueIsReplacedAndNeverStored(string value)
     {
         var clean = TelemetryPrivacyGuard.Sanitize(new Dictionary<string, string?> { ["category"] = value });
 
         clean["category"].Should().Be(TelemetryPrivacyGuard.Redacted);
     }
 
+    [Theory]
+    [MemberData(nameof(PersonalContext))]
+    public void PersonalAndPaymentContextPassesThroughByProductDecision(string value)
+    {
+        var clean = TelemetryPrivacyGuard.Sanitize(new Dictionary<string, string?> { ["customer_note"] = value });
+
+        clean["customer_note"].Should().Be(value);
+    }
+
     [Fact]
-    public void OnlyAllowlistedFieldsSurviveAndOrdinaryValuesAreKept()
+    public void SecretNamedFieldsAreDroppedAndContextFieldsKept()
     {
         var clean = TelemetryPrivacyGuard.Sanitize(new Dictionary<string, string?>
         {
             ["action_key"] = "order.confirm",
-            ["duration_ms"] = "123",
-            ["button_text"] = "Siparişi onayla",
-            ["typed_value"] = "Ayşe",
+            ["error_code"] = "PAYMENT_DECLINED",
+            ["amount"] = "125.50",
+            ["password"] = "x",
+            ["api_key"] = "y",
+            ["Authorization"] = "Bearer z",
+            ["card_number"] = "4111111111111111",
             ["status_code"] = null,
         });
 
-        clean.Should().BeEquivalentTo(new Dictionary<string, string> { ["action_key"] = "order.confirm", ["duration_ms"] = "123" });
+        clean.Should().BeEquivalentTo(new Dictionary<string, string>
+        {
+            ["action_key"] = "order.confirm",
+            ["error_code"] = "PAYMENT_DECLINED",
+            ["amount"] = "125.50",
+        });
     }
 
     [Fact]

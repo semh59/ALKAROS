@@ -3,33 +3,35 @@ using System.Text.RegularExpressions;
 namespace ALKAROS.Observability.TelemetryPrivacy;
 
 /// <summary>
-/// Everything the monitoring system stores passes through here first: only fields on the allowlist survive,
-/// and a value that looks like personal or payment data is replaced, never stored.
+/// Everything the monitoring system stores passes through here first. Personal and payment context (names,
+/// phones, e-mail, IBAN, amounts, identifiers) and error codes are allowed to pass by product decision; secrets
+/// never are: fields named like a secret are dropped, and values that look like a card number, a bearer or
+/// JWT token or a long secret string are replaced.
 /// </summary>
 public static class TelemetryPrivacyGuard
 {
     public const string Redacted = "[gizlendi]";
     public const int MaxValueLength = 200;
 
-    public static readonly IReadOnlySet<string> AllowedFields = new HashSet<string>(StringComparer.Ordinal)
-    {
-        "layer", "severity", "category", "action_key", "route_key", "status_code", "duration_ms",
-        "terminal_label", "role_code", "trace_id", "occurred_at", "count", "event_id", "error_type",
-    };
+    /// <summary>Field names that carry secrets; such fields are never stored, whatever their value.</summary>
+    private static readonly Regex ForbiddenField = new(
+        @"pass(word|wd)?|secret|token|cvv|cvc|card_?(number|no)|\bpan\b|authorization|cookie|api_?key|private_?key",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private static readonly Regex Email = new(@"[A-Za-z0-9._%+\-]+@[A-Za-z0-9.\-]+\.[A-Za-z]{2,}", RegexOptions.Compiled);
-    private static readonly Regex Iban = new(@"\bTR\d{2}[ ]?(?:\d{4}[ ]?){5}\d{2}\b", RegexOptions.Compiled | RegexOptions.IgnoreCase);
-    private static readonly Regex Phone = new(@"(?<!\d)(?:\+?90|0)?[ ]?\(?5\d{2}\)?[ ]?\d{3}[ ]?\d{2}[ ]?\d{2}(?!\d)", RegexOptions.Compiled);
+    private static readonly Regex BearerOrJwt = new(
+        @"\bBearer\s+[A-Za-z0-9._\-]{8,}|\beyJ[A-Za-z0-9_\-]{5,}\.[A-Za-z0-9_\-]{5,}\.[A-Za-z0-9_\-]{5,}",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
     private static readonly Regex Digits = new(@"\d[\d \-]{9,}\d", RegexOptions.Compiled);
 
-    /// <summary>Returns only allowlisted fields; sensitive-looking values are replaced and long values clipped.</summary>
+    /// <summary>Drops secret-named fields; secret-looking values are replaced and long values clipped.</summary>
     public static IReadOnlyDictionary<string, string> Sanitize(IReadOnlyDictionary<string, string?> fields)
     {
         ArgumentNullException.ThrowIfNull(fields);
         var result = new Dictionary<string, string>(StringComparer.Ordinal);
         foreach (var (key, value) in fields)
         {
-            if (!AllowedFields.Contains(key) || value is null)
+            if (value is null || ForbiddenField.IsMatch(key))
                 continue;
             var clean = LooksSensitive(value) ? Redacted : value;
             result[key] = clean.Length > MaxValueLength ? clean[..MaxValueLength] : clean;
@@ -42,26 +44,16 @@ public static class TelemetryPrivacyGuard
     {
         if (string.IsNullOrEmpty(value))
             return false;
-        if (Email.IsMatch(value) || Iban.IsMatch(value) || Phone.IsMatch(value))
+        if (BearerOrJwt.IsMatch(value))
             return true;
         foreach (Match match in Digits.Matches(value))
         {
             var digits = new string(match.Value.Where(char.IsDigit).ToArray());
-            if (IsTurkishId(digits) || IsCardNumber(digits))
+            if (IsCardNumber(digits))
                 return true;
         }
 
         return false;
-    }
-
-    private static bool IsTurkishId(string d)
-    {
-        if (d.Length != 11 || d[0] == '0')
-            return false;
-        var v = d.Select(c => c - '0').ToArray();
-        var tenth = ((v[0] + v[2] + v[4] + v[6] + v[8]) * 7 - (v[1] + v[3] + v[5] + v[7])) % 10;
-        if (tenth < 0) tenth += 10;
-        return tenth == v[9] && v.Take(10).Sum() % 10 == v[10];
     }
 
     private static bool IsCardNumber(string d)
