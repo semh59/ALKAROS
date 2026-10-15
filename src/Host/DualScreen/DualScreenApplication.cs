@@ -1,3 +1,4 @@
+using ALKAROS.Host.Observability.HealthSnapshot;
 using ALKAROS.Host.Observability.SecurityDetectors;
 using ALKAROS.Host.Observability.ServerDetectors;
 using ALKAROS.Host.Observability.Wiring;
@@ -189,6 +190,7 @@ public static partial class DualScreenApplication
         builder.Services.AddMonitoringDataSource(options.ConnectionString);
         builder.Services.AddServerErrorDetection();
         builder.Services.AddSecurityDetection();
+        builder.Services.AddHealthSnapshotJob();
         // V1-RMD-326 (independent 2026-09-26 audit, finding K14): the first real health probe - see
         // DatabaseHealthProbeHostedService's own doc comment for why this was needed at all (before this
         // fix, POST /health-checks only ever recorded whatever status a caller claimed, never anything

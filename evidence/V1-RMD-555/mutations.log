@@ -1,0 +1,6 @@
+unhealthy threshold off: KILLED
+degraded threshold off: KILLED
+zero total healthy: KILLED
+db size zero: KILLED
+free bytes zero: KILLED
+db status always healthy: KILLED (UnreachableDatabaseIsReportedUnhealthyWithZeroSize eklendikten sonra)
