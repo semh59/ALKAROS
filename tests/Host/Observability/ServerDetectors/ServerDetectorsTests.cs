@@ -39,6 +39,9 @@ public sealed class ServerDetectorsTests : IClassFixture<DetectorsDatabase>
         await _database.ScalarAsync<long>(
             $"SELECT count(*) FROM observability.error_events WHERE category = '{category}';");
 
+    private Task<long> ApiOccurrencesAsync() => _database.ScalarAsync<long>(
+        "SELECT COALESCE(sum(occurrence_count), 0)::bigint FROM observability.error_events WHERE category = 'api.unhandled_exception';");
+
     private static async Task<bool> ObserveAsync(ErrorEventWriter writer, Exception exception)
     {
         var observer = new ServerErrorObserver(writer);
@@ -77,11 +80,25 @@ public sealed class ServerDetectorsTests : IClassFixture<DetectorsDatabase>
     public async Task LockNotAvailableDatabaseFaultIsRecorded()
     {
         await using var writer = NewWriter();
+        var apiBefore = await ApiOccurrencesAsync();
         var fault = new PostgresException("lock timeout", "ERROR", "ERROR", "55P03");
 
         await ObserveAsync(writer, new InvalidOperationException("wrapped", fault));
 
         (await CountCategoryAsync("db.lock_not_available")).Should().Be(1);
+        (await ApiOccurrencesAsync()).Should().Be(apiBefore);
+    }
+
+    [Fact]
+    public async Task ObserverFailureDoesNotBreakTheErrorHandlerChain()
+    {
+        await using var writer = NewWriter();
+        await writer.DisposeAsync();
+        var observer = new ServerErrorObserver(writer);
+
+        var handled = await observer.TryHandleAsync(new DefaultHttpContext(), new InvalidOperationException("x"), CancellationToken.None);
+
+        handled.Should().BeFalse();
     }
 
     [Fact]

@@ -12,11 +12,17 @@ public sealed class CrashChannelTests : IDisposable
     private sealed class FakeNotifier : ICriticalNotifier
     {
         public bool Accept { get; set; }
+        public bool ThrowTimeout { get; set; }
+        public int? FailAfter { get; set; }
         public List<CriticalNotice> Sent { get; } = [];
         public int Calls { get; private set; }
 
         public Task<bool> SendAsync(CriticalNotice notice, CancellationToken cancellationToken)
         {
+            if (ThrowTimeout)
+                throw new TaskCanceledException("timeout");
+            if (FailAfter is { } limit && Sent.Count >= limit)
+                return Task.FromResult(false);
             Calls++;
             if (Accept)
                 Sent.Add(notice);
@@ -98,5 +104,48 @@ public sealed class CrashChannelTests : IDisposable
         await watchdog.CheckOnceAsync();
         notifier.Sent.Should().HaveCount(2);
         watchdog.Heartbeats.Should().Be(6);
+    }
+
+    [Fact]
+    public void CorruptLineIsSkippedAndGoodNoticesSurvive()
+    {
+        var buffer = new LocalFileBuffer(_path);
+        buffer.Append(Notice("good.1"));
+        File.AppendAllText(_path, "{\"Layer\":\"Data\n");
+        buffer.Append(Notice("good.2"));
+
+        buffer.ReadAll().Select(n => n.Category).Should().Equal("good.1", "good.2");
+    }
+
+    [Fact]
+    public async Task PartialDrainKeepsUnsentAndLateNoticesWithoutResending()
+    {
+        var notifier = new FakeNotifier();
+        var buffer = new LocalFileBuffer(_path);
+        buffer.Append(Notice("a"));
+        buffer.Append(Notice("b"));
+        var channel = new CriticalOutageChannel(notifier, buffer, new CircuitBreaker(5, TimeSpan.Zero));
+        notifier.Accept = true;
+        notifier.FailAfter = 1;
+
+        (await channel.DrainAsync()).Should().Be(1);
+        buffer.Append(Notice("late"));
+
+        buffer.ReadAll().Select(n => n.Category).Should().Equal("b", "late");
+        notifier.FailAfter = null;
+        (await channel.DrainAsync()).Should().Be(2);
+        notifier.Sent.Select(n => n.Category).Should().Equal("a", "b", "late");
+    }
+
+    [Fact]
+    public async Task NotifierTimeoutIsBufferedInsteadOfLost()
+    {
+        var notifier = new FakeNotifier { ThrowTimeout = true };
+        var buffer = new LocalFileBuffer(_path);
+        var channel = new CriticalOutageChannel(notifier, buffer, new CircuitBreaker(5, TimeSpan.Zero));
+
+        (await channel.ReportAsync(Notice())).Should().BeFalse();
+
+        buffer.ReadAll().Should().HaveCount(1);
     }
 }

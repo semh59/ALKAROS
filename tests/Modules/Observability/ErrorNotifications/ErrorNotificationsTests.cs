@@ -109,7 +109,7 @@ public sealed class ErrorNotificationsTests : IClassFixture<NotificationsDatabas
         await ResetAsync();
         var channel = new FakeChannel();
         for (var i = 0; i < 3; i++)
-            channel.Results.Enqueue(new NotificationSendResult(NotificationOutcome.RetryLater));
+            channel.Results.Enqueue(new NotificationSendResult(NotificationOutcome.Rejected));
         await Queue().OnChangesAsync([Change("fp3", ErrorSeverity.Critical)], CancellationToken.None);
 
         for (var i = 0; i < 3; i++)
@@ -224,5 +224,61 @@ public sealed class ErrorNotificationsTests : IClassFixture<NotificationsDatabas
         new TelegramChannel(client, () => (null, "42")).IsConfigured.Should().BeFalse();
         new TelegramChannel(client, () => ("k", "42")).IsConfigured.Should().BeTrue();
         await Task.CompletedTask;
+    }
+
+    [Fact]
+    public async Task NetworkOutageNeverExhaustsAttemptsAndDeliversWhenItReturns()
+    {
+        await ResetAsync();
+        var channel = new FakeChannel();
+        for (var i = 0; i < 6; i++)
+            channel.Results.Enqueue(new NotificationSendResult(NotificationOutcome.RetryLater));
+        await Queue().OnChangesAsync([Change("fp8", ErrorSeverity.Critical)], CancellationToken.None);
+
+        for (var i = 0; i < 7; i++)
+        {
+            await Dispatcher(channel).RunOnceAsync();
+            _now = _now.AddMinutes(11);
+        }
+
+        (await CountStateAsync("Failed")).Should().Be(0);
+        (await CountStateAsync("Sent")).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task SecondDispatcherDoesNothingWhileTheFirstHoldsTheLock()
+    {
+        await ResetAsync();
+        var channel = new FakeChannel();
+        await Queue().OnChangesAsync([Change("fp9", ErrorSeverity.Critical)], CancellationToken.None);
+        await using var holder = await _database.DataSource.OpenConnectionAsync();
+        await using (var command = new Npgsql.NpgsqlCommand("SELECT pg_advisory_lock(538001);", holder))
+            await command.ExecuteScalarAsync();
+
+        var summary = await Dispatcher(channel).RunOnceAsync();
+
+        summary.Sent.Should().Be(0);
+        channel.Texts.Should().BeEmpty();
+        await using (var unlock = new Npgsql.NpgsqlCommand("SELECT pg_advisory_unlock(538001);", holder))
+            await unlock.ExecuteScalarAsync();
+    }
+
+    [Fact]
+    public void ForeignTerminalLabelIsDroppedFromTheMessage()
+    {
+        var item = new NotificationItem(1, "f", "db.down", "Critical", "Ali Veli <script>", "Critical", 0, T0);
+
+        NotificationText.Critical(item).Should().NotContain("Ali").And.NotContain("script");
+    }
+
+    [Fact]
+    public async Task OversizedRetryAfterIsClampedInsteadOfCrashing()
+    {
+        using var client = new HttpClient(new StatusHandler(HttpStatusCode.TooManyRequests, "{\"parameters\":{\"retry_after\":99999999999}}"));
+        var channel = new TelegramChannel(client, () => ("k", "42"));
+
+        var result = await channel.SendAsync("x", CancellationToken.None);
+
+        result.RetryAfter.Should().Be(TimeSpan.FromSeconds(30));
     }
 }

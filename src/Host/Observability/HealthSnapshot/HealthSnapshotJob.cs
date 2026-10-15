@@ -55,6 +55,11 @@ public sealed class HealthSnapshotJob(
 {
     public static readonly TimeSpan DefaultInterval = TimeSpan.FromSeconds(60);
 
+    /// <summary>Capture runs that failed since start; the screen keeps showing the last good snapshot meanwhile.</summary>
+    public long Failures => Interlocked.Read(ref failures);
+
+    private long failures;
+
     public async Task CaptureOnceAsync(CancellationToken cancellationToken)
     {
         var (database, diskStatus, usage, size) = await probe.CollectAsync(cancellationToken);
@@ -74,10 +79,10 @@ public sealed class HealthSnapshotJob(
             {
                 await CaptureOnceAsync(stoppingToken);
             }
-            catch (NpgsqlException)
+            catch (Exception exception) when (exception is not OperationCanceledException)
             {
                 // The next tick retries; a database outage is reported by the server detectors.
-                wait = interval ?? DefaultInterval;
+                Interlocked.Increment(ref failures);
             }
 
             await Task.Delay(wait, stoppingToken);

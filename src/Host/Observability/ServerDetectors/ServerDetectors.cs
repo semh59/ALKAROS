@@ -40,6 +40,21 @@ public sealed class ServerErrorObserver(ErrorEventWriter writer) : IExceptionHan
 
     public ValueTask<bool> TryHandleAsync(HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
+        try
+        {
+            Observe(httpContext, exception);
+        }
+        catch (Exception observerFailure) when (observerFailure is not OperationCanceledException)
+        {
+            // Observing is best effort: the shared handler must still answer the request.
+            return ValueTask.FromResult(false);
+        }
+
+        return ValueTask.FromResult(false);
+    }
+
+    private void Observe(HttpContext httpContext, Exception exception)
+    {
         var route = RouteOf(httpContext);
         var trace = Activity.Current?.TraceId.ToString() ?? httpContext.TraceIdentifier;
         var pg = FindPostgres(exception);
@@ -47,6 +62,7 @@ public sealed class ServerErrorObserver(ErrorEventWriter writer) : IExceptionHan
         {
             writer.TryEnqueue(new ErrorEventInput(
                 ErrorLayer.Database, known.Severity, known.Category, $"sqlstate {pg.SqlState} on {route}", trace));
+            return;
         }
 
         var (status, _, _) = ApiExceptionHandler.Resolve(ApiErrorScope.Entered(httpContext), exception);
@@ -56,8 +72,6 @@ public sealed class ServerErrorObserver(ErrorEventWriter writer) : IExceptionHan
                 ErrorLayer.Api, ErrorSeverity.Critical, "api.unhandled_exception",
                 $"{exception.GetType().Name} on {route}", trace));
         }
-
-        return ValueTask.FromResult(false);
     }
 
     private static PostgresException? FindPostgres(Exception exception)
@@ -114,7 +128,7 @@ public sealed class ErrorEventWriterHostedService(ErrorEventWriter writer) : IHo
 
 /// <summary>Deletes expired monitoring rows once a day and writes one audit event per run.</summary>
 public sealed class ErrorRetentionHostedService(
-    MonitoringDataSource monitoring, IAuditEventStore audit, TimeSpan? interval = null) : BackgroundService
+    MonitoringDataSource monitoring, IAuditEventStore audit, TimeSpan? interval = null, ErrorEventWriter? writer = null) : BackgroundService
 {
     public static readonly IReadOnlyList<TelemetryRetentionPolicy> Policies =
     [
@@ -146,9 +160,10 @@ public sealed class ErrorRetentionHostedService(
             {
                 return;
             }
-            catch (Exception exception)
+            catch (Exception exception) when (exception is not OperationCanceledException)
             {
-                Debug.WriteLine($"Monitoring retention run failed: {exception.GetType().Name}");
+                writer?.TryEnqueue(new ErrorEventInput(
+                    ErrorLayer.Background, ErrorSeverity.Error, "monitoring.retention_failed", exception.GetType().Name));
             }
 
             await Task.Delay(wait, stoppingToken);
@@ -166,7 +181,8 @@ public static class ServerDetectorsExtensions
             sink: new AlertErrorEventSink(sp.GetRequiredService<IAlertService>())));
         services.AddHostedService<ErrorEventWriterHostedService>();
         services.AddHostedService(sp => new ErrorRetentionHostedService(
-            sp.GetRequiredService<MonitoringDataSource>(), sp.GetRequiredService<IAuditEventStore>()));
+            sp.GetRequiredService<MonitoringDataSource>(), sp.GetRequiredService<IAuditEventStore>(),
+            writer: sp.GetRequiredService<ErrorEventWriter>()));
         // The observer must run before the shared API error handler, which answers the request and ends the chain.
         services.Insert(0, ServiceDescriptor.Singleton<IExceptionHandler, ServerErrorObserver>());
         return services;

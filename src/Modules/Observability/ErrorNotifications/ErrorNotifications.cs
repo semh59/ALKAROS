@@ -28,9 +28,11 @@ public static class NotificationText
 {
     public static string Critical(NotificationItem item)
     {
-        var terminal = string.IsNullOrEmpty(item.TerminalLabel) ? string.Empty : $" | {item.TerminalLabel}";
+        var terminal = item.TerminalLabel is { Length: > 0 and <= 40 } label && label.All(IsLabelChar) ? $" | {label}" : string.Empty;
         return $"KRITIK: {item.Category} | {item.EnqueuedAt.ToLocalTime():HH:mm}{terminal}";
     }
+
+    private static bool IsLabelChar(char c) => char.IsAsciiLetterOrDigit(c) || c is ':' or '_' or '-';
 
     public static string Digest(IReadOnlyCollection<NotificationItem> items, DateTimeOffset now)
     {
@@ -95,6 +97,27 @@ public sealed class NotificationDispatcher(
         if (!channel.IsConfigured)
             return new DispatchSummary(0, 0, 0, 0, false);
 
+        // One dispatcher at a time across replicas: a second instance would send the same rows again.
+        await using var lockConnection = await dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using (var acquire = new NpgsqlCommand("SELECT pg_try_advisory_lock(538001);", lockConnection))
+        {
+            if (!(bool)(await acquire.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false))!)
+                return new DispatchSummary(0, 0, 0, 0, true);
+        }
+
+        try
+        {
+            return await DispatchAsync(cancellationToken).ConfigureAwait(false);
+        }
+        finally
+        {
+            await using var release = new NpgsqlCommand("SELECT pg_advisory_unlock(538001);", lockConnection);
+            await release.ExecuteScalarAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+    }
+
+    private async Task<DispatchSummary> DispatchAsync(CancellationToken cancellationToken)
+    {
         var now = _clock();
         var due = await LoadDueAsync(now, cancellationToken);
         int sent = 0, suppressed = 0, failed = 0, digested = 0;
@@ -172,8 +195,9 @@ public sealed class NotificationDispatcher(
         foreach (var item in items)
         {
             var attempts = item.Attempts + 1;
-            var exhausted = attempts >= maxAttempts;
-            var wait = result.RetryAfter ?? TimeSpan.FromSeconds(30 * attempts);
+            // A network outage must not burn the attempts: only an explicit rejection exhausts them.
+            var exhausted = result.Outcome == NotificationOutcome.Rejected && attempts >= maxAttempts;
+            var wait = result.RetryAfter ?? TimeSpan.FromSeconds(Math.Min(30 * attempts, 600));
             await using var command = dataSource.CreateCommand(
                 "UPDATE observability.notification_queue SET attempts = @a, state = @s, next_attempt_at = @n WHERE id = @id;");
             command.Parameters.AddWithValue("a", attempts);
@@ -298,8 +322,9 @@ public sealed class TelegramChannel(HttpClient client, Func<(string? BotKey, str
             using var json = await JsonDocument.ParseAsync(
                 await response.Content.ReadAsStreamAsync(cancellationToken).ConfigureAwait(false), cancellationToken: cancellationToken);
             if (json.RootElement.TryGetProperty("parameters", out var parameters)
-                && parameters.TryGetProperty("retry_after", out var seconds))
-                return TimeSpan.FromSeconds(seconds.GetInt32());
+                && parameters.TryGetProperty("retry_after", out var seconds)
+                && seconds.TryGetInt32(out var value))
+                return TimeSpan.FromSeconds(Math.Clamp(value, 1, 3600));
         }
         catch (JsonException)
         {

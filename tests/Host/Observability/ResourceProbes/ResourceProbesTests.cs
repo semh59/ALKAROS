@@ -108,4 +108,18 @@ public sealed class ResourceProbesTests : IClassFixture<ResourceDatabase>
         counter.Drops.Should().Be(1);
         continued.Should().Be(2);
     }
+
+    [Fact]
+    public async Task ProbeFailureIsCountedAndDoesNotStopTheService()
+    {
+        await using var writer = new ErrorEventWriter(_database.DataSource, flushInterval: TimeSpan.FromMinutes(5));
+        var monitor = new ResourceMonitor(writer, () => throw new IOException("drive gone"), () => (1, 100));
+        using var service = new ResourceMonitorHostedService(monitor, TimeSpan.FromMilliseconds(20));
+
+        await service.StartAsync(CancellationToken.None);
+        await Task.Delay(150);
+        await service.StopAsync(CancellationToken.None);
+
+        service.Failures.Should().BeGreaterThan(1);
+    }
 }

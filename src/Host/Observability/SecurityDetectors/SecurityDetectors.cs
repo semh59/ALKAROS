@@ -92,10 +92,12 @@ public sealed class OutboxDeadLetterWatcher(
             {
                 await CheckOnceAsync(stoppingToken);
             }
-            catch (NpgsqlException)
+            catch (Exception exception) when (exception is not OperationCanceledException)
             {
-                // The database being down is reported by the server detectors; the next poll retries.
-                _lastDead = -1;
+                // The database being down is reported by the server detectors; the next poll retries and
+                // keeps the last known count so deaths during the outage are still noticed.
+                writer.TryEnqueue(new ErrorEventInput(
+                    ErrorLayer.Background, ErrorSeverity.Warning, "monitoring.outbox_watch_failed", exception.GetType().Name));
             }
 
             await Task.Delay(wait, stoppingToken);
@@ -108,7 +110,7 @@ public static class SecurityDetectorsExtensions
     public static IServiceCollection AddSecurityDetection(this IServiceCollection services)
     {
         services.AddSingleton<SecurityBurstDetectors>();
-        services.AddScoped<IDenialEventSink>(sp => new ObservingDenialEventSink(
+        services.AddSingleton<IDenialEventSink>(sp => new ObservingDenialEventSink(
             new PostgresDenialEventSink(sp.GetRequiredService<NpgsqlDataSource>()),
             sp.GetRequiredService<SecurityBurstDetectors>()));
         services.AddHostedService(sp => new OutboxDeadLetterWatcher(

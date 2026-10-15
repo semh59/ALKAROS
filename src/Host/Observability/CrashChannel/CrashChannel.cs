@@ -31,14 +31,48 @@ public sealed class LocalFileBuffer(string path, long maxBytes = 5 * 1024 * 1024
                 Dropped++;
             }
 
-            File.WriteAllLines(path, lines);
+            WriteAtomically(lines);
         }
     }
 
+    /// <summary>Unreadable lines (for example a write cut short by a crash) are skipped, never fatal.</summary>
     public IReadOnlyList<CriticalNotice> ReadAll()
     {
         lock (_gate)
-            return ReadLines().Select(l => JsonSerializer.Deserialize<CriticalNotice>(l)!).ToList();
+        {
+            var notices = new List<CriticalNotice>();
+            foreach (var line in ReadLines())
+            {
+                try
+                {
+                    if (JsonSerializer.Deserialize<CriticalNotice>(line) is { } notice)
+                        notices.Add(notice);
+                }
+                catch (JsonException)
+                {
+                    Dropped++;
+                }
+            }
+
+            return notices;
+        }
+    }
+
+    /// <summary>Removes only the oldest lines that were actually delivered, so notices appended meanwhile survive.</summary>
+    public void RemoveFirst(int count)
+    {
+        lock (_gate)
+        {
+            var lines = ReadLines();
+            WriteAtomically(lines.Skip(Math.Min(count, lines.Count)).ToList());
+        }
+    }
+
+    private void WriteAtomically(List<string> lines)
+    {
+        var temp = path + ".tmp";
+        File.WriteAllLines(temp, lines);
+        File.Move(temp, path, overwrite: true);
     }
 
     public void Clear()
@@ -57,15 +91,31 @@ public sealed class CircuitBreaker(int failureThreshold, TimeSpan coolDown, Func
     private int _failures;
     private DateTimeOffset _openedAt;
 
-    public bool IsOpen => _failures >= failureThreshold && _clock() - _openedAt < coolDown;
+    private readonly object _gate = new();
 
-    public void Success() => _failures = 0;
+    public bool IsOpen
+    {
+        get
+        {
+            lock (_gate)
+                return _failures >= failureThreshold && _clock() - _openedAt < coolDown;
+        }
+    }
+
+    public void Success()
+    {
+        lock (_gate)
+            _failures = 0;
+    }
 
     public void Failure()
     {
-        _failures++;
-        if (_failures >= failureThreshold)
-            _openedAt = _clock();
+        lock (_gate)
+        {
+            _failures++;
+            if (_failures >= failureThreshold)
+                _openedAt = _clock();
+        }
     }
 }
 
@@ -96,10 +146,14 @@ public sealed class CriticalOutageChannel(ICriticalNotifier notifier, LocalFileB
             sent++;
         }
 
-        if (sent == pending.Count)
-            buffer.Clear();
+        if (sent > 0)
+            buffer.RemoveFirst(sent);
         return sent;
     }
+
+    internal static bool IsTransportFailure(Exception exception, CancellationToken cancellationToken) =>
+        exception is HttpRequestException or TimeoutException
+        || (exception is OperationCanceledException && !cancellationToken.IsCancellationRequested);
 
     private async Task<bool> TrySendAsync(CriticalNotice notice, CancellationToken cancellationToken)
     {
@@ -108,7 +162,7 @@ public sealed class CriticalOutageChannel(ICriticalNotifier notifier, LocalFileB
         {
             accepted = await notifier.SendAsync(notice, cancellationToken);
         }
-        catch (HttpRequestException)
+        catch (Exception exception) when (IsTransportFailure(exception, cancellationToken))
         {
             accepted = false;
         }
@@ -139,7 +193,7 @@ public sealed class OutageWatchdog(
         {
             healthy = await probe(cancellationToken);
         }
-        catch (HttpRequestException)
+        catch (Exception exception) when (CriticalOutageChannel.IsTransportFailure(exception, cancellationToken))
         {
             healthy = false;
         }

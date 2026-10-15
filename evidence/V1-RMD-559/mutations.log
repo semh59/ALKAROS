@@ -1,0 +1,7 @@
+drain clears whole buffer: KILLED 
+timeout not treated as transport failure: KILLED 
+corrupt line rethrows: KILLED
+outage exhausts attempts: KILLED 
+advisory lock ignored: KILLED 
+label not filtered: KILLED 
+db fault also api event: KILLED 

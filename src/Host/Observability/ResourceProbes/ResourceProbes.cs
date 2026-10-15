@@ -74,12 +74,22 @@ public sealed class ResourceMonitor(
 
 public sealed class ResourceMonitorHostedService(ResourceMonitor monitor, TimeSpan? interval = null) : BackgroundService
 {
+    public long Failures { get; private set; }
+
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var wait = interval ?? TimeSpan.FromSeconds(60);
         while (!stoppingToken.IsCancellationRequested)
         {
-            monitor.CheckOnce();
+            try
+            {
+                monitor.CheckOnce();
+            }
+            catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or InvalidOperationException)
+            {
+                Failures++;
+            }
+
             await Task.Delay(wait, stoppingToken);
         }
     }
