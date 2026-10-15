@@ -20,6 +20,8 @@ Mevcut sistem sağlığı görüntüsünü yazan kod bağlanır; yönetim ekran�
 - `evidence/V1-RMD-555/**`
 - `src/Host/Observability/HealthSnapshot/**`
 - `tests/Host/Observability/HealthSnapshot/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız periyodik görev kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
