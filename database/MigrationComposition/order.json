@@ -1612,6 +1612,15 @@
         "error_event_counters"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "188",
+      "phase": "B",
+      "tables": [
+        "notification_queue",
+        "notification_suppressions"
+      ],
+      "deferredConstraints": []
     }
   ]
 }
