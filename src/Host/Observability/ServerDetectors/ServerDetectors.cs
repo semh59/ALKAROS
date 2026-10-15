@@ -76,7 +76,7 @@ public sealed class ServerErrorObserver(ErrorEventWriter writer) : IExceptionHan
 }
 
 /// <summary>Reports a request that took longer than the threshold; the route pattern is used, never the raw path.</summary>
-public sealed class SlowRequestMiddleware(RequestDelegate next, ErrorEventWriter writer, SlowRequestOptions options)
+public sealed class SlowRequestMiddleware(RequestDelegate next, ErrorEventWriter? writer = null, SlowRequestOptions? options = null)
 {
     public async Task InvokeAsync(HttpContext context)
     {
@@ -88,9 +88,10 @@ public sealed class SlowRequestMiddleware(RequestDelegate next, ErrorEventWriter
         finally
         {
             var elapsed = Stopwatch.GetElapsedTime(started);
-            if (elapsed > options.Threshold)
+            var threshold = (options ?? SlowRequestOptions.Default).Threshold;
+            if (writer is not null && elapsed > threshold)
             {
-                var severity = elapsed > options.Threshold * 3 ? ErrorSeverity.Error : ErrorSeverity.Warning;
+                var severity = elapsed > threshold * 3 ? ErrorSeverity.Error : ErrorSeverity.Warning;
                 writer.TryEnqueue(new ErrorEventInput(
                     ErrorLayer.Api, severity, "api.slow_request",
                     $"{context.Request.Method} {ServerErrorObserver.RouteOf(context)} {(int)elapsed.TotalMilliseconds} ms",

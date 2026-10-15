@@ -1,0 +1,7 @@
+threshold off by one: KILLED
+window ignored: KILLED
+denial inner skipped: KILLED
+denial threshold too high: KILLED
+dead count >=: KILLED
+first poll fires: KILLED
+terminal label dropped: KILLED

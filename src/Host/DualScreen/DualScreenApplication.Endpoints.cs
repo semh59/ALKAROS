@@ -1,4 +1,5 @@
 using System.Net;
+using ALKAROS.Host.Observability.SecurityDetectors;
 using System.Globalization;
 using System.Text.Json.Serialization;
 using System.Threading.RateLimiting;
@@ -55,6 +56,7 @@ public static partial class DualScreenApplication
             DualScreenStore store,
             IRoleRepository roles,
             IOfflineAuthorityBudgetService offlineBudgets,
+            SecurityBurstDetectors securityDetectors,
             CancellationToken cancellationToken) =>
         {
             if (request.TerminalId == Guid.Empty
@@ -67,7 +69,10 @@ public static partial class DualScreenApplication
             var result = await authentication.LoginAsync(
                 request.Username.Trim(), request.Password, DateTimeOffset.UtcNow, cancellationToken);
             if (result is not LoginSuccess success)
+            {
+                securityDetectors.LoginFailures.Record(SecurityBurstDetectors.TerminalLabel(request.TerminalId));
                 return Error(context, StatusCodes.Status401Unauthorized, "INVALID_CREDENTIALS", "Kullanıcı adı veya parola hatalı.");
+            }
 
             // V1-RMD-406 (V1-RMD-399 H-01): every staff session lives SessionTokenIssuer.DefaultLifetime (8 h,
             // V1-IAM-031); the literal 12 h here used to override that decision.
