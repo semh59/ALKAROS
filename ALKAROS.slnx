@@ -70,6 +70,7 @@
   <Project Path="tests/Host/Experience/Reconciliation/ALKAROS.Host.Experience.Reconciliation.Tests.csproj" />
   <Project Path="tests/Host/Experience/SecurityAdministration/ALKAROS.Host.Experience.SecurityAdministration.Tests.csproj" />
   <Project Path="tests/Host/Experience/Observability/ALKAROS.Host.Experience.Observability.Tests.csproj" />
+  <Project Path="tests/Host/Observability/CrashChannel/ALKAROS.Host.Observability.CrashChannel.Tests.csproj" />
   <Project Path="tests/Host/Observability/ServerDetectors/ALKAROS.Host.Observability.ServerDetectors.Tests.csproj" />
   <Project Path="tests/Host/Observability/Wiring/ALKAROS.Host.Observability.Wiring.Tests.csproj" />
   <Project Path="tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj" />

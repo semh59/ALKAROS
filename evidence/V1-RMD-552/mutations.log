@@ -1,0 +1,7 @@
+buffer never drops: KILLED
+breaker never opens: KILLED
+failed send not buffered: KILLED
+drain keeps buffer: KILLED
+alarm every failure: KILLED
+no reset on recovery: KILLED
+threshold ignored: KILLED
