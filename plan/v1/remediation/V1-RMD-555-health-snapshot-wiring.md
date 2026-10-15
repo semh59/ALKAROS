@@ -1,7 +1,7 @@
 # V1-RMD-555 - Sistem sağlığı görüntüsünü yazma
 
 - Task ID: V1-RMD-555
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
