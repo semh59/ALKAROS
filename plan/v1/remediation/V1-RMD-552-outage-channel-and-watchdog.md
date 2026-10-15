@@ -1,7 +1,7 @@
 # V1-RMD-552 - Çöküş kanalı ve süreç dışı bekçi
 
 - Task ID: V1-RMD-552
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
