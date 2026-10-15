@@ -1,7 +1,7 @@
 # V1-RMD-530 - Kanal ve ürün raporu ekranlarında iade tutarları
 
 - Task ID: V1-RMD-530
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Existing

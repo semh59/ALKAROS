@@ -1,7 +1,7 @@
 export interface ChannelDayRow {
   businessDate: string; source: string; provider: string | null;
   ordersReceived: number; awaitingConfirmation: number; accepted: number; rejected: number; cancelled: number;
-  acceptedValue: number; acceptedNetValue: number; cancelledValue: number; providerRefused: number;
+  acceptedValue: number; acceptedNetValue: number; cancelledValue: number; providerRefused: number; refundedValue: number;
 }
 export interface ChannelReport {
   from: string; to: string; days: readonly ChannelDayRow[];
@@ -26,7 +26,7 @@ export function dayCount(from: string, to: string): number {
 export const formatDay = (iso: string) => new Date(`${iso}T00:00:00`).toLocaleDateString("tr-TR");
 
 export interface ChannelTotals {
-  received: number; accepted: number; rejected: number; cancelled: number; refused: number; acceptedValue: number; acceptedNetValue: number;
+  received: number; accepted: number; rejected: number; cancelled: number; refused: number; acceptedValue: number; acceptedNetValue: number; refundedValue: number;
 }
 
 export function totalsOf(days: readonly ChannelDayRow[]): ChannelTotals {
@@ -38,5 +38,6 @@ export function totalsOf(days: readonly ChannelDayRow[]): ChannelTotals {
     refused: sum.refused + day.providerRefused,
     acceptedValue: sum.acceptedValue + day.acceptedValue,
     acceptedNetValue: sum.acceptedNetValue + day.acceptedNetValue,
-  }), { received: 0, accepted: 0, rejected: 0, cancelled: 0, refused: 0, acceptedValue: 0, acceptedNetValue: 0 });
+    refundedValue: sum.refundedValue + day.refundedValue,
+  }), { received: 0, accepted: 0, rejected: 0, cancelled: 0, refused: 0, acceptedValue: 0, acceptedNetValue: 0, refundedValue: 0 });
 }

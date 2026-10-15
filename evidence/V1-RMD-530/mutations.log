@@ -1,0 +1,8 @@
+killed   total-not-summed
+killed   row-wrong-field
+killed   header-missing
+killed   total-wrong-field
+killed   note-always
+killed   note-never
+killed   note-wrong-field
+done

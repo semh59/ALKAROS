@@ -64,17 +64,17 @@ export function ChannelReportSection({ client }: Partial<ManagementSectionProps>
           <th>{t.date}</th><th>{t.channel}</th><th>{t.platform}</th>
           <th className="mcr__num">{t.received}</th><th className="mcr__num">{t.accepted}</th><th className="mcr__num">{t.rejected}</th>
           <th className="mcr__num">{t.cancelled}</th><th className="mcr__num">{t.refused}</th>
-          <th className="mcr__num">{t.gross}</th><th className="mcr__num">{t.net}</th></tr></thead>
+          <th className="mcr__num">{t.gross}</th><th className="mcr__num">{t.net}</th><th className="mcr__num">{t.refunded}</th></tr></thead>
         <tbody>{report.days.map((day) => <tr key={`${day.businessDate}-${day.source}-${day.provider ?? ""}`}>
           <td>{formatDay(day.businessDate)}</td><td>{sourceLabel(day.source)}</td><td>{providerLabel(day.provider)}</td>
           <td className="mcr__num">{day.ordersReceived}</td><td className="mcr__num">{day.accepted}</td><td className="mcr__num">{day.rejected}</td>
           <td className="mcr__num">{day.cancelled}</td><td className="mcr__num">{day.providerRefused}</td>
-          <td className="mcr__num">{formatMoney(day.acceptedValue)}</td><td className="mcr__num">{formatMoney(day.acceptedNetValue)}</td></tr>)}</tbody>
+          <td className="mcr__num">{formatMoney(day.acceptedValue)}</td><td className="mcr__num">{formatMoney(day.acceptedNetValue)}</td><td className="mcr__num">{formatMoney(day.refundedValue)}</td></tr>)}</tbody>
         {totals && <tfoot><tr>
           <td colSpan={3}>{t.total}</td>
           <td className="mcr__num">{totals.received}</td><td className="mcr__num">{totals.accepted}</td><td className="mcr__num">{totals.rejected}</td>
           <td className="mcr__num">{totals.cancelled}</td><td className="mcr__num">{totals.refused}</td>
-          <td className="mcr__num">{formatMoney(totals.acceptedValue)}</td><td className="mcr__num">{formatMoney(totals.acceptedNetValue)}</td></tr></tfoot>}
+          <td className="mcr__num">{formatMoney(totals.acceptedValue)}</td><td className="mcr__num">{formatMoney(totals.acceptedNetValue)}</td><td className="mcr__num">{formatMoney(totals.refundedValue)}</td></tr></tfoot>}
       </table>}
       <p className="mcr__hint">{t.notRevenue}</p>
     </section>}

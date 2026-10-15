@@ -71,6 +71,7 @@ export function ProductMarginSection({ client }: Partial<ManagementSectionProps>
         </tr></tfoot>
       </table>}
       <p className="mpm__hint">{t.discountNote} {formatMoney(report.check.billLevelDiscounts)}</p>
+      {report.unallocatedRefunds > 0 && <p className="mpm__hint">{t.unallocatedRefundNote} {formatMoney(report.unallocatedRefunds)}</p>}
       <p className="mpm__hint">{t.costNote}</p>
     </section>}
   </div>;

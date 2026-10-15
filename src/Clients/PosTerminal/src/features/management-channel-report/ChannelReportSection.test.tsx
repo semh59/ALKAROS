@@ -12,13 +12,13 @@ import type { ChannelDayRow, ChannelReport } from "./models";
 const day = (over: Partial<ChannelDayRow>): ChannelDayRow => ({
   businessDate: "2026-09-29", source: "Online", provider: "yemeksepeti",
   ordersReceived: 5, awaitingConfirmation: 0, accepted: 3, rejected: 1, cancelled: 1,
-  acceptedValue: 600, acceptedNetValue: 500, cancelledValue: 90, providerRefused: 2, ...over,
+  acceptedValue: 600, acceptedNetValue: 500, cancelledValue: 90, providerRefused: 2, refundedValue: 40, ...over,
 });
 
 const report = (over: Partial<ChannelReport> = {}): ChannelReport => ({
   from: "2026-09-23", to: "2026-09-29", check: { isBalanced: true },
-  days: [day({}), day({ source: "Online", provider: "trendyol-go", ordersReceived: 2, accepted: 2, rejected: 0, cancelled: 0, acceptedValue: 300, acceptedNetValue: 250, providerRefused: 0 }),
-    day({ source: "Qr", provider: null, ordersReceived: 4, accepted: 4, rejected: 0, cancelled: 0, acceptedValue: 200, acceptedNetValue: 180, providerRefused: 0 })],
+  days: [day({}), day({ source: "Online", provider: "trendyol-go", ordersReceived: 2, accepted: 2, rejected: 0, cancelled: 0, acceptedValue: 300, acceptedNetValue: 250, providerRefused: 0, refundedValue: 10 }),
+    day({ source: "Qr", provider: null, ordersReceived: 4, accepted: 4, rejected: 0, cancelled: 0, acceptedValue: 200, acceptedNetValue: 180, providerRefused: 0, refundedValue: 0 })],
   ...over,
 });
 
@@ -48,6 +48,10 @@ describe("channel report section", () => {
     expect(total).toContain("Toplam");
     expect(total).toContain("11");
     expect(total).toContain("9");
+    expect(document.querySelector("thead")!.textContent).toContain("İade edilen");
+    expect(rows[0]).toContain("40,00");
+    expect(rows[1]).toContain("10,00");
+    expect(total).toContain("50,00");
     expect(document.body.textContent).toContain("ciroya ve kasaya dahil değildir");
     for (const raw of ["yemeksepeti", "trendyol-go", "Accepted", "Qr"]) expect(document.body.textContent).not.toContain(raw);
     const results = await axe.run(document.body, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });

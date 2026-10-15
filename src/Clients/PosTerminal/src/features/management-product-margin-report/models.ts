@@ -4,7 +4,7 @@ export interface ProductMarginRow {
 }
 export interface ProductMarginReport {
   reportVersion: string; from: string; to: string; rows: readonly ProductMarginRow[];
-  totalNetRevenue: number; totalCost: number; unknownCostLines: number;
+  totalNetRevenue: number; totalCost: number; unknownCostLines: number; unallocatedRefunds: number;
   check: { productNetTotal: number; linesNetTotal: number; billLevelDiscounts: number; isBalanced: boolean };
 }
 

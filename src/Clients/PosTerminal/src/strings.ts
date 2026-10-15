@@ -573,6 +573,7 @@ export const managementText = {
     refused: "Oluşturulamayan",
     gross: "Kabul tutarı (brüt)",
     net: "Kabul tutarı (net)",
+    refunded: "İade edilen",
     total: "Toplam",
     notRevenue: "Bu tutarlar ciroya ve kasaya dahil değildir; online satışlar yalnız bu raporda izlenir.",
   },
@@ -601,6 +602,7 @@ export const managementText = {
     partial: "eksik",
     total: "Toplam",
     discountNote: "Fiş düzeyi indirimler ürünlere dağıtılmaz; bu aralıktaki toplamı:",
+    unallocatedRefundNote: "Ürün seçilmeden yapılan iadeler ürünlere dağıtılmaz; bu aralıktaki toplamı:",
     costNote: "Maliyet, satış gününe kadar girilen alış kayıtlarının ağırlıklı ortalamasıyla hesaplanır. Net satış KDV hariçtir.",
   },
   purchaseInvoices: {

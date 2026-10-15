@@ -17,7 +17,7 @@ const row = (over: Partial<ProductMarginRow>): ProductMarginRow => ({
 const report = (over: Partial<ProductMarginReport> = {}): ProductMarginReport => ({
   reportVersion: "product-margin.v1", from: "2026-09-23", to: "2026-09-29",
   rows: [row({}), row({ productId: "p2", productName: "Ayran", netRevenue: 60, cost: 0, unknownCostLines: 2, grossMargin: null, marginPercent: null })],
-  totalNetRevenue: 510, totalCost: 120, unknownCostLines: 2,
+  totalNetRevenue: 510, totalCost: 120, unknownCostLines: 2, unallocatedRefunds: 0,
   check: { productNetTotal: 510, linesNetTotal: 510, billLevelDiscounts: 25, isBalanced: true },
   ...over,
 });
@@ -51,6 +51,18 @@ describe("product margin section", () => {
     expect(document.body.textContent).toContain("Fiş düzeyi indirimler ürünlere dağıtılmaz");
     const results = await axe.run(document.body, { rules: { "color-contrast": { enabled: false }, region: { enabled: false } } });
     expect(results.violations).toEqual([]);
+  });
+
+  it("shows the refunds that named no product only when there are any", async () => {
+    await render(<ProductMarginSection client={client()} />);
+    await press("Raporu getir");
+    expect(document.body.textContent).not.toContain("Ürün seçilmeden yapılan iadeler");
+
+    await unmount();
+    await render(<ProductMarginSection client={client({ report: vi.fn().mockResolvedValue(report({ unallocatedRefunds: 42.5 })) })} />);
+    await press("Raporu getir");
+    expect(document.body.textContent).toContain("Ürün seçilmeden yapılan iadeler");
+    expect(document.body.textContent).toContain("42,50");
   });
 
   it("sends the chosen dates", async () => {
