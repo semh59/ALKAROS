@@ -20,6 +20,8 @@ Sistem her dakika kendi üzerinde salt okuyan veya işlemi geri alan bir akış�
 - `evidence/V1-RMD-545/**`
 - `src/Host/Observability/SyntheticProbes/**`
 - `tests/Host/Observability/SyntheticProbes/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız sonda kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
