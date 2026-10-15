@@ -42,3 +42,5 @@ Bugün iade yalnız ödemenin tamamı içindir. Ürün bazlı kısmi iade için 
 ## Handoff
 
 - None
+
+- Not: izleme zinciri V1-RMD-552 kapsamı güncellendi (bekçi mantığı; konteyner ve gerçek kanal V1-RMD-557).
