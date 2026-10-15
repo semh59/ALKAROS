@@ -1,0 +1,3 @@
+events not handed to the writer: KILLED
+failure not counted: KILLED 
+failure stops the loop: KILLED 
