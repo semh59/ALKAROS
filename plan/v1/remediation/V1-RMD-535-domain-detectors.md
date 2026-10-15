@@ -4,7 +4,7 @@
 - Status: Planned
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
-- Surface state: New
+- Surface state: Planned
 
 ## Source basis
 

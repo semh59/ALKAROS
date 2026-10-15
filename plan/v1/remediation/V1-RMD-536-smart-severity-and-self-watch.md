@@ -4,7 +4,7 @@
 - Status: Planned
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
-- Surface state: New
+- Surface state: Planned
 
 ## Source basis
 
@@ -18,8 +18,8 @@ Bir hata normalden çok sıklaşırsa şiddeti otomatik yükselir; dedektörler 
 
 - `plan/v1/remediation/V1-RMD-536-smart-severity-and-self-watch.md`
 - `evidence/V1-RMD-536/**`
-- `src/Modules/Observability/ErrorEvents/Analysis/**`
-- `tests/Modules/Observability/ErrorEvents/Analysis/**`
+- `src/Modules/Observability/ErrorAnalysis/**`
+- `tests/Modules/Observability/ErrorAnalysis/**`
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 
 ## In scope
