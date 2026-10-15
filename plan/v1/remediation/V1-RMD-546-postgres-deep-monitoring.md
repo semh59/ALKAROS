@@ -24,11 +24,12 @@ En yavaş sorgular, kilitler, bağlantı doluluğu ve tablo şişmesi veritaban�
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- `pg_stat_statements` ile en yavaş ve en sık sorgular, kilit zincirleri, bekleyen işlemler, ölü satır oranı.
+- `pg_stat_statements` ile en yavaş ve en sık sorgular (eklenti yoksa kapalı gösterilir); eklentisiz çalışan sorgular, kilit zincirleri, uzun işlemler, bağlantı doluluğu, ölü satır oranı. Bu parça yalnız okuma ve olay üretimi yapar; tablo yazmaz (göç gerekmez), Host işi V1-RMD-558 zincirinde bağlanır.
 - Eklentinin açılması dağıtım yapılandırmasında (yeniden başlatma gerektiren) ayrı ve açık bir adımdır; uygulama kullanıcısı yetkisi doğrulanır.
 
 ## Out of scope
