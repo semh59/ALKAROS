@@ -1,0 +1,18 @@
+BUILD-ERROR numbers-kept
+killed   guid-kept
+killed   category-ignored
+killed   severity-overwrite
+killed   no-reopen
+killed   count-not-merged
+killed   drop-uncounted
+killed   escalation-blind
+killed   new-blind
+killed   warning-alerts
+SURVIVED dedup-key
+killed   failure-uncounted
+killed   detail-raw
+killed   critical-severity
+done
+killed   numbers-kept
+killed   dedup-key
+done
