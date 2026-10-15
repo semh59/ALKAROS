@@ -45,7 +45,7 @@
 
 1. Sızıntı testi: 12 kişisel veri kalıbı örneğinin hiçbiri depoya yazılmaz.
 2. Saklama işi 30 günü aşmış satırların %100'ünü siler, süresi dolmamışlara dokunmaz.
-3. Ham tablolar yedek dosyasında yer almaz (yedek içeriği testle kanıtlanır).
+3. Ham tablo adı kuralı (`raw_` öneki) kodda tanımlıdır ve testlidir; tabloların yedekten çıkarılması ve silme işinin zamanlanıp denetim kaydı yazması, tabloları oluşturan V1-RMD-533 ve V1-RMD-541 kabul koşullarındadır.
 4. Çıktılar `evidence/V1-RMD-549/` altındadır.
 
 ## Handoff

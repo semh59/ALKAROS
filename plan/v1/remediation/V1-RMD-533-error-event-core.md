@@ -47,8 +47,9 @@ Her hata katman ve şiddetle tek bir hata olayı olarak kaydedilir; parmak izi m
 1. Fırtına testi: aynı hatanın saniyede 500 oluşu en çok 1 yazım/sn/parmak izi ve ana havuzdan 0 bağlantı tüketir.
 2. Parmak izi: kimlik ve sayı farkı olan 20 örnek tek satıra düşer.
 3. Kuyruk dolunca düşen olay sayacı artar ve ekrandan okunur.
-4. Gerçek Postgres testi ve mutasyon kanıtı.
-5. Çıktılar `evidence/V1-RMD-533/` altındadır.
+4. Hata olayı tabloları saklama kataloğuna (V1-RMD-549 `TelemetryRetention`) eklenir; silme işi zamanlanır ve her çalışma denetim kaydı yazar.
+5. Gerçek Postgres testi ve mutasyon kanıtı.
+6. Çıktılar `evidence/V1-RMD-533/` altındadır.
 
 ## Handoff
 

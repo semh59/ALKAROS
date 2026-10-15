@@ -48,7 +48,8 @@ Kasa, garson ve mutfak ekranlarında basılan her düğme, sayfa değişimi ve f
 1. PosTerminal'deki tüm düğmeler eşleme tablosunda anahtara sahiptir (statik tarama testi).
 2. Tıklama ek yükü gerçek kasa cihazında p95 5 ms altında.
 3. Telemetri kuyruğu dolunca sipariş kuyruğu yazımı etkilenmez.
-4. Çıktılar `evidence/V1-RMD-541/` altındadır.
+4. Ham tıklama tabloları `raw_` önekli ve kalıcı günlük tutmayan (UNLOGGED) olur; saatlik yedek dosyasında yer almadığı testle kanıtlanır; saklama kataloğuna 30 gün ile eklenir.
+5. Çıktılar `evidence/V1-RMD-541/` altındadır.
 
 ## Handoff
 
