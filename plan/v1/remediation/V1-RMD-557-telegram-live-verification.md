@@ -1,7 +1,7 @@
 # V1-RMD-557 - Telegram gerçek doğrulama (dış hesap)
 
 - Task ID: V1-RMD-557
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: validation
 - Surface state: Planned
