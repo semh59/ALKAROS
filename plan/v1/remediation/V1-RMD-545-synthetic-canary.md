@@ -12,7 +12,7 @@
 
 ## Goal
 
-Sistem, gerçek kullanıcıdan önce sorunu görmek için her dakika kendi üzerinde betiklenmiş bir sipariş akışını dener ve süresini ölçer.
+Sistem her dakika kendi üzerinde salt okuyan veya işlemi geri alan bir akışı dener ve süresini ölçer.
 
 ## Owned surface
 
@@ -20,16 +20,16 @@ Sistem, gerçek kullanıcıdan önce sorunu görmek için her dakika kendi üzer
 - `evidence/V1-RMD-545/**`
 - `src/Host/Observability/SyntheticProbes/**`
 - `tests/Host/Observability/SyntheticProbes/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Giriş, katalog, taslak sipariş aç-iptal et, sağlık ucu; tüm test verisi işaretli ve rapor/ciroya girmez.
-- Başarısızlık veya yavaşlama hata olayı ve alarm olur.
+- Giriş yapmayan okuma uçları, katalog okuma, sağlık ucu; taslak sipariş yazılmaz ya da işlem geri alınır; kalıcı yetkili sentetik kullanıcı yoktur.
+- Başarısızlık veya yavaşlama hata olayı olur.
 
 ## Out of scope
 
-- Gerçek ödeme ve yazıcı çıktısı üretmek.
+- Gerçek ödeme ve yazıcı çıktısı.
 
 ## Dependencies
 
@@ -37,7 +37,9 @@ Sistem, gerçek kullanıcıdan önce sorunu görmek için her dakika kendi üzer
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-545/` altındadır.
+1. Bir günde kalıcı sentetik kayıt sayısı 0.
+2. Sondanın kendisinin yükü dakikada en çok 5 sorgu.
+3. Çıktılar `evidence/V1-RMD-545/` altındadır.
 
 ## Handoff
 

@@ -12,7 +12,7 @@
 
 ## Goal
 
-PosTerminal, garson ve kasa tarayıcı uygulamalarındaki yakalanmamış hatalar ve ağ hataları sunucuya raporlanır.
+PosTerminal ekranındaki yakalanmamış hatalar ve ağ hataları sunucuya raporlanır (vanilla kasa ve garson V1-RMD-553'te).
 
 ## Owned surface
 
@@ -21,24 +21,29 @@ PosTerminal, garson ve kasa tarayıcı uygulamalarındaki yakalanmamış hatalar
 - `src/Clients/PosTerminal/src/features/error-reporting/**`
 - `src/Host/Observability/BrowserErrors/**`
 - `tests/Host/Observability/BrowserErrors/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Bir uç nokta (oran sınırlı, en çok 200/saat), istemci tarafında aynı hatadan en çok 3 rapor, `sendBeacon`.
-- Kişisel veri ve token içermez; metin uzunluğu sınırlıdır.
+- Uç nokta oturum doğrulaması ister; oran sınırı terminal+oturum başına; olay kimliği ile yinelenmez; sunucu saati esastır.
+- İstemci aynı hatadan en çok 3 rapor üretir, `sendBeacon`; kişisel veri ve token içermez; metin uzunluğu sınırlıdır; telemetri ayrı istek yolundan gider (oturum kapatma tetiklemez).
+- Sunucu istemci metnini hata türü kataloğuna eşler; bilinmeyen metin sabit künyeye düşer.
 
 ## Out of scope
 
-- Ekran.
+- Vanilla uygulamalar.
 
 ## Dependencies
 
 - V1-RMD-533
+- V1-RMD-549
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-537/` altındadır.
+1. Oturumsuz çağrı 401; oran sınırı aşımı gerçek hata kaydını engellemez (ayrı kota).
+2. Aynı hata 50 kez raporlanınca sunucuya en çok 3 ulaşır.
+3. Metin sızıntı testi 0 kalıp.
+4. Çıktılar `evidence/V1-RMD-537/` altındadır.
 
 ## Handoff
 

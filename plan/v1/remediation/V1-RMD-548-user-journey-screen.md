@@ -12,7 +12,7 @@
 
 ## Goal
 
-Müdür, bir eylemin başından sonuna zaman çizelgesini görür: düğme, istek, veritabanı, olay; her adımın süresi ve en yavaş eylemler listesi.
+Müdür bir eylemin zaman çizelgesini görür: düğme, istek, veritabanı, olay; her adımın süresi ve en yavaş eylemler.
 
 ## Owned surface
 
@@ -21,12 +21,12 @@ Müdür, bir eylemin başından sonuna zaman çizelgesini görür: düğme, iste
 - `src/Clients/PosTerminal/src/features/management-user-journeys/**`
 - `src/Host/Observability/JourneyEndpoints/**`
 - `tests/Host/Observability/JourneyEndpoints/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Eylem listesi (en yavaş, en hatalı), tek eylem zaman çizelgesi, rol ve terminal süzgeci.
-- Tüm metin Türkçe; teknik terimler ekranda açıklamalıdır.
+- Eylem listesi (en yavaş, en hatalı), tek eylem zaman çizelgesi (sunucu saatine göre), rol ve terminal süzgeci.
+- Personel hareketleri ayrı, daha dar bir yetkiyle (vardiya sorumlusuna açık değil); teknik terimler ekranda açıklanır.
 
 ## Out of scope
 
@@ -40,7 +40,9 @@ Müdür, bir eylemin başından sonuna zaman çizelgesini görür: düğme, iste
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-548/` altındadır.
+1. Seçilen eylemin tüm adımları tek izleme kimliğiyle sıralı görünür.
+2. Yetkisiz rol 403 alır.
+3. Çıktılar `evidence/V1-RMD-548/` altındadır.
 
 ## Handoff
 

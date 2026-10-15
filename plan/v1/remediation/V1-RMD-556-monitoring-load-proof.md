@@ -1,0 +1,46 @@
+# V1-RMD-556 - İzleme yükü ve fırtına ölçümü
+
+- Task ID: V1-RMD-556
+- Status: Planned
+- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
+- Work type: validation
+- Surface state: Planned
+
+## Source basis
+
+- PO:2026-10-15
+
+## Goal
+
+İzleme sisteminin kasa terminaline ve veritabanına yükü ölçülür; olay fırtınasında davranışı kanıtlanır.
+
+## Owned surface
+
+- `plan/v1/remediation/V1-RMD-556-monitoring-load-proof.md`
+- `evidence/V1-RMD-556/**`
+- `evidence/V1-RMD-556/**`
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
+
+## In scope
+
+- Gerçek kasa cihazında ve Docker yığınında yük ölçümü; fırtına enjeksiyonu.
+
+## Out of scope
+
+- Yok.
+
+## Dependencies
+
+- V1-RMD-534
+- V1-RMD-541
+- V1-RMD-543
+
+## Acceptance evidence
+
+1. İzleme açıkken sipariş onayı p95 süresi kapalıya göre en çok %10 yavaş.
+2. Saniyede 1000 olay fırtınasında ana havuz bağlantı kullanımı değişmez.
+3. Çıktılar `evidence/V1-RMD-556/` altındadır.
+
+## Handoff
+
+- None

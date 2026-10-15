@@ -12,7 +12,7 @@
 
 ## Goal
 
-Yakalanmamış istisna, yavaş istek, yavaş sorgu, bağlantı havuzu doluluğu, uzun işlem/kilit ve kaçan arka plan işi hata olayı olarak yakalanır.
+Yakalanmamış istisna, yavaş istek, yavaş sorgu, bağlantı havuzu, kilit/kilitlenme ve kaçan arka plan işi hata olayı olarak yakalanır.
 
 ## Owned surface
 
@@ -20,16 +20,17 @@ Yakalanmamış istisna, yavaş istek, yavaş sorgu, bağlantı havuzu doluluğu,
 - `evidence/V1-RMD-534/**`
 - `src/Host/Observability/ServerDetectors/**`
 - `tests/Host/Observability/ServerDetectors/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Global istisna yakalayıcı (CRITICAL), istek süresi eşiği, sorgu süresi eşiği (EXPLAIN planı ile), havuz > %85, işlem > 30 sn, zamanlanmış iş kaçırma.
-- Eşikler ayarlanabilir yapılandırmadan okunur.
+- İstisna yakalayıcı yalnız 5xx sunucu hatalarını KRİTİK sayar; 4xx istemci hataları şiddetsiz sayaçtır.
+- Yavaş istek ve sorgu eşiği, havuz > %85, kilit ve kilitlenme hata kodları (55P03, 40P01), kaçan zamanlanmış iş, N+1 (istek başına 20 sorgu), veritabanı hata kodu sınıflaması.
+- Sorgu planı (EXPLAIN) yalnız SELECT için, sınırlı sürede alınır; dış çağrı adresleri temizlenir; izlemenin kendi yazımları ayıklanır.
 
 ## Out of scope
 
-- Alan dedektörleri; bildirim.
+- Yok.
 
 ## Dependencies
 
@@ -37,7 +38,10 @@ Yakalanmamış istisna, yavaş istek, yavaş sorgu, bağlantı havuzu doluluğu,
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-534/` altındadır.
+1. 500 durumlu bir istek tam 1 KRİTİK olay; 404 ve 409 sıfır olay üretir.
+2. Yapay 10 sn kilit bekleme 55P03 olayı üretir.
+3. İzleme yazımları yavaş-sorgu olayı üretmez (öz kirlenme testi).
+4. Çıktılar `evidence/V1-RMD-534/` altındadır.
 
 ## Handoff
 

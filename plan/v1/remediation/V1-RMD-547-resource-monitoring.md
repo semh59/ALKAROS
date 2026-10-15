@@ -12,7 +12,7 @@
 
 ## Goal
 
-Konteyner ve sunucu kaynakları (işlemci, bellek, disk, ağ) ile gerçek zamanlı bağlantı (SignalR) kopmaları ve garson çevrimdışı kuyruk uzunluğu izlenir.
+Konteyner kaynakları (işlemci, bellek, disk), gerçek zamanlı bağlantı kopmaları ve garson çevrimdışı kuyruk uzunluğu izlenir.
 
 ## Owned surface
 
@@ -20,11 +20,12 @@ Konteyner ve sunucu kaynakları (işlemci, bellek, disk, ağ) ile gerçek zamanl
 - `evidence/V1-RMD-547/**`
 - `src/Host/Observability/ResourceProbes/**`
 - `tests/Host/Observability/ResourceProbes/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Disk dolması, bellek baskısı, bağlantı kopma sıklığı ve çevrimdışı kuyruk birikmesi için eşikler ve olaylar.
+- Konteyner içi görünür kaynaklar; ana makine (Docker Desktop/WSL2) kaynakları konteynerden görünmez, bu sınır ekranda belirtilir.
+- SignalR kopma sayacı ve garson çevrimdışı kuyruk uzunluğu (istemci bildirimiyle).
 
 ## Out of scope
 
@@ -36,7 +37,9 @@ Konteyner ve sunucu kaynakları (işlemci, bellek, disk, ağ) ile gerçek zamanl
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-547/` altındadır.
+1. Disk %90 eşiği olay üretir.
+2. Bağlantı kopma sayacı gerçek bir kopmada artar.
+3. Çıktılar `evidence/V1-RMD-547/` altındadır.
 
 ## Handoff
 

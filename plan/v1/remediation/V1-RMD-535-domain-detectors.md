@@ -12,7 +12,7 @@
 
 ## Goal
 
-Yazıcı kopması/tekrar denemesi, Bilinmeyen ödeme sonucu, mutfağa iletilmeyen sipariş, Yemeksepeti/QNB/Trendyol Go entegrasyon hataları, yedek ve disk durumu hata olayı olarak yakalanır.
+Yazıcı kopması, Bilinmeyen ödeme sonucu, mutfağa iletilmeyen sipariş, Yemeksepeti/QNB/Trendyol Go entegrasyon hataları, yedek ve disk durumu hata olayı olarak yakalanır.
 
 ## Owned surface
 
@@ -20,24 +20,27 @@ Yazıcı kopması/tekrar denemesi, Bilinmeyen ödeme sonucu, mutfağa iletilmeye
 - `evidence/V1-RMD-535/**`
 - `src/Host/Observability/DomainDetectors/**`
 - `tests/Host/Observability/DomainDetectors/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Her kaynağın mevcut olay/durum kayıtlarından okuyan dedektör; kaynak modülün kodu değişmez.
-- Bir hata türü için tanımlı eşik aşılınca olay açılır, durum düzelince otomatik çözülür.
+- Her kaynağın mevcut olay ve durum kayıtlarından okuyan dedektör; kaynak modül değişmez; durum düzelince otomatik çözülür.
+- Eşikler ayarlanabilir yapılandırmadan okunur.
 
 ## Out of scope
 
-- Sunucu dedektörleri; bildirim.
+- Yok.
 
 ## Dependencies
 
 - V1-RMD-533
+- V1-RMD-555
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-535/` altındadır.
+1. Her alan için en az 1 enjekte edilen hata olay üretir ve düzelince 1 dakika içinde çözülür.
+2. Bilinmeyen ödeme 5 dakikayı aşınca KRİTİK olur.
+3. Çıktılar `evidence/V1-RMD-535/` altındadır.
 
 ## Handoff
 

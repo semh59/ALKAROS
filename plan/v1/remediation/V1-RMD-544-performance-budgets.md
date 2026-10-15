@@ -12,7 +12,7 @@
 
 ## Goal
 
-Her kritik eylemin (sipariş onayla, ödeme al, fiş yazdır, mutfağa ilet) süre bütçesi vardır; bütçe aşılınca veya son 7 günün normaline göre yavaşlayınca alarm üretilir.
+Her kritik eylemin süre bütçesi vardır; bütçe aşılınca veya normale göre yavaşlayınca alarm üretilir.
 
 ## Owned surface
 
@@ -21,12 +21,14 @@ Her kritik eylemin (sipariş onayla, ödeme al, fiş yazdır, mutfağa ilet) sü
 - `src/Modules/Observability/PerformanceBudgets/**`
 - `tests/Modules/Observability/PerformanceBudgets/**`
 - `database/migrations/V1/V1-RMD-544/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Eylem başına bütçe (ör. p95 800 ms) ve taban çizgisi karşılaştırması (son 7 günün aynı saat dilimi).
-- Gerileme: aynı eylem yeni sürümden sonra belirgin yavaşladıysa alarm.
+- Eylem başına bütçe (ör. p95 800 ms) ve taban çizgisi karşılaştırması (aynı saat dilimi); gerileme: yeni sürümden sonra belirgin yavaşlama.
 
 ## Out of scope
 
@@ -38,7 +40,9 @@ Her kritik eylemin (sipariş onayla, ödeme al, fiş yazdır, mutfağa ilet) sü
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-544/` altındadır.
+1. Bütçe aşımı 3 ardışık dakikada 1 alarm üretir (tekrar bastırma).
+2. Yeni sürüm sonrası %50 yavaşlama gerileme olayı olur.
+3. Çıktılar `evidence/V1-RMD-544/` altındadır.
 
 ## Handoff
 

@@ -12,7 +12,7 @@
 
 ## Goal
 
-İzleme verisi kişisel veri, ödeme verisi veya girilen metin taşımaz; saklama süreleri tanımlıdır ve süresi dolan veri silinir.
+İzleme verisi kişisel veri, ödeme verisi veya girilen metin taşımaz; her tablonun saklama süresi tanımlıdır; süresi dolan veri silinir; ham tıklama verisi yedeğe girmez.
 
 ## Owned surface
 
@@ -21,24 +21,32 @@
 - `src/Modules/Observability/TelemetryPrivacy/**`
 - `tests/Modules/Observability/TelemetryPrivacy/**`
 - `database/migrations/V1/V1-RMD-549/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- İzin verilen alanların listesi (allowlist); listede olmayan alan reddedilir; sızıntı testi.
-- Saklama: ham olay 30 gün, özetler 13 ay; silme işi ve denetim kaydı.
+- İzin verilen alan listesi (allowlist); listede olmayan alan reddedilir; mevcut ObservabilityRedactionHook ve gizli kalıp tarayıcısı yeniden kullanılır; telefon, e-posta, TCKN, IBAN kalıpları eklenir.
+- Saklama: ham olay 30 gün, saatlik özet 13 ay, hata olayı 90 gün; silme işi ve denetim kaydı; onaylı saklama kataloğuna yeni sınıflar eklenir.
+- Ham tıklama tabloları kalıcı günlük tutmayan (UNLOGGED) olur ve saatlik yedekten hariç tutulur.
 
 ## Out of scope
 
-- Yok.
+- Aydınlatma metni (karar kaydında açık madde).
 
 ## Dependencies
 
-- V1-RMD-541
+- V1-RMD-550
+- V1-RMD-551
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-549/` altındadır.
+1. Sızıntı testi: 12 kişisel veri kalıbı örneğinin hiçbiri depoya yazılmaz.
+2. Saklama işi 30 günü aşmış satırların %100'ünü siler, süresi dolmamışlara dokunmaz.
+3. Ham tablolar yedek dosyasında yer almaz (yedek içeriği testle kanıtlanır).
+4. Çıktılar `evidence/V1-RMD-549/` altındadır.
 
 ## Handoff
 

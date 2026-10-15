@@ -12,7 +12,7 @@
 
 ## Goal
 
-Her eylem ve uç nokta için istek sayısı, hata oranı ve süre yüzdelikleri (p50, p95, p99) dakikalık özetlerle saklanır.
+Her eylem ve uç nokta için istek sayısı, hata oranı ve süre dağılımı (histogram) dakikalık özetlerle saklanır; yüzdelikler (p50, p95, p99) histogramdan hesaplanır.
 
 ## Owned surface
 
@@ -21,12 +21,15 @@ Her eylem ve uç nokta için istek sayısı, hata oranı ve süre yüzdelikleri 
 - `src/Modules/Observability/PerformanceMetrics/**`
 - `tests/Modules/Observability/PerformanceMetrics/**`
 - `database/migrations/V1/V1-RMD-543/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Dakikalık özet tablosu (`metric_rollups`); ham veri kısa, özetler uzun saklanır.
-- Ölçümler: istek süresi, veritabanı komut süresi, kuyruk derinliği, ekran etkileşim süresi, hata oranı.
+- Dakikalık histogram özet tablosu; yüzdelikler dakikalık yüzdeliklerin ortalamasından değil histogramın toplanmasından hesaplanır.
+- Ölçümler: istek, veritabanı komutu, kuyruk derinliği, ekran etkileşimi, hata oranı.
 
 ## Out of scope
 
@@ -39,7 +42,9 @@ Her eylem ve uç nokta için istek sayısı, hata oranı ve süre yüzdelikleri 
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-543/` altındadır.
+1. Bilinen dağılımlı 10.000 örnekle p95 hatası en çok %5.
+2. Yazım hacmi: dakikada en çok 600 özet satırı.
+3. Çıktılar `evidence/V1-RMD-543/` altındadır.
 
 ## Handoff
 

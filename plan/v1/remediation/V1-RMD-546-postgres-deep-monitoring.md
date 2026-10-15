@@ -12,7 +12,7 @@
 
 ## Goal
 
-En yavaş sorgular, kilitler, bağlantı doluluğu ve tablo şişmesi veritabanının kendi istatistiklerinden okunarak izlenir.
+En yavaş sorgular, kilitler, bağlantı doluluğu ve tablo şişmesi veritabanının kendi istatistiklerinden izlenir.
 
 ## Owned surface
 
@@ -21,12 +21,15 @@ En yavaş sorgular, kilitler, bağlantı doluluğu ve tablo şişmesi veritaban�
 - `src/Modules/Observability/PostgresInsight/**`
 - `tests/Modules/Observability/PostgresInsight/**`
 - `database/migrations/V1/V1-RMD-546/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
 - `pg_stat_statements` ile en yavaş ve en sık sorgular, kilit zincirleri, bekleyen işlemler, ölü satır oranı.
-- Eklentinin açılması dağıtım yapılandırmasında ayrı ve açık bir adımdır.
+- Eklentinin açılması dağıtım yapılandırmasında (yeniden başlatma gerektiren) ayrı ve açık bir adımdır; uygulama kullanıcısı yetkisi doğrulanır.
 
 ## Out of scope
 
@@ -38,7 +41,9 @@ En yavaş sorgular, kilitler, bağlantı doluluğu ve tablo şişmesi veritaban�
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-546/` altındadır.
+1. Eklenti yokken sistem hata vermeden "kapalı" gösterir.
+2. Yapay yavaş sorgu 1 dakika içinde listede görünür.
+3. Çıktılar `evidence/V1-RMD-546/` altındadır.
 
 ## Handoff
 

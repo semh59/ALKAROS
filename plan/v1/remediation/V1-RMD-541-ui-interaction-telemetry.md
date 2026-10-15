@@ -12,7 +12,7 @@
 
 ## Goal
 
-Kasa, garson ve mutfak ekranlarında basılan her düğme, sayfa değişimi ve form gönderimi bir etkileşim olayı olarak kaydedilir: ne, ne zaman, kim (rol/terminal), ne kadar sürdü, sonucu ne oldu.
+Kasa, garson ve mutfak ekranlarında basılan her düğme, sayfa değişimi ve form gönderimi etkileşim olarak kaydedilir: ne, ne zaman, hangi rol/terminal, ne kadar sürdü, sonucu ne oldu.
 
 ## Owned surface
 
@@ -22,25 +22,33 @@ Kasa, garson ve mutfak ekranlarında basılan her düğme, sayfa değişimi ve f
 - `src/Host/Observability/InteractionTelemetry/**`
 - `tests/Host/Observability/InteractionTelemetry/**`
 - `database/migrations/V1/V1-RMD-541/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Otomatik izleme: her düğme, bağlantı ve form için tek noktadan olay; element kimliği `data-telemetry-id` veya erişilebilir ad anahtarıdır, görünen metin veya girilen değer değildir.
-- Her etkileşim için süre: dokunuştan ekranın güncellenmesine kadar (INP benzeri), uzun görev (50 ms üstü donma) ve düzen kayması.
-- Toplu gönderim (`sendBeacon`), çevrimdışıyken kuyrukta bekletme, sunucuda oran sınırı.
+- `data-telemetry-id` zorunludur (yoksa eşleme tablosundan sabit anahtar); görünen metin, erişilebilir ad veya girilen değer asla kaydedilmez; anahtar sayısı sınırlıdır.
+- Süre: dokunuştan ekranın güncellenmesine (INP benzeri), uzun görev (50 ms üstü) ve düzen kayması; toplu gönderim; çevrimdışıyken sınırlı kuyruk; ayrı depolama kotası (sipariş kuyruğunu etkilemez).
+- Terminal başına ayrı yazma kotası (sipariş yazımlarını yemez).
 
 ## Out of scope
 
-- Kullanıcı yolculuğu ekranı; oturum videosu kaydı (yapılmayacak).
+- Oturum videosu kaydı yapılmaz; vanilla uygulamalar V1-RMD-553.
 
 ## Dependencies
 
 - V1-RMD-533
+- V1-RMD-549
+- V1-RMD-542
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-541/` altındadır.
+1. PosTerminal'deki tüm düğmeler eşleme tablosunda anahtara sahiptir (statik tarama testi).
+2. Tıklama ek yükü gerçek kasa cihazında p95 5 ms altında.
+3. Telemetri kuyruğu dolunca sipariş kuyruğu yazımı etkilenmez.
+4. Çıktılar `evidence/V1-RMD-541/` altındadır.
 
 ## Handoff
 

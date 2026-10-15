@@ -3,7 +3,7 @@
 - Task ID: V1-RMD-540
 - Status: Planned
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
-- Work type: implementation
+- Work type: validation
 - Surface state: Planned
 
 ## Source basis
@@ -12,18 +12,18 @@
 
 ## Goal
 
-Docker yığınında enjekte edilen gerçek hatalar olay olarak görünür, bildirim kuyruğuna düşer ve ekranda listelenir.
+Docker yığınında enjekte edilen gerçek hatalar olay olarak görünür, bildirim kuyruğuna düşer, ekranda listelenir; etkileşim ve performans zinciri kanıtlanır.
 
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-540-error-system-docker-proof.md`
 - `evidence/V1-RMD-540/**`
 - `evidence/V1-RMD-540/**`
-- Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Yazıcı kopması, yavaş sorgu, istisna ve tarayıcı hatası enjekte edilir; her biri için olay, sayaç ve bildirim kaydı kanıtlanır.
+- Yazıcı kopması, yavaş sorgu, istisna, tarayıcı hatası ve düğme etkileşimi enjekte edilir; her biri için olay, sayaç, bildirim ve zaman çizelgesi kaydı kanıtlanır.
 
 ## Out of scope
 
@@ -36,10 +36,21 @@ Docker yığınında enjekte edilen gerçek hatalar olay olarak görünür, bild
 - V1-RMD-537
 - V1-RMD-538
 - V1-RMD-539
+- V1-RMD-541
+- V1-RMD-545
+- V1-RMD-546
+- V1-RMD-547
+- V1-RMD-548
+- V1-RMD-552
+- V1-RMD-553
+- V1-RMD-554
+- V1-RMD-556
 
 ## Acceptance evidence
 
-- Her kabul koşulu için test ve mutasyon kanıtı; gerçek Postgres testi; çıktılar `evidence/V1-RMD-540/` altındadır.
+1. Her kabul koşulu için Docker çıktısı ve ekran görüntüsü kanıtı.
+2. Semih'in elle deneyebileceği senaryo listesi README'de.
+3. Çıktılar `evidence/V1-RMD-540/` altındadır.
 
 ## Handoff
 
