@@ -1,0 +1,7 @@
+status>=500 -> >=400: KILLED
+observer swallows (true): KILLED
+slow compare inverted: KILLED
+55P03 code lost: KILLED
+audit event renamed: KILLED
+raw retention too long: KILLED
+api event dropped: KILLED

@@ -1,3 +1,4 @@
+using ALKAROS.Host.Observability.ServerDetectors;
 using ALKAROS.Host.Observability.Wiring;
 using ALKAROS.Host.Composition.Errors;
 using System.Net;
@@ -185,6 +186,7 @@ public static partial class DualScreenApplication
         // existed with zero HTTP surface.
         builder.Services.AddObservabilityExperience();
         builder.Services.AddMonitoringDataSource(options.ConnectionString);
+        builder.Services.AddServerErrorDetection();
         // V1-RMD-326 (independent 2026-09-26 audit, finding K14): the first real health probe - see
         // DatabaseHealthProbeHostedService's own doc comment for why this was needed at all (before this
         // fix, POST /health-checks only ever recorded whatever status a caller claimed, never anything
@@ -690,7 +692,7 @@ public static partial class DualScreenApplication
     /// <see cref="ApiExceptionHandler"/> (ALKAROS.Host.Composition.Errors).
     /// </summary>
     public static IApplicationBuilder UseDualScreenErrorHandling(IApplicationBuilder application)
-        => application.UseApiErrorHandling();
+        => application.UseMonitoringRequestTiming().UseApiErrorHandling();
 
     private static RateLimitPartition<string> FixedWindow(string partitionKey, int permitLimit)
         => RateLimitPartition.GetFixedWindowLimiter(partitionKey, _ => new FixedWindowRateLimiterOptions
