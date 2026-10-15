@@ -31,8 +31,15 @@ RUN dotnet publish src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS
 # published — run on demand via compose.test.yaml.
 # ---------------------------------------------------------------------------
 FROM backend-build AS test
+# The test database is PostgreSQL 18; the distro's own client is older and
+# pg_dump refuses a newer server, so the client comes from the PGDG repository.
 RUN apt-get update \
-    && apt-get install --no-install-recommends -y postgresql-client \
+    && apt-get install --no-install-recommends -y ca-certificates curl lsb-release \
+    && install -d /usr/share/postgresql-common/pgdg \
+    && curl -fsSL -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc https://www.postgresql.org/media/keys/ACCC4CF8.asc \
+    && echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list \
+    && apt-get update \
+    && apt-get install --no-install-recommends -y postgresql-client-18 \
     && rm -rf /var/lib/apt/lists/*
 # Test projects target net8.0 (Directory.Build.props keeps that as the
 # published runtime target, B-6) but this stage's SDK is 10.0, which only
