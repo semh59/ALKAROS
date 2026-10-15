@@ -1,5 +1,6 @@
 using ALKAROS.Host.Observability.HealthSnapshot;
 using ALKAROS.Host.Observability.AnalysisRunner;
+using ALKAROS.Host.Observability.BrowserErrors;
 using ALKAROS.Host.Observability.InsightRunner;
 using ALKAROS.Host.Observability.NotificationWiring;
 using ALKAROS.Host.Observability.SyntheticProbes;
@@ -200,6 +201,7 @@ public static partial class DualScreenApplication
         builder.Services.AddNotificationDelivery();
         builder.Services.AddInsightRunner();
         builder.Services.AddAnalysisRunner();
+        builder.Services.AddSingleton(sp => new BrowserErrorIngest(sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>()));
         builder.Services.AddSyntheticProbes();
         // V1-RMD-326 (independent 2026-09-26 audit, finding K14): the first real health probe - see
         // DatabaseHealthProbeHostedService's own doc comment for why this was needed at all (before this
@@ -613,6 +615,7 @@ public static partial class DualScreenApplication
         UseDualScreenErrorHandling(app);
 
         MapApi(app);
+        app.MapBrowserErrors();
         app.MapCatalogManagement();
         app.MapMenuManagement();
         app.MapPurchasingManagement();

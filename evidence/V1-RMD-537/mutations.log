@@ -1,0 +1,6 @@
+duplicate accepted: KILLED 
+quota off: KILLED 
+unknown kind passes through: KILLED 
+route not templated: KILLED 
+empty id accepted: KILLED 
+cookie auth removed: DERLENEMEDI (nullable uyarisi hata) - mutant gecersiz; gecerli oturumla 204 yolu test edilmedi
