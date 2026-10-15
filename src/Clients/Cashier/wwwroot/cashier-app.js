@@ -534,7 +534,7 @@
   function renderProducts(searchQuery = '') {
     if (!el.productMatrix) return;
     if (state.sessionStatus === 'unauthorized') {
-      el.productMatrix.innerHTML = '<div class="pos-catalog-state pos-catalog-state--error">Kasiyer oturumu doğrulanamadı. Sipariş girişi kapalı; yeniden giriş yapın.</div>';
+      el.productMatrix.innerHTML = '<div class="pos-catalog-state pos-catalog-state--error">Kasiyer oturumu doğrulanamadı. Sipariş girişi kapalı; yeniden giriş yapın. <a href="/">Giriş sayfasına git</a></div>';
       return;
     }
     if (state.catalogStatus === 'loading') {

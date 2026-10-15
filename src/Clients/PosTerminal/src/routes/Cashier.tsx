@@ -68,6 +68,8 @@ export function Cashier() {
   const [customerDisplayUrl, setCustomerDisplayUrl] = useState("");
   const [reservationStationEnabled, setReservationStationEnabled] = useState(false);
   const [session, setSession] = useState<CashierSession>("checking");
+  const sessionRef = useRef<CashierSession>("checking");
+  sessionRef.current = session;
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   // V1-RMD-388 (Tur 2, T7): only set by the session-expired handler below,
@@ -134,8 +136,10 @@ export function Cashier() {
   // still owns the Turkish message shown for it.
   useEffect(() => {
     registerSessionExpiredHandler(() => {
+      // The first session probe of a fresh page load also comes back 401; nobody was signed in, so nothing ended.
+      const wasSignedIn = sessionRef.current === "ready";
       setSession("anonymous");
-      setSessionEndedMessage("Oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.");
+      if (wasSignedIn) setSessionEndedMessage("Oturumunuz sonlandırıldı. Lütfen tekrar giriş yapın.");
     });
     return () => registerSessionExpiredHandler(null);
   }, []);

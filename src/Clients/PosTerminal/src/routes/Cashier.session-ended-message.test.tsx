@@ -3,7 +3,6 @@
 import { act, createElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { RouterProvider } from "../router";
 
 (globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }).IS_REACT_ACT_ENVIRONMENT = true;
 
@@ -47,6 +46,27 @@ afterEach(() => {
 // used to land on the plain login form with zero indication anything
 // happened, indistinguishable from having never logged in at all.
 describe("Cashier tells the operator why they landed back on the login form", () => {
+  it("shows no ended-session message when the first session probe of a fresh page comes back 401", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
+      return jsonResponse({ message: "Unauthorized" }, 401);
+    }));
+
+    const { Cashier } = await import("./Cashier");
+    const { RouterProvider } = await import("../router");
+
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => {
+      root!.render(createElement(RouterProvider, null, createElement(Cashier)));
+    });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+
+    expect(document.querySelector("input[autocomplete='username']")).not.toBeNull();
+    expect(document.body.textContent).not.toContain("Oturumunuz sonlandırıldı");
+  });
+
   it('shows "Oturumunuz sonlandırıldı" when a mid-session call comes back 401, and clears it on the next login attempt', async () => {
     let orderStartShouldFail = false;
 
@@ -69,6 +89,7 @@ describe("Cashier tells the operator why they landed back on the login form", ()
     }));
 
     const { Cashier } = await import("./Cashier");
+    const { RouterProvider } = await import("../router");
 
     document.body.innerHTML = '<div id="root"></div>';
     root = createRoot(document.getElementById("root")!);
