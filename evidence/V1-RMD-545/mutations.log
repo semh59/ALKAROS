@@ -1,0 +1,4 @@
+failure ignored: KILLED 
+slow compare inverted: KILLED 
+synthetic flag lost: KILLED 
+health probe always on (base url ignored): KILLED
