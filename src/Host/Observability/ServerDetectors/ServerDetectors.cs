@@ -115,6 +115,29 @@ public sealed class SlowRequestMiddleware(RequestDelegate next, ErrorEventWriter
     }
 }
 
+/// <summary>Hands the same changes to several sinks; one failing sink never starves the others.</summary>
+public sealed class CompositeErrorEventSink(params IErrorEventChangeSink?[] sinks) : IErrorEventChangeSink
+{
+    public async Task OnChangesAsync(IReadOnlyList<ErrorEventChange> changes, CancellationToken cancellationToken)
+    {
+        List<Exception>? failures = null;
+        foreach (var sink in sinks.OfType<IErrorEventChangeSink>())
+        {
+            try
+            {
+                await sink.OnChangesAsync(changes, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                (failures ??= []).Add(exception);
+            }
+        }
+
+        if (failures is not null)
+            throw new AggregateException(failures);
+    }
+}
+
 public sealed class ErrorEventWriterHostedService(ErrorEventWriter writer) : IHostedService
 {
     public Task StartAsync(CancellationToken cancellationToken)
@@ -178,7 +201,9 @@ public static class ServerDetectorsExtensions
         services.AddSingleton(slow ?? SlowRequestOptions.Default);
         services.AddSingleton(sp => new ErrorEventWriter(
             sp.GetRequiredService<MonitoringDataSource>().Inner,
-            sink: new AlertErrorEventSink(sp.GetRequiredService<IAlertService>())));
+            sink: new CompositeErrorEventSink(
+                new AlertErrorEventSink(sp.GetRequiredService<IAlertService>()),
+                sp.GetService<ALKAROS.Observability.ErrorNotifications.NotificationEnqueuer>())));
         services.AddHostedService<ErrorEventWriterHostedService>();
         services.AddHostedService(sp => new ErrorRetentionHostedService(
             sp.GetRequiredService<MonitoringDataSource>(), sp.GetRequiredService<IAuditEventStore>(),

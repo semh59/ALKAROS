@@ -1,0 +1,4 @@
+sinks stop at first failure: KILLED 
+composite drops failures silently: KILLED 
+channel on with key only: KILLED 
+enqueuer not part of writer sink: KILLED (HostRegistrationFeedsTheNotificationQueueFromTheRealWriter)

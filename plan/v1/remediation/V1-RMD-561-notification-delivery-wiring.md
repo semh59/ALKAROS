@@ -1,7 +1,7 @@
 # V1-RMD-561 - Bildirim teslimatının Host bağlantısı
 
 - Task ID: V1-RMD-561
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
