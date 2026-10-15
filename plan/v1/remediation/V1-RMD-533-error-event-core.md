@@ -1,7 +1,7 @@
 # V1-RMD-533 - Hata olayı çekirdeği
 
 - Task ID: V1-RMD-533
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
