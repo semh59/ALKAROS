@@ -30,7 +30,7 @@ Veritabanı veya API süreci çökse de kritik durum yerel dosya tamponuna yazı
 
 ## Out of scope
 
-- Gerçek Telegram doğrulaması (V1-RMD-557).
+- Gerçek Telegram doğrulaması ve bekçi konteyneri (V1-RMD-557).
 
 ## Dependencies
 

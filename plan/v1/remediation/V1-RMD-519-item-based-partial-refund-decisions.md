@@ -25,7 +25,7 @@ Bugün iade yalnız ödemenin tamamı içindir. Ürün bazlı kısmi iade için 
 - Bilinen çelişkiler: veritabanında iade isteğini açanın aynı kişi tarafından karara bağlanmasını yasaklayan kısıt vardır (`ck_refund_requests_decider_not_requester`); nakit iadede "kasiyer ister, müdür onaylar" kararı vardır (2026-10-13). Bütçe içinde kendi kendine tamamlama bu iki kuralı bilerek gevşetir; V1-RMD-520 bunu `approval_mode` ile açıkça ele alır.
 - Doğrulanacaklar: stok geri alma servisinin kalem içinde kısmi miktarı destekleyip desteklemediği; sayısal işletme ayarı için kayıt yeri bulunmadığı (yeni tablo ve yönetim ekranı gerekebilir).
 
-- PO 2026-10-14 (devam): adet seçilebilir (kalem içinden 1 adet); kısmi iadeden sonra hesap Ödendi kalır. Doğrulananlar: stok geri alma bugün yalnız tüm hareketi ve bir kez geri alır (kısmi adet için yeni Return hareketi gerekir, V1-RMD-523); kısmen iade edilmiş ödeme kapanış hesabında sayılmıyor (V1-RMD-522). Zincir: 522, 523, 524, 525, 526 (tamamlandı), 527 (kanal raporu iade netlemesi, tamamlandı), 528 (ürün marj raporu iade netlemesi, tamamlandı), 529 (kalemsiz iade ayrı satır, tamamlandı), 530 (rapor ekranlarında iade tutarları, tamamlandı); zincir kapandı; sonraki bağımsız işler 531, 532; izleme zinciri 533-557 (docs/MONITORING_SYSTEM_PLAN.md).
+- PO 2026-10-14 (devam): adet seçilebilir (kalem içinden 1 adet); kısmi iadeden sonra hesap Ödendi kalır. Doğrulananlar: stok geri alma bugün yalnız tüm hareketi ve bir kez geri alır (kısmi adet için yeni Return hareketi gerekir, V1-RMD-523); kısmen iade edilmiş ödeme kapanış hesabında sayılmıyor (V1-RMD-522). Zincir: 522, 523, 524, 525, 526 (tamamlandı), 527 (kanal raporu iade netlemesi, tamamlandı), 528 (ürün marj raporu iade netlemesi, tamamlandı), 529 (kalemsiz iade ayrı satır, tamamlandı), 530 (rapor ekranlarında iade tutarları, tamamlandı); zincir kapandı; sonraki bağımsız işler 531, 532; izleme zinciri 533-557 (docs/MONITORING_SYSTEM_PLAN.md; 552 bekçi mantığı kapsamına daraltıldı).
 
 ## Out of scope
 
@@ -42,5 +42,3 @@ Bugün iade yalnız ödemenin tamamı içindir. Ürün bazlı kısmi iade için 
 ## Handoff
 
 - None
-
-- Not: izleme zinciri V1-RMD-552 kapsamı güncellendi (bekçi mantığı; konteyner ve gerçek kanal V1-RMD-557).
