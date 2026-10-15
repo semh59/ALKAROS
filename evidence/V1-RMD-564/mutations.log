@@ -1,0 +1,5 @@
+never escalates: KILLED
+always escalates: KILLED
+same severity re-reported: KILLED 
+degraded not reported: KILLED 
+failure not counted: KILLED 
