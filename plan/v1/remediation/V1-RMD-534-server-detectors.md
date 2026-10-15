@@ -41,7 +41,8 @@ Yakalanmamış istisna, yavaş istek, yavaş sorgu, bağlantı havuzu, kilit/kil
 1. 500 durumlu bir istek tam 1 KRİTİK olay; 404 ve 409 sıfır olay üretir.
 2. Yapay 10 sn kilit bekleme 55P03 olayı üretir.
 3. İzleme yazımları yavaş-sorgu olayı üretmez (öz kirlenme testi).
-4. Çıktılar `evidence/V1-RMD-534/` altındadır.
+4. Olay yazıcısı Host'ta izleme havuzuyla bağlanır; hata olayı tabloları saklama kataloğuna (V1-RMD-549 `TelemetryRetention`) eklenir, silme işi zamanlanır ve her çalışma denetim kaydı yazar.
+5. Çıktılar `evidence/V1-RMD-534/` altındadır.
 
 ## Handoff
 
