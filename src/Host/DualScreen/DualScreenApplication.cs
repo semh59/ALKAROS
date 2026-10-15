@@ -1,3 +1,4 @@
+using ALKAROS.Host.Observability.Wiring;
 using ALKAROS.Host.Composition.Errors;
 using System.Net;
 using System.Globalization;
@@ -183,6 +184,7 @@ public static partial class DualScreenApplication
         // IObservabilityService's health-check surface (V1-OBS-001)
         // existed with zero HTTP surface.
         builder.Services.AddObservabilityExperience();
+        builder.Services.AddMonitoringDataSource(options.ConnectionString);
         // V1-RMD-326 (independent 2026-09-26 audit, finding K14): the first real health probe - see
         // DatabaseHealthProbeHostedService's own doc comment for why this was needed at all (before this
         // fix, POST /health-checks only ever recorded whatever status a caller claimed, never anything

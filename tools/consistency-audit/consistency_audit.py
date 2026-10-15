@@ -165,6 +165,7 @@ def _find_write_targets(text: str) -> list[tuple[int, str, str, str]]:
 # and is treated as identity's cross-cutting surface, V0-ARC-001 row 1); the
 # top-level DualScreen/ folder is its own area.
 HOST_AREA_SCHEMA = {
+    "Observability": "observability",
     "Experience": "identity",
     "Experience/Authorization": "identity",
     "Experience/Billing": "billing",
