@@ -26,6 +26,7 @@ Bağlantı havuzu doluluğu, kaçan arka plan işi, N+1 sorgu, yavaş sorgu ve s
 ## In scope
 
 - Havuz > %85, kaçan zamanlanmış iş (nabız), istek başına 20 sorgu (N+1, son 8 sorgu örneği), yavaş sorgu eşiği (>500 ms Warning, >2000 ms Error).
+- QR tüneli (bağlayıcı süreci) kopma sinyali hata olayı olur.
 - Sorgu planı (EXPLAIN) yalnız SELECT için ve sınırlı sürede alınır; izlemenin kendi yazımları yavaş-sorgu olayından ayıklanır; dış çağrı adresleri temizlenir.
 
 ## Out of scope

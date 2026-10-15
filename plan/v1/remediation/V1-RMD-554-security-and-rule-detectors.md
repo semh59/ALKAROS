@@ -12,7 +12,7 @@
 
 ## Goal
 
-Yetki reddi yağmuru, kaba kuvvet giriş denemesi, iş kuralı ihlali, outbox kalıcı başarısız mesajlar ve QR tüneli kopması hata olayı olur.
+Yetki reddi yağmuru, kaba kuvvet giriş denemesi ve outbox kalıcı başarısız mesajlar hata olayı olur.
 
 ## Owned surface
 
@@ -20,11 +20,14 @@ Yetki reddi yağmuru, kaba kuvvet giriş denemesi, iş kuralı ihlali, outbox ka
 - `evidence/V1-RMD-554/**`
 - `src/Host/Observability/SecurityDetectors/**`
 - `tests/Host/Observability/SecurityDetectors/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız dedektör kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Endpoints.cs - yalnız giriş başarısızlığı bildirimi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Mevcut yetki reddi olay kaynağı (denial event sink) dedektörü; outbox kalıcı başarısızlığı artık yalnız günlükte kalmaz; QR tüneli sağlık sinyali.
+- Mevcut yetki reddi olay kaynağı (denial event sink) dedektörü; outbox kalıcı başarısızlığı artık yalnız günlükte kalmaz. QR tüneli sağlık sinyali V1-RMD-558 kapsamına taşındı (bağlayıcı ayrı süreç).
 - Giriş denemesi eşiği: 60 sn'de 10 başarısız; olayda kullanıcı adı yerine terminal etiketi.
 
 ## Out of scope
