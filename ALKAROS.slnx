@@ -72,6 +72,7 @@
   <Project Path="tests/Host/Experience/Observability/ALKAROS.Host.Experience.Observability.Tests.csproj" />
   <Project Path="tests/Modules/Observability/ErrorNotifications/ALKAROS.Observability.ErrorNotifications.Tests.csproj" />
   <Project Path="tests/Modules/Observability/PostgresInsight/ALKAROS.Observability.PostgresInsight.Tests.csproj" />
+  <Project Path="tests/Modules/Observability/ErrorAnalysis/ALKAROS.Observability.ErrorAnalysis.Tests.csproj" />
   <Project Path="tests/Host/Observability/CrashChannel/ALKAROS.Host.Observability.CrashChannel.Tests.csproj" />
   <Project Path="tests/Host/Observability/SecurityDetectors/ALKAROS.Host.Observability.SecurityDetectors.Tests.csproj" />
   <Project Path="tests/Host/Observability/HealthSnapshot/ALKAROS.Host.Observability.HealthSnapshot.Tests.csproj" />

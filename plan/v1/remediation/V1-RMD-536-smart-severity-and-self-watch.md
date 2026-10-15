@@ -1,7 +1,7 @@
 # V1-RMD-536 - Akıllı şiddet ve izleyicinin izlenmesi
 
 - Task ID: V1-RMD-536
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned

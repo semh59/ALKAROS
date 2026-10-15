@@ -1,0 +1,12 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Observability -> D:\PROJECT\ALKAROS\src\Modules\Observability\bin\Debug\net8.0\ALKAROS.Observability.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Observability.ErrorAnalysis.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Observability\ErrorAnalysis\bin\Debug\net8.0\ALKAROS.Observability.ErrorAnalysis.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Observability\ErrorAnalysis\bin\Debug\net8.0\ALKAROS.Observability.ErrorAnalysis.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:    10, Atlanan:     0, Toplam:    10, Süre: 142 ms - ALKAROS.Observability.ErrorAnalysis.Tests.dll (net8.0)

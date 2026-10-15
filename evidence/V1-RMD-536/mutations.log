@@ -1,0 +1,7 @@
+history guard removed: KILLED 
+minimum count removed: KILLED 
+std floor removed: KILLED (ZeroSpreadBaselineUsesTheDeviationFloor)
+z threshold lowered: KILLED 
+escalation does not stop at critical: KILLED 
+silence limit too long: KILLED 
+baseline window not weekly: KILLED 
