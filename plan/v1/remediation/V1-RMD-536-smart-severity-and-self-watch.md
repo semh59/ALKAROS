@@ -20,6 +20,7 @@ Bir hata normalden çok sıklaşırsa şiddeti otomatik yükselir (saat dilimi v
 - `evidence/V1-RMD-536/**`
 - `src/Modules/Observability/ErrorAnalysis/**`
 - `tests/Modules/Observability/ErrorAnalysis/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
