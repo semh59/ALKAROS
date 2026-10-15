@@ -20,12 +20,14 @@ Konteyner kaynakları (işlemci, bellek, disk), gerçek zamanlı bağlantı kopm
 - `evidence/V1-RMD-547/**`
 - `src/Host/Observability/ResourceProbes/**`
 - `tests/Host/Observability/ResourceProbes/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız kaynak izleme kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
 - Konteyner içi görünür kaynaklar; ana makine (Docker Desktop/WSL2) kaynakları konteynerden görünmez, bu sınır ekranda belirtilir.
-- SignalR kopma sayacı ve garson çevrimdışı kuyruk uzunluğu (istemci bildirimiyle).
+- SignalR anormal kopma sayacı (genel hub süzgeci). Garson çevrimdışı kuyruk uzunluğu istemci bildirimi gerektirir ve V1-RMD-558 kapsamına taşındı.
 
 ## Out of scope
 
