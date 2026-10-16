@@ -1,7 +1,7 @@
 # V1-RMD-544 - Performans bütçeleri ve gerileme alarmı
 
 - Task ID: V1-RMD-544
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -24,6 +24,8 @@ Her kritik eylemin süre bütçesi vardır; bütçe aşılınca veya normale gö
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız bütçe değerlendiricisi kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
