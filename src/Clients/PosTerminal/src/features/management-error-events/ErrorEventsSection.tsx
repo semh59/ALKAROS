@@ -80,16 +80,16 @@ export function ErrorEventsSection({ capabilities, client }: ManagementSectionPr
             <td>{layerLabel(item.layer)}</td><td>{severityLabel(item.severity)}</td><td>{statusLabel(item.status)}</td>
             <td>{item.occurrenceCount}</td><td>{formatWhen(item.lastSeenAt)}</td><td>{item.terminalLabel ?? "—"}</td>
             <td><div className="merr__actions">
-              <Button variant="quiet" onClick={() => void open(item.fingerprint)}>{t.details}</Button>
-              {canManage && item.status === "Open" && <Button variant="quiet" disabled={busy} onClick={() => void act(item.fingerprint, "acknowledge")}>{t.acknowledge}</Button>}
-              {canManage && item.status !== "Resolved" && <Button variant="quiet" disabled={busy} onClick={() => void act(item.fingerprint, "resolve")}>{t.resolve}</Button>}
+              <Button data-telemetry-id="b.management-error-events.erroreventssection.1" variant="quiet" onClick={() => void open(item.fingerprint)}>{t.details}</Button>
+              {canManage && item.status === "Open" && <Button data-telemetry-id="b.management-error-events.erroreventssection.2" variant="quiet" disabled={busy} onClick={() => void act(item.fingerprint, "acknowledge")}>{t.acknowledge}</Button>}
+              {canManage && item.status !== "Resolved" && <Button data-telemetry-id="b.management-error-events.erroreventssection.3" variant="quiet" disabled={busy} onClick={() => void act(item.fingerprint, "resolve")}>{t.resolve}</Button>}
             </div></td>
           </tr>)}</tbody>
         </table>
         <div className="merr__actions">
-          <Button variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>{t.previous}</Button>
+          <Button data-telemetry-id="b.management-error-events.erroreventssection.4" variant="secondary" disabled={page <= 1} onClick={() => setPage(page - 1)}>{t.previous}</Button>
           <span>{fill(t.pageOf, page, Math.max(1, Math.ceil(data.total / data.pageSize)))}</span>
-          <Button variant="secondary" disabled={page * data.pageSize >= data.total} onClick={() => setPage(page + 1)}>{t.next}</Button>
+          <Button data-telemetry-id="b.management-error-events.erroreventssection.5" variant="secondary" disabled={page * data.pageSize >= data.total} onClick={() => setPage(page + 1)}>{t.next}</Button>
         </div>
       </>}
     </PanelView>

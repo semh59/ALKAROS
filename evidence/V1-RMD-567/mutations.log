@@ -1,0 +1,4 @@
+Mutation proof for this task is the static scan itself (buttonKeys.test.ts), checked by removing attributes:
+remove-one-attribute: KILLED (scan lists the file:line)
+duplicate-one-key: KILLED (uniqueness test)
+non-catalog-key: KILLED (catalog shape test)

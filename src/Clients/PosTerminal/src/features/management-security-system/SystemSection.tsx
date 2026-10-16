@@ -52,14 +52,14 @@ export function SystemSection({ capabilities, client }: ManagementSectionProps &
           <span>{alertSeverityLabel(alert.severity)} · {alertStatusLabel(alert.status)} · {formatWhen(alert.openedAt)}</span>
           <span>{alert.message}</span>
           {canManage && <div className="msys__actions">{actions.map(({ action, label }) =>
-            <Button key={action} variant="quiet" disabled={busy} onClick={() => { setNotice(undefined); setReason(""); setPending({ alert, action }); }}>{label}</Button>)}
+            <Button data-telemetry-id="b.management-security-system.systemsection.1" key={action} variant="quiet" disabled={busy} onClick={() => { setNotice(undefined); setReason(""); setPending({ alert, action }); }}>{label}</Button>)}
           </div>}
         </div>)}
         {pending && <form className="msys__form" aria-label={pending.alert.title} onSubmit={(event) => void submit(event)}>
           <TextField id="al-reason" label={pending.action === "resolve" ? t.resolutionReason : t.reasonOptional} value={reason} onChange={(event) => setReason(event.target.value)} />
           <div className="msys__actions">
-            <Button type="submit" disabled={busy}>{t.confirm}</Button>
-            <Button type="button" variant="secondary" onClick={() => setPending(undefined)}>{t.cancel}</Button>
+            <Button data-telemetry-id="b.management-security-system.systemsection.2" type="submit" disabled={busy}>{t.confirm}</Button>
+            <Button data-telemetry-id="b.management-security-system.systemsection.3" type="button" variant="secondary" onClick={() => setPending(undefined)}>{t.cancel}</Button>
           </div>
         </form>}
       </div>}

@@ -152,7 +152,7 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
 
       <div className="online-ops__filters" role="group" aria-label="Kaynağa göre süz">
         {filters.map((option) => (
-          <button
+          <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.1"
             key={option.value}
             type="button"
             className="online-ops__filter"
@@ -166,11 +166,11 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
 
       {platforms.length > 1 && (
         <div className="online-ops__filters" role="group" aria-label="Platforma göre süz">
-          <button type="button" className="online-ops__filter" aria-pressed={activePlatform === undefined} onClick={() => setPlatform(undefined)}>
+          <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.2" type="button" className="online-ops__filter" aria-pressed={activePlatform === undefined} onClick={() => setPlatform(undefined)}>
             Tüm platformlar
           </button>
           {platforms.map((option) => (
-            <button
+            <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.3"
               key={option}
               type="button"
               className="online-ops__filter"
@@ -206,22 +206,22 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
               <div className="online-ops__actions">
                 {order.source === "Qr" ? (
                   <>
-                    <button type="button" disabled={busy} onClick={() => void act(order, () => acceptQrOrder(terminalId, order), `${title} siparişi onaylandı.`)}>
+                    <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.4" type="button" disabled={busy} onClick={() => void act(order, () => acceptQrOrder(terminalId, order), `${title} siparişi onaylandı.`)}>
                       Onayla
                     </button>
-                    <button type="button" className="online-ops__secondary" disabled={busy} onClick={() => { setRejecting(order); setRejectReason(""); }}>
+                    <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.5" type="button" className="online-ops__secondary" disabled={busy} onClick={() => { setRejecting(order); setRejectReason(""); }}>
                       Reddet
                     </button>
                   </>
                 ) : (
                   <>
-                    <button type="button" disabled={busy} onClick={() => void act(order, () => handOverOnlineOrder(terminalId, order), `${title} siparişi kuryeye teslim edildi.`)}>
+                    <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.6" type="button" disabled={busy} onClick={() => void act(order, () => handOverOnlineOrder(terminalId, order), `${title} siparişi kuryeye teslim edildi.`)}>
                       Kuryeye teslim et
                     </button>
-                    <button type="button" className="online-ops__secondary" disabled={busy} onClick={() => { setCancelling(order); setCancelReason("ItemUnavailable"); }}>
+                    <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.7" type="button" className="online-ops__secondary" disabled={busy} onClick={() => { setCancelling(order); setCancelReason("ItemUnavailable"); }}>
                       İptal et
                     </button>
-                    <button type="button" className="online-ops__secondary" onClick={() => void openNote(order)}>
+                    <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.8" type="button" className="online-ops__secondary" onClick={() => void openNote(order)}>
                       Müşteri notu
                     </button>
                   </>
@@ -251,8 +251,8 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
                 >
                   <label htmlFor={reasonId}>Ret gerekçesi</label>
                   <input id={reasonId} value={rejectReason} maxLength={200} required onChange={(event) => setRejectReason(event.target.value)} />
-                  <button type="submit" disabled={busy || !rejectReason.trim()}>Reddi onayla</button>
-                  <button type="button" className="online-ops__secondary" onClick={() => setRejecting(undefined)}>Vazgeç</button>
+                  <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.9" type="submit" disabled={busy || !rejectReason.trim()}>Reddi onayla</button>
+                  <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.10" type="button" className="online-ops__secondary" onClick={() => setRejecting(undefined)}>Vazgeç</button>
                 </form>
               )}
 
@@ -274,8 +274,8 @@ export function OnlineOperationsWorkspace({ terminalId }: { terminalId: string }
                       </label>
                     ))}
                   </fieldset>
-                  <button type="submit" disabled={busy}>İptali onayla</button>
-                  <button type="button" className="online-ops__secondary" onClick={() => setCancelling(undefined)}>Vazgeç</button>
+                  <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.11" type="submit" disabled={busy}>İptali onayla</button>
+                  <button data-telemetry-id="b.online-operations.onlineoperationsworkspace.12" type="button" className="online-ops__secondary" onClick={() => setCancelling(undefined)}>Vazgeç</button>
                 </form>
               )}
             </li>

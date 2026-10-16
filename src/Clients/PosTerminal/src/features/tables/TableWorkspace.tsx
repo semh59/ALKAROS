@@ -337,13 +337,13 @@ export function TableWorkspace({
     return <div className="table-workspace table-workspace--state"><StateMessage tone="unauthorized" title={stateText.unauthorizedTitle}><p>Masa çalışma alanını görmek için yeniden giriş yapın.</p></StateMessage></div>;
   }
   if (state === "offline") {
-    return <div className="table-workspace table-workspace--state"><StateMessage tone="offline" title={stateText.offlineTitle}><p>Sunucuya ulaşılamıyor; eski masa durumu işlem için kullanılmıyor.</p><Button onClick={onRefresh}>{commonActions.retry}</Button></StateMessage></div>;
+    return <div className="table-workspace table-workspace--state"><StateMessage tone="offline" title={stateText.offlineTitle}><p>Sunucuya ulaşılamıyor; eski masa durumu işlem için kullanılmıyor.</p><Button data-telemetry-id="b.tables.tableworkspace.1" onClick={onRefresh}>{commonActions.retry}</Button></StateMessage></div>;
   }
   if (state === "error") {
-    return <div className="table-workspace table-workspace--state"><StateMessage tone="error" title="Masa düzeni alınamadı"><p>{suppliedError ?? stateText.unexpectedError}</p><Button onClick={onRefresh}>{commonActions.reload}</Button></StateMessage></div>;
+    return <div className="table-workspace table-workspace--state"><StateMessage tone="error" title="Masa düzeni alınamadı"><p>{suppliedError ?? stateText.unexpectedError}</p><Button data-telemetry-id="b.tables.tableworkspace.2" onClick={onRefresh}>{commonActions.reload}</Button></StateMessage></div>;
   }
   if (state === "stale") {
-    return <div className="table-workspace table-workspace--state"><StateMessage tone="stale" title="Masa verisi güncel değil"><p>İşlem yapmadan önce güncel durumu alın.</p><Button onClick={onRefresh}>Güncelle</Button></StateMessage></div>;
+    return <div className="table-workspace table-workspace--state"><StateMessage tone="stale" title="Masa verisi güncel değil"><p>İşlem yapmadan önce güncel durumu alın.</p><Button data-telemetry-id="b.tables.tableworkspace.3" onClick={onRefresh}>Güncelle</Button></StateMessage></div>;
   }
 
   return (
@@ -355,14 +355,14 @@ export function TableWorkspace({
           <p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Canlı masa ve sipariş bağlamı"}</p>
         </div>
         <div className="table-workspace__toolbar-actions">
-          {canCreate && <><Button variant="secondary" onClick={() => { setFormErrors([]); setZoneDialogOpen(true); }}>+ Bölge ekle</Button><Button onClick={() => { setFormErrors([]); setTableDialogOpen(true); }}>+ Masa ekle</Button></>}
-          {canManage && onUpdateTable && selectedTable && <Button variant="secondary" onClick={openTableEdit}>Masayı düzenle</Button>}
-          {canManage && onUpdateZone && <Button variant="secondary" onClick={() => { setFormErrors([]); setEditZoneId(null); setDeleteZoneId(null); setZonesDialogOpen(true); }}>Bölgeleri yönet</Button>}
-          <Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
+          {canCreate && <><Button data-telemetry-id="b.tables.tableworkspace.4" variant="secondary" onClick={() => { setFormErrors([]); setZoneDialogOpen(true); }}>+ Bölge ekle</Button><Button data-telemetry-id="b.tables.tableworkspace.5" onClick={() => { setFormErrors([]); setTableDialogOpen(true); }}>+ Masa ekle</Button></>}
+          {canManage && onUpdateTable && selectedTable && <Button data-telemetry-id="b.tables.tableworkspace.6" variant="secondary" onClick={openTableEdit}>Masayı düzenle</Button>}
+          {canManage && onUpdateZone && <Button data-telemetry-id="b.tables.tableworkspace.7" variant="secondary" onClick={() => { setFormErrors([]); setEditZoneId(null); setDeleteZoneId(null); setZonesDialogOpen(true); }}>Bölgeleri yönet</Button>}
+          <Button data-telemetry-id="b.tables.tableworkspace.8" variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
         </div>
       </header>
 
-      {feedback && <div className={`table-workspace__feedback table-workspace__feedback--${feedback.tone}`} role={feedback.tone === "error" || feedback.tone === "conflict" ? "alert" : "status"} aria-live="polite"><span>{feedback.message}</span><button type="button" aria-label={stateText.dismissMessage} onClick={() => setFeedback(null)}>×</button></div>}
+      {feedback && <div className={`table-workspace__feedback table-workspace__feedback--${feedback.tone}`} role={feedback.tone === "error" || feedback.tone === "conflict" ? "alert" : "status"} aria-live="polite"><span>{feedback.message}</span><button data-telemetry-id="b.tables.tableworkspace.9" type="button" aria-label={stateText.dismissMessage} onClick={() => setFeedback(null)}>×</button></div>}
 
       <div className="table-workspace__filters" role="group" aria-label="Masa filtreleri">
         <SelectField label="Bölge" value={zoneFilter} onChange={(event) => setZoneFilter(event.target.value)}>
@@ -371,11 +371,11 @@ export function TableWorkspace({
         </SelectField>
         <label className="table-workspace__search">Masa ara<input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Örn. S-09" aria-label="Masa ara" /></label>
         <div className="table-workspace__status-filter" role="group" aria-label="Masa durumuna göre filtrele">
-          {statusOptions.map((status) => <button key={status} type="button" className={statusFilter === status ? "is-active" : ""} aria-pressed={statusFilter === status} onClick={() => setStatusFilter(status)}>{status === "all" ? "Tümü" : tableStatusLabels[status]}</button>)}
+          {statusOptions.map((status) => <button data-telemetry-id="b.tables.tableworkspace.10" key={status} type="button" className={statusFilter === status ? "is-active" : ""} aria-pressed={statusFilter === status} onClick={() => setStatusFilter(status)}>{status === "all" ? "Tümü" : tableStatusLabels[status]}</button>)}
         </div>
         <div className="table-workspace__view-toggle" role="group" aria-label="Görünüm">
-          <button type="button" className={view === "map" ? "is-active" : ""} aria-pressed={view === "map"} onClick={() => setView("map")}>Salon planı</button>
-          <button type="button" className={view === "list" ? "is-active" : ""} aria-pressed={view === "list"} onClick={() => setView("list")}>Liste</button>
+          <button data-telemetry-id="b.tables.tableworkspace.11" type="button" className={view === "map" ? "is-active" : ""} aria-pressed={view === "map"} onClick={() => setView("map")}>Salon planı</button>
+          <button data-telemetry-id="b.tables.tableworkspace.12" type="button" className={view === "list" ? "is-active" : ""} aria-pressed={view === "list"} onClick={() => setView("list")}>Liste</button>
         </div>
       </div>
 
@@ -387,7 +387,7 @@ export function TableWorkspace({
       </div>
 
       {state === "empty" || filteredTables.length === 0 ? (
-        <div className="table-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Henüz masa yok" : "Filtreyle eşleşen masa yok"}><p>{state === "empty" ? "Yönetici olarak ilk bölgeyi ve masayı ekleyerek başlayın." : "Filtreyi değiştirin veya aramayı temizleyin."}</p>{state === "empty" && canCreate && <Button onClick={() => setTableDialogOpen(true)}>İlk masayı ekle</Button>}</StateMessage></div>
+        <div className="table-workspace__empty"><StateMessage tone="info" title={state === "empty" ? "Henüz masa yok" : "Filtreyle eşleşen masa yok"}><p>{state === "empty" ? "Yönetici olarak ilk bölgeyi ve masayı ekleyerek başlayın." : "Filtreyi değiştirin veya aramayı temizleyin."}</p>{state === "empty" && canCreate && <Button data-telemetry-id="b.tables.tableworkspace.13" onClick={() => setTableDialogOpen(true)}>İlk masayı ekle</Button>}</StateMessage></div>
       ) : (
         <div className={`table-workspace__content table-workspace__content--${view}`}>
           {view === "map" && floorPlan ? <div className="table-workspace__floor-plan">
@@ -421,7 +421,7 @@ export function TableWorkspace({
           <TextField label="Kod" value={zoneDraft.code} onChange={(event) => setZoneDraft({ ...zoneDraft, code: event.target.value })} placeholder="SALON" autoComplete="off" />
           <TextField label="Bölge adı" value={zoneDraft.name} onChange={(event) => setZoneDraft({ ...zoneDraft, name: event.target.value })} placeholder="Salon" autoComplete="off" />
           <TextField label="Sıra" type="number" min={0} value={zoneDraft.sortOrder} onChange={(event) => setZoneDraft({ ...zoneDraft, sortOrder: Number(event.target.value) })} />
-          <div className="table-form__actions"><Button variant="secondary" onClick={() => setZoneDialogOpen(false)}>Vazgeç</Button><Button type="submit">Bölge oluştur</Button></div>
+          <div className="table-form__actions"><Button data-telemetry-id="b.tables.tableworkspace.14" variant="secondary" onClick={() => setZoneDialogOpen(false)}>Vazgeç</Button><Button data-telemetry-id="b.tables.tableworkspace.15" type="submit">Bölge oluştur</Button></div>
         </form>
       </ModalDialog>
 
@@ -431,7 +431,7 @@ export function TableWorkspace({
           <TextField label="Masa numarası" value={tableDraft.tableNumber} onChange={(event) => setTableDraft({ ...tableDraft, tableNumber: event.target.value })} placeholder="S-09" autoComplete="off" />
           <SelectField label="Bölge" value={tableDraft.zoneId ?? ""} onChange={(event) => setTableDraft({ ...tableDraft, zoneId: event.target.value || null })}><option value="">Bölge seçin</option>{zones.filter((zone) => zone.active).map((zone) => <option key={zone.zoneId} value={zone.zoneId}>{zone.name}</option>)}</SelectField>
           <TextField label="Kapasite" type="number" min={1} max={100} value={tableDraft.capacity} onChange={(event) => setTableDraft({ ...tableDraft, capacity: Number(event.target.value) })} />
-          <div className="table-form__actions"><Button variant="secondary" onClick={() => setTableDialogOpen(false)}>Vazgeç</Button><Button type="submit">Masa oluştur</Button></div>
+          <div className="table-form__actions"><Button data-telemetry-id="b.tables.tableworkspace.16" variant="secondary" onClick={() => setTableDialogOpen(false)}>Vazgeç</Button><Button data-telemetry-id="b.tables.tableworkspace.17" type="submit">Masa oluştur</Button></div>
         </form>
       </ModalDialog>
 
@@ -439,19 +439,19 @@ export function TableWorkspace({
         <ValidationSummary title="İşlem tamamlanamadı" errors={formErrors} />
         {zones.length === 0 ? <p>Henüz bölge yok.</p> : <ul className="table-form__checklist">{zones.map((zone) => <li key={zone.zoneId}>
           <strong>{zone.name}</strong> · {zone.code} · {zone.active ? "Etkin" : "Pasif"}
-          <Button variant="quiet" onClick={() => { setFormErrors([]); setDeleteZoneId(null); setEditZoneId(zone.zoneId); setZoneEdit({ name: zone.name, sortOrder: zone.sortOrder, active: zone.active }); }}>Düzenle</Button>
-          <Button variant="quiet" onClick={() => { setFormErrors([]); setEditZoneId(null); setDeleteZoneId(zone.zoneId); }}>Sil</Button>
+          <Button data-telemetry-id="b.tables.tableworkspace.18" variant="quiet" onClick={() => { setFormErrors([]); setDeleteZoneId(null); setEditZoneId(zone.zoneId); setZoneEdit({ name: zone.name, sortOrder: zone.sortOrder, active: zone.active }); }}>Düzenle</Button>
+          <Button data-telemetry-id="b.tables.tableworkspace.19" variant="quiet" onClick={() => { setFormErrors([]); setEditZoneId(null); setDeleteZoneId(zone.zoneId); }}>Sil</Button>
         </li>)}</ul>}
         {deleteZoneId && <div className="table-form__context" role="alert">
           <p>Bu bölge silinecek. Bölgede masa varsa sunucu işlemi reddeder.</p>
-          <Button onClick={() => void confirmZoneDelete()}>Evet, bölgeyi sil</Button>
-          <Button variant="secondary" onClick={() => setDeleteZoneId(null)}>Vazgeç</Button>
+          <Button data-telemetry-id="b.tables.tableworkspace.20" onClick={() => void confirmZoneDelete()}>Evet, bölgeyi sil</Button>
+          <Button data-telemetry-id="b.tables.tableworkspace.21" variant="secondary" onClick={() => setDeleteZoneId(null)}>Vazgeç</Button>
         </div>}
         {editZoneId && <form className="table-form" aria-label="Bölgeyi düzenle" onSubmit={(event) => void submitZoneEdit(event)}>
           <TextField label="Bölge adı" value={zoneEdit.name} onChange={(event) => setZoneEdit({ ...zoneEdit, name: event.target.value })} autoComplete="off" />
           <TextField label="Sıra" type="number" min={0} value={zoneEdit.sortOrder} onChange={(event) => setZoneEdit({ ...zoneEdit, sortOrder: Number(event.target.value) })} />
           <label><input type="checkbox" checked={zoneEdit.active} onChange={(event) => setZoneEdit({ ...zoneEdit, active: event.target.checked })} /> Etkin</label>
-          <div className="table-form__actions"><Button variant="secondary" onClick={() => setEditZoneId(null)}>Vazgeç</Button><Button type="submit">Bölgeyi kaydet</Button></div>
+          <div className="table-form__actions"><Button data-telemetry-id="b.tables.tableworkspace.22" variant="secondary" onClick={() => setEditZoneId(null)}>Vazgeç</Button><Button data-telemetry-id="b.tables.tableworkspace.23" type="submit">Bölgeyi kaydet</Button></div>
         </form>}
       </ModalDialog>
 
@@ -462,7 +462,7 @@ export function TableWorkspace({
           <SelectField label="Bölge" value={tableEdit.zoneId ?? ""} onChange={(event) => setTableEdit({ ...tableEdit, zoneId: event.target.value || null })}><option value="">Bölge seçin</option>{zones.map((zone) => <option key={zone.zoneId} value={zone.zoneId}>{zone.name}</option>)}</SelectField>
           <TextField label="Kapasite" type="number" min={1} max={100} value={tableEdit.capacity} onChange={(event) => setTableEdit({ ...tableEdit, capacity: Number(event.target.value) })} />
           <label><input type="checkbox" checked={tableEdit.active} onChange={(event) => setTableEdit({ ...tableEdit, active: event.target.checked })} /> Etkin</label>
-          <div className="table-form__actions"><Button variant="secondary" onClick={() => setTableEditOpen(false)}>Vazgeç</Button><Button type="submit">Masayı kaydet</Button></div>
+          <div className="table-form__actions"><Button data-telemetry-id="b.tables.tableworkspace.24" variant="secondary" onClick={() => setTableEditOpen(false)}>Vazgeç</Button><Button data-telemetry-id="b.tables.tableworkspace.25" type="submit">Masayı kaydet</Button></div>
         </form>
       </ModalDialog>
 
@@ -475,7 +475,7 @@ export function TableWorkspace({
           {action === "Merge" && <fieldset className="table-form__checklist"><legend>Birleştirilecek masalar</legend>{availableTargets.map((table) => <label key={table.tableId}><input type="checkbox" checked={participantTableIds.includes(table.tableId)} onChange={(event) => setParticipantTableIds(event.target.checked ? [...participantTableIds, table.tableId] : participantTableIds.filter((id) => id !== table.tableId))} /> <span>{table.tableNumber} · {tableStatusLabels[table.status]}</span></label>)}</fieldset>}
           {action === "Unmerge" && <p className="table-form__context">Birleşimdeki tüm katılımcı masalar güncel satır sürümleriyle ayrılacaktır.</p>}
           {(action && actionNeedsReason(action)) && <TextField label="Açıklama" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="İşlem gerekçesi" autoComplete="off" />}
-          <div className="table-form__actions"><Button variant="secondary" disabled={actionBusy} onClick={() => { setAction(null); setActionTableId(null); }}>Vazgeç</Button><Button type="submit" disabled={actionBusy}>{actionBusy ? "İşleniyor…" : "Onayla"}</Button></div>
+          <div className="table-form__actions"><Button data-telemetry-id="b.tables.tableworkspace.26" variant="secondary" disabled={actionBusy} onClick={() => { setAction(null); setActionTableId(null); }}>Vazgeç</Button><Button data-telemetry-id="b.tables.tableworkspace.27" type="submit" disabled={actionBusy}>{actionBusy ? "İşleniyor…" : "Onayla"}</Button></div>
         </form>
       </ModalDialog>
     </section>
@@ -489,12 +489,12 @@ function Stat({ label, value, tone = "neutral" }: { label: string; value: number
 function TableCard({ table, selected, onSelect, onAction }: { table: TableRecord; selected: boolean; onSelect: () => void; onAction: (action: TableAction) => void }) {
   const command = table.allowedCommands.find((value): value is TableAction => value in tableActionLabels && isClientExecutableAction(value as TableAction, table));
   return <article className={`table-card table-card--${table.status.toLowerCase()} ${selected ? "is-selected" : ""}`}>
-    <button type="button" className="table-card__select" aria-label={`${table.tableNumber} masasını seç, ${tableStatusLabels[table.status]}`} aria-pressed={selected} onClick={onSelect}>
+    <button data-telemetry-id="b.tables.tableworkspace.28" type="button" className="table-card__select" aria-label={`${table.tableNumber} masasını seç, ${tableStatusLabels[table.status]}`} aria-pressed={selected} onClick={onSelect}>
       <span className="table-card__top"><strong>{table.tableNumber}</strong><span className="table-card__status-group"><span className="table-status">{tableStatusLabels[table.status]}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</span></span>
       <span className="table-card__capacity">◉ {table.capacity} kişilik</span>
       <span className="table-card__context">{table.currentOrderId ? `Sipariş #${table.currentOrderId.slice(0, 8)}` : table.currentBillId ? `Hesap #${table.currentBillId.slice(0, 8)}` : "Sipariş yok"}</span>
     </button>
-    <footer className="table-card__footer"><span className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : `v${table.rowVersion}`}</span>{command && <button type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
+    <footer className="table-card__footer"><span className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : `v${table.rowVersion}`}</span>{command && <button data-telemetry-id="b.tables.tableworkspace.29" type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
   </article>;
 }
 
@@ -504,7 +504,7 @@ function TableDetails({ table, zoneName, onAction }: { table: TableRecord; zoneN
     <div className="table-details__header"><div><span className="table-workspace__kicker">SEÇİLİ MASA</span><h3>{table.tableNumber}</h3><span>{zoneName ?? "Bölge atanmamış"}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{tableStatusLabels[table.status]}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
     <div className="table-details__facts"><div><span>Kapasite</span><strong>{table.capacity} kişi</strong></div><div><span>Satır sürümü</span><strong>v{table.rowVersion}</strong></div><div><span>Geçen süre</span><strong className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : "—"}</strong></div></div>
     <div className="table-details__pointer"><span className="table-details__label">AKTİF BAĞLAM</span>{table.currentOrderId ? <p><strong>Sipariş</strong><code>{table.currentOrderId}</code></p> : <p className="is-muted">Bu masada aktif sipariş yok.</p>}{table.currentBillId && <p><strong>Hesap</strong><code>{table.currentBillId}</code></p>}</div>
-    {commands.length > 0 ? <div className="table-details__actions"><span className="table-details__label">İŞLEMLER</span>{commands.map((command) => <Button key={command} variant={command === "SetOutOfService" ? "secondary" : "primary"} disabled={!isClientExecutableAction(command, table)} title={isClientExecutableAction(command, table) ? undefined : "Bu masa için aktif rezervasyon bulunamadığından işlem güvenli biçimde kapalı."} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}</div> : <StateMessage tone="forbidden" title="İşlem kullanılamıyor"><p>Bu masa için sunucu tarafından izin verilen işlem yok.</p></StateMessage>}
+    {commands.length > 0 ? <div className="table-details__actions"><span className="table-details__label">İŞLEMLER</span>{commands.map((command) => <Button data-telemetry-id="b.tables.tableworkspace.30" key={command} variant={command === "SetOutOfService" ? "secondary" : "primary"} disabled={!isClientExecutableAction(command, table)} title={isClientExecutableAction(command, table) ? undefined : "Bu masa için aktif rezervasyon bulunamadığından işlem güvenli biçimde kapalı."} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}</div> : <StateMessage tone="forbidden" title="İşlem kullanılamıyor"><p>Bu masa için sunucu tarafından izin verilen işlem yok.</p></StateMessage>}
     <p className="table-details__authority">Sunucu yetkisi ve v{table.rowVersion} kaynak gerçek. Çakışmada bu bağlam korunur.</p>
   </section>;
 }

@@ -63,7 +63,7 @@ export function SellerProfileCard({ terminalId, fetcher = fetch }: { terminalId:
         <label>{t.email}<input type="email" value={profile.email ?? ""} onChange={(event) => change({ email: event.target.value })} autoComplete="off" /></label>
         {problem && <div className="alert error" role="alert">{problem}</div>}
         {saved && <div className="alert information" role="status">{t.savedMessage}</div>}
-        <button className="primary login-submit" disabled={busy || loading}>{busy ? t.saving : t.save}</button>
+        <button data-telemetry-id="b.invoice-settings.sellerprofilecard.1" className="primary login-submit" disabled={busy || loading}>{busy ? t.saving : t.save}</button>
       </form>
     </section>
   );

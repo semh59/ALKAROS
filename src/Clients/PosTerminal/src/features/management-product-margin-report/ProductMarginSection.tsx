@@ -44,7 +44,7 @@ export function ProductMarginSection({ client }: Partial<ManagementSectionProps>
     <form className="mpm__filters" onSubmit={(event) => { event.preventDefault(); void load(); }}>
       <TextField id="mpm-from" label={t.from} type="date" value={range.from} onChange={(event) => setRange({ ...range, from: event.target.value })} />
       <TextField id="mpm-to" label={t.to} type="date" value={range.to} onChange={(event) => setRange({ ...range, to: event.target.value })} />
-      <Button type="submit" variant="secondary" disabled={loading}>{t.load}</Button>
+      <Button data-telemetry-id="b.management-product-margin-report.productmarginsection.1" type="submit" variant="secondary" disabled={loading}>{t.load}</Button>
     </form>
     {problem && <p role="alert" className="mpm__warning">{problem}</p>}
     {loading && <p aria-busy="true">{t.loading}</p>}

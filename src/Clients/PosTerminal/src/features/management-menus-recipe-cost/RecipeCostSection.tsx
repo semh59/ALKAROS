@@ -49,8 +49,8 @@ export function RecipeCostSection({ client }: ManagementSectionProps & { client?
             {list.map((version) => <option key={version.id} value={version.id}>{version.label} ({recipeStatusLabel(version.status)})</option>)}
           </SelectField>
           <TextField id="c-date" label={t.asOf} type="date" value={asOf} onChange={(event) => setAsOf(event.target.value)} />
-          <Button type="submit" variant="secondary" disabled={!versionId}>{t.show}</Button>
-          <Button type="button" disabled={!versionId || busy} onClick={() => void calculate()}>{t.calculate}</Button>
+          <Button data-telemetry-id="b.management-menus-recipe-cost.recipecostsection.1" type="submit" variant="secondary" disabled={!versionId}>{t.show}</Button>
+          <Button data-telemetry-id="b.management-menus-recipe-cost.recipecostsection.2" type="button" disabled={!versionId || busy} onClick={() => void calculate()}>{t.calculate}</Button>
         </form>
         {query.versionId && snapshot.state === "loading" && <p aria-busy="true">{t.loading}</p>}
         {query.versionId && snapshot.state === "error" && <p role="alert">{snapshot.message}</p>}

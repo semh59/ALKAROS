@@ -421,13 +421,13 @@ export function KitchenOperationsWorkspace({
     return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="unauthorized" title="Kasiyer oturumu gerekli"><p>Mutfak çalışma alanını görmek için terminal oturumunu yenileyin.</p></StateMessage></div>;
   }
   if (state === "offline") {
-    return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="offline" title={stateText.offlineTitle}><p>Eski ticket veya sağlık verisiyle işlem yapılmıyor.</p><Button onClick={onRefresh}>{commonActions.retry}</Button></StateMessage></div>;
+    return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="offline" title={stateText.offlineTitle}><p>Eski ticket veya sağlık verisiyle işlem yapılmıyor.</p><Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.1" onClick={onRefresh}>{commonActions.retry}</Button></StateMessage></div>;
   }
   if (state === "error") {
-    return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="error" title="Mutfak verisi alınamadı"><p>{suppliedError ?? stateText.unexpectedError}</p><Button onClick={onRefresh}>{commonActions.reload}</Button></StateMessage></div>;
+    return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="error" title="Mutfak verisi alınamadı"><p>{suppliedError ?? stateText.unexpectedError}</p><Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.2" onClick={onRefresh}>{commonActions.reload}</Button></StateMessage></div>;
   }
   if (state === "stale" || state === "conflict") {
-    return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="conflict" title={state === "stale" ? "Mutfak verisi güncel değil" : "Mutfak çakışması"}><p>Operasyon komutu göndermeden önce sunucunun son durumunu alın.</p><Button onClick={onRefresh}>Güncel veriyi al</Button></StateMessage></div>;
+    return <div className="kitchen-workspace kitchen-workspace--state"><StateMessage tone="conflict" title={state === "stale" ? "Mutfak verisi güncel değil" : "Mutfak çakışması"}><p>Operasyon komutu göndermeden önce sunucunun son durumunu alın.</p><Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.3" onClick={onRefresh}>Güncel veriyi al</Button></StateMessage></div>;
   }
 
   return <section className={`kitchen-workspace ${isDense ? "is-dense" : ""}`} aria-label="Mutfak ve operasyon yönetimi">
@@ -438,17 +438,17 @@ export function KitchenOperationsWorkspace({
         {!data.liveSyncEnabled && <span className="kitchen-live-sync-badge" title="Kalem hazır olduğunda garsona bildirim gitmiyor">Canlı senkron kapalı</span>}
         {!canOperate && canAdvance && <span className="kitchen-role-badge" title="Yalnız ilerletme yapabilirsiniz">Mutfak Personeli</span>}
         <span className={`kitchen-health-dot kitchen-health-dot--${(overallHealth ?? "unknown").toLowerCase()}`} role="img" aria-label={`Sistem durumu: ${healthStatusLabel(overallHealth)}`} />
-        {onSuspendProductAvailability && <Button
+        {onSuspendProductAvailability && <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.4"
           variant="secondary"
           disabled={!canSuspendAvailability}
           title={canSuspendAvailability ? undefined : "Bu işlem için Mutfak Şefi yetkisi gerekli"}
           onClick={openSuspendPrompt}
         >Ürün Tükendi Bildir</Button>}
-        <Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
+        <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.5" variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
       </div>
     </header>
 
-    {feedback && <div className={`kitchen-workspace__feedback kitchen-workspace__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"} aria-live="polite"><span>{feedback.message}</span><button type="button" aria-label={stateText.dismissMessage} onClick={() => setFeedback(null)}>×</button></div>}
+    {feedback && <div className={`kitchen-workspace__feedback kitchen-workspace__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"} aria-live="polite"><span>{feedback.message}</span><button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.6" type="button" aria-label={stateText.dismissMessage} onClick={() => setFeedback(null)}>×</button></div>}
 
     <div className="kitchen-workspace__toolbar">
       <div className="kitchen-workspace__stats" aria-label="Mutfak özeti">
@@ -468,17 +468,17 @@ export function KitchenOperationsWorkspace({
           exact shape (a role="group" of mutually exclusive toggle buttons),
           not role="tab"/radio, to stay consistent with that precedent. */}
       <div className="kitchen-view-mode" role="group" aria-label="Görünüm modu">
-        <button type="button" className={viewMode === "expo" ? "is-active" : ""} aria-pressed={viewMode === "expo"} onClick={() => setViewMode("expo")}>Expo</button>
-        <button type="button" className={viewMode === "allday" ? "is-active" : ""} aria-pressed={viewMode === "allday"} onClick={() => setViewMode("allday")}>Tüm Gün</button>
+        <button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.7" type="button" className={viewMode === "expo" ? "is-active" : ""} aria-pressed={viewMode === "expo"} onClick={() => setViewMode("expo")}>Expo</button>
+        <button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.8" type="button" className={viewMode === "allday" ? "is-active" : ""} aria-pressed={viewMode === "allday"} onClick={() => setViewMode("allday")}>Tüm Gün</button>
         {/* V1-KIT-014/V1-KDS-009: hidden entirely without reports.view —
             an operational report, not a locked-but-visible action like the
             86 button (V1-KDS-002's own pattern doesn't apply here). */}
-        {canViewReports && onLoadPerformanceReport && <button type="button" className={viewMode === "report" ? "is-active" : ""} aria-pressed={viewMode === "report"} onClick={() => setViewMode("report")}>Rapor</button>}
+        {canViewReports && onLoadPerformanceReport && <button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.9" type="button" className={viewMode === "report" ? "is-active" : ""} aria-pressed={viewMode === "report"} onClick={() => setViewMode("report")}>Rapor</button>}
       </div>
       <div className="kitchen-density" role="group" aria-label="Ekran yoğunluğu">
-        <button type="button" className={densityOverride === "auto" ? "is-active" : ""} aria-pressed={densityOverride === "auto"} onClick={() => setDensityOverride("auto")}>Otomatik{autoDense && densityOverride === "auto" ? " (yoğun)" : ""}</button>
-        <button type="button" className={densityOverride === "sparse" ? "is-active" : ""} aria-pressed={densityOverride === "sparse"} onClick={() => setDensityOverride("sparse")}>Sakin mod</button>
-        <button type="button" className={densityOverride === "dense" ? "is-active" : ""} aria-pressed={densityOverride === "dense"} onClick={() => setDensityOverride("dense")}>Yoğun mod</button>
+        <button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.10" type="button" className={densityOverride === "auto" ? "is-active" : ""} aria-pressed={densityOverride === "auto"} onClick={() => setDensityOverride("auto")}>Otomatik{autoDense && densityOverride === "auto" ? " (yoğun)" : ""}</button>
+        <button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.11" type="button" className={densityOverride === "sparse" ? "is-active" : ""} aria-pressed={densityOverride === "sparse"} onClick={() => setDensityOverride("sparse")}>Sakin mod</button>
+        <button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.12" type="button" className={densityOverride === "dense" ? "is-active" : ""} aria-pressed={densityOverride === "dense"} onClick={() => setDensityOverride("dense")}>Yoğun mod</button>
       </div>
     </div>
 
@@ -523,14 +523,14 @@ export function KitchenOperationsWorkspace({
         {cancelTarget && <p className="kitchen-decision-form__context"><strong>{cancelTarget.map((ticket) => ticket.ticketNumber).join(", ")}</strong> iptal edilecek.</p>}
         <TextField label="Gerekçe" hint="Bu bilgi denetim kaydına geçer." value={cancelReason} onChange={(event) => setCancelReason(event.target.value)} placeholder="Örn. Malzeme bitti" autoComplete="off" />
         <div className="kitchen-decision-form__actions">
-          <Button variant="secondary" disabled={Boolean(busyKey)} onClick={() => setCancelTarget(null)}>Vazgeç</Button>
-          <Button type="submit" disabled={Boolean(busyKey)}>{busyKey ? "Kaydediliyor…" : "İptal et"}</Button>
+          <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.13" variant="secondary" disabled={Boolean(busyKey)} onClick={() => setCancelTarget(null)}>Vazgeç</Button>
+          <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.14" type="submit" disabled={Boolean(busyKey)}>{busyKey ? "Kaydediliyor…" : "İptal et"}</Button>
         </div>
       </form>
     </ModalDialog>
 
     <ModalDialog open={decision !== null} title={decision === "approve" ? "Reprint onayı" : "Reprint reddi"} onClose={() => { if (!busyKey) { setDecision(null); setSelectedDelivery(null); } }}>
-      <form className="kitchen-decision-form" onSubmit={(event) => void submitDecision(event)}><ValidationSummary title="Gerekçeyi kontrol edin" errors={formErrors} />{selectedDelivery && <p className="kitchen-decision-form__context"><strong>Doğrulanamayan teslimat</strong> · {compactId(selectedDelivery.id)} · deneme {selectedDelivery.attemptNumber}</p>}<TextField label={kitchenReprintText.reasonLabel} hint="İstasyonda fiziksel kontrol yapıldı mı?" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Örn. Ticket yazıcıdan çıkmadı" autoComplete="off" /><div className="kitchen-decision-form__actions"><Button variant="secondary" disabled={Boolean(busyKey)} onClick={() => { setDecision(null); setSelectedDelivery(null); }}>Vazgeç</Button><Button type="submit" disabled={Boolean(busyKey)}>{busyKey ? "Kaydediliyor…" : decision === "approve" ? "Reprint'i onayla" : "Reprint'i reddet"}</Button></div></form>
+      <form className="kitchen-decision-form" onSubmit={(event) => void submitDecision(event)}><ValidationSummary title="Gerekçeyi kontrol edin" errors={formErrors} />{selectedDelivery && <p className="kitchen-decision-form__context"><strong>Doğrulanamayan teslimat</strong> · {compactId(selectedDelivery.id)} · deneme {selectedDelivery.attemptNumber}</p>}<TextField label={kitchenReprintText.reasonLabel} hint="İstasyonda fiziksel kontrol yapıldı mı?" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Örn. Ticket yazıcıdan çıkmadı" autoComplete="off" /><div className="kitchen-decision-form__actions"><Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.15" variant="secondary" disabled={Boolean(busyKey)} onClick={() => { setDecision(null); setSelectedDelivery(null); }}>Vazgeç</Button><Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.16" type="submit" disabled={Boolean(busyKey)}>{busyKey ? "Kaydediliyor…" : decision === "approve" ? "Reprint'i onayla" : "Reprint'i reddet"}</Button></div></form>
     </ModalDialog>
 
     <ModalDialog open={suspendPromptOpen} title="Ürün Tükendi Bildir" onClose={() => { if (!busyKey) setSuspendPromptOpen(false); }}>
@@ -544,8 +544,8 @@ export function KitchenOperationsWorkspace({
         </label>}
         <p className="kitchen-decision-form__context">Ürün pasife alınır; Catalog Management'ta da pasif görünecektir. Ürün hâlâ satışta iken 86'lanıyorsa, yöneticiye denetlenebilir bir bildirim kaydı düşülür.</p>
         <div className="kitchen-decision-form__actions">
-          <Button variant="secondary" disabled={Boolean(busyKey)} onClick={() => setSuspendPromptOpen(false)}>Vazgeç</Button>
-          <Button type="submit" disabled={Boolean(busyKey) || openProducts.length === 0}>{busyKey ? "Kaydediliyor…" : "Tükendi olarak işaretle"}</Button>
+          <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.17" variant="secondary" disabled={Boolean(busyKey)} onClick={() => setSuspendPromptOpen(false)}>Vazgeç</Button>
+          <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.18" type="submit" disabled={Boolean(busyKey) || openProducts.length === 0}>{busyKey ? "Kaydediliyor…" : "Tükendi olarak işaretle"}</Button>
         </div>
       </form>
     </ModalDialog>
@@ -647,7 +647,7 @@ function OrderGroupCard({
         : <><span className="kitchen-order__label">Sipariş</span><span className="kitchen-order__id">{compactId(groupKey)}</span></>}</div>
       <div className={`kitchen-order__timer kitchen-order__timer--${tone}`}>{ageLabel(minutes)}<small>hedef {targetPrepMinutes} dk</small></div>
       {allDone && <span className="kitchen-order__done">✓ Tüm kalemler hazır</span>}
-      {canOperate && anyCancellable && <button type="button" className="kitchen-flag-btn" title="Sorun bildir / iptal et" onClick={() => onCancel(tickets)}>⚠</button>}
+      {canOperate && anyCancellable && <button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.19" type="button" className="kitchen-flag-btn" title="Sorun bildir / iptal et" onClick={() => onCancel(tickets)}>⚠</button>}
     </header>
     <div className="kitchen-order__stations">
       {tickets.map((ticket) => <StationColumn
@@ -723,7 +723,7 @@ function ItemRow({
         {item.modifiers && <span className="kitchen-item-row__detail">{item.modifiers}</span>}
         {item.notes && <span className="kitchen-item-row__detail kitchen-item-row__detail--note">Not: {item.notes}</span>}
       </div>
-      {canShowUndo && <button type="button" className="kitchen-undo-btn" disabled={busy} onClick={onUndo}>{busy ? "…" : `Geri Al · ${Math.ceil(remainingMs / 1000)}sn`}</button>}
+      {canShowUndo && <button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.20" type="button" className="kitchen-undo-btn" disabled={busy} onClick={onUndo}>{busy ? "…" : `Geri Al · ${Math.ceil(remainingMs / 1000)}sn`}</button>}
     </div>
     {currentIndex < 0 ? null : <div className="kitchen-stepper" role="group" aria-label={`${item.productName} durumu`}>
       {STAGES.map((stage, index) => {
@@ -731,7 +731,7 @@ function ItemRow({
         const isCurrent = index === currentIndex;
         const isNext = index === currentIndex + 1;
         const clickable = canAdvance && isNext && !busy;
-        return <button
+        return <button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.21"
           key={stage}
           type="button"
           className={`kitchen-step ${isPast ? "is-done" : ""} ${isCurrent ? `is-current is-current--${stage.toLowerCase()}` : ""} ${isNext ? "is-next" : ""}`}
@@ -782,7 +782,7 @@ function HealthPanel({ health, backups }: { health: KitchenHealthSnapshot | null
 }
 
 function UnknownPanel({ deliveries, canManage, busyKey, onDecision }: { deliveries: readonly KitchenUnknownDelivery[]; canManage: boolean; busyKey: string | null; onDecision: (delivery: KitchenUnknownDelivery, decision: "approve" | "reject") => void }) {
-  return <section className={`kitchen-panel kitchen-panel--unknown ${deliveries.length ? "has-alert" : ""}`} aria-labelledby="unknown-heading"><header><div><span className="kitchen-panel__eyebrow">YAZICI KURTARMA</span><h3 id="unknown-heading">Doğrulanamayan teslimatlar</h3></div><strong>{deliveries.length}</strong></header>{deliveries.length === 0 ? <p className="kitchen-panel__muted">Bekleyen belirsiz teslimat yok.</p> : <div className="kitchen-unknown-list">{deliveries.map((delivery) => <div className="kitchen-unknown" key={delivery.id}><div><strong>{compactId(delivery.ticketId)}</strong><span>{delivery.crashReason ?? "ACK alınamadı"}</span></div>{canManage ? <div className="kitchen-unknown__actions"><Button variant="secondary" disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "reject")}>Reddet</Button><Button disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "approve")}>Gerekçeli onay</Button></div> : <span className="kitchen-panel__muted">Süpervizör gerekli</span>}</div>)}</div>}</section>;
+  return <section className={`kitchen-panel kitchen-panel--unknown ${deliveries.length ? "has-alert" : ""}`} aria-labelledby="unknown-heading"><header><div><span className="kitchen-panel__eyebrow">YAZICI KURTARMA</span><h3 id="unknown-heading">Doğrulanamayan teslimatlar</h3></div><strong>{deliveries.length}</strong></header>{deliveries.length === 0 ? <p className="kitchen-panel__muted">Bekleyen belirsiz teslimat yok.</p> : <div className="kitchen-unknown-list">{deliveries.map((delivery) => <div className="kitchen-unknown" key={delivery.id}><div><strong>{compactId(delivery.ticketId)}</strong><span>{delivery.crashReason ?? "ACK alınamadı"}</span></div>{canManage ? <div className="kitchen-unknown__actions"><Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.22" variant="secondary" disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "reject")}>Reddet</Button><Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.23" disabled={busyKey === `delivery:${delivery.id}`} onClick={() => onDecision(delivery, "approve")}>Gerekçeli onay</Button></div> : <span className="kitchen-panel__muted">Süpervizör gerekli</span>}</div>)}</div>}</section>;
 }
 
 function PrintFailurePanel({ jobs, tickets, printers }: { jobs: readonly KitchenPrintJob[]; tickets: readonly KitchenTicket[]; printers: readonly KitchenWorkspaceProps["data"]["printers"][number][] }) {
@@ -875,7 +875,7 @@ function PrinterPanel({
           {printers.filter((printer) => printer.isActive).map((printer) => <option key={printer.id} value={printer.id}>{printer.name}</option>)}
         </select>
       </label>
-      <Button type="submit" variant="secondary" disabled={routeBusy || !selectedCategoryId || !selectedPrinterId}>{routeBusy ? "Kaydediliyor…" : "Rota ekle"}</Button>
+      <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.24" type="submit" variant="secondary" disabled={routeBusy || !selectedCategoryId || !selectedPrinterId}>{routeBusy ? "Kaydediliyor…" : "Rota ekle"}</Button>
     </form>}
   </section>;
 }

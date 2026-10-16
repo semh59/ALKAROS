@@ -82,11 +82,11 @@ export function OnlineProblemsTab({ terminalId, canAct }: { terminalId: string; 
             {canAct && (
               <div className="online-problems__buttons">
                 {problem.canRetry && (
-                  <button type="button" disabled={busy} onClick={() => void act(async () => { await retryProblem(terminalId, problem.caseId); return "Yeniden denenmek üzere sıraya alındı."; })}>
+                  <button data-telemetry-id="b.online-problems.onlineproblemstab.1" type="button" disabled={busy} onClick={() => void act(async () => { await retryProblem(terminalId, problem.caseId); return "Yeniden denenmek üzere sıraya alındı."; })}>
                     Yeniden dene
                   </button>
                 )}
-                <button type="button" className="online-problems__secondary" disabled={busy} onClick={() => { setResolving(problem); setNote(""); }}>
+                <button data-telemetry-id="b.online-problems.onlineproblemstab.2" type="button" className="online-problems__secondary" disabled={busy} onClick={() => { setResolving(problem); setNote(""); }}>
                   Çözüldü
                 </button>
               </div>
@@ -98,8 +98,8 @@ export function OnlineProblemsTab({ terminalId, canAct }: { terminalId: string; 
               }}>
                 <label htmlFor={noteId}>Nasıl çözüldü?</label>
                 <textarea id={noteId} value={note} maxLength={500} onChange={(event) => setNote(event.target.value)} />
-                <button type="submit" disabled={busy || note.trim() === ""}>Kaydet</button>
-                <button type="button" className="online-problems__secondary" onClick={() => setResolving(undefined)}>Vazgeç</button>
+                <button data-telemetry-id="b.online-problems.onlineproblemstab.3" type="submit" disabled={busy || note.trim() === ""}>Kaydet</button>
+                <button data-telemetry-id="b.online-problems.onlineproblemstab.4" type="button" className="online-problems__secondary" onClick={() => setResolving(undefined)}>Vazgeç</button>
               </form>
             )}
           </li>

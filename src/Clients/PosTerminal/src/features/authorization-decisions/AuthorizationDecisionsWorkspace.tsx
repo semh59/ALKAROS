@@ -69,7 +69,7 @@ export function AuthorizationDecisionsWorkspace({
       <div className="authz-decisions authz-decisions--state">
         <StateMessage tone="offline" title={stateText.offlineTitle}>
           <p>{text.offlineBody}</p>
-          <Button onClick={() => void onRefresh()}>{commonActions.retry}</Button>
+          <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.1" onClick={() => void onRefresh()}>{commonActions.retry}</Button>
         </StateMessage>
       </div>
     );
@@ -79,7 +79,7 @@ export function AuthorizationDecisionsWorkspace({
       <div className="authz-decisions authz-decisions--state">
         <StateMessage tone="error" title={text.errorTitle}>
           <p>{errorMessage ?? stateText.unexpectedError}</p>
-          <Button onClick={() => void onRefresh()}>{commonActions.reload}</Button>
+          <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.2" onClick={() => void onRefresh()}>{commonActions.reload}</Button>
         </StateMessage>
       </div>
     );
@@ -93,7 +93,7 @@ export function AuthorizationDecisionsWorkspace({
           <h2>{text.title}</h2>
           <p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : text.subtitle}</p>
         </div>
-        <Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
+        <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.3" variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
       </header>
 
       <div className="authz-decisions__group" aria-label={text.pendingHeading}>
@@ -111,8 +111,8 @@ export function AuthorizationDecisionsWorkspace({
                   <span className="authz-decisions__muted">Personel {actor(grant.requesterUserId)}</span>
                 </div>
                 <div className="authz-decisions__actions">
-                  <Button onClick={() => void onApprove(grant.grantId)}>{text.approve}</Button>
-                  <Button variant="quiet" onClick={() => void onDeny(grant.grantId)}>{text.deny}</Button>
+                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.4" onClick={() => void onApprove(grant.grantId)}>{text.approve}</Button>
+                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.5" variant="quiet" onClick={() => void onDeny(grant.grantId)}>{text.deny}</Button>
                 </div>
               </li>
             ))}
@@ -135,7 +135,7 @@ export function AuthorizationDecisionsWorkspace({
                   <span className="authz-decisions__muted">Bitiş {delegation.expiresAt}</span>
                 </div>
                 <div className="authz-decisions__actions">
-                  <Button variant="quiet" onClick={() => void onRevokeDelegation(delegation.delegationId)}>
+                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.6" variant="quiet" onClick={() => void onRevokeDelegation(delegation.delegationId)}>
                     {text.revoke}
                   </Button>
                 </div>
@@ -160,7 +160,7 @@ export function AuthorizationDecisionsWorkspace({
                   <span className="authz-decisions__muted">Personel {actor(tightening.userId)}</span>
                 </div>
                 <div className="authz-decisions__actions">
-                  <Button variant="quiet" onClick={() => void onClearTightening(tightening.tighteningId)}>
+                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.7" variant="quiet" onClick={() => void onClearTightening(tightening.tighteningId)}>
                     {text.clear}
                   </Button>
                 </div>

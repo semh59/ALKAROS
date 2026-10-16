@@ -146,7 +146,7 @@ export function ExperiencePage({
     activeNavigationId={path === "/tables" ? "tables" : path === "/pending-checks" ? "pending-checks" : onlineTab !== null ? "online" : path === "/billing" ? "billing" : path === "/catalog" ? "catalog" : path === "/kitchen" ? "kitchen" : path === "/system-health" ? "system-health" : path === "/authorization" ? "authorization" : path === "/management" ? "management" : "sales"}
     workspaceTitle={title}
     workspaceDescription={description}
-    headerActions={<><a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
+    headerActions={<><a className="experience-header-link" href={`${customerDisplayUrl.replace(/\/+$/, "")}/display`} target="alkaros-customer-display">Müşteri ekranı</a><button data-telemetry-id="b.routes.workspace.1" className="experience-header-button" type="button" onClick={() => void onLogout()}>Çıkış</button></>}
   >
     {path === "/tables" && <TableRoute terminalId={terminalId} canManage={canOpenRoute} />}
     {path === "/billing" && <BillingRoute terminalId={terminalId} canManage={canOpenRoute} canCancel={capabilitySet.has("bills.cancel")} canRequestRefund={capabilitySet.has("payments.refund.request")} canApproveRefund={capabilitySet.has("payments.refund.approve")} />}
@@ -310,7 +310,7 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
         <strong>{selectedTable.tableNumber}</strong>
         <p>{selectedTable.currentOrderId ? "Bu masadaki taslak siparişe devam edin." : "Bu masa seçildiğinde sipariş ve mutfak kaydı birlikte açılır."}</p>
       </div>
-      <button
+      <button data-telemetry-id="b.routes.workspace.2"
         className="primary"
         type="button"
         disabled={!canManage || !canStartTableOrder || orderBusy}

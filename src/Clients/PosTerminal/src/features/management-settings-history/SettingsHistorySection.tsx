@@ -39,7 +39,7 @@ export function SettingsHistorySection({ client }: Partial<ManagementSectionProp
           <td>{formatSettingValue(setting.dataType, setting.value)}</td>
           <td>{formatWhen(setting.updatedAt)}</td>
           <td>{[setting.active ? null : t.inactive, setting.requiresRestart ? t.requiresRestart : null].filter(Boolean).join(" · ") || "—"}</td>
-          <td><Button variant="quiet" onClick={() => setSelected(setting)}>{t.showHistory}</Button></td></tr>)}</tbody>
+          <td><Button data-telemetry-id="b.management-settings-history.settingshistorysection.1" variant="quiet" onClick={() => setSelected(setting)}>{t.showHistory}</Button></td></tr>)}</tbody>
       </table>}
     </PanelView>
     {selected && <History client={api} setting={selected} />}

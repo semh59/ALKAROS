@@ -116,7 +116,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
           const remaining = Math.max(0, check.total - check.paidAmount);
           return (
             <li key={check.orderId}>
-              <button
+              <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.1"
                 type="button"
                 className="pending-checks__row"
                 disabled={openingOrderId !== undefined}
@@ -136,7 +136,7 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
                 {openingOrderId === check.orderId && <span className="pending-checks__opening">Açılıyor…</span>}
               </button>
               {check.paidAmount === 0 && check.tableId && (
-                <button
+                <button data-telemetry-id="b.pending-checks.pendingchecksworkspace.2"
                   type="button"
                   className="pending-checks__recall"
                   disabled={openingOrderId !== undefined}

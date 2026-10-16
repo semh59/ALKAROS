@@ -255,7 +255,7 @@ export function BusinessIdentitySettings() {
             />
           </label>
           {error && <div className="alert error" role="alert">{error}</div>}
-          <button className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
+          <button data-telemetry-id="b.routes.businessidentitysettings.1" className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
         </form>
       </main>
     );
@@ -281,7 +281,7 @@ export function BusinessIdentitySettings() {
             />
           </label>
           {nameSaveMessage && <div className="alert information" role="status">{nameSaveMessage}</div>}
-          <button className="primary login-submit" disabled={!loaded || nameBusy}>
+          <button data-telemetry-id="b.routes.businessidentitysettings.2" className="primary login-submit" disabled={!loaded || nameBusy}>
             {nameBusy ? "Kaydediliyor…" : "Adı Kaydet"}
           </button>
         </form>
@@ -311,7 +311,7 @@ export function BusinessIdentitySettings() {
             ))}
           </div>
           {accentSaveMessage && <div className="alert information" role="status">{accentSaveMessage}</div>}
-          <button className="primary login-submit" disabled={!loaded || accentBusy || !selectedAccentKey}>
+          <button data-telemetry-id="b.routes.businessidentitysettings.3" className="primary login-submit" disabled={!loaded || accentBusy || !selectedAccentKey}>
             {accentBusy ? "Kaydediliyor…" : "Rengi Kaydet"}
           </button>
         </form>
@@ -336,7 +336,7 @@ export function BusinessIdentitySettings() {
             </div>
           )}
           {logoMessage && <div className="alert information" role="status">{logoMessage}</div>}
-          <button className="primary login-submit" disabled={!loaded || logoBusy || !selectedFile}>
+          <button data-telemetry-id="b.routes.businessidentitysettings.4" className="primary login-submit" disabled={!loaded || logoBusy || !selectedFile}>
             {logoBusy ? "Yükleniyor…" : "Logoyu Yükle"}
           </button>
         </form>
@@ -344,7 +344,7 @@ export function BusinessIdentitySettings() {
           <div className="business-logo-preview business-logo-preview-current">
             <span>Şu anda ayarlı logo:</span>
             <img src={currentLogoUrl} alt="QR menü sayfalarında gösterilen mevcut logo" />
-            <button type="button" className="danger-text" disabled={logoBusy} onClick={() => void removeLogo()}>
+            <button data-telemetry-id="b.routes.businessidentitysettings.5" type="button" className="danger-text" disabled={logoBusy} onClick={() => void removeLogo()}>
               {logoBusy ? "Kaldırılıyor…" : "Kaldır"}
             </button>
           </div>

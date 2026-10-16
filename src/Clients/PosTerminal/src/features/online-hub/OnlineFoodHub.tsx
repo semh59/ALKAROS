@@ -47,7 +47,7 @@ export function OnlineFoodHub({
       <ChannelStatus terminalId={terminalId} canManage={canManage} onOpenSettings={() => onSelectTab("settings")} />
       <div className="online-hub__tabs" role="tablist" aria-label="Online yemek bölümleri">
         {tabs.map((option) => (
-          <button
+          <button data-telemetry-id="b.online-hub.onlinefoodhub.1"
             key={option}
             type="button"
             role="tab"
@@ -105,7 +105,7 @@ function ChannelStatus({ terminalId, canManage, onOpenSettings }: { terminalId: 
           <strong>{channel.displayName}</strong>
           <span>{channelStatusText(channel)}</span>
           {!channel.configured && canManage && (
-            <button type="button" className="online-hub__link" onClick={onOpenSettings}>Ayarlara git</button>
+            <button data-telemetry-id="b.online-hub.onlinefoodhub.2" type="button" className="online-hub__link" onClick={onOpenSettings}>Ayarlara git</button>
           )}
         </p>
       ))}

@@ -66,8 +66,8 @@ export function MenusSection({ client }: ManagementSectionProps & { client?: Men
           <tbody>{list.map((menu) => <tr key={menu.id}>
             <td>{menu.code}</td><td>{menu.name}</td><td>{menu.isActive ? t.active : t.passive}</td>
             <td className="mrc__actions">
-              <Button variant="quiet" onClick={() => setOpenMenuId(menu.id)}>{t.manage}</Button>
-              <Button variant="quiet" disabled={busy} onClick={() => void act(() => api.setMenuActive(menu, !menu.isActive), t.menuUpdated, reloadMenus)}>{menu.isActive ? t.deactivate : t.activate}</Button>
+              <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.1" variant="quiet" onClick={() => setOpenMenuId(menu.id)}>{t.manage}</Button>
+              <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.2" variant="quiet" disabled={busy} onClick={() => void act(() => api.setMenuActive(menu, !menu.isActive), t.menuUpdated, reloadMenus)}>{menu.isActive ? t.deactivate : t.activate}</Button>
             </td></tr>)}</tbody>
         </table>}
 
@@ -77,7 +77,7 @@ export function MenusSection({ client }: ManagementSectionProps & { client?: Men
             <thead><tr><th>{t.product}</th><th>{t.order}</th><th>{t.status}</th><th>{t.actions}</th></tr></thead>
             <tbody>{composition.data.items.map((item) => <tr key={item.menuItemId}>
               <td>{item.productName}{item.isProductActiveInCatalog ? "" : ` (${t.inactiveInCatalog})`}</td><td>{item.displayOrder}</td><td>{item.isActive ? t.active : t.passive}</td>
-              <td><Button variant="quiet" disabled={busy} onClick={() => void act(() => api.setMenuItem(composition.data!.menu.id, item.menuItemId, item.displayOrder, !item.isActive), t.itemUpdated, reloadComposition)}>{item.isActive ? t.deactivate : t.activate}</Button></td></tr>)}</tbody>
+              <td><Button data-telemetry-id="b.management-menus-recipe-cost.menussection.3" variant="quiet" disabled={busy} onClick={() => void act(() => api.setMenuItem(composition.data!.menu.id, item.menuItemId, item.displayOrder, !item.isActive), t.itemUpdated, reloadComposition)}>{item.isActive ? t.deactivate : t.activate}</Button></td></tr>)}</tbody>
           </table>}
           <form className="mrc__form" aria-label={t.addProduct} onSubmit={(event) => {
             event.preventDefault();
@@ -87,7 +87,7 @@ export function MenusSection({ client }: ManagementSectionProps & { client?: Men
           }}>
             <SelectField id="m-product" label={t.product} value={field("m-product")} onChange={set("m-product")}><option value="">{t.pick}</option>{productOptions}</SelectField>
             <TextField id="m-order" label={t.order} inputMode="numeric" value={field("m-order")} onChange={set("m-order")} />
-            <Button type="submit" disabled={busy}>{t.add}</Button>
+            <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.4" type="submit" disabled={busy}>{t.add}</Button>
           </form>
         </div>}
 
@@ -98,7 +98,7 @@ export function MenusSection({ client }: ManagementSectionProps & { client?: Men
           <h4>{t.newMenu}</h4>
           <TextField id="n-code" label={t.code} value={field("n-code")} onChange={set("n-code")} />
           <TextField id="n-name" label={t.name} value={field("n-name")} onChange={set("n-name")} />
-          <Button type="submit" disabled={busy}>{t.add}</Button>
+          <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.5" type="submit" disabled={busy}>{t.add}</Button>
         </form>
       </div>}
     </PanelView>
@@ -107,7 +107,7 @@ export function MenusSection({ client }: ManagementSectionProps & { client?: Men
       {(details) => <div>
         <form className="mrc__toolbar" onSubmit={(event) => { event.preventDefault(); setDayQuery(date); }}>
           <TextField id="d-date" label={t.date} type="date" value={date} onChange={(event) => setDate(event.target.value)} />
-          <Button type="submit" variant="secondary">{t.load}</Button>
+          <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.6" type="submit" variant="secondary">{t.load}</Button>
         </form>
         {details === null ? <div>
           <p>{t.noDaily}</p>
@@ -116,13 +116,13 @@ export function MenusSection({ client }: ManagementSectionProps & { client?: Men
             void act(() => api.createDailyMenu(dayQuery, field("d-note")), t.dailyCreated, reloadDaily, () => setFields({}));
           }}>
             <TextField id="d-note" label={t.note} value={field("d-note")} onChange={set("d-note")} />
-            <Button type="submit" disabled={busy}>{t.createDaily}</Button>
+            <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.7" type="submit" disabled={busy}>{t.createDaily}</Button>
           </form>
         </div> : <div>
           <p><strong>{dailyMenuStatusLabel(details.menu.status)}</strong>{details.menu.note ? ` · ${details.menu.note}` : ""}</p>
           <div className="mrc__actions">
-            {details.menu.status === "Draft" && <Button disabled={busy} onClick={() => void act(() => api.openDailyMenu(details.menu.id), t.dailyOpened, reloadDaily)}>{t.openDaily}</Button>}
-            {(details.menu.status === "Open" || details.menu.status === "PartiallyConsumed") && <Button variant="secondary" disabled={busy} onClick={() => void act(() => api.closeDailyMenu(details.menu.id), t.dailyClosed, reloadDaily)}>{t.closeDaily}</Button>}
+            {details.menu.status === "Draft" && <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.8" disabled={busy} onClick={() => void act(() => api.openDailyMenu(details.menu.id), t.dailyOpened, reloadDaily)}>{t.openDaily}</Button>}
+            {(details.menu.status === "Open" || details.menu.status === "PartiallyConsumed") && <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.9" variant="secondary" disabled={busy} onClick={() => void act(() => api.closeDailyMenu(details.menu.id), t.dailyClosed, reloadDaily)}>{t.closeDaily}</Button>}
           </div>
           {details.items.length === 0 ? <p className="mrc__empty">{t.empty}</p> : <table>
             <thead><tr><th>{t.product}</th><th>{t.price}</th><th>{t.planned}</th><th>{t.prepared}</th><th>{t.available}</th><th>{t.actions}</th></tr></thead>
@@ -131,17 +131,17 @@ export function MenusSection({ client }: ManagementSectionProps & { client?: Men
               <td>{formatQuantity(item.preparedPortions)}</td><td>{item.isOutOfStock ? t.outOfStock : formatQuantity(item.availablePortions)}</td>
               <td className="mrc__actions">
                 {details.menu.status !== "Closed" && <>
-                  <Button variant="quiet" onClick={() => { setNotice(undefined); setFields({ edit: String(item.price) }); setEdit({ kind: "price", item }); }}>{t.setPrice}</Button>
-                  <Button variant="quiet" onClick={() => { setNotice(undefined); setFields({ edit: String(item.plannedPortions) }); setEdit({ kind: "portions", item }); }}>{t.setPortions}</Button>
-                  <Button variant="quiet" disabled={busy} onClick={() => void act(() => api.setDailyItemActive(item.id, !item.isActive), t.itemUpdated, reloadDaily)}>{item.isActive ? t.deactivate : t.activate}</Button>
+                  <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.10" variant="quiet" onClick={() => { setNotice(undefined); setFields({ edit: String(item.price) }); setEdit({ kind: "price", item }); }}>{t.setPrice}</Button>
+                  <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.11" variant="quiet" onClick={() => { setNotice(undefined); setFields({ edit: String(item.plannedPortions) }); setEdit({ kind: "portions", item }); }}>{t.setPortions}</Button>
+                  <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.12" variant="quiet" disabled={busy} onClick={() => void act(() => api.setDailyItemActive(item.id, !item.isActive), t.itemUpdated, reloadDaily)}>{item.isActive ? t.deactivate : t.activate}</Button>
                 </>}
               </td></tr>)}</tbody>
           </table>}
           {edit && <form className="mrc__form" aria-label={edit.item.productNameSnapshot} onSubmit={submitEdit}>
             <TextField id="d-edit" label={edit.kind === "price" ? t.price : t.planned} inputMode="decimal" value={field("edit")} onChange={set("edit")} />
             <div className="mrc__actions">
-              <Button type="submit" disabled={busy}>{t.save}</Button>
-              <Button type="button" variant="secondary" onClick={() => setEdit(undefined)}>{t.cancel}</Button>
+              <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.13" type="submit" disabled={busy}>{t.save}</Button>
+              <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.14" type="button" variant="secondary" onClick={() => setEdit(undefined)}>{t.cancel}</Button>
             </div>
           </form>}
           {details.menu.status !== "Closed" && <form className="mrc__form" aria-label={t.addDailyItem} onSubmit={(event) => {
@@ -160,7 +160,7 @@ export function MenusSection({ client }: ManagementSectionProps & { client?: Men
               <option value="">{t.none}</option>
               {lookups.state === "ready" && lookups.data.versions.filter((version) => version.status === "Active").map((version) => <option key={version.id} value={version.id}>{version.label}</option>)}
             </SelectField>
-            <Button type="submit" disabled={busy}>{t.add}</Button>
+            <Button data-telemetry-id="b.management-menus-recipe-cost.menussection.15" type="submit" disabled={busy}>{t.add}</Button>
           </form>}
         </div>}
       </div>}

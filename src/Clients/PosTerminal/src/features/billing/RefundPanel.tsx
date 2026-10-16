@@ -132,7 +132,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
   }
   if (loadError) {
     return <section className="refund-panel">
-      <StateMessage tone="error" title={refundText.loadFailed} actions={<Button variant="secondary" onClick={() => void load()}>{refundText.refresh}</Button>} />
+      <StateMessage tone="error" title={refundText.loadFailed} actions={<Button data-telemetry-id="b.billing.refundpanel.1" variant="secondary" onClick={() => void load()}>{refundText.refresh}</Button>} />
     </section>;
   }
   if (!tenders) return <section className="refund-panel"><p role="status">{refundText.loading}</p></section>;
@@ -166,11 +166,11 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
     if (confirming === key) {
       return <>
         <span role="alert">{refundText.confirmQuestion}</span>
-        <Button disabled={busy} onClick={() => void run(action, call)}>{confirmLabel}</Button>
-        <Button variant="secondary" onClick={() => setConfirming(null)}>{refundText.dismiss}</Button>
+        <Button data-telemetry-id="b.billing.refundpanel.2" disabled={busy} onClick={() => void run(action, call)}>{confirmLabel}</Button>
+        <Button data-telemetry-id="b.billing.refundpanel.3" variant="secondary" onClick={() => setConfirming(null)}>{refundText.dismiss}</Button>
       </>;
     }
-    return <Button variant={variant} disabled={busy || disabled} onClick={() => setConfirming(key)}>{label}</Button>;
+    return <Button data-telemetry-id="b.billing.refundpanel.4" variant={variant} disabled={busy || disabled} onClick={() => setConfirming(key)}>{label}</Button>;
   }
 
   return <section className="refund-panel" aria-labelledby="refund-panel-heading">
@@ -179,14 +179,14 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
     {notice && <p role="status">{notice}</p>}
     {canRequestRefund && allowance && allowance.hasOpenSession && allowance.allowance > 0 &&
       <p>{refundText.allowanceRemaining}: <strong>{money(allowance.remaining)}</strong></p>}
-    {listBlocksRefund && <StateMessage tone="warning" title={refundText.listFailed} actions={<Button variant="secondary" onClick={() => void load()}>{refundText.refresh}</Button>} />}
+    {listBlocksRefund && <StateMessage tone="warning" title={refundText.listFailed} actions={<Button data-telemetry-id="b.billing.refundpanel.5" variant="secondary" onClick={() => void load()}>{refundText.refresh}</Button>} />}
 
     {refundable.length > 0 && <div className="refund-panel__group">
       <h3>{refundText.refundHeading}</h3>
       {refundable.map((line) => <div key={line.paymentId} className="refund-panel__row">
         <strong>{money(line.amount)}</strong>
         {reasonField(`reason:${line.paymentId}`, refundText.refundReasonLabel)}
-        <Button variant="secondary" disabled={busy || !filled(texts[`reason:${line.paymentId}`])} onClick={() => void run("request", () => client.requestRefund(line.paymentId, texts[`reason:${line.paymentId}`] ?? ""))}>
+        <Button data-telemetry-id="b.billing.refundpanel.6" variant="secondary" disabled={busy || !filled(texts[`reason:${line.paymentId}`])} onClick={() => void run("request", () => client.requestRefund(line.paymentId, texts[`reason:${line.paymentId}`] ?? ""))}>
           {refundText.refundAction}
         </Button>
       </div>)}
@@ -211,7 +211,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
         <option value="no">{refundText.itemsStockNo}</option>
       </SelectField>
       {reasonField("items-reason", refundText.refundReasonLabel)}
-      <Button variant="secondary" disabled={busy || !itemsReady} onClick={() => void run("request", () => client.requestRefund(
+      <Button data-telemetry-id="b.billing.refundpanel.7" variant="secondary" disabled={busy || !itemsReady} onClick={() => void run("request", () => client.requestRefund(
         texts["items-payment"] ?? "",
         texts["items-reason"] ?? "",
         chosenItems.map(({ item, quantity }) => ({ billItemId: item.billItemId, quantity, restoreStock: texts["items-stock"] === "yes" })),
@@ -234,7 +234,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
               value={texts[`allowance:${row.requestId}`] ?? ""}
               onChange={(event) => setText(`allowance:${row.requestId}`, event.target.value)}
             />
-            <Button
+            <Button data-telemetry-id="b.billing.refundpanel.8"
               variant="secondary"
               disabled={busy || parseAmount(texts[`allowance:${row.requestId}`]) === null}
               onClick={() => void run(
@@ -248,7 +248,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
           </>}
           {reasonField(`note:${row.requestId}`, refundText.rejectNoteLabel)}
           {guarded(`approve:${row.requestId}`, refundText.approve, refundText.approveConfirm, "primary", false, "approve", () => client.approve(row.requestId))}
-          <Button variant="secondary" disabled={busy || !filled(texts[`note:${row.requestId}`])} onClick={() => void run("reject", () => client.reject(row.requestId, texts[`note:${row.requestId}`] ?? ""))}>
+          <Button data-telemetry-id="b.billing.refundpanel.9" variant="secondary" disabled={busy || !filled(texts[`note:${row.requestId}`])} onClick={() => void run("reject", () => client.reject(row.requestId, texts[`note:${row.requestId}`] ?? ""))}>
             {refundText.reject}
           </Button>
         </>}
@@ -259,7 +259,7 @@ export function RefundPanel({ client, canCancel, canRequestRefund, canApproveRef
             value={texts[`slip:${row.requestId}`] ?? ""}
             onChange={(event) => setText(`slip:${row.requestId}`, event.target.value)}
           />
-          <Button disabled={busy || !filled(texts[`slip:${row.requestId}`])} onClick={() => void run("complete", () => client.complete(row.requestId, texts[`slip:${row.requestId}`] ?? ""))}>
+          <Button data-telemetry-id="b.billing.refundpanel.10" disabled={busy || !filled(texts[`slip:${row.requestId}`])} onClick={() => void run("complete", () => client.complete(row.requestId, texts[`slip:${row.requestId}`] ?? ""))}>
             {refundText.complete}
           </Button>
         </>}

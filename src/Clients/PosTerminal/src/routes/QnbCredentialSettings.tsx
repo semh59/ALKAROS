@@ -167,7 +167,7 @@ export function QnbCredentialSettings() {
             />
           </label>
           {error && <div className="alert error" role="alert">{error}</div>}
-          <button className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
+          <button data-telemetry-id="b.routes.qnbcredentialsettings.1" className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
         </form>
       </main>
     );
@@ -215,13 +215,13 @@ export function QnbCredentialSettings() {
           )}
           {error && <div className="alert error" role="alert">{error}</div>}
           {saveMessage && <div className="alert information" role="status">{saveMessage}</div>}
-          <button className="primary login-submit" disabled={busy || !canSave}>
+          <button data-telemetry-id="b.routes.qnbcredentialsettings.2" className="primary login-submit" disabled={busy || !canSave}>
             {busy ? "Kaydediliyor…" : "Kaydet"}
           </button>
         </form>
         {status?.configured && (
           <>
-            <button
+            <button data-telemetry-id="b.routes.qnbcredentialsettings.3"
               type="button"
               className="secondary login-submit"
               disabled={testBusy}

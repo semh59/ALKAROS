@@ -31,7 +31,7 @@ function PanelView<T>({ title, panel, onRetry, children }: { title: string; pane
   return <section className="closing__panel" aria-label={title}>
     <h3>{title}</h3>
     {panel.state === "loading" && <p aria-busy="true">{t.loading}</p>}
-    {panel.state === "error" && <StateMessage tone="error" title={t.loadFailed} actions={<Button variant="secondary" onClick={onRetry}>{commonActions.retry}</Button>}><p>{panel.message}</p></StateMessage>}
+    {panel.state === "error" && <StateMessage tone="error" title={t.loadFailed} actions={<Button data-telemetry-id="b.management-closing.closingsection.1" variant="secondary" onClick={onRetry}>{commonActions.retry}</Button>}><p>{panel.message}</p></StateMessage>}
     {panel.state === "ready" && children(panel.data)}
   </section>;
 }
@@ -93,13 +93,13 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
   return <div className="closing">
     <form className="closing__date" onSubmit={(event) => { event.preventDefault(); setNotice(undefined); refreshDay(); }}>
       <TextField id="closing-date" label={t.dateLabel} type="date" value={date} onChange={(event) => setDate(event.target.value)} />
-      <Button type="submit" variant="secondary">{t.load}</Button>
+      <Button data-telemetry-id="b.management-closing.closingsection.2" type="submit" variant="secondary">{t.load}</Button>
     </form>
     {notice && <div role={notice.tone === "error" ? "alert" : "status"} className={`closing__notice closing__notice--${notice.tone}`}>{notice.text}</div>}
 
     <PanelView title={t.dayHeading} panel={day} onRetry={reloadDay}>
       {(current: BusinessDay | null) => current === null
-        ? <div><p>{t.noDay}</p>{canClose && <Button disabled={busy} onClick={() => void act(() => api.openDay(date), t.dayOpened, refreshDay)}>{t.openDay}</Button>}</div>
+        ? <div><p>{t.noDay}</p>{canClose && <Button data-telemetry-id="b.management-closing.closingsection.3" disabled={busy} onClick={() => void act(() => api.openDay(date), t.dayOpened, refreshDay)}>{t.openDay}</Button>}</div>
         : <div>
           <dl className="closing__facts">
             <div><dt>{t.status}</dt><dd>{dayStatusLabel(current.status)}</dd></div>
@@ -117,7 +117,7 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
             <p>{t.closeHint}</p>
             <TextField id="closing-cancelled" label={t.cancelledItems} type="number" min={0} value={cancelledItems} onChange={(event) => setCancelledItems(event.target.value)} />
             <TextField id="closing-print" label={t.printFailures} type="number" min={0} value={printFailures} onChange={(event) => setPrintFailures(event.target.value)} />
-            <Button type="submit" disabled={busy}>{t.closeDay}</Button>
+            <Button data-telemetry-id="b.management-closing.closingsection.4" type="submit" disabled={busy}>{t.closeDay}</Button>
           </form>}
         </div>}
     </PanelView>
@@ -173,7 +173,7 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
           <SelectField id="closing-case-status" label={t.caseStatusFilter} value={caseStatus} onChange={(event) => setCaseStatus(event.target.value as CaseStatus)}>
             {caseStatuses.map((status) => <option key={status} value={status}>{caseStatusLabel(status)}</option>)}
           </SelectField>
-          {canManage && <Button variant="secondary" disabled={busy} onClick={() => void act(() => api.scanPayments(), t.scanDone, reloadCases)}>{t.scan}</Button>}
+          {canManage && <Button data-telemetry-id="b.management-closing.closingsection.5" variant="secondary" disabled={busy} onClick={() => void act(() => api.scanPayments(), t.scanDone, reloadCases)}>{t.scan}</Button>}
         </div>
         {canManage && <TextField id="closing-case-note" label={t.caseNote} value={caseNote} onChange={(event) => setCaseNote(event.target.value)} />}
         {rows.length === 0 ? <Empty /> : <table>
@@ -182,10 +182,10 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
             <td>{caseTypeLabel(row.caseType)}</td><td>{severityLabel(row.severity)}</td><td>{caseStatusLabel(row.status)}</td>
             <td>{formatMoney(row.discrepancyAmount)}</td><td>{stamp(row.openedAt)}</td>
             <td className="closing__actions">
-              <Button variant="quiet" disabled={busy} onClick={() => void openHistory(row.caseId)}>{t.caseHistory}</Button>
-              {canManage && <Button variant="quiet" disabled={busy} onClick={() => addNote(row.caseId)}>{t.caseAddNote}</Button>}
+              <Button data-telemetry-id="b.management-closing.closingsection.6" variant="quiet" disabled={busy} onClick={() => void openHistory(row.caseId)}>{t.caseHistory}</Button>
+              {canManage && <Button data-telemetry-id="b.management-closing.closingsection.7" variant="quiet" disabled={busy} onClick={() => addNote(row.caseId)}>{t.caseAddNote}</Button>}
               {canManage && nextStatuses(row.status, row.caseType).map((target) =>
-              <Button key={target} variant="quiet" disabled={busy}
+              <Button data-telemetry-id="b.management-closing.closingsection.8" key={target} variant="quiet" disabled={busy}
                 onClick={() => void act(() => api.transitionCase(row.caseId, target, row.rowVersion, caseNote), t.caseUpdated, reloadCases)}>
                 {transitionActionLabel(target)}
               </Button>)}</td>
@@ -198,7 +198,7 @@ export function ClosingSection({ capabilities, client }: { capabilities: Readonl
             <tbody>{history.rows.map((action) => <tr key={action.actionId}>
               <td>{caseActionLabel(action.actionType)}</td><td>{stamp(action.performedAt)}</td><td>{caseActionText(action.detailsJson)}</td></tr>)}</tbody>
           </table>}
-          <Button variant="secondary" onClick={() => setHistory(undefined)}>{t.caseHistoryClose}</Button>
+          <Button data-telemetry-id="b.management-closing.closingsection.9" variant="secondary" onClick={() => setHistory(undefined)}>{t.caseHistoryClose}</Button>
         </div>}
       </div>}
     </PanelView>

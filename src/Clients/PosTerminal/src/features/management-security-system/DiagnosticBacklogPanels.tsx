@@ -51,11 +51,11 @@ export function DiagnosticPanel({ client }: { client?: SecurityClient }) {
       <TextField id="dg-from" label={t.diagnostic.from} type="datetime-local" value={field("from")} onChange={set("from")} />
       <TextField id="dg-to" label={t.diagnostic.to} type="datetime-local" value={field("to")} onChange={set("to")} />
       <TextField id="dg-reason" label={t.diagnostic.reason} value={field("reason")} onChange={set("reason")} />
-      <Button type="submit" disabled={busy}>{t.diagnostic.create}</Button>
+      <Button data-telemetry-id="b.management-security-system.diagnosticbacklogpanels.1" type="submit" disabled={busy}>{t.diagnostic.create}</Button>
     </form>
     {bundle && <div>
       <p>{fill(t.diagnostic.summary, bundle.logEntries.length, bundle.systemStatus.unhealthyCheckCount, Math.ceil(bundle.sizeBytes / 1024))}</p>
-      <Button variant="secondary" onClick={() => download(bundle)}>{t.diagnostic.download}</Button>
+      <Button data-telemetry-id="b.management-security-system.diagnosticbacklogpanels.2" variant="secondary" onClick={() => download(bundle)}>{t.diagnostic.download}</Button>
     </div>}
   </section>;
 }
@@ -89,14 +89,14 @@ export function BacklogPanel({ client }: { client?: SecurityClient }) {
         <div><dt>{t.backlog.oldest}</dt><dd>{formatWhen(data.oldestSettledCreatedAt)}</dd></div>
       </dl>
       <div className="msys__actions">
-        <Button variant="secondary" disabled={busy} onClick={() => void run(async () => {
+        <Button data-telemetry-id="b.management-security-system.diagnosticbacklogpanels.3" variant="secondary" disabled={busy} onClick={() => void run(async () => {
           setNotice(undefined);
           setPreview(await api.closeSettled(true));
         })}>{t.backlog.preview}</Button>
       </div>
       {preview && (preview.eligible === 0 ? <p className="msys__hint">{t.backlog.nothing}</p> : <div>
         <p>{fill(t.backlog.eligible, preview.eligible)}{preview.sampleOrderNumbers.length > 0 ? ` (${preview.sampleOrderNumbers.join(", ")})` : ""}</p>
-        <Button disabled={busy} onClick={() => void run(async () => {
+        <Button data-telemetry-id="b.management-security-system.diagnosticbacklogpanels.4" disabled={busy} onClick={() => void run(async () => {
           const result = await api.closeSettled(false);
           setPreview(undefined);
           setNotice({ tone: result.failed > 0 ? "error" : "success", text: fill(t.backlog.closed, result.closed, result.failed) });

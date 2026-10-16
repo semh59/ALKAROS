@@ -87,10 +87,10 @@ export function ProductionSection({ client }: ManagementSectionProps & { client?
             <td>{batch.batchNumber}</td><td>{batchStatusLabel(batch.status)}</td>
             <td>{formatQuantity(batch.plannedQuantity)} {batch.portionUnitCode}</td><td>{formatQuantity(batch.actualQuantity)} {batch.portionUnitCode}</td>
             <td className="mpp__actions">
-              <Button variant="quiet" disabled={busy} onClick={() => void openDetail(batch)}>{t.detail}</Button>
-              {batch.status === "Planned" && <Button variant="quiet" disabled={busy} onClick={() => void act(() => api.startBatch(batch.id), t.batchStarted)}>{t.start}</Button>}
-              {batch.status === "InProgress" && <Button variant="quiet" disabled={busy} onClick={() => open({ kind: "complete", batch })}>{t.complete}</Button>}
-              {(batch.status === "Planned" || batch.status === "InProgress") && <Button variant="quiet" disabled={busy} onClick={() => open({ kind: "cancel", batch })}>{t.cancel}</Button>}
+              <Button data-telemetry-id="b.management-purchasing-production.productionsection.1" variant="quiet" disabled={busy} onClick={() => void openDetail(batch)}>{t.detail}</Button>
+              {batch.status === "Planned" && <Button data-telemetry-id="b.management-purchasing-production.productionsection.2" variant="quiet" disabled={busy} onClick={() => void act(() => api.startBatch(batch.id), t.batchStarted)}>{t.start}</Button>}
+              {batch.status === "InProgress" && <Button data-telemetry-id="b.management-purchasing-production.productionsection.3" variant="quiet" disabled={busy} onClick={() => open({ kind: "complete", batch })}>{t.complete}</Button>}
+              {(batch.status === "Planned" || batch.status === "InProgress") && <Button data-telemetry-id="b.management-purchasing-production.productionsection.4" variant="quiet" disabled={busy} onClick={() => open({ kind: "cancel", batch })}>{t.cancel}</Button>}
             </td></tr>)}</tbody>
         </table>}
 
@@ -114,7 +114,7 @@ export function ProductionSection({ client }: ManagementSectionProps & { client?
             <tbody>{detail.data.waste.map((row) => <tr key={row.id}>
               <td>{itemName(row.stockItemId)}</td><td>{formatQuantity(row.quantity)} {row.unitCode}</td><td>{row.reason}</td></tr>)}</tbody>
           </table>}
-          <Button variant="secondary" onClick={() => setDetail(undefined)}>{t.detailClose}</Button>
+          <Button data-telemetry-id="b.management-purchasing-production.productionsection.5" variant="secondary" onClick={() => setDetail(undefined)}>{t.detailClose}</Button>
         </section>}
 
         {action && <form className="mpp__form" aria-label={`${action.batch.batchNumber}`} onSubmit={submitAction}>
@@ -135,8 +135,8 @@ export function ProductionSection({ client }: ManagementSectionProps & { client?
             </SelectField>
           </> : <TextField id="p-reason" label={t.reason} value={field("reason")} onChange={(event) => setFields((current) => ({ ...current, reason: event.target.value }))} />}
           <div className="mpp__actions">
-            <Button type="submit" disabled={busy}>{action.kind === "complete" ? t.confirmComplete : t.confirmCancel}</Button>
-            <Button type="button" variant="secondary" onClick={() => setAction(undefined)}>{t.dismiss}</Button>
+            <Button data-telemetry-id="b.management-purchasing-production.productionsection.6" type="submit" disabled={busy}>{action.kind === "complete" ? t.confirmComplete : t.confirmCancel}</Button>
+            <Button data-telemetry-id="b.management-purchasing-production.productionsection.7" type="button" variant="secondary" onClick={() => setAction(undefined)}>{t.dismiss}</Button>
           </div>
         </form>}
 
@@ -149,7 +149,7 @@ export function ProductionSection({ client }: ManagementSectionProps & { client?
             </SelectField>
             <TextField id="b-planned" label={t.plannedQuantity} inputMode="decimal" value={field("b-planned")} onChange={set("b-planned")} />
             <TextField id="b-unit" label={t.portionUnit} value={field("b-unit", "portion")} onChange={set("b-unit")} />
-            <Button type="submit" disabled={busy}>{t.create}</Button>
+            <Button data-telemetry-id="b.management-purchasing-production.productionsection.8" type="submit" disabled={busy}>{t.create}</Button>
           </form>}
         </PanelView>
       </div>}

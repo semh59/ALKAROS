@@ -84,7 +84,7 @@ export function PurchaseInvoicesSection({ client }: Partial<ManagementSectionPro
         <label htmlFor="mpi-file">{t.upload}</label>
         <input id="mpi-file" type="file" accept=".xml,text/xml,application/xml" disabled={busy} onChange={upload} />
       </div>
-      <Button variant="secondary" disabled={busy} onClick={fetchFromQnb}>{t.fetchQnb}</Button>
+      <Button data-telemetry-id="b.management-purchase-invoices.purchaseinvoicessection.1" variant="secondary" disabled={busy} onClick={fetchFromQnb}>{t.fetchQnb}</Button>
       <SelectField id="mpi-status" label={t.status} value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
         <option value="">{t.allStatuses}</option>
         {invoiceStatuses.map((status) => <option key={status} value={status}>{invoiceStatusLabel(status)}</option>)}
@@ -101,7 +101,7 @@ export function PurchaseInvoicesSection({ client }: Partial<ManagementSectionPro
           <td>{row.invoiceNumber}{isReturn(row.kind) && ` (${t.returnBadge})`}</td><td>{new Date(`${row.issueDate}T00:00:00`).toLocaleDateString("tr-TR")}</td><td>{row.supplierName}</td>
           <td>{invoiceStatusLabel(row.status)}</td>
           <td className="mpi__num">{row.lineCount}</td><td className="mpi__num">{row.unmappedLineCount}</td><td className="mpi__num">{formatMoney(row.netTotal)}</td>
-          <td><Button variant="secondary" disabled={busy} onClick={() => void act(async () => { setOpen(await api.get(row.invoiceId)); setPicks({}); }, t.opened)}>{t.open}</Button></td>
+          <td><Button data-telemetry-id="b.management-purchase-invoices.purchaseinvoicessection.2" variant="secondary" disabled={busy} onClick={() => void act(async () => { setOpen(await api.get(row.invoiceId)); setPicks({}); }, t.opened)}>{t.open}</Button></td>
         </tr>)}</tbody>
       </table>}
     </PanelView>
@@ -125,7 +125,7 @@ export function PurchaseInvoicesSection({ client }: Partial<ManagementSectionPro
               </SelectField>
               <TextField id={`mpi-factor-${line.lineId}`} label={t.factor} value={picks[line.lineId]?.factor ?? "1"}
                 onChange={(event) => setPicks({ ...picks, [line.lineId]: { stock: picks[line.lineId]?.stock ?? "", factor: event.target.value } })} />
-              <Button variant="secondary" disabled={busy} onClick={() => mapLine(line.lineId)}>{t.map}</Button>
+              <Button data-telemetry-id="b.management-purchase-invoices.purchaseinvoicessection.3" variant="secondary" disabled={busy} onClick={() => mapLine(line.lineId)}>{t.map}</Button>
             </div>
             : t.notMapped}</td>
         </tr>)}</tbody>
@@ -138,8 +138,8 @@ export function PurchaseInvoicesSection({ client }: Partial<ManagementSectionPro
             <option value="">{t.choose}</option>
             {lookups.data.locations.map((location) => <option key={location.id} value={location.id}>{location.name}</option>)}
           </SelectField>
-          <Button disabled={busy || unmapped > 0 || locationId === ""} onClick={() => finish(() => api.approve(open.invoiceId, locationId), isReturn(open.kind) ? t.approvedReturn : t.approved)}>{isReturn(open.kind) ? t.approveReturn : t.approve}</Button>
-          <Button variant="secondary" disabled={busy} onClick={() => finish(() => api.reject(open.invoiceId), t.rejected)}>{t.reject}</Button>
+          <Button data-telemetry-id="b.management-purchase-invoices.purchaseinvoicessection.4" disabled={busy || unmapped > 0 || locationId === ""} onClick={() => finish(() => api.approve(open.invoiceId, locationId), isReturn(open.kind) ? t.approvedReturn : t.approved)}>{isReturn(open.kind) ? t.approveReturn : t.approve}</Button>
+          <Button data-telemetry-id="b.management-purchase-invoices.purchaseinvoicessection.5" variant="secondary" disabled={busy} onClick={() => finish(() => api.reject(open.invoiceId), t.rejected)}>{t.reject}</Button>
         </div>}
       </>}
     </section>}

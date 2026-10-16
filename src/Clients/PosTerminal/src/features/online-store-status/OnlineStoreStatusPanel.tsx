@@ -79,16 +79,16 @@ export function OnlineStoreStatusPanel({ terminalId }: { terminalId: string }) {
                     </p>
                   )}
                   <div className="online-store-status__buttons" role="group" aria-label={`${name} için restoran durumu`}>
-                    <button type="button" disabled={busy || row.state === "Open"} onClick={() => void change(row.provider, { state: "Open" })}>
+                    <button data-telemetry-id="b.online-store-status.onlinestorestatuspanel.1" type="button" disabled={busy || row.state === "Open"} onClick={() => void change(row.provider, { state: "Open" })}>
                       Aç
                     </button>
                     {busyChoices.map((minutes) => (
-                      <button key={minutes} type="button" className="online-store-status__secondary" disabled={busy}
+                      <button data-telemetry-id="b.online-store-status.onlinestorestatuspanel.2" key={minutes} type="button" className="online-store-status__secondary" disabled={busy}
                         onClick={() => void change(row.provider, { state: "Busy", minutes })}>
                         {minutes} dk yoğun
                       </button>
                     ))}
-                    <button type="button" className="online-store-status__secondary" disabled={busy || row.state === "ClosedToday"}
+                    <button data-telemetry-id="b.online-store-status.onlinestorestatuspanel.3" type="button" className="online-store-status__secondary" disabled={busy || row.state === "ClosedToday"}
                       onClick={() => void change(row.provider, { state: "ClosedToday" })}>
                       Bugün kapat
                     </button>

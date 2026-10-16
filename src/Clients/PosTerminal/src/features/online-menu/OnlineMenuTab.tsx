@@ -124,7 +124,7 @@ export function OnlineMenuTab({ terminalId }: { terminalId: string }) {
       {platforms.length > 1 && (
         <div className="online-menu__platforms" role="group" aria-label="Platform seç">
           {platforms.map((p) => (
-            <button key={p.provider} type="button" aria-pressed={p.provider === provider} onClick={() => setProvider(p.provider)}>
+            <button data-telemetry-id="b.online-menu.onlinemenutab.1" key={p.provider} type="button" aria-pressed={p.provider === provider} onClick={() => setProvider(p.provider)}>
               {p.displayName}
             </button>
           ))}
@@ -140,7 +140,7 @@ export function OnlineMenuTab({ terminalId }: { terminalId: string }) {
               {menu.menus.length === 0 && <option value="">Menü yok</option>}
               {menu.menus.map((m) => <option key={m.menuId} value={m.menuId}>{m.name}</option>)}
             </select>
-            <button type="button" disabled={busy || menuId === ""} onClick={() => void publish()}>
+            <button data-telemetry-id="b.online-menu.onlinemenutab.2" type="button" disabled={busy || menuId === ""} onClick={() => void publish()}>
               {displayName} menüsünü yayınla
             </button>
           </div>
@@ -217,7 +217,7 @@ export function OnlineMenuTab({ terminalId }: { terminalId: string }) {
                     {product.externalSku !== null ? (
                       <span className="online-menu__mapped">
                         {platformNames.get(product.externalSku) ?? product.externalSku}
-                        <button type="button" className="online-menu__secondary" disabled={busy}
+                        <button data-telemetry-id="b.online-menu.onlinemenutab.3" type="button" className="online-menu__secondary" disabled={busy}
                           aria-label={`${product.name} eşlemesini kaldır`} onClick={() => void unmap(product)}>Kaldır</button>
                       </span>
                     ) : (
@@ -232,7 +232,7 @@ export function OnlineMenuTab({ terminalId }: { terminalId: string }) {
                           <input aria-label={`${product.name} için platform ürün kodu`} list={codesListId} value={drafts[product.productId] ?? ""} disabled={busy}
                             onChange={(event) => { const value = event.target.value; setDrafts((current) => ({ ...current, [product.productId]: value })); }} />
                         )}
-                        <button type="button" disabled={busy || !product.active} aria-label={`${product.name} ürününü eşle`} onClick={() => void map(product)}>Eşle</button>
+                        <button data-telemetry-id="b.online-menu.onlinemenutab.4" type="button" disabled={busy || !product.active} aria-label={`${product.name} ürününü eşle`} onClick={() => void map(product)}>Eşle</button>
                       </span>
                     )}
                   </td>

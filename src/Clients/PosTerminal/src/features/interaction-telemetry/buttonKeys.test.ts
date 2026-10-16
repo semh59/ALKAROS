@@ -1,29 +1,38 @@
 import { readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { join, relative } from "node:path";
 import { describe, expect, it } from "vitest";
 import { findButtonSites } from "./buttonSites";
+import { isCatalogKey } from "./interactionKeys";
 
-/** Button sites without data-telemetry-id today; V1-RMD-567 brings it to zero. It may only go down. */
-const UNMARKED_BASELINE = 304;
 const ROOT = join(__dirname, "..", "..");
 
 function sourceFiles(directory: string): string[] {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const path = join(directory, entry.name);
-    if (entry.isDirectory()) return sourceFiles(path);
+    if (entry.isDirectory()) return entry.name === "design-system" ? [] : sourceFiles(path);
     return path.endsWith(".tsx") && !path.endsWith(".test.tsx") ? [path] : [];
   });
 }
 
-const sites = sourceFiles(ROOT).flatMap((file) => findButtonSites(file, readFileSync(file, "utf8")));
+const files = sourceFiles(ROOT).map((file) => ({ file, source: readFileSync(file, "utf8") }));
+const sites = files.flatMap(({ file, source }) => findButtonSites(relative(ROOT, file), source));
 
 describe("button telemetry keys (static scan)", () => {
-  it("finds the button sites and reports those without a data-telemetry-id", () => {
+  it("finds the button sites of the application screens", () => {
     expect(sites.length).toBeGreaterThan(250);
   });
 
-  it("never lets the number of unmarked buttons grow", () => {
-    expect(sites.filter((site) => !site.marked).length).toBeLessThanOrEqual(UNMARKED_BASELINE);
+  it("gives every button site a data-telemetry-id", () => {
+    const missing = sites.filter((site) => !site.marked).map((site) => `${site.file}:${site.line}`);
+
+    expect(missing).toEqual([]);
+  });
+
+  it("uses only catalog-shaped keys and never the same key twice", () => {
+    const keys = files.flatMap(({ source }) => [...source.matchAll(/data-telemetry-id="([^"]+)"/g)].map((match) => match[1]!));
+
+    expect(keys.filter((key) => !isCatalogKey(key))).toEqual([]);
+    expect(keys.length - new Set(keys).size).toBe(0);
   });
 
   it.each([

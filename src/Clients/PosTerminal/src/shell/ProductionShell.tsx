@@ -94,7 +94,7 @@ export function ProductionShell(props: ProductionShellProps) {
       <main id={workspaceId} className="production-shell__workspace" tabIndex={-1}>
         <div className="production-shell__workspace-header">
           <div className="production-shell__workspace-heading"><h1>{workspaceTitle}</h1>{workspaceDescription && <p>{workspaceDescription}</p>}</div>
-          {mode !== "wide" && context != null && !contextOpen && <button type="button" className="production-shell__context-trigger" onClick={onContextOpen}>Bağlamı aç</button>}
+          {mode !== "wide" && context != null && !contextOpen && <button data-telemetry-id="b.shell.productionshell.1" type="button" className="production-shell__context-trigger" onClick={onContextOpen}>Bağlamı aç</button>}
         </div>
         <AccessContent session={session} authorization={authorization}>{children}</AccessContent>
       </main>
@@ -115,13 +115,13 @@ function AccessContent({ session, authorization, children }: { session: ShellSes
   if (session.status === "unauthenticated") {
     return <div className="production-shell__access-state"><StateMessage tone="unauthorized" title="Oturum gerekli">
       <p>{session.reason === "expired" ? "Oturumunuzun süresi doldu. Devam etmek için yeniden giriş yapın." : "Bu çalışma alanını açmak için giriş yapın."}</p>
-      <Button onClick={session.onSignIn}>Giriş yap</Button>
+      <Button data-telemetry-id="b.shell.productionshell.2" onClick={session.onSignIn}>Giriş yap</Button>
     </StateMessage></div>;
   }
   if (authorization.status === "forbidden") {
     return <div className="production-shell__access-state"><StateMessage tone="forbidden" title="Bu alana erişim izniniz yok">
       <p>Oturum açık, ancak bu çalışma alanı rolünüz için yetkilendirilmemiş.</p>
-      {authorization.onReturn && <Button variant="secondary" onClick={authorization.onReturn}>İzinli alana dön</Button>}
+      {authorization.onReturn && <Button data-telemetry-id="b.shell.productionshell.3" variant="secondary" onClick={authorization.onReturn}>İzinli alana dön</Button>}
     </StateMessage></div>;
   }
   return children;
@@ -133,12 +133,12 @@ function SystemStatus({ connectivity, freshness }: { connectivity: Connectivity;
   return <footer className="production-shell__status" aria-label="Sistem durumu" aria-live="polite">
     <div className={`production-shell__status-item production-shell__status-item--${connectivity.status}`} role={connectivity.status === "offline" ? "alert" : "status"}>
       <span className="production-shell__status-symbol" aria-hidden="true"><Icon name={connectionIcon} /></span><strong>{connectionLabel}</strong>
-      {connectivity.status === "offline" && connectivity.onRetry && <button type="button" className="production-shell__status-action" onClick={connectivity.onRetry}>{commonActions.retry}</button>}
+      {connectivity.status === "offline" && connectivity.onRetry && <button data-telemetry-id="b.shell.productionshell.4" type="button" className="production-shell__status-action" onClick={connectivity.onRetry}>{commonActions.retry}</button>}
     </div>
     <div className={`production-shell__status-item production-shell__status-item--${freshness.status}`} role={freshness.status === "stale" ? "alert" : "status"}>
       <span className="production-shell__status-symbol" aria-hidden="true"><Icon name={freshness.status === "fresh" ? "check" : "clock"} /></span>
       <span><span className="production-shell__status-label-prefix">Veri: </span><time dateTime={freshness.dateTime}>{freshness.label}</time></span>
-      {freshness.status === "stale" && <button type="button" className="production-shell__status-action" onClick={freshness.onRefresh}>{commonActions.refresh}</button>}
+      {freshness.status === "stale" && <button data-telemetry-id="b.shell.productionshell.5" type="button" className="production-shell__status-action" onClick={freshness.onRefresh}>{commonActions.refresh}</button>}
     </div>
     <span className="production-shell__status-spacer" />
   </footer>;

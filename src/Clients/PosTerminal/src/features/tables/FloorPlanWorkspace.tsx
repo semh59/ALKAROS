@@ -327,10 +327,10 @@ export function FloorPlanWorkspace({
           <small>{draft.canvasWidth} × {draft.canvasHeight} · v{draft.rowVersion} · {lastUpdated ? `güncellendi ${lastUpdated}` : "sunucu durumu"}</small>
         </div>
         <div className="floor-plan-shell__mode-actions">
-          {mode === "operation" && canManage && onSave && <Button variant="secondary" onClick={beginSetup}>Planı düzenle</Button>}
+          {mode === "operation" && canManage && onSave && <Button data-telemetry-id="b.tables.floorplanworkspace.1" variant="secondary" onClick={beginSetup}>Planı düzenle</Button>}
           {mode === "setup" && <>
-            <Button variant="secondary" disabled={saveState === "saving"} onClick={cancelSetup}>Değişiklikleri bırak</Button>
-            <Button disabled={saveState === "saving" || validation.errors.length > 0} onClick={() => void save()}>
+            <Button data-telemetry-id="b.tables.floorplanworkspace.2" variant="secondary" disabled={saveState === "saving"} onClick={cancelSetup}>Değişiklikleri bırak</Button>
+            <Button data-telemetry-id="b.tables.floorplanworkspace.3" disabled={saveState === "saving" || validation.errors.length > 0} onClick={() => void save()}>
               {saveState === "saving" ? "Kaydediliyor…" : "İncele ve kaydet"}
             </Button>
           </>}
@@ -363,7 +363,7 @@ export function FloorPlanWorkspace({
                   height: `${table.height / draft.canvasHeight * 100}%`,
                 }}
               >
-                <button
+                <button data-telemetry-id="b.tables.floorplanworkspace.4"
                   type="button"
                   className={`floor-plan-table floor-plan-table--${table.status.toLowerCase()} floor-plan-table--${table.shape.toLowerCase()} ${selectedState ? "is-selected" : ""}`}
                   aria-label={`${table.tableNumber}, ${tableStatusLabels[table.status]}, ${contextLabel(table)}${mode === "setup" ? ", ok tuşlarıyla taşı" : ""}`}
@@ -398,7 +398,7 @@ export function FloorPlanWorkspace({
             })}
           </div>
           <div className="floor-plan-dense-list" role="group" aria-label="Erişilebilir masa listesi">
-            {draft.tables.map((table) => <button key={table.tableId} type="button" onClick={() => onSelectTable(table.tableId)} aria-pressed={table.tableId === selected?.tableId}>
+            {draft.tables.map((table) => <button data-telemetry-id="b.tables.floorplanworkspace.5" key={table.tableId} type="button" onClick={() => onSelectTable(table.tableId)} aria-pressed={table.tableId === selected?.tableId}>
               <span><strong>{table.tableNumber}</strong><small>{tableStatusLabels[table.status]} · {table.capacity} kişi</small></span>
               <span>{contextLabel(table)}</span>
             </button>)}
@@ -424,7 +424,7 @@ export function FloorPlanWorkspace({
                   {selected.allowedCommands.some((command): command is TableAction => command in tableActionLabels)
                     ? <div className="floor-plan-inspector__command-buttons">{selected.allowedCommands
                       .filter((command): command is TableAction => command in tableActionLabels)
-                      .map((command) => <Button
+                      .map((command) => <Button data-telemetry-id="b.tables.floorplanworkspace.6"
                         key={command}
                         variant={command === "SetOutOfService" ? "secondary" : "primary"}
                         disabled={!onOpenAction || !selectedRecord || !isClientExecutableAction(command, selectedRecord)}
@@ -435,7 +435,7 @@ export function FloorPlanWorkspace({
                       >{tableActionLabels[command]}</Button>)}</div>
                     : <p>Bu durumda kullanılabilir işlem yok.</p>}
                   {selected.isMergePrimary && !selected.allowedCommands.includes("Unmerge") && <div className="floor-plan-inspector__command-buttons">
-                    <Button variant="secondary" disabled title="Sunucu bu birleşim için ayırma komutunu henüz yayınlamadı.">Birleşimi ayır</Button>
+                    <Button data-telemetry-id="b.tables.floorplanworkspace.7" variant="secondary" disabled title="Sunucu bu birleşim için ayırma komutunu henüz yayınlamadı.">Birleşimi ayır</Button>
                   </div>}
                 </div>
                 <p className="floor-plan-inspector__hint">Operasyon modunda geometri kilitlidir. İşlemler yalnız sunucunun bu masa için döndürdüğü komutlardan açılır.</p>
@@ -496,11 +496,11 @@ function SetupFields({ table, plan, update }: { table: DraftTable; plan: DraftPl
       </SelectField>
     </div>
     <div className="floor-plan-seat-editor">
-      <div><strong>Sandalyeler</strong><Button variant="secondary" onClick={addSeat}>Sandalye ekle</Button></div>
+      <div><strong>Sandalyeler</strong><Button data-telemetry-id="b.tables.floorplanworkspace.8" variant="secondary" onClick={addSeat}>Sandalye ekle</Button></div>
       {table.seats.map((seat) => <div className="floor-plan-seat-editor__row" key={seat.seatId}>
         <input aria-label={`${seat.label} numarası`} type="number" min={1} value={seat.number} onChange={(event) => updateSeat(seat.seatId, (current) => ({ ...current, number: Number(event.target.value) }))} />
         <input aria-label={`${seat.number}. sandalye etiketi`} value={seat.label} onChange={(event) => updateSeat(seat.seatId, (current) => ({ ...current, label: event.target.value }))} />
-        <button type="button" aria-label={`${seat.label} sandalyesini kaldır`} onClick={() => update((current) => ({ ...current, seats: current.seats.filter((candidate) => candidate.seatId !== seat.seatId) }))}>Kaldır</button>
+        <button data-telemetry-id="b.tables.floorplanworkspace.9" type="button" aria-label={`${seat.label} sandalyesini kaldır`} onClick={() => update((current) => ({ ...current, seats: current.seats.filter((candidate) => candidate.seatId !== seat.seatId) }))}>Kaldır</button>
       </div>)}
     </div>
   </div>;

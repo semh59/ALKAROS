@@ -207,7 +207,7 @@ export function CustomerDisplay() {
         kicker="BAĞLANTI KURULAMADI"
         title="Ekran bilgisi alınamadı"
         description={pairingError || "Sunucuya ulaşılamadı. Bağlantıyı kontrol edip yeniden deneyin."}
-        action={<button className="display-retry" onClick={() => void refresh()}>Tekrar dene</button>}
+        action={<button data-telemetry-id="b.routes.customerdisplay.1" className="display-retry" onClick={() => void refresh()}>Tekrar dene</button>}
         alert
       />
     );
@@ -373,7 +373,7 @@ function DisplayUnavailable({ onRetry }: { onRetry: () => Promise<void> }) {
       kicker="GÜNCEL VERİ YOK"
       title="Bilgi güncellenemiyor"
       description="Eski ürün ve tutarlar güvenlik nedeniyle ekrandan kaldırıldı. Bağlantıyı kontrol edip yeniden deneyin."
-      action={<button className="display-retry" onClick={() => void onRetry()}>Tekrar dene</button>}
+      action={<button data-telemetry-id="b.routes.customerdisplay.2" className="display-retry" onClick={() => void onRetry()}>Tekrar dene</button>}
       icon="warning"
       alert
     />

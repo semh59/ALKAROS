@@ -51,7 +51,7 @@ export function ChannelReportSection({ client }: Partial<ManagementSectionProps>
         <option value="Qr">{t.qr}</option>
         <option value="Online">{t.online}</option>
       </SelectField>
-      <Button type="submit" variant="secondary" disabled={loading}>{t.load}</Button>
+      <Button data-telemetry-id="b.management-channel-report.channelreportsection.1" type="submit" variant="secondary" disabled={loading}>{t.load}</Button>
     </form>
     {problem && <p role="alert" className="mcr__warning">{problem}</p>}
     {loading && <p aria-busy="true">{t.loading}</p>}

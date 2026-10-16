@@ -107,7 +107,7 @@ export function SecurityAdministration() {
             />
           </label>
           {error && <div className="alert error" role="alert">{error}</div>}
-          <button className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
+          <button data-telemetry-id="b.routes.securityadministration.1" className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
         </form>
       </main>
     );

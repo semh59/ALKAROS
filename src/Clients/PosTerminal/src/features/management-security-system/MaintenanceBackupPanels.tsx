@@ -35,7 +35,7 @@ export function MaintenancePanel({ client }: { client?: SecurityClient }) {
         <span>{jobStatusLabel(job.lastStatus)} · {t.maintenance.lastRun}: {formatWhen(job.lastRunAt)} · {t.maintenance.every} {formatDuration(job.intervalSeconds)}</span>
         {job.lastSummary && <span>{job.lastSummary}</span>}
         {!job.enabled && <span>{t.maintenance.disabled}{job.disabledReason ? `: ${job.disabledReason}` : ""}</span>}
-        <div><Button variant="secondary" disabled={busy || !job.enabled} onClick={() => void run(job)}>{t.maintenance.run}</Button></div>
+        <div><Button data-telemetry-id="b.management-security-system.maintenancebackuppanels.1" variant="secondary" disabled={busy || !job.enabled} onClick={() => void run(job)}>{t.maintenance.run}</Button></div>
       </div>)}
     </div>}
   </PanelView>;

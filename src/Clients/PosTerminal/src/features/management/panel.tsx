@@ -24,7 +24,7 @@ export function PanelView<T>({ title, loading, failed, panel, onRetry, children 
   return <section className="management__panel" aria-label={title}>
     <h3>{title}</h3>
     {panel.state === "loading" && <p aria-busy="true">{loading}</p>}
-    {panel.state === "error" && <StateMessage tone="error" title={failed} actions={<Button variant="secondary" onClick={onRetry}>{commonActions.retry}</Button>}><p>{panel.message}</p></StateMessage>}
+    {panel.state === "error" && <StateMessage tone="error" title={failed} actions={<Button data-telemetry-id="b.management.panel.1" variant="secondary" onClick={onRetry}>{commonActions.retry}</Button>}><p>{panel.message}</p></StateMessage>}
     {panel.state === "ready" && children(panel.data)}
   </section>;
 }

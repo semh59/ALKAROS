@@ -121,7 +121,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
   return <section className="bill-split" aria-label="Hesap bölme çalışma alanı">
     <header className="bill-split__header"><div><span>HESAP / DAĞITIM TASARIMI</span><h2>{design.billNumber}</h2><p>{billStatusLabels[design.billStatus] ?? "Bilinmiyor"} · {lastUpdated ? `Güncellendi ${new Date(lastUpdated).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}` : "Henüz güncellenmedi"}</p></div><div className="bill-split__totals"><span>Ödenecek<strong>{money(design.payableAmount, design.currencyCode)}</strong></span><span>Vergi<strong>{money(design.taxTotal, design.currencyCode)}</strong></span></div></header>
     {feedback && <div className={`bill-split__feedback bill-split__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"}>{feedback.message}</div>}
-    <div className="bill-split__modes" role="tablist" aria-label="Dağıtım modu">{(Object.keys(modeLabels) as SplitMode[]).map((option) => <button key={option} type="button" role="tab" aria-selected={mode === option} onClick={() => setModeSafely(option)}>{modeLabels[option]}</button>)}</div>
+    <div className="bill-split__modes" role="tablist" aria-label="Dağıtım modu">{(Object.keys(modeLabels) as SplitMode[]).map((option) => <button data-telemetry-id="b.billing.billsplitworkspace.1" key={option} type="button" role="tab" aria-selected={mode === option} onClick={() => setModeSafely(option)}>{modeLabels[option]}</button>)}</div>
     <div className="bill-split__layout">
       <main className="bill-split__editor">
         {mode === "EqualByPerson" && <OwnerPicker owners={owners} selected={equalOwners} onChange={(next) => { setEqualOwners(next); setDirty(true); }} />}
@@ -132,8 +132,8 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
         <span>İNCELEME</span><div><small>Dağıtıldı</small><strong>{money(allocated, design.currencyCode)}</strong></div><div><small>Dağıtılmadı</small><strong className={unallocated !== 0 ? "is-warning" : ""}>{money(unallocated, design.currencyCode)}</strong></div>
         <ValidationSummary title="Kaydetmeden önce düzeltin" errors={validation} />
         <p>Bu ekran yalnız hesap dağıtım tasarımını kaydeder; tahsilat veya ödeme yürütmez.</p>
-        <Button disabled={!canMutate || busy || validation.length > 0} onClick={() => void save()}>{busy ? "Kaydediliyor…" : "Dağıtımı kaydet"}</Button>
-        <Button variant="secondary" disabled={!canMutate || busy || !design.allowedCommands.includes("Clear") || design.allocations.length === 0} onClick={() => void clear()}>Dağıtımı sıfırla</Button>
+        <Button data-telemetry-id="b.billing.billsplitworkspace.2" disabled={!canMutate || busy || validation.length > 0} onClick={() => void save()}>{busy ? "Kaydediliyor…" : "Dağıtımı kaydet"}</Button>
+        <Button data-telemetry-id="b.billing.billsplitworkspace.3" variant="secondary" disabled={!canMutate || busy || !design.allowedCommands.includes("Clear") || design.allocations.length === 0} onClick={() => void clear()}>Dağıtımı sıfırla</Button>
       </aside>
     </div>
   </section>;
@@ -155,7 +155,7 @@ function AmountEditor({ design, owners, draft, onChange }: { design: BillSplitDe
 
 function BoundedState({ state, message, onRefresh }: { state: BillSplitWorkspaceProps["state"]; message?: string; onRefresh: BillSplitWorkspaceProps["onRefresh"] }) {
   const content = state === "loading" ? ["info", "Hesap yükleniyor", "Güncel hesap ve dağıtımlar alınıyor…"] : state === "offline" ? ["offline", stateText.offlineTitle, "Taslak gönderilmedi; sunucuya yeniden bağlanın."] : state === "stale" ? ["stale", "Hesap güncel değil", "Dağıtmadan önce güncel hesap sürümünü alın."] : state === "unauthorized" ? ["unauthorized", stateText.unauthorizedTitle, "Hesap dağıtımını görmek için yeniden giriş yapın."] : ["error", "Hesap alınamadı", message ?? stateText.unexpectedError];
-  return <div className="bill-split bill-split--state"><StateMessage tone={content[0] as "info" | "offline" | "stale" | "unauthorized" | "error"} title={content[1]} actions={state === "loading" || state === "unauthorized" ? undefined : <Button onClick={() => void onRefresh()}>{commonActions.retry}</Button>}><p>{content[2]}</p></StateMessage></div>;
+  return <div className="bill-split bill-split--state"><StateMessage tone={content[0] as "info" | "offline" | "stale" | "unauthorized" | "error"} title={content[1]} actions={state === "loading" || state === "unauthorized" ? undefined : <Button data-telemetry-id="b.billing.billsplitworkspace.4" onClick={() => void onRefresh()}>{commonActions.retry}</Button>}><p>{content[2]}</p></StateMessage></div>;
 }
 
 const emptyDesign: BillSplitDesign = { billId: "", billNumber: "", billStatus: "", currencyCode: "TRY", payableAmount: 0, taxTotal: 0, billRowVersion: 0, mode: "None", executionState: "DesignOnly", allowedCommands: [], items: [], allocations: [] };

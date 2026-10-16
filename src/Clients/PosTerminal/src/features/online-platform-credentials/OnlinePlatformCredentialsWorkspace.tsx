@@ -129,7 +129,7 @@ function PlatformForm({
               {removing ? "Kaydedince silinecek" : field.configured ? "Kayıtlı" : "Kayıtlı değil"}
             </span>
             {field.configured && (
-              <button
+              <button data-telemetry-id="b.online-platform-cred.onlineplatformcredentialsworks.1"
                 type="button"
                 className="platform-credentials__secondary"
                 aria-pressed={removing}
@@ -144,7 +144,7 @@ function PlatformForm({
         );
       })}
       <div className="platform-credentials__actions">
-        <button type="submit" disabled={!hasChange || busy}>{busy ? "Kaydediliyor…" : "Kaydet"}</button>
+        <button data-telemetry-id="b.online-platform-cred.onlineplatformcredentialsworks.2" type="submit" disabled={!hasChange || busy}>{busy ? "Kaydediliyor…" : "Kaydet"}</button>
       </div>
       {error && <p className="platform-credentials__error" role="alert">{error}</p>}
       <p className="platform-credentials__notice" role="status" aria-live="polite">{notice ?? ""}</p>

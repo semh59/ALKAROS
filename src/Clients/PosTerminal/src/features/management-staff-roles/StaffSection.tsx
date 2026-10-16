@@ -60,7 +60,7 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
         <TextField id="u-username" label={t.username} autoComplete="off" value={field("username")} onChange={set("username")} />
         <TextField id="u-display" label={t.displayName} autoComplete="off" value={field("displayName")} onChange={set("displayName")} />
         <TextField id="u-password" label={t.password} type="password" autoComplete="new-password" hint={t.passwordHint} value={field("password")} onChange={set("password")} />
-        <Button type="submit" disabled={busy}>{t.create}</Button>
+        <Button data-telemetry-id="b.management-staff-roles.staffsection.1" type="submit" disabled={busy}>{t.create}</Button>
       </form>
     </section>
 
@@ -68,12 +68,12 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
       <h3>{t.findHeading}</h3>
       <form className="msr__toolbar" aria-label={t.findHeading} onSubmit={(event) => { event.preventDefault(); search(); }}>
         <TextField id="u-search" label={t.username} autoComplete="off" value={field("search")} onChange={set("search")} />
-        <Button type="submit" variant="secondary" disabled={busy}>{t.find}</Button>
+        <Button data-telemetry-id="b.management-staff-roles.staffsection.2" type="submit" variant="secondary" disabled={busy}>{t.find}</Button>
       </form>
       {found === null && <p className="msr__hint">{t.notFound}</p>}
       {found && <div>
         <p><strong>{found.displayName}</strong> · {found.active ? t.active : t.inactive}{found.isLocked ? ` · ${t.locked}` : ""}</p>
-        <Button variant="secondary" disabled={busy} onClick={() => void act(async () => {
+        <Button data-telemetry-id="b.management-staff-roles.staffsection.3" variant="secondary" disabled={busy} onClick={() => void act(async () => {
           await api.setActive(found.userId, !found.active);
           setFound(await api.lookupUser(field("search").trim()));
         }, found.active ? t.deactivated : t.reactivated)}>{found.active ? t.deactivate : t.reactivate}</Button>

@@ -45,18 +45,18 @@ export function RecoveryPanel({ client }: { client?: SecurityClient }) {
     <p className="msys__hint">{t.hint}</p>
     <form className="msys__toolbar" onSubmit={search}>
       <TextField id="rec-username" label={t.username} autoComplete="off" value={username} onChange={(event) => setUsername(event.target.value)} />
-      <Button type="submit" disabled={busy || !username.trim()}>{busy ? t.searching : t.search}</Button>
+      <Button data-telemetry-id="b.management-security-system.recoverypanel.1" type="submit" disabled={busy || !username.trim()}>{busy ? t.searching : t.search}</Button>
     </form>
     <Notice notice={notice} />
     {found && <div>
       <h4>{found.displayName}</h4>
       <p>{found.active ? t.active : t.inactive}{found.isLocked ? ` — ${t.locked}` : ""}</p>
       <div className="msys__actions">
-        <Button disabled={busy} onClick={() => void run(async () => {
+        <Button data-telemetry-id="b.management-security-system.recoverypanel.2" disabled={busy} onClick={() => void run(async () => {
           const revoked = await api.revokeSessions(found.userId);
           setNotice({ tone: "success", text: fill(t.revoked, revoked) });
         })}>{t.revoke}</Button>
-        <Button variant="secondary" disabled={busy || !found.isLocked} onClick={() => void run(async () => {
+        <Button data-telemetry-id="b.management-security-system.recoverypanel.3" variant="secondary" disabled={busy || !found.isLocked} onClick={() => void run(async () => {
           await api.forceUnlock(found.userId);
           setFound({ ...found, isLocked: false });
           setNotice({ tone: "success", text: t.unlocked });

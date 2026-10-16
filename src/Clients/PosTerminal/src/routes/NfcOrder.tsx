@@ -237,7 +237,7 @@ export function NfcOrder() {
           <h1>Menüye ulaşılamadı</h1>
           <p>{message}</p>
           {tableId && (
-            <button className="nfc-secondary-button" onClick={() => void loadCatalog()}>
+            <button data-telemetry-id="b.routes.nfcorder.1" className="nfc-secondary-button" onClick={() => void loadCatalog()}>
               Tekrar dene
             </button>
           )}
@@ -277,7 +277,7 @@ export function NfcOrder() {
               <span>{formatMoney(result.totalAmount)}</span>
             </div>
           </div>
-          <button className="nfc-secondary-button" onClick={startNewRound}>
+          <button data-telemetry-id="b.routes.nfcorder.2" className="nfc-secondary-button" onClick={startNewRound}>
             Başka bir şey eklemek istiyorum
           </button>
         </div>
@@ -306,7 +306,7 @@ export function NfcOrder() {
                     .map((line) => (
                       <div className="nfc-stepper" key={line.key}>
                         <small>{line.extras.map((extra) => extra.name).join(", ") || "Ekstrasız"}</small>
-                        <button
+                        <button data-telemetry-id="b.routes.nfcorder.3"
                           type="button"
                           aria-label={`${product.name} (${line.extras.map((extra) => extra.name).join(", ") || "ekstrasız"}) adedini azalt`}
                           disabled={state === "submitting"}
@@ -315,7 +315,7 @@ export function NfcOrder() {
                           −
                         </button>
                         <span className="nfc-stepper__count" aria-live="polite">{line.quantity}</span>
-                        <button
+                        <button data-telemetry-id="b.routes.nfcorder.4"
                           type="button"
                           aria-label={`${product.name} (${line.extras.map((extra) => extra.name).join(", ") || "ekstrasız"}) adedini artır`}
                           disabled={state === "submitting"}
@@ -326,7 +326,7 @@ export function NfcOrder() {
                       </div>
                     ))}
                 </div>
-                <button
+                <button data-telemetry-id="b.routes.nfcorder.5"
                   type="button"
                   className="nfc-secondary-button"
                   aria-label={`${product.name} için seçenekleri aç`}
@@ -345,7 +345,7 @@ export function NfcOrder() {
                 <span className="nfc-product__price">{formatMoney(product.unitPrice)}</span>
               </div>
               <div className="nfc-stepper">
-                <button
+                <button data-telemetry-id="b.routes.nfcorder.6"
                   type="button"
                   aria-label={`${product.name} adedini azalt`}
                   disabled={quantity === 0 || state === "submitting"}
@@ -354,7 +354,7 @@ export function NfcOrder() {
                   −
                 </button>
                 <span className="nfc-stepper__count" aria-live="polite">{quantity}</span>
-                <button
+                <button data-telemetry-id="b.routes.nfcorder.7"
                   type="button"
                   aria-label={`${product.name} adedini artır`}
                   disabled={state === "submitting"}
@@ -391,10 +391,10 @@ export function NfcOrder() {
               ))}
             </fieldset>
           ))}
-          <button type="button" className="nfc-secondary-button" onClick={() => setPicking(null)}>
+          <button data-telemetry-id="b.routes.nfcorder.8" type="button" className="nfc-secondary-button" onClick={() => setPicking(null)}>
             Vazgeç
           </button>
-          <button
+          <button data-telemetry-id="b.routes.nfcorder.9"
             type="button"
             className="nfc-primary-button"
             disabled={!groupsOf(picking.product).every((group) => groupIsSatisfied(group, picking.chosen))}
@@ -410,7 +410,7 @@ export function NfcOrder() {
             {formatMoney(total)}
             <small>{formatQuantity(cartLines.reduce((sum, line) => sum + line.quantity, 0))} ürün</small>
           </span>
-          <button
+          <button data-telemetry-id="b.routes.nfcorder.10"
             type="button"
             className="nfc-primary-button"
             disabled={state === "submitting"}

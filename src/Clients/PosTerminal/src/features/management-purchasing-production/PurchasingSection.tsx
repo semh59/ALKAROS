@@ -115,8 +115,8 @@ export function PurchasingSection({ client }: ManagementSectionProps & { client?
           <tbody>{list.map((supplier) => <tr key={supplier.id}>
             <td>{supplier.code}</td><td>{supplier.name}</td><td>{supplier.active ? t.active : t.passive}</td>
             <td className="mpp__actions">
-              <Button variant="quiet" disabled={busy} onClick={() => void openSupplierEdit(supplier.id)}>{t.editSupplier}</Button>
-              <Button variant="quiet" disabled={busy} onClick={() => void act(() => api.setSupplierActive(supplier.id, !supplier.active), t.supplierUpdated, reloadSuppliers)}>
+              <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.1" variant="quiet" disabled={busy} onClick={() => void openSupplierEdit(supplier.id)}>{t.editSupplier}</Button>
+              <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.2" variant="quiet" disabled={busy} onClick={() => void act(() => api.setSupplierActive(supplier.id, !supplier.active), t.supplierUpdated, reloadSuppliers)}>
                 {supplier.active ? t.deactivate : t.activate}</Button></td></tr>)}</tbody>
         </table>}
         {editingSupplierId && <form className="mpp__form" aria-label={t.editSupplierForm} onSubmit={(event) => {
@@ -134,8 +134,8 @@ export function PurchasingSection({ client }: ManagementSectionProps & { client?
           <TextField id="e-phone" label={t.phone} value={field("e-phone")} onChange={set("e-phone")} />
           <TextField id="e-email" label={t.email} value={field("e-email")} onChange={set("e-email")} />
           <div className="mpp__actions">
-            <Button type="submit" disabled={busy}>{t.saveSupplier}</Button>
-            <Button type="button" variant="secondary" onClick={() => setEditingSupplierId(undefined)}>{t.cancelEdit}</Button>
+            <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.3" type="submit" disabled={busy}>{t.saveSupplier}</Button>
+            <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.4" type="button" variant="secondary" onClick={() => setEditingSupplierId(undefined)}>{t.cancelEdit}</Button>
           </div>
         </form>}
         <form className="mpp__form" aria-label={t.newSupplier} onSubmit={(event) => {
@@ -152,7 +152,7 @@ export function PurchasingSection({ client }: ManagementSectionProps & { client?
           <TextField id="s-office" label={t.taxOffice} value={field("s-office")} onChange={set("s-office")} />
           <TextField id="s-phone" label={t.phone} value={field("s-phone")} onChange={set("s-phone")} />
           <TextField id="s-email" label={t.email} value={field("s-email")} onChange={set("s-email")} />
-          <Button type="submit" disabled={busy}>{t.add}</Button>
+          <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.5" type="submit" disabled={busy}>{t.add}</Button>
         </form>
       </div>}
     </PanelView>
@@ -168,9 +168,9 @@ export function PurchasingSection({ client }: ManagementSectionProps & { client?
           <tbody>{list.map((order) => <tr key={order.id}>
             <td>{order.orderNumber}</td><td>{supplierName(order.supplierId)}</td><td>{orderStatusLabel(order.status)}</td><td>{formatMoney(order.totalAmount, order.currency)}</td>
             <td className="mpp__actions">
-              {order.status === "Draft" && <Button variant="quiet" disabled={busy} onClick={() => void act(() => api.submitOrder(order.id), t.orderSubmitted, reloadOrders)}>{t.submit}</Button>}
-              {(order.status === "Submitted" || order.status === "PartiallyReceived") && <Button variant="quiet" disabled={busy} onClick={() => { setNotice(undefined); setReceiving(order); }}>{t.receive}</Button>}
-              {(order.status === "Draft" || order.status === "Submitted") && <Button variant="quiet" disabled={busy} onClick={() => void act(() => api.cancelOrder(order.id), t.orderCancelled, reloadOrders)}>{t.cancel}</Button>}
+              {order.status === "Draft" && <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.6" variant="quiet" disabled={busy} onClick={() => void act(() => api.submitOrder(order.id), t.orderSubmitted, reloadOrders)}>{t.submit}</Button>}
+              {(order.status === "Submitted" || order.status === "PartiallyReceived") && <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.7" variant="quiet" disabled={busy} onClick={() => { setNotice(undefined); setReceiving(order); }}>{t.receive}</Button>}
+              {(order.status === "Draft" || order.status === "Submitted") && <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.8" variant="quiet" disabled={busy} onClick={() => void act(() => api.cancelOrder(order.id), t.orderCancelled, reloadOrders)}>{t.cancel}</Button>}
             </td></tr>)}</tbody>
         </table>}
 
@@ -185,8 +185,8 @@ export function PurchasingSection({ client }: ManagementSectionProps & { client?
           <label className="mpp__check"><input type="checkbox" checked={approved} onChange={(event) => setApproved(event.target.checked)} /> {t.managerApproved}</label>
           <TextField id="r-notes" label={t.notes} value={field("r-notes")} onChange={set("r-notes")} />
           <div className="mpp__actions">
-            <Button type="submit" disabled={busy}>{t.confirmReceipt}</Button>
-            <Button type="button" variant="secondary" onClick={() => setReceiving(undefined)}>{t.close}</Button>
+            <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.9" type="submit" disabled={busy}>{t.confirmReceipt}</Button>
+            <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.10" type="button" variant="secondary" onClick={() => setReceiving(undefined)}>{t.close}</Button>
           </div>
         </form>}
 
@@ -209,12 +209,12 @@ export function PurchasingSection({ client }: ManagementSectionProps & { client?
               </SelectField>
               <TextField id={`l-qty-${index}`} label={t.quantity} inputMode="decimal" value={line.quantity} onChange={(event) => updateLine(index, { quantity: event.target.value })} />
               <TextField id={`l-price-${index}`} label={t.unitPrice} inputMode="decimal" value={line.price} onChange={(event) => updateLine(index, { price: event.target.value })} />
-              {lines.length > 1 && <Button type="button" variant="quiet" onClick={() => setLines((current) => current.filter((_, position) => position !== index))}>{t.removeLine}</Button>}
+              {lines.length > 1 && <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.11" type="button" variant="quiet" onClick={() => setLines((current) => current.filter((_, position) => position !== index))}>{t.removeLine}</Button>}
             </fieldset>)}
             <TextField id="o-notes" label={t.notes} value={field("o-notes")} onChange={set("o-notes")} />
             <div className="mpp__actions">
-              <Button type="button" variant="secondary" onClick={() => setLines((current) => [...current, blankLine])}>{t.addLine}</Button>
-              <Button type="submit" disabled={busy}>{t.createOrder}</Button>
+              <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.12" type="button" variant="secondary" onClick={() => setLines((current) => [...current, blankLine])}>{t.addLine}</Button>
+              <Button data-telemetry-id="b.management-purchasing-production.purchasingsection.13" type="submit" disabled={busy}>{t.createOrder}</Button>
             </div>
           </form>}
         </PanelView>

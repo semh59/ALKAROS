@@ -32,8 +32,8 @@ function useActions(reload: () => void, setNotice: (note: Note | undefined) => v
 function ConfirmBar({ confirmation, busy, onYes, onNo }: { confirmation: Confirmation; busy: boolean; onYes: () => void; onNo: () => void }) {
   return <div className="msr__confirm" role="group" aria-label={confirmation.question}>
     <span>{confirmation.question}</span>
-    <Button disabled={busy} onClick={onYes}>{t.confirmYes}</Button>
-    <Button variant="secondary" onClick={onNo}>{t.confirmNo}</Button>
+    <Button data-telemetry-id="b.management-staff-roles.rolespanels.1" disabled={busy} onClick={onYes}>{t.confirmYes}</Button>
+    <Button data-telemetry-id="b.management-staff-roles.rolespanels.2" variant="secondary" onClick={onNo}>{t.confirmNo}</Button>
   </div>;
 }
 
@@ -64,7 +64,7 @@ export function RolesPanel({ api, revision, onChanged, setNotice }: PanelProps) 
           <thead><tr><th>{t.role}</th><th>{t.permissionCount}</th><th>{t.actions}</th></tr></thead>
           <tbody>{roles.map((role) => <tr key={role.roleId}>
             <td>{roleLabel(role)}</td><td>{role.permissionCodes.length}</td>
-            <td><Button variant="quiet" onClick={() => { setNotice(undefined); setConfirmation(undefined); setEditingId(role.roleId); }}>{t.editPermissions}</Button></td></tr>)}</tbody>
+            <td><Button data-telemetry-id="b.management-staff-roles.rolespanels.3" variant="quiet" onClick={() => { setNotice(undefined); setConfirmation(undefined); setEditingId(role.roleId); }}>{t.editPermissions}</Button></td></tr>)}</tbody>
         </table>}
 
         {editing && <fieldset className="msr__permissions">
@@ -87,7 +87,7 @@ export function RolesPanel({ api, revision, onChanged, setNotice }: PanelProps) 
           <h4>{t.newRole}</h4>
           <TextField id="r-code" label={t.code} hint={t.codeHint} autoComplete="off" value={fields.code} onChange={(event) => setFields({ ...fields, code: event.target.value })} />
           <TextField id="r-name" label={t.name} autoComplete="off" value={fields.name} onChange={(event) => setFields({ ...fields, name: event.target.value })} />
-          <Button type="submit" disabled={busy}>{t.createRole}</Button>
+          <Button data-telemetry-id="b.management-staff-roles.rolespanels.4" type="submit" disabled={busy}>{t.createRole}</Button>
         </form>
       </div>;
     }}
@@ -112,21 +112,21 @@ export function UserRolesPanel({ api, revision, onChanged, setNotice }: PanelPro
           <tbody>{users.map((user) => <tr key={user.userId}>
             <td>{user.displayName}</td><td>{user.username}</td><td>{user.active ? t.active : t.inactive}</td>
             <td>{user.roleIds.length === 0 ? "—" : user.roleIds.map(roleName).join(", ")}</td>
-            <td><Button variant="quiet" onClick={() => { setNotice(undefined); setConfirmation(undefined); setPickedRole(""); setEditingId(user.userId); }}>{t.editRoles}</Button></td></tr>)}</tbody>
+            <td><Button data-telemetry-id="b.management-staff-roles.rolespanels.5" variant="quiet" onClick={() => { setNotice(undefined); setConfirmation(undefined); setPickedRole(""); setEditingId(user.userId); }}>{t.editRoles}</Button></td></tr>)}</tbody>
         </table>}
 
         {editing && <div className="msr__form" role="group" aria-label={editing.displayName}>
           <h4>{editing.displayName}</h4>
           {editing.roleIds.map((id) => <div key={id} className="msr__check">
             <span>{roleName(id)}</span>
-            <Button variant="quiet" disabled={busy} onClick={() => setConfirmation({ question: `${roleName(id)}: ${t.revokeRoleQuestion}`, done: t.roleRevoked, run: () => api.revokeUser(id, editing.userId) })}>{t.revokeRole}</Button>
+            <Button data-telemetry-id="b.management-staff-roles.rolespanels.6" variant="quiet" disabled={busy} onClick={() => setConfirmation({ question: `${roleName(id)}: ${t.revokeRoleQuestion}`, done: t.roleRevoked, run: () => api.revokeUser(id, editing.userId) })}>{t.revokeRole}</Button>
           </div>)}
           {confirmation && <ConfirmBar confirmation={confirmation} busy={busy} onYes={() => void act(confirmation.run, confirmation.done)} onNo={() => setConfirmation(undefined)} />}
           <SelectField id="u-role" label={t.addRole} value={pickedRole} onChange={(event) => setPickedRole(event.target.value)}>
             <option value="">{t.pick}</option>
             {free.map((role) => <option key={role.roleId} value={role.roleId}>{roleLabel(role)}</option>)}
           </SelectField>
-          <Button disabled={busy || !pickedRole} onClick={() => void act(async () => { await api.assignUser(pickedRole, editing.userId); setPickedRole(""); }, t.roleAssigned)}>{t.assign}</Button>
+          <Button data-telemetry-id="b.management-staff-roles.rolespanels.7" disabled={busy || !pickedRole} onClick={() => void act(async () => { await api.assignUser(pickedRole, editing.userId); setPickedRole(""); }, t.roleAssigned)}>{t.assign}</Button>
         </div>}
       </div>;
     }}

@@ -408,7 +408,7 @@ export function Cashier() {
           )}
           {sessionEndedMessage && <div className="alert error" role="alert">{sessionEndedMessage}</div>}
           {error && <div className={`alert ${feedbackKind}`} role="alert">{error}</div>}
-          <button className="primary login-submit" disabled={busy || session === "checking" || backendStatus === "offline"}>
+          <button data-telemetry-id="b.routes.cashier.1" className="primary login-submit" disabled={busy || session === "checking" || backendStatus === "offline"}>
             {session === "checking" ? "Oturum kontrol ediliyor…" : busy ? "Giriş yapılıyor…" : "Giriş yap"}
           </button>
           <small className="terminal-reference">Terminal · {terminalId.slice(0, 8).toUpperCase()}</small>
@@ -451,14 +451,14 @@ export function Cashier() {
             <span />
             {backendStatus === "online" ? "Sunucu hazır" : "Bağlantı sorunu"}
           </div>
-          <button
+          <button data-telemetry-id="b.routes.cashier.2"
             className="header-action"
             onClick={() => window.open(customerDisplayHref(customerDisplayUrl), "alkaros-customer-display")}
           >
             Müşteri ekranı
           </button>
           {reservationStationEnabled && (
-            <button
+            <button data-telemetry-id="b.routes.cashier.3"
               className="header-action"
               onClick={() => window.open("/reservations", "alkaros-reservation-station")}
             >
@@ -471,7 +471,7 @@ export function Cashier() {
           <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
           {capabilities.includes("catalog.manage") && <a className="header-action" href="/catalog" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/catalog"); } }}>Menü</a>}
           {capabilities.includes("reports.view") && <a className="header-action" href="/management" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/management"); } }}>{navLabels.management}</a>}
-          <button
+          <button data-telemetry-id="b.routes.cashier.4"
             className="header-action"
             ref={pairingTrigger}
             aria-haspopup="dialog"
@@ -481,7 +481,7 @@ export function Cashier() {
             Ekranı eşleştir
           </button>
           <div className="operator-card"><span>{displayName || username}</span><small>Kasiyer</small></div>
-          <button className="icon-action" disabled={busy} onClick={() => void logout()} aria-label="Oturumu kapat">
+          <button data-telemetry-id="b.routes.cashier.5" className="icon-action" disabled={busy} onClick={() => void logout()} aria-label="Oturumu kapat">
             Çıkış
           </button>
         </div>
@@ -496,7 +496,7 @@ export function Cashier() {
                 : "Bağlantı koptuğu sırada gelen yardım çağrıları görülmemiş olabilir."}
             </span>
             {helpLink === "missed" && (
-              <button onClick={() => setHelpLink("ok")} aria-label={stateText.dismissMessage}>×</button>
+              <button data-telemetry-id="b.routes.cashier.6" onClick={() => setHelpLink("ok")} aria-label={stateText.dismissMessage}>×</button>
             )}
           </div>
         </div>
@@ -509,7 +509,7 @@ export function Cashier() {
                 <strong>{alert.tableNumber} masası</strong> — {helpRequestTypeLabels[alert.requestType] ?? alert.requestType}
                 {" · "}{alert.requestedByDisplayName}
               </span>
-              <button
+              <button data-telemetry-id="b.routes.cashier.7"
                 onClick={() => setHelpAlerts((previous) => previous.filter((candidate) => candidate.id !== alert.id))}
                 aria-label={stateText.dismissMessage}
               >
@@ -527,7 +527,7 @@ export function Cashier() {
           aria-live={error ? "assertive" : "polite"}
         >
           <span>{error || notice}</span>
-          <button onClick={() => { setError(""); setNotice(""); }} aria-label={stateText.dismissMessage}>×</button>
+          <button data-telemetry-id="b.routes.cashier.8" onClick={() => { setError(""); setNotice(""); }} aria-label={stateText.dismissMessage}>×</button>
         </div>
       )}
 
@@ -537,11 +537,11 @@ export function Cashier() {
           <strong>{activeOrder ? formatMoney(activeOrder.total) : "Yeni satış"}</strong>
         </div>
         {!activeOrder ? (
-          <button className="primary" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
+          <button data-telemetry-id="b.routes.cashier.9" className="primary" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
             Sipariş aç
           </button>
         ) : activeOrder.editable ? (
-          <button
+          <button data-telemetry-id="b.routes.cashier.10"
             className="primary"
             disabled={busy || activeOrder.lines.length === 0}
             onClick={() => execute(
@@ -550,7 +550,7 @@ export function Cashier() {
             )}
           >Gönder</button>
         ) : (
-          <button className="secondary" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
+          <button data-telemetry-id="b.routes.cashier.11" className="secondary" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
             Sonraki sipariş
           </button>
         )}
@@ -563,7 +563,7 @@ export function Cashier() {
             is the right pair (not radiogroup/radio, which Module 3's
             split-payment fix used for a VALUE choice instead). */}
         <nav className="category-rail" aria-label="Ürün kategorileri" role="tablist">
-          <button
+          <button data-telemetry-id="b.routes.cashier.12"
             className={activeCategory === "ALL" ? "active" : ""}
             role="tab"
             aria-selected={activeCategory === "ALL"}
@@ -574,7 +574,7 @@ export function Cashier() {
             <small>{catalog.length}</small>
           </button>
           {categories.map((category, index) => (
-            <button
+            <button data-telemetry-id="b.routes.cashier.13"
               className={activeCategory === category.code ? "active" : ""}
               role="tab"
               aria-selected={activeCategory === category.code}
@@ -607,7 +607,7 @@ export function Cashier() {
 
           <div className="product-grid">
             {visibleProducts.map((product) => (
-              <button
+              <button data-telemetry-id="b.routes.cashier.14"
                 className="product-card"
                 key={product.productId}
                 disabled={busy || !activeOrder?.editable}
@@ -646,7 +646,7 @@ export function Cashier() {
               <div className="new-order-icon">＋</div>
               <h3>Siparişe hazır</h3>
               <p>Ürünleri açmak ve yeni satışa başlamak için sipariş oluşturun.</p>
-              <button className="primary large" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
+              <button data-telemetry-id="b.routes.cashier.15" className="primary large" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
                 Yeni sipariş aç
               </button>
             </div>
@@ -664,7 +664,7 @@ export function Cashier() {
                     </div>
                     <strong className="line-total">{formatMoney(line.lineTotal)}</strong>
                     <div className="quantity-controls">
-                      <button
+                      <button data-telemetry-id="b.routes.cashier.16"
                         aria-label={`${line.name} azalt`}
                         disabled={busy || line.quantity <= 1 || !activeOrder.editable}
                         onClick={() => execute(() => api.changeQuantity(
@@ -672,14 +672,14 @@ export function Cashier() {
                         ))}
                       >−</button>
                       <span>{formatQuantity(line.quantity)}</span>
-                      <button
+                      <button data-telemetry-id="b.routes.cashier.17"
                         aria-label={`${line.name} artır`}
                         disabled={busy || !activeOrder.editable}
                         onClick={() => execute(() => api.changeQuantity(
                           terminalId, activeOrder.orderId!, line.itemId, line.quantity + 1, activeOrder.revision,
                         ))}
                       >+</button>
-                      <button
+                      <button data-telemetry-id="b.routes.cashier.18"
                         className="remove"
                         disabled={busy || !activeOrder.editable}
                         onClick={() => execute(() => api.removeItem(
@@ -699,7 +699,7 @@ export function Cashier() {
                 <div className="grand-total"><span>Toplam</span><strong>{formatMoney(activeOrder.total)}</strong></div>
               </div>
               {activeOrder.editable ? (
-                <button
+                <button data-telemetry-id="b.routes.cashier.19"
                   className="primary submit-order"
                   disabled={busy || activeOrder.lines.length === 0}
                   onClick={() => execute(
@@ -714,7 +714,7 @@ export function Cashier() {
                 </div>
               )}
               {canStartNextOrder && (
-                <button className="secondary next-order" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
+                <button data-telemetry-id="b.routes.cashier.20" className="secondary next-order" disabled={busy} onClick={() => execute(() => api.startOrder(terminalId))}>
                   Sonraki siparişi aç
                 </button>
               )}
@@ -741,7 +741,7 @@ export function Cashier() {
                 <span className="eyebrow dark">MÜŞTERİ EKRANI</span>
                 <h2 id="pairing-title">Ekran bağlantısını yönetin</h2>
               </div>
-              <button className="dialog-close" onClick={closePairing} aria-label="Eşleştirme penceresini kapat">×</button>
+              <button data-telemetry-id="b.routes.cashier.21" className="dialog-close" onClick={closePairing} aria-label="Eşleştirme penceresini kapat">×</button>
             </div>
             <p id="pairing-description">Müşteri ekranındaki 8 karakterli kodu girin veya mevcut ekran yetkisini kaldırın.</p>
             <label>
@@ -756,8 +756,8 @@ export function Cashier() {
               />
             </label>
             <div className="dialog-actions">
-              <button className="secondary" onClick={closePairing}>Vazgeç</button>
-              <button
+              <button data-telemetry-id="b.routes.cashier.22" className="secondary" onClick={closePairing}>Vazgeç</button>
+              <button data-telemetry-id="b.routes.cashier.23"
                 className="primary"
                 disabled={busy || pairingCode.length !== 8}
                 onClick={() => void execute(
@@ -769,7 +769,7 @@ export function Cashier() {
             <div className="dialog-danger-zone">
               <strong>Bağlantıyı sonlandır</strong>
               <span>Yetki kaldırıldığında müşteri ekranı yeniden kod ister.</span>
-              <button
+              <button data-telemetry-id="b.routes.cashier.24"
                 className="danger-text"
                 disabled={busy}
                 onClick={() => void execute(

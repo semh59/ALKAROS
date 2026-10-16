@@ -29,7 +29,7 @@ function PanelView<T>({ title, panel, onRetry, children }: { title: string; pane
   return <section className="stock__panel" aria-label={title}>
     <h3>{title}</h3>
     {panel.state === "loading" && <p aria-busy="true">{t.loading}</p>}
-    {panel.state === "error" && <StateMessage tone="error" title={t.loadFailed} actions={<Button variant="secondary" onClick={onRetry}>{commonActions.retry}</Button>}><p>{panel.message}</p></StateMessage>}
+    {panel.state === "error" && <StateMessage tone="error" title={t.loadFailed} actions={<Button data-telemetry-id="b.management-stock.stocksection.1" variant="secondary" onClick={onRetry}>{commonActions.retry}</Button>}><p>{panel.message}</p></StateMessage>}
     {panel.state === "ready" && children(panel.data)}
   </section>;
 }
@@ -128,7 +128,7 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
         <form className="stock__toolbar" onSubmit={(event) => { event.preventDefault(); setRange({ from, to }); }}>
           <TextField id="stock-from" label={t.from} type="date" value={from} onChange={(event) => setFrom(event.target.value)} />
           <TextField id="stock-to" label={t.to} type="date" value={to} onChange={(event) => setTo(event.target.value)} />
-          <Button type="submit" variant="secondary">{t.run}</Button>
+          <Button data-telemetry-id="b.management-stock.stocksection.2" type="submit" variant="secondary">{t.run}</Button>
         </form>
         {report.items.length === 0 ? <Empty /> : <table>
           <thead><tr><th>{t.name}</th><th>{t.location}</th><th>{t.actual}</th><th>{t.theoretical}</th><th>{t.variance}</th><th>{t.variancePercent}</th></tr></thead>
@@ -149,9 +149,9 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
             <td>{item.code}</td><td>{item.name}{item.isActive ? "" : ` (${t.passive})`}</td><td>{itemTypeLabel(item.itemType)}</td><td>{item.trackingUnitCode}</td>
             <td>{item.reorderPoint === null ? t.none : stat(item.reorderPoint)}</td>
             <td className="stock__actions">
-              <Button variant="quiet" onClick={() => openAction({ kind: "count", item })}>{t.count}</Button>
-              <Button variant="quiet" onClick={() => openAction({ kind: "waste", item })}>{t.waste}</Button>
-              <Button variant="quiet" onClick={() => openAction({ kind: "reorder", item })}>{t.setReorder}</Button>
+              <Button data-telemetry-id="b.management-stock.stocksection.3" variant="quiet" onClick={() => openAction({ kind: "count", item })}>{t.count}</Button>
+              <Button data-telemetry-id="b.management-stock.stocksection.4" variant="quiet" onClick={() => openAction({ kind: "waste", item })}>{t.waste}</Button>
+              <Button data-telemetry-id="b.management-stock.stocksection.5" variant="quiet" onClick={() => openAction({ kind: "reorder", item })}>{t.setReorder}</Button>
             </td></tr>)}</tbody>
         </table>}
 
@@ -175,8 +175,8 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
                 </>}
             </>}
           <div className="stock__actions">
-            <Button type="submit" disabled={busy}>{t.save}</Button>
-            <Button type="button" variant="secondary" onClick={() => setAction(undefined)}>{t.cancel}</Button>
+            <Button data-telemetry-id="b.management-stock.stocksection.6" type="submit" disabled={busy}>{t.save}</Button>
+            <Button data-telemetry-id="b.management-stock.stocksection.7" type="button" variant="secondary" onClick={() => setAction(undefined)}>{t.cancel}</Button>
           </div>
         </form>}
 
@@ -201,7 +201,7 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
             {locations.state === "ready" && locationOptions(locations.data)}
           </SelectField>
           <TextField id="n-reorder" label={t.reorderPoint} inputMode="decimal" value={field("n-reorder")} onChange={set("n-reorder")} />
-          <Button type="submit" disabled={busy}>{t.add}</Button>
+          <Button data-telemetry-id="b.management-stock.stocksection.8" type="submit" disabled={busy}>{t.add}</Button>
         </form>
       </div>}
     </PanelView>}
@@ -223,7 +223,7 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
           <tbody>{mappings.data.map((mapping) => <tr key={mapping.stockItemId}>
             <td>{mapping.stockItemName ?? itemName(mapping.stockItemId)}</td><td>{stat(mapping.quantityMultiplier)}</td>
             <td>{mapping.availableQuantity === null ? t.none : stat(mapping.availableQuantity)}</td>
-            <td><Button variant="quiet" disabled={busy} onClick={() => void act(() => api.removeMapping(mapKind, mapTarget, mapping.stockItemId), t.mappingRemoved, reloadMappings)}>{t.removeMapping}</Button></td>
+            <td><Button data-telemetry-id="b.management-stock.stocksection.9" variant="quiet" disabled={busy} onClick={() => void act(() => api.removeMapping(mapKind, mapTarget, mapping.stockItemId), t.mappingRemoved, reloadMappings)}>{t.removeMapping}</Button></td>
           </tr>)}</tbody>
         </table>)}
         {mapTarget && <form className="stock__form" aria-label={t.addMapping} onSubmit={(event) => {
@@ -239,7 +239,7 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
           </SelectField>
           <TextField id="map-multiplier" label={t.multiplier} inputMode="decimal" value={field("map-multiplier")} onChange={set("map-multiplier")} />
           <TextField id="map-notes" label={t.notes} value={field("map-notes")} onChange={set("map-notes")} />
-          <Button type="submit" disabled={busy || !field("map-item")}>{t.add}</Button>
+          <Button data-telemetry-id="b.management-stock.stocksection.10" type="submit" disabled={busy || !field("map-item")}>{t.add}</Button>
         </form>}
       </div>}
     </PanelView>}
@@ -258,7 +258,7 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
             {wasteHistorySources.map((source) => <option key={source} value={source}>{wasteSourceLabel(source)}</option>)}
           </SelectField>
           <TextField id="w-reference" label={t.wasteHistoryReference} value={field("w-reference")} onChange={set("w-reference")} />
-          <Button type="submit" variant="secondary">{t.wasteHistoryShow}</Button>
+          <Button data-telemetry-id="b.management-stock.stocksection.11" type="submit" variant="secondary">{t.wasteHistoryShow}</Button>
         </form>
         {wasteQuery && (records.length === 0 ? <p className="stock__empty">{t.wasteHistoryNone}</p> : <table>
           <thead><tr><th>{t.name}</th><th>{t.quantity}</th><th>{t.wasteSource}</th><th>{t.reason}</th><th>{t.recordedAt}</th></tr></thead>
@@ -287,7 +287,7 @@ export function StockSection({ capabilities, client }: { capabilities: ReadonlyS
           <SelectField id="l-type" label={t.type} value={field("l-type", "Warehouse")} onChange={set("l-type")}>
             {locationTypes.map((type) => <option key={type} value={type}>{locationTypeLabel(type)}</option>)}
           </SelectField>
-          <Button type="submit" disabled={busy}>{t.add}</Button>
+          <Button data-telemetry-id="b.management-stock.stocksection.12" type="submit" disabled={busy}>{t.add}</Button>
         </form>
       </div>}
     </PanelView>}

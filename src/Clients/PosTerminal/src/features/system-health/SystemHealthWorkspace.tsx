@@ -31,17 +31,17 @@ export function SystemHealthWorkspace({ state, health, backups, onRefresh, error
     return <div className="system-health system-health--state"><StateMessage tone="unauthorized" title={stateText.managerUnauthorizedTitle}><p>Sistem sağlığı yalnızca yönetici rolüne açıktır.</p></StateMessage></div>;
   }
   if (state === "offline") {
-    return <div className="system-health system-health--state"><StateMessage tone="offline" title={stateText.offlineTitle}><p>Güncel sağlık verisi alınamıyor.</p><Button onClick={onRefresh}>{commonActions.retry}</Button></StateMessage></div>;
+    return <div className="system-health system-health--state"><StateMessage tone="offline" title={stateText.offlineTitle}><p>Güncel sağlık verisi alınamıyor.</p><Button data-telemetry-id="b.system-health.systemhealthworkspace.1" onClick={onRefresh}>{commonActions.retry}</Button></StateMessage></div>;
   }
   if (state === "error") {
-    return <div className="system-health system-health--state"><StateMessage tone="error" title="Sağlık verisi alınamadı"><p>{errorMessage ?? stateText.unexpectedError}</p><Button onClick={onRefresh}>{commonActions.reload}</Button></StateMessage></div>;
+    return <div className="system-health system-health--state"><StateMessage tone="error" title="Sağlık verisi alınamadı"><p>{errorMessage ?? stateText.unexpectedError}</p><Button data-telemetry-id="b.system-health.systemhealthworkspace.2" onClick={onRefresh}>{commonActions.reload}</Button></StateMessage></div>;
   }
 
   const latestBackup = backups[0];
   return <section className="system-health" aria-label="Sistem sağlığı ve yedek durumu">
     <header className="system-health__header">
       <div><span className="system-health__kicker">YÖNETİM / SİSTEM</span><h2>Sistem sağlığı</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Veritabanı, disk ve yedekleme durumu"}</p></div>
-      <Button variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
+      <Button data-telemetry-id="b.system-health.systemhealthworkspace.3" variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
     </header>
 
     {health ? <dl className="system-health__grid">

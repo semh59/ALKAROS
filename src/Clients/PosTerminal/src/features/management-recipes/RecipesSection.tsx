@@ -58,7 +58,7 @@ export function RecipesSection({ client }: ManagementSectionProps & { client?: R
           <thead><tr><th>{t.code}</th><th>{t.name}</th><th>{t.actions}</th></tr></thead>
           <tbody>{list.map((recipe) => <tr key={recipe.id}>
             <td>{recipe.code}</td><td>{recipe.name}</td>
-            <td><Button variant="quiet" onClick={() => { setOpenRecipeId(recipe.id); setOpenVersionId(undefined); }}>{t.showVersions}</Button></td>
+            <td><Button data-telemetry-id="b.management-recipes.recipessection.1" variant="quiet" onClick={() => { setOpenRecipeId(recipe.id); setOpenVersionId(undefined); }}>{t.showVersions}</Button></td>
           </tr>)}</tbody>
         </table>}
 
@@ -70,10 +70,10 @@ export function RecipesSection({ client }: ManagementSectionProps & { client?: R
               <td>{version.versionNumber}</td><td>{versionStatusLabel(version.status)}</td>
               <td>{formatQuantity(version.yieldQuantity)} {version.yieldUnitCode}</td><td>{version.isLocked ? t.locked : t.notLocked}</td>
               <td className="mrcp__actions">
-                <Button variant="quiet" onClick={() => setOpenVersionId(version.id)}>{t.showIngredients}</Button>
-                {version.status === "Draft" && <Button variant="quiet" disabled={busy}
+                <Button data-telemetry-id="b.management-recipes.recipessection.2" variant="quiet" onClick={() => setOpenVersionId(version.id)}>{t.showIngredients}</Button>
+                {version.status === "Draft" && <Button data-telemetry-id="b.management-recipes.recipessection.3" variant="quiet" disabled={busy}
                   onClick={() => void act(() => api.activate(version.recipeId, version.versionNumber), t.activated, reloadVersions)}>{t.activate}</Button>}
-                {version.status === "Active" && !version.isLocked && <Button variant="quiet" disabled={busy}
+                {version.status === "Active" && !version.isLocked && <Button data-telemetry-id="b.management-recipes.recipessection.4" variant="quiet" disabled={busy}
                   onClick={() => void act(() => api.lock(version.id), t.lockedDone, reloadVersions)}>{t.lock}</Button>}
               </td></tr>)}</tbody>
           </table>}
@@ -86,8 +86,8 @@ export function RecipesSection({ client }: ManagementSectionProps & { client?: R
           }}>
             <TextField id="v-yield" label={t.yieldQuantity} inputMode="decimal" value={field("v-yield")} onChange={set("v-yield")} />
             <TextField id="v-unit" label={t.yieldUnit} value={field("v-unit")} onChange={set("v-unit")} />
-            <Button type="submit" disabled={busy}>{t.firstVersion}</Button>
-          </form> : <Button variant="secondary" disabled={busy}
+            <Button data-telemetry-id="b.management-recipes.recipessection.5" type="submit" disabled={busy}>{t.firstVersion}</Button>
+          </form> : <Button data-telemetry-id="b.management-recipes.recipessection.6" variant="secondary" disabled={busy}
             onClick={() => void act(() => api.createNextVersion(openRecipeId), t.versionAdded, reloadVersions)}>{t.nextVersion}</Button>}
 
           {openVersion && <div className="mrcp__sub">
@@ -97,7 +97,7 @@ export function RecipesSection({ client }: ManagementSectionProps & { client?: R
               <tbody>{openVersion.ingredients.map((ingredient) => <tr key={ingredient.ingredientItemId}>
                 <td>{stockName(ingredient.ingredientItemId)}</td>
                 <td>{formatQuantity(ingredient.quantity)} {ingredient.unitCode}</td><td>{formatQuantity(ingredient.lossPercentage)}</td>
-                <td>{openVersion.status === "Draft" && <Button variant="quiet" disabled={busy}
+                <td>{openVersion.status === "Draft" && <Button data-telemetry-id="b.management-recipes.recipessection.7" variant="quiet" disabled={busy}
                   onClick={() => void act(() => api.removeIngredient(openVersion.id, ingredient.ingredientItemId), t.ingredientRemoved, reloadVersions)}>{t.remove}</Button>}</td>
               </tr>)}</tbody>
             </table>}
@@ -120,7 +120,7 @@ export function RecipesSection({ client }: ManagementSectionProps & { client?: R
               <TextField id="i-quantity" label={t.quantity} inputMode="decimal" value={field("i-quantity")} onChange={set("i-quantity")} />
               <TextField id="i-unit" label={t.unit} value={field("i-unit")} onChange={set("i-unit")} />
               <TextField id="i-loss" label={t.loss} inputMode="decimal" value={field("i-loss")} onChange={set("i-loss")} />
-              <Button type="submit" disabled={busy || !field("i-item")}>{t.add}</Button>
+              <Button data-telemetry-id="b.management-recipes.recipessection.8" type="submit" disabled={busy || !field("i-item")}>{t.add}</Button>
             </form>}
           </div>}
         </div>}
@@ -133,7 +133,7 @@ export function RecipesSection({ client }: ManagementSectionProps & { client?: R
           <TextField id="r-code" label={t.code} value={field("r-code")} onChange={set("r-code")} />
           <TextField id="r-name" label={t.name} value={field("r-name")} onChange={set("r-name")} />
           <TextField id="r-description" label={t.description} value={field("r-description")} onChange={set("r-description")} />
-          <Button type="submit" disabled={busy}>{t.add}</Button>
+          <Button data-telemetry-id="b.management-recipes.recipessection.9" type="submit" disabled={busy}>{t.add}</Button>
         </form>
       </div>}
     </PanelView>
@@ -146,7 +146,7 @@ export function RecipesSection({ client }: ManagementSectionProps & { client?: R
         </SelectField>
         {mappingProductId && mapping.state === "ready" && (mapping.data ? <p>
           {t.mappedTo}: {recipeName(mapping.data.recipeId)}{" "}
-          <Button variant="quiet" disabled={busy} onClick={() => void act(() => api.removeMapping(mappingProductId), t.mappingRemoved, reloadMapping)}>{t.unmap}</Button>
+          <Button data-telemetry-id="b.management-recipes.recipessection.10" variant="quiet" disabled={busy} onClick={() => void act(() => api.removeMapping(mappingProductId), t.mappingRemoved, reloadMapping)}>{t.unmap}</Button>
         </p> : <p className="mrcp__empty">{t.noMapping}</p>)}
         {mappingProductId && <form className="mrcp__form" aria-label={t.assign} onSubmit={(event) => {
           event.preventDefault();
@@ -156,7 +156,7 @@ export function RecipesSection({ client }: ManagementSectionProps & { client?: R
             <option value="">{t.pick}</option>
             {recipes.state === "ready" && recipes.data.map((recipe) => <option key={recipe.id} value={recipe.id}>{recipe.name}</option>)}
           </SelectField>
-          <Button type="submit" disabled={busy || !field("m-recipe")}>{t.assign}</Button>
+          <Button data-telemetry-id="b.management-recipes.recipessection.11" type="submit" disabled={busy || !field("m-recipe")}>{t.assign}</Button>
         </form>}
       </div>}
     </PanelView>
@@ -179,7 +179,7 @@ export function RecipesSection({ client }: ManagementSectionProps & { client?: R
           <TextField id="c-from" label={t.fromUnit} value={field("c-from")} onChange={set("c-from")} />
           <TextField id="c-to" label={t.toUnit} value={field("c-to")} onChange={set("c-to")} />
           <TextField id="c-factor" label={t.factor} inputMode="decimal" value={field("c-factor")} onChange={set("c-factor")} />
-          <Button type="submit" disabled={busy}>{t.add}</Button>
+          <Button data-telemetry-id="b.management-recipes.recipessection.12" type="submit" disabled={busy}>{t.add}</Button>
         </form>
       </div>}
     </PanelView>

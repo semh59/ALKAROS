@@ -187,7 +187,7 @@ export function RelaySettings() {
             />
           </label>
           {error && <div className="alert error" role="alert">{error}</div>}
-          <button className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
+          <button data-telemetry-id="b.routes.relaysettings.1" className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
         </form>
       </main>
     );
@@ -235,7 +235,7 @@ export function RelaySettings() {
           </label>
           {error && <div className="alert error" role="alert">{error}</div>}
           {saveMessage && <div className="alert information" role="status">{saveMessage}</div>}
-          <button className="primary login-submit" disabled={busy || !canSave}>
+          <button data-telemetry-id="b.routes.relaysettings.2" className="primary login-submit" disabled={busy || !canSave}>
             {busy ? "Kaydediliyor…" : "Kaydet"}
           </button>
         </form>
@@ -267,7 +267,7 @@ export function RelaySettings() {
             </label>
             {provisionError && <div className="alert error" role="alert">{provisionError}</div>}
             {provisionMessage && <div className="alert information" role="status">{provisionMessage}</div>}
-            <button className="primary login-submit" disabled={provisionBusy || !subdomainInput.trim()}>
+            <button data-telemetry-id="b.routes.relaysettings.3" className="primary login-submit" disabled={provisionBusy || !subdomainInput.trim()}>
               {provisionBusy ? "Etkinleştiriliyor…" : "Bağlantıyı Etkinleştir"}
             </button>
           </form>

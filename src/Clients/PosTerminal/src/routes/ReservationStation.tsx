@@ -120,7 +120,7 @@ export function ReservationStation() {
             />
           </label>
           {error && <div className="alert error" role="alert">{error}</div>}
-          <button className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
+          <button data-telemetry-id="b.routes.reservationstation.1" className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
         </form>
       </main>
     );
@@ -135,7 +135,7 @@ export function ReservationStation() {
         </div>
         <div className="pos-header-actions">
           <div className="operator-card"><span>{displayName || username}</span><small>Rezervasyon</small></div>
-          <button className="icon-action" disabled={busy} onClick={() => void logout()} aria-label="Oturumu kapat">
+          <button data-telemetry-id="b.routes.reservationstation.2" className="icon-action" disabled={busy} onClick={() => void logout()} aria-label="Oturumu kapat">
             Çıkış
           </button>
         </div>

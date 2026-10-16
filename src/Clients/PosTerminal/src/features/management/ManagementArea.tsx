@@ -18,7 +18,7 @@ export function ManagementArea({ capabilities, sections = managementSections }: 
   const Active = active.component;
   return <div className="management">
     <nav className="management__tabs" aria-label={managementText.sectionsLabel}>
-      {visible.map((section) => <button
+      {visible.map((section) => <button data-telemetry-id="b.management.managementarea.1"
         key={section.id}
         type="button"
         className="management__tab"

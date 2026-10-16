@@ -55,7 +55,7 @@ export function OrderInvoicesSection({ client }: Partial<ManagementSectionProps>
     <form className="moi__filters" onSubmit={(event) => { event.preventDefault(); void load(); }}>
       <TextField id="moi-from" label={t.from} type="date" value={range.from} onChange={(event) => setRange({ ...range, from: event.target.value })} />
       <TextField id="moi-to" label={t.to} type="date" value={range.to} onChange={(event) => setRange({ ...range, to: event.target.value })} />
-      <Button type="submit" variant="secondary" disabled={loading}>{t.load}</Button>
+      <Button data-telemetry-id="b.management-order-invoices.orderinvoicessection.1" type="submit" variant="secondary" disabled={loading}>{t.load}</Button>
     </form>
     {problem && <p role="alert" className="moi__warning">{problem}</p>}
     {loading && <p aria-busy="true">{t.loading}</p>}
@@ -81,7 +81,7 @@ export function OrderInvoicesSection({ client }: Partial<ManagementSectionProps>
             <td>{formatDay(invoice.serviceDate)}</td><td>{invoice.orderNumber}</td><td>{providerLabel(invoice.provider)}</td><td>{statusLabel(invoice.status)}</td>
             <td className="moi__num">{formatMoney(invoice.netAmount)}</td><td className="moi__num">{formatMoney(invoice.taxAmount)}</td>
             <td className="moi__num">{formatMoney(invoice.grossAmount)}</td>
-            <td><Button variant="secondary" onClick={() => void open(invoice.orderId)}>{t.show}</Button></td></tr>)}</tbody>
+            <td><Button data-telemetry-id="b.management-order-invoices.orderinvoicessection.2" variant="secondary" onClick={() => void open(invoice.orderId)}>{t.show}</Button></td></tr>)}</tbody>
         </table>}
         <p className="moi__hint">{t.notSent}</p>
       </section>

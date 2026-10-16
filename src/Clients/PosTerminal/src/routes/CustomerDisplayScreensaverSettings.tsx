@@ -198,7 +198,7 @@ export function CustomerDisplayScreensaverSettings() {
             />
           </label>
           {error && <div className="alert error" role="alert">{error}</div>}
-          <button className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
+          <button data-telemetry-id="b.routes.customerdisplayscreensaversettings.1" className="primary login-submit" disabled={busy}>{busy ? "Giriş yapılıyor…" : "Giriş yap"}</button>
         </form>
       </main>
     );
@@ -234,7 +234,7 @@ export function CustomerDisplayScreensaverSettings() {
           )}
           {error && <div className="alert error" role="alert">{error}</div>}
           {statusMessage && <div className="alert information" role="status">{statusMessage}</div>}
-          <button className="primary login-submit" disabled={busy || !selectedFile}>
+          <button data-telemetry-id="b.routes.customerdisplayscreensaversettings.2" className="primary login-submit" disabled={busy || !selectedFile}>
             {busy ? "Yükleniyor…" : "Yükle"}
           </button>
         </form>
@@ -246,7 +246,7 @@ export function CustomerDisplayScreensaverSettings() {
             ) : (
               <img src={currentMediaUrl} alt="Müşteri ekranında gösterilen mevcut ekran koruyucu görseli" />
             )}
-            <button type="button" className="danger-text" disabled={busy} onClick={() => void remove()}>
+            <button data-telemetry-id="b.routes.customerdisplayscreensaversettings.3" type="button" className="danger-text" disabled={busy} onClick={() => void remove()}>
               {busy ? "Kaldırılıyor…" : "Kaldır"}
             </button>
           </div>
