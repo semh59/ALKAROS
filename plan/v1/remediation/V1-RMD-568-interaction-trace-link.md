@@ -1,7 +1,7 @@
 # V1-RMD-568 - Tıklamayı izleme kimliğine bağlama
 
 - Task ID: V1-RMD-568
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -22,6 +22,13 @@ Bir düğme tıklaması, o tıklamanın başlattığı isteğin izleme kimliğiy
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Observability/InteractionTelemetry/** - yalnız izleme kimliği alanı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Observability/InteractionTelemetry/** - yalnız izleme kimliği testi
 - `database/migrations/V1/V1-RMD-568/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/trace-correlation/** - yalnız verilen izleme kimliğini bildirme
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Observability/JourneyEndpoints/** - yalnız düğme adımı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Observability/JourneyEndpoints/** - yalnız düğme adımı testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-user-journeys/** - yalnız düğme adımı etiketi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
