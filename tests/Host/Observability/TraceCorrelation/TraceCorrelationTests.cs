@@ -93,6 +93,14 @@ public sealed class TraceCorrelationTests : IClassFixture<TraceDatabase>
 
             return Results.Ok();
         });
+        app.MapGet("/e2e/explain", async () =>
+        {
+            await using var plan = _database.DataSource.CreateCommand("EXPLAIN SELECT 1");
+            await plan.ExecuteScalarAsync();
+            await using var command = _database.DataSource.CreateCommand("SELECT 1");
+            await command.ExecuteScalarAsync();
+            return Results.Ok();
+        });
         app.MapGet("/e2e/ping", () => Results.Ok());
         app.MapGet("/e2e/outgoing", async (HttpContext context) =>
         {
@@ -171,6 +179,18 @@ public sealed class TraceCorrelationTests : IClassFixture<TraceDatabase>
         var large = buffer.Get(CorrelationOf(many))!;
         large.Spans.Should().HaveCount(TraceSpanBuffer.MaxSpansPerTrace);
         large.DroppedSpans.Should().Be(10);
+    }
+
+    [Fact]
+    public async Task ThePlanLookupOfTheSlowQueryPlannerIsNotAStepOfTheRequest()
+    {
+        await using var app = await StartAppAsync();
+        var buffer = app.Services.GetRequiredService<TraceSpanBuffer>();
+        using var client = new HttpClient { BaseAddress = new Uri(app.Urls.First()) };
+
+        using var response = await client.SendAsync(Call("/e2e/explain"));
+
+        buffer.Get(CorrelationOf(response))!.Spans.Should().ContainSingle().Which.Name.Should().NotContain("EXPLAIN");
     }
 
     [Fact]

@@ -58,7 +58,8 @@ public sealed class ServerErrorObserver(ErrorEventWriter writer) : IExceptionHan
     private void Observe(HttpContext httpContext, Exception exception)
     {
         httpContext.Items[ReportedKey] = true;
-        var route = RouteOf(httpContext);
+        // The exception handler middleware clears the endpoint of the request; the feature keeps the one that threw.
+        var route = RouteOf(httpContext.Features.Get<IExceptionHandlerFeature>()?.Endpoint ?? httpContext.GetEndpoint());
         var trace = Activity.Current?.TraceId.ToString() ?? httpContext.TraceIdentifier;
         var pg = FindPostgres(exception);
         if (pg is not null && DatabaseCodes.TryGetValue(pg.SqlState, out var known))
@@ -88,8 +89,10 @@ public sealed class ServerErrorObserver(ErrorEventWriter writer) : IExceptionHan
         return null;
     }
 
-    internal static string RouteOf(HttpContext context) =>
-        (context.GetEndpoint() as RouteEndpoint)?.RoutePattern.RawText ?? "unmatched";
+    internal static string RouteOf(HttpContext context) => RouteOf(context.GetEndpoint());
+
+    private static string RouteOf(Endpoint? endpoint) =>
+        (endpoint as RouteEndpoint)?.RoutePattern.RawText ?? "unmatched";
 }
 
 /// <summary>Reports a request that took longer than the threshold; the route pattern is used, never the raw path.</summary>

@@ -68,6 +68,11 @@ public sealed class TraceSpanBuffer : IDisposable
         if (!_open.TryGetValue(activity.TraceId.ToString(), out var open))
             return;
 
+        // The plan lookup of the slow query planner is monitoring's own work, not part of the request.
+        if (activity.Source.Name == "Npgsql" && activity.GetTagItem("db.statement") is string sql
+            && sql.StartsWith("EXPLAIN", StringComparison.OrdinalIgnoreCase))
+            return;
+
         var (kind, name) = activity.Source.Name == "Npgsql"
             ? ("database", activity.GetTagItem("db.statement") is string statement ? DbActivityTap.Shape(statement) : "command")
             : ("external", activity.GetTagItem("server.address") is string host ? $"{activity.GetTagItem("http.request.method")} {host}".Trim() : "external call");

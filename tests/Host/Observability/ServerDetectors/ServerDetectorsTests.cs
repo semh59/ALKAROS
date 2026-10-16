@@ -4,7 +4,10 @@ using ALKAROS.Host.Observability.Wiring;
 using ALKAROS.Observability.ErrorEvents;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
+using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.Routing.Patterns;
 using Npgsql;
 using Xunit;
 
@@ -122,6 +125,23 @@ public sealed class ServerDetectorsTests : IClassFixture<DetectorsDatabase>
         (await _database.ScalarAsync<string>(
             "SELECT severity FROM observability.error_events WHERE category = 'api.slow_request';"))
             .Should().Be("Warning");
+    }
+
+    [Fact]
+    public async Task UnhandledExceptionCarriesTheRoutePatternOfTheEndpointThatThrew()
+    {
+        await using var writer = NewWriter();
+        var context = new DefaultHttpContext();
+        var endpoint = new RouteEndpoint(_ => Task.CompletedTask, RoutePatternFactory.Parse("/e2e/orders/{id}"), 0, EndpointMetadataCollection.Empty, "e2e");
+        context.Features.Set<IExceptionHandlerFeature>(new ExceptionHandlerFeature { Error = new InvalidOperationException("boom"), Endpoint = endpoint });
+
+        await new ServerErrorObserver(writer).TryHandleAsync(context, new InvalidOperationException("boom"), CancellationToken.None);
+        await writer.FlushAsync();
+
+        (await _database.ScalarAsync<long>(
+            "SELECT count(*) FROM observability.error_events WHERE category = 'api.unhandled_exception' AND detail LIKE '%/e2e/orders/{id}%';"))
+            .Should().Be(1);
+        await _database.ExecuteAsync("DELETE FROM observability.error_events WHERE detail LIKE '%/e2e/orders/{id}%';");
     }
 
     [Fact]
