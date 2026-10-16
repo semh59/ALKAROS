@@ -1,7 +1,7 @@
 # V1-RMD-541 - Arayüz etkileşim izleme
 
 - Task ID: V1-RMD-541
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -25,6 +25,9 @@ Kasa, garson ve mutfak ekranlarında basılan her düğme, sayfa değişimi ve f
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız uç nokta ve servis kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/main.tsx - yalnız etkileşim kaydının kurulumu
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
