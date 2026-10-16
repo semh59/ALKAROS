@@ -1,0 +1,16 @@
+V1-RMD-566 mutasyon sinamasi (her mutant sonrasi dosya yedekten geri konup cmp ile dogrulandi)
+
+M1  kuyruk siniri >= yerine >                              -> yakalandi (1 test kirildi)
+M2  cozum guncellemesi hicbir satiri eslemiyor             -> yakalandi (1)
+M3  kuyruk uzunlugu ust siniri kaldirildi                  -> yakalandi (1)
+M4  dis adres yolunda sorgu dizesi tutuluyor               -> yakalandi (2)
+M5  yol parcasi filtresi her seyi geciriyor (^.+$)         -> yakalandi (4)
+M6  yavas dis cagri hic raporlanmiyor                      -> yakalandi (1)
+M7  4xx cevabi Error seviyesinde                           -> yakalandi (1)
+M8  plan yalniz INSERT icin aciliyor                       -> yakalandi (8)
+M9  cok ifadeli metne (;) izin veriliyor                   -> yakalandi (1)
+M10 ayni sorgu sekli icin bekleme suresi yok               -> yakalandi (1)
+M11 adlandirilmis parametre $n'ye cevrilmiyor              -> yakalandi (5)
+M12 tirnak ici @ metni de cevriliyor                       -> yakalandi (1)
+
+12/12 yakalandi. Esdeger mutant yok. (M5 ilk denemede sed deseni eslesmedigi icin degisiklik yapmadi; satir dogrudan degistirilerek yeniden denendi.)

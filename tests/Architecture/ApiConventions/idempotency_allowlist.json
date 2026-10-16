@@ -221,6 +221,14 @@
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-RMD-251"
     },
+    "POST /api/v1/management/observability/errors/{fingerprint}/resolve": {
+      "reason": "Hata olayını çözüldü işaretler; aynı çağrıyı tekrarlamak durumu değiştirmez (etkisiz tekrar).",
+      "task": "V1-RMD-539"
+    },
+    "POST /api/v1/management/observability/errors/{fingerprint}/acknowledge": {
+      "reason": "Hata olayını görüldü işaretler; aynı çağrıyı tekrarlamak durumu değiştirmez (etkisiz tekrar).",
+      "task": "V1-RMD-539"
+    },
     "POST /api/v1/management/observability/health-checks": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-RMD-251"
@@ -420,6 +428,18 @@
     "POST /api/v1/qr/sessions": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V12-CWB-001"
+    },
+    "POST /api/v1/telemetry/offline-queue": {
+      "reason": "Telemetri ucu: oturuma bağlı, gönderen yalnız sabit alan yollar; tekrar eden bildirim sunucuda aynı olay kaydında birleşir, tekrar anahtarı gerekmez.",
+      "task": "V1-RMD-566"
+    },
+    "POST /api/v1/telemetry/interactions": {
+      "reason": "Telemetri ucu: oturuma bağlı, gönderen yalnız sabit alan yollar; tekrar eden bildirim sunucuda aynı olay kaydında birleşir, tekrar anahtarı gerekmez.",
+      "task": "V1-RMD-541"
+    },
+    "POST /api/v1/telemetry/browser-errors": {
+      "reason": "Telemetri ucu: oturuma bağlı, gönderen yalnız sabit alan yollar; tekrar eden bildirim sunucuda aynı olay kaydında birleşir, tekrar anahtarı gerekmez.",
+      "task": "V1-RMD-537"
     },
     "POST /api/v1/terminals/{terminalId:guid}/billing/bills/from-order/{orderId:guid}": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",

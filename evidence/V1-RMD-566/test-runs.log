@@ -1,0 +1,6 @@
+OfflineQueueReport.Tests (gercek Postgres 18, gercek HTTP sunucusu): 27/27 basarili
+ServerDetectorsDeep.Tests: 9/9 basarili
+TraceCorrelation.Tests: 6/6 basarili
+ApiConventions.Tests (idempotency allowlist dahil): 5/5 basarili
+Host.Tests DualScreenHostTests: 6/6 basarili
+project_manifest_tool: VALID

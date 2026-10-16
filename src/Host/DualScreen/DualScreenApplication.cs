@@ -1,6 +1,7 @@
 using ALKAROS.Host.Observability.HealthSnapshot;
 using ALKAROS.Host.Observability.AnalysisRunner;
 using ALKAROS.Host.Observability.BrowserErrors;
+using ALKAROS.Host.Observability.OfflineQueueReport;
 using ALKAROS.Host.Observability.ErrorEventEndpoints;
 using ALKAROS.Host.Observability.JourneyEndpoints;
 using ALKAROS.Host.Observability.DomainDetectors;
@@ -211,6 +212,9 @@ public static partial class DualScreenApplication
         builder.Services.AddInsightRunner();
         builder.Services.AddAnalysisRunner();
         builder.Services.AddDomainDetectors(builder.Configuration.GetSection("Monitoring:DomainDetectors").Get<DomainDetectorOptions>());
+        builder.Services.AddSlowQueryPlans();
+        builder.Services.AddOfflineQueueReport();
+        builder.Services.AddExternalCallDetection(builder.Configuration.GetSection("Monitoring:ExternalCalls").Get<ExternalCallOptions>());
         builder.Services.AddServerDetectorsDeep(builder.Configuration.GetSection("Monitoring:ServerDetectorsDeep").Get<ServerDetectorsDeepOptions>());
         builder.Services.AddTraceCorrelation();
         builder.Services.AddSingleton(sp =>
@@ -666,6 +670,7 @@ public static partial class DualScreenApplication
 
         MapApi(app);
         app.MapBrowserErrors();
+        app.MapOfflineQueueReport();
         app.MapInteractionTelemetry();
         app.MapCatalogManagement();
         app.MapMenuManagement();

@@ -4,6 +4,7 @@ using System.Diagnostics.Metrics;
 using System.Text.RegularExpressions;
 using ALKAROS.Host.Experience.SecurityAdministration.Maintenance;
 using ALKAROS.Host.Observability.BrowserErrors;
+using ALKAROS.Host.Observability.OfflineQueueReport;
 using ALKAROS.Host.Observability.Wiring;
 using ALKAROS.Observability.ErrorEvents;
 using ALKAROS.QrRelay.LocalConnector;
@@ -93,10 +94,12 @@ public sealed partial class DbActivityTap : IDisposable
     private readonly ServerDetectorsDeepOptions _options;
     private readonly ActivityListener _listener;
     private readonly ConcurrentDictionary<Activity, RequestQueries> _requests = new();
+    private readonly SlowQueryPlanner? _planner;
 
-    public DbActivityTap(ErrorEventWriter writer, ServerDetectorsDeepOptions? options = null)
+    public DbActivityTap(ErrorEventWriter writer, ServerDetectorsDeepOptions? options = null, SlowQueryPlanner? planner = null)
     {
         _writer = writer;
+        _planner = planner;
         _options = options ?? new ServerDetectorsDeepOptions();
         _listener = new ActivityListener
         {
@@ -148,6 +151,7 @@ public sealed partial class DbActivityTap : IDisposable
         {
             var severity = milliseconds >= _options.SlowErrorMilliseconds ? ErrorSeverity.Error : ErrorSeverity.Warning;
             _writer.TryEnqueue(new ErrorEventInput(ErrorLayer.Database, severity, "db.slow_query", shape, command.TraceId.ToString()));
+            _planner?.Request(shape, statement, command.TraceId.ToString());
         }
 
         var request = command.Parent;
@@ -293,7 +297,7 @@ public static class ServerDetectorsDeepExtensions
     public static IServiceCollection AddServerDetectorsDeep(this IServiceCollection services, ServerDetectorsDeepOptions? options = null)
     {
         services.AddSingleton<PoolUsageReader>();
-        services.AddSingleton(sp => new DbActivityTap(sp.GetRequiredService<ErrorEventWriter>(), options));
+        services.AddSingleton(sp => new DbActivityTap(sp.GetRequiredService<ErrorEventWriter>(), options, sp.GetService<SlowQueryPlanner>()));
         services.AddHostedService(sp =>
         {
             _ = sp.GetRequiredService<DbActivityTap>();
