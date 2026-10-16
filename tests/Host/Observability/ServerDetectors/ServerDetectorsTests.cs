@@ -23,6 +23,9 @@ public sealed class DetectorsDatabase : PgTestDatabase
         var file = Directory.GetFiles(
             Path.Combine(root, "database", "migrations", "V1", "V1-RMD-533"), "187-*.up.sql").Single();
         await RunAsync(DataSource, await File.ReadAllTextAsync(file));
+        var interactions = Directory.GetFiles(
+            Path.Combine(root, "database", "migrations", "V1", "V1-RMD-541"), "191-*.up.sql").Single();
+        await RunAsync(DataSource, await File.ReadAllTextAsync(interactions));
     }
 }
 
@@ -119,6 +122,59 @@ public sealed class ServerDetectorsTests : IClassFixture<DetectorsDatabase>
         (await _database.ScalarAsync<string>(
             "SELECT severity FROM observability.error_events WHERE category = 'api.slow_request';"))
             .Should().Be("Warning");
+    }
+
+    [Fact]
+    public async Task ServerErrorAnsweredByTheEndpointIsRecordedOnce()
+    {
+        await using var writer = NewWriter();
+        var middleware = new SlowRequestMiddleware(context =>
+        {
+            context.Response.StatusCode = 500;
+            return Task.CompletedTask;
+        }, writer);
+
+        await middleware.InvokeAsync(new DefaultHttpContext());
+        await writer.FlushAsync();
+
+        (await CountCategoryAsync("api.server_error_response")).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task ServerErrorAlreadyReportedByTheExceptionObserverIsNotReportedTwice()
+    {
+        await using var writer = NewWriter();
+        var observer = new ServerErrorObserver(writer);
+        var middleware = new SlowRequestMiddleware(async context =>
+        {
+            await observer.TryHandleAsync(context, new InvalidOperationException("boom"), CancellationToken.None);
+            context.Response.StatusCode = 500;
+        }, writer);
+
+        await middleware.InvokeAsync(new DefaultHttpContext());
+        await writer.FlushAsync();
+
+        (await CountCategoryAsync("api.unhandled_exception")).Should().Be(1);
+        (await CountCategoryAsync("api.server_error_response")).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task ClientErrorAndSuccessAreNotReportedAsServerErrors()
+    {
+        await using var writer = NewWriter();
+        foreach (var status in new[] { 200, 404 })
+        {
+            var middleware = new SlowRequestMiddleware(context =>
+            {
+                context.Response.StatusCode = status;
+                return Task.CompletedTask;
+            }, writer);
+            await middleware.InvokeAsync(new DefaultHttpContext());
+        }
+
+        await writer.FlushAsync();
+
+        (await CountCategoryAsync("api.server_error_response")).Should().Be(0);
     }
 
     [Fact]

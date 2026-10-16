@@ -53,8 +53,11 @@ public sealed class ServerErrorObserver(ErrorEventWriter writer) : IExceptionHan
         return ValueTask.FromResult(false);
     }
 
+    internal const string ReportedKey = "monitoring.exception_reported";
+
     private void Observe(HttpContext httpContext, Exception exception)
     {
+        httpContext.Items[ReportedKey] = true;
         var route = RouteOf(httpContext);
         var trace = Activity.Current?.TraceId.ToString() ?? httpContext.TraceIdentifier;
         var pg = FindPostgres(exception);
@@ -109,6 +112,15 @@ public sealed class SlowRequestMiddleware(RequestDelegate next, ErrorEventWriter
                 writer.TryEnqueue(new ErrorEventInput(
                     ErrorLayer.Api, severity, "api.slow_request",
                     $"{context.Request.Method} {ServerErrorObserver.RouteOf(context)} {(int)elapsed.TotalMilliseconds} ms",
+                    Activity.Current?.TraceId.ToString() ?? context.TraceIdentifier));
+            }
+
+            // An endpoint that catches a failure and answers 5xx itself never reaches the exception observer.
+            if (writer is not null && context.Response.StatusCode >= 500 && !context.Items.ContainsKey(ServerErrorObserver.ReportedKey))
+            {
+                writer.TryEnqueue(new ErrorEventInput(
+                    ErrorLayer.Api, ErrorSeverity.Error, "api.server_error_response",
+                    $"{context.Request.Method} {ServerErrorObserver.RouteOf(context)} {context.Response.StatusCode}",
                     Activity.Current?.TraceId.ToString() ?? context.TraceIdentifier));
             }
         }

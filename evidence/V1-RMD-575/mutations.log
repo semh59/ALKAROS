@@ -1,0 +1,4 @@
+M1 threshold >=500 -> >500 (after boundary test uses 500): Başarısız! - Başarısız: 1, Başarılı: 8, Atlanan: 0,
+M2 ignore reported key: Başarısız! - Başarısız:     2, Başarılı:     7, Atlanan:     0, Toplam:     9, Süre: 661 ms - ALKAROS.Host.Observability.ServerDetectors.Tests.dll (net8.0)
+M3 observer does not mark: Başarısız! - Başarısız:     2, Başarılı:     7, Atlanan:     0, Toplam:     9, Süre: 584 ms - ALKAROS.Host.Observability.ServerDetectors.Tests.dll (net8.0)
+M4 >=500 -> >=400: Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 509 ms - ALKAROS.Host.Observability.ServerDetectors.Tests.dll (net8.0)
