@@ -1,8 +1,8 @@
 # V1-RMD-575 - Uç noktanın kendi yanıtladığı 5xx hatalarını izleme
 
 - Task ID: V1-RMD-575
-- Status: Planned
-- Assignee: None
+- Status: InProgress
+- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
 
