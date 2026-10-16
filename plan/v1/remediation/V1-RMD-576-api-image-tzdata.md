@@ -1,8 +1,8 @@
 # V1-RMD-576 - Docker api imajına saat dilimi verisi ekleme
 
 - Task ID: V1-RMD-576
-- Status: Planned
-- Assignee: None
+- Status: InProgress
+- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
 
