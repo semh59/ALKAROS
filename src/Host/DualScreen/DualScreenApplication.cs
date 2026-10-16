@@ -1,6 +1,7 @@
 using ALKAROS.Host.Observability.HealthSnapshot;
 using ALKAROS.Host.Observability.AnalysisRunner;
 using ALKAROS.Host.Observability.BrowserErrors;
+using ALKAROS.Host.Observability.MonitoringSwitch;
 using ALKAROS.Host.Observability.OfflineQueueReport;
 using ALKAROS.Host.Observability.ErrorEventEndpoints;
 using ALKAROS.Host.Observability.JourneyEndpoints;
@@ -203,57 +204,60 @@ public static partial class DualScreenApplication
         // IObservabilityService's health-check surface (V1-OBS-001)
         // existed with zero HTTP surface.
         builder.Services.AddObservabilityExperience();
-        builder.Services.AddMonitoringDataSource(options.ConnectionString);
-        builder.Services.AddServerErrorDetection();
-        builder.Services.AddSecurityDetection();
-        builder.Services.AddHealthSnapshotJob();
-        builder.Services.AddResourceProbes();
-        builder.Services.AddNotificationDelivery();
-        builder.Services.AddInsightRunner();
-        builder.Services.AddAnalysisRunner();
-        builder.Services.AddDomainDetectors(builder.Configuration.GetSection("Monitoring:DomainDetectors").Get<DomainDetectorOptions>());
-        builder.Services.AddSlowQueryPlans();
-        builder.Services.AddOfflineQueueReport();
-        builder.Services.AddExternalCallDetection(builder.Configuration.GetSection("Monitoring:ExternalCalls").Get<ExternalCallOptions>());
-        builder.Services.AddServerDetectorsDeep(builder.Configuration.GetSection("Monitoring:ServerDetectorsDeep").Get<ServerDetectorsDeepOptions>());
-        builder.Services.AddTraceCorrelation();
-        builder.Services.AddSingleton(sp =>
+        if (builder.Configuration.MonitoringEnabled())
         {
-            var recorder = new PerformanceRecorder(sp.GetRequiredService<MonitoringDataSource>().Inner);
-            recorder.Start();
-            return recorder;
-        });
-        builder.Services.AddSingleton(sp => new ActivityPerformanceFeeder(sp.GetRequiredService<PerformanceRecorder>()));
-        builder.Services.AddSingleton(sp =>
-        {
-            var monitoring = sp.GetRequiredService<MonitoringDataSource>().Inner;
-            var version = typeof(DualScreenApplication).Assembly
-                .GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
-                .OfType<System.Reflection.AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion ?? "unknown";
-            DateTimeOffset? firstSeen;
-            try
+            builder.Services.AddMonitoringDataSource(options.ConnectionString);
+            builder.Services.AddServerErrorDetection();
+            builder.Services.AddSecurityDetection();
+            builder.Services.AddHealthSnapshotJob();
+            builder.Services.AddResourceProbes();
+            builder.Services.AddNotificationDelivery();
+            builder.Services.AddInsightRunner();
+            builder.Services.AddAnalysisRunner();
+            builder.Services.AddDomainDetectors(builder.Configuration.GetSection("Monitoring:DomainDetectors").Get<DomainDetectorOptions>());
+            builder.Services.AddSlowQueryPlans();
+            builder.Services.AddOfflineQueueReport();
+            builder.Services.AddExternalCallDetection(builder.Configuration.GetSection("Monitoring:ExternalCalls").Get<ExternalCallOptions>());
+            builder.Services.AddServerDetectorsDeep(builder.Configuration.GetSection("Monitoring:ServerDetectorsDeep").Get<ServerDetectorsDeepOptions>());
+            builder.Services.AddTraceCorrelation();
+            builder.Services.AddSingleton(sp =>
             {
-                firstSeen = new ReleaseRegistry(monitoring).RegisterAsync(version).GetAwaiter().GetResult();
-            }
-            catch (Npgsql.NpgsqlException)
+                var recorder = new PerformanceRecorder(sp.GetRequiredService<MonitoringDataSource>().Inner);
+                recorder.Start();
+                return recorder;
+            });
+            builder.Services.AddSingleton(sp => new ActivityPerformanceFeeder(sp.GetRequiredService<PerformanceRecorder>()));
+            builder.Services.AddSingleton(sp =>
             {
-                firstSeen = null;
-            }
+                var monitoring = sp.GetRequiredService<MonitoringDataSource>().Inner;
+                var version = typeof(DualScreenApplication).Assembly
+                    .GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+                    .OfType<System.Reflection.AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion ?? "unknown";
+                DateTimeOffset? firstSeen;
+                try
+                {
+                    firstSeen = new ReleaseRegistry(monitoring).RegisterAsync(version).GetAwaiter().GetResult();
+                }
+                catch (Npgsql.NpgsqlException)
+                {
+                    firstSeen = null;
+                }
 
-            var runner = new PerformanceBudgetRunner(new PerformanceBudgetEvaluator(
-                monitoring, sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>(),
-                builder.Configuration.GetSection("Monitoring:PerformanceBudgets").Get<PerformanceBudgetOptions>(),
-                releaseFirstSeenAt: firstSeen));
-            runner.Start();
-            return runner;
-        });
-        builder.Services.AddSingleton(sp => new PerformanceReader(sp.GetRequiredService<MonitoringDataSource>().Inner));
-        builder.Services.AddErrorEventEndpoints();
-        builder.Services.AddJourneyEndpoints();
-        builder.Services.AddSingleton(sp => new InteractionIngest(
-            sp.GetRequiredService<MonitoringDataSource>().Inner, sp.GetService<PerformanceRecorder>()));
-        builder.Services.AddSingleton(sp => new BrowserErrorIngest(sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>()));
-        builder.Services.AddSyntheticProbes();
+                var runner = new PerformanceBudgetRunner(new PerformanceBudgetEvaluator(
+                    monitoring, sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>(),
+                    builder.Configuration.GetSection("Monitoring:PerformanceBudgets").Get<PerformanceBudgetOptions>(),
+                    releaseFirstSeenAt: firstSeen));
+                runner.Start();
+                return runner;
+            });
+            builder.Services.AddSingleton(sp => new PerformanceReader(sp.GetRequiredService<MonitoringDataSource>().Inner));
+            builder.Services.AddErrorEventEndpoints();
+            builder.Services.AddJourneyEndpoints();
+            builder.Services.AddSingleton(sp => new InteractionIngest(
+                sp.GetRequiredService<MonitoringDataSource>().Inner, sp.GetService<PerformanceRecorder>()));
+            builder.Services.AddSingleton(sp => new BrowserErrorIngest(sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>()));
+            builder.Services.AddSyntheticProbes();
+        }
         // V1-RMD-326 (independent 2026-09-26 audit, finding K14): the first real health probe - see
         // DatabaseHealthProbeHostedService's own doc comment for why this was needed at all (before this
         // fix, POST /health-checks only ever recorded whatever status a caller claimed, never anything
@@ -663,15 +667,24 @@ public static partial class DualScreenApplication
                 : "no-cache";
             await next();
         });
-        app.UseTraceCorrelation();
-        _ = app.Services.GetRequiredService<ActivityPerformanceFeeder>();
-        _ = app.Services.GetRequiredService<PerformanceBudgetRunner>();
+        var monitoring = app.Configuration.MonitoringEnabled();
+        if (monitoring)
+        {
+            app.UseTraceCorrelation();
+            _ = app.Services.GetRequiredService<ActivityPerformanceFeeder>();
+            _ = app.Services.GetRequiredService<PerformanceBudgetRunner>();
+        }
+
         UseDualScreenErrorHandling(app);
 
         MapApi(app);
-        app.MapBrowserErrors();
-        app.MapOfflineQueueReport();
-        app.MapInteractionTelemetry();
+        if (monitoring)
+        {
+            app.MapBrowserErrors();
+            app.MapOfflineQueueReport();
+            app.MapInteractionTelemetry();
+        }
+
         app.MapCatalogManagement();
         app.MapMenuManagement();
         app.MapPurchasingManagement();
@@ -692,8 +705,11 @@ public static partial class DualScreenApplication
         app.MapOrderInvoiceApi();
         app.MapSecurityAdministrationApi();
         app.MapObservabilityApi();
-        app.MapErrorEventEndpoints();
-        app.MapJourneyEndpoints();
+        if (monitoring)
+        {
+            app.MapErrorEventEndpoints();
+            app.MapJourneyEndpoints();
+        }
         app.MapTableManagementApi();
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();
@@ -767,7 +783,9 @@ public static partial class DualScreenApplication
     /// <see cref="ApiExceptionHandler"/> (ALKAROS.Host.Composition.Errors).
     /// </summary>
     public static IApplicationBuilder UseDualScreenErrorHandling(IApplicationBuilder application)
-        => application.UseMonitoringRequestTiming().UseApiErrorHandling();
+        => (application.ApplicationServices.GetService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>() is null
+            ? application
+            : application.UseMonitoringRequestTiming()).UseApiErrorHandling();
 
     private static RateLimitPartition<string> FixedWindow(string partitionKey, int permitLimit)
         => RateLimitPartition.GetFixedWindowLimiter(partitionKey, _ => new FixedWindowRateLimiterOptions

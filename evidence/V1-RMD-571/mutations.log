@@ -1,0 +1,7 @@
+V1-RMD-571 mutasyon sinamasi (her mutant sonrasi dosya yedekten geri konup cmp ile dogrulandi)
+W1 ayar her zaman acik donuyor                       -> yakalandi (3 test)
+W2 gecersiz deger izlemeyi kapatiyor                 -> yakalandi (4)
+W3 uclar ve ara katmanlar anahtarsiz kaydediliyor    -> yakalandi (1)
+W4 servis kayitlari anahtarsiz                       -> yakalandi (1)
+S1 olay yazici ana havuza baglaniyor (firtina testi) -> yakalandi (1)
+5/5 yakalandi. Esdeger mutant yok.

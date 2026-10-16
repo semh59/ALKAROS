@@ -1,0 +1,3 @@
+MonitoringSwitch.Tests (gercek Postgres 18 + tam Host): 10/10 basarili (9 anahtar testi + 1 firtina testi)
+Firtina testi 5 sn (gercek Postgres 55432): baselineMaxMainConnections=8 stormMaxMainConnections=8 stormMaxMonitoringConnections=1 enqueued=5012 refusedFullQueue=0 droppedPending=0 failedPending=0
+Host.Tests DualScreenHostTests + Manifest: 23/23; ApiConventions: 5/5; project_manifest_tool: VALID

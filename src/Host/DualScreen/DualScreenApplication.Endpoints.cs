@@ -56,7 +56,7 @@ public static partial class DualScreenApplication
             DualScreenStore store,
             IRoleRepository roles,
             IOfflineAuthorityBudgetService offlineBudgets,
-            SecurityBurstDetectors securityDetectors,
+            [Microsoft.AspNetCore.Mvc.FromServices] SecurityBurstDetectors? securityDetectors,
             CancellationToken cancellationToken) =>
         {
             if (request.TerminalId == Guid.Empty
@@ -70,7 +70,7 @@ public static partial class DualScreenApplication
                 request.Username.Trim(), request.Password, DateTimeOffset.UtcNow, cancellationToken);
             if (result is not LoginSuccess success)
             {
-                securityDetectors.LoginFailures.Record(SecurityBurstDetectors.TerminalLabel(request.TerminalId));
+                securityDetectors?.LoginFailures.Record(SecurityBurstDetectors.TerminalLabel(request.TerminalId));
                 return Error(context, StatusCodes.Status401Unauthorized, "INVALID_CREDENTIALS", "Kullanıcı adı veya parola hatalı.");
             }
 
