@@ -2,6 +2,7 @@ using System.Diagnostics;
 using ALKAROS.Host.Experience.SecurityAdministration.Maintenance;
 using ALKAROS.Host.Observability.ServerDetectorsDeep;
 using ALKAROS.Host.Observability.Wiring;
+using ALKAROS.Observability.ErrorAnalysis;
 using ALKAROS.Observability.ErrorEvents;
 using ALKAROS.QrRelay.LocalConnector;
 using ALKAROS.TestHelpers;
@@ -131,6 +132,39 @@ public sealed class ServerDetectorsDeepTests : IClassFixture<DeepDatabase>
         (await _database.ScalarAsync<long>("SELECT count(*) FROM observability.error_events WHERE category = 'db.slow_query' AND severity = 'Warning';")).Should().Be(1);
         (await _database.ScalarAsync<long>("SELECT count(*) FROM observability.error_events WHERE category = 'db.slow_query' AND severity = 'Error';")).Should().Be(1);
         (await _database.ScalarAsync<long>("SELECT count(*) FROM observability.error_events WHERE category = 'db.slow_query' AND detail LIKE '%observability%';")).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task RunnerBeatsItsHeartbeatEachRoundAndIsReportedSilentOnceItStops()
+    {
+        var now = DateTimeOffset.UtcNow;
+        var heartbeats = new DetectorHeartbeats(() => now);
+        await using var writer = NewWriter();
+        using var pool = new PoolUsageReader();
+        using var runner = new ServerDetectorsDeepRunner(
+            _database.DataSource, writer, pool, null, null, clock: () => now, interval: TimeSpan.FromSeconds(15), heartbeats: heartbeats);
+        await runner.StartAsync(CancellationToken.None);
+        await Task.Delay(300);
+
+        heartbeats.Degraded().Should().BeEmpty();
+        now += TimeSpan.FromSeconds(31);
+        heartbeats.Degraded().Should().ContainSingle().Which.Detail.Should().StartWith("server-detectors-deep silent");
+
+        await runner.RunOnceAsync(CancellationToken.None);
+        heartbeats.Degraded().Should().BeEmpty();
+        await runner.StopAsync(CancellationToken.None);
+    }
+
+    [Fact]
+    public async Task RunnerWithoutHeartbeatsStillRuns()
+    {
+        await using var writer = NewWriter();
+        using var pool = new PoolUsageReader();
+        using var runner = new ServerDetectorsDeepRunner(_database.DataSource, writer, pool, null, null);
+
+        await runner.RunOnceAsync(CancellationToken.None);
+
+        runner.Failures.Should().Be(0);
     }
 
     private async Task RunRequestAsync(int queries)

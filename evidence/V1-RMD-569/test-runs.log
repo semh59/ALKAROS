@@ -1,0 +1,2 @@
+ServerDetectorsDeep.Tests (gercek Postgres 18, trust kimlik dogrulamali gecici kap): 11/11 basarili
+Not: iki havuz testi parola gerektiren bir veritabaniyla basarisiz olur (havuz baglanti dizesini parolasiz kopyalar); bu gorevden bagimsiz, test ortami trust kimlik dogrulamali kurulunca gecer.

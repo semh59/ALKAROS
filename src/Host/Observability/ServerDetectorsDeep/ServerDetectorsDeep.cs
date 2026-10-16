@@ -6,6 +6,7 @@ using ALKAROS.Host.Experience.SecurityAdministration.Maintenance;
 using ALKAROS.Host.Observability.BrowserErrors;
 using ALKAROS.Host.Observability.OfflineQueueReport;
 using ALKAROS.Host.Observability.Wiring;
+using ALKAROS.Observability.ErrorAnalysis;
 using ALKAROS.Observability.ErrorEvents;
 using ALKAROS.QrRelay.LocalConnector;
 using Microsoft.Extensions.DependencyInjection;
@@ -215,8 +216,10 @@ public sealed class ServerDetectorsDeepRunner(
     NpgsqlDataSource monitoringDataSource, ErrorEventWriter writer, PoolUsageReader pool,
     Func<IReadOnlyList<MaintenanceJobStatusV1>>? jobStatuses,
     IRelayConnectorStatusReporter? tunnel, ServerDetectorsDeepOptions? options = null, Func<DateTimeOffset>? clock = null,
-    TimeSpan? interval = null) : BackgroundService
+    TimeSpan? interval = null, DetectorHeartbeats? heartbeats = null) : BackgroundService
 {
+    public const string HeartbeatName = "server-detectors-deep";
+
     private readonly ServerDetectorsDeepOptions _options = options ?? new ServerDetectorsDeepOptions();
     private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
     private readonly DateTimeOffset _startedAt = (clock ?? (() => DateTimeOffset.UtcNow))();
@@ -228,6 +231,7 @@ public sealed class ServerDetectorsDeepRunner(
         await CheckAsync(ErrorLayer.Database, "db.pool_saturation", PoolConditions, cancellationToken).ConfigureAwait(false);
         await CheckAsync(ErrorLayer.Background, "background.job_missed", JobConditions, cancellationToken).ConfigureAwait(false);
         await CheckAsync(ErrorLayer.Integration, "integration.qr_tunnel_down", TunnelConditions, cancellationToken).ConfigureAwait(false);
+        heartbeats?.Beat(HeartbeatName);
     }
 
     private IEnumerable<(ErrorSeverity, string)> PoolConditions()
@@ -284,6 +288,7 @@ public sealed class ServerDetectorsDeepRunner(
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
         var wait = interval ?? TimeSpan.FromSeconds(15);
+        heartbeats?.Register(HeartbeatName, wait);
         while (!stoppingToken.IsCancellationRequested)
         {
             await RunOnceAsync(stoppingToken).ConfigureAwait(false);
@@ -304,7 +309,7 @@ public static class ServerDetectorsDeepExtensions
             return new ServerDetectorsDeepRunner(
                 sp.GetRequiredService<MonitoringDataSource>().Inner, sp.GetRequiredService<ErrorEventWriter>(),
                 sp.GetRequiredService<PoolUsageReader>(), sp.GetService<MaintenanceJobRunner>() is { } jobs ? jobs.GetStatuses : null,
-                sp.GetService<IRelayConnectorStatusReporter>(), options);
+                sp.GetService<IRelayConnectorStatusReporter>(), options, heartbeats: sp.GetService<DetectorHeartbeats>());
         });
         return services;
     }
