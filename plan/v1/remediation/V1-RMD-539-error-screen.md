@@ -18,14 +18,15 @@ Müdür, mevcut Sistem bölümünde canlı hata listesini görür; süzer, ayrı
 
 - `plan/v1/remediation/V1-RMD-539-error-screen.md`
 - `evidence/V1-RMD-539/**`
-- `src/Clients/PosTerminal/src/features/management-error-events/**`
 - `src/Host/Observability/ErrorEventEndpoints/**`
 - `tests/Host/Observability/ErrorEventEndpoints/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız uç nokta kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Liste, katman/şiddet/durum süzgeci, ayrıntı, onayla, çözüldü, dedektör sağlığı şeridi, bildirim kanalı durumu.
+- Yönetici uç noktaları: liste (katman/şiddet/durum süzgeci, sayfalı), ayrıntı ve son oluşlar, onayla, çözüldü; bildirim kanalı durumu (açık/kapalı). Ekran V1-RMD-565 kapsamına taşındı.
 - Sabit hata türü kataloğu ve Türkçe sözlük; ham hata metni basılmaz; yetki: yönetici.
 - Uyarı gerekçesindeki kaçışsız JSON hatası bu yolda düzeltilir.
 
@@ -41,8 +42,8 @@ Müdür, mevcut Sistem bölümünde canlı hata listesini görür; süzer, ayrı
 
 ## Acceptance evidence
 
-1. 10.000 olayda liste ilk sayfa 300 ms altında.
-2. Ekran metinlerinde İngilizce sızıntı taraması 0.
+1. 10.000 olayda liste ilk sayfa 300 ms altında; yetkisiz çağrı reddedilir.
+2. Onayla ve çözüldü durumu değiştirir ve olayı denetim izine bırakır.
 3. Çıktılar `evidence/V1-RMD-539/` altındadır.
 
 ## Handoff
