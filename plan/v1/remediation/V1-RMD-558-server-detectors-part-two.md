@@ -1,7 +1,7 @@
 # V1-RMD-558 - Sunucu dedektörleri ikinci parça
 
 - Task ID: V1-RMD-558
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -21,14 +21,16 @@ Bağlantı havuzu doluluğu, kaçan arka plan işi, N+1 sorgu, yavaş sorgu ve s
 - `src/Host/Observability/ServerDetectorsDeep/**`
 - `tests/Host/Observability/ServerDetectorsDeep/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız dedektör kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
 - Havuz > %85, kaçan zamanlanmış iş (nabız), istek başına 20 sorgu (N+1, son 8 sorgu örneği), yavaş sorgu eşiği (>500 ms Warning, >2000 ms Error).
 - QR tüneli (bağlayıcı süreci) kopma sinyali hata olayı olur.
-- Garson çevrimdışı kuyruk uzunluğu istemciden bildirilir ve eşik aşımı olay olur.
-- Sorgu planı (EXPLAIN) yalnız SELECT için ve sınırlı sürede alınır; izlemenin kendi yazımları yavaş-sorgu olayından ayıklanır; dış çağrı adresleri temizlenir.
+- Sorgu planı (EXPLAIN) yalnız SELECT için ve sınırlı sürede alınır; izlemenin kendi yazımları yavaş-sorgu olayından ayıklanır.
+- Garson çevrimdışı kuyruk uzunluğu ve dış çağrı adresi temizleme V1-RMD-566'ya taşındı.
 
 ## Out of scope
 
