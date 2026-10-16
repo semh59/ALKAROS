@@ -1,0 +1,7 @@
+.mbud { display: grid; gap: var(--ds-space-4); }
+.mbud__form { display: flex; gap: var(--ds-space-3); flex-wrap: wrap; align-items: flex-end; }
+.mbud__actions { display: flex; gap: .4rem; flex-wrap: wrap; }
+.mbud__empty, .mbud__hint { margin: 0; color: var(--ds-color-muted); }
+.mbud table { width: 100%; border-collapse: collapse; }
+.mbud th, .mbud td { padding: .5rem .6rem; text-align: left; border-bottom: 1px solid var(--ds-color-line); }
+.mbud th { color: var(--ds-color-muted); font-size: .72rem; letter-spacing: .04em; }

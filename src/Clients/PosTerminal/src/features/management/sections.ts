@@ -13,6 +13,7 @@ import { ProductMarginSection } from "../management-product-margin-report";
 import { OrderInvoicesSection } from "../management-order-invoices";
 import { ErrorEventsSection } from "../management-error-events";
 import { UserJourneysSection } from "../management-user-journeys";
+import { PerformanceBudgetsSection } from "../management-performance-budgets";
 import { managementText } from "../../strings";
 
 export interface ManagementSectionProps {
@@ -41,6 +42,7 @@ export const managementSections: readonly ManagementSection[] = [
   { id: "system", label: managementText.system.tab, requiredCapability: "reports.view", component: SystemSection },
   { id: "errors", label: managementText.errors.tab, requiredCapability: "reports.view", component: ErrorEventsSection },
   { id: "journeys", label: managementText.journeys.tab, requiredCapability: "reports.view", component: UserJourneysSection },
+  { id: "performance-budgets", label: managementText.performanceBudgets.tab, requiredCapability: "reports.view", component: PerformanceBudgetsSection },
   { id: "channel-report", label: managementText.channelReport.tab, requiredCapability: "reports.view", component: ChannelReportSection },
   { id: "purchase-invoices", label: managementText.purchaseInvoices.tab, requiredCapability: "purchasing.manage", component: PurchaseInvoicesSection },
   { id: "product-margin", label: managementText.productMargin.tab, requiredCapability: "reports.view", component: ProductMarginSection },
