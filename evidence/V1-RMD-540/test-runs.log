@@ -1,0 +1,3 @@
+V1-RMD-540 - dogrulama gorevi, urun kodu degismedi.
+Kanit: run.log (Docker yigini, http://localhost:8090, node prove.mjs + node printer-step.mjs), screen-0..4.png (node screens.mjs).
+Yeni birim testi yok; kosullar gercek Docker yigininda enjekte edildi (bkz. README.md).
