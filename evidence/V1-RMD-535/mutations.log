@@ -1,0 +1,12 @@
+no-auto-resolve: KILLED
+payment-never-critical: KILLED
+payment-threshold-ignored: KILLED
+failures-not-counted: KILLED
+no-heartbeat: KILLED
+fiscal-rpo-wrong-column: KILLED
+streak-ignored: KILLED
+dead-letter-missed: KILLED
+kitchen-wrong-status: KILLED
+provider-detail-shared: KILLED
+stale-empty-table-alert: KILLED
+resolve-on-failed-read: KILLED
