@@ -1,0 +1,10 @@
+ratio-too-coarse: KILLED
+no-interpolation: KILLED
+upsert-overwrites: KILLED
+buckets-overwritten: KILLED (after test fix)
+row-cap-off: KILLED
+current-minute-flushed-early: KILLED
+failed-write-drops-samples: KILLED
+errors-not-counted: KILLED (after test fix)
+monitoring-statements-fed: KILLED
+percentile-too-high: KILLED

@@ -1621,6 +1621,14 @@
         "notification_suppressions"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "189",
+      "phase": "B",
+      "tables": [
+        "perf_minute_summaries"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

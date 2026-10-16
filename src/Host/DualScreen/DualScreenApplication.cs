@@ -10,6 +10,7 @@ using ALKAROS.Host.Observability.ResourceProbes;
 using ALKAROS.Host.Observability.SecurityDetectors;
 using ALKAROS.Host.Observability.ServerDetectorsDeep;
 using ALKAROS.Host.Observability.TraceCorrelation;
+using ALKAROS.Observability.PerformanceMetrics;
 using ALKAROS.Host.Observability.ServerDetectors;
 using ALKAROS.Host.Observability.Wiring;
 using ALKAROS.Host.Composition.Errors;
@@ -209,6 +210,14 @@ public static partial class DualScreenApplication
         builder.Services.AddDomainDetectors(builder.Configuration.GetSection("Monitoring:DomainDetectors").Get<DomainDetectorOptions>());
         builder.Services.AddServerDetectorsDeep(builder.Configuration.GetSection("Monitoring:ServerDetectorsDeep").Get<ServerDetectorsDeepOptions>());
         builder.Services.AddTraceCorrelation();
+        builder.Services.AddSingleton(sp =>
+        {
+            var recorder = new PerformanceRecorder(sp.GetRequiredService<MonitoringDataSource>().Inner);
+            recorder.Start();
+            return recorder;
+        });
+        builder.Services.AddSingleton(sp => new ActivityPerformanceFeeder(sp.GetRequiredService<PerformanceRecorder>()));
+        builder.Services.AddSingleton(sp => new PerformanceReader(sp.GetRequiredService<MonitoringDataSource>().Inner));
         builder.Services.AddErrorEventEndpoints();
         builder.Services.AddSingleton(sp => new BrowserErrorIngest(sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>()));
         builder.Services.AddSyntheticProbes();
@@ -622,6 +631,7 @@ public static partial class DualScreenApplication
             await next();
         });
         app.UseTraceCorrelation();
+        _ = app.Services.GetRequiredService<ActivityPerformanceFeeder>();
         UseDualScreenErrorHandling(app);
 
         MapApi(app);
