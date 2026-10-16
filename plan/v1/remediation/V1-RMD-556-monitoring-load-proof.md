@@ -25,7 +25,7 @@
 
 - Gerçek kasa cihazında ve Docker yığınında yük ölçümü; fırtına enjeksiyonu.
 - Tıklama etkileşim kaydının gerçek kasa cihazındaki ek yükü V1-RMD-572'ye taşındı (gerçek cihaz gerekir).
-- Docker yığınında `Monitoring:Enabled` açık/kapalı dönüşümlü turlarla sipariş onayı p95 karşılaştırması; fırtına testi V1-RMD-571'in test projesinde Docker Postgres'e karşı çalıştırılır (HTTP uçlarının oturum başına kotası fırtınayı bilerek engeller).
+- Docker yığınında `Monitoring:Enabled` açık/kapalı dönüşümlü turlarla sipariş onayı p95 karşılaştırması (kapalı tur: `Monitoring__Enabled=false` ortam değişkeni, yalnız api yeniden başlatılır); fırtına testi V1-RMD-571'in test projesinde Docker Postgres'e karşı çalıştırılır (HTTP uçlarının oturum başına kotası fırtınayı bilerek engeller).
 
 ## Out of scope
 

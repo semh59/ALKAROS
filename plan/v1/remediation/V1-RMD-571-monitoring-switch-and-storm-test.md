@@ -21,6 +21,7 @@
 - `src/Host/Observability/MonitoringSwitch/**`
 - `tests/Host/Observability/MonitoringSwitch/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız izleme kayıtlarının anahtar arkasına alınması
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Endpoints.cs - yalnız giriş ucunun güvenlik dedektörünü isteğe bağlı alması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
