@@ -1,7 +1,7 @@
 # V1-RMD-548 - Kullanıcı yolculuğu ekranı
 
 - Task ID: V1-RMD-548
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -21,6 +21,10 @@ Müdür bir eylemin zaman çizelgesini görür: düğme, istek, veritabanı, ola
 - `src/Clients/PosTerminal/src/features/management-user-journeys/**`
 - `src/Host/Observability/JourneyEndpoints/**`
 - `tests/Host/Observability/JourneyEndpoints/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız uç nokta ve servis kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts - yalnız yeni yolculuk ekranı metinleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/sections.ts - yalnız yeni sekme girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
