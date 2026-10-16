@@ -1,7 +1,7 @@
 # V1-RMD-535 - Alan dedektörleri
 
 - Task ID: V1-RMD-535
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -20,6 +20,8 @@ Yazıcı kopması, Bilinmeyen ödeme sonucu, mutfağa iletilmeyen sipariş, Yeme
 - `evidence/V1-RMD-535/**`
 - `src/Host/Observability/DomainDetectors/**`
 - `tests/Host/Observability/DomainDetectors/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız dedektör kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
