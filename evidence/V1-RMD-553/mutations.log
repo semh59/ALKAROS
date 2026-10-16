@@ -1,0 +1,13 @@
+max-per-error 3->30 => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 14 passed (15)
+own-queue not cleared on quota error => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 14 passed (15)
+stored cap 20000->200000 =>       Tests  15 passed (15)
+marked id priority removed => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 14 passed (15)
+query string kept =>       Tests  15 passed (15)
+failed send drops queue => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 14 passed (15)
+query string kept (retry) =>       Tests  15 passed (15)
+NOT: stored cap 20000->200000 survives: equivalent, the 200-item queue cap already keeps the stored text under 20000 chars; the char cap is a second guard.
+NOT: query-string stripping survives: equivalent for what is sent, the dedupe key is never part of the request body (body = eventId, kind, page path).
