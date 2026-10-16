@@ -1,0 +1,9 @@
+
+Başarılı!  - Başarısız:     0, Başarılı:     6, Atlanan:     0, Toplam:     6, Süre: 650 ms - ALKAROS.Host.Observability.TraceCorrelation.Tests.dll (net8.0)
+ Test Files  69 passed (69)
+      Tests  566 passed (566)
+   Start at  09:46:10
+   Duration  19.98s (transform 12.77s, setup 0ms, import 23.86s, tests 64.17s, environment 87.83s)
+
+
+Başarılı!  - Başarısız:     0, Başarılı:     6, Atlanan:     0, Toplam:     6, Süre: 34 s - ALKAROS.Host.Tests.dll (net8.0)

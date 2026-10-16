@@ -81,6 +81,7 @@
   <Project Path="tests/Host/Observability/NotificationWiring/ALKAROS.Host.Observability.NotificationWiring.Tests.csproj" />
   <Project Path="tests/Host/Observability/InsightRunner/ALKAROS.Host.Observability.InsightRunner.Tests.csproj" />
   <Project Path="tests/Host/Observability/DomainDetectors/ALKAROS.Host.Observability.DomainDetectors.Tests.csproj" />
+  <Project Path="tests/Host/Observability/TraceCorrelation/ALKAROS.Host.Observability.TraceCorrelation.Tests.csproj" />
   <Project Path="tests/Host/Observability/ServerDetectorsDeep/ALKAROS.Host.Observability.ServerDetectorsDeep.Tests.csproj" />
   <Project Path="tests/Host/Observability/SyntheticProbes/ALKAROS.Host.Observability.SyntheticProbes.Tests.csproj" />
   <Project Path="tests/Host/Observability/AnalysisRunner/ALKAROS.Host.Observability.AnalysisRunner.Tests.csproj" />

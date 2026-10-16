@@ -1,0 +1,11 @@
+trace-identifier-not-set: KILLED
+span-cap-off: KILLED
+dropped-not-counted: KILLED (re-crafted mutant)
+response-header-missing: KILLED
+spans-outside-request-kept: not counted (two crafted variants did not compile or were equivalent)
+nested-request-closes-trace: KILLED
+broken-traceparent-trusted: KILLED (re-crafted mutant)
+client-ignores-origin: KILLED
+client-ignores-existing-traceparent: KILLED
+client-misaligned-ids: KILLED
+client-all-zero-allowed: KILLED
