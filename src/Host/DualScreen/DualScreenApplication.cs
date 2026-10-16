@@ -4,6 +4,7 @@ using ALKAROS.Host.Observability.BrowserErrors;
 using ALKAROS.Host.Observability.MonitoringSwitch;
 using ALKAROS.Host.Observability.OfflineQueueReport;
 using ALKAROS.Host.Observability.ErrorEventEndpoints;
+using ALKAROS.Host.Observability.PerformanceBudgetEndpoints;
 using ALKAROS.Host.Observability.JourneyEndpoints;
 using ALKAROS.Host.Observability.DomainDetectors;
 using ALKAROS.Host.Observability.InsightRunner;
@@ -252,6 +253,9 @@ public static partial class DualScreenApplication
             });
             builder.Services.AddSingleton(sp => new PerformanceReader(sp.GetRequiredService<MonitoringDataSource>().Inner));
             builder.Services.AddErrorEventEndpoints();
+            builder.Services.AddPerformanceBudgetEndpoints(
+                builder.Configuration.GetSection("Monitoring:PerformanceBudgets").Get<PerformanceBudgetOptions>()?.DefaultRequestP95Milliseconds
+                    ?? new PerformanceBudgetOptions().DefaultRequestP95Milliseconds);
             builder.Services.AddJourneyEndpoints();
             builder.Services.AddSingleton(sp => new InteractionIngest(
                 sp.GetRequiredService<MonitoringDataSource>().Inner, sp.GetService<PerformanceRecorder>()));
@@ -708,6 +712,7 @@ public static partial class DualScreenApplication
         if (monitoring)
         {
             app.MapErrorEventEndpoints();
+            app.MapPerformanceBudgetEndpoints();
             app.MapJourneyEndpoints();
         }
         app.MapTableManagementApi();

@@ -1,7 +1,7 @@
 # V1-RMD-570 - Performans bütçelerini yönetimden ayarlama
 
 - Task ID: V1-RMD-570
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -19,7 +19,7 @@ Performans bütçeleri veritabanında durur ama değiştirmenin yolu yoktur; yet
 - `plan/v1/remediation/V1-RMD-570-performance-budget-management.md`
 - `evidence/V1-RMD-570/**`
 - `src/Host/Observability/PerformanceBudgetEndpoints/**`
-- `tests/Host/Experience/Observability/PerformanceBudgetHttpTests.cs`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Observability/PerformanceBudgetHttpTests.cs - yalnız yeni test dosyası
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız yeni uç nokta kaydı (iki satır)
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ApiConventions/idempotency_allowlist.json - yalnız yeni uç nokta girdileri
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.

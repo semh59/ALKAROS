@@ -27,6 +27,7 @@ Yetkili kullanıcı performans bütçelerini yönetim panelinden görür, deği�
 
 - Bütçe listesi, ekleme/düzenleme alanı, silme; tüm metinler Türkçe, hata mesajları sözlükten.
 - Yetkisiz kullanıcıya düzenleme düğmeleri gösterilmez.
+- Uç nokta sözleşmesi: `GET/PUT/DELETE /api/v1/management/observability/performance-budgets/` (PUT gövdesi `{metric,name,p95Ms}`, DELETE sorgu `metric` ve `name`); geçersiz değer 400, yetkisiz değişiklik 403.
 
 ## Out of scope
 
