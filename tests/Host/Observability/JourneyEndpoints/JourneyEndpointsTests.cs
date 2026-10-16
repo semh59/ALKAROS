@@ -152,6 +152,40 @@ public sealed class JourneyEndpointsTests : IClassFixture<ObservabilityTestDatab
     }
 
     [Fact]
+    public async Task TimelineStartsWithTheClickThatStartedTheRequestAndIgnoresClicksOfOtherTraces()
+    {
+        var trace = NewTraceId();
+        Request(trace, "/api/bills/pay", 200, 120);
+        await _database.ExecuteAsync(
+            """
+            INSERT INTO observability.raw_ui_interactions (occurred_at, terminal_id, role, key, kind, duration_ms, outcome, trace_id)
+            VALUES (@at, gen_random_uuid(), 'cashier', 'b.pay.confirm', 'click', 45, 'error', @c),
+                   (@at, gen_random_uuid(), 'cashier', 'b.other', 'click', 45, 'ok', @o);
+            """,
+            ("c", trace), ("o", NewTraceId()), ("at", DateTime.UtcNow.AddMilliseconds(-300)));
+
+        var journey = (await Queries.TimelineAsync(trace, CancellationToken.None))!;
+
+        journey.Steps.Select(s => s.Kind).Should().Equal("interaction", "request");
+        journey.Steps[0].Should().Match<JourneyStep>(s => s.Name == "b.pay.confirm" && s.OffsetMilliseconds == 0 && s.DurationMilliseconds == 45 && s.Failed);
+        journey.Steps[1].OffsetMilliseconds.Should().BeGreaterThan(0);
+    }
+
+    [Fact]
+    public async Task TimelineIsFoundFromAClickAloneWhenTheRequestLeftTheBuffer()
+    {
+        var trace = NewTraceId();
+        await _database.ExecuteAsync(
+            "INSERT INTO observability.raw_ui_interactions (occurred_at, terminal_id, role, key, kind, duration_ms, outcome, trace_id) VALUES (now(), gen_random_uuid(), 'cashier', 'b.solo', 'click', 10, 'ok', @c);",
+            ("c", trace));
+
+        var journey = (await Queries.TimelineAsync(trace, CancellationToken.None))!;
+
+        journey.RequestCaptured.Should().BeFalse();
+        journey.Steps.Should().ContainSingle().Which.Kind.Should().Be("interaction");
+    }
+
+    [Fact]
     public async Task TimelineStillShowsEventsAfterTheRequestLeftTheBufferAndIsEmptyForUnknownIds()
     {
         var trace = NewTraceId();

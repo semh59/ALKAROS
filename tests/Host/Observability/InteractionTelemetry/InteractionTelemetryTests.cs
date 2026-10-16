@@ -30,7 +30,7 @@ public sealed class InteractionDatabase : PgTestDatabase
 
     protected override async Task ApplySqlAsync()
     {
-        foreach (var (folder, pattern) in new[] { ("V1-RMD-533", "187-*.up.sql"), ("V1-RMD-543", "189-*.up.sql"), ("V1-RMD-541", "191-*.up.sql") })
+        foreach (var (folder, pattern) in new[] { ("V1-RMD-533", "187-*.up.sql"), ("V1-RMD-543", "189-*.up.sql"), ("V1-RMD-541", "191-*.up.sql"), ("V1-RMD-568", "192-*.up.sql") })
         {
             var file = Directory.GetFiles(Path.Combine(RepositoryRoot(), "database", "migrations", "V1", folder), pattern).Single();
             await RunAsync(DataSource, await File.ReadAllTextAsync(file));
@@ -44,8 +44,8 @@ public sealed class InteractionTelemetryTests : IClassFixture<InteractionDatabas
 
     public InteractionTelemetryTests(InteractionDatabase database) => _database = database;
 
-    private static InteractionItem Item(string key = "t:system.save", string kind = "click", int duration = 40, string outcome = "ok", int age = 0) =>
-        new(key, kind, age, duration, 0, 0, outcome);
+    private static InteractionItem Item(string key = "t:system.save", string kind = "click", int duration = 40, string outcome = "ok", int age = 0, string? trace = null) =>
+        new(key, kind, age, duration, 0, 0, outcome, trace);
 
     private Task<int> ClearAsync() => _database.ExecuteAsync("DELETE FROM observability.raw_ui_interactions;");
 
@@ -87,6 +87,29 @@ public sealed class InteractionTelemetryTests : IClassFixture<InteractionDatabas
     [InlineData("", false)]
     public void OnlyCatalogShapedKeysAreAccepted(string key, bool expected) =>
         InteractionIngest.IsCatalogKey(key).Should().Be(expected);
+
+    [Fact]
+    public async Task ClickKeepsAValidTraceIdAndAnyOtherValueIsStoredAsNoIdWithoutRejectingTheClick()
+    {
+        await ClearAsync();
+        var ingest = new InteractionIngest(_database.DataSource);
+        var valid = new string('a', 16) + new string('1', 16);
+        var batch = new InteractionBatch([
+            Item(key: "trace.valid", trace: valid),
+            Item(key: "trace.none"),
+            Item(key: "trace.upper", trace: valid.ToUpperInvariant().Replace('1', 'B')),
+            Item(key: "trace.short", trace: valid[..31]),
+            Item(key: "trace.zeros", trace: new string('0', 32)),
+            Item(key: "trace.newline", trace: valid + "\n"),
+            Item(key: "trace.text", trace: "not-a-trace-id"),
+        ]);
+
+        var result = await ingest.StoreAsync(batch, Guid.NewGuid(), CancellationToken.None);
+
+        result.Accepted.Should().Be(7);
+        (await CountAsync($"key = 'trace.valid' AND trace_id = '{valid}'")).Should().Be(1);
+        (await CountAsync("key LIKE 'trace.%' AND key <> 'trace.valid' AND trace_id IS NULL")).Should().Be(6);
+    }
 
     [Fact]
     public async Task OnlyTheFirstFiftyItemsOfABatchAreConsidered()

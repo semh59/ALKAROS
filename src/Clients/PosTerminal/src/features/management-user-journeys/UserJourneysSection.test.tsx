@@ -13,6 +13,7 @@ const request = {
 const journey = {
   traceId: request.traceId, startedAt: request.startedAt, requestCaptured: true, droppedSpans: 0,
   steps: [
+    { kind: "interaction", name: "b.pay.confirm", offsetMilliseconds: 0, durationMilliseconds: 40, failed: false },
     { kind: "request", name: "POST /api/v1/bills/pay (200)", offsetMilliseconds: 0, durationMilliseconds: 842, failed: false },
     { kind: "database", name: "select from bills", offsetMilliseconds: 12, durationMilliseconds: 30, failed: false },
     { kind: "event", name: "billing.bill.paid", offsetMilliseconds: 800, durationMilliseconds: 0, failed: true },
@@ -49,11 +50,13 @@ describe("user journeys section", () => {
     expect(client.journey).toHaveBeenCalledWith(request.traceId);
     const rows = [...document.querySelectorAll("tbody tr")].map((row) => row.textContent ?? "");
     const stepRows = rows.slice(1);
-    expect(stepRows[0]).toContain("İstek");
-    expect(stepRows[1]).toContain("Veritabanı");
-    expect(stepRows[2]).toContain("Olay");
-    expect(stepRows[2]).toContain("başarısız");
-    expect(stepRows[0]).toContain("842 ms");
+    expect(stepRows[0]).toContain("Düğme");
+    expect(stepRows[0]).toContain("b.pay.confirm");
+    expect(stepRows[1]).toContain("İstek");
+    expect(stepRows[2]).toContain("Veritabanı");
+    expect(stepRows[3]).toContain("Olay");
+    expect(stepRows[3]).toContain("başarısız");
+    expect(stepRows[1]).toContain("842 ms");
   });
 
   it("says so when the request has left the server memory", async () => {

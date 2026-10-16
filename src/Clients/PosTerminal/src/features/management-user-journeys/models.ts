@@ -9,7 +9,7 @@ export interface StaffMovement { occurredAt: string; actorId: string | null; act
 export interface ActionFilter { sort: string; role: string; terminalId: string }
 
 const label = (map: Record<string, string>) => (value: string) => map[value] ?? "Bilinmiyor";
-export const stepKindLabel = label({ request: "İstek", database: "Veritabanı", external: "Dış çağrı", event: "Olay" });
+export const stepKindLabel = label({ interaction: "Düğme", request: "İstek", database: "Veritabanı", external: "Dış çağrı", event: "Olay" });
 export const roleLabel = label({ cashier: "Kasiyer", waiter: "Garson", kitchen: "Mutfak", manager: "Müdür" });
 export const sortLabel = label({ slowest: "En yavaş", failing: "En hatalı", recent: "En yeni" });
 

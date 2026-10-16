@@ -1,0 +1,22 @@
+V1-RMD-568 mutasyon sinamasi (her mutant sonrasi dosya yedekten geri konup cmp ile dogrulandi)
+
+Tarayici (vitest)
+C1 yeni uretilen izleme kimligi duyurulmuyor                  -> yakalandi (1 test)
+C2 istekle gelen traceparent duyurulmuyor                     -> yakalandi (1)
+I1 2 sn pencere kaldirildi                                    -> yakalandi (1)
+I2 ikinci istek de tiklamaya yaziliyor                        -> yakalandi (1)
+I3 rota degisikligi de izleme kimligi aliyor                  -> yakalandi (1)
+I4 kayit olustuktan sonra gelen kimlik kalici depoya yazilmiyor -> yakalandi (1)
+I5 gonderimde traceId alani dusuyor                           -> yakalandi (2)
+I6 kayit sonradan gelen kimlige baglanmiyor                   -> yakalandi (2)
+
+Sunucu (gercek Postgres)
+S1 sifirlardan olusan kimlik kabul ediliyor                   -> yakalandi (1)
+S2 regex sonu \z yerine $ (sonda satir sonu gecer)            -> yakalandi (1)
+S3 kimlik hic saklanmiyor                                     -> yakalandi (1)
+S4 dogrulanmamis kimlik saklaniyor                            -> yakalandi (1)
+S5 zaman cizelgesi baska izlerin tiklamalarini da aliyor      -> yakalandi (1)
+S6 istek adimi hep 0. milisaniyede                            -> yakalandi (1)
+S7 tiklama zaman cizelgesinin baslangicina katilmiyor         -> yakalandi (2)
+
+15/15 yakalandi. Esdeger mutant yok. (S2 ilk denemede sed deseni eslesmedigi icin degisiklik yapmadi; satir dogrudan degistirilerek yeniden denendi.)

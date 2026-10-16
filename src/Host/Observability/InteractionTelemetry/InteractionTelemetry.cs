@@ -12,7 +12,7 @@ namespace ALKAROS.Host.Observability.InteractionTelemetry;
 
 /// <summary>One recorded interaction as the browser reports it: a fixed key and numbers, never text.</summary>
 public sealed record InteractionItem(
-    string? Key, string? Kind, int? AgeMs, int? DurationMs, int? LongTasks, int? ShiftMilli, string? Outcome);
+    string? Key, string? Kind, int? AgeMs, int? DurationMs, int? LongTasks, int? ShiftMilli, string? Outcome, string? TraceId = null);
 
 public sealed record InteractionBatch(IReadOnlyList<InteractionItem>? Items);
 
@@ -38,6 +38,10 @@ public sealed partial class InteractionIngest(
     private readonly object _gate = new();
     private readonly HashSet<string> _keys = new(StringComparer.Ordinal);
     private readonly Dictionary<Guid, Queue<DateTimeOffset>> _recent = [];
+
+    /// <summary>The trace id when it is 32 lowercase hex digits and not all zeros; anything else is stored as no id.</summary>
+    public static string? ValidTraceId(string? traceId) =>
+        traceId is not null && TraceIdPattern().IsMatch(traceId) && traceId.Any(c => c != '0') ? traceId : null;
 
     public static bool IsCatalogKey(string? key) => key is { Length: <= 64 } && Key().IsMatch(key);
 
@@ -93,9 +97,9 @@ public sealed partial class InteractionIngest(
         await using var command = dataSource.CreateCommand(
             """
             INSERT INTO observability.raw_ui_interactions
-                (occurred_at, terminal_id, role, key, kind, duration_ms, long_task_count, layout_shift_milli, outcome)
-            SELECT now() - make_interval(secs => u.age / 1000.0), @terminal, @role, u.key, u.kind, u.duration, u.tasks, u.shift, u.outcome
-            FROM unnest(@keys, @kinds, @ages, @durations, @tasks, @shifts, @outcomes) AS u(key, kind, age, duration, tasks, shift, outcome);
+                (occurred_at, terminal_id, role, key, kind, duration_ms, long_task_count, layout_shift_milli, outcome, trace_id)
+            SELECT now() - make_interval(secs => u.age / 1000.0), @terminal, @role, u.key, u.kind, u.duration, u.tasks, u.shift, u.outcome, u.trace
+            FROM unnest(@keys, @kinds, @ages, @durations, @tasks, @shifts, @outcomes, @traces) AS u(key, kind, age, duration, tasks, shift, outcome, trace);
             """);
         command.Parameters.AddWithValue("terminal", terminalId);
         command.Parameters.AddWithValue("role", Role);
@@ -106,6 +110,7 @@ public sealed partial class InteractionIngest(
         command.Parameters.Add(new NpgsqlParameter("tasks", NpgsqlDbType.Array | NpgsqlDbType.Integer) { Value = items.Select(i => Math.Clamp(i.LongTasks ?? 0, 0, 10_000)).ToArray() });
         command.Parameters.Add(new NpgsqlParameter("shifts", NpgsqlDbType.Array | NpgsqlDbType.Integer) { Value = items.Select(i => Math.Clamp(i.ShiftMilli ?? 0, 0, 100_000)).ToArray() });
         command.Parameters.Add(new NpgsqlParameter("outcomes", NpgsqlDbType.Array | NpgsqlDbType.Text) { Value = items.Select(i => i.Outcome!).ToArray() });
+        command.Parameters.Add(new NpgsqlParameter("traces", NpgsqlDbType.Array | NpgsqlDbType.Text) { Value = items.Select(i => ValidTraceId(i.TraceId)).ToArray() });
         await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
 
         if (recorder is not null)
@@ -114,6 +119,9 @@ public sealed partial class InteractionIngest(
                 recorder.Record(PerformanceMetric.UiInteraction, keys[i], items[i].DurationMs!.Value, items[i].Outcome == "error");
         }
     }
+
+    [GeneratedRegex(@"^[0-9a-f]{32}\z")]
+    private static partial Regex TraceIdPattern();
 
     [GeneratedRegex("^[a-z0-9][a-z0-9._:-]*(@/[a-z0-9._:/-]*)?$")]
     private static partial Regex Key();

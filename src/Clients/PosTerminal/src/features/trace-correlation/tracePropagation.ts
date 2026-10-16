@@ -7,6 +7,17 @@ export interface TraceTarget {
   location: { origin: string };
 }
 
+type TraceListener = (traceId: string) => void;
+const listeners = new Set<TraceListener>();
+
+/** Tells the listener the trace id of every API call the app makes; returns a function that stops it. */
+export function onTraceIssued(listener: TraceListener): () => void {
+  listeners.add(listener);
+  return () => { listeners.delete(listener); };
+}
+
+const announce = (traceId: string) => listeners.forEach((listener) => listener(traceId));
+
 const randomHex = (bytes: number) =>
   Array.from(crypto.getRandomValues(new Uint8Array(bytes)), (value) => value.toString(16).padStart(2, "0")).join("");
 
@@ -32,11 +43,17 @@ export function installTracePropagation(target: TraceTarget = window): void {
   target.fetch = (input, init) => {
     if (!isSameOriginApi(input, target.location.origin)) return original(input, init);
     const headers = new Headers(init?.headers ?? (input instanceof Request ? input.headers : undefined));
-    if (headers.has("traceparent")) return original(input, init);
+    const existing = headers.get("traceparent");
+    if (existing) {
+      const given = existing.split("-")[1] ?? "";
+      if (TRACE_ID.test(given)) announce(given);
+      return original(input, init);
+    }
     const correlationId = headers.get("X-Correlation-Id");
     const traceId = traceIdFrom(correlationId);
     if (!correlationId) headers.set("X-Correlation-Id", traceId);
     headers.set("traceparent", `00-${traceId}-${randomHex(8)}-01`);
+    announce(traceId);
     return original(input, { ...init, headers });
   };
 }

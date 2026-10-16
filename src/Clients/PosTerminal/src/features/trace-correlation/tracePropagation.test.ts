@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { installTracePropagation, traceIdFrom, type TraceTarget } from "./tracePropagation";
+import { installTracePropagation, onTraceIssued, traceIdFrom, type TraceTarget } from "./tracePropagation";
 
 function setup() {
   const calls: { input: RequestInfo | URL; headers: Headers; init?: RequestInit }[] = [];
@@ -15,6 +15,25 @@ function setup() {
 }
 
 describe("trace propagation", () => {
+  it("tells listeners the trace id of each API call, including a given traceparent, and stops after unsubscribe", async () => {
+    const { target } = setup();
+    const seen: string[] = [];
+    const stop = onTraceIssued((id) => seen.push(id));
+    const given = "a".repeat(16) + "b".repeat(16);
+
+    await target.fetch("/api/v1/orders", { headers: { "X-Correlation-Id": "3f2c1b0a-1111-4222-8333-444455556666" } });
+    await target.fetch("/api/v1/orders", { headers: { traceparent: `00-${given}-${"c".repeat(16)}-01` } });
+    await target.fetch("/api/v1/orders");
+    await target.fetch("https://other.test/api/v1/orders");
+    stop();
+    await target.fetch("/api/v1/orders");
+
+    expect(seen).toHaveLength(3);
+    expect(seen[0]).toBe("3f2c1b0a111142228333444455556666");
+    expect(seen[1]).toBe(given);
+    expect(seen[2]).toMatch(/^[0-9a-f]{32}$/);
+  });
+
   it("adds a traceparent whose trace id is the existing correlation id without dashes", async () => {
     const { target, calls } = setup();
     const id = "3f2c1b0a-1111-4222-8333-444455556666";

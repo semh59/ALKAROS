@@ -91,17 +91,20 @@ public sealed partial class JourneyQueries(NpgsqlDataSource dataSource, TraceSpa
     {
         var record = buffer.Get(traceId);
         var events = await EventsAsync(traceId, cancellationToken).ConfigureAwait(false);
-        if (record is null && events.Count == 0)
+        var clicks = await ClicksAsync(traceId, cancellationToken).ConfigureAwait(false);
+        if (record is null && events.Count == 0 && clicks.Count == 0)
             return null;
 
-        var origin = record?.StartedAt ?? events.Min(e => e.At);
+        var origin = new[] { record?.StartedAt }.Concat(events.Select(e => (DateTimeOffset?)e.At)).Concat(clicks.Select(c => (DateTimeOffset?)c.At))
+            .OfType<DateTimeOffset>().Min();
         var steps = new List<JourneyStep>();
         if (record is not null)
         {
-            steps.Add(new JourneyStep("request", $"{record.Method} {record.Route} ({record.StatusCode})", 0, record.DurationMilliseconds, record.StatusCode >= 500));
+            steps.Add(new JourneyStep("request", $"{record.Method} {record.Route} ({record.StatusCode})", Offset(origin, record.StartedAt), record.DurationMilliseconds, record.StatusCode >= 500));
             steps.AddRange(record.Spans.Select(s => new JourneyStep(s.Kind, s.Name, Offset(origin, s.StartedAt), s.DurationMilliseconds, s.Failed)));
         }
 
+        steps.AddRange(clicks.Select(c => new JourneyStep("interaction", c.Key, Offset(origin, c.At), c.DurationMilliseconds, c.Failed)));
         steps.AddRange(events.Select(e => new JourneyStep("event", e.Name, Offset(origin, e.At), 0, false)));
         return new Journey(traceId, record?.StartedAt, record is not null, record?.DroppedSpans ?? 0, [.. steps.OrderBy(s => s.OffsetMilliseconds)]);
     }
@@ -142,6 +145,19 @@ public sealed partial class JourneyQueries(NpgsqlDataSource dataSource, TraceSpa
         await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
         while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             rows.Add((Utc(reader.GetDateTime(0)), reader.GetString(1)));
+        return rows;
+    }
+
+    private async Task<List<(DateTimeOffset At, string Key, double DurationMilliseconds, bool Failed)>> ClicksAsync(
+        string traceId, CancellationToken cancellationToken)
+    {
+        await using var command = dataSource.CreateCommand(
+            $"SELECT occurred_at, key, duration_ms, outcome FROM observability.raw_ui_interactions WHERE trace_id = @trace ORDER BY occurred_at LIMIT {MaxEvents};");
+        command.Parameters.AddWithValue("trace", traceId);
+        var rows = new List<(DateTimeOffset, string, double, bool)>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+        while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            rows.Add((Utc(reader.GetDateTime(0)), reader.GetString(1), reader.GetInt32(2), reader.GetString(3) == "error"));
         return rows;
     }
 

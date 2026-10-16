@@ -1,0 +1,4 @@
+InteractionTelemetry.Tests (gercek Postgres 18): 16/16 basarili
+JourneyEndpoints.Tests (gercek Postgres 18): 10/10 basarili
+PosTerminal vitest tamami: 74 dosya, 603/603 basarili; tsc --noEmit temiz
+Host.Tests Manifest: 17/17; Migrations + DualScreenHostTests: 10/10 basarili

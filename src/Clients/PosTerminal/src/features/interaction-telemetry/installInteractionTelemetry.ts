@@ -1,8 +1,11 @@
 import { buildNameTable, deriveKey, routeTemplate, type NameTable } from "./interactionKeys";
-import { createInteractionRecorder, type InteractionKind } from "./interactionRecorder";
+import { onTraceIssued } from "../trace-correlation";
+import { createInteractionRecorder, type InteractionKind, type InteractionRecord } from "./interactionRecorder";
 
 const INTERACTIVE = "button, a[href], [role='button'], [role='tab'], [role='menuitem'], input[type='submit'], input[type='button'], [data-telemetry-id]";
 const FLUSH_MS = 10_000;
+/** The first API call within this time after a click or submit is taken as the one that click started. */
+const TRACE_WINDOW_MS = 2_000;
 
 export interface InstallOptions {
   readonly target?: Window & typeof globalThis;
@@ -10,7 +13,11 @@ export interface InstallOptions {
   readonly names?: NameTable;
   /** Runs the callback after the next paint; replaceable so tests need no real frames. */
   readonly afterPaint?: (callback: () => void) => void;
+  /** Reports the trace id of each API call; replaceable so tests need no real fetch. */
+  readonly traceSource?: (listener: (traceId: string) => void) => () => void;
 }
+
+interface OpenClick { until: number; traceId?: string; record?: InteractionRecord }
 
 /**
  * Records every click on a control, every route change and every form submit as a key, a duration and an outcome.
@@ -25,6 +32,16 @@ export function installInteractionTelemetry(options: InstallOptions = {}): () =>
   let longTasks = 0;
   let shift = 0;
   let errors = 0;
+  let open: OpenClick | undefined;
+
+  cleanups.push((options.traceSource ?? onTraceIssued)((traceId) => {
+    if (!open || open.traceId || Date.now() > open.until) return;
+    open.traceId = traceId;
+    if (open.record) {
+      open.record.traceId = traceId;
+      recorder.save();
+    }
+  }));
 
   function observe(type: string, onEntry: (entry: PerformanceEntry) => void) {
     const PerformanceObserverType = target.PerformanceObserver as typeof PerformanceObserver | undefined;
@@ -45,15 +62,22 @@ export function installInteractionTelemetry(options: InstallOptions = {}): () =>
     const tasks0 = longTasks;
     const shift0 = shift;
     const errors0 = errors;
-    afterPaint(() => recorder.record({
-      key,
-      kind,
-      atMs: wall,
-      durationMs: Math.max(0, Math.round(target.performance.now() - startedAt)),
-      longTasks: longTasks - tasks0,
-      shiftMilli: Math.round((shift - shift0) * 1000),
-      outcome: errors > errors0 ? "error" : "ok",
-    }));
+    const click: OpenClick = { until: wall + TRACE_WINDOW_MS };
+    if (kind !== "navigate") open = click;
+    afterPaint(() => {
+      const record: InteractionRecord = {
+        key,
+        kind,
+        atMs: wall,
+        durationMs: Math.max(0, Math.round(target.performance.now() - startedAt)),
+        longTasks: longTasks - tasks0,
+        shiftMilli: Math.round((shift - shift0) * 1000),
+        outcome: errors > errors0 ? "error" : "ok",
+        traceId: click.traceId,
+      };
+      click.record = record;
+      recorder.record(record);
+    });
   }
 
   const route = () => routeTemplate(target.location.pathname);

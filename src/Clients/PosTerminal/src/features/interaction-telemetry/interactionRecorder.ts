@@ -9,6 +9,8 @@ export interface InteractionRecord {
   readonly longTasks: number;
   readonly shiftMilli: number;
   readonly outcome: InteractionOutcome;
+  /** Trace id of the first API call the click started; set after the record exists, so it is the one mutable field. */
+  traceId?: string;
 }
 
 export const ENDPOINT = "/api/v1/telemetry/interactions";
@@ -77,6 +79,7 @@ export function createInteractionRecorder(options: RecorderOptions = {}) {
         longTasks: item.longTasks,
         shiftMilli: item.shiftMilli,
         outcome: item.outcome,
+        traceId: item.traceId,
       }));
       if (!send(JSON.stringify({ items }))) return false;
       queue = queue.slice(batch.length);
@@ -86,5 +89,5 @@ export function createInteractionRecorder(options: RecorderOptions = {}) {
   }
 
   restore();
-  return { record, flush, size: () => queue.length, storageFailed: () => storageFailed };
+  return { record, flush, save: persist, size: () => queue.length, storageFailed: () => storageFailed };
 }
