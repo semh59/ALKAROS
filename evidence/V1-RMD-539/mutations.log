@@ -1,0 +1,6 @@
+drop-status-filter: KILLED
+drop-layer-filter: KILLED
+ack-ignores-open-state: KILLED
+resolve-ignores-resolved-state: KILLED
+drop-auth-filter: KILLED
+no-page-clamp: SURVIVED (first run) -> KILLED after page-size assertion added
