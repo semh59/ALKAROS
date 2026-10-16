@@ -1638,6 +1638,14 @@
         "perf_releases"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "191",
+      "phase": "B",
+      "tables": [
+        "raw_ui_interactions"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

@@ -41,7 +41,7 @@ echo "backup: pg_dump ${PGUSER}@${PGHOST}:${PGPORT}/${PGDATABASE} -> ${ARTIFACT}
 START="$(date +%s)"
 pg_dump \
   --host="$PGHOST" --port="$PGPORT" --username="$PGUSER" --dbname="$PGDATABASE" \
-  --format=custom --no-owner --no-privileges --compress=6 \
+  --format=custom --no-owner --no-privileges --compress=6 --no-unlogged-table-data \
   --file="$ARTIFACT"
 END="$(date +%s)"
 

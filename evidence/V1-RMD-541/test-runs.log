@@ -1,0 +1,9 @@
+
+Başarılı!  - Başarısız:     0, Başarılı:    15, Atlanan:     0, Toplam:    15, Süre: 1 s - ALKAROS.Host.Observability.InteractionTelemetry.Tests.dll (net8.0)
+ Test Files  73 passed (73)
+      Tests  590 passed (590)
+   Start at  10:43:27
+   Duration  20.05s (transform 14.20s, setup 0ms, import 23.31s, tests 65.04s, environment 87.47s)
+
+
+Başarılı!  - Başarısız:     0, Başarılı:    23, Atlanan:     0, Toplam:    23, Süre: 1 m - ALKAROS.Host.Tests.dll (net8.0)

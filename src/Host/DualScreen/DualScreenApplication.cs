@@ -8,6 +8,7 @@ using ALKAROS.Host.Observability.NotificationWiring;
 using ALKAROS.Host.Observability.SyntheticProbes;
 using ALKAROS.Host.Observability.ResourceProbes;
 using ALKAROS.Host.Observability.SecurityDetectors;
+using ALKAROS.Host.Observability.InteractionTelemetry;
 using ALKAROS.Host.Observability.ServerDetectorsDeep;
 using ALKAROS.Host.Observability.TraceCorrelation;
 using ALKAROS.Observability.PerformanceBudgets;
@@ -243,6 +244,8 @@ public static partial class DualScreenApplication
         });
         builder.Services.AddSingleton(sp => new PerformanceReader(sp.GetRequiredService<MonitoringDataSource>().Inner));
         builder.Services.AddErrorEventEndpoints();
+        builder.Services.AddSingleton(sp => new InteractionIngest(
+            sp.GetRequiredService<MonitoringDataSource>().Inner, sp.GetService<PerformanceRecorder>()));
         builder.Services.AddSingleton(sp => new BrowserErrorIngest(sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>()));
         builder.Services.AddSyntheticProbes();
         // V1-RMD-326 (independent 2026-09-26 audit, finding K14): the first real health probe - see
@@ -661,6 +664,7 @@ public static partial class DualScreenApplication
 
         MapApi(app);
         app.MapBrowserErrors();
+        app.MapInteractionTelemetry();
         app.MapCatalogManagement();
         app.MapMenuManagement();
         app.MapPurchasingManagement();

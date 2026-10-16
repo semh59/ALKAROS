@@ -1,0 +1,23 @@
+server key-allows-email: KILLED
+server key-length-unbounded: KILLED (after test fix)
+server batch-cap-off: KILLED
+server terminal-quota-shared: KILLED
+server quota-off: KILLED
+server distinct-cap-off: KILLED (after test fix)
+server client-clock-trusted: KILLED
+server kind-unchecked: KILLED
+server duration-unbounded: KILLED (after test fix)
+client marked-id-ignored: KILLED
+client marked-id-unchecked: KILLED
+client dictionary-last-wins: KILLED
+client route-ids-kept: KILLED
+client auto-key-uses-text: KILLED
+client batch-unbounded: KILLED
+client failed-send-drops: KILLED
+client storage-limit-off: KILLED
+client queue-unbounded: KILLED
+client storage-error-escapes: KILLED
+client non-controls-recorded: KILLED
+client error-outcome-lost: KILLED
+client uninstall-leaves-listeners: KILLED
+client navigation-not-recorded: KILLED

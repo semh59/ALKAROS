@@ -156,6 +156,7 @@ public sealed class ErrorRetentionHostedService(
     public static readonly IReadOnlyList<TelemetryRetentionPolicy> Policies =
     [
         new("observability.error_occurrences", "occurred_at", TelemetryRetention.RawEventDays),
+        new("observability.raw_ui_interactions", "occurred_at", TelemetryRetention.RawEventDays),
         new("observability.error_events", "last_seen_at", TelemetryRetention.ErrorEventDays),
     ];
 
