@@ -1,7 +1,7 @@
 # V1-RMD-565 - Yönetim ekranı: hata listesi arayüzü
 
 - Task ID: V1-RMD-565
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -19,6 +19,8 @@ Müdür, mevcut Sistem bölümünde canlı hata listesini görür; süzer, ayrı
 - `plan/v1/remediation/V1-RMD-565-error-screen-ui.md`
 - `evidence/V1-RMD-565/**`
 - `src/Clients/PosTerminal/src/features/management-error-events/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts - yalnız yeni hata ekranı metinleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/sections.ts - yalnız yeni sekme girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
