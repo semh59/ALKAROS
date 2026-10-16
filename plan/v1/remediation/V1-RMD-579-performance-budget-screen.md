@@ -1,8 +1,8 @@
 # V1-RMD-579 - Yönetim panelinde performans bütçesi ekranı
 
 - Task ID: V1-RMD-579
-- Status: Planned
-- Assignee: None
+- Status: InProgress
+- Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
 
