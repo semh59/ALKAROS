@@ -1,7 +1,7 @@
 # V1-RMD-553 - Vanilla kasa ve garson uygulamalarında raporlama
 
 - Task ID: V1-RMD-553
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -23,6 +23,10 @@ Düz JavaScript ile yazılmış kasa ve garson uygulamaları da hata ve etkileş
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/index.html
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/index.html
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/telemetry-reporting.test.js
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/cash-session/index.html - yalnız betik etiketi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/customer-accounts/index.html - yalnız betik etiketi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/split-payment/index.html - yalnız betik etiketi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/sw.js - yalnız çevrimdışı önbellek listesine betik girişi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
