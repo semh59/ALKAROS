@@ -1,0 +1,22 @@
+manage permission removed from staff movements => Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 1 s - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+own route not excluded => Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 946 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+failing order = duration only => Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 835 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+events of other traces => Başarısız! - Başarısız:     3, Başarılı:     6, Atlanan:     0, Toplam:     9, Süre: 777 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+role filter ignored => Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 791 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+window ignored => Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 776 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+steps not ordered => Başarılı!  - Başarısız:     0, Başarılı:     9, Atlanan:     0, Toplam:     9, Süre: 763 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+terminal filter ignored => Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 856 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+failing actions sorted by avg => Başarısız! - Başarısız:     1, Başarılı:     8, Atlanan:     0, Toplam:     9, Süre: 816 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+malformed id accepted => Başarılı!  - Başarısız:     0, Başarılı:     9, Atlanan:     0, Toplam:     9, Süre: 708 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+steps not ordered (retest) => Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 740 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+malformed id accepted (retest) => Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 797 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0) 
+UI: staff tab always offered => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 7 passed (8)
+UI: malformed terminal id sent => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 7 passed (8)
+UI: uncaptured request notice removed => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 7 passed (8)
+UI: unknown kind raw => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 7 passed (8)
+UI: failed step not marked => ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Tests 1 failed | 7 passed (8)

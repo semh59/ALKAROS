@@ -1,0 +1,8 @@
+
+Başarılı!  - Başarısız:     0, Başarılı:     8, Atlanan:     0, Toplam:     8, Süre: 669 ms - ALKAROS.Host.Observability.JourneyEndpoints.Tests.dll (net8.0)
+
+ Test Files  74 passed (74)
+      Tests  599 passed (599)
+   Start at  12:06:20
+   Duration  20.45s (transform 11.85s, setup 0ms, import 22.67s, tests 65.81s, environment 89.66s)
+

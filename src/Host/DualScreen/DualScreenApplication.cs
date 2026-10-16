@@ -2,6 +2,7 @@ using ALKAROS.Host.Observability.HealthSnapshot;
 using ALKAROS.Host.Observability.AnalysisRunner;
 using ALKAROS.Host.Observability.BrowserErrors;
 using ALKAROS.Host.Observability.ErrorEventEndpoints;
+using ALKAROS.Host.Observability.JourneyEndpoints;
 using ALKAROS.Host.Observability.DomainDetectors;
 using ALKAROS.Host.Observability.InsightRunner;
 using ALKAROS.Host.Observability.NotificationWiring;
@@ -244,6 +245,7 @@ public static partial class DualScreenApplication
         });
         builder.Services.AddSingleton(sp => new PerformanceReader(sp.GetRequiredService<MonitoringDataSource>().Inner));
         builder.Services.AddErrorEventEndpoints();
+        builder.Services.AddJourneyEndpoints();
         builder.Services.AddSingleton(sp => new InteractionIngest(
             sp.GetRequiredService<MonitoringDataSource>().Inner, sp.GetService<PerformanceRecorder>()));
         builder.Services.AddSingleton(sp => new BrowserErrorIngest(sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>()));
@@ -686,6 +688,7 @@ public static partial class DualScreenApplication
         app.MapSecurityAdministrationApi();
         app.MapObservabilityApi();
         app.MapErrorEventEndpoints();
+        app.MapJourneyEndpoints();
         app.MapTableManagementApi();
         app.MapKitchenOperationsApi();
         app.MapOrderManagementApi();
