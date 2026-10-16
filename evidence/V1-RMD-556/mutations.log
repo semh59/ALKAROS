@@ -1,0 +1,3 @@
+V1-RMD-556 dogrulama gorevidir; urun kodu degismedi, bu yuzden urun mutasyonu yok.
+Fırtina testinin duyarliligi V1-RMD-571'de kanitlandi (yazici ana havuza baglaninca test kirildi: evidence/V1-RMD-571/mutations.log, S1).
+A/B betiginin duyarliligi ayrica denenmedi (bilinen sinir, README).

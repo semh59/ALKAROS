@@ -1,0 +1,87 @@
+{
+  "rounds": [
+    {
+      "round": 0,
+      "monitoring": true,
+      "orders": 300,
+      "failures": 0,
+      "confirmP50": 67.64259999999922,
+      "confirmP95": 103.14849999999933,
+      "confirmP99": 147.79999999999563,
+      "draftP95": 71.36930000000211
+    },
+    {
+      "round": 1,
+      "monitoring": false,
+      "orders": 300,
+      "failures": 0,
+      "confirmP50": 61.35480000000098,
+      "confirmP95": 86.14770000000135,
+      "confirmP99": 102.66099999999278,
+      "draftP95": 56.42149999999674
+    },
+    {
+      "round": 2,
+      "monitoring": true,
+      "orders": 300,
+      "failures": 0,
+      "confirmP50": 56.70209999999497,
+      "confirmP95": 83.738400000002,
+      "confirmP99": 101.79259999998612,
+      "draftP95": 57.366800000017975
+    },
+    {
+      "round": 3,
+      "monitoring": false,
+      "orders": 300,
+      "failures": 0,
+      "confirmP50": 42.853100000007544,
+      "confirmP95": 57.81479999999283,
+      "confirmP99": 67.23340000002645,
+      "draftP95": 47.99760000000242
+    },
+    {
+      "round": 4,
+      "monitoring": true,
+      "orders": 300,
+      "failures": 0,
+      "confirmP50": 43.641399999993155,
+      "confirmP95": 58.80199999999604,
+      "confirmP99": 71.70260000001872,
+      "draftP95": 48.0225999999966
+    },
+    {
+      "round": 5,
+      "monitoring": false,
+      "orders": 300,
+      "failures": 0,
+      "confirmP50": 43.14400000002934,
+      "confirmP95": 57.40649999998277,
+      "confirmP99": 68.00699999998324,
+      "draftP95": 49.90189999999711
+    },
+    {
+      "round": 6,
+      "monitoring": true,
+      "orders": 300,
+      "failures": 0,
+      "confirmP50": 43.394300000043586,
+      "confirmP95": 57.16769999999087,
+      "confirmP99": 70.43640000000596,
+      "draftP95": 48.086300000024494
+    },
+    {
+      "round": 7,
+      "monitoring": false,
+      "orders": 300,
+      "failures": 0,
+      "confirmP50": 42.915899999963585,
+      "confirmP95": 58.7056000000448,
+      "confirmP99": 66.79970000003232,
+      "draftP95": 48.83379999996396
+    }
+  ],
+  "medianP95On": 58.80199999999604,
+  "medianP95Off": 57.81479999999283,
+  "ratio": 1.0170752125753844
+}

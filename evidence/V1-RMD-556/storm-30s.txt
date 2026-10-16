@@ -1,0 +1,1 @@
+seconds=30 baselineMaxMainConnections=8 stormMaxMainConnections=8 stormMaxMonitoringConnections=1 baselineQueries=239361 stormQueries=261693 enqueued=30012 refusedFullQueue=0 droppedPending=0 failedPending=0

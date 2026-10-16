@@ -1,0 +1,6 @@
+A/B siparis onayi (order-confirm-ab.json / .log): 8 tur dönüşümlü (açık, kapalı, ...), tur basina 300 siparis + 30 isinma, hata 0
+  medyan p95 acik = 58,8 ms, kapali = 57,8 ms, oran 1,017 (sinir 1,10)
+  tur p95 (ms): 103,1 A | 86,1 K | 83,7 A | 57,8 K | 58,8 A | 57,4 K | 57,2 A | 58,7 K
+Firtina 30 sn, saniyede 1000 olay (storm-30s.txt), gercek Postgres 18 (Docker):
+  baselineMaxMainConnections=8 stormMaxMainConnections=8 stormMaxMonitoringConnections=1 enqueued=30012 refused=0 droppedPending=0 failedPending=0
+  baselineQueries=239361 stormQueries=261693
