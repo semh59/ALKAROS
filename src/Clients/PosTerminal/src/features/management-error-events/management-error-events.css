@@ -1,0 +1,8 @@
+.merr { display: grid; gap: var(--ds-space-4); }
+.merr__filters { display: flex; gap: var(--ds-space-3); flex-wrap: wrap; align-items: flex-end; }
+.merr__filters label { display: grid; gap: .2rem; font-weight: 700; }
+.merr__actions { display: flex; gap: .4rem; flex-wrap: wrap; }
+.merr__empty, .merr__hint { margin: 0; color: var(--ds-color-muted); }
+.merr table { width: 100%; border-collapse: collapse; }
+.merr th, .merr td { padding: .5rem .6rem; text-align: left; border-bottom: 1px solid var(--ds-color-line); }
+.merr th { color: var(--ds-color-muted); font-size: .72rem; letter-spacing: .04em; }

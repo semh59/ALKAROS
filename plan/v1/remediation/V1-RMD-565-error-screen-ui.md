@@ -1,7 +1,7 @@
 # V1-RMD-565 - Yönetim ekranı: hata listesi arayüzü
 
 - Task ID: V1-RMD-565
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned

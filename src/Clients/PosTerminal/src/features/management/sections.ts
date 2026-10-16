@@ -11,6 +11,7 @@ import { ChannelReportSection } from "../management-channel-report";
 import { PurchaseInvoicesSection } from "../management-purchase-invoices";
 import { ProductMarginSection } from "../management-product-margin-report";
 import { OrderInvoicesSection } from "../management-order-invoices";
+import { ErrorEventsSection } from "../management-error-events";
 import { managementText } from "../../strings";
 
 export interface ManagementSectionProps {
@@ -37,6 +38,7 @@ export const managementSections: readonly ManagementSection[] = [
   { id: "staff", label: managementText.staff.tab, requiredCapability: "identity.users.manage", component: StaffSection },
   { id: "security", label: managementText.security.tab, requiredCapability: "security.manage", component: SecuritySection },
   { id: "system", label: managementText.system.tab, requiredCapability: "reports.view", component: SystemSection },
+  { id: "errors", label: managementText.errors.tab, requiredCapability: "reports.view", component: ErrorEventsSection },
   { id: "channel-report", label: managementText.channelReport.tab, requiredCapability: "reports.view", component: ChannelReportSection },
   { id: "purchase-invoices", label: managementText.purchaseInvoices.tab, requiredCapability: "purchasing.manage", component: PurchaseInvoicesSection },
   { id: "product-margin", label: managementText.productMargin.tab, requiredCapability: "reports.view", component: ProductMarginSection },
