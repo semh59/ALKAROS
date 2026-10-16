@@ -1,0 +1,11 @@
+pool-ratio-ignored: KILLED (re-crafted mutant)
+monitoring-pool-included: KILLED
+monitoring-statements-reported: KILLED
+slow-error-line-lost: KILLED
+nplusone-threshold-off-by-one: KILLED
+samples-unbounded: KILLED
+literals-kept-in-shape: KILLED
+job-factor-ignored: KILLED
+disabled-jobs-counted: KILLED
+tunnel-not-configured-alarms: KILLED
+no-resolve: KILLED

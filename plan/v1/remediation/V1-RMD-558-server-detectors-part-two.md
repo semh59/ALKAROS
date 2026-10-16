@@ -1,7 +1,7 @@
 # V1-RMD-558 - Sunucu dedektörleri ikinci parça
 
 - Task ID: V1-RMD-558
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -29,7 +29,7 @@ Bağlantı havuzu doluluğu, kaçan arka plan işi, N+1 sorgu, yavaş sorgu ve s
 
 - Havuz > %85, kaçan zamanlanmış iş (nabız), istek başına 20 sorgu (N+1, son 8 sorgu örneği), yavaş sorgu eşiği (>500 ms Warning, >2000 ms Error).
 - QR tüneli (bağlayıcı süreci) kopma sinyali hata olayı olur.
-- Sorgu planı (EXPLAIN) yalnız SELECT için ve sınırlı sürede alınır; izlemenin kendi yazımları yavaş-sorgu olayından ayıklanır.
+- İzlemenin kendi yazımları yavaş-sorgu olayından ayıklanır; sorgu planı (EXPLAIN) V1-RMD-566'ya taşındı.
 - Garson çevrimdışı kuyruk uzunluğu ve dış çağrı adresi temizleme V1-RMD-566'ya taşındı.
 
 ## Out of scope

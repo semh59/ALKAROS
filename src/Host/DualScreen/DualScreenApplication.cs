@@ -8,6 +8,7 @@ using ALKAROS.Host.Observability.NotificationWiring;
 using ALKAROS.Host.Observability.SyntheticProbes;
 using ALKAROS.Host.Observability.ResourceProbes;
 using ALKAROS.Host.Observability.SecurityDetectors;
+using ALKAROS.Host.Observability.ServerDetectorsDeep;
 using ALKAROS.Host.Observability.ServerDetectors;
 using ALKAROS.Host.Observability.Wiring;
 using ALKAROS.Host.Composition.Errors;
@@ -205,6 +206,7 @@ public static partial class DualScreenApplication
         builder.Services.AddInsightRunner();
         builder.Services.AddAnalysisRunner();
         builder.Services.AddDomainDetectors(builder.Configuration.GetSection("Monitoring:DomainDetectors").Get<DomainDetectorOptions>());
+        builder.Services.AddServerDetectorsDeep(builder.Configuration.GetSection("Monitoring:ServerDetectorsDeep").Get<ServerDetectorsDeepOptions>());
         builder.Services.AddErrorEventEndpoints();
         builder.Services.AddSingleton(sp => new BrowserErrorIngest(sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>()));
         builder.Services.AddSyntheticProbes();

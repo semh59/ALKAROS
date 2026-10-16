@@ -25,6 +25,7 @@ Garson uygulamasının çevrimdışı kuyruk uzunluğu sunucuya bildirilir ve e�
 ## In scope
 
 - Sunucu uç noktası: kuyruk uzunluğu (sayı) bildirimi, eşik aşımında olay; yalnız sayı ve terminal etiketi alınır.
+- Yavaş sorgu olayına sorgu planı: yalnız SELECT için ve sınırlı sürede EXPLAIN; sürücü etkinliğindeki sorgu metni adlandırılmış parametre içerdiğinden planın nasıl alınacağı bu görevde çözülür.
 - Dış çağrı adresleri olaya konmadan önce sunucu adı ve yoldan sorgu/kimlik parçaları atılarak temizlenir.
 
 ## Out of scope
