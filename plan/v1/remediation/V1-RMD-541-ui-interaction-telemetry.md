@@ -1,7 +1,7 @@
 # V1-RMD-541 - Arayüz etkileşim izleme
 
 - Task ID: V1-RMD-541
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -28,6 +28,11 @@ Kasa, garson ve mutfak ekranlarında basılan her düğme, sayfa değişimi ve f
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız uç nokta ve servis kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/main.tsx - yalnız etkileşim kaydının kurulumu
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız uç nokta ve servis kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/main.tsx - yalnız etkileşim kaydının kurulumu
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Observability/ServerDetectors/ServerDetectors.cs - yalnız saklama kataloğuna ham tablo satırı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): deploy/docker/backup.sh - yalnız loglanmayan tabloların verisini yedekten çıkaran seçenek
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
@@ -39,6 +44,7 @@ Kasa, garson ve mutfak ekranlarında basılan her düğme, sayfa değişimi ve f
 ## Out of scope
 
 - Oturum videosu kaydı yapılmaz; vanilla uygulamalar V1-RMD-553.
+- Her düğmeye `data-telemetry-id` eklenmesi V1-RMD-567'ye, gerçek kasa cihazında tıklama ek yükü ölçümü V1-RMD-556'ya taşındı.
 
 ## Dependencies
 
@@ -48,11 +54,10 @@ Kasa, garson ve mutfak ekranlarında basılan her düğme, sayfa değişimi ve f
 
 ## Acceptance evidence
 
-1. PosTerminal'deki tüm düğmeler eşleme tablosunda anahtara sahiptir (statik tarama testi).
-2. Tıklama ek yükü gerçek kasa cihazında p95 5 ms altında.
-3. Telemetri kuyruğu dolunca sipariş kuyruğu yazımı etkilenmez.
-4. Ham tıklama tabloları `raw_` önekli ve kalıcı günlük tutmayan (UNLOGGED) olur; saatlik yedek dosyasında yer almadığı testle kanıtlanır; saklama kataloğuna 30 gün ile eklenir.
-5. Çıktılar `evidence/V1-RMD-541/` altındadır.
+1. Anahtar sırası: `data-telemetry-id`, yoksa ad tablosundan sabit anahtar, yoksa `auto:` anahtarı; görünen metin ve girilen değer hiçbir anahtara girmez. Statik tarama PosTerminal düğme sitelerini sayar ve anahtarsız olanları `evidence/V1-RMD-541/button-keys.txt` olarak raporlar.
+2. Telemetri kuyruğu dolunca sipariş kuyruğu yazımı etkilenmez (ayrı depolama anahtarı ve sınır testi).
+3. Ham tıklama tablosu `raw_` önekli ve kalıcı günlük tutmayan (UNLOGGED) olur; saatlik yedek dosyasında yer almadığı gerçek `pg_dump` ile testle kanıtlanır; saklama kataloğuna 30 gün ile eklenir.
+4. Çıktılar `evidence/V1-RMD-541/` altındadır.
 
 ## Handoff
 

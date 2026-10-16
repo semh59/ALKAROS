@@ -24,6 +24,7 @@
 ## In scope
 
 - Gerçek kasa cihazında ve Docker yığınında yük ölçümü; fırtına enjeksiyonu.
+- Tıklama etkileşim kaydının gerçek kasa cihazındaki ek yükü (V1-RMD-541'den taşındı).
 
 ## Out of scope
 
@@ -39,7 +40,8 @@
 
 1. İzleme açıkken sipariş onayı p95 süresi kapalıya göre en çok %10 yavaş.
 2. Saniyede 1000 olay fırtınasında ana havuz bağlantı kullanımı değişmez.
-3. Çıktılar `evidence/V1-RMD-556/` altındadır.
+3. Tıklama ek yükü gerçek kasa cihazında p95 5 ms altında.
+4. Çıktılar `evidence/V1-RMD-556/` altındadır.
 
 ## Handoff
 
