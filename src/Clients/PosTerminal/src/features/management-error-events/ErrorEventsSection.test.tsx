@@ -95,6 +95,19 @@ describe("error events section", () => {
     expect(document.body.textContent).toContain("Telegram bildirimi yapılandırılmamış");
   });
 
+  it.each([
+    "api.server_error_response", "background.job_missed", "backup.failed", "backup.restore_failed", "backup.rpo_exceeded", "backup.stale",
+    "browser.offline_queue_backlog", "db.n_plus_one", "db.pool_saturation", "db.slow_query", "db.slow_query_plan", "db.statement",
+    "integration.catalog_undelivered", "integration.external_call_failed", "integration.external_call_slow", "integration.provider_poll_failing",
+    "integration.qr_tunnel_down", "integration.store_status_undelivered", "kitchen.ticket_not_accepted", "payment.reconciliation_required",
+    "payment.unknown_outcome", "printer.delivery_unknown", "printer.job_failed", "printer.queue_stuck",
+  ])("category %s has a Turkish label", async (category) => {
+    const list = vi.fn().mockResolvedValue(page([{ ...item, category }]));
+    await render(<ErrorEventsSection capabilities={manager} client={fakeClient({ list })} />);
+    expect(document.body.textContent).not.toContain("Bilinmiyor");
+    expect(document.body.textContent).not.toContain(category);
+  });
+
   it("an unknown category shows Bilinmiyor, never the raw value", async () => {
     const list = vi.fn().mockResolvedValue(page([{ ...item, category: "zzz.new_kind" }]));
     await render(<ErrorEventsSection capabilities={manager} client={fakeClient({ list })} />);
