@@ -1,7 +1,7 @@
 # V1-RMD-573 - Dockerfile apk sürüm sabitlerini güncelleme
 
 - Task ID: V1-RMD-573
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -31,7 +31,7 @@
 
 ## Dependencies
 
-- None
+- V1-RMD-574
 
 ## Acceptance evidence
 
