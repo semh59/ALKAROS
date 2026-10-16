@@ -10,6 +10,7 @@ using ALKAROS.Host.Observability.ResourceProbes;
 using ALKAROS.Host.Observability.SecurityDetectors;
 using ALKAROS.Host.Observability.ServerDetectorsDeep;
 using ALKAROS.Host.Observability.TraceCorrelation;
+using ALKAROS.Observability.PerformanceBudgets;
 using ALKAROS.Observability.PerformanceMetrics;
 using ALKAROS.Host.Observability.ServerDetectors;
 using ALKAROS.Host.Observability.Wiring;
@@ -217,6 +218,29 @@ public static partial class DualScreenApplication
             return recorder;
         });
         builder.Services.AddSingleton(sp => new ActivityPerformanceFeeder(sp.GetRequiredService<PerformanceRecorder>()));
+        builder.Services.AddSingleton(sp =>
+        {
+            var monitoring = sp.GetRequiredService<MonitoringDataSource>().Inner;
+            var version = typeof(DualScreenApplication).Assembly
+                .GetCustomAttributes(typeof(System.Reflection.AssemblyInformationalVersionAttribute), false)
+                .OfType<System.Reflection.AssemblyInformationalVersionAttribute>().FirstOrDefault()?.InformationalVersion ?? "unknown";
+            DateTimeOffset? firstSeen;
+            try
+            {
+                firstSeen = new ReleaseRegistry(monitoring).RegisterAsync(version).GetAwaiter().GetResult();
+            }
+            catch (Npgsql.NpgsqlException)
+            {
+                firstSeen = null;
+            }
+
+            var runner = new PerformanceBudgetRunner(new PerformanceBudgetEvaluator(
+                monitoring, sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>(),
+                builder.Configuration.GetSection("Monitoring:PerformanceBudgets").Get<PerformanceBudgetOptions>(),
+                releaseFirstSeenAt: firstSeen));
+            runner.Start();
+            return runner;
+        });
         builder.Services.AddSingleton(sp => new PerformanceReader(sp.GetRequiredService<MonitoringDataSource>().Inner));
         builder.Services.AddErrorEventEndpoints();
         builder.Services.AddSingleton(sp => new BrowserErrorIngest(sp.GetRequiredService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>()));
@@ -632,6 +656,7 @@ public static partial class DualScreenApplication
         });
         app.UseTraceCorrelation();
         _ = app.Services.GetRequiredService<ActivityPerformanceFeeder>();
+        _ = app.Services.GetRequiredService<PerformanceBudgetRunner>();
         UseDualScreenErrorHandling(app);
 
         MapApi(app);

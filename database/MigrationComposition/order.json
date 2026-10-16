@@ -1629,6 +1629,15 @@
         "perf_minute_summaries"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "190",
+      "phase": "B",
+      "tables": [
+        "perf_budgets",
+        "perf_releases"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

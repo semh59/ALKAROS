@@ -1,0 +1,11 @@
+needs-only-one-minute: KILLED
+any-minute-enough: KILLED
+budget-ignored-explicit: KILLED
+min-samples-off: KILLED (after test added)
+ratio-off: KILLED
+baseline-threshold-off: KILLED
+current-threshold-off: KILLED
+release-window-ignored: KILLED
+no-resolve: KILLED
+release-moves: KILLED
+baseline-one-day: KILLED
