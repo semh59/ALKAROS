@@ -694,6 +694,7 @@ export const managementText = {
   },
   errors: {
     tab: "Hatalar",
+    action: "İşlem",
     heading: "Sistem hataları",
     detailHeading: "Son oluşumlar",
     filterLayer: "Katman",
@@ -721,6 +722,8 @@ export const managementText = {
   },
   journeys: {
     tab: "Kullanıcı yolculuğu",
+    bar: "Süre çubuğu",
+    action: "İşlem",
     glossary: "İstek: ekranın sunucuya yaptığı çağrı. Veritabanı: o çağrının okuduğu veya yazdığı kayıt işlemi. Olay: çağrının sonucunda tutulan denetim kaydı. Süreler sunucu saatine göre milisaniyedir.",
     tabRequests: "İstekler",
     tabActions: "Düğmeler",

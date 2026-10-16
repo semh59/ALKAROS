@@ -73,7 +73,7 @@ export function ErrorEventsSection({ capabilities, client }: ManagementSectionPr
         <table>
           <thead><tr>
             <th>{t.category}</th><th>{t.filterLayer}</th><th>{t.filterSeverity}</th><th>{t.filterStatus}</th>
-            <th>{t.count}</th><th>{t.lastSeen}</th><th>{t.terminal}</th><th />
+            <th>{t.count}</th><th>{t.lastSeen}</th><th>{t.terminal}</th><th>{t.action}</th>
           </tr></thead>
           <tbody>{data.items.map((item) => <tr key={item.fingerprint}>
             <td>{categoryLabel(item.category)}{item.synthetic ? ` (${t.test})` : ""}</td>

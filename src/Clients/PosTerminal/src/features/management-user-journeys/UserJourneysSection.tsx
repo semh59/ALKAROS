@@ -21,12 +21,12 @@ function Timeline({ api, traceId }: { api: UserJourneysClient; traceId: string }
         {!journey.requestCaptured && <p className="mjny__help">{t.requestNotCaptured}</p>}
         {journey.droppedSpans > 0 && <p className="mjny__help">{t.droppedSteps.replace("{0}", String(journey.droppedSpans))}</p>}
         <table>
-          <thead><tr><th>{t.step}</th><th>{t.what}</th><th>{t.startsAt}</th><th>{t.duration}</th><th /></tr></thead>
+          <thead><tr><th>{t.step}</th><th>{t.what}</th><th>{t.startsAt}</th><th>{t.duration}</th><th>{t.bar}</th></tr></thead>
           <tbody>{journey.steps.map((step, index) => <tr key={`${index}-${step.kind}`} className={step.failed ? "mjny__failed" : undefined}>
             <td>{stepKindLabel(step.kind)}</td><td>{step.name}</td>
             <td>{formatMilliseconds(step.offsetMilliseconds)}</td>
             <td>{step.failed ? `${formatMilliseconds(step.durationMilliseconds)} · ${t.failed}` : formatMilliseconds(step.durationMilliseconds)}</td>
-            <td><span className="mjny__bar" style={{ width: `${Math.max(1, (step.durationMilliseconds / total) * 100)}%` }} /></td>
+            <td aria-hidden="true"><span className="mjny__bar" style={{ width: `${Math.max(1, (step.durationMilliseconds / total) * 100)}%` }} /></td>
           </tr>)}</tbody>
         </table>
       </>;
@@ -76,7 +76,7 @@ function RequestsView({ api }: { api: UserJourneysClient }) {
     <p className="mjny__help">{t.requestsHelp}</p>
     <PanelView title={t.requestsHeading} loading={t.loading} failed={t.loadFailed} panel={panel} onRetry={reload}>
       {(rows) => rows.length === 0 ? <p className="mjny__empty">{t.noRequests}</p> : <table>
-        <thead><tr><th>{t.address}</th><th>{t.when}</th><th>{t.duration}</th><th>{t.steps}</th><th /></tr></thead>
+        <thead><tr><th>{t.address}</th><th>{t.when}</th><th>{t.duration}</th><th>{t.steps}</th><th>{t.action}</th></tr></thead>
         <tbody>{rows.map((row) => <tr key={row.traceId}>
           <td>{row.method} {row.route}</td><td>{formatWhen(row.startedAt)}</td>
           <td>{formatMilliseconds(row.durationMilliseconds)}</td><td>{row.spanCount}</td>

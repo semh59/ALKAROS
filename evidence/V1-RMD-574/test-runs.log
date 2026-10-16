@@ -1,0 +1,3 @@
+oxlint -c .oxlintrc.json --max-warnings=20 src: cikis kodu 0 (0 hata, 19 uyari; onceden 5 hata)
+tsc --noEmit: temiz
+PosTerminal vitest tamami: 74 dosya, 603/603 basarili

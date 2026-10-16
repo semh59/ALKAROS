@@ -69,7 +69,7 @@ export function Cashier() {
   const [reservationStationEnabled, setReservationStationEnabled] = useState(false);
   const [session, setSession] = useState<CashierSession>("checking");
   const sessionRef = useRef<CashierSession>("checking");
-  sessionRef.current = session;
+  useEffect(() => { sessionRef.current = session; }, [session]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   // V1-RMD-388 (Tur 2, T7): only set by the session-expired handler below,

@@ -1,0 +1,4 @@
+L1 empty th in error list -> lint exit 1
+L2 ref written during render -> lint exit 1
+L3 bar cell without hidden -> lint exit 1
+restored -> lint exit 0
