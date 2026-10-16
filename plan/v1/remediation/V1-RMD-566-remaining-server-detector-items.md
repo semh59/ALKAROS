@@ -1,7 +1,7 @@
 # V1-RMD-566 - Kalan sunucu dedektör kalemleri
 
 - Task ID: V1-RMD-566
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -20,6 +20,11 @@ Garson uygulamasının çevrimdışı kuyruk uzunluğu sunucuya bildirilir ve e�
 - `evidence/V1-RMD-566/**`
 - `src/Host/Observability/OfflineQueueReport/**`
 - `tests/Host/Observability/OfflineQueueReport/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Observability/ServerDetectorsDeep/** - yalnız sorgu planı bağlantısı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Observability/ServerDetectorsDeep/** - yalnız sorgu planı testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız servis ve uç nokta kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): ALKAROS.slnx - yalnız yeni test projesi girişi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ApiConventions/idempotency_allowlist.json - yalnız telemetri ve hata yönetimi uçlarının girişleri
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
