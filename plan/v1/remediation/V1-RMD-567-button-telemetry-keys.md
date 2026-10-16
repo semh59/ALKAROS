@@ -1,7 +1,7 @@
 # V1-RMD-567 - PosTerminal düğmelerine telemetri anahtarı
 
 - Task ID: V1-RMD-567
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
@@ -18,6 +18,56 @@ PosTerminal'deki her düğme sitesi `data-telemetry-id` taşır; etkileşim kayd
 
 - `plan/v1/remediation/V1-RMD-567-button-telemetry-keys.md`
 - `evidence/V1-RMD-567/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/authorization-decisions/AuthorizationDecisionsWorkspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/billing/RefundPanel.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/invoice-settings/SellerProfileCard.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-channel-report/ChannelReportSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-closing/ClosingSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-error-events/ErrorEventsSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-menus-recipe-cost/MenusSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-menus-recipe-cost/RecipeCostSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-order-invoices/OrderInvoicesSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-product-margin-report/ProductMarginSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-purchase-invoices/PurchaseInvoicesSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-purchasing-production/ProductionSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-purchasing-production/PurchasingSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-recipes/RecipesSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-security-system/DiagnosticBacklogPanels.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-security-system/MaintenanceBackupPanels.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-security-system/RecoveryPanel.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-security-system/SystemSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-settings-history/SettingsHistorySection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-staff-roles/StaffSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management-stock/StockSection.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/ManagementArea.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/management/panel.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-menu/OnlineMenuTab.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-operations/OnlineOperationsWorkspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-platform-credentials/OnlinePlatformCredentialsWorkspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-problems/OnlineProblemsTab.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/online-store-status/OnlineStoreStatusPanel.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/system-health/SystemHealthWorkspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/BusinessIdentitySettings.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/CustomerDisplayScreensaverSettings.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/NfcOrder.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/RelaySettings.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/ReservationStation.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/SecurityAdministration.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/TokenTerminalSettings.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/shell/ProductionShell.tsx - yalnız düğmelere data-telemetry-id özniteliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/interaction-telemetry/buttonKeys.test.ts - yalnız anahtarsız düğme sınırı sıfıra iner
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
