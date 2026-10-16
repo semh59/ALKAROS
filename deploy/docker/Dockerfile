@@ -90,7 +90,7 @@ COPY src/Clients/Cashier/wwwroot /out/app/cashier
 # ---------------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23 AS api
 RUN apk update \
-    && apk add --no-cache libcrypto3=3.5.9-r0 libssl3=3.5.9-r0 openssl=3.5.9-r0 postgresql-client ca-certificates curl \
+    && apk add --no-cache libcrypto3=3.5.9-r0 libssl3=3.5.9-r0 openssl=3.5.9-r0 postgresql-client tzdata ca-certificates curl \
     && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY --from=backend-build /out/api ./
