@@ -1,0 +1,3 @@
+docker compose -f compose.yaml -f compose.dev.yaml build api migrate connector -> cikis kodu 0 (Image alkaros-api / alkaros-migrate / alkaros-connector Built)
+docker compose -f compose.yaml -f compose.dev.yaml up -d --wait -> cikis kodu 0; api, postgres, connector Healthy
+Dogrulama (guncel kod calisiyor): observability.raw_ui_interactions.trace_id sutunu var (migrasyon 192 calisti); POST http://localhost:8090/api/v1/telemetry/offline-queue oturumsuz -> 401 (404 degil); bilinmeyen telemetri adresi -> 404

@@ -90,7 +90,7 @@ COPY src/Clients/Cashier/wwwroot /out/app/cashier
 # ---------------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23 AS api
 RUN apk update \
-    && apk add --no-cache libcrypto3=3.5.8-r0 libssl3=3.5.8-r0 openssl=3.5.8-r0 postgresql-client ca-certificates curl \
+    && apk add --no-cache libcrypto3=3.5.9-r0 libssl3=3.5.9-r0 openssl=3.5.9-r0 postgresql-client ca-certificates curl \
     && rm -rf /var/cache/apk/*
 WORKDIR /app
 COPY --from=backend-build /out/api ./
@@ -138,7 +138,7 @@ ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", \
 # ---------------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine@sha256:023a2daa7f8303c8915915ff68657492e0d99bfe2d095b2eb22c6f4c1e459b83 AS connector
 RUN apk update \
-    && apk add --no-cache libcrypto3=3.5.8-r0 libssl3=3.5.8-r0 openssl=3.5.8-r0 ca-certificates curl \
+    && apk add --no-cache libcrypto3=3.5.9-r0 libssl3=3.5.9-r0 openssl=3.5.9-r0 ca-certificates curl \
     && rm -rf /var/cache/apk/*
 # V12-QRT-001 LocalConnector: cloudflared is a statically-linked Go binary
 # (CGO_ENABLED=0 release build) — verified to run unmodified on Alpine/musl,
