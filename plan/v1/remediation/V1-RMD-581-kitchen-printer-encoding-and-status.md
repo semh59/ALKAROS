@@ -1,7 +1,7 @@
 # V1-RMD-581 - Mutfak yazıcısı: Türkçe karakter tablosu, ibare ve durum okuma
 
 - Task ID: V1-RMD-581
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned

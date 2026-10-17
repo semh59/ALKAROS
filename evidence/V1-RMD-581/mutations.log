@@ -1,0 +1,11 @@
+M1 Epson table 13->12: Başarısız! - Başarısız:     2, Başarılı:    36, Atlanan:     
+M2 Bixolon table 37->25: Başarısız! - Başarısız:     1, Başarılı:    37, Atlanan:     
+M3 Star command ESC t instead of ESC GS t: Başarısız! - Başarısız:     2, Başarılı:    36, Atlanan:     
+M4 Ascii no folding: Başarısız! - Başarısız:     1, Başarılı:    37, Atlanan:     
+M5 code page 857 -> utf8: Başarısız! - Başarısız:     4, Başarılı:    34, Atlanan:     
+M6 offline bit ignored: [xUnit.net 00:00:03.02]     ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPos
+M7 paper-end bit wrong: Başarısız! - Başarısız:     1, Başarılı:    37, Atlanan:     
+M8 cover bit wrong: Başarısız! - Başarısız:     1, Başarılı:    37, Atlanan:     
+M9 status never checked: [xUnit.net 00:00:00.47]     ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPos
+M10 error bit wrong: [xUnit.net 00:00:02.97]     ALKAROS.Kitchen.PrintQueue.Tests.TcpEscPos
+M11 notice removed: Başarısız! - Başarısız:     1, Başarılı:    37, Atlanan:     

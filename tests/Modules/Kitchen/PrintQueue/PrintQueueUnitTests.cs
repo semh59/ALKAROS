@@ -212,6 +212,27 @@ public sealed class PrintQueueUnitTests
     }
 
     [Fact]
+    public void TheKitchenTicketStatesThatItHasNoFiscalValue()
+    {
+        var item = new KitchenTicketItem(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Ayran", 1);
+        var ticket = new KitchenTicket(Guid.NewGuid(), Guid.NewGuid(), "KT-7", "Station1", [item]);
+
+        EscPosTicketFormatter.FormatToPrintableText(ticket).Should().Contain("MALİ DEĞERİ YOKTUR- FİŞ YERİNE GEÇMEZ");
+    }
+
+    [Fact]
+    public void EscPosFormatterSelectsTheTurkishTableOfTheProfileAndEncodesTurkishLettersInIt()
+    {
+        var item = new KitchenTicketItem(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Çiğ köfte", 1);
+        var ticket = new KitchenTicket(Guid.NewGuid(), Guid.NewGuid(), "KT-8", "Station1", [item]);
+
+        var bytes = EscPosTicketFormatter.FormatToEscPosBytes(ticket, profile: PrinterProfile.Star);
+
+        bytes.Take(6).Should().Equal(0x1B, 0x40, 0x1B, 0x1D, 0x74, 0x0C);
+        bytes.Should().ContainInOrder((byte)0x80, (byte)'i', (byte)0xA7, (byte)' ', (byte)'k', (byte)0x94, (byte)'f');
+    }
+
+    [Fact]
     public void EscPosFormatterGeneratesValidEscPosBytesWithCutCommand()
     {
         var item = new KitchenTicketItem(

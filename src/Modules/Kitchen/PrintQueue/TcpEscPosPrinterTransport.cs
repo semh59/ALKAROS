@@ -14,6 +14,15 @@ public sealed class TcpEscPosPrinterTransport : IPrinterTransport
 {
     private static readonly TimeSpan ConnectTimeout = TimeSpan.FromSeconds(5);
     private static readonly TimeSpan WriteTimeout = TimeSpan.FromSeconds(10);
+    private static readonly TimeSpan StatusTimeout = TimeSpan.FromMilliseconds(500);
+
+    private readonly PrinterProfile _profile;
+
+    public TcpEscPosPrinterTransport() : this(EscPosEncoding.FromEnvironment())
+    {
+    }
+
+    public TcpEscPosPrinterTransport(PrinterProfile profile) => _profile = profile;
 
     public async Task SendAsync(string ipAddress, int port, string payload, CancellationToken ct = default)
     {
@@ -50,7 +59,7 @@ public sealed class TcpEscPosPrinterTransport : IPrinterTransport
         // may have received and acted on some or all of the bytes before the
         // failure. This must not be auto-retried (see IPrinterTransport's own
         // doc comment).
-        var bytes = BuildEscPosPayload(payload);
+        var bytes = BuildEscPosPayload(payload, _profile);
         using var writeCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         writeCts.CancelAfter(WriteTimeout);
         try
@@ -58,6 +67,7 @@ public sealed class TcpEscPosPrinterTransport : IPrinterTransport
             var stream = client.GetStream();
             await stream.WriteAsync(bytes, writeCts.Token).ConfigureAwait(false);
             await stream.FlushAsync(writeCts.Token).ConfigureAwait(false);
+            await ThrowIfPrinterReportsAProblemAsync(stream, ipAddress, port, ct).ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (!ct.IsCancellationRequested)
         {
@@ -84,13 +94,52 @@ public sealed class TcpEscPosPrinterTransport : IPrinterTransport
     /// just operating on the stored text directly instead of re-formatting
     /// from the ticket.
     /// </summary>
-    private static byte[] BuildEscPosPayload(string payload)
+    private static byte[] BuildEscPosPayload(string payload, PrinterProfile profile)
     {
-        var textBytes = Encoding.UTF8.GetBytes(payload);
+        var textBytes = EscPosEncoding.Encode(payload, profile);
         using var ms = new MemoryStream(textBytes.Length + 16);
         ms.Write(EscPosTicketFormatter.InitializePrinter);
+        ms.Write(EscPosEncoding.SelectTable(profile));
         ms.Write(textBytes);
         ms.Write(EscPosTicketFormatter.CutPaperWithFeed);
         return ms.ToArray();
+    }
+
+    /// <summary>
+    /// Asks the printer for its real-time status after the data went out (DLE EOT 1: bit 3 = offline; DLE EOT 2: bit 2 =
+    /// cover open, bit 5 = paper end, bit 6 = error). A printer that does not answer is treated as before: nothing is known.
+    /// </summary>
+    private static async Task ThrowIfPrinterReportsAProblemAsync(NetworkStream stream, string ipAddress, int port, CancellationToken ct)
+    {
+        if (await QueryStatusAsync(stream, 1, ct).ConfigureAwait(false) is not { } printer || (printer & 0x08) == 0)
+            return;
+
+        var cause = await QueryStatusAsync(stream, 2, ct).ConfigureAwait(false) ?? 0;
+        var reason = (cause & 0x20) != 0 ? "out of paper"
+            : (cause & 0x04) != 0 ? "cover open"
+            : (cause & 0x40) != 0 ? "in an error state"
+            : "offline";
+        throw new PrinterTransmissionUncertainException(
+            $"Printer {ipAddress}:{port} reports it is {reason} after the ticket was sent; the ticket may print later, delivery is unconfirmed.");
+    }
+
+    private static async Task<byte?> QueryStatusAsync(NetworkStream stream, byte kind, CancellationToken ct)
+    {
+        using var statusCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+        statusCts.CancelAfter(StatusTimeout);
+        try
+        {
+            await stream.WriteAsync(new byte[] { 0x10, 0x04, kind }, statusCts.Token).ConfigureAwait(false);
+            var answer = new byte[1];
+            return await stream.ReadAsync(answer, statusCts.Token).ConfigureAwait(false) == 1 ? answer[0] : null;
+        }
+        catch (OperationCanceledException) when (!ct.IsCancellationRequested)
+        {
+            return null; // a printer without status support stays silent
+        }
+        catch (Exception ex) when (ex is IOException or SocketException)
+        {
+            return null; // the data already went out; a failing status read does not undo that
+        }
     }
 }

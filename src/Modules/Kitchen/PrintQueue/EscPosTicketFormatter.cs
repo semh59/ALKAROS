@@ -20,6 +20,9 @@ public static class EscPosTicketFormatter
     public static readonly byte[] BoldOff = [0x1B, 0x45, 0x00];                 // ESC E 0
     public static readonly byte[] CutPaperWithFeed = [0x1D, 0x56, 0x42, 0x03];   // GS V 'B' 3
 
+    /// <summary>The notice the fiscal rules require on a kitchen printout that has no fiscal value.</summary>
+    public const string NotFiscalNotice = "MALİ DEĞERİ YOKTUR- FİŞ YERİNE GEÇMEZ";
+
     private const int LineWidth = 42;
 
     public static string FormatToPrintableText(
@@ -106,6 +109,7 @@ public static class EscPosTicketFormatter
 
         sb.AppendLine(new string('-', LineWidth));
         sb.AppendLine(CenterText($"*** {ticket.Status.ToString().ToUpperInvariant()} ***", LineWidth));
+        sb.AppendLine(CenterText(NotFiscalNotice, LineWidth));
         sb.AppendLine(new string('=', LineWidth));
         sb.AppendLine();
 
@@ -116,14 +120,15 @@ public static class EscPosTicketFormatter
         KitchenTicket ticket,
         string? tableNumber = null,
         string? orderNumber = null,
-        DateTimeOffset? printTimestamp = null)
+        DateTimeOffset? printTimestamp = null,
+        PrinterProfile profile = PrinterProfile.Epson)
     {
         var text = FormatToPrintableText(ticket, tableNumber, orderNumber, printTimestamp);
-        var textBytes = Encoding.UTF8.GetBytes(text);
 
         using var ms = new MemoryStream();
         ms.Write(InitializePrinter);
-        ms.Write(textBytes);
+        ms.Write(EscPosEncoding.SelectTable(profile));
+        ms.Write(EscPosEncoding.Encode(text, profile));
         ms.Write(CutPaperWithFeed);
 
         return ms.ToArray();
