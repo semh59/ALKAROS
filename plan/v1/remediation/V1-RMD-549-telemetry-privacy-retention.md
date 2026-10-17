@@ -36,6 +36,7 @@
 ## Out of scope
 
 - Aydınlatma metni (karar kaydında açık madde).
+- Sağlık ölçümü, sağlık denetimi ve bildirim tablolarının saklama süreleri (V1-RMD-587).
 
 ## Dependencies
 
