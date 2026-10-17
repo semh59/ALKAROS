@@ -1,7 +1,7 @@
 # V1-RMD-583 - ASVS 5.0 bölüm haritası
 
 - Task ID: V1-RMD-583
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: documentation
 - Surface state: Planned
