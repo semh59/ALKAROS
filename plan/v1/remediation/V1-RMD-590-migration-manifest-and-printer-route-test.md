@@ -42,4 +42,4 @@ V1-RMD-589 yeni bir göç (193) ekledi; göç listesi doğrulayıcısının en b
 
 ## Handoff
 
-- None
+- V1-RMD-591
