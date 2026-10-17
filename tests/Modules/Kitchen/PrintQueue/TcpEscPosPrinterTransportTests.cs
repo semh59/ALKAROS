@@ -91,6 +91,14 @@ public sealed class TcpEscPosPrinterTransportTests
     }
 
     [Fact]
+    public async Task AProfileGivenWithTheCallWinsOverTheTransportDefault()
+    {
+        var received = await SendToFakePrinterAsync(PrinterProfile.Epson, Turkish, new Dictionary<byte, byte>(), PrinterProfile.Star);
+
+        received.Take(6).Should().Equal([0x1B, 0x40, 0x1B, 0x1D, 0x74, 12]);
+    }
+
+    [Fact]
     public async Task TheAsciiProfileSelectsNoTableAndFoldsTurkishLetters()
     {
         var received = await SendToFakePrinterAsync(PrinterProfile.Ascii, Turkish, new Dictionary<byte, byte>());
@@ -119,7 +127,8 @@ public sealed class TcpEscPosPrinterTransportTests
     }
 
     /// <summary>A printer stand-in: collects what it receives and answers each <c>DLE EOT n</c> with the scripted status byte.</summary>
-    private static async Task<byte[]> SendToFakePrinterAsync(PrinterProfile profile, string payload, Dictionary<byte, byte> statusAnswers)
+    private static async Task<byte[]> SendToFakePrinterAsync(
+        PrinterProfile profile, string payload, Dictionary<byte, byte> statusAnswers, PrinterProfile? callProfile = null)
     {
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
@@ -147,7 +156,7 @@ public sealed class TcpEscPosPrinterTransportTests
 
         try
         {
-            await new TcpEscPosPrinterTransport(profile).SendAsync(IPAddress.Loopback.ToString(), port, payload);
+            await new TcpEscPosPrinterTransport(profile).SendAsync(IPAddress.Loopback.ToString(), port, payload, callProfile);
         }
         finally
         {

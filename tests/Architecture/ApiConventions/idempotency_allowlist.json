@@ -537,6 +537,10 @@
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-KIT-005"
     },
+    "POST /api/v1/terminals/{terminalId:guid}/kitchen-operations/printers/{printerId:guid}": {
+      "reason": "Kimliği istemci üretir; aynı kimlikle tekrarlanan aynı istek aynı yanıtı döner, farklı değerler 409 verir.",
+      "task": "V1-RMD-589"
+    },
     "POST /api/v1/terminals/{terminalId:guid}/kitchen-operations/products/{productId:guid}/suspend": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-KIT-005"

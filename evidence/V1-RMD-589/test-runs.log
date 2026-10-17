@@ -1,0 +1,16 @@
+== tests/Host/Experience/KitchenOperations
+Başarılı!  - Başarısız:     0, Başarılı:    66, Atlanan:     0, Toplam:    66, Süre: 5 m 1 s - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+== tests/Modules/Kitchen/Routing
+Başarılı!  - Başarısız:     0, Başarılı:    24, Atlanan:     0, Toplam:    24, Süre: 3 s - ALKAROS.Kitchen.Routing.Tests.dll (net8.0)
+== tests/Modules/Kitchen/PrintQueue
+Başarılı!  - Başarısız:     0, Başarılı:    39, Atlanan:     0, Toplam:    39, Süre: 5 s - ALKAROS.Kitchen.PrintQueue.Tests.dll (net8.0)
+== tests/Modules/Kitchen/PhysicalPrintRecovery
+Başarılı!  - Başarısız:     0, Başarılı:    17, Atlanan:     0, Toplam:    17, Süre: 2 s - ALKAROS.Kitchen.PhysicalPrintRecovery.Tests.dll (net8.0)
+== tests/Architecture/ApiConventions
+Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 18 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+== tests/Host/MigrationComposition (Manifest) - V1-RMD-590 değişikliğiyle birlikte koşuldu
+Başarılı!  - Başarısız:     0, Başarılı:    16, Atlanan:     0, Toplam:    16, Süre: 154 ms - ALKAROS.Host.Tests.dll (net8.0)
+== PosTerminal (kitchen-operations, system-health, routes) hedefli: 80 test geçti (kitchen-operations) + routes/workspace.test.tsx 23 geçti
+tsc --noEmit: exit 0
+npm run lint: exit 0
+== PosTerminal tam paket: 665 testten 7-8'i Cashier.* dosyalarında zaman aşımıyla düşüyor; değişiklikler geri alınmış HEAD'de de aynı dosyalar düşüyor (649 testten 6 düştü) - önceden var olan kararsızlık, bu görevden değil

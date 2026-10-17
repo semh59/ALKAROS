@@ -33,6 +33,23 @@ describe("kitchen operations API client", () => {
     });
   });
 
+  it("creates a printer with a generated id and edits one by its own id", async () => {
+    const fetcher = vi.fn(async (_url: RequestInfo | URL, _init?: RequestInit) => new Response(JSON.stringify({ id: "p" }), { status: 200, headers: { "Content-Type": "application/json" } }));
+    const client = createKitchenOperationsClient("terminal-1", "hot-line", fetcher);
+    const input = { name: "Bar", stationId: "bar", ipAddress: "192.168.1.60", port: 9100, profile: "Star" as const, isActive: true };
+
+    await client.savePrinter(null, input);
+    await client.savePrinter("printer-7", input);
+
+    const [created, edited] = fetcher.mock.calls;
+    expect(String(created![0])).toMatch(/\/terminals\/terminal-1\/kitchen-operations\/printers\/[0-9a-f-]{36}$/);
+    expect(created![1]).toMatchObject({ method: "POST" });
+    expect(JSON.parse(String(created![1]!.body))).toEqual({ name: "Bar", stationId: "bar", ipAddress: "192.168.1.60", port: 9100, profile: "Star" });
+    expect(String(edited![0])).toMatch(/\/printers\/printer-7$/);
+    expect(edited![1]).toMatchObject({ method: "PUT" });
+    expect(JSON.parse(String(edited![1]!.body))).toEqual(input);
+  });
+
   it("loads every production surface with same-origin credentials and station scope", async () => {
     const fetcher = vi.fn(async (url: RequestInfo | URL, _init?: RequestInit) => {
       const path = String(url);

@@ -1,5 +1,6 @@
 namespace ALKAROS.Kitchen.Routing.Tests;
 
+using ALKAROS.Kitchen.PrintQueue;
 using ALKAROS.Kitchen.Routing;
 using ALKAROS.TestHelpers;
 using FluentAssertions;
@@ -55,7 +56,8 @@ public sealed class PostgresRoutingIntegrationTests : IAsyncLifetime
             "Station-Hot",
             "192.168.1.50",
             9100,
-            isActive: true);
+            isActive: true,
+            profile: PrinterProfile.Bixolon);
 
         await _printerRepo.SaveAsync(printer);
 
@@ -66,6 +68,7 @@ public sealed class PostgresRoutingIntegrationTests : IAsyncLifetime
         loaded.IpAddress.Should().Be("192.168.1.50");
         loaded.Port.Should().Be(9100);
         loaded.IsActive.Should().BeTrue();
+        loaded.Profile.Should().Be(PrinterProfile.Bixolon);
 
         // Update active state
         var updated = printer.SetActive(false);
@@ -73,6 +76,7 @@ public sealed class PostgresRoutingIntegrationTests : IAsyncLifetime
 
         var reloaded = await _printerRepo.GetByIdAsync(printer.Id);
         reloaded!.IsActive.Should().BeFalse();
+        reloaded.Profile.Should().Be(PrinterProfile.Bixolon);
 
         var activeList = await _printerRepo.GetActiveAsync();
         activeList.Should().NotContain(p => p.Id == printer.Id);

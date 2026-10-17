@@ -24,7 +24,7 @@ public sealed class TcpEscPosPrinterTransport : IPrinterTransport
 
     public TcpEscPosPrinterTransport(PrinterProfile profile) => _profile = profile;
 
-    public async Task SendAsync(string ipAddress, int port, string payload, CancellationToken ct = default)
+    public async Task SendAsync(string ipAddress, int port, string payload, PrinterProfile? profile = null, CancellationToken ct = default)
     {
         if (string.IsNullOrWhiteSpace(ipAddress))
             throw new PrinterUnreachableException("Printer has no IP address configured.");
@@ -59,7 +59,7 @@ public sealed class TcpEscPosPrinterTransport : IPrinterTransport
         // may have received and acted on some or all of the bytes before the
         // failure. This must not be auto-retried (see IPrinterTransport's own
         // doc comment).
-        var bytes = BuildEscPosPayload(payload, _profile);
+        var bytes = BuildEscPosPayload(payload, profile ?? _profile);
         using var writeCts = CancellationTokenSource.CreateLinkedTokenSource(ct);
         writeCts.CancelAfter(WriteTimeout);
         try

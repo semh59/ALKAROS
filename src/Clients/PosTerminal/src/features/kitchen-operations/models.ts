@@ -4,10 +4,11 @@ import {
   healthSnapshotStaleText,
   healthStatusLabels,
   itemStatusLabels,
+  printerProfileLabels,
   ticketStatusLabels,
 } from "../../strings";
 
-export { backupStatusLabels, healthSnapshotStaleText, healthStatusLabels, itemStatusLabels, ticketStatusLabels };
+export { backupStatusLabels, healthSnapshotStaleText, healthStatusLabels, itemStatusLabels, printerProfileLabels, ticketStatusLabels };
 
 export type KitchenWorkspaceState =
   | "loading"
@@ -74,6 +75,21 @@ export interface KitchenPrinter {
   isActive: boolean;
   createdAt: string;
   updatedAt: string | null;
+  ipAddress?: string | null;
+  port?: number | null;
+  /** "Epson" | "Bixolon" | "Star" | "Ascii"; null means the server default applies. */
+  profile?: string | null;
+}
+
+export type KitchenPrinterProfile = "Default" | "Epson" | "Bixolon" | "Star" | "Ascii";
+
+export interface KitchenPrinterInput {
+  name: string;
+  stationId: string;
+  ipAddress: string;
+  port: number;
+  profile: KitchenPrinterProfile;
+  isActive: boolean;
 }
 
 export interface KitchenPrinterRoute {
@@ -259,6 +275,7 @@ export interface KitchenWorkspaceProps {
   // whether kitchen-chef should hold it is a separate, undecided question.
   canViewReports: boolean;
   onRefresh: () => void | Promise<void>;
+  onSavePrinter?: (printerId: string | null, input: KitchenPrinterInput) => void | Promise<void>;
   onTransitionItem?: (ticket: KitchenTicket, item: KitchenTicketItem, targetState: KitchenTicketItem["status"]) => void | Promise<void>;
   // V1-KIT-009/V1-KDS-003: reverses an item's most recent transition within
   // its short undo window. Gated by canAdvance only, same as onTransitionItem.
@@ -278,6 +295,15 @@ export interface KitchenWorkspaceProps {
   onLoadPerformanceReport?: (from: string, to: string) => Promise<KitchenPerformanceReport>;
   errorMessage?: string;
   lastUpdated?: string;
+}
+
+/** Turkish text for a failed printer save; the server answers with a code and a generic message only. */
+export function printerErrorText(error: { status: number; code: string; message: string }): string {
+  if (error.code === "VALIDATION_FAILED") return "Girilen bilgiler geçerli değil: ağ adresi işletme ağındaki (192.168.x.x, 10.x.x.x, 172.16-31.x.x) bir adres olmalı, port 1-65535 arasında olmalı.";
+  if (error.code === "DUPLICATE_RESOURCE") return "Bu adda bir yazıcı zaten var.";
+  if (error.status === 403) return "Yazıcı eklemek veya düzenlemek için yetkiniz yok.";
+  if (error.status === 409) return "Bu yazıcı başka bir işlemle değiştirilmiş; ekranı yenileyip tekrar deneyin.";
+  return "Yazıcı kaydedilemedi.";
 }
 
 /** The snapshot job writes every 60 s; three missed rounds mean the job is no longer running. */

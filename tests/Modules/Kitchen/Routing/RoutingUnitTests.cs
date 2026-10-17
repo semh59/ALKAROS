@@ -1,5 +1,6 @@
 namespace ALKAROS.Kitchen.Routing.Tests;
 
+using ALKAROS.Kitchen.PrintQueue;
 using ALKAROS.Kitchen.Routing;
 using FluentAssertions;
 using Xunit;
@@ -13,6 +14,16 @@ public sealed class RoutingUnitTests
     private readonly Printer _printerDaily = new(Guid.NewGuid(), "DailyPrinter", "Station3", "192.168.1.103", 9100, isActive: true);
     private readonly Printer _printerCategory = new(Guid.NewGuid(), "CategoryPrinter", "Station4", "192.168.1.104", 9100, isActive: true);
     private readonly Printer _printerDefault = new(Guid.NewGuid(), "DefaultPrinter", "StationMain", "192.168.1.100", 9100, isActive: true);
+
+    [Fact]
+    public void APrinterWithoutAProfileUsesTheServerDefaultAndDeactivatingKeepsTheProfile()
+    {
+        _printerDefault.Profile.Should().BeNull();
+
+        var star = new Printer(Guid.NewGuid(), "Star", "Bar", "192.168.1.9", 9100, profile: PrinterProfile.Star);
+
+        star.SetActive(false).Profile.Should().Be(PrinterProfile.Star);
+    }
 
     [Fact]
     public void Rule1ItemOverridesProductCategoryAndDefault()

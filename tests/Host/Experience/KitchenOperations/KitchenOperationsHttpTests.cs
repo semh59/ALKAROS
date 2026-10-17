@@ -664,6 +664,137 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.False(deactivated.IsActive);
     }
 
+    [Fact]
+    public async Task APrinterCanBeCreatedWithItsConnectionSettingsAndProfileThenEditedAndRetriedSafely()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, [KitchenOperationsEndpoints.RoutingMutationPermission]);
+        var readOnlyCookie = await _database.SeedSessionAsync(terminalId, []);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var printerId = Guid.NewGuid();
+        var path = $"{Prefix(terminalId)}/printers/{printerId:D}";
+        var request = new CreatePrinterV1("Bar yazicisi", "bar", "192.168.1.50", 9100, "Bixolon");
+
+        using var denied = await client.SendAsync(JsonRequest(HttpMethod.Post, path, readOnlyCookie, request));
+        Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+
+        var created = await PostAsync<PrinterV1>(client, path, cookie, request);
+        Assert.Equal(("192.168.1.50", 9100, "Bixolon", true), (created.IpAddress, created.Port, created.Profile, created.IsActive));
+        var listed = Assert.Single(await GetAsync<PrinterV1[]>(client, Prefix(terminalId) + "/printers", cookie), p => p.Id == printerId);
+        Assert.Equal("Bixolon", listed.Profile);
+
+        var replay = await PostAsync<PrinterV1>(client, path, cookie, request);
+        Assert.Equal((created.Id, created.IpAddress, created.Port, created.Profile), (replay.Id, replay.IpAddress, replay.Port, replay.Profile));
+        Assert.Equal(1, await _database.ScalarAsync<long>($"SELECT count(*) FROM kitchen.printers WHERE id = '{printerId:D}';"));
+        foreach (var different in new[]
+        {
+            request with { Port = 9101 }, request with { Name = "Baska ad" }, request with { StationId = "baska" },
+            request with { IpAddress = "192.168.1.51" }, request with { Profile = "Star" }, request with { Profile = null },
+        })
+        {
+            using var conflict = await client.SendAsync(JsonRequest(HttpMethod.Post, path, cookie, different));
+            Assert.Equal(HttpStatusCode.Conflict, conflict.StatusCode);
+        }
+
+        var moved = await PutAsync<PrinterV1>(client, path, cookie, new UpdatePrinterV1("Bar yazicisi", "bar", true, "10.0.0.7", 9200, "Star"));
+        Assert.Equal(("10.0.0.7", 9200, "Star"), (moved.IpAddress, moved.Port, moved.Profile));
+        var renamed = await PutAsync<PrinterV1>(client, path, cookie, new UpdatePrinterV1("Bar 2", "bar", false));
+        Assert.Equal(("10.0.0.7", 9200, "Star", false), (renamed.IpAddress, renamed.Port, renamed.Profile, renamed.IsActive));
+        var cleared = await PutAsync<PrinterV1>(client, path, cookie, new UpdatePrinterV1("Bar 2", "bar", false, Profile: "Default"));
+        Assert.Null(cleared.Profile);
+        Assert.Equal(1, await _database.ScalarAsync<long>($"SELECT count(*) FROM kitchen.printers WHERE id = '{printerId:D}' AND profile IS NULL;"));
+    }
+
+    [Theory]
+    [InlineData("10.0.0.1")]
+    [InlineData("10.255.255.254")]
+    [InlineData("172.16.0.5")]
+    [InlineData("172.31.255.254")]
+    [InlineData("192.168.0.1")]
+    [InlineData("192.168.255.254")]
+    public async Task EveryPrivateNetworkRangeIsAcceptedAsAPrinterAddress(string ipAddress)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, [KitchenOperationsEndpoints.RoutingMutationPermission]);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var created = await PostAsync<PrinterV1>(
+            client, $"{Prefix(terminalId)}/printers/{Guid.NewGuid():D}", cookie, new CreatePrinterV1("Test " + ipAddress, "bar", ipAddress, 65535));
+
+        Assert.Equal((ipAddress, 65535), (created.IpAddress, created.Port));
+    }
+
+    [Theory]
+    [InlineData("8.8.8.8", 9100, "Epson")]
+    [InlineData("11.0.0.1", 9100, "Epson")]
+    [InlineData("9.255.255.255", 9100, "Epson")]
+    [InlineData("172.15.255.255", 9100, "Epson")]
+    [InlineData("192.167.1.1", 9100, "Epson")]
+    [InlineData("192.169.1.1", 9100, "Epson")]
+    [InlineData("1.2.3.4.5", 9100, "Epson")]
+    [InlineData("193.168.1.1", 9100, "Epson")]
+    [InlineData("200.168.0.1", 9100, "Epson")]
+    [InlineData("192.168.1.50", -1, "Epson")]
+    [InlineData("192.168.1.50", 65536, "Epson")]
+    [InlineData("127.0.0.1", 9100, "Epson")]
+    [InlineData("169.254.169.254", 9100, "Epson")]
+    [InlineData("172.32.0.1", 9100, "Epson")]
+    [InlineData("printer.local", 9100, "Epson")]
+    [InlineData("10.1", 9100, "Epson")]
+    [InlineData("::1", 9100, "Epson")]
+    [InlineData("", 9100, "Epson")]
+    [InlineData("192.168.1.50", 0, "Epson")]
+    [InlineData("192.168.1.50", 70000, "Epson")]
+    [InlineData("192.168.1.50", 9100, "Zebra")]
+    [InlineData("192.168.1.50", 9100, "epson")]
+    public async Task APrinterWithAnAddressPortOrProfileThatCannotBeRightIsRejected(string ipAddress, int port, string profile)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, [KitchenOperationsEndpoints.RoutingMutationPermission]);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var printerId = Guid.NewGuid();
+
+        using var response = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"{Prefix(terminalId)}/printers/{printerId:D}", cookie,
+            new CreatePrinterV1("Test", "bar", ipAddress, port, profile)));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(0, await _database.ScalarAsync<long>($"SELECT count(*) FROM kitchen.printers WHERE id = '{printerId:D}';"));
+    }
+
+    [Fact]
+    public async Task AReprintIsSentWithTheTurkishTableOfThePrintersOwnProfile()
+    {
+        using var listener = new TcpListener(IPAddress.Loopback, 0);
+        listener.Start();
+        var port = ((IPEndPoint)listener.LocalEndpoint).Port;
+        var received = new System.Collections.Concurrent.ConcurrentBag<byte[]>();
+        using var acceptCts = new CancellationTokenSource();
+        var acceptLoop = AcceptAllUntilCancelledAsync(listener, received, acceptCts.Token);
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, [KitchenOperationsEndpoints.ReprintPermission]);
+        var seed = await _database.SeedKitchenGraphAsync(IPAddress.Loopback.ToString(), port);
+        await _database.ExecuteAsync($"UPDATE kitchen.printers SET profile = 'Star' WHERE id = '{seed.PrinterId:D}';");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        await PostAsync<PhysicalPrintDeliveryV1>(
+            client, $"{Prefix(terminalId)}/deliveries/{seed.DeliveryId:D}/reprint-approval", cookie,
+            new ReprintDecisionV1("Station checked; original ticket was not printed."));
+        // The background dispatcher also sends the seeded pending job to this printer; both connections must carry the table.
+        for (var waited = 0; received.Count < 2 && waited < 100; waited++)
+            await Task.Delay(100);
+        acceptCts.Cancel();
+        await Task.WhenAny(acceptLoop);
+
+        byte[] starTable = [0x1B, 0x1D, 0x74, 12];
+        Assert.True(received.Count >= 2, $"expected the dispatch and the reprint connection, got {received.Count}");
+        Assert.All(received, bytes => Assert.True(bytes.AsSpan().IndexOf(starTable) >= 0));
+    }
+
     /// <summary>
     /// V1-KIT-008: suspending a product that was still on active sale
     /// (IsAvailable = true) is this task's "plan aykırı" rule, and must

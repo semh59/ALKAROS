@@ -23,9 +23,9 @@ public interface IPrinterTransport
     /// <summary>
     /// Sends <paramref name="payload"/> (plain formatted ticket text — ESC/POS
     /// control bytes are added by the transport itself) to the printer at
-    /// <paramref name="ipAddress"/>:<paramref name="port"/>.
+    /// <paramref name="ipAddress"/>:<paramref name="port"/>. A null <paramref name="profile"/> uses the transport's default.
     /// </summary>
-    Task SendAsync(string ipAddress, int port, string payload, CancellationToken ct = default);
+    Task SendAsync(string ipAddress, int port, string payload, PrinterProfile? profile = null, CancellationToken ct = default);
 }
 
 /// <summary>

@@ -1,7 +1,7 @@
 # V1-RMD-589 - Yazıcı ekleme, bağlantı ayarları ve yazıcı başına model profili
 
 - Task ID: V1-RMD-589
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: feature
 - Surface state: Planned

@@ -1,3 +1,5 @@
+using System.Net;
+using System.Net.Sockets;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Host.Experience.WaiterNotifications;
@@ -347,13 +349,64 @@ public sealed class KitchenOperationsStore
             printerId,
             RequireText(request.Name, 200, nameof(request.Name)),
             RequireText(request.StationId, 100, nameof(request.StationId)),
-            current.IpAddress,
-            current.Port,
+            request.IpAddress is null ? current.IpAddress : RequirePrivateAddress(request.IpAddress),
+            request.Port is null ? current.Port : RequirePort(request.Port.Value),
             request.IsActive,
             current.CreatedAt,
-            DateTimeOffset.UtcNow);
+            DateTimeOffset.UtcNow,
+            request.Profile is null ? current.Profile : ParseProfile(request.Profile));
         await _printers.SaveAsync(updated, cancellationToken);
         return ToDto(updated);
+    }
+
+    public async Task<PrinterV1> CreatePrinterAsync(
+        Guid printerId,
+        CreatePrinterV1 request,
+        CancellationToken cancellationToken)
+    {
+        EnsureId(printerId, nameof(printerId));
+        ArgumentNullException.ThrowIfNull(request);
+        var name = RequireText(request.Name, 200, nameof(request.Name));
+        var stationId = RequireText(request.StationId, 100, nameof(request.StationId));
+        var ipAddress = RequirePrivateAddress(request.IpAddress);
+        var port = RequirePort(request.Port);
+        var profile = ParseProfile(request.Profile);
+        if (await _printers.GetByIdAsync(printerId, cancellationToken) is { } existing)
+        {
+            // The id is client generated, so a retry after a lost response repeats the same request and must get the same answer.
+            return existing.Name == name && existing.StationId == stationId && existing.IpAddress == ipAddress
+                && existing.Port == port && existing.Profile == profile
+                ? ToDto(existing)
+                : throw new KitchenOperationsConcurrencyException("Printer already exists with different values.");
+        }
+
+        var created = new Printer(printerId, name, stationId, ipAddress, port, isActive: true, profile: profile);
+        await _printers.SaveAsync(created, cancellationToken);
+        return ToDto(created);
+    }
+
+    /// <summary>Printers sit on the restaurant LAN; a public, loopback or named address is a mistake (or an attempt to reach another service).</summary>
+    private static string RequirePrivateAddress(string? ipAddress)
+    {
+        var text = RequireText(ipAddress, 45, nameof(ipAddress));
+        if (text.Count(c => c == '.') != 3 || !IPAddress.TryParse(text, out var address) || address.AddressFamily != AddressFamily.InterNetwork)
+            throw new ArgumentException("IpAddress must be a dotted IPv4 address.", nameof(ipAddress));
+        var b = address.GetAddressBytes();
+        if (!(b[0] == 10 || (b[0] == 172 && b[1] is >= 16 and <= 31) || (b[0] == 192 && b[1] == 168)))
+            throw new ArgumentException("IpAddress must be a private network address.", nameof(ipAddress));
+        return address.ToString();
+    }
+
+    private static int RequirePort(int port) =>
+        port is >= 1 and <= 65535 ? port : throw new ArgumentException("Port must be between 1 and 65535.", nameof(port));
+
+    private static PrinterProfile? ParseProfile(string? profileName)
+    {
+        if (string.IsNullOrWhiteSpace(profileName) || profileName == "Default")
+            return null;
+        return Enum.TryParse<PrinterProfile>(profileName, ignoreCase: false, out var profile) && Enum.IsDefined(profile)
+            ? profile
+            : throw new ArgumentException("Profile is not a known printer family.", nameof(profileName));
     }
 
     public async Task<IReadOnlyList<PrinterRouteV1>> GetRoutesAsync(CancellationToken cancellationToken)
@@ -483,7 +536,7 @@ public sealed class KitchenOperationsStore
             async payload =>
             {
                 await _printerTransport.SendAsync(
-                    printer.IpAddress ?? string.Empty, printer.Port ?? 0, payload, cancellationToken);
+                    printer.IpAddress ?? string.Empty, printer.Port ?? 0, payload, printer.Profile, cancellationToken);
                 return true;
             },
             cancellationToken);
@@ -867,7 +920,8 @@ public sealed class KitchenOperationsStore
             value.IsHeld);
 
     private static PrinterV1 ToDto(Printer value)
-        => new(value.Id, value.Name, value.StationId, value.IsActive, value.CreatedAt, value.UpdatedAt);
+        => new(value.Id, value.Name, value.StationId, value.IsActive, value.CreatedAt, value.UpdatedAt,
+            value.IpAddress, value.Port, value.Profile?.ToString());
 
     private static PrinterRouteV1 ToDto(PrinterRoute value)
         => new(value.Id, value.RouteLevel.ToString(), value.PrinterId, value.ItemId, value.ProductId,

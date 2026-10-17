@@ -483,6 +483,97 @@ describe("kitchen operations workspace", () => {
     expect(document.body.textContent).toContain("Rota kaydedilemedi.");
   });
 
+  const withAddress: KitchenData = { ...data, printers: [{ ...data.printers[0]!, ipAddress: "192.168.1.50", port: 9100, profile: "Bixolon" }] };
+  const button = (text: string) => [...document.querySelectorAll("button")].find((candidate) => candidate.textContent?.trim() === text)!;
+  const field = (label: string) => [...document.querySelectorAll<HTMLLabelElement>(".kitchen-route-form[aria-label] label")].find((candidate) => candidate.textContent?.startsWith(label))!.querySelector("input, select") as HTMLInputElement;
+  async function submitPrinterForm() {
+    await act(async () => { document.querySelector<HTMLFormElement>(".kitchen-route-form[aria-label]")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })); });
+  }
+
+  it("lists each printer with its address and brand, or says the address is missing", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: withAddress })} />);
+    expect(document.body.textContent).toContain("192.168.1.50:9100");
+    expect(document.body.textContent).toContain("Bixolon");
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    expect(document.body.textContent).toContain("adres girilmemiş");
+  });
+
+  it("adds a printer from the form with the standard port and the default brand preselected", async () => {
+    const onSavePrinter = vi.fn().mockResolvedValue(undefined);
+    await render(<KitchenOperationsWorkspace {...baseProps({ onSavePrinter })} />);
+    await click(button("Yazıcı ekle"));
+    expect(field("Port").value).toBe("9100");
+    expect(field("Yazıcı markası").value).toBe("Default");
+    await fill(field("Yazıcı adı"), "Bar yazıcısı");
+    await fill(field("İstasyon"), "bar");
+    await fill(field("Ağ adresi"), "192.168.1.60");
+    await act(async () => {
+      const select = field("Yazıcı markası") as unknown as HTMLSelectElement;
+      Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")!.set!.call(select, "Star");
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    await submitPrinterForm();
+    expect(onSavePrinter).toHaveBeenCalledWith(null, { name: "Bar yazıcısı", stationId: "bar", ipAddress: "192.168.1.60", port: 9100, profile: "Star", isActive: true });
+    expect(document.body.textContent).toContain("Yazıcı kaydedildi.");
+    expect(document.querySelector(".kitchen-route-form[aria-label]")).toBeNull();
+  });
+
+  it("edits an existing printer with its current values filled in", async () => {
+    const onSavePrinter = vi.fn().mockResolvedValue(undefined);
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: withAddress, onSavePrinter })} />);
+    await click(button("Düzenle"));
+    expect(field("Yazıcı adı").value).toBe("Mutfak yazıcı");
+    expect(field("Ağ adresi").value).toBe("192.168.1.50");
+    expect(field("Yazıcı markası").value).toBe("Bixolon");
+    await fill(field("Ağ adresi"), "192.168.1.51");
+    await submitPrinterForm();
+    expect(onSavePrinter).toHaveBeenCalledWith("printer-1", { name: "Mutfak yazıcı", stationId: "hot-line", ipAddress: "192.168.1.51", port: 9100, profile: "Bixolon", isActive: true });
+  });
+
+  it("explains a rejected address in Turkish and keeps the form open", async () => {
+    const onSavePrinter = vi.fn().mockRejectedValue(new KitchenOperationsApiError(400, "VALIDATION_FAILED", "İstek doğrulanamadı."));
+    await render(<KitchenOperationsWorkspace {...baseProps({ onSavePrinter })} />);
+    await click(button("Yazıcı ekle"));
+    await fill(field("Yazıcı adı"), "Bar");
+    await fill(field("İstasyon"), "bar");
+    await fill(field("Ağ adresi"), "8.8.8.8");
+    await submitPrinterForm();
+    expect(document.body.textContent).toContain("ağ adresi işletme ağındaki");
+    expect(document.querySelector(".kitchen-route-form[aria-label]")).not.toBeNull();
+    expect(button("Kaydet").hasAttribute("disabled")).toBe(false);
+  });
+
+  it("cannot save a printer without a name, station and address, and can be cancelled", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ onSavePrinter: vi.fn() })} />);
+    await click(button("Yazıcı ekle"));
+    expect(button("Kaydet").hasAttribute("disabled")).toBe(true);
+    await click(button("Vazgeç"));
+    expect(document.querySelector(".kitchen-route-form[aria-label]")).toBeNull();
+  });
+
+  it("enables saving only while the name, station and address are all filled in", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ onSavePrinter: vi.fn() })} />);
+    await click(button("Yazıcı ekle"));
+    await fill(field("Yazıcı adı"), "Bar");
+    expect(button("Kaydet").hasAttribute("disabled")).toBe(true);
+    await fill(field("İstasyon"), "bar");
+    expect(button("Kaydet").hasAttribute("disabled")).toBe(true);
+    await fill(field("Ağ adresi"), "192.168.1.60");
+    expect(button("Kaydet").hasAttribute("disabled")).toBe(false);
+    await fill(field("Yazıcı adı"), "  ");
+    expect(button("Kaydet").hasAttribute("disabled")).toBe(true);
+    await fill(field("Yazıcı adı"), "Bar");
+    await fill(field("İstasyon"), " ");
+    expect(button("Kaydet").hasAttribute("disabled")).toBe(true);
+  });
+
+  it("hides the printer buttons without routing permission or without a save handler", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps({ canManageRouting: false, onSavePrinter: vi.fn() })} />);
+    expect([...document.querySelectorAll("button")].some((candidate) => candidate.textContent === "Yazıcı ekle" || candidate.textContent === "Düzenle")).toBe(false);
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    expect([...document.querySelectorAll("button")].some((candidate) => candidate.textContent === "Yazıcı ekle")).toBe(false);
+  });
+
   it("shows the Ürün Tükendi Bildir button locked for a kitchen-staff session and enabled for the chef", async () => {
     const onSuspendProductAvailability = vi.fn();
     await render(<KitchenOperationsWorkspace {...baseProps({ canSuspendAvailability: false, onSuspendProductAvailability })} />);

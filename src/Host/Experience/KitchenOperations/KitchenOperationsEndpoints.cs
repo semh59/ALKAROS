@@ -257,6 +257,20 @@ public static class KitchenOperationsEndpoints
             return Results.Ok(await store.GetPrintersAsync(cancellationToken));
         });
 
+        group.MapPost("/printers/{printerId:guid}", async (
+            Guid terminalId,
+            Guid printerId,
+            CreatePrinterV1 request,
+            IKitchenOperationsSessionAuthorizer authorizer,
+            KitchenOperationsStore store,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            await authorizer.RequirePermissionAsync(
+                context, terminalId, RoutingMutationPermission, cancellationToken);
+            return Results.Ok(await store.CreatePrinterAsync(printerId, request, cancellationToken));
+        });
+
         group.MapPut("/printers/{printerId:guid}", async (
             Guid terminalId,
             Guid printerId,

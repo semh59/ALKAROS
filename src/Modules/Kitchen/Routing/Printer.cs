@@ -1,5 +1,7 @@
 namespace ALKAROS.Kitchen.Routing;
 
+using ALKAROS.Kitchen.PrintQueue;
+
 /// <summary>
 /// Domain entity representing a kitchen station / physical printer (kitchen.printers).
 /// </summary>
@@ -13,7 +15,8 @@ public sealed class Printer
         int? port = null,
         bool isActive = true,
         DateTimeOffset? createdAt = null,
-        DateTimeOffset? updatedAt = null)
+        DateTimeOffset? updatedAt = null,
+        PrinterProfile? profile = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Printer ID cannot be empty.", nameof(id));
@@ -32,6 +35,7 @@ public sealed class Printer
         IsActive = isActive;
         CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
         UpdatedAt = updatedAt;
+        Profile = profile;
     }
 
     public Guid Id { get; }
@@ -39,6 +43,9 @@ public sealed class Printer
     public string StationId { get; }
     public string? IpAddress { get; }
     public int? Port { get; }
+
+    /// <summary>The printer family; null means the environment default applies.</summary>
+    public PrinterProfile? Profile { get; }
     public bool IsActive { get; private set; }
     public DateTimeOffset CreatedAt { get; }
     public DateTimeOffset? UpdatedAt { get; private set; }
@@ -53,6 +60,7 @@ public sealed class Printer
             Port,
             isActive: active,
             createdAt: CreatedAt,
-            updatedAt: timestamp ?? DateTimeOffset.UtcNow);
+            updatedAt: timestamp ?? DateTimeOffset.UtcNow,
+            profile: Profile);
     }
 }

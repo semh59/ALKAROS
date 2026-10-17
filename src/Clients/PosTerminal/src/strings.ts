@@ -1021,6 +1021,14 @@ export const healthStatusLabels: Record<KitchenHealthSnapshot["databaseStatus"],
   Unhealthy: "Sorunlu",
 };
 
+export const printerProfileLabels = {
+  Default: "Varsayılan (sunucu ayarı)",
+  Epson: "Epson",
+  Bixolon: "Bixolon",
+  Star: "Star",
+  Ascii: "Türkçe karakter basamayan eski yazıcı (ASCII)",
+} as const;
+
 export const healthSnapshotStaleText = {
   title: "Sağlık ölçümü eski",
   unreadable: "Son ölçümün zamanı okunamadı; gösterilen değerlere güvenmeyin.",

@@ -80,9 +80,15 @@ public sealed record PrinterV1(
     string StationId,
     bool IsActive,
     DateTimeOffset CreatedAt,
-    DateTimeOffset? UpdatedAt);
+    DateTimeOffset? UpdatedAt,
+    string? IpAddress = null,
+    int? Port = null,
+    string? Profile = null);
 
-public sealed record UpdatePrinterV1(string Name, string StationId, bool IsActive);
+/// <summary>Null address, port or profile keeps the current value; the profile "Default" clears it back to the environment default.</summary>
+public sealed record UpdatePrinterV1(string Name, string StationId, bool IsActive, string? IpAddress = null, int? Port = null, string? Profile = null);
+
+public sealed record CreatePrinterV1(string Name, string StationId, string IpAddress, int Port, string? Profile = null);
 
 public sealed record PrinterRouteV1(
     Guid Id,

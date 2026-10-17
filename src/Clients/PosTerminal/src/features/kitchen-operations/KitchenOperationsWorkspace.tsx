@@ -11,10 +11,15 @@ import {
   type KitchenBackup,
   type KitchenHealthSnapshot,
   type KitchenPerformanceReport,
+  type KitchenPrinter,
+  type KitchenPrinterInput,
+  type KitchenPrinterProfile,
   type KitchenTicket,
   type KitchenPrintJob,
   type KitchenTicketItem,
   type KitchenUnknownDelivery,
+  printerErrorText,
+  printerProfileLabels,
   printJobStatusLabels,
   type KitchenWorkspaceProps,
 } from "./models";
@@ -143,6 +148,7 @@ export function KitchenOperationsWorkspace({
   onApproveReprint,
   onRejectReprint,
   onCreateCategoryRoute,
+  onSavePrinter,
   onSuspendProductAvailability,
   onLoadPerformanceReport,
   errorMessage: suppliedError,
@@ -516,6 +522,7 @@ export function KitchenOperationsWorkspace({
           categories={data.categories}
           canManageRouting={canManageRouting}
           onCreateCategoryRoute={onCreateCategoryRoute}
+          onSavePrinter={onSavePrinter}
         />
       </aside>
     </div>
@@ -816,12 +823,14 @@ function PrinterPanel({
   categories,
   canManageRouting,
   onCreateCategoryRoute,
+  onSavePrinter,
 }: {
   printers: readonly KitchenWorkspaceProps["data"]["printers"][number][];
   routes: readonly KitchenWorkspaceProps["data"]["routes"][number][];
   categories: readonly KitchenWorkspaceProps["data"]["categories"][number][];
   canManageRouting: boolean;
   onCreateCategoryRoute?: KitchenWorkspaceProps["onCreateCategoryRoute"];
+  onSavePrinter?: KitchenWorkspaceProps["onSavePrinter"];
 }) {
   const categoryName = (id: string | null) => categories.find((category) => category.id === id)?.name ?? id;
   const categoryRoutes = routes.filter((route) => route.routeLevel === "Category" && route.isActive);
@@ -835,6 +844,44 @@ function PrinterPanel({
   const [selectedPrinterId, setSelectedPrinterId] = useState("");
   const [routeBusy, setRouteBusy] = useState(false);
   const [routeFeedback, setRouteFeedback] = useState<Feedback>(null);
+  const [printerForm, setPrinterForm] = useState<{ id: string | null; input: KitchenPrinterInput } | null>(null);
+  const [printerBusy, setPrinterBusy] = useState(false);
+  const [printerFeedback, setPrinterFeedback] = useState<Feedback>(null);
+
+  function openPrinterForm(printer: KitchenPrinter | null) {
+    setPrinterFeedback(null);
+    setPrinterForm({
+      id: printer?.id ?? null,
+      input: {
+        name: printer?.name ?? "",
+        stationId: printer?.stationId ?? "",
+        ipAddress: printer?.ipAddress ?? "",
+        port: printer?.port ?? 9100,
+        profile: (printer?.profile as KitchenPrinterProfile | null | undefined) ?? "Default",
+        isActive: printer?.isActive ?? true,
+      },
+    });
+  }
+
+  function changePrinterForm(change: Partial<KitchenPrinterInput>) {
+    setPrinterForm((current) => current && { ...current, input: { ...current.input, ...change } });
+  }
+
+  async function submitPrinter(event: FormEvent) {
+    event.preventDefault();
+    if (!onSavePrinter || !printerForm) return;
+    setPrinterBusy(true);
+    setPrinterFeedback(null);
+    try {
+      await onSavePrinter(printerForm.id, printerForm.input);
+      setPrinterForm(null);
+      setPrinterFeedback({ tone: "success", message: "Yazıcı kaydedildi." });
+    } catch (error) {
+      setPrinterFeedback({ tone: "error", message: error instanceof KitchenOperationsApiError ? printerErrorText(error) : "Yazıcı kaydedilemedi." });
+    } finally {
+      setPrinterBusy(false);
+    }
+  }
 
   async function submitCategoryRoute(event: FormEvent) {
     event.preventDefault();
@@ -855,7 +902,36 @@ function PrinterPanel({
 
   return <section className="kitchen-panel" aria-labelledby="printer-heading">
     <header><div><span className="kitchen-panel__eyebrow">DONANIM</span><h3 id="printer-heading">Yazıcı rotaları</h3></div><span>{printers.filter((printer) => printer.isActive).length}/{printers.length} aktif</span></header>
-    {printers.length === 0 ? <p className="kitchen-panel__muted">Yapılandırılmış yazıcı yok.</p> : <ul className="kitchen-printer-list">{printers.map((printer) => <li key={printer.id}><span className={`kitchen-printer-dot ${printer.isActive ? "is-active" : ""}`} /><div><strong>{printer.name}</strong><span>{printer.stationId} · {routes.filter((route) => route.printerId === printer.id && route.isActive).length} aktif rota</span></div></li>)}</ul>}
+    {printers.length === 0 ? <p className="kitchen-panel__muted">Yapılandırılmış yazıcı yok.</p> : <ul className="kitchen-printer-list">{printers.map((printer) => <li key={printer.id}><span className={`kitchen-printer-dot ${printer.isActive ? "is-active" : ""}`} /><div><strong>{printer.name}</strong><span>{printer.stationId} · {routes.filter((route) => route.printerId === printer.id && route.isActive).length} aktif rota{printer.ipAddress ? ` · ${printer.ipAddress}:${printer.port ?? ""}` : " · adres girilmemiş"}{printer.profile ? ` · ${printerProfileLabels[printer.profile as KitchenPrinterProfile] ?? printer.profile}` : ""}</span></div>{canManageRouting && onSavePrinter && <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.26" type="button" variant="secondary" onClick={() => openPrinterForm(printer)}>Düzenle</Button>}</li>)}</ul>}
+
+    {printerFeedback && !printerForm && <p className={`kitchen-route-form__feedback kitchen-route-form__feedback--${printerFeedback.tone}`}>{printerFeedback.message}</p>}
+    {canManageRouting && onSavePrinter && !printerForm && <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.25" type="button" variant="secondary" onClick={() => openPrinterForm(null)}>Yazıcı ekle</Button>}
+    {canManageRouting && onSavePrinter && printerForm && <form className="kitchen-route-form" onSubmit={(event) => void submitPrinter(event)} aria-label={printerForm.id ? "Yazıcıyı düzenle" : "Yazıcı ekle"}>
+      <p className="kitchen-panel__muted">Yazıcının ağ adresi yalnızca işletme ağındaki (192.168.x.x, 10.x.x.x, 172.16-31.x.x) bir adres olabilir. Standart ağ yazıcılarında port 9100'dür.</p>
+      {printerFeedback && <p className={`kitchen-route-form__feedback kitchen-route-form__feedback--${printerFeedback.tone}`}>{printerFeedback.message}</p>}
+      <label>Yazıcı adı
+        <input value={printerForm.input.name} onChange={(event) => changePrinterForm({ name: event.target.value })} maxLength={200} required disabled={printerBusy} />
+      </label>
+      <label>İstasyon
+        <input value={printerForm.input.stationId} onChange={(event) => changePrinterForm({ stationId: event.target.value })} maxLength={100} required disabled={printerBusy} />
+      </label>
+      <label>Ağ adresi (IP)
+        <input value={printerForm.input.ipAddress} onChange={(event) => changePrinterForm({ ipAddress: event.target.value })} inputMode="decimal" placeholder="192.168.1.50" required disabled={printerBusy} />
+      </label>
+      <label>Port
+        <input type="number" min={1} max={65535} value={printerForm.input.port} onChange={(event) => changePrinterForm({ port: Number(event.target.value) })} required disabled={printerBusy} />
+      </label>
+      <label>Yazıcı markası (Türkçe karakterler için)
+        <select value={printerForm.input.profile} onChange={(event) => changePrinterForm({ profile: event.target.value as KitchenPrinterProfile })} disabled={printerBusy}>
+          {(Object.keys(printerProfileLabels) as KitchenPrinterProfile[]).map((profile) => <option key={profile} value={profile}>{printerProfileLabels[profile]}</option>)}
+        </select>
+      </label>
+      {printerForm.id && <label className="kitchen-route-form__check"><input type="checkbox" checked={printerForm.input.isActive} onChange={(event) => changePrinterForm({ isActive: event.target.checked })} disabled={printerBusy} /> Yazıcı aktif</label>}
+      <div className="kitchen-route-form__actions">
+        <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.27" type="submit" disabled={printerBusy || !printerForm.input.name.trim() || !printerForm.input.stationId.trim() || !printerForm.input.ipAddress.trim()}>{printerBusy ? "Kaydediliyor…" : "Kaydet"}</Button>
+        <Button data-telemetry-id="b.kitchen-operations.kitchenoperationsworkspace.28" type="button" variant="secondary" onClick={() => { setPrinterForm(null); setPrinterFeedback(null); }} disabled={printerBusy}>Vazgeç</Button>
+      </div>
+    </form>}
 
     {categoryRoutes.length > 0 && <ul className="kitchen-printer-list" aria-label="Kategori yönlendirmeleri">
       {categoryRoutes.map((route) => <li key={route.id}>

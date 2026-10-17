@@ -220,7 +220,7 @@ public sealed class KitchenPrintDispatchHostedService : BackgroundService
         try
         {
             await transport.SendAsync(
-                printer.IpAddress ?? string.Empty, printer.Port ?? 0, job.Payload, ct).ConfigureAwait(false);
+                printer.IpAddress ?? string.Empty, printer.Port ?? 0, job.Payload, printer.Profile, ct).ConfigureAwait(false);
         }
         catch (PrinterTransmissionUncertainException ex)
         {

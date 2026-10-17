@@ -1,5 +1,6 @@
 namespace ALKAROS.Kitchen.Routing;
 
+using ALKAROS.Kitchen.PrintQueue;
 using Npgsql;
 
 public sealed class PostgresPrinterRepository : IPrinterRepository
@@ -22,7 +23,7 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
             """
-            SELECT id, name, station_id, ip_address, port, is_active, created_at, updated_at
+            SELECT id, name, station_id, ip_address, port, is_active, created_at, updated_at, profile
             FROM kitchen.printers
             WHERE id = @id;
             """;
@@ -41,7 +42,7 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
             $"""
-            SELECT id, name, station_id, ip_address, port, is_active, created_at, updated_at
+            SELECT id, name, station_id, ip_address, port, is_active, created_at, updated_at, profile
             FROM kitchen.printers
             ORDER BY name
             LIMIT {MaxUnpagedRows + 1};
@@ -67,7 +68,7 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
         await using var cmd = connection.CreateCommand();
         cmd.CommandText =
             $"""
-            SELECT id, name, station_id, ip_address, port, is_active, created_at, updated_at
+            SELECT id, name, station_id, ip_address, port, is_active, created_at, updated_at, profile
             FROM kitchen.printers
             WHERE is_active = TRUE
             ORDER BY name
@@ -97,9 +98,9 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
         cmd.CommandText =
             """
             INSERT INTO kitchen.printers (
-                id, name, station_id, ip_address, port, is_active, created_at, updated_at
+                id, name, station_id, ip_address, port, is_active, created_at, updated_at, profile
             ) VALUES (
-                @id, @name, @station_id, @ip_address, @port, @is_active, @created_at, @updated_at
+                @id, @name, @station_id, @ip_address, @port, @is_active, @created_at, @updated_at, @profile
             )
             ON CONFLICT (id) DO UPDATE SET
                 name = EXCLUDED.name,
@@ -107,7 +108,8 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
                 ip_address = EXCLUDED.ip_address,
                 port = EXCLUDED.port,
                 is_active = EXCLUDED.is_active,
-                updated_at = EXCLUDED.updated_at;
+                updated_at = EXCLUDED.updated_at,
+                profile = EXCLUDED.profile;
             """;
 
         cmd.Parameters.AddWithValue("id", printer.Id);
@@ -118,6 +120,7 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
         cmd.Parameters.AddWithValue("is_active", printer.IsActive);
         cmd.Parameters.AddWithValue("created_at", printer.CreatedAt);
         cmd.Parameters.AddWithValue("updated_at", (object?)printer.UpdatedAt ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("profile", (object?)printer.Profile?.ToString() ?? DBNull.Value);
 
         await cmd.ExecuteNonQueryAsync(ct).ConfigureAwait(false);
     }
@@ -142,6 +145,7 @@ public sealed class PostgresPrinterRepository : IPrinterRepository
             port: reader.IsDBNull(4) ? null : reader.GetInt32(4),
             isActive: reader.GetBoolean(5),
             createdAt: reader.GetFieldValue<DateTimeOffset>(6),
-            updatedAt: reader.IsDBNull(7) ? null : reader.GetFieldValue<DateTimeOffset>(7));
+            updatedAt: reader.IsDBNull(7) ? null : reader.GetFieldValue<DateTimeOffset>(7),
+            profile: reader.IsDBNull(8) ? null : Enum.Parse<PrinterProfile>(reader.GetString(8)));
     }
 }

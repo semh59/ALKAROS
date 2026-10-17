@@ -633,6 +633,7 @@ function KitchenRoute({ terminalId, canAdvance, canOperate, canManageReprints, c
     onApproveReprint={canManageReprints && client ? async (delivery, reason) => { await client.approveReprint(delivery.id, reason); await load(); } : undefined}
     onRejectReprint={canManageReprints && client ? async (delivery, reason) => { await client.rejectReprint(delivery.id, reason); await load(); } : undefined}
     onCreateCategoryRoute={canManageRouting && client ? async (categoryId, printerId) => { await client.createCategoryRoute(categoryId, printerId); await load(); } : undefined}
+    onSavePrinter={canManageRouting && client ? async (printerId, input) => { await client.savePrinter(printerId, input); await load(); } : undefined}
     // V1-KDS-002: present whenever a client exists - the workspace itself
     // decides whether the button is enabled or shown-but-locked, matching
     // this task's own acceptance evidence (a kitchen-staff session must see

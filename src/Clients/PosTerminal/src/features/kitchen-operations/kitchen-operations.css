@@ -148,6 +148,9 @@
 .kitchen-route-form { display: grid; gap: .5rem; margin-top: .75rem; padding-top: .75rem; border-top: 1px solid var(--ds-color-line); }
 .kitchen-route-form label { display: grid; gap: .25rem; font-size: .78rem; color: var(--ds-color-muted); }
 .kitchen-route-form select { min-height: 40px; border-radius: var(--ds-radius-sm, 6px); border: 1px solid var(--ds-color-line); background: var(--ds-color-surface); color: inherit; font: inherit; padding: 0 .5rem; }
+.kitchen-route-form input:not([type="checkbox"]) { min-height: 40px; border-radius: var(--ds-radius-sm, 6px); border: 1px solid var(--ds-color-line); background: var(--ds-color-surface); color: inherit; font: inherit; padding: 0 .5rem; }
+.kitchen-route-form__check { display: flex !important; align-items: center; gap: .5rem; }
+.kitchen-route-form__actions { display: flex; gap: .5rem; flex-wrap: wrap; }
 .kitchen-route-form__feedback { margin: 0; font-size: .78rem; }
 .kitchen-route-form__feedback--success { color: var(--ds-color-success); }
 .kitchen-route-form__feedback--error { color: var(--ds-color-danger); }

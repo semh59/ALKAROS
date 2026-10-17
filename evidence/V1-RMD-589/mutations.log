@@ -1,0 +1,30 @@
+# Arka uç (26 mutant): ilk koşu
+# Yeniden koşu (S5 testi eklendi, S21 mutantı düzeltildi)
+S5 192.168 first octet: KILLED restored=True
+S21 create needs only read access: KILLED restored=True
+survivors: 0
+# Arayüz (15 mutant): ilk koşu
+U1 default port: KILLED restored=True
+U2 default brand: KILLED restored=True
+U3 new printer inactive: KILLED restored=True
+U4 add button without permission check: KILLED restored=True
+U5 edit button without permission check: KILLED restored=True
+U6 address not required: SURVIVED restored=True
+U7 name not required: SURVIVED restored=True
+U8 save does not close the form: KILLED restored=True
+U9 create uses PUT: KILLED restored=True
+U10 edit uses POST: KILLED restored=True
+U11 validation text: KILLED restored=True
+U12 duplicate text: SURVIVED restored=True
+U13 forbidden text: SURVIVED restored=True
+U14 page does not reload after save: SURVIVED restored=True
+U15 save handler ignores permission: SURVIVED restored=True
+survivors: 6
+# Yeniden koşu (U6 U7 U12 U13 U14 için test eklendi)
+U6 address not required: KILLED restored=True
+U7 name not required: KILLED restored=True
+U12 duplicate text: KILLED restored=True
+U13 forbidden text: KILLED restored=True
+U14 page does not reload after save: KILLED restored=True
+U15 save handler ignores permission: SURVIVED restored=True
+survivors: 1

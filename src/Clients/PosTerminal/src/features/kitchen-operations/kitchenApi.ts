@@ -5,6 +5,7 @@ import type {
   KitchenHealthSnapshot,
   KitchenPerformanceReport,
   KitchenPrinter,
+  KitchenPrinterInput,
   KitchenPrinterRoute,
   KitchenPrintJob,
   KitchenTicket,
@@ -28,6 +29,8 @@ export interface KitchenOperationsClient {
   approveReprint: (deliveryId: string, reason: string) => Promise<KitchenUnknownDelivery>;
   rejectReprint: (deliveryId: string, reason: string) => Promise<KitchenUnknownDelivery>;
   createCategoryRoute: (categoryId: string, printerId: string) => Promise<KitchenPrinterRoute>;
+  // A null printer id creates a new printer (the id is generated here); otherwise the printer is edited.
+  savePrinter: (printerId: string | null, input: KitchenPrinterInput) => Promise<KitchenPrinter>;
   // V1-KIT-008: 86 a product from the Kitchen screen itself.
   suspendProductAvailability: (productId: string) => Promise<ProductAvailabilitySuspended>;
   // V1-KIT-014: from/to as ISO-8601 strings, passed straight through to the query string.
@@ -150,6 +153,15 @@ export function createKitchenOperationsClient(terminalId: string, stationId: str
       method: "POST",
       body: JSON.stringify({ routeLevel: "Category", printerId, categoryId, isActive: true }),
     }),
+    savePrinter: (printerId, input) => printerId === null
+      ? request<KitchenPrinter>(`/printers/${encodeURIComponent(crypto.randomUUID())}`, {
+        method: "POST",
+        body: JSON.stringify({ name: input.name, stationId: input.stationId, ipAddress: input.ipAddress, port: input.port, profile: input.profile }),
+      })
+      : request<KitchenPrinter>(`/printers/${encodeURIComponent(printerId)}`, {
+        method: "PUT",
+        body: JSON.stringify(input),
+      }),
     suspendProductAvailability: (productId) => request<ProductAvailabilitySuspended>(`/products/${encodeURIComponent(productId)}/suspend`, { method: "POST" }),
     getPerformanceReport: (from, to) => request<KitchenPerformanceReport>(`/operations/performance-report?from=${encodeURIComponent(from)}&to=${encodeURIComponent(to)}`),
   };
