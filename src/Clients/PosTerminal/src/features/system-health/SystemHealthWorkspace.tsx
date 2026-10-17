@@ -2,7 +2,10 @@ import { Button, StateMessage } from "../../design-system";
 import { commonActions, stateText } from "../../strings";
 import {
   backupStatusLabels,
+  healthSnapshotStaleMessage,
+  healthSnapshotStaleText,
   healthStatusLabel,
+  isHealthSnapshotStale,
   type KitchenBackup,
   type KitchenHealthSnapshot,
 } from "../kitchen-operations";
@@ -43,6 +46,8 @@ export function SystemHealthWorkspace({ state, health, backups, onRefresh, error
       <div><span className="system-health__kicker">YÖNETİM / SİSTEM</span><h2>Sistem sağlığı</h2><p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Veritabanı, disk ve yedekleme durumu"}</p></div>
       <Button data-telemetry-id="b.system-health.systemhealthworkspace.3" variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
     </header>
+
+    {health && isHealthSnapshotStale(health.capturedAt) && <StateMessage tone="stale" title={healthSnapshotStaleText.title}><p>{healthSnapshotStaleMessage(health.capturedAt)}</p></StateMessage>}
 
     {health ? <dl className="system-health__grid">
       <div><dt>Veritabanı</dt><dd className={`system-health__badge system-health__badge--${health.databaseStatus.toLowerCase()}`}>{healthStatusLabel(health.databaseStatus)}</dd></div>

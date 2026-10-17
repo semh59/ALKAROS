@@ -47,6 +47,18 @@ describe("system health workspace", () => {
     expect(document.body.textContent).toContain("Yönetici oturumu gerekli");
   });
 
+  it("marks an old snapshot as stale and shows when it was taken", async () => {
+    await render(<SystemHealthWorkspace {...baseProps()} />);
+    expect(document.body.textContent).toContain("Sağlık ölçümü eski");
+    expect(document.body.textContent).toContain("Gösterilen değerler güncel olmayabilir.");
+  });
+
+  it("shows no stale marker for a fresh snapshot", async () => {
+    const health = { snapshotId: "snap-2", databaseStatus: "Healthy" as const, diskStatus: "Healthy" as const, lastBackupStatus: "Healthy" as const, freeDiskBytes: 1, databaseSizeBytes: 1, capturedAt: new Date().toISOString() };
+    await render(<SystemHealthWorkspace {...baseProps({ health })} />);
+    expect(document.body.textContent).not.toContain("Sağlık ölçümü eski");
+  });
+
   // V1-RMD-372 (module-by-module UI audit, 2026-09-27): unlike ~13 other
   // feature workspaces, this file had no axe-core scan at all.
   it("has no critical or serious axe violations", async () => {

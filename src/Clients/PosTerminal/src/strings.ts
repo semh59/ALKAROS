@@ -1021,6 +1021,12 @@ export const healthStatusLabels: Record<KitchenHealthSnapshot["databaseStatus"],
   Unhealthy: "Sorunlu",
 };
 
+export const healthSnapshotStaleText = {
+  title: "Sağlık ölçümü eski",
+  unreadable: "Son ölçümün zamanı okunamadı; gösterilen değerlere güvenmeyin.",
+  since: (time: string) => `Son ölçüm ${time}. Gösterilen değerler güncel olmayabilir.`,
+};
+
 export const backupStatusLabels: Record<KitchenBackup["status"], string> = {
   InProgress: "Sürüyor",
   Completed: "Tamamlandı",

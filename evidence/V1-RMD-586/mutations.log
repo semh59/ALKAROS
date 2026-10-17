@@ -1,0 +1,10 @@
+M1 boundary exclusive: KILLED restored=True
+M2 unreadable date not stale: KILLED restored=True
+M3 threshold: KILLED restored=True
+M4 unreadable message: KILLED restored=True
+M5 age sign: KILLED restored=True
+M6 system-health marker off: KILLED restored=True
+M7 kitchen marker off: KILLED restored=True
+M8 system-health inverted: KILLED restored=True
+M9 kitchen inverted: KILLED restored=True
+survivors: 0

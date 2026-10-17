@@ -186,6 +186,14 @@ describe("kitchen operations workspace", () => {
     expect(document.querySelector(".kitchen-step.is-next")).not.toBeNull();
   });
 
+  it("marks an old health snapshot as stale and leaves a fresh one unmarked", async () => {
+    await render(<KitchenOperationsWorkspace {...baseProps()} />);
+    expect(document.body.textContent).toContain("Sağlık ölçümü eski");
+    const fresh: KitchenData = { ...data, health: { ...data.health!, capturedAt: new Date().toISOString() } };
+    await render(<KitchenOperationsWorkspace {...baseProps({ data: fresh })} />);
+    expect(document.body.textContent).not.toContain("Sağlık ölçümü eski");
+  });
+
   it("V1-RMD-225: shows a failed backup's error message, not just a health dot color", async () => {
     // Regression coverage for a Medium finding (2026-09-16, independent
     // audit): GetRecentBackupsAsync was fetched into KitchenData.backups on

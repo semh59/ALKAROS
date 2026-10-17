@@ -3,7 +3,10 @@ import { playNewItemChime } from "../../audioAlerts";
 import { Button, ModalDialog, StateMessage, TextField, ValidationSummary } from "../../design-system";
 import { commonActions, kitchenReprintText, stateText } from "../../strings";
 import {
+  healthSnapshotStaleMessage,
+  healthSnapshotStaleText,
   healthStatusLabel,
+  isHealthSnapshotStale,
   itemStatusLabels,
   type KitchenBackup,
   type KitchenHealthSnapshot,
@@ -768,6 +771,7 @@ function HealthPanel({ health, backups }: { health: KitchenHealthSnapshot | null
   const hasFailedBackup = backups.some((backup) => backup.status === "Failed");
   return <section className={`kitchen-panel ${hasFailedBackup ? "has-alert" : ""}`} aria-labelledby="health-heading">
     <header><div><span className="kitchen-panel__eyebrow">SİSTEM SAĞLIĞI</span><h3 id="health-heading">Veritabanı ve yedekleme</h3></div></header>
+    {health && isHealthSnapshotStale(health.capturedAt) && <StateMessage tone="stale" title={healthSnapshotStaleText.title}><p>{healthSnapshotStaleMessage(health.capturedAt)}</p></StateMessage>}
     {health ? <dl className="kitchen-health">
       <div><dt>Veritabanı</dt><dd>{healthStatusLabel(health.databaseStatus)}</dd></div>
       <div><dt>Disk</dt><dd>{healthStatusLabel(health.diskStatus)} · {formatGigabytes(health.freeDiskBytes)} boş</dd></div>

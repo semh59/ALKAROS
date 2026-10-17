@@ -1,12 +1,13 @@
 // Enum label maps live in the central catalog (finding F-7).
 import {
   backupStatusLabels,
+  healthSnapshotStaleText,
   healthStatusLabels,
   itemStatusLabels,
   ticketStatusLabels,
 } from "../../strings";
 
-export { backupStatusLabels, healthStatusLabels, itemStatusLabels, ticketStatusLabels };
+export { backupStatusLabels, healthSnapshotStaleText, healthStatusLabels, itemStatusLabels, ticketStatusLabels };
 
 export type KitchenWorkspaceState =
   | "loading"
@@ -277,6 +278,21 @@ export interface KitchenWorkspaceProps {
   onLoadPerformanceReport?: (from: string, to: string) => Promise<KitchenPerformanceReport>;
   errorMessage?: string;
   lastUpdated?: string;
+}
+
+/** The snapshot job writes every 60 s; three missed rounds mean the job is no longer running. */
+export const HEALTH_SNAPSHOT_STALE_AFTER_MS = 180_000;
+
+export function isHealthSnapshotStale(capturedAt: string, now: number = Date.now()): boolean {
+  const captured = Date.parse(capturedAt);
+  return Number.isNaN(captured) || now - captured > HEALTH_SNAPSHOT_STALE_AFTER_MS;
+}
+
+export function healthSnapshotStaleMessage(capturedAt: string): string {
+  const captured = Date.parse(capturedAt);
+  return Number.isNaN(captured)
+    ? healthSnapshotStaleText.unreadable
+    : healthSnapshotStaleText.since(new Date(captured).toLocaleString("tr-TR", { dateStyle: "short", timeStyle: "short" }));
 }
 
 export function healthStatusLabel(status: KitchenHealthSnapshot["databaseStatus"] | null | undefined): string {
