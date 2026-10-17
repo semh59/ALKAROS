@@ -39,6 +39,9 @@ karar vermez, her işletme kendi muhasebecisiyle doğruladığı olguyu kurulumd
 ## Out of scope
 
 - Vergi hukuku yorumu üretmek veya QNB adapter kodlamak.
+- Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
+- VUK 509 güncel metni IV.12 (https://cdn.gib.gov.tr/api/gibportal-file/file/getFile?objectKey=MEVZUAT_TEBLIGLER%2FUNIVERSAL%2F2026%2FMEVZUAT_TEBLIGLER_2026_VukTeb509_Guncel.pdf, 2026-10-17): e-Adisyon'a gönüllü katılım için işletmenin e-Fatura **ve** e-Arşiv kullanıyor olması gerekir; matristeki "e-Fatura **veya** e-Arşiv" ifadesi metne uymuyor. Zorunluluk yalnız GİB'in yazılı bildirimi veya ebelge.gib.gov.tr duyurusuyla doğar (en az 3 ay süre); yayımlanmış zorunlu geçiş duyurusu bulunamadı.
+- Karar bekliyor: matriste "veya" → "ve" düzeltmesi ve "GİB'den e-Adisyon bildirimi aldınız mı / gönüllü katıldınız mı?" sorusunun eklenmesi (e-Adisyon zorunlu sonucu yalnız buna "evet" ile çıkmalı).
 
 ## Dependencies
 

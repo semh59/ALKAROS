@@ -65,6 +65,16 @@ düzeyinde gerçek doküman ve erişimle doğrulamak — birincil olarak
   fallback'i (bu görevin kendisi zaten Hugin'den Token'a bir istisnai
   geçiş — bir daha otomatik geçiş yapılmaz, yeni bir değişiklik yine
   kullanıcı onaylı ayrı bir plan değişikliği gerektirir).
+- Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
+- Token geliştirici portalı (developer.tokeninc.com, 2026-10-16/17 okundu) şunu yazıyor; kayıttaki varsayımlarla çelişenler işaretlidir:
+- Süreç: okc.entegrasyon@tokeninc.com → bilgi formu → tanışma toplantısı → sözleşme → test cihazı (portal: `x-platform/partner-and-isyeri-basvuru-sureci/surec-bilgilendirmesi`). Ücretsiz sandbox/yalnız chatbot kanalı varsayımı **çelişiyor**.
+- Test talebi go.tech.tokeninc.com/servicedesk üzerinden; kuyruk yaklaşık 2 ay, test en çok 5 iş günü, pilot 15 gün (model başına 30 cihaz); major hata olursa talep reddedilir.
+- 300TR yalnız kablolu, X30TR kablolu ve kablosuz; Cloud tanıtımında yalnız X30TR geçiyor.
+- SSS (`x-platform/baslangic/sik-sorulan-sorular`): kart ödemesi iptali entegrasyondan tetiklenemez (ÖKC'de yapılır); sepet gönderildikten sonra fiş iptali desteklenmez; gün sonu/Z raporu tetiklenemez, kablolu entegrasyon yalnız satış yapar.
+- Cloud API'de "reddedildi" durumu belgelenmemiş (status 0 ödendi, -1 terk edildi, 99 fiş iptal). Test/üretim adresi yazılmamış.
+- Restoran için entegrasyon ücreti **bulunamadı**; yalnız eczane PDF'inde cihaz başına yıllık 2.999 TL (KDV dahil) görüldü.
+- HoReCa sayfası (`x-platform/baslangic/horeca`): "Polling YAPILMAZ, Webhook ZORUNLUDUR" (olaylar BASKET_COMPLETED/LOCKED/UNLOCKED); Cloud yalnız X30TR için tanıtılıyor. Onaylı V13-GOV-005 kararındaki polling ve "300 TR veya X30 TR" ifadesi bununla çelişiyor (Done kaydı bu görevde değiştirilmedi).
+- Karar bekliyor: V13-GOV-005, V13-HUG-003 ve V13-HUG-004 dayanaklarının yeniden değerlendirilmesi.
 
 ## Dependencies
 

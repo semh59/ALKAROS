@@ -31,6 +31,8 @@ sözleşmesini gerçek satıcı hesabı ve test (stage) ortamıyla doğrulamak.
 ## Out of scope
 
 - Kod; uygulama V12-TGO-002..005'te.
+- Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
+- Trendyol Go belgesi (developers.tgoapps.com, 2026-10-17): restoranın kullanabileceği iptal nedenleri 621, 622, 623, 624, 626 ve 627'dir; **625 ("Kabul edilmedi") platformun nedenidir**, "621–627" aralığı bu yüzden tam değildir. Test ortamı için sunucu IP'sinin önceden tanımlanması gerekir (aksi 503); bilgiler satıcı panelindeki "Hesap Bilgilerim → Entegrasyon Bilgileri" sayfasından alınır. Belgedeki istek sınırı iki yerde farklı yazılmış (genel 10 sn'de 50; hizmet limitleri tablosunda ürün uçları dakikada 50, fiyat dakikada 100). Uber Eats geçişi şimdilik yalnız Bilecik mağazalarında; kupon alanı boş gelir, indirim `promotions` içindedir. Bilinen kod uyumsuzlukları V1-RMD-580 ile giderildi.
 
 ## Dependencies
 

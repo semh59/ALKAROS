@@ -1,7 +1,7 @@
 # V1-RMD-584 - Dış bağımlılık araştırma notlarını ilgili görev kayıtlarına işleme
 
 - Task ID: V1-RMD-584
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: documentation
 - Surface state: Planned
@@ -19,7 +19,6 @@
 - `plan/v1/remediation/V1-RMD-584-research-notes.md`
 - `evidence/V1-RMD-584/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v0/hugin-t300/V0-HUG-001-integration-contract.md - yalnız sonuna eklenen araştırma notu bölümü
-- Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1.3/governance/V13-GOV-005-token-cloud-integration-path-decision.md - yalnız sonuna eklenen araştırma notu bölümü
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1.3/hugin-t300/V13-HUG-003-refund-and-cancel.md - yalnız sonuna eklenen araştırma notu bölümü
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1.3/hugin-t300/V13-HUG-004-terminal-totals-reconciliation.md - yalnız sonuna eklenen araştırma notu bölümü
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1.3/fiscal/V13-FSC-004-t300-adisyon-adapter.md - yalnız sonuna eklenen araştırma notu bölümü

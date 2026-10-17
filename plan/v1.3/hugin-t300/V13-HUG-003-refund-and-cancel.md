@@ -34,6 +34,9 @@ Onaylı RefundIntent için iptal/iade işlemini gönderip Approved, Rejected vey
 ## Out of scope
 
 - Compensating allocation, net-paid mutation, fiscal document ve reconciliation case oluşturma.
+- Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
+- Token SSS'si (`x-platform/baslangic/sik-sorulan-sorular`, 2026-10-17): "Entegrasyon üzerinden kredi kartı ödemesinin iptalini tetikleyen bir mekanizmamız bulunmamaktadır. Bunun için ÖKC üzerinden müdahale edilmesi gereklidir." ve sepet gönderildikten sonra fiş iptali entegrasyon üzerinden desteklenmez. X30TR'de cihaz üzerinden yapılan fiş iptali yazılıma döner, 300TR'de dönmez. Bu görevin "taşıma katmanı ile iade/iptal" dayanağı belgelerle çelişiyor.
+- Karar bekliyor: görevi "cihazda iptal + ALKAROS kanıt kaydı" olarak yeniden tanımlamak veya NotApplicable yapmak.
 
 ## Dependencies
 

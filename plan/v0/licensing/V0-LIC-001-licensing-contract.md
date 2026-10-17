@@ -29,6 +29,8 @@ tanımlamak.
 ## Out of scope
 
 - Abonelik faturalandırması, DRM bypass veya uzaktan kapatma davranışı işletme tarafından onaylanmadı.
+- Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
+- Hukuki çerçeve (mevzuat.gov.tr, 2026-10-17): VUK md.253/256 defter ve belgelerin 5 yıl saklanıp kayıtlara erişim için gereken bilgi ve şifrelerin talep üzerine ibrazını, TTK md.82 elektronik kayıtlara saklama süresince her an erişimi, TCK md.244 bilişim sisteminin işleyişini engelleme/verileri erişilmez kılmayı (1-5 yıl / 6 ay-3 yıl hapis) düzenler. Onaylı "lisans geçersiz olsa bile sipariş, mutfak ve ödeme durmaz" politikası bu çerçeveyle uyumlu görünür; "fesih sonrası destek ekibinin elle devre dışı bırakması" istisnası yetkili avukata gösterilmelidir (bu çıkarım hukuki görüş değildir). Lisans dosyası tasarımı için Keygen belgesi: Ed25519 imza, dosya başına geçerlilik süresi, düzenlenme tarihi gelecekteyse saat geri alınmış sayılır.
 
 ## Dependencies
 

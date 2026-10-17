@@ -29,6 +29,8 @@ Outgoing/incoming e-belge, registered-user query, idempotency, status query ve t
 ## Out of scope
 
 - Production invoice generation ve adapter kodu.
+- Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
+- QNB'nin test servis tanımları herkese açıktır (girişsiz indirildi, 2026-10-16/17): e-Fatura https://erpefaturatest1.qnbesolutions.com.tr/efatura/ws/connectorService?wsdl ve userService; e-Arşiv https://earsivtest.qnbesolutions.com.tr/earsiv/ws/EarsivWebService?wsdl (giriş: .../earsiv/ws/userService). e-Arşiv'de `faturaOlusturExt`, `faturaSorgula`, `faturaIptalEt`, `faturaItirazEt`, `raporGonder` vardır; e-Fatura'da genel iptal metodu yoktur (yalnız itiraz/iade işaretleme). Erişim: test formu https://www.qnbesolutions.com.tr/destek/api-teknik , `erpKodu` başvuru anında verilir, test ortamına yalnız başvuran VKN kaydedilir; hız sınırı IP başına dakikada 300. Gerçek hesap, `erpKodu` ve yaşam döngüsü kaydı hâlâ sahibin başvurusuna bağlıdır. e-Arşiv gönderim istemcisi V1-RMD-582 ile şemadan yazıldı (gerçek hesapla denenmedi).
 
 ## Dependencies
 

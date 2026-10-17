@@ -33,6 +33,9 @@ contract'larını doğrulamak.
 ## Out of scope
 
 - Production adapter yazmak veya private provider contract kanıtı olmadan provider seçmek.
+- Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
+- Devlet tarafından verilmiş bir "legal provider code" bulunamadı (2026-10-16/17). GİB'in "yemek kartı POS cihazlarının haricen kullanılmasına izin verilen firmalar" listesinde (https://ynokc.gib.gov.tr/UploadedFiles/Files/yemekkartiposfirmalari_2.pdf) 8 firmanın yalnız unvanı vardır: Set, Multinet, Metropal, Edenred, Sodexo, CIO, Token, iWallet. GİB bildirimlerinde sağlayıcı VKN ve unvanla tanımlanır (GMP-3 v5.0 Ek-2). Token ödeme tipi 7 + `operatorId` kullanır: Edenred 1001, Multinet 1002, Setcard 1003, Sodexo 1004, TokenFlex 1005, Metropol 1006, test 1000 (`developer.tokeninc.com/x-platform/baslangic/banka-yemek-uygulamalari`); bunlar Token'ın kodlarıdır, yasal kod değildir. Hiçbir sağlayıcının herkese açık POS yazılımı API'si bulunamadı. Mevzuat: komisyon %6'yı geçemez, ödeme fatura tarihinden itibaren 30 günü aşamaz (Perakende Ticarette Uygulanacak İlke ve Kurallar Hakkında Yönetmelik m.12/A). Tamamı yemek kartıyla ödemede mali değeri olmayan bilgi fişi, kısmi ödemede mali fiş kesilir ve yemek kartı kısmına KDV hesaplanmaz; dönem sonunda her sağlayıcıya ayrı fatura kesilir. Bu dönemsel fatura için planda sahip görev yoktur.
+- Karar bekliyor: onaylı sağlayıcı listesi ve "provider code" tanımı (öneri: GİB listesindeki unvan + sağlayıcı VKN'si; `operatorId` ayrı cihaz eşlemesi).
 
 ## Dependencies
 

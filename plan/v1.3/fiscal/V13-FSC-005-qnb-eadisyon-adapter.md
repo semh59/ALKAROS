@@ -32,6 +32,9 @@ open/update/close mapping'ini uygulamak.
 ## Out of scope
 
 - Kamuya açık kaynakta bulunmayan capability uydurmak, applicability kararı, T300 adapter ve invoice issuance.
+- Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
+- GİB e-Adisyon özel entegratör listesi (https://ebelge.gib.gov.tr/eadisyonbelgesiozelentegratorlerlistesi.html, sayfa güncelleme 25.09.2026) QNB eSolutions'ı içerir; Token/Beko listede yoktur. GİB e-Arşiv Teknik Kılavuzu v1.19'da e-Adisyon rapor bölümü (`adisyonIptal`) vardır; "kamuya açık dokümantasyon yok" gerekçesi bu kadar geçerli değildir. e-Adisyon zorunlu değildir; yalnız GİB'in yazılı bildirimiyle en az 3 ay süreli zorunlu hale gelir (VUK 509 IV.12.2, IV.12.4). Bu kayıttaki "V0-CMP-001 hâlâ Blocked" cümlesi güncel değildir (V0-CMP-001 Done).
+- Karar bekliyor: NotApplicable kararının gerekçesinin yeniden değerlendirilmesi.
 
 ## Dependencies
 

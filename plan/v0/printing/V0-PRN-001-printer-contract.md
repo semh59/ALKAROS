@@ -27,6 +27,8 @@
 ## Out of scope
 
 - Production printer adapter kodu yazmak.
+- Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
+- Epson, Bixolon ve Star kılavuzlarından (2026-10-16/17) Türkçe karakter tablosu komutları: Epson `ESC t` 13 = PC857, Bixolon `ESC t` 37 = 857, Star ESC/POS modunda `ESC GS t` 12 = Codepage 857; Epson TM-U220 iğneli yazıcıda Türkçe tablo yoktur. Durum sorgusu `DLE EOT 1/2` (Epson). Kodda tablo seçimi ve durum okuma eksikti; V1-RMD-581 ile eklendi (sahte yazıcıyla test; gerçek cihazla doğrulanmadı). Bu kaydın engeli (iki yazıcının tam model/firmware/bağlantı kimliği ve cihaz erişimi) sürer.
 
 ## Dependencies
 

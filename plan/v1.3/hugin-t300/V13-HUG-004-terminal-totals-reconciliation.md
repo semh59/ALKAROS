@@ -36,6 +36,9 @@ Yerel onaylı/iade edilmiş kart işlemlerini terminalin doğrulanmış toplamla
 ## Out of scope
 
 - Doğrulanmış Token/Beko contract dışındaki banka ödemesi.
+- Araştırma notu (2026-10-17, V1-RMD-584), kayıt durumunu ve kararı değiştirmez:
+- Token belgeleri: gün sonu/Z raporu entegrasyondan tetiklenemez. Z-Report Service (`x-platform/z-report-service/gelistirici-dokumani`) Z verisini okur ve `zNo` başına ödeme tipi bazında toplam verir, işlem satırı vermez; test adresi https://test-gmu-report.devtokeninc.com/zreport/web/ecr/api/v1/ ; yetkilendirme/erişim süreci yazılmamış (2026-10-17).
+- Karar bekliyor: mutabakat kapsamının Z toplamı düzeyine indirilmesi veya NotApplicable.
 
 ## Dependencies
 
