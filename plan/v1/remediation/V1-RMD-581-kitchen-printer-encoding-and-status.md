@@ -33,7 +33,7 @@ Dış kaynak araştırmasında (Epson, Bixolon, Star kılavuzları; GİB GMP-3 v
 
 ## Out of scope
 
-- Yazıcı başına profil (veritabanı alanı ve ekran), gerçek cihazla doğrulama (V0-PRN-001 Blocked).
+- Gerçek cihazla doğrulama (V0-PRN-001 Blocked). Yazıcı başına profil, yazıcı ekleme ve bağlantı ayarları V1-RMD-589 ile yapılır.
 
 ## Dependencies
 
