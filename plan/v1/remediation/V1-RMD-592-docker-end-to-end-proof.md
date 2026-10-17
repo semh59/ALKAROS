@@ -40,4 +40,4 @@ Bekçi konteyneri, eski ölçüm işareti, saklama temizliği ve yazıcı ekleme
 
 ## Handoff
 
-- None
+- V1-RMD-593
