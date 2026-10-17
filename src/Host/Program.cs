@@ -2,6 +2,7 @@ using ALKAROS.Audit.PartitionDisposal;
 using ALKAROS.Host.Composition;
 using ALKAROS.Host.Composition.Migrations;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Observability.WatchdogProcess;
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Privacy.Anonymization;
 using ALKAROS.Privacy.RetentionExecution;
@@ -66,6 +67,19 @@ public static class Program
             catch (DualScreenStartupException ex)
             {
                 Console.Error.WriteLine($"STARTUP: {ex.Message}");
+                return (int)HostExitCode.StartupFailed;
+            }
+        }
+
+        if (args.Length > 0 && string.Equals(args[0], "watchdog", StringComparison.Ordinal))
+        {
+            try
+            {
+                return OutageWatchdogHost.RunAsync(args[1..], CancellationToken.None).GetAwaiter().GetResult();
+            }
+            catch (Exception ex) when (ex is ArgumentException or FormatException or OverflowException)
+            {
+                Console.Error.WriteLine($"WATCHDOG: {ex.Message}");
                 return (int)HostExitCode.StartupFailed;
             }
         }

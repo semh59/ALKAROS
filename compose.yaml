@@ -188,6 +188,30 @@ services:
           cpus: "1.0"
           memory: 512m
 
+  # Out-of-process outage watcher: probes api readiness and tells Telegram straight away when it stops
+  # answering, without going through the database that may be the thing that is down. Bot key and chat
+  # id come from the local, gitignored .env (ALKAROS_TELEGRAM_BOT_KEY / ALKAROS_TELEGRAM_CHAT_ID); when
+  # unset the alarm waits in the buffer file. Starts after api is healthy so boot time is not an outage.
+  watchdog:
+    build:
+      context: .
+      dockerfile: deploy/docker/Dockerfile
+      target: api
+    environment:
+      Monitoring__Telegram__BotKey: ${ALKAROS_TELEGRAM_BOT_KEY:-}
+      Monitoring__Telegram__ChatId: ${ALKAROS_TELEGRAM_CHAT_ID:-}
+    entrypoint: ["dotnet", "ALKAROS.Host.dll", "watchdog", "--health-url", "http://api:5080/health/ready", "--buffer", "/data/outage-buffer.log"]
+    volumes:
+      - alkaros-watchdog:/data
+    depends_on:
+      api: { condition: service_healthy }
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 192m
+
   connector:
     build:
       context: .
@@ -276,6 +300,7 @@ secrets:
 
 volumes:
   alkaros-postgres:
+  alkaros-watchdog:
   alkaros-wal-archive:
   caddy-data:
   caddy-config:

@@ -1,0 +1,18 @@
+== api durduruluyor 11:26:13
+alkaros-api-1
+== 50 sn sonra watchdog günlüğü
+WATCHDOG: started, telegramConfigured=False
+== tampon
+== tampon (api durmuş)
+{"Layer":"Api","Category":"system.unreachable","At":"2026-10-17T11:26:26.147485+00:00"}
+== api başlatılıyor 11:27:07
+alkaros-api-1
+== api healthy; tampon satır sayısı (tek alarm beklenir, Telegram kapalı olduğu için tamponda kalır)
+1 /data/outage-buffer.log
+WATCHDOG: started, telegramConfigured=False
+alkaros-watchdog-1 Up About a minute
+alkaros-api-1 Up 50 seconds (healthy)
+alkaros-web-1 Up 21 hours (healthy)
+alkaros-connector-1 Up 21 hours
+alkaros-test-pg Up 22 hours
+alkaros-postgres-1 Up 23 hours (healthy)

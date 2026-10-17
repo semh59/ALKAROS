@@ -1,7 +1,7 @@
 # V1-RMD-585 - Süreç dışı bekçi konteyneri ve Telegram doğrudan bildirimi
 
 - Task ID: V1-RMD-585
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: feature
 - Surface state: Planned
