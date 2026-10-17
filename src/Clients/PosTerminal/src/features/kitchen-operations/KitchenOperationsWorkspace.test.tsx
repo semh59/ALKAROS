@@ -530,13 +530,26 @@ describe("kitchen operations workspace", () => {
     expect(onSavePrinter).toHaveBeenCalledWith("printer-1", { name: "Mutfak yazıcı", stationId: "hot-line", ipAddress: "192.168.1.51", port: 9100, profile: "Bixolon", isActive: true });
   });
 
+  it("names the faulty field without calling the server", async () => {
+    const onSavePrinter = vi.fn();
+    await render(<KitchenOperationsWorkspace {...baseProps({ onSavePrinter })} />);
+    await click(button("Yazıcı ekle"));
+    await fill(field("Yazıcı adı"), "Bar");
+    await fill(field("İstasyon"), "bar");
+    await fill(field("Ağ adresi"), "8.8.8.8");
+    await submitPrinterForm();
+    expect(document.body.textContent).toContain("Ağ adresi işletme ağındaki");
+    expect(onSavePrinter).not.toHaveBeenCalled();
+    expect(document.querySelector(".kitchen-route-form[aria-label]")).not.toBeNull();
+  });
+
   it("explains a rejected address in Turkish and keeps the form open", async () => {
     const onSavePrinter = vi.fn().mockRejectedValue(new KitchenOperationsApiError(400, "VALIDATION_FAILED", "İstek doğrulanamadı."));
     await render(<KitchenOperationsWorkspace {...baseProps({ onSavePrinter })} />);
     await click(button("Yazıcı ekle"));
     await fill(field("Yazıcı adı"), "Bar");
     await fill(field("İstasyon"), "bar");
-    await fill(field("Ağ adresi"), "8.8.8.8");
+    await fill(field("Ağ adresi"), "192.168.1.50");
     await submitPrinterForm();
     expect(document.body.textContent).toContain("ağ adresi işletme ağındaki");
     expect(document.querySelector(".kitchen-route-form[aria-label]")).not.toBeNull();

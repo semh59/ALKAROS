@@ -19,6 +19,7 @@ import {
   type KitchenTicketItem,
   type KitchenUnknownDelivery,
   printerErrorText,
+  printerInputError,
   printerProfileLabels,
   printJobStatusLabels,
   type KitchenWorkspaceProps,
@@ -870,6 +871,11 @@ function PrinterPanel({
   async function submitPrinter(event: FormEvent) {
     event.preventDefault();
     if (!onSavePrinter || !printerForm) return;
+    const invalid = printerInputError(printerForm.input);
+    if (invalid) {
+      setPrinterFeedback({ tone: "error", message: invalid });
+      return;
+    }
     setPrinterBusy(true);
     setPrinterFeedback(null);
     try {

@@ -1,0 +1,16 @@
+octet limit 255->256 =>       Tests  1 failed | 98 passed (99)
+10.x block =>       Tests  1 failed | 98 passed (99)
+172.16 lower bound =>       Tests  1 failed | 98 passed (99)
+172.31 upper bound =>       Tests  1 failed | 98 passed (99)
+192.168 second octet =>       Tests  1 failed | 98 passed (99)
+port lower bound =>       Tests  1 failed | 98 passed (99)
+port upper bound =>       Tests  1 failed | 98 passed (99)
+integer check =>       Tests  1 failed | 98 passed (99)
+four parts =>       Tests  99 passed (99)
+name trim =>       Tests  1 failed | 98 passed (99)
+station trim =>       Tests  99 passed (99)
+workspace ignores error =>       Tests  1 failed | 98 passed (99)
+restored identical
+four parts (rerun) =>       Tests  1 failed | 99 passed (100)
+station trim (rerun) =>       Tests  1 failed | 99 passed (100)
+restored identical

@@ -1,0 +1,9 @@
+ Test Files  5 passed (5)
+      Tests  100 passed (100)
+   Start at  23:26:15
+   Duration  3.09s (transform 626ms, setup 0ms, import 1.08s, tests 1.71s, environment 786ms)
+
+tsc ok
+src/routes/Cashier.tsx:730:12: warning jsx-a11y(no-noninteractive-element-interactions): Non-interactive elements should not be assigned mouse or keyboard event listeners. help: Move the handler to an interactive element, or use an appropriate interactive role.
+src/routes/TokenTerminalSettings.tsx:174:115: warning jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users. help: Remove the `autoFocus` attribute.
+src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:89:10: warning eslint(no-unused-vars): Function 'nextItemState' is declared but never used. help: Consider removing this declaration.

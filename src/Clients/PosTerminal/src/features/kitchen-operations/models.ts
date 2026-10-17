@@ -306,6 +306,19 @@ export function printerErrorText(error: { status: number; code: string; message:
   return "Yazıcı kaydedilemedi.";
 }
 
+/** Mirrors the server rules so the form can name the faulty field before sending. */
+export function printerInputError(input: KitchenPrinterInput): string | null {
+  if (!input.name.trim()) return "Yazıcı adı boş olamaz.";
+  if (!input.stationId.trim()) return "İstasyon boş olamaz.";
+  const parts = input.ipAddress.trim().split(".");
+  const octets = parts.map((part) => (/^\d{1,3}$/.test(part) ? Number(part) : -1));
+  if (parts.length !== 4 || octets.some((octet) => octet < 0 || octet > 255)) return "Ağ adresi 192.168.1.50 gibi dört sayıdan oluşmalı.";
+  const [a, b] = octets;
+  if (!(a === 10 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168))) return "Ağ adresi işletme ağındaki (192.168.x.x, 10.x.x.x, 172.16-31.x.x) bir adres olmalı.";
+  if (!Number.isInteger(input.port) || input.port < 1 || input.port > 65535) return "Port 1 ile 65535 arasında olmalı.";
+  return null;
+}
+
 /** The snapshot job writes every 60 s; three missed rounds mean the job is no longer running. */
 export const HEALTH_SNAPSHOT_STALE_AFTER_MS = 180_000;
 
