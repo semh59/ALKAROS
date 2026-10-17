@@ -173,10 +173,8 @@ public sealed class TrendyolGoOrderNormalizer
     {
         if (HasDiscount(root))
             return null;
-        if (Price(root, "totalPrice") is not { } total)
-            return null;
-        var delivery = Price(root, "totalDeliveryPrice") ?? 0m;
-        return decimal.Round(total - delivery, 2, MidpointRounding.AwayFromZero);
+        // totalPrice is the sum of the lines; the delivery fee (totalDeliveryPrice) is separate and not part of it.
+        return Price(root, "totalPrice") is { } total ? decimal.Round(total, 2, MidpointRounding.AwayFromZero) : null;
     }
 
     /// <summary>Whether any order- or item-level coupon or promotion is present with an amount other than zero.</summary>

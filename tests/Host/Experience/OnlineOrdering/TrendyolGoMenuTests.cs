@@ -150,6 +150,7 @@ public sealed class TrendyolGoMenuTests : IAsyncLifetime, IDisposable
         var price = _handler.Calls[2];
         Assert.Equal($"{Root}products/price", price.Uri);
         var items = price.Body.GetProperty("items").EnumerateArray().ToList();
+        Assert.All(items, item => Assert.Equal(153L, item.GetProperty("restaurantId").GetInt64()));
         Assert.Equal((11L, 15.50m, 12L, 5m), (items[0].GetProperty("productId").GetInt64(), items[0].GetProperty("sellingPrice").GetDecimal(),
             items[1].GetProperty("productId").GetInt64(), items[1].GetProperty("sellingPrice").GetDecimal()));
         Assert.Equal($"{Root}batch-requests/b-1", _handler.Calls[3].Uri);
@@ -189,6 +190,20 @@ public sealed class TrendyolGoMenuTests : IAsyncLifetime, IDisposable
         var posts = _handler.Calls.Where(c => c.Method == "POST").ToList();
         Assert.Equal(BatchSizes, posts.Select(p => p.Body.GetProperty("items").GetArrayLength()));
         await Assert.ThrowsAsync<ArgumentException>(() => Client().UpdatePricesAsync([]));
+    }
+
+    [Fact]
+    public async Task APriceUpdateIsRefusedBeforeAnyCallWhenTheStoreIdIsNotTheNumericRestaurantId()
+    {
+        var secrets = new InMemorySecretProvider();
+        foreach (var reference in new[] { TrendyolGoApiSettings.BaseUrlReference, TrendyolGoApiSettings.SupplierIdReference, TrendyolGoApiSettings.ApiKeyReference,
+                     TrendyolGoApiSettings.ApiSecretReference, TrendyolGoApiSettings.IntegratorNameReference, TrendyolGoApiSettings.ExecutorEmailReference })
+            secrets.Set(reference, _secrets.GetValue(reference)!);
+        secrets.Set(TrendyolGoMenuClient.StoreIdReference, "store-abc");
+
+        await Assert.ThrowsAsync<TrendyolGoMenuException>(() => Client(secrets).UpdatePricesAsync([new TrendyolGoPriceUpdate(11, 15m)]));
+
+        Assert.Empty(_handler.Calls);
     }
 
     [Fact]

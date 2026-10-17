@@ -109,10 +109,13 @@ public sealed class TrendyolGoMenuClient
         ArgumentNullException.ThrowIfNull(prices);
         if (prices.Count is 0 or > MaxPriceItems)
             throw new ArgumentException($"A price update carries 1-{MaxPriceItems} products.", nameof(prices));
-        var (settings, _) = Require();
+        var (settings, storeId) = Require();
+        // Without restaurantId the platform applies the price to every restaurant of the seller.
+        if (!long.TryParse(storeId, NumberStyles.None, CultureInfo.InvariantCulture, out var restaurantId))
+            throw new TrendyolGoMenuException("The Trendyol Go store id must be the numeric restaurant id for a price update.");
         using var request = new HttpRequestMessage(HttpMethod.Post, Endpoint(settings, "products/price"))
         {
-            Content = JsonContent.Create(new { items = prices.Select(p => new { productId = p.ProductId, sellingPrice = p.SellingPrice }) })
+            Content = JsonContent.Create(new { items = prices.Select(p => new { restaurantId, productId = p.ProductId, sellingPrice = p.SellingPrice }) })
         };
         settings.Apply(request);
         using var response = await _http.SendAsync(request, cancellationToken).ConfigureAwait(false);

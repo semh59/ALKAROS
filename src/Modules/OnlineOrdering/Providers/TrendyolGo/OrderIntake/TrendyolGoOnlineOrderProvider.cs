@@ -35,8 +35,7 @@ public sealed class TrendyolGoOnlineOrderProvider : IOnlineOrderProvider
     /// <c>created</c> asks for the order; <c>cancelled</c> (a non-seller reason, such as the customer) and
     /// <c>unsupplied</c> (a seller reason, 621–627) cancel it; <c>shipped</c> and <c>delivered</c> change nothing
     /// locally (the restaurant's part ends at handover); <c>picking</c> and <c>invoiced</c> echo this restaurant's own
-    /// calls. The other documented events (<c>pickupEtaCalculated</c>, <c>courierNearby</c>, <c>storeChanged</c>,
-    /// <c>sellerChanged</c>) are not expected — the integrator subscribes only the five above, as the document's own
+    /// calls. The other documented events (<c>pickupEtaCalculated</c>, <c>courierNearby</c>) are not expected — the integrator subscribes only the five above, as the document's own
     /// sample does — so they are unknown and reach a person.
     /// </summary>
     public StatusMappingResult MapStatus(string externalOrderId, string providerStatus, string rawPayload)

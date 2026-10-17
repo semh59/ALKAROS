@@ -29,8 +29,6 @@ public static class TrendyolGoEvents
     public const string Delivered = "delivered";
     public const string PickupEtaCalculated = "pickupEtaCalculated";
     public const string CourierNearby = "courierNearby";
-    public const string StoreChanged = "storeChanged";
-    public const string SellerChanged = "sellerChanged";
 
     /// <summary>Restaurant-side package states only seen by polling: echoes of this restaurant's own acceptance and readiness.</summary>
     public const string Picking = "picking";
@@ -39,7 +37,7 @@ public static class TrendyolGoEvents
     /// <summary>The event types a webhook path may name.</summary>
     public static IReadOnlySet<string> WebhookEventTypes { get; } = new HashSet<string>(StringComparer.Ordinal)
     {
-        Created, Cancelled, Unsupplied, Shipped, Delivered, PickupEtaCalculated, CourierNearby, StoreChanged, SellerChanged
+        Created, Cancelled, Unsupplied, Shipped, Delivered, PickupEtaCalculated, CourierNearby
     };
 
     /// <summary>The stored event name of a polled package's <c>packageStatus</c>; null for a status the document does not list.</summary>

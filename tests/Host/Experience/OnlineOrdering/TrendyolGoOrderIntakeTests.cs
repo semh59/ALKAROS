@@ -143,6 +143,12 @@ public sealed class TrendyolGoOrderIntakeTests : IAsyncLifetime, IDisposable
         Assert.Equal(HttpStatusCode.Unauthorized, missing.StatusCode);
         using var unknownType = await DeliverAsync("paid", body);
         Assert.Equal((HttpStatusCode.NotFound, "UNKNOWN_EVENT_TYPE"), (unknownType.StatusCode, await CodeAsync(unknownType)));
+        foreach (var undocumented in new[] { "storeChanged", "sellerChanged" })
+        {
+            using var rejected = await DeliverAsync(undocumented, body);
+            Assert.Equal((HttpStatusCode.NotFound, "UNKNOWN_EVENT_TYPE"), (rejected.StatusCode, await CodeAsync(rejected)));
+        }
+
         using var malformed = await DeliverAsync("created", "{\"orderNumber\":\"1\"}");
         Assert.Equal((HttpStatusCode.BadRequest, "MALFORMED_PAYLOAD"), (malformed.StatusCode, await CodeAsync(malformed)));
         Assert.Empty(await _database.InboxAsync(packageId));
@@ -314,9 +320,9 @@ public sealed class TrendyolGoOrderIntakeTests : IAsyncLifetime, IDisposable
         var discounted = (await Normalizer().NormalizeAsync(Package(packageId, tgoSku, withCoupon: true, totalPrice: 280m), DateTimeOffset.UtcNow)).Order!;
         Assert.Null(discounted.ProviderSubTotal);
         var delivered = (await Normalizer().NormalizeAsync(
-            Package(packageId, tgoSku, totalPrice: 305.99m).Replace("\"totalDeliveryPrice\":null", "\"totalDeliveryPrice\":15.99", StringComparison.Ordinal),
+            Package(packageId, tgoSku, totalPrice: 290m).Replace("\"totalDeliveryPrice\":null", "\"totalDeliveryPrice\":15.99", StringComparison.Ordinal),
             DateTimeOffset.UtcNow)).Order!;
-        Assert.Equal(290m, delivered.ProviderSubTotal);
+        Assert.Equal((290m, true), (delivered.ProviderSubTotal, delivered.TotalsMatch));
 
         Assert.Equal(NormalizationRejection.UnmappedSku, (await Normalizer().NormalizeAsync(Package(packageId, "999999999"), DateTimeOffset.UtcNow)).Rejection);
         Assert.Equal(NormalizationRejection.UnsupportedTransportType,
