@@ -30,7 +30,7 @@ Mevcut sistem sağlığı görüntüsünü yazan kod bağlanır; yönetim ekran�
 
 ## Out of scope
 
-- Yok.
+- Ölçümün eski kalmasının ekranda işaretlenmesi (V1-RMD-586).
 
 ## Dependencies
 
