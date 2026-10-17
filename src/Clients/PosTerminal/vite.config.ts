@@ -1,4 +1,4 @@
-import { defineConfig } from "vite";
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   server: {
@@ -11,6 +11,11 @@ export default defineConfig({
         ws: true,
       },
     },
+  },
+  // The screen tests render whole routes in jsdom (about 4.5 s alone) and run in parallel, so the 5 s default flakes under load.
+  test: {
+    testTimeout: 30_000,
+    hookTimeout: 30_000,
   },
   build: {
     outDir: "dist",

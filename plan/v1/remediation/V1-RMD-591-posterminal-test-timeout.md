@@ -1,7 +1,7 @@
 # V1-RMD-591 - PosTerminal testlerinde zaman aşımı kararsızlığı
 
 - Task ID: V1-RMD-591
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: validation
 - Surface state: Planned
