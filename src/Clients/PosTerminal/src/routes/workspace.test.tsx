@@ -731,3 +731,64 @@ describe("workspace /management route", () => {
     expect((fetch.mock.calls as unknown[][]).map(([url]) => String(url)).filter((url) => url.includes("/api/v1/management"))).toEqual([]);
   });
 });
+
+/** The kitchen screen's printer form is wired to the printer endpoints only for the routing permission, and the list is reloaded after a save. */
+describe("KitchenRoute printer setup wiring", () => {
+  let root: Root | null = null;
+  const calls: { method: string; path: string; body?: string }[] = [];
+
+  async function renderKitchen(capabilities: readonly string[]) {
+    calls.length = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(input);
+      calls.push({ method: init?.method ?? "GET", path, body: typeof init?.body === "string" ? init.body : undefined });
+      if (path.endsWith("/runtime-configuration")) return jsonResponse({ kitchenStationId: "hot-line" });
+      if (path.includes("/operations/live-sync")) return jsonResponse({ enabled: true, denseModeThreshold: 9 });
+      if (path.includes("/operations/health/latest")) return new Response(null, { status: 204 });
+      if (init?.method === "POST" && path.includes("/printers/")) return jsonResponse({ id: "new" });
+      return jsonResponse([]);
+    }));
+    window.history.replaceState({}, "", "/kitchen");
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage terminalId="55555555-5555-5555-5555-555555555555" displayName="Test" capabilities={capabilities} path="/kitchen" backendStatus="online" onLogout={async () => {}} />
+      </RouterProvider>,
+    ));
+    for (let i = 0; i < 4; i++) await act(async () => Promise.resolve());
+  }
+
+  const button = (text: string) => [...document.querySelectorAll("button")].find((candidate) => candidate.textContent?.trim() === text);
+  const printerListReads = () => calls.filter((call) => call.method === "GET" && /\/printers$/.test(call.path)).length;
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+  });
+
+  it("offers no printer form without the routing permission", async () => {
+    await renderKitchen(["kitchen.advance"]);
+
+    expect(button("Yazıcı ekle")).toBeUndefined();
+  });
+
+  it("saves a new printer through the printer endpoint and then reloads the printer list", async () => {
+    await renderKitchen(["kitchen.advance", "kitchen.routing.manage"]);
+    const readsBefore = printerListReads();
+    await act(async () => button("Yazıcı ekle")!.click());
+    const set = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+    for (const [label, value] of [["Yazıcı adı", "Bar"], ["İstasyon", "bar"], ["Ağ adresi", "192.168.1.60"]]) {
+      const input = [...document.querySelectorAll<HTMLLabelElement>("form[aria-label] label")].find((candidate) => candidate.textContent?.startsWith(label))!.querySelector("input")!;
+      await act(async () => { set.call(input, value); input.dispatchEvent(new Event("input", { bubbles: true })); });
+    }
+    await act(async () => { document.querySelector("form[aria-label]")!.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })); });
+    for (let i = 0; i < 4; i++) await act(async () => Promise.resolve());
+
+    const post = calls.find((call) => call.method === "POST" && /\/printers\/[0-9a-f-]{36}$/.test(call.path));
+    expect(JSON.parse(post!.body!)).toEqual({ name: "Bar", stationId: "bar", ipAddress: "192.168.1.60", port: 9100, profile: "Default" });
+    expect(printerListReads()).toBeGreaterThan(readsBefore);
+  });
+});

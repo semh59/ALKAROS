@@ -1,7 +1,7 @@
 # V1-RMD-590 - Göç listesi sınırı ve yazıcı formu bağlantı testi
 
 - Task ID: V1-RMD-590
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: validation
 - Surface state: Planned
