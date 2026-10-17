@@ -26,11 +26,11 @@ Veritabanı veya API süreci çökse de kritik durum yerel dosya tamponuna yazı
 ## In scope
 
 - Boyutu sınırlı yerel dosya tamponu; veritabanı yazımı başarısızsa kritik olay kuyruğu atlayıp doğrudan gönderim denemesi; devre kesici.
-- Bekçi mantığı (sağlık ucu yoklama, ardışık başarısızlıkta tek alarm, nabız sayacı) ve doğrudan bildirim arayüzü; bekçinin ayrı konteynerde çalıştırılması ve gerçek kanal V1-RMD-557'de bağlanır.
+- Bekçi mantığı (sağlık ucu yoklama, ardışık başarısızlıkta tek alarm, nabız sayacı) ve doğrudan bildirim arayüzü; bekçinin ayrı konteynerde çalıştırılması ve gerçek kanal V1-RMD-585'te bağlanır.
 
 ## Out of scope
 
-- Gerçek Telegram doğrulaması ve bekçi konteyneri (V1-RMD-557).
+- Gerçek Telegram doğrulaması (V1-RMD-557) ve bekçi konteyneri (V1-RMD-585).
 
 ## Dependencies
 
