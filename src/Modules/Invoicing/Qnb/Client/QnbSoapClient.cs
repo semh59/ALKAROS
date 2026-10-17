@@ -127,6 +127,12 @@ public sealed class QnbSoapClient
         return await reader.ReadToEndAsync(cancellationToken);
     }
 
+    /// <summary>One SOAP call to another QNB service (e-Arsiv) through the same HTTP session, fault handling included.</summary>
+    internal Task<XDocument> CallAsync(string url, string serviceNamespace, string method, string innerXml, CancellationToken cancellationToken) =>
+        PostAsync(url, BuildEnvelope(serviceNamespace, method, innerXml), cancellationToken);
+
+    internal static string EscapeXml(string value) => Escape(value);
+
     private static string BuildEnvelope(string serviceNamespace, string method, string innerXml) => $"""
         <?xml version="1.0" encoding="utf-8"?>
         <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ser="{serviceNamespace}">

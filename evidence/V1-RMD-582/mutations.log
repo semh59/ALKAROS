@@ -1,0 +1,9 @@
+M1 success code accepted blindly: Başarısız! - Başarısız: 1 (22 geçti)
+M2 wrong service namespace: Başarısız! - Başarısız: 1 (22 geçti)
+M3 returned format 9 -> 2: Başarısız! - Başarısız: 1 (22 geçti)
+M4 belgeFormati UBL -> HTML: Başarısız! - Başarısız: 1 (22 geçti)
+M5 input not XML-escaped: yaşıyor, eşdeğer mutant - System.Text.Json JSON metninde < & > karakterlerini zaten kaçırır, XML kaçışı ikinci koruma
+M6 blank invoice number or uuid accepted: Başarısız! - Başarısız:     2, Başarılı:    23, Atlanan:     0,
+M7 sube sent as kasa (testte farklı şube/kasa değerleriyle): Başarısız! - Başarısız: 1 (24 geçti)
+M8 view url dropped: Başarısız! - Başarısız: 1 (22 geçti)
+M9 empty UBL content sent: Başarısız! - Başarısız: 1 (22 geçti)

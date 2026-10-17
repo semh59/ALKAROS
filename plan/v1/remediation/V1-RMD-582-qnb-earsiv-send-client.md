@@ -1,7 +1,7 @@
 # V1-RMD-582 - QNB e-Arşiv fatura gönderim istemcisi
 
 - Task ID: V1-RMD-582
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: implementation
 - Surface state: Planned
