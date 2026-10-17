@@ -28,6 +28,7 @@ olarak değerlendirmek.
 - Assignee independence: assignee, değerlendirilen security control task'larının implementer'ı olamaz.
 - Threat-model verification, SAST/dependency/config scan, authorization abuse case, public endpoint test, secret scan ve
   finding severity.
+- Kapsam haritası: `docs/security/asvs-5-chapter-map.md` (ASVS 5.0.0 bölüm numaraları ve `v5.0.0-<bölüm>.<kesim>.<madde>` kimlik biçimi; onaylı temel kayıttaki eski 4.0 tarzı aralıklar yerine bu harita kullanılır).
 
 ## Out of scope
 
