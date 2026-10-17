@@ -41,4 +41,4 @@ PosTerminal test paketinde `Cashier.*` ekran testleri tek başlarına yaklaşık
 
 ## Handoff
 
-- None
+- V1-RMD-592
