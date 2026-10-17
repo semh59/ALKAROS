@@ -29,6 +29,14 @@ public static class RetentionPolicyCatalog
         ExtendedAudit365D
     };
 
+    public static IReadOnlyDictionary<string, int> RetentionDays { get; } = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+    {
+        [HotOperational7D] = 7,
+        [StandardOperational30D] = 30,
+        [ComplianceAudit90D] = 90,
+        [ExtendedAudit365D] = 365,
+    };
+
     public static bool IsApproved(string? policyId)
     {
         return !string.IsNullOrWhiteSpace(policyId) && ApprovedPolicies.Contains(policyId.Trim());

@@ -5,6 +5,7 @@ using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.Observability.Wiring;
 using ALKAROS.Observability.AlertFoundation;
 using ALKAROS.Observability.ErrorEvents;
+using ALKAROS.Observability.Foundation;
 using ALKAROS.Observability.TelemetryPrivacy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
@@ -173,17 +174,52 @@ public sealed class ErrorRetentionHostedService(
         new("observability.error_occurrences", "occurred_at", TelemetryRetention.RawEventDays),
         new("observability.raw_ui_interactions", "occurred_at", TelemetryRetention.RawEventDays),
         new("observability.error_events", "last_seen_at", TelemetryRetention.ErrorEventDays),
+        new("operations.system_health_snapshots", "captured_at", TelemetryRetention.RawEventDays),
+        new("observability.notification_queue", "enqueued_at", TelemetryRetention.RawEventDays),
+        new("observability.notification_suppressions", "last_sent_at", TelemetryRetention.RawEventDays),
     ];
+
+    /// <summary>Each health check row carries its own approved retention policy; the longest one bounds an unknown value.</summary>
+    private static readonly string HealthCheckDaysSql =
+        string.Concat(RetentionPolicyCatalog.RetentionDays.Select(p => $"WHEN '{p.Key.ToUpperInvariant()}' THEN {p.Value} "))
+        + $"ELSE {RetentionPolicyCatalog.RetentionDays.Values.Max()}";
 
     public async Task RunOnceAsync(DateTimeOffset now, CancellationToken cancellationToken)
     {
-        var removed = await TelemetryRetention.PurgeAsync(monitoring.Inner, Policies, now, cancellationToken: cancellationToken);
+        var removed = new Dictionary<string, int>(
+            await TelemetryRetention.PurgeAsync(monitoring.Inner, Policies, now, cancellationToken: cancellationToken))
+        {
+            ["observability.health_checks"] = await PurgeHealthChecksAsync(now, cancellationToken),
+        };
         await audit.AppendAsync(
             new AuditEvent(
                 Guid.NewGuid(), "monitoring.retention.run", "MonitoringRetention", Guid.NewGuid(), "System",
                 "monitoring-retention", reason: "Scheduled monitoring data purge",
                 afterStateJson: JsonSerializer.Serialize(removed)),
             cancellationToken);
+    }
+
+    private async Task<int> PurgeHealthChecksAsync(DateTimeOffset now, CancellationToken cancellationToken)
+    {
+        const int batchSize = 5000;
+        var total = 0;
+        while (true)
+        {
+            await using var command = monitoring.Inner.CreateCommand(
+                $"""
+                WITH doomed AS (
+                    SELECT ctid FROM observability.health_checks
+                    WHERE checked_at < $1 - make_interval(days => CASE upper(trim(retention_policy_id)) {HealthCheckDaysSql} END)
+                    LIMIT {batchSize}
+                )
+                DELETE FROM observability.health_checks WHERE ctid IN (SELECT ctid FROM doomed);
+                """);
+            command.Parameters.AddWithValue(now.UtcDateTime);
+            var affected = await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+            total += affected;
+            if (affected < batchSize)
+                return total;
+        }
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

@@ -1,0 +1,14 @@
+M1 snapshots not purged: KILLED restored=True
+M2 queue not purged: KILLED restored=True
+M3 suppressions not purged: KILLED restored=True
+M4 snapshots kept 395 days: KILLED restored=True
+M5 queue kept 90 days: KILLED restored=True
+M6 health cutoff sign: KILLED restored=True
+M7 health purge skipped: KILLED restored=True
+M8 unknown policy deleted at once: KILLED restored=True
+M9 hot policy 8 days: KILLED restored=True
+M10 no case folding: KILLED restored=True
+M11 no trim: KILLED restored=True
+M12 only first batch: KILLED restored=True
+M13 audit policy 91 days: KILLED restored=True
+survivors: 0

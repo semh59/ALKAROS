@@ -1,7 +1,7 @@
 # V1-RMD-587 - Sağlık ve bildirim tablolarında saklama süresi
 
 - Task ID: V1-RMD-587
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01UKcG8ALDsRweQYx6F2bSYe
 - Work type: feature
 - Surface state: Planned

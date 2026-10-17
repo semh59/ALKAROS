@@ -29,6 +29,11 @@ public sealed class DetectorsDatabase : PgTestDatabase
         var interactions = Directory.GetFiles(
             Path.Combine(root, "database", "migrations", "V1", "V1-RMD-541"), "191-*.up.sql").Single();
         await RunAsync(DataSource, await File.ReadAllTextAsync(interactions));
+        foreach (var (task, prefix) in new[] { ("V1-OBS-001", "028-"), ("V1-OPS-002", "029-"), ("V1-RMD-538", "188-") })
+        {
+            var migration = Directory.GetFiles(Path.Combine(root, "database", "migrations", "V1", task), prefix + "*.up.sql").Single();
+            await RunAsync(DataSource, await File.ReadAllTextAsync(migration));
+        }
     }
 }
 
@@ -214,6 +219,49 @@ public sealed class ServerDetectorsTests : IClassFixture<DetectorsDatabase>
         (await CountCategoryAsync("api.old")).Should().Be(0);
         (await CountCategoryAsync("api.new")).Should().Be(1);
         audit.Events.Should().ContainSingle(e => e.EventName == "monitoring.retention.run");
+    }
+
+    [Fact]
+    public async Task RetentionRunAlsoPurgesHealthSnapshotsHealthChecksAndNotificationRows()
+    {
+        await _database.ExecuteAsync(
+            """
+            INSERT INTO operations.system_health_snapshots (snapshot_id, database_status, disk_status, last_backup_status, free_disk_bytes, database_size_bytes, captured_at)
+            VALUES (gen_random_uuid(), 'Healthy', 'Healthy', 'Healthy', 1, 1, now() - interval '31 days'),
+                   (gen_random_uuid(), 'Healthy', 'Healthy', 'Healthy', 1, 1, now() - interval '29 days');
+            INSERT INTO observability.notification_queue (fingerprint, layer, category, severity, kind, enqueued_at, next_attempt_at)
+            VALUES ('q-old', 'Api', 'c', 'Error', 'Digest', now() - interval '31 days', now()),
+                   ('q-new', 'Api', 'c', 'Error', 'Digest', now() - interval '29 days', now());
+            INSERT INTO observability.notification_suppressions (fingerprint, last_sent_at)
+            VALUES ('s-old', now() - interval '31 days'), ('s-new', now() - interval '29 days');
+            INSERT INTO observability.health_checks (health_check_id, check_type, target, status, checked_at, retention_policy_id)
+            VALUES (gen_random_uuid(), 't', 'hot-old', 'Healthy', now() - interval '7 days 1 hour', 'HOT_7D'),
+                   (gen_random_uuid(), 't', 'hot-new', 'Healthy', now() - interval '6 days 23 hours', 'HOT_7D'),
+                   (gen_random_uuid(), 't', 'op-old', 'Healthy', now() - interval '30 days 1 hour', 'OPERATIONAL_30D'),
+                   (gen_random_uuid(), 't', 'op-new', 'Healthy', now() - interval '29 days 23 hours', 'OPERATIONAL_30D'),
+                   (gen_random_uuid(), 't', 'au-old', 'Healthy', now() - interval '90 days 1 hour', 'AUDIT_90D'),
+                   (gen_random_uuid(), 't', 'au-new', 'Healthy', now() - interval '89 days 23 hours', 'AUDIT_90D'),
+                   (gen_random_uuid(), 't', 'ex-old', 'Healthy', now() - interval '365 days 1 hour', 'audit_365d'),
+                   (gen_random_uuid(), 't', 'ex-new', 'Healthy', now() - interval '364 days 23 hours', 'audit_365d'),
+                   (gen_random_uuid(), 't', 'lc-old', 'Healthy', now() - interval '7 days 1 hour', ' hot_7d '),
+                   (gen_random_uuid(), 't', 'lc-new', 'Healthy', now() - interval '6 days 23 hours', ' hot_7d '),
+                   (gen_random_uuid(), 't', 'zz-old', 'Healthy', now() - interval '400 days', 'UNKNOWN'),
+                   (gen_random_uuid(), 't', 'zz-new', 'Healthy', now() - interval '300 days', 'UNKNOWN');
+            INSERT INTO observability.health_checks (health_check_id, check_type, target, status, checked_at, retention_policy_id)
+            SELECT gen_random_uuid(), 't', 'bulk', 'Healthy', now() - interval '10 days', 'HOT_7D' FROM generate_series(1, 5001);
+            """);
+        var audit = new RecordingAudit();
+        var service = new ErrorRetentionHostedService(new MonitoringDataSource(_database.DataSource), audit);
+
+        await service.RunOnceAsync(DateTimeOffset.UtcNow, CancellationToken.None);
+
+        (await _database.ScalarAsync<long>("SELECT count(*) FROM operations.system_health_snapshots;")).Should().Be(1);
+        (await _database.ScalarAsync<string>("SELECT string_agg(fingerprint, ',') FROM observability.notification_queue;")).Should().Be("q-new");
+        (await _database.ScalarAsync<string>("SELECT string_agg(fingerprint, ',') FROM observability.notification_suppressions;")).Should().Be("s-new");
+        (await _database.ScalarAsync<string>("SELECT string_agg(target, ',' ORDER BY target) FROM observability.health_checks;"))
+            .Should().Be("au-new,ex-new,hot-new,lc-new,op-new,zz-new");
+        audit.Events.Last().AfterStateJson.Should().Contain("observability.health_checks\":5007")
+            .And.Contain("operations.system_health_snapshots\":1");
     }
 
     private sealed class RecordingAudit : IAuditEventStore
