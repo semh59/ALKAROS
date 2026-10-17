@@ -56,4 +56,4 @@ Mutfak yazıcısı oluşturmanın veya IP/port ayarlamanın hiçbir yolu yok: ar
 
 ## Handoff
 
-- None
+- V1-RMD-590
