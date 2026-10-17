@@ -1,0 +1,7 @@
+{"step":"login","url":"http://localhost:8090/"}
+{"step":"kitchen","url":"http://localhost:8090/kitchen","hasAddButton":1}
+{"step":"public-address","feedback":"Girilen bilgiler geçerli değil: ağ adresi işletme ağındaki (192.168.x.x, 10.x.x.x, 172.16-31.x.x) bir adres olmalı, port 1-65535 arasında olmalı.","rowsInDatabase":"0"}
+{"step":"saved","requests":[{"method":"POST","status":400,"body":"{\"name\":\"Kanit592 yanlis\",\"stationId\":\"bar\",\"ipAddress\":\"8.8.8.8\",\"port\":9100,\"profile\":\"Default\"}"},{"method":"POST","status":200,"body":"{\"name\":\"Kanit592 bar yazicisi\",\"stationId\":\"bar\",\"ipAddress\":\"192.168.1.77\",\"port\":9100,\"profile\":\"Star\"}"}],"row":"Kanit592 bar yazicisi|bar|192.168.1.77|9100|Star|true","listedOnScreen":["Kanit592 bar yazicisi\nbar · 0 aktif rota · 192.168.1.77:9100 · Star\nDüzenle"]}
+{"step":"edited","row":"-","requests":[{"method":"PUT","status":200,"body":"{\"name\":\"Kanit592 bar yazicisi\",\"stationId\":\"bar\",\"ipAddress\":\"192.168.1.77\",\"port\":9100,\"profile\":\"Default\",\"isActive\":true}"}]}
+{"step":"stale-marker","onScreen":1,"text":"Son ölçüm 17.10.2026 22:58. Gösterilen değerler güncel olmayabilir."}
+{"step":"cleanup","printersLeft":"0"}

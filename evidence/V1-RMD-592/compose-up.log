@@ -1,0 +1,1041 @@
+ Image alkaros-provision Building 
+ Image alkaros-web Building 
+ Image alkaros-migrate Building 
+ Image alkaros-api Building 
+ Image alkaros-watchdog Building 
+#1 [internal] load local bake definitions
+#1 reading from stdin 2.31kB 0.0s done
+#1 DONE 0.0s
+
+#2 [migrate internal] load build definition from Dockerfile
+#2 transferring dockerfile: 10.92kB 0.1s done
+#2 DONE 0.1s
+
+#2 [web internal] load build definition from Dockerfile
+#2 DONE 0.1s
+
+#3 [provision] resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#3 ...
+
+#4 [auth] docker/dockerfile:pull token for registry-1.docker.io
+#4 DONE 0.0s
+
+#3 [provision] resolve image config for docker-image://docker.io/docker/dockerfile:1.7
+#3 DONE 1.3s
+
+#5 [watchdog] docker-image://docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e
+#5 resolve docker.io/docker/dockerfile:1.7@sha256:a57df69d0ea827fb7266491f2813635de6f17269be881f696fbfdf2d83dda33e 0.0s done
+#5 CACHED
+
+#6 [provision internal] load build definition from Dockerfile
+#6 transferring dockerfile: 10.92kB done
+#6 DONE 0.0s
+
+#7 [api internal] load build definition from Dockerfile
+#7 transferring dockerfile: 10.92kB done
+#7 DONE 0.0s
+
+#8 [migrate internal] load build definition from Dockerfile
+#8 transferring dockerfile: 10.92kB done
+#8 DONE 0.1s
+
+#9 [web internal] load build definition from Dockerfile
+#9 transferring dockerfile: 10.92kB done
+#9 DONE 0.1s
+
+#10 [watchdog internal] load build definition from Dockerfile
+#10 transferring dockerfile: 10.92kB done
+#10 DONE 0.1s
+
+#11 [watchdog internal] load metadata for docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#11 ...
+
+#12 [watchdog internal] load metadata for mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+#12 DONE 0.4s
+
+#13 [auth] library/node:pull token for registry-1.docker.io
+#13 DONE 0.0s
+
+#14 [auth] library/caddy:pull token for registry-1.docker.io
+#14 DONE 0.0s
+
+#15 [watchdog internal] load metadata for mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23
+#15 DONE 0.5s
+
+#16 [web internal] load metadata for docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+#16 DONE 0.8s
+
+#11 [web internal] load metadata for docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#11 DONE 0.8s
+
+#17 [api internal] load .dockerignore
+#17 transferring context: 745B 0.0s done
+#17 DONE 0.0s
+
+#18 [watchdog internal] load .dockerignore
+#18 transferring context: 745B 0.0s done
+#18 DONE 0.1s
+
+#19 [provision internal] load .dockerignore
+#19 transferring context: 745B 0.0s done
+#19 DONE 0.1s
+
+#20 [migrate internal] load .dockerignore
+#20 transferring context: 745B 0.0s done
+#20 DONE 0.1s
+
+#21 [web internal] load .dockerignore
+#21 transferring context: 745B done
+#21 DONE 0.1s
+
+#22 [api internal] load build context
+#22 DONE 0.0s
+
+#23 [watchdog internal] load build context
+#23 DONE 0.0s
+
+#24 [provision internal] load build context
+#24 DONE 0.0s
+
+#25 [migrate internal] load build context
+#25 DONE 0.0s
+
+#26 [api backend-build 1/6] FROM mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0
+#26 resolve mcr.microsoft.com/dotnet/sdk:10.0.302@sha256:72dd743782f2ae7e5476fd64f6a460045e3998dc862218b80e6944cba79a01b0 0.1s done
+#26 DONE 0.1s
+
+#27 [api frontend-build  1/10] FROM docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff
+#27 resolve docker.io/library/node:24.6.0-bookworm-slim@sha256:9b741b28148b0195d62fa456ed84dd6c953c1f17a3761f3e6e6797a754d9edff 0.1s done
+#27 DONE 0.1s
+
+#28 [api api  1/10] FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23
+#28 resolve mcr.microsoft.com/dotnet/aspnet:8.0-alpine@sha256:b288317d8ed45bb763fa95dbc807cf9d36e3bf9373ec2fac6b6548675f1f4b23 0.1s done
+#28 DONE 0.1s
+
+#29 [web internal] load build context
+#29 ...
+
+#30 [web web 1/6] FROM docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0
+#30 resolve docker.io/library/caddy:2.9-alpine@sha256:b4e3952384eb9524a887633ce65c752dd7c71314d2c2acf98cd5c715aaa534f0 0.0s done
+#30 DONE 0.1s
+
+#22 [api internal] load build context
+#22 ...
+
+#29 [web internal] load build context
+#29 transferring context: 310.61kB 1.3s done
+#29 DONE 1.3s
+
+#31 [web frontend-build  2/10] WORKDIR /src
+#31 CACHED
+
+#32 [web frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#32 CACHED
+
+#33 [web frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#33 CACHED
+
+#22 [api internal] load build context
+#22 ...
+
+#34 [web frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#34 DONE 0.8s
+
+#22 [api internal] load build context
+#22 transferring context: 15.37MB 6.2s
+#22 ...
+
+#24 [provision internal] load build context
+#24 ...
+
+#22 [api internal] load build context
+#22 ...
+
+#23 [watchdog internal] load build context
+#23 ...
+
+#25 [migrate internal] load build context
+#25 ...
+
+#22 [api internal] load build context
+#22 transferring context: 35.66MB 11.3s
+#22 ...
+
+#35 [web frontend-build  6/10] RUN pnpm build
+#35 6.475 ? Verifying lockfile against supply-chain policies (175 entries)...
+#35 6.518 Lockfile is up to date, resolution step is skipped
+#35 6.921 Already up to date
+#35 7.626 
+#35 7.626    ╭───────────────────────────────────────────────╮
+#35 7.626    │                                               │
+#35 7.626    │     Update available! 11.19.0 → 12.14.0.      │
+#35 7.626    │     Changelog: https://pnpm.io/v/12.14.0      │
+#35 7.626    │   To update, run: corepack use pnpm@12.14.0   │
+#35 7.626    │                                               │
+#35 7.626    ╰───────────────────────────────────────────────╯
+#35 7.626 
+#35 ...
+
+#22 [api internal] load build context
+#22 transferring context: 54.70MB 14.4s done
+#22 DONE 14.4s
+
+#25 [migrate internal] load build context
+#25 ...
+
+#33 [api frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#33 CACHED
+
+#34 [api frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#34 DONE 0.8s
+
+#36 [provision backend-build 2/6] WORKDIR /src
+#36 CACHED
+
+#25 [migrate internal] load build context
+#25 ...
+
+#24 [provision internal] load build context
+#24 transferring context: 70.91MB 19.4s
+#24 ...
+
+#25 [migrate internal] load build context
+#25 ...
+
+#23 [watchdog internal] load build context
+#23 ...
+
+#25 [migrate internal] load build context
+#25 ...
+
+#35 [api frontend-build  6/10] RUN pnpm build
+#35 10.48 ✓ Lockfile passes supply-chain policies (175 entries in 4s)
+#35 10.62 
+#35 10.70 Done in 6.2s using pnpm v11.19.0
+#35 10.82 $ pnpm run lint && tsc --noEmit && vite build
+#35 12.35 $ oxlint -c .oxlintrc.json --max-warnings=20 src
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#35 13.30      ,-[src/routes/CustomerDisplayScreensaverSettings.tsx:189:115]
+#35 13.30  188 |             Kullanıcı adı
+#35 13.30  189 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#35 13.30      :                                                                                                                   ^^^^^^^^^
+#35 13.30  190 |           </label>
+#35 13.30      `----
+#35 13.30   help: Remove the `autoFocus` attribute.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#35 13.30      ,-[src/routes/TokenTerminalSettings.tsx:174:115]
+#35 13.30  173 |             Kullanıcı adı
+#35 13.30  174 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#35 13.30      :                                                                                                                   ^^^^^^^^^
+#35 13.30  175 |           </label>
+#35 13.30      `----
+#35 13.30   help: Remove the `autoFocus` attribute.
+#35 13.30 
+#35 13.30   ! react(globals): Cannot reassign variables declared outside of the component/hook
+#35 13.30     ,-[src/router.test.tsx:14:3]
+#35 13.30  13 | function Probe() {
+#35 13.30  14 |   seen = useRouter();
+#35 13.30     :   ^^|^
+#35 13.30     :     `-- `seen` cannot be reassigned
+#35 13.30  15 |   return <span>{seen.path}</span>;
+#35 13.30     `----
+#35 13.30   help: Variable `seen` is declared outside of the component/hook. Reassigning this value during render is a side effect which can cause unpredictable behavior. If this variable is used in rendering, use useState instead. Otherwise, update it in an effect
+#35 13.30   note: React Compiler skipped optimizing this component or hook. Additional guidance: https://react.dev/reference/eslint-plugin-react-hooks/lints/globals
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#35 13.30      ,-[src/routes/RelaySettings.tsx:178:115]
+#35 13.30  177 |             Kullanıcı adı
+#35 13.30  178 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#35 13.30      :                                                                                                                   ^^^^^^^^^
+#35 13.30  179 |           </label>
+#35 13.30      `----
+#35 13.30   help: Remove the `autoFocus` attribute.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#35 13.30     ,-[src/routes/SecurityAdministration.tsx:98:115]
+#35 13.30  97 |             Kullanıcı adı
+#35 13.30  98 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#35 13.30     :                                                                                                                   ^^^^^^^^^
+#35 13.30  99 |           </label>
+#35 13.30     `----
+#35 13.30   help: Remove the `autoFocus` attribute.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#35 13.30      ,-[src/routes/ReservationStation.tsx:111:115]
+#35 13.30  110 |             Kullanıcı adı
+#35 13.30  111 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#35 13.30      :                                                                                                                   ^^^^^^^^^
+#35 13.30  112 |           </label>
+#35 13.30      `----
+#35 13.30   help: Remove the `autoFocus` attribute.
+#35 13.30 
+#35 13.30   ! eslint(no-unused-vars): Identifier 'ApiError' is imported but never used.
+#35 13.30    ,-[src/features/tables/TableWorkspace.test.tsx:7:10]
+#35 13.30  6 | import { afterEach, describe, expect, it, vi } from "vitest";
+#35 13.30  7 | import { ApiError } from "../../api";
+#35 13.30    :          ^^^^|^^^
+#35 13.30    :              `-- 'ApiError' is imported here
+#35 13.30  8 | import { TableWorkspace, type TableRecord, type TableZone } from "./index";
+#35 13.30    `----
+#35 13.30   help: Consider removing this import.
+#35 13.30 
+#35 13.30   ! react-hooks(exhaustive-deps): The ref's value `.current` is accessed directly in the effect cleanup function.
+#35 13.30      ,-[src/routes/Cashier.tsx:253:18]
+#35 13.30  252 |     first?.focus();
+#35 13.30  253 |     return () => pairingTrigger.current?.focus();
+#35 13.30      :                  ^^^^^^^^^^^^^^^^^^^^^^
+#35 13.30  254 |   }, [pairingOpen]);
+#35 13.30      `----
+#35 13.30   help: The ref value will likely have changed by the time this effect cleanup function runs. If this ref points to a node rendered by react, copy it to a variable inside the effect and use that variable in the cleanup function.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#35 13.30      ,-[src/routes/Cashier.tsx:394:15]
+#35 13.30  393 |               autoComplete="username"
+#35 13.30  394 |               autoFocus
+#35 13.30      :               ^^^^^^^^^
+#35 13.30  395 |             />
+#35 13.30      `----
+#35 13.30   help: Remove the `autoFocus` attribute.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-noninteractive-element-to-interactive-role): Non-interactive elements should not be assigned interactive roles.
+#35 13.30      ,-[src/routes/Cashier.tsx:565:73]
+#35 13.30  564 |             split-payment fix used for a VALUE choice instead). */}
+#35 13.30  565 |         <nav className="category-rail" aria-label="Ürün kategorileri" role="tablist">
+#35 13.30      :                                                                       ^^^^^^^^^^^^^^
+#35 13.30  566 |           <button data-telemetry-id="b.routes.cashier.12"
+#35 13.30      `----
+#35 13.30   help: Remove the interactive role or use an appropriate interactive element instead.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-static-element-interactions): Static HTML elements with event handlers require a role.
+#35 13.30      ,-[src/routes/Cashier.tsx:727:10]
+#35 13.30  726 |       {pairingOpen && (
+#35 13.30  727 |         <div className="dialog-backdrop" onMouseDown={(event) => {
+#35 13.30      :          ^^^
+#35 13.30  728 |           if (event.target === event.currentTarget) closePairing();
+#35 13.30      `----
+#35 13.30   help: Add a role attribute to this element, or use a semantic HTML element instead.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-noninteractive-element-interactions): Non-interactive elements should not be assigned mouse or keyboard event listeners.
+#35 13.30      ,-[src/routes/Cashier.tsx:730:12]
+#35 13.30  729 |         }}>
+#35 13.30  730 |           <div
+#35 13.30      :            ^^^
+#35 13.30  731 |             className="pairing-dialog"
+#35 13.30      `----
+#35 13.30   help: Move the handler to an interactive element, or use an appropriate interactive role.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#35 13.30      ,-[src/routes/QnbCredentialSettings.tsx:158:115]
+#35 13.30  157 |             Kullanıcı adı
+#35 13.30  158 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#35 13.30      :                                                                                                                   ^^^^^^^^^
+#35 13.30  159 |           </label>
+#35 13.30      `----
+#35 13.30   help: Remove the `autoFocus` attribute.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-autofocus): The `autoFocus` attribute is found here, which can cause usability issues for sighted and non-sighted users.
+#35 13.30      ,-[src/routes/BusinessIdentitySettings.tsx:246:115]
+#35 13.30  245 |             Kullanıcı adı
+#35 13.30  246 |             <input value={username} onChange={(event) => setUsername(event.target.value)} autoComplete="username" autoFocus />
+#35 13.30      :                                                                                                                   ^^^^^^^^^
+#35 13.30  247 |           </label>
+#35 13.30      `----
+#35 13.30   help: Remove the `autoFocus` attribute.
+#35 13.30 
+#35 13.30   ! eslint(no-unused-vars): Parameter 'init' is declared but never used. Unused parameters should start with a '_'.
+#35 13.30     ,-[src/routes/Cashier.logout-clears-storage.test.tsx:52:67]
+#35 13.30  51 | 
+#35 13.30  52 |     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+#35 13.30     :                                                                   ^^|^
+#35 13.30     :                                                                     `-- 'init' is declared here
+#35 13.30  53 |       const path = String(input);
+#35 13.30     `----
+#35 13.30   help: Consider removing this parameter.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-noninteractive-element-interactions): Non-interactive elements should not be assigned mouse or keyboard event listeners.
+#35 13.30      ,-[src/design-system/primitives.tsx:139:8]
+#35 13.30  138 |     <div className="ds-dialog-backdrop">
+#35 13.30  139 |       <div ref={dialogRef} className="ds-dialog" role="dialog" aria-modal="true" aria-labelledby={titleId} onKeyDown={(event) => {
+#35 13.30      :        ^^^
+#35 13.30  140 |         if (event.key === "Escape") { event.preventDefault(); onClose(); return; }
+#35 13.30      `----
+#35 13.30   help: Move the handler to an interactive element, or use an appropriate interactive role.
+#35 13.30 
+#35 13.30   ! jsx-a11y(no-noninteractive-element-interactions): Non-interactive elements should not be assigned mouse or keyboard event listeners.
+#35 13.30      ,-[src/design-system/primitives.tsx:162:6]
+#35 13.30  161 |   return (
+#35 13.30  162 |     <aside ref={drawerRef} className={`ds-drawer ds-drawer--${presentation}`} aria-labelledby={titleId} aria-modal={presentation === "sheet" ? true : undefined} role={presentation === "sheet" ? "dialog" : undefined} onKeyDown={presentation === "sheet" ? (event) => {
+#35 13.30      :      ^^^^^
+#35 13.30  163 |       if (event.key === "Escape" && onClose) { event.preventDefault(); onClose(); return; }
+#35 13.30      `----
+#35 13.30   help: Move the handler to an interactive element, or use an appropriate interactive role.
+#35 13.30 
+#35 13.30   ! eslint(no-unused-vars): Function 'nextItemState' is declared but never used.
+#35 13.30     ,-[src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:88:10]
+#35 13.30  87 | 
+#35 13.30  88 | function nextItemState(status: KitchenTicketItem["status"]): KitchenTicketItem["status"] | null {
+#35 13.30     :          ^^^^^^|^^^^^^
+#35 13.30     :                `-- 'nextItemState' is declared here
+#35 13.30  89 |   if (status === "Queued") return "Preparing";
+#35 13.30     `----
+#35 13.30   help: Consider removing this declaration.
+#35 13.30 
+#35 13.30   ! jsx-a11y(label-has-associated-control): A form label must have accessible text.
+#35 13.30      ,-[src/features/billing/BillSplitWorkspace.tsx:145:313]
+#35 13.30  144 | function OwnerPicker({ owners, selected, onChange }: { owners: readonly SplitOwnerOption[]; selected: readonly string[]; onChange: (next: string[]) => void }) {
+#35 13.30  145 |   return <section className="bill-split__owner-picker" aria-labelledby="equal-title"><div><span>1</span><h3 id="equal-title">Sandalye veya kişi seçin</h3></div><p>Sunucu kuruş farkını seçilen sahipler arasında deterministik dağıtır.</p><div>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key}><input type="checkbox" checked={selected.includes(key)} onChange={(event) => onChange(event.target.checked ? [...selected, key] : selected.filter((value) => value !== key))} /><span><strong>{owner.label}</strong><small>{owner.secondaryLabel ?? ownerKindLabel(owner)}</small></span></label>; })}</div></section>;
+#35 13.30      :                                                                                                                                                                                                                                                                                                               ^^^^^^^^^^^^^^^^^
+#35 13.30  146 | }
+#35 13.30      `----
+#35 13.30   help: Ensure the label either has text inside it or is accessibly labelled using an attribute such as `aria-label`, or `aria-labelledby`. You can mark more attributes as accessible labels by configuring the `labelAttributes` option.
+#35 13.30 
+#35 13.30 Found 19 warnings and 0 errors.
+#35 13.30 Finished in 668ms on 237 files with 134 rules using 8 threads.
+#35 ...
+
+#25 [migrate internal] load build context
+#25 ...
+
+#23 [watchdog internal] load build context
+#23 transferring context: 54.70MB 23.0s done
+#23 DONE 23.1s
+
+#25 [migrate internal] load build context
+#25 ...
+
+#33 [watchdog frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#33 CACHED
+
+#34 [watchdog frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#34 DONE 0.8s
+
+#25 [migrate internal] load build context
+#25 ...
+
+#37 [watchdog backend-build 3/6] COPY . .
+#37 ...
+
+#25 [migrate internal] load build context
+#25 transferring context: 80.12MB 27.3s done
+#25 DONE 27.4s
+
+#37 [api backend-build 3/6] COPY . .
+#37 DONE 12.9s
+
+#35 [api frontend-build  6/10] RUN pnpm build
+#35 23.07 vite v8.2.2 building client environment for production...
+#35 23.14 transforming...
+#35 23.56 ✓ 235 modules transformed.
+#35 23.93 rendering chunks...
+#35 24.18 computing gzip size...
+#35 24.19 dist/index.html                                                1.25 kB │ gzip:  0.61 kB
+#35 24.19 dist/assets/alkaros-logo-on-dark-CmVDjlL_.png                 32.94 kB
+#35 24.19 dist/assets/CustomerDisplayScreensaverSettings-C7nv96pV.css    0.50 kB │ gzip:  0.27 kB
+#35 24.19 dist/assets/BusinessIdentitySettings-D6KWlPnp.css              0.93 kB │ gzip:  0.43 kB
+#35 24.19 dist/assets/management-security-system-C6fZZsnO.css            2.33 kB │ gzip:  0.69 kB
+#35 24.19 dist/assets/NfcOrder-KNdAOhPu.css                              4.71 kB │ gzip:  1.35 kB
+#35 24.19 dist/assets/design-system-CFu97vtJ.css                         6.32 kB │ gzip:  1.88 kB
+#35 24.19 dist/assets/index-CkekQFWV.css                                27.28 kB │ gzip:  6.86 kB
+#35 24.19 dist/assets/workspace-XxS1HvrL.css                            88.80 kB │ gzip: 13.33 kB
+#35 24.19 dist/assets/format-C2ZSrFr6.js                                 0.18 kB │ gzip:  0.14 kB
+#35 24.19 dist/assets/storage-Ck3mJz4b.js                                0.27 kB │ gzip:  0.17 kB
+#35 24.19 dist/assets/rolldown-runtime-EyZ2wyi3.js                       0.61 kB │ gzip:  0.39 kB
+#35 24.19 dist/assets/SecurityAdministration-DZu9hh7j.js                 2.42 kB │ gzip:  1.02 kB
+#35 24.19 dist/assets/ReservationStation-B6xvjYp0.js                     3.32 kB │ gzip:  1.28 kB
+#35 24.19 dist/assets/TokenTerminalSettings-BqFYeyAa.js                  5.55 kB │ gzip:  1.95 kB
+#35 24.19 dist/assets/api-4GtB4rQ3.js                                    6.02 kB │ gzip:  1.84 kB
+#35 24.19 dist/assets/RelaySettings-aL5atQWV.js                          6.14 kB │ gzip:  1.91 kB
+#35 24.19 dist/assets/CustomerDisplayScreensaverSettings-Brx6PsSs.js     6.16 kB │ gzip:  2.11 kB
+#35 24.19 dist/assets/design-system-B4Z1-Iad.js                          6.76 kB │ gzip:  2.51 kB
+#35 24.19 dist/assets/BusinessIdentitySettings-D106DsQg.js               8.19 kB │ gzip:  2.50 kB
+#35 24.19 dist/assets/QnbCredentialSettings-BlS9tNaF.js                  8.66 kB │ gzip:  2.81 kB
+#35 24.19 dist/assets/NfcOrder-CydBhfoU.js                               8.66 kB │ gzip:  2.74 kB
+#35 24.19 dist/assets/CustomerDisplay-CQyr52Bg.js                       10.14 kB │ gzip:  3.28 kB
+#35 24.19 dist/assets/management-security-system-Bu_Nomvs.js            15.90 kB │ gzip:  4.85 kB
+#35 24.19 dist/assets/Cashier-C_eSKfdo.js                               19.43 kB │ gzip:  5.83 kB
+#35 24.19 dist/assets/HubConnectionBuilder-BSoreM0u.js                  54.78 kB │ gzip: 14.03 kB
+#35 24.19 dist/assets/index-rQoga7Eo.js                                233.08 kB │ gzip: 75.14 kB
+#35 24.19 dist/assets/workspace-C0lPNqL7.js                            336.23 kB │ gzip: 78.09 kB
+#35 24.19 
+#35 24.20 ✓ built in 1.12s
+#35 DONE 25.4s
+
+#38 [watchdog frontend-build  7/10] RUN pnpm build:nfc-standalone
+#38 ...
+
+#37 [provision backend-build 3/6] COPY . .
+#37 DONE 12.9s
+
+#24 [provision internal] load build context
+#24 transferring context: 80.12MB 27.3s done
+#24 DONE 27.5s
+
+#38 [web frontend-build  7/10] RUN pnpm build:nfc-standalone
+#38 ...
+
+#37 [migrate backend-build 3/6] COPY . .
+#37 DONE 12.9s
+
+#33 [provision frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#33 CACHED
+
+#34 [provision frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#34 DONE 0.8s
+
+#35 [migrate frontend-build  6/10] RUN pnpm build
+#35 DONE 25.4s
+
+#38 [migrate frontend-build  7/10] RUN pnpm build:nfc-standalone
+#38 1.541 $ vite build --config vite.nfc.config.ts && node -e "require('fs').renameSync('dist-nfc/nfc.html','dist-nfc/index.html')"
+#38 1.862 vite v8.2.2 building client environment for production...
+#38 1.889 transforming...
+#38 1.993 ✓ 24 modules transformed.
+#38 2.044 rendering chunks...
+#38 2.096 computing gzip size...
+#38 2.101 dist-nfc/nfc.html                   1.31 kB │ gzip:  0.73 kB
+#38 2.101 dist-nfc/assets/nfc-BLOZWIM0.css   11.04 kB │ gzip:  2.85 kB
+#38 2.101 dist-nfc/assets/nfc-CP89STAV.js   207.44 kB │ gzip: 65.33 kB
+#38 2.101 
+#38 2.102 ✓ built in 237ms
+#38 DONE 2.2s
+
+#39 [api frontend-build  8/10] RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
+#39 DONE 0.6s
+
+#40 [migrate backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#40 ...
+
+#39 [migrate frontend-build  8/10] RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
+#39 DONE 0.6s
+
+#41 [api frontend-build  9/10] COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
+#41 DONE 0.1s
+
+#41 [watchdog frontend-build  9/10] COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
+#41 DONE 0.1s
+
+#42 [provision frontend-build 10/10] COPY src/Clients/Cashier/wwwroot /out/app/cashier
+#42 DONE 0.1s
+
+#40 [migrate backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#40 ...
+
+#42 [watchdog frontend-build 10/10] COPY src/Clients/Cashier/wwwroot /out/app/cashier
+#42 DONE 0.1s
+
+#40 [migrate backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#40 ...
+
+#43 [web web 2/6] COPY deploy/docker/Caddyfile /etc/caddy/Caddyfile
+#43 CACHED
+
+#44 [web web 3/6] COPY --from=frontend-build /out/app /srv/app
+#44 DONE 0.1s
+
+#45 [web web 4/6] COPY --from=frontend-build /src/dist-nfc /srv/nfc-app
+#45 DONE 0.1s
+
+#46 [web web 5/6] COPY src/Apps/CustomerWeb/Menu/wwwroot /srv/qr-app
+#46 DONE 0.1s
+
+#40 [migrate backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#40 ...
+
+#47 [web web 6/6] COPY src/Apps/CustomerWeb/OrderEntry/wwwroot /srv/qr-app
+#47 DONE 0.1s
+
+#48 [web] exporting to image
+#48 exporting layers
+#48 exporting layers 0.4s done
+#48 exporting manifest sha256:29efc7ec9b2c43eadb3e4dac324a4b9ee682d5142dd08358d8db35f67022e7f3 0.0s done
+#48 exporting config sha256:03269a695cdcbf74827667440caa13cb19e7317aeda74c52de51359101ac7e07 0.0s done
+#48 exporting attestation manifest sha256:8c29167071304e3809b3b22a42df0e2449778efad295d4b6546f8edd6f19e9b8 0.0s done
+#48 exporting manifest list sha256:14a44837e27d9391fb08623b6143a57490a8c670d1097e29539c56265379d71e 0.0s done
+#48 naming to docker.io/library/alkaros-web:latest
+#48 naming to docker.io/library/alkaros-web:latest done
+#48 unpacking to docker.io/library/alkaros-web:latest
+#48 unpacking to docker.io/library/alkaros-web:latest 0.3s done
+#48 DONE 0.9s
+
+#40 [migrate backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#40 ...
+
+#49 [web] resolving provenance for metadata file
+#49 DONE 0.1s
+
+#40 [migrate backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#40 8.160   Determining projects to restore...
+#40 21.15   Restored /src/tests/Host/Observability/ServerDetectorsDeep/ALKAROS.Host.Observability.ServerDetectorsDeep.Tests.csproj (in 7.78 sec).
+#40 21.16   Restored /src/tests/Host/Observability/OutageWatchdog/ALKAROS.Host.Observability.OutageWatchdog.Tests.csproj (in 7.78 sec).
+#40 21.16   Restored /src/tests/Host/Observability/NotificationWiring/ALKAROS.Host.Observability.NotificationWiring.Tests.csproj (in 7.78 sec).
+#40 21.16   Restored /src/tests/Host/Observability/ResourceProbes/ALKAROS.Host.Observability.ResourceProbes.Tests.csproj (in 7.78 sec).
+#40 21.16   Restored /src/tests/Host/Observability/ServerDetectors/ALKAROS.Host.Observability.ServerDetectors.Tests.csproj (in 7.78 sec).
+#40 21.18   Restored /src/tests/Host/Observability/OfflineQueueReport/ALKAROS.Host.Observability.OfflineQueueReport.Tests.csproj (in 7.78 sec).
+#40 21.19   Restored /src/tests/Host/Observability/SecurityDetectors/ALKAROS.Host.Observability.SecurityDetectors.Tests.csproj (in 7.78 sec).
+#40 21.19   Restored /src/tests/Host/Observability/ServerEndToEnd/ALKAROS.Host.Observability.ServerEndToEnd.Tests.csproj (in 7.78 sec).
+#40 21.22   Restored /src/tests/Host/Observability/JourneyEndpoints/ALKAROS.Host.Observability.JourneyEndpoints.Tests.csproj (in 35 ms).
+#40 21.23   Restored /src/tests/Host/Observability/MonitoringSwitch/ALKAROS.Host.Observability.MonitoringSwitch.Tests.csproj (in 35 ms).
+#40 21.23   Restored /src/tests/Host/Observability/InteractionTelemetry/ALKAROS.Host.Observability.InteractionTelemetry.Tests.csproj (in 45 ms).
+#40 21.24   Restored /src/tests/Host/Observability/InsightRunner/ALKAROS.Host.Observability.InsightRunner.Tests.csproj (in 44 ms).
+#40 21.24   Restored /src/tests/Host/Observability/ErrorEventEndpoints/ALKAROS.Host.Observability.ErrorEventEndpoints.Tests.csproj (in 27 ms).
+#40 21.24   Restored /src/tests/Host/Observability/HealthSnapshot/ALKAROS.Host.Observability.HealthSnapshot.Tests.csproj (in 48 ms).
+#40 21.25   Restored /src/tests/Host/Experience/Reporting/ALKAROS.Host.Experience.Reporting.Tests.csproj (in 33 ms).
+#40 21.29   Restored /src/tests/Host/Experience/Reconciliation/ALKAROS.Host.Experience.Reconciliation.Tests.csproj (in 29 ms).
+#40 21.30   Restored /src/tests/Host/Experience/Recipes/ALKAROS.Host.Experience.Recipes.Tests.csproj (in 32 ms).
+#40 21.30   Restored /src/tests/Host/Experience/RelaySettings/ALKAROS.Host.Experience.RelaySettings.Tests.csproj (in 48 ms).
+#40 21.31   Restored /src/tests/Host/Experience/QrOrdering/ALKAROS.Host.Experience.QrOrdering.Tests.csproj (in 39 ms).
+#40 21.32   Restored /src/tests/Host/Experience/Inventory/ALKAROS.Host.Experience.Inventory.Tests.csproj (in 46 ms).
+#40 21.32   Restored /src/tests/Host/Experience/QnbCredentialSettings/ALKAROS.Host.Experience.QnbCredentialSettings.Tests.csproj (in 56 ms).
+#40 21.43   Restored /src/tests/Modules/Observability/TelemetryPrivacy/ALKAROS.Observability.TelemetryPrivacy.Tests.csproj (in 128 ms).
+#40 21.43   Restored /src/tests/Modules/Observability/PostgresInsight/ALKAROS.Observability.PostgresInsight.Tests.csproj (in 112 ms).
+#40 21.43   Restored /src/tests/Modules/Observability/PerformanceMetrics/ALKAROS.Observability.PerformanceMetrics.Tests.csproj (in 102 ms).
+#40 21.44   Restored /src/tests/Modules/Observability/Foundation/ALKAROS.Observability.Foundation.Tests.csproj (in 94 ms).
+#40 21.45   Restored /src/tests/Modules/QrOrdering/PendingOrders/ALKAROS.QrOrdering.PendingOrders.Tests.csproj (in 232 ms).
+#40 21.45   Restored /src/tests/Modules/Observability/StructuredLogging/ALKAROS.Observability.StructuredLogging.Tests.csproj (in 118 ms).
+#40 21.45   Restored /src/tests/Modules/Observability/PerformanceBudgets/ALKAROS.Observability.PerformanceBudgets.Tests.csproj (in 97 ms).
+#40 21.45   Restored /src/tests/Modules/OnlineOrdering/AvailabilityPublishing/ALKAROS.OnlineOrdering.AvailabilityPublishing.Tests.csproj (in 162 ms).
+#40 21.46   Restored /src/tests/Modules/Observability/ErrorNotifications/ALKAROS.Observability.ErrorNotifications.Tests.csproj (in 13 ms).
+#40 21.46   Restored /src/tests/Modules/Observability/ErrorAnalysis/ALKAROS.Observability.ErrorAnalysis.Tests.csproj (in 15 ms).
+#40 21.46   Restored /src/tests/Modules/Observability/ErrorEvents/ALKAROS.Observability.ErrorEvents.Tests.csproj (in 13 ms).
+#40 21.47   Restored /src/tests/Modules/Observability/AlertFoundation/ALKAROS.Observability.AlertFoundation.Tests.csproj (in 13 ms).
+#40 21.49   Restored /src/tests/Modules/Menu/StaticMenu/ALKAROS.Menu.StaticMenu.Tests.csproj (in 17 ms).
+#40 21.49   Restored /src/tests/Modules/Kitchen/TicketLifecycle/ALKAROS.Kitchen.TicketLifecycle.Tests.csproj (in 7 ms).
+#40 21.49   Restored /src/tests/Modules/Menu/CounterProjection/ALKAROS.Menu.CounterProjection.Tests.csproj (in 10 ms).
+#40 21.49   Restored /src/tests/Modules/Kitchen/PrintQueue/ALKAROS.Kitchen.PrintQueue.Tests.csproj (in 14 ms).
+#40 21.50   Restored /src/tests/Modules/Kitchen/OrderItemStateSync/ALKAROS.Kitchen.OrderItemStateSync.Tests.csproj (in 14 ms).
+#40 21.51   Restored /src/tests/Modules/Kitchen/PhysicalPrintRecovery/ALKAROS.Kitchen.PhysicalPrintRecovery.Tests.csproj (in 17 ms).
+#40 21.51   Restored /src/tests/Modules/Invoicing/SourceSelection/ALKAROS.Invoicing.SourceSelection.Tests.csproj (in 6 ms).
+#40 21.51   Restored /src/tests/Modules/Kitchen/Routing/ALKAROS.Kitchen.Routing.Tests.csproj (in 20 ms).
+#40 21.51   Restored /src/tests/Modules/Invoicing/SourceTraceability/ALKAROS.Invoicing.SourceTraceability.Tests.csproj (in 9 ms).
+#40 21.51   Restored /src/tests/Modules/Menu/DailyMenuLifecycle/ALKAROS.Menu.DailyMenuLifecycle.Tests.csproj (in 30 ms).
+#40 21.51   Restored /src/tests/Modules/Invoicing/Qnb/CredentialRegistration/ALKAROS.Invoicing.Qnb.CredentialRegistration.Tests.csproj (in 5 ms).
+#40 21.53   Restored /src/tests/Modules/Invoicing/Qnb/Client/ALKAROS.Invoicing.Qnb.Client.Tests.csproj (in 8 ms).
+#40 21.53   Restored /src/tests/Modules/Invoicing/Generation/ALKAROS.Invoicing.Generation.Tests.csproj (in 14 ms).
+#40 21.54   Restored /src/tests/Modules/Inventory/WasteRecording/ALKAROS.Inventory.WasteRecording.Tests.csproj (in 8 ms).
+#40 21.54   Restored /src/tests/Modules/Billing/Adjustments/ALKAROS.Billing.Adjustments.Tests.csproj (in 6 ms).
+#40 21.54   Restored /src/tests/Modules/Inventory/ReservationBalanceProjection/ALKAROS.Inventory.ReservationBalanceProjection.Tests.csproj (in 12 ms).
+#40 21.54   Restored /src/tests/Modules/Inventory/StockMaster/ALKAROS.Inventory.StockMaster.Tests.csproj (in 8 ms).
+#40 21.56   Restored /src/tests/Modules/Inventory/PortionReservations/Lifecycle/ALKAROS.Inventory.PortionReservations.Lifecycle.Tests.csproj (in 8 ms).
+#40 21.56   Restored /src/tests/Integrations/QrRelay/PublicGateway/ALKAROS.QrRelay.PublicGateway.Tests.csproj (in 12 ms).
+#40 21.56   Restored /src/tests/Modules/Audit/EventStore/ALKAROS.Audit.EventStore.Tests.csproj (in 6 ms).
+#40 21.56   Restored /src/tests/Integrations/QrRelay/LocalConnector/ALKAROS.QrRelay.LocalConnector.Tests.csproj (in 13 ms).
+#40 21.60   Restored /src/tests/Host/Observability/SyntheticProbes/ALKAROS.Host.Observability.SyntheticProbes.Tests.csproj (in 23 ms).
+#40 21.60   Restored /src/tests/Host/Observability/Wiring/ALKAROS.Host.Observability.Wiring.Tests.csproj (in 24 ms).
+#40 21.60   Restored /src/tests/Host/Observability/DomainDetectors/ALKAROS.Host.Observability.DomainDetectors.Tests.csproj (in 26 ms).
+#40 21.62   Restored /src/tests/Host/Observability/TraceCorrelation/ALKAROS.Host.Observability.TraceCorrelation.Tests.csproj (in 39 ms).
+#40 21.62   Restored /src/tests/Host/Observability/CrashChannel/ALKAROS.Host.Observability.CrashChannel.Tests.csproj (in 39 ms).
+#40 21.62   Restored /src/tests/Host/Observability/AnalysisRunner/ALKAROS.Host.Observability.AnalysisRunner.Tests.csproj (in 30 ms).
+#40 21.63   Restored /src/tests/Host/Observability/BrowserErrors/ALKAROS.Host.Observability.BrowserErrors.Tests.csproj (in 34 ms).
+#40 21.65   Restored /src/tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj (in 42 ms).
+#40 21.66   Restored /src/tests/Host/Experience/WebPush/ALKAROS.Host.Experience.WebPush.Tests.csproj (in 32 ms).
+#40 21.67   Restored /src/tests/Host/Experience/TokenTerminalSettings/ALKAROS.Host.Experience.TokenTerminalSettings.Tests.csproj (in 33 ms).
+#40 21.69   Restored /src/tests/Host/Experience/Settings/ALKAROS.Host.Experience.Settings.Tests.csproj (in 35 ms).
+#40 21.69   Restored /src/tests/Host/Experience/WaiterNotifications/ALKAROS.Host.Experience.WaiterNotifications.Tests.csproj (in 38 ms).
+#40 21.69   Restored /src/tests/Modules/Tables/TableMerge/ALKAROS.Tables.TableMerge.Tests.csproj (in 9 ms).
+#40 21.69   Restored /src/tests/Modules/Tables/TableTransfer/ALKAROS.Tables.TableTransfer.Tests.csproj (in 10 ms).
+#40 21.70   Restored /src/tests/Host/Experience/Tables/ALKAROS.Host.Experience.Tables.Tests.csproj (in 41 ms).
+#40 21.70   Restored /src/tests/Host/Experience/Roles/ALKAROS.Host.Experience.Roles.Tests.csproj (in 41 ms).
+#40 21.70   Restored /src/tests/Modules/Tables/TableLifecycle/ALKAROS.Tables.TableLifecycle.Tests.csproj (in 16 ms).
+#40 21.71   Restored /src/tests/Host/Experience/SecurityAdministration/ALKAROS.Host.Experience.SecurityAdministration.Tests.csproj (in 37 ms).
+#40 21.72   Restored /src/tests/Modules/Tables/PaymentTopology/ALKAROS.Tables.PaymentTopology.Tests.csproj (in 10 ms).
+#40 21.72   Restored /src/tests/Modules/Settings/WaiterMaxActiveTables/ALKAROS.Settings.WaiterMaxActiveTables.Tests.csproj (in 9 ms).
+#40 21.73   Restored /src/tests/Modules/Tables/Reservations/ALKAROS.Tables.Reservations.Tests.csproj (in 17 ms).
+#40 21.73   Restored /src/tests/Modules/Settings/TypedSettings/ALKAROS.Settings.TypedSettings.Tests.csproj (in 14 ms).
+#40 21.74   Restored /src/tests/Modules/Settings/BusinessIdentity/ALKAROS.Settings.BusinessIdentity.Tests.csproj (in 7 ms).
+#40 21.74   Restored /src/tests/Modules/Settings/ReservationStation/ALKAROS.Settings.ReservationStation.Tests.csproj (in 12 ms).
+#40 21.75   Restored /src/tests/Modules/Settings/KitchenLiveSync/ALKAROS.Settings.KitchenLiveSync.Tests.csproj (in 12 ms).
+#40 21.75   Restored /src/tests/Modules/Tables/CurrentPointers/ALKAROS.Tables.CurrentPointers.Tests.csproj (in 23 ms).
+#40 21.75   Restored /src/tests/Modules/Settings/KitchenDenseModeThreshold/ALKAROS.Settings.KitchenDenseModeThreshold.Tests.csproj (in 9 ms).
+#40 21.75   Restored /src/tests/Modules/Support/DiagnosticBundle/ALKAROS.Support.DiagnosticBundle.Tests.csproj (in 20 ms).
+#40 21.76   Restored /src/tests/Modules/Security/IdentityHardening/ALKAROS.Security.IdentityHardening.Tests.csproj (in 7 ms).
+#40 21.76   Restored /src/tests/Modules/Security/SecretRotation/ALKAROS.Security.SecretRotation.Tests.csproj (in 7 ms).
+#40 21.76   Restored /src/tests/Modules/Reporting/V1Operations/ALKAROS.Reporting.V1Operations.Tests.csproj (in 8 ms).
+#40 21.77   Restored /src/tests/Modules/Inventory/PortionReservations/Concurrency/ALKAROS.Inventory.PortionReservations.Concurrency.Tests.csproj (in 12 ms).
+#40 21.78   Restored /src/tests/Modules/Security/DataProtectionRetention/ALKAROS.Security.DataProtectionRetention.Tests.csproj (in 13 ms).
+#40 21.78   Restored /src/tests/Modules/Inventory/PortionReservations/CancellationEffects/ALKAROS.Inventory.PortionReservations.CancellationEffects.Tests.csproj (in 25 ms).
+#40 21.79   Restored /src/tests/Modules/Inventory/MovementReversal/ALKAROS.Inventory.MovementReversal.Tests.csproj (in 19 ms).
+#40 21.79   Restored /src/tests/Modules/Inventory/CrossChannelReservation/ALKAROS.Inventory.CrossChannelReservation.Tests.csproj (in 14 ms).
+#40 21.79   Restored /src/tests/Modules/Inventory/BalanceProjection/ALKAROS.Inventory.BalanceProjection.Tests.csproj (in 7 ms).
+#40 21.80   Restored /src/tests/Modules/Inventory/MovementLedger/ALKAROS.Inventory.MovementLedger.Tests.csproj (in 14 ms).
+#40 21.80   Restored /src/tests/Modules/Inventory/PhysicalCounts/ALKAROS.Inventory.PhysicalCounts.Tests.csproj (in 23 ms).
+#40 21.80   Restored /src/tests/Modules/Inventory/ManualAdjustments/ALKAROS.Inventory.ManualAdjustments.Tests.csproj (in 23 ms).
+#40 21.80   Restored /src/tests/Modules/Identity/Authentication/ALKAROS.Identity.Authentication.Tests.csproj (in 6 ms).
+#40 21.81   Restored /src/tests/Modules/Identity/Authorization/ALKAROS.Identity.Authorization.Tests.csproj (in 8 ms).
+#40 21.81   Restored /src/tests/Modules/Identity/DeviceSessions/ALKAROS.Identity.DeviceSessions.Tests.csproj (in 20 ms).
+#40 21.83   Restored /src/tests/Modules/CustomerData/Profiles/ALKAROS.CustomerData.Profiles.Tests.csproj (in 17 ms).
+#40 21.83   Restored /src/tests/Modules/CustomerData/AnonymizationState/ALKAROS.CustomerData.AnonymizationState.Tests.csproj (in 20 ms).
+#40 21.83   Restored /src/tests/Modules/CustomerAccounts/BillCharges/ALKAROS.CustomerAccounts.BillCharges.Tests.csproj (in 8 ms).
+#40 21.83   Restored /src/tests/Modules/CustomerAccounts/TransactionLedger/ALKAROS.CustomerAccounts.TransactionLedger.Tests.csproj (in 10 ms).
+#40 21.84   Restored /src/tests/Modules/CustomerAccounts/BalanceProjection/ALKAROS.CustomerAccounts.BalanceProjection.Tests.csproj (in 21 ms).
+#40 21.85   Restored /src/tests/Modules/CustomerAccounts/CashReceipts/ALKAROS.CustomerAccounts.CashReceipts.Tests.csproj (in 8 ms).
+#40 21.85   Restored /src/tests/Modules/Catalog/ProductCatalog/ALKAROS.Catalog.ProductCatalog.Tests.csproj (in 6 ms).
+#40 21.86   Restored /src/tests/Modules/CustomerAccounts/AccountReceipts/ALKAROS.CustomerAccounts.AccountReceipts.Tests.csproj (in 22 ms).
+#40 21.87   Restored /src/tests/Modules/Cash/TransactionLedger/ALKAROS.Cash.TransactionLedger.Tests.csproj (in 16 ms).
+#40 21.87   Restored /src/tests/Modules/Catalog/Pricing/ALKAROS.Catalog.Pricing.Tests.csproj (in 12 ms).
+#40 21.87   Restored /src/tests/Modules/CustomerAccounts/AccountPayments/ALKAROS.CustomerAccounts.AccountPayments.Tests.csproj (in 18 ms).
+#40 21.87   Restored /src/tests/Modules/Cash/Contracts/ALKAROS.Cash.Contracts.Tests.csproj (in 9 ms).
+#40 21.88   Restored /src/tests/Modules/Cash/TenderHandler/ALKAROS.Cash.TenderHandler.Tests.csproj (in 16 ms).
+#40 21.89   Restored /src/tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj (in 10 ms).
+#40 21.89   Restored /src/tests/Modules/Cash/SessionLifecycle/ALKAROS.Cash.SessionLifecycle.Tests.csproj (in 16 ms).
+#40 21.89   Restored /src/tests/Modules/Reporting/ProductMargin/ALKAROS.Reporting.ProductMargin.Tests.csproj (in 8 ms).
+#40 21.89   Restored /src/tests/Modules/Billing/BillFoundation/ALKAROS.Billing.BillFoundation.Tests.csproj (in 11 ms).
+#40 21.90   Restored /src/tests/Modules/Reporting/Payments/ALKAROS.Reporting.Payments.Tests.csproj (in 13 ms).
+#40 21.91   Restored /src/tests/Modules/Reporting/Channels/ALKAROS.Reporting.Channels.Tests.csproj (in 11 ms).
+#40 21.91   Restored /src/tests/Modules/Reporting/MenuInventory/ALKAROS.Reporting.MenuInventory.Tests.csproj (in 21 ms).
+#40 21.92   Restored /src/tests/Modules/Billing/PaymentClosure/ALKAROS.Billing.PaymentClosure.Tests.csproj (in 25 ms).
+#40 21.92   Restored /src/tests/Modules/Recipes/Versioning/ALKAROS.Recipes.Versioning.Tests.csproj (in 6 ms).
+#40 21.92   Restored /src/tests/Modules/Reconciliation/CaseFoundation/ALKAROS.Reconciliation.CaseFoundation.Tests.csproj (in 10 ms).
+#40 21.92   Restored /src/tests/Modules/Reconciliation/OnlineOrders/ALKAROS.Reconciliation.OnlineOrders.Tests.csproj (in 9 ms).
+#40 21.93   Restored /src/tests/Modules/Recipes/Units/ALKAROS.Recipes.Units.Tests.csproj (in 5 ms).
+#40 21.93   Restored /src/tests/Modules/Reconciliation/Payments/ALKAROS.Reconciliation.Payments.Tests.csproj (in 22 ms).
+#40 21.94   Restored /src/tests/Modules/Recipes/TheoreticalConsumption/ALKAROS.Recipes.TheoreticalConsumption.Tests.csproj (in 8 ms).
+#40 21.94   Restored /src/tests/Modules/Recipes/CatalogMapping/ALKAROS.Recipes.CatalogMapping.Tests.csproj (in 7 ms).
+#40 21.94   Restored /src/tests/Modules/Recipes/CostSnapshots/ALKAROS.Recipes.CostSnapshots.Tests.csproj (in 8 ms).
+#40 21.94   Restored /src/tests/Modules/QrOrdering/TokenLifecycle/ALKAROS.QrOrdering.TokenLifecycle.Tests.csproj (in 7 ms).
+#40 21.95   Restored /src/tests/Modules/QrOrdering/TablePolicy/ALKAROS.QrOrdering.TablePolicy.Tests.csproj (in 16 ms).
+#40 21.96   Restored /src/tests/Modules/QrOrdering/RelayCredential/ALKAROS.QrOrdering.RelayCredential.Tests.csproj (in 10 ms).
+#40 21.96   Restored /src/tests/Modules/Purchasing/OrdersAndReceipts/ALKAROS.Purchasing.OrdersAndReceipts.Tests.csproj (in 7 ms).
+#40 21.97   Restored /src/tests/Modules/QrOrdering/CustomerSession/ALKAROS.QrOrdering.CustomerSession.Tests.csproj (in 12 ms).
+#40 21.97   Restored /src/tests/Modules/QrOrdering/RelaySecurity/ALKAROS.QrOrdering.RelaySecurity.Tests.csproj (in 16 ms).
+#40 21.97   Restored /src/tests/Modules/Purchasing/Suppliers/ALKAROS.Purchasing.Suppliers.Tests.csproj (in 17 ms).
+#40 21.97   Restored /src/tests/Modules/Production/StockEffects/ALKAROS.Production.StockEffects.Tests.csproj (in 13 ms).
+#40 21.97   Restored /src/tests/Modules/Purchasing/PurchaseInvoices/ALKAROS.Purchasing.PurchaseInvoices.Tests.csproj (in 13 ms).
+#40 21.98   Restored /src/tests/Modules/Privacy/RetentionExecution/ALKAROS.Privacy.RetentionExecution.Tests.csproj (in 6 ms).
+#40 21.99   Restored /src/tests/Modules/Production/BatchLifecycle/ALKAROS.Production.BatchLifecycle.Tests.csproj (in 20 ms).
+#40 21.99   Restored /src/tests/Modules/Privacy/Anonymization/ALKAROS.Privacy.Anonymization.Tests.csproj (in 5 ms).
+#40 21.99   Restored /src/tests/Modules/Payments/Token/TerminalCredential/ALKAROS.Payments.Token.TerminalCredential.Tests.csproj (in 14 ms).
+#40 22.00   Restored /src/tests/Modules/Payments/TenderRouting/ALKAROS.Payments.TenderRouting.Tests.csproj (in 11 ms).
+#40 22.00   Restored /src/tests/Modules/Payments/PaymentAggregate/ALKAROS.Payments.PaymentAggregate.Tests.csproj (in 12 ms).
+#40 22.01   Restored /src/tests/Modules/Payments/EftTender/ALKAROS.Payments.EftTender.Tests.csproj (in 11 ms).
+#40 22.01   Restored /src/tests/Modules/Payments/CardSettlement/ALKAROS.Payments.CardSettlement.Tests.csproj (in 10 ms).
+#40 22.01   Restored /src/tests/Modules/Payments/Allocations/Persistence/ALKAROS.Payments.Allocations.Persistence.Tests.csproj (in 12 ms).
+#40 22.01   Restored /src/tests/Modules/Payments/TenderComposition/ALKAROS.Payments.TenderComposition.Tests.csproj (in 12 ms).
+#40 22.02   Restored /src/tests/Modules/Orders/SubmitOrder/ALKAROS.Orders.SubmitOrder.Tests.csproj (in 13 ms).
+#40 22.02   Restored /src/tests/Modules/Payments/Allocations/RefundIntents/ALKAROS.Payments.Allocations.RefundIntents.Tests.csproj (in 10 ms).
+#40 22.03   Restored /src/tests/Modules/Orders/ItemExceptions/ALKAROS.Orders.ItemExceptions.Tests.csproj (in 6 ms).
+#40 22.03   Restored /src/tests/Modules/Orders/OrderAggregate/ALKAROS.Orders.OrderAggregate.Tests.csproj (in 15 ms).
+#40 22.04   Restored /src/tests/Modules/Operations/BackupHealth/ALKAROS.Operations.BackupHealth.Tests.csproj (in 7 ms).
+#40 22.04   Restored /src/tests/Modules/Operations/OffsiteBackup/ALKAROS.Operations.OffsiteBackup.Tests.csproj (in 20 ms).
+#40 22.04   Restored /src/tests/Modules/Operations/RestoreVerification/ALKAROS.Operations.RestoreVerification.Tests.csproj (in 14 ms).
+#40 22.05   Restored /src/tests/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox/ALKAROS.OnlineOrdering.Yemeksepeti.WebhookInbox.Tests.csproj (in 19 ms).
+#40 22.06   Restored /src/tests/Modules/OnlineOrdering/Yemeksepeti/OrderNormalization/ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization.Tests.csproj (in 16 ms).
+#40 22.07   Restored /src/tests/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping.Tests.csproj (in 15 ms).
+#40 22.07   Restored /src/tests/Modules/OnlineOrdering/Yemeksepeti/StatusMapping/ALKAROS.OnlineOrdering.Yemeksepeti.StatusMapping.Tests.csproj (in 21 ms).
+#40 22.07   Restored /src/tests/Modules/OnlineOrdering/CatalogPublishing/ALKAROS.OnlineOrdering.CatalogPublishing.Tests.csproj (in 11 ms).
+#40 22.07   Restored /src/tests/Modules/OnlineOrdering/Yemeksepeti/StatusSync/ALKAROS.OnlineOrdering.Yemeksepeti.StatusSync.Tests.csproj (in 16 ms).
+#40 22.11   Restored /src/tests/Host/Experience/PendingOrderNotifications/ALKAROS.Host.Experience.PendingOrderNotifications.Tests.csproj (in 25 ms).
+#40 22.11   Restored /src/tests/Host/Experience/Purchasing/ALKAROS.Host.Experience.Purchasing.Tests.csproj (in 29 ms).
+#40 22.12   Restored /src/tests/Host/Experience/Production/ALKAROS.Host.Experience.Production.Tests.csproj (in 30 ms).
+#40 22.12   Restored /src/tests/Host/Experience/Orders/VoidSent/ALKAROS.Host.Experience.Orders.VoidSent.Tests.csproj (in 32 ms).
+#40 22.14   Restored /src/tests/Host/Experience/PaymentTender/ALKAROS.Host.Experience.PaymentTender.Tests.csproj (in 36 ms).
+#40 22.14   Restored /src/tests/Host/Experience/Orders/TableDraft/ALKAROS.Host.Experience.Orders.TableDraft.Tests.csproj (in 32 ms).
+#40 22.14   Restored /src/tests/Host/Experience/Orders/Void/ALKAROS.Host.Experience.Orders.Void.Tests.csproj (in 23 ms).
+#40 22.14   Restored /src/tests/Host/Experience/Orders/Confirmation/ALKAROS.Host.Experience.Orders.Confirmation.Tests.csproj (in 31 ms).
+#40 22.17   Restored /src/tests/Host/Experience/OnlineOrdering/ALKAROS.Host.Experience.OnlineOrdering.Tests.csproj (in 34 ms).
+#40 22.19   Restored /src/tests/Host/Experience/OfflineReconciliation/ALKAROS.Host.Experience.OfflineReconciliation.Tests.csproj (in 39 ms).
+#40 22.19   Restored /src/tests/Host/Experience/Orders/Comp/ALKAROS.Host.Experience.Orders.Comp.Tests.csproj (in 33 ms).
+#40 22.19   Restored /src/tests/Host/Experience/NfcOrdering/ALKAROS.Host.Experience.NfcOrdering.Tests.csproj (in 26 ms).
+#40 22.21   Restored /src/tests/Host/Experience/Menu/ALKAROS.Host.Experience.Menu.Tests.csproj (in 25 ms).
+#40 22.21   Restored /src/tests/Host/Experience/Observability/ALKAROS.Host.Experience.Observability.Tests.csproj (in 62 ms).
+#40 22.22   Restored /src/tests/Host/Experience/KitchenOperations/ALKAROS.Host.Experience.KitchenOperations.Tests.csproj (in 42 ms).
+#40 22.24   Restored /src/tests/Host/Experience/HelpRequests/ALKAROS.Host.Experience.HelpRequests.Tests.csproj (in 44 ms).
+#40 22.24   Restored /src/tests/Host/Experience/CustomerAccounts/ALKAROS.Host.Experience.CustomerAccounts.Tests.csproj (in 27 ms).
+#40 22.25   Restored /src/tests/Host/Experience/Catalog/ALKAROS.Host.Experience.Catalog.Tests.csproj (in 29 ms).
+#40 22.26   Restored /src/tests/Host/Experience/InventoryReporting/ALKAROS.Host.Experience.InventoryReporting.Tests.csproj (in 30 ms).
+#40 22.27   Restored /src/tests/Host/Experience/Composition/ALKAROS.Host.Experience.Composition.Tests.csproj (in 32 ms).
+#40 22.28   Restored /src/tests/Host/Experience/CashSession/ALKAROS.Host.Experience.CashSession.Tests.csproj (in 34 ms).
+#40 22.28   Restored /src/tests/Host/Experience/Authorization/ALKAROS.Host.Experience.Authorization.Tests.csproj (in 25 ms).
+#40 22.28   Restored /src/tests/BuildingBlocks/TestHelpers/ALKAROS.TestHelpers.csproj (in 10 ms).
+#40 22.29   Restored /src/tests/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.Tests.csproj (in 6 ms).
+#40 22.30   Restored /src/src/Modules/Payments/TenderComposition/ALKAROS.Payments.TenderComposition.csproj (in 8 ms).
+#40 22.30   Restored /src/tests/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.Tests.csproj (in 4 ms).
+#40 22.30   Restored /src/tests/Host/Errors/ALKAROS.Host.Errors.Tests.csproj (in 25 ms).
+#40 22.30   Restored /src/tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj (in 43 ms).
+#40 22.30   Restored /src/tests/BuildingBlocks/Messaging/ALKAROS.Messaging.Tests.csproj (in 9 ms).
+#40 22.31   Restored /src/tests/BuildingBlocks/Measurements/ALKAROS.Measurements.Tests.csproj (in 15 ms).
+#40 22.32   Restored /src/src/Modules/Tables/ALKAROS.Tables.csproj (in 3 ms).
+#40 22.32   Restored /src/src/Modules/Reconciliation/ALKAROS.Reconciliation.csproj (in 4 ms).
+#40 22.32   Restored /src/src/Modules/Support/ALKAROS.Support.csproj (in 3 ms).
+#40 22.33   Restored /src/src/Modules/Reporting/ALKAROS.Reporting.csproj (in 9 ms).
+#40 22.33   Restored /src/src/Modules/Security/ALKAROS.Security.csproj (in 3 ms).
+#40 22.33   Restored /src/src/Modules/Settings/ALKAROS.Settings.csproj (in 2 ms).
+#40 22.34   Restored /src/src/Modules/Recipes/ALKAROS.Recipes.csproj (in 3 ms).
+#40 22.34   Restored /src/src/Modules/Purchasing/ALKAROS.Purchasing.csproj (in 3 ms).
+#40 22.34   Restored /src/src/Modules/Production/ALKAROS.Production.csproj (in 3 ms).
+#40 22.34   Restored /src/src/Modules/QrOrdering/ALKAROS.QrOrdering.csproj (in 10 ms).
+#40 22.34   Restored /src/src/Modules/Privacy/RetentionExecution/ALKAROS.Privacy.RetentionExecution.csproj (in 2 ms).
+#40 22.35   Restored /src/src/Modules/Payments/ALKAROS.Payments.csproj (in 4 ms).
+#40 22.35   Restored /src/src/Modules/Privacy/Anonymization/ALKAROS.Privacy.Anonymization.csproj (in 3 ms).
+#40 22.36   Restored /src/src/Modules/Observability/ALKAROS.Observability.csproj (in 3 ms).
+#40 22.36   Restored /src/src/Modules/Orders/ALKAROS.Orders.csproj (in 7 ms).
+#40 22.36   Restored /src/src/Modules/OnlineOrdering/ALKAROS.OnlineOrdering.csproj (in 5 ms).
+#40 22.37   Restored /src/tests/Architecture/ApiConventions/ALKAROS.Architecture.ApiConventions.Tests.csproj (in 38 ms).
+#40 22.37   Restored /src/src/Modules/Kitchen/ALKAROS.Kitchen.csproj (in 12 ms).
+#40 22.37   Restored /src/src/Modules/Menu/ALKAROS.Menu.csproj (in 3 ms).
+#40 22.37   Restored /src/src/Modules/Operations/ALKAROS.Operations.csproj (in 8 ms).
+#40 22.38   Restored /src/src/Modules/Inventory/ALKAROS.Inventory.csproj (in 3 ms).
+#40 22.38   Restored /src/src/Modules/Identity/ALKAROS.Identity.csproj (in 8 ms).
+#40 22.39   Restored /src/src/Modules/CustomerAccounts/ALKAROS.CustomerAccounts.csproj (in 6 ms).
+#40 22.39   Restored /src/src/Modules/CustomerData/ALKAROS.CustomerData.csproj (in 8 ms).
+#40 22.39   Restored /src/src/Modules/Invoicing/ALKAROS.Invoicing.csproj (in 13 ms).
+#40 22.40   Restored /src/src/Modules/Audit/ALKAROS.Audit.csproj (in 3 ms).
+#40 22.41   Restored /src/src/Modules/Catalog/ALKAROS.Catalog.csproj (in 4 ms).
+#40 22.41   Restored /src/src/Modules/Billing/ALKAROS.Billing.csproj (in 7 ms).
+#40 22.41   Restored /src/src/Modules/Cash/ALKAROS.Cash.csproj (in 13 ms).
+#40 22.41   Restored /src/src/Integrations/QrRelay/ALKAROS.QrRelay.csproj (in 11 ms).
+#40 22.42   Restored /src/src/Modules/Billing/PaymentClosure/ALKAROS.Billing.PaymentClosure.csproj (in 15 ms).
+#40 22.43   Restored /src/src/BuildingBlocks/Security/Secrets/ALKAROS.Secrets.csproj (in 2 ms).
+#40 22.43   Restored /src/src/Clients/Cashier/ALKAROS.Cashier.csproj (in 4 ms).
+#40 22.43   Restored /src/src/BuildingBlocks/ModuleComposition/ALKAROS.ModuleComposition.csproj (in 2 ms).
+#40 22.44   Restored /src/src/Clients/WaiterPwa/ALKAROS.WaiterPwa.csproj (in 7 ms).
+#40 22.44   Restored /src/src/BuildingBlocks/Security/SensitiveData/ALKAROS.SensitiveData.csproj (in 8 ms).
+#40 22.44   Restored /src/src/BuildingBlocks/Measurements/ALKAROS.Measurements.csproj (in 2 ms).
+#40 22.45   Restored /src/src/BuildingBlocks/IntegrationContracts/ALKAROS.IntegrationContracts.csproj (in 3 ms).
+#40 22.45   Restored /src/src/BuildingBlocks/Messaging/ALKAROS.Messaging.csproj (in 5 ms).
+#40 22.96   Restored /src/tests/Architecture/ModuleBoundaries/ALKAROS.Architecture.Tests.csproj (in 652 ms).
+#40 23.41   Restored /src/src/Host/ALKAROS.Host.csproj (in 992 ms).
+#40 23.43   Restored /src/src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj (in 1.03 sec).
+#40 DONE 23.9s
+
+#40 [watchdog backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#40 DONE 23.9s
+
+#50 [provision backend-build 5/6] RUN dotnet publish src/Host/ALKAROS.Host.csproj --configuration Release --no-restore --output /out/api
+#50 7.632   ALKAROS.Measurements -> /src/src/BuildingBlocks/Measurements/bin/Release/net8.0/ALKAROS.Measurements.dll
+#50 7.651   ALKAROS.IntegrationContracts -> /src/src/BuildingBlocks/IntegrationContracts/bin/Release/net8.0/ALKAROS.IntegrationContracts.dll
+#50 7.663   ALKAROS.ModuleComposition -> /src/src/BuildingBlocks/ModuleComposition/bin/Release/net8.0/ALKAROS.ModuleComposition.dll
+#50 8.947   ALKAROS.Secrets -> /src/src/BuildingBlocks/Security/Secrets/bin/Release/net8.0/ALKAROS.Secrets.dll
+#50 11.87   ALKAROS.Privacy.RetentionExecution -> /src/src/Modules/Privacy/RetentionExecution/bin/Release/net8.0/ALKAROS.Privacy.RetentionExecution.dll
+#50 13.96   ALKAROS.Menu -> /src/src/Modules/Menu/bin/Release/net8.0/ALKAROS.Menu.dll
+#50 14.09   ALKAROS.Identity -> /src/src/Modules/Identity/bin/Release/net8.0/ALKAROS.Identity.dll
+#50 15.04   ALKAROS.SensitiveData -> /src/src/BuildingBlocks/Security/SensitiveData/bin/Release/net8.0/ALKAROS.SensitiveData.dll
+#50 15.09   ALKAROS.Privacy.Anonymization -> /src/src/Modules/Privacy/Anonymization/bin/Release/net8.0/ALKAROS.Privacy.Anonymization.dll
+#50 15.17   ALKAROS.Observability -> /src/src/Modules/Observability/bin/Release/net8.0/ALKAROS.Observability.dll
+#50 15.18   ALKAROS.Inventory -> /src/src/Modules/Inventory/bin/Release/net8.0/ALKAROS.Inventory.dll
+#50 16.40   ALKAROS.Audit -> /src/src/Modules/Audit/bin/Release/net8.0/ALKAROS.Audit.dll
+#50 16.53   ALKAROS.Recipes -> /src/src/Modules/Recipes/bin/Release/net8.0/ALKAROS.Recipes.dll
+#50 16.61   ALKAROS.Reporting -> /src/src/Modules/Reporting/bin/Release/net8.0/ALKAROS.Reporting.dll
+#50 16.64   ALKAROS.Messaging -> /src/src/BuildingBlocks/Messaging/bin/Release/net8.0/ALKAROS.Messaging.dll
+#50 16.67   ALKAROS.Catalog -> /src/src/Modules/Catalog/bin/Release/net8.0/ALKAROS.Catalog.dll
+#50 18.15   ALKAROS.Production -> /src/src/Modules/Production/bin/Release/net8.0/ALKAROS.Production.dll
+#50 18.70   ALKAROS.Purchasing -> /src/src/Modules/Purchasing/bin/Release/net8.0/ALKAROS.Purchasing.dll
+#50 19.78   ALKAROS.Reconciliation -> /src/src/Modules/Reconciliation/bin/Release/net8.0/ALKAROS.Reconciliation.dll
+#50 19.81   ALKAROS.Security -> /src/src/Modules/Security/bin/Release/net8.0/ALKAROS.Security.dll
+#50 19.83   ALKAROS.CustomerData -> /src/src/Modules/CustomerData/bin/Release/net8.0/ALKAROS.CustomerData.dll
+#50 20.08   ALKAROS.Tables -> /src/src/Modules/Tables/bin/Release/net8.0/ALKAROS.Tables.dll
+#50 20.78   ALKAROS.Settings -> /src/src/Modules/Settings/bin/Release/net8.0/ALKAROS.Settings.dll
+#50 22.15   ALKAROS.QrOrdering -> /src/src/Modules/QrOrdering/bin/Release/net8.0/ALKAROS.QrOrdering.dll
+#50 22.46   ALKAROS.Invoicing -> /src/src/Modules/Invoicing/bin/Release/net8.0/ALKAROS.Invoicing.dll
+#50 22.46   ALKAROS.Support -> /src/src/Modules/Support/bin/Release/net8.0/ALKAROS.Support.dll
+#50 24.12   ALKAROS.Operations -> /src/src/Modules/Operations/bin/Release/net8.0/ALKAROS.Operations.dll
+#50 24.21   ALKAROS.Orders -> /src/src/Modules/Orders/bin/Release/net8.0/ALKAROS.Orders.dll
+#50 26.25   ALKAROS.OnlineOrdering -> /src/src/Modules/OnlineOrdering/bin/Release/net8.0/ALKAROS.OnlineOrdering.dll
+#50 26.74   ALKAROS.QrRelay -> /src/src/Integrations/QrRelay/bin/Release/net8.0/ALKAROS.QrRelay.dll
+#50 26.75   ALKAROS.Billing -> /src/src/Modules/Billing/bin/Release/net8.0/ALKAROS.Billing.dll
+#50 26.84   ALKAROS.Kitchen -> /src/src/Modules/Kitchen/bin/Release/net8.0/ALKAROS.Kitchen.dll
+#50 27.98   ALKAROS.Payments -> /src/src/Modules/Payments/bin/Release/net8.0/ALKAROS.Payments.dll
+#50 28.54   ALKAROS.Billing.PaymentClosure -> /src/src/Modules/Billing/PaymentClosure/bin/Release/net8.0/ALKAROS.Billing.PaymentClosure.dll
+#50 28.77   ALKAROS.Cash -> /src/src/Modules/Cash/bin/Release/net8.0/ALKAROS.Cash.dll
+#50 29.30   ALKAROS.Payments.TenderComposition -> /src/src/Modules/Payments/TenderComposition/bin/Release/net8.0/ALKAROS.Payments.TenderComposition.dll
+#50 29.82   ALKAROS.CustomerAccounts -> /src/src/Modules/CustomerAccounts/bin/Release/net8.0/ALKAROS.CustomerAccounts.dll
+#50 42.09   ALKAROS.Host -> /src/src/Host/bin/Release/net8.0/ALKAROS.Host.dll
+#50 42.22   ALKAROS.Host -> /out/api/
+#50 DONE 42.6s
+
+#50 [api backend-build 5/6] RUN dotnet publish src/Host/ALKAROS.Host.csproj --configuration Release --no-restore --output /out/api
+#50 DONE 42.6s
+
+#51 [provision backend-build 6/6] RUN dotnet publish src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj     --configuration Release --no-restore --output /out/connector
+#51 2.982   ALKAROS.ModuleComposition -> /src/src/BuildingBlocks/ModuleComposition/bin/Release/net8.0/ALKAROS.ModuleComposition.dll
+#51 2.992   ALKAROS.IntegrationContracts -> /src/src/BuildingBlocks/IntegrationContracts/bin/Release/net8.0/ALKAROS.IntegrationContracts.dll
+#51 3.003   ALKAROS.Secrets -> /src/src/BuildingBlocks/Security/Secrets/bin/Release/net8.0/ALKAROS.Secrets.dll
+#51 3.496   ALKAROS.SensitiveData -> /src/src/BuildingBlocks/Security/SensitiveData/bin/Release/net8.0/ALKAROS.SensitiveData.dll
+#51 3.497   ALKAROS.Messaging -> /src/src/BuildingBlocks/Messaging/bin/Release/net8.0/ALKAROS.Messaging.dll
+#51 3.974   ALKAROS.Tables -> /src/src/Modules/Tables/bin/Release/net8.0/ALKAROS.Tables.dll
+#51 4.365   ALKAROS.QrOrdering -> /src/src/Modules/QrOrdering/bin/Release/net8.0/ALKAROS.QrOrdering.dll
+#51 4.746   ALKAROS.QrRelay -> /src/src/Integrations/QrRelay/bin/Release/net8.0/ALKAROS.QrRelay.dll
+#51 7.849   ALKAROS.QrRelay.ConnectorHost -> /src/src/Integrations/QrRelay/LocalConnector/ConnectorHost/bin/Release/net8.0/ALKAROS.QrRelay.ConnectorHost.dll
+#51 7.941   ALKAROS.QrRelay.ConnectorHost -> /out/connector/
+#51 DONE 8.1s
+
+#51 [api backend-build 6/6] RUN dotnet publish src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj     --configuration Release --no-restore --output /out/connector
+#51 DONE 8.1s
+
+#52 [migrate backend-build 6/6] RUN dotnet publish src/Integrations/QrRelay/LocalConnector/ConnectorHost/ALKAROS.QrRelay.ConnectorHost.csproj     --configuration Release --no-restore --output /out/connector
+#52 CACHED
+
+#53 [migrate backend-build 5/6] RUN dotnet publish src/Host/ALKAROS.Host.csproj --configuration Release --no-restore --output /out/api
+#53 CACHED
+
+#54 [migrate backend-build 4/6] RUN dotnet restore ALKAROS.slnx --locked-mode
+#54 CACHED
+
+#55 [migrate backend-build 3/6] COPY . .
+#55 CACHED
+
+#56 [migrate api  4/10] COPY --from=backend-build /out/api ./
+#56 CANCELED
+
+#57 [provision api  2/10] RUN apk update     && apk add --no-cache libcrypto3=3.5.9-r0 libssl3=3.5.9-r0 openssl=3.5.9-r0 postgresql-client tzdata ca-certificates curl     && rm -rf /var/cache/apk/*
+#57 CACHED
+
+#58 [provision api  3/10] WORKDIR /app
+#58 CACHED
+
+#59 [watchdog api  4/10] COPY --from=backend-build /out/api ./
+#59 DONE 0.1s
+
+#59 [provision api  4/10] COPY --from=backend-build /out/api ./
+#59 DONE 0.1s
+
+#60 [provision api  5/10] COPY database ./database
+#60 DONE 0.3s
+
+#60 [provision api  5/10] COPY database ./database
+#60 DONE 0.3s
+
+#61 [migrate api  6/10] COPY build/project-manifest.json ./build/project-manifest.json
+#61 DONE 0.1s
+
+#62 [provision api  7/10] COPY src/Apps/CustomerWeb/Menu/wwwroot ./qr-web
+#62 DONE 0.1s
+
+#62 [watchdog api  7/10] COPY src/Apps/CustomerWeb/Menu/wwwroot ./qr-web
+#62 DONE 0.1s
+
+#63 [provision api  8/10] COPY src/Apps/CustomerWeb/OrderEntry/wwwroot ./qr-web
+#63 DONE 0.1s
+
+#64 [migrate api  9/10] COPY src/Apps/CustomerWeb/Bill/wwwroot ./qr-web
+#64 DONE 0.1s
+
+#64 [provision api  9/10] COPY src/Apps/CustomerWeb/Bill/wwwroot ./qr-web
+#64 DONE 0.1s
+
+#65 [api frontend-build  6/10] RUN pnpm build
+#65 CACHED
+
+#66 [api frontend-build  3/10] COPY src/Clients/PosTerminal/package.json src/Clients/PosTerminal/pnpm-lock.yaml ./
+#66 CACHED
+
+#67 [api frontend-build 10/10] COPY src/Clients/Cashier/wwwroot /out/app/cashier
+#67 CACHED
+
+#31 [api frontend-build  2/10] WORKDIR /src
+#31 CACHED
+
+#68 [api frontend-build  4/10] RUN corepack enable && corepack prepare pnpm@11.19.0 --activate && pnpm install --frozen-lockfile
+#68 CACHED
+
+#69 [api frontend-build  8/10] RUN mkdir -p /out/app && cp -r /src/dist/. /out/app/
+#69 CACHED
+
+#70 [api frontend-build  7/10] RUN pnpm build:nfc-standalone
+#70 CACHED
+
+#71 [api frontend-build  9/10] COPY src/Clients/WaiterPwa/wwwroot /out/app/waiter
+#71 CACHED
+
+#72 [api frontend-build  5/10] COPY src/Clients/PosTerminal ./
+#72 CACHED
+
+#73 [migrate api 10/10] COPY --from=frontend-build /src/dist-nfc ./nfc-web
+#73 DONE 0.1s
+
+#74 [watchdog] exporting to image
+#74 exporting layers
+#74 exporting layers 0.7s done
+#74 exporting manifest sha256:2d802b31ce698f1e2dcee205741590239aa0cbb00f95dfd1d61fdf88d3d77ce5 0.0s done
+#74 exporting config sha256:2dc28fecfc59d3ee9557d55b79ba00c4ef10a618df7c4d52bdc3f85dbe3c5473
+#74 exporting config sha256:2dc28fecfc59d3ee9557d55b79ba00c4ef10a618df7c4d52bdc3f85dbe3c5473 0.1s done
+#74 exporting attestation manifest sha256:a2732031f4f44fbcc04a1f0f6d870986d42b8fa3147bffb3ce698b69956f1d9d
+#74 exporting attestation manifest sha256:a2732031f4f44fbcc04a1f0f6d870986d42b8fa3147bffb3ce698b69956f1d9d 0.1s done
+#74 exporting manifest list sha256:7d76059543835bd29da2789a809a6671cd2160477cb9d8e29baa7814bbe38a80 0.1s done
+#74 naming to docker.io/library/alkaros-watchdog:latest 0.0s done
+#74 unpacking to docker.io/library/alkaros-watchdog:latest
+#74 ...
+
+#75 [api] exporting to image
+#75 exporting layers 0.7s done
+#75 exporting manifest sha256:84eae5f1eb4abc512e3bd254a02662c8796bdc966d75960f38015676e2e86c6d 0.0s done
+#75 exporting config sha256:27e4e1fa8b9b48561294b3f1e0bb3b7800e7037743b653a1e92a7c3ebec0e105 0.1s done
+#75 exporting attestation manifest sha256:c63df40bea279c333fa369144667841c990b794b3525d3fe89792f24a9e965f2 0.1s done
+#75 exporting manifest list sha256:e70f51b0036dce2d3302b92bf6df190fae45ecd40d9d7375bd65d25561a7a291 0.0s done
+#75 naming to docker.io/library/alkaros-api:latest 0.0s done
+#75 unpacking to docker.io/library/alkaros-api:latest 0.8s done
+#75 DONE 2.0s
+
+#76 [provision] exporting to image
+#76 exporting layers 0.7s done
+#76 exporting manifest sha256:12e834665bb2ff94d2cf3c2d5c54091ef447a26083d4d5454b90588b4e2db7ce 0.0s done
+#76 exporting config sha256:089270e1fa3287f3f09aab5b34e665b045b8be0b410d2d0aaa47a60687884850 0.1s done
+#76 exporting attestation manifest sha256:14f6f7e4e3d5cba4e031e5dcf0acfe7361374e76f6a609e92970e453a3d484e9 0.1s done
+#76 exporting manifest list sha256:cf495539ad6faa9617a16086fe69e2e36e512d2bd5eb53f1dc0433ce05bb1054 0.0s done
+#76 naming to docker.io/library/alkaros-provision:latest 0.0s done
+#76 unpacking to docker.io/library/alkaros-provision:latest 0.9s done
+#76 DONE 2.0s
+
+#74 [watchdog] exporting to image
+#74 unpacking to docker.io/library/alkaros-watchdog:latest 0.9s done
+#74 DONE 2.0s
+
+#77 [migrate] exporting to image
+#77 exporting layers 0.7s done
+#77 exporting manifest sha256:f7df2bfe2287634e8636f7533dd1413522aae7d7ba3797e5fe547db7462cc74e 0.1s done
+#77 exporting config sha256:c6d1efc82107f589cb0d8362ece9483e56e1e6939a5a75bd1f856c3cb448e869 0.1s done
+#77 exporting attestation manifest sha256:f3772598ef5315164f72da9312f87b5299f53eda8d4616cb6158b7b5280a2cb3 0.1s done
+#77 exporting manifest list sha256:641a0be76b83501905554eb2da1b63336c9b79d625cb5b8ef9b8d393fc7eeb44 0.1s done
+#77 naming to docker.io/library/alkaros-migrate:latest 0.0s done
+#77 unpacking to docker.io/library/alkaros-migrate:latest 0.9s done
+#77 DONE 2.0s
+
+#78 [api] resolving provenance for metadata file
+#78 DONE 0.1s
+
+#79 [migrate] resolving provenance for metadata file
+#79 DONE 0.1s
+
+#80 [watchdog] resolving provenance for metadata file
+#80 DONE 0.2s
+
+#81 [provision] resolving provenance for metadata file
+#81 DONE 0.0s
+ Image alkaros-watchdog Built 
+ Image alkaros-web Built 
+ Image alkaros-migrate Built 
+ Image alkaros-provision Built 
+ Image alkaros-api Built 
+ Container alkaros-postgres-1 Running 
+ Container alkaros-migrate-1 Recreate 
+ Container alkaros-migrate-1 Recreated 
+ Container alkaros-provision-1 Recreate 
+ Container alkaros-provision-1 Recreated 
+ Container alkaros-api-1 Recreate 
+ Container alkaros-api-1 Recreated 
+ Container alkaros-web-1 Recreate 
+ Container alkaros-watchdog-1 Recreate 
+ Container alkaros-watchdog-1 Recreated 
+ Container alkaros-web-1 Recreated 
+ Container alkaros-postgres-1 Waiting 
+ Container alkaros-postgres-1 Healthy 
+ Container alkaros-migrate-1 Starting 
+ Container alkaros-migrate-1 Started 
+ Container alkaros-migrate-1 Waiting 
+ Container alkaros-migrate-1 Exited 
+ Container alkaros-provision-1 Starting 
+ Container alkaros-provision-1 Started 
+ Container alkaros-provision-1 Waiting 
+ Container alkaros-provision-1 Exited 
+ Container alkaros-api-1 Starting 
+ Container alkaros-api-1 Started 
+ Container alkaros-api-1 Waiting 
+ Container alkaros-api-1 Waiting 
+ Container alkaros-api-1 Healthy 
+ Container alkaros-api-1 Healthy 
+ Container alkaros-web-1 Starting 
+ Container alkaros-watchdog-1 Starting 
+ Container alkaros-watchdog-1 Started 
+ Container alkaros-web-1 Started 
+exit=0

@@ -1,0 +1,37 @@
+== öncesi: profile kolonu (0 beklenir) / göç 193
+0
+== eski ve yeni satırlar ekleniyor (api yeniden başlayınca ilk saklama turu eskileri silmeli)
+INSERT 0 2
+INSERT 0 4
+INSERT 0 2
+INSERT 0 2
+== öncesi sayımlar
+1|4|2|2
+== bekçi tamponu ve günlüğü (öncesi)
+1
+WATCHDOG: started, telegramConfigured=False
+20:04:27
+== yeniden kurulumdan sonra 20:07:07
+profile kolonu:
+1
+göç günlüğü (migrate): All 192 migration(s) verified; 1 applied. exit: 0 
+kalan satırlar (eski silinmiş, yeni kalmış beklenir):
+hc:kanit592-aud-new|1
+hc:kanit592-hot-new|1
+q:kanit592-q-new|1
+s:kanit592-s-new|1
+snap_old|0
+denetim kaydı:
+monitoring.retention.run|{"observability.error_events": 0, "observability.error_occurrences": 0, "observability.raw_ui_interactions": 0}
+== bekçi
+{"Layer":"Api","Category":"system.unreachable","At":"2026-10-17T11:26:26.147485+00:00"}
+{"Layer":"Api","Category":"system.unreachable","At":"2026-10-17T20:06:56.7095139+00:00"}
+WATCHDOG: started, telegramConfigured=False
+alkaros-watchdog-1 Up 28 seconds
+alkaros-web-1 Up 28 seconds (healthy)
+alkaros-api-1 Up 40 seconds (healthy)
+alkaros-connector-1 Up 30 hours
+alkaros-test-pg Up 31 hours
+alkaros-postgres-1 Up 31 hours (healthy)
+== son saklama denetim kaydı (zamana göre)
+2026-10-17 20:06:31.079482+00|{"observability.error_events": 0, "observability.health_checks": 9352, "observability.error_occurrences": 0, "observability.notification_queue": 1, "observability.raw_ui_interactions": 0, "operations.system_health_snapshots": 1, "observability.notification_suppressions": 1}
