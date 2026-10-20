@@ -1,4 +1,5 @@
 using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Inventory.MovementReversal;
@@ -47,6 +48,7 @@ public sealed class SentItemVoidStore
     private readonly IStockMovementRepository _stockMovements;
     private readonly IStockMovementReversalService _stockReversal;
     private readonly NpgsqlDataSource _dataSource;
+    private readonly IAuditEventStore _auditEvents;
 
     public SentItemVoidStore(
         IOrderRepository orders,
@@ -54,7 +56,8 @@ public sealed class SentItemVoidStore
         IBillRepository bills,
         IStockMovementRepository stockMovements,
         IStockMovementReversalService stockReversal,
-        NpgsqlDataSource dataSource)
+        NpgsqlDataSource dataSource,
+        IAuditEventStore auditEvents)
     {
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
@@ -62,6 +65,7 @@ public sealed class SentItemVoidStore
         _stockMovements = stockMovements ?? throw new ArgumentNullException(nameof(stockMovements));
         _stockReversal = stockReversal ?? throw new ArgumentNullException(nameof(stockReversal));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _auditEvents = auditEvents ?? throw new ArgumentNullException(nameof(auditEvents));
     }
 
     public async Task<SentItemVoidResult> VoidAsync(
@@ -138,6 +142,7 @@ public sealed class SentItemVoidStore
             stockRestored = restoresStock
                 && await RestoreStockForVoidedItemAsync(item, command, connection, transaction, cancellationToken)
                     .ConfigureAwait(false);
+            await AppendAuditAsync(connection, transaction, order.Id, item, command, stockRestored, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         }
 
@@ -148,8 +153,6 @@ public sealed class SentItemVoidStore
                 billContext.Value.Bill, billContext.Value.BillItem, item, command.ReasonCode, cancellationToken)
                 .ConfigureAwait(false)
             : false;
-        await AppendAuditAsync(
-            order.Id, item, command, kitchenCancelled, wasteConverted, stockRestored, now, cancellationToken).ConfigureAwait(false);
 
         return new SentItemVoidResult(
             order.Id, item.Id, newOrderRowVersion, voidedOrder.Total, kitchenCancelled, wasteConverted, stockRestored, now);
@@ -300,67 +303,40 @@ public sealed class SentItemVoidStore
         return true;
     }
 
-    private async Task AppendAuditAsync(
+    // Written in the Order's own transaction: the item is not voided unless this record is kept. What the kitchen and
+    // bill steps that follow achieved is recorded by the endpoint's order-item.void-sent event.
+    private Task AppendAuditAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
         Guid orderId,
         OrderItem item,
         SentItemVoidCommand command,
-        bool kitchenTicketItemCancelled,
-        bool billLineConvertedToWaste,
         bool stockRestored,
-        DateTimeOffset now,
         CancellationToken cancellationToken)
-    {
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var cmd = connection.CreateCommand();
-        cmd.CommandText =
-            """
-            INSERT INTO audit.audit_events (
-                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                reason, correlation_id, causation_id, before_state_json, after_state_json,
-                metadata_json, occurred_at
-            ) VALUES (
-                @id, @event_name, @aggregate_type, @aggregate_id, @actor_id, @actor_type,
-                @reason, @correlation_id, @causation_id, @before_state_json, @after_state_json,
-                @metadata_json, @occurred_at
-            );
-            """;
-        cmd.Parameters.AddWithValue("id", Guid.NewGuid());
-        cmd.Parameters.AddWithValue("event_name", "Order.SentItemVoided");
-        cmd.Parameters.AddWithValue("aggregate_type", "Order");
-        cmd.Parameters.AddWithValue("aggregate_id", orderId);
-        cmd.Parameters.AddWithValue("actor_id", command.ActorId);
-        cmd.Parameters.AddWithValue("actor_type", "User");
-        cmd.Parameters.AddWithValue("reason", command.ReasonCode);
-        cmd.Parameters.AddWithValue("correlation_id", command.CorrelationId);
-        cmd.Parameters.AddWithValue("causation_id", DBNull.Value);
-
-        var before = new
-        {
-            ItemId = item.Id,
-            Status = item.Status.ToString(),
-            KitchenState = item.KitchenState.ToString(),
-            Total = item.GrossAmount,
-        };
-        var after = new
-        {
-            ItemId = item.Id,
-            Status = OrderItemState.Cancelled.ToString(),
-            KitchenState = KitchenState.Cancelled.ToString(),
-            KitchenTicketItemCancelled = kitchenTicketItemCancelled,
-            BillLineConvertedToWaste = billLineConvertedToWaste,
-            StockRestored = stockRestored,
-        };
-
-        var pBefore = cmd.Parameters.AddWithValue("before_state_json", JsonSerializer.Serialize(before));
-        pBefore.NpgsqlDbType = NpgsqlDbType.Jsonb;
-        var pAfter = cmd.Parameters.AddWithValue("after_state_json", JsonSerializer.Serialize(after));
-        pAfter.NpgsqlDbType = NpgsqlDbType.Jsonb;
-
-        cmd.Parameters.AddWithValue("metadata_json", DBNull.Value);
-        cmd.Parameters.AddWithValue("occurred_at", now);
-
-        await cmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-    }
+        => _auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: "Order.SentItemVoided",
+                aggregateType: "Order",
+                aggregateId: orderId,
+                actorType: "User",
+                correlationId: command.CorrelationId,
+                actorId: command.ActorId,
+                reason: command.ReasonCode,
+                beforeStateJson: JsonSerializer.Serialize(new
+                {
+                    ItemId = item.Id,
+                    Status = item.Status.ToString(),
+                    KitchenState = item.KitchenState.ToString(),
+                    Total = item.GrossAmount,
+                }),
+                afterStateJson: JsonSerializer.Serialize(new
+                {
+                    ItemId = item.Id,
+                    Status = OrderItemState.Cancelled.ToString(),
+                    StockRestored = stockRestored,
+                })),
+            connection, transaction, cancellationToken);
 }
 
 /// <summary>

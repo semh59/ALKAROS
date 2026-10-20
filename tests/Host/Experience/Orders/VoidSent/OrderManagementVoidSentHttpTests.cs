@@ -91,6 +91,51 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AVoidWhoseAuditRecordCannotBeWrittenIsNotMade()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, productId, item) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing);
+        await _database.SeedKitchenTicketAsync(orderId, itemId, productId, KitchenTicketItemState.Preparing);
+        await _database.SeedOpenBillAsync(orderId, item);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        // The database refuses the audit event, as a broken audit write would.
+        await using (var install = _database.DataSource.CreateCommand(
+            """
+            CREATE OR REPLACE FUNCTION audit.test_refuse_event() RETURNS trigger AS $fn$
+            BEGIN
+                IF NEW.event_name = TG_ARGV[0] THEN
+                    RAISE EXCEPTION 'audit write refused by the test';
+                END IF;
+                RETURN NEW;
+            END;
+            $fn$ LANGUAGE plpgsql;
+            """))
+            await install.ExecuteNonQueryAsync();
+        await using (var attach = _database.DataSource.CreateCommand(
+            "CREATE TRIGGER test_refuse_event BEFORE INSERT ON audit.audit_events FOR EACH ROW EXECUTE FUNCTION audit.test_refuse_event('Order.SentItemVoided');"))
+            await attach.ExecuteNonQueryAsync();
+        try
+        {
+            using var response = await client.SendAsync(JsonRequest(
+                VoidSentPath(terminalId, orderId, itemId), cookie,
+                new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange", "sent by mistake")));
+
+            Assert.False(response.IsSuccessStatusCode);
+        }
+        finally
+        {
+            await using var detach = _database.DataSource.CreateCommand("DROP TRIGGER IF EXISTS test_refuse_event ON audit.audit_events;");
+            await detach.ExecuteNonQueryAsync();
+        }
+
+        var (status, _) = await _database.ReloadItemStateAsync(orderId, itemId);
+        Assert.Equal(OrderItemState.Active, status);
+    }
+
+    [Fact]
     public async Task ARoleThatHoldsBillsVoidOutrightAppliesDirectlyAndCancelsKitchenAndBill()
     {
         var terminalId = Guid.NewGuid();
@@ -119,6 +164,10 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         var applied = Assert.Single(events);
         Assert.Equal("order-item.void-sent", applied.EventName);
         Assert.Equal("CustomerChange", applied.Reason);
+
+        // The decision itself is recorded once, in the order's own transaction (sanitized by the shared audit store).
+        var decision = Assert.Single(await auditEvents.GetByAggregateAsync("Order", orderId), e => e.EventName == "Order.SentItemVoided");
+        Assert.Equal("CustomerChange", decision.Reason);
     }
 
     [Fact]

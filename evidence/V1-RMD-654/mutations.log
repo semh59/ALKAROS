@@ -1,0 +1,5 @@
+KILLED   audit after commit
+KILLED   audit not written
+KILLED   audit event name changed
+restore SentItemVoidStore.cs: identical
+mutants: 3, survived: 0
