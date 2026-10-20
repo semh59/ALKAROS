@@ -48,4 +48,4 @@ V1-RMD-595 bulguları F22, F23, F25 ve F26 kapanır. F22: denetim kaydının sak
 
 ## Handoff
 
-- None
+- V1-RMD-659
