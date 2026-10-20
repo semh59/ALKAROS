@@ -5,6 +5,7 @@ using ALKAROS.Audit.EventStore;
 using ALKAROS.CustomerData.AnonymizationState.Tests.Fixtures;
 using ALKAROS.CustomerData.Profiles;
 using ALKAROS.Secrets;
+using Npgsql;
 using Xunit;
 
 /// <summary>Real Postgres end-to-end: real ICustomerProfileStore, real ICustomerAnonymizationRequestStore, real IAuditEventStore. Only the retention guard is a controllable test double, since neither real blocking-reference owner (V14-ACC/V14-INV) exists yet.</summary>
@@ -13,6 +14,25 @@ public sealed class CustomerAnonymizationServiceTests : IAsyncLifetime
     private sealed class FixedGuard(string? reason) : IAnonymizationRetentionGuard
     {
         public Task<string?> CheckAsync(Guid customerId, CancellationToken cancellationToken) => Task.FromResult(reason);
+    }
+
+    private sealed class FailingAuditStore : IAuditEventStore
+    {
+        public Task AppendAsync(AuditEvent auditEvent, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("audit write failed");
+
+        public Task AppendAsync(
+            AuditEvent auditEvent, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("audit write failed");
+
+        public Task AppendBatchAsync(IEnumerable<AuditEvent> auditEvents, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("audit write failed");
+
+        public Task<IReadOnlyList<AuditEvent>> GetByAggregateAsync(string aggregateType, Guid aggregateId, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<IReadOnlyList<AuditEvent>> GetByCorrelationIdAsync(string correlationId, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
     }
 
     private readonly CustomerAnonymizationTestDatabase _database = new();
@@ -111,6 +131,32 @@ public sealed class CustomerAnonymizationServiceTests : IAsyncLifetime
 
         var events = await _audit.GetByAggregateAsync("CustomerAnonymizationRequest", request.Id);
         Assert.Contains(events, e => e.EventName == "CustomerAnonymized");
+    }
+
+    [Fact]
+    public async Task AStateChangeWhoseAuditRecordCannotBeWrittenIsNotKept()
+    {
+        var customerId = await _profiles.CreateAsync(new CreateCustomerProfileRequest("Ayşe Yılmaz", "0555", "a@x.com", "İstanbul"));
+        var failing = new CustomerAnonymizationService(_requests, _profiles, new FixedGuard(null), new FailingAuditStore());
+
+        // No request is kept when its audit record cannot be written.
+        await Assert.ThrowsAsync<InvalidOperationException>(() => failing.RequestAsync(customerId, "manager-1"));
+        await using (var count = _database.DataSource.CreateCommand(
+            "SELECT count(*) FROM customer_data.anonymization_requests WHERE customer_id = @id;"))
+        {
+            count.Parameters.AddWithValue("id", customerId);
+            Assert.Equal(0L, (long)(await count.ExecuteScalarAsync())!);
+        }
+
+        // An execution that cannot be audited leaves the request Pending, and the retry completes it.
+        var request = await Service(blockingReason: null).RequestAsync(customerId, null);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => failing.ExecuteAsync(request.Id, request.RowVersion));
+        Assert.Equal(AnonymizationRequestStatus.Pending, (await _requests.GetAsync(request.Id))!.Status);
+
+        var retried = await Service().ExecuteAsync(request.Id, request.RowVersion);
+        Assert.Equal(AnonymizationRequestStatus.Anonymized, retried.Status);
+        var events = await _audit.GetByAggregateAsync("CustomerAnonymizationRequest", request.Id);
+        Assert.Single(events, e => e.EventName == "CustomerAnonymized");
     }
 
     [Fact]

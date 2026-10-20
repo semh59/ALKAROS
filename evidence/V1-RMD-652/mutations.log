@@ -1,0 +1,6 @@
+KILLED   request creation audit after commit
+KILLED   status change audit after commit
+KILLED   request creation audit not recorded
+KILLED   status change audit not recorded
+restore PostgresCustomerAnonymizationRequestStore.cs: identical
+mutants: 4, survived: 0

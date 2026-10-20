@@ -49,17 +49,22 @@ public sealed class CustomerAnonymizationService
             ? AnonymizationRequestStatus.Pending
             : AnonymizationRequestStatus.RetentionBlocked;
 
-        var id = await _requests.CreateAsync(customerId, initialStatus, requestedBy, blockingReason, requestedAt, cancellationToken);
-
-        await _audit.AppendAsync(
-            new AuditEvent(
-                Guid.NewGuid(),
-                blockingReason is null ? "CustomerAnonymizationRequested" : "CustomerAnonymizationBlocked",
-                "CustomerAnonymizationRequest",
-                id,
-                actorType: requestedBy is null ? "System" : "User",
-                correlationId: id.ToString(),
-                reason: blockingReason),
+        var id = await _requests.CreateAsync(
+            customerId,
+            initialStatus,
+            requestedBy,
+            blockingReason,
+            requestedAt,
+            (newId, connection, transaction, token) => _audit.AppendAsync(
+                new AuditEvent(
+                    Guid.NewGuid(),
+                    blockingReason is null ? "CustomerAnonymizationRequested" : "CustomerAnonymizationBlocked",
+                    "CustomerAnonymizationRequest",
+                    newId,
+                    actorType: requestedBy is null ? "System" : "User",
+                    correlationId: newId.ToString(),
+                    reason: blockingReason),
+                connection, transaction, token),
             cancellationToken);
 
         return (await _requests.GetAsync(id, cancellationToken))!;
@@ -84,16 +89,20 @@ public sealed class CustomerAnonymizationService
             return request;
 
         await _requests.UpdateStatusAsync(
-            requestId, AnonymizationRequestStatus.Pending, blockedReason: null, anonymizedAt: null, request.RowVersion, cancellationToken);
-
-        await _audit.AppendAsync(
-            new AuditEvent(
-                Guid.NewGuid(),
-                "CustomerAnonymizationUnblocked",
-                "CustomerAnonymizationRequest",
-                requestId,
-                actorType: "System",
-                correlationId: requestId.ToString()),
+            requestId,
+            AnonymizationRequestStatus.Pending,
+            blockedReason: null,
+            anonymizedAt: null,
+            request.RowVersion,
+            (connection, transaction, token) => _audit.AppendAsync(
+                new AuditEvent(
+                    Guid.NewGuid(),
+                    "CustomerAnonymizationUnblocked",
+                    "CustomerAnonymizationRequest",
+                    requestId,
+                    actorType: "System",
+                    correlationId: requestId.ToString()),
+                connection, transaction, token),
             cancellationToken);
 
         return (await _requests.GetAsync(requestId, cancellationToken))!;
@@ -130,16 +139,20 @@ public sealed class CustomerAnonymizationService
 
         var anonymizedAt = DateTimeOffset.UtcNow;
         await _requests.UpdateStatusAsync(
-            requestId, AnonymizationRequestStatus.Anonymized, blockedReason: null, anonymizedAt, expectedRowVersion, cancellationToken);
-
-        await _audit.AppendAsync(
-            new AuditEvent(
-                Guid.NewGuid(),
-                "CustomerAnonymized",
-                "CustomerAnonymizationRequest",
-                requestId,
-                actorType: "System",
-                correlationId: requestId.ToString()),
+            requestId,
+            AnonymizationRequestStatus.Anonymized,
+            blockedReason: null,
+            anonymizedAt,
+            expectedRowVersion,
+            (connection, transaction, token) => _audit.AppendAsync(
+                new AuditEvent(
+                    Guid.NewGuid(),
+                    "CustomerAnonymized",
+                    "CustomerAnonymizationRequest",
+                    requestId,
+                    actorType: "System",
+                    correlationId: requestId.ToString()),
+                connection, transaction, token),
             cancellationToken);
 
         return (await _requests.GetAsync(requestId, cancellationToken))!;

@@ -1,3 +1,5 @@
+using Npgsql;
+
 namespace ALKAROS.CustomerData.AnonymizationState;
 
 /// <summary>
@@ -19,6 +21,16 @@ public interface ICustomerAnonymizationRequestStore
         DateTimeOffset requestedAt,
         CancellationToken cancellationToken = default);
 
+    /// <summary>As above; <paramref name="record"/> runs in the same transaction with the new request id, so a failure in it undoes the creation.</summary>
+    Task<Guid> CreateAsync(
+        Guid customerId,
+        AnonymizationRequestStatus initialStatus,
+        string? requestedBy,
+        string? blockedReason,
+        DateTimeOffset requestedAt,
+        Func<Guid, NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record,
+        CancellationToken cancellationToken = default);
+
     Task<CustomerAnonymizationRequest?> GetAsync(Guid requestId, CancellationToken cancellationToken = default);
 
     /// <summary>
@@ -34,5 +46,15 @@ public interface ICustomerAnonymizationRequestStore
         string? blockedReason,
         DateTimeOffset? anonymizedAt,
         int expectedRowVersion,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>As above; <paramref name="record"/> runs in the same transaction, so a failure in it undoes the status change.</summary>
+    Task UpdateStatusAsync(
+        Guid requestId,
+        AnonymizationRequestStatus newStatus,
+        string? blockedReason,
+        DateTimeOffset? anonymizedAt,
+        int expectedRowVersion,
+        Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record,
         CancellationToken cancellationToken = default);
 }

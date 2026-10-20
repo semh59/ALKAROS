@@ -16,22 +16,35 @@ public sealed class PostgresCustomerAnonymizationRequestStore : ICustomerAnonymi
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
     }
 
-    public async Task<Guid> CreateAsync(
+    public Task<Guid> CreateAsync(
         Guid customerId,
         AnonymizationRequestStatus initialStatus,
         string? requestedBy,
         string? blockedReason,
         DateTimeOffset requestedAt,
         CancellationToken cancellationToken = default)
+        => CreateAsync(
+            customerId, initialStatus, requestedBy, blockedReason, requestedAt, static (_, _, _, _) => Task.CompletedTask, cancellationToken);
+
+    public async Task<Guid> CreateAsync(
+        Guid customerId,
+        AnonymizationRequestStatus initialStatus,
+        string? requestedBy,
+        string? blockedReason,
+        DateTimeOffset requestedAt,
+        Func<Guid, NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record,
+        CancellationToken cancellationToken = default)
     {
         var id = Guid.NewGuid();
 
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             """
             INSERT INTO customer_data.anonymization_requests
                 (id, customer_id, status, requested_at, requested_by, blocked_reason, anonymized_at, row_version)
             VALUES (@id, @customer_id, @status, @requested_at, @requested_by, @blocked_reason, NULL, 1);
-            """);
+            """, connection, transaction);
         command.Parameters.Add("id", NpgsqlDbType.Uuid).Value = id;
         command.Parameters.Add("customer_id", NpgsqlDbType.Uuid).Value = customerId;
         command.Parameters.Add("status", NpgsqlDbType.Text).Value = initialStatus.ToString();
@@ -39,6 +52,8 @@ public sealed class PostgresCustomerAnonymizationRequestStore : ICustomerAnonymi
         command.Parameters.Add("requested_by", NpgsqlDbType.Text).Value = (object?)requestedBy ?? DBNull.Value;
         command.Parameters.Add("blocked_reason", NpgsqlDbType.Text).Value = (object?)blockedReason ?? DBNull.Value;
         await command.ExecuteNonQueryAsync(cancellationToken);
+        await record(id, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
 
         return id;
     }
@@ -59,15 +74,28 @@ public sealed class PostgresCustomerAnonymizationRequestStore : ICustomerAnonymi
         return ReadRecord(reader);
     }
 
-    public async Task UpdateStatusAsync(
+    public Task UpdateStatusAsync(
         Guid requestId,
         AnonymizationRequestStatus newStatus,
         string? blockedReason,
         DateTimeOffset? anonymizedAt,
         int expectedRowVersion,
         CancellationToken cancellationToken = default)
+        => UpdateStatusAsync(
+            requestId, newStatus, blockedReason, anonymizedAt, expectedRowVersion, static (_, _, _) => Task.CompletedTask, cancellationToken);
+
+    public async Task UpdateStatusAsync(
+        Guid requestId,
+        AnonymizationRequestStatus newStatus,
+        string? blockedReason,
+        DateTimeOffset? anonymizedAt,
+        int expectedRowVersion,
+        Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record,
+        CancellationToken cancellationToken = default)
     {
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             """
             UPDATE customer_data.anonymization_requests
             SET status = @status,
@@ -75,7 +103,7 @@ public sealed class PostgresCustomerAnonymizationRequestStore : ICustomerAnonymi
                 anonymized_at = @anonymized_at,
                 row_version = row_version + 1
             WHERE id = @id AND row_version = @expected_row_version;
-            """);
+            """, connection, transaction);
         command.Parameters.Add("id", NpgsqlDbType.Uuid).Value = requestId;
         command.Parameters.Add("status", NpgsqlDbType.Text).Value = newStatus.ToString();
         command.Parameters.Add("blocked_reason", NpgsqlDbType.Text).Value = (object?)blockedReason ?? DBNull.Value;
@@ -84,7 +112,11 @@ public sealed class PostgresCustomerAnonymizationRequestStore : ICustomerAnonymi
 
         var rows = await command.ExecuteNonQueryAsync(cancellationToken);
         if (rows > 0)
+        {
+            await record(connection, transaction, cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
             return;
+        }
 
         var existing = await GetAsync(requestId, cancellationToken);
         if (existing is null)
