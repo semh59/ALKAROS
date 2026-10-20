@@ -1,7 +1,7 @@
 # V1-RMD-653 - Performans bütçesi değişikliğinde denetim kaydının eylemden önce yazılması
 
 - Task ID: V1-RMD-653
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: implementation
 - Surface state: Planned

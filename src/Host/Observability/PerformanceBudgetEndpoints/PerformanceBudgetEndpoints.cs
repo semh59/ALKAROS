@@ -89,8 +89,9 @@ public static class PerformanceBudgetEndpointsExtensions
             if (!PerformanceBudgetQueries.IsValid(item))
                 return Results.BadRequest();
 
-            await queries.SetAsync(item, cancellationToken);
+            // The audit record is written first: the budget lives in another data source, so it cannot share a transaction.
             await AuditAsync(audit, "monitoring.performance_budget.set", actorId, item, cancellationToken);
+            await queries.SetAsync(item, cancellationToken);
             return Results.NoContent();
         });
 
@@ -99,11 +100,13 @@ public static class PerformanceBudgetEndpointsExtensions
             [FromServices] IAuditEventStore audit, HttpContext context, CancellationToken cancellationToken) =>
         {
             var actorId = await RequireManagerAsync(context, authorization, cancellationToken);
-            if (!await queries.RemoveAsync(metric, name, cancellationToken))
+            var existing = (await queries.ListAsync(cancellationToken)).Items.FirstOrDefault(
+                budget => budget.Metric == metric && budget.Name == name);
+            if (existing is null)
                 return Results.NotFound();
 
             await AuditAsync(audit, "monitoring.performance_budget.removed", actorId, new PerformanceBudgetItem(metric, name, 0), cancellationToken);
-            return Results.NoContent();
+            return await queries.RemoveAsync(metric, name, cancellationToken) ? Results.NoContent() : Results.NotFound();
         });
         return app;
     }

@@ -82,6 +82,75 @@ public sealed class PerformanceBudgetHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AChangeWhoseAuditRecordCannotBeWrittenIsNotMadeAndRemovingAMissingBudgetLeavesNoRecord()
+    {
+        using var manager = Client(ObservabilityTestDatabase.SupervisorToken);
+        using var created = await manager.PutAsJsonAsync(Path, new PerformanceBudgetItem("request", "GET /api/kept", 450));
+        Assert.Equal(HttpStatusCode.NoContent, created.StatusCode);
+
+        await RefuseAuditEventAsync("monitoring.performance_budget.set");
+        try
+        {
+            using var refusedSet = await manager.PutAsJsonAsync(Path, new PerformanceBudgetItem("request", "GET /api/new", 300));
+            Assert.False(refusedSet.IsSuccessStatusCode);
+            using var refusedChange = await manager.PutAsJsonAsync(Path, new PerformanceBudgetItem("request", "GET /api/kept", 100));
+            Assert.False(refusedChange.IsSuccessStatusCode);
+        }
+        finally
+        {
+            await StopRefusingAsync();
+        }
+
+        var afterSet = (await ListAsync(manager)).Items;
+        Assert.DoesNotContain(afterSet, i => i.Name == "GET /api/new");
+        Assert.Equal(450, Assert.Single(afterSet, i => i.Name == "GET /api/kept").P95Ms);
+
+        await RefuseAuditEventAsync("monitoring.performance_budget.removed");
+        try
+        {
+            using var refusedRemove = await manager.DeleteAsync($"{Path}?metric=request&name={Uri.EscapeDataString("GET /api/kept")}");
+            Assert.False(refusedRemove.IsSuccessStatusCode);
+        }
+        finally
+        {
+            await StopRefusingAsync();
+        }
+
+        Assert.Contains((await ListAsync(manager)).Items, i => i.Name == "GET /api/kept");
+
+        using var missing = await manager.DeleteAsync($"{Path}?metric=request&name=never-existed");
+        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+        Assert.Equal(0, await _database.ScalarAsync<long>(
+            "SELECT count(*) FROM audit.audit_events WHERE event_name = 'monitoring.performance_budget.removed';"));
+    }
+
+    // Makes the database refuse one audit event, as a broken audit write would.
+    private async Task RefuseAuditEventAsync(string eventName)
+    {
+        await using (var install = _database.DataSource.CreateCommand(
+            """
+            CREATE OR REPLACE FUNCTION audit.test_refuse_event() RETURNS trigger AS $fn$
+            BEGIN
+                IF NEW.event_name = TG_ARGV[0] THEN
+                    RAISE EXCEPTION 'audit write refused by the test';
+                END IF;
+                RETURN NEW;
+            END;
+            $fn$ LANGUAGE plpgsql;
+            """))
+            await install.ExecuteNonQueryAsync();
+        await using var attach = _database.DataSource.CreateCommand(
+            $"CREATE TRIGGER test_refuse_event BEFORE INSERT ON audit.audit_events FOR EACH ROW EXECUTE FUNCTION audit.test_refuse_event('{eventName}');");
+        await attach.ExecuteNonQueryAsync();
+    }
+
+    private async Task StopRefusingAsync()
+    {
+        await using var detach = _database.DataSource.CreateCommand("DROP TRIGGER IF EXISTS test_refuse_event ON audit.audit_events;");
+        await detach.ExecuteNonQueryAsync();
+    }
+
+    [Fact]
     public async Task ViewOnlyUserReadsButChangesAreForbiddenAndLeaveNoTrace()
     {
         using var viewOnly = Client(ObservabilityTestDatabase.ViewOnlyToken);
