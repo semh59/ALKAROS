@@ -1,3 +1,4 @@
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Inventory.CrossChannelReservation;
@@ -336,30 +337,22 @@ public sealed class PendingOrderConfirmationStore
         return new ProductStockNotConfiguredException(item.ProductId, item.ProductNameSnapshot);
     }
 
-    private static async Task AppendAuditAsync(
+    private static Task AppendAuditAsync(
         Guid orderId, string eventName, Guid actorId, string? reason, DateTimeOffset now,
         NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
-    {
-        await using var command = connection.CreateCommand();
-        command.Transaction = transaction;
-        command.CommandText =
-            """
-            INSERT INTO audit.audit_events (
-                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                reason, correlation_id, causation_id, before_state_json, after_state_json,
-                metadata_json, occurred_at
-            ) VALUES (
-                @id, @event_name, 'Order', @aggregate_id, @actor_id, 'User',
-                @reason, @correlation_id, NULL, NULL, NULL, NULL, @occurred_at
-            );
-            """;
-        command.Parameters.AddWithValue("id", Guid.NewGuid());
-        command.Parameters.AddWithValue("event_name", eventName);
-        command.Parameters.AddWithValue("aggregate_id", orderId);
-        command.Parameters.AddWithValue("actor_id", actorId);
-        command.Parameters.AddWithValue("reason", (object?)reason ?? DBNull.Value);
-        command.Parameters.AddWithValue("correlation_id", orderId.ToString("D"));
-        command.Parameters.AddWithValue("occurred_at", now);
-        await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-    }
+        => AuditEventWriter.WriteAsync(
+            connection,
+            transaction,
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: eventName,
+                aggregateType: "Order",
+                aggregateId: orderId,
+                actorType: "User",
+                correlationId: orderId.ToString("D"),
+                actorId: actorId,
+                reason: reason,
+                occurredAt: now),
+            sanitizer: null,
+            cancellationToken);
 }

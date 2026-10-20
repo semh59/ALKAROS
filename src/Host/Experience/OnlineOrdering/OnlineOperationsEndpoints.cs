@@ -1,3 +1,4 @@
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Identity.Authorization;
@@ -170,19 +171,21 @@ public static class OnlineOperationsEndpoints
     private static async Task AuditNoteViewAsync(
         NpgsqlDataSource dataSource, Guid orderId, Guid userId, bool hadNote, bool hadCallInfo, CancellationToken cancellationToken)
     {
-        await using var command = dataSource.CreateCommand(
-            """
-            INSERT INTO audit.audit_events (
-                id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                reason, correlation_id, causation_id, before_state_json, after_state_json, metadata_json, occurred_at
-            ) VALUES ($1, 'Order.CustomerNoteViewed', 'Order', $2, $3, 'User', NULL, $4, NULL, NULL, NULL, $5::jsonb, now());
-            """);
-        command.Parameters.AddWithValue(Guid.NewGuid());
-        command.Parameters.AddWithValue(orderId);
-        command.Parameters.AddWithValue(userId);
-        command.Parameters.AddWithValue(orderId.ToString("D"));
-        command.Parameters.AddWithValue(System.Text.Json.JsonSerializer.Serialize(new { hadNote, hadCallInfo }));
-        await command.ExecuteNonQueryAsync(cancellationToken);
+        await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+        await AuditEventWriter.WriteAsync(
+            connection,
+            transaction: null,
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: "Order.CustomerNoteViewed",
+                aggregateType: "Order",
+                aggregateId: orderId,
+                actorType: "User",
+                correlationId: orderId.ToString("D"),
+                actorId: userId,
+                metadataJson: System.Text.Json.JsonSerializer.Serialize(new { hadNote, hadCallInfo })),
+            sanitizer: null,
+            cancellationToken);
     }
 
     private static IResult Reply(OnlineOrderActionOutcome outcome) => outcome switch

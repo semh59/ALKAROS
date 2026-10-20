@@ -248,6 +248,26 @@ public sealed class PostgresAuditEventStoreIntegrationTests : IClassFixture<Audi
     }
 
     [Fact]
+    public async Task TheSharedWriterSanitizesAndValidatesLikeTheStore()
+    {
+        var correlationId = "corr-writer-" + Guid.NewGuid().ToString("N")[..8];
+        var withSecret = new AuditEvent(
+            Guid.NewGuid(), "Writer.Event", "Order", Guid.NewGuid(), "User", correlationId,
+            metadataJson: "{\"auth_token\": \"secret-val\", \"hadNote\": true}");
+        var invalid = new AuditEvent(Guid.NewGuid(), "", "Order", Guid.NewGuid(), "User", correlationId);
+
+        await using (var connection = await _dataSource.OpenConnectionAsync())
+        {
+            await AuditEventWriter.WriteAsync(connection, null, withSecret, null, default);
+            await ((Func<Task>)(() => AuditEventWriter.WriteAsync(connection, null, invalid, null, default))).Should().ThrowAsync<ArgumentException>();
+        }
+
+        var stored = await _eventStore.GetByCorrelationIdAsync(correlationId);
+        stored.Should().ContainSingle();
+        stored[0].MetadataJson.Should().NotContain("secret-val").And.Contain("hadNote");
+    }
+
+    [Fact]
     public async Task AppendBatchAsyncRejectsANullEventAndWritesNothing()
     {
         var correlationId = "corr-null-" + Guid.NewGuid().ToString("N")[..8];

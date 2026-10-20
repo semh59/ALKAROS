@@ -1,0 +1,6 @@
+KILLED   validation skipped
+KILLED   metadata not sanitized
+KILLED   before state not sanitized
+KILLED   after state not sanitized
+restore AuditEventWriter.cs: identical
+mutants: 4, survived: 0
