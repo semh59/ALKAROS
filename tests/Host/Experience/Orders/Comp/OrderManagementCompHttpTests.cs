@@ -77,12 +77,11 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
         Assert.Equal("Complimentary", body.NewItemStatus);
         Assert.Equal(2, body.NewOrderRowVersion);
 
-        // V1-RMD-244: IAuditEventStore existed since V1-OPS-001 with zero
-        // real callers on this endpoint.
+        // The item write and its audit row share one transaction; the endpoint writes no second record.
         var auditEvents = new PostgresAuditEventStore(_database.DataSource);
-        var events = await auditEvents.GetByAggregateAsync("OrderItem", itemId);
+        var events = await auditEvents.GetByAggregateAsync("Order", orderId);
         var applied = Assert.Single(events);
-        Assert.Equal("order-item.complimentary-applied", applied.EventName);
+        Assert.Equal("Order.ItemComplimentary", applied.EventName);
         Assert.Equal("VIPGuest", applied.Reason);
     }
 

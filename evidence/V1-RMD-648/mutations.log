@@ -1,0 +1,4 @@
+KILLED   recall audit after commit
+KILLED   recall audit event name changed
+restore CashierHandoffStore.cs: identical
+mutants: 2, survived: 0

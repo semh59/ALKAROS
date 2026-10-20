@@ -1,4 +1,6 @@
 using System.Data;
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
 using Npgsql;
 using NpgsqlTypes;
@@ -85,7 +87,8 @@ public sealed class CashierHandoffStore
     /// the bill cancelled and is refused.
     /// </summary>
     public async Task<RecallCheckResultV1> RecallCheckAsync(
-        Guid tableId, Guid orderId, IBillRepository bills, CancellationToken cancellationToken = default)
+        Guid tableId, Guid orderId, IBillRepository bills, IAuditEventStore auditEvents, Guid actorId, string correlationId,
+        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(bills);
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -146,6 +149,18 @@ public sealed class CashierHandoffStore
         }
 
         await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);
+        await auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: "check.recalled-from-cashier",
+                aggregateType: "Order",
+                aggregateId: orderId,
+                actorType: "User",
+                correlationId: correlationId,
+                actorId: actorId,
+                reason: "Hesap kasadan masaya geri alındı.",
+                afterStateJson: JsonSerializer.Serialize(new { tableId })),
+            connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return new RecallCheckResultV1(orderId, tableId, "Recalled");
     }

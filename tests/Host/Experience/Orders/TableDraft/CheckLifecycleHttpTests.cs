@@ -1,6 +1,8 @@
 using System.Net;
 using System.Net.Http.Json;
 using System.Text;
+using ALKAROS.Audit.EventStore;
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.Experience.Orders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -245,6 +247,46 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ARecallWhoseAuditRecordCannotBeWrittenIsNotKept()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var check = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await client.SendAsync(JsonRequest(SendToCashierPath(terminalId, check.OrderId), cookie, new SendCheckToCashierRequestV1(tableId)));
+        var billId = await _database.SeedBillForOrderAsync(check.OrderId, 280m, "Open");
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => app.Services.GetRequiredService<CashierHandoffStore>().RecallCheckAsync(
+            tableId, check.OrderId, app.Services.GetRequiredService<IBillRepository>(), new FailingAuditEventStore(), Guid.NewGuid(), "corr"));
+
+        Assert.False(await _database.TablePointsAtAsync(tableId, check.OrderId));
+        Assert.NotEqual("Cancelled", await _database.BillStatusAsync(billId));
+    }
+
+    private sealed class FailingAuditEventStore : IAuditEventStore
+    {
+        public Task AppendAsync(AuditEvent auditEvent, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("audit write failed");
+
+        public Task AppendAsync(
+            AuditEvent auditEvent, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("audit write failed");
+
+        public Task AppendBatchAsync(IEnumerable<AuditEvent> auditEvents, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("audit write failed");
+
+        public Task<IReadOnlyList<AuditEvent>> GetByAggregateAsync(string aggregateType, Guid aggregateId, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<IReadOnlyList<AuditEvent>> GetByCorrelationIdAsync(string correlationId, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+    }
+
+    [Fact]
     public async Task ACheckSentByMistakeGoesBackToItsTableAndLeavesTheTillQueue()
     {
         var terminalId = Guid.NewGuid();
@@ -265,6 +307,8 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         Assert.True(await _database.TablePointsAtAsync(tableId, check.OrderId));
         Assert.Equal("Occupied", await _database.TableStatusAsync(tableId));
         Assert.Equal("Cancelled", await _database.BillStatusAsync(billId));
+        var audit = Assert.Single(await new PostgresAuditEventStore(_database.DataSource).GetByAggregateAsync("Order", check.OrderId));
+        Assert.Equal("check.recalled-from-cashier", audit.EventName);
         using var queue = await client.SendAsync(GetRequest(AwaitingPaymentPath(terminalId), cookie));
         Assert.DoesNotContain((await queue.Content.ReadFromJsonAsync<List<PendingCheckSummaryV1>>())!, c => c.OrderId == check.OrderId);
 

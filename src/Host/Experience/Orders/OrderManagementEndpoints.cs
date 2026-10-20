@@ -397,23 +397,9 @@ public static class OrderManagementEndpoints
             {
                 // The till must not keep a ghost bill (a re-send would otherwise reuse it with stale items); the
                 // store cancels it in the same transaction as its money check (V1-RMD-414).
-                var result = await store.RecallCheckAsync(request.TableId, orderId, bills, cancellationToken);
+                var result = await store.RecallCheckAsync(
+                    request.TableId, orderId, bills, auditEvents, principal, context.TraceIdentifier, cancellationToken);
 
-                if (result.Outcome == "Recalled")
-                {
-                    await auditEvents.AppendAsync(
-                        new AuditEvent(
-                            id: Guid.NewGuid(),
-                            eventName: "check.recalled-from-cashier",
-                            aggregateType: "Order",
-                            aggregateId: orderId,
-                            actorType: "User",
-                            correlationId: context.TraceIdentifier,
-                            actorId: principal,
-                            reason: "Hesap kasadan masaya geri alındı.",
-                            afterStateJson: System.Text.Json.JsonSerializer.Serialize(new { tableId = request.TableId })),
-                        cancellationToken);
-                }
                 // Also on a repeat: a retry may be completing a request that failed half-way.
                 await queueAnnouncer.AnnouncePendingChecksChangedAsync("Recalled", orderId, request.TableId, cancellationToken);
                 return Results.Ok(result);
@@ -627,20 +613,6 @@ public static class OrderManagementEndpoints
                 CorrelationId: context.TraceIdentifier,
                 request.Notes);
             var result = await itemExceptions.VoidItemAsync(command, cancellationToken);
-            // V1-RMD-244: first real audit event on this endpoint —
-            // IAuditEventStore existed since V1-OPS-001 with zero callers.
-            await auditEvents.AppendAsync(
-                new AuditEvent(
-                    id: Guid.NewGuid(),
-                    eventName: "order-item.voided",
-                    aggregateType: "OrderItem",
-                    aggregateId: itemId,
-                    actorType: "User",
-                    correlationId: context.TraceIdentifier,
-                    actorId: userId,
-                    reason: request.ReasonCode,
-                    afterStateJson: JsonSerializer.Serialize(new { status = result.NewItemStatus.ToString() })),
-                cancellationToken);
             return Results.Ok(new VoidOrderItemResultV1(
                 result.OrderId,
                 result.OrderItemId,
@@ -749,18 +721,6 @@ public static class OrderManagementEndpoints
                 CorrelationId: context.TraceIdentifier,
                 request.Notes);
             var result = await itemExceptions.ApplyComplimentaryAsync(command, cancellationToken);
-            await auditEvents.AppendAsync(
-                new AuditEvent(
-                    id: Guid.NewGuid(),
-                    eventName: "order-item.complimentary-applied",
-                    aggregateType: "OrderItem",
-                    aggregateId: itemId,
-                    actorType: "User",
-                    correlationId: context.TraceIdentifier,
-                    actorId: userId,
-                    reason: request.ReasonCode,
-                    afterStateJson: JsonSerializer.Serialize(new { status = result.NewItemStatus.ToString() })),
-                cancellationToken);
             return Results.Ok(new ApplyComplimentaryResultV1(
                 "Applied",
                 result.OrderId,
