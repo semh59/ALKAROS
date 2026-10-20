@@ -291,3 +291,53 @@ public sealed class PostgresAuditDownSqlTests : IClassFixture<AuditTestDatabase>
         exists.Should().BeFalse();
     }
 }
+
+public sealed class AuditEventHardeningTests
+{
+    [Fact]
+    public void OccurredAtIsNormalizedToUtc()
+    {
+        var local = new DateTimeOffset(2026, 10, 1, 12, 0, 0, TimeSpan.FromHours(3));
+
+        var auditEvent = new AuditEvent(Guid.NewGuid(), "E", "A", Guid.NewGuid(), "U", "C", occurredAt: local);
+
+        auditEvent.OccurredAt.Offset.Should().Be(TimeSpan.Zero);
+        auditEvent.OccurredAt.Should().Be(local);
+    }
+
+    [Theory]
+    [InlineData("EventName", 129)]
+    [InlineData("AggregateType", 65)]
+    [InlineData("ActorType", 33)]
+    [InlineData("CorrelationId", 129)]
+    [InlineData("CausationId", 129)]
+    public void ValidateRejectsValuesLongerThanTheColumn(string field, int length)
+    {
+        var tooLong = new string('x', length);
+        var auditEvent = new AuditEvent(
+            Guid.NewGuid(),
+            field == "EventName" ? tooLong : "E",
+            field == "AggregateType" ? tooLong : "A",
+            Guid.NewGuid(),
+            field == "ActorType" ? tooLong : "U",
+            field == "CorrelationId" ? tooLong : "C",
+            causationId: field == "CausationId" ? tooLong : null);
+
+        var act = () => auditEvent.Validate();
+
+        act.Should().Throw<ArgumentException>().WithParameterName(field);
+    }
+
+    [Theory]
+    [InlineData(128, 64, 32, 128, 128)]
+    public void ValidateAcceptsValuesExactlyAtTheColumnLimit(int eventName, int aggregateType, int actorType, int correlation, int causation)
+    {
+        var auditEvent = new AuditEvent(
+            Guid.NewGuid(), new string('e', eventName), new string('a', aggregateType), Guid.NewGuid(),
+            new string('u', actorType), new string('c', correlation), causationId: new string('k', causation));
+
+        var act = () => auditEvent.Validate();
+
+        act.Should().NotThrow();
+    }
+}

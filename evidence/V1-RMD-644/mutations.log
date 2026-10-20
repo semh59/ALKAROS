@@ -1,0 +1,56 @@
+KILLED  drop "password"
+KILLED  drop "passwords"
+KILLED  drop "passphrase"
+KILLED  drop "pin"
+KILLED  drop "pins"
+KILLED  drop "secret"
+KILLED  drop "secrets"
+KILLED  drop "token"
+KILLED  drop "tokens"
+KILLED  drop "cvv"
+KILLED  drop "cvc"
+KILLED  drop "pan"
+KILLED  drop "pans"
+KILLED  drop "salt"
+KILLED  drop "jwt"
+KILLED  drop "pwd"
+KILLED  drop "otp"
+KILLED  drop "iban"
+KILLED  drop "authorization"
+KILLED  drop "bearer"
+KILLED  drop "cookie"
+KILLED  drop "cookies"
+KILLED  drop "credential"
+KILLED  drop "credentials"
+KILLED  drop "tckn"
+KILLED  drop "cardnumber"
+KILLED  drop "creditcard"
+KILLED  drop "cardno"
+KILLED  drop "apikey"
+KILLED  drop "accesstoken"
+KILLED  drop "refreshtoken"
+KILLED  drop "authtoken"
+KILLED  drop "idtoken"
+KILLED  drop "jwttoken"
+KILLED  drop "secretkey"
+KILLED  drop "privatekey"
+KILLED  drop "connectionstring"
+KILLED  drop "pincode"
+KILLED  catch drops ArgumentException
+KILLED  root string branch disabled
+KILLED  quote close not appended
+KILLED  escape skip removed
+KILLED  unquoted stops only at comma
+KILLED  unquoted ignores newline
+KILLED  empty value marker
+KILLED  sensitive check inverted
+KILLED  camel split removed
+KILLED  no UTC normalisation
+KILLED  event name limit 129
+KILLED  aggregate type limit 65
+KILLED  actor type limit 33
+KILLED  correlation limit 129
+KILLED  causation check removed
+restore IAuditSanitizer.cs: identical
+restore AuditEvent.cs: identical
+mutants: 53, survived: 0

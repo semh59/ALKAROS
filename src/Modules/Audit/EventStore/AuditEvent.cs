@@ -34,7 +34,7 @@ public sealed class AuditEvent
         BeforeStateJson = beforeStateJson;
         AfterStateJson = afterStateJson;
         MetadataJson = metadataJson;
-        OccurredAt = occurredAt ?? DateTimeOffset.UtcNow;
+        OccurredAt = occurredAt?.ToUniversalTime() ?? DateTimeOffset.UtcNow;
     }
 
     public Guid Id { get; }
@@ -65,5 +65,18 @@ public sealed class AuditEvent
             throw new ArgumentException("ActorType cannot be empty.", nameof(ActorType));
         if (string.IsNullOrWhiteSpace(CorrelationId))
             throw new ArgumentException("CorrelationId cannot be empty.", nameof(CorrelationId));
+
+        // Mirrors the VARCHAR limits of audit.audit_events so an oversized value
+        // fails here, before any business work, instead of inside the insert.
+        if (EventName.Length > 128)
+            throw new ArgumentException("EventName is longer than 128 characters.", nameof(EventName));
+        if (AggregateType.Length > 64)
+            throw new ArgumentException("AggregateType is longer than 64 characters.", nameof(AggregateType));
+        if (ActorType.Length > 32)
+            throw new ArgumentException("ActorType is longer than 32 characters.", nameof(ActorType));
+        if (CorrelationId.Length > 128)
+            throw new ArgumentException("CorrelationId is longer than 128 characters.", nameof(CorrelationId));
+        if (CausationId is { Length: > 128 })
+            throw new ArgumentException("CausationId is longer than 128 characters.", nameof(CausationId));
     }
 }

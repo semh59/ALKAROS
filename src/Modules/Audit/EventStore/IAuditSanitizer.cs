@@ -1,7 +1,9 @@
 namespace ALKAROS.Audit.EventStore;
 
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.RegularExpressions;
 
 public interface IAuditSanitizer
 {
@@ -15,43 +17,37 @@ public interface IAuditSanitizer
 /// </summary>
 public sealed class AuditSanitizer : IAuditSanitizer
 {
-    private static readonly string[] SensitiveSubstrings =
-    [
-        "password",
-        "passphrase",
-        "pin",
-        "secret",
-        "token",
-        "cvv",
-        "cvc",
-        "pan",
-        "cardnumber",
-        "creditcard",
-        "salt",
-        "jwt",
-        "apikey"
-    ];
-
     // IsSensitiveKey matches these as whole identifier tokens (split on `_`,
-    // `-`, and camelCase boundaries), not a raw substring — found by an
-    // independent audit (2026-09-05, H3): the old Contains()-based check
-    // falsely redacted shipping_address ("pin" inside "shiPINg"),
-    // company_name / expansion_plan ("pan" inside "comPANy" / "exPANsion").
+    // `-`, and camelCase boundaries), not a raw substring: a raw substring
+    // match falsely redacted shipping_address ("pin" inside "shiPINg") and
+    // company_name ("pan" inside "comPANy"). Plurals and short forms are listed
+    // explicitly because tokens are compared whole.
     private static readonly HashSet<string> SensitiveKeyTokens =
         new(StringComparer.OrdinalIgnoreCase)
         {
-            "password", "passphrase", "pin", "secret", "token", "cvv", "cvc", "pan", "salt", "jwt"
+            "password", "passwords", "passphrase", "pin", "pins", "secret", "secrets", "token", "tokens",
+            "cvv", "cvc", "pan", "pans", "salt", "jwt", "pwd", "otp", "iban", "authorization", "bearer",
+            "cookie", "cookies", "credential", "credentials", "tckn"
         };
 
-    // These are two real words concatenated, so they stay substring-matched
-    // (separators stripped) rather than whole-token — token-splitting would
-    // separate "card"+"number" or "api"+"key", and neither half alone is
-    // sensitive on its own.
+    // Run-together words (and acronym-led names the camelCase split cannot
+    // separate) stay substring-matched on the key with separators stripped.
     private static readonly string[] SensitiveCompoundKeySubstrings =
-        ["cardnumber", "creditcard", "apikey"];
+    [
+        "cardnumber", "creditcard", "cardno", "apikey", "accesstoken", "refreshtoken", "authtoken",
+        "idtoken", "jwttoken", "secretkey", "privatekey", "connectionstring", "pincode"
+    ];
 
-    private static readonly System.Text.RegularExpressions.Regex CamelCaseBoundary =
-        new(@"(?<=[a-z0-9])(?=[A-Z])", System.Text.RegularExpressions.RegexOptions.Compiled);
+    private static readonly Regex CamelCaseBoundary =
+        new(@"(?<=[a-z0-9])(?=[A-Z])", RegexOptions.Compiled);
+
+    // "key" followed by a ':' or '=' separator, optionally with a closing quote
+    // on the key (JSON text). The value is consumed by hand so that a
+    // non-sensitive key never swallows a sensitive pair that follows it.
+    private static readonly Regex KeySeparator =
+        new(@"(?<key>[A-Za-z0-9_\-]+)[""']?\s*[:=]\s*", RegexOptions.Compiled | RegexOptions.CultureInvariant);
+
+    private const string RedactedMarker = "[REDACTED]";
 
     public string? SanitizeJson(string? rawJson)
     {
@@ -64,11 +60,16 @@ public sealed class AuditSanitizer : IAuditSanitizer
             if (node == null)
                 return null;
 
+            if (node is JsonValue rootValue && rootValue.TryGetValue(out string? rootText))
+                return JsonValue.Create(RedactEmbeddedSecrets(rootText))!.ToJsonString();
+
             SanitizeNode(node);
             return node.ToJsonString();
         }
-        catch (JsonException)
+        catch (Exception ex) when (ex is JsonException or ArgumentException)
         {
+            // ArgumentException: System.Text.Json accepts duplicate property names
+            // at parse time and fails when the tree is walked.
             var sanitized = FallbackSanitizeText(rawJson);
             return JsonSerializer.Serialize(new { raw_payload = sanitized, unparsed = true });
         }
@@ -88,39 +89,58 @@ public sealed class AuditSanitizer : IAuditSanitizer
         return RedactEmbeddedSecrets(text);
     }
 
-    // Extracted so well-formed JSON's structured path (SanitizeNode) can run
-    // the same value-level regex scrubbing that used to run only on the
-    // JSON-parse-failure fallback — found by an independent audit
-    // (2026-09-05, H2): a secret embedded in a string VALUE under a
-    // non-sensitive KEY (e.g. {"detail": "auth failed for token=eyJ..."})
-    // passed into the audit store verbatim on well-formed JSON, since
-    // IsSensitiveKey only ever inspected property names.
+    // Value-level scrubbing for text: a secret embedded in a string VALUE under
+    // a non-sensitive KEY (e.g. {"detail": "auth failed for token=eyJ..."}) is
+    // found by its own key=value shape. A quoted value is redacted up to its
+    // closing quote; an unquoted value up to the next delimiter or line end, so
+    // free text after a password ("password: my secret phrase") does not leak.
     private static string RedactEmbeddedSecrets(string text)
     {
-        var sanitized = text;
-        foreach (var pattern in SensitiveSubstrings)
+        var result = new StringBuilder(text.Length);
+        var position = 0;
+        while (true)
         {
-            // Quoted values: tolerate backslash-escaped quotes and embedded
-            // newlines, up to the matching closing quote.
-            var quotedRegex = new System.Text.RegularExpressions.Regex(
-                $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*)(?<q>[""'])((?:\\.|(?!\k<q>)[^\\])*)(\k<q>)",
-                System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Singleline);
-            sanitized = quotedRegex.Replace(sanitized, "$1${q}[REDACTED]$3");
+            var match = KeySeparator.Match(text, position);
+            if (!match.Success)
+                break;
 
-            // Truncated/malformed: opening quote present but no closing quote
-            // before end-of-input, including multi-line values.
-            var truncatedRegex = new System.Text.RegularExpressions.Regex(
-                $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*)(?<q>[""'])((?:\\.|(?!\k<q>)[^\\])+)$",
-                System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.Singleline);
-            sanitized = truncatedRegex.Replace(sanitized, "$1${q}[REDACTED]");
-
-            // Unquoted values
-            var unquotedRegex = new System.Text.RegularExpressions.Regex(
-                $@"(?i)([""']?{pattern}[""']?\s*[:=]\s*)([^,\s""}}\]]+)",
-                System.Text.RegularExpressions.RegexOptions.Compiled);
-            sanitized = unquotedRegex.Replace(sanitized, "$1[REDACTED]");
+            var valueStart = match.Index + match.Length;
+            result.Append(text, position, valueStart - position);
+            position = valueStart;
+            if (IsSensitiveKey(match.Groups["key"].Value))
+                position = AppendRedactedValue(text, position, result);
         }
-        return sanitized;
+
+        result.Append(text, position, text.Length - position);
+        return result.ToString();
+    }
+
+    private static int AppendRedactedValue(string text, int start, StringBuilder result)
+    {
+        if (start >= text.Length)
+            return start;
+
+        var first = text[start];
+        if (first is '"' or '\'')
+        {
+            var index = start + 1;
+            while (index < text.Length && text[index] != first)
+                index += text[index] == '\\' ? 2 : 1;
+
+            var closed = index < text.Length;
+            result.Append(first).Append(RedactedMarker);
+            if (closed)
+                result.Append(first);
+            return closed ? index + 1 : text.Length;
+        }
+
+        var end = start;
+        while (end < text.Length && text[end] is not (',' or '"' or '}' or ']' or '\r' or '\n'))
+            end++;
+
+        if (end > start)
+            result.Append(RedactedMarker);
+        return end;
     }
 
     public string? SerializeAndSanitize<T>(T? payload)

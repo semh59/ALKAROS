@@ -234,3 +234,171 @@ public sealed class AuditSanitizerTests
         Assert.DoesNotContain("leak-token", rawPayload);
     }
 }
+
+public sealed class AuditSanitizerHardeningTests
+{
+    private readonly AuditSanitizer _sanitizer = new();
+
+    [Theory]
+    [InlineData("passwords")]
+    [InlineData("tokens")]
+    [InlineData("accessToken")]
+    [InlineData("access_token")]
+    [InlineData("refreshTokens")]
+    [InlineData("PINCode")]
+    [InlineData("JWTToken")]
+    [InlineData("pwd")]
+    [InlineData("otp")]
+    [InlineData("iban")]
+    [InlineData("cardNo")]
+    [InlineData("privateKey")]
+    [InlineData("authorization")]
+    [InlineData("secretkey")]
+    [InlineData("api-key")]
+    [InlineData("connectionString")]
+    [InlineData("secret")]
+    [InlineData("credential")]
+    [InlineData("password")]
+    [InlineData("token")]
+    [InlineData("pin")]
+    [InlineData("pan")]
+    [InlineData("userPin")]
+    [InlineData("secrets")]
+    [InlineData("pins")]
+    [InlineData("pans")]
+    [InlineData("cookie")]
+    [InlineData("credentials")]
+    [InlineData("tckn")]
+    [InlineData("bearer")]
+    [InlineData("passphrase")]
+    [InlineData("cvv")]
+    [InlineData("cvc")]
+    [InlineData("salt")]
+    [InlineData("jwt")]
+    [InlineData("cardnumber")]
+    [InlineData("creditcard")]
+    [InlineData("authtoken")]
+    [InlineData("idtoken")]
+    [InlineData("refreshtoken")]
+    [InlineData("accesstoken")]
+    [InlineData("apiKey")]
+    [InlineData("cookies")]
+    public void SanitizeJsonRedactsEverySensitiveKeyShape(string key)
+    {
+        var json = new JsonObject { [key] = "leak-value-1" }.ToJsonString();
+
+        var sanitized = _sanitizer.SanitizeJson(json);
+
+        Assert.DoesNotContain("leak-value-1", sanitized);
+        Assert.Contains("[REDACTED]", sanitized);
+    }
+
+    [Fact]
+    public void SanitizeJsonRedactsSensitiveValuesInsideArraysOfObjects()
+    {
+        var sanitized = _sanitizer.SanitizeJson("""{"items":[{"token":"leak-a"},{"ok":"fine"}]}""");
+
+        Assert.DoesNotContain("leak-a", sanitized);
+        Assert.Contains("fine", sanitized);
+    }
+
+    [Fact]
+    public void SanitizeJsonDoesNotThrowOnDuplicateKeysAndStillRedacts()
+    {
+        var sanitized = _sanitizer.SanitizeJson("""{"token":"leak-a","token":"leak-b","name":"x"}""");
+
+        Assert.NotNull(sanitized);
+        Assert.DoesNotContain("leak-a", sanitized);
+        Assert.DoesNotContain("leak-b", sanitized);
+    }
+
+    [Theory]
+    [InlineData("\"token=leak-root\"", "leak-root")]
+    [InlineData("\"password: leak-root\"", "leak-root")]
+    public void SanitizeJsonRedactsARootStringValue(string json, string secret)
+    {
+        var sanitized = _sanitizer.SanitizeJson(json);
+
+        Assert.DoesNotContain(secret, sanitized);
+    }
+
+    [Fact]
+    public void SanitizeJsonLeavesAPlainRootNumberAndBooleanAlone()
+    {
+        Assert.Equal("42", _sanitizer.SanitizeJson("42"));
+        Assert.Equal("true", _sanitizer.SanitizeJson("true"));
+    }
+
+    [Theory]
+    [InlineData("Authorization: Bearer leak.jwt.value", "leak.jwt.value")]
+    [InlineData("token: Bearer leak.jwt.value", "leak.jwt.value")]
+    [InlineData("password: my secret phrase here", "phrase")]
+    [InlineData("login failed, password=leak-pw, retry", "leak-pw")]
+    public void SanitizeJsonRedactsTheWholeSecretInFreeText(string text, string secret)
+    {
+        var sanitized = _sanitizer.SanitizeJson(new JsonObject { ["detail"] = text }.ToJsonString());
+
+        Assert.DoesNotContain(secret, sanitized);
+    }
+
+    [Theory]
+    [InlineData("Trip to Japan: 3 days")]
+    [InlineData("spin=5 and basalt: rock")]
+    [InlineData("salty: very, panel: wide")]
+    public void SanitizeJsonDoesNotRedactWordsThatOnlyContainASensitiveWord(string text)
+    {
+        var sanitized = _sanitizer.SanitizeJson(new JsonObject { ["note"] = text }.ToJsonString());
+
+        var note = JsonNode.Parse(sanitized!)!["note"]!.GetValue<string>();
+        Assert.Equal(text, note);
+    }
+
+    [Fact]
+    public void SanitizeJsonKeepsUnrelatedFreeTextAfterAQuotedSecret()
+    {
+        var sanitized = _sanitizer.SanitizeJson("""{"detail":"password=\"abc\" then continue normally"}""");
+
+        Assert.DoesNotContain("abc", sanitized);
+        Assert.Contains("then continue normally", sanitized);
+    }
+
+    [Fact]
+    public void SanitizeJsonLeavesAnEmptyValueAfterASensitiveKeyAlone()
+    {
+        var sanitized = _sanitizer.SanitizeJson("{\"detail\":\"token=\"}");
+
+        Assert.Equal("token=", JsonNode.Parse(sanitized!)!["detail"]!.GetValue<string>());
+    }
+
+    [Theory]
+    [InlineData("{\"a\":1,\"a\":2,\"token\":123,\"keep\":\"ok\"}", "{\"a\":1,\"a\":2,\"token\":[REDACTED],\"keep\":\"ok\"}")]
+    [InlineData("{\"a\":1,\"a\":2,\"token\":123}", "{\"a\":1,\"a\":2,\"token\":[REDACTED]}")]
+    [InlineData("[token=abc]", "[token=[REDACTED]]")]
+    [InlineData("token=, other", "token=, other")]
+    [InlineData("password=\"abc\" then continue", "password=\"[REDACTED]\" then continue")]
+    [InlineData("password=\"a\\\"b\" then continue", "password=\"[REDACTED]\" then continue")]
+    [InlineData("pin=\"unterminated", "pin=\"[REDACTED]")]
+    public void SanitizeJsonScrubsMalformedTextWithExactBoundaries(string malformed, string expected)
+    {
+        var sanitized = _sanitizer.SanitizeJson(malformed);
+
+        var raw = JsonNode.Parse(sanitized!)!["raw_payload"]!.GetValue<string>();
+        Assert.Equal(expected, raw);
+    }
+
+    [Fact]
+    public void SanitizeJsonStopsAnUnquotedSecretAtTheEndOfTheLine()
+    {
+        var sanitized = _sanitizer.SanitizeJson(new JsonObject { ["detail"] = "token=abc\nnext line" }.ToJsonString());
+
+        Assert.Equal("token=[REDACTED]\nnext line", JsonNode.Parse(sanitized!)!["detail"]!.GetValue<string>());
+    }
+
+    [Fact]
+    public void SanitizeJsonStillRedactsAnEmbeddedSecretUnderAnInnocentKey()
+    {
+        var sanitized = _sanitizer.SanitizeJson("""{"detail":"auth failed for token=eyJleak"}""");
+
+        Assert.DoesNotContain("eyJleak", sanitized);
+    }
+}
