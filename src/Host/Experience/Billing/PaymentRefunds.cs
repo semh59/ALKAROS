@@ -185,14 +185,14 @@ public sealed class PaymentRefundStore
         await PostgresRefundRequestRepository.MarkApprovedAsync(
             requestId, completed, userId, "Allowance", now, connection, transaction, cancellationToken);
 
-        await transaction.CommitAsync(cancellationToken);
         var result = request with
         {
             Status = completed ? "Completed" : "AwaitingManualRefund", DecidedBy = userId, DecidedAt = now,
             BillCancelled = billCancelled, ApprovedFromAllowance = true,
         };
         if (completed)
-            await AuditRefundAsync(result, userId, null, billCancelled, cancellationToken);
+            await AuditRefundAsync(result, userId, null, billCancelled, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
         return result;
     }
 
@@ -270,14 +270,14 @@ public sealed class PaymentRefundStore
         var before = change.Previous;
         var used = change.Used;
 
-        await transaction.CommitAsync(cancellationToken);
         await _audit.AppendAsync(
             new AuditEvent(
                 Guid.NewGuid(), "refund.allowance.set", "CashSession", sessionId, "User", sessionId.ToString("N"),
                 actorId, "Shift refund allowance set",
                 beforeStateJson: JsonSerializer.Serialize(new { allowance = before }),
                 afterStateJson: JsonSerializer.Serialize(new { allowance = amount, cashierUserId })),
-            cancellationToken);
+            connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
         return new RefundAllowanceV1(true, amount, used, amount - used);
     }
 
@@ -335,9 +335,9 @@ public sealed class PaymentRefundStore
         await PostgresRefundRequestRepository.MarkApprovedAsync(
             requestId, status == "Completed", deciderId, "Manager", now, connection, transaction, cancellationToken);
 
-        await transaction.CommitAsync(cancellationToken);
         if (status == "Completed")
-            await AuditRefundAsync(request, deciderId, null, billCancelled, cancellationToken);
+            await AuditRefundAsync(request, deciderId, null, billCancelled, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
         return request with
         {
             Status = status, DecidedBy = deciderId, DecidedAt = now, BillCancelled = billCancelled,
@@ -359,14 +359,14 @@ public sealed class PaymentRefundStore
         var now = DateTimeOffset.UtcNow;
         await PostgresRefundRequestRepository.MarkRejectedAsync(requestId, deciderId, text, now, connection, transaction, cancellationToken);
 
-        await transaction.CommitAsync(cancellationToken);
         await _audit.AppendAsync(
             new AuditEvent(
                 Guid.NewGuid(), "refund.rejected", "Payment", request.PaymentId, "User", requestId.ToString("N"),
                 deciderId, text,
                 beforeStateJson: JsonSerializer.Serialize(new { status = "Requested" }),
                 afterStateJson: JsonSerializer.Serialize(new { status = "Rejected", requestId })),
-            cancellationToken);
+            connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
         return request with { Status = "Rejected", DecidedBy = deciderId, DecidedAt = now };
     }
 
@@ -393,8 +393,8 @@ public sealed class PaymentRefundStore
         await PostgresRefundRequestRepository.MarkCompletedAsync(
             requestId, slip, noteText, userId, now, connection, transaction, cancellationToken);
 
+        await AuditRefundAsync(request, userId, slip, billCancelled, connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
-        await AuditRefundAsync(request, userId, slip, billCancelled, cancellationToken);
         return request with { Status = "Completed", SlipNumber = slip, BillCancelled = billCancelled };
     }
 
@@ -418,7 +418,8 @@ public sealed class PaymentRefundStore
     }
 
     private Task AuditRefundAsync(
-        RefundRequestV1 request, Guid actorId, string? slip, bool billCancelled, CancellationToken cancellationToken)
+        RefundRequestV1 request, Guid actorId, string? slip, bool billCancelled,
+        NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
         => _audit.AppendAsync(
             new AuditEvent(
                 Guid.NewGuid(), "payment.refunded", "Payment", request.PaymentId, "User", request.RequestId.ToString("N"),
@@ -430,7 +431,7 @@ public sealed class PaymentRefundStore
                     requestId = request.RequestId, requestedBy = request.RequestedBy,
                     viaAllowance = request.ApprovedFromAllowance,
                 })),
-            cancellationToken);
+            connection, transaction, cancellationToken);
 
     /// <summary>
     /// Cancels the bill once at least one payment of it was refunded and none still holds money; the allocations stay

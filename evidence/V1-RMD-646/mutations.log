@@ -1,0 +1,8 @@
+KILLED   batch accepts a null event
+KILLED   default overload silently succeeds
+KILLED   rejection audit after commit
+KILLED   cancellation audit after commit
+KILLED   insert skips validation (after AnInvalidEventIsRejectedOnBothWritePathsAndWritesNothing was added)
+EQUIVALENT overload ignores the transaction: Npgsql runs a command without Transaction inside the connection's pending transaction, so behavior is identical
+restore: all four source files identical to the originals (cmp) after every run
+Not counted: the first run of the two Host mutants was invalid (swap helper matched the wrong await, mutant was a no-op); fixed and rerun, see mutations-part2-invalid.log

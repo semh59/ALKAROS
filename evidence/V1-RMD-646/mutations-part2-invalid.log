@@ -1,0 +1,11 @@
+SURVIVED overload ignores the transaction
+KILLED   batch accepts a null event
+SURVIVED insert skips validation
+KILLED   default overload silently succeeds
+SURVIVED rejection audit after commit
+SURVIVED cancellation audit after commit
+restore PostgresAuditEventStore.cs: identical
+restore IAuditEventStore.cs: identical
+restore BillCancellation.cs: identical
+restore PaymentRefunds.cs: identical
+mutants run: 2, survived: 2

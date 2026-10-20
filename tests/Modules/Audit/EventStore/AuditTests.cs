@@ -204,6 +204,62 @@ public sealed class PostgresAuditEventStoreIntegrationTests : IClassFixture<Audi
     }
 
     [Fact]
+    public async Task AppendInATransactionIsSanitizedAndFollowsTheTransactionOutcome()
+    {
+        var rolledBack = new AuditEvent(Guid.NewGuid(), "Tx.RolledBack", "Order", Guid.NewGuid(), "User", "corr-tx-" + Guid.NewGuid().ToString("N")[..8]);
+        var committed = new AuditEvent(
+            Guid.NewGuid(), "Tx.Committed", "Order", Guid.NewGuid(), "User", "corr-tx-" + Guid.NewGuid().ToString("N")[..8],
+            afterStateJson: "{\"auth_token\": \"secret-val\"}");
+
+        await using (var connection = await _dataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _eventStore.AppendAsync(rolledBack, connection, transaction);
+            await transaction.RollbackAsync();
+        }
+
+        await using (var connection = await _dataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            await _eventStore.AppendAsync(committed, connection, transaction);
+            (await _eventStore.GetByCorrelationIdAsync(committed.CorrelationId)).Should().BeEmpty("the row is not committed yet");
+            await transaction.CommitAsync();
+        }
+
+        (await _eventStore.GetByCorrelationIdAsync(rolledBack.CorrelationId)).Should().BeEmpty();
+        var stored = await _eventStore.GetByCorrelationIdAsync(committed.CorrelationId);
+        stored.Should().ContainSingle();
+        stored[0].AfterStateJson.Should().NotContain("secret-val");
+    }
+
+    [Fact]
+    public async Task AnInvalidEventIsRejectedOnBothWritePathsAndWritesNothing()
+    {
+        var correlationId = "corr-invalid-" + Guid.NewGuid().ToString("N")[..8];
+        var invalid = new AuditEvent(Guid.NewGuid(), "", "Order", Guid.NewGuid(), "User", correlationId);
+
+        await ((Func<Task>)(() => _eventStore.AppendAsync(invalid))).Should().ThrowAsync<ArgumentException>();
+        await using var connection = await _dataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await ((Func<Task>)(() => _eventStore.AppendAsync(invalid, connection, transaction))).Should().ThrowAsync<ArgumentException>();
+        await transaction.RollbackAsync();
+
+        (await _eventStore.GetByCorrelationIdAsync(correlationId)).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task AppendBatchAsyncRejectsANullEventAndWritesNothing()
+    {
+        var correlationId = "corr-null-" + Guid.NewGuid().ToString("N")[..8];
+        var first = new AuditEvent(Guid.NewGuid(), "Batch.First", "Order", Guid.NewGuid(), "User", correlationId);
+
+        var act = () => _eventStore.AppendBatchAsync([first, null!]);
+
+        await act.Should().ThrowAsync<ArgumentNullException>();
+        (await _eventStore.GetByCorrelationIdAsync(correlationId)).Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task AppendBatchAsyncPersistsMultipleEventsAndQueriesByCorrelation()
     {
         var correlationId = "corr-batch-" + Guid.NewGuid().ToString("N")[..8];
@@ -289,6 +345,33 @@ public sealed class PostgresAuditDownSqlTests : IClassFixture<AuditTestDatabase>
             """;
         var exists = (bool)(await checkCmd.ExecuteScalarAsync())!;
         exists.Should().BeFalse();
+    }
+}
+
+public sealed class AuditStoreWithoutTransactionSupportTests
+{
+    private sealed class PlainStore : IAuditEventStore
+    {
+        public Task AppendAsync(AuditEvent auditEvent, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+        public Task AppendBatchAsync(IEnumerable<AuditEvent> auditEvents, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+        public Task<IReadOnlyList<AuditEvent>> GetByAggregateAsync(string aggregateType, Guid aggregateId, CancellationToken cancellationToken = default)
+            => Task.FromResult<IReadOnlyList<AuditEvent>>([]);
+
+        public Task<IReadOnlyList<AuditEvent>> GetByCorrelationIdAsync(string correlationId, CancellationToken cancellationToken = default)
+            => Task.FromResult<IReadOnlyList<AuditEvent>>([]);
+    }
+
+    [Fact]
+    public async Task AStoreThatCannotJoinATransactionRefusesInsteadOfWritingOutsideIt()
+    {
+        IAuditEventStore store = new PlainStore();
+        var evt = new AuditEvent(Guid.NewGuid(), "Plain.Event", "Order", Guid.NewGuid(), "User", "corr-plain");
+
+        var act = () => store.AppendAsync(evt, null!, null!);
+
+        await act.Should().ThrowAsync<NotSupportedException>();
     }
 }
 

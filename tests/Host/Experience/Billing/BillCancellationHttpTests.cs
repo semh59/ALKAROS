@@ -13,6 +13,29 @@ using Xunit;
 
 namespace ALKAROS.Host.Experience.Billing.Tests;
 
+/// <summary>An audit store that joins the caller's transaction and then fails, as a broken audit write would.</summary>
+internal sealed class FailingAuditEventStore : ALKAROS.Audit.EventStore.IAuditEventStore
+{
+    public Task AppendAsync(ALKAROS.Audit.EventStore.AuditEvent auditEvent, CancellationToken cancellationToken = default)
+        => throw new InvalidOperationException("audit write failed");
+
+    public Task AppendAsync(
+        ALKAROS.Audit.EventStore.AuditEvent auditEvent, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+        => throw new InvalidOperationException("audit write failed");
+
+    public Task AppendBatchAsync(IEnumerable<ALKAROS.Audit.EventStore.AuditEvent> auditEvents, CancellationToken cancellationToken = default)
+        => throw new InvalidOperationException("audit write failed");
+
+    public Task<IReadOnlyList<ALKAROS.Audit.EventStore.AuditEvent>> GetByAggregateAsync(
+        string aggregateType, Guid aggregateId, CancellationToken cancellationToken = default)
+        => throw new NotSupportedException();
+
+    public Task<IReadOnlyList<ALKAROS.Audit.EventStore.AuditEvent>> GetByCorrelationIdAsync(
+        string correlationId, CancellationToken cancellationToken = default)
+        => throw new NotSupportedException();
+}
+
 [Collection("Billing split PostgreSQL HTTP")]
 public sealed class BillCancellationHttpTests : IAsyncLifetime
 {
@@ -64,6 +87,28 @@ public sealed class BillCancellationHttpTests : IAsyncLifetime
         using var again = await client.SendAsync(Cancel(terminalId, seeded.BillId, cookie, "Tekrar"));
         Assert.Equal(HttpStatusCode.Conflict, again.StatusCode);
         Assert.Equal("UNSUPPORTED_BILL_STATE", await ErrorCode(again));
+    }
+
+    [Fact]
+    public async Task ACancellationWhoseAuditRecordCannotBeWrittenIsNotKept()
+    {
+        var seeded = await _database.SeedBillAsync();
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+        var store = new BillCancellationStore(source, new FailingAuditEventStore());
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => store.CancelAsync(seeded.BillId, "Müşteri vazgeçti", Guid.NewGuid(), "corr", CancellationToken.None));
+
+        await using var read = source.CreateCommand(
+            """
+            SELECT b.status, (SELECT count(*) FROM billing.bill_items i WHERE i.bill_id = b.bill_id AND i.superseded_at IS NOT NULL)
+            FROM billing.bills b WHERE b.bill_id = @id;
+            """);
+        read.Parameters.AddWithValue("id", seeded.BillId);
+        await using var reader = await read.ExecuteReaderAsync();
+        Assert.True(await reader.ReadAsync());
+        Assert.NotEqual("Cancelled", reader.GetString(0));
+        Assert.Equal(0L, reader.GetInt64(1));
     }
 
     [Fact]

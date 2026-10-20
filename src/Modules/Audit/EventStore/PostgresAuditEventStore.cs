@@ -28,14 +28,46 @@ public sealed class PostgresAuditEventStore : IAuditEventStore
     public async Task AppendAsync(AuditEvent auditEvent, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(auditEvent);
-        auditEvent.Validate();
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await InsertAsync(connection, null, auditEvent, cancellationToken).ConfigureAwait(false);
+    }
 
-        var sanitizedBefore = _sanitizer.SanitizeJson(auditEvent.BeforeStateJson);
-        var sanitizedAfter = _sanitizer.SanitizeJson(auditEvent.AfterStateJson);
-        var sanitizedMetadata = _sanitizer.SanitizeJson(auditEvent.MetadataJson);
+    public Task AppendAsync(
+        AuditEvent auditEvent, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(auditEvent);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+        return InsertAsync(connection, transaction, auditEvent, cancellationToken);
+    }
+
+    public async Task AppendBatchAsync(IEnumerable<AuditEvent> auditEvents, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(auditEvents);
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
+        await using var tx = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+
+        foreach (var evt in auditEvents)
+        {
+            ArgumentNullException.ThrowIfNull(evt);
+            await InsertAsync(connection, tx, evt, cancellationToken).ConfigureAwait(false);
+        }
+
+        await tx.CommitAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private async Task InsertAsync(
+        NpgsqlConnection connection, NpgsqlTransaction? transaction, AuditEvent evt, CancellationToken cancellationToken)
+    {
+        evt.Validate();
+
+        var sanitizedBefore = _sanitizer.SanitizeJson(evt.BeforeStateJson);
+        var sanitizedAfter = _sanitizer.SanitizeJson(evt.AfterStateJson);
+        var sanitizedMetadata = _sanitizer.SanitizeJson(evt.MetadataJson);
+
         await using var cmd = connection.CreateCommand();
+        cmd.Transaction = transaction;
         cmd.CommandText =
             """
             INSERT INTO audit.audit_events (
@@ -48,15 +80,15 @@ public sealed class PostgresAuditEventStore : IAuditEventStore
                 @metadata_json, @occurred_at
             );
             """;
-        cmd.Parameters.AddWithValue("id", auditEvent.Id);
-        cmd.Parameters.AddWithValue("event_name", auditEvent.EventName);
-        cmd.Parameters.AddWithValue("aggregate_type", auditEvent.AggregateType);
-        cmd.Parameters.AddWithValue("aggregate_id", auditEvent.AggregateId);
-        cmd.Parameters.AddWithValue("actor_id", (object?)auditEvent.ActorId ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("actor_type", auditEvent.ActorType);
-        cmd.Parameters.AddWithValue("reason", (object?)auditEvent.Reason ?? DBNull.Value);
-        cmd.Parameters.AddWithValue("correlation_id", auditEvent.CorrelationId);
-        cmd.Parameters.AddWithValue("causation_id", (object?)auditEvent.CausationId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("id", evt.Id);
+        cmd.Parameters.AddWithValue("event_name", evt.EventName);
+        cmd.Parameters.AddWithValue("aggregate_type", evt.AggregateType);
+        cmd.Parameters.AddWithValue("aggregate_id", evt.AggregateId);
+        cmd.Parameters.AddWithValue("actor_id", (object?)evt.ActorId ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("actor_type", evt.ActorType);
+        cmd.Parameters.AddWithValue("reason", (object?)evt.Reason ?? DBNull.Value);
+        cmd.Parameters.AddWithValue("correlation_id", evt.CorrelationId);
+        cmd.Parameters.AddWithValue("causation_id", (object?)evt.CausationId ?? DBNull.Value);
 
         var pBefore = cmd.Parameters.AddWithValue("before_state_json", (object?)sanitizedBefore ?? DBNull.Value);
         pBefore.NpgsqlDbType = NpgsqlDbType.Jsonb;
@@ -67,64 +99,9 @@ public sealed class PostgresAuditEventStore : IAuditEventStore
         var pMeta = cmd.Parameters.AddWithValue("metadata_json", (object?)sanitizedMetadata ?? DBNull.Value);
         pMeta.NpgsqlDbType = NpgsqlDbType.Jsonb;
 
-        cmd.Parameters.AddWithValue("occurred_at", auditEvent.OccurredAt);
+        cmd.Parameters.AddWithValue("occurred_at", evt.OccurredAt);
 
         await cmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-    }
-
-    public async Task AppendBatchAsync(IEnumerable<AuditEvent> auditEvents, CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNull(auditEvents);
-
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-        await using var tx = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-
-        foreach (var evt in auditEvents)
-        {
-            evt.Validate();
-            var sanitizedBefore = _sanitizer.SanitizeJson(evt.BeforeStateJson);
-            var sanitizedAfter = _sanitizer.SanitizeJson(evt.AfterStateJson);
-            var sanitizedMetadata = _sanitizer.SanitizeJson(evt.MetadataJson);
-
-            await using var cmd = connection.CreateCommand();
-            cmd.Transaction = tx;
-            cmd.CommandText =
-                """
-                INSERT INTO audit.audit_events (
-                    id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
-                    reason, correlation_id, causation_id, before_state_json, after_state_json,
-                    metadata_json, occurred_at
-                ) VALUES (
-                    @id, @event_name, @aggregate_type, @aggregate_id, @actor_id, @actor_type,
-                    @reason, @correlation_id, @causation_id, @before_state_json, @after_state_json,
-                    @metadata_json, @occurred_at
-                );
-                """;
-            cmd.Parameters.AddWithValue("id", evt.Id);
-            cmd.Parameters.AddWithValue("event_name", evt.EventName);
-            cmd.Parameters.AddWithValue("aggregate_type", evt.AggregateType);
-            cmd.Parameters.AddWithValue("aggregate_id", evt.AggregateId);
-            cmd.Parameters.AddWithValue("actor_id", (object?)evt.ActorId ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("actor_type", evt.ActorType);
-            cmd.Parameters.AddWithValue("reason", (object?)evt.Reason ?? DBNull.Value);
-            cmd.Parameters.AddWithValue("correlation_id", evt.CorrelationId);
-            cmd.Parameters.AddWithValue("causation_id", (object?)evt.CausationId ?? DBNull.Value);
-
-            var pBefore = cmd.Parameters.AddWithValue("before_state_json", (object?)sanitizedBefore ?? DBNull.Value);
-            pBefore.NpgsqlDbType = NpgsqlDbType.Jsonb;
-
-            var pAfter = cmd.Parameters.AddWithValue("after_state_json", (object?)sanitizedAfter ?? DBNull.Value);
-            pAfter.NpgsqlDbType = NpgsqlDbType.Jsonb;
-
-            var pMeta = cmd.Parameters.AddWithValue("metadata_json", (object?)sanitizedMetadata ?? DBNull.Value);
-            pMeta.NpgsqlDbType = NpgsqlDbType.Jsonb;
-
-            cmd.Parameters.AddWithValue("occurred_at", evt.OccurredAt);
-
-            await cmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        }
-
-        await tx.CommitAsync(cancellationToken).ConfigureAwait(false);
     }
 
     public async Task<IReadOnlyList<AuditEvent>> GetByAggregateAsync(

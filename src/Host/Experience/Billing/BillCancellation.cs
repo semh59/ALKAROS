@@ -80,22 +80,22 @@ public sealed class BillCancellationStore(NpgsqlDataSource dataSource, IAuditEve
                 await cancel.ExecuteNonQueryAsync(cancellationToken);
             }
 
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "bill.cancelled",
+                    aggregateType: "Bill",
+                    aggregateId: billId,
+                    actorType: "User",
+                    correlationId: correlationId,
+                    actorId: actorId,
+                    reason: trimmed,
+                    beforeStateJson: JsonSerializer.Serialize(new { status = previousStatus }),
+                    afterStateJson: JsonSerializer.Serialize(new { status = "Cancelled" })),
+                connection, transaction, cancellationToken);
+
             await transaction.CommitAsync(cancellationToken);
         }
-
-        await auditEvents.AppendAsync(
-            new AuditEvent(
-                id: Guid.NewGuid(),
-                eventName: "bill.cancelled",
-                aggregateType: "Bill",
-                aggregateId: billId,
-                actorType: "User",
-                correlationId: correlationId,
-                actorId: actorId,
-                reason: trimmed,
-                beforeStateJson: JsonSerializer.Serialize(new { status = previousStatus }),
-                afterStateJson: JsonSerializer.Serialize(new { status = "Cancelled" })),
-            cancellationToken);
 
         return new CancelBillResultV1(billId, "Cancelled", trimmed, now);
     }

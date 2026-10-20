@@ -288,6 +288,22 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ARefundDecisionWhoseAuditRecordCannotBeWrittenIsNotKept()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+        var store = new PaymentRefundStore(_source, new FailingAuditEventStore());
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => store.RejectAsync(request.RequestId, _managerId, "Gerekçe yetersiz", CancellationToken.None));
+
+        Assert.Equal("Requested", await Scalar<string>("SELECT status FROM payments.refund_requests WHERE refund_request_id = @p", request.RequestId));
+    }
+
+    [Fact]
     public async Task ARejectedRequestLeavesThePaymentAloneAndAllowsANewRequest()
     {
         var seeded = await _database.SeedBillAsync();
