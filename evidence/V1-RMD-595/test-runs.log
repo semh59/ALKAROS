@@ -1,0 +1,3 @@
+tests/Modules/Audit/EventStore (HEAD c41c1eec): Başarısız: 0, Başarılı: 22, Atlanan: 0 (runs/audit-tests.log, exit=0)
+Ajan koşuları (kendi kayıtları): AuditDisposalTests 7/7 geçti; Architecture ModuleBoundaries 9/9 geçti.
+Not: ilk koşu test PostgreSQL konteyneri kapalı olduğu için 10 test başarısız oldu (altyapı, bulgu değil); alkaros-test-pg başlatıldıktan sonra 22/22.

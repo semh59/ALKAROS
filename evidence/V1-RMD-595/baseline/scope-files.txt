@@ -1,0 +1,19 @@
+compose.ops.yaml
+database/migrations/V1/V1-OPS-001/015-audit-log.down.sql
+database/migrations/V1/V1-OPS-001/015-audit-log.up.sql
+database/migrations/V1/V1-RMD-481/173-audit-events-yearly-partitions.down.sql
+database/migrations/V1/V1-RMD-481/173-audit-events-yearly-partitions.up.sql
+src/Modules/Audit/ALKAROS.Audit.csproj
+src/Modules/Audit/AuditModule.cs
+src/Modules/Audit/EventStore/AuditEvent.cs
+src/Modules/Audit/EventStore/IAuditEventStore.cs
+src/Modules/Audit/EventStore/IAuditSanitizer.cs
+src/Modules/Audit/EventStore/PostgresAuditEventStore.cs
+src/Modules/Audit/PartitionDisposal/AuditPartitionDisposal.cs
+src/Modules/Audit/packages.lock.json
+tests/Host/MigrationComposition/Program/AuditDisposalTests.cs
+tests/Modules/Audit/EventStore/ALKAROS.Audit.EventStore.Tests.csproj
+tests/Modules/Audit/EventStore/AuditSanitizerTests.cs
+tests/Modules/Audit/EventStore/AuditTests.cs
+tests/Modules/Audit/EventStore/packages.lock.json
+src/Host/Program.cs (audit-disposal subcommand)

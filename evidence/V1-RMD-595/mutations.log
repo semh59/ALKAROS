@@ -1,0 +1,1 @@
+Denetim görevi: kod değişikliği yok. Mutasyon ölçümü qa-test-kalitesi ajanı tarafından repo dışı worktree kopyasında yapıldı: 76 mutant (EventStore ve sanitizer 64: 28 öldü, 34 yaşadı, 1 derlenmedi, 1 eşdeğer; imha 12: 8 öldü, 4 yaşadı). Yaşayan mutantlar bulgu F16 olarak V1-RMD-642'ye bağlandı. Kopya silindi, ana ağaç temiz.

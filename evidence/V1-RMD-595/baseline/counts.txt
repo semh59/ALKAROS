@@ -1,0 +1,6 @@
+files:
+8
+cs lines:
+615
+consumers of IAuditEventStore outside module:
+20

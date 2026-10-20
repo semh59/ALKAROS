@@ -1,0 +1,170 @@
+[
+ {
+  "id": "V1-RMD-595-F01",
+  "severity": "Yüksek",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-639"
+ },
+ {
+  "id": "V1-RMD-595-F02",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-640"
+ },
+ {
+  "id": "V1-RMD-595-F03",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-640"
+ },
+ {
+  "id": "V1-RMD-595-F04",
+  "severity": "Orta",
+  "status": "KISMEN",
+  "fixTask": "V1-RMD-640"
+ },
+ {
+  "id": "V1-RMD-595-F05",
+  "severity": "Orta",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-640"
+ },
+ {
+  "id": "V1-RMD-595-F06",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-640"
+ },
+ {
+  "id": "V1-RMD-595-F07",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-640"
+ },
+ {
+  "id": "V1-RMD-595-F08",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-640"
+ },
+ {
+  "id": "V1-RMD-595-F09",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-639"
+ },
+ {
+  "id": "V1-RMD-595-F10",
+  "severity": "Orta",
+  "status": "DOĞRULANDI",
+  "fixTask": "Semih kararı"
+ },
+ {
+  "id": "V1-RMD-595-F11",
+  "severity": "Orta",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-641"
+ },
+ {
+  "id": "V1-RMD-595-F12",
+  "severity": "Düşük",
+  "status": "KISMEN",
+  "fixTask": "V1-RMD-641"
+ },
+ {
+  "id": "V1-RMD-595-F13",
+  "severity": "Düşük",
+  "status": "KISMEN",
+  "fixTask": "V1-RMD-641"
+ },
+ {
+  "id": "V1-RMD-595-F14",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-641"
+ },
+ {
+  "id": "V1-RMD-595-F15",
+  "severity": "Düşük",
+  "status": "KISMEN",
+  "fixTask": "V1-RMD-642"
+ },
+ {
+  "id": "V1-RMD-595-F16",
+  "severity": "Orta",
+  "status": "KISMEN",
+  "fixTask": "V1-RMD-642"
+ },
+ {
+  "id": "V1-RMD-595-F17",
+  "severity": "Düşük",
+  "status": "KISMEN",
+  "fixTask": "V1-RMD-641"
+ },
+ {
+  "id": "V1-RMD-595-F18",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-639"
+ },
+ {
+  "id": "V1-RMD-595-F19",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-640"
+ },
+ {
+  "id": "V1-RMD-595-F20",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-639"
+ },
+ {
+  "id": "V1-RMD-595-F21",
+  "severity": "Düşük",
+  "status": "KISMEN",
+  "fixTask": "V1-RMD-642"
+ },
+ {
+  "id": "V1-RMD-595-F22",
+  "severity": "Orta",
+  "status": "KISMEN",
+  "fixTask": "Semih kararı"
+ },
+ {
+  "id": "V1-RMD-595-F23",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-643"
+ },
+ {
+  "id": "V1-RMD-595-F24",
+  "severity": "Orta",
+  "status": "KISMEN",
+  "fixTask": "V1-RMD-641"
+ },
+ {
+  "id": "V1-RMD-595-F25",
+  "severity": "Düşük",
+  "status": "DOĞRULANDI",
+  "fixTask": "V1-RMD-643"
+ },
+ {
+  "id": "V1-RMD-595-F26",
+  "severity": "Düşük",
+  "status": "KISMEN",
+  "fixTask": "V1-RMD-643"
+ },
+ {
+  "id": "V1-RMD-595-Y1",
+  "severity": "Düşük",
+  "status": "yeni",
+  "fixTask": "V1-RMD-639"
+ },
+ {
+  "id": "V1-RMD-595-Y2",
+  "severity": "Düşük",
+  "status": "yeni",
+  "fixTask": "V1-RMD-641"
+ }
+]

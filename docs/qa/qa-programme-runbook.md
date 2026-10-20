@@ -131,7 +131,18 @@ Denetim görevinde derleme veya test kırmızıysa bu bir bulgudur, görevin Don
 
 | Ölçü | Değer |
 | --- | --- |
-| Koşu başına ortalama token | ölçülmedi |
-| Koşu başına ortalama süre | ölçülmedi |
-| Ajan başına çürütme oranı | ölçülmedi |
-| Kılavuzda düzeltilen eksikler | ölçülmedi |
+| Koşu başına ortalama token | yaklaşık 80 bin (53-118 bin); 595 toplam yaklaşık 805 bin |
+| Koşu başına ortalama süre | 2,6-36 dk (ortalama 8 dk); en uzun qa-test-kalitesi |
+| Ajan başına çürütme oranı | 595: tamamen çürütülen 0/26; abartılı önem 6 bulgu |
+| Kılavuzda düzeltilen eksikler | bkz. §12 |
+
+## 12. Pilot dersleri (V1-RMD-595)
+
+- Ajanlar `evidence/` altına yazamaz (kapsam bekçisi); ana oturum ajan çıktısını `findings-raw.md` içinde birleştirir, ajan başına sayılar `agents/README.md` dosyasına yazılır.
+- Bash komutlarında bazı veritabanı komut sözcükleri güvenlik freni tarafından engellenir; bu sözcükleri içeren metin Write aracıyla yazılır.
+- Test PostgreSQL konteyneri (`alkaros-test-pg`) kapalı olabilir; ilk testten önce `docker ps -a` ile bakılır ve yalnız o konteyner `docker start` ile açılır. Aksi hâlde test hataları altyapı kaynaklıdır, bulgu değildir.
+- Bash içinde `python3` ile heredoc kullanılmaz (asılı kalır); gerekirse `node -e` veya dosya yazma aracı kullanılır.
+- Ajanlar paralel koşabilir (salt okunur); mutasyon koşan `qa-test-kalitesi` en uzun sürendir, önce o başlatılır.
+- Ham bulguların yaklaşık yarısı aynı kök nedenin tekrarıdır (117 ham, 26 tekil); doğrulayıcıya yalnız birleştirilmiş liste verilir.
+- Doğrulayıcı önemi sıklıkla düşürür (üretimde tetiklenemeyen gizli kusurlar): önem "bugün tetiklenebilir mi" sorusuyla yeniden değerlendirilir.
+- Düzeltme görevleri kök neden gruplarına göre açılır (595 için V1-RMD-639...643).
