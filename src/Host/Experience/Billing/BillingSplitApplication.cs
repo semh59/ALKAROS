@@ -180,30 +180,8 @@ public static class BillingSplitApplication
                 }
             }
 
-            var (adjustment, summary) = await store.ApplyDiscountAsync(billId, request, principal.UserId, cancellationToken);
-            // V1-RMD-237: first real caller of IAuditEventStore.AppendAsync —
-            // this was registered since V1-OPS-001 but never actually
-            // invoked anywhere in the codebase. Only the applied outcome is
-            // recorded here; Pending/Refused grant outcomes above already
-            // have their own record in identity.authorization_grants.
-            await auditEvents.AppendAsync(
-                new AuditEvent(
-                    id: Guid.NewGuid(),
-                    eventName: "bill.discount.applied",
-                    aggregateType: "Bill",
-                    aggregateId: billId,
-                    actorType: "User",
-                    correlationId: context.TraceIdentifier,
-                    actorId: principal.UserId,
-                    reason: request.ReasonCode,
-                    beforeStateJson: JsonSerializer.Serialize(new { payableAmount = summary.OriginalPayableAmount }),
-                    afterStateJson: JsonSerializer.Serialize(new
-                    {
-                        payableAmount = summary.AdjustedPayableAmount,
-                        discountId = adjustment.Id,
-                        discountValue = request.Value,
-                    })),
-                cancellationToken);
+            var (adjustment, summary) = await store.ApplyDiscountAsync(
+                billId, request, principal.UserId, auditEvents, context.TraceIdentifier, cancellationToken);
             return Results.Ok(new ApplyBillDiscountResultV1(
                 "Applied",
                 billId,
@@ -230,11 +208,13 @@ public static class BillingSplitApplication
             ApplyBillTipRequestV1 request,
             IBillingSplitSessionAuthorizer authorizer,
             BillingSplitStore store,
+            IAuditEventStore auditEvents,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, cancellationToken);
-            var (adjustment, summary) = await store.ApplyTipAsync(billId, request, principal.UserId, cancellationToken);
+            var (adjustment, summary) = await store.ApplyTipAsync(
+                billId, request, principal.UserId, auditEvents, context.TraceIdentifier, cancellationToken);
             return Results.Ok(new ApplyBillTipResultV1(
                 billId,
                 adjustment.Id,

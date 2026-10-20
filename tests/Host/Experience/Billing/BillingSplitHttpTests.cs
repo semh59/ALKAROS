@@ -507,6 +507,62 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADiscountAndATipWhoseAuditRecordCannotBeWrittenAreNotKept()
+    {
+        var (userId, _) = await _database.SeedSessionWithPermissionsAsync(Guid.NewGuid(), "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        var store = app.Services.GetRequiredService<BillingSplitStore>();
+        var failing = new FailingAuditEventStore();
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => store.ApplyDiscountAsync(
+            seeded.BillId, new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"),
+            userId, failing, "corr", CancellationToken.None));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => store.ApplyTipAsync(
+            seeded.BillId, new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 50m), userId, failing, "corr", CancellationToken.None));
+
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+        await using var count = source.CreateCommand("SELECT count(*) FROM billing.bill_adjustments WHERE bill_id = @id;");
+        count.Parameters.AddWithValue("id", seeded.BillId);
+        Assert.Equal(0L, (long)(await count.ExecuteScalarAsync())!);
+    }
+
+    [Fact]
+    public async Task ADiscountAndATipEachWriteOneAuditRecordAndARetryWritesNone()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var discountKey = Guid.NewGuid().ToString();
+        var tipKey = Guid.NewGuid().ToString();
+        var billPath = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}";
+
+        for (var attempt = 0; attempt < 2; attempt++)
+        {
+            using var discount = await client.SendAsync(JsonRequest(
+                HttpMethod.Post, billPath + "/discount", cookie,
+                new ApplyBillDiscountRequestV1(discountKey, "Percentage", 10m, "PromotionalOffer")));
+            Assert.Equal(HttpStatusCode.OK, discount.StatusCode);
+            using var tip = await client.SendAsync(JsonRequest(
+                HttpMethod.Post, billPath + "/tip", cookie, new ApplyBillTipRequestV1(tipKey, 50m)));
+            Assert.Equal(HttpStatusCode.OK, tip.StatusCode);
+        }
+
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+        await using var rows = source.CreateCommand(
+            "SELECT event_name, count(*) FROM audit.audit_events WHERE aggregate_id = @id GROUP BY event_name ORDER BY event_name;");
+        rows.Parameters.AddWithValue("id", seeded.BillId);
+        await using var reader = await rows.ExecuteReaderAsync();
+        Assert.True(await reader.ReadAsync());
+        Assert.Equal(("bill.discount.applied", 1L), (reader.GetString(0), reader.GetInt64(1)));
+        Assert.True(await reader.ReadAsync());
+        Assert.Equal(("bill.tip.applied", 1L), (reader.GetString(0), reader.GetInt64(1)));
+        Assert.False(await reader.ReadAsync());
+    }
+
+    [Fact]
     public async Task RetryingATipWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment()
     {
         var terminalId = Guid.NewGuid();

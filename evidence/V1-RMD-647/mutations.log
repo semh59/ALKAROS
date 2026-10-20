@@ -1,0 +1,7 @@
+KILLED   discount audit after commit
+KILLED   tip audit after commit
+KILLED   discount audit event name changed
+KILLED   tip audit event name changed
+restore BillingSplitStore.cs: identical
+restore BillingSplitApplication.cs: identical
+mutants: 4, survived: 0

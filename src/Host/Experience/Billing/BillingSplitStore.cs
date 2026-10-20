@@ -1,3 +1,5 @@
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.SplitDesign;
@@ -46,6 +48,8 @@ public sealed class BillingSplitStore
         Guid billId,
         ApplyBillDiscountRequestV1 request,
         Guid actorId,
+        IAuditEventStore auditEvents,
+        string correlationId,
         CancellationToken cancellationToken = default)
     {
         if (_adjustments == null)
@@ -156,6 +160,24 @@ public sealed class BillingSplitStore
         // method holds, from a second, uncommitted connection — a
         // self-deadlock (found while testing this fix).
         await _adjustments.AddAsync(adjustment, connection, lockTransaction, cancellationToken);
+        await auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: "bill.discount.applied",
+                aggregateType: "Bill",
+                aggregateId: billId,
+                actorType: "User",
+                correlationId: correlationId,
+                actorId: actorId,
+                reason: request.ReasonCode,
+                beforeStateJson: JsonSerializer.Serialize(new { payableAmount = summary.OriginalPayableAmount }),
+                afterStateJson: JsonSerializer.Serialize(new
+                {
+                    payableAmount = summary.AdjustedPayableAmount,
+                    discountId = adjustment.Id,
+                    discountValue = request.Value,
+                })),
+            connection, lockTransaction, cancellationToken);
         await lockTransaction.CommitAsync(cancellationToken);
 
         return (adjustment, summary);
@@ -177,6 +199,8 @@ public sealed class BillingSplitStore
         Guid billId,
         ApplyBillTipRequestV1 request,
         Guid actorId,
+        IAuditEventStore auditEvents,
+        string correlationId,
         CancellationToken cancellationToken = default)
     {
         if (_adjustments == null)
@@ -236,6 +260,24 @@ public sealed class BillingSplitStore
         var summary = AdjustmentCalculator.Calculate(bill, [.. existingAdjustments, adjustment]);
 
         await _adjustments.AddAsync(adjustment, connection, lockTransaction, cancellationToken);
+        await auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: "bill.tip.applied",
+                aggregateType: "Bill",
+                aggregateId: billId,
+                actorType: "User",
+                correlationId: correlationId,
+                actorId: actorId,
+                reason: "VOLUNTARY_TIP",
+                beforeStateJson: JsonSerializer.Serialize(new { payableAmount = summary.OriginalPayableAmount }),
+                afterStateJson: JsonSerializer.Serialize(new
+                {
+                    payableAmount = summary.AdjustedPayableAmount,
+                    tipId = adjustment.Id,
+                    tipAmount = request.Amount,
+                })),
+            connection, lockTransaction, cancellationToken);
         await lockTransaction.CommitAsync(cancellationToken);
 
         return (adjustment, summary);
