@@ -36,6 +36,19 @@ public sealed class RetentionExecutionServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADisposalWhoseAuditRecordCannotBeWrittenIsNotKept()
+    {
+        var (store, protector, _) = Build();
+        var envelope = RetentionCryptoFixtures.ProtectTestPayload(protector, RetentionCryptoFixtures.OldKey);
+        var id = await store.InsertAsync(DataCategory.ProviderPayloads, envelope, false, DateTimeOffset.UtcNow.AddDays(-(365 * 7) - 1), default);
+
+        var act = () => new RetentionExecutionService(store, new ThrowingAuditEventStore()).RunSweepAsync(DateTimeOffset.UtcNow, "corr-fail", default);
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+        (await store.GetAsync(id, default))!.IsDisposed.Should().BeFalse();
+    }
+
+    [Fact]
     public async Task ExpiredDeleteClassSubjectIsQueuedNotImmediatelyPurged()
     {
         var (store, protector, audit) = Build();

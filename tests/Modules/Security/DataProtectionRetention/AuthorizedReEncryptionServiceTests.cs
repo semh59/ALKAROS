@@ -39,6 +39,21 @@ public sealed class AuthorizedReEncryptionServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AReEncryptionWhoseAuditRecordCannotBeWrittenIsNotKept()
+    {
+        var protector = RetentionCryptoFixtures.CreateProtector();
+        var store = new PostgresRetentionSubjectStore(_database.DataSource);
+        var envelope = RetentionCryptoFixtures.ProtectTestPayload(protector, RetentionCryptoFixtures.OldKey);
+        var id = await store.InsertAsync(DataCategory.ProviderPayloads, envelope, false, DateTimeOffset.UtcNow.AddDays(-30), default);
+        var service = new AuthorizedReEncryptionService(store, RetentionCryptoFixtures.CreateSecretProvider(), new ThrowingAuditEventStore());
+
+        var act = () => service.ReEncryptAsync(id, RetentionCryptoFixtures.OldKey, RetentionCryptoFixtures.NewKey, Actor, "corr-fail", default);
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+        (await store.GetAsync(id, default))!.Envelope.Ciphertext.KeyId.Should().Be(RetentionCryptoFixtures.OldKey.Name);
+    }
+
+    [Fact]
     public async Task ReEncryptingASubjectAlreadyOnTheTargetKeyIsANoOp()
     {
         var protector = RetentionCryptoFixtures.CreateProtector();

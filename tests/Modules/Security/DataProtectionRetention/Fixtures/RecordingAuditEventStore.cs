@@ -1,4 +1,5 @@
 using ALKAROS.Audit.EventStore;
+using Npgsql;
 
 namespace ALKAROS.Security.DataProtectionRetention.Tests.Fixtures;
 
@@ -15,6 +16,10 @@ public sealed class RecordingAuditEventStore : IAuditEventStore
         _events.Add(auditEvent);
         return Task.CompletedTask;
     }
+
+    public Task AppendAsync(
+        AuditEvent auditEvent, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+        => AppendAsync(auditEvent, cancellationToken);
 
     public Task AppendBatchAsync(IEnumerable<AuditEvent> auditEvents, CancellationToken cancellationToken = default)
     {
@@ -33,4 +38,24 @@ public sealed class RecordingAuditEventStore : IAuditEventStore
     public Task<IReadOnlyList<AuditEvent>> GetByCorrelationIdAsync(string correlationId, CancellationToken cancellationToken = default) =>
         Task.FromResult<IReadOnlyList<AuditEvent>>(
             _events.Where(e => e.CorrelationId == correlationId).ToList());
+}
+
+/// <summary>An audit store whose every write fails, as a broken audit write would.</summary>
+public sealed class ThrowingAuditEventStore : IAuditEventStore
+{
+    public Task AppendAsync(AuditEvent auditEvent, CancellationToken cancellationToken = default)
+        => throw new InvalidOperationException("audit write failed");
+
+    public Task AppendAsync(
+        AuditEvent auditEvent, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+        => throw new InvalidOperationException("audit write failed");
+
+    public Task AppendBatchAsync(IEnumerable<AuditEvent> auditEvents, CancellationToken cancellationToken = default)
+        => throw new InvalidOperationException("audit write failed");
+
+    public Task<IReadOnlyList<AuditEvent>> GetByAggregateAsync(string aggregateType, Guid aggregateId, CancellationToken cancellationToken = default)
+        => throw new NotSupportedException();
+
+    public Task<IReadOnlyList<AuditEvent>> GetByCorrelationIdAsync(string correlationId, CancellationToken cancellationToken = default)
+        => throw new NotSupportedException();
 }

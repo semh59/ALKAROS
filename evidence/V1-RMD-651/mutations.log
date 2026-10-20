@@ -1,0 +1,6 @@
+KILLED   disposal audit after commit
+KILLED   re-encryption audit after commit
+KILLED   purge audit after commit
+KILLED   purge audit not recorded
+restore PostgresRetentionSubjectStore.cs: identical
+mutants: 4, survived: 0

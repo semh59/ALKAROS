@@ -32,15 +32,17 @@ public sealed class DeletionQueueProcessor
         var queued = await _store.GetDeletionQueueAsync(cancellationToken);
         foreach (var id in queued)
         {
-            await _store.PurgeAsync(id, cancellationToken);
-            await _auditStore.AppendAsync(
-                new AuditEvent(
-                    Guid.NewGuid(),
-                    "RetentionSubjectPurged",
-                    "RetentionSubject",
-                    id,
-                    actorType: "System",
-                    correlationId: correlationId),
+            await _store.PurgeAsync(
+                id,
+                (connection, transaction, token) => _auditStore.AppendAsync(
+                    new AuditEvent(
+                        Guid.NewGuid(),
+                        "RetentionSubjectPurged",
+                        "RetentionSubject",
+                        id,
+                        actorType: "System",
+                        correlationId: correlationId),
+                    connection, transaction, token),
                 cancellationToken);
         }
         return queued;

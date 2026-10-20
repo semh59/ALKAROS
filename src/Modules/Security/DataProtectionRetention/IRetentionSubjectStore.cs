@@ -1,4 +1,5 @@
 using ALKAROS.SensitiveData;
+using Npgsql;
 
 namespace ALKAROS.Security.DataProtectionRetention;
 
@@ -49,11 +50,27 @@ public interface IRetentionSubjectStore
         int expectedRowVersion,
         CancellationToken cancellationToken);
 
+    /// <summary>As above; <paramref name="record"/> runs in the same transaction, so a failure in it undoes the disposal.</summary>
+    Task MarkDisposedAsync(
+        Guid id,
+        DisposalAction action,
+        int expectedRowVersion,
+        Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record,
+        CancellationToken cancellationToken);
+
     /// <summary>Replaces a live (not yet disposed) subject's envelope — used by re-encryption.</summary>
     Task ReplaceEnvelopeAsync(
         Guid id,
         SensitiveEnvelope envelope,
         int expectedRowVersion,
+        CancellationToken cancellationToken);
+
+    /// <summary>As above; <paramref name="record"/> runs in the same transaction, so a failure in it undoes the replacement.</summary>
+    Task ReplaceEnvelopeAsync(
+        Guid id,
+        SensitiveEnvelope envelope,
+        int expectedRowVersion,
+        Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record,
         CancellationToken cancellationToken);
 
     Task SetLegalHoldAsync(
@@ -64,4 +81,8 @@ public interface IRetentionSubjectStore
 
     /// <summary>Hard-deletes a queued (Delete-disposed) row. A no-op, not an error, if the row is already gone.</summary>
     Task PurgeAsync(Guid id, CancellationToken cancellationToken);
+
+    /// <summary>As above; <paramref name="record"/> runs in the same transaction, so a failure in it keeps the row.</summary>
+    Task PurgeAsync(
+        Guid id, Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record, CancellationToken cancellationToken);
 }

@@ -58,17 +58,21 @@ public sealed class RetentionExecutionService
                 continue;
             }
 
-            await _store.MarkDisposedAsync(subject.Id, action, subject.RowVersion, cancellationToken);
-            await _auditStore.AppendAsync(
-                new AuditEvent(
-                    Guid.NewGuid(),
-                    "RetentionSubjectDisposed",
-                    "RetentionSubject",
-                    subject.Id,
-                    actorType: "System",
-                    correlationId: correlationId,
-                    reason: $"Retention period elapsed for category {subject.Category}.",
-                    afterStateJson: $$"""{"category":"{{subject.Category}}","action":"{{action}}"}"""),
+            await _store.MarkDisposedAsync(
+                subject.Id,
+                action,
+                subject.RowVersion,
+                (connection, transaction, token) => _auditStore.AppendAsync(
+                    new AuditEvent(
+                        Guid.NewGuid(),
+                        "RetentionSubjectDisposed",
+                        "RetentionSubject",
+                        subject.Id,
+                        actorType: "System",
+                        correlationId: correlationId,
+                        reason: $"Retention period elapsed for category {subject.Category}.",
+                        afterStateJson: $$"""{"category":"{{subject.Category}}","action":"{{action}}"}"""),
+                    connection, transaction, token),
                 cancellationToken);
             disposed.Add(subject.Id);
         }

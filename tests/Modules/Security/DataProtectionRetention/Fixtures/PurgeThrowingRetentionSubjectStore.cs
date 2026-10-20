@@ -1,4 +1,5 @@
 using ALKAROS.SensitiveData;
+using Npgsql;
 
 namespace ALKAROS.Security.DataProtectionRetention.Tests.Fixtures;
 
@@ -31,6 +32,19 @@ public sealed class PurgeThrowingRetentionSubjectStore : IRetentionSubjectStore
 
     public Task MarkDisposedAsync(Guid id, DisposalAction action, int expectedRowVersion, CancellationToken cancellationToken)
         => _inner.MarkDisposedAsync(id, action, expectedRowVersion, cancellationToken);
+
+    public Task MarkDisposedAsync(
+        Guid id, DisposalAction action, int expectedRowVersion,
+        Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record, CancellationToken cancellationToken)
+        => _inner.MarkDisposedAsync(id, action, expectedRowVersion, record, cancellationToken);
+
+    public Task ReplaceEnvelopeAsync(
+        Guid id, SensitiveEnvelope envelope, int expectedRowVersion,
+        Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record, CancellationToken cancellationToken)
+        => _inner.ReplaceEnvelopeAsync(id, envelope, expectedRowVersion, record, cancellationToken);
+
+    public Task PurgeAsync(Guid id, Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record, CancellationToken cancellationToken)
+        => throw new InvalidOperationException("Simulated purge failure for test.");
 
     public Task ReplaceEnvelopeAsync(Guid id, SensitiveEnvelope envelope, int expectedRowVersion, CancellationToken cancellationToken)
         => _inner.ReplaceEnvelopeAsync(id, envelope, expectedRowVersion, cancellationToken);

@@ -72,16 +72,20 @@ public sealed class AuthorizedReEncryptionService
         // expiry from the row's own created_at column (set once at insert,
         // untouched by ReplaceEnvelopeAsync), never from envelope.CreatedAt,
         // so re-encryption never resets the retention clock.
-        await _store.ReplaceEnvelopeAsync(subjectId, reEncrypted, subject.RowVersion, cancellationToken);
-        await _auditStore.AppendAsync(
-            new AuditEvent(
-                Guid.NewGuid(),
-                "RetentionSubjectReEncrypted",
-                "RetentionSubject",
-                subjectId,
-                actorType: "User",
-                correlationId: correlationId,
-                actorId: actorId),
+        await _store.ReplaceEnvelopeAsync(
+            subjectId,
+            reEncrypted,
+            subject.RowVersion,
+            (connection, transaction, token) => _auditStore.AppendAsync(
+                new AuditEvent(
+                    Guid.NewGuid(),
+                    "RetentionSubjectReEncrypted",
+                    "RetentionSubject",
+                    subjectId,
+                    actorType: "User",
+                    correlationId: correlationId,
+                    actorId: actorId),
+                connection, transaction, token),
             cancellationToken);
         return true;
     }

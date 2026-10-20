@@ -107,17 +107,23 @@ public sealed class PostgresRetentionSubjectStore : IRetentionSubjectStore
         return results;
     }
 
+    public Task MarkDisposedAsync(Guid id, DisposalAction action, int expectedRowVersion, CancellationToken cancellationToken)
+        => MarkDisposedAsync(id, action, expectedRowVersion, static (_, _, _) => Task.CompletedTask, cancellationToken);
+
     public async Task MarkDisposedAsync(
         Guid id,
         DisposalAction action,
         int expectedRowVersion,
+        Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record,
         CancellationToken cancellationToken)
     {
         var envelopeBytes = action == DisposalAction.Anonymize
             ? AnonymizedSentinel.ToPersistenceBytes()
             : (byte[]?)null;
 
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             """
             UPDATE security.retention_subjects
             SET disposed_at = @disposed_at,
@@ -125,7 +131,7 @@ public sealed class PostgresRetentionSubjectStore : IRetentionSubjectStore
                 envelope_bytes = COALESCE(@envelope_bytes, envelope_bytes),
                 row_version = row_version + 1
             WHERE id = @id AND row_version = @expected_row_version AND disposed_at IS NULL;
-            """);
+            """, connection, transaction);
         command.Parameters.Add("id", NpgsqlDbType.Uuid).Value = id;
         command.Parameters.Add("disposed_at", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
         command.Parameters.Add("disposal_action", NpgsqlDbType.Text).Value = action.ToString();
@@ -135,23 +141,31 @@ public sealed class PostgresRetentionSubjectStore : IRetentionSubjectStore
         var rows = await command.ExecuteNonQueryAsync(cancellationToken);
         if (rows == 0)
             throw new RetentionConcurrencyException(id);
+        await record(connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
     }
+
+    public Task ReplaceEnvelopeAsync(Guid id, SensitiveEnvelope envelope, int expectedRowVersion, CancellationToken cancellationToken)
+        => ReplaceEnvelopeAsync(id, envelope, expectedRowVersion, static (_, _, _) => Task.CompletedTask, cancellationToken);
 
     public async Task ReplaceEnvelopeAsync(
         Guid id,
         SensitiveEnvelope envelope,
         int expectedRowVersion,
+        Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record,
         CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(envelope);
 
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand(
             """
             UPDATE security.retention_subjects
             SET envelope_bytes = @envelope_bytes,
                 row_version = row_version + 1
             WHERE id = @id AND row_version = @expected_row_version AND disposed_at IS NULL;
-            """);
+            """, connection, transaction);
         command.Parameters.Add("id", NpgsqlDbType.Uuid).Value = id;
         command.Parameters.Add("envelope_bytes", NpgsqlDbType.Bytea).Value = envelope.ToPersistenceBytes();
         command.Parameters.Add("expected_row_version", NpgsqlDbType.Integer).Value = expectedRowVersion;
@@ -159,6 +173,8 @@ public sealed class PostgresRetentionSubjectStore : IRetentionSubjectStore
         var rows = await command.ExecuteNonQueryAsync(cancellationToken);
         if (rows == 0)
             throw new RetentionConcurrencyException(id);
+        await record(connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
     }
 
     public async Task SetLegalHoldAsync(
@@ -183,12 +199,19 @@ public sealed class PostgresRetentionSubjectStore : IRetentionSubjectStore
             throw new RetentionConcurrencyException(id);
     }
 
-    public async Task PurgeAsync(Guid id, CancellationToken cancellationToken)
+    public Task PurgeAsync(Guid id, CancellationToken cancellationToken)
+        => PurgeAsync(id, static (_, _, _) => Task.CompletedTask, cancellationToken);
+
+    public async Task PurgeAsync(
+        Guid id, Func<NpgsqlConnection, NpgsqlTransaction, CancellationToken, Task> record, CancellationToken cancellationToken)
     {
-        await using var command = _dataSource.CreateCommand(
-            "DELETE FROM security.retention_subjects WHERE id = @id;");
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await using var command = new NpgsqlCommand("DELETE FROM security.retention_subjects WHERE id = @id;", connection, transaction);
         command.Parameters.Add("id", NpgsqlDbType.Uuid).Value = id;
         await command.ExecuteNonQueryAsync(cancellationToken);
+        await record(connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
     }
 
     private static RetentionSubjectRecord ReadRecord(NpgsqlDataReader reader)

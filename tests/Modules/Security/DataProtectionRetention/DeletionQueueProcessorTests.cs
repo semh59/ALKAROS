@@ -30,6 +30,21 @@ public sealed class DeletionQueueProcessorTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APurgeWhoseAuditRecordCannotBeWrittenKeepsTheRow()
+    {
+        var protector = RetentionCryptoFixtures.CreateProtector();
+        var store = new PostgresRetentionSubjectStore(_database.DataSource);
+        var envelope = RetentionCryptoFixtures.ProtectTestPayload(protector, RetentionCryptoFixtures.OldKey);
+        var id = await store.InsertAsync(DataCategory.UserCredentials, envelope, false, DateTimeOffset.UtcNow, default);
+        await store.MarkDisposedAsync(id, DisposalAction.Delete, 1, default);
+
+        var act = () => new DeletionQueueProcessor(store, new ThrowingAuditEventStore()).ProcessAsync("corr-fail", default);
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+        (await store.GetAsync(id, default)).Should().NotBeNull();
+    }
+
+    [Fact]
     public async Task ProcessOnAnEmptyQueueIsANoOp()
     {
         var store = new PostgresRetentionSubjectStore(_database.DataSource);
