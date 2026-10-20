@@ -1,0 +1,3 @@
+tests/Architecture/ApiConventions/ Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 17 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
+tests/Architecture/ModuleBoundaries/ Başarılı!  - Başarısız:     0, Başarılı:    10, Atlanan:     0, Toplam:    10, Süre: 937 ms - ALKAROS.Architecture.Tests.dll (net8.0)
+# Diğer tests/Architecture klasörleri dotnet projesi değil (python araç testleri); commit kapısı plan-audit/consistency-audit'i çalıştırır.

@@ -1,0 +1,22 @@
+KILLED   ALKAROS.Host.DualScreen without Billing
+KILLED   ALKAROS.Host.DualScreen without CustomerAccounts
+KILLED   ALKAROS.Host.Experience.Billing without Cash
+SURVIVED ALKAROS.Host.Experience.CustomerAccounts without Billing
+KILLED   ALKAROS.Host.Experience.Observability without Observability
+KILLED   ALKAROS.Host.Experience.SecurityAdministration without Operations
+KILLED   ALKAROS.Host.Observability without Operations
+restore identical
+SURVIVED CustomerAccounts tree without Cash (re-run)
+KILLED   CustomerAccounts tree without CustomerAccounts (re-run)
+KILLED   CustomerAccounts tree without CustomerData (re-run)
+SURVIVED CustomerAccounts tree without Identity (re-run)
+restore identical
+
+# Sıkılık taraması: her girdiden her modül tek tek çıkarıldı; kırılmayanlar (kullanılmayan veya testin izlemediği)
+UNUSED ALKAROS.Host.DualScreen Inventory
+UNUSED ALKAROS.Host.DualScreen Payments
+UNUSED ALKAROS.Host.DualScreen QrOrdering
+UNUSED ALKAROS.Host.Experience.Billing Payments
+UNUSED ALKAROS.Host.Experience.SecurityAdministration Secrets
+UNUSED ALKAROS.Host.Observability QrRelay
+# Not: Payments, QrOrdering, Secrets, QrRelay ModuleAssemblies listesinde olmadığı için test onları izlemez; Inventory (DualScreen) ve CustomerAccounts ağacındaki Billing/Cash/Identity gerçekten kullanılmadığından listeden çıkarıldı.

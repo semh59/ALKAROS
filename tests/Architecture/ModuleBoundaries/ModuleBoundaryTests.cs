@@ -278,6 +278,18 @@ public static class ModuleBoundaryTests
             // self-contained Host area, not a Orders-module dependency.
             ["ALKAROS.Host.Experience.Recipes"] =
                 ["ALKAROS.Identity", "ALKAROS.Recipes"],
+            ["ALKAROS.Host.DualScreen"] =
+                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Observability", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.QrOrdering", "ALKAROS.Security", "ALKAROS.Settings", "ALKAROS.CustomerAccounts"],
+            ["ALKAROS.Host.Experience.Billing"] =
+                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.Settings"],
+            ["ALKAROS.Host.Experience.CustomerAccounts"] =
+                ["ALKAROS.CustomerAccounts", "ALKAROS.CustomerData"],
+            ["ALKAROS.Host.Experience.Observability"] =
+                ["ALKAROS.Identity", "ALKAROS.Observability"],
+            ["ALKAROS.Host.Experience.SecurityAdministration"] =
+                ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Operations", "ALKAROS.Secrets", "ALKAROS.Security", "ALKAROS.Support"],
+            ["ALKAROS.Host.Observability"] =
+                ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Observability", "ALKAROS.Operations", "ALKAROS.QrRelay"],
         };
 
     [Fact]
