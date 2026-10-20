@@ -1,0 +1,191 @@
+{
+ "task": "V1-RMD-596",
+ "unique": 26,
+ "verified": 19,
+ "partial": 7,
+ "refuted": 0,
+ "findings": [
+  {
+   "id": "V1-RMD-596-B001",
+   "severity": "Yüksek",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-660",
+   "title": "Aynı boyutlu birimlerde özel dönüşüm yok sayılır (koli→adet)"
+  },
+  {
+   "id": "V1-RMD-596-B002",
+   "severity": "Yüksek",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-663",
+   "title": "Compose connector servisinde ana anahtar yok"
+  },
+  {
+   "id": "V1-RMD-596-B003",
+   "severity": "Orta",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-661",
+   "title": "Sağlayıcı zaman aşımı deneme sayılmaz, parti takılır"
+  },
+  {
+   "id": "V1-RMD-596-B004",
+   "severity": "Orta",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-660",
+   "title": "CanConvert true iken Convert fırlatır"
+  },
+  {
+   "id": "V1-RMD-596-B005",
+   "severity": "Orta",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-662",
+   "title": "Outbox dispatched/dead satırları hiç silinmez"
+  },
+  {
+   "id": "V1-RMD-596-B006",
+   "severity": "Orta",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-662",
+   "title": "Tüketici hatası loga/last_error'a yazılmaz"
+  },
+  {
+   "id": "V1-RMD-596-B007",
+   "severity": "Orta",
+   "status": "KISMEN",
+   "fixTask": "V1-RMD-662",
+   "title": "Profilsiz olay bütçesi 3 deneme / ~15 sn"
+  },
+  {
+   "id": "V1-RMD-596-B008",
+   "severity": "Orta",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-661",
+   "title": "Kira bırakmada attempt_count artmaz (zehirli mesaj)"
+  },
+  {
+   "id": "V1-RMD-596-B009",
+   "severity": "Orta",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-661",
+   "title": "Kira kaybı/kapatma partiyi 5 dk in_flight bırakır"
+  },
+  {
+   "id": "V1-RMD-596-B010",
+   "severity": "Orta",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-665",
+   "title": "Mutfak kalem olayı commit sonrası ayrı bağlantıyla yazılır"
+  },
+  {
+   "id": "V1-RMD-596-B011",
+   "severity": "Orta",
+   "status": "KISMEN",
+   "fixTask": "V1-RMD-666",
+   "title": "Nonce, anahtar uzunluğu, backoff, FIFO, sıfır miktar testsiz"
+  },
+  {
+   "id": "V1-RMD-596-B012",
+   "severity": "Orta",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-663",
+   "title": "Üretimde bağlı olmayan güvenlik yetenekleri (başlangıç doğrulaması)"
+  },
+  {
+   "id": "V1-RMD-596-B013",
+   "severity": "Orta",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-666",
+   "title": "Mimari test modül listesi Payments/QrOrdering/Invoicing/Privacy'yi izlemez"
+  },
+  {
+   "id": "V1-RMD-596-B014",
+   "severity": "Orta",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-660",
+   "title": "Birim yükleyici yeniden denemez; bellek-DB ayrışması"
+  },
+  {
+   "id": "V1-RMD-596-B015",
+   "severity": "Düşük",
+   "status": "KISMEN",
+   "fixTask": "V1-RMD-664",
+   "title": "QR notu düz JSON, serializer yorumu yanlış"
+  },
+  {
+   "id": "V1-RMD-596-B016",
+   "severity": "Düşük",
+   "status": "KISMEN",
+   "fixTask": "V1-RMD-662",
+   "title": "Ölü mektup izleyicisi açılıştaki ölüleri atlar"
+  },
+  {
+   "id": "V1-RMD-596-B017",
+   "severity": "Düşük",
+   "status": "KISMEN",
+   "fixTask": "V1-RMD-661",
+   "title": "Tüketici başına zaman aşımı yok"
+  },
+  {
+   "id": "V1-RMD-596-B018",
+   "severity": "Düşük",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-661",
+   "title": "DB kesintisinde sabit 1 sn döngü ve log seli"
+  },
+  {
+   "id": "V1-RMD-596-B019",
+   "severity": "Düşük",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-664",
+   "title": "Bozuk zarf ham ArgumentException fırlatır"
+  },
+  {
+   "id": "V1-RMD-596-B020",
+   "severity": "Düşük",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-664",
+   "title": "Zarf AAD'si kayda bağlı değil"
+  },
+  {
+   "id": "V1-RMD-596-B021",
+   "severity": "Düşük",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-662",
+   "title": "Olay sırası garantisi yok (sözleşmeye yazılacak)"
+  },
+  {
+   "id": "V1-RMD-596-B022",
+   "severity": "Düşük",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-664",
+   "title": "Serializer/OutboxEnvelope Guid.Empty ve eksik alan kabul"
+  },
+  {
+   "id": "V1-RMD-596-B023",
+   "severity": "Düşük",
+   "status": "KISMEN",
+   "fixTask": "V1-RMD-667",
+   "title": "Doküman sapmaları kümesi"
+  },
+  {
+   "id": "V1-RMD-596-B024",
+   "severity": "Düşük",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-662",
+   "title": "inbox_messages ölü şema (bilinen V1-RMD-134) kararı"
+  },
+  {
+   "id": "V1-RMD-596-B025",
+   "severity": "Düşük",
+   "status": "KISMEN",
+   "fixTask": "V1-RMD-664",
+   "title": "Çift ISecretProvider kaydı, ad çakışması"
+  },
+  {
+   "id": "V1-RMD-596-B026",
+   "severity": "Düşük",
+   "status": "DOĞRULANDI",
+   "fixTask": "V1-RMD-664",
+   "title": "Küçük sertleştirmeler (bellek sıfırlama, TimeProvider, MaxAge Zero, requeue gerekçesi, 404 metni, kısıt adları, indeks, Npgsql lisansı, Enum.Parse)"
+  }
+ ]
+}

@@ -1,0 +1,1 @@
+ham 135; tekil 26; DOĞRULANDI 19; KISMEN 7; ÇÜRÜTÜLDÜ 0 (verifier/verifier.md); findings.json 26 kayıt
