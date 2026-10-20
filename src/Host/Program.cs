@@ -116,9 +116,9 @@ public static class Program
             {
                 return AuditDisposalAsync(args[1..]).GetAwaiter().GetResult();
             }
-            catch (Exception ex) when (ex is ArgumentException or InvalidOperationException or NpgsqlException or FormatException)
+            catch (Exception ex) when (ex is not OperationCanceledException)
             {
-                Console.Error.WriteLine($"AUDIT-DISPOSAL: {ex.Message}");
+                Console.Error.WriteLine(AuditDisposalFailureText(ex));
                 return (int)HostExitCode.StartupFailed;
             }
         }
@@ -455,6 +455,7 @@ public static class Program
     {
         string? databaseUrl = null;
         var apply = false;
+        string? operatorName = null;
         DateTimeOffset? asOf = null;
         for (var i = 0; i < args.Length; i++)
         {
@@ -466,27 +467,32 @@ public static class Program
                 case "--apply":
                     apply = true;
                     break;
+                case "--operator" when i + 1 < args.Length:
+                    operatorName = args[++i];
+                    break;
                 case "--as-of" when i + 1 < args.Length:
                     if (!DateTimeOffset.TryParse(args[++i], System.Globalization.CultureInfo.InvariantCulture,
                             System.Globalization.DateTimeStyles.AssumeUniversal | System.Globalization.DateTimeStyles.AdjustToUniversal,
                             out var parsed))
-                        throw new ArgumentException("--as-of must be an ISO date.");
+                        throw new ArgumentException("--as-of geçerli bir ISO tarihi olmalı (örnek: 2040-01-01).");
                     asOf = parsed;
                     break;
                 default:
-                    throw new ArgumentException($"Unrecognized audit-disposal argument '{args[i]}'.");
+                    throw new ArgumentException($"Tanınmayan audit-disposal seçeneği '{args[i]}' (veya değeri eksik).");
             }
         }
 
         if (string.IsNullOrWhiteSpace(databaseUrl))
-            throw new ArgumentException("audit-disposal requires a --db-url argument.");
+            throw new ArgumentException("audit-disposal için --db-url zorunludur.");
         if (apply && asOf is not null)
-            throw new ArgumentException("--as-of only previews; it cannot be combined with --apply.");
+            throw new ArgumentException("--as-of yalnız önizleme içindir; --apply ile birlikte kullanılamaz.");
+        if (apply && string.IsNullOrWhiteSpace(operatorName))
+            throw new ArgumentException("--apply için --operator <ad> zorunludur; ad, imha olayına yazılır.");
 
         var databasePassword = RequiredEnvironmentValue(PasswordEnvironmentVariable, 1, 256, allowWhitespace: false);
         await using var dataSource = NpgsqlDataSource.Create(BuildConnectionString(databaseUrl, databasePassword, "ALKAROS.AuditDisposal"));
         var now = asOf ?? DateTimeOffset.UtcNow;
-        var result = await new AuditPartitionDisposal(dataSource).RunAsync(now, apply);
+        var result = await new AuditPartitionDisposal(dataSource).RunAsync(now, apply, operatorName);
 
         foreach (var partition in result.Partitions.Where(p => p.Rows > 0 || p.Expired))
             Console.Out.WriteLine($"audit-disposal: partition={partition.Name} rows={partition.Rows} expired={partition.Expired.ToString().ToLowerInvariant()}");
@@ -494,8 +500,26 @@ public static class Program
             $"audit-disposal: partitions={result.Partitions.Count} expired={result.Partitions.Count(p => p.Expired)} "
             + $"dropped={result.Dropped.Count} dropped_rows={result.Dropped.Sum(p => p.Rows)} default_partition_rows={result.DefaultPartitionRows} "
             + $"as_of={now:yyyy-MM-dd} apply={apply.ToString().ToLowerInvariant()}");
+        if (result.DefaultPartitionRows > 0)
+        {
+            Console.Error.WriteLine(
+                $"AUDIT-DISPOSAL UYARI: varsayılan bölümde {result.DefaultPartitionRows} kayıt var (2020-2060 dışı tarih); "
+                + "bu kayıtlar silinmez. Adımlar için docs/compliance/kvkk-retention-runbook.md dosyasındaki 'Audit log disposal' bölümüne bakın.");
+            return (int)HostExitCode.CompletedWithWarnings;
+        }
+
         return (int)HostExitCode.Success;
     }
+
+    // Our own argument errors are written in Turkish and the one state error (a run is active) is mapped; anything else (database, disk, timeout) is reported by
+    // type only, so no connection detail or raw English text reaches the operator's log.
+    private static string AuditDisposalFailureText(Exception ex)
+        => ex is ArgumentException
+            ? $"AUDIT-DISPOSAL: {ex.Message}"
+            : ex is InvalidOperationException
+                ? "AUDIT-DISPOSAL: başka bir imha çalışması sürüyor; bitmesini bekleyip yeniden deneyin."
+                : $"AUDIT-DISPOSAL: işlem tamamlanamadı ({ex.GetType().Name}). Veritabanı erişimini ve parolayı kontrol edip yeniden deneyin; "
+              + "geri dönüş adımları docs/compliance/kvkk-retention-runbook.md dosyasındaki 'Audit log disposal' bölümündedir.";
 
     private static string RequiredEnvironmentValue(
         string variable,

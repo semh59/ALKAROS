@@ -92,7 +92,7 @@ public sealed class AuditDisposalTests : IAsyncLifetime
         Assert.Equal(1L, dry.DefaultPartitionRows);
         Assert.Equal(5L, await ScalarAsync<long>("SELECT count(*) FROM audit.audit_events;"));
 
-        var applied = await disposal.RunAsync(Now, apply: true);
+        var applied = await disposal.RunAsync(Now, apply: true, operatorName: "qa.operator");
         Assert.Equal(["audit_events_y2015"], applied.Dropped.Select(p => p.Name));
         Assert.False(await ScalarAsync<bool>("SELECT to_regclass('audit.audit_events_y2015') IS NOT NULL;"));
         Assert.True(await ScalarAsync<bool>("SELECT to_regclass('audit.audit_events_y2016') IS NOT NULL;"));
@@ -103,7 +103,7 @@ public sealed class AuditDisposalTests : IAsyncLifetime
             await ScalarAsync<string>(
                 "SELECT metadata_json->>'partition' || ':' || (metadata_json->>'rows') FROM audit.audit_events WHERE event_name = 'audit.partition.disposed';"));
 
-        var again = await disposal.RunAsync(Now, apply: true);
+        var again = await disposal.RunAsync(Now, apply: true, operatorName: "qa.operator");
         Assert.Empty(again.Dropped);
         Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM audit.audit_events WHERE event_name = 'audit.partition.disposed';"));
     }
@@ -143,7 +143,7 @@ public sealed class AuditDisposalTests : IAsyncLifetime
         try
         {
             Console.SetError(err);
-            applyExit = ALKAROS.Host.Program.Main(["audit-disposal", "--db-url", _database.Url, "--apply", "--as-of", "2040-01-01"]);
+            applyExit = ALKAROS.Host.Program.Main(["audit-disposal", "--db-url", _database.Url, "--apply", "--operator", "qa.operator", "--as-of", "2040-01-01"]);
         }
         finally
         {
@@ -151,7 +151,174 @@ public sealed class AuditDisposalTests : IAsyncLifetime
         }
 
         Assert.NotEqual((int)HostExitCode.Success, applyExit);
-        Assert.Contains("cannot be combined", err.ToString(), StringComparison.Ordinal);
+        Assert.Contains("birlikte kullanılamaz", err.ToString(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task TableWideClearIsRefusedOnTheParentAndEveryPartition()
+    {
+        await CreateYearAsync(2015);
+        await ExecuteAsync("SELECT audit.guard_audit_partition('audit.audit_events_y2015'::regclass);");
+        foreach (var target in new[] { "audit.audit_events", "audit.audit_events_y2015", "audit.audit_events_y2026", "audit.audit_events_default" })
+        {
+            var ex = await Assert.ThrowsAsync<PostgresException>(() => ExecuteAsync($"TRUNCATE {target};"));
+            Assert.Contains("append-only", ex.MessageText, StringComparison.Ordinal);
+        }
+    }
+
+    [Fact]
+    public async Task EveryExistingPartitionCarriesTheClearGuard()
+    {
+        Assert.Equal(
+            await ScalarAsync<long>("SELECT count(*) + 1 FROM pg_inherits WHERE inhparent = 'audit.audit_events'::regclass;"),
+            await ScalarAsync<long>(
+                "SELECT count(*) FROM pg_trigger WHERE tgname = 'trg_audit_events_no_bulk_clear' AND NOT tgisinternal;"));
+    }
+
+    [Fact]
+    public async Task TheClearGuardMigrationRollsBackAndForwardIdempotently()
+    {
+        var folder = Path.Combine(FindRepositoryRoot(), "database", "migrations", "V1", "V1-RMD-645");
+        var up = await File.ReadAllTextAsync(Path.Combine(folder, "194-audit-bulk-clear-guard.up.sql"));
+        var down = await File.ReadAllTextAsync(Path.Combine(folder, "194-audit-bulk-clear-guard.down.sql"));
+
+        await ExecuteAsync(up);
+        await ExecuteAsync(down);
+        Assert.Equal(0L, await ScalarAsync<long>("SELECT count(*) FROM pg_trigger WHERE tgname = 'trg_audit_events_no_bulk_clear';"));
+        await ExecuteAsync(down);
+        await ExecuteAsync(up);
+        await ExecuteAsync(up);
+        Assert.True(await ScalarAsync<long>("SELECT count(*) FROM pg_trigger WHERE tgname = 'trg_audit_events_no_bulk_clear';") > 40);
+    }
+
+    [Fact]
+    public async Task ApplyNeedsAnOperatorNameAndRecordsItInTheDisposalEvent()
+    {
+        await CreateYearAsync(2015);
+        var disposal = new AuditPartitionDisposal(_dataSource!);
+
+        await Assert.ThrowsAsync<ArgumentException>(() => disposal.RunAsync(Now, apply: true));
+        await Assert.ThrowsAsync<ArgumentException>(() => disposal.RunAsync(Now, apply: true, operatorName: "  "));
+        Assert.True(await ScalarAsync<bool>("SELECT to_regclass('audit.audit_events_y2015') IS NOT NULL;"));
+
+        await disposal.RunAsync(Now, apply: true, operatorName: "qa.operator");
+        Assert.Equal(
+            "qa.operator",
+            await ScalarAsync<string>("SELECT metadata_json->>'operator' FROM audit.audit_events WHERE event_name = 'audit.partition.disposed';"));
+    }
+
+    [Fact]
+    public async Task ASecondRunWhileOneIsActiveIsRejectedAndTheLockIsReleasedAfterwards()
+    {
+        await CreateYearAsync(2015);
+        await using var holder = await _dataSource!.OpenConnectionAsync();
+        await using (var take = new NpgsqlCommand("SELECT pg_advisory_lock(@key);", holder))
+        {
+            take.Parameters.AddWithValue("key", AuditPartitionDisposal.AdvisoryLockKey);
+            await take.ExecuteNonQueryAsync();
+        }
+
+        var disposal = new AuditPartitionDisposal(_dataSource!);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => disposal.RunAsync(Now, apply: true, operatorName: "qa.operator"));
+        Assert.True(await ScalarAsync<bool>("SELECT to_regclass('audit.audit_events_y2015') IS NOT NULL;"));
+
+        await using (var release = new NpgsqlCommand("SELECT pg_advisory_unlock(@key);", holder))
+        {
+            release.Parameters.AddWithValue("key", AuditPartitionDisposal.AdvisoryLockKey);
+            await release.ExecuteNonQueryAsync();
+        }
+
+        var result = await disposal.RunAsync(Now, apply: true, operatorName: "qa.operator");
+        Assert.Single(result.Dropped);
+        var again = await disposal.RunAsync(Now, apply: false);
+        Assert.Empty(again.Dropped);
+    }
+
+    [Fact]
+    public async Task TheCommandSaysInTurkishThatAnotherRunIsActive()
+    {
+        await using var holder = await _dataSource!.OpenConnectionAsync();
+        await using (var take = new NpgsqlCommand("SELECT pg_advisory_lock(@key);", holder))
+        {
+            take.Parameters.AddWithValue("key", AuditPartitionDisposal.AdvisoryLockKey);
+            await take.ExecuteNonQueryAsync();
+        }
+
+        var exit = RunCommand(["audit-disposal", "--db-url", _database.Url], out _, out var err);
+
+        Assert.Equal((int)HostExitCode.StartupFailed, exit);
+        Assert.Contains("başka bir imha çalışması sürüyor", err, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task TheDroppedRowCountIsTheOneRecordedInTheEvent()
+    {
+        await CreateYearAsync(2015);
+        await InsertAsync("2015-03-03", "2015-07-07", "2015-09-09");
+
+        var result = await new AuditPartitionDisposal(_dataSource!).RunAsync(Now, apply: true, operatorName: "qa.operator");
+
+        Assert.Equal(3L, result.Dropped.Single().Rows);
+        Assert.Equal(3L, await ScalarAsync<long>("SELECT (metadata_json->>'rows')::bigint FROM audit.audit_events WHERE event_name = 'audit.partition.disposed';"));
+    }
+
+    [Fact]
+    public async Task TheCommandReportsRowsInTheDefaultPartitionWithAWarningExitCode()
+    {
+        var cleanExit = RunCommand(["audit-disposal", "--db-url", _database.Url], out var cleanOut, out _);
+        Assert.Equal((int)HostExitCode.Success, cleanExit);
+        Assert.Contains("default_partition_rows=0", cleanOut, StringComparison.Ordinal);
+
+        await InsertAsync("1999-01-01");
+        var warnExit = RunCommand(["audit-disposal", "--db-url", _database.Url], out var warnOut, out var warnErr);
+
+        Assert.Equal((int)HostExitCode.CompletedWithWarnings, warnExit);
+        Assert.Contains("default_partition_rows=1", warnOut, StringComparison.Ordinal);
+        Assert.Contains("UYARI", warnErr, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("--apply", "--operator")]
+    [InlineData("--unknown", "Tanınmayan")]
+    public void CommandErrorsAreInTurkishAndNameTheOption(string argument, string expected)
+    {
+        var exit = RunCommand(["audit-disposal", "--db-url", _database.Url, argument], out _, out var err);
+
+        Assert.Equal((int)HostExitCode.StartupFailed, exit);
+        Assert.Contains("AUDIT-DISPOSAL", err, StringComparison.Ordinal);
+        Assert.Contains(expected, err, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void AnUnexpectedFailureNeverPrintsTheRawExceptionTextAndPointsAtTheRunbook()
+    {
+        var exit = RunCommand(["audit-disposal", "--db-url", "postgresql://nobody@127.0.0.1:1/none"], out _, out var err);
+
+        Assert.Equal((int)HostExitCode.StartupFailed, exit);
+        Assert.Contains("kvkk-retention-runbook.md", err, StringComparison.Ordinal);
+        Assert.DoesNotContain("127.0.0.1", err, StringComparison.Ordinal);
+        Assert.DoesNotContain("nobody", err, StringComparison.Ordinal);
+    }
+
+    private static int RunCommand(string[] args, out string stdout, out string stderr)
+    {
+        var originalOut = Console.Out;
+        var originalErr = Console.Error;
+        using var outWriter = new StringWriter();
+        using var errWriter = new StringWriter();
+        try
+        {
+            Console.SetOut(outWriter);
+            Console.SetError(errWriter);
+            return ALKAROS.Host.Program.Main(args);
+        }
+        finally
+        {
+            Console.SetOut(originalOut);
+            Console.SetError(originalErr);
+            stdout = outWriter.ToString();
+            stderr = errWriter.ToString();
+        }
     }
 
     private Task CreateYearAsync(int year)

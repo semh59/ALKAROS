@@ -91,6 +91,11 @@ the most recent `orders` / `reporting.daily_business_days` timestamps.
 3. Start `api`: `docker compose start api`.
 4. Once confirmed healthy, drop `alkaros_broken_<date>`.
 
+### After a restore: disposal jobs and the master key
+
+- A backup can bring back data that was already anonymised or dropped (customer records, expired audit partitions). After promoting a restored copy run `kvkk-retention` and `audit-disposal` again as a dry run, then with `--apply` (the audit run needs `--operator <name>`); see `docs/compliance/kvkk-retention-runbook.md`. Old backups and WAL archives still contain the disposed data until they age out of the retention windows above, so a restore from one must never be used to bring disposed data back into use.
+- The secret-envelope master key (`ALKAROS_SECRET_ENVELOPE_MASTER_KEY`, in the deployment `.env`) is **not** part of any database backup. Without it every already-saved encrypted credential (relay credentials and similar) cannot be read after a restore. Keep a copy of the key in a separate secure place (for example a sealed envelope kept by the owner or a password manager), and check that it is there whenever a restore rehearsal is run.
+
 ## Corruption rejection — why it matters
 
 A backup you cannot trust is worse than no backup. `restore.sh` computes the

@@ -104,7 +104,7 @@ def test_operator_tools_are_split_into_an_ops_overlay() -> None:
     assert ops.count('profiles: ["ops"]') == 4
     assert "exec dotnet ALKAROS.Host.dll housekeeping --db-url" in ops
     assert "exec dotnet ALKAROS.Host.dll audit-disposal --db-url" in ops
-    assert "audit-disposal --db-url postgresql://alkaros@postgres:5432/alkaros --apply" in ops
+    assert "audit-disposal --db-url postgresql://alkaros@postgres:5432/alkaros --apply --operator compose-ops" in ops
     assert "/repo/deploy/docker/backup.sh" in ops
     assert "/repo/deploy/docker/basebackup.sh" in ops
 

@@ -106,6 +106,12 @@ pruned from the off-host copy (keep an overlap so you can always recover from at
 least the previous base). Never prune segments newer than the oldest base
 backup you still keep.
 
+Pruning is a manual step today (no script runs it). With the archive volume mounted, give
+`pg_archivecleanup <archive directory> <oldest kept base backup's .backup file name>` the
+label file of the oldest base backup you still keep; it removes every segment older than that.
+Run it after each verified base backup, and check the volume's free space at least weekly: a
+full archive volume makes `archive_command` fail and WAL then piles up inside the database.
+
 ## 4. What is out of scope
 
 - Streaming replication / hot standby for RPO ≈ 0 — `V15-BKP`.

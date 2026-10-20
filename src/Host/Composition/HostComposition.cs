@@ -13,6 +13,8 @@ public enum HostExitCode
     Success = 0,
     MigrationFailed = 1,
     StartupFailed = 2,
+    /// <summary>The command finished its work but found something an operator must look at.</summary>
+    CompletedWithWarnings = 3,
 }
 
 public sealed record HostCompositionOptions(

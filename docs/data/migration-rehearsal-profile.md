@@ -35,3 +35,8 @@
 ## 4. Affected Tasks
 
 - V20-MIG-001, V20-MIG-002
+
+## 5. Addendum — migrations that rewrite or guard a large table (V1-RMD-645)
+
+- Migration 173 copies the whole `audit.audit_events` table into a yearly-partitioned table inside one transaction and keeps the table locked for the duration of the copy. Rehearse it on the Large and Stress classes with the audit log filled to that volume and note the lock time before running it on a store that has been live for years; control total: `count(*)` before and after (the migration itself aborts when they differ).
+- Migration 194 adds a statement trigger to the parent and to every existing partition (metadata only, no row is touched); its control check is that the trigger count equals the partition count plus one.

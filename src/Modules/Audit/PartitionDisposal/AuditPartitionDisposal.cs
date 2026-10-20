@@ -14,11 +14,15 @@ public sealed record AuditDisposalResult(
 /// <summary>
 /// Drops yearly partitions of <c>audit.audit_events</c> whose retention has ended. The retention counts from the end of the
 /// calendar year: year Y may go once 1 January of Y + RetentionYears + 1 (UTC) has arrived. The default partition is never dropped.
-/// A partition whose name or bounds are not exactly a calendar year is left alone.
+/// A partition whose name or bounds are not exactly a calendar year is left alone. Dropping needs an operator name, which is
+/// written to the disposal event, and only one run can work at a time.
 /// </summary>
 public sealed partial class AuditPartitionDisposal(NpgsqlDataSource dataSource)
 {
     public const int RetentionYears = 10;
+
+    /// <summary>Session advisory lock key that keeps two disposal runs from working at once.</summary>
+    public const long AdvisoryLockKey = 7241001001L;
 
     [GeneratedRegex(@"^audit_events_y(\d{4})$")]
     private static partial Regex YearlyName();
@@ -26,9 +30,36 @@ public sealed partial class AuditPartitionDisposal(NpgsqlDataSource dataSource)
     public static bool IsExpired(int year, DateTimeOffset now)
         => now.UtcDateTime >= new DateTime(year + RetentionYears + 1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-    public async Task<AuditDisposalResult> RunAsync(DateTimeOffset now, bool apply, CancellationToken cancellationToken = default)
+    public async Task<AuditDisposalResult> RunAsync(
+        DateTimeOffset now, bool apply, string? operatorName = null, CancellationToken cancellationToken = default)
     {
+        if (apply && string.IsNullOrWhiteSpace(operatorName))
+            throw new ArgumentException("An operator name is required to drop partitions.", nameof(operatorName));
+
         await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
+        await using (var guard = new NpgsqlCommand("SELECT pg_try_advisory_lock(@key);", connection))
+        {
+            guard.Parameters.AddWithValue("key", AdvisoryLockKey);
+            if (!(bool)(await guard.ExecuteScalarAsync(cancellationToken))!)
+                throw new InvalidOperationException("Another audit disposal run is already active.");
+        }
+
+        try
+        {
+            return await RunLockedAsync(connection, now, apply, operatorName?.Trim(), cancellationToken);
+        }
+        finally
+        {
+            // A pooled connection keeps its session locks until it is reset, so release the lock explicitly.
+            await using var release = new NpgsqlCommand("SELECT pg_advisory_unlock(@key);", connection);
+            release.Parameters.AddWithValue("key", AdvisoryLockKey);
+            await release.ExecuteNonQueryAsync(CancellationToken.None);
+        }
+    }
+
+    private static async Task<AuditDisposalResult> RunLockedAsync(
+        NpgsqlConnection connection, DateTimeOffset now, bool apply, string? operatorName, CancellationToken cancellationToken)
+    {
         await using (var zone = new NpgsqlCommand("SET TIME ZONE 'UTC';", connection))
             await zone.ExecuteNonQueryAsync(cancellationToken);
 
@@ -64,41 +95,46 @@ public sealed partial class AuditPartitionDisposal(NpgsqlDataSource dataSource)
         if (apply)
         {
             foreach (var partition in partitions.Where(p => p.Expired))
-            {
-                await DropAsync(connection, partition, cancellationToken);
-                dropped.Add(partition);
-            }
+                dropped.Add(partition with { Rows = await DropAsync(connection, partition, operatorName!, cancellationToken) });
         }
 
         return new AuditDisposalResult(partitions, dropped, await CountAsync(connection, "audit_events_default", cancellationToken));
     }
 
-    private static async Task<long> CountAsync(NpgsqlConnection connection, string partition, CancellationToken cancellationToken)
+    private static async Task<long> CountAsync(
+        NpgsqlConnection connection, string partition, CancellationToken cancellationToken, NpgsqlTransaction? transaction = null)
     {
-        await using var command = new NpgsqlCommand($"SELECT count(*) FROM audit.\"{partition}\";", connection);
+        await using var command = new NpgsqlCommand($"SELECT count(*) FROM audit.\"{partition}\";", connection, transaction);
         return (long)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 
-    private static async Task DropAsync(NpgsqlConnection connection, AuditPartitionStatus partition, CancellationToken cancellationToken)
+    private static async Task<long> DropAsync(
+        NpgsqlConnection connection, AuditPartitionStatus partition, string operatorName, CancellationToken cancellationToken)
     {
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
-        var rows = await CountAsync(connection, partition.Name, cancellationToken);
+        // The lock makes the count the exact number of rows the drop removes.
+        await using (var guard = new NpgsqlCommand($"LOCK TABLE audit.\"{partition.Name}\" IN ACCESS EXCLUSIVE MODE;", connection, transaction))
+            await guard.ExecuteNonQueryAsync(cancellationToken);
+        var rows = await CountAsync(connection, partition.Name, cancellationToken, transaction);
         await using (var drop = new NpgsqlCommand($"DROP TABLE audit.\"{partition.Name}\";", connection, transaction))
             await drop.ExecuteNonQueryAsync(cancellationToken);
         await using (var record = new NpgsqlCommand(
             """
             INSERT INTO audit.audit_events (id, event_name, aggregate_type, aggregate_id, actor_type, reason, correlation_id, metadata_json)
             VALUES (gen_random_uuid(), 'audit.partition.disposed', 'audit_partition', gen_random_uuid(), 'system',
-                    'retention ended', @correlation, jsonb_build_object('partition', @partition, 'year', @year, 'rows', @rows));
+                    'retention ended', @correlation,
+                    jsonb_build_object('partition', @partition, 'year', @year, 'rows', @rows, 'operator', @operator));
             """, connection, transaction))
         {
             record.Parameters.AddWithValue("correlation", $"audit-disposal-{partition.Name}");
             record.Parameters.AddWithValue("partition", partition.Name);
             record.Parameters.AddWithValue("year", partition.Year);
             record.Parameters.AddWithValue("rows", rows);
+            record.Parameters.AddWithValue("operator", operatorName);
             await record.ExecuteNonQueryAsync(cancellationToken);
         }
 
         await transaction.CommitAsync(cancellationToken);
+        return rows;
     }
 }

@@ -45,15 +45,16 @@ If a step fails the job is `Failed` with the error class (e.g. an SQLSTATE) and 
 store is checked for leftovers; only a clean record is marked done in the retention list (`failed=N` otherwise, and the
 command exits with an error). A legal hold placed meanwhile also stops the job (`blocked`) before the work item is completed.
 
-### Audit events — out of scope here
+### Audit events — disposed by whole year, see "Audit log disposal" below
 
 The `V0-CMP-003` inventory lists audit logs as *anonymize after 10 years*, but
-`audit.audit_events` is enforced **append-only** by a database trigger (AUD-01):
-`UPDATE`/`DELETE` are rejected. In-place anonymization is therefore impossible by
-design. The 10-year disposal for audit needs a partition-drop approach (partition
-the table by year, drop whole old partitions) and is deferred (planned as `V1-RMD-481`).
-`IAuditSanitizer` already redacts secrets/PII patterns from audit payloads at
-write time, so the highest-risk data is not stored in the first place.
+`audit.audit_events` is enforced **append-only** by database triggers (AUD-01):
+`UPDATE`/`DELETE` and a table-wide `TRUNCATE` are rejected. In-place anonymization is
+therefore impossible by design; the 10-year disposal drops whole yearly partitions
+(`V1-RMD-481`, section "Audit log disposal" below). The Product Owner confirmed on
+2026-10-20 that the audit log is kept for 10 years. `IAuditSanitizer` redacts secrets
+from audit payloads at write time (it redacts secrets and card data, not personal data
+such as a username), so the highest-risk data is not stored in the first place.
 
 The financial columns of orders and bills are **not** touched — the row stays a
 complete financial record, only the free-text / identifying fields are scrubbed.
@@ -128,12 +129,17 @@ calendar year (`audit.audit_events_y2026`, ...) and a year is removed as a whole
 ```
 dotnet ALKAROS.Host.dll audit-disposal --db-url ...                  # dry run: lists partitions, rows and which are expired
 dotnet ALKAROS.Host.dll audit-disposal --db-url ... --as-of 2040-01-01   # preview for a date (never combined with --apply)
-dotnet ALKAROS.Host.dll audit-disposal --db-url ... --apply          # drops expired partitions
+dotnet ALKAROS.Host.dll audit-disposal --db-url ... --apply --operator "<your name>"   # drops expired partitions
 ```
 
+- `--apply` requires `--operator <name>`; the name is written to the `audit.partition.disposed` event (`metadata_json.operator`). Only one run can work at a time (a second one stops with "başka bir imha çalışması sürüyor"). The row count printed and recorded is counted under a lock, so it is exactly what the drop removed.
+- Exit codes: `0` finished, `2` failed (message in Turkish on stderr), `3` finished with a warning (rows sit in the default partition). A scheduled run must alert on any non-zero exit code (cron mail, or the scheduler's failure alert), and the last successful run date should be checked at least every six months: a disposal that never runs raises no event of its own.
+- The table-wide clear guard (`TRUNCATE`, migration 194) is a statement trigger and is not inherited by new partitions. After creating a partition by hand run `SELECT audit.guard_audit_partition('audit.audit_events_y2061'::regclass);`.
+
 - Retention counts from the end of the year: year Y is expired on 1 January of Y+11 (UTC). Nothing can expire before 1 January 2031 (first partition 2020), and the log of 2026 is kept until 2037.
-- Each drop writes an `audit.partition.disposed` event with the partition name, year and row count only.
+- Each drop writes an `audit.partition.disposed` event with the partition name, year, row count and operator name only.
 - `audit_events_default` holds any date outside the pre-created years (2020-2060); it is never dropped by the command. After 2060 new partitions must be created before the year starts.
 - There is no legal-hold class for the audit log; a hold would have to be added to `Privacy.RetentionExecution` first.
 - Schedule it with `docker compose -f compose.yaml -f compose.ops.yaml run --rm audit-disposal` (service in `compose.ops.yaml`, runs with `--apply`) at least every six months, like `kvkk-retention`.
-- A non-zero `default_partition_rows` in its summary line means rows with dates outside 2020-2060; they stay until someone creates a partition for them.
+- A non-zero `default_partition_rows` in its summary line means rows with dates outside 2020-2060; they stay until someone creates a partition for them. The command then exits with code `3` and prints a warning. To move them into a new year partition (the rows cannot be updated or deleted, so this is a copy under maintenance): stop writers, `CREATE TABLE audit.audit_events_yNNNN (LIKE audit.audit_events INCLUDING ALL)`, copy the matching rows with `INSERT ... SELECT`, verify the counts, detach and drop the old default partition inside a maintenance window, attach the new table with `ATTACH PARTITION ... FOR VALUES FROM (...) TO (...)`, re-create the default partition, and call `audit.guard_audit_partition(...)` on each new partition. Do this with a database administrator; it is not part of the disposal command.
+- After a database restore from a backup run `audit-disposal` (dry run first) and `kvkk-retention` again: a backup can bring back partitions and rows that were already disposed of (see `docs/recovery/backup-restore-runbook.md`).

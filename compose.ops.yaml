@@ -76,7 +76,9 @@ services:
   # Drops audit-log year partitions whose 10-year retention has ended. Schedule from cron at
   # least every six months (docs/compliance/kvkk-retention-runbook.md). Prints a summary line
   # (dropped=, default_partition_rows=) to the container log; to preview without dropping, run
-  # `dotnet ALKAROS.Host.dll audit-disposal --db-url ...` without --apply.
+  # `dotnet ALKAROS.Host.dll audit-disposal --db-url ...` without --apply. --apply needs --operator <name>
+  # (the scheduled run records `compose-ops`; a manual run should pass the person's name). Exit code 3 means
+  # rows sit in the default partition and need attention (see the runbook).
   audit-disposal:
     build:
       context: .
@@ -88,7 +90,7 @@ services:
     command:
       - |
         export ALKAROS_DB_PASSWORD="$(tr -d '\r\n' < /run/secrets/db_password)"
-        exec dotnet ALKAROS.Host.dll audit-disposal --db-url postgresql://alkaros@postgres:5432/alkaros --apply
+        exec dotnet ALKAROS.Host.dll audit-disposal --db-url postgresql://alkaros@postgres:5432/alkaros --apply --operator compose-ops
     restart: "no"
 
 secrets:

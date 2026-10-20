@@ -1,0 +1,13 @@
+KILLED   operator name not required
+KILLED   advisory lock ignored
+KILLED   operator not recorded
+KILLED   warning exit code lost
+KILLED   operator not required in command
+KILLED   raw exception detail printed
+KILLED   run-active message lost
+KILLED   guard only on parent
+KILLED   guard function does not raise
+restore AuditPartitionDisposal.cs: identical
+restore Program.cs: identical
+restore 194-audit-bulk-clear-guard.up.sql: identical
+mutants: 9, survived: 0
