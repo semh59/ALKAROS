@@ -1,0 +1,15 @@
+2a3b934cb39bb005370ab25f0c002b58f8d2aa0c6b6ca6f4e3b16524699bc14e */c/Users/semih/.claude/agents/qa-api-uclar.md
+0137044cbb2322734f14bde56c6dee86fd6d2152902283c0d54361c482ae65a5 */c/Users/semih/.claude/agents/qa-backend.md
+84b1dcd93cf1f81dba2c993c84796fc4dfaabe51f26be2fe26b1c22659a18328 */c/Users/semih/.claude/agents/qa-bulgu-dogrulayici.md
+c846a6767d503780b89aa186d17a85ada7728b4fd295ea04d2cf80c297ce1a1e */c/Users/semih/.claude/agents/qa-dokuman-bagimlilik.md
+b36cf83d401eaadc89538823b9cc6d7ad1336a8466e9e201dded69af4cd1a16a */c/Users/semih/.claude/agents/qa-entegrasyon-cihaz.md
+6b515175b8a8f65d254cd00389110293b2f0fcc3ee6b05f73e22a28d8e398cc3 */c/Users/semih/.claude/agents/qa-frontend.md
+fd53216174922cbdedff687c984f5d3bdbe1710484fd2642827d3e9f2be73d0d */c/Users/semih/.claude/agents/qa-guvenlik-yetki.md
+aa264fcadc6c81d365a4857147dc89e2fd0ea26ce03e1c48a9e42352f4166c02 */c/Users/semih/.claude/agents/qa-mevzuat-uyum.md
+847adcfc9e0c7bd9b5e797874836cb4b67e43776dd5374732d580f241e9ee912 */c/Users/semih/.claude/agents/qa-operasyon-gozlemlenebilirlik.md
+814715ef37621ad5b5809ebefa582170358659e5261eaf76ed9d62cbd14d9f1f */c/Users/semih/.claude/agents/qa-performans-dayaniklilik.md
+cf6728d538941229809e835f77c1e22592258664fdc18e468e59462154c1caa7 */c/Users/semih/.claude/agents/qa-sinir-mimari.md
+d679785ad3cdefc37b5cfb513ac388d07ef59ebd1b18af78b96a6acf3041bd36 */c/Users/semih/.claude/agents/qa-test-kalitesi.md
+f329a628dcbb80870343d9380213a7e47a86d875e794f395e7d47838e1f40a17 */c/Users/semih/.claude/agents/qa-uctan-uca-akis.md
+52dbeb0e51d5bf20f6f283cea555045580a11afee78b765d91f779d6d4271065 */c/Users/semih/.claude/agents/qa-ux-tasarim.md
+d625e9b710ccb8e6b98d3e822eb4e70bcdc6daa6262e816b88856d432706b080 */c/Users/semih/.claude/agents/qa-veritabani.md

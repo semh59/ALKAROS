@@ -1,0 +1,6 @@
+Dilim sayım tablosu (komut: git ls-files ... | wc -l)
+toplam dosya: 105
+src .cs: 51
+tests .cs: 22
+göç dosyası: 10
+test: Measurements 13, Messaging 42, Secrets 21, SensitiveData 23 = 99 (hepsi yeşil, exit 0)
