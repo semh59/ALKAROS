@@ -22,11 +22,14 @@
 
   <ItemGroup>
     <Compile Include="..\..\..\..\src\Modules\Audit\EventStore\**\*.cs" Link="AuditSource\%(RecursiveDir)%(Filename)%(Extension)" />
+    <Compile Include="..\..\..\..\src\Modules\Audit\AuditModule.cs" Link="AuditSource\AuditModule.cs" />
   </ItemGroup>
 
   <ItemGroup>
     <None Include="..\..\..\..\database\migrations\V1\V1-OPS-001\015-audit-log.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-OPS-001\015-audit-log.down.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <!-- Production runs the yearly-partitioned table (migration 173); the tests run on it too. -->
+    <None Include="..\..\..\..\database\migrations\V1\V1-RMD-481\173-audit-events-yearly-partitions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

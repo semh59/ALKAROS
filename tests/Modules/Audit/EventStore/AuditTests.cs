@@ -268,6 +268,130 @@ public sealed class PostgresAuditEventStoreIntegrationTests : IClassFixture<Audi
     }
 
     [Fact]
+    public async Task TheTestSchemaIsTheYearlyPartitionedProductionSchema()
+    {
+        await using var command = _dataSource.CreateCommand(
+            "SELECT c.relkind::text FROM pg_class c JOIN pg_namespace n ON n.oid = c.relnamespace WHERE n.nspname = 'audit' AND c.relname = 'audit_events';");
+        (await command.ExecuteScalarAsync()).Should().Be("p");
+    }
+
+    [Fact]
+    public async Task EveryFieldOfAnEventRoundTrips()
+    {
+        var aggregateId = Guid.NewGuid();
+        var actorId = Guid.NewGuid();
+        var occurredAt = new DateTimeOffset(2026, 3, 4, 5, 6, 7, TimeSpan.Zero).AddTicks(1230);
+        var evt = new AuditEvent(
+            Guid.NewGuid(), "Round.Trip", "Widget", aggregateId, "User", "corr-rt-" + Guid.NewGuid().ToString("N")[..8],
+            actorId, "because", "cause-1", "{\"a\":1}", "{\"b\":2}", "{\"c\":3}", occurredAt);
+
+        await _eventStore.AppendAsync(evt);
+
+        var stored = Assert.Single(await _eventStore.GetByAggregateAsync("Widget", aggregateId));
+        stored.Id.Should().Be(evt.Id);
+        stored.EventName.Should().Be("Round.Trip");
+        stored.ActorId.Should().Be(actorId);
+        stored.ActorType.Should().Be("User");
+        stored.Reason.Should().Be("because");
+        stored.CausationId.Should().Be("cause-1");
+        stored.CorrelationId.Should().Be(evt.CorrelationId);
+        stored.BeforeStateJson.Should().Contain("\"a\"");
+        stored.AfterStateJson.Should().Contain("\"b\"");
+        stored.MetadataJson.Should().Contain("\"c\"");
+        stored.OccurredAt.Should().BeCloseTo(occurredAt, TimeSpan.FromMilliseconds(1));
+    }
+
+    [Fact]
+    public async Task ReadsAreOrderedByOccurredAtThenIdAndFilteredByAggregateType()
+    {
+        var aggregateId = Guid.NewGuid();
+        var correlationId = "corr-order-" + Guid.NewGuid().ToString("N")[..8];
+        var t = new DateTimeOffset(2026, 5, 1, 0, 0, 0, TimeSpan.Zero);
+        var low = Guid.Parse("00000000-0000-0000-0000-000000000001");
+        var high = Guid.Parse("00000000-0000-0000-0000-000000000002");
+        AuditEvent Make(Guid id, string name, DateTimeOffset at, string type = "Order")
+            => new(id, name, type, aggregateId, "User", correlationId, occurredAt: at);
+
+        await _eventStore.AppendBatchAsync(
+        [
+            Make(Guid.NewGuid(), "Third", t.AddMinutes(10)),
+            Make(high, "SecondB", t.AddMinutes(5)),
+            Make(low, "SecondA", t.AddMinutes(5)),
+            Make(Guid.NewGuid(), "First", t),
+            Make(Guid.NewGuid(), "OtherType", t, type: "Invoice"),
+        ]);
+
+        (await _eventStore.GetByAggregateAsync("Order", aggregateId)).Select(e => e.EventName)
+            .Should().Equal("First", "SecondA", "SecondB", "Third");
+        (await _eventStore.GetByCorrelationIdAsync(correlationId)).Select(e => e.EventName)
+            .Should().ContainInOrder("SecondA", "SecondB", "Third");
+        (await _eventStore.GetByAggregateAsync("Invoice", aggregateId)).Should().ContainSingle(e => e.EventName == "OtherType");
+    }
+
+    [Fact]
+    public async Task AnUnboundedReadReturnsTheCapAndFailsLoudBeyondIt()
+    {
+        var atCap = "corr-cap-" + Guid.NewGuid().ToString("N")[..8];
+        var overCap = "corr-over-" + Guid.NewGuid().ToString("N")[..8];
+        var atCapAggregate = Guid.NewGuid();
+        var overCapAggregate = Guid.NewGuid();
+        foreach (var (correlationId, aggregateId, count) in new[] { (atCap, atCapAggregate, 5000), (overCap, overCapAggregate, 5001) })
+        {
+            await using var insert = _dataSource.CreateCommand(
+                """
+                INSERT INTO audit.audit_events (id, event_name, aggregate_type, aggregate_id, actor_type, correlation_id)
+                SELECT gen_random_uuid(), 'Cap.Test', 'Cap', @aggregate, 'System', @correlation FROM generate_series(1, @count);
+                """);
+            insert.Parameters.AddWithValue("correlation", correlationId);
+            insert.Parameters.AddWithValue("aggregate", aggregateId);
+            insert.Parameters.AddWithValue("count", count);
+            await insert.ExecuteNonQueryAsync();
+        }
+
+        (await _eventStore.GetByCorrelationIdAsync(atCap)).Should().HaveCount(5000);
+        await ((Func<Task>)(() => _eventStore.GetByCorrelationIdAsync(overCap))).Should().ThrowAsync<InvalidOperationException>();
+        (await _eventStore.GetByAggregateAsync("Cap", atCapAggregate)).Should().HaveCount(5000);
+        await ((Func<Task>)(() => _eventStore.GetByAggregateAsync("Cap", overCapAggregate))).Should().ThrowAsync<InvalidOperationException>();
+    }
+
+    [Fact]
+    public async Task ABatchIsSanitizedAndAllOrNothing()
+    {
+        var correlationId = "corr-batch2-" + Guid.NewGuid().ToString("N")[..8];
+        var aggregateId = Guid.NewGuid();
+        var withSecrets = new AuditEvent(
+            Guid.NewGuid(), "Batch.Secret", "Order", aggregateId, "User", correlationId,
+            beforeStateJson: "{\"password\": \"pw-before\"}", afterStateJson: "{\"auth_token\": \"tok-after\"}",
+            metadataJson: "{\"api-key\": \"key-meta\"}");
+
+        await _eventStore.AppendBatchAsync([withSecrets]);
+
+        var stored = Assert.Single(await _eventStore.GetByCorrelationIdAsync(correlationId));
+        stored.BeforeStateJson.Should().NotContain("pw-before");
+        stored.AfterStateJson.Should().NotContain("tok-after");
+        stored.MetadataJson.Should().NotContain("key-meta");
+
+        var atomicCorrelation = "corr-atomic-" + Guid.NewGuid().ToString("N")[..8];
+        var good = new AuditEvent(Guid.NewGuid(), "Batch.Good", "Order", Guid.NewGuid(), "User", atomicCorrelation);
+        var bad = new AuditEvent(Guid.NewGuid(), "", "Order", Guid.NewGuid(), "User", atomicCorrelation);
+        await ((Func<Task>)(() => _eventStore.AppendBatchAsync([good, bad]))).Should().ThrowAsync<ArgumentException>();
+        (await _eventStore.GetByCorrelationIdAsync(atomicCorrelation)).Should().BeEmpty();
+    }
+
+    [Fact]
+    public void TheModuleRegistersTheStoreAndSanitizerAsSingletons()
+    {
+        var context = new ALKAROS.ModuleComposition.ModuleContext();
+
+        new ALKAROS.Audit.AuditModule().Register(context);
+
+        context.Services.Single(d => d.ServiceType == typeof(IAuditEventStore)).Lifetime
+            .Should().Be(ALKAROS.ModuleComposition.ModuleContext.ServiceLifetime.Singleton);
+        context.Services.Single(d => d.ServiceType == typeof(IAuditSanitizer)).Lifetime
+            .Should().Be(ALKAROS.ModuleComposition.ModuleContext.ServiceLifetime.Singleton);
+    }
+
+    [Fact]
     public async Task AppendBatchAsyncRejectsANullEventAndWritesNothing()
     {
         var correlationId = "corr-null-" + Guid.NewGuid().ToString("N")[..8];

@@ -1,0 +1,12 @@
+KILLED   read order without the id tie-break
+KILLED   read order descending
+KILLED   cap read without the extra row
+KILLED   aggregate cap check is off by one
+KILLED   both cap checks off by one
+KILLED   correlation cap check off by one
+KILLED   aggregate type filter dropped
+KILLED   store registered transient
+KILLED   sanitizer registered transient
+restore PostgresAuditEventStore.cs: identical
+restore AuditModule.cs: identical
+mutants: 9, survived: 0

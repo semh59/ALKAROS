@@ -11,7 +11,7 @@ public sealed class AuditModule : IModule
 
     public void Register(ModuleContext context)
     {
-        context.RegisterTransient<IAuditEventStore, PostgresAuditEventStore>();
-        context.RegisterTransient<IAuditSanitizer, AuditSanitizer>();
+        context.RegisterSingleton<IAuditEventStore, PostgresAuditEventStore>();
+        context.RegisterSingleton<IAuditSanitizer, AuditSanitizer>();
     }
 }

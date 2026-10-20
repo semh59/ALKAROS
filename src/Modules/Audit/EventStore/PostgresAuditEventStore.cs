@@ -80,7 +80,7 @@ public sealed class PostgresAuditEventStore : IAuditEventStore
                    metadata_json, occurred_at
             FROM audit.audit_events
             WHERE aggregate_type = @aggregate_type AND aggregate_id = @aggregate_id
-            ORDER BY occurred_at ASC
+            ORDER BY occurred_at ASC, id ASC
             LIMIT {MaxUnpagedRows + 1};
             """;
         cmd.Parameters.AddWithValue("aggregate_type", aggregateType);
@@ -116,7 +116,7 @@ public sealed class PostgresAuditEventStore : IAuditEventStore
                    metadata_json, occurred_at
             FROM audit.audit_events
             WHERE correlation_id = @correlation_id
-            ORDER BY occurred_at ASC
+            ORDER BY occurred_at ASC, id ASC
             LIMIT {MaxUnpagedRows + 1};
             """;
         cmd.Parameters.AddWithValue("correlation_id", correlationId);
