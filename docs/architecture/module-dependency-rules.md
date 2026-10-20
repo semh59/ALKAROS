@@ -110,8 +110,11 @@ Notes:
   batch's atomic stock-sufficiency check and its effects still commit or roll
   back as one unit; the sufficiency check itself stays a same-transaction
   read of `inventory.stock_balances`, which V0-ARC-001 already allows.
-- Reporting, Audit, Observability and Licensing are cross-cutting; they never
-  appear as direct-call targets of domain flows.
+- Reporting, Observability and Licensing are cross-cutting; they never
+  appear as direct-call targets of domain flows. Audit is the one exception:
+  modules append to it through `IAuditEventStore` (rows 28-30 and the Host
+  orchestration rows below) so the audit row commits with the business change,
+  but no domain decision ever reads from it.
 - Table state coupling to Order/Bill is an application-layer invariant, not a
   database constraint (PDF:II.5.15). After a merge / transfer / unmerge, Table
   Management writes one table event to the outbox in its own transaction;

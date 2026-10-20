@@ -123,6 +123,8 @@ will report all zeros — that is expected.
 
 ## Audit log disposal (10 years)
 
+Where the retention length of the audit log is written: the `DisposalMatrix` entry (365 x 10 days) only classifies the category; the effective rule is the yearly partition drop below (year Y expires on 1 January of Y+11). `privacy.retention_rules` carries no audit rule and the row-level anonymizer never touches `audit.audit_events`. Open Product Owner decisions, not guessed here: whether any audit partition may be put on legal hold before its drop, and whether the tax-record period (5 years for most books, 10 years for some documents) should lengthen the audit retention of fiscal events.
+
 `audit.audit_events` is append-only (a trigger refuses UPDATE and DELETE), so its rows are never edited. The table is split into one partition per
 calendar year (`audit.audit_events_y2026`, ...) and a year is removed as a whole:
 

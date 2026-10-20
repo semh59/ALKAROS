@@ -4,7 +4,7 @@ using Npgsql;
 using NpgsqlTypes;
 
 /// <summary>
-/// PostgreSQL implementation of the append-only audit log store (V1-OPS-001, PDF:II.9, PDF:III.24).
+/// PostgreSQL implementation of the append-only audit log store.
 /// Enforces payload sanitization and fails closed on unauthorized modification attempts.
 /// </summary>
 public sealed class PostgresAuditEventStore : IAuditEventStore

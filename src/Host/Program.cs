@@ -320,10 +320,9 @@ public static class Program
     ///   identity.users (inactive + 1 year)      -> mask username/display_name, null email/phone
     ///   orders.orders.notes / order_items.notes (5 years, terminal order)  -> '[anonymized]'
     ///   table_mgmt.table_reservations.reason    (5 years, closed reservation) -> '[anonymized]'
-    /// audit.audit_events is out of scope: it is enforced append-only by a
-    /// database trigger (AUD-01). Its 10-year anonymization needs a partition-
-    /// drop mechanism and is deferred; IAuditSanitizer already
-    /// redacts secrets on write.
+    /// audit.audit_events is out of scope: it is append-only (database trigger), so
+    /// its 10-year disposal drops whole yearly partitions through the separate
+    /// audit-disposal command; IAuditSanitizer redacts secrets on write.
     /// Fiscal receipts, Z reports, invoices and the financial columns are
     /// legal-retention and are never touched. Default is a dry run; pass
     /// --apply to write. Idempotent (an already-'[anonymized]' row is skipped).

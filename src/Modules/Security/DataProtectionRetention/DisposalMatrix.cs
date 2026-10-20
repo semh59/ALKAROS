@@ -42,6 +42,7 @@ public static class DisposalMatrix
             [DataCategory.UserCredentials] = null,
             [DataCategory.OrderNotes] = TimeSpan.FromDays(365 * 5),
             [DataCategory.ProviderPayloads] = TimeSpan.FromDays(365 * 7),
+            // Not row anonymization: the append-only log is disposed by whole yearly partition (see the KVKK retention runbook).
             [DataCategory.AuditLogs] = TimeSpan.FromDays(365 * 10),
             [DataCategory.FiscalData] = null,
             [DataCategory.InvoiceData] = null,

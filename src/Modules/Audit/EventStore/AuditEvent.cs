@@ -1,7 +1,7 @@
 ﻿namespace ALKAROS.Audit.EventStore;
 
 /// <summary>
-/// Immutable audit log event entry (PDF:II.2.22, PDF:II.9, PDF:III.24).
+/// Immutable audit log event entry.
 /// Records security and operational transactions with actor, reason, correlation,
 /// and sanitized before/after state snapshots.
 /// </summary>
