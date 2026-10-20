@@ -42,4 +42,4 @@ V1-RMD-595 bulgusu F25'in kalan parçası: `HostOrchestrationEdgesStayWithinTheA
 
 ## Handoff
 
-- None
+- V1-RMD-660
