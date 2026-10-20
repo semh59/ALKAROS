@@ -45,4 +45,4 @@ V1-RMD-596 bulguları B001, B004 ve B014 kapanır. B001: `koli`, `adet` gibi ayn
 
 ## Handoff
 
-- None
+- V1-RMD-661
