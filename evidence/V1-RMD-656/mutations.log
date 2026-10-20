@@ -1,0 +1,6 @@
+KILLED   allow-list entry removed
+KILLED   new raw audit insert in another file
+KILLED   audit module not excluded
+restore ModuleBoundaryTests.cs: identical
+restore Program.cs: identical
+mutants: 3, survived: 0

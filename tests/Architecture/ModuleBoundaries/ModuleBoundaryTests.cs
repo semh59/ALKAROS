@@ -267,7 +267,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.Orders.OrderStockConsumption"] =
                 ["ALKAROS.Inventory", "ALKAROS.Orders", "ALKAROS.Recipes"],
             ["ALKAROS.Host.Experience.Orders.SentItemVoid"] =
-                ["ALKAROS.Billing", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders"],
+                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders"],
             ["ALKAROS.Host.Experience.Orders"] =
                 ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders", "ALKAROS.Recipes", "ALKAROS.Settings"],
             ["ALKAROS.Host.Experience.KitchenOperations"] =
@@ -330,6 +330,34 @@ public static class ModuleBoundaryTests
                     "or integration project together with its first implementation file, not before.");
             }
         }
+    }
+
+    // Every audit row goes through AuditEventWriter (sanitizer + validation). Orders and OnlineOrdering may not reference the
+    // Audit module (module-dependency-rules.md), so these three files still write their fixed-shape rows by SQL: catalog
+    // reason codes, ids and statuses (item exceptions), provider and field names (credentials), provider and state (store
+    // status). No other file may add a raw insert.
+    private static readonly string[] RawAuditInsertAllowList =
+    [
+        "src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs",
+        "src/Modules/OnlineOrdering/Credentials/PostgresOnlinePlatformCredentialStore.cs",
+        "src/Modules/OnlineOrdering/StoreStatus/OnlineStoreStatusService.cs",
+    ];
+
+    [Fact]
+    public static void RawAuditInsertsStayOnTheKnownList()
+    {
+        var repoRoot = FindRepoRoot();
+        var auditModule = Path.Combine(repoRoot, "src", "Modules", "Audit") + Path.DirectorySeparatorChar;
+        var offenders = Directory.GetFiles(Path.Combine(repoRoot, "src"), "*.cs", SearchOption.AllDirectories)
+            .Where(f => !f.StartsWith(auditModule, StringComparison.Ordinal)
+                && !f.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
+                && !f.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}"))
+            .Where(f => File.ReadAllText(f).Contains("INSERT INTO audit.audit_events", StringComparison.OrdinalIgnoreCase))
+            .Select(f => Path.GetRelativePath(repoRoot, f).Replace(Path.DirectorySeparatorChar, '/'))
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+
+        Assert.Equal(RawAuditInsertAllowList.Order(StringComparer.Ordinal), offenders);
     }
 
     private static string FindRepoRoot()
