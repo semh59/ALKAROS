@@ -1,0 +1,10 @@
+SURVIVED requeue audit not in the update transaction
+KILLED   initialize saved before audit
+KILLED   rotate saved before audit
+KILLED   revoke saved before audit
+KILLED   rollback saved before audit
+KILLED   backfill intent event name changed
+restore OutboxAdministration.cs: identical
+restore SecretRotationAdministration.cs: identical
+restore OrderBacklogAdministration.cs: identical
+mutants: 6, survived: 1

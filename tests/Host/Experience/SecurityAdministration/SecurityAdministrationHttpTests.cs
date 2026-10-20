@@ -665,6 +665,92 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NotFound, repeat.StatusCode);
     }
 
+    // Makes the database refuse one audit event, as a broken audit write would, and removes the refusal afterwards.
+    private async Task<IAsyncDisposable> RefuseAuditEventAsync(string eventName)
+    {
+        await using (var install = _database.DataSource.CreateCommand(
+            """
+            CREATE OR REPLACE FUNCTION audit.test_refuse_event() RETURNS trigger AS $fn$
+            BEGIN
+                IF NEW.event_name = TG_ARGV[0] THEN
+                    RAISE EXCEPTION 'audit write refused by the test';
+                END IF;
+                RETURN NEW;
+            END;
+            $fn$ LANGUAGE plpgsql;
+            """))
+            await install.ExecuteNonQueryAsync();
+        await using (var attach = _database.DataSource.CreateCommand(
+            $"CREATE TRIGGER test_refuse_event BEFORE INSERT ON audit.audit_events FOR EACH ROW EXECUTE FUNCTION audit.test_refuse_event('{eventName}');"))
+            await attach.ExecuteNonQueryAsync();
+        return new AuditRefusal(_database.DataSource);
+    }
+
+    private sealed class AuditRefusal(Npgsql.NpgsqlDataSource dataSource) : IAsyncDisposable
+    {
+        public async ValueTask DisposeAsync()
+        {
+            await using var detach = dataSource.CreateCommand("DROP TRIGGER IF EXISTS test_refuse_event ON audit.audit_events;");
+            await detach.ExecuteNonQueryAsync();
+        }
+    }
+
+    [Fact]
+    public async Task AnActionWhoseAuditRecordCannotBeWrittenLeavesNoTraceOfTheActionItself()
+    {
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V1", V1Value);
+        var deadLetterId = await _database.SeedDeadOutboxMessageAsync();
+        var (settled, _) = await _database.SeedOrderAsync(ALKAROS.Orders.OrderAggregate.OrderState.Submitted, ALKAROS.Billing.BillFoundation.BillState.Paid);
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+
+        await using (await RefuseAuditEventAsync("outbox.dead-letter.requeued"))
+        {
+            using var requeue = await manager.PostAsync($"{OutboxPath}/dead-letters/{deadLetterId:D}/requeue?dryRun=false", null);
+            Assert.False(requeue.IsSuccessStatusCode);
+            Assert.Equal("dead", await _database.OutboxMessageStatusAsync(deadLetterId));
+        }
+
+        await using (await RefuseAuditEventAsync("secret.rotation.initialize"))
+        {
+            using var initialize = await manager.PostAsync($"{RotationPath}/initialize", null);
+            Assert.False(initialize.IsSuccessStatusCode);
+            Assert.Equal(HttpStatusCode.NotFound, (await manager.GetAsync(RotationPath)).StatusCode);
+        }
+
+        Assert.Equal(HttpStatusCode.OK, (await manager.PostAsync($"{RotationPath}/initialize", null)).StatusCode);
+        Environment.SetEnvironmentVariable("ALKAROS_SECRET_OFFSITE_BACKUP_V2", V2Value);
+        async Task<JsonElement> StateAsync() => (await manager.GetAsync(RotationPath)).Content.ReadFromJsonAsync<JsonElement>().Result;
+
+        await using (await RefuseAuditEventAsync("secret.rotation.rotate"))
+        {
+            using var rotate = await manager.PostAsJsonAsync($"{RotationPath}/rotate", new { OverlapHours = 24 });
+            Assert.False(rotate.IsSuccessStatusCode);
+            Assert.Equal(1, (await StateAsync()).GetProperty("activeVersion").GetInt32());
+        }
+
+        Assert.Equal(HttpStatusCode.OK, (await manager.PostAsJsonAsync($"{RotationPath}/rotate", new { OverlapHours = 24 })).StatusCode);
+        await using (await RefuseAuditEventAsync("secret.rotation.revoke"))
+        {
+            using var revoke = await manager.PostAsJsonAsync($"{RotationPath}/revoke", new { Version = 1 });
+            Assert.False(revoke.IsSuccessStatusCode);
+            Assert.Equal(0, (await StateAsync()).GetProperty("revokedVersionCount").GetInt32());
+        }
+
+        await using (await RefuseAuditEventAsync("secret.rotation.rollback"))
+        {
+            using var rollback = await manager.PostAsJsonAsync($"{RotationPath}/rollback", new { Version = 1 });
+            Assert.False(rollback.IsSuccessStatusCode);
+            Assert.Equal(2, (await StateAsync()).GetProperty("activeVersion").GetInt32());
+        }
+
+        await using (await RefuseAuditEventAsync("orders.backfill.started"))
+        {
+            using var close = await manager.PostAsync($"{OrdersPath}/close-settled?dryRun=false", null);
+            Assert.False(close.IsSuccessStatusCode);
+            Assert.Equal("Submitted", await _database.OrderStatusOfAsync(settled));
+        }
+    }
+
     [Fact]
     public async Task RequeuingAnUnknownDeadLetterIsNotFound()
     {

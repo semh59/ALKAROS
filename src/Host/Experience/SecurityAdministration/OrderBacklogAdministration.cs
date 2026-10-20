@@ -98,6 +98,20 @@ public static class OrderBacklogAdministration
             if (isDryRun)
                 return Results.Ok(new CloseSettledOrdersResultV1(true, candidates.Count, 0, 0, sample));
 
+            // The intent is recorded before anything closes: if it cannot be written, no order is touched.
+            await auditEvents.AppendAsync(
+                new AuditEvent(
+                    id: Guid.NewGuid(),
+                    eventName: "orders.backfill.started",
+                    aggregateType: "OrderBacklog",
+                    aggregateId: AuditAggregateId,
+                    actorType: "User",
+                    correlationId: context.TraceIdentifier,
+                    actorId: actorId,
+                    reason: "Ödemesi tamamlanmış eski siparişleri kapatma başlatıldı.",
+                    afterStateJson: JsonSerializer.Serialize(new { requested = candidates.Count })),
+                cancellationToken);
+
             var closed = new List<Guid>();
             var failed = 0;
             foreach (var candidate in candidates)

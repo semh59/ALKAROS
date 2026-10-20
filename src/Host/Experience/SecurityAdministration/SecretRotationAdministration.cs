@@ -64,8 +64,8 @@ public static class SecretRotationAdministration
                 return Conflict(context, "KEY_MATERIAL_MISSING", missing);
 
             var record = SecretRotationRecord.Initialize(name, DateTimeOffset.UtcNow);
-            store.Save(record);
             await AuditAsync(audit, context, "initialize", name, 1, cancellationToken);
+            store.Save(record);
             return Results.Ok(SecretRotationSnapshot.From(record));
         });
 
@@ -86,8 +86,8 @@ public static class SecretRotationAdministration
                 return Conflict(context, "KEY_MATERIAL_MISSING", missing);
 
             var rotated = record.Rotate(DateTimeOffset.UtcNow, TimeSpan.FromHours(request.OverlapHours));
-            store.Save(rotated);
             await AuditAsync(audit, context, "rotate", name, nextVersion, cancellationToken);
+            store.Save(rotated);
             return Results.Ok(SecretRotationSnapshot.From(rotated));
         });
 
@@ -104,8 +104,8 @@ public static class SecretRotationAdministration
                 return Conflict(context, "ACTIVE_VERSION", "Etkin sürüm iptal edilemez; önce yeni bir sürüme döndürün.");
 
             var revoked = record.Revoke(request.Version, DateTimeOffset.UtcNow);
-            store.Save(revoked);
             await AuditAsync(audit, context, "revoke", name, request.Version, cancellationToken);
+            store.Save(revoked);
             return Results.Ok(SecretRotationSnapshot.From(revoked));
         });
 
@@ -122,8 +122,8 @@ public static class SecretRotationAdministration
                 return Conflict(context, "KEY_MATERIAL_MISSING", missing);
 
             var rolledBack = record.Rollback(request.Version, DateTimeOffset.UtcNow);
-            store.Save(rolledBack);
             await AuditAsync(audit, context, "rollback", name, request.Version, cancellationToken);
+            store.Save(rolledBack);
             return Results.Ok(SecretRotationSnapshot.From(rolledBack));
         });
 

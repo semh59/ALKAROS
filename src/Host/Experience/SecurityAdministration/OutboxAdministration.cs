@@ -99,38 +99,43 @@ public static class OutboxAdministration
             if (isDryRun)
                 return Results.Ok(new OutboxRequeueResultV1(true, id, eventType, aggregateType, aggregateId, attemptCount, false));
 
-            await using (var updateCommand = dataSource.CreateCommand(
-                """
-                UPDATE outbox_messages
-                SET status = 'pending', attempt_count = 0, next_retry_at = NULL, claimed_at = NULL
-                WHERE id = @id AND status = 'dead';
-                """))
+            await using (var connection = await dataSource.OpenConnectionAsync(cancellationToken))
+            await using (var transaction = await connection.BeginTransactionAsync(cancellationToken))
             {
-                updateCommand.Parameters.AddWithValue("id", id);
-                var affected = await updateCommand.ExecuteNonQueryAsync(cancellationToken);
-                if (affected != 1)
-                    return Results.Json(
-                        new ApiErrorEnvelope(new ApiError(
-                            "NOT_FOUND", "Ölü mektup bulunamadı ya da zaten yeniden kuyruğa alınmış.",
-                            StatusCodes.Status404NotFound, context.TraceIdentifier)),
-                        statusCode: StatusCodes.Status404NotFound);
-            }
+                await using (var updateCommand = new NpgsqlCommand(
+                    """
+                    UPDATE outbox_messages
+                    SET status = 'pending', attempt_count = 0, next_retry_at = NULL, claimed_at = NULL
+                    WHERE id = @id AND status = 'dead';
+                    """, connection, transaction))
+                {
+                    updateCommand.Parameters.AddWithValue("id", id);
+                    var affected = await updateCommand.ExecuteNonQueryAsync(cancellationToken);
+                    if (affected != 1)
+                        return Results.Json(
+                            new ApiErrorEnvelope(new ApiError(
+                                "NOT_FOUND", "Ölü mektup bulunamadı ya da zaten yeniden kuyruğa alınmış.",
+                                StatusCodes.Status404NotFound, context.TraceIdentifier)),
+                            statusCode: StatusCodes.Status404NotFound);
+                }
 
-            await auditEvents.AppendAsync(
-                new AuditEvent(
-                    id: Guid.NewGuid(),
-                    eventName: "outbox.dead-letter.requeued",
-                    aggregateType: "OutboxDeadLetter",
-                    aggregateId: AuditAggregateId,
-                    actorType: "User",
-                    correlationId: context.TraceIdentifier,
-                    actorId: actorId,
-                    reason: "Kalıcı başarısız olmuş entegrasyon olayı yeniden kuyruğa alındı.",
-                    afterStateJson: JsonSerializer.Serialize(new
-                    {
-                        messageId = id, eventType, aggregateType, aggregateId, priorAttemptCount = attemptCount,
-                    })),
-                cancellationToken);
+                await auditEvents.AppendAsync(
+                    new AuditEvent(
+                        id: Guid.NewGuid(),
+                        eventName: "outbox.dead-letter.requeued",
+                        aggregateType: "OutboxDeadLetter",
+                        aggregateId: AuditAggregateId,
+                        actorType: "User",
+                        correlationId: context.TraceIdentifier,
+                        actorId: actorId,
+                        reason: "Kalıcı başarısız olmuş entegrasyon olayı yeniden kuyruğa alındı.",
+                        afterStateJson: JsonSerializer.Serialize(new
+                        {
+                            messageId = id, eventType, aggregateType, aggregateId, priorAttemptCount = attemptCount,
+                        })),
+                    connection, transaction, cancellationToken);
+                await transaction.CommitAsync(cancellationToken);
+            }
 
             return Results.Ok(new OutboxRequeueResultV1(false, id, eventType, aggregateType, aggregateId, attemptCount, true));
         });
