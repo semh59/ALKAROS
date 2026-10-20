@@ -62,6 +62,18 @@ public sealed class UnitConverter : IUnitConverter
             return;
         }
 
+        // A physical dimension (mass, volume) has one true factor; only Count units (case, pack, ...) have
+        // no fixed ratio and take an operator-defined one.
+        if (_units.TryGetValue(from, out var knownFrom) && _units.TryGetValue(to, out var knownTo)
+            && knownFrom.Dimension == knownTo.Dimension && knownFrom.Dimension != UnitDimension.Count)
+        {
+            var physicalFactor = knownFrom.FactorToBase / knownTo.FactorToBase;
+            if (Math.Abs(factor - physicalFactor) > InvertibilityTolerance)
+                throw new ContradictoryUnitConversionException(
+                    $"Cannot register conversion from '{from}' to '{to}' with factor {factor}: both are {knownFrom.Dimension} units and the standard factor is {physicalFactor}.");
+            return;
+        }
+
         // Validate contradictory conversion with inverse if already exists - UNLESS this exact (from, to)
         // direction was already directly registered before (a legitimate factor update/correction for the
         // same pair, not a contradiction with some other pair's own reverse).
@@ -79,6 +91,26 @@ public sealed class UnitConverter : IUnitConverter
         _customConversions[(from, to)] = factor;
         _customConversions[(to, from)] = 1.0m / factor;
         _directlyRegisteredPairs[(from, to)] = true;
+    }
+
+    // The reverse of a registered rule divides by the registered factor instead of multiplying by its stored
+    // 1/factor: 24 / 12 is exactly 2, 24 * 0.08333... is not.
+    private bool TryApplyCustom(string from, string to, decimal quantity, out decimal result)
+    {
+        if (_directlyRegisteredPairs.ContainsKey((from, to)) && _customConversions.TryGetValue((from, to), out var factor))
+        {
+            result = quantity * factor;
+            return true;
+        }
+
+        if (_directlyRegisteredPairs.ContainsKey((to, from)) && _customConversions.TryGetValue((to, from), out var reverseFactor))
+        {
+            result = quantity / reverseFactor;
+            return true;
+        }
+
+        result = 0m;
+        return false;
     }
 
     public bool IsKnownUnit(string unitCode)
@@ -117,16 +149,12 @@ public sealed class UnitConverter : IUnitConverter
         var from = fromUnitCode.Trim().ToLowerInvariant();
         var to = toUnitCode.Trim().ToLowerInvariant();
 
+        // An operator-registered rule wins over the standard table: koli -> adet is 12, not the 1:1 of two Count units.
+        if (TryApplyCustom(from, to, quantity, out result))
+            return true;
+
         if (!_units.TryGetValue(from, out var fromDef) || !_units.TryGetValue(to, out var toDef))
-        {
-            // Check direct custom conversion
-            if (_customConversions.TryGetValue((from, to), out var factor))
-            {
-                result = quantity * factor;
-                return true;
-            }
             return false;
-        }
 
         if (from == to)
         {
@@ -142,12 +170,7 @@ public sealed class UnitConverter : IUnitConverter
             return true;
         }
 
-        // Cross-dimension: requires custom bridge rule
-        if (_customConversions.TryGetValue((from, to), out var customFactor))
-        {
-            result = quantity * customFactor;
-            return true;
-        }
+        // Cross-dimension without a custom bridge rule cannot be converted.
 
         return false;
     }
@@ -164,6 +187,9 @@ public sealed class UnitConverter : IUnitConverter
 
         var from = fromUnitCode.Trim().ToLowerInvariant();
         var to = toUnitCode.Trim().ToLowerInvariant();
+
+        if (from != to && TryApplyCustom(from, to, quantity, out var registered))
+            return registered;
 
         if (!_units.TryGetValue(from, out var fromDef))
             throw new UnknownUnitException(fromUnitCode);
@@ -188,11 +214,6 @@ public sealed class UnitConverter : IUnitConverter
             }
 
             return targetQty;
-        }
-
-        if (_customConversions.TryGetValue((from, to), out var customFactor))
-        {
-            return quantity * customFactor;
         }
 
         throw new IncompatibleUnitDimensionException(from, fromDef.Dimension, to, toDef.Dimension);

@@ -1,0 +1,6 @@
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.Measurements.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.Tests.dll
+D:\PROJECT\ALKAROS\tests\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+
+Başarılı!  - Başarısız:     0, Başarılı:    18, Atlanan:     0, Toplam:    18, Süre: 89 ms - ALKAROS.Measurements.Tests.dll (net8.0)

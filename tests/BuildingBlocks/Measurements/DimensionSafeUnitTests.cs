@@ -162,4 +162,55 @@ public sealed class DimensionSafeUnitTests
             roundtrip.Should().Be(val);
         });
     }
+
+    [Fact]
+    public void ACustomFactorBetweenTwoCountUnitsOverridesTheStandardTable()
+    {
+        _converter.RegisterConversion("koli", "adet", 12m);
+
+        _converter.Convert(2m, "koli", "adet").Should().Be(24m);
+        _converter.Convert(24m, "adet", "koli").Should().Be(2m);
+        _converter.TryConvert(2m, "koli", "adet", out var forward).Should().BeTrue();
+        forward.Should().Be(24m);
+        _converter.TryConvert(24m, "adet", "koli", out var backward).Should().BeTrue();
+        backward.Should().Be(2m);
+    }
+
+    [Fact]
+    public void ACorrectedCountFactorReplacesTheEarlierOneInBothDirections()
+    {
+        _converter.RegisterConversion("koli", "adet", 12m);
+        _converter.RegisterConversion("koli", "adet", 24m);
+
+        _converter.Convert(1m, "koli", "adet").Should().Be(24m);
+        _converter.TryConvert(24m, "adet", "koli", out var koli).Should().BeTrue();
+        koli.Should().Be(1m);
+    }
+
+    [Fact]
+    public void CanConvertAndConvertAgreeForACustomRuleOnAnUnregisteredUnit()
+    {
+        _converter.RegisterConversion("kasa", "adet", 12m);
+
+        _converter.CanConvert("kasa", "adet").Should().BeTrue();
+        _converter.Convert(2m, "kasa", "adet").Should().Be(24m);
+        _converter.Convert(24m, "adet", "kasa").Should().Be(2m);
+    }
+
+    [Fact]
+    public void ACustomFactorThatContradictsAPhysicalUnitTableIsRejected()
+    {
+        var act = () => _converter.RegisterConversion("kg", "g", 5m);
+
+        act.Should().Throw<ContradictoryUnitConversionException>();
+        _converter.Convert(1m, "kg", "g").Should().Be(1000m);
+    }
+
+    [Fact]
+    public void RegisteringThePhysicalFactorItselfIsAccepted()
+    {
+        _converter.RegisterConversion("kg", "g", 1000m);
+
+        _converter.Convert(2m, "kg", "g").Should().Be(2000m);
+    }
 }

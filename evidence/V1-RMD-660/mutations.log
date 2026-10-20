@@ -1,0 +1,12 @@
+KILLED   TryConvert ignores custom rule first
+KILLED   Convert ignores custom rule first
+KILLED   reverse multiplies instead of divides
+KILLED   direct rule disabled
+KILLED   physical contradiction accepted
+KILLED   Count units treated as physical
+COMPILE  no background retry
+KILLED   no background retry
+KILLED   retry never stops
+restore UnitConverter.cs: identical
+restore UnitConversionLoaderHostedService.cs: identical
+mutants: 8, survived: 0

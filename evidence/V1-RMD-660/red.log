@@ -1,0 +1,63 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.Measurements.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.Tests.dll
+D:\PROJECT\ALKAROS\tests\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:00.33]     ALKAROS.Measurements.Tests.DimensionSafeUnitTests.ACustomFactorThatContradictsAPhysicalUnitTableIsRejected [FAIL]
+[xUnit.net 00:00:00.34]     ALKAROS.Measurements.Tests.DimensionSafeUnitTests.ACustomFactorBetweenTwoCountUnitsOverridesTheStandardTable [FAIL]
+[xUnit.net 00:00:00.34]     ALKAROS.Measurements.Tests.DimensionSafeUnitTests.ACorrectedCountFactorReplacesTheEarlierOneInBothDirections [FAIL]
+[xUnit.net 00:00:00.36]     ALKAROS.Measurements.Tests.DimensionSafeUnitTests.CanConvertAndConvertAgreeForACustomRuleOnAnUnregisteredUnit [FAIL]
+  Başarısız ALKAROS.Measurements.Tests.DimensionSafeUnitTests.ACustomFactorThatContradictsAPhysicalUnitTableIsRejected [65 ms]
+  Hata İletisi:
+   Expected a <ALKAROS.Measurements.ContradictoryUnitConversionException> to be thrown, but no exception was thrown.
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message)
+   at FluentAssertions.Specialized.DelegateAssertionsBase`2.ThrowInternal[TException](Exception exception, String because, Object[] becauseArgs)
+   at FluentAssertions.Specialized.DelegateAssertions`2.Throw[TException](String because, Object[] becauseArgs)
+   at ALKAROS.Measurements.Tests.DimensionSafeUnitTests.ACustomFactorThatContradictsAPhysicalUnitTableIsRejected() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\Measurements\DimensionSafeUnitTests.cs:line 205
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Başarısız ALKAROS.Measurements.Tests.DimensionSafeUnitTests.ACustomFactorBetweenTwoCountUnitsOverridesTheStandardTable [2 ms]
+  Hata İletisi:
+   Expected _converter.Convert(2m, "koli", "adet") to be 24M, but found 2M (difference of -22).
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)
+   at ALKAROS.Measurements.Tests.DimensionSafeUnitTests.ACustomFactorBetweenTwoCountUnitsOverridesTheStandardTable() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\Measurements\DimensionSafeUnitTests.cs:line 171
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Başarısız ALKAROS.Measurements.Tests.DimensionSafeUnitTests.ACorrectedCountFactorReplacesTheEarlierOneInBothDirections [1 ms]
+  Hata İletisi:
+   Expected _converter.Convert(1m, "koli", "adet") to be 24M, but found 1M (difference of -23).
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)
+   at ALKAROS.Measurements.Tests.DimensionSafeUnitTests.ACorrectedCountFactorReplacesTheEarlierOneInBothDirections() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\Measurements\DimensionSafeUnitTests.cs:line 185
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+  Başarısız ALKAROS.Measurements.Tests.DimensionSafeUnitTests.CanConvertAndConvertAgreeForACustomRuleOnAnUnregisteredUnit [< 1 ms]
+  Hata İletisi:
+   ALKAROS.Measurements.UnknownUnitException : Measurement unit 'kasa' is not registered.
+  Yığın İzleme:
+     at ALKAROS.Measurements.UnitConverter.Convert(Decimal quantity, String fromUnitCode, String toUnitCode) in D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\UnitConverter.cs:line 169
+   at ALKAROS.Measurements.Tests.DimensionSafeUnitTests.CanConvertAndConvertAgreeForACustomRuleOnAnUnregisteredUnit() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\Measurements\DimensionSafeUnitTests.cs:line 196
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)
+
+Başarısız! - Başarısız:     4, Başarılı:    14, Atlanan:     0, Toplam:    18, Süre: 201 ms - ALKAROS.Measurements.Tests.dll (net8.0)

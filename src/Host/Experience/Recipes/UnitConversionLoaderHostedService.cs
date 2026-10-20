@@ -21,9 +21,9 @@ namespace ALKAROS.Host.Experience.Recipes;
 /// This service is the one place that loads them into the now-<c>Singleton</c> <see cref="IUnitConverter"/>
 /// at startup. A conversion added AFTER startup takes effect immediately too —
 /// <see cref="RecipeManagementEndpoints"/>'s own POST handler calls <see cref="IUnitConverter.RegisterConversion"/>
-/// on the same shared singleton right after persisting, so no restart is needed going forward.
+/// on the same shared singleton (it validates there before it persists), so no restart is needed going forward. A failed startup load is retried in the background.
 /// </summary>
-public sealed class UnitConversionLoaderHostedService : IHostedService
+public sealed class UnitConversionLoaderHostedService : IHostedService, IDisposable
 {
     private static readonly Action<ILogger, string, string, Exception> LogRejectedConversion =
         LoggerMessage.Define<string, string>(
@@ -38,7 +38,7 @@ public sealed class UnitConversionLoaderHostedService : IHostedService
             new EventId(5911, nameof(LogLoadFailed)),
             "Failed to load stored unit conversions into the runtime converter at startup; the Host still " +
             "starts (a missing custom conversion is the same broken state this fix corrects, not worse), " +
-            "but no custom conversion is usable until the next successful load.");
+            "but no custom conversion is usable until a retry succeeds.");
 
     private readonly IUnitConverter _converter;
     private readonly IUnitConversionRepository _conversions;
@@ -54,13 +54,49 @@ public sealed class UnitConversionLoaderHostedService : IHostedService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
+    private static readonly TimeSpan MaxRetryDelay = TimeSpan.FromMinutes(1);
+
+    private readonly CancellationTokenSource _stopping = new();
+    private Task _retry = Task.CompletedTask;
+
+    /// <summary>First wait before retrying a failed startup load; doubles up to one minute.</summary>
+    public TimeSpan RetryDelay { get; init; } = TimeSpan.FromSeconds(5);
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
-        // The Microsoft.Extensions.Hosting host AWAITS every registered IHostedService.StartAsync before
-        // the app is considered started - a transient database outage at exactly the wrong moment must
-        // never block the whole Host from serving any other, unrelated request just to load a nice-to-have
-        // list of custom unit conversions. Caught broadly (not just NpgsqlException) because this is a
-        // best-effort warm-up, not a required dependency the rest of the app relies on synchronously.
+        // The host awaits every IHostedService.StartAsync before it counts as started, so a database outage at
+        // that moment must not block it: the first attempt is awaited, a failed one is retried in the background.
+        if (!await TryLoadAsync(cancellationToken).ConfigureAwait(false))
+            _retry = RetryUntilLoadedAsync(_stopping.Token);
+    }
+
+    public async Task StopAsync(CancellationToken cancellationToken)
+    {
+        await _stopping.CancelAsync().ConfigureAwait(false);
+        await _retry.ConfigureAwait(false);
+    }
+
+    public void Dispose() => _stopping.Dispose();
+
+    private async Task RetryUntilLoadedAsync(CancellationToken stopping)
+    {
+        var delay = RetryDelay;
+        try
+        {
+            do
+            {
+                await Task.Delay(delay, stopping).ConfigureAwait(false);
+                delay = TimeSpan.FromTicks(Math.Min(delay.Ticks * 2, MaxRetryDelay.Ticks));
+            }
+            while (!await TryLoadAsync(stopping).ConfigureAwait(false));
+        }
+        catch (OperationCanceledException) when (stopping.IsCancellationRequested)
+        {
+        }
+    }
+
+    private async Task<bool> TryLoadAsync(CancellationToken cancellationToken)
+    {
         IReadOnlyList<UnitConversion> active;
         try
         {
@@ -69,7 +105,7 @@ public sealed class UnitConversionLoaderHostedService : IHostedService
         catch (Exception ex) when (ex is NpgsqlException or TimeoutException or OperationCanceledException)
         {
             LogLoadFailed(_logger, ex);
-            return;
+            return false;
         }
 
         foreach (var conversion in active)
@@ -86,7 +122,7 @@ public sealed class UnitConversionLoaderHostedService : IHostedService
                 LogRejectedConversion(_logger, conversion.FromUnitCode, conversion.ToUnitCode, ex);
             }
         }
-    }
 
-    public Task StopAsync(CancellationToken cancellationToken) => Task.CompletedTask;
+        return true;
+    }
 }
