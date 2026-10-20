@@ -1,0 +1,7 @@
+KILLED   not-charged audit after commit
+KILLED   claim audit after commit
+KILLED   approval audit after commit
+KILLED   rejection audit after commit
+restore ManualPaymentResolutionService.cs: identical
+restore ManualCardConfirmationService.cs: identical
+mutants: 4, survived: 0

@@ -219,19 +219,20 @@ public static partial class DualScreenApplication
             try
             {
                 var result = await resolution.MarkNotChargedAsync(
-                    paymentId, principal.UserId, request.Reason ?? string.Empty, cancellationToken);
-                await auditEvents.AppendAsync(
-                    new AuditEvent(
-                        id: Guid.NewGuid(),
-                        eventName: "payment.manual-resolution.not-charged",
-                        aggregateType: "Payment",
-                        aggregateId: paymentId,
-                        actorType: "User",
-                        correlationId: context.TraceIdentifier,
-                        actorId: principal.UserId,
-                        reason: request.Reason?.Trim(),
-                        beforeStateJson: JsonSerializer.Serialize(new { status = result.PreviousStatus, billId }),
-                        afterStateJson: JsonSerializer.Serialize(new { status = result.NewStatus, billId })),
+                    paymentId, principal.UserId, request.Reason ?? string.Empty,
+                    (resolved, connection, transaction, token) => auditEvents.AppendAsync(
+                        new AuditEvent(
+                            id: Guid.NewGuid(),
+                            eventName: "payment.manual-resolution.not-charged",
+                            aggregateType: "Payment",
+                            aggregateId: paymentId,
+                            actorType: "User",
+                            correlationId: context.TraceIdentifier,
+                            actorId: principal.UserId,
+                            reason: request.Reason?.Trim(),
+                            beforeStateJson: JsonSerializer.Serialize(new { status = resolved.PreviousStatus, billId }),
+                            afterStateJson: JsonSerializer.Serialize(new { status = resolved.NewStatus, billId })),
+                        connection, transaction, token),
                     cancellationToken);
                 // V1-RMD-412 (V1-RMD-393 F-06): the unresolved attempt was what kept an otherwise settled check
                 // open; like card approval and every tender, try to close it now (a check still short stays open).
@@ -280,18 +281,19 @@ public static partial class DualScreenApplication
             try
             {
                 var claim = await confirmationService.RequestAsync(
-                    paymentId, principal.UserId, request.SlipNumber ?? string.Empty, request.Note, cancellationToken);
-                await auditEvents.AppendAsync(
-                    new AuditEvent(
-                        id: Guid.NewGuid(),
-                        eventName: "payment.manual-resolution.card-charged-requested",
-                        aggregateType: "Payment",
-                        aggregateId: paymentId,
-                        actorType: "User",
-                        correlationId: context.TraceIdentifier,
-                        actorId: principal.UserId,
-                        reason: request.Note?.Trim(),
-                        afterStateJson: JsonSerializer.Serialize(new { confirmationId = claim.Id, slipNumber = claim.SlipNumber, amount = claim.Amount, billId })),
+                    paymentId, principal.UserId, request.SlipNumber ?? string.Empty, request.Note,
+                    (claimed, connection, transaction, token) => auditEvents.AppendAsync(
+                        new AuditEvent(
+                            id: Guid.NewGuid(),
+                            eventName: "payment.manual-resolution.card-charged-requested",
+                            aggregateType: "Payment",
+                            aggregateId: paymentId,
+                            actorType: "User",
+                            correlationId: context.TraceIdentifier,
+                            actorId: principal.UserId,
+                            reason: request.Note?.Trim(),
+                            afterStateJson: JsonSerializer.Serialize(new { confirmationId = claimed.Id, slipNumber = claimed.SlipNumber, amount = claimed.Amount, billId })),
+                        connection, transaction, token),
                     cancellationToken);
                 return Results.Ok(new CardConfirmationResultV1(claim.Id, claim.Status.ToString()));
             }
@@ -320,22 +322,24 @@ public static partial class DualScreenApplication
                 context, terminalId, store, authorization, ApplicationPermissions.ReconciliationManage, cancellationToken);
             try
             {
-                var decided = await confirmationService.ApproveAsync(confirmationId, billId, principal.UserId, request?.Note, cancellationToken);
-                await auditEvents.AppendAsync(
-                    new AuditEvent(
-                        id: Guid.NewGuid(),
-                        eventName: "payment.manual-resolution.card-charged-approved",
-                        aggregateType: "Payment",
-                        aggregateId: decided.PaymentId,
-                        actorType: "User",
-                        correlationId: context.TraceIdentifier,
-                        actorId: principal.UserId,
-                        reason: request?.Note?.Trim(),
-                        afterStateJson: JsonSerializer.Serialize(new
-                        {
-                            confirmationId = decided.Id, slipNumber = decided.SlipNumber, amount = decided.Amount,
-                            requestedBy = decided.RequestedBy, approvedBy = principal.UserId, billId,
-                        })),
+                var decided = await confirmationService.ApproveAsync(
+                    confirmationId, billId, principal.UserId, request?.Note,
+                    (approved, connection, transaction, token) => auditEvents.AppendAsync(
+                        new AuditEvent(
+                            id: Guid.NewGuid(),
+                            eventName: "payment.manual-resolution.card-charged-approved",
+                            aggregateType: "Payment",
+                            aggregateId: approved.PaymentId,
+                            actorType: "User",
+                            correlationId: context.TraceIdentifier,
+                            actorId: principal.UserId,
+                            reason: request?.Note?.Trim(),
+                            afterStateJson: JsonSerializer.Serialize(new
+                            {
+                                confirmationId = approved.Id, slipNumber = approved.SlipNumber, amount = approved.Amount,
+                                requestedBy = approved.RequestedBy, approvedBy = principal.UserId, billId,
+                            })),
+                        connection, transaction, token),
                     cancellationToken);
                 var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
                 return Results.Ok(new CardConfirmationResultV1(decided.Id, decided.Status.ToString(), closed));
@@ -368,18 +372,20 @@ public static partial class DualScreenApplication
                 context, terminalId, store, authorization, ApplicationPermissions.ReconciliationManage, cancellationToken);
             try
             {
-                var decided = await confirmationService.RejectAsync(confirmationId, billId, principal.UserId, request?.Note, cancellationToken);
-                await auditEvents.AppendAsync(
-                    new AuditEvent(
-                        id: Guid.NewGuid(),
-                        eventName: "payment.manual-resolution.card-charged-rejected",
-                        aggregateType: "Payment",
-                        aggregateId: decided.PaymentId,
-                        actorType: "User",
-                        correlationId: context.TraceIdentifier,
-                        actorId: principal.UserId,
-                        reason: request?.Note?.Trim(),
-                        afterStateJson: JsonSerializer.Serialize(new { confirmationId = decided.Id, slipNumber = decided.SlipNumber, billId })),
+                var decided = await confirmationService.RejectAsync(
+                    confirmationId, billId, principal.UserId, request?.Note,
+                    (rejected, connection, transaction, token) => auditEvents.AppendAsync(
+                        new AuditEvent(
+                            id: Guid.NewGuid(),
+                            eventName: "payment.manual-resolution.card-charged-rejected",
+                            aggregateType: "Payment",
+                            aggregateId: rejected.PaymentId,
+                            actorType: "User",
+                            correlationId: context.TraceIdentifier,
+                            actorId: principal.UserId,
+                            reason: request?.Note?.Trim(),
+                            afterStateJson: JsonSerializer.Serialize(new { confirmationId = rejected.Id, slipNumber = rejected.SlipNumber, billId })),
+                        connection, transaction, token),
                     cancellationToken);
                 return Results.Ok(new CardConfirmationResultV1(decided.Id, decided.Status.ToString()));
             }

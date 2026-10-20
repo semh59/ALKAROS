@@ -24,8 +24,10 @@ public sealed class ManualPaymentResolutionService : IManualPaymentResolutionSer
     }
 
     public async Task<ManualPaymentResolutionResult> MarkNotChargedAsync(
-        Guid paymentId, Guid actorUserId, string reason, CancellationToken cancellationToken = default)
+        Guid paymentId, Guid actorUserId, string reason, InTransactionRecorder<ManualPaymentResolutionResult> record,
+        CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(record);
         var trimmed = reason?.Trim();
         if (string.IsNullOrEmpty(trimmed))
             throw new ManualResolutionReasonInvalidException("A reason is required.");
@@ -60,8 +62,10 @@ public sealed class ManualPaymentResolutionService : IManualPaymentResolutionSer
         resolved = resolved.Decline(note, actorUserId);
 
         await _paymentRepository.SaveAsync(resolved, expectedRowVersion, connection, transaction, cancellationToken);
+        var result = new ManualPaymentResolutionResult(payment.Id, payment.BillId, previous, resolved.Status.ToString());
+        await record(result, connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
 
-        return new ManualPaymentResolutionResult(payment.Id, payment.BillId, previous, resolved.Status.ToString());
+        return result;
     }
 }

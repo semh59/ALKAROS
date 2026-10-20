@@ -11,14 +11,17 @@ namespace ALKAROS.Payments.ManualResolution;
 public interface IManualCardConfirmationService
 {
     Task<ManualCardConfirmation> RequestAsync(
-        Guid paymentId, Guid requesterUserId, string slipNumber, string? note, CancellationToken cancellationToken = default);
+        Guid paymentId, Guid requesterUserId, string slipNumber, string? note, InTransactionRecorder<ManualCardConfirmation> record,
+        CancellationToken cancellationToken = default);
 
     /// <summary><paramref name="billId"/> must be the confirmation's own bill; anything else is "not found" and changes nothing.</summary>
     Task<ManualCardConfirmation> ApproveAsync(
-        Guid confirmationId, Guid billId, Guid approverUserId, string? note, CancellationToken cancellationToken = default);
+        Guid confirmationId, Guid billId, Guid approverUserId, string? note, InTransactionRecorder<ManualCardConfirmation> record,
+        CancellationToken cancellationToken = default);
 
     Task<ManualCardConfirmation> RejectAsync(
-        Guid confirmationId, Guid billId, Guid userId, string? note, CancellationToken cancellationToken = default);
+        Guid confirmationId, Guid billId, Guid userId, string? note, InTransactionRecorder<ManualCardConfirmation> record,
+        CancellationToken cancellationToken = default);
 }
 
 /// <summary>
@@ -56,8 +59,10 @@ public sealed partial class ManualCardConfirmationService : IManualCardConfirmat
     }
 
     public async Task<ManualCardConfirmation> RequestAsync(
-        Guid paymentId, Guid requesterUserId, string slipNumber, string? note, CancellationToken cancellationToken = default)
+        Guid paymentId, Guid requesterUserId, string slipNumber, string? note, InTransactionRecorder<ManualCardConfirmation> record,
+        CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(record);
         var slip = NormalizeSlip(slipNumber);
         var trimmedNote = NormalizeNote(note);
 
@@ -88,13 +93,16 @@ public sealed partial class ManualCardConfirmationService : IManualCardConfirmat
                 : new ManualResolutionAlreadyPendingException(paymentId);
         }
 
+        await record(confirmation, connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return confirmation;
     }
 
     public async Task<ManualCardConfirmation> ApproveAsync(
-        Guid confirmationId, Guid billId, Guid approverUserId, string? note, CancellationToken cancellationToken = default)
+        Guid confirmationId, Guid billId, Guid approverUserId, string? note, InTransactionRecorder<ManualCardConfirmation> record,
+        CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(record);
         var trimmedNote = NormalizeNote(note);
         var actualBillId = await BillOfAsync(confirmationId, cancellationToken);
         if (actualBillId != billId)
@@ -148,17 +156,21 @@ public sealed partial class ManualCardConfirmationService : IManualCardConfirmat
             confirmation.Id, ManualCardConfirmationStatus.Approved, approverUserId, decidedAt, trimmedNote,
             confirmation.RowVersion, connection, transaction, cancellationToken);
 
-        await transaction.CommitAsync(cancellationToken);
-        return confirmation with
+        var approvedConfirmation = confirmation with
         {
             Status = ManualCardConfirmationStatus.Approved, DecidedBy = approverUserId, DecidedAt = decidedAt,
             DecisionNote = trimmedNote, RowVersion = confirmation.RowVersion + 1,
         };
+        await record(approvedConfirmation, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return approvedConfirmation;
     }
 
     public async Task<ManualCardConfirmation> RejectAsync(
-        Guid confirmationId, Guid billId, Guid userId, string? note, CancellationToken cancellationToken = default)
+        Guid confirmationId, Guid billId, Guid userId, string? note, InTransactionRecorder<ManualCardConfirmation> record,
+        CancellationToken cancellationToken = default)
     {
+        ArgumentNullException.ThrowIfNull(record);
         var trimmedNote = NormalizeNote(note);
         var actualBillId = await BillOfAsync(confirmationId, cancellationToken);
         if (actualBillId != billId)
@@ -177,12 +189,14 @@ public sealed partial class ManualCardConfirmationService : IManualCardConfirmat
         await _confirmations.DecideAsync(
             confirmation.Id, ManualCardConfirmationStatus.Rejected, userId, decidedAt, trimmedNote,
             confirmation.RowVersion, connection, transaction, cancellationToken);
-        await transaction.CommitAsync(cancellationToken);
-        return confirmation with
+        var rejectedConfirmation = confirmation with
         {
             Status = ManualCardConfirmationStatus.Rejected, DecidedBy = userId, DecidedAt = decidedAt,
             DecisionNote = trimmedNote, RowVersion = confirmation.RowVersion + 1,
         };
+        await record(rejectedConfirmation, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return rejectedConfirmation;
     }
 
     private async Task<Guid> BillOfAsync(Guid confirmationId, CancellationToken cancellationToken)

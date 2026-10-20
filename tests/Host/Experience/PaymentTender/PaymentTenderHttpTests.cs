@@ -5,6 +5,7 @@ using System.Text.Json;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Payments.ManualResolution;
 using ALKAROS.Orders.OrderAggregate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -709,6 +710,45 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         => $"{TendersPath(terminalId, billId)}confirmations/{confirmationId:D}/{decision}";
 
     [Fact]
+    public async Task AManualResolutionWhoseAuditRecordCannotBeWrittenIsNotKept()
+    {
+        var terminalId = Guid.NewGuid();
+        var cashier = await _database.SeedCashierSessionAsync(terminalId, "rmd649-cashier");
+        var billId = await _database.SeedBillAsync(payable: 40m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paymentId = await CreateUnsettledPaymentAsync(client, terminalId, billId, cashier, "rmd649-1");
+        await _database.SeedManagerSessionAsync(terminalId, "rmd649-manager-a");
+        await _database.SeedManagerSessionAsync(terminalId, "rmd649-manager-b");
+        var (userA, userB) = await _database.TwoUsersAsync();
+        InTransactionRecorder<ManualPaymentResolutionResult> failResolution = (_, _, _, _) => throw new InvalidOperationException("audit write failed");
+        InTransactionRecorder<ManualCardConfirmation> failConfirmation = (_, _, _, _) => throw new InvalidOperationException("audit write failed");
+        var resolution = app.Services.GetRequiredService<IManualPaymentResolutionService>();
+        var confirmations = app.Services.GetRequiredService<IManualCardConfirmationService>();
+
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => resolution.MarkNotChargedAsync(paymentId, userA, "Kart çekilmedi.", failResolution));
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => confirmations.RequestAsync(paymentId, userA, "FIS-649", null, failConfirmation));
+        Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentId));
+
+        // No claim was kept, so a real one is still accepted; its approval and rejection that cannot be audited are undone.
+        var confirmationId = (await confirmations.RequestAsync(paymentId, userA, "FIS-649", null, (_, _, _, _) => Task.CompletedTask)).Id;
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => confirmations.ApproveAsync(confirmationId, billId, userB, null, failConfirmation));
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => confirmations.RejectAsync(confirmationId, billId, userB, null, failConfirmation));
+
+        Assert.Equal("Unknown", await _database.PaymentStatusAsync(paymentId));
+        Assert.Equal(0m, (await (await GetAsync(client, TendersPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>())
+            .GetProperty("allocatedTotal").GetDecimal());
+        Assert.Equal(0, await _database.AuditEventCountAsync("payment.manual-resolution.not-charged", paymentId));
+        var pending = (await (await GetAsync(client, TendersPath(terminalId, billId), cashier)).Content.ReadFromJsonAsync<JsonElement>())
+            .GetProperty("unsettledPayment").GetProperty("pendingConfirmation");
+        Assert.Equal("FIS-649", pending.GetProperty("slipNumber").GetString());
+    }
+
+    [Fact]
     public async Task ACardChargeClaimedByOneManagerAndApprovedByAnotherSettlesThePaymentClosesTheBillAndIsAudited()
     {
         var terminalId = Guid.NewGuid();
@@ -1045,6 +1085,16 @@ internal sealed class PaymentTenderHttpTestDatabase
         await using var command = DataSource.CreateCommand("SELECT count(*) FROM payments.payments WHERE bill_id = @id;");
         command.Parameters.AddWithValue("id", billId);
         return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<(Guid First, Guid Second)> TwoUsersAsync()
+    {
+        await using var command = DataSource.CreateCommand("SELECT user_id FROM identity.users ORDER BY user_id LIMIT 2;");
+        await using var reader = await command.ExecuteReaderAsync();
+        Assert.True(await reader.ReadAsync());
+        var first = reader.GetGuid(0);
+        Assert.True(await reader.ReadAsync());
+        return (first, reader.GetGuid(0));
     }
 
     public async Task<string> PaymentStatusAsync(Guid paymentId)

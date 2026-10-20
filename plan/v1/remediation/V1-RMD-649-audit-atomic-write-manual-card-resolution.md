@@ -1,7 +1,7 @@
 # V1-RMD-649 - Denetim kaydının iş işlemiyle birlikte yazılması (manuel kart çözümleme)
 
 - Task ID: V1-RMD-649
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: implementation
 - Surface state: Planned
