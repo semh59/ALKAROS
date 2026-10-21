@@ -49,6 +49,23 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnOversizedBatchWithoutASessionIsStillRefusedAsUnauthorized()
+    {
+        var terminalId = Guid.NewGuid();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var actions = Enumerable.Range(0, OfflineReconciliationEndpoints.MaxActionsPerBatch + 1)
+            .Select(index => new OfflineAuthorizedActionV1(
+                $"http-recon-nosession-{index}", "bills.comp", Guid.NewGuid(), "waiter", "CustomerChange", 1m, DateTimeOffset.UtcNow))
+            .ToList();
+
+        using var response = await client.PostAsJsonAsync(
+            Path(terminalId), new ReconcileOfflineActionsRequest(Guid.NewGuid(), actions));
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+    }
+
+    [Fact]
     public async Task AnUnknownBudgetIsRejectedWithNotFound()
     {
         var terminalId = Guid.NewGuid();
@@ -376,7 +393,10 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();
         var budget = body.GetProperty("offlineBudget");
         Assert.Equal("waiter", budget.GetProperty("roleCode").GetString());
-        var line = Assert.Single(budget.GetProperty("lines").EnumerateArray());
+        var lines = budget.GetProperty("lines").EnumerateArray().ToList();
+        Assert.Contains(lines, candidate => candidate.GetProperty("permissionCode").GetString() == "bills.discount"
+            && candidate.GetProperty("limitAmount").GetDecimal() == 100m);
+        var line = Assert.Single(lines, candidate => candidate.GetProperty("permissionCode").GetString() == "bills.comp");
         Assert.Equal("bills.comp", line.GetProperty("permissionCode").GetString());
         Assert.Equal(50m, line.GetProperty("limitAmount").GetDecimal());
         Assert.Equal(3, line.GetProperty("maxCount").GetInt32());

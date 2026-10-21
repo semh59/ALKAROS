@@ -62,11 +62,11 @@ public static class OfflineReconciliationEndpoints
             CancellationToken cancellationToken) =>
         {
             ArgumentNullException.ThrowIfNull(request);
-            if (request.Actions is null || request.Actions.Count > MaxActionsPerBatch)
-                throw new ArgumentException("A reconnect batch carries at most " + MaxActionsPerBatch + " actions.");
             var cashierToken = context.Request.Cookies[DualScreenApplication.CashierCookieName];
             var principal = await sessions.AuthenticateCashierAsync(cashierToken, terminalId, cancellationToken)
                 ?? throw new OfflineReconciliationUnauthorizedException();
+            if (request.Actions is null || request.Actions.Count > MaxActionsPerBatch)
+                throw new ArgumentException("A reconnect batch carries at most " + MaxActionsPerBatch + " actions.");
 
             // Found by an independent audit (2026-09-06): a request's BudgetId and every action's RequesterUserId
             // must belong to the authenticated caller — a cashier who learned another employee's budgetId could

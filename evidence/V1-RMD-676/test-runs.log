@@ -1,0 +1,4 @@
+== tests/Host/Experience/OfflineReconciliation/ALKAROS.Host.Experience.OfflineReconciliation.Tests.csproj
+Başarılı!  - Başarısız:     0, Başarılı:    13, Atlanan:     0, Toplam:    13, Süre: 36 s - ALKAROS.Host.Experience.OfflineReconciliation.Tests.dll (net8.0)
+== tests/Architecture/ApiConventions/ALKAROS.Architecture.ApiConventions.Tests.csproj
+Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 17 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)
