@@ -1,5 +1,6 @@
 using System.IO;
 using System.Text.RegularExpressions;
+using ALKAROS.Identity.Authorization.Tests.Grants;
 using FluentAssertions;
 using Npgsql;
 using Xunit;
@@ -152,5 +153,56 @@ public sealed class AuthorizationGuardDatabaseTests : IClassFixture<DelegationDa
         await FluentActions
             .Invoking(() => _db.ExecuteAsync($"UPDATE identity.authorization_delegations SET revoked_at = NULL WHERE delegation_id = '{id}';"))
             .Should().ThrowAsync<PostgresException>().WithMessage("*already revoked*");
+    }
+}
+
+public sealed class WaiterDiscountPolicySeedTests : IClassFixture<GrantDatabase>
+{
+    private static readonly string Dir = Path.Combine(FindRoot(), "database", "migrations", "V1", "V1-RMD-674");
+    private readonly GrantDatabase _db;
+
+    public WaiterDiscountPolicySeedTests(GrantDatabase db) => _db = db;
+
+    private static string FindRoot()
+    {
+        var dir = AppContext.BaseDirectory;
+        while (dir is not null && !File.Exists(Path.Combine(dir, "ALKAROS.slnx")))
+            dir = Path.GetDirectoryName(dir);
+        return dir ?? throw new InvalidOperationException("Could not locate the repository root.");
+    }
+
+    private Task<int> ApplyUpAsync() => _db.ExecuteAsync(File.ReadAllText(Path.Combine(Dir, "196-waiter-discount-policy.up.sql")));
+
+    private Task<string> PolicyAsync() => _db.ScalarAsync<string>(
+        "SELECT mode || ':' || limit_amount || ':' || max_count || ':' || window_seconds FROM identity.authorization_policies WHERE permission_code = 'bills.discount' AND role_code = 'waiter';");
+
+    [Fact]
+    public async Task TheSeedGivesAWaiterAHundredLiraDiscountLimitAndLeavesComplimentaryAndVoidAlone()
+    {
+        await ApplyUpAsync();
+        await ApplyUpAsync();
+
+        (await PolicyAsync()).Should().Be("auto_within:100.00:10:28800");
+        (await _db.ScalarAsync<long>(
+            "SELECT count(*) FROM identity.authorization_policies WHERE permission_code IN ('bills.comp', 'bills.void');"))
+            .Should().Be(0);
+    }
+
+    [Fact]
+    public async Task ARowAManagerAlreadySetIsNotOverwrittenAndDownRemovesOnlyTheSeededRow()
+    {
+        await _db.ExecuteAsync("DELETE FROM identity.authorization_policies;");
+        await _db.ExecuteAsync(
+            "INSERT INTO identity.authorization_policies (permission_code, role_code, mode, limit_amount, max_count, window_seconds) VALUES ('bills.discount', 'waiter', 'auto_within', 40, 3, 3600);");
+        await ApplyUpAsync();
+        (await PolicyAsync()).Should().Be("auto_within:40.00:3:3600");
+
+        await _db.ExecuteAsync(File.ReadAllText(Path.Combine(Dir, "196-waiter-discount-policy.down.sql")));
+        (await PolicyAsync()).Should().Be("auto_within:40.00:3:3600", "the manager's row is not the seeded one");
+
+        await _db.ExecuteAsync("DELETE FROM identity.authorization_policies;");
+        await ApplyUpAsync();
+        await _db.ExecuteAsync(File.ReadAllText(Path.Combine(Dir, "196-waiter-discount-policy.down.sql")));
+        (await _db.ScalarAsync<long>("SELECT count(*) FROM identity.authorization_policies;")).Should().Be(0);
     }
 }

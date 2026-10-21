@@ -36,6 +36,23 @@ public sealed class PostgresAuthorizationDelegationRepositoryTests : IClassFixtu
     }
 
     [Fact]
+    public async Task ADelegationStopsCoveringOnceItsDelegatorIsDeactivated()
+    {
+        var request = Request();
+        await _db.ExecuteAsync(
+            $"INSERT INTO identity.users (user_id, username, password_hash, display_name) VALUES ('{request.DelegatorUserId}', 'delegator-{request.DelegatorUserId:N}', 'x', 'Devreden');");
+        await _repository.CreateAsync(request, _now);
+
+        (await _repository.FindCoveringAsync(request.GranteeUserId, "bills.comp", 100m, _now.AddMinutes(10)))
+            .Should().NotBeNull("the delegator is still active");
+
+        await _db.ExecuteAsync($"UPDATE identity.users SET active = false WHERE user_id = '{request.DelegatorUserId}';");
+
+        (await _repository.FindCoveringAsync(request.GranteeUserId, "bills.comp", 100m, _now.AddMinutes(10)))
+            .Should().BeNull("a deactivated delegator's delegation no longer authorizes anything");
+    }
+
+    [Fact]
     public async Task TheDatabaseCheckAlsoRejectsASelfDelegation()
     {
         // Bypass DelegationRequest.Validate: the table's own CHECK must still refuse

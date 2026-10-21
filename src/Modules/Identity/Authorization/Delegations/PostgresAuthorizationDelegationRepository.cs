@@ -76,6 +76,9 @@ public sealed class PostgresAuthorizationDelegationRepository : IAuthorizationDe
               AND revoked_at IS NULL
               AND expires_at > @instant
               AND limit_amount >= @amount
+              AND NOT EXISTS (
+                  SELECT 1 FROM identity.users AS delegator
+                  WHERE delegator.user_id = delegator_user_id AND NOT delegator.active)
             ORDER BY granted_at DESC
             LIMIT 1;
             """);
