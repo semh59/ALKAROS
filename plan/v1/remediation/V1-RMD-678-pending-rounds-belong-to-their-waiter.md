@@ -42,4 +42,4 @@ V1-RMD-671 sonrası açık kalan riski kapatır (Ürün Sahibi kararı, 2026-10-
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-679
