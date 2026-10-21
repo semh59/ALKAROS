@@ -33,7 +33,7 @@ approved".** That model has four structural weaknesses this decision targets:
 Plus one preventive layer no competitor ships:
 
 - **Behavioural tightening** — the authorization service reads a rolling
-  per-user rate (void %, comp ₺/shift, discount count). A user whose rate spikes
+  per-user rate (the number of approved grants for one permission in the trailing window; amounts are not part of the measure). A user whose rate spikes
   ≥ 3× their 30-day baseline is auto-moved to `requires_grant` even on actions
   their role normally auto-approves, until a manager clears it. Audit shifts from
   forensic to preventive.
@@ -61,6 +61,10 @@ removed in the last wave task. New application permission codes:
 | `reports.view` | operational reports |
 | `catalog.manage` | menu / price / routing (already exists, unchanged) |
 | `kitchen.advance` | advance a kitchen ticket/item one stage forward (Queued→Preparing→Ready→Served) — split out of `orders.send` (V1-IAM-028) so the narrow `kitchen-staff` role can hold it without also being able to cancel a ticket. A ticket/item transition to `Cancelled` still requires `orders.send` regardless of which role/permission gate is checked; `KitchenOperationsEndpoints.TicketTransitionPermission` branches on the target state. |
+
+Later additions, all in `ApplicationPermissions` (26 codes in total): `orders.transfer-server` and `orders.transfer-server-any` (move an order to another server, own or any), `bills.cancel` (cancel a whole bill), `payments.refund.request` and `payments.refund.approve` (ask for / approve a refund), `cash.session.override` (supervisor-tier cash session override), `reconciliation.manage`, `observability.manage`, `security.manage` (device and session administration), `integrations.manage`, and `reports.close-day` (manager-tier day close). `pos.cashier.mutate` no longer exists (dropped by migration 049).
+
+The manager decision screen (pending grants, delegations, tightenings) is guarded by `reports.view`, not by a role name; whoever answers a grant must also hold the permission being asked for (V1-RMD-670).
 
 ## 3. Roles (seed defaults; tunable from the manager UI)
 
@@ -141,6 +145,13 @@ Like `kitchen-staff`, none of `kitchen-chef`'s grants are listed in
 original FOH roles) — seeded directly by migrations 111 (the role itself
 plus `orders.send`/`kitchen.advance`/`kitchen.reprint`/
 `kitchen.availability.suspend`) and 112 (`kitchen.routing.manage`).
+
+### 3.3 Personal comp budget and starting limits (Product Owner, 2026-10-21)
+
+- Personal comp budget: a waiter's `bills.comp` request is approved without a manager while one item is at most ₺50 and the person's total for the day is at most ₺150. The day is the UTC day. The approval is recorded as `policy_path = personal_budget`. These two numbers are product decisions, kept in `PersonalCompBudgetEscalationResolver`.
+- Starting limits for the `auto_within` policy of a waiter (to be seeded by V1-RMD-673; until then no policy rows exist and every request goes to a manager): discount and comp up to ₺100, void of a sent item up to ₺200; anything above goes to a manager. The limits are changeable from the screen.
+- Retention: the personal budget record and the access log of these decisions are kept 10 years, the same as the audit log.
+- Void requests carry the item's real amount (V1-RMD-670); the earlier amount of 0 was a defect, not a decision.
 
 ## 4. Grant flow (`authorization_grants`)
 

@@ -19,6 +19,11 @@ apply always pick the same records. The multi-store checkpoint/resume workflow i
 | Order line note | `orders.order_items.notes` | parent order past the same window | `notes -> '[anonymized]'` |
 | Reservation reason | `table_mgmt.table_reservations.reason`, `release_reason` | `status IN (Claimed, Cancelled, Expired)` **and** `reserved_at` older than **5 years** | both `-> '[anonymized]'` |
 
+### Staff data that is kept, and for how long (V1-RMD-672)
+
+- `identity.users` also holds `pin_hash` (a PBKDF2 hash of the cashier PIN). It is personal data of the staff member; it is cleared together with the other fields when the staff record is anonymized (code change tracked in V1-RMD-673).
+- The authorization trail (`identity.authorization_grants`, delegations, behavioural tightenings, the personal comp budget record) and the access log of those decisions are kept **10 years**, the same as the audit log (Product Owner, 2026-10-21).
+
 ### Customers and suppliers
 
 Customer profiles (10 years after the last ledger movement or invoice; never with an open

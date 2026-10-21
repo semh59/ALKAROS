@@ -142,7 +142,6 @@ Emoji ve tipografik glif ikon olarak **kullanılmaz** (finding F-8).
 1. **Ağ Kesintisi (LAN Outage):**
    - Kasiyer Kiosk salt okunura geçer; Garson PWA siparişleri UUID v7 ile IndexedDB yerel kuyruğuna yazar.
 2. **PIN Kilitlenmesi (Brute-Force Protection):**
-   - 3 Hatalı Deneme: 30 saniye kilitlenme geri sayımı.
-   - 5 Hatalı Deneme: Oturumun sunucuda tamamen geçersiz kılınması (Session Invalidation).
+   - 5 Hatalı Deneme: PIN 15 dakika kilitlenir ve o cihazın kasiyer oturumu sunucuda iptal edilir. Yönetici kilidi hemen açabilir (parola alanlarıyla birlikte PIN kilidi de sıfırlanır). Hatalı denemeler ve kalan hak sunucuda tutulur; süre ve eşik 5 deneme / 15 dakikadır (AuthenticationService).
 3. **Mutfak İstasyon Yönlendirme (Print Recovery):**
    - Kağıt bitmesi durumunda fişler sıcağa/soğuğa tek tıkla gerekçe loguyla aktarılır.

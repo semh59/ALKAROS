@@ -4,7 +4,8 @@ namespace ALKAROS.Identity.Authorization.Tests.Catalog;
 
 /// <summary>
 /// A fresh identity database with the real migration chain applied up to and
-/// including V1-IAM-030 (112): base identity schema (005, 008), the V1-RMD-097
+/// including the permission migrations listed below (the list is hand-picked, not the whole chain; the newest entry
+/// is the payments.take permission, 163): base identity schema (005, 008), the
 /// role catalog (042), the permission split (043), the drop of the
 /// transitional <c>pos.cashier.mutate</c> alias (049), the manager admin
 /// grants (054), transfer-server (055), integrations.manage (079), the
