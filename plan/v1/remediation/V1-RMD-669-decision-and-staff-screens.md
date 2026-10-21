@@ -51,4 +51,4 @@ V1-RMD-597 bulguları B005, B006 (adlar hariç) ve B029 kapanır. Yetki karar ek
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-671
