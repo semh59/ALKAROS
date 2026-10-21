@@ -45,4 +45,4 @@ V1-RMD-596 bulguları B002, B012 ve B016 kapanır. B002: Docker kurulumunda `con
 
 ## Handoff
 
-- None
+- V1-RMD-663
