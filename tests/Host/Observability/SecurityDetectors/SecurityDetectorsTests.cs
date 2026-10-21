@@ -98,9 +98,24 @@ public sealed class SecurityDetectorsTests : IClassFixture<SecurityDatabase>
     }
 
     [Fact]
+    public async Task DeadLettersAlreadyPresentAtStartupAreReportedByTheFirstCheck()
+    {
+        await using var writer = NewWriter();
+        await _database.ExecuteAsync("DELETE FROM outbox_messages;");
+        await _database.ExecuteAsync(
+            "INSERT INTO outbox_messages (event_type, aggregate_type, aggregate_id, payload_envelope, status) " +
+            "VALUES ('x', 'y', gen_random_uuid(), decode('00', 'hex'), 'dead');");
+        var watcher = new OutboxDeadLetterWatcher(new MonitoringDataSource(_database.DataSource), writer);
+
+        (await watcher.CheckOnceAsync(CancellationToken.None)).Should().BeTrue();
+        (await watcher.CheckOnceAsync(CancellationToken.None)).Should().BeFalse();
+    }
+
+    [Fact]
     public async Task NewDeadLetterProducesOneEventAndUnchangedCountProducesNone()
     {
         await using var writer = NewWriter();
+        await _database.ExecuteAsync("DELETE FROM outbox_messages;");
         var watcher = new OutboxDeadLetterWatcher(new MonitoringDataSource(_database.DataSource), writer);
 
         (await watcher.CheckOnceAsync(CancellationToken.None)).Should().BeFalse();

@@ -1,0 +1,6 @@
+KILLED   first check ignores existing dead letters
+KILLED   connector without master key
+KILLED   connector key renamed
+restore SecurityDetectors.cs: identical
+restore compose.yaml: identical
+mutants: 3, survived: 0

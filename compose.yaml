@@ -218,6 +218,10 @@ services:
       dockerfile: deploy/docker/Dockerfile
       target: connector
     secrets: [db_password]
+    environment:
+      # The tunnel token is read from the database encrypted under this key, so the connector
+      # needs the same one as api; without it the public QR path never starts.
+      ALKAROS_SECRET_ENVELOPE_MASTER_KEY: ${ALKAROS_SECRET_ENVELOPE_MASTER_KEY:?Set ALKAROS_SECRET_ENVELOPE_MASTER_KEY in a local .env file (openssl rand -base64 32)}
     depends_on:
       api: { condition: service_healthy }
     # V12-QRT-005: an independent container on the compose network (its own

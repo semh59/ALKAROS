@@ -76,7 +76,8 @@ public sealed class OutboxDeadLetterWatcher(
         await using var command = monitoring.Inner.CreateCommand(
             "SELECT count(*) FROM outbox_messages WHERE status = 'dead';");
         var dead = (long)(await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) ?? 0L);
-        var rose = _lastDead >= 0 && dead > _lastDead;
+        // The first check has no earlier count: dead letters already there at startup are reported too.
+        var rose = dead > Math.Max(_lastDead, 0);
         _lastDead = dead;
         if (rose)
             writer.TryEnqueue(new ErrorEventInput(ErrorLayer.Background, ErrorSeverity.Error, "outbox.dead_letter", $"dead={dead}"));

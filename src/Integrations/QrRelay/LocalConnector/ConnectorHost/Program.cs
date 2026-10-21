@@ -22,6 +22,7 @@ namespace ALKAROS.QrRelay.ConnectorHost;
 public static class Program
 {
     private const string PasswordEnvironmentVariable = "ALKAROS_DB_PASSWORD";
+    private const string MasterKeyEnvironmentVariable = "ALKAROS_SECRET_ENVELOPE_MASTER_KEY";
 
     public static async Task<int> Main(string[] args)
     {
@@ -41,6 +42,14 @@ public static class Program
         if (string.IsNullOrWhiteSpace(password))
         {
             Console.Error.WriteLine($"{PasswordEnvironmentVariable} is required.");
+            return 2;
+        }
+
+        // The tunnel token is stored encrypted under this key; failing here names the cause at start instead of
+        // as a decryption error the first time the tunnel starts.
+        if (string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(MasterKeyEnvironmentVariable)))
+        {
+            Console.Error.WriteLine($"{MasterKeyEnvironmentVariable} is required.");
             return 2;
         }
 

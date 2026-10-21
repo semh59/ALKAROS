@@ -22,7 +22,7 @@ def test_dockerfile_is_multi_stage_and_uses_pinned_toolchains() -> None:
     assert "node:24.6.0-bookworm-slim@sha256:" in dockerfile
     assert "aspnet:8.0-alpine@sha256:" in dockerfile
     assert "caddy:2.9-alpine@sha256:" in dockerfile
-    assert dockerfile.count("FROM ") == 4
+    assert dockerfile.count("FROM ") == 6
     assert "AS backend-build" in dockerfile
     assert "AS frontend-build" in dockerfile
     assert "AS api" in dockerfile
@@ -77,7 +77,7 @@ def test_compose_core_has_web_and_api_and_no_published_datastore() -> None:
     assert '["CMD", "wget", "-q", "--spider", "https://localhost/health/ready"]' in compose
     assert "5432:" not in compose and "5080:" not in compose
     assert "ALKAROS_DB_PASSWORD:" not in compose
-    assert compose.count("export ALKAROS_DB_PASSWORD=\"$$(tr -d '\\r\\n' < /run/secrets/db_password)\"") == 3
+    assert compose.count("export ALKAROS_DB_PASSWORD=\"$$(tr -d '\\r\\n' < /run/secrets/db_password)\"") == 4
     assert "${ALKAROS_KITCHEN_STATION_ID:-kitchen-main}" in compose
     assert "--api-only --customer-display-origin-header X-Alkaros-Origin" in compose
 
@@ -91,6 +91,16 @@ def test_compose_core_has_web_and_api_and_no_published_datastore() -> None:
         "admin_password",
         "!admin_password.example",
     ]
+
+
+def test_connector_receives_the_envelope_master_key_that_api_uses() -> None:
+    compose = (ROOT / "compose.yaml").read_text(encoding="utf-8")
+    services = re.split(r"\n  (?=[a-z][a-z-]*:\n)", compose.split("\nservices:\n", 1)[1])
+    connector = next(block for block in services if block.startswith("connector:"))
+
+    environment = re.split(r"\n    (?=[a-z])", connector.split("\n    environment:\n", 1)[1])[0]
+
+    assert "ALKAROS_SECRET_ENVELOPE_MASTER_KEY: ${ALKAROS_SECRET_ENVELOPE_MASTER_KEY:?" in environment
 
 
 def test_operator_tools_are_split_into_an_ops_overlay() -> None:
@@ -145,7 +155,7 @@ def test_dev_overlay_serves_plain_http_and_publishes_ports() -> None:
 def test_services_load_the_password_from_the_mounted_secret() -> None:
     compose = (ROOT / "compose.yaml").read_text(encoding="utf-8")
 
-    assert compose.count('entrypoint: ["/bin/sh", "-eu", "-c"]') == 3
+    assert compose.count('entrypoint: ["/bin/sh", "-eu", "-c"]') == 4
     assert "exec dotnet ALKAROS.Host.dll --order-manifest" in compose
     assert "exec dotnet ALKAROS.Host.dll serve" in compose
 
