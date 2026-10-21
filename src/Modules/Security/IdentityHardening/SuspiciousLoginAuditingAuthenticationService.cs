@@ -56,31 +56,41 @@ public sealed class SuspiciousLoginAuditingAuthenticationService
 
         var result = await _inner.LoginAsync(username, password, now, cancellationToken);
 
+        SuspiciousLoginEvent? signal = null;
         switch (result)
         {
             case LoginSuccess success when priorFailedAttempts >= _suspiciousFailureThreshold:
-                await _sink.RecordAsync(
-                    new SuspiciousLoginEvent(
-                        success.UserId,
-                        username,
-                        SuspiciousLoginReason.SuccessAfterRepeatedFailures,
-                        priorFailedAttempts,
-                        now),
-                    cancellationToken);
+                signal = new SuspiciousLoginEvent(
+                    success.UserId, username, SuspiciousLoginReason.SuccessAfterRepeatedFailures, priorFailedAttempts, now);
                 break;
 
-            case LoginFailure { Reason: LoginFailureReason.LockedOut }:
-                await _sink.RecordAsync(
-                    new SuspiciousLoginEvent(
-                        before?.UserId,
-                        username,
-                        SuspiciousLoginReason.LockoutTriggered,
-                        priorFailedAttempts,
-                        now),
-                    cancellationToken);
+            // The attempt that arms the lock is the one worth a record; every later attempt on the locked account is
+            // not, or a single guessing run would flood the audit log.
+            case LoginFailure { Reason: LoginFailureReason.InvalidCredentials } when before is not null && !IsLocked(before, now):
+                var after = await _store.GetByUsernameAsync(username, cancellationToken);
+                if (after is not null && IsLocked(after, now))
+                {
+                    signal = new SuspiciousLoginEvent(
+                        before.UserId, username, SuspiciousLoginReason.LockoutTriggered, after.FailedLoginAttempts, now);
+                }
+
                 break;
+        }
+
+        if (signal is not null)
+        {
+            try
+            {
+                await _sink.RecordAsync(signal, cancellationToken);
+            }
+            catch (Exception ex) when (ex is not OperationCanceledException)
+            {
+                // The sign-in has already been decided; a failing audit sink must not turn it into an error.
+            }
         }
 
         return result;
     }
+
+    private static bool IsLocked(StoredUser user, DateTimeOffset now) => user.LockedUntil is { } until && until > now;
 }

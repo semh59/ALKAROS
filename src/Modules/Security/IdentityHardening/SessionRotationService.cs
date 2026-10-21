@@ -34,7 +34,15 @@ public sealed class SessionRotationService
 
         var current = await _sessions.AuthenticateAsync(userId, deviceId, currentRawToken, cancellationToken);
 
-        var (newSession, rawToken) = await _sessions.CreateSessionAsync(userId, deviceId, lifetime, cancellationToken);
+        // A rotation replaces the token, it never extends the session: the replacement ends no later than the session it
+        // replaces, so repeated unlocks cannot keep one login alive forever.
+        // One second is held back for the time between this read and the clock read inside the creation, so the
+        // replacement can only end earlier, never later.
+        var remaining = current.ExpiresAt - DateTimeOffset.UtcNow - TimeSpan.FromSeconds(1);
+        if (remaining < TimeSpan.FromMilliseconds(1))
+            remaining = TimeSpan.FromMilliseconds(1);
+        var effectiveLifetime = lifetime is { } requested && requested < remaining ? requested : remaining;
+        var (newSession, rawToken) = await _sessions.CreateSessionAsync(userId, deviceId, effectiveLifetime, cancellationToken);
         await _sessions.RevokeAsync(current.SessionId, cancellationToken);
 
         return (newSession, rawToken);

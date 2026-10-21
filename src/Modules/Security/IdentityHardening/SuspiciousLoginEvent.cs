@@ -9,7 +9,7 @@ public enum SuspiciousLoginReason
     /// <summary>A login succeeded only after a run of prior failures on the same account.</summary>
     SuccessAfterRepeatedFailures,
 
-    /// <summary>A login attempt was rejected because the account is currently locked out.</summary>
+    /// <summary>A failed login attempt reached the limit and locked the account out.</summary>
     LockoutTriggered,
 
     /// <summary>An administrator revoked every active session for a user.</summary>

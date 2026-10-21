@@ -81,7 +81,7 @@ public sealed class SuspiciousLoginAuditingAuthenticationServiceTests : IClassFi
     }
 
     [Fact]
-    public async Task LockedOutAttemptIsAudited()
+    public async Task AnAttemptOnAnAlreadyLockedAccountIsNotAudited()
     {
         var userId = await InsertUserAsync(
             failedLoginAttempts: 5,
@@ -92,8 +92,39 @@ public sealed class SuspiciousLoginAuditingAuthenticationServiceTests : IClassFi
 
         result.Should().BeOfType<LoginFailure>()
             .Which.Reason.Should().Be(LoginFailureReason.LockedOut);
+        _sink.Events.Should().BeEmpty("only the attempt that arms the lock is recorded");
+    }
+
+    [Fact]
+    public async Task TheFailureThatArmsTheLockIsAuditedOnce()
+    {
+        var userId = await InsertUserAsync(failedLoginAttempts: 4);
+        var username = await UsernameOfAsync(userId);
+
+        await _auditing.LoginAsync(username, "wrong-password", DateTimeOffset.UtcNow);
+        await _auditing.LoginAsync(username, "wrong-password", DateTimeOffset.UtcNow);
+
         _sink.Events.Should().ContainSingle(e =>
-            e.UserId == userId && e.Reason == SuspiciousLoginReason.LockoutTriggered);
+            e.UserId == userId && e.Reason == SuspiciousLoginReason.LockoutTriggered && e.PriorFailedAttempts == 5);
+    }
+
+    [Fact]
+    public async Task AFailingAuditSinkDoesNotBreakTheLoginResult()
+    {
+        var userId = await InsertUserAsync(failedLoginAttempts: 3);
+        var username = await UsernameOfAsync(userId);
+        var failing = new SuspiciousLoginAuditingAuthenticationService(
+            new AuthenticationService(_store, verifier: Verify), _store, new ThrowingSink());
+
+        var result = await failing.LoginAsync(username, CorrectPassword, DateTimeOffset.UtcNow);
+
+        result.Should().BeOfType<LoginSuccess>();
+    }
+
+    private sealed class ThrowingSink : ISuspiciousLoginAuditSink
+    {
+        public Task RecordAsync(SuspiciousLoginEvent loginEvent, CancellationToken cancellationToken = default)
+            => throw new InvalidOperationException("audit store unavailable");
     }
 
     [Fact]

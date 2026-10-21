@@ -1,0 +1,5 @@
+R1 KILLED restored=true
+R2 KILLED restored=true
+A1 SURVIVED restored=true
+A2 KILLED restored=true
+A3 KILLED restored=true

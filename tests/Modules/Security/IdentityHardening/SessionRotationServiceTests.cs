@@ -41,6 +41,32 @@ public sealed class SessionRotationServiceTests : IClassFixture<IdentityHardenin
     }
 
     [Fact]
+    public async Task ARotatedSessionNeverOutlivesTheOneItReplaces()
+    {
+        var userId = await InsertUser();
+        var (original, originalToken) = await _sessions.CreateSessionAsync(userId, Device, TimeSpan.FromHours(8));
+
+        var (first, firstToken) = await _rotation.RotateAsync(userId, Device, originalToken, TimeSpan.FromHours(8));
+        var (second, _) = await _rotation.RotateAsync(userId, Device, firstToken, TimeSpan.FromDays(30));
+
+        first.ExpiresAt.Should().BeOnOrBefore(original.ExpiresAt);
+        second.ExpiresAt.Should().BeOnOrBefore(original.ExpiresAt);
+    }
+
+    [Fact]
+    public async Task ARotationMayShortenTheLifetimeButNotLengthenIt()
+    {
+        var userId = await InsertUser();
+        var (_, token) = await _sessions.CreateSessionAsync(userId, Device, TimeSpan.FromHours(8));
+
+        var (shorter, _) = await _rotation.RotateAsync(userId, Device, token, TimeSpan.FromMinutes(30));
+
+        shorter.ExpiresAt.Should().BeCloseTo(DateTimeOffset.UtcNow.AddMinutes(30), TimeSpan.FromMinutes(1));
+    }
+
+    private Task<Guid> InsertUser() => _database.InsertUserAsync();
+
+    [Fact]
     public async Task RotateRejectsAnAlreadyRevokedToken()
     {
         var userId = await _database.InsertUserAsync();
