@@ -22,5 +22,12 @@ public sealed class SettingsTestDatabase : PgTestDatabase
             var sql = await File.ReadAllTextAsync(file);
             await RunAsync(DataSource, sql);
         }
+
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, "database", "migrations")))
+            directory = directory.Parent;
+        var migrationRoot = Path.Combine(directory?.FullName ?? throw new InvalidOperationException("Repository root not found."), "database", "migrations");
+        foreach (var pattern in new[] { "136-*.up.sql", "197-*.up.sql" })
+            await RunAsync(DataSource, await File.ReadAllTextAsync(Directory.GetFiles(migrationRoot, pattern, SearchOption.AllDirectories).Single()));
     }
 }

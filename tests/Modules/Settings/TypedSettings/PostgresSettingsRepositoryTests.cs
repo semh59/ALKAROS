@@ -601,6 +601,149 @@ public sealed class QrOrderExpirySettingTests : IAsyncLifetime
     }
 }
 
+/// <summary>One fresh database per test, because the down-script test changes the schema.</summary>
+public sealed class SettingsHistoryImmutabilityTests : IAsyncLifetime
+{
+    private readonly SettingsTestDatabase _db = new();
+    private PostgresSettingsRepository _repository = null!;
+
+    public async Task InitializeAsync()
+    {
+        await _db.InitializeAsync();
+        _repository = new PostgresSettingsRepository(_db.DataSource, new SettingValidator());
+    }
+
+    public Task DisposeAsync() => _db.DisposeAsync();
+
+    private async Task<SettingRecord> RegisterAsync(string key, Guid? by = null)
+        => await _repository.RegisterSettingAsync(new RegisterSettingRequest(
+            Key: key, Value: "1", DataType: SettingDataType.WholeNumber, Scope: SettingScope.Module, ModuleOwner: "History", RegisteredBy: by));
+
+    private async Task<int> ExecuteAsync(string sql, params (string Name, object Value)[] parameters)
+    {
+        await using var command = _db.DataSource.CreateCommand(sql);
+        foreach (var (name, value) in parameters)
+            command.Parameters.AddWithValue(name, value);
+        return await command.ExecuteNonQueryAsync();
+    }
+
+    private static async Task<string> ReadScriptAsync(string pattern)
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null && !Directory.Exists(Path.Combine(directory.FullName, "database", "migrations")))
+            directory = directory.Parent;
+        var root = Path.Combine(directory!.FullName, "database", "migrations");
+        return await File.ReadAllTextAsync(Directory.GetFiles(root, pattern, SearchOption.AllDirectories).Single());
+    }
+
+    [Fact]
+    public async Task AHistoryRowCannotBeDeleted()
+    {
+        var setting = await RegisterAsync("immutable.delete");
+
+        var act = () => ExecuteAsync("DELETE FROM settings.setting_history WHERE setting_id = @id;", ("id", setting.SettingId));
+
+        (await act.Should().ThrowAsync<PostgresException>()).Which.MessageText.Should().Contain("cannot be deleted");
+        (await _repository.GetHistoryAsync(setting.SettingId)).Should().HaveCount(1);
+    }
+
+    [Theory]
+    [InlineData("new_value = 'x'")]
+    [InlineData("old_value = 'x'")]
+    [InlineData("reason = 'x'")]
+    [InlineData("changed_at = now() + interval '1 day'")]
+    [InlineData("setting_history_id = gen_random_uuid()")]
+    public async Task EditingAnyAuditedColumnOfAHistoryRowIsRefused(string assignment)
+    {
+        var setting = await RegisterAsync("immutable.update");
+
+        var act = () => ExecuteAsync($"UPDATE settings.setting_history SET {assignment} WHERE setting_id = @id;", ("id", setting.SettingId));
+
+        (await act.Should().ThrowAsync<PostgresException>()).Which.MessageText.Should().Contain("cannot be changed");
+    }
+
+    [Fact]
+    public async Task AttributingAHistoryRowToADifferentUserIsRefused()
+    {
+        var first = Guid.NewGuid();
+        var second = Guid.NewGuid();
+        foreach (var id in new[] { first, second })
+            await ExecuteAsync(
+                "INSERT INTO identity.users (user_id, username, display_name, password_hash, active, created_at, updated_at) VALUES (@id, @name, 'Kişi', 'hash', true, now(), now());",
+                ("id", id), ("name", $"usr_{id:N}"[..20]));
+        var setting = await RegisterAsync("immutable.attribution", first);
+
+        var act = () => ExecuteAsync("UPDATE settings.setting_history SET changed_by = @to WHERE setting_id = @id;", ("to", second), ("id", setting.SettingId));
+
+        (await act.Should().ThrowAsync<PostgresException>()).Which.MessageText.Should().Contain("cannot be changed");
+    }
+
+    [Fact]
+    public async Task ReassigningAHistoryRowToAnotherSettingIsRefused()
+    {
+        var first = await RegisterAsync("immutable.first");
+        var second = await RegisterAsync("immutable.second");
+
+        var act = () => ExecuteAsync(
+            "UPDATE settings.setting_history SET setting_id = @to WHERE setting_id = @from;", ("to", second.SettingId), ("from", first.SettingId));
+
+        await act.Should().ThrowAsync<PostgresException>();
+    }
+
+    [Fact]
+    public async Task ASettingThatStillHasHistoryCannotBeDeleted()
+    {
+        var setting = await RegisterAsync("immutable.setting");
+
+        var act = () => ExecuteAsync("DELETE FROM settings.settings WHERE setting_id = @id;", ("id", setting.SettingId));
+
+        (await act.Should().ThrowAsync<PostgresException>()).Which.SqlState.Should().Be("23001");
+        (await _repository.GetByKeyAsync("immutable.setting")).Should().NotBeNull();
+        (await _repository.GetHistoryAsync(setting.SettingId)).Should().HaveCount(1);
+    }
+
+    [Fact]
+    public async Task DeletingTheUserWhoChangedASettingKeepsTheHistoryAndClearsTheName()
+    {
+        var userId = Guid.NewGuid();
+        await ExecuteAsync(
+            "INSERT INTO identity.users (user_id, username, display_name, password_hash, active, created_at, updated_at) VALUES (@id, @name, 'Geçici', 'hash', true, now(), now());",
+            ("id", userId), ("name", $"tmp_{userId:N}"[..20]));
+        var setting = await RegisterAsync("immutable.user", userId);
+
+        await ExecuteAsync("DELETE FROM identity.users WHERE user_id = @id;", ("id", userId));
+
+        var history = await _repository.GetHistoryAsync(setting.SettingId);
+        history.Should().ContainSingle().Which.ChangedBy.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task NewChangesStillAppendToHistory()
+    {
+        var setting = await RegisterAsync("immutable.append");
+
+        await _repository.UpdateSettingAsync(new UpdateSettingRequest("immutable.append", "2", setting.RowVersion, null, "bir"));
+
+        (await _repository.GetHistoryAsync(setting.SettingId)).Should().HaveCount(2);
+    }
+
+    [Fact]
+    public async Task TheDownScriptRestoresEditableHistoryAndCascadeAndTheUpScriptCanRunAgain()
+    {
+        var setting = await RegisterAsync("immutable.rollback");
+
+        await ExecuteAsync(await ReadScriptAsync("197-*.down.sql"));
+        await ExecuteAsync("UPDATE settings.setting_history SET reason = 'edited' WHERE setting_id = @id;", ("id", setting.SettingId));
+        await ExecuteAsync("DELETE FROM settings.settings WHERE setting_id = @id;", ("id", setting.SettingId));
+        (await _repository.GetHistoryAsync(setting.SettingId)).Should().BeEmpty("the cascade is back");
+
+        await ExecuteAsync(await ReadScriptAsync("197-*.up.sql"));
+        var again = await RegisterAsync("immutable.rollback.again");
+        var act = () => ExecuteAsync("DELETE FROM settings.setting_history WHERE setting_id = @id;", ("id", again.SettingId));
+        await act.Should().ThrowAsync<PostgresException>();
+    }
+}
+
 /// <summary>
 /// Migration tests verifying up/down cycle for 026-typed-settings.
 /// </summary>

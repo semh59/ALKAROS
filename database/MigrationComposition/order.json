@@ -1687,6 +1687,15 @@
         "authorization_policies"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "197",
+      "phase": "B",
+      "tables": [
+        "setting_history",
+        "business_logo"
+      ],
+      "deferredConstraints": []
     }
   ]
 }
