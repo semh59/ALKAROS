@@ -1,7 +1,7 @@
 # V1-RMD-666 - BuildingBlocks belge sapmaları ve açık kararların kaydı
 
 - Task ID: V1-RMD-666
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: documentation
 - Surface state: Planned

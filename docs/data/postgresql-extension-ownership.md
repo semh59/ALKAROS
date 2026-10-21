@@ -38,16 +38,11 @@ Previously, extension installation was implicit or ambiguously distributed acros
 
    - This ensures idempotent initialization on fresh empty databases as well as pre-provisioned environments.
 3. **Reverse / Rollback Lifecycle**:
-   - Migration `012-btree-gist-ownership.down.sql` executes:
-
-     ```sql
-     DROP EXTENSION IF EXISTS btree_gist;
-     ```
-
-   - On a clean ALKAROS-managed database, rolling back position `012` safely cleans up the extension.
-   - In environments where dependent database objects outside ALKAROS exist, or in managed hosting with shared extension
-     pools, failing to drop due to external dependencies or pre-existing installation is classified as **declared
-     pre-existing residue** and handled safely without corrupting ALKAROS migration state.
+   - Migration `012-btree-gist-ownership.down.sql` does **not** drop the extension. It only verifies that `btree_gist` is still
+     installed and that the `catalog.product_prices` exclusion constraint `excl_product_prices_no_overlap` still exists, and raises
+     an exception otherwise: the price-overlap guard depends on the extension, so rolling back position `012` must never remove it.
+   - The extension is therefore left in place after a rollback; removing it is a manual operation that first requires dropping
+     the dependent constraint.
 4. **Verification Query**:
 
    ```sql
