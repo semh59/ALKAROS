@@ -1,7 +1,7 @@
 # V1-RMD-680 - Composition testi: yetkisiz erişim olay alıcısı dekoratörü
 
 - Task ID: V1-RMD-680
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: implementation
 - Surface state: Planned
