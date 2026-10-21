@@ -46,4 +46,4 @@ V1-RMD-597 bulgusu B006'nın ad kısmı kapanır. Yetki karar ekranı, bekleyen 
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-680
