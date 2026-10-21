@@ -1,0 +1,9 @@
+Dilim sayım tablosu (kaynak: baseline/scope-files.txt, git ls-files)
+toplam dosya: 231
+src .cs: 73
+tests .cs: 49
+göç dosyası: 78
+istemci dosyası: 17
+diğer (csproj, packages.lock.json, test yardımcıları): 14
+Not: baseline/counts.txt ilk halinde "214" yazıyordu (kategori toplamı 217 bile değildi); gerçek dosya sayısı 231'dir. 13 ajanın hepsi 231'e göre raporladı.
+Bulgu sayıları: ham ajan satırı 13 rapordan 257; birleştirilmiş benzersiz bulgu 40 (findings-raw.md); doğrulayıcı sonrası Kritik 0, Yüksek 3, Orta 21, Düşük 16.
