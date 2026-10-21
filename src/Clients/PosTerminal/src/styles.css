@@ -367,7 +367,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .pairing-content { display: grid; gap: .75rem; padding: 0 1.25rem 1rem; }
 .pairing-row { display: grid; grid-template-columns: 1fr auto; gap: .5rem; }
 .pairing-row input { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; text-transform: uppercase; }
-.danger-text { min-height: 44px; display: inline-flex; align-items: center; padding: .4rem 0; color: var(--red); background: transparent; text-align: left; font-size: .8rem; font-weight: 750; }
+.danger-text { min-height: 48px; display: inline-flex; align-items: center; padding: .4rem 0; color: var(--red); background: transparent; text-align: left; font-size: .8rem; font-weight: 750; }
 .dialog-backdrop {
   position: fixed;
   z-index: 40;

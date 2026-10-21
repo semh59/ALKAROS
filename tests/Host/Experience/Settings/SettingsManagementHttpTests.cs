@@ -128,6 +128,42 @@ public sealed class SettingsManagementHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheListShowsEveryKnownSettingFromTheVeryFirstVisit()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.GetAsync("/api/v1/management/settings/");
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var keys = (await response.Content.ReadFromJsonAsync<SettingRecordV1[]>())!.Select(record => record.Key).ToHashSet();
+        foreach (var expected in new[]
+        {
+            "waiter.max_active_tables", "kitchen.dense_mode_threshold", "kitchen.live_sync_enabled",
+            "qr_ordering.pending_confirmation_timeout", "reservations.dedicated_station_enabled",
+            "business.name", "business.accent_theme", "garson.party_size_enabled",
+        })
+            Assert.Contains(expected, keys);
+    }
+
+    [Fact]
+    public async Task TheHistoryNamesWhoChangedTheSettingAndUsesTheCurrentName()
+    {
+        var key = await _database.SeedBooleanSettingAsync("test.feature.named", false);
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        using var update = await client.PutAsJsonAsync(
+            $"/api/v1/management/settings/{key}", new UpdateSettingValueV1("true", ExpectedRowVersion: 1, Reason: "aç"));
+        Assert.Equal(HttpStatusCode.OK, update.StatusCode);
+        await _database.ExecuteAsync(
+            "UPDATE identity.users SET display_name = 'Zeynep Müdür' WHERE user_id = @id;",
+            ("id", SettingsManagementTestDatabase.ManagerUserId));
+
+        using var history = await client.GetAsync($"/api/v1/management/settings/{key}/history");
+
+        var entries = await history.Content.ReadFromJsonAsync<SettingHistoryRecordV1[]>();
+        Assert.Equal("Zeynep Müdür", Assert.Single(entries!).ChangedByName);
+    }
+
+    [Fact]
     public async Task AnOutOfRangeValueIsRefusedInTurkishAndTheSettingIsUnchanged()
     {
         await _database.ExecuteAsync(

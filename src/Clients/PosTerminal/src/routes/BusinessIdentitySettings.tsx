@@ -11,7 +11,9 @@ const BusinessNameKey = "business.name";
 const BusinessAccentThemeKey = "business.accent_theme";
 const AllowedLogoTypes = new Set(["image/png", "image/jpeg", "image/webp"]);
 const MaxLogoBytes = 5 * 1024 * 1024;
-const SaveReason = "PosTerminal ayarlar ekranından güncellendi";
+const SaveReason = "Ayarlar ekranından güncellendi";
+const SessionExpired = "Oturum sona erdi; yeniden giriş yapın.";
+const Conflict = "Ayar başka biri tarafından değiştirilmiş; ekran yenilendi, tekrar deneyin.";
 
 /**
  * V1-CUI-012: Semih's own request that the business's own name and logo be
@@ -39,6 +41,9 @@ export function BusinessIdentitySettings() {
   const [session, setSession] = useState<StationSession>("checking");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [confirmingRemove, setConfirmingRemove] = useState(false);
+  // The version a setting had when this screen loaded it: a save sent with it detects somebody else's change in between.
+  const versions = useRef<Record<string, number>>({});
 
   const [loaded, setLoaded] = useState(false);
   const [nameInput, setNameInput] = useState("");
@@ -69,10 +74,13 @@ export function BusinessIdentitySettings() {
   const loadCurrentState = useCallback(async () => {
     setError("");
     try {
+      const remember = (key: string) => api.getSetting(key).then((record) => { versions.current[key] = record.rowVersion; }, () => undefined);
       const [branding, palette, logo] = await Promise.all([
         api.qrBranding(),
         api.accentPalette(),
         api.fetchBusinessLogo(),
+        remember(BusinessNameKey),
+        remember(BusinessAccentThemeKey),
       ]);
       setNameInput(branding.businessName);
       setPaletteEntries(palette.entries);
@@ -95,10 +103,24 @@ export function BusinessIdentitySettings() {
       }
       setSession("ready");
       await loadCurrentState();
-    } catch {
+    } catch (reason) {
       setSession("anonymous");
+      if (reason instanceof ApiError && reason.status !== 401) setError(reason.message);
     }
   }, [terminalId, loadCurrentState]);
+
+  // A save that failed: an ended session goes back to the login form, a conflict reloads what the server has now.
+  const fail = async (reason: unknown, fallback: string) => {
+    if (reason instanceof ApiError && reason.status === 401) {
+      setSession("anonymous");
+      setError(SessionExpired);
+    } else if (reason instanceof ApiError && reason.status === 409) {
+      await loadCurrentState();
+      setError(Conflict);
+    } else {
+      setError(reason instanceof ApiError ? reason.message : fallback);
+    }
+  };
 
   useEffect(() => { void restoreSession(); }, [restoreSession]);
 
@@ -129,11 +151,12 @@ export function BusinessIdentitySettings() {
     setError("");
     setNameSaveMessage("");
     try {
-      const record = await api.getSetting(BusinessNameKey);
-      await api.updateSetting(BusinessNameKey, nameInput.trim(), record.rowVersion, SaveReason);
+      const version = versions.current[BusinessNameKey] ?? (await api.getSetting(BusinessNameKey)).rowVersion;
+      const saved = await api.updateSetting(BusinessNameKey, nameInput.trim(), version, SaveReason);
+      versions.current[BusinessNameKey] = saved.rowVersion;
       setNameSaveMessage("İşletme adı kaydedildi.");
     } catch (reason) {
-      setError(reason instanceof ApiError ? reason.message : "Kaydedilemedi.");
+      await fail(reason, "Kaydedilemedi.");
     } finally {
       setNameBusy(false);
     }
@@ -146,11 +169,12 @@ export function BusinessIdentitySettings() {
     setError("");
     setAccentSaveMessage("");
     try {
-      const record = await api.getSetting(BusinessAccentThemeKey);
-      await api.updateSetting(BusinessAccentThemeKey, selectedAccentKey, record.rowVersion, SaveReason);
+      const version = versions.current[BusinessAccentThemeKey] ?? (await api.getSetting(BusinessAccentThemeKey)).rowVersion;
+      const saved = await api.updateSetting(BusinessAccentThemeKey, selectedAccentKey, version, SaveReason);
+      versions.current[BusinessAccentThemeKey] = saved.rowVersion;
       setAccentSaveMessage("Renk kaydedildi.");
     } catch (reason) {
-      setError(reason instanceof ApiError ? reason.message : "Kaydedilemedi.");
+      await fail(reason, "Kaydedilemedi.");
     } finally {
       setAccentBusy(false);
     }
@@ -192,7 +216,7 @@ export function BusinessIdentitySettings() {
       setSelectedPreviewUrl(null);
       setLogoMessage("Logo yüklendi. QR sayfaları bir sonraki ziyarette bunu gösterecek.");
     } catch (reason) {
-      setError(reason instanceof ApiError ? reason.message : "Yüklenemedi.");
+      await fail(reason, "Yüklenemedi.");
     } finally {
       setLogoBusy(false);
     }
@@ -200,6 +224,7 @@ export function BusinessIdentitySettings() {
 
   const removeLogo = async () => {
     setLogoBusy(true);
+    setConfirmingRemove(false);
     setError("");
     setLogoMessage("");
     try {
@@ -208,7 +233,7 @@ export function BusinessIdentitySettings() {
       setCurrentLogoUrl(null);
       setLogoMessage("Logo kaldırıldı.");
     } catch (reason) {
-      setError(reason instanceof ApiError ? reason.message : "Kaldırılamadı.");
+      await fail(reason, "Kaldırılamadı.");
     } finally {
       setLogoBusy(false);
     }
@@ -344,14 +369,31 @@ export function BusinessIdentitySettings() {
           <div className="business-logo-preview business-logo-preview-current">
             <span>Şu anda ayarlı logo:</span>
             <img src={currentLogoUrl} alt="QR menü sayfalarında gösterilen mevcut logo" />
-            <button data-telemetry-id="b.routes.businessidentitysettings.5" type="button" className="danger-text" disabled={logoBusy} onClick={() => void removeLogo()}>
-              {logoBusy ? "Kaldırılıyor…" : "Kaldır"}
-            </button>
+            {confirmingRemove ? (
+              <div role="group" aria-label="Logo kaldırma onayı">
+                <span>Logo QR sayfalarından kalkacak. Emin misiniz?</span>
+                <button data-telemetry-id="b.routes.businessidentitysettings.6" type="button" className="danger-text" disabled={logoBusy} onClick={() => void removeLogo()}>
+                  {logoBusy ? "Kaldırılıyor…" : "Evet, kaldır"}
+                </button>
+                <button data-telemetry-id="b.routes.businessidentitysettings.7" type="button" className="secondary" disabled={logoBusy} onClick={() => setConfirmingRemove(false)}>
+                  Vazgeç
+                </button>
+              </div>
+            ) : (
+              <button data-telemetry-id="b.routes.businessidentitysettings.5" type="button" className="danger-text" disabled={logoBusy} onClick={() => setConfirmingRemove(true)}>
+                Kaldır
+              </button>
+            )}
           </div>
         )}
       </section>
 
-      {error && <div className="alert error" role="alert">{error}</div>}
+      {error && (
+        <div className="alert error" role="alert">
+          {error}
+          {!loaded && <button data-telemetry-id="b.routes.businessidentitysettings.8" type="button" className="secondary" onClick={() => void loadCurrentState()}>Tekrar dene</button>}
+        </div>
+      )}
     </main>
   );
 }

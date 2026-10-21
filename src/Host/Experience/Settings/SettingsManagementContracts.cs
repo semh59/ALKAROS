@@ -24,7 +24,7 @@ public sealed record SettingRecordV1(
 
 public sealed record SettingHistoryRecordV1(
     Guid SettingHistoryId, Guid SettingId, string? OldValue, string NewValue,
-    string? Reason, Guid? ChangedBy, DateTimeOffset ChangedAt)
+    string? Reason, Guid? ChangedBy, DateTimeOffset ChangedAt, string? ChangedByName = null)
 {
     public static SettingHistoryRecordV1 From(SettingHistoryRecord value)
         => new(value.SettingHistoryId, value.SettingId, value.OldValue, value.NewValue,

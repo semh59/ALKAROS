@@ -14,3 +14,4 @@
 .msh__form { display: grid; gap: var(--ds-space-3); max-width: 32rem; margin-top: var(--ds-space-3); }
 .msh__line { display: grid; gap: var(--ds-space-2); border: 1px solid var(--ds-color-line); border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); }
 .msh__check { display: flex; align-items: center; gap: .5rem; }
+.msh__problem { margin: 0; color: var(--ds-color-danger); font-weight: 700; }

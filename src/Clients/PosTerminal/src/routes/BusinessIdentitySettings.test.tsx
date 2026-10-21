@@ -243,10 +243,129 @@ describe("BusinessIdentitySettings", () => {
     const removeButton = Array.from(document.querySelectorAll<HTMLButtonElement>("button"))
       .find((button) => button.textContent === "Kaldır")!;
     await act(async () => removeButton.click());
+    expect(deleteCalled).toBe(false);
+    const confirmButton = Array.from(document.querySelectorAll<HTMLButtonElement>("button"))
+      .find((button) => button.textContent === "Evet, kaldır")!;
+    await act(async () => confirmButton.click());
     await act(async () => Promise.resolve());
 
     expect(deleteCalled).toBe(true);
     expect(document.body.textContent).toContain("Logo kaldırıldı");
+  });
+
+  const nameRecord = (rowVersion: number) => ({
+    settingId: "s1", key: "business.name", value: "Sahil Cafe", dataType: "Text", scope: "Global",
+    moduleOwner: "BusinessIdentity", description: null, requiresRestart: false, active: true,
+    updatedAt: "2026-09-19T00:00:00Z", rowVersion,
+  });
+
+  /** A manager session with the identity read endpoints answering; `extra` handles whatever a test wants to vary. */
+  function managerFetch(extra: (path: string, init?: RequestInit) => Response | undefined) {
+    return vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(input);
+      const custom = extra(path, init);
+      if (custom) return custom;
+      if (path.includes("/auth/session")) return jsonResponse({ userId: "u1", displayName: "Zeynep", terminalId: "t1", capabilities: ["settings.manage"] });
+      if (path.endsWith("/api/v1/qr/branding")) return jsonResponse({ businessName: "Sahil Cafe", accentColor: "#1B4D7B", hasLogo: false });
+      if (path.endsWith("/accent-palette")) return jsonResponse(PALETTE);
+      if (path.endsWith("/api/v1/qr/logo")) return jsonResponse(undefined, 404);
+      throw new Error(`unexpected fetch: ${path} ${init?.method ?? "GET"}`);
+    });
+  }
+
+  async function saveName() {
+    const nameInput = document.querySelector<HTMLInputElement>('input[placeholder="Örn. Sahil Cafe"]')!;
+    const nativeSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")!.set!;
+    await act(async () => {
+      nativeSetter.call(nameInput, "Yeni Ad");
+      nameInput.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    await act(async () => nameInput.closest("form")!.querySelector<HTMLButtonElement>("button")!.click());
+    await act(async () => Promise.resolve());
+  }
+
+  const flush = async () => { await act(async () => Promise.resolve()); await act(async () => Promise.resolve()); };
+
+  it("saves with the version the screen loaded, so a change made by someone else in between is caught", async () => {
+    let nameReads = 0;
+    let put: string | undefined;
+    vi.stubGlobal("fetch", managerFetch((path, init) => {
+      if (!path.endsWith("/management/settings/business.name")) return undefined;
+      if (init?.method === "PUT") { put = String(init.body); return jsonResponse({ ...nameRecord(8), value: "Yeni Ad" }); }
+      nameReads += 1;
+      return jsonResponse(nameRecord(nameReads === 1 ? 7 : 99));
+    }));
+    await render(<BusinessIdentitySettings />);
+    await flush();
+    await saveName();
+    expect(put).toContain('"expectedRowVersion":7');
+    expect(nameReads).toBe(1);
+  });
+
+  it("when someone else changed the name meanwhile it says so in Turkish and reloads the screen", async () => {
+    let brandingReads = 0;
+    vi.stubGlobal("fetch", managerFetch((path, init) => {
+      if (path.endsWith("/api/v1/qr/branding")) { brandingReads += 1; return jsonResponse({ businessName: "Sahil Cafe", accentColor: "#1B4D7B", hasLogo: false }); }
+      if (!path.endsWith("/management/settings/business.name")) return undefined;
+      if (init?.method === "PUT") return jsonResponse({ error: { code: "CONCURRENCY_CONFLICT", message: "Ayar başka bir işlem tarafından değiştirildi." } }, 409);
+      return jsonResponse(nameRecord(1));
+    }));
+    await render(<BusinessIdentitySettings />);
+    await flush();
+    await saveName();
+    await flush();
+    expect(document.body.textContent).toContain("Ayar başka biri tarafından değiştirilmiş; ekran yenilendi, tekrar deneyin.");
+    expect(brandingReads).toBe(2);
+  });
+
+  it("when the session ended during a save it goes back to the login form instead of staying stuck", async () => {
+    vi.stubGlobal("fetch", managerFetch((path, init) => {
+      if (!path.endsWith("/management/settings/business.name")) return undefined;
+      if (init?.method === "PUT") return jsonResponse({ error: { code: "UNAUTHORIZED", message: "Oturum geçersiz." } }, 401);
+      return jsonResponse(nameRecord(1));
+    }));
+    await render(<BusinessIdentitySettings />);
+    await flush();
+    await saveName();
+    await flush();
+    expect(document.body.textContent).toContain("Yönetici girişi");
+    expect(document.body.textContent).toContain("Oturum sona erdi; yeniden giriş yapın.");
+  });
+
+  it("when the current settings cannot be read it offers a retry that unlocks the form", async () => {
+    let brandingFails = true;
+    vi.stubGlobal("fetch", managerFetch((path) => {
+      if (path.endsWith("/api/v1/qr/branding") && brandingFails) return jsonResponse({ error: { code: "X", message: "Sunucu yanıt vermedi." } }, 500);
+      return undefined;
+    }));
+    await render(<BusinessIdentitySettings />);
+    await flush();
+    expect(document.querySelector<HTMLInputElement>('input[placeholder="Örn. Sahil Cafe"]')!.disabled).toBe(true);
+    expect(document.body.textContent).toContain("Sunucu yanıt vermedi.");
+
+    brandingFails = false;
+    await act(async () => Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find((button) => button.textContent === "Tekrar dene")!.click());
+    await flush();
+    expect(document.querySelector<HTMLInputElement>('input[placeholder="Örn. Sahil Cafe"]')!.disabled).toBe(false);
+    expect(document.body.textContent).not.toContain("Tekrar dene");
+  });
+
+  it("asks before removing the logo and keeps it when the manager steps back", async () => {
+    let deleteCalled = false;
+    vi.stubGlobal("fetch", managerFetch((path, init) => {
+      if (path.endsWith("/api/v1/qr/logo")) return new Response(new Uint8Array([1, 2, 3]), { status: 200, headers: { "Content-Type": "image/png" } });
+      if (path.endsWith("/management/business-identity/logo") && init?.method === "DELETE") { deleteCalled = true; return jsonResponse(undefined, 204); }
+      return undefined;
+    }));
+    await render(<BusinessIdentitySettings />);
+    await flush();
+    const byText = (text: string) => Array.from(document.querySelectorAll<HTMLButtonElement>("button")).find((button) => button.textContent === text)!;
+    await act(async () => byText("Kaldır").click());
+    expect(document.body.textContent).toContain("Emin misiniz?");
+    await act(async () => byText("Vazgeç").click());
+    expect(deleteCalled).toBe(false);
+    expect(document.body.textContent).not.toContain("Emin misiniz?");
+    expect(byText("Kaldır")).toBeDefined();
   });
 
   // V1-RMD-373 (module-by-module UI audit, 2026-09-27): unlike ~13 other

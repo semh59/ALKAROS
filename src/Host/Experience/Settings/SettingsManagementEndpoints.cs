@@ -3,7 +3,13 @@ using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Settings.BusinessIdentity;
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.KitchenDenseModeThreshold;
+using ALKAROS.Settings.KitchenLiveSync;
+using ALKAROS.Settings.QrOrderExpiry;
+using ALKAROS.Settings.ReservationStation;
 using ALKAROS.Settings.TypedSettings;
+using ALKAROS.Settings.WaiterMaxActiveTables;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -57,6 +63,8 @@ public static class SettingsManagementEndpoints
             ISettingsService settings,
             CancellationToken cancellationToken) =>
         {
+            // Settings register themselves on first read; the editor must list every one from the very first visit.
+            await EnsureKnownSettingsRegisteredAsync(settings, cancellationToken);
             var records = string.IsNullOrWhiteSpace(moduleOwner)
                 ? await settings.GetAllActiveAsync(cancellationToken)
                 : await settings.GetByModuleOwnerAsync(moduleOwner, cancellationToken);
@@ -110,15 +118,49 @@ public static class SettingsManagementEndpoints
         group.MapGet("/{key}/history", async (
             string key,
             ISettingsService settings,
+            NpgsqlDataSource dataSource,
             CancellationToken cancellationToken) =>
         {
             var record = await settings.GetRecordAsync(key, cancellationToken)
                 ?? throw new SettingNotFoundException(key);
             var history = await settings.GetHistoryAsync(record.SettingId, cancellationToken);
-            return Results.Ok(history.Select(SettingHistoryRecordV1.From).ToArray());
+            var names = await DisplayNamesAsync(dataSource, history.Where(entry => entry.ChangedBy is not null).Select(entry => entry.ChangedBy!.Value), cancellationToken);
+            return Results.Ok(history.Select(entry => SettingHistoryRecordV1.From(entry) with
+            {
+                ChangedByName = entry.ChangedBy is { } id ? names.GetValueOrDefault(id) : null,
+            }).ToArray());
         });
 
         return group;
+    }
+
+    private static async Task EnsureKnownSettingsRegisteredAsync(ISettingsService settings, CancellationToken cancellationToken)
+    {
+        await BusinessNameSetting.EnsureRegisteredAsync(settings, cancellationToken);
+        await BusinessAccentThemeSetting.EnsureRegisteredAsync(settings, cancellationToken);
+        await KitchenDenseModeThresholdSetting.EnsureRegisteredAsync(settings, cancellationToken);
+        await KitchenLiveSyncSetting.EnsureRegisteredAsync(settings, cancellationToken);
+        await QrOrderExpirySetting.EnsureRegisteredAsync(settings, cancellationToken);
+        await ReservationStationSetting.EnsureRegisteredAsync(settings, cancellationToken);
+        await WaiterMaxActiveTablesSetting.EnsureRegisteredAsync(settings, cancellationToken);
+        await GarsonFeatureToggles.EnsureAllRegisteredAsync(settings, cancellationToken);
+    }
+
+    private static async Task<Dictionary<Guid, string>> DisplayNamesAsync(
+        NpgsqlDataSource dataSource, IEnumerable<Guid> userIds, CancellationToken cancellationToken)
+    {
+        var ids = userIds.Distinct().ToArray();
+        var names = new Dictionary<Guid, string>();
+        if (ids.Length == 0)
+            return names;
+
+        await using var command = dataSource.CreateCommand(
+            "SELECT user_id, display_name FROM identity.users WHERE user_id = ANY(@ids);");
+        command.Parameters.AddWithValue("ids", ids);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            names[reader.GetGuid(0)] = reader.GetString(1);
+        return names;
     }
 }
 

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Button, StateMessage } from "../../design-system";
 import { commonActions } from "../../strings";
 import { ManagementApiError } from "./http";
@@ -10,9 +10,15 @@ export type Panel<T> = { state: "loading" } | { state: "error"; message: string 
 
 export function usePanel<T>(load: () => Promise<T>, failed: string, refreshKey = 0): [Panel<T>, () => void] {
   const [panel, setPanel] = useState<Panel<T>>({ state: "loading" });
+  const latest = useRef(0);
   const run = useCallback(() => {
+    // Only the newest request may answer: a slow earlier one must not overwrite what the screen asks for now.
+    const mine = ++latest.current;
     setPanel((current) => current.state === "ready" ? current : { state: "loading" });
-    load().then((data) => setPanel({ state: "ready", data }), (reason) => setPanel({ state: "error", message: errorText(reason, failed) }));
+    load().then(
+      (data) => { if (mine === latest.current) setPanel({ state: "ready", data }); },
+      (reason) => { if (mine === latest.current) setPanel({ state: "error", message: errorText(reason, failed) }); },
+    );
   }, [load, failed]);
   useEffect(run, [run, refreshKey]);
   return [panel, run];

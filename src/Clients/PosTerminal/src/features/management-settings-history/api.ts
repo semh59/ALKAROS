@@ -4,6 +4,7 @@ import { createRequester } from "../management/http";
 export interface SettingsClient {
   listSettings: () => Promise<readonly SettingRecord[]>;
   history: (key: string) => Promise<readonly SettingHistoryEntry[]>;
+  update: (key: string, newValue: string, expectedRowVersion: number, reason: string) => Promise<SettingRecord>;
 }
 
 export function createSettingsClient(fetcher: typeof fetch = fetch): SettingsClient {
@@ -12,5 +13,9 @@ export function createSettingsClient(fetcher: typeof fetch = fetch): SettingsCli
   return {
     listSettings: () => json("/"),
     history: (key) => json(`/${encodeURIComponent(key)}/history`),
+    update: async (key, newValue, expectedRowVersion, reason) => (await call(`/${encodeURIComponent(key)}`, {
+      method: "PUT",
+      body: JSON.stringify({ newValue, expectedRowVersion, reason }),
+    })).json() as Promise<SettingRecord>,
   };
 }
