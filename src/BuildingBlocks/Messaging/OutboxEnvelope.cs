@@ -26,6 +26,8 @@ public sealed record OutboxEnvelope
         ArgumentException.ThrowIfNullOrWhiteSpace(eventType);
         ArgumentException.ThrowIfNullOrWhiteSpace(aggregateType);
         ArgumentNullException.ThrowIfNull(payloadEnvelope);
+        if (aggregateId == Guid.Empty)
+            throw new ArgumentException("Aggregate id cannot be empty.", nameof(aggregateId));
         if (eventType.Length > MaxTypeLength || aggregateType.Length > MaxTypeLength)
             throw new ArgumentException(
                 $"Event type and aggregate type must not exceed {MaxTypeLength} characters.",

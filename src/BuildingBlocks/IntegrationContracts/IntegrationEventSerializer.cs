@@ -3,10 +3,11 @@ using System.Text.Json;
 namespace ALKAROS.IntegrationContracts;
 
 /// <summary>
-/// Serializes integration event payloads for the outbox. These events carry
-/// only aggregate identifiers and timestamps — no personal or financial data —
-/// so the payload is plain UTF-8 JSON, not a protected sensitive envelope. An
-/// event that ever needs to carry sensitive data must wrap it through the
+/// Serializes integration event payloads for the outbox as plain UTF-8 JSON,
+/// not a protected sensitive envelope. Most events carry only identifiers and
+/// timestamps, but a few carry customer free text (the QR order note), which
+/// is stored here unencrypted until the outbox purge deletes the row. An event
+/// that needs stronger protection must wrap its payload through the
 /// SensitiveData boundary before it reaches the outbox.
 /// </summary>
 public static class IntegrationEventSerializer

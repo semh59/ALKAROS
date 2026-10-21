@@ -43,6 +43,10 @@ public static class ModuleBoundaryTests
         "ALKAROS.CustomerData",
         // V14-ACC-001, 2026-09-28.
         "ALKAROS.CustomerAccounts",
+        "ALKAROS.Payments",
+        "ALKAROS.QrOrdering",
+        "ALKAROS.Invoicing",
+        "ALKAROS.Privacy",
     };
 
     private static readonly string[] EmptyDependencies = Array.Empty<string>();
@@ -279,7 +283,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.Recipes"] =
                 ["ALKAROS.Identity", "ALKAROS.Recipes"],
             ["ALKAROS.Host.DualScreen"] =
-                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Observability", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.QrOrdering", "ALKAROS.Security", "ALKAROS.Settings", "ALKAROS.CustomerAccounts"],
+                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Observability", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.Privacy", "ALKAROS.QrOrdering", "ALKAROS.Security", "ALKAROS.Settings", "ALKAROS.CustomerAccounts"],
             ["ALKAROS.Host.Experience.Billing"] =
                 ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.Settings"],
             ["ALKAROS.Host.Experience.CustomerAccounts"] =

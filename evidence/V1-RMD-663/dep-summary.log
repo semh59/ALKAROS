@@ -1,0 +1,6 @@
+tests/Modules/Kitchen/OrderItemStateSync: Başarılı!  - Başarısız:     0, Başarılı:     7, Atlanan:     0, Toplam:     7, Süre: 263 m
+tests/Modules/QrOrdering/PendingOrders: Başarılı!  - Başarısız:     0, Başarılı:    13, Atlanan:     0, Toplam:    13, Süre: 659 m
+tests/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox: Başarılı!  - Başarısız:     0, Başarılı:    31, Atlanan:     0, Toplam:    31, Süre: 537 m
+tests/Modules/QrOrdering/RelayCredential: Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 785 m
+tests/Host/Experience/OnlineOrdering: Başarılı!  - Başarısız:     0, Başarılı:   179, Atlanan:     0, Toplam:   179, Süre: 1 m 3
+tests/Host/Experience/SecurityAdministration: Başarılı!  - Başarısız:     0, Başarılı:    30, Atlanan:     0, Toplam:    30, Süre: 1 m 1

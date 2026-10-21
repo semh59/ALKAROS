@@ -1,0 +1,15 @@
+KILLED   empty aggregate id accepted
+SURVIVED delivery order ignored
+KILLED   not-yet-due message claimed
+KILLED   backoff does not double
+KILLED   Privacy edge not approved
+restore OutboxEnvelope.cs: identical
+restore OutboxStore.cs: identical
+restore RetryPolicy.cs: identical
+restore ModuleBoundaryTests.cs: identical
+KILLED   delivery order ignored
+restore OutboxEnvelope.cs: identical
+restore OutboxStore.cs: identical
+restore RetryPolicy.cs: identical
+restore ModuleBoundaryTests.cs: identical
+mutants: 5, survived: 0 (the four SensitiveData mutants moved to V1-RMD-664 with their code)
