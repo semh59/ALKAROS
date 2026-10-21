@@ -172,13 +172,20 @@ public static class GarsonFeatureToggles
     {
         ArgumentNullException.ThrowIfNull(settings);
 
-        var result = new Dictionary<GarsonFeature, bool>();
-        foreach (var feature in Definitions.Keys)
+        var records = await settings.GetByModuleOwnerAsync(ModuleOwner, cancellationToken);
+        if (Definitions.Values.Any(definition => records.All(record => record.Key != definition.Key)))
         {
-            result[feature] = await IsEnabledAsync(settings, feature, cancellationToken);
+            await EnsureAllRegisteredAsync(settings, cancellationToken);
         }
 
-        return result;
+        // Same answer as IsEnabledAsync (a freshly registered key reads as its default, on): a missing, deactivated or unreadable value means "on".
+        return Definitions.ToDictionary(
+            definition => definition.Key,
+            definition =>
+            {
+                var record = records.FirstOrDefault(candidate => candidate.Key == definition.Value.Key);
+                return record is not { Active: true } || !bool.TryParse(record.Value, out var enabled) || enabled;
+            });
     }
 }
 

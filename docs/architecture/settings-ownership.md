@@ -41,3 +41,26 @@ that classification is bound below.
   history; credentials are explicitly excluded from generic settings.
 - A setting value can always be traced to the `setting_history` row that
   changed it.
+
+## Known settings as built
+
+The registry is the code, not this file. Owners and edit limits below match
+what the Host registers and the server enforces on write (reasons are at most
+500 characters; a change needs the `settings.manage` permission and writes a
+history row naming who changed it).
+
+| Key | Module owner | Type | Default | Allowed values |
+| --- | --- | --- | --- | --- |
+| `business.name` | settings | Text | empty | up to 80 characters, no control characters |
+| `business.accent_theme` | settings | Text | palette default | a key of the accent palette |
+| `waiter.max_active_tables` | orders | WholeNumber | 0 | 0–50, 0 = unlimited |
+| `kitchen.dense_mode_threshold` | kitchen | WholeNumber | 9 | 1–99 |
+| `kitchen.live_sync_enabled` | kitchen | Toggle | false | true/false |
+| `qr_ordering.pending_confirmation_timeout` | qr_ordering | Duration | 5 min | 1 min–24 h |
+| `reservations.dedicated_station_enabled` | tables | Toggle | false | true/false |
+| `garson.*_enabled` (nine feature switches) | waiter | Toggle | true | true/false |
+
+Reading rules: a missing, deactivated or unreadable value falls back to the
+default. History lists show the newest 5000 changes, newest first, and ties on
+the same instant are ordered by history id so paging is stable.
+Making history rows immutable in the database is a separate migration task.

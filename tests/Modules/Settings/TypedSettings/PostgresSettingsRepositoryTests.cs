@@ -1,7 +1,10 @@
+using ALKAROS.Settings.GarsonFeatureToggles;
+using ALKAROS.Settings.QrOrderExpiry;
 using ALKAROS.Settings.TypedSettings.Tests.Fixtures;
 using FluentAssertions;
 using Npgsql;
 using Xunit;
+using Toggles = ALKAROS.Settings.GarsonFeatureToggles.GarsonFeatureToggles;
 
 namespace ALKAROS.Settings.TypedSettings.Tests;
 
@@ -370,6 +373,231 @@ public sealed class PostgresSettingsRepositoryTests : IClassFixture<SettingsTest
         updated.Value.Should().Be("100");
         var newIntVal = await _service.GetValueAsync<int>("test.int_val");
         newIntVal.Should().Be(100);
+    }
+
+    private async Task<SettingRecord> RegisterHistorySettingAsync(string key)
+        => await _repository.RegisterSettingAsync(new RegisterSettingRequest(
+            Key: key, Value: "0", DataType: SettingDataType.WholeNumber, Scope: SettingScope.Module, ModuleOwner: "History", RegisteredBy: _userId));
+
+    private async Task AddHistoryRowsAsync(Guid settingId, int count, string? fixedTime)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var command = new NpgsqlCommand(
+            $"""
+            INSERT INTO settings.setting_history (setting_history_id, setting_id, old_value, new_value, changed_at)
+            SELECT gen_random_uuid(), @id, NULL, 'v' || n, {(fixedTime is null ? "now() + n * interval '1 second'" : "@at::timestamptz")}
+            FROM generate_series(1, @count) AS n;
+            """,
+            connection);
+        command.Parameters.AddWithValue("id", settingId);
+        command.Parameters.AddWithValue("count", count);
+        if (fixedTime is not null)
+            command.Parameters.AddWithValue("at", fixedTime);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    [Fact]
+    public async Task HistoryEntriesWithTheSameInstantComeBackInAStableNewestFirstOrder()
+    {
+        var setting = await RegisterHistorySettingAsync("history.tie_order");
+        await AddHistoryRowsAsync(setting.SettingId, 20, "2031-01-01T00:00:00Z");
+
+        var first = await _repository.GetHistoryAsync(setting.SettingId);
+        var second = await _repository.GetHistoryAsync(setting.SettingId);
+
+        var tied = first.Where(entry => entry.ChangedAt == DateTimeOffset.Parse("2031-01-01T00:00:00Z", System.Globalization.CultureInfo.InvariantCulture)).Select(entry => entry.SettingHistoryId).ToList();
+        tied.Should().HaveCount(20);
+        tied.Should().BeInDescendingOrder();
+        first.Select(entry => entry.SettingHistoryId).Should().Equal(second.Select(entry => entry.SettingHistoryId));
+    }
+
+    [Fact]
+    public async Task AVeryLongHistoryReturnsTheNewestEntriesInsteadOfFailing()
+    {
+        var setting = await RegisterHistorySettingAsync("history.very_long");
+        await AddHistoryRowsAsync(setting.SettingId, 5001, null);
+
+        var history = await _repository.GetHistoryAsync(setting.SettingId);
+
+        history.Should().HaveCount(5000);
+        history[0].NewValue.Should().Be("v5001");
+        history.Should().NotContain(entry => entry.NewValue == "v1" || entry.NewValue == "0");
+    }
+}
+
+/// <summary>One fresh database per test: the toggle keys are fixed, so a shared database would make tests order-dependent.</summary>
+public sealed class GarsonFeatureTogglesTests : IAsyncLifetime
+{
+    private readonly SettingsTestDatabase _db = new();
+    private CountingSettings _settings = null!;
+
+    public async Task InitializeAsync()
+    {
+        await _db.InitializeAsync();
+        _settings = new CountingSettings(new SettingsService(new PostgresSettingsRepository(_db.DataSource, new SettingValidator())));
+    }
+
+    public Task DisposeAsync() => _db.DisposeAsync();
+
+    [Fact]
+    public async Task FirstAskRegistersEveryFeatureAndAllAreOn()
+    {
+        var all = await Toggles.GetAllAsync(_settings);
+
+        all.Keys.Should().BeEquivalentTo(Enum.GetValues<GarsonFeature>());
+        all.Values.Should().OnlyContain(enabled => enabled);
+        foreach (var feature in Enum.GetValues<GarsonFeature>())
+            (await _settings.GetRecordAsync(Toggles.KeyFor(feature)))!.Value.Should().Be("true");
+    }
+
+    [Fact]
+    public async Task AFeatureAnOperatorTurnedOffReadsOffWhileTheRestStayOn()
+    {
+        await Toggles.EnsureAllRegisteredAsync(_settings);
+        var key = Toggles.KeyFor(GarsonFeature.VoluntaryTip);
+        var record = (await _settings.GetRecordAsync(key))!;
+        await _settings.SetValueAsync(key, false, record.RowVersion);
+
+        var all = await Toggles.GetAllAsync(_settings);
+
+        all[GarsonFeature.VoluntaryTip].Should().BeFalse();
+        all.Where(pair => pair.Key != GarsonFeature.VoluntaryTip).Should().OnlyContain(pair => pair.Value);
+        (await Toggles.IsEnabledAsync(_settings, GarsonFeature.VoluntaryTip)).Should().BeFalse();
+    }
+
+    [Fact]
+    public async Task ADeactivatedFeatureReadsOnInBothTheSingleAndTheBatchRead()
+    {
+        await Toggles.EnsureAllRegisteredAsync(_settings);
+        var key = Toggles.KeyFor(GarsonFeature.PartySize);
+        var turnedOff = await _settings.SetValueAsync(key, false, (await _settings.GetRecordAsync(key))!.RowVersion);
+        await _settings.DeactivateAsync(key, turnedOff.RowVersion);
+
+        var all = await Toggles.GetAllAsync(_settings);
+
+        all[GarsonFeature.PartySize].Should().BeTrue();
+        (await Toggles.IsEnabledAsync(_settings, GarsonFeature.PartySize)).Should().BeTrue();
+    }
+
+    [Fact]
+    public async Task OnceRegisteredTheBatchReadIsOneQueryNotOnePerFeature()
+    {
+        await Toggles.EnsureAllRegisteredAsync(_settings);
+        _settings.Reads = 0;
+
+        await Toggles.GetAllAsync(_settings);
+
+        _settings.Reads.Should().Be(1);
+    }
+
+    [Fact]
+    public async Task RegisteringAgainNeverResetsAChosenValue()
+    {
+        await Toggles.EnsureAllRegisteredAsync(_settings);
+        var key = Toggles.KeyFor(GarsonFeature.ShiftSummary);
+        await _settings.SetValueAsync(key, false, (await _settings.GetRecordAsync(key))!.RowVersion);
+
+        await Toggles.EnsureAllRegisteredAsync(_settings);
+
+        (await _settings.GetRecordAsync(key))!.Value.Should().Be("false");
+    }
+
+    private sealed class CountingSettings(ISettingsService inner) : ISettingsService
+    {
+        public int Reads { get; set; }
+
+        public Task<T> GetValueAsync<T>(string key, CancellationToken cancellationToken = default)
+        {
+            Reads++;
+            return inner.GetValueAsync<T>(key, cancellationToken);
+        }
+
+        public Task<T> GetValueOrDefaultAsync<T>(string key, T defaultValue, CancellationToken cancellationToken = default)
+        {
+            Reads++;
+            return inner.GetValueOrDefaultAsync(key, defaultValue, cancellationToken);
+        }
+
+        public Task<SettingRecord?> GetRecordAsync(string key, CancellationToken cancellationToken = default)
+        {
+            Reads++;
+            return inner.GetRecordAsync(key, cancellationToken);
+        }
+
+        public Task<IReadOnlyList<SettingRecord>> GetByModuleOwnerAsync(string moduleOwner, CancellationToken cancellationToken = default)
+        {
+            Reads++;
+            return inner.GetByModuleOwnerAsync(moduleOwner, cancellationToken);
+        }
+
+        public Task<IReadOnlyList<SettingRecord>> GetAllActiveAsync(CancellationToken cancellationToken = default)
+            => inner.GetAllActiveAsync(cancellationToken);
+
+        public Task<SettingRecord> RegisterSettingAsync(RegisterSettingRequest request, CancellationToken cancellationToken = default)
+            => inner.RegisterSettingAsync(request, cancellationToken);
+
+        public Task<SettingRecord> SetValueAsync<T>(
+            string key, T value, long expectedRowVersion, Guid? updatedBy = null, string? reason = null, CancellationToken cancellationToken = default)
+            => inner.SetValueAsync(key, value, expectedRowVersion, updatedBy, reason, cancellationToken);
+
+        public Task<SettingRecord> DeactivateAsync(
+            string key, long expectedRowVersion, Guid? deactivatedBy = null, string? reason = null, CancellationToken cancellationToken = default)
+            => inner.DeactivateAsync(key, expectedRowVersion, deactivatedBy, reason, cancellationToken);
+
+        public Task<IReadOnlyList<SettingHistoryRecord>> GetHistoryAsync(Guid settingId, CancellationToken cancellationToken = default)
+            => inner.GetHistoryAsync(settingId, cancellationToken);
+    }
+}
+
+/// <summary>One fresh database per test: the key is a fixed constant, so sharing would make tests order-dependent.</summary>
+public sealed class QrOrderExpirySettingTests : IAsyncLifetime
+{
+    private readonly SettingsTestDatabase _db = new();
+    private SettingsService _service = null!;
+
+    public async Task InitializeAsync()
+    {
+        await _db.InitializeAsync();
+        _service = new SettingsService(new PostgresSettingsRepository(_db.DataSource, new SettingValidator()));
+    }
+
+    public Task DisposeAsync() => _db.DisposeAsync();
+
+    [Fact]
+    public async Task FirstAskRegistersTheFiveMinuteDefault()
+    {
+        (await _service.GetRecordAsync(QrOrderExpirySetting.Key)).Should().BeNull();
+
+        var timeout = await QrOrderExpirySetting.GetTimeoutAsync(_service);
+
+        timeout.Should().Be(TimeSpan.FromMinutes(5));
+        var record = await _service.GetRecordAsync(QrOrderExpirySetting.Key);
+        record!.DataType.Should().Be(SettingDataType.Duration);
+        record.Scope.Should().Be(SettingScope.Global);
+        record.Value.Should().Be("00:05:00");
+    }
+
+    [Fact]
+    public async Task AChosenTimeoutIsReadBackAndSurvivesRegisteringAgain()
+    {
+        await QrOrderExpirySetting.EnsureRegisteredAsync(_service);
+        var record = (await _service.GetRecordAsync(QrOrderExpirySetting.Key))!;
+        await _service.SetValueAsync(QrOrderExpirySetting.Key, TimeSpan.FromMinutes(12), record.RowVersion);
+
+        await QrOrderExpirySetting.EnsureRegisteredAsync(_service);
+
+        (await QrOrderExpirySetting.GetTimeoutAsync(_service)).Should().Be(TimeSpan.FromMinutes(12));
+    }
+
+    [Fact]
+    public async Task ADeactivatedSettingFallsBackToTheDefault()
+    {
+        await QrOrderExpirySetting.EnsureRegisteredAsync(_service);
+        var record = (await _service.GetRecordAsync(QrOrderExpirySetting.Key))!;
+        var changed = await _service.SetValueAsync(QrOrderExpirySetting.Key, TimeSpan.FromMinutes(12), record.RowVersion);
+        await _service.DeactivateAsync(QrOrderExpirySetting.Key, changed.RowVersion);
+
+        (await QrOrderExpirySetting.GetTimeoutAsync(_service)).Should().Be(QrOrderExpirySetting.Default);
     }
 }
 

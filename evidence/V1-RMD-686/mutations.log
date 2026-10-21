@@ -1,0 +1,9 @@
+R1 KILLED
+R2 KILLED
+R3 KILLED
+R4 KILLED
+(R1-R4: ilk tam koşuda, aynı test projesi; ikinci koşu bellek azlığı yüzünden kesildi, kaynak elle geri alınıp doğrulandı)
+G1 KILLED restored=true
+G2 KILLED restored=true
+G3 KILLED restored=true
+G4 KILLED restored=true

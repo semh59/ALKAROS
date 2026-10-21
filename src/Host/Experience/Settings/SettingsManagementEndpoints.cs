@@ -117,13 +117,18 @@ public static class SettingsManagementEndpoints
 
         group.MapGet("/{key}/history", async (
             string key,
+            int? limit,
+            int? offset,
             ISettingsService settings,
             NpgsqlDataSource dataSource,
             CancellationToken cancellationToken) =>
         {
             var record = await settings.GetRecordAsync(key, cancellationToken)
                 ?? throw new SettingNotFoundException(key);
-            var history = await settings.GetHistoryAsync(record.SettingId, cancellationToken);
+            var history = (await settings.GetHistoryAsync(record.SettingId, cancellationToken))
+                .Skip(Math.Max(offset ?? 0, 0))
+                .Take(Math.Clamp(limit ?? DefaultHistoryPageSize, 1, MaxHistoryPageSize))
+                .ToList();
             var names = await DisplayNamesAsync(dataSource, history.Where(entry => entry.ChangedBy is not null).Select(entry => entry.ChangedBy!.Value), cancellationToken);
             return Results.Ok(history.Select(entry => SettingHistoryRecordV1.From(entry) with
             {
@@ -133,6 +138,9 @@ public static class SettingsManagementEndpoints
 
         return group;
     }
+
+    private const int DefaultHistoryPageSize = 100;
+    private const int MaxHistoryPageSize = 500;
 
     private static async Task EnsureKnownSettingsRegisteredAsync(ISettingsService settings, CancellationToken cancellationToken)
     {

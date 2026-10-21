@@ -128,8 +128,8 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
             SELECT setting_history_id, setting_id, old_value, new_value, reason, changed_by, changed_at
             FROM {HistoryTable}
             WHERE setting_id = @setting_id
-            ORDER BY changed_at DESC
-            LIMIT {MaxUnpagedRows + 1};
+            ORDER BY changed_at DESC, setting_history_id DESC
+            LIMIT {MaxUnpagedRows};
             """;
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -150,10 +150,6 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
                 reader.IsDBNull(5) ? null : reader.GetGuid(5),
                 reader.GetFieldValue<DateTimeOffset>(6)));
         }
-
-        if (list.Count > MaxUnpagedRows)
-            throw new InvalidOperationException(
-                $"GetHistoryAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return list;
     }
