@@ -1,8 +1,8 @@
 # V1-RMD-597 - Identity modülünün bağımsız test ve kalite denetimi
 
 - Task ID: V1-RMD-597
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: validation
 - Surface state: Planned
 
