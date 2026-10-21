@@ -1,8 +1,8 @@
 # V1-RMD-687 - Ayar geçmişi değişmez ve logo tablosu sertleşir (göç)
 
 - Task ID: V1-RMD-687
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: implementation
 - Surface state: Planned
 
