@@ -51,4 +51,4 @@ V1-RMD-597 bulguları B016 (indirim kısmı) ve B010'un kullanım anı yarısı 
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-675
