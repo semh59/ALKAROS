@@ -59,6 +59,7 @@ public static class ApiErrorCatalog
             typeof(BehaviouralTighteningAlreadyClearedException),
             typeof(BehaviouralTighteningSelfClearException),
             typeof(DelegatorLacksPermissionException),
+            typeof(ApproverLacksPermissionException),
             typeof(DelegationGranteeNotFoundException),
             typeof(BadHttpRequestException),
             typeof(ArgumentException),
@@ -80,6 +81,8 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status403Forbidden, "SELF_APPROVAL_NOT_ALLOWED", "Kendinize uygulanan kısıtlamayı kaldıramazsınız."),
             DelegatorLacksPermissionException =>
                 (StatusCodes.Status403Forbidden, "DELEGATOR_LACKS_PERMISSION", "Sahip olmadığınız bir yetkiyi devredemezsiniz."),
+            ApproverLacksPermissionException =>
+                (StatusCodes.Status403Forbidden, "APPROVER_LACKS_PERMISSION", "Bu talebi yanıtlamak için talep edilen işlem yetkisine de sahip olmanız gerekir."),
             DelegationGranteeNotFoundException =>
                 (StatusCodes.Status404NotFound, "GRANTEE_NOT_FOUND", "Yetki devredilecek kullanıcı bulunamadı."),
             BadHttpRequestException =>

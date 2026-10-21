@@ -140,7 +140,7 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
     public async Task AManagerDelegatesAGrantClassPermissionTheyHoldAndItIsListed()
     {
         // V1-RMD-407 (V1-RMD-399 H-04): the time-boxed hand-off of model §1 can finally be created.
-        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true, withGrantPermissions: false);
         var (managerId, _) = _database.LastSeededManager;
         await _database.GrantToUserRoleAsync(managerId, "bills.comp");
         var granteeId = await _database.SeedGranteeAsync();
@@ -163,7 +163,7 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
     [Fact]
     public async Task ADelegationIsRefusedWhenItBreaksAnyOfItsBounds()
     {
-        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true, withGrantPermissions: false);
         var (managerId, _) = _database.LastSeededManager;
         await _database.GrantToUserRoleAsync(managerId, "bills.comp");
         var granteeId = await _database.SeedGranteeAsync();
@@ -186,6 +186,27 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
         Assert.Equal((HttpStatusCode.BadRequest, "VALIDATION_FAILED"), await TryAsync(new(granteeId, "bills.comp", -1m, soon)));
         Assert.Equal((HttpStatusCode.NotFound, "GRANTEE_NOT_FOUND"), await TryAsync(new(Guid.NewGuid(), "bills.comp", 50m, soon)));
         Assert.Empty(await GetAsync<List<ActiveDelegationV1>>(client, path, manager));
+    }
+
+    [Fact]
+    public async Task AnApproverWhoCannotDoTheRequestedThingThemselvesIsRefused()
+    {
+        var reportsOnly = await _database.SeedManagerSessionAsync(withDecisionPermission: true, withGrantPermissions: false);
+        var grantId = await _database.SeedPendingGrantAsync("bills.comp", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        foreach (var action in new[] { "approve", "deny" })
+        {
+            using var response = await client.SendAsync(Request(HttpMethod.Post, GrantPath(grantId, action), reportsOnly));
+            Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+            var error = await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
+            Assert.Equal("APPROVER_LACKS_PERMISSION", error!.Error.Code);
+        }
+
+        var pending = await GetAsync<List<PendingGrantV1>>(
+            client, AuthorizationDecisionEndpoints.GroupPrefix + "/pending-grants", reportsOnly);
+        Assert.Contains(pending, grant => grant.GrantId == grantId);
     }
 
     /// <summary>
@@ -389,7 +410,7 @@ internal sealed class AuthorizationDecisionTestDatabase
         await ExecuteAsync(maintenance, $"DROP DATABASE IF EXISTS {_databaseName} WITH (FORCE);");
     }
 
-    public async Task<string> SeedManagerSessionAsync(bool withDecisionPermission)
+    public async Task<string> SeedManagerSessionAsync(bool withDecisionPermission, bool withGrantPermissions = true)
     {
         var userId = Guid.NewGuid();
         var suffix = userId.ToString("N");
@@ -415,13 +436,14 @@ internal sealed class AuthorizationDecisionTestDatabase
                 """
                 INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, 'Decision Test Role');
                 INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
-                SELECT @role_permission_id, @role_id, permission_id FROM identity.permissions WHERE code = 'reports.view';
+                SELECT gen_random_uuid(), @role_id, permission_id FROM identity.permissions
+                WHERE code = 'reports.view' OR (@with_grants AND code IN ('bills.void', 'bills.comp', 'bills.discount'));
                 INSERT INTO identity.user_roles (user_role_id, user_id, role_id)
                 VALUES (@user_role_id, @user_id, @role_id);
                 """,
                 ("role_id", Guid.NewGuid()),
                 ("role_code", "decision-role-" + suffix),
-                ("role_permission_id", Guid.NewGuid()),
+                ("with_grants", withGrantPermissions),
                 ("user_role_id", Guid.NewGuid()),
                 ("user_id", userId));
         }

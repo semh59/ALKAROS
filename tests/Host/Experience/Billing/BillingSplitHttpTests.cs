@@ -708,6 +708,48 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APercentageDiscountRequestIsRaisedForTheCurrencyItWouldTakeOff()
+    {
+        // Limits and delegations are in currency: 10 (percent) used to be compared with a limit in lira.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
+            cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer")));
+
+        var body = await response.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        var payable = await _database.BillPayableAsync(seeded.BillId);
+        var granted = await _database.GrantAmountAsync(body!.GrantId!.Value);
+        Assert.True(payable > 100m);
+        Assert.Equal(Math.Round(payable * 0.10m, 2, MidpointRounding.AwayFromZero), granted);
+    }
+
+    [Fact]
+    public async Task AFixedAmountDiscountRequestKeepsItsOwnAmount()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
+            cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "FixedAmount", 30m, "PromotionalOffer")));
+
+        var body = await response.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        Assert.Equal(30m, await _database.GrantAmountAsync(body!.GrantId!.Value));
+    }
+
+    [Fact]
     public async Task ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied()
     {
         // Found by an independent audit (2026-09-07): AuthorizationGrantService.
@@ -1205,6 +1247,20 @@ internal sealed class BillingSplitTestDatabase
             "SELECT count(*) FROM billing.bills WHERE order_id = @order_id;");
         command.Parameters.AddWithValue("order_id", orderId);
         return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<decimal> BillPayableAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT payable_amount FROM billing.bills WHERE bill_id = @bill_id;");
+        command.Parameters.AddWithValue("bill_id", billId);
+        return (decimal)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<decimal> GrantAmountAsync(Guid grantId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT amount FROM identity.authorization_grants WHERE grant_id = @grant_id;");
+        command.Parameters.AddWithValue("grant_id", grantId);
+        return (decimal)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<long> BillAdjustmentCountAsync(Guid billId)

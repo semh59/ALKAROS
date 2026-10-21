@@ -151,6 +151,12 @@ public static class BillingSplitApplication
                     throw new AuthorizationDeniedException(
                         principal.UserId, ApplicationPermissions.BillsDiscount, "Requester has no assigned role.");
 
+                // Limits and delegations are in currency; a percentage is turned into the amount it takes off this bill.
+                var grantAmount = string.Equals(request.CalculationType, "Percentage", StringComparison.Ordinal)
+                    ? BillMath.RoundCurrency(
+                        (await store.GetAdjustmentsAsync(billId, cancellationToken)).Summary.OriginalPayableAmount * request.Value / 100m)
+                    : request.Value;
+
                 var resolution = await grants.RequestAsync(
                     new GrantRequest(
                         request.IdempotencyKey,
@@ -158,7 +164,7 @@ public static class BillingSplitApplication
                         principal.UserId,
                         role.Code,
                         request.ReasonCode,
-                        request.Value,
+                        grantAmount,
                         SubjectType: "Bill",
                         SubjectId: billId,
                         SubjectServingUserId: null),

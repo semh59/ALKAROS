@@ -66,6 +66,8 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
             var replay = await _grants.FindByIdempotencyKeyAsync(action.IdempotencyKey, cancellationToken);
             if (replay is not null)
             {
+                if (!MatchesReplay(replay, action))
+                    throw new IdempotencyKeyReusedException(action.IdempotencyKey);
                 results.Add(new OfflineReconciliationResult(
                     action.IdempotencyKey, replay.GrantId, replay.Status, "already reconciled", flagged, IsReplay: true));
                 continue;
@@ -123,6 +125,16 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
         return (GrantStatus.Pending, "recorded for manager review (offline_pending_review)");
     }
 
+    // The same fields the online path compares: a key that already belongs to another user's or another request's grant
+    // is a collision, never a replay of this action.
+    private static bool MatchesReplay(AuthorizationGrant replay, OfflineAuthorizedAction action)
+        => replay.RequesterUserId == action.RequesterUserId
+            && string.Equals(replay.PermissionCode, action.PermissionCode, StringComparison.Ordinal)
+            && string.Equals(replay.SubjectType, action.SubjectType, StringComparison.Ordinal)
+            && replay.SubjectId == action.SubjectId
+            && replay.Amount == action.Amount
+            && string.Equals(replay.ReasonCode, action.ReasonCode, StringComparison.Ordinal);
+
     private async Task<AuthorizationGrant> StoreAsync(
         Guid budgetId, OfflineAuthorizedAction action, GrantStatus status, CancellationToken cancellationToken)
     {
@@ -155,6 +167,8 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
             var winner = await _grants.FindByIdempotencyKeyAsync(action.IdempotencyKey, cancellationToken);
             if (winner is null)
                 throw;
+            if (!MatchesReplay(winner, action))
+                throw new IdempotencyKeyReusedException(action.IdempotencyKey);
             return winner;
         }
         catch (PostgresException ex) when (ex.SqlState == ForeignKeyViolation && ex.ConstraintName == ReplayBudgetForeignKey)

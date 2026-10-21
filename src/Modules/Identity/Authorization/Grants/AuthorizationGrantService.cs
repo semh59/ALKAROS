@@ -144,6 +144,10 @@ public sealed class AuthorizationGrantService : IAuthorizationGrantService
                 throw new InvalidOperationException($"Unhandled policy outcome '{outcome}'.");
         }
 
+        // An open behavioural tightening means a manager must look; no resolver may hand out the grant on their behalf.
+        if (forceEscalation)
+            return await StoreAsync(request, GrantStatus.Pending, path: null, cancellationToken);
+
         foreach (var resolver in _escalationResolvers)
         {
             var path = await resolver.TryResolveAsync(request, _nowUtc(), cancellationToken);

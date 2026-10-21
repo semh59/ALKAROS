@@ -39,6 +39,44 @@ public sealed class AuthorizationGrantServiceTests : IClassFixture<GrantDatabase
         SubjectId: serving is null ? null : Guid.NewGuid(),
         SubjectServingUserId: serving);
 
+    private sealed class FixedResolver(PolicyPath path) : IEscalationResolver
+    {
+        public Task<PolicyPath?> TryResolveAsync(
+            GrantRequest request, DateTimeOffset instant, CancellationToken cancellationToken = default)
+            => Task.FromResult<PolicyPath?>(path);
+    }
+
+    private sealed class ForcingGate(bool force) : IPrePolicyGate
+    {
+        public Task<bool> ShouldForceEscalationAsync(
+            GrantRequest request, DateTimeOffset instant, CancellationToken cancellationToken = default)
+            => Task.FromResult(force);
+    }
+
+    [Fact]
+    public async Task AnOpenTighteningSendsTheRequestToAManagerEvenWhenAResolverWouldApproveIt()
+    {
+        var service = new AuthorizationGrantService(
+            _grants, _policies, [new FixedResolver(PolicyPath.Delegation)], [new ForcingGate(true)], () => _now);
+
+        var result = await service.RequestAsync(Request("svc-tightened"));
+
+        result.Outcome.Should().Be(GrantOutcome.Pending);
+        result.Grant.Path.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task WithoutATighteningTheResolverStillApproves()
+    {
+        var service = new AuthorizationGrantService(
+            _grants, _policies, [new FixedResolver(PolicyPath.Delegation)], [new ForcingGate(false)], () => _now);
+
+        var result = await service.RequestAsync(Request("svc-not-tightened"));
+
+        result.Outcome.Should().Be(GrantOutcome.Authorized);
+        result.Grant.Path.Should().Be(PolicyPath.Delegation);
+    }
+
     [Fact]
     public async Task NoPolicyEscalatesToPendingAndWritesOneRow()
     {

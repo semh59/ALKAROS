@@ -439,6 +439,28 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APendingVoidRequestCarriesTheItemsRealAmount()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterUserId, cookie) = await _database.SeedRealWaiterSessionAsync(terminalId);
+        var (orderId, itemId, _, item) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing, waiterUserId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        var body = await response.Content.ReadFromJsonAsync<VoidSentItemResultV1>();
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT amount FROM identity.authorization_grants WHERE grant_id = @grant_id;");
+        command.Parameters.AddWithValue("grant_id", body!.GrantId!.Value);
+        var amount = (decimal)(await command.ExecuteScalarAsync())!;
+        Assert.True(item.GrossAmount > 0m);
+        Assert.Equal(item.GrossAmount, amount);
+    }
+
+    [Fact]
     public async Task AWaiterVoidingAnotherServersSentItemIsRefusedByTheOwnCheckGuard()
     {
         // V1-RMD-111: same wiring proof as the /comp sibling test — before

@@ -771,7 +771,10 @@ public static class OrderManagementEndpoints
                 // the order's real server via ServingUserId, same as /comp.
                 var order = await orders.GetByIdAsync(orderId, cancellationToken)
                     ?? throw new OrderItemNotFoundException(orderId, itemId);
+                var voidedItem = order.Items.FirstOrDefault(i => i.Id == itemId)
+                    ?? throw new OrderItemNotFoundException(orderId, itemId);
 
+                // The value being voided is what a limit, a delegation and the report have to see; 0 let any limit pass.
                 var resolution = await grants.RequestAsync(
                     new GrantRequest(
                         request.IdempotencyKey,
@@ -779,7 +782,7 @@ public static class OrderManagementEndpoints
                         userId,
                         role.Code,
                         request.ReasonCode,
-                        0m,
+                        voidedItem.GrossAmount,
                         SubjectType: "OrderItem",
                         SubjectId: itemId,
                         SubjectServingUserId: order.ServingUserId),

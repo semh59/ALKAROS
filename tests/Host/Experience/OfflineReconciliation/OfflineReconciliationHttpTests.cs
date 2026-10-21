@@ -106,6 +106,40 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ResendingAKeyWithAnotherAmountIsAConflictWhileTheSameActionIsAReplay()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId);
+        var issuedAt = DateTimeOffset.UtcNow.AddHours(-2);
+        var budget = await _database.SeedOfflineBudgetAsync(
+            userId, issuedAt, issuedAt.AddHours(4),
+            new OfflineAuthorityBudgetLine("bills.comp", 150m, 5));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var key = "http-recon-replay-" + Guid.NewGuid().ToString("N");
+        OfflineAuthorizedActionV1 Action(decimal amount) => new(
+            key, "bills.comp", userId, "cashier", "CustomerChange", amount, issuedAt.AddMinutes(30));
+
+        using (var first = await client.SendAsync(JsonRequest(
+            Path(terminalId), cookie, new ReconcileOfflineActionsRequest(budget.BudgetId, [Action(40m)]))))
+            Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        using (var same = await client.SendAsync(JsonRequest(
+            Path(terminalId), cookie, new ReconcileOfflineActionsRequest(budget.BudgetId, [Action(40m)]))))
+        {
+            Assert.Equal(HttpStatusCode.OK, same.StatusCode);
+            var body = await same.Content.ReadFromJsonAsync<OfflineReconciliationResponseV1>();
+            Assert.Equal("already reconciled", Assert.Single(body!.Results).Detail);
+        }
+
+        using var tampered = await client.SendAsync(JsonRequest(
+            Path(terminalId), cookie, new ReconcileOfflineActionsRequest(budget.BudgetId, [Action(75m)])));
+        Assert.Equal(HttpStatusCode.Conflict, tampered.StatusCode);
+        var error = await tampered.Content.ReadFromJsonAsync<OfflineReconciliationErrorV1>();
+        Assert.Equal("IDEMPOTENCY_KEY_REUSED", error!.Code);
+    }
+
+    [Fact]
     public async Task AFlaggedPendingActionSortsFirstAndTheSummaryCountsIt()
     {
         var terminalId = Guid.NewGuid();

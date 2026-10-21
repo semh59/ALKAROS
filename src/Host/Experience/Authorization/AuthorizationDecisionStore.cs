@@ -1,3 +1,4 @@
+using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Behavioural;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization.Delegations;
@@ -17,14 +18,17 @@ public sealed class AuthorizationDecisionStore
     private readonly IAuthorizationGrantRepository _grants;
     private readonly IAuthorizationDelegationRepository _delegations;
     private readonly IBehaviouralTighteningService _tightenings;
+    private readonly IAuthorizationService _authorization;
     private readonly Func<DateTimeOffset> _nowUtc;
 
     public AuthorizationDecisionStore(
         IAuthorizationGrantRepository grants,
         IAuthorizationDelegationRepository delegations,
         IBehaviouralTighteningService tightenings,
+        IAuthorizationService authorization,
         Func<DateTimeOffset>? nowUtc = null)
     {
+        _authorization = authorization ?? throw new ArgumentNullException(nameof(authorization));
         _grants = grants ?? throw new ArgumentNullException(nameof(grants));
         _delegations = delegations ?? throw new ArgumentNullException(nameof(delegations));
         _tightenings = tightenings ?? throw new ArgumentNullException(nameof(tightenings));
@@ -66,6 +70,19 @@ public sealed class AuthorizationDecisionStore
         var pending = await _grants.GetAsync(grantId, cancellationToken);
         if (pending is not null && pending.RequesterUserId == approverUserId)
             throw new AuthorizationSelfApprovalException(grantId, approverUserId);
+
+        // Whoever answers must be allowed to do the thing themselves; reading reports is not enough.
+        if (pending is not null)
+        {
+            try
+            {
+                await _authorization.AuthorizeAsync(approverUserId, pending.PermissionCode, cancellationToken);
+            }
+            catch (AuthorizationDeniedException)
+            {
+                throw new ApproverLacksPermissionException(pending.PermissionCode);
+            }
+        }
 
         var resolved = await _grants.ResolveAsync(
             grantId, status, PolicyPath.Manual, approverUserId, cancellationToken);
@@ -174,4 +191,16 @@ public sealed class AuthorizationDecisionStore
 
         await _tightenings.ClearAsync(tighteningId, managerUserId, cancellationToken);
     }
+}
+
+/// <summary>The person answering a request does not hold the permission the request asks for.</summary>
+public sealed class ApproverLacksPermissionException : Exception
+{
+    public ApproverLacksPermissionException(string permissionCode)
+        : base($"The approver does not hold '{permissionCode}'.")
+    {
+        PermissionCode = permissionCode;
+    }
+
+    public string PermissionCode { get; }
 }

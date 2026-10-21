@@ -277,6 +277,8 @@ internal sealed class OfflineReconciliationExceptionFilter : IEndpointFilter
             (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Geçerli bir terminal oturumu gerekiyor."),
         UnknownOfflineAuthorityBudgetException =>
             (StatusCodes.Status404NotFound, "UNKNOWN_BUDGET", "Çevrimdışı yetki bütçesi bulunamadı; yeniden bağlanın."),
+        IdempotencyKeyReusedException =>
+            (StatusCodes.Status409Conflict, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı başka bir talep için zaten kullanılmış."),
         OfflineReconciliationIdentityMismatchException =>
             (StatusCodes.Status403Forbidden, "IDENTITY_MISMATCH", "Bu çevrimdışı bütçe veya işlem başka bir kullanıcıya ait."),
         ArgumentException or ArgumentNullException or BadHttpRequestException =>
