@@ -1,7 +1,7 @@
 # V1-RMD-669 - Yetki karar ekranı ve personel ekranının hata, onay ve okunurluk düzeltmeleri
 
 - Task ID: V1-RMD-669
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: implementation
 - Surface state: Planned
