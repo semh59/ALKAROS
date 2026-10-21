@@ -52,4 +52,4 @@ V1-RMD-597 bulgusu B017 kapanır. Yetki hibesi tablosu, onaylayanın talep eden 
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-674
