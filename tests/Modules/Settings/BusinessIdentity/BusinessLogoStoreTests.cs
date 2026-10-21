@@ -75,6 +75,20 @@ public sealed class BusinessLogoStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task MetaIsNullWithoutALogoAndMatchesTheFullReadOtherwise()
+    {
+        (await _store.GetMetaAsync(CancellationToken.None)).Should().BeNull();
+
+        await _store.SaveAsync([1, 2, 3], "image/webp", CancellationToken.None);
+        var meta = await _store.GetMetaAsync(CancellationToken.None);
+        var full = await _store.GetAsync(CancellationToken.None);
+
+        meta!.ContentType.Should().Be("image/webp");
+        meta.ETag.Should().Be(full!.ETag);
+        meta.UpdatedAt.Should().Be(full.UpdatedAt);
+    }
+
+    [Fact]
     public async Task DeleteWhenNoLogoExistsIsANoOpNotAnError()
         => await FluentActions.Invoking(() => _store.DeleteAsync(CancellationToken.None))
             .Should().NotThrowAsync();

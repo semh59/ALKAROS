@@ -13,13 +13,23 @@ public interface IBusinessLogoStore
     Task SaveAsync(byte[] content, string contentType, CancellationToken cancellationToken);
     Task DeleteAsync(CancellationToken cancellationToken);
     Task<BusinessLogoImage?> GetAsync(CancellationToken cancellationToken);
+
+    /// <summary>What a caller needs to decide whether a logo exists or changed, without reading the image bytes (up to 5 MB).</summary>
+    Task<BusinessLogoMeta?> GetMetaAsync(CancellationToken cancellationToken);
+}
+
+public sealed record BusinessLogoMeta(string ContentType, DateTimeOffset UpdatedAt)
+{
+    public string ETag => BusinessLogoImage.ETagFor(UpdatedAt);
 }
 
 /// <summary>The logo row's content, read back for both the manager's own confirmation and the public QR read.</summary>
 public sealed record BusinessLogoImage(byte[] Content, string ContentType, DateTimeOffset UpdatedAt)
 {
     /// <summary>A weak ETag derived from the row's own update timestamp - two reads of the same row always agree, any real change always changes it.</summary>
-    public string ETag => $"\"{UpdatedAt.UtcTicks:x}\"";
+    public string ETag => ETagFor(UpdatedAt);
+
+    internal static string ETagFor(DateTimeOffset updatedAt) => $"\"{updatedAt.UtcTicks:x}\"";
 }
 
 public sealed class BusinessLogoStore : IBusinessLogoStore
@@ -72,6 +82,16 @@ public sealed class BusinessLogoStore : IBusinessLogoStore
         var contentType = reader.GetString(1);
         var updatedAt = reader.GetFieldValue<DateTimeOffset>(2);
         return new BusinessLogoImage(content, contentType, updatedAt);
+    }
+
+    public async Task<BusinessLogoMeta?> GetMetaAsync(CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            "SELECT content_type, updated_at FROM settings.business_logo WHERE id = 1;");
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+        return new BusinessLogoMeta(reader.GetString(0), reader.GetFieldValue<DateTimeOffset>(1));
     }
 
     private static void AddParameter(DbCommand command, string name, object value)

@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Settings.BusinessIdentity;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,6 +26,7 @@ public sealed class BusinessIdentityLogoEndpointsTests : IAsyncLifetime
     private WebApplication? _application;
     private Uri? _baseAddress;
     private BusinessLogoStore _store = null!;
+    private readonly RecordingAuditStore _audit = new();
 
     public async Task InitializeAsync()
     {
@@ -34,6 +36,7 @@ public sealed class BusinessIdentityLogoEndpointsTests : IAsyncLifetime
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
         builder.WebHost.UseKestrel().UseUrls("http://127.0.0.1:0");
         builder.Services.AddSingleton(_database.DataSource);
+        builder.Services.AddSingleton<IAuditEventStore>(_audit);
         builder.Services.AddBusinessIdentityLogoExperience();
 
         _application = builder.Build();
@@ -160,6 +163,129 @@ public sealed class BusinessIdentityLogoEndpointsTests : IAsyncLifetime
         Assert.Null(await _store.GetAsync(CancellationToken.None));
     }
 
+    public static TheoryData<string, int> SignatureBytes => new()
+    {
+        { "image/png", 0 }, { "image/png", 1 }, { "image/png", 2 }, { "image/png", 3 },
+        { "image/png", 4 }, { "image/png", 5 }, { "image/png", 6 }, { "image/png", 7 },
+        { "image/jpeg", 0 }, { "image/jpeg", 1 }, { "image/jpeg", 2 },
+        { "image/webp", 0 }, { "image/webp", 1 }, { "image/webp", 2 }, { "image/webp", 3 },
+        { "image/webp", 8 }, { "image/webp", 9 }, { "image/webp", 10 }, { "image/webp", 11 },
+    };
+
+    private static byte[] ValidImage(string contentType, int length = 16)
+    {
+        byte[] header = contentType switch
+        {
+            "image/png" => [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
+            "image/jpeg" => [0xFF, 0xD8, 0xFF],
+            _ => [0x52, 0x49, 0x46, 0x46, 0, 0, 0, 0, 0x57, 0x45, 0x42, 0x50],
+        };
+        var bytes = new byte[Math.Max(length, header.Length)];
+        header.CopyTo(bytes, 0);
+        return bytes;
+    }
+
+    private static MultipartFormDataContent Upload(byte[] bytes, string contentType)
+    {
+        var content = new MultipartFormDataContent();
+        var fileContent = new ByteArrayContent(bytes);
+        fileContent.Headers.TryAddWithoutValidation("Content-Type", contentType);
+        content.Add(fileContent, "file", "logo");
+        return content;
+    }
+
+    [Theory]
+    [InlineData("image/png")]
+    [InlineData("image/jpeg")]
+    [InlineData("image/webp")]
+    public async Task EachAllowedTypeWithItsRealSignatureIsAccepted(string contentType)
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.PutAsync("/api/v1/management/business-identity/logo", Upload(ValidImage(contentType), contentType));
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal(contentType, (await _store.GetAsync(CancellationToken.None))!.ContentType);
+    }
+
+    [Theory]
+    [MemberData(nameof(SignatureBytes))]
+    public async Task CorruptingAnySignatureByteIsRefused(string contentType, int index)
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        var bytes = ValidImage(contentType);
+        bytes[index] ^= 0xFF;
+
+        using var response = await client.PutAsync("/api/v1/management/business-identity/logo", Upload(bytes, contentType));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Null(await _store.GetAsync(CancellationToken.None));
+    }
+
+    [Fact]
+    public async Task ExactlyFiveMegabytesIsAcceptedAndOneByteMoreIsRefused()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        const int limit = 5 * 1024 * 1024;
+
+        using var atLimit = await client.PutAsync("/api/v1/management/business-identity/logo", Upload(ValidImage("image/png", limit), "image/png"));
+        Assert.Equal(HttpStatusCode.NoContent, atLimit.StatusCode);
+        Assert.Equal(limit, (await _store.GetAsync(CancellationToken.None))!.Content.Length);
+
+        using var over = await client.PutAsync("/api/v1/management/business-identity/logo", Upload(ValidImage("image/png", limit + 1), "image/png"));
+        Assert.Equal(HttpStatusCode.BadRequest, over.StatusCode);
+        Assert.Equal(limit, (await _store.GetAsync(CancellationToken.None))!.Content.Length);
+    }
+
+    [Fact]
+    public async Task ContentTypeCaseAndParametersAreNormalizedBeforeCheckAndStorage()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.PutAsync(
+            "/api/v1/management/business-identity/logo", Upload(ValidImage("image/png"), "IMAGE/PNG; charset=binary"));
+
+        Assert.Equal(HttpStatusCode.NoContent, response.StatusCode);
+        Assert.Equal("image/png", (await _store.GetAsync(CancellationToken.None))!.ContentType);
+    }
+
+    [Fact]
+    public async Task UploadAndRemovalAreAuditedWithTheManagerAsActor()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var put = await client.PutAsync("/api/v1/management/business-identity/logo", BuildPngContent());
+        using var delete = await client.DeleteAsync("/api/v1/management/business-identity/logo");
+
+        Assert.Equal(HttpStatusCode.NoContent, put.StatusCode);
+        Assert.Equal(HttpStatusCode.NoContent, delete.StatusCode);
+        Assert.Collection(
+            _audit.Events,
+            changed =>
+            {
+                Assert.Equal("settings.business-logo-changed", changed.EventName);
+                Assert.Equal(SettingsManagementTestDatabase.ManagerUserId, changed.ActorId);
+                Assert.Contains("image/png", changed.AfterStateJson);
+            },
+            removed =>
+            {
+                Assert.Equal("settings.business-logo-removed", removed.EventName);
+                Assert.Equal(SettingsManagementTestDatabase.ManagerUserId, removed.ActorId);
+            });
+    }
+
+    [Fact]
+    public async Task RefusedUploadsLeaveNoAuditTrail()
+    {
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.PutAsync(
+            "/api/v1/management/business-identity/logo", Upload("not an image"u8.ToArray(), "image/png"));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Empty(_audit.Events);
+    }
+
     [Fact]
     public async Task AccentPaletteReturnsAllEightColorsAndTheRealDefaultKey()
     {
@@ -201,6 +327,26 @@ public sealed class BusinessIdentityLogoEndpointsTests : IAsyncLifetime
         fileContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
         content.Add(fileContent, "file", "logo.png");
         return content;
+    }
+
+    private sealed class RecordingAuditStore : IAuditEventStore
+    {
+        public List<AuditEvent> Events { get; } = [];
+
+        public Task AppendAsync(AuditEvent auditEvent, CancellationToken cancellationToken = default)
+        {
+            Events.Add(auditEvent);
+            return Task.CompletedTask;
+        }
+
+        public Task AppendBatchAsync(IEnumerable<AuditEvent> auditEvents, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<IReadOnlyList<AuditEvent>> GetByAggregateAsync(string aggregateType, Guid aggregateId, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
+
+        public Task<IReadOnlyList<AuditEvent>> GetByCorrelationIdAsync(string correlationId, CancellationToken cancellationToken = default)
+            => throw new NotSupportedException();
     }
 
     private HttpClient CreateClient(string? token)

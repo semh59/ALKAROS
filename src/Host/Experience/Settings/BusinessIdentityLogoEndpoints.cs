@@ -1,3 +1,4 @@
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
@@ -34,6 +35,8 @@ public static class BusinessIdentityLogoEndpoints
     private const long MaxLogoRequestBodyBytes = 6 * 1024 * 1024;
     private static readonly string[] AllowedLogoContentTypes = ["image/png", "image/jpeg", "image/webp"];
     private const string LogoPath = "/api/v1/management/business-identity/logo";
+    // The logo is a single row, so its audit trail hangs off one fixed aggregate id.
+    private static readonly Guid LogoAggregateId = new("00000000-0000-0000-0000-00000000b10c");
 
     public static IServiceCollection AddBusinessIdentityLogoExperience(this IServiceCollection services)
     {
@@ -87,19 +90,22 @@ public static class BusinessIdentityLogoEndpoints
         management.MapPut("/logo", async (
             IFormFile? file,
             IBusinessLogoStore store,
+            IAuditEventStore audit,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             if (file is null || file.Length == 0)
                 return LogoValidationError(context, "Bir logo dosyası seçilmedi.");
-            if (!AllowedLogoContentTypes.Contains(file.ContentType))
+            // A media type is case-insensitive and may carry parameters ("image/PNG; charset=binary").
+            var contentType = file.ContentType.Split(';')[0].Trim().ToLowerInvariant();
+            if (!AllowedLogoContentTypes.Contains(contentType))
                 return LogoValidationError(context, "Yalnız PNG, JPEG veya WEBP görseli yüklenebilir.");
             if (file.Length > MaxLogoImageBytes)
                 return LogoValidationError(context, "Logo 5 MB'ı aşamaz.");
 
-            await using var stream = new MemoryStream();
-            await file.CopyToAsync(stream, cancellationToken);
-            var content = stream.ToArray();
+            var content = new byte[file.Length];
+            await using (var stream = file.OpenReadStream())
+                await stream.ReadExactlyAsync(content, cancellationToken);
 
             // Same reasoning as V1-RMD-235: the declared Content-Type header
             // is entirely client-controlled — this checks the file's own
@@ -107,10 +113,11 @@ public static class BusinessIdentityLogoEndpoints
             // merely "one of the three allowed types"), before anything
             // gets persisted as "the business's logo" under a
             // possibly-mismatched content_type.
-            if (!HasValidLogoMagicNumber(content, file.ContentType))
+            if (!HasValidLogoMagicNumber(content, contentType))
                 return LogoValidationError(context, "Dosya içeriği beyan edilen türle eşleşmiyor.");
 
-            await store.SaveAsync(content, file.ContentType, cancellationToken);
+            await store.SaveAsync(content, contentType, cancellationToken);
+            await RecordAsync(audit, context, "settings.business-logo-changed", $"{{\"contentType\":\"{contentType}\",\"bytes\":{content.Length}}}", cancellationToken);
             return Results.NoContent();
         })
             // No AddAntiforgery/UseAntiforgery is registered anywhere in this
@@ -121,9 +128,12 @@ public static class BusinessIdentityLogoEndpoints
 
         management.MapDelete("/logo", async (
             IBusinessLogoStore store,
+            IAuditEventStore audit,
+            HttpContext context,
             CancellationToken cancellationToken) =>
         {
             await store.DeleteAsync(cancellationToken);
+            await RecordAsync(audit, context, "settings.business-logo-removed", null, cancellationToken);
             return Results.NoContent();
         });
 
@@ -140,6 +150,14 @@ public static class BusinessIdentityLogoEndpoints
 
         return management;
     }
+
+    private static Task RecordAsync(
+        IAuditEventStore audit, HttpContext context, string eventName, string? afterStateJson, CancellationToken cancellationToken)
+        => audit.AppendAsync(
+            new AuditEvent(
+                Guid.NewGuid(), eventName, "BusinessLogo", LogoAggregateId, "User", context.TraceIdentifier,
+                actorId: SettingsManagerEndpointFilter.RequireActorId(context), afterStateJson: afterStateJson),
+            cancellationToken);
 
     private static IResult LogoValidationError(HttpContext context, string message)
         => Results.Json(

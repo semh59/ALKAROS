@@ -235,6 +235,51 @@ public sealed class SettingsManagementHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheHistoryRecordsTheManagerWhoMadeTheChange()
+    {
+        var key = await _database.SeedBooleanSettingAsync("test.feature.actor", false);
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        using var update = await client.PutAsJsonAsync(
+            $"/api/v1/management/settings/{key}", new UpdateSettingValueV1("true", ExpectedRowVersion: 1, Reason: "aç"));
+        Assert.Equal(HttpStatusCode.OK, update.StatusCode);
+
+        using var history = await client.GetAsync($"/api/v1/management/settings/{key}/history");
+
+        var entry = Assert.Single((await history.Content.ReadFromJsonAsync<SettingHistoryRecordV1[]>())!);
+        Assert.Equal(SettingsManagementTestDatabase.ManagerUserId, entry.ChangedBy);
+    }
+
+    [Fact]
+    public async Task TheListCanBeNarrowedToOneModuleOwner()
+    {
+        await _database.ExecuteAsync(
+            "INSERT INTO settings.settings (setting_id, setting_key, setting_value, data_type, scope, module_owner) VALUES (@a, 'test.owner.alpha', 'true', 'Boolean', 'Global', 'alpha'), (@b, 'test.owner.beta', 'true', 'Boolean', 'Global', 'beta');",
+            ("a", Guid.NewGuid()), ("b", Guid.NewGuid()));
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.GetAsync("/api/v1/management/settings/?moduleOwner=alpha");
+
+        var records = await response.Content.ReadFromJsonAsync<SettingRecordV1[]>();
+        Assert.Equal("test.owner.alpha", Assert.Single(records!).Key);
+    }
+
+    [Fact]
+    public async Task DeactivatingWithAStaleVersionOrAnUnknownKeyIsRefusedAndChangesNothing()
+    {
+        var key = await _database.SeedBooleanSettingAsync("test.feature.stale-delete", true);
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var stale = await client.DeleteAsync($"/api/v1/management/settings/{key}?expectedRowVersion=99");
+        using var unknown = await client.DeleteAsync($"/api/v1/management/settings/no.such.key.{Guid.NewGuid():N}?expectedRowVersion=1");
+
+        Assert.Equal(HttpStatusCode.Conflict, stale.StatusCode);
+        Assert.Equal("CONCURRENCY_CONFLICT", (await ReadErrorAsync(stale)).Error.Code);
+        Assert.Equal(HttpStatusCode.NotFound, unknown.StatusCode);
+        var current = await client.GetFromJsonAsync<SettingRecordV1>($"/api/v1/management/settings/{key}");
+        Assert.True(current!.Active);
+    }
+
+    [Fact]
     public async Task AnUnknownKeyIsNotFound()
     {
         using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);

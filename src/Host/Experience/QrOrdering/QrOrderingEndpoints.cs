@@ -131,7 +131,7 @@ public static class QrOrderingEndpoints
         {
             var name = await BusinessNameSetting.GetNameAsync(settings, cancellationToken);
             var theme = await BusinessAccentThemeSetting.GetThemeAsync(settings, cancellationToken);
-            var logo = await logoStore.GetAsync(cancellationToken);
+            var logo = await logoStore.GetMetaAsync(cancellationToken);
             return Results.Ok(new QrBrandingResponse(name, theme.Hex, HasLogo: logo is not null));
         }).RequireRateLimiting("qr-public");
 
@@ -144,12 +144,15 @@ public static class QrOrderingEndpoints
             IBusinessLogoStore logoStore,
             CancellationToken cancellationToken) =>
         {
-            var logo = await logoStore.GetAsync(cancellationToken)
+            // The ETag comes from the row's own timestamp, so an unchanged logo is answered without reading its bytes.
+            var meta = await logoStore.GetMetaAsync(cancellationToken)
                 ?? throw new QrLogoNotFoundException();
 
-            if (context.Request.Headers.IfNoneMatch.Contains(logo.ETag))
+            if (context.Request.Headers.IfNoneMatch.Contains(meta.ETag))
                 return Results.StatusCode(StatusCodes.Status304NotModified);
 
+            var logo = await logoStore.GetAsync(cancellationToken)
+                ?? throw new QrLogoNotFoundException();
             context.Response.Headers.ETag = logo.ETag;
             context.Response.Headers.CacheControl = "public, max-age=300";
             return Results.File(logo.Content, logo.ContentType);
