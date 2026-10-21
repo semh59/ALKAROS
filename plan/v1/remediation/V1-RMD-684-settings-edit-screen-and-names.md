@@ -1,7 +1,7 @@
 # V1-RMD-684 - Ayar düzenleme ekranı, geçmişte kişi adları ve istemci düzeltmeleri
 
 - Task ID: V1-RMD-684
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: implementation
 - Surface state: Planned
