@@ -8,9 +8,9 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "..", "..", "..");
 const modulePath = resolve(repoRoot, "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js");
 
-document.body.innerHTML = '<div id="toasts"></div>';
+document.body.innerHTML = '<div id="toasts"></div><div id="ribbon"></div><span id="ribbonText"></span><button id="ribbonQueue"></button><div id="pendingBanner" hidden></div><div id="tablesGrid"></div><div id="zoneChips"></div><span id="pendingTitle"></span><span id="pendingSub"></span>';
 
-const { sortQueueByPriority, isTransientOrderStatus, isTransientReconcileFailure, reconcileOfflineActions, MAX_RECONCILE_BATCH } = await import(modulePath);
+const { sortQueueByPriority, isQueuedFor, flushQueue, isTransientOrderStatus, isTransientReconcileFailure, reconcileOfflineActions, MAX_RECONCILE_BATCH } = await import(modulePath);
 const { state, adoptDeviceOwner, PersistentKeyMap } = await import(resolve(repoRoot, "src/Clients/WaiterPwa/wwwroot/js/state.js"));
 
 function round(id, { courseNumbers = [], queuedAt } = {}) {
@@ -183,5 +183,38 @@ describe("a device that changes hands", () => {
   it("keeps a request key across a reload", () => {
     new PersistentKeyMap("alkaros_waiter_comp_keys").set("item-9", "key-9");
     expect(new PersistentKeyMap("alkaros_waiter_comp_keys").get("item-9")).toBe("key-9");
+  });
+});
+
+describe("rounds stay with the waiter who queued them", () => {
+  it("is a round for its owner, for an untagged old round and when nobody is known, never for another waiter", () => {
+    expect(isQueuedFor({ ownerUserId: "w1" }, "w1")).toBe(true);
+    expect(isQueuedFor({}, "w2")).toBe(true);
+    expect(isQueuedFor({ ownerUserId: "w1" }, undefined)).toBe(true);
+    expect(isQueuedFor({ ownerUserId: "w1" }, "w2")).toBe(false);
+  });
+
+  it("sends only the signed-in waiter's rounds and leaves the other waiter's round queued", async () => {
+    state.terminalId = "t1";
+    state.isOnline = true;
+    state.user = { userId: "w2" };
+    state.offlineQueue = [
+      { id: "round-w1", ownerUserId: "w1", items: [], queuedAt: "2026-09-15T10:00:00.000Z" },
+      { id: "round-w2", ownerUserId: "w2", items: [], queuedAt: "2026-09-15T10:00:01.000Z" },
+    ];
+    const sent = [];
+    vi.stubGlobal("fetch", vi.fn((url, config) => {
+      sent.push(JSON.parse(config.body));
+      return Promise.resolve(new Response(JSON.stringify({}), { status: 200 }));
+    }));
+    try {
+      await flushQueue();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+    expect(state.offlineQueue.map((round) => round.id)).toEqual(["round-w1"]);
+    expect(JSON.stringify(sent)).not.toContain("round-w1");
+    state.offlineQueue = [];
+    state.user = null;
   });
 });

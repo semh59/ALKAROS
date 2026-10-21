@@ -118,8 +118,20 @@ export function persistQueue() {
   renderRibbon();
 }
 
+// A round belongs to the waiter who queued it. Another waiter signing in on the same device neither loses it nor sends
+// it under their own name; rounds queued before this tag existed carry none and are sent as before.
+export function isQueuedFor(payload, userId) {
+  return !payload.ownerUserId || !userId || payload.ownerUserId === userId;
+}
+
+function ownQueue() {
+  const userId = state.user && state.user.userId;
+  return state.offlineQueue.filter((payload) => isQueuedFor(payload, userId));
+}
+
 function queueOrder(payload) {
-  state.offlineQueue.push(Object.assign({}, payload, { queuedAt: new Date().toISOString() }));
+  const ownerUserId = state.user && state.user.userId;
+  state.offlineQueue.push(Object.assign({}, payload, { queuedAt: new Date().toISOString(), ownerUserId }));
   persistQueue();
   scheduleQueueRetry();
 }
@@ -192,7 +204,7 @@ let flushRequested = false;
 
 export function scheduleQueueRetry() {
   window.clearTimeout(queueRetryTimer);
-  if (state.offlineQueue.length === 0) {
+  if (ownQueue().length === 0) {
     queueRetryDelay = QUEUE_RETRY_MIN_MS;
     return;
   }
@@ -218,7 +230,7 @@ export function isTransientReconcileFailure(result) {
 export const MAX_RECONCILE_BATCH = 50;
 
 export async function flushQueue() {
-  if (state.offlineQueue.length === 0 || !state.isOnline) return;
+  if (ownQueue().length === 0 || !state.isOnline) return;
   // Two overlapping flushes would send the same payload twice. The server
   // is idempotent on the submission id, so this is a courtesy rather than
   // the last line of defence — but it also keeps the ribbon honest.
@@ -230,7 +242,7 @@ export async function flushQueue() {
   flushRequested = false;
 
   try {
-    for (const payload of sortQueueByPriority(state.offlineQueue)) {
+    for (const payload of sortQueueByPriority(ownQueue())) {
       const result = await postOrder(payload);
       if (result.ok) {
         state.offlineQueue = state.offlineQueue.filter((queued) => queued.id !== payload.id);
@@ -256,7 +268,7 @@ export async function flushQueue() {
     await loadTables();
   } finally {
     flushInFlight = false;
-    if (flushRequested && state.offlineQueue.length > 0 && state.isOnline) {
+    if (flushRequested && ownQueue().length > 0 && state.isOnline) {
       void flushQueue();
     } else {
       flushRequested = false;
