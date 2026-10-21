@@ -26,9 +26,17 @@ public sealed class EndToEndDatabase : PgTestDatabase
         while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "ALKAROS.slnx")))
             directory = directory.Parent;
         var root = directory?.FullName ?? throw new InvalidOperationException("Repository root not found.");
-        var file = Directory.GetFiles(
-            Path.Combine(root, "database", "migrations", "V1", "V1-RMD-533"), "187-*.up.sql").Single();
-        await RunAsync(DataSource, await File.ReadAllTextAsync(file));
+        // The daily retention service purges these tables at start-up, so they must exist or it reports its own failure.
+        foreach (var (task, prefix) in new[]
+        {
+            ("V1-OBS-001", "028"), ("V1-OPS-002", "029"), ("V1-RMD-533", "187"), ("V1-RMD-538", "188"),
+            ("V1-RMD-541", "191"), ("V1-RMD-568", "192"),
+        })
+        {
+            var file = Directory.GetFiles(
+                Path.Combine(root, "database", "migrations", "V1", task), prefix + "-*.up.sql").Single();
+            await RunAsync(DataSource, await File.ReadAllTextAsync(file));
+        }
     }
 }
 
