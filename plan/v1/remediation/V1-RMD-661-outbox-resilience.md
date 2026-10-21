@@ -48,4 +48,4 @@ V1-RMD-596 bulguları B003, B005, B006, B008, B009, B017 ve B018 kapanır. B003/
 
 ## Handoff
 
-- None
+- V1-RMD-662
