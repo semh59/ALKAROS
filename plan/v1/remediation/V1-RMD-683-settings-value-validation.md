@@ -1,8 +1,8 @@
 # V1-RMD-683 - Ayar değer doğrulaması: aralık, uzunluk, pasif ayar, kayıt yarışı
 
 - Task ID: V1-RMD-683
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: implementation
 - Surface state: Planned
 
