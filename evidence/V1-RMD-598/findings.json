@@ -1,0 +1,20 @@
+{"sha":"eb93ec697d6f67c46012f62610550fd3e32c670c","findings":[
+{"id":"V1-RMD-598-B001","root":"R1+N1","severity":"Orta","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-682"},
+{"id":"V1-RMD-598-B002","root":"R2","severity":"Orta","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-684"},
+{"id":"V1-RMD-598-B003","root":"R3","severity":"Orta","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-684"},
+{"id":"V1-RMD-598-B004","root":"R4","severity":"Orta","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-683"},
+{"id":"V1-RMD-598-B005","root":"R5","severity":"Orta","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-683"},
+{"id":"V1-RMD-598-B006","root":"R6","severity":"Düşük","level":"Kod okuması","status":"KISMEN","fix":"V1-RMD-683"},
+{"id":"V1-RMD-598-B007","root":"R7","severity":"Orta","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-685"},
+{"id":"V1-RMD-598-B008","root":"R8","severity":"Orta","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-685"},
+{"id":"V1-RMD-598-B009","root":"R9","severity":"Düşük","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-686"},
+{"id":"V1-RMD-598-B010","root":"R10","severity":"Düşük","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-686"},
+{"id":"V1-RMD-598-B011","root":"R11","severity":"Düşük","level":"Kod okuması","status":"KISMEN","fix":"V1-RMD-686"},
+{"id":"V1-RMD-598-B012","root":"R12a-g","severity":"Düşük","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-684"},
+{"id":"V1-RMD-598-B013","root":"R13","severity":"Düşük","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-683"},
+{"id":"V1-RMD-598-B014","root":"R14+TK","severity":"Düşük","level":"Çalıştırıldı (mutasyon)","status":"DOĞRULANDI","fix":"V1-RMD-685 (logo), V1-RMD-686"},
+{"id":"V1-RMD-598-B015","root":"R15","severity":"Düşük","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-683"},
+{"id":"V1-RMD-598-B016","root":"R16","severity":"Düşük","level":"Kod okuması","status":"KISMEN","fix":"V1-RMD-685"},
+{"id":"V1-RMD-598-B017","root":"R17","severity":"Doküman sapması","level":"Kod okuması","status":"DOĞRULANDI","fix":"V1-RMD-686"},
+{"id":"V1-RMD-598-REF1","root":"TK-B9, UX-B12","severity":"-","level":"Kod okuması","status":"ÇÜRÜTÜLDÜ","fix":"-"}
+]}
