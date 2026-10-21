@@ -57,4 +57,4 @@ V1-RMD-597 bulguları B007 (Yüksek), B011, B012, B014, B023 ve B030 kapanır. G
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-672
