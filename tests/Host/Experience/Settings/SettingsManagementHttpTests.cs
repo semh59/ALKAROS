@@ -128,6 +128,61 @@ public sealed class SettingsManagementHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnOutOfRangeValueIsRefusedInTurkishAndTheSettingIsUnchanged()
+    {
+        await _database.ExecuteAsync(
+            "INSERT INTO settings.settings (setting_id, setting_key, setting_value, data_type, scope, module_owner) VALUES (@id, 'waiter.max_active_tables', '0', 'Integer', 'Global', 'orders');",
+            ("id", Guid.NewGuid()));
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var response = await client.PutAsJsonAsync(
+            "/api/v1/management/settings/waiter.max_active_tables",
+            new UpdateSettingValueV1("-5", ExpectedRowVersion: 1, Reason: null));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var error = (await ReadErrorAsync(response)).Error;
+        Assert.Equal("VALUE_OUT_OF_RANGE", error.Code);
+        Assert.Contains("0 ile 50 arasında", error.Message);
+        Assert.Equal("0", await _database.GetRawValueAsync("waiter.max_active_tables"));
+    }
+
+    [Fact]
+    public async Task AnAccentColourOutsideThePaletteIsRefused()
+    {
+        await _database.ExecuteAsync(
+            "INSERT INTO settings.settings (setting_id, setting_key, setting_value, data_type, scope, module_owner) VALUES (@id, 'business.accent_theme', 'lacivert', 'String', 'Global', 'business');",
+            ("id", Guid.NewGuid()));
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+
+        using var refused = await client.PutAsJsonAsync(
+            "/api/v1/management/settings/business.accent_theme", new UpdateSettingValueV1("pembe", ExpectedRowVersion: 1));
+        using var accepted = await client.PutAsJsonAsync(
+            "/api/v1/management/settings/business.accent_theme", new UpdateSettingValueV1("mor", ExpectedRowVersion: 1));
+
+        Assert.Equal(HttpStatusCode.BadRequest, refused.StatusCode);
+        Assert.Equal("VALUE_OUT_OF_RANGE", (await ReadErrorAsync(refused)).Error.Code);
+        Assert.Equal(HttpStatusCode.OK, accepted.StatusCode);
+        Assert.Equal("mor", await _database.GetRawValueAsync("business.accent_theme"));
+    }
+
+    [Fact]
+    public async Task ADeactivatedSettingCannotBeChangedAnymore()
+    {
+        var key = await _database.SeedBooleanSettingAsync("test.feature.inactive", true);
+        using var client = CreateClient(SettingsManagementTestDatabase.ManagerToken);
+        using var deactivate = await client.DeleteAsync($"/api/v1/management/settings/{key}?expectedRowVersion=1");
+        var record = await deactivate.Content.ReadFromJsonAsync<SettingRecordV1>();
+
+        using var response = await client.PutAsJsonAsync(
+            $"/api/v1/management/settings/{key}",
+            new UpdateSettingValueV1("false", record!.RowVersion, Reason: null));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("SETTING_INACTIVE", (await ReadErrorAsync(response)).Error.Code);
+        Assert.Equal("true", await _database.GetRawValueAsync(key));
+    }
+
+    [Fact]
     public async Task DeactivatingASettingTurnsItInactiveWithoutDeletingIt()
     {
         var key = await _database.SeedBooleanSettingAsync("test.feature.deactivate", true);

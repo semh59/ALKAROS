@@ -71,6 +71,8 @@ public static class ApplicationPermissions
     public const string SecurityManage = "security.manage";
     /// <summary>V12-QRT-003: configuring a third-party integration credential (e.g. the QR relay provider token) — manager-only, no escalation path.</summary>
     public const string IntegrationsManage = "integrations.manage";
+    /// <summary>Changing a business setting (and a customer's credit terms): manager-only, granted by migration and deliberately outside <see cref="Codes"/>.</summary>
+    public const string SettingsManage = "settings.manage";
     /// <summary>
     /// V1-RMD-249: opening/closing a business day (EOD) — a one-time-per-day,
     /// no-escalation-path manager action (same family as

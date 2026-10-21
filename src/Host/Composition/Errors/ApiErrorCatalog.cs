@@ -548,6 +548,10 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status400BadRequest, "SECRET_KEY_BANNED", "Bu anahtar gizli bilgi deposu kuralını ihlal ediyor."),
             SettingTypeValidationException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "Değer, ayarın türüyle uyuşmuyor."),
+            SettingValueRangeException rangeError =>
+                (StatusCodes.Status400BadRequest, "VALUE_OUT_OF_RANGE", rangeError.UserMessage),
+            SettingInactiveException =>
+                (StatusCodes.Status409Conflict, "SETTING_INACTIVE", "Bu ayar pasif; değeri değiştirilemez."),
             SettingConcurrencyException =>
                 (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Ayar başka bir işlem tarafından değiştirildi."),
             DuplicateSettingKeyException =>

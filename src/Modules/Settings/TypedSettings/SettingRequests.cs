@@ -22,6 +22,8 @@ public sealed record RegisterSettingRequest(
         if (Value is null)
             throw new ArgumentNullException(nameof(Value), "Setting value cannot be null.");
 
+        SettingReasonLimit.Check(Reason);
+
         if (string.IsNullOrWhiteSpace(ModuleOwner))
             throw new ArgumentException("Module owner cannot be null, empty, or whitespace.", nameof(ModuleOwner));
     }
@@ -45,6 +47,8 @@ public sealed record UpdateSettingRequest(
         if (NewValue is null)
             throw new ArgumentNullException(nameof(NewValue), "New value cannot be null.");
 
+        SettingReasonLimit.Check(Reason);
+
         if (ExpectedRowVersion < 1)
             throw new ArgumentOutOfRangeException(nameof(ExpectedRowVersion), ExpectedRowVersion, "Expected row version must be positive.");
     }
@@ -66,5 +70,16 @@ public sealed record DeactivateSettingRequest(
 
         if (ExpectedRowVersion < 1)
             throw new ArgumentOutOfRangeException(nameof(ExpectedRowVersion), ExpectedRowVersion, "Expected row version must be positive.");
+    }
+}
+
+internal static class SettingReasonLimit
+{
+    internal const int MaxLength = 500;
+
+    internal static void Check(string? reason)
+    {
+        if (reason is { Length: > MaxLength })
+            throw new ArgumentException($"Reason can be at most {MaxLength} characters.", nameof(reason));
     }
 }

@@ -175,18 +175,6 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
-        // Check duplicate
-        const string checkSql = $"SELECT 1 FROM {SettingsTable} WHERE setting_key = @key;";
-        await using (var checkCmd = connection.CreateCommand())
-        {
-            checkCmd.Transaction = transaction;
-            checkCmd.CommandText = checkSql;
-            AddParameter(checkCmd, "key", request.Key);
-            var exists = await checkCmd.ExecuteScalarAsync(cancellationToken);
-            if (exists is not null and not DBNull)
-                throw new DuplicateSettingKeyException(request.Key);
-        }
-
         // Insert Setting
         const string insertSettingSql = $"""
             INSERT INTO {SettingsTable} (
@@ -195,7 +183,9 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
             ) VALUES (
                 @id, @key, @value, @data_type, @scope,
                 @module_owner, @description, @requires_restart, true, @now, 1
-            );
+            )
+            ON CONFLICT (setting_key) DO NOTHING
+            RETURNING setting_id;
             """;
 
         await using (var cmd = connection.CreateCommand())
@@ -211,7 +201,9 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
             AddParameter(cmd, "description", (object?)request.Description ?? DBNull.Value);
             AddParameter(cmd, "requires_restart", request.RequiresRestart);
             AddParameter(cmd, "now", now);
-            await cmd.ExecuteNonQueryAsync(cancellationToken);
+            // Lost the race (or already registered): ON CONFLICT leaves the row alone and returns nothing.
+            if (await cmd.ExecuteScalarAsync(cancellationToken) is null or DBNull)
+                throw new DuplicateSettingKeyException(request.Key);
         }
 
         // Insert Initial History
@@ -309,6 +301,9 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
         {
             throw new SettingConcurrencyException(request.Key, request.ExpectedRowVersion, currentRowVersion);
         }
+
+        if (!active)
+            throw new SettingInactiveException(request.Key);
 
         // Validate New Value Type
         _validator.ValidateValue(request.Key, request.NewValue, dataType);
@@ -425,6 +420,8 @@ public sealed class PostgresSettingsRepository : ISettingsRepository
             moduleOwner = reader.GetString(5);
             description = reader.IsDBNull(6) ? null : reader.GetString(6);
             requiresRestart = reader.GetBoolean(7);
+            if (!reader.GetBoolean(8))
+                throw new SettingInactiveException(request.Key);
             currentRowVersion = reader.GetInt64(9);
         }
 

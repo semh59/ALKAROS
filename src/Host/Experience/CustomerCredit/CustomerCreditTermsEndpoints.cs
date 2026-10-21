@@ -1,6 +1,7 @@
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.CustomerAccounts.CreditTerms;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Catalog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -19,7 +20,7 @@ namespace ALKAROS.Host.Experience.CustomerCredit;
 public static class CustomerCreditTermsEndpoints
 {
     public const string ManagerCookieName = "alkaros.manager";
-    public const string ManagePermission = "settings.manage";
+    public const string ManagePermission = ApplicationPermissions.SettingsManage;
 
     public static IServiceCollection AddCustomerCreditTermsExperience(this IServiceCollection services)
     {

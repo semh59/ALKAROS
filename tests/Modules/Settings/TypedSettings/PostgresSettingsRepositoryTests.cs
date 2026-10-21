@@ -218,6 +218,115 @@ public sealed class PostgresSettingsRepositoryTests : IClassFixture<SettingsTest
     }
 
     [Fact]
+    public async Task OutOfRangeValuesForTheKnownSettingsAreRefusedAndTheStoredValueStaysUntouched()
+    {
+        var known = new (string Key, string Default, SettingDataType Type, string[] Bad, string[] Good)[]
+        {
+            ("waiter.max_active_tables", "0", SettingDataType.WholeNumber, ["-1", "51"], ["50", "0"]),
+            ("kitchen.dense_mode_threshold", "9", SettingDataType.WholeNumber, ["0", "100"], ["1", "99"]),
+            ("qr_ordering.pending_confirmation_timeout", "00:05:00", SettingDataType.Duration,
+                ["00:00:00", "-00:10:00", "00:00:59", "1.00:00:01", "5"], ["00:01:00", "1.00:00:00", "PT30M"]),
+            ("business.name", "", SettingDataType.Text, [new string('a', 81), "ad\u0007"], [new string('a', 80)]),
+        };
+
+        foreach (var (key, defaultValue, type, bad, good) in known)
+        {
+            await _repository.RegisterSettingAsync(new RegisterSettingRequest(key, defaultValue, type, SettingScope.Global, "Test"));
+
+            foreach (var value in bad)
+            {
+                var act = () => _repository.UpdateSettingAsync(new UpdateSettingRequest(key, value, 1, _userId));
+                var thrown = await Record.ExceptionAsync(act);
+                thrown.Should().BeAssignableTo<SettingsException>($"{key} must refuse '{value}'");
+                (await _repository.GetByKeyAsync(key))!.Value.Should().Be(defaultValue);
+            }
+
+            var rowVersion = 1L;
+            foreach (var value in good)
+                rowVersion = (await _repository.UpdateSettingAsync(new UpdateSettingRequest(key, value, rowVersion, _userId))).RowVersion;
+        }
+    }
+
+    [Fact]
+    public async Task ABareNumberIsNotAcceptedAsADurationAndAZeroOrNegativeOneIsNeverAccepted()
+    {
+        foreach (var bad in new[] { "5", "00:00:00", "-00:05:00", "P0D" })
+        {
+            var act = () => _repository.RegisterSettingAsync(new RegisterSettingRequest(
+                "test.duration." + Guid.NewGuid().ToString("N")[..8], bad, SettingDataType.Duration, SettingScope.Global, "Test"));
+            await act.Should().ThrowAsync<SettingTypeValidationException>($"'{bad}' is not a usable duration");
+        }
+    }
+
+    [Fact]
+    public async Task AnOverlongValueOrReasonIsRefused()
+    {
+        var tooLong = await _repository.RegisterSettingAsync(new RegisterSettingRequest(
+            "test.long.text", "ok", SettingDataType.Text, SettingScope.Global, "Test"));
+
+        var longValue = () => _repository.UpdateSettingAsync(new UpdateSettingRequest(tooLong.Key, new string('x', 2001), 1, _userId));
+        await longValue.Should().ThrowAsync<SettingValueRangeException>();
+
+        var longReason = () => _repository.UpdateSettingAsync(new UpdateSettingRequest(tooLong.Key, "fine", 1, _userId, new string('r', 501)));
+        await longReason.Should().ThrowAsync<ArgumentException>();
+
+        (await _repository.GetByKeyAsync(tooLong.Key))!.Value.Should().Be("ok");
+    }
+
+    [Fact]
+    public async Task ADeactivatedSettingRefusesAChangeAndASecondDeactivationWithoutWritingHistory()
+    {
+        var setting = await _repository.RegisterSettingAsync(new RegisterSettingRequest(
+            "test.inactive.key", "a", SettingDataType.Text, SettingScope.Global, "Test"));
+        var deactivated = await _repository.DeactivateSettingAsync(new DeactivateSettingRequest(setting.Key, 1, _userId));
+
+        var change = () => _repository.UpdateSettingAsync(new UpdateSettingRequest(setting.Key, "b", deactivated.RowVersion, _userId));
+        var again = () => _repository.DeactivateSettingAsync(new DeactivateSettingRequest(setting.Key, deactivated.RowVersion, _userId));
+
+        await change.Should().ThrowAsync<SettingInactiveException>();
+        await again.Should().ThrowAsync<SettingInactiveException>();
+        (await _repository.GetHistoryAsync(setting.SettingId)).Should().HaveCount(2);
+        (await _repository.GetByKeyAsync(setting.Key))!.Value.Should().Be("a");
+    }
+
+    [Fact]
+    public async Task ManyParallelRegistrationsOfOneKeyLeaveExactlyOneWinnerAndNoRawDatabaseError()
+    {
+        var attempts = Enumerable.Range(0, 8).Select(i => Task.Run(async () =>
+        {
+            try
+            {
+                await _repository.RegisterSettingAsync(new RegisterSettingRequest(
+                    "test.race.key", i.ToString(System.Globalization.CultureInfo.InvariantCulture), SettingDataType.WholeNumber, SettingScope.Global, "Test"));
+                return (Exception?)null;
+            }
+            catch (Exception ex)
+            {
+                return ex;
+            }
+        })).ToArray();
+
+        var results = await Task.WhenAll(attempts);
+
+        results.Count(r => r is null).Should().Be(1);
+        results.Where(r => r is not null).Should().AllBeOfType<DuplicateSettingKeyException>();
+    }
+
+    [Theory]
+    [InlineData("x.api-key")]
+    [InlineData("svc.api.key")]
+    [InlineData("db.pass_wd")]
+    [InlineData("db.pwd")]
+    [InlineData("mail.passphrase")]
+    [InlineData("Svc.Client-Secret")]
+    public void SecretKeysAreBannedWhateverTheSeparator(string key)
+    {
+        var act = () => _validator.ValidateKey(key);
+
+        act.Should().Throw<SecretSettingsStorageBanException>();
+    }
+
+    [Fact]
     public async Task RegisterDuplicateKeyThrowsDuplicateSettingKeyException()
     {
         var request1 = new RegisterSettingRequest("app.company_name", "Alkaros", SettingDataType.Text, SettingScope.Global, "Core");

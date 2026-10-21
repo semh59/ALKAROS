@@ -1,6 +1,8 @@
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Settings.BusinessIdentity;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -21,7 +23,7 @@ namespace ALKAROS.Host.Experience.Settings;
 public static class SettingsManagementEndpoints
 {
     public const string ManagerCookieName = "alkaros.manager";
-    public const string ManagePermission = "settings.manage";
+    public const string ManagePermission = ApplicationPermissions.SettingsManage;
 
     public static IServiceCollection AddSettingsManagementExperience(this IServiceCollection services)
     {
@@ -79,6 +81,9 @@ public static class SettingsManagementEndpoints
             CancellationToken cancellationToken) =>
         {
             var actorId = SettingsManagerEndpointFilter.RequireActorId(context);
+            // A stale key from a shrunk palette still reads back safely; a new one must be a palette colour.
+            if (key == BusinessAccentThemeSetting.Key && BusinessAccentPalette.All.All(entry => entry.Key != request.NewValue))
+                throw new SettingValueRangeException(key, "Vurgu rengi hazır renklerden biri olmalı.");
             var updated = await settings.SetValueAsync(
                 key, request.NewValue, request.ExpectedRowVersion, actorId, request.Reason, cancellationToken);
             return Results.Ok(SettingRecordV1.From(updated));
