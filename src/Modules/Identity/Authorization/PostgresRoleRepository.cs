@@ -247,6 +247,25 @@ public sealed class PostgresRoleRepository : IRoleRepository
         return (true, reader.GetBoolean(0));
     }
 
+    public async Task<int> CountActiveHoldersAsync(
+        string permissionCode, Guid? ignoredRoleId, Guid? ignoredUserId, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            SELECT count(DISTINCT u.user_id)
+            FROM identity.users u
+            JOIN {UserRoles} ur ON ur.user_id = u.user_id
+            JOIN {RolePermissions} rp ON rp.role_id = ur.role_id
+            JOIN {PermissionTable} p ON p.permission_id = rp.permission_id
+            WHERE u.active AND p.code = @code
+              AND (@role_id::uuid IS NULL OR NOT (ur.role_id = @role_id AND (@user_id::uuid IS NULL OR ur.user_id = @user_id)));
+            """);
+        command.Parameters.AddWithValue("code", permissionCode);
+        command.Parameters.AddWithValue("role_id", NpgsqlTypes.NpgsqlDbType.Uuid, (object?)ignoredRoleId ?? DBNull.Value);
+        command.Parameters.AddWithValue("user_id", NpgsqlTypes.NpgsqlDbType.Uuid, (object?)ignoredUserId ?? DBNull.Value);
+        return (int)(long)(await command.ExecuteScalarAsync(cancellationToken))!;
+    }
+
     public async Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken = default)
     {
         await using var command = _dataSource.CreateCommand(

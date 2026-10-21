@@ -1,3 +1,4 @@
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Host.Experience;
@@ -43,6 +44,7 @@ public static class RoleManagementEndpoints
         services.TryAddScoped<IAuthorizationService, AuthorizationService>();
         services.TryAddScoped<IRoleManagementService, RoleManagementService>();
         services.TryAddScoped<RoleManagementAuthentication>();
+        services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
         return services;
     }
 
@@ -57,9 +59,12 @@ public static class RoleManagementEndpoints
             AddPermissionRequestV1 request,
             HttpContext http,
             IRoleManagementService roles,
+            IAuditEventStore audit,
             CancellationToken cancellationToken) =>
         {
             await roles.AddPermissionAsync(ActorId(http), request.Code, request.Name, cancellationToken);
+            await AppendAuditAsync(audit, http, "identity.permission-added", "Permission", PermissionAggregateId(request.Code),
+                new { code = request.Code, name = request.Name }, cancellationToken);
             return Results.NoContent();
         });
 
@@ -67,9 +72,12 @@ public static class RoleManagementEndpoints
             CreateRoleRequestV1 request,
             HttpContext http,
             IRoleManagementService roles,
+            IAuditEventStore audit,
             CancellationToken cancellationToken) =>
         {
             var roleId = await roles.CreateRoleAsync(ActorId(http), request.Code, request.Name, cancellationToken);
+            await AppendAuditAsync(audit, http, "identity.role-created", "Role", roleId,
+                new { code = request.Code, name = request.Name }, cancellationToken);
             return Results.Ok(new CreateRoleResultV1(roleId));
         });
 
@@ -96,9 +104,12 @@ public static class RoleManagementEndpoints
             AssignPermissionRequestV1 request,
             HttpContext http,
             IRoleManagementService roles,
+            IAuditEventStore audit,
             CancellationToken cancellationToken) =>
         {
             await roles.AssignPermissionAsync(ActorId(http), roleId, request.PermissionCode, cancellationToken);
+            await AppendAuditAsync(audit, http, "identity.role-permission-assigned", "Role", roleId,
+                new { permissionCode = request.PermissionCode }, cancellationToken);
             return Results.NoContent();
         });
 
@@ -107,9 +118,12 @@ public static class RoleManagementEndpoints
             string permissionCode,
             HttpContext http,
             IRoleManagementService roles,
+            IAuditEventStore audit,
             CancellationToken cancellationToken) =>
         {
             await roles.RevokePermissionAsync(ActorId(http), roleId, permissionCode, cancellationToken);
+            await AppendAuditAsync(audit, http, "identity.role-permission-revoked", "Role", roleId,
+                new { permissionCode }, cancellationToken);
             return Results.NoContent();
         });
 
@@ -118,9 +132,12 @@ public static class RoleManagementEndpoints
             Guid userId,
             HttpContext http,
             IRoleManagementService roles,
+            IAuditEventStore audit,
             CancellationToken cancellationToken) =>
         {
             await roles.AssignUserAsync(ActorId(http), userId, roleId, cancellationToken);
+            await AppendAuditAsync(audit, http, "identity.user-role-assigned", "User", userId,
+                new { roleId }, cancellationToken);
             return Results.NoContent();
         });
 
@@ -129,9 +146,12 @@ public static class RoleManagementEndpoints
             Guid userId,
             HttpContext http,
             IRoleManagementService roles,
+            IAuditEventStore audit,
             CancellationToken cancellationToken) =>
         {
             await roles.RevokeUserAsync(ActorId(http), userId, roleId, cancellationToken);
+            await AppendAuditAsync(audit, http, "identity.user-role-revoked", "User", userId,
+                new { roleId }, cancellationToken);
             return Results.NoContent();
         });
 
@@ -149,10 +169,13 @@ public static class RoleManagementEndpoints
             CreateUserRequestV1 request,
             HttpContext http,
             IRoleManagementService roles,
+            IAuditEventStore audit,
             CancellationToken cancellationToken) =>
         {
             var userId = await roles.CreateUserAsync(
                 ActorId(http), request.Username, request.Password, request.DisplayName, cancellationToken);
+            await AppendAuditAsync(audit, http, "identity.user-created", "User", userId,
+                new { username = request.Username.Trim(), displayName = request.DisplayName }, cancellationToken);
             return Results.Ok(new CreateUserResultV1(userId));
         });
 
@@ -167,6 +190,27 @@ public static class RoleManagementEndpoints
 
         return group;
     }
+
+    // The audit log needs an aggregate id and the command does not return one for a permission, so the code stands in for it.
+    private static Guid PermissionAggregateId(string code)
+        => new(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(code))[..16]);
+
+    // Written after the command succeeded, in the same request. The two stores cannot share one transaction; a failed
+    // write surfaces as an error to the caller rather than being swallowed.
+    private static Task AppendAuditAsync(
+        IAuditEventStore audit, HttpContext http, string eventName, string aggregateType, Guid aggregateId,
+        object after, CancellationToken cancellationToken)
+        => audit.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: eventName,
+                aggregateType: aggregateType,
+                aggregateId: aggregateId,
+                actorType: "User",
+                correlationId: http.TraceIdentifier,
+                actorId: ActorId(http),
+                afterStateJson: System.Text.Json.JsonSerializer.Serialize(after)),
+            cancellationToken);
 
     internal const string ActorItemKey = "alkaros.role-management.actor";
 

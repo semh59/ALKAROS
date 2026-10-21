@@ -468,6 +468,9 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Yönetici ya da vardiya sorumlusu oturumu gerekiyor."),
             AuthorizationDeniedException =>
                 (StatusCodes.Status403Forbidden, "FORBIDDEN", "Rol ya da yetki yönetimi izni gerekiyor."),
+            LastRoleManagerException =>
+                (StatusCodes.Status409Conflict, "LAST_ROLE_MANAGER",
+                    "Rol yönetimi yetkisine sahip son kişi kaldırılamaz; önce bu yetkiyi başka bir yöneticiye verin."),
             // V1-RMD-426: the exception's own text is English and names internal codes (UI_STYLE_GUIDE); the
             // cases behind it are an existing role, permission or username, or a missing permission code.
             InvalidOperationException =>

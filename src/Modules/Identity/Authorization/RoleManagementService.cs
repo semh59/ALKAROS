@@ -90,6 +90,9 @@ public sealed class RoleManagementService : IRoleManagementService
         var permission = await _permissionRepository.GetByCodeAsync(permissionCode, cancellationToken);
         if (permission is not null)
         {
+            if (permission.Code == PermissionCodes.RolesManage)
+                await EnsureAnotherRoleManagerRemainsAsync(roleId, null, cancellationToken);
+
             await _roleRepository.RevokePermissionAsync(roleId, permission.Id, cancellationToken);
         }
     }
@@ -105,6 +108,7 @@ public sealed class RoleManagementService : IRoleManagementService
     {
         await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.RolesManage, cancellationToken);
 
+        await EnsureAnotherRoleManagerRemainsAsync(roleId, userId, cancellationToken);
         await _roleRepository.RevokeUserAsync(userId, roleId, cancellationToken);
     }
 
@@ -112,6 +116,7 @@ public sealed class RoleManagementService : IRoleManagementService
         Guid actorUserId, string username, string password, string displayName, CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username);
+        username = username.Trim();
         ArgumentException.ThrowIfNullOrWhiteSpace(password);
         ArgumentException.ThrowIfNullOrWhiteSpace(displayName);
         if (username.Length > 100)
@@ -130,6 +135,15 @@ public sealed class RoleManagementService : IRoleManagementService
         return await _roleRepository.CreateUserAsync(username, passwordHash, displayName, cancellationToken);
     }
 
+    // Role management itself is the permission that repairs everything else, so the last active holder stays. When nobody
+    // holds it already (a fresh install before provisioning) there is nothing left to protect.
+    private async Task EnsureAnotherRoleManagerRemainsAsync(Guid roleId, Guid? userId, CancellationToken cancellationToken)
+    {
+        var remaining = await _roleRepository.CountActiveHoldersAsync(PermissionCodes.RolesManage, roleId, userId, cancellationToken);
+        if (remaining == 0 && await _roleRepository.CountActiveHoldersAsync(PermissionCodes.RolesManage, null, null, cancellationToken) > 0)
+            throw new LastRoleManagerException();
+    }
+
     public async Task<IReadOnlyList<RoleListing>> ListRolesAsync(Guid actorUserId, CancellationToken cancellationToken = default)
     {
         await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.RolesManage, cancellationToken);
@@ -146,5 +160,14 @@ public sealed class RoleManagementService : IRoleManagementService
     {
         await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.UsersManage, cancellationToken);
         return await _roleRepository.ListUsersAsync(cancellationToken);
+    }
+}
+
+/// <summary>Raised when a change would leave nobody able to manage roles.</summary>
+public sealed class LastRoleManagerException : InvalidOperationException
+{
+    public LastRoleManagerException()
+        : base("The last holder of roles management cannot be removed.")
+    {
     }
 }

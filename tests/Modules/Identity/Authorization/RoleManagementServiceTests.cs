@@ -334,3 +334,87 @@ public sealed class RoleManagementServiceTests : IClassFixture<AuthorizationTest
         (await _database.CountAsync("identity.user_roles")).Should().Be(before);
     }
 }
+public sealed class RoleManagementGuardTests : IClassFixture<AuthorizationTestDatabase>
+{
+    private readonly AuthorizationTestDatabase _database;
+    private readonly PostgresRoleRepository _roles;
+    private readonly RoleManagementService _service;
+
+    public RoleManagementGuardTests(AuthorizationTestDatabase database)
+    {
+        _database = database;
+        _roles = new PostgresRoleRepository(database.DataSource);
+        var authorization = new AuthorizationService(_roles, new PostgresDenialEventSink(database.DataSource));
+        _service = new RoleManagementService(authorization, _roles, new PostgresPermissionRepository(database.DataSource));
+    }
+
+    private async Task<(Guid Manager, Guid RoleId)> OnlyRoleManagerAsync()
+    {
+        // The fixture database is shared by this class's tests, so every test starts by retiring the earlier holders.
+        await _database.ExecuteAsync("UPDATE identity.users SET active = false;");
+        var manager = await _database.InsertUserAsync("guard_" + Guid.NewGuid().ToString("N")[..8]);
+        var roleId = await _database.SeedRoleWithPermissionAsync(
+            "guard_admin_" + Guid.NewGuid().ToString("N")[..8], manager, PermissionCodes.RolesManage, PermissionCodes.UsersManage);
+        return (manager, roleId);
+    }
+
+    [Fact]
+    public async Task TheLastRolesManagePermissionCannotBeRevokedFromItsRole()
+    {
+        var (manager, roleId) = await OnlyRoleManagerAsync();
+
+        var act = () => _service.RevokePermissionAsync(manager, roleId, PermissionCodes.RolesManage);
+
+        await act.Should().ThrowAsync<LastRoleManagerException>();
+        (await _roles.GetPermissionCodesForUserAsync(manager)).Should().Contain(PermissionCodes.RolesManage);
+    }
+
+    [Fact]
+    public async Task TheLastHolderCannotBeRemovedFromTheirRole()
+    {
+        var (manager, roleId) = await OnlyRoleManagerAsync();
+
+        var act = () => _service.RevokeUserAsync(manager, manager, roleId);
+
+        await act.Should().ThrowAsync<LastRoleManagerException>();
+        (await _roles.GetRoleIdsForUserAsync(manager)).Should().Contain(roleId);
+    }
+
+    [Fact]
+    public async Task AnInactiveSecondHolderDoesNotCountButAnActiveOneDoes()
+    {
+        var (manager, roleId) = await OnlyRoleManagerAsync();
+        var second = await _database.InsertUserAsync("guard_second_" + Guid.NewGuid().ToString("N")[..8], active: false);
+        await _roles.AssignUserAsync(second, roleId);
+
+        var refused = () => _service.RevokeUserAsync(manager, manager, roleId);
+        await refused.Should().ThrowAsync<LastRoleManagerException>();
+
+        await _database.ExecuteAsync("UPDATE identity.users SET active = true WHERE user_id = @id;", ("id", second));
+        await _service.RevokeUserAsync(manager, manager, roleId);
+
+        (await _roles.GetRoleIdsForUserAsync(manager)).Should().NotContain(roleId);
+    }
+
+    [Fact]
+    public async Task RevokingAnUnrelatedPermissionFromTheOnlyManagerRoleIsStillAllowed()
+    {
+        var (manager, roleId) = await OnlyRoleManagerAsync();
+
+        await _service.RevokePermissionAsync(manager, roleId, PermissionCodes.UsersManage);
+
+        (await _roles.GetPermissionCodesForUserAsync(manager)).Should().NotContain(PermissionCodes.UsersManage);
+    }
+
+    [Fact]
+    public async Task NewUserNamesAreStoredWithoutSurroundingSpaces()
+    {
+        var (manager, _) = await OnlyRoleManagerAsync();
+        var name = "trim_" + Guid.NewGuid().ToString("N")[..8];
+
+        await _service.CreateUserAsync(manager, "  " + name + " \t", "long-enough-password", "Trim User");
+
+        (await _roles.UsernameExistsAsync(name)).Should().BeTrue();
+        (await _roles.UsernameExistsAsync("  " + name + " \t")).Should().BeFalse();
+    }
+}

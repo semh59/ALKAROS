@@ -266,6 +266,79 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
 
+    [Fact]
+    public async Task EveryManagementCommandLeavesOneAuditRowNamingTheActor()
+    {
+        var cookie = await _database.SeedRealManagerRoleSessionAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var roleCode = "audited-" + Guid.NewGuid().ToString("N")[..8];
+        var permissionCode = "audited.manage-" + Guid.NewGuid().ToString("N")[..8];
+        var username = "audited-" + Guid.NewGuid().ToString("N")[..8];
+
+        using (var createRole = await client.SendAsync(Request(HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + "/roles", cookie, new CreateRoleRequestV1(roleCode, "Audited"))))
+            Assert.Equal(HttpStatusCode.OK, createRole.StatusCode);
+        var roleId = await _database.GetRoleIdAsync(roleCode);
+        using (var addPermission = await client.SendAsync(Request(HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + "/permissions", cookie, new AddPermissionRequestV1(permissionCode, "Audited"))))
+            Assert.Equal(HttpStatusCode.NoContent, addPermission.StatusCode);
+        using (var assign = await client.SendAsync(Request(HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + $"/roles/{roleId:D}/permissions", cookie, new AssignPermissionRequestV1(permissionCode))))
+            Assert.Equal(HttpStatusCode.NoContent, assign.StatusCode);
+        using (var revoke = await client.SendAsync(Request(HttpMethod.Delete, RoleManagementEndpoints.GroupPrefix + $"/roles/{roleId:D}/permissions/{permissionCode}", cookie)))
+            Assert.Equal(HttpStatusCode.NoContent, revoke.StatusCode);
+        Guid userId;
+        using (var createUser = await client.SendAsync(Request(HttpMethod.Post, "/api/v1/management/users", cookie, new CreateUserRequestV1(username, "correct-horse-battery", "Audited User"))))
+        {
+            Assert.Equal(HttpStatusCode.OK, createUser.StatusCode);
+            userId = (await createUser.Content.ReadFromJsonAsync<CreateUserResultV1>())!.UserId;
+        }
+        using (var assignUser = await client.SendAsync(Request(HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + $"/roles/{roleId:D}/users/{userId:D}", cookie)))
+            Assert.Equal(HttpStatusCode.NoContent, assignUser.StatusCode);
+        using (var revokeUser = await client.SendAsync(Request(HttpMethod.Delete, RoleManagementEndpoints.GroupPrefix + $"/roles/{roleId:D}/users/{userId:D}", cookie)))
+            Assert.Equal(HttpStatusCode.NoContent, revokeUser.StatusCode);
+
+        foreach (var eventName in new[]
+        {
+            "identity.role-created", "identity.permission-added", "identity.role-permission-assigned",
+            "identity.role-permission-revoked", "identity.user-created", "identity.user-role-assigned", "identity.user-role-revoked",
+        })
+            Assert.Equal(1, await _database.AuditCountAsync(eventName));
+        Assert.Equal(7, await _database.AuditCountWithActorAsync());
+        Assert.Equal(0, await _database.AuditTextCountAsync("correct-horse-battery"));
+    }
+
+    [Fact]
+    public async Task ADeniedManagementCommandLeavesNoAuditRow()
+    {
+        var cookie = await _database.SeedManagerSessionAsync(withRolesManage: false, withPermissionsManage: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(Request(
+            HttpMethod.Post, RoleManagementEndpoints.GroupPrefix + "/roles", cookie, new CreateRoleRequestV1("denied", "Denied")));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal(0, await _database.AuditCountAsync("identity.role-created"));
+    }
+
+    [Fact]
+    public async Task TheLastRoleManagerCannotBeStrippedOfTheirOwnPermission()
+    {
+        var cookie = await _database.SeedManagerSessionAsync(withRolesManage: true, withPermissionsManage: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var roles = await client.SendAsync(Request(HttpMethod.Get, RoleManagementEndpoints.GroupPrefix + "/roles", cookie));
+        var listing = await roles.Content.ReadFromJsonAsync<RoleV1[]>();
+        var ownRole = listing!.Single(role => role.Code.StartsWith("role-mgmt-role-", StringComparison.Ordinal));
+
+        using var response = await client.SendAsync(Request(
+            HttpMethod.Delete, RoleManagementEndpoints.GroupPrefix + $"/roles/{ownRole.RoleId:D}/permissions/identity.roles.manage", cookie));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var error = await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
+        Assert.Equal("LAST_ROLE_MANAGER", error!.Error.Code);
+        Assert.True(await _database.RoleHasPermissionAsync(ownRole.RoleId, "identity.roles.manage"));
+    }
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
@@ -507,6 +580,22 @@ internal sealed class RoleManagementTestDatabase
         await using var command = DataSource.CreateCommand("SELECT role_id FROM identity.roles WHERE code = @code;");
         command.Parameters.AddWithValue("code", code);
         return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    public Task<long> AuditCountAsync(string eventName)
+        => ScalarCountAsync("SELECT count(*) FROM audit.audit_events WHERE event_name = @value;", eventName);
+
+    public Task<long> AuditCountWithActorAsync()
+        => ScalarCountAsync("SELECT count(*) FROM audit.audit_events WHERE actor_id IS NOT NULL AND actor_type = 'User' AND event_name LIKE @value;", "identity.%");
+
+    public Task<long> AuditTextCountAsync(string text)
+        => ScalarCountAsync("SELECT count(*) FROM audit.audit_events WHERE after_state_json::text LIKE @value;", "%" + text + "%");
+
+    private async Task<long> ScalarCountAsync(string sql, string value)
+    {
+        await using var command = DataSource.CreateCommand(sql);
+        command.Parameters.AddWithValue("value", value);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<bool> RoleHasPermissionAsync(Guid roleId, string permissionCode)
