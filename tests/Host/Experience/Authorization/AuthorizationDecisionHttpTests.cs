@@ -137,6 +137,36 @@ public sealed class AuthorizationDecisionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheThreeListsCarryTheDisplayNamesOfThePeopleInThem()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withDecisionPermission: true);
+        var requester = await _database.SeedGranteeAsync();
+        await _database.RenameUserAsync(requester, "Ayşe Garson");
+        var grantId = await _database.SeedPendingGrantAsync("bills.comp", 80m, requester);
+        var delegationId = await _database.SeedActiveDelegationAsync();
+        var tightenedUser = await _database.SeedGranteeAsync();
+        await _database.RenameUserAsync(tightenedUser, "Veli Kasiyer");
+        var tighteningId = await _database.SeedOpenTighteningAsync(tightenedUser);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var grants = await GetAsync<List<PendingGrantV1>>(client, AuthorizationDecisionEndpoints.GroupPrefix + "/pending-grants", manager);
+        Assert.Equal("Ayşe Garson", grants.Single(grant => grant.GrantId == grantId).RequesterName);
+
+        var delegations = await GetAsync<List<ActiveDelegationV1>>(client, AuthorizationDecisionEndpoints.GroupPrefix + "/delegations", manager);
+        var delegation = delegations.Single(item => item.DelegationId == delegationId);
+        await _database.RenameUserAsync(delegation.GranteeUserId, "Veli Devralan");
+        await _database.RenameUserAsync(delegation.DelegatorUserId, "Mehmet Veren");
+        delegations = await GetAsync<List<ActiveDelegationV1>>(client, AuthorizationDecisionEndpoints.GroupPrefix + "/delegations", manager);
+        delegation = delegations.Single(item => item.DelegationId == delegationId);
+        Assert.Equal("Veli Devralan", delegation.GranteeName);
+        Assert.Equal("Mehmet Veren", delegation.DelegatorName);
+
+        var tightenings = await GetAsync<List<OpenTighteningV1>>(client, AuthorizationDecisionEndpoints.GroupPrefix + "/behavioural-tightenings", manager);
+        Assert.Equal("Veli Kasiyer", tightenings.Single(item => item.TighteningId == tighteningId).UserName);
+    }
+
+    [Fact]
     public async Task AManagerDelegatesAGrantClassPermissionTheyHoldAndItIsListed()
     {
         // V1-RMD-407 (V1-RMD-399 H-04): the time-boxed hand-off of model §1 can finally be created.
@@ -527,6 +557,9 @@ internal sealed class AuthorizationDecisionTestDatabase
     // is all any of the three actually need.
     /// <summary>V1-RMD-407: a plain user who can receive a delegation.</summary>
     public Task<Guid> SeedGranteeAsync() => SeedBareUserAsync();
+
+    public Task RenameUserAsync(Guid userId, string displayName)
+        => ExecuteAsync(DataSource, "UPDATE identity.users SET display_name = @name WHERE user_id = @id;", ("name", displayName), ("id", userId));
 
     /// <summary>V1-RMD-407: adds <paramref name="permissionCode"/> to the roles <paramref name="userId"/> already holds.</summary>
     public Task GrantToUserRoleAsync(Guid userId, string permissionCode)

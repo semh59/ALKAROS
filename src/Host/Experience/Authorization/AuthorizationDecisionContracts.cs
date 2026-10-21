@@ -11,7 +11,8 @@ public sealed record PendingGrantV1(
     Guid? SubjectServingUserId,
     decimal Amount,
     string ReasonCode,
-    DateTimeOffset RequestedAt);
+    DateTimeOffset RequestedAt,
+    string? RequesterName = null);
 
 /// <summary>One active time-boxed delegation (V1-IAM-021), for the revoke list.</summary>
 public sealed record ActiveDelegationV1(
@@ -21,7 +22,9 @@ public sealed record ActiveDelegationV1(
     Guid DelegatorUserId,
     decimal LimitAmount,
     DateTimeOffset GrantedAt,
-    DateTimeOffset ExpiresAt);
+    DateTimeOffset ExpiresAt,
+    string? GranteeName = null,
+    string? DelegatorName = null);
 
 /// <summary>One open behavioural tightening (V1-IAM-023), for the clear list.</summary>
 public sealed record OpenTighteningV1(
@@ -30,7 +33,8 @@ public sealed record OpenTighteningV1(
     string PermissionCode,
     int RecentCount,
     decimal TriggerRatio,
-    DateTimeOffset TriggeredAt);
+    DateTimeOffset TriggeredAt,
+    string? UserName = null);
 
 /// <summary>The resolved grant returned by approve / deny.</summary>
 public sealed record ResolvedGrantV1(

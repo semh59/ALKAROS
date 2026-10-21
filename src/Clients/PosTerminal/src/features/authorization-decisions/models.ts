@@ -19,6 +19,7 @@ export interface PendingGrant {
   amount: number;
   reasonCode: string;
   requestedAt: string;
+  requesterName?: string;
 }
 
 export interface ActiveDelegation {
@@ -27,6 +28,8 @@ export interface ActiveDelegation {
   granteeUserId: string;
   limitAmount: number;
   expiresAt: string;
+  granteeName?: string;
+  delegatorName?: string;
 }
 
 export interface OpenTightening {
@@ -36,6 +39,7 @@ export interface OpenTightening {
   recentCount: number;
   triggerRatio: number;
   triggeredAt: string;
+  userName?: string;
 }
 
 /** Turkish labels for the granular permission codes (UI_STYLE_GUIDE: no raw codes). */
@@ -112,6 +116,9 @@ export const authorizationDecisionText = {
   offlineBody: "Güncel yetki verisi alınamıyor.",
   actionFailed: "İşlem tamamlanamadı. Listeyi yenileyip tekrar deneyin.",
   requestedBy: "İsteyen",
+  unknownPerson: "Bilinmeyen personel",
+  delegatedTo: "Devralan",
+  delegatedBy: "Veren",
   requestedAt: "İstek",
   until: "Bitiş",
   since: "Son güncelleme",

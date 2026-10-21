@@ -124,7 +124,7 @@ export function AuthorizationDecisionsWorkspace({
                   <strong>{permissionLabel(grant.permissionCode)}</strong>
                   <span>{money(grant.amount)}</span>
                   <span>{reasonLabel(grant.reasonCode)}</span>
-                  <span className="authz-decisions__muted">{text.requestedBy} {roleName(grant.requesterRoleCode)}</span>
+                  <span className="authz-decisions__muted">{text.requestedBy} {grant.requesterName ?? text.unknownPerson} ({roleName(grant.requesterRoleCode)})</span>
                   <span className="authz-decisions__muted">{text.requestedAt} {formatTime(grant.requestedAt)}</span>
                 </div>
                 <div className="authz-decisions__actions">
@@ -148,6 +148,8 @@ export function AuthorizationDecisionsWorkspace({
                 <div className="authz-decisions__facts">
                   <strong>{permissionLabel(delegation.permissionCode)}</strong>
                   <span>≤ {money(delegation.limitAmount)}</span>
+                  <span className="authz-decisions__muted">{text.delegatedTo} {delegation.granteeName ?? text.unknownPerson}</span>
+                  <span className="authz-decisions__muted">{text.delegatedBy} {delegation.delegatorName ?? text.unknownPerson}</span>
                   <span className="authz-decisions__muted">{text.until} {formatTime(delegation.expiresAt)}</span>
                 </div>
                 <div className="authz-decisions__actions">
@@ -173,6 +175,7 @@ export function AuthorizationDecisionsWorkspace({
                   <strong>{permissionLabel(tightening.permissionCode)}</strong>
                   <span>{tightening.recentCount} işlem</span>
                   <span>{tightening.triggerRatio.toFixed(1)}× taban</span>
+                  <span className="authz-decisions__muted">{tightening.userName ?? text.unknownPerson}</span>
                   <span className="authz-decisions__muted">{formatTime(tightening.triggeredAt)}</span>
                 </div>
                 <div className="authz-decisions__actions">

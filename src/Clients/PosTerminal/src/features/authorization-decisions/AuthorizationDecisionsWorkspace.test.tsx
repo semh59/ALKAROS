@@ -122,7 +122,7 @@ describe("authorization decisions workspace", () => {
   it("shows the role in Turkish and the time in Istanbul time, never a raw id or ISO text", async () => {
     await render(<AuthorizationDecisionsWorkspace {...baseProps({ lastUpdated: "2026-09-04T18:00:00Z" })} />);
     const text = document.body.textContent ?? "";
-    expect(text).toContain("İsteyen Garson");
+    expect(text).toContain("İsteyen Bilinmeyen personel (Garson)");
     expect(text).toContain("04.09.2026 21:00");
     expect(text).not.toContain("AAAAAAAA");
     expect(text).not.toContain("2026-09-04T");
@@ -135,6 +135,28 @@ describe("authorization decisions workspace", () => {
     }));
     await render(<AuthorizationDecisionsWorkspace {...baseProps({ pendingGrants: grants })} />);
     for (const code of codes) expect(document.body.textContent).not.toContain(code);
+  });
+
+  it("names the people in all three lists and never shows an id fragment", async () => {
+    const base = baseProps();
+    await render(
+      <AuthorizationDecisionsWorkspace
+        {...baseProps({
+          pendingGrants: [{ ...base.pendingGrants[0], requesterName: "Ayşe Yıldız" }],
+          delegations: [{ ...base.delegations[0], granteeName: "Veli Kaya", delegatorName: "Mehmet Usta" }],
+          tightenings: [{ ...base.tightenings[0], userName: "Can Demir" }],
+        })}
+      />,
+    );
+    const text = document.body.textContent ?? "";
+    for (const name of ["Ayşe Yıldız", "Veli Kaya", "Mehmet Usta", "Can Demir"]) expect(text).toContain(name);
+    expect(text).not.toMatch(/AAAAAAAA|BBBBBBBB|CCCCCCCC/i);
+  });
+
+  it("says the person is unknown instead of showing an id when the server sent no name", async () => {
+    await render(<AuthorizationDecisionsWorkspace {...baseProps()} />);
+    expect(document.body.textContent).toContain("Bilinmeyen personel");
+    expect(document.body.textContent).not.toMatch(/aaaaaaaa|bbbbbbbb|cccccccc/i);
   });
 
   it("shows the empty copy when nothing is pending", async () => {

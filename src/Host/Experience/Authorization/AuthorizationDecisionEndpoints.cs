@@ -52,8 +52,12 @@ public static class AuthorizationDecisionEndpoints
         group.AddEndpointFilter<AuthorizationDecisionEndpointFilter>();
 
         group.MapGet("/pending-grants", async (
-            AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
-            Results.Ok(await store.ListPendingGrantsAsync(cancellationToken)));
+            AuthorizationDecisionStore store, NpgsqlDataSource dataSource, CancellationToken cancellationToken) =>
+        {
+            var grants = await store.ListPendingGrantsAsync(cancellationToken);
+            var names = await DisplayNamesAsync(dataSource, grants.Select(grant => grant.RequesterUserId), cancellationToken);
+            return Results.Ok(grants.Select(grant => grant with { RequesterName = names.GetValueOrDefault(grant.RequesterUserId) }).ToArray());
+        });
 
         group.MapPost("/grants/{grantId:guid}/approve", async (
             Guid grantId, HttpContext http, AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
@@ -64,8 +68,17 @@ public static class AuthorizationDecisionEndpoints
             Results.Ok(await store.DenyAsync(grantId, ActorId(http), cancellationToken)));
 
         group.MapGet("/delegations", async (
-            AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
-            Results.Ok(await store.ListActiveDelegationsAsync(cancellationToken)));
+            AuthorizationDecisionStore store, NpgsqlDataSource dataSource, CancellationToken cancellationToken) =>
+        {
+            var delegations = await store.ListActiveDelegationsAsync(cancellationToken);
+            var names = await DisplayNamesAsync(
+                dataSource, delegations.SelectMany(item => new[] { item.GranteeUserId, item.DelegatorUserId }), cancellationToken);
+            return Results.Ok(delegations.Select(item => item with
+            {
+                GranteeName = names.GetValueOrDefault(item.GranteeUserId),
+                DelegatorName = names.GetValueOrDefault(item.DelegatorUserId),
+            }).ToArray());
+        });
 
         // V1-RMD-407 (V1-RMD-399 H-04): nothing could create a delegation, so the time-boxed hand-off
         // (model §1, V1-IAM-021) only ever existed on rows inserted by hand.
@@ -100,8 +113,12 @@ public static class AuthorizationDecisionEndpoints
         });
 
         group.MapGet("/behavioural-tightenings", async (
-            AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
-            Results.Ok(await store.ListOpenTighteningsAsync(cancellationToken)));
+            AuthorizationDecisionStore store, NpgsqlDataSource dataSource, CancellationToken cancellationToken) =>
+        {
+            var tightenings = await store.ListOpenTighteningsAsync(cancellationToken);
+            var names = await DisplayNamesAsync(dataSource, tightenings.Select(item => item.UserId), cancellationToken);
+            return Results.Ok(tightenings.Select(item => item with { UserName = names.GetValueOrDefault(item.UserId) }).ToArray());
+        });
 
         group.MapPost("/behavioural-tightenings/{tighteningId:guid}/clear", async (
             Guid tighteningId, HttpContext http, AuthorizationDecisionStore store, CancellationToken cancellationToken) =>
@@ -111,6 +128,24 @@ public static class AuthorizationDecisionEndpoints
         });
 
         return group;
+    }
+
+    // The lists carry people's display names so the screen never shows an id fragment.
+    private static async Task<Dictionary<Guid, string>> DisplayNamesAsync(
+        NpgsqlDataSource dataSource, IEnumerable<Guid> userIds, CancellationToken cancellationToken)
+    {
+        var ids = userIds.Distinct().ToArray();
+        var names = new Dictionary<Guid, string>();
+        if (ids.Length == 0)
+            return names;
+
+        await using var command = dataSource.CreateCommand(
+            "SELECT user_id, display_name FROM identity.users WHERE user_id = ANY(@ids);");
+        command.Parameters.AddWithValue("ids", ids);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            names[reader.GetGuid(0)] = reader.GetString(1);
+        return names;
     }
 
     internal const string ActorItemKey = "alkaros.authorization-decision.actor";
