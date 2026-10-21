@@ -1,7 +1,9 @@
-import type { PermissionInfo, RoleInfo, UserInfo } from "./models";
+import type { PermissionInfo, PolicyInfo, RoleInfo, UserInfo } from "./models";
 import { ManagementApiError, createRequester } from "../management/http";
 
 export interface UserLookup { userId: string; displayName: string; active: boolean; isLocked: boolean }
+
+export type PolicyChange = Pick<PolicyInfo, "permissionCode" | "roleCode" | "limitAmount" | "maxCount" | "windowSeconds">;
 
 export interface StaffClient {
   createUser: (username: string, password: string, displayName: string) => Promise<void>;
@@ -15,6 +17,9 @@ export interface StaffClient {
   revokePermission: (roleId: string, permissionCode: string) => Promise<void>;
   assignUser: (roleId: string, userId: string) => Promise<void>;
   revokeUser: (roleId: string, userId: string) => Promise<void>;
+  listPolicies: () => Promise<readonly PolicyInfo[]>;
+  setPolicy: (policy: PolicyChange, expectedRowVersion: number | null) => Promise<void>;
+  removePolicy: (permissionCode: string, roleCode: string) => Promise<void>;
 }
 
 export function createStaffClient(fetcher: typeof fetch = fetch): StaffClient {
@@ -42,5 +47,12 @@ export function createStaffClient(fetcher: typeof fetch = fetch): StaffClient {
     revokePermission: (roleId, permissionCode) => send("DELETE", `${roles}/${roleId}/permissions/${encodeURIComponent(permissionCode)}`),
     assignUser: (roleId, userId) => send("POST", `${roles}/${roleId}/users/${userId}`),
     revokeUser: (roleId, userId) => send("DELETE", `${roles}/${roleId}/users/${userId}`),
+    listPolicies: () => json("/roles/policies"),
+    setPolicy: ({ permissionCode, roleCode, limitAmount, maxCount, windowSeconds }, expectedRowVersion) =>
+      send("PUT", `/roles/policies/${encodeURIComponent(permissionCode)}/${encodeURIComponent(roleCode)}`, {
+        idempotencyKey: crypto.randomUUID(), limitAmount, maxCount, windowSeconds, expectedRowVersion,
+      }),
+    removePolicy: (permissionCode, roleCode) =>
+      send("DELETE", `/roles/policies/${encodeURIComponent(permissionCode)}/${encodeURIComponent(roleCode)}`),
   };
 }

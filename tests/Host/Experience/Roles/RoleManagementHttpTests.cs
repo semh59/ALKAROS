@@ -339,6 +339,136 @@ public sealed class RoleManagementHttpTests : IAsyncLifetime
         Assert.True(await _database.RoleHasPermissionAsync(ownRole.RoleId, "identity.roles.manage"));
     }
 
+    private static string PolicyPath(string permission, string role)
+        => RoleManagementEndpoints.GroupPrefix + $"/policies/{permission}/{role}";
+
+    private static SetPolicyRequestV1 Limit(decimal amount = 100m, int count = 5, int window = 3600, long? version = null)
+        => new(Guid.NewGuid().ToString(), amount, count, window, version);
+
+    private static async Task<PolicyV1[]> ListPoliciesAsync(HttpClient client, string cookie)
+    {
+        using var response = await client.SendAsync(Request(HttpMethod.Get, RoleManagementEndpoints.GroupPrefix + "/policies", cookie));
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return (await response.Content.ReadFromJsonAsync<PolicyV1[]>(WebJson))!;
+    }
+
+    [Fact]
+    public async Task ThePolicyListShowsTheSeededWaiterDiscountLimitToARoleManagerOnly()
+    {
+        var manager = await _database.SeedManagerSessionAsync(withRolesManage: true, withPermissionsManage: false);
+        var outsider = await _database.SeedManagerSessionAsync(withRolesManage: false, withPermissionsManage: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var listing = await ListPoliciesAsync(client, manager);
+        var discount = Assert.Single(listing, policy => policy.PermissionCode == "bills.discount" && policy.RoleCode == "waiter");
+        Assert.Equal(100m, discount.LimitAmount);
+
+        using var refused = await client.SendAsync(Request(HttpMethod.Get, RoleManagementEndpoints.GroupPrefix + "/policies", outsider));
+        Assert.Equal(HttpStatusCode.Forbidden, refused.StatusCode);
+    }
+
+    [Fact]
+    public async Task TheListHidesPoliciesTheScreenCannotEdit()
+    {
+        var cookie = await _database.SeedManagerSessionAsync(withRolesManage: true, withPermissionsManage: false);
+        await _database.InsertPoliciesTheScreenMustNotShowAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var listing = await ListPoliciesAsync(client, cookie);
+
+        Assert.Equal(["bills.discount/waiter"], listing.Select(policy => policy.PermissionCode + "/" + policy.RoleCode).ToArray());
+    }
+
+    [Fact]
+    public async Task AManagerSetsChangesAndRemovesALimitAndEveryChangeIsAudited()
+    {
+        var cookie = await _database.SeedManagerSessionAsync(withRolesManage: true, withPermissionsManage: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = PolicyPath("bills.comp", "waiter");
+
+        using (var created = await client.SendAsync(Request(HttpMethod.Put, path, cookie, Limit(100m, 5, 3600))))
+        {
+            Assert.Equal(HttpStatusCode.OK, created.StatusCode);
+            Assert.Equal(1, (await created.Content.ReadFromJsonAsync<PolicyV1>(WebJson))!.RowVersion);
+        }
+
+        using (var changed = await client.SendAsync(Request(HttpMethod.Put, path, cookie, Limit(150m, 6, 7200, version: 1))))
+            Assert.Equal(2, (await changed.Content.ReadFromJsonAsync<PolicyV1>(WebJson))!.RowVersion);
+
+        var listing = await ListPoliciesAsync(client, cookie);
+        var comp = Assert.Single(listing, policy => policy.PermissionCode == "bills.comp");
+        Assert.Equal((150m, 6, 7200), (comp.LimitAmount, comp.MaxCount, comp.WindowSeconds));
+
+        using (var removed = await client.SendAsync(Request(HttpMethod.Delete, path, cookie)))
+            Assert.Equal(HttpStatusCode.NoContent, removed.StatusCode);
+        using (var again = await client.SendAsync(Request(HttpMethod.Delete, path, cookie)))
+            Assert.Equal(HttpStatusCode.NoContent, again.StatusCode);
+
+        Assert.DoesNotContain(await ListPoliciesAsync(client, cookie), policy => policy.PermissionCode == "bills.comp");
+        Assert.Equal(2, await _database.AuditCountAsync("identity.policy-changed"));
+        Assert.Equal(1, await _database.AuditCountAsync("identity.policy-removed"));
+    }
+
+    [Fact]
+    public async Task AStaleOrMissingVersionIsAConflictAndNothingIsChanged()
+    {
+        var cookie = await _database.SeedManagerSessionAsync(withRolesManage: true, withPermissionsManage: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = PolicyPath("bills.discount", "waiter");
+
+        foreach (var version in new long?[] { null, 99 })
+        {
+            using var response = await client.SendAsync(Request(HttpMethod.Put, path, cookie, Limit(10m, version: version)));
+            Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+            Assert.Equal("POLICY_CHANGED", (await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>())!.Error.Code);
+        }
+
+        Assert.Equal(100m, Assert.Single(await ListPoliciesAsync(client, cookie), policy => policy.PermissionCode == "bills.discount").LimitAmount);
+        Assert.Equal(0, await _database.AuditCountAsync("identity.policy-changed"));
+    }
+
+    [Theory]
+    [InlineData("bills.comp", "waiter", 1000.01, 5, 3600)]
+    [InlineData("bills.comp", "waiter", 0, 5, 3600)]
+    [InlineData("bills.comp", "waiter", 100, 0, 3600)]
+    [InlineData("bills.comp", "waiter", 100, 101, 3600)]
+    [InlineData("bills.comp", "waiter", 100, 5, 3599)]
+    [InlineData("bills.comp", "waiter", 100, 5, 86401)]
+    [InlineData("bills.split", "waiter", 100, 5, 3600)]
+    [InlineData("bills.comp", "manager", 100, 5, 3600)]
+    public async Task ALimitOutsideWhatTheScreenMaySetIsRefused(string permission, string role, double amount, int count, int window)
+    {
+        var cookie = await _database.SeedManagerSessionAsync(withRolesManage: true, withPermissionsManage: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(Request(
+            HttpMethod.Put, PolicyPath(permission, role), cookie, Limit((decimal)amount, count, window)));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("POLICY_INVALID", (await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>())!.Error.Code);
+    }
+
+    [Fact]
+    public async Task AnActorWithoutRolesManageCannotSetOrRemoveALimit()
+    {
+        var cookie = await _database.SeedManagerSessionAsync(withRolesManage: false, withPermissionsManage: false);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var set = await client.SendAsync(Request(HttpMethod.Put, PolicyPath("bills.comp", "waiter"), cookie, Limit()));
+        using var remove = await client.SendAsync(Request(HttpMethod.Delete, PolicyPath("bills.discount", "waiter"), cookie));
+
+        Assert.Equal(HttpStatusCode.Forbidden, set.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, remove.StatusCode);
+        Assert.Equal(0, await _database.AuditCountAsync("identity.policy-changed"));
+        Assert.Equal(0, await _database.AuditCountAsync("identity.policy-removed"));
+    }
+
     private async Task<WebApplication> StartAsync()
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
@@ -460,6 +590,17 @@ internal sealed class RoleManagementTestDatabase
         await using var maintenance = NpgsqlDataSource.Create(maintenanceConnection);
         await ExecuteAsync(maintenance, $"DROP DATABASE IF EXISTS {_databaseName} WITH (FORCE);");
     }
+
+    public Task InsertPoliciesTheScreenMustNotShowAsync()
+        => ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.authorization_policies (permission_code, role_code, mode, limit_amount, max_count, window_seconds)
+            VALUES ('bills.split', 'waiter', 'auto_within', 5, 1, 3600),
+                   ('bills.comp', 'manager', 'auto_within', 5, 1, 3600);
+            INSERT INTO identity.authorization_policies (permission_code, role_code, mode)
+            VALUES ('bills.void', 'waiter', 'always_deny');
+            """);
 
     public async Task<string> SeedManagerSessionAsync(bool withRolesManage, bool withPermissionsManage)
     {

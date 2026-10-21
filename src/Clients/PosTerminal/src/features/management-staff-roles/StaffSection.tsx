@@ -3,6 +3,7 @@ import { Button, TextField } from "../../design-system";
 import { managementText } from "../../strings";
 import type { ManagementSectionProps } from "../management/sections";
 import { createStaffClient, type StaffClient, type UserLookup } from "./api";
+import { PoliciesPanel } from "./PoliciesPanel";
 import { RolesPanel, UserRolesPanel } from "./RolesPanels";
 import "./management-staff-roles.css";
 import { ManagementApiError } from "../management/http";
@@ -99,5 +100,6 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
 
     {capabilities.has("identity.roles.manage") && <RolesPanel api={api} revision={revision} onChanged={changed} setNotice={setNotice} />}
     {capabilities.has("identity.roles.manage") && <UserRolesPanel api={api} revision={revision} onChanged={changed} setNotice={setNotice} />}
+    {capabilities.has("identity.roles.manage") && <PoliciesPanel api={api} revision={revision} onChanged={changed} setNotice={setNotice} />}
   </div>;
 }

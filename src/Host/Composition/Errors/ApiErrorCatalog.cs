@@ -460,6 +460,8 @@ public static class ApiErrorCatalog
         [
             typeof(RoleManagementUnauthorizedException),
             typeof(AuthorizationDeniedException),
+            typeof(InvalidPolicyException),
+            typeof(ALKAROS.Identity.Authorization.Policies.AuthorizationPolicyConcurrencyException),
             typeof(InvalidOperationException),
             typeof(BadHttpRequestException),
             typeof(ArgumentException),
@@ -471,6 +473,12 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Yönetici ya da vardiya sorumlusu oturumu gerekiyor."),
             AuthorizationDeniedException =>
                 (StatusCodes.Status403Forbidden, "FORBIDDEN", "Rol ya da yetki yönetimi izni gerekiyor."),
+            InvalidPolicyException =>
+                (StatusCodes.Status400BadRequest, "POLICY_INVALID",
+                    "Limit en çok 1000 TL, adet 1-100 ve süre 1-24 saat olmalı; yalnız garson ve kasiyerin indirim, ikram ve iptal limitleri değiştirilebilir."),
+            ALKAROS.Identity.Authorization.Policies.AuthorizationPolicyConcurrencyException =>
+                (StatusCodes.Status409Conflict, "POLICY_CHANGED",
+                    "Bu limit siz bakarken başka biri tarafından değiştirildi; listeyi yenileyip tekrar deneyin."),
             LastRoleManagerException =>
                 (StatusCodes.Status409Conflict, "LAST_ROLE_MANAGER",
                     "Rol yönetimi yetkisine sahip son kişi kaldırılamaz; önce bu yetkiyi başka bir yöneticiye verin."),

@@ -42,6 +42,9 @@ const fakeClient = (overrides: Partial<StaffClient> = {}): StaffClient => ({
   revokePermission: vi.fn().mockResolvedValue(undefined),
   assignUser: vi.fn().mockResolvedValue(undefined),
   revokeUser: vi.fn().mockResolvedValue(undefined),
+  listPolicies: vi.fn().mockResolvedValue([]),
+  setPolicy: vi.fn().mockResolvedValue(undefined),
+  removePolicy: vi.fn().mockResolvedValue(undefined),
   ...overrides,
 });
 const manager = new Set(["identity.users.manage", "security.manage"]);

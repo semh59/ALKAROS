@@ -1,4 +1,14 @@
 export interface RoleInfo { roleId: string; code: string; name: string; permissionCodes: readonly string[] }
+export interface PolicyInfo { permissionCode: string; roleCode: string; limitAmount: number; maxCount: number; windowSeconds: number; rowVersion: number }
+
+/** The roles and actions whose self-approval limits a manager may set (the server accepts nothing else). */
+export const policyRoles = [{ code: "waiter", label: "Garson" }, { code: "cashier", label: "Kasiyer" }] as const;
+export const policyPermissions = [
+  { code: "bills.discount", label: "İndirim" },
+  { code: "bills.comp", label: "İkram" },
+  { code: "bills.void", label: "Gönderilmiş kalem iptali" },
+] as const;
+
 export interface PermissionInfo { code: string; name: string }
 export interface UserInfo { userId: string; username: string; displayName: string; active: boolean; roleIds: readonly string[] }
 

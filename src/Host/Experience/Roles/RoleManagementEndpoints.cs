@@ -1,10 +1,13 @@
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Catalog;
+using ALKAROS.Identity.Authorization.Policies;
 using ALKAROS.Host.Experience;
 using ALKAROS.Host.Experience.Catalog;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -43,6 +46,7 @@ public static class RoleManagementEndpoints
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddScoped<IAuthorizationService, AuthorizationService>();
         services.TryAddScoped<IRoleManagementService, RoleManagementService>();
+        services.TryAddScoped<IAuthorizationPolicyRepository, PostgresAuthorizationPolicyRepository>();
         services.TryAddScoped<RoleManagementAuthentication>();
         services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
         return services;
@@ -155,6 +159,89 @@ public static class RoleManagementEndpoints
             return Results.NoContent();
         });
 
+        // The limits a role may approve on its own (docs/domain/authorization-model.md). No row for a pair means a
+        // manager decides. Only the three grant-class permissions and the two roles that hold them through a
+        // request are editable, and only as auto_within; always_allow is never reachable from here.
+        group.MapGet("/policies", async (
+            HttpContext http,
+            IAuthorizationService authorization,
+            IAuthorizationPolicyRepository policies,
+            CancellationToken cancellationToken) =>
+        {
+            await authorization.AuthorizeAsync(ActorId(http), PermissionCodes.RolesManage, cancellationToken);
+            var listing = await policies.ListAsync(cancellationToken);
+            return Results.Ok(listing.Where(IsEditablePolicy).Select(ToPolicyV1).ToArray());
+        });
+
+        group.MapPut("/policies/{permissionCode}/{roleCode}", async (
+            string permissionCode,
+            string roleCode,
+            SetPolicyRequestV1 request,
+            HttpContext http,
+            IAuthorizationService authorization,
+            IAuthorizationPolicyRepository policies,
+            IAuditEventStore audit,
+            CancellationToken cancellationToken) =>
+        {
+            var actor = ActorId(http);
+            await authorization.AuthorizeAsync(actor, PermissionCodes.RolesManage, cancellationToken);
+            request.Validate(permissionCode, roleCode);
+
+            var existing = await policies.GetAsync(permissionCode, roleCode, cancellationToken);
+            var versionMatches = existing is null ? request.ExpectedRowVersion is null : existing.RowVersion == request.ExpectedRowVersion;
+            if (!versionMatches)
+                throw new AuthorizationPolicyConcurrencyException(permissionCode, roleCode);
+
+            AuthorizationPolicy saved;
+            try
+            {
+                saved = await policies.UpsertAsync(
+                    new AuthorizationPolicy(
+                        Guid.Empty, permissionCode, roleCode, PolicyMode.AutoWithin,
+                        request.LimitAmount, request.MaxCount, request.WindowSeconds, 0),
+                    request.ExpectedRowVersion, actor, cancellationToken);
+            }
+            catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                throw new AuthorizationPolicyConcurrencyException(permissionCode, roleCode);
+            }
+
+            await AppendAuditAsync(audit, http, "identity.policy-changed", "AuthorizationPolicy", saved.PolicyId,
+                new
+                {
+                    permissionCode,
+                    roleCode,
+                    before = existing is null ? null : new { existing.LimitAmount, existing.MaxCount, existing.WindowSeconds },
+                    after = new { saved.LimitAmount, saved.MaxCount, saved.WindowSeconds },
+                }, cancellationToken);
+            return Results.Ok(ToPolicyV1(saved));
+        });
+
+        group.MapDelete("/policies/{permissionCode}/{roleCode}", async (
+            string permissionCode,
+            string roleCode,
+            [FromHeader(Name = "X-Idempotency-Key")] string? idempotencyKey,
+            HttpContext http,
+            IAuthorizationService authorization,
+            IAuthorizationPolicyRepository policies,
+            IAuditEventStore audit,
+            CancellationToken cancellationToken) =>
+        {
+            var actor = ActorId(http);
+            await authorization.AuthorizeAsync(actor, PermissionCodes.RolesManage, cancellationToken);
+            SetPolicyRequestV1.ValidateScope(permissionCode, roleCode);
+
+            var existing = await policies.GetAsync(permissionCode, roleCode, cancellationToken);
+            if (existing is not null && await policies.DeleteAsync(permissionCode, roleCode, cancellationToken))
+            {
+                await AppendAuditAsync(audit, http, "identity.policy-removed", "AuthorizationPolicy", existing.PolicyId,
+                    new { permissionCode, roleCode, before = new { existing.LimitAmount, existing.MaxCount, existing.WindowSeconds } },
+                    cancellationToken);
+            }
+
+            return Results.NoContent();
+        });
+
         // V1-RMD-110: found while designing waiter-table ownership tracking —
         // there was no way, anywhere in the system, to create a second user
         // account. provision-manager refuses to run once any user exists, and
@@ -191,6 +278,15 @@ public static class RoleManagementEndpoints
         return group;
     }
 
+    private static bool IsEditablePolicy(AuthorizationPolicy policy)
+        => policy.Mode == PolicyMode.AutoWithin
+            && SetPolicyRequestV1.EditablePermissions.Contains(policy.PermissionCode)
+            && SetPolicyRequestV1.EditableRoles.Contains(policy.RoleCode);
+
+    private static PolicyV1 ToPolicyV1(AuthorizationPolicy policy)
+        => new(policy.PermissionCode, policy.RoleCode, policy.LimitAmount!.Value, policy.MaxCount!.Value,
+            policy.WindowSeconds!.Value, policy.RowVersion);
+
     // The audit log needs an aggregate id and the command does not return one for a permission, so the code stands in for it.
     private static Guid PermissionAggregateId(string code)
         => new(System.Security.Cryptography.SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(code))[..16]);
@@ -221,6 +317,54 @@ public static class RoleManagementEndpoints
 }
 
 public sealed record AddPermissionRequestV1(string Code, string Name);
+
+public sealed record PolicyV1(
+    string PermissionCode, string RoleCode, decimal LimitAmount, int MaxCount, int WindowSeconds, long RowVersion);
+
+public sealed record SetPolicyRequestV1(
+    string IdempotencyKey, decimal LimitAmount, int MaxCount, int WindowSeconds, long? ExpectedRowVersion)
+{
+    public const decimal MaximumLimit = 1000m;
+    public const int MaximumCount = 100;
+    public const int MinimumWindowSeconds = 3600;
+    public const int MaximumWindowSeconds = 86400;
+
+    public static readonly IReadOnlySet<string> EditablePermissions = new HashSet<string>(StringComparer.Ordinal)
+    {
+        ApplicationPermissions.BillsVoid, ApplicationPermissions.BillsComp, ApplicationPermissions.BillsDiscount,
+    };
+
+    public static readonly IReadOnlySet<string> EditableRoles = new HashSet<string>(StringComparer.Ordinal)
+    {
+        ApplicationPermissions.RoleWaiter, ApplicationPermissions.RoleCashier,
+    };
+
+    public static void ValidateScope(string permissionCode, string roleCode)
+    {
+        if (!EditablePermissions.Contains(permissionCode) || !EditableRoles.Contains(roleCode))
+            throw new InvalidPolicyException();
+    }
+
+    public void Validate(string permissionCode, string roleCode)
+    {
+        ValidateScope(permissionCode, roleCode);
+        if (LimitAmount is <= 0m or > MaximumLimit
+            || MaxCount is < 1 or > MaximumCount
+            || WindowSeconds is < MinimumWindowSeconds or > MaximumWindowSeconds)
+        {
+            throw new InvalidPolicyException();
+        }
+    }
+}
+
+/// <summary>The limit, count or window is outside what the screen may set, or the permission/role is not editable.</summary>
+public sealed class InvalidPolicyException : Exception
+{
+    public InvalidPolicyException()
+        : base("The policy scope or its limits are outside the allowed range.")
+    {
+    }
+}
 
 public sealed record CreateRoleRequestV1(string Code, string Name);
 
