@@ -1,0 +1,8 @@
+KILLED   wrong-size nonce/tag not converted
+KILLED   missing envelope field not converted
+KILLED   fixed nonce
+KILLED   short keys accepted
+restore AesGcmEnvelopeCipher.cs: identical
+restore SensitiveEnvelope.cs: identical
+restore EnvelopeKeyCodec.cs: identical
+mutants: 4, survived: 0

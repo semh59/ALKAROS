@@ -75,8 +75,9 @@ public sealed class AesGcmEnvelopeCipher : IEnvelopeCipher
                 plaintext,
                 associatedData.Span);
         }
-        catch (CryptographicException exception)
+        catch (Exception exception) when (exception is CryptographicException or ArgumentException)
         {
+            // ArgumentException: a stored nonce or tag of the wrong size is just as untrustworthy as a bad tag.
             throw new SensitiveDataEncryptionException(
                 "Envelope decryption failed; ciphertext integrity check failed.",
                 exception);

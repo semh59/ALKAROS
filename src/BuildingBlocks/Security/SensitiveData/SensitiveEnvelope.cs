@@ -53,8 +53,9 @@ public sealed record SensitiveEnvelope
                 ?? throw new SensitiveDataException(
                     "Payload failed to deserialize; it was not written by this boundary.");
         }
-        catch (System.Text.Json.JsonException exception)
+        catch (Exception exception) when (exception is System.Text.Json.JsonException or ArgumentException)
         {
+            // ArgumentException: valid JSON with a missing field makes the constructor reject its null.
             throw new SensitiveDataException(
                 "Payload failed to deserialize; it was not written by this boundary.",
                 exception);

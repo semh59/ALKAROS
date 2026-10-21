@@ -1,0 +1,7 @@
+tests/Host/Experience/RelaySettings: Başarılı!  - Başarısız:     0, Başarılı:     9, Atlanan:     0, Toplam:     9, Süre: 2 s -
+tests/Integrations/QrRelay/PublicGateway: Başarılı!  - Başarısız:     0, Başarılı:    26, Atlanan:     0, Toplam:    26, Süre: 1 s -
+tests/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox: Başarılı!  - Başarısız:     0, Başarılı:    31, Atlanan:     0, Toplam:    31, Süre: 463 m
+tests/Modules/Payments/Token/TerminalCredential: Başarılı!  - Başarısız:     0, Başarılı:     6, Atlanan:     0, Toplam:     6, Süre: 912 m
+tests/Modules/QrOrdering/RelayCredential: Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 699 m
+tests/Modules/Security/DataProtectionRetention: Başarılı!  - Başarısız:     0, Başarılı:    43, Atlanan:     0, Toplam:    43, Süre: 2 s -
+tests/Host/Experience/SecurityAdministration: Başarılı!  - Başarısız:     0, Başarılı:    30, Atlanan:     0, Toplam:    30, Süre: 1 m 1
