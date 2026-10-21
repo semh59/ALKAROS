@@ -148,11 +148,15 @@ public static class RetryPolicy
             return string.Empty;
 
         // Handler exception text is untrusted and may contain secrets, PII,
-        // SQL fragments, or provider credentials. Persist only a bounded,
-        // allowlisted classification; operators can correlate the failure
-        // through structured telemetry without exposing the raw message.
-        return "handler failure";
+        // SQL fragments, or provider credentials. Persist only a bounded
+        // classification: the exception type name when the caller passes one
+        // (a bare identifier), nothing of the message.
+        return TypeNameShape.IsMatch(error) ? $"handler failure: {error}" : "handler failure";
     }
+
+    private static readonly System.Text.RegularExpressions.Regex TypeNameShape = new(
+        "^[A-Za-z_][A-Za-z0-9_.]{0,79}$",
+        System.Text.RegularExpressions.RegexOptions.CultureInvariant | System.Text.RegularExpressions.RegexOptions.NonBacktracking);
 }
 
 /// <summary>

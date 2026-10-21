@@ -1,0 +1,25 @@
+KILLED   timeout not a failure (old catch filter)
+KILLED   no delivery timeout
+KILLED   expired lease does not count
+KILLED   expired lease never dies
+KILLED   finalize uses shutdown token
+KILLED   rest of batch not released
+SURVIVED lease not renewed
+KILLED   lost lease not skipped
+KILLED   delivered retention too long
+KILLED   dead retention too short
+SURVIVED purge deletes pending
+KILLED   pacing never grows
+KILLED   pacing cap too high
+KILLED   error type name dropped
+restore OutboxStore.cs: identical
+restore RetryPolicy.cs: identical
+mutants: 14, survived: 2
+KILLED   lease not renewed
+restore OutboxStore.cs: identical
+restore RetryPolicy.cs: identical
+mutants: 14, survived: 0
+KILLED   purge deletes pending
+restore OutboxStore.cs: identical
+restore RetryPolicy.cs: identical
+mutants: 14, survived: 0

@@ -18,16 +18,28 @@ public sealed class OutboxStore
     private readonly NpgsqlDataSource _dataSource;
     private readonly TimeSpan _baseDelay;
     private readonly TimeSpan _leaseTimeout;
+    private readonly TimeSpan _deliveryTimeout;
+    private readonly Action<OutboxMessage, Exception>? _onDeliveryFailure;
     private readonly Dictionary<string, OutboxRetryProfile> _retryProfiles;
+
+    /// <summary>Delivered messages are deleted after this long (their payload may hold personal data).</summary>
+    public static readonly TimeSpan DispatchedRetention = TimeSpan.FromDays(14);
+
+    /// <summary>Dead-lettered messages stay this long for operator triage, then are deleted.</summary>
+    public static readonly TimeSpan DeadRetention = TimeSpan.FromDays(90);
 
     /// <param name="retryProfiles">
     /// V12-RMD-008: event types with their own retry budget; every other event type keeps the default one.
     /// </param>
+    /// <param name="deliveryTimeout">Upper bound of one sink call; an expired call counts as a failed attempt.</param>
+    /// <param name="onDeliveryFailure">Called with the exception of every failed delivery (the stored error holds only its type name).</param>
     public OutboxStore(
         NpgsqlDataSource dataSource,
         TimeSpan? baseDelay = null,
         TimeSpan? leaseTimeout = null,
-        IEnumerable<OutboxRetryProfile>? retryProfiles = null)
+        IEnumerable<OutboxRetryProfile>? retryProfiles = null,
+        TimeSpan? deliveryTimeout = null,
+        Action<OutboxMessage, Exception>? onDeliveryFailure = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _baseDelay = baseDelay ?? TimeSpan.FromSeconds(5);
@@ -36,6 +48,11 @@ public sealed class OutboxStore
         _leaseTimeout = leaseTimeout ?? TimeSpan.FromMinutes(5);
         if (_leaseTimeout <= TimeSpan.Zero)
             throw new ArgumentOutOfRangeException(nameof(leaseTimeout), "Lease timeout must be positive.");
+
+        _deliveryTimeout = deliveryTimeout ?? TimeSpan.FromSeconds(30);
+        if (_deliveryTimeout <= TimeSpan.Zero)
+            throw new ArgumentOutOfRangeException(nameof(deliveryTimeout), "Delivery timeout must be positive.");
+        _onDeliveryFailure = onDeliveryFailure;
 
         var profiles = new Dictionary<string, OutboxRetryProfile>(StringComparer.Ordinal);
         foreach (var profile in retryProfiles ?? [])
@@ -129,35 +146,114 @@ public sealed class OutboxStore
         var messages = await ClaimAsync(batchSize, cancellationToken).ConfigureAwait(false);
         var attempted = 0;
 
-        foreach (var message in messages)
+        for (var index = 0; index < messages.Count; index++)
         {
-            string? failure = null;
-            var handled = false;
             try
             {
-                handled = await handler.HandleAsync(message, cancellationToken).ConfigureAwait(false);
+                if (await DeliverAsync(handler, messages[index], cancellationToken).ConfigureAwait(false))
+                    attempted++;
             }
-            catch (Exception ex) when (ex is not OperationCanceledException)
+            catch
             {
-                failure = ex.Message;
+                // Whatever stops the batch (shutdown, a lost lease, a database fault), the messages not yet
+                // tried go back to pending now instead of waiting out the lease.
+                await ReleaseAsync(messages.Skip(index).ToList()).ConfigureAwait(false);
+                throw;
             }
-
-            await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
-            await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-
-            if (handled)
-                await MarkDispatchedAsync(connection, transaction, message.Id, message.LeaseGeneration + 1, cancellationToken).ConfigureAwait(false);
-            else
-                await RecordFailureAsync(
-                        connection, transaction, message.Id, message.EventType, message.LeaseGeneration + 1,
-                        failure ?? "handler returned false", cancellationToken)
-                    .ConfigureAwait(false);
-
-            await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
-            attempted++;
         }
 
         return attempted;
+    }
+
+    /// <returns><c>false</c> when the lease was lost before delivery, so the message was skipped.</returns>
+    private async Task<bool> DeliverAsync(IOutboxDeliverySink handler, OutboxMessage message, CancellationToken cancellationToken)
+    {
+        var leaseGeneration = message.LeaseGeneration + 1;
+        if (!await RenewLeaseAsync(message.Id, leaseGeneration, cancellationToken).ConfigureAwait(false))
+            return false;
+
+        string? failure = null;
+        var handled = false;
+        using var deliveryScope = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        deliveryScope.CancelAfter(_deliveryTimeout);
+        try
+        {
+            handled = await handler.HandleAsync(message, deliveryScope.Token).ConfigureAwait(false);
+        }
+        catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+        {
+            // A timeout of the sink's own call (or of deliveryScope) is a failed attempt like any other.
+            failure = ex.GetType().Name;
+            _onDeliveryFailure?.Invoke(message, ex);
+        }
+
+        // The sink already ran: record the outcome even when shutdown has begun, or the message is delivered twice.
+        await using var connection = await _dataSource.OpenConnectionAsync(CancellationToken.None).ConfigureAwait(false);
+        await using var transaction = await connection.BeginTransactionAsync(CancellationToken.None).ConfigureAwait(false);
+
+        if (handled)
+            await MarkDispatchedAsync(connection, transaction, message.Id, leaseGeneration, CancellationToken.None).ConfigureAwait(false);
+        else
+            await RecordFailureAsync(
+                    connection, transaction, message.Id, message.EventType, leaseGeneration,
+                    failure ?? "handler returned false", CancellationToken.None)
+                .ConfigureAwait(false);
+
+        await transaction.CommitAsync(CancellationToken.None).ConfigureAwait(false);
+        return true;
+    }
+
+    private async Task<bool> RenewLeaseAsync(Guid id, long leaseGeneration, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            "UPDATE outbox_messages SET claimed_at = now() WHERE id = $1 AND status = 'in_flight' AND lease_generation = $2;");
+        command.Parameters.AddWithValue(id);
+        command.Parameters.AddWithValue(leaseGeneration);
+        return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false) == 1;
+    }
+
+    private async Task ReleaseAsync(List<OutboxMessage> messages)
+    {
+        if (messages.Count == 0)
+            return;
+        try
+        {
+            await using var command = _dataSource.CreateCommand(
+                """
+                UPDATE outbox_messages m
+                SET status = 'pending', claimed_at = NULL
+                FROM unnest($1::uuid[], $2::bigint[]) AS held(id, lease_generation)
+                WHERE m.id = held.id AND m.status = 'in_flight' AND m.lease_generation = held.lease_generation;
+                """);
+            command.Parameters.AddWithValue(messages.Select(message => message.Id).ToArray());
+            command.Parameters.AddWithValue(messages.Select(message => message.LeaseGeneration + 1).ToArray());
+            await command.ExecuteNonQueryAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (NpgsqlException)
+        {
+            // Best effort: the lease timeout still returns them to pending.
+        }
+    }
+
+    /// <summary>
+    /// Deletes delivered messages older than <see cref="DispatchedRetention"/> and dead-lettered ones older than
+    /// <see cref="DeadRetention"/>, in bounded chunks.
+    /// </summary>
+    /// <returns>The number of deleted messages.</returns>
+    public async Task<int> PurgeAsync(CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            DELETE FROM outbox_messages
+            WHERE id IN (
+                SELECT id FROM outbox_messages
+                WHERE (status = 'dispatched' AND dispatched_at < now() - $1 * interval '1 second')
+                   OR (status = 'dead' AND created_at < now() - $2 * interval '1 second')
+                LIMIT 1000);
+            """);
+        command.Parameters.AddWithValue(DispatchedRetention.TotalSeconds);
+        command.Parameters.AddWithValue(DeadRetention.TotalSeconds);
+        return await command.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task<IReadOnlyList<OutboxMessage>> ClaimAsync(
@@ -167,21 +263,10 @@ public sealed class OutboxStore
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
 
-        // Leases that outlived the timeout return to pending so a crashed
-        // worker can never strand a message. Runs inside the claim
-        // transaction, so released records are claimable immediately.
-        await using (var releaseCommand = connection.CreateCommand())
-        {
-            releaseCommand.Transaction = transaction;
-            releaseCommand.CommandText =
-                """
-                UPDATE outbox_messages
-                SET status = 'pending', claimed_at = NULL
-                WHERE status = 'in_flight' AND claimed_at <= now() - $1 * interval '1 second';
-                """;
-            releaseCommand.Parameters.AddWithValue(_leaseTimeout.TotalSeconds);
-            await releaseCommand.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
-        }
+        // Leases that outlived the timeout return to pending so a crashed worker can never strand a message.
+        // The abandoned attempt counts: a message that keeps crashing its worker runs out of budget and dies
+        // instead of looping forever. Runs inside the claim transaction, so released records are claimable immediately.
+        await ReleaseExpiredLeasesAsync(connection, transaction, cancellationToken).ConfigureAwait(false);
 
         var messages = await ClaimPendingAsync(connection, transaction, batchSize, cancellationToken)
             .ConfigureAwait(false);
@@ -206,6 +291,51 @@ public sealed class OutboxStore
 
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         return messages;
+    }
+
+    private async Task ReleaseExpiredLeasesAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        var expired = new List<(Guid Id, bool Dead)>();
+        await using (var select = connection.CreateCommand())
+        {
+            select.Transaction = transaction;
+            select.CommandText =
+                """
+                SELECT id, event_type, attempt_count FROM outbox_messages
+                WHERE status = 'in_flight' AND claimed_at <= now() - $1 * interval '1 second'
+                FOR UPDATE SKIP LOCKED;
+                """;
+            select.Parameters.AddWithValue(_leaseTimeout.TotalSeconds);
+            await using var reader = await select.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+            while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
+            {
+                var maxAttempts = _retryProfiles.TryGetValue(reader.GetString(1), out var profile)
+                    ? profile.MaxAttempts
+                    : RetryPolicy.MaxAttempts;
+                expired.Add((reader.GetGuid(0), reader.GetInt32(2) + 1 >= maxAttempts));
+            }
+        }
+
+        foreach (var dead in new[] { true, false })
+        {
+            var ids = expired.Where(item => item.Dead == dead).Select(item => item.Id).ToArray();
+            if (ids.Length == 0)
+                continue;
+            await using var update = connection.CreateCommand();
+            update.Transaction = transaction;
+            update.CommandText =
+                """
+                UPDATE outbox_messages
+                SET status = $2, claimed_at = NULL, attempt_count = attempt_count + 1, last_error = 'lease expired'
+                WHERE id = ANY($1);
+                """;
+            update.Parameters.AddWithValue(ids);
+            update.Parameters.AddWithValue(dead ? "dead" : "pending");
+            await update.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+        }
     }
 
     private static async Task<IReadOnlyList<OutboxMessage>> ClaimPendingAsync(
@@ -287,4 +417,22 @@ public sealed class OutboxStore
                 connection, "outbox_messages", id, leaseGeneration, error, profile, transaction, cancellationToken)
             : RetryPolicy.RecordFailureAsync(
                 connection, "outbox_messages", id, leaseGeneration, error, _baseDelay, transaction, cancellationToken);
+}
+
+/// <summary>How long the dispatch loop waits between iterations.</summary>
+public static class OutboxDispatchPacing
+{
+    public static readonly TimeSpan Idle = TimeSpan.FromSeconds(1);
+
+    public static readonly TimeSpan MaxFaultDelay = TimeSpan.FromSeconds(30);
+
+    /// <summary>The wait after <paramref name="consecutiveFaults"/> failed iterations in a row: doubles from one second up to <see cref="MaxFaultDelay"/>.</summary>
+    public static TimeSpan DelayAfter(int consecutiveFaults)
+    {
+        ArgumentOutOfRangeException.ThrowIfNegative(consecutiveFaults);
+        if (consecutiveFaults == 0)
+            return Idle;
+        var doublings = Math.Min(consecutiveFaults - 1, 16);
+        return TimeSpan.FromTicks(Math.Min(Idle.Ticks << doublings, MaxFaultDelay.Ticks));
+    }
 }

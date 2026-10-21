@@ -1,6 +1,8 @@
 using ALKAROS.Messaging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 
 namespace ALKAROS.Host.Outbox;
@@ -15,6 +17,12 @@ namespace ALKAROS.Host.Outbox;
 /// </summary>
 public static class OutboxComposition
 {
+    private static readonly Action<ILogger, Guid, string, Exception?> LogDeliveryFailure =
+        LoggerMessage.Define<Guid, string>(
+            LogLevel.Warning,
+            new EventId(5302, nameof(LogDeliveryFailure)),
+            "Outbox message {MessageId} ({EventType}) failed to deliver; it will be retried or dead-lettered.");
+
     public static IServiceCollection AddOutboxDispatch(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
@@ -33,8 +41,10 @@ public static class OutboxComposition
     public static OutboxStore CreateStore(IServiceProvider services)
     {
         ArgumentNullException.ThrowIfNull(services);
+        var logger = (services.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance).CreateLogger<OutboxStore>();
         return new OutboxStore(
             services.GetRequiredService<NpgsqlDataSource>(),
-            retryProfiles: services.GetServices<OutboxRetryProfile>());
+            retryProfiles: services.GetServices<OutboxRetryProfile>(),
+            onDeliveryFailure: (message, ex) => LogDeliveryFailure(logger, message.Id, message.EventType, ex));
     }
 }

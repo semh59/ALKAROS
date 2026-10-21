@@ -99,7 +99,7 @@ public sealed class OutboxStoreTests : IClassFixture<StoreTestDatabase>
         Assert.Equal(1, attempted);
         var lastError = await _database.ScalarAsync<string>(
             $"SELECT last_error FROM outbox_messages WHERE event_type = '{eventType}';");
-        Assert.Equal("handler failure", lastError);
+        Assert.Equal("handler failure: InvalidOperationException", lastError);
     }
 
     [Fact]

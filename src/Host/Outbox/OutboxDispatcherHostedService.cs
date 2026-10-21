@@ -24,13 +24,13 @@ namespace ALKAROS.Host.Outbox;
 public sealed class OutboxDispatcherHostedService : BackgroundService
 {
     private const int BatchSize = 50;
-    private static readonly TimeSpan IdleDelay = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan PurgeInterval = TimeSpan.FromHours(1);
 
     private static readonly Action<ILogger, Exception?> LogLoopFault =
         LoggerMessage.Define(
             LogLevel.Error,
             new EventId(5300, nameof(LogLoopFault)),
-            "Outbox dispatch loop iteration failed; retrying after the idle delay.");
+            "Outbox dispatch loop iteration failed; retrying after a growing delay.");
 
     private static readonly Action<ILogger, long, Exception?> LogDeadLetterRise =
         LoggerMessage.Define<long>(
@@ -43,6 +43,7 @@ public sealed class OutboxDispatcherHostedService : BackgroundService
     private readonly NpgsqlDataSource _dataSource;
     private readonly ILogger<OutboxDispatcherHostedService> _logger;
     private long _lastDeadCount;
+    private DateTimeOffset _nextPurge = DateTimeOffset.MinValue;
 
     public OutboxDispatcherHostedService(
         IServiceScopeFactory scopeFactory,
@@ -58,6 +59,7 @@ public sealed class OutboxDispatcherHostedService : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var consecutiveFaults = 0;
         while (!stoppingToken.IsCancellationRequested)
         {
             var attempted = 0;
@@ -73,6 +75,9 @@ public sealed class OutboxDispatcherHostedService : BackgroundService
                     // idle loop.
                     await ReportDeadLettersAsync(stoppingToken).ConfigureAwait(false);
                 }
+
+                await PurgeIfDueAsync(stoppingToken).ConfigureAwait(false);
+                consecutiveFaults = 0;
             }
             catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
             {
@@ -83,13 +88,14 @@ public sealed class OutboxDispatcherHostedService : BackgroundService
                 // A dispatch-loop fault (transport, transient DB) must not kill
                 // the worker; the messages stay pending and are retried.
                 LogLoopFault(_logger, ex);
+                consecutiveFaults++;
             }
 
-            if (attempted < BatchSize)
+            if (attempted < BatchSize || consecutiveFaults > 0)
             {
                 try
                 {
-                    await Task.Delay(IdleDelay, stoppingToken).ConfigureAwait(false);
+                    await Task.Delay(OutboxDispatchPacing.DelayAfter(consecutiveFaults), stoppingToken).ConfigureAwait(false);
                 }
                 catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
                 {
@@ -97,6 +103,14 @@ public sealed class OutboxDispatcherHostedService : BackgroundService
                 }
             }
         }
+    }
+
+    private async Task PurgeIfDueAsync(CancellationToken cancellationToken)
+    {
+        if (DateTimeOffset.UtcNow < _nextPurge)
+            return;
+        _nextPurge = DateTimeOffset.UtcNow + PurgeInterval;
+        await _outbox.PurgeAsync(cancellationToken).ConfigureAwait(false);
     }
 
     private async Task ReportDeadLettersAsync(CancellationToken cancellationToken)

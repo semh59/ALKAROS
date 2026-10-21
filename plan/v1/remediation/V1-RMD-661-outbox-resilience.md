@@ -1,7 +1,7 @@
 # V1-RMD-661 - Olay kuyruğu dayanıklılığı (zaman aşımı, kira bırakma, kapatma, hata nedeni, eski kayıt temizliği, kesinti bekleme süresi)
 
 - Task ID: V1-RMD-661
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: implementation
 - Surface state: Planned

@@ -1,0 +1,5 @@
+tests/Modules/Kitchen/OrderItemStateSync: Başarılı!  - Başarısız:     0, Başarılı:     7, Atlanan:     0, Toplam:     7, Süre: 278 ms - ALKAROS.Kitchen.
+tests/Host/Experience/OnlineOrdering: Başarılı!  - Başarısız:     0, Başarılı:   179, Atlanan:     0, Toplam:   179, Süre: 1 m 34 s - ALKAROS.Host.E
+tests/Host/Experience/SecurityAdministration: Başarılı!  - Başarısız:     0, Başarılı:    30, Atlanan:     0, Toplam:    30, Süre: 1 m 11 s - ALKAROS.Host.E
+tests/Architecture: 
+done
