@@ -44,4 +44,4 @@ V1-RMD-596 bulgusu B010 kapanır. Mutfakta kalem durumu değişince (hazırlanı
 
 ## Handoff
 
-- None
+- V1-RMD-666
