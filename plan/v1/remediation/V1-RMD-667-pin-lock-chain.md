@@ -57,4 +57,4 @@ V1-RMD-597 bulguları B001, B003, B004, B024 ve B032 kapanır. Beş yanlış PIN
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-668
