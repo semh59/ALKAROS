@@ -23,6 +23,7 @@ V1-RMD-596 bulguları B011, B013, B015, B019 ve B022 kapanır. B019: bozuk veya 
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/BuildingBlocks/Messaging/OutboxEnvelope.cs - yalnız kimlik doğrulaması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/BuildingBlocks/IntegrationContracts/IntegrationEventSerializer.cs - yalnız yorum
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs - yalnız modül listesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/architecture/module-dependency-rules.md - yalnız Host DualScreen satırına Privacy bağımlılığı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/BuildingBlocks/Security/SensitiveData/Encryption/EnvelopeHardeningTests.cs - yalnız yeni test dosyası
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/BuildingBlocks/Messaging/OutboxOrderingTests.cs - yalnız yeni test dosyası
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-662-connector-key-and-deadletter-watch.md - yalnız Handoff satırı
