@@ -43,4 +43,4 @@ V1-RMD-596 bulguları B019 ve B011'in SensitiveData kısmı kapanır (V1-RMD-663
 
 ## Handoff
 
-- None
+- V1-RMD-665
