@@ -1670,6 +1670,15 @@
         "audit_events"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "195",
+      "phase": "B",
+      "tables": [
+        "authorization_grants",
+        "authorization_delegations"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

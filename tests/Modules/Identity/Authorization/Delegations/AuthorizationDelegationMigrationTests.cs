@@ -1,6 +1,7 @@
 using System.IO;
 using System.Text.RegularExpressions;
 using FluentAssertions;
+using Npgsql;
 using Xunit;
 
 namespace ALKAROS.Identity.Authorization.Tests.Delegations;
@@ -51,5 +52,105 @@ public sealed class AuthorizationDelegationMigrationTests
         while (dir is not null && !File.Exists(Path.Combine(dir, "ALKAROS.slnx")))
             dir = Path.GetDirectoryName(dir);
         return dir ?? throw new InvalidOperationException("Could not locate the repository root.");
+    }
+}
+
+public sealed class AuthorizationGuardDatabaseTests : IClassFixture<DelegationDatabase>
+{
+    private readonly DelegationDatabase _db;
+
+    public AuthorizationGuardDatabaseTests(DelegationDatabase db) => _db = db;
+
+    private async Task<Guid> InsertGrantAsync(Guid requester, string status = "pending", Guid? approver = null)
+    {
+        await using var command = _db.DataSource.CreateCommand(
+            """
+            INSERT INTO identity.authorization_grants
+                (idempotency_key, permission_code, requester_user_id, requester_role_code, amount, reason_code,
+                 status, policy_path, approver_user_id, resolved_at)
+            VALUES (@key, 'bills.comp', @requester, 'waiter', 10, 'CustomerChange',
+                    @status, CASE WHEN @status = 'pending' THEN NULL ELSE 'manual' END, @approver,
+                    CASE WHEN @status = 'pending' THEN NULL ELSE now() END)
+            RETURNING grant_id;
+            """);
+        command.Parameters.AddWithValue("key", "guard-" + Guid.NewGuid().ToString("N"));
+        command.Parameters.AddWithValue("requester", requester);
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("approver", (object?)approver ?? DBNull.Value);
+        return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    private async Task<Guid> InsertDelegationAsync()
+    {
+        await using var command = _db.DataSource.CreateCommand(
+            """
+            INSERT INTO identity.authorization_delegations
+                (permission_code, grantee_user_id, delegator_user_id, limit_amount, expires_at)
+            VALUES ('bills.comp', gen_random_uuid(), gen_random_uuid(), 100, now() + interval '2 hours')
+            RETURNING delegation_id;
+            """);
+        return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    [Fact]
+    public async Task AGrantCannotBeResolvedByItsOwnRequester()
+    {
+        var requester = Guid.NewGuid();
+        var grantId = await InsertGrantAsync(requester);
+
+        await FluentActions
+            .Invoking(() => _db.ExecuteAsync(
+                $"UPDATE identity.authorization_grants SET status = 'granted', policy_path = 'manual', approver_user_id = '{requester}', resolved_at = now() WHERE grant_id = '{grantId}';"))
+            .Should().ThrowAsync<PostgresException>().Where(e => e.ConstraintName == "ck_authorization_grants_approver_not_requester");
+        await FluentActions
+            .Invoking(() => InsertGrantAsync(requester, "granted", requester))
+            .Should().ThrowAsync<PostgresException>().Where(e => e.ConstraintName == "ck_authorization_grants_approver_not_requester");
+    }
+
+    [Theory]
+    [InlineData("requester_role_code = 'manager'")]
+    [InlineData("subject_type = 'OrderItem', subject_id = gen_random_uuid()")]
+    [InlineData("subject_serving_user_id = gen_random_uuid()")]
+    public async Task TheRoleAndSubjectOfAGrantRequestCannotChangeOnResolution(string change)
+    {
+        var grantId = await InsertGrantAsync(Guid.NewGuid());
+
+        await FluentActions
+            .Invoking(() => _db.ExecuteAsync(
+                $"UPDATE identity.authorization_grants SET {change}, status = 'granted', policy_path = 'manual', approver_user_id = gen_random_uuid(), resolved_at = now() WHERE grant_id = '{grantId}';"))
+            .Should().ThrowAsync<PostgresException>().WithMessage("*only the resolution fields*");
+    }
+
+    [Fact]
+    public async Task AnOrdinaryResolutionByAnotherApproverStillWorks()
+    {
+        var grantId = await InsertGrantAsync(Guid.NewGuid());
+
+        await _db.ExecuteAsync(
+            $"UPDATE identity.authorization_grants SET status = 'granted', policy_path = 'manual', approver_user_id = gen_random_uuid(), resolved_at = now() WHERE grant_id = '{grantId}';");
+
+        (await _db.ScalarAsync<string>($"SELECT status FROM identity.authorization_grants WHERE grant_id = '{grantId}';"))
+            .Should().Be("granted");
+    }
+
+    [Fact]
+    public async Task ADelegationCannotBeDeletedOrChangedExceptByItsOneRevocation()
+    {
+        var id = await InsertDelegationAsync();
+
+        await FluentActions
+            .Invoking(() => _db.ExecuteAsync($"UPDATE identity.authorization_delegations SET limit_amount = 5000 WHERE delegation_id = '{id}';"))
+            .Should().ThrowAsync<PostgresException>().WithMessage("*only the revocation fields*");
+        await FluentActions
+            .Invoking(() => _db.ExecuteAsync($"UPDATE identity.authorization_delegations SET expires_at = expires_at + interval '10 days' WHERE delegation_id = '{id}';"))
+            .Should().ThrowAsync<PostgresException>().WithMessage("*only the revocation fields*");
+        await FluentActions
+            .Invoking(() => _db.ExecuteAsync($"DELETE FROM identity.authorization_delegations WHERE delegation_id = '{id}';"))
+            .Should().ThrowAsync<PostgresException>().WithMessage("*cannot be deleted*");
+
+        await _db.ExecuteAsync($"UPDATE identity.authorization_delegations SET revoked_at = now(), revoked_by_user_id = gen_random_uuid() WHERE delegation_id = '{id}';");
+        await FluentActions
+            .Invoking(() => _db.ExecuteAsync($"UPDATE identity.authorization_delegations SET revoked_at = NULL WHERE delegation_id = '{id}';"))
+            .Should().ThrowAsync<PostgresException>().WithMessage("*already revoked*");
     }
 }

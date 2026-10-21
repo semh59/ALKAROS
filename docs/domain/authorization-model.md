@@ -149,7 +149,7 @@ plus `orders.send`/`kitchen.advance`/`kitchen.reprint`/
 ### 3.3 Personal comp budget and starting limits (Product Owner, 2026-10-21)
 
 - Personal comp budget: a waiter's `bills.comp` request is approved without a manager while one item is at most ₺50 and the person's total for the day is at most ₺150. The day is the UTC day. The approval is recorded as `policy_path = personal_budget`. These two numbers are product decisions, kept in `PersonalCompBudgetEscalationResolver`.
-- Starting limits for the `auto_within` policy of a waiter (to be seeded by V1-RMD-673; until then no policy rows exist and every request goes to a manager): discount and comp up to ₺100, void of a sent item up to ₺200; anything above goes to a manager. The limits are changeable from the screen.
+- Starting limits intended by the Product Owner (2026-10-21) for the `auto_within` policy of a waiter: comp up to ₺100 and void of a sent item up to ₺200; anything above goes to a manager. Not seeded: no policy rows exist, so every request still goes to a manager, and there is no screen to edit policies yet. A standing discount limit for waiters would contradict the 2026-09-04 decision that every `bills.discount` is a grant, so discount stays out until that is decided again.
 - Retention: the personal budget record and the access log of these decisions are kept 10 years, the same as the audit log.
 - Void requests carry the item's real amount (V1-RMD-670); the earlier amount of 0 was a defect, not a decision.
 

@@ -21,6 +21,7 @@ public sealed class DelegationDatabase : PgTestDatabase
             Mig("V1-IAM-019", "045-authorization-grants.up.sql"),
             Mig("V1-IAM-021", "046-authorization-delegations.up.sql"),
             Mig("V1-IAM-025", "051-delegation-revoke-actor.up.sql"),
+            Mig("V1-RMD-673", "195-authorization-guards.up.sql"),
         };
         foreach (var path in scripts)
             await RunAsync(DataSource, await File.ReadAllTextAsync(path));
@@ -28,6 +29,9 @@ public sealed class DelegationDatabase : PgTestDatabase
 
     public async Task ApplyDownAsync()
     {
+        await RunAsync(
+            DataSource,
+            await File.ReadAllTextAsync(Mig("V1-RMD-673", "195-authorization-guards.down.sql")));
         await RunAsync(
             DataSource,
             await File.ReadAllTextAsync(Mig("V1-IAM-025", "051-delegation-revoke-actor.down.sql")));
