@@ -49,4 +49,4 @@ V1-RMD-597 bulguları B002, B020 ve B022 (boşluk kırpma yarısı) kapanır. Ro
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-670
