@@ -2,7 +2,7 @@
 // item sheets (V1-WTR-047, step 11/? of
 // docs/engineering/garson-refactor-plan.md's Section 2).
 
-import { state, el, offlineAuthorityFor } from '../state.js';
+import { state, el, offlineAuthorityFor, PersistentKeyMap } from '../state.js';
 import { escapeHtml, formatMoney, formatQuantity, randomUUID } from '../util.js';
 import { activeItems, KITCHEN_STATE, renderBill, loadOrder } from './bill.js';
 import { loadTables } from '../screens/tables.js';
@@ -97,7 +97,7 @@ export async function confirmVoid() {
 }
 
 // Keyed by item id so a retry after approval reuses the same request.
-const pendingVoidKeys = new Map();
+const pendingVoidKeys = new PersistentKeyMap('alkaros_waiter_void_keys');
 
 // V1-RMD-155: the grant-gated path for a line the kitchen already has.
 // Unlike the free void it may not resolve immediately — a waiter's request
@@ -153,9 +153,10 @@ export async function confirmVoidSent() {
     });
 
   if (!result.ok && result.offline) {
-    // The void-sent grant is requested with amount 0 (OrderManagementEndpoints),
-    // so the offline action carries 0 too and a later retry matches it.
-    authorizeOffline('bills.void', context, 0, pendingVoidKeys,
+    // The void-sent grant is requested with the item's gross amount (the line's totalPrice), so the offline action
+    // carries the same amount and a later retry matches it.
+    const item = activeItems().find((candidate) => candidate.itemId === context.itemId);
+    authorizeOffline('bills.void', context, item ? item.totalPrice : 0, pendingVoidKeys,
       'İptal çevrimdışı kaydedildi; bağlanınca uzlaştırılacak ve yönetici onayına gidecek.');
     return;
   }
@@ -188,7 +189,7 @@ export async function confirmVoidSent() {
 // /manager) applies directly, a waiter's request goes to a manager and may
 // come back 202 Pending — same idempotency-key-survives-a-retry pattern.
 
-const pendingCompKeys = new Map();
+const pendingCompKeys = new PersistentKeyMap('alkaros_waiter_comp_keys');
 
 export function openCompSheet(itemId) {
   const item = activeItems().find((candidate) => candidate.itemId === itemId);

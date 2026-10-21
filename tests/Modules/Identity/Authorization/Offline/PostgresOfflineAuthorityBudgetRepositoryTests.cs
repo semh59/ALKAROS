@@ -101,6 +101,35 @@ public sealed class PostgresOfflineAuthorityBudgetRepositoryTests : IClassFixtur
     }
 
     [Fact]
+    public async Task AFreshBudgetForTheSameUserStartsWithWhatWasAlreadySpent()
+    {
+        var user = Guid.NewGuid();
+        var first = await _repository.CreateAsync(
+            user, Guid.NewGuid(),
+            new[] { new OfflineAuthorityBudgetLine("bills.comp", 100m, 2) }, _now, _now.AddHours(4));
+        var replays = new PostgresOfflineReplayLedger(_db.DataSource);
+        foreach (var key in new[] { "carry-1", "carry-2" })
+        {
+            await replays.RecordAsync(
+                new AuthorizationGrant(
+                    Guid.Empty, $"{key}-{first.BudgetId}", "bills.comp", user, "waiter", null, null, null, 20m,
+                    "CustomerChange", _now.AddHours(1), GrantStatus.Pending, null, null, null),
+                first.BudgetId, _now.AddMinutes(30), _now.AddHours(1));
+        }
+
+        var again = await _repository.CreateAsync(
+            user, Guid.NewGuid(),
+            new[] { new OfflineAuthorityBudgetLine("bills.comp", 100m, 2) }, _now.AddHours(2), _now.AddHours(6));
+        var someoneElse = await _repository.CreateAsync(
+            Guid.NewGuid(), Guid.NewGuid(),
+            new[] { new OfflineAuthorityBudgetLine("bills.comp", 100m, 2) }, _now.AddHours(2), _now.AddHours(6));
+
+        again.Lines.Should().ContainSingle(line => line.MaxCount == 0, "both of the user's offline grants are already spent");
+        (await _repository.GetAsync(again.BudgetId))!.Lines.Should().ContainSingle(line => line.MaxCount == 0);
+        someoneElse.Lines.Should().ContainSingle(line => line.MaxCount == 2);
+    }
+
+    [Fact]
     public async Task CreateAcceptsABudgetWithNoLines()
     {
         var created = await _repository.CreateAsync(

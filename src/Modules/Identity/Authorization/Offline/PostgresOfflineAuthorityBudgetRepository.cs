@@ -33,6 +33,31 @@ public sealed class PostgresOfflineAuthorityBudgetRepository : IOfflineAuthority
         // would throw on exactly the session that most needs a fresh budget.
         // The prior row is left in place, undated; GetBySessionAsync /
         // LoadAsync return the most recently issued one.
+        // A fresh login must not hand back a full budget: what this user already spent on budgets that are still valid
+        // is taken off the new lines.
+        var spent = new Dictionary<string, int>(StringComparer.Ordinal);
+        await using (var spentQuery = new NpgsqlCommand(
+            """
+            SELECT g.permission_code, count(*)
+            FROM identity.offline_authority_replays r
+            JOIN identity.offline_authority_budgets b ON b.budget_id = r.budget_id
+            JOIN identity.authorization_grants g ON g.grant_id = r.grant_id
+            WHERE b.user_id = @user AND b.expires_at > @issued_at AND g.status <> 'denied'
+            GROUP BY g.permission_code;
+            """,
+            connection, transaction))
+        {
+            spentQuery.Parameters.AddWithValue("user", userId);
+            spentQuery.Parameters.AddWithValue("issued_at", issuedAt);
+            await using var reader = await spentQuery.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+                spent[reader.GetString(0)] = (int)reader.GetInt64(1);
+        }
+
+        lines = lines
+            .Select(line => line with { MaxCount = Math.Max(0, line.MaxCount - spent.GetValueOrDefault(line.PermissionCode)) })
+            .ToList();
+
         Guid budgetId;
         await using (var insert = new NpgsqlCommand(
             """

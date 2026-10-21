@@ -20,7 +20,7 @@
 //   POST /api/v1/terminals/{t}/orders/{o}/items/{i}/void
 //   POST /api/v1/terminals/{t}/orders/{o}/accept | /reject
 import { isFullscreen } from './js/util.js';
-import { state, el, measureChrome, renderRibbon, rememberOfflineBudget, forgetOfflineBudget } from './js/state.js';
+import { state, el, measureChrome, renderRibbon, rememberOfflineBudget, forgetOfflineBudget, adoptDeviceOwner } from './js/state.js';
 import { applyUser, releaseTrap, showLogin } from './js/auth.js';
 import { apiUrl, api } from './js/api.js';
 import { toast } from './js/toast.js';
@@ -126,6 +126,7 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       applyUser(result.data);
       // V1-RMD-297: keep the offline authority budget the server issued with
       // this session, so a void/comp can still be authorized offline.
+      adoptDeviceOwner(result.data.userId);
       rememberOfflineBudget(result.data.offlineBudget, result.data.userId);
       // The PIN lives on the server, so the idle lock is armed from what the server says, not from what this device remembers.
       state.pinArmed = result.data.pinSet === true;
@@ -144,7 +145,12 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     // The subscription is attributed to whoever signed in, so it goes with
     // them - the next waiter on this device subscribes as themselves.
     await unsubscribePush();
-    await api(`/api/v1/auth/logout?terminalId=${state.terminalId}`, { method: 'POST', body: {} });
+    const result = await api(`/api/v1/auth/logout?terminalId=${state.terminalId}`, { method: 'POST', body: {} });
+    // A failed logout leaves the server session open: stay signed in and say so instead of pretending to leave.
+    if (!result.ok && result.status !== 401) {
+      toast('Çıkış yapılamadı. Bağlantıyı kontrol edip tekrar deneyin.', { warning: true });
+      return;
+    }
     localStorage.removeItem('alkaros_waiter_pin_armed');
     forgetOfflineBudget();
     window.location.reload();

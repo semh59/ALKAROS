@@ -258,6 +258,60 @@ export function rememberOfflineBudget(budget, userId) {
   localStorage.setItem('alkaros_waiter_offline_budget', JSON.stringify(state.offlineBudget));
 }
 
+// Keys that must survive a reload (an approved or pending request is resent under the same key, or a second grant is
+// raised). A Map that writes itself to localStorage; forgetOtherUsersData() empties every one of them.
+const persistentKeyMaps = new Set();
+
+export class PersistentKeyMap extends Map {
+  constructor(storageKey) {
+    super();
+    this.storageKey = storageKey;
+    for (const [key, value] of loadJsonArray(storageKey)) super.set(key, value);
+    persistentKeyMaps.add(this);
+  }
+
+  set(key, value) {
+    super.set(key, value);
+    this.save();
+    return this;
+  }
+
+  delete(key) {
+    const removed = super.delete(key);
+    this.save();
+    return removed;
+  }
+
+  clear() {
+    super.clear();
+    this.save();
+  }
+
+  save() {
+    try { localStorage.setItem(this.storageKey, JSON.stringify([...this])); } catch { /* storage unavailable: keys live for this page only */ }
+  }
+}
+
+const OWNER_KEY = 'alkaros_waiter_owner';
+
+// Drafts, offline authority actions, rejected-order notes and request keys are one waiter's own. When another user signs
+// in on the same device they are dropped; the unsent order queue stays so no round is lost.
+export function adoptDeviceOwner(userId) {
+  if (!userId) return;
+  let previous = null;
+  try { previous = localStorage.getItem(OWNER_KEY); } catch { /* treated as no previous owner */ }
+  if (previous && previous !== userId) {
+    state.draftsByTable.clear();
+    persistDraftsByTable();
+    state.offlineActions = [];
+    persistOfflineActions();
+    state.failedOrders = [];
+    localStorage.setItem('alkaros_waiter_failed_orders', '[]');
+    for (const keys of persistentKeyMaps) keys.clear();
+  }
+  try { localStorage.setItem(OWNER_KEY, userId); } catch { /* ignored */ }
+}
+
 export function forgetOfflineBudget() {
   state.offlineBudget = null;
   localStorage.removeItem('alkaros_waiter_offline_budget');

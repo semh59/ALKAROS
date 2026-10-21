@@ -61,8 +61,8 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(request);
 
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<OfflineReconciliationErrorV1>();
-        Assert.Equal("UNKNOWN_BUDGET", body!.Code);
+        var body = await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
+        Assert.Equal("UNKNOWN_BUDGET", body!.Error.Code);
     }
 
     [Fact]
@@ -135,8 +135,33 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
         using var tampered = await client.SendAsync(JsonRequest(
             Path(terminalId), cookie, new ReconcileOfflineActionsRequest(budget.BudgetId, [Action(75m)])));
         Assert.Equal(HttpStatusCode.Conflict, tampered.StatusCode);
-        var error = await tampered.Content.ReadFromJsonAsync<OfflineReconciliationErrorV1>();
-        Assert.Equal("IDEMPOTENCY_KEY_REUSED", error!.Code);
+        var error = await tampered.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
+        Assert.Equal("IDEMPOTENCY_KEY_REUSED", error!.Error.Code);
+    }
+
+    [Fact]
+    public async Task ABatchOverTheLimitIsRefusedWithATurkishReasonInTheSharedErrorShape()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId);
+        var issuedAt = DateTimeOffset.UtcNow.AddHours(-2);
+        var budget = await _database.SeedOfflineBudgetAsync(
+            userId, issuedAt, issuedAt.AddHours(4), new OfflineAuthorityBudgetLine("bills.comp", 150m, 5));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var actions = Enumerable.Range(0, OfflineReconciliationEndpoints.MaxActionsPerBatch + 1)
+            .Select(index => new OfflineAuthorizedActionV1(
+                $"http-recon-many-{index}-{Guid.NewGuid():N}", "bills.comp", userId, "cashier", "CustomerChange", 10m,
+                issuedAt.AddMinutes(30)))
+            .ToList();
+        using var response = await client.SendAsync(JsonRequest(
+            Path(terminalId), cookie, new ReconcileOfflineActionsRequest(budget.BudgetId, actions)));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        var error = await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
+        Assert.Equal("VALIDATION_FAILED", error!.Error.Code);
+        Assert.Equal("Uzlaştırma isteği doğrulanamadı.", error.Error.Message);
     }
 
     [Fact]
@@ -263,8 +288,8 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(request);
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        var body = await response.Content.ReadFromJsonAsync<OfflineReconciliationErrorV1>();
-        Assert.Equal("IDENTITY_MISMATCH", body!.Code);
+        var body = await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>();
+        Assert.Equal("IDENTITY_MISMATCH", body!.Error.Code);
     }
 
     [Fact]
@@ -286,7 +311,7 @@ public sealed class OfflineReconciliationHttpTests : IAsyncLifetime
             Path(terminalId), cookie, new ReconcileOfflineActionsRequest(budget.BudgetId, [forged])));
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
-        Assert.Equal("IDENTITY_MISMATCH", (await response.Content.ReadFromJsonAsync<OfflineReconciliationErrorV1>())!.Code);
+        Assert.Equal("IDENTITY_MISMATCH", (await response.Content.ReadFromJsonAsync<ApiErrorEnvelope>())!.Error.Code);
     }
 
     [Fact]

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
@@ -8,7 +8,10 @@ const here = dirname(fileURLToPath(import.meta.url));
 const repoRoot = resolve(here, "..", "..", "..");
 const modulePath = resolve(repoRoot, "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js");
 
-const { sortQueueByPriority } = await import(modulePath);
+document.body.innerHTML = '<div id="toasts"></div>';
+
+const { sortQueueByPriority, isTransientOrderStatus, isTransientReconcileFailure, reconcileOfflineActions, MAX_RECONCILE_BATCH } = await import(modulePath);
+const { state, adoptDeviceOwner, PersistentKeyMap } = await import(resolve(repoRoot, "src/Clients/WaiterPwa/wwwroot/js/state.js"));
 
 function round(id, { courseNumbers = [], queuedAt } = {}) {
   return {
@@ -94,5 +97,91 @@ describe("sortQueueByPriority", () => {
     const sorted = sortQueueByPriority([newerAged, olderAged], NOW);
 
     expect(sorted.map((r) => r.id)).toEqual(["older-aged", "newer-aged"]);
+  });
+});
+
+describe("what the device keeps when the server does not take an answer", () => {
+  it("keeps a round on a session, lock, timeout, conflict or rate-limit answer, and drops it on a real rejection", () => {
+    for (const status of [401, 403, 408, 409, 423, 429]) expect(isTransientOrderStatus(status)).toBe(true);
+    for (const status of [400, 404, 422]) expect(isTransientOrderStatus(status)).toBe(false);
+  });
+
+  it("treats a network failure, an expired session, a busy server and any 5xx as retryable for offline actions", () => {
+    expect(isTransientReconcileFailure({ offline: true, status: 0 })).toBe(true);
+    for (const status of [401, 408, 423, 429, 500, 502, 503]) expect(isTransientReconcileFailure({ status })).toBe(true);
+    for (const status of [400, 403, 404, 409]) expect(isTransientReconcileFailure({ status })).toBe(false);
+  });
+});
+
+describe("reconcileOfflineActions", () => {
+  const actions = (count) => Array.from({ length: count }, (_, index) => ({ idempotencyKey: `k-${index}`, permissionCode: "bills.comp" }));
+  const answer = (status, body) => new Response(JSON.stringify(body), { status });
+
+  function setUp(count) {
+    state.terminalId = "t1";
+    state.offlineBudget = { budgetId: "b1", roleCode: "waiter", userId: "u1", lines: [], used: {} };
+    state.offlineActions = actions(count);
+  }
+
+  afterEach(() => { vi.unstubAllGlobals(); state.offlineActions = []; state.offlineBudget = null; });
+
+  it("keeps every queued action when the server fails or is unreachable", async () => {
+    for (const reply of [() => answer(503, {}), () => answer(500, {}), () => Promise.reject(new TypeError("Failed to fetch"))]) {
+      setUp(2);
+      vi.stubGlobal("fetch", vi.fn(reply));
+      await reconcileOfflineActions();
+      expect(state.offlineActions).toHaveLength(2);
+    }
+  });
+
+  it("drops the actions the server refused for good and shows its Turkish reason", async () => {
+    setUp(2);
+    vi.stubGlobal("fetch", vi.fn(() => answer(404, { error: { code: "UNKNOWN_BUDGET", message: "Çevrimdışı yetki bütçesi bulunamadı; yeniden bağlanın." } })));
+    await reconcileOfflineActions();
+    expect(state.offlineActions).toHaveLength(0);
+    expect(document.getElementById("toasts").textContent).toContain("Çevrimdışı yetki bütçesi bulunamadı");
+  });
+
+  it("sends a long queue in batches no larger than the server accepts", async () => {
+    setUp(MAX_RECONCILE_BATCH + 5);
+    const sizes = [];
+    vi.stubGlobal("fetch", vi.fn((_url, config) => {
+      sizes.push(JSON.parse(config.body).actions.length);
+      return Promise.resolve(answer(200, { summary: { brief: "tamam" }, results: [] }));
+    }));
+    await reconcileOfflineActions();
+    expect(sizes).toEqual([MAX_RECONCILE_BATCH, 5]);
+    expect(state.offlineActions).toHaveLength(0);
+  });
+});
+
+describe("a device that changes hands", () => {
+  afterEach(() => { localStorage.clear(); });
+
+  it("forgets the previous waiter's drafts, offline actions, rejected notes and request keys but keeps unsent rounds", () => {
+    const keys = new PersistentKeyMap("alkaros_waiter_void_keys");
+    adoptDeviceOwner("waiter-1");
+    state.draftsByTable.set("t1", { number: 1, lines: [{ id: "x" }] });
+    state.offlineActions = [{ idempotencyKey: "a" }];
+    state.failedOrders = [{ id: "f" }];
+    state.offlineQueue = [{ id: "round-1" }];
+    keys.set("item-1", "key-1");
+
+    adoptDeviceOwner("waiter-1");
+    expect(state.offlineActions).toHaveLength(1);
+    expect(keys.get("item-1")).toBe("key-1");
+
+    adoptDeviceOwner("waiter-2");
+    expect(state.draftsByTable.size).toBe(0);
+    expect(state.offlineActions).toHaveLength(0);
+    expect(state.failedOrders).toHaveLength(0);
+    expect(keys.size).toBe(0);
+    expect(new PersistentKeyMap("alkaros_waiter_void_keys").size).toBe(0);
+    expect(state.offlineQueue).toHaveLength(1);
+  });
+
+  it("keeps a request key across a reload", () => {
+    new PersistentKeyMap("alkaros_waiter_comp_keys").set("item-9", "key-9");
+    expect(new PersistentKeyMap("alkaros_waiter_comp_keys").get("item-9")).toBe("key-9");
   });
 });

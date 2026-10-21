@@ -202,6 +202,21 @@ export function scheduleQueueRetry() {
   }, queueRetryDelay);
 }
 
+// A round that met one of these answers is kept: the session, a lock or a conflict can clear while the device waits, and
+// moving the round to the rejected list would end its life for a reason that is not the round's fault.
+export function isTransientOrderStatus(status) {
+  return status === 401 || status === 403 || status === 408 || status === 409 || status === 423 || status === 429;
+}
+
+// Offline authority actions are kept for the next attempt on a network failure, an expired session or a busy/failing
+// server. Only an answer that will never change (unknown budget, identity mismatch, key reuse) discards them.
+export function isTransientReconcileFailure(result) {
+  const status = result.status;
+  return Boolean(result.offline) || status === 401 || status === 408 || status === 423 || status === 429 || status >= 500;
+}
+
+export const MAX_RECONCILE_BATCH = 50;
+
 export async function flushQueue() {
   if (state.offlineQueue.length === 0 || !state.isOnline) return;
   // Two overlapping flushes would send the same payload twice. The server
@@ -221,9 +236,9 @@ export async function flushQueue() {
         state.offlineQueue = state.offlineQueue.filter((queued) => queued.id !== payload.id);
         // A success means the server is back; drop the backoff.
         queueRetryDelay = QUEUE_RETRY_MIN_MS;
-      } else if (result.status === 429) {
-        // Rate limited while draining a long queue. Retryable, and filing
-        // it as permanently failed would destroy the round.
+      } else if (isTransientOrderStatus(result.status)) {
+        // Retryable (rate limit, session, lock, conflict): filing it as
+        // permanently failed would destroy the round.
         break;
       } else if (result.status >= 400 && result.status < 500) {
         // A 4xx will never succeed on retry, but the order is never destroyed:
@@ -363,23 +378,27 @@ export async function reconcileOfflineActions() {
   if (reconcileInFlight || !budget || state.offlineActions.length === 0) return null;
   reconcileInFlight = true;
   try {
-    const actions = state.offlineActions.slice();
-    const result = await api(apiUrl('/offline-reconciliation'), {
-      method: 'POST',
-      body: { budgetId: budget.budgetId, actions }
-    });
-    if (result.offline || result.status === 401) return null;
+    let last = null;
+    while (state.offlineActions.length > 0) {
+      const actions = state.offlineActions.slice(0, MAX_RECONCILE_BATCH);
+      const result = await api(apiUrl('/offline-reconciliation'), {
+        method: 'POST',
+        body: { budgetId: budget.budgetId, actions }
+      });
+      if (isTransientReconcileFailure(result)) return last;
 
-    const sent = new Set(actions.map((action) => action.idempotencyKey));
-    state.offlineActions = state.offlineActions.filter((action) => !sent.has(action.idempotencyKey));
-    persistOfflineActions();
-    if (!result.ok) {
-      toast(`Çevrimdışı işlemler uzlaştırılamadı: ${result.message}`, { warning: true });
-      return null;
+      const sent = new Set(actions.map((action) => action.idempotencyKey));
+      state.offlineActions = state.offlineActions.filter((action) => !sent.has(action.idempotencyKey));
+      persistOfflineActions();
+      if (!result.ok) {
+        toast(`Çevrimdışı işlemler uzlaştırılamadı: ${result.message}`, { warning: true });
+        return last;
+      }
+      const brief = result.data && result.data.summary && result.data.summary.brief;
+      toast(brief || 'Çevrimdışı işlemler uzlaştırıldı.', { warning: true });
+      last = result.data;
     }
-    const brief = result.data && result.data.summary && result.data.summary.brief;
-    toast(brief || 'Çevrimdışı işlemler uzlaştırıldı.', { warning: true });
-    return result.data;
+    return last;
   } finally {
     reconcileInFlight = false;
   }

@@ -25,6 +25,12 @@ public interface IOfflineReplayLedger
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Serialises reconciliation of one budget across requests: the spent count is read and written under this lock,
+    /// so two devices of the same budget cannot both see headroom that only one of them may use.
+    /// </summary>
+    Task<IAsyncDisposable> LockBudgetAsync(Guid budgetId, CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// How many offline grants for <paramref name="permissionCode"/> have already
     /// been reconciled against <paramref name="budgetId"/> without being denied —
     /// the count already spent against that budget line.

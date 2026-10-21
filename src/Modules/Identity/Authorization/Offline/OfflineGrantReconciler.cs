@@ -12,6 +12,8 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
     private const string ForeignKeyViolation = "23503";
     private const string ReplayBudgetForeignKey = "fk_offline_authority_replays_budget";
 
+    private static readonly TimeSpan ClockSkew = TimeSpan.FromMinutes(5);
+
     private readonly IOfflineAuthorityBudgetRepository _budgets;
     private readonly IAuthorizationGrantRepository _grants;
     private readonly IAuthorizationPolicyRepository _policies;
@@ -41,16 +43,18 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(actions);
+        // A malformed action is refused before anything is written, so a batch is never half stored by a bad row.
+        foreach (var action in actions)
+            action.Validate();
 
         var budget = await _budgets.GetAsync(budgetId, cancellationToken)
             ?? throw new UnknownOfflineAuthorityBudgetException(budgetId);
 
+        await using var budgetLock = await _replays.LockBudgetAsync(budgetId, cancellationToken);
         var results = new List<OfflineReconciliationResult>(actions.Count);
-        var grantedThisBatch = new Dictionary<string, int>(StringComparer.Ordinal);
 
         foreach (var action in actions)
         {
-            action.Validate();
 
             // Idea 2: surface the requester's existing behavioural-tightening
             // signal (docs/domain/authorization-model.md's rolling rate
@@ -73,12 +77,9 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
                 continue;
             }
 
-            var priorBatch = grantedThisBatch.GetValueOrDefault(action.PermissionCode);
-            var (status, detail) = await DecideAsync(budget, action, priorBatch, cancellationToken);
+            var (status, detail) = await DecideAsync(budget, action, cancellationToken);
 
             var stored = await StoreAsync(budget.BudgetId, action, status, cancellationToken);
-            if (stored.Status == GrantStatus.Pending)
-                grantedThisBatch[action.PermissionCode] = priorBatch + 1;
 
             results.Add(new OfflineReconciliationResult(
                 action.IdempotencyKey, stored.GrantId, stored.Status, detail, flagged, IsReplay: false));
@@ -90,7 +91,6 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
     private async Task<(GrantStatus Status, string Detail)> DecideAsync(
         OfflineAuthorityBudget budget,
         OfflineAuthorizedAction action,
-        int priorInThisBatch,
         CancellationToken cancellationToken)
     {
         // V1-RMD-404 (V1-RMD-399 H-06): the same own-check the online grant path applies (model §3 decision #1,
@@ -105,6 +105,13 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
             return (GrantStatus.Denied, "a waiter may void or comp only a check they serve");
         }
 
+        // A device clock ahead of the server, or an action older than the budget, denies that one action; it must not
+        // fail the whole reconnect batch.
+        if (action.OfflineAuthorizedAt > _nowUtc() + ClockSkew)
+            return (GrantStatus.Denied, "the action's time is in the future");
+        if (action.OfflineAuthorizedAt < budget.IssuedAt)
+            return (GrantStatus.Denied, "the action predates the offline authority budget");
+
         if (budget.IsExpiredAt(action.OfflineAuthorizedAt))
             return (GrantStatus.Denied, "offline authority budget had expired when the action was taken");
 
@@ -114,7 +121,7 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
 
         var priorReconciled = await _replays.CountReconciledAsync(
             budget.BudgetId, action.PermissionCode, cancellationToken);
-        if (!line.Admits(action.Amount, priorReconciled + priorInThisBatch))
+        if (!line.Admits(action.Amount, priorReconciled))
             return (GrantStatus.Denied, "action is outside the offline budget for this permission");
 
         var policy = await _policies.GetAsync(
@@ -158,8 +165,8 @@ public sealed class OfflineGrantReconciler : IOfflineGrantReconciler
 
         try
         {
-            return await _replays.RecordAsync(
-                draft, budgetId, action.OfflineAuthorizedAt, now, cancellationToken);
+            var authorizedAt = action.OfflineAuthorizedAt > now ? now : action.OfflineAuthorizedAt;
+            return await _replays.RecordAsync(draft, budgetId, authorizedAt, now, cancellationToken);
         }
         catch (PostgresException ex) when (ex.SqlState == UniqueViolation)
         {

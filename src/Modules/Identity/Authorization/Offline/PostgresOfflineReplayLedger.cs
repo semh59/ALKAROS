@@ -87,6 +87,42 @@ public sealed class PostgresOfflineReplayLedger : IOfflineReplayLedger
         return stored;
     }
 
+    public async Task<IAsyncDisposable> LockBudgetAsync(
+        Guid budgetId, CancellationToken cancellationToken = default)
+    {
+        var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        try
+        {
+            await using var command = new NpgsqlCommand("SELECT pg_advisory_lock(hashtextextended(@key, 0));", connection);
+            command.Parameters.AddWithValue("key", budgetId.ToString("D"));
+            await command.ExecuteNonQueryAsync(cancellationToken);
+        }
+        catch
+        {
+            await connection.DisposeAsync();
+            throw;
+        }
+
+        return new BudgetLock(connection, budgetId);
+    }
+
+    private sealed class BudgetLock(NpgsqlConnection connection, Guid budgetId) : IAsyncDisposable
+    {
+        public async ValueTask DisposeAsync()
+        {
+            try
+            {
+                await using var command = new NpgsqlCommand("SELECT pg_advisory_unlock(hashtextextended(@key, 0));", connection);
+                command.Parameters.AddWithValue("key", budgetId.ToString("D"));
+                await command.ExecuteNonQueryAsync();
+            }
+            finally
+            {
+                await connection.DisposeAsync();
+            }
+        }
+    }
+
     public async Task<int> CountReconciledAsync(
         Guid budgetId, string permissionCode, CancellationToken cancellationToken = default)
     {

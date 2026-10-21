@@ -91,6 +91,68 @@ public sealed class OfflineGrantReconcilerTests : IClassFixture<OfflineBudgetDat
     }
 
     [Fact]
+    public async Task ABatchUpToTheBudgetCountIsNotCountedTwice()
+    {
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(4), new OfflineAuthorityBudgetLine("bills.void", null, 2));
+
+        var results = await Reconciler().ReconcileAsync(budget.BudgetId, new[]
+        {
+            Action("recon-twice-1", permission: "bills.void", amount: 10m),
+            Action("recon-twice-2", permission: "bills.void", amount: 10m),
+            Action("recon-twice-3", permission: "bills.void", amount: 10m),
+        });
+
+        results.Select(result => result.Status).Should().Equal(GrantStatus.Pending, GrantStatus.Pending, GrantStatus.Denied);
+    }
+
+    [Fact]
+    public async Task ParallelReconnectsOfOneBudgetNeverSpendMoreThanItsCount()
+    {
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(4), new OfflineAuthorityBudgetLine("bills.void", null, 1));
+        var requester = Guid.NewGuid();
+
+        var batches = await Task.WhenAll(Enumerable.Range(0, 6).Select(index => Task.Run(
+            () => Reconciler().ReconcileAsync(
+                budget.BudgetId,
+                new[] { Action($"recon-race-{budget.BudgetId}-{index}", permission: "bills.void", amount: 10m, requesterUserId: requester) }))));
+
+        batches.SelectMany(batch => batch).Count(result => result.Status == GrantStatus.Pending).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task AnActionFromTheFutureOrBeforeTheBudgetIsDeniedWithoutFailingTheBatch()
+    {
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(8), new OfflineAuthorityBudgetLine("bills.comp", 150m, 5));
+        var good = Action("recon-time-good");
+        var future = good with { IdempotencyKey = "recon-time-future", OfflineAuthorizedAt = _reconnectAt.AddHours(2) };
+        var early = good with { IdempotencyKey = "recon-time-early", OfflineAuthorizedAt = _issuedAt.AddMinutes(-30) };
+
+        var results = await Reconciler().ReconcileAsync(budget.BudgetId, new[] { good, future, early });
+
+        results.Select(result => result.Status).Should().Equal(GrantStatus.Pending, GrantStatus.Denied, GrantStatus.Denied);
+        results[1].Detail.Should().Contain("future");
+        results[2].Detail.Should().Contain("predates");
+    }
+
+    [Fact]
+    public async Task AMalformedActionRefusesTheBatchBeforeAnythingIsStored()
+    {
+        var budget = await BudgetAsync(
+            TimeSpan.FromHours(4), new OfflineAuthorityBudgetLine("bills.comp", 150m, 5));
+        var good = Action("recon-validate-good");
+        var bad = Action("recon-validate-bad", amount: -1m);
+
+        await FluentActions
+            .Invoking(() => Reconciler().ReconcileAsync(budget.BudgetId, new[] { good, bad }))
+            .Should().ThrowAsync<ArgumentException>();
+
+        (await _grants.FindByIdempotencyKeyAsync("recon-validate-good")).Should().BeNull();
+    }
+
+    [Fact]
     public async Task TheSecondActionForAPermissionCappedAtOneIsDenied()
     {
         var budget = await BudgetAsync(

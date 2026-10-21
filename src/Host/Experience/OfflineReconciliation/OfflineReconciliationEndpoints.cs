@@ -62,6 +62,8 @@ public static class OfflineReconciliationEndpoints
             CancellationToken cancellationToken) =>
         {
             ArgumentNullException.ThrowIfNull(request);
+            if (request.Actions is null || request.Actions.Count > MaxActionsPerBatch)
+                throw new ArgumentException("A reconnect batch carries at most " + MaxActionsPerBatch + " actions.");
             var cashierToken = context.Request.Cookies[DualScreenApplication.CashierCookieName];
             var principal = await sessions.AuthenticateCashierAsync(cashierToken, terminalId, cancellationToken)
                 ?? throw new OfflineReconciliationUnauthorizedException();
@@ -112,6 +114,9 @@ public static class OfflineReconciliationEndpoints
 
         return group;
     }
+
+    /// <summary>The device sends longer queues in several requests of this size.</summary>
+    public const int MaxActionsPerBatch = 50;
 
     /// <summary>The offline action subject type that names one order item (V1-RMD-404).</summary>
     private const string OrderItemSubject = "OrderItem";
@@ -266,7 +271,7 @@ internal sealed class OfflineReconciliationExceptionFilter : IEndpointFilter
             }
 
             return Results.Json(
-                new OfflineReconciliationErrorV1(code, message, status, invocationContext.HttpContext.TraceIdentifier),
+                new ApiErrorEnvelope(new ApiError(code, message, status, invocationContext.HttpContext.TraceIdentifier)),
                 statusCode: status);
         }
     }
@@ -288,8 +293,6 @@ internal sealed class OfflineReconciliationExceptionFilter : IEndpointFilter
         _ => (StatusCodes.Status500InternalServerError, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
     };
 }
-
-public sealed record OfflineReconciliationErrorV1(string Code, string Message, int Status, string TraceId);
 
 public sealed class OfflineReconciliationUnauthorizedException : Exception
 {
