@@ -522,9 +522,9 @@ function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
   const [data, setData] = useState<AuthorizationDecisionsData>(emptyAuthorizationDecisions);
   const [errorMessage, setErrorMessage] = useState<string>();
   const [lastUpdated, setLastUpdated] = useState<string>();
-  const load = useCallback(async () => {
+  const load = useCallback(async (silent = false) => {
     if (!canView) { setState("unauthorized"); return; }
-    setState("loading");
+    if (!silent) setState("loading");
     setErrorMessage(undefined);
     try {
       const next = await client.load();
@@ -539,7 +539,7 @@ function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
     }
   }, [canView, client]);
   useEffect(() => { void load(); }, [load]);
-  const act = (run: () => Promise<void>) => async () => { await run(); await load(); };
+  const act = (run: () => Promise<void>) => async () => { await run(); await load(true); };
   return <AuthorizationDecisionsWorkspace
     state={state}
     pendingGrants={data.pendingGrants}
@@ -549,7 +549,7 @@ function AuthorizationDecisionsRoute({ canView }: { canView: boolean }) {
     onDeny={(id) => act(() => client.deny(id))()}
     onRevokeDelegation={(id) => act(() => client.revokeDelegation(id))()}
     onClearTightening={(id) => act(() => client.clearTightening(id))()}
-    onRefresh={load}
+    onRefresh={() => load()}
     errorMessage={errorMessage}
     lastUpdated={lastUpdated}
   />;

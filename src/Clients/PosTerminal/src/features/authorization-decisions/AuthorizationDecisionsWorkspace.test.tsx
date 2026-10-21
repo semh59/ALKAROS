@@ -102,6 +102,41 @@ describe("authorization decisions workspace", () => {
     expect(props.onClearTightening).toHaveBeenCalledWith("33333333-3333-3333-3333-333333333333");
   });
 
+  it("shows an error and keeps the lists when an action fails, and locks the buttons while it runs", async () => {
+    let release: () => void = () => {};
+    const slow = new Promise<void>((resolve) => { release = resolve; });
+    const props = baseProps({ onApprove: vi.fn().mockReturnValueOnce(slow).mockRejectedValueOnce(new Error("Bu istek zaten yanıtlandı.")) });
+    await render(<AuthorizationDecisionsWorkspace {...props} />);
+    const approve = () => [...document.querySelectorAll("button")].find((b) => b.textContent?.trim() === "Onayla")!;
+
+    await act(async () => { approve().click(); });
+    expect(approve().disabled).toBe(true);
+    await act(async () => { release(); await slow; });
+    expect(approve().disabled).toBe(false);
+
+    await act(async () => { approve().click(); });
+    expect(document.querySelector('[role="alert"]')?.textContent).toBe("Bu istek zaten yanıtlandı.");
+    expect(document.body.textContent).toContain("Bekleyen yetki istekleri");
+  });
+
+  it("shows the role in Turkish and the time in Istanbul time, never a raw id or ISO text", async () => {
+    await render(<AuthorizationDecisionsWorkspace {...baseProps({ lastUpdated: "2026-09-04T18:00:00Z" })} />);
+    const text = document.body.textContent ?? "";
+    expect(text).toContain("İsteyen Garson");
+    expect(text).toContain("04.09.2026 21:00");
+    expect(text).not.toContain("AAAAAAAA");
+    expect(text).not.toContain("2026-09-04T");
+  });
+
+  it("labels every reason code of the void, comp and discount catalogs", async () => {
+    const codes = ["OperatorError", "ProductUnavailable", "CustomerChange", "DuplicateEntry", "CustomerSatisfaction", "ManagerPromotion", "VIPGuest", "ServiceApology", "CustomerLoyalty", "PromotionalOffer", "ServiceRecovery", "ManagerDiscretion"];
+    const grants = codes.map((reasonCode, index) => ({
+      grantId: `00000000-0000-0000-0000-${String(index).padStart(12, "0")}`, permissionCode: "bills.comp", requesterUserId: "x", requesterRoleCode: "waiter", amount: 1, reasonCode, requestedAt: "2026-09-04T18:00:00Z",
+    }));
+    await render(<AuthorizationDecisionsWorkspace {...baseProps({ pendingGrants: grants })} />);
+    for (const code of codes) expect(document.body.textContent).not.toContain(code);
+  });
+
   it("shows the empty copy when nothing is pending", async () => {
     await render(
       <AuthorizationDecisionsWorkspace

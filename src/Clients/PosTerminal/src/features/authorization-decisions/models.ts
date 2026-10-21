@@ -54,17 +54,42 @@ export function permissionLabel(code: string): string {
   return permissionLabels[code] ?? code;
 }
 
-/** Turkish labels for the fixed reason-code catalog. */
+/** Turkish labels for the void, complimentary and discount reason catalogs. */
 export const reasonLabels: Record<string, string> = {
+  OperatorError: "Operatör hatası",
+  ProductUnavailable: "Ürün tükendi",
   CustomerChange: "Müşteri talebi",
+  DuplicateEntry: "Çift giriş",
+  CustomerSatisfaction: "Müşteri memnuniyeti",
+  ManagerPromotion: "Yönetici ikramı",
+  VIPGuest: "Özel misafir",
+  ServiceApology: "Servis özrü",
+  CustomerLoyalty: "Müşteri sadakati",
+  PromotionalOffer: "Kampanya",
   ServiceRecovery: "Servis telafisi",
-  KitchenError: "Mutfak hatası",
-  Promotion: "Promosyon",
-  Training: "Eğitim",
+  ManagerDiscretion: "Yönetici takdiri",
 };
 
 export function reasonLabel(code: string): string {
   return reasonLabels[code] ?? code;
+}
+
+const roleNames: Record<string, string> = {
+  cashier: "Kasiyer",
+  manager: "Yönetici",
+  supervisor: "Şef garson",
+  waiter: "Garson",
+};
+
+export function roleName(code: string): string {
+  return roleNames[code] ?? code;
+}
+
+const istanbulTime = new Intl.DateTimeFormat("tr-TR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit", timeZone: "Europe/Istanbul" });
+
+export function formatTime(iso: string): string {
+  const date = new Date(iso);
+  return Number.isNaN(date.getTime()) ? iso : istanbulTime.format(date);
 }
 
 export const authorizationDecisionText = {
@@ -85,5 +110,10 @@ export const authorizationDecisionText = {
   loadingBody: "Bekleyen istekler ve devirler alınıyor…",
   errorTitle: "Yetki verileri alınamadı",
   offlineBody: "Güncel yetki verisi alınamıyor.",
+  actionFailed: "İşlem tamamlanamadı. Listeyi yenileyip tekrar deneyin.",
+  requestedBy: "İsteyen",
+  requestedAt: "İstek",
+  until: "Bitiş",
+  since: "Son güncelleme",
   unauthorizedBody: "Yetki kararları yalnızca yönetici ve şef garson rolüne açıktır.",
 } as const;

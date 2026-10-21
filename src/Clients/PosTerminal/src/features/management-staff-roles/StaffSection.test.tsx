@@ -102,9 +102,35 @@ describe("staff section", () => {
     await submit("Personel bul");
     expect(document.body.textContent).toContain("Ayşe Yılmaz · Etkin");
     await press("Pasifleştir");
+    expect(client.setActive).not.toHaveBeenCalled();
+    await press("Evet, pasifleştir");
     expect(client.setActive).toHaveBeenCalledWith("u1", false);
     expect(document.body.textContent).toContain("Ayşe Yılmaz · Pasif");
     expect(buttons()).toContain("Yeniden etkinleştir");
+  });
+
+  it("asks before deactivating and leaves the account alone when the manager backs out", async () => {
+    const client = fakeClient();
+    await render(<StaffSection capabilities={manager} client={client} />);
+    await type("u-search", "ayse");
+    await submit("Personel bul");
+    await press("Pasifleştir");
+    expect(document.body.textContent).toContain("Bu hesap pasifleştirilsin mi?");
+    await press("Vazgeç");
+    expect(client.setActive).not.toHaveBeenCalled();
+    expect(buttons()).toContain("Pasifleştir");
+  });
+
+  it("refreshes the card of the person found even when the search box was edited afterwards", async () => {
+    const lookupUser = vi.fn().mockResolvedValueOnce(user).mockResolvedValueOnce({ ...user, active: false });
+    const client = fakeClient({ lookupUser });
+    await render(<StaffSection capabilities={manager} client={client} />);
+    await type("u-search", "ayse");
+    await submit("Personel bul");
+    await type("u-search", "baska");
+    await press("Pasifleştir");
+    await press("Evet, pasifleştir");
+    expect(lookupUser).toHaveBeenLastCalledWith("ayse");
   });
 
   it("says so when no user has that name", async () => {
@@ -120,6 +146,7 @@ describe("staff section", () => {
     await type("u-search", "ayse");
     await submit("Personel bul");
     await press("Pasifleştir");
+    await press("Evet, pasifleştir");
     expect(alertText()).toBe("Kendi hesabınızı pasifleştiremezsiniz.");
   });
 

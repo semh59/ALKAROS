@@ -1,9 +1,12 @@
+import { useState } from "react";
 import { Button, StateMessage } from "../../design-system";
 import { commonActions, stateText } from "../../strings";
 import {
   authorizationDecisionText as text,
+  formatTime,
   permissionLabel,
   reasonLabel,
+  roleName,
   type ActiveDelegation,
   type AuthorizationDecisionState,
   type OpenTightening,
@@ -29,10 +32,6 @@ function money(value: number): string {
   return `₺${value.toLocaleString("tr-TR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 }
 
-function actor(id: string): string {
-  return id.slice(0, 8).toUpperCase();
-}
-
 export function AuthorizationDecisionsWorkspace({
   state,
   pendingGrants,
@@ -46,6 +45,21 @@ export function AuthorizationDecisionsWorkspace({
   errorMessage,
   lastUpdated,
 }: AuthorizationDecisionsWorkspaceProps) {
+  const [busy, setBusy] = useState(false);
+  const [actionError, setActionError] = useState<string>();
+  async function run(action: () => void | Promise<void>) {
+    if (busy) return;
+    setBusy(true);
+    setActionError(undefined);
+    try {
+      await action();
+    } catch (reason) {
+      setActionError(reason instanceof Error && reason.message ? reason.message : text.actionFailed);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (state === "loading") {
     return (
       <div className="authz-decisions authz-decisions--state" aria-busy="true">
@@ -91,10 +105,12 @@ export function AuthorizationDecisionsWorkspace({
         <div>
           <span className="authz-decisions__kicker">{text.kicker}</span>
           <h2>{text.title}</h2>
-          <p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : text.subtitle}</p>
+          <p>{lastUpdated ? `${text.since} ${formatTime(lastUpdated)}` : text.subtitle}</p>
         </div>
         <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.3" variant="secondary" onClick={() => void onRefresh()}>{commonActions.refresh}</Button>
       </header>
+
+      {actionError && <p className="authz-decisions__error" role="alert">{actionError}</p>}
 
       <div className="authz-decisions__group" aria-label={text.pendingHeading}>
         <h3>{text.pendingHeading}</h3>
@@ -108,11 +124,12 @@ export function AuthorizationDecisionsWorkspace({
                   <strong>{permissionLabel(grant.permissionCode)}</strong>
                   <span>{money(grant.amount)}</span>
                   <span>{reasonLabel(grant.reasonCode)}</span>
-                  <span className="authz-decisions__muted">Personel {actor(grant.requesterUserId)}</span>
+                  <span className="authz-decisions__muted">{text.requestedBy} {roleName(grant.requesterRoleCode)}</span>
+                  <span className="authz-decisions__muted">{text.requestedAt} {formatTime(grant.requestedAt)}</span>
                 </div>
                 <div className="authz-decisions__actions">
-                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.4" onClick={() => void onApprove(grant.grantId)}>{text.approve}</Button>
-                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.5" variant="quiet" onClick={() => void onDeny(grant.grantId)}>{text.deny}</Button>
+                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.4" disabled={busy} onClick={() => void run(() => onApprove(grant.grantId))}>{text.approve}</Button>
+                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.5" variant="quiet" disabled={busy} onClick={() => void run(() => onDeny(grant.grantId))}>{text.deny}</Button>
                 </div>
               </li>
             ))}
@@ -131,11 +148,10 @@ export function AuthorizationDecisionsWorkspace({
                 <div className="authz-decisions__facts">
                   <strong>{permissionLabel(delegation.permissionCode)}</strong>
                   <span>≤ {money(delegation.limitAmount)}</span>
-                  <span className="authz-decisions__muted">Personel {actor(delegation.granteeUserId)}</span>
-                  <span className="authz-decisions__muted">Bitiş {delegation.expiresAt}</span>
+                  <span className="authz-decisions__muted">{text.until} {formatTime(delegation.expiresAt)}</span>
                 </div>
                 <div className="authz-decisions__actions">
-                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.6" variant="quiet" onClick={() => void onRevokeDelegation(delegation.delegationId)}>
+                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.6" variant="quiet" disabled={busy} onClick={() => void run(() => onRevokeDelegation(delegation.delegationId))}>
                     {text.revoke}
                   </Button>
                 </div>
@@ -157,10 +173,10 @@ export function AuthorizationDecisionsWorkspace({
                   <strong>{permissionLabel(tightening.permissionCode)}</strong>
                   <span>{tightening.recentCount} işlem</span>
                   <span>{tightening.triggerRatio.toFixed(1)}× taban</span>
-                  <span className="authz-decisions__muted">Personel {actor(tightening.userId)}</span>
+                  <span className="authz-decisions__muted">{formatTime(tightening.triggeredAt)}</span>
                 </div>
                 <div className="authz-decisions__actions">
-                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.7" variant="quiet" onClick={() => void onClearTightening(tightening.tighteningId)}>
+                  <Button data-telemetry-id="b.authorization-decisions.authorizationdecisionsworkspace.7" variant="quiet" disabled={busy} onClick={() => void run(() => onClearTightening(tightening.tighteningId))}>
                     {text.clear}
                   </Button>
                 </div>

@@ -403,6 +403,8 @@ export const managementText = {
     locked: "Kilitli",
     deactivate: "Pasifleştir",
     reactivate: "Yeniden etkinleştir",
+    deactivateQuestion: "Bu hesap pasifleştirilsin mi? Kişi giriş yapamaz.",
+    deactivateYes: "Evet, pasifleştir",
     deactivated: "Hesap pasifleştirildi.",
     reactivated: "Hesap yeniden etkinleştirildi.",
     roles: {

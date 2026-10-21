@@ -14,3 +14,5 @@
 .authz-decisions__facts strong { font-size: .95rem; }
 .authz-decisions__muted { color: var(--ds-color-muted); font-size: .8rem; }
 .authz-decisions__actions { display: flex; gap: .4rem; flex-shrink: 0; }
+.authz-decisions__error { margin: 0; border: 1px solid var(--ds-color-danger, #b3261e); border-radius: var(--ds-radius-sm); padding: .6rem .8rem; color: var(--ds-color-danger, #b3261e); font-weight: 700; }
+.authz-decisions__actions .ds-button { min-height: 48px; }

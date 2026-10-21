@@ -16,6 +16,8 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
   const [busy, setBusy] = useState(false);
   const [fields, setFields] = useState<Record<string, string>>({});
   const [found, setFound] = useState<UserLookup | null>();
+  const [lookedUp, setLookedUp] = useState("");
+  const [confirmingDeactivate, setConfirmingDeactivate] = useState(false);
   const [revision, setRevision] = useState(0);
   const changed = useCallback(() => setRevision((current) => current + 1), []);
   const field = (key: string) => fields[key] ?? "";
@@ -41,12 +43,24 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
     void act(async () => {
       await api.createUser(username, field("password"), displayName);
       setFields({});
+      changed();
     }, t.created);
+  }
+
+  function toggleActive(user: UserLookup) {
+    setConfirmingDeactivate(false);
+    return act(async () => {
+      await api.setActive(user.userId, !user.active);
+      setFound(await api.lookupUser(lookedUp));
+      changed();
+    }, user.active ? t.deactivated : t.reactivated);
   }
 
   function search(username = field("search").trim()) {
     if (!username) return;
     setNotice(undefined);
+    setConfirmingDeactivate(false);
+    setLookedUp(username);
     void act(async () => setFound(await api.lookupUser(username)));
   }
 
@@ -73,10 +87,13 @@ export function StaffSection({ capabilities, client }: ManagementSectionProps & 
       {found === null && <p className="msr__hint">{t.notFound}</p>}
       {found && <div>
         <p><strong>{found.displayName}</strong> · {found.active ? t.active : t.inactive}{found.isLocked ? ` · ${t.locked}` : ""}</p>
-        <Button data-telemetry-id="b.management-staff-roles.staffsection.3" variant="secondary" disabled={busy} onClick={() => void act(async () => {
-          await api.setActive(found.userId, !found.active);
-          setFound(await api.lookupUser(field("search").trim()));
-        }, found.active ? t.deactivated : t.reactivated)}>{found.active ? t.deactivate : t.reactivate}</Button>
+        {confirmingDeactivate
+          ? <div className="msr__confirm" role="group" aria-label={t.deactivateQuestion}>
+            <span>{t.deactivateQuestion}</span>
+            <Button data-telemetry-id="b.management-staff-roles.staffsection.4" disabled={busy} onClick={() => void toggleActive(found)}>{t.deactivateYes}</Button>
+            <Button data-telemetry-id="b.management-staff-roles.staffsection.5" variant="secondary" onClick={() => setConfirmingDeactivate(false)}>{t.roles.confirmNo}</Button>
+          </div>
+          : <Button data-telemetry-id="b.management-staff-roles.staffsection.3" variant="secondary" disabled={busy} onClick={() => found.active ? setConfirmingDeactivate(true) : void toggleActive(found)}>{found.active ? t.deactivate : t.reactivate}</Button>}
       </div>}
     </section>}
 
