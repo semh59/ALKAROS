@@ -1,7 +1,7 @@
 # V1-RMD-672 - Identity belgeleri, lisans politikası, saklama süreleri ve yedekten dönüş adımı
 
 - Task ID: V1-RMD-672
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: documentation
 - Surface state: Planned
