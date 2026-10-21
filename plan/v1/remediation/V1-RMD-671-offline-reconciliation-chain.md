@@ -1,7 +1,7 @@
 # V1-RMD-671 - Çevrimdışı yetki zinciri: kayıp, sayım yarışı, parti sınırı, hata gövdesi ve cihaz verisi
 
 - Task ID: V1-RMD-671
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: implementation
 - Surface state: Planned
