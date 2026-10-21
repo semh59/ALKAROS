@@ -37,4 +37,4 @@ V1-RMD-671 ve V1-RMD-674'ün tam çözüm testinde ortaya çıkardığı iki ger
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-677
