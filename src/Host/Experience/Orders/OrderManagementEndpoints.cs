@@ -301,6 +301,10 @@ public static class OrderManagementEndpoints
                     return Results.BadRequest(new { error = new { code = "INVALID_WAITER", message = "Belirtilen garson bulunamadı veya yetkili değil." } });
             }
 
+            // A hand-off (transfer-server) is deliberately not capped: a shift change must never half-fail.
+            if (await suggestedWaiter.FindReachedTableLimitAsync(servingUserId, request.TableId, cancellationToken) is { } tableLimit)
+                return Results.Conflict(new { error = new { code = "TABLE_LIMIT_REACHED", message = $"Bu garson en fazla {tableLimit} açık masaya bakabilir. Başka bir garson seçin veya bir masayı kapatın." } });
+
             var draft = await store.CreateOrUpdateTableDraftAsync(request, servingUserId, cancellationToken);
             return Results.Ok(draft);
         });

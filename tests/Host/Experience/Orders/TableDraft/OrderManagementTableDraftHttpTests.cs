@@ -2,6 +2,8 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Settings.TypedSettings;
+using ALKAROS.Settings.WaiterMaxActiveTables;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -1911,6 +1913,98 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(GetRequest(AwaitingPaymentPath(terminalId), cookie));
 
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+
+    private static async Task SetTableLimitAsync(WebApplication app, int limit)
+    {
+        var settings = app.Services.GetRequiredService<ISettingsService>();
+        await WaiterMaxActiveTablesSetting.EnsureRegisteredAsync(settings);
+        var record = await settings.GetRecordAsync(WaiterMaxActiveTablesSetting.Key);
+        await settings.SetValueAsync(WaiterMaxActiveTablesSetting.Key, limit, record!.RowVersion);
+    }
+
+    private static async Task<HttpResponseMessage> OpenTableAsync(HttpClient client, Guid terminalId, string cookie, Guid tableId, Guid productId)
+        => await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-01", [new OrderItemDraftDto(Guid.NewGuid(), productId, "Çorba", 1, 60m)])));
+
+    [Fact]
+    public async Task TheFourthTableIsRefusedInTurkishWhenTheLimitIsThree()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await SetTableLimitAsync(app, 3);
+
+        for (var i = 0; i < 3; i++)
+        {
+            using var ok = await OpenTableAsync(client, terminalId, cookie, await _database.SeedTableAsync(), product);
+            Assert.Equal(HttpStatusCode.OK, ok.StatusCode);
+        }
+
+        var fourthTable = await _database.SeedTableAsync();
+        using var refused = await OpenTableAsync(client, terminalId, cookie, fourthTable, product);
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        var body = await refused.Content.ReadAsStringAsync();
+        Assert.Contains("TABLE_LIMIT_REACHED", body);
+        Assert.Contains("en fazla 3 açık masaya", body);
+        Assert.False(await _database.TableHasOpenCheckAsync(fourthTable));
+    }
+
+    [Fact]
+    public async Task AnotherRoundOnATableAtTheLimitIsNeverRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        var tableId = await _database.SeedTableAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await SetTableLimitAsync(app, 1);
+
+        using var first = await OpenTableAsync(client, terminalId, cookie, tableId, product);
+        using var second = await OpenTableAsync(client, terminalId, cookie, tableId, product);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, second.StatusCode);
+    }
+
+    [Fact]
+    public async Task AServedButUnpaidTableStillCountsTowardsTheLimit()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await SetTableLimitAsync(app, 1);
+
+        using var first = await OpenTableAsync(client, terminalId, cookie, await _database.SeedTableAsync(), product);
+        var order = await first.Content.ReadFromJsonAsync<OrderDto>();
+        await _database.ExecuteAsync("UPDATE orders.orders SET status = 'Served' WHERE order_id = @id;", ("id", order!.OrderId));
+
+        using var second = await OpenTableAsync(client, terminalId, cookie, await _database.SeedTableAsync(), product);
+
+        Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
+    }
+
+    [Fact]
+    public async Task WithoutALimitAnyNumberOfTablesCanBeOpened()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        for (var i = 0; i < 5; i++)
+        {
+            using var response = await OpenTableAsync(client, terminalId, cookie, await _database.SeedTableAsync(), product);
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        }
     }
 
     private static string DraftPath(Guid terminalId)

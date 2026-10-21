@@ -51,7 +51,8 @@ public sealed class SuggestedWaiterResolver
     /// assigned — first of all), so the same person does not keep winning
     /// ties all shift. Returns null when nobody qualifies.
     ///
-    /// V1-SET-006: a candidate whose own <c>active_load</c> has reached
+    /// A candidate whose own open table count (a table whose
+    /// check is not yet paid or cancelled, served or not) has reached
     /// <c>waiter.max_active_tables</c> (0 = no cap, the default) drops out
     /// of the pool entirely rather than merely ranking last — a genuinely
     /// overloaded waiter must never be the answer just because everyone
@@ -71,6 +72,9 @@ public sealed class SuggestedWaiterResolver
                     COUNT(*) FILTER (
                         WHERE o.status NOT IN ('Served', 'Completed', 'Cancelled', 'Rejected')
                     ) AS active_load,
+                    COUNT(DISTINCT COALESCE(o.table_id, o.order_id)) FILTER (
+                        WHERE o.status NOT IN ('Completed', 'Cancelled', 'Rejected')
+                    ) AS open_tables,
                     MAX(o.created_at) AS last_assigned_at
                 FROM orders.orders o
                 WHERE o.serving_user_id = u.user_id
@@ -109,7 +113,7 @@ public sealed class SuggestedWaiterResolver
                     AND s.revoked_at IS NULL
                     AND s.expires_at > @now
               )
-              AND (@max_active_tables = 0 OR COALESCE(w.active_load, 0) < @max_active_tables)
+              AND (@max_active_tables = 0 OR COALESCE(w.open_tables, 0) < @max_active_tables)
             ORDER BY COALESCE(w.active_load, 0) ASC,
                      CASE
                          WHEN target.zone_id IS NOT NULL AND z.zone_id = target.zone_id THEN 0
@@ -126,6 +130,35 @@ public sealed class SuggestedWaiterResolver
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken)) return null;
         return new SuggestedWaiterV1(reader.GetGuid(0), reader.GetString(1));
+    }
+
+    /// <summary>
+    /// The cap in force when <paramref name="userId"/> would start a NEW table: null when it is fine, otherwise the cap
+    /// they have reached. A table that already has an open check adds no table to anyone (the draft keeps its server),
+    /// so a further round on it is never refused.
+    /// </summary>
+    public async Task<int?> FindReachedTableLimitAsync(Guid userId, Guid tableId, CancellationToken cancellationToken)
+    {
+        var limit = await WaiterMaxActiveTablesSetting.GetLimitAsync(_settings, cancellationToken);
+        if (limit <= 0)
+            return null;
+
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT
+                EXISTS (SELECT 1 FROM orders.orders
+                        WHERE table_id = @table_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected')),
+                (SELECT COUNT(DISTINCT COALESCE(table_id, order_id)) FROM orders.orders
+                 WHERE serving_user_id = @user_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected'));
+            """);
+        command.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+        command.Parameters.Add("user_id", NpgsqlDbType.Uuid).Value = userId;
+
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        await reader.ReadAsync(cancellationToken);
+        if (reader.GetBoolean(0))
+            return null;
+        return reader.GetInt64(1) >= limit ? limit : null;
     }
 
     /// <summary>

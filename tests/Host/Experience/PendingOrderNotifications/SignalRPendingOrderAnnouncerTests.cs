@@ -140,6 +140,51 @@ public sealed class SignalRPendingOrderAnnouncerTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task SeveralOrdersOnOneTableCountAsOneTableTowardsTheCap()
+    {
+        var zone = await _database.SeedZoneAsync("Salon");
+        var table = await _database.SeedTableAsync(zone, "M-01");
+        var waiter = await _database.SeedWaiterAsync("Tek Masa", hasOpenSession: true);
+        await _database.SeedOrderAsync(waiter, "Preparing", DateTimeOffset.UtcNow.AddMinutes(-5), table);
+        await _database.SeedOrderAsync(waiter, "Preparing", DateTimeOffset.UtcNow.AddMinutes(-4), table);
+
+        await WaiterMaxActiveTablesSetting.EnsureRegisteredAsync(_settings);
+        var settingRecord = await _settings.GetRecordAsync(WaiterMaxActiveTablesSetting.Key);
+        await _settings.SetValueAsync(WaiterMaxActiveTablesSetting.Key, 2, settingRecord!.RowVersion);
+
+        var hub = new RecordingHubContext();
+        var presence = new WaiterPresenceTracker();
+        presence.Connected(waiter);
+        var announcer = new SignalRPendingOrderAnnouncer(hub, presence, new SuggestedWaiterResolver(_database.DataSource, new PostgresRoleRepository(_database.DataSource), _settings));
+
+        await announcer.AnnounceAsync(NewAnnouncement());
+
+        Assert.Equal(WaiterOrderStatusHub.GroupName(waiter), Assert.Single(hub.Clients.GroupCalls));
+    }
+
+    [Fact]
+    public async Task SeveralOrdersOnOneTableDoNotUseUpTheCapWhenOpeningANewTable()
+    {
+        var zone = await _database.SeedZoneAsync("Salon");
+        var busyTable = await _database.SeedTableAsync(zone, "M-01");
+        var newTable = await _database.SeedTableAsync(zone, "M-02");
+        var waiter = await _database.SeedWaiterAsync("Tek Masa", hasOpenSession: true);
+        await _database.SeedOrderAsync(waiter, "Preparing", DateTimeOffset.UtcNow.AddMinutes(-5), busyTable);
+        await _database.SeedOrderAsync(waiter, "Served", DateTimeOffset.UtcNow.AddMinutes(-4), busyTable);
+
+        await WaiterMaxActiveTablesSetting.EnsureRegisteredAsync(_settings);
+        var settingRecord = await _settings.GetRecordAsync(WaiterMaxActiveTablesSetting.Key);
+        await _settings.SetValueAsync(WaiterMaxActiveTablesSetting.Key, 2, settingRecord!.RowVersion);
+        var resolver = new SuggestedWaiterResolver(_database.DataSource, new PostgresRoleRepository(_database.DataSource), _settings);
+
+        Assert.Null(await resolver.FindReachedTableLimitAsync(waiter, newTable, CancellationToken.None));
+
+        var secondTable = await _database.SeedTableAsync(zone, "M-03");
+        await _database.SeedOrderAsync(waiter, "Preparing", DateTimeOffset.UtcNow.AddMinutes(-3), secondTable);
+        Assert.Equal(2, await resolver.FindReachedTableLimitAsync(waiter, newTable, CancellationToken.None));
+    }
+
+    [Fact]
     public async Task ACandidateJustUnderTheCapIsStillSuggested()
     {
         // The mirror of the above: one order below the same cap must still
