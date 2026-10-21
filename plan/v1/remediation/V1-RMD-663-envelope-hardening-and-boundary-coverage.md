@@ -49,4 +49,4 @@ V1-RMD-596 bulguları B011, B013, B015, B019 ve B022 kapanır. B019: bozuk veya 
 
 ## Handoff
 
-- None
+- V1-RMD-664
