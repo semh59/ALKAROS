@@ -333,6 +333,7 @@ public sealed class ProductionExperienceCompositionTests
     {
         [typeof(IEscalationResolver)] = typeof(GarsonFeatureGatedEscalationResolver),
         [typeof(ALKAROS.Security.IdentityHardening.ISuspiciousLoginAuditSink)] = typeof(ALKAROS.Host.Experience.SecurityAdministration.AuditEventStoreSuspiciousLoginSink),
+        [typeof(ALKAROS.Identity.Authorization.IDenialEventSink)] = typeof(ALKAROS.Host.Observability.SecurityDetectors.ObservingDenialEventSink),
     };
 
     [Fact]
