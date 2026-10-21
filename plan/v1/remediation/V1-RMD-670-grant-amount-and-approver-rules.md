@@ -55,4 +55,4 @@ V1-RMD-597 bulguları B009 (Yüksek), B008, B013 ve B015 kapanır. Garsonun gön
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-669
