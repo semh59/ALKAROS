@@ -234,6 +234,8 @@ public sealed class PostgresUserStore : IUserStore
             UPDATE {Table}
             SET failed_login_attempts = 0,
                 locked_until = NULL,
+                pin_failed_attempts = 0,
+                pin_locked_until = NULL,
                 updated_at = now(),
                 row_version = row_version + 1
             WHERE user_id = @user_id;

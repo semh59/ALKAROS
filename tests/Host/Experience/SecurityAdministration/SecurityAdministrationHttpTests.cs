@@ -95,6 +95,29 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task LookupShowsAPinOnlyLockAsLockedAndForceUnlockClearsIt()
+    {
+        var target = SecurityAdministrationTestDatabase.TargetUserId;
+        await using (var command = _database.DataSource.CreateCommand(
+            "UPDATE identity.users SET locked_until = NULL, failed_login_attempts = 0, "
+            + "pin_failed_attempts = 5, pin_locked_until = now() + interval '15 minutes' WHERE user_id = @id;"))
+        {
+            command.Parameters.AddWithValue("id", target);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        using var manager = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+        var locked = await manager.GetFromJsonAsync<JsonElement>(LookupPath(SecurityAdministrationTestDatabase.TargetUsername));
+        Assert.True(locked.GetProperty("isLocked").GetBoolean());
+
+        using var unlocked = await manager.PostAsync(UnlockPath(target), null);
+        Assert.Equal(HttpStatusCode.OK, unlocked.StatusCode);
+
+        var after = await manager.GetFromJsonAsync<JsonElement>(LookupPath(SecurityAdministrationTestDatabase.TargetUsername));
+        Assert.False(after.GetProperty("isLocked").GetBoolean());
+    }
+
+    [Fact]
     public async Task OnlyAManagerSessionHoldingSecurityManageMayUseTheSurface()
     {
         var target = SecurityAdministrationTestDatabase.TargetUserId;

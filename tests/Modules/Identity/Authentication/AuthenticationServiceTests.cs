@@ -214,7 +214,7 @@ public sealed class AuthenticationServiceTests : IClassFixture<AuthTestDatabase>
     {
         var userId = await _database.InsertUserAsync("pin-ok", _hasher.Hash("s3cret-Pass"));
         var service = new AuthenticationService(_store);
-        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", "1234"));
+        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", "1234", Now));
 
         Assert.IsType<UnlockFailure>(await service.UnlockAsync(userId, "9999", Now));
         var result = await service.UnlockAsync(userId, "1234", Now);
@@ -231,7 +231,7 @@ public sealed class AuthenticationServiceTests : IClassFixture<AuthTestDatabase>
         // the waiter from working, and PIN guesses must not lock the account.
         var userId = await _database.InsertUserAsync("pin-lock", _hasher.Hash("s3cret-Pass"));
         var service = new AuthenticationService(_store, maxFailedAttempts: 5);
-        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", "1234"));
+        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", "1234", Now));
 
         for (var attempt = 0; attempt < 5; attempt++)
             Assert.IsType<UnlockFailure>(await service.UnlockAsync(userId, "0000", Now));
@@ -263,8 +263,24 @@ public sealed class AuthenticationServiceTests : IClassFixture<AuthTestDatabase>
         var userId = await _database.InsertUserAsync("pin-guard", _hasher.Hash("s3cret-Pass"));
         var service = new AuthenticationService(_store);
 
-        Assert.False(await service.SetPinAsync(userId, "wrong-password", "1234"));
+        Assert.False(await service.SetPinAsync(userId, "wrong-password", "1234", Now));
         Assert.IsType<UnlockFailure>(await service.UnlockAsync(userId, "1234", Now));
+    }
+
+    [Fact]
+    public async Task WrongPasswordsOnThePinEndpointCountTowardsTheAccountLock()
+    {
+        // Otherwise a stolen device session could guess the real password
+        // through the PIN screen with no limit at all.
+        var userId = await _database.InsertUserAsync("pin-guess", _hasher.Hash("s3cret-Pass"));
+        var service = new AuthenticationService(_store, maxFailedAttempts: 5);
+
+        for (var attempt = 0; attempt < 5; attempt++)
+            Assert.False(await service.SetPinAsync(userId, "guess-" + attempt, "4829", Now));
+
+        Assert.False(await service.SetPinAsync(userId, "s3cret-Pass", "4829", Now));
+        var login = Assert.IsType<LoginFailure>(await service.LoginAsync("pin-guess", "s3cret-Pass", Now));
+        Assert.Equal(LoginFailureReason.LockedOut, login.Reason);
     }
 
     [Fact]
@@ -273,8 +289,8 @@ public sealed class AuthenticationServiceTests : IClassFixture<AuthTestDatabase>
         // Semih's decision (2026-09-10): the PIN is optional and removable.
         var userId = await _database.InsertUserAsync("pin-clear", _hasher.Hash("s3cret-Pass"));
         var service = new AuthenticationService(_store);
-        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", "1234"));
-        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", null));
+        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", "1234", Now));
+        Assert.True(await service.SetPinAsync(userId, "s3cret-Pass", null, Now));
 
         var result = Assert.IsType<UnlockFailure>(await service.UnlockAsync(userId, "1234", Now));
 

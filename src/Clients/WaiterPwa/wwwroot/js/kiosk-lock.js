@@ -90,7 +90,7 @@ export function openPinSheet(removing) {
     ${removing ? '' : `
     <div class="optgroup">
       <div class="optgroup-head"><span class="optgroup-name">Yeni PIN</span>
-        <span class="optgroup-rule">en az 4 rakam</span></div>
+        <span class="optgroup-rule">4-12 rakam, 1234 gibi olmaz</span></div>
       <input class="note" type="password" inputmode="numeric" data-pin-code
              autocomplete="one-time-code" aria-label="Yeni PIN">
     </div>`}`;
@@ -211,6 +211,14 @@ export async function submitPin() {
     el.lockOverlay.hidden = true;
     releaseTrap();
     toast('Bu hesapta PIN tanımlı değil, kilit kaldırıldı.', { warning: true });
+    return;
+  }
+
+  // No connection or a server fault says nothing about the PIN: keep what was typed and say what is wrong.
+  if (result.offline || result.status === 429 || result.status >= 500) {
+    el.lockSub.textContent = result.offline
+      ? 'Bağlantı yok, PIN doğrulanamıyor. Bağlantı gelince tekrar deneyin.'
+      : 'Sunucu şu an yanıt vermiyor, biraz sonra tekrar deneyin.';
     return;
   }
 

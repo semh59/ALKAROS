@@ -805,6 +805,92 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         Assert.Null(products!.Single(p => p.ProductId == productWithout).ModifierGroups);
     }
 
+    [Fact]
+    public async Task WrongPinsThatLockTheDeviceEndTheServerSessionSoARefreshCannotWalkAround()
+    {
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cookie = await LoginAsync(client, terminalId, "198.51.100.51");
+        Assert.Equal(HttpStatusCode.OK, (await SendJsonAsync(client, $"/api/v1/auth/pin?terminalId={terminalId:D}", cookie, new { currentPassword = Password, pin = "4829" })).StatusCode);
+
+        var locked = false;
+        for (var attempt = 0; attempt < 7 && !locked; attempt++)
+        {
+            using var response = await SendJsonAsync(client, $"/api/v1/auth/unlock?terminalId={terminalId:D}", cookie, new { pin = "7351" });
+            locked = response.StatusCode == HttpStatusCode.Locked;
+        }
+
+        Assert.True(locked);
+        using var session = CreateForwardedRequest(
+            HttpMethod.Get, $"/api/v1/auth/session?terminalId={terminalId:D}", "198.51.100.51", cookie);
+        using var sessionResponse = await client.SendAsync(session);
+        Assert.Equal(HttpStatusCode.Unauthorized, sessionResponse.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("123", false)]
+    [InlineData("1111", false)]
+    [InlineData("1234", false)]
+    [InlineData("4321", false)]
+    [InlineData("12ab", false)]
+    [InlineData("٤٨٢٩", false)]
+    [InlineData("4829135702468", false)]
+    [InlineData("4829", true)]
+    [InlineData("482913570246", true)]
+    public async Task PinsMustBeFourToTwelveAsciiDigitsAndNotPredictable(string pin, bool accepted)
+    {
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cookie = await LoginAsync(client, terminalId, "198.51.100.52");
+
+        using var response = await SendJsonAsync(client, $"/api/v1/auth/pin?terminalId={terminalId:D}", cookie, new { currentPassword = Password, pin });
+
+        Assert.Equal(accepted ? HttpStatusCode.OK : HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task LoginAndSessionReportWhetherAPinIsSet()
+    {
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent(new { terminalId, username = "cashier", password = Password }),
+        };
+        AddTrustedForwarding(login, "198.51.100.53");
+        using var loginResponse = await client.SendAsync(login);
+        var cookie = loginResponse.Headers.GetValues("Set-Cookie")
+            .Single(value => value.StartsWith(DualScreenApplication.CashierCookieName + "=", StringComparison.Ordinal))
+            .Split(';', 2)[0];
+        var loginBody = await loginResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.False(loginBody.GetProperty("pinSet").GetBoolean());
+
+        await SendJsonAsync(client, $"/api/v1/auth/pin?terminalId={terminalId:D}", cookie, new { currentPassword = Password, pin = "4829" });
+
+        using var session = CreateForwardedRequest(
+            HttpMethod.Get, $"/api/v1/auth/session?terminalId={terminalId:D}", "198.51.100.53", cookie);
+        using var sessionResponse = await client.SendAsync(session);
+        var sessionBody = await sessionResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(sessionBody.GetProperty("pinSet").GetBoolean());
+    }
+
+    private static async Task<HttpResponseMessage> SendJsonAsync(HttpClient client, string path, string cookie, object body)
+    {
+        using var request = CreateForwardedRequest(HttpMethod.Post, path, "198.51.100.54", cookie);
+        request.Content = JsonContent(body);
+        return await client.SendAsync(request);
+    }
+
     private static async Task<string> LoginAsync(HttpClient client, Guid terminalId, string forwardedFor)
     {
         using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")

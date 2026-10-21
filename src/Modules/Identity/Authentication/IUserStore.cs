@@ -66,8 +66,8 @@ public interface IUserStore
     /// <summary>
     /// V15-SEC-002: an authorized administrative action that clears a locked
     /// account immediately instead of waiting out the lockout window — the
-    /// account's own password lockout counters only, never the PIN's (same
-    /// separation <see cref="SetPinAsync"/> keeps). Returns <c>false</c> when
+    /// password lockout and the PIN lockout together (a locked waiter
+    /// asks the manager once, not twice). Returns <c>false</c> when
     /// no such user exists.
     /// </summary>
     Task<bool> ForceUnlockAsync(Guid userId, CancellationToken cancellationToken = default);

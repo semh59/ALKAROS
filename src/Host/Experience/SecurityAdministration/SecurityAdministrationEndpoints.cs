@@ -89,7 +89,8 @@ public static class SecurityAdministrationEndpoints
                         "NOT_FOUND", "İstenen kullanıcı bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
                     statusCode: StatusCodes.Status404NotFound)
                 : Results.Ok(new UserLookupResultV1(
-                    user.UserId, user.DisplayName, user.Active, user.LockedUntil.HasValue && user.LockedUntil.Value > DateTimeOffset.UtcNow));
+                    user.UserId, user.DisplayName, user.Active, (user.LockedUntil ?? DateTimeOffset.MinValue) > DateTimeOffset.UtcNow
+                        || (user.PinLockedUntil ?? DateTimeOffset.MinValue) > DateTimeOffset.UtcNow));
         });
 
         group.MapPost("/users/{userId:guid}/revoke-sessions", async (

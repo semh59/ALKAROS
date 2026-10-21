@@ -56,6 +56,7 @@ public static partial class DualScreenApplication
             DualScreenStore store,
             IRoleRepository roles,
             IOfflineAuthorityBudgetService offlineBudgets,
+            IUserStore users,
             [Microsoft.AspNetCore.Mvc.FromServices] SecurityBurstDetectors? securityDetectors,
             CancellationToken cancellationToken) =>
         {
@@ -151,6 +152,7 @@ public static partial class DualScreenApplication
                 terminalId = request.TerminalId,
                 capabilities,
                 offlineBudget,
+                pinSet = (await users.GetByIdAsync(success.UserId, cancellationToken))?.PinHash is not null,
             });
         }).RequireRateLimiting("login");
 
@@ -159,6 +161,7 @@ public static partial class DualScreenApplication
             HttpContext context,
             DualScreenStore store,
             IRoleRepository roles,
+            IUserStore users,
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
@@ -179,6 +182,7 @@ public static partial class DualScreenApplication
                 roleName = role?.Name,
                 terminalId,
                 capabilities,
+                pinSet = (await users.GetByIdAsync(principal.UserId, cancellationToken))?.PinHash is not null,
             });
         }).RequireRateLimiting("terminal-read");
 
@@ -193,6 +197,7 @@ public static partial class DualScreenApplication
             DualScreenStore store,
             AuthenticationService authentication,
             SessionRotationService rotation,
+            IDeviceSessionService sessions,
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
@@ -211,6 +216,14 @@ public static partial class DualScreenApplication
                     principal.UserId, $"cashier:{terminalId:D}", context.Request.Cookies[CashierCookieName]!,
                     SessionTokenIssuer.DefaultLifetime, cancellationToken);
                 AppendCookie(context, CashierCookieName, rawToken, session.ExpiresAt);
+            }
+
+            if (result is UnlockFailure { Reason: UnlockFailureReason.LockedOut })
+            {
+                // The lock lives on the server: a locked device loses its session, so a reload or a hand-made request
+                // with the same cookie cannot skip the PIN. Signing in with the password starts a fresh session.
+                await sessions.RevokeDeviceAsync(principal.UserId, $"cashier:{terminalId:D}", cancellationToken);
+                context.Response.Cookies.Delete(CashierCookieName);
             }
 
             return result switch
@@ -242,11 +255,11 @@ public static partial class DualScreenApplication
             var principal = await RequireCashierAsync(context, terminalId, store, cancellationToken);
             if (request is null || string.IsNullOrWhiteSpace(request.CurrentPassword))
                 return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Mevcut şifre gereklidir." } });
-            if (request.Pin is not null && (request.Pin.Length < 4 || !request.Pin.All(char.IsDigit)))
-                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "PIN en az 4 rakamdan oluşmalıdır." } });
+            if (request.Pin is not null && !IsAcceptablePin(request.Pin))
+                return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "PIN 4 ile 12 rakam arasında olmalı; 1111 ya da 1234 gibi tahmin edilebilir PIN kabul edilmez." } });
 
             var applied = await authentication.SetPinAsync(
-                principal.UserId, request.CurrentPassword, request.Pin, cancellationToken);
+                principal.UserId, request.CurrentPassword, request.Pin, DateTimeOffset.UtcNow, cancellationToken);
 
             return applied
                 ? Results.Ok(new { pinSet = request.Pin is not null })
@@ -604,4 +617,12 @@ public static partial class DualScreenApplication
         });
     }
 
+    // The keypad takes at most 12 digits, so a longer PIN could never be typed; 1111 and 1234 are the first guesses.
+    private static bool IsAcceptablePin(string pin)
+    {
+        if (pin.Length is < 4 or > 12 || !pin.All(c => c is >= '0' and <= '9'))
+            return false;
+        var steps = pin.Zip(pin.Skip(1), (a, b) => b - a).ToArray();
+        return !(steps.All(s => s == 0) || steps.All(s => s == 1) || steps.All(s => s == -1));
+    }
 }

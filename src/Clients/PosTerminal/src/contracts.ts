@@ -55,9 +55,8 @@ export interface RelayCredentialStatus {
 
 // V1-RMD-331 (independent 2026-09-26 audit, finding K10): resolves a
 // manager-supplied username into the userId SecurityAdministration's
-// revoke-sessions/force-unlock actions require. isLocked reflects the
-// account's password lockout only (matches AccountRecoveryService.ForceUnlockAsync's
-// own scope, never the separate PIN lockout).
+// revoke-sessions/force-unlock actions require. isLocked is true while the
+// password lockout or the PIN lockout is active; force-unlock clears both.
 export interface UserLookupResult {
   userId: string;
   displayName: string;

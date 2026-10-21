@@ -127,6 +127,9 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       // V1-RMD-297: keep the offline authority budget the server issued with
       // this session, so a void/comp can still be authorized offline.
       rememberOfflineBudget(result.data.offlineBudget, result.data.userId);
+      // The PIN lives on the server, so the idle lock is armed from what the server says, not from what this device remembers.
+      state.pinArmed = result.data.pinSet === true;
+      localStorage.setItem('alkaros_waiter_pin_armed', state.pinArmed ? '1' : '0');
       el.loginPassword.value = '';
       el.loginOverlay.hidden = true;
       releaseTrap();
@@ -867,8 +870,9 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       showLogin();
       return;
     }
-    await start();
+    // Locked before any data loads, and it stays locked if loading fails.
     reapplyPersistedLock();
+    await start();
   }
 
   if (document.readyState === 'loading') {

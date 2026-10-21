@@ -34,6 +34,25 @@ public sealed class PostgresUserStoreTests : IClassFixture<AuthTestDatabase>
     }
 
     [Fact]
+    public async Task ForceUnlockAlsoClearsThePinLockAndItsCounter()
+    {
+        var userId = await _database.InsertUserAsync("force-unlock-pin", "hash-value");
+        await _database.ExecuteAsync(
+            "UPDATE identity.users SET failed_login_attempts = 5, locked_until = now() + interval '15 minutes', "
+            + "pin_failed_attempts = 5, pin_locked_until = now() + interval '15 minutes' WHERE user_id = @user_id;",
+            ("user_id", userId));
+
+        Assert.True(await _store.ForceUnlockAsync(userId));
+
+        var user = await _store.GetByIdAsync(userId);
+        Assert.NotNull(user);
+        Assert.Equal(0, user.FailedLoginAttempts);
+        Assert.Null(user.LockedUntil);
+        Assert.Equal(0, user.PinFailedAttempts);
+        Assert.Null(user.PinLockedUntil);
+    }
+
+    [Fact]
     public async Task GetByUsernameReturnsNullForUnknownUser()
     {
         Assert.Null(await _store.GetByUsernameAsync("missing-user"));

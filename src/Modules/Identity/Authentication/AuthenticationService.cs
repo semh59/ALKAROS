@@ -148,13 +148,21 @@ public sealed class AuthenticationService
         Guid userId,
         string currentPassword,
         string? pin,
+        DateTimeOffset now,
         CancellationToken cancellationToken = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(currentPassword);
 
         var user = await _store.GetByIdAsync(userId, cancellationToken);
-        if (user is null || !user.Active || !_verify(currentPassword, user.PasswordHash))
+        if (user is null || !user.Active || (user.LockedUntil is { } lockedUntil && lockedUntil > now))
             return false;
+
+        // A wrong password here is a password guess like any other: it counts towards the same lock as sign-in.
+        if (!_verify(currentPassword, user.PasswordHash))
+        {
+            await _store.RecordLoginFailureAsync(userId, now, _maxFailedAttempts, _lockoutDuration, cancellationToken);
+            return false;
+        }
 
         var encoded = pin is null ? null : new PasswordHasher().Hash(pin);
         return await _store.SetPinAsync(userId, encoded, cancellationToken);
