@@ -1,0 +1,6 @@
+Dilim sayım tablosu (komut: scope597.mjs üzerinden git ls-files)
+toplam dosya: 214
+src .cs: 73
+tests .cs: 49
+göç dosyası: 78
+istemci dosyası: 17
