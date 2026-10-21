@@ -32,7 +32,6 @@ public sealed class KitchenOperationsStore
     private readonly IBackupHealthService _backupHealth;
     private readonly IAuditEventStore _audit;
     private readonly ISettingsService _settings;
-    private readonly OutboxStore _outbox;
     private readonly IOrderRepository _orders;
     private readonly IHubContext<WaiterOrderStatusHub> _waiterHub;
     private readonly WaiterPresenceTracker _waiterPresence;
@@ -52,7 +51,6 @@ public sealed class KitchenOperationsStore
         IBackupHealthService backupHealth,
         IAuditEventStore audit,
         ISettingsService settings,
-        OutboxStore outbox,
         IOrderRepository orders,
         IHubContext<WaiterOrderStatusHub> waiterHub,
         WaiterPresenceTracker waiterPresence,
@@ -73,7 +71,6 @@ public sealed class KitchenOperationsStore
         // V1-KIT-005: publishes the item's new state for Orders to mirror,
         // gated by kitchen.live_sync_enabled (V1-SET-002, default off).
         _settings = settings ?? throw new ArgumentNullException(nameof(settings));
-        _outbox = outbox ?? throw new ArgumentNullException(nameof(outbox));
         // V1-WTR-009: broadcasts "ready" to every connected waiter device,
         // same gate.
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
@@ -194,11 +191,9 @@ public sealed class KitchenOperationsStore
         try
         {
             var transitioned = ticket.UpdateItemStatus(itemId, target, NormalizeReason(request.Reason));
-            await _tickets.SaveAsync(transitioned, request.ExpectedTicketRowVersion, cancellationToken);
             var transitionedItem = transitioned.Items.First(value => value.Id == itemId);
-            var liveSyncEnabled = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
-            await KitchenOrderItemStateSyncPublisher.PublishAsync(
-                _outbox, transitioned.OrderId, transitionedItem, liveSyncEnabled, cancellationToken);
+            var liveSyncEnabled = await SaveItemChangeAsync(
+                transitioned, request.ExpectedTicketRowVersion, transitionedItem, cancellationToken);
             if (liveSyncEnabled && transitionedItem.Status == KitchenTicketItemState.Ready)
                 await NotifyWaitersItemIsReadyAsync(transitioned.OrderId, transitionedItem, cancellationToken);
             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
@@ -243,11 +238,9 @@ public sealed class KitchenOperationsStore
         try
         {
             var undone = ticket.UndoItemStatus(itemId);
-            await _tickets.SaveAsync(undone, request.ExpectedTicketRowVersion, cancellationToken);
             var undoneItem = undone.Items.First(value => value.Id == itemId);
-            var liveSyncEnabled = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
-            await KitchenOrderItemStateSyncPublisher.PublishAsync(
-                _outbox, undone.OrderId, undoneItem, liveSyncEnabled, cancellationToken);
+            var liveSyncEnabled = await SaveItemChangeAsync(
+                undone, request.ExpectedTicketRowVersion, undoneItem, cancellationToken);
             if (liveSyncEnabled && undoneItem.Status == KitchenTicketItemState.Ready)
                 await NotifyWaitersItemIsReadyAsync(undone.OrderId, undoneItem, cancellationToken);
             var canonical = await _tickets.GetByIdAsync(ticketId, cancellationToken)
@@ -259,6 +252,24 @@ public sealed class KitchenOperationsStore
             await ThrowConcurrencyOrNotFoundAsync(ticketId, request.ExpectedTicketRowVersion, exception, cancellationToken);
             throw;
         }
+    }
+
+    /// <summary>
+    /// Saves the ticket and queues the item's state event in one transaction, so a failure of either leaves
+    /// neither behind.
+    /// </summary>
+    /// <returns>Whether live sync is on (the caller notifies waiters only then).</returns>
+    private async Task<bool> SaveItemChangeAsync(
+        KitchenTicket ticket, long expectedRowVersion, KitchenTicketItem item, CancellationToken cancellationToken)
+    {
+        var liveSyncEnabled = await KitchenLiveSyncSetting.IsEnabledAsync(_settings, cancellationToken);
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        await _tickets.SaveAsync(ticket, expectedRowVersion, connection, transaction, cancellationToken);
+        await KitchenOrderItemStateSyncPublisher.PublishAsync(
+            ticket.OrderId, item, liveSyncEnabled, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return liveSyncEnabled;
     }
 
     /// <summary>

@@ -1,6 +1,6 @@
 using ALKAROS.Kitchen.OrderItemStateSync.Tests.Fixtures;
 using ALKAROS.Kitchen.TicketLifecycle;
-using ALKAROS.Messaging;
+using Npgsql;
 using FluentAssertions;
 using Xunit;
 
@@ -9,12 +9,10 @@ namespace ALKAROS.Kitchen.OrderItemStateSync.Tests;
 public sealed class KitchenOrderItemStateSyncPublisherTests : IClassFixture<OutboxTestDatabase>
 {
     private readonly OutboxTestDatabase _db;
-    private readonly OutboxStore _outbox;
 
     public KitchenOrderItemStateSyncPublisherTests(OutboxTestDatabase db)
     {
         _db = db;
-        _outbox = new OutboxStore(db.DataSource);
     }
 
     private static KitchenTicketItem NewItem(KitchenTicketItemState status)
@@ -25,7 +23,7 @@ public sealed class KitchenOrderItemStateSyncPublisherTests : IClassFixture<Outb
     {
         var item = NewItem(KitchenTicketItemState.Preparing);
 
-        await KitchenOrderItemStateSyncPublisher.PublishAsync(_outbox, Guid.NewGuid(), item, enabled: false);
+        await PublishInTransactionAsync(Guid.NewGuid(), item, enabled: false, commit: true);
 
         (await CountOutboxRowsAsync(item.Id)).Should().Be(0);
     }
@@ -40,7 +38,7 @@ public sealed class KitchenOrderItemStateSyncPublisherTests : IClassFixture<Outb
     {
         var item = NewItem(status);
 
-        await KitchenOrderItemStateSyncPublisher.PublishAsync(_outbox, Guid.NewGuid(), item, enabled: true);
+        await PublishInTransactionAsync(Guid.NewGuid(), item, enabled: true, commit: true);
 
         (await CountOutboxRowsAsync(item.Id)).Should().Be(1);
     }
@@ -48,9 +46,28 @@ public sealed class KitchenOrderItemStateSyncPublisherTests : IClassFixture<Outb
     [Fact]
     public async Task ThrowsForAnEmptyOrderId()
         => await FluentActions
-            .Invoking(() => KitchenOrderItemStateSyncPublisher.PublishAsync(
-                _outbox, Guid.Empty, NewItem(KitchenTicketItemState.Ready), enabled: true))
+            .Invoking(() => PublishInTransactionAsync(
+                Guid.Empty, NewItem(KitchenTicketItemState.Ready), enabled: true, commit: true))
             .Should().ThrowAsync<ArgumentException>();
+
+    [Fact]
+    public async Task ARolledBackTransactionTakesTheEventWithIt()
+    {
+        var item = NewItem(KitchenTicketItemState.Ready);
+
+        await PublishInTransactionAsync(Guid.NewGuid(), item, enabled: true, commit: false);
+
+        (await CountOutboxRowsAsync(item.Id)).Should().Be(0);
+    }
+
+    private async Task PublishInTransactionAsync(Guid orderId, KitchenTicketItem item, bool enabled, bool commit)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await KitchenOrderItemStateSyncPublisher.PublishAsync(orderId, item, enabled, connection, transaction);
+        if (commit)
+            await transaction.CommitAsync();
+    }
 
     private async Task<long> CountOutboxRowsAsync(Guid aggregateId)
     {

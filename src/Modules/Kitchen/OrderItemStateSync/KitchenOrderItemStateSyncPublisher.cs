@@ -3,6 +3,7 @@ namespace ALKAROS.Kitchen.OrderItemStateSync;
 using ALKAROS.IntegrationContracts;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Messaging;
+using Npgsql;
 
 /// <summary>
 /// V1-KIT-005: the Kitchen side of the order-item state mirror. Enqueues a
@@ -14,28 +15,19 @@ using ALKAROS.Messaging;
 /// BuildingBlocks only).
 /// </summary>
 /// <remarks>
-/// Design note: <see cref="IKitchenTicketRepository.SaveAsync(KitchenTicket, long, CancellationToken)"/>
-/// owns its own connection and transaction internally (no connection/transaction
-/// overload exists, unlike <c>IOrderRepository</c>'s table-reparent methods), so
-/// this enqueues on its own short transaction immediately after the ticket
-/// save commits rather than inside the same one. That is a narrower guarantee
-/// than the fully atomic transactional outbox pattern Table Management uses
-/// (a crash in the narrow window between the two commits drops the event) —
-/// accepted here because kitchen status is operational, not financial, and
-/// every consumer of this event is already required to tolerate at-least-once
-/// / out-of-order delivery; a dropped ready-notification is recoverable by the
-/// next state transition, not a correctness incident.
+/// The event is written on the caller's connection and transaction, next to the ticket save, so both commit or
+/// neither does (the transactional outbox pattern the other publishers use).
 /// </remarks>
 public static class KitchenOrderItemStateSyncPublisher
 {
     public static async Task PublishAsync(
-        OutboxStore outbox,
         Guid orderId,
         KitchenTicketItem item,
         bool enabled,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(outbox);
         ArgumentNullException.ThrowIfNull(item);
         if (orderId == Guid.Empty)
             throw new ArgumentException("Order id cannot be empty.", nameof(orderId));
@@ -55,6 +47,6 @@ public static class KitchenOrderItemStateSyncPublisher
             IntegrationEventSerializer.Serialize(new KitchenTicketItemStateChanged(
                 item.TicketId, orderId, item.OrderItemId, item.Status.ToString(), DateTimeOffset.UtcNow)));
 
-        await outbox.EnqueueAsync(envelope, cancellationToken);
+        await OutboxStore.EnqueueAsync(envelope, connection, transaction, cancellationToken);
     }
 }

@@ -1,0 +1,13 @@
+KILLED   ticket saved outside the transaction
+KILLED   event never written
+KILLED   transaction never committed
+COMPILE  disabled still enqueues
+KILLED   event not enqueued
+KILLED   empty order id accepted
+restore KitchenOperationsStore.cs: identical
+restore KitchenOrderItemStateSyncPublisher.cs: identical
+mutants: 6, survived: 0
+KILLED   disabled still enqueues
+restore KitchenOperationsStore.cs: identical
+restore KitchenOrderItemStateSyncPublisher.cs: identical
+mutants: 6, survived: 0

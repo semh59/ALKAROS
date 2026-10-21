@@ -299,6 +299,95 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, cancelDenied.StatusCode);
     }
 
+    // The ticket row and the state event it produces commit together. With the event write made to
+    // fail, the item must stay exactly as it was instead of moving on without telling the waiter.
+    [Fact]
+    public async Task AnItemTransitionIsRolledBackWhenItsStateEventCannotBeWritten()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
+        var seed = await _database.SeedKitchenGraphAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        // Reading the status registers the setting (default off) the first time.
+        await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
+        var settings = new SettingsService(new PostgresSettingsRepository(_database.DataSource, new SettingValidator()));
+        var record = await settings.GetRecordAsync(KitchenLiveSyncSetting.Key);
+        await settings.SetValueAsync(KitchenLiveSyncSetting.Key, true, record!.RowVersion);
+        await PostAsync<KitchenTicketV1>(
+            client,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/transition",
+            cookie,
+            new TransitionKitchenTicketV1("Accepted", 1));
+        await FailKitchenItemEventWritesAsync();
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition",
+            cookie,
+            new TransitionKitchenItemV1("Preparing", 2, 1));
+        using var response = await client.SendAsync(request);
+
+        Assert.False(response.IsSuccessStatusCode);
+        Assert.Equal(
+            "Queued",
+            await _database.ScalarAsync<string>(
+                $"SELECT status FROM kitchen.kitchen_ticket_items WHERE id = '{seed.ItemId:D}';"));
+        Assert.Equal(
+            2L,
+            await _database.ScalarAsync<long>(
+                $"SELECT row_version FROM kitchen.kitchen_tickets WHERE id = '{seed.TicketId:D}';"));
+    }
+
+    [Fact]
+    public async Task AnItemUndoIsRolledBackWhenItsStateEventCannotBeWritten()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedSessionAsync(terminalId, [ApplicationPermissions.KitchenAdvance]);
+        var seed = await _database.SeedKitchenGraphAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await GetAsync<LiveSyncStatusV1>(client, Prefix(terminalId) + "/operations/live-sync", cookie);
+        var settings = new SettingsService(new PostgresSettingsRepository(_database.DataSource, new SettingValidator()));
+        var record = await settings.GetRecordAsync(KitchenLiveSyncSetting.Key);
+        await settings.SetValueAsync(KitchenLiveSyncSetting.Key, true, record!.RowVersion);
+        await PostAsync<KitchenTicketV1>(
+            client,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/transition",
+            cookie,
+            new TransitionKitchenTicketV1("Accepted", 1));
+        var preparing = await PostAsync<KitchenTicketV1>(
+            client,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/transition",
+            cookie,
+            new TransitionKitchenItemV1("Preparing", 2, 1));
+        var preparingItem = Assert.Single(preparing.Items);
+        await FailKitchenItemEventWritesAsync();
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"{Prefix(terminalId)}/tickets/{seed.TicketId:D}/items/{seed.ItemId:D}/undo",
+            cookie,
+            new UndoKitchenItemV1(preparing.RowVersion, preparingItem.RowVersion));
+        using var response = await client.SendAsync(request);
+
+        Assert.False(response.IsSuccessStatusCode);
+        Assert.Equal(
+            "Preparing",
+            await _database.ScalarAsync<string>(
+                $"SELECT status FROM kitchen.kitchen_ticket_items WHERE id = '{seed.ItemId:D}';"));
+    }
+
+    private Task<int> FailKitchenItemEventWritesAsync()
+        => _database.ExecuteAsync(
+            """
+            CREATE FUNCTION fail_kitchen_item_event() RETURNS trigger AS $$
+            BEGIN RAISE EXCEPTION 'event write failed'; END $$ LANGUAGE plpgsql;
+            CREATE TRIGGER fail_kitchen_item_event BEFORE INSERT ON outbox_messages
+                FOR EACH ROW WHEN (NEW.aggregate_type = 'kitchen_ticket_item')
+                EXECUTE FUNCTION fail_kitchen_item_event();
+            """);
+
     // V1-KIT-010: kitchen.live_sync_enabled silently changed behavior
     // (waiter ready-notifications, KitchenState mirroring) with no way for
     // the Kitchen screen itself to see it — an independent review
