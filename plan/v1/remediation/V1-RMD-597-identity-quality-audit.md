@@ -48,4 +48,4 @@ Identity modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar b
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-667
