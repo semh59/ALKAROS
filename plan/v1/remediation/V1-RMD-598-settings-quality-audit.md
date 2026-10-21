@@ -48,4 +48,4 @@ Settings modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar b
 
 ## Handoff
 
-- V1-RMD-599
+- V1-RMD-682
