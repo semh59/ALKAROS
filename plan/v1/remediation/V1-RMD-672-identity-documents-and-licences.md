@@ -46,4 +46,4 @@ V1-RMD-597 bulguları B033, B034, B036 ve B027 kapanır; Ürün Sahibinin 2026-1
 
 ## Handoff
 
-- V1-RMD-598
+- V1-RMD-673
