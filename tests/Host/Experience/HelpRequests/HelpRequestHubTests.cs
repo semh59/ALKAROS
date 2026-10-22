@@ -72,7 +72,34 @@ public sealed class HelpRequestHubTests : IAsyncLifetime
         Assert.Contains((context.ConnectionId, HelpRequestHub.RecipientsGroup), groups.Memberships);
     }
 
-    private (HelpRequestHub Hub, FakeHubCallerContext Context, FakeGroupManager Groups) Build(string? cookie)
+    [Fact]
+    public async Task TheRecipientCountFollowsConnectionsAndDisconnections()
+    {
+        var (_, rawToken) = await _database.SeedManagementSessionAsync("manager");
+        var recipients = new HelpRequestRecipientTracker();
+        var (hub, _, _) = Build($"alkaros.manager={rawToken}", recipients);
+
+        await hub.OnConnectedAsync();
+        Assert.Equal(1, recipients.Count);
+
+        await hub.OnDisconnectedAsync(null);
+        Assert.Equal(0, recipients.Count);
+    }
+
+    [Fact]
+    public async Task ARefusedConnectionIsNotCountedAsARecipient()
+    {
+        var (_, cookie) = await _database.SeedCashierSessionAsync(Guid.NewGuid());
+        var recipients = new HelpRequestRecipientTracker();
+        var (hub, _, _) = Build($"alkaros.manager={cookie.Split('=', 2)[1]}", recipients);
+
+        await hub.OnConnectedAsync();
+
+        Assert.Equal(0, recipients.Count);
+    }
+
+    private (HelpRequestHub Hub, FakeHubCallerContext Context, FakeGroupManager Groups) Build(
+        string? cookie, HelpRequestRecipientTracker? recipients = null)
     {
         var httpContext = new DefaultHttpContext();
         if (cookie is not null)
@@ -80,7 +107,7 @@ public sealed class HelpRequestHubTests : IAsyncLifetime
 
         var context = new FakeHubCallerContext(httpContext);
         var groups = new FakeGroupManager();
-        var hub = new HelpRequestHub(_database.DataSource) { Context = context, Groups = groups };
+        var hub = new HelpRequestHub(_database.DataSource, recipients ?? new HelpRequestRecipientTracker()) { Context = context, Groups = groups };
         return (hub, context, groups);
     }
 }

@@ -6,6 +6,7 @@ import type {
   LoginResponse,
   MutationResult,
   NfcOrderResult,
+  OpenHelpRequest,
   PairingCompleted,
   PairingCreated,
   QnbConnectionTestResult,
@@ -84,7 +85,9 @@ async function withIdempotentRetry<T>(attempt: () => Promise<T>): Promise<T> {
   }
 }
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+// `keepSessionOn401`: the manager-only help-request calls answer 401 to a cashier-only session, which
+// must not be read as that cashier's own session having ended.
+async function request<T>(path: string, init?: RequestInit, keepSessionOn401 = false): Promise<T> {
   let response: Response;
   try {
     const timeout = AbortSignal.timeout(8_000);
@@ -115,7 +118,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     // Idempotent to call redundantly (e.g. a rejected login, where there was
     // never a session to drop) - the handler only sets state to what it
     // already is in that case.
-    if (response.status === 401) onSessionExpired?.();
+    if (response.status === 401 && !keepSessionOn401) onSessionExpired?.();
     throw new ApiError(
       response.status,
       body?.error?.code ?? "REQUEST_FAILED",
@@ -135,6 +138,10 @@ export const api = {
     }),
   session: (terminalId: string) =>
     request<LoginResponse>(`/api/v1/auth/session?terminalId=${terminalId}`),
+  openHelpRequests: (terminalId: string) =>
+    request<OpenHelpRequest[]>(`/api/v1/terminals/${terminalId}/help-requests/open`, undefined, true),
+  acknowledgeHelpRequest: (terminalId: string, helpRequestId: string) =>
+    request<void>(`/api/v1/terminals/${terminalId}/help-requests/${helpRequestId}/acknowledge`, { method: "POST" }, true),
   runtimeConfig: (terminalId: string) =>
     request<RuntimeConfiguration>(`/api/v1/terminals/${terminalId}/runtime-configuration`),
   logout: (terminalId: string) =>

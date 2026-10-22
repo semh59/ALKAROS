@@ -14,6 +14,7 @@ import { isPlainClick, useRouter } from "../router";
 import { navLabels, stateText } from "../strings";
 import { formatMoney, formatQuantity } from "../format";
 import { savedId } from "../storage";
+import { playNewItemChime } from "../audioAlerts";
 import { onlineHubTabFor } from "../features/online-hub";
 import { useNewOrderChime } from "../features/online-operations/useNewOrderChime";
 import { ExperiencePage, type BackendStatus } from "./workspace";
@@ -31,6 +32,9 @@ const helpRequestTypeLabels: Record<string, string> = {
   Approval: "Onay gerekiyor",
   Other: "Diğer",
 };
+
+// Shown for a call type this build does not know, instead of the server's raw English code.
+const unknownHelpRequestLabel = "Yardım çağrısı";
 
 interface HelpAlert {
   id: string;
@@ -89,8 +93,29 @@ export function Cashier() {
   // V1-RMD-286: 'ok' | 'reconnecting' (was connected, link dropped) | 'missed'
   // (link is back but calls sent while it was down cannot be recovered).
   const [helpLink, setHelpLink] = useState<"ok" | "reconnecting" | "missed">("ok");
+  const knownHelpIds = useRef(new Set<string>());
   const pairingTrigger = useRef<HTMLButtonElement>(null);
   const pairingDialog = useRef<HTMLDivElement>(null);
+
+  // A call already on screen is not added or announced twice (it can arrive live and again in the open list).
+  const addHelpAlerts = useCallback((incoming: HelpAlert[]) => {
+    const fresh = incoming.filter((alert) => !knownHelpIds.current.has(alert.id));
+    if (fresh.length === 0) return;
+    fresh.forEach((alert) => knownHelpIds.current.add(alert.id));
+    setHelpAlerts((previous) => [...fresh, ...previous]);
+    playNewItemChime();
+  }, []);
+
+  // The call only leaves the screen once the Host has recorded that a manager saw it; that is also what
+  // tells the waiter who raised it.
+  const acknowledgeHelpAlert = useCallback(async (helpRequestId: string) => {
+    try {
+      await api.acknowledgeHelpRequest(terminalId, helpRequestId);
+    } catch {
+      return;
+    }
+    setHelpAlerts((previous) => previous.filter((candidate) => candidate.id !== helpRequestId));
+  }, [terminalId]);
 
   const reload = useCallback(async () => {
     const [session, products, active, config] = await Promise.all([
@@ -168,6 +193,16 @@ export function Cashier() {
     // There is no endpoint listing open help requests, so calls sent while
     // the link was down cannot be reloaded; the cashier is told they may
     // have been missed instead.
+    // Calls nobody answered yet are listed by the Host, so a call raised while this till was offline (or
+    // before it was opened) still appears; a session that is not a manager's gets 401 and stays quiet.
+    const loadOpenCalls = () => {
+      api.openHelpRequests(terminalId).then((open) => {
+        if (disposed || !Array.isArray(open)) return;
+        addHelpAlerts(open.map(({ helpRequestId, tableNumber, requestType, requestedByDisplayName }) => (
+          { id: helpRequestId, tableNumber, requestType, requestedByDisplayName })));
+        setHelpLink("ok");
+      }).catch(() => undefined);
+    };
     const retryDelay = (attempt: number) => Math.min(15_000, 1_000 * 2 ** Math.min(attempt, 4));
     let connection: ReturnType<HubConnectionBuilder["build"]> | null = null;
     try {
@@ -191,6 +226,7 @@ export function Cashier() {
         established = true;
         attempt = 0;
         setHelpLink((current) => (current === "reconnecting" ? "missed" : current));
+        loadOpenCalls();
       }, 5_000);
     };
     const start = () => {
@@ -217,12 +253,9 @@ export function Cashier() {
     });
     activeConnection.on(
       "HelpRequested",
-      (payload: { tableId: string; tableNumber: string; requestType: string; requestedByDisplayName: string }) => {
-        setHelpAlerts((previous) => [
-          { id: `${payload.tableId}-${Date.now()}`, tableNumber: payload.tableNumber,
-            requestType: payload.requestType, requestedByDisplayName: payload.requestedByDisplayName },
-          ...previous,
-        ]);
+      (payload: { helpRequestId?: string; tableId: string; tableNumber: string; requestType: string; requestedByDisplayName: string }) => {
+        addHelpAlerts([{ id: payload.helpRequestId ?? `${payload.tableId}-${Date.now()}`, tableNumber: payload.tableNumber,
+          requestType: payload.requestType, requestedByDisplayName: payload.requestedByDisplayName }]);
       },
     );
     start();
@@ -232,7 +265,7 @@ export function Cashier() {
       window.clearTimeout(retryTimer);
       void activeConnection.stop();
     };
-  }, [session]);
+  }, [session, terminalId, addHelpAlerts]);
 
   useEffect(() => {
     const check = () => {
@@ -506,14 +539,14 @@ export function Cashier() {
           {helpAlerts.map((alert) => (
             <div key={alert.id} className="help-alert">
               <span>
-                <strong>{alert.tableNumber} masası</strong> — {helpRequestTypeLabels[alert.requestType] ?? alert.requestType}
+                <strong>{alert.tableNumber} masası</strong> — {helpRequestTypeLabels[alert.requestType] ?? unknownHelpRequestLabel}
                 {" · "}{alert.requestedByDisplayName}
               </span>
               <button data-telemetry-id="b.routes.cashier.7"
-                onClick={() => setHelpAlerts((previous) => previous.filter((candidate) => candidate.id !== alert.id))}
-                aria-label={stateText.dismissMessage}
+                onClick={() => acknowledgeHelpAlert(alert.id)}
+                aria-label={`${alert.tableNumber} masası çağrısını gördüm`}
               >
-                ×
+                Gördüm
               </button>
             </div>
           ))}

@@ -521,6 +521,10 @@
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-IAM-024"
     },
+    "POST /api/v1/terminals/{terminalId:guid}/help-requests/{helpRequestId:guid}/acknowledge": {
+      "reason": "Aynı çağrıyı yeniden onaylamak zararsızdır (ikinci çağrı 204 döner, durum değişmez); bu yüzden ayrı bir tekrar anahtarı gerekmiyor.",
+      "task": "V1-RMD-689"
+    },
     "POST /api/v1/terminals/{terminalId:guid}/help-requests/": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-WTR-014"

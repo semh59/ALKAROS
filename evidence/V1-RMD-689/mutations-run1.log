@@ -1,0 +1,12 @@
+M1 BUILD-ERROR restored=true
+M2 KILLED restored=true
+M3 KILLED restored=true
+M4 BUILD-ERROR restored=true
+M5 KILLED restored=true
+M6 BUILD-ERROR restored=true
+M7 KILLED restored=true
+M8 KILLED restored=true
+M9 KILLED restored=true
+M10 SURVIVED restored=true
+M11 SURVIVED restored=true
+M12 SURVIVED restored=true

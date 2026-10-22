@@ -45,16 +45,24 @@ public sealed class HelpRequestHub : Hub
     public const string RecipientsGroup = "help-request-recipients";
 
     private readonly NpgsqlDataSource _dataSource;
+    private readonly HelpRequestRecipientTracker _recipients;
 
-    public HelpRequestHub(NpgsqlDataSource dataSource)
+    public HelpRequestHub(NpgsqlDataSource dataSource, HelpRequestRecipientTracker recipients)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _recipients = recipients ?? throw new ArgumentNullException(nameof(recipients));
+    }
+
+    public override Task OnDisconnectedAsync(Exception? exception)
+    {
+        _recipients.Disconnected(Context.ConnectionId);
+        return base.OnDisconnectedAsync(exception);
     }
 
     public override async Task OnConnectedAsync()
     {
         var httpContext = Context.GetHttpContext();
-        var rawToken = httpContext?.Request.Cookies[CatalogManagementEndpointsManagerCookieName];
+        var rawToken = httpContext?.Request.Cookies[ManagerCookieName];
         var actorId = await ManagementSessionLookup.ResolveActorAsync(
             _dataSource, rawToken, allowSupervisor: true, Context.ConnectionAborted);
         if (actorId is null)
@@ -64,6 +72,7 @@ public sealed class HelpRequestHub : Hub
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, RecipientsGroup, Context.ConnectionAborted);
+        _recipients.Connected(Context.ConnectionId);
         await base.OnConnectedAsync();
     }
 
@@ -71,5 +80,5 @@ public sealed class HelpRequestHub : Hub
     // cookie defines its own copy of the name (V1-RMD-121's own doc comment
     // on ManagementSessionLookup: duplicated by design, not a boundary
     // violation — each reads identity's own schema for its own check).
-    private const string CatalogManagementEndpointsManagerCookieName = "alkaros.manager";
+    internal const string ManagerCookieName = "alkaros.manager";
 }

@@ -96,3 +96,13 @@ def test_waiter_pwa_real_api_and_reliable_queue():
     # sürerken ikinci bir tıklama) karşı korunmuyordu.
     assert "dispatchInFlight" in app_code
     assert "btnSendKitchen.disabled = true" in app_code
+
+
+def test_waiter_help_request_is_honest_about_delivery_and_hears_back():
+    """A call nobody was connected for must not be reported as delivered, and the waiter hears when it is seen."""
+    sheet = (WWWROOT / "js" / "sheets" / "help-request.js").read_text(encoding="utf-8")
+    app_code = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
+
+    assert "connectedRecipients === 0" in sheet
+    assert "Çağrınız kaydedildi" in sheet
+    assert "hub.on('HelpRequestSeen'" in app_code

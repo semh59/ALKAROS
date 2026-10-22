@@ -17,6 +17,8 @@ const jsonResponse = (body: unknown, status = 200) =>
 // this feature's one real risk (an event-name or payload-field typo between
 // the server's HelpRequestedV1 and this file) is exactly what a mock like
 // this catches and a typecheck cannot.
+const chime = vi.hoisted(() => vi.fn());
+vi.mock("../audioAlerts", () => ({ playNewItemChime: chime }));
 const handlers: Record<string, (payload: unknown) => void> = {};
 const startMock = vi.fn(async () => undefined);
 const stopMock = vi.fn(async () => undefined);
@@ -44,6 +46,7 @@ vi.mock("@microsoft/signalr", () => ({
 let root: Root | null = null;
 
 afterEach(() => {
+  chime.mockClear();
   vi.useRealTimers();
   startMock.mockReset();
   startMock.mockImplementation(async () => undefined);
@@ -59,7 +62,8 @@ afterEach(() => {
 
 describe("Cashier help alerts", () => {
   it("renders a table's help request the moment the hub broadcasts it", async () => {
-    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+    localStorage.setItem("alkaros.terminal-id", "call-terminal");
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, _init?: RequestInit) => {
       const path = String(input);
       if (path.includes("/auth/session")) {
         return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
@@ -68,7 +72,8 @@ describe("Cashier help alerts", () => {
       if (path.endsWith("/orders/active")) return jsonResponse(null);
       if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
       return jsonResponse({});
-    }));
+    });
+    vi.stubGlobal("fetch", fetchMock);
 
     const { Cashier } = await import("./Cashier");
 
@@ -87,6 +92,7 @@ describe("Cashier help alerts", () => {
 
     await act(async () => {
       handlers.HelpRequested({
+        helpRequestId: "call-1",
         tableId: "table-5",
         tableNumber: "T-5",
         requestType: "Complaint",
@@ -99,9 +105,16 @@ describe("Cashier help alerts", () => {
     expect(alert?.textContent).toContain("Misafir şikayeti");
     expect(alert?.textContent).toContain("Ayşe");
 
-    const dismiss = alert!.querySelector("button")!;
-    await act(async () => { dismiss.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+    expect(chime).toHaveBeenCalledTimes(1);
+
+    const seen = alert!.querySelector("button")!;
+    expect(seen.textContent).toBe("Gördüm");
+    await act(async () => { seen.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
     expect(document.querySelector(".help-alert")).toBeNull();
+    expect(fetchMock).toHaveBeenCalledWith(
+      "/api/v1/terminals/call-terminal/help-requests/call-1/acknowledge",
+      expect.objectContaining({ method: "POST" }),
+    );
   });
 });
 
@@ -179,5 +192,100 @@ describe("Cashier help connection resilience", () => {
     expect(startMock.mock.calls.length).toBe(before + 1);
     await tick(1_000);
     expect(startMock.mock.calls.length).toBe(before + 2);
+  });
+});
+
+// A call is stored on the Host; the till reloads the ones nobody answered instead of relying on the live push.
+describe("Cashier unanswered help calls", () => {
+  const openCall = { helpRequestId: "call-9", tableId: "table-9", tableNumber: "T-9", requestType: "Spill", requestedByDisplayName: "Can" };
+
+  const tick = (ms: number) => act(async () => { await vi.advanceTimersByTimeAsync(ms); });
+
+  async function renderCashier(overrides: (path: string, init?: RequestInit) => Response | undefined) {
+    vi.useFakeTimers();
+    localStorage.setItem("alkaros.terminal-id", "call-terminal");
+    const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(input);
+      const override = overrides(path, init);
+      if (override) return override;
+      if (path.includes("/auth/session")) {
+        return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
+      }
+      if (path.endsWith("/catalog")) return jsonResponse([]);
+      if (path.endsWith("/orders/active")) return jsonResponse(null);
+      if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
+      return jsonResponse({});
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    const { Cashier } = await import("./Cashier");
+    const { RouterProvider: FreshRouterProvider } = await import("../router");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => {
+      root!.render(createElement(FreshRouterProvider, null, createElement(Cashier)));
+    });
+    await tick(0);
+    await tick(0);
+    return fetchMock;
+  }
+
+  const openList = (path: string) =>
+    path.endsWith("/help-requests/open") ? jsonResponse([openCall]) : undefined;
+
+  it("shows a call raised while this till was offline once the link is up, and announces it once", async () => {
+    await renderCashier(openList);
+    await tick(5_000);
+
+    expect(document.querySelector(".help-alert")?.textContent).toContain("T-9 masası");
+    expect(chime).toHaveBeenCalledTimes(1);
+
+    await act(async () => {
+      handlers.HelpRequested({ ...openCall });
+    });
+    expect(document.querySelectorAll(".help-alert")).toHaveLength(1);
+    expect(chime).toHaveBeenCalledTimes(1);
+  });
+
+  it("clears the link warning when the open list could be reloaded after a reconnect", async () => {
+    await renderCashier(openList);
+    await tick(5_000);
+    await act(async () => { lifecycle.reconnecting?.(); });
+    await act(async () => { lifecycle.reconnected?.(); });
+    await tick(5_000);
+
+    expect(document.body.textContent).not.toContain("görülmemiş olabilir");
+  });
+
+  it("keeps the till signed in when the open list is refused for a cashier-only session", async () => {
+    await renderCashier((path) => path.endsWith("/help-requests/open")
+      ? jsonResponse({ error: { code: "UNAUTHORIZED", message: "Oturum geçersiz veya süresi dolmuş." } }, 401)
+      : undefined);
+    await tick(5_000);
+
+    expect(document.body.textContent).not.toContain("Oturumunuz sonlandırıldı");
+    expect(document.querySelector(".help-alert")).toBeNull();
+  });
+
+  it("shows a neutral label instead of an unknown English call type", async () => {
+    await renderCashier(() => undefined);
+    await act(async () => {
+      handlers.HelpRequested({ ...openCall, helpRequestId: "call-x", requestType: "BrokenGlass" });
+    });
+
+    const text = document.querySelector(".help-alert")?.textContent ?? "";
+    expect(text).toContain("Yardım çağrısı");
+    expect(text).not.toContain("BrokenGlass");
+  });
+
+  it("keeps the call on screen when the Host could not record that it was seen", async () => {
+    await renderCashier((path, init) => init?.method === "POST" && path.endsWith("/acknowledge")
+      ? jsonResponse({ error: { code: "X", message: "Hata" } }, 500)
+      : undefined);
+    await act(async () => { handlers.HelpRequested({ ...openCall }); });
+
+    const seen = document.querySelector(".help-alert button")!;
+    await act(async () => { seen.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+
+    expect(document.querySelector(".help-alert")).not.toBeNull();
   });
 });

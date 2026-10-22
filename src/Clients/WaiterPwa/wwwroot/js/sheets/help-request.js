@@ -31,7 +31,7 @@ export function openHelpRequestSheet() {
         </button>`).join('')}
     </div>`;
   openOptions('help-request', 'Yardım çağır',
-    `${state.table.number} masası için nöbetçi yöneticiye anında bildirim gider`,
+    `${state.table.number} masası için nöbetçi yöneticiye bildirim gider; kimse bağlı değilse çağrı kayıtta bekler`,
     body, 'Çağır', '', '');
   el.optionsConfirm.className = 'btn btn-primary';
   el.optionsConfirm.disabled = true;
@@ -48,14 +48,19 @@ export async function confirmHelpRequest() {
   });
 
   if (!result.ok) {
-    // V1-WTR-014: a 429 (same table's 2-minute cooldown still active) is
-    // routine, not an error - the earlier call already reached
-    // management, this one would only be a duplicate.
+    // A 429 (the table's earlier call is still unanswered) is routine, not an
+    // error; the message already says how many seconds to wait.
     toast(result.message, { warning: true });
     el.optionsConfirm.disabled = false;
     return;
   }
 
   closeOptions();
+  // The server counts the managers connected at that moment; with none, the
+  // call is only stored, so it must not be reported as delivered.
+  if (result.data && result.data.connectedRecipients === 0) {
+    toast('Çağrınız kaydedildi; şu an bağlı yönetici yok. Yöneticiye iletildiği anda haber verilecek.');
+    return;
+  }
   toast('Yardım çağrınız yöneticiye iletildi.');
 }

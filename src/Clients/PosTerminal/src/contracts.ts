@@ -22,6 +22,15 @@ export interface NfcOrderResult {
   createdAt: string;
 }
 
+// An unanswered waiter call, as listed by the Host (and broadcast as HelpRequested).
+export interface OpenHelpRequest {
+  helpRequestId: string;
+  tableId: string;
+  tableNumber: string;
+  requestType: string;
+  requestedByDisplayName: string;
+}
+
 export interface LoginResponse {
   userId: string;
   displayName: string;

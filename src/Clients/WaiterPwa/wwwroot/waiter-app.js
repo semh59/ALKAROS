@@ -811,6 +811,14 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       notify('Sipariş hazır', `${name} hazır`, 'alkaros-order-ready');
     });
 
+    // Sent only to the waiter who raised the call, once a manager took it.
+    hub.on('HelpRequestSeen', (payload) => {
+      if (!payload) return;
+      const manager = payload.seenByDisplayName ? ` (${payload.seenByDisplayName})` : '';
+      toast(`${payload.tableNumber} masası için yardım çağrınız görüldü${manager}.`);
+      notify('Yardım çağrısı görüldü', `${payload.tableNumber} masası${manager}`, 'alkaros-help-seen');
+    });
+
     // V1-RMD-149: before this existed a guest could order from the QR menu and
     // nobody found out.
     hub.on('OrderPendingConfirmation', (payload) => {

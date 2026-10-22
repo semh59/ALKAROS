@@ -1,4 +1,5 @@
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.WaiterNotifications;
 using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
@@ -42,6 +43,7 @@ public static class HelpRequestExperience
         services.TryAddSingleton<ISettingsRepository, PostgresSettingsRepository>();
         services.TryAddSingleton<ISettingsService, SettingsService>();
         services.TryAddSingleton<HelpRequestStore>();
+        services.TryAddSingleton<HelpRequestRecipientTracker>();
         return services;
     }
 
@@ -59,6 +61,7 @@ public static class HelpRequestExperience
             HelpRequestV1 request,
             HelpRequestStore store,
             IHubContext<HelpRequestHub> hub,
+            HelpRequestRecipientTracker recipients,
             DualScreenStore dualStore,
             HttpContext context,
             CancellationToken cancellationToken) =>
@@ -76,21 +79,30 @@ public static class HelpRequestExperience
                     error = new { code = "VALIDATION_FAILED", message = "Geçersiz yardım türü." },
                 });
 
+            if (request.TableId == Guid.Empty)
+                return Results.BadRequest(new
+                {
+                    error = new { code = "VALIDATION_FAILED", message = "Masa seçilmedi." },
+                });
+
             HelpRequestRecord record;
             try
             {
                 record = await store.RaiseAsync(request.TableId, request.RequestType, principal.UserId, cancellationToken);
             }
-            catch (HelpRequestCooldownActiveException)
+            catch (HelpRequestCooldownActiveException cooldown)
             {
+                var retryAfterSeconds = (int)Math.Ceiling(cooldown.Remaining.TotalSeconds);
+                context.Response.Headers.RetryAfter = retryAfterSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
                 return Results.Json(
                     new
                     {
                         error = new
                         {
                             code = "HELP_REQUEST_COOLDOWN",
-                            message = "Bu masa için az önce zaten yardım çağrıldı, lütfen biraz bekleyin.",
+                            message = $"Bu masanın çağrısı henüz yanıtlanmadı, {retryAfterSeconds} saniye sonra tekrar deneyebilirsiniz.",
                         },
+                        retryAfterSeconds,
                     },
                     statusCode: StatusCodes.Status429TooManyRequests);
             }
@@ -107,17 +119,73 @@ public static class HelpRequestExperience
 
             // V1-RMD-289: explicit recipient group instead of Clients.All - see HelpRequestHub's own doc
             // comment on why this stays a flat, restaurant-wide broadcast rather than a per-terminal one.
+            var connectedRecipients = recipients.Count;
             await hub.Clients.Group(HelpRequestHub.RecipientsGroup).SendAsync(
                 HelpRequestHub.HelpRequested,
                 new HelpRequestedV1(request.TableId, record.TableNumber, request.RequestType,
-                    record.RequestedByDisplayName, record.CreatedAt),
+                    record.RequestedByDisplayName, record.CreatedAt, record.HelpRequestId),
                 cancellationToken);
 
-            return Results.Ok(new HelpRequestedV1(
+            return Results.Ok(new HelpRequestRaisedV1(
                 request.TableId, record.TableNumber, request.RequestType,
-                record.RequestedByDisplayName, record.CreatedAt));
+                record.RequestedByDisplayName, record.CreatedAt, record.HelpRequestId, connectedRecipients));
         });
+
+        // Recipient side: authenticated like the hub (manager/supervisor cookie), so a manager's till can
+        // reload what it missed while disconnected and mark a call as taken.
+        var recipientGroup = endpoints.MapGroup(RoutePrefix).WithTags("HelpRequests");
+
+        recipientGroup.MapGet("open", async (
+            HelpRequestStore store,
+            NpgsqlDataSource dataSource,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            if (await ResolveManagerAsync(dataSource, context, cancellationToken) is null)
+                return UnauthorizedResult();
+
+            return Results.Ok(await store.ListOpenAsync(cancellationToken));
+        }).RequireRateLimiting("terminal-read");
+
+        recipientGroup.MapPost("{helpRequestId:guid}/acknowledge", async (
+            Guid helpRequestId,
+            HelpRequestStore store,
+            NpgsqlDataSource dataSource,
+            IHubContext<WaiterOrderStatusHub> waiterHub,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            if (await ResolveManagerAsync(dataSource, context, cancellationToken) is not Guid managerId)
+                return UnauthorizedResult();
+
+            var acknowledgement = await store.AcknowledgeAsync(helpRequestId, managerId, cancellationToken);
+            if (acknowledgement is null)
+                return Results.NotFound(new { error = new { code = "NOT_FOUND", message = "Yardım çağrısı bulunamadı." } });
+
+            // Only the waiters who raised the call hear it; nobody else needs to know it was taken.
+            foreach (var requesterId in acknowledgement.RequesterUserIds)
+            {
+                await waiterHub.Clients.Group(WaiterOrderStatusHub.GroupName(requesterId)).SendAsync(
+                    HelpRequestSeen,
+                    new HelpRequestSeenV1(acknowledgement.TableNumber, acknowledgement.AcknowledgedByDisplayName),
+                    cancellationToken);
+            }
+
+            return Results.NoContent();
+        }).RequireRateLimiting("terminal-write");
 
         return endpoints;
     }
+
+    /// <summary>The waiter-side event telling the requester that a manager took the call.</summary>
+    public const string HelpRequestSeen = "HelpRequestSeen";
+
+    private static Task<Guid?> ResolveManagerAsync(NpgsqlDataSource dataSource, HttpContext context, CancellationToken cancellationToken)
+        => ManagementSessionLookup.ResolveActorAsync(
+            dataSource, context.Request.Cookies[HelpRequestHub.ManagerCookieName], allowSupervisor: true, cancellationToken);
+
+    private static IResult UnauthorizedResult()
+        => Results.Json(
+            new { error = new { code = "UNAUTHORIZED", message = "Oturum geçersiz veya süresi dolmuş." } },
+            statusCode: StatusCodes.Status401Unauthorized);
 }

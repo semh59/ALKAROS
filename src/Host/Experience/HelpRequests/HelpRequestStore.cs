@@ -80,10 +80,12 @@ public sealed class HelpRequestStore
         if (tableNumber is null)
             throw new KeyNotFoundException($"Table '{tableId}' was not found.");
 
+        // Only a request nobody has answered blocks a repeat: once a manager took the earlier call, a new
+        // problem at the same table is a new call, and while it is open the repeat adds nothing.
         await using (var cooldownCheck = new NpgsqlCommand(
             """
             SELECT created_at FROM notifications.help_requests
-            WHERE table_id = @table_id
+            WHERE table_id = @table_id AND acknowledged_at IS NULL
             ORDER BY created_at DESC
             LIMIT 1;
             """, connection, transaction))
@@ -128,4 +130,70 @@ public sealed class HelpRequestStore
         await transaction.CommitAsync(cancellationToken);
         return record;
     }
+
+    /// <summary>Requests nobody has acknowledged yet (last 24 hours, oldest first).</summary>
+    public async Task<IReadOnlyList<OpenHelpRequestV1>> ListOpenAsync(CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT h.help_request_id, h.table_id, h.table_number, h.request_type, u.display_name, h.created_at
+            FROM notifications.help_requests h
+            JOIN identity.users u ON u.user_id = h.requested_by_user_id
+            WHERE h.acknowledged_at IS NULL AND h.created_at > now() - interval '24 hours'
+            ORDER BY h.created_at
+            LIMIT 100;
+            """);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        var open = new List<OpenHelpRequestV1>();
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            open.Add(new OpenHelpRequestV1(
+                reader.GetGuid(0), reader.GetGuid(1), reader.GetString(2), reader.GetString(3),
+                reader.GetString(4), reader.GetFieldValue<DateTimeOffset>(5)));
+        }
+
+        return open;
+    }
+
+    /// <summary>
+    /// Marks every open request of the same table as seen by <paramref name="managerUserId"/> (one manager
+    /// taking the call answers all of them). Returns null for an unknown request; an empty requester list
+    /// means it was already acknowledged, so repeating the call is harmless.
+    /// </summary>
+    public async Task<HelpRequestAcknowledgement?> AcknowledgeAsync(
+        Guid helpRequestId, Guid managerUserId, CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            WITH target AS (
+                SELECT table_id, table_number FROM notifications.help_requests WHERE help_request_id = @help_request_id
+            ), updated AS (
+                UPDATE notifications.help_requests h
+                SET acknowledged_at = now(), acknowledged_by_user_id = @manager_user_id
+                FROM target
+                WHERE h.table_id = target.table_id AND h.acknowledged_at IS NULL
+                RETURNING h.requested_by_user_id
+            )
+            SELECT target.table_number,
+                   (SELECT display_name FROM identity.users WHERE user_id = @manager_user_id),
+                   (SELECT array_agg(DISTINCT requested_by_user_id) FROM updated)
+            FROM target;
+            """);
+        command.Parameters.Add("help_request_id", NpgsqlDbType.Uuid).Value = helpRequestId;
+        command.Parameters.Add("manager_user_id", NpgsqlDbType.Uuid).Value = managerUserId;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        if (!await reader.ReadAsync(cancellationToken))
+            return null;
+
+        return new HelpRequestAcknowledgement(
+            reader.GetString(0),
+            reader.IsDBNull(1) ? string.Empty : reader.GetString(1),
+            reader.IsDBNull(2) ? [] : reader.GetFieldValue<Guid[]>(2));
+    }
 }
+
+/// <summary>Who has to be told that a call was taken, and by whom.</summary>
+public sealed record HelpRequestAcknowledgement(
+    string TableNumber,
+    string AcknowledgedByDisplayName,
+    IReadOnlyList<Guid> RequesterUserIds);

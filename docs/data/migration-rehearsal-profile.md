@@ -39,6 +39,7 @@
 ## 5. Addendum — migrations that rewrite or guard a large table (V1-RMD-645)
 
 - Migration 173 copies the whole `audit.audit_events` table into a yearly-partitioned table inside one transaction and keeps the table locked for the duration of the copy. Rehearse it on the Large and Stress classes with the audit log filled to that volume and note the lock time before running it on a store that has been live for years; control total: `count(*)` before and after (the migration itself aborts when they differ).
+- Migration 198 adds two nullable columns and a partial index to the small help request table; no rewrite, no rehearsal needed beyond the control check that both columns exist.
 - Migration 197 replaces the setting history foreign key (one scan of the history table, which stays small) and adds two NOT VALID checks on the single-row logo table, so no rewrite; its control check is that the history trigger exists and a delete of a setting with history is refused.
 - Migration 195 adds one CHECK (not validated, so no table scan) and replaces two trigger functions on the authorization grant and delegation tables; no row is rewritten and it needs no rehearsal beyond the control check that both triggers exist afterwards.
 - Migration 194 adds a statement trigger to the parent and to every existing partition (metadata only, no row is touched); its control check is that the trigger count equals the partition count plus one.

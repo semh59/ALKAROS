@@ -68,6 +68,22 @@ public sealed class HelpRequestTestDatabase : PgTestDatabase
     public Task<long> HelpRequestCountAsync()
         => ScalarAsync<long>("SELECT count(*) FROM notifications.help_requests;");
 
+    /// <summary>Inserts an unanswered request directly; the API itself never allows two open ones for one table.</summary>
+    public async Task<Guid> SeedOpenRequestAsync(Guid tableId, string tableNumber, Guid userId)
+    {
+        var helpRequestId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO notifications.help_requests (help_request_id, table_id, table_number, requested_by_user_id, request_type)
+            VALUES (@help_request_id, @table_id, @table_number, @user_id, 'Other');
+            """,
+            ("help_request_id", helpRequestId), ("table_id", tableId), ("table_number", tableNumber), ("user_id", userId));
+        return helpRequestId;
+    }
+
+    public Task<long> AcknowledgedCountAsync()
+        => ScalarAsync<long>("SELECT count(*) FROM notifications.help_requests WHERE acknowledged_at IS NOT NULL;");
+
     /// <summary>V1-RMD-289: seeds a manager or supervisor device session - the cookie HelpRequestHub itself
     /// authenticates (`alkaros.manager`), never the cashier one <see cref="SeedCashierSessionAsync"/> seeds.</summary>
     public async Task<(Guid UserId, string RawToken)> SeedManagementSessionAsync(string devicePrefix)
