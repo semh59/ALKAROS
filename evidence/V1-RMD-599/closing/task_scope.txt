@@ -1,0 +1,1 @@
+task-scope: kapanış kapısı commit anında çalıştırıldı (geçti).

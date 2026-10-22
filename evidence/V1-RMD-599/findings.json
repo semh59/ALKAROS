@@ -1,0 +1,1442 @@
+[
+ {
+  "id": "V1-RMD-599-B001",
+  "title": "Tünel kaynak kapısı bağlayıcı alt ağını tanımıyor; tünelden NFC/QR dışı API izolasyonsuz ulaşılır, QR/NFC 404 verir. `DualScreenApplication.cs:560-587`, `compos",
+  "severity": "Yüksek",
+  "original_severity": "Yüksek",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-688"
+ },
+ {
+  "id": "V1-RMD-599-B002",
+  "title": "Yardım çağrısı kaybolur (kalıcı kayıt yok, alıcı yoksa 200, bekleme süresi yeniden çağırmayı engeller). Kaynak: backend:B1, entegrasyon:E-05, frontend:F9, ux:B-",
+  "severity": "Orta",
+  "original_severity": "Yüksek",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-689"
+ },
+ {
+  "id": "V1-RMD-599-B003",
+  "title": "Müşteri ekranı eşleştirme, ekran iptali, `session/current`, `orders/active` için sunucu testi yok. Kaynak: api:B-04, test:T-01, T-02, T-03.",
+  "severity": "Orta",
+  "original_severity": "Yüksek",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B004",
+  "title": "Müşteri ekranı ağ/5xx/429 sonrası kendiliğinden toparlanmıyor. Kaynak: frontend:F1, F2.",
+  "severity": "Orta",
+  "original_severity": "Yüksek",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B005",
+  "title": "Pasifleştirilen personelin cihazı bildirim almaya devam ediyor (S6). Kaynak: mevzuat:5, guvenlik:G-06, operasyon:B10.",
+  "severity": "Orta",
+  "original_severity": "Yüksek",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B006",
+  "title": "Müşteri vergi kimliği için erişim/denetim izi yok, sunucu sabit Manager rolüyle çözüyor (S5). Kaynak: mevzuat:9, guvenlik:G-09.",
+  "severity": "Orta",
+  "original_severity": "Yüksek",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-692"
+ },
+ {
+  "id": "V1-RMD-599-B007",
+  "title": "Bildirim tabloları KVKK envanterinde ve anonimleştirmede yok (S1, S2, S3). Kaynak: mevzuat:1, 7.",
+  "severity": "Orta",
+  "original_severity": "Yüksek",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-692"
+ },
+ {
+  "id": "V1-RMD-599-B008",
+  "title": "WebPush abonelik adresi SSRF",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B009",
+  "title": "Push gönderimi sıralı ve istek yolunda",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B010",
+  "title": "Push istisna filtresi dar",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B011",
+  "title": "Push abonelik sayısı sınırsız, failure_count okunmuyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B012",
+  "title": "VAPID özel anahtarı düz metin, rotasyon yok (S4)",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B013",
+  "title": "Bildirim kanalları yalıtılmamış",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B014",
+  "title": "Housekeeping/saklama eksikliği (S1)",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-692"
+ },
+ {
+  "id": "V1-RMD-599-B015",
+  "title": "Ekran oturumu 12 saat mutlak",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B016",
+  "title": "Hub bağlantıları iptal/pasifleştirme sonrası açık kalıyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B017",
+  "title": "İkinci ekran eşleşince eski ekran yetkili kalıyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B018",
+  "title": "Tek çakışma kodu/mesajı ve eşleştirme hataları ayırt edilemiyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B019",
+  "title": "Hub yeniden bağlanma ~9 sn sonra bırakılıyor",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B020",
+  "title": "Snapshot yanıt sırası yarışı",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B021",
+  "title": "Veritabanı hata eşlemesi 500/503, /health/ready",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B022",
+  "title": "InvalidOperationException 409'a çevriliyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B023",
+  "title": "Fatura kapatma hatası yutuluyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-694"
+ },
+ {
+  "id": "V1-RMD-599-B024",
+  "title": "Hata kataloğu test boşlukları, hayatta kalan mutantlar",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B025",
+  "title": "Modül kenar testi 11 ad alanıyla sınırlı",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B026",
+  "title": "Kompozisyon testi dar",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B027",
+  "title": "Hub/push hata yolu testleri yok",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B028",
+  "title": "CustomerDisplay istemci testleri yalnız mutlu yol",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B029",
+  "title": "WaiterPwa push/yardım/sw.js testsiz",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B030",
+  "title": "Tünel statik sayfaları güvenlik başlıksız",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-688"
+ },
+ {
+  "id": "V1-RMD-599-B031",
+  "title": "Ekran koruyucu yükleme yetki filtresinden önce 25 MB okutuyor",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B032",
+  "title": "Yönetim/mutfak/fatura gruplarında hız sınırı yok",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B033",
+  "title": "Giriş hız sınırı tek kova",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B034",
+  "title": "qr-order hız sınırı istemci başlığına bağlı",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B035",
+  "title": "Terminal kimliğini istemci seçiyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B036",
+  "title": "Süper kullanıcı DB hesabı, root konteyner",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B037",
+  "title": "Uzak yedek işleri compose'ta çalışmaz",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B038",
+  "title": "restore.sh canlı DB'yi silebilir",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B039",
+  "title": "Terfi adımı connector'ı durdurmuyor",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B040",
+  "title": "PITR çıktısı kalıcı hacimde değil",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B041",
+  "title": "Geri yükleme provası 38 göçlük şemaya ait",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": "V20-DRL-001",
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B042",
+  "title": "CA, secret ve .env yedeksiz",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B043",
+  "title": "kvkk-retention servisi yok, silinen veri geri dönebilir (S7)",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-692"
+ },
+ {
+  "id": "V1-RMD-599-B044",
+  "title": "Ana anahtar ve Telegram anahtarı ortam değişkeninde",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B045",
+  "title": ".dockerignore .env/.git dışlamıyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B046",
+  "title": "Watchdog Caddy'yi atlıyor",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B047",
+  "title": "Göç dosyalarında CRLF/karışık satır sonu, sağlama toplamı ham bayt",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-698"
+ },
+ {
+  "id": "V1-RMD-599-B048",
+  "title": "Program.cs beş modül şemasına ham yazıyor",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B049",
+  "title": "ManagementSessionLookup identity'ye ham UPDATE",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B050",
+  "title": "DualScreen masa durumunu ham SQL ile yazıyor, 11 yer",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B051",
+  "title": "Kasa hareketi/kapanış yarışı",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-694"
+ },
+ {
+  "id": "V1-RMD-599-B052",
+  "title": "Aktif oturum ucu 5000 satır çekiyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-694"
+ },
+ {
+  "id": "V1-RMD-599-B053",
+  "title": "İkinci havuz bağlantısı",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-694"
+ },
+ {
+  "id": "V1-RMD-599-B054",
+  "title": "Ekran koruyucu ETag/boyut CHECK",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-698"
+ },
+ {
+  "id": "V1-RMD-599-B055",
+  "title": "Makbuz sorgusu indeksi",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-698"
+ },
+ {
+  "id": "V1-RMD-599-B056",
+  "title": "Sipariş satırı birleştirme imzası",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-694"
+ },
+ {
+  "id": "V1-RMD-599-B057",
+  "title": "Snapshot tutarlılığı ve modifiyer",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-694"
+ },
+ {
+  "id": "V1-RMD-599-B058",
+  "title": "Kart tahsilatı yer tutucu, bilinen V13-HUG-001",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": "V13-HUG-001",
+  "fix_task": "bilinen:V13-HUG-001"
+ },
+ {
+  "id": "V1-RMD-599-B059",
+  "title": "pushsubscriptionchange işleyicisi yok",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B060",
+  "title": "OrderItemReady yeniden bağlanınca tekrar oynatılmıyor",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B061",
+  "title": "OrderItemReady masa bilgisi yok, tüm cihazlara gidiyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B062",
+  "title": "Sabit bildirim tag'i",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B063",
+  "title": "Push açma akışı yönlendirmiyor, çıkışta abonelik siliniyor",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B064",
+  "title": "Elle işlerde aktör kaydı yok",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B065",
+  "title": "İstemci ham sunucu mesajı basıyor",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B066",
+  "title": "Ekran talimatı ile kasa etiketi uyuşmuyor",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B067",
+  "title": "Yardım uyarısı sessiz",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-689"
+ },
+ {
+  "id": "V1-RMD-599-B068",
+  "title": "Bekleyen hesap kasada sessiz",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B069",
+  "title": "Eşleştirme hatası diyalogda görünür mü belirsiz",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B070",
+  "title": "İptal onaysız, \"iptal edildi\" mesajı yanıltıcı",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B071",
+  "title": "Push upsert sahiplik devri",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B072",
+  "title": "notificationclick data.url yok sayıyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B073",
+  "title": "429'da Retry-After yok",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-689"
+ },
+ {
+  "id": "V1-RMD-599-B074",
+  "title": "Eşleştirme sayacı tutarsız",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B075",
+  "title": "/hubs/* tünel izolasyonu ve hız sınırı dışında",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-688"
+ },
+ {
+  "id": "V1-RMD-599-B076",
+  "title": "CSP/HSTS eksik (bilinen V1-RMD-335)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": "V1-RMD-335",
+  "fix_task": "bilinen:V1-RMD-335"
+ },
+ {
+  "id": "V1-RMD-599-B077",
+  "title": "DB bağlantısı TLS'siz",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B078",
+  "title": "Okuma uçları izin aramıyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B079",
+  "title": "Sağlık probe'u ex.Message yazıyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B080",
+  "title": "Online platform URL'sinde ana makine kısıtı yok",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B081",
+  "title": "\"Kart çekilmedi\" tek kişiyle kapanıyor (S8)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": "Semih-sorusu-S8",
+  "fix_task": "bilinen:Semih-sorusu-S8"
+ },
+ {
+  "id": "V1-RMD-599-B082",
+  "title": "TableId boş Guid",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-689"
+ },
+ {
+  "id": "V1-RMD-599-B083",
+  "title": "Catch-all 404/405",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B084",
+  "title": "Gövdesiz NotFound",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B085",
+  "title": "Manuel çözüm iki farklı kod",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B086",
+  "title": "Olmayan oturumda expected-cash 200",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-694"
+ },
+ {
+  "id": "V1-RMD-599-B087",
+  "title": "İstemci katalog imlecini izlemiyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B088",
+  "title": "terminalId istemciden isteniyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B089",
+  "title": "İngilizce sızıntı",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B090",
+  "title": "Ölü kod",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B091",
+  "title": "Sipariş no UTC",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B092",
+  "title": "ArgumentException 404'e çevriliyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B093",
+  "title": "Açılışta sync-over-async",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B094",
+  "title": "KITCHEN_STATION geç doğrulanıyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B095",
+  "title": "Bağlantı dizesi unescape yok",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B096",
+  "title": "Tutar biçimi kültüre bağlı",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B097",
+  "title": "Uygulama saati ile DB saati karışıyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B098",
+  "title": "Singleton'a yakalanan HttpClient",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-691"
+ },
+ {
+  "id": "V1-RMD-599-B099",
+  "title": "RefundIntentsModule kayıtsız (bilinen V13-HUG-003)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": "V13-HUG-003",
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B100",
+  "title": "Ölü TryAdd (bilinen V1-RMD-686)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": "V1-RMD-686",
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B101",
+  "title": "Modüller arası çift kayıt",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B102",
+  "title": "Fişte ödeme yöntemi \"Manual\"",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-694"
+ },
+ {
+  "id": "V1-RMD-599-B103",
+  "title": "--db-url parolası reddedilmiyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B104",
+  "title": "Giriş ucunda iş mantığı",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B105",
+  "title": "PostgresOrderRepository DI dışı",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-695"
+ },
+ {
+  "id": "V1-RMD-599-B106",
+  "title": "help_requests FK CASCADE",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-692"
+ },
+ {
+  "id": "V1-RMD-599-B107",
+  "title": "Göç kimliği 999 tavanı, sabit PhaseBMax",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B108",
+  "title": "Göç koşucusunda advisory lock yok",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B109",
+  "title": "Bekleyen devir notu tekilliği şemada yok",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-692"
+ },
+ {
+  "id": "V1-RMD-599-B110",
+  "title": "COLLATE \"C\" Türkçe sıralama",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-698"
+ },
+ {
+  "id": "V1-RMD-599-B111",
+  "title": "Done görevlerde kanıt/ileri-geri göç testi yok",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-698"
+ },
+ {
+  "id": "V1-RMD-599-B112",
+  "title": "Göç şeması küçük tutarsızlıkları",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-698"
+ },
+ {
+  "id": "V1-RMD-599-B113",
+  "title": "Housekeeping tek işlemde sınırsız silme",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-692"
+ },
+ {
+  "id": "V1-RMD-599-B114",
+  "title": "Müşteri ekranı her 5 sn UPDATE",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B115",
+  "title": "Cihaz kaldırmada silme yolu yok",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-692"
+ },
+ {
+  "id": "V1-RMD-599-B116",
+  "title": "HostDatabaseConnection.ToString() parolayı basar",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B117",
+  "title": "Sertifika PFX (parolasız, izin, yenileme)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-696"
+ },
+ {
+  "id": "V1-RMD-599-B118",
+  "title": "stop_grace_period yok",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B119",
+  "title": "Dev port bağlama ve Caddy önbellek",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B120",
+  "title": "archive_command atomik değil",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B121",
+  "title": "\"Paying\" durumu üretilmiyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B122",
+  "title": "Table-draft siparişleri müşteri ekranında yok (S9)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B123",
+  "title": "Sabit bekleme kullanan testler",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B124",
+  "title": "Lisans envanteri (bilinen V1-RMD-596)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": "V1-RMD-596",
+  "fix_task": "bilinen:V1-RMD-596"
+ },
+ {
+  "id": "V1-RMD-599-B125",
+  "title": "Npgsql doğrudan referansı yok",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-697"
+ },
+ {
+  "id": "V1-RMD-599-B126",
+  "title": "Kullanılmış eşleştirme kodu temizlenmiyor",
+  "severity": "Düşük",
+  "original_severity": "Orta",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B127",
+  "title": "Dokunma hedefi küçük",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B128",
+  "title": "Backdrop a11y uyarıları (oxlint)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B129",
+  "title": "\"2 dakika\" sabit metin",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-690"
+ },
+ {
+  "id": "V1-RMD-599-B130",
+  "title": "cash-movements replay tutar/yön denetlemiyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-694"
+ },
+ {
+  "id": "V1-RMD-599-B131",
+  "title": "dual-screen-pos-topology.md koda göre eski (dokuman:D-01..04)",
+  "severity": "Orta",
+  "original_severity": "Orta",
+  "kind": "doc_deviation",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B132",
+  "title": "api-contract-standard.md/hata kodu adı",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B133",
+  "title": "idempotency anahtarı gövdede (bilinen V1-RMD-430)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "DOĞRULANDI",
+  "known": "V1-RMD-430",
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B134",
+  "title": "iki hata zarfı biçimi",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-693"
+ },
+ {
+  "id": "V1-RMD-599-B135",
+  "title": "operasyon belgeleri",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "KISMEN",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B136",
+  "title": "güvenlik gerekçeli yanlış yorumlar",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-688"
+ },
+ {
+  "id": "V1-RMD-599-B137",
+  "title": "yorum–kod çelişkileri",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B138",
+  "title": "KVKK runbook (V1-RMD-673)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-692"
+ },
+ {
+  "id": "V1-RMD-599-B139",
+  "title": "CLI kullanım metni",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B140",
+  "title": "order.json 139≠197 (bilinen V1-RMD-597)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "DOĞRULANDI",
+  "known": "V1-RMD-597",
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B141",
+  "title": "eski veri/ayar belgeleri",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-B142",
+  "title": "bildirim matrisi (V15-NOT-001)",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "ÇÜRÜTÜLDÜ",
+  "known": null,
+  "fix_task": null
+ },
+ {
+  "id": "V1-RMD-599-B143",
+  "title": "ApplicationPermissions katalog dışı kodlar",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "doc_deviation",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-699"
+ },
+ {
+  "id": "V1-RMD-599-N001",
+  "title": "Yardım çağrısı türü listede yoksa ham İngilizce kod ekrana çıkıyor",
+  "severity": "Düşük",
+  "original_severity": "Düşük",
+  "kind": "bug",
+  "status": "DOĞRULANDI",
+  "known": null,
+  "fix_task": "V1-RMD-689"
+ }
+]

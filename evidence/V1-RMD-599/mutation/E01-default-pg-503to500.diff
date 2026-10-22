@@ -1,0 +1,4 @@
+609c609
+<             PostgresException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
+---
+>             PostgresException => (500, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),

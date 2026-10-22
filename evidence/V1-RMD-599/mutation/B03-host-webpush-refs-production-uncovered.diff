@@ -1,0 +1,4 @@
+18c18
+< {
+---
+> { private static readonly System.Type MutDep = typeof(ALKAROS.Production.StockEffects.InsufficientProductionStockException);

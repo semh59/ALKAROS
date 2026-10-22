@@ -1,0 +1,4 @@
+488c488
+<                 (StatusCodes.Status409Conflict, "ROLE_MANAGEMENT_CONFLICT",
+---
+>                 (StatusCodes.Status400BadRequest, "ROLE_MANAGEMENT_CONFLICT",

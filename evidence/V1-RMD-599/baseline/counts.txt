@@ -1,0 +1,6 @@
+src/Host dosyası (scope): 48
+göç dosyası: 5
+tests/Host+Architecture .cs: 168
+Host uç dosyası (MapGet/MapPost vb.) tüm Host: 61
+Host toplam .cs: 187
+komutlar: find/grep (bu dosya), git rev-parse HEAD

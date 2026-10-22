@@ -1,0 +1,4 @@
+19c19
+<     public IReadOnlyCollection<string> DependsOn => new[] { "Orders" };
+---
+>     public IReadOnlyCollection<string> DependsOn => new[] { "Orders", "Kitchen" };

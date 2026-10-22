@@ -1,0 +1,4 @@
+38c38
+<             if (area.Catches(exception) && area.Map(exception) is { } mapped)
+---
+>             if (area.Map(exception) is { } mapped)

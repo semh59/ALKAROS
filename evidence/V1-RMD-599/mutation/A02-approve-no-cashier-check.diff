@@ -1,0 +1,4 @@
+508c508
+<             await RequireCashierAsync(context, terminalId, store, cancellationToken);
+---
+>             await Task.CompletedTask;

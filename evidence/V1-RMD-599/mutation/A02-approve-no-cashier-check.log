@@ -1,0 +1,53 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.Measurements -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.Messaging -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Observability -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Observability\bin\Debug\net8.0\ALKAROS.Observability.dll
+  ALKAROS.Identity -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Privacy.RetentionExecution -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Settings -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Menu -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Menu\bin\Debug\net8.0\ALKAROS.Menu.dll
+  ALKAROS.Audit -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
+  ALKAROS.Tables -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Inventory -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.SensitiveData -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Reconciliation -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Recipes -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Recipes\bin\Debug\net8.0\ALKAROS.Recipes.dll
+  ALKAROS.Orders -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Privacy.Anonymization -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.Reporting -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Purchasing -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Purchasing\bin\Debug\net8.0\ALKAROS.Purchasing.dll
+  ALKAROS.Kitchen -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Production -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Production\bin\Debug\net8.0\ALKAROS.Production.dll
+  ALKAROS.Support -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Support\bin\Debug\net8.0\ALKAROS.Support.dll
+  ALKAROS.Billing -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Security -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Security\bin\Debug\net8.0\ALKAROS.Security.dll
+  ALKAROS.Catalog -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.CustomerData -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
+  ALKAROS.Operations -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Operations\bin\Debug\net8.0\ALKAROS.Operations.dll
+  ALKAROS.OnlineOrdering -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\OnlineOrdering\bin\Debug\net8.0\ALKAROS.OnlineOrdering.dll
+  ALKAROS.Invoicing -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
+  ALKAROS.QrOrdering -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\QrOrdering\bin\Debug\net8.0\ALKAROS.QrOrdering.dll
+  ALKAROS.Payments -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.QrRelay -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Integrations\QrRelay\bin\Debug\net8.0\ALKAROS.QrRelay.dll
+  ALKAROS.Cash -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+  ALKAROS.Billing.PaymentClosure -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Billing\PaymentClosure\bin\Debug\net8.0\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Payments.TenderComposition -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.CustomerAccounts -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Modules\CustomerAccounts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Host -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+  ALKAROS.Architecture.ApiConventions.Tests -> C:\Users\semih\AppData\Local\Temp\alk-mut-host\tests\Architecture\ApiConventions\bin\Debug\net8.0\ALKAROS.Architecture.ApiConventions.Tests.dll
+C:\Users\semih\AppData\Local\Temp\alk-mut-host\tests\Architecture\ApiConventions\bin\Debug\net8.0\ALKAROS.Architecture.ApiConventions.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:16.97]     ALKAROS.Architecture.ApiConventions.Tests.ApiRouteAuthorizationTests.EveryEndpointRefusesACallerWithoutASession [FAIL]
+  Başarısız ALKAROS.Architecture.ApiConventions.Tests.ApiRouteAuthorizationTests.EveryEndpointRefusesACallerWithoutASession [2 s]
+  Hata İletisi:
+   Endpoints that answered a caller without a session with something other than 401/403 (add the authorization check, or record a deliberately public endpoint with a reason):
+POST /api/v1/terminals/{terminalId:guid}/pairings/approve -> 400
+  Yığın İzleme:
+     at ALKAROS.Architecture.ApiConventions.Tests.ApiRouteAuthorizationTests.EveryEndpointRefusesACallerWithoutASession() in C:\Users\semih\AppData\Local\Temp\alk-mut-host\tests\Architecture\ApiConventions\ApiRouteAuthorizationTests.cs:line 110
+--- End of stack trace from previous location ---
+
+Başarısız! - Başarısız:     1, Başarılı:     4, Atlanan:     0, Toplam:     5, Süre: 26 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)

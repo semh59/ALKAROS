@@ -1,0 +1,4 @@
+196c196
+<             PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
+---
+>             PostgresException { SqlState: PostgresErrorCodes.CheckViolation } =>

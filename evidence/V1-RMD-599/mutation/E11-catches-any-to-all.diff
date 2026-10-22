@@ -1,0 +1,4 @@
+23c23
+<     public bool Catches(Exception exception) => CaughtTypes.Any(type => type.IsInstanceOfType(exception));
+---
+>     public bool Catches(Exception exception) => CaughtTypes.All(type => type.IsInstanceOfType(exception));

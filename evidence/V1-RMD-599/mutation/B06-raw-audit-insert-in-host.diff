@@ -1,0 +1,4 @@
+18c18
+< {
+---
+> { private const string MutSql = "INSERT INTO audit.audit_events (x) VALUES (1)";

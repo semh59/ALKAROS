@@ -1,0 +1,5 @@
+tests-Architecture-ApiConventions exit=0
+tests-Architecture-ModuleBoundaries exit=0
+tests-Host-Errors exit=0
+tests-Host-Observability exit=1
+tests-Host-MigrationComposition exit=0

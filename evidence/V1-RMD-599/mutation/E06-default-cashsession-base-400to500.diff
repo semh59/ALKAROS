@@ -1,0 +1,4 @@
+592c592
+<             CashSessionException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+---
+>             CashSessionException => (500, "VALIDATION_FAILED", "İstek doğrulanamadı."),
