@@ -46,7 +46,6 @@ describe("customer display freshness", () => {
   it.each([
     ["Idle", "idle", false],
     ["Active", "active", true],
-    ["Paying", "paying", true],
     ["Completed", "completed", false],
     ["Unavailable", "unavailable", false],
   ] as const)("maps %s to an explicit presentation without leaking money", (state, expected, money) => {

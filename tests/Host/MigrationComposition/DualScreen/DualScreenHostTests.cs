@@ -10,10 +10,15 @@ using ALKAROS.Host.Tests.Fixtures;
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Settings.ReservationStation;
 using ALKAROS.Settings.TypedSettings;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Connections.Features;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Npgsql;
@@ -993,6 +998,314 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
                 ("role_id", roleId),
                 ("code", code));
         }
+    }
+
+    private static async Task<string> LoginCashierAsync(HttpClient client, Guid terminalId, string forwardedFor)
+    {
+        using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent(new { terminalId, username = "cashier", password = Password }),
+        };
+        AddTrustedForwarding(login, forwardedFor);
+        using var response = await client.SendAsync(login);
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        return response.Headers.GetValues("Set-Cookie")
+            .Single(value => value.StartsWith(DualScreenApplication.CashierCookieName + "=", StringComparison.Ordinal))
+            .Split(';', 2)[0];
+    }
+
+    private static async Task<(Guid RequestId, string Secret, string Code, Guid DisplayId)> CreatePairingAsync(
+        HttpClient client, string forwardedFor, Guid? displayId = null)
+    {
+        var display = displayId ?? Guid.NewGuid();
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/customer-displays/pairing-requests")
+        {
+            Content = JsonContent(new { displayId = display }),
+        };
+        AddTrustedForwarding(request, forwardedFor);
+        using var response = await client.SendAsync(request);
+        Assert.Equal(HttpStatusCode.Created, response.StatusCode);
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.EndsWith(body.GetProperty("requestId").GetGuid().ToString("D"), response.Headers.Location!.ToString());
+        return (body.GetProperty("requestId").GetGuid(), body.GetProperty("secret").GetString()!,
+            body.GetProperty("code").GetString()!, display);
+    }
+
+    private static Task<HttpResponseMessage> ApproveAsync(HttpClient client, Guid terminalId, string cookie, string code, string forwardedFor)
+    {
+        var request = CreateForwardedRequest(HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/pairings/approve", forwardedFor, cookie);
+        request.Content = JsonContent(new { code });
+        return client.SendAsync(request);
+    }
+
+    private static Task<HttpResponseMessage> CompleteAsync(HttpClient client, Guid requestId, string secret, string forwardedFor)
+    {
+        var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/customer-displays/pairing-requests/{requestId:D}/complete")
+        {
+            Content = JsonContent(new { secret }),
+        };
+        AddTrustedForwarding(request, forwardedFor);
+        return client.SendAsync(request);
+    }
+
+    private static async Task<string> ErrorCodeAsync(HttpResponseMessage response)
+        => (await response.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString()!;
+
+    private static async Task<(Guid DisplayId, string Cookie)> PairDisplayAsync(
+        HttpClient client, Guid terminalId, string cashierCookie, string forwardedFor)
+    {
+        var pairing = await CreatePairingAsync(client, forwardedFor);
+        using var approved = await ApproveAsync(client, terminalId, cashierCookie, pairing.Code, forwardedFor);
+        Assert.Equal(HttpStatusCode.NoContent, approved.StatusCode);
+        using var completed = await CompleteAsync(client, pairing.RequestId, pairing.Secret, forwardedFor);
+        Assert.Equal(HttpStatusCode.OK, completed.StatusCode);
+        var cookie = completed.Headers.GetValues("Set-Cookie")
+            .Single(value => value.StartsWith(DualScreenApplication.DisplayCookieName + "=", StringComparison.Ordinal))
+            .Split(';', 2)[0];
+        return (pairing.DisplayId, cookie);
+    }
+
+    [Fact]
+    public async Task PairingTellsApartAWrongCodeAnUnapprovedRequestAndAUsedOne()
+    {
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(Guid.NewGuid());
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.40");
+        var pairing = await CreatePairingAsync(client, "198.51.100.40");
+
+        using var early = await CompleteAsync(client, pairing.RequestId, pairing.Secret, "198.51.100.40");
+        Assert.Equal(HttpStatusCode.Conflict, early.StatusCode);
+        Assert.Equal("PAIRING_NOT_APPROVED", await ErrorCodeAsync(early));
+
+        using var wrong = await ApproveAsync(client, terminalId, cashier, "ZZZZZZZZ", "198.51.100.40");
+        Assert.Equal(HttpStatusCode.NotFound, wrong.StatusCode);
+        Assert.Equal("PAIRING_CODE_INVALID", await ErrorCodeAsync(wrong));
+
+        using var approved = await ApproveAsync(client, terminalId, cashier, pairing.Code, "198.51.100.40");
+        Assert.Equal(HttpStatusCode.NoContent, approved.StatusCode);
+        using var done = await CompleteAsync(client, pairing.RequestId, pairing.Secret, "198.51.100.40");
+        Assert.Equal(HttpStatusCode.OK, done.StatusCode);
+
+        using var again = await CompleteAsync(client, pairing.RequestId, pairing.Secret, "198.51.100.40");
+        Assert.Equal(HttpStatusCode.Gone, again.StatusCode);
+        Assert.Equal("PAIRING_CONSUMED", await ErrorCodeAsync(again));
+    }
+
+    [Fact]
+    public async Task AnExpiredPairingRequestSaysItExpiredAndFiveWrongSecretsLockIt()
+    {
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var expired = await CreatePairingAsync(client, "198.51.100.41");
+        await ExecuteAsync(
+            "UPDATE customer_display.pairing_requests SET expires_at = now() - interval '1 minute' WHERE request_id = @id;",
+            ("id", expired.RequestId));
+        using var late = await CompleteAsync(client, expired.RequestId, expired.Secret, "198.51.100.41");
+        Assert.Equal(HttpStatusCode.Gone, late.StatusCode);
+        Assert.Equal("PAIRING_EXPIRED", await ErrorCodeAsync(late));
+
+        var guessed = await CreatePairingAsync(client, "198.51.100.41");
+        for (var attempt = 0; attempt < 5; attempt++)
+        {
+            using var wrong = await CompleteAsync(client, guessed.RequestId, "not-the-secret", "198.51.100.41");
+            Assert.Equal(HttpStatusCode.Unauthorized, wrong.StatusCode);
+        }
+
+        using var locked = await CompleteAsync(client, guessed.RequestId, guessed.Secret, "198.51.100.41");
+        Assert.Equal(HttpStatusCode.Locked, locked.StatusCode);
+        Assert.Equal("PAIRING_LOCKED", await ErrorCodeAsync(locked));
+    }
+
+    [Fact]
+    public async Task APairedDisplayShowsItsSessionToTheTillAndRevokingEndsIt()
+    {
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(Guid.NewGuid());
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.42");
+        var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cashier, "198.51.100.42");
+
+        using var otherTerminal = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/terminals/{Guid.NewGuid():D}/display-sessions/current", "198.51.100.42", cashier);
+        using var otherTerminalResponse = await client.SendAsync(otherTerminal);
+        Assert.Equal(HttpStatusCode.Unauthorized, otherTerminalResponse.StatusCode);
+
+        using var current = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/display-sessions/current", "198.51.100.42", cashier);
+        using var currentResponse = await client.SendAsync(current);
+        var session = await currentResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.True(session.GetProperty("paired").GetBoolean());
+        Assert.True(session.GetProperty("expiresAt").GetDateTimeOffset() > DateTimeOffset.UtcNow.AddHours(11));
+
+        using var snapshot = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/customer-displays/{displayId:D}/snapshot", "198.51.100.43", displayCookie);
+        using var snapshotResponse = await client.SendAsync(snapshot);
+        Assert.Equal(HttpStatusCode.OK, snapshotResponse.StatusCode);
+
+        using var revoke = CreateForwardedRequest(HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/display-sessions/revoke", "198.51.100.42", cashier);
+        using var revoked = await client.SendAsync(revoke);
+        Assert.Equal(HttpStatusCode.OK, revoked.StatusCode);
+        Assert.Equal(1, (await revoked.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("revoked").GetInt32());
+
+        using var afterRevoke = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/customer-displays/{displayId:D}/snapshot", "198.51.100.43", displayCookie);
+        using var afterRevokeResponse = await client.SendAsync(afterRevoke);
+        Assert.Equal(HttpStatusCode.Unauthorized, afterRevokeResponse.StatusCode);
+        using var currentAfter = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/display-sessions/current", "198.51.100.42", cashier);
+        using var currentAfterResponse = await client.SendAsync(currentAfter);
+        Assert.False((await currentAfterResponse.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("paired").GetBoolean());
+    }
+
+    [Fact]
+    public async Task PairingANewDisplayEndsTheOneThatWasPairedToTheSameTerminal()
+    {
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(Guid.NewGuid());
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.44");
+        var (firstId, firstCookie) = await PairDisplayAsync(client, terminalId, cashier, "198.51.100.44");
+        var (secondId, secondCookie) = await PairDisplayAsync(client, terminalId, cashier, "198.51.100.44");
+
+        using var oldScreen = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/customer-displays/{firstId:D}/snapshot", "198.51.100.45", firstCookie);
+        using var oldResponse = await client.SendAsync(oldScreen);
+        using var newScreen = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/customer-displays/{secondId:D}/snapshot", "198.51.100.46", secondCookie);
+        using var newResponse = await client.SendAsync(newScreen);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, oldResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, newResponse.StatusCode);
+    }
+
+    [Fact]
+    public async Task ASessionInUseSlidesItsEndAndASessionPolledAgainAtOnceIsNotWrittenAgain()
+    {
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(Guid.NewGuid());
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.47");
+        var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cashier, "198.51.100.47");
+        await ExecuteAsync(
+            "UPDATE customer_display.display_sessions SET expires_at = now() + interval '1 hour', last_seen_at = now() - interval '5 minutes' WHERE terminal_id = @id;",
+            ("id", terminalId));
+
+        using var first = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/customer-displays/{displayId:D}/snapshot", "198.51.100.48", displayCookie);
+        using var firstResponse = await client.SendAsync(first);
+        Assert.Equal(HttpStatusCode.OK, firstResponse.StatusCode);
+        Assert.True(await ScalarAsync<bool>(
+            "SELECT expires_at > now() + interval '11 hours' FROM customer_display.display_sessions WHERE terminal_id = @id;", ("id", terminalId)));
+        Assert.Contains(DualScreenApplication.DisplayCookieName, string.Join(';', firstResponse.Headers.GetValues("Set-Cookie")));
+
+        var seenAfterFirst = await ScalarAsync<DateTime>(
+            "SELECT last_seen_at FROM customer_display.display_sessions WHERE terminal_id = @id;", ("id", terminalId));
+        using var second = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/customer-displays/{displayId:D}/snapshot", "198.51.100.48", displayCookie);
+        using var secondResponse = await client.SendAsync(second);
+        Assert.Equal(HttpStatusCode.OK, secondResponse.StatusCode);
+        Assert.Equal(seenAfterFirst, await ScalarAsync<DateTime>(
+            "SELECT last_seen_at FROM customer_display.display_sessions WHERE terminal_id = @id;", ("id", terminalId)));
+    }
+
+    [Fact]
+    public async Task TheActiveOrderRouteNeedsTheCashierSessionBoundToThatTerminal()
+    {
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(Guid.NewGuid());
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.49");
+
+        using var anonymous = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/orders/active");
+        AddTrustedForwarding(anonymous, "198.51.100.49");
+        using var anonymousResponse = await client.SendAsync(anonymous);
+        using var other = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/terminals/{Guid.NewGuid():D}/orders/active", "198.51.100.49", cashier);
+        using var otherResponse = await client.SendAsync(other);
+        using var own = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/terminals/{terminalId:D}/orders/active", "198.51.100.49", cashier);
+        using var ownResponse = await client.SendAsync(own);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, anonymousResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.Unauthorized, otherResponse.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, ownResponse.StatusCode);
+        var idle = await ownResponse.Content.ReadFromJsonAsync<JsonElement>();
+        Assert.Equal("Idle", idle.GetProperty("state").GetString());
+        Assert.Equal(JsonValueKind.Null, idle.GetProperty("orderId").ValueKind);
+    }
+
+    private CustomerDisplayHub BuildDisplayHub(string? cookie, out FakeDisplayHubContext context, out FakeDisplayGroups groups)
+    {
+        var httpContext = new DefaultHttpContext();
+        if (cookie is not null)
+            httpContext.Request.Headers.Append("Cookie", cookie);
+        context = new FakeDisplayHubContext(httpContext);
+        groups = new FakeDisplayGroups();
+        return new CustomerDisplayHub(new DualScreenStore(_dataSource!)) { Context = context, Groups = groups };
+    }
+
+    [Fact]
+    public async Task TheCustomerDisplayHubAcceptsOnlyALivePairedDisplayIntoItsTerminalGroup()
+    {
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(Guid.NewGuid());
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.50");
+        var (_, displayCookie) = await PairDisplayAsync(client, terminalId, cashier, "198.51.100.50");
+
+        var anonymous = BuildDisplayHub(null, out var anonymousContext, out var anonymousGroups);
+        await anonymous.OnConnectedAsync();
+        Assert.True(anonymousContext.Aborted);
+        Assert.Empty(anonymousGroups.Memberships);
+
+        var cashierOnly = BuildDisplayHub(cashier, out var cashierContext, out _);
+        await cashierOnly.OnConnectedAsync();
+        Assert.True(cashierContext.Aborted);
+
+        var paired = BuildDisplayHub(displayCookie, out var pairedContext, out var pairedGroups);
+        await paired.OnConnectedAsync();
+        Assert.False(pairedContext.Aborted);
+        Assert.Contains((pairedContext.ConnectionId, DualScreenApplication.TerminalGroup(terminalId)), pairedGroups.Memberships);
+
+        await ExecuteAsync("UPDATE customer_display.display_sessions SET revoked_at = now() WHERE terminal_id = @id;", ("id", terminalId));
+        var revoked = BuildDisplayHub(displayCookie, out var revokedContext, out var revokedGroups);
+        await revoked.OnConnectedAsync();
+        Assert.True(revokedContext.Aborted);
+        Assert.Empty(revokedGroups.Memberships);
+    }
+
+    private sealed class FakeDisplayHubContext : HubCallerContext
+    {
+        private readonly FeatureCollection _features = new();
+
+        public FakeDisplayHubContext(HttpContext httpContext)
+            => _features.Set<IHttpContextFeature>(new HttpContextFeature(httpContext));
+
+        public bool Aborted { get; private set; }
+
+        public override string ConnectionId { get; } = Guid.NewGuid().ToString("N");
+        public override string? UserIdentifier => null;
+        public override ClaimsPrincipal? User => null;
+        public override IDictionary<object, object?> Items { get; } = new Dictionary<object, object?>();
+        public override IFeatureCollection Features => _features;
+        public override CancellationToken ConnectionAborted => CancellationToken.None;
+
+        public override void Abort() => Aborted = true;
+
+        private sealed class HttpContextFeature(HttpContext httpContext) : IHttpContextFeature
+        {
+            public HttpContext? HttpContext { get; set; } = httpContext;
+        }
+    }
+
+    private sealed class FakeDisplayGroups : IGroupManager
+    {
+        public List<(string ConnectionId, string GroupName)> Memberships { get; } = [];
+
+        public Task AddToGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)
+        {
+            Memberships.Add((connectionId, groupName));
+            return Task.CompletedTask;
+        }
+
+        public Task RemoveFromGroupAsync(string connectionId, string groupName, CancellationToken cancellationToken = default)
+            => Task.CompletedTask;
     }
 
     private async Task<WebApplication> StartAsync()

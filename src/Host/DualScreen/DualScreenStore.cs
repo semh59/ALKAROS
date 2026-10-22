@@ -16,7 +16,10 @@ public sealed partial class DualScreenStore
     private const string CodeAlphabet = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private const int MaximumCatalogCursorLength = 1024;
     private static readonly TimeSpan PairingLifetime = TimeSpan.FromMinutes(2);
+    // Sliding: every authenticated use pushes the end out again, so a screen that stays in use is never
+    // dropped mid-service; an unused one still expires.
     private static readonly TimeSpan DisplaySessionLifetime = TimeSpan.FromHours(12);
+    private static readonly TimeSpan DisplaySessionRefreshInterval = TimeSpan.FromMinutes(1);
     private readonly NpgsqlDataSource _dataSource;
     private readonly PostgresOrderRepository _orderRepository;
 
@@ -124,18 +127,34 @@ public sealed partial class DualScreenStore
         if (string.IsNullOrWhiteSpace(rawToken))
             return null;
 
+        // The screen polls every few seconds; writing on each call would turn one open display into a steady
+        // stream of updates, so the row is only touched (and its end moved) once per refresh interval.
         await using var command = _dataSource.CreateCommand(
             """
-            UPDATE customer_display.display_sessions
-            SET last_seen_at = now()
+            WITH touched AS (
+                UPDATE customer_display.display_sessions
+                SET last_seen_at = now(), expires_at = now() + @lifetime
+                WHERE token_hash = @token_hash
+                  AND revoked_at IS NULL
+                  AND expires_at > now()
+                  AND (last_seen_at IS NULL OR last_seen_at <= now() - @refresh)
+                  AND (@display_id IS NULL OR display_id = @display_id)
+                RETURNING session_id, display_id, terminal_id, expires_at
+            )
+            SELECT session_id, display_id, terminal_id, expires_at FROM touched
+            UNION ALL
+            SELECT session_id, display_id, terminal_id, expires_at
+            FROM customer_display.display_sessions
             WHERE token_hash = @token_hash
               AND revoked_at IS NULL
               AND expires_at > now()
-              AND (@display_id IS NULL OR display_id = @display_id)
-            RETURNING session_id, display_id, terminal_id, expires_at;
+              AND last_seen_at > now() - @refresh
+              AND (@display_id IS NULL OR display_id = @display_id);
             """);
         command.Parameters.AddWithValue("token_hash", DualScreenToken.Hash(rawToken));
         command.Parameters.Add("display_id", NpgsqlDbType.Uuid).Value = requiredDisplayId ?? (object)DBNull.Value;
+        command.Parameters.Add("lifetime", NpgsqlDbType.Interval).Value = DisplaySessionLifetime;
+        command.Parameters.Add("refresh", NpgsqlDbType.Interval).Value = DisplaySessionRefreshInterval;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         if (!await reader.ReadAsync(cancellationToken))
             return null;

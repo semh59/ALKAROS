@@ -94,3 +94,27 @@ describe("api.placeNfcOrder retry", () => {
     expect(submittedIds).toEqual(["sub-stable", "sub-stable"]);
   });
 });
+
+describe("api.catalog paging", () => {
+  afterEach(() => {
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("follows the Host's next-cursor header until the catalog is complete", async () => {
+    const seen: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      seen.push(path);
+      if (path.endsWith("/catalog")) {
+        return new Response(JSON.stringify([{ productId: "p1" }]), { status: 200, headers: { "Content-Type": "application/json", "X-Next-Cursor": "c 1" } });
+      }
+      return new Response(JSON.stringify([{ productId: "p2" }]), { status: 200, headers: { "Content-Type": "application/json" } });
+    }));
+
+    const products = await api.catalog("t-1");
+
+    expect(products.map((product) => (product as unknown as { productId: string }).productId)).toEqual(["p1", "p2"]);
+    expect(seen).toEqual(["/api/v1/terminals/t-1/catalog", "/api/v1/terminals/t-1/catalog?cursor=c%201"]);
+  });
+});

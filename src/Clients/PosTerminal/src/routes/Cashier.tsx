@@ -9,7 +9,7 @@ import {
 } from "react";
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
 import { ApiError, api, registerSessionExpiredHandler } from "../api";
-import type { CatalogProduct, DisplaySnapshot } from "../contracts";
+import type { CatalogProduct, DisplaySessionStatus, DisplaySnapshot } from "../contracts";
 import { isPlainClick, useRouter } from "../router";
 import { navLabels, stateText } from "../strings";
 import { formatMoney, formatQuantity } from "../format";
@@ -89,6 +89,8 @@ export function Cashier() {
   const [activeCategory, setActiveCategory] = useState("ALL");
   const [backendStatus, setBackendStatus] = useState<BackendStatus>("checking");
   const [pairingOpen, setPairingOpen] = useState(false);
+  const [displaySession, setDisplaySession] = useState<DisplaySessionStatus | null>(null);
+  const [confirmRevoke, setConfirmRevoke] = useState(false);
   const [helpAlerts, setHelpAlerts] = useState<HelpAlert[]>([]);
   // V1-RMD-286: 'ok' | 'reconnecting' (was connected, link dropped) | 'missed'
   // (link is back but calls sent while it was down cannot be recovered).
@@ -286,7 +288,40 @@ export function Cashier() {
     return () => pairingTrigger.current?.focus();
   }, [pairingOpen]);
 
-  const closePairing = () => setPairingOpen(false);
+  // The dialog shows whether a screen is paired and when that pairing ends, so a session that is about to
+  // run out is not discovered in front of a customer.
+  useEffect(() => {
+    if (!pairingOpen) return;
+    let current = true;
+    setDisplaySession(null);
+    api.displaySession(terminalId).then((status) => { if (current) setDisplaySession(status); }).catch(() => undefined);
+    return () => { current = false; };
+  }, [pairingOpen, terminalId, notice]);
+
+  const closePairing = () => {
+    setPairingOpen(false);
+    setPairingCode("");
+    setConfirmRevoke(false);
+    setError("");
+  };
+
+  const revokeDisplay = async () => {
+    setBusy(true);
+    setError("");
+    setNotice("");
+    try {
+      const { revoked } = await api.revokeDisplay(terminalId);
+      setFeedbackKind("success");
+      setNotice(revoked > 0 ? `${revoked} ekranın yetkisi kaldırıldı.` : "Bağlı müşteri ekranı yoktu.");
+      closePairing();
+    } catch (reason) {
+      setFeedbackKind("error");
+      setError(reason instanceof ApiError ? reason.message : "Ekran yetkisi kaldırılamadı.");
+      setConfirmRevoke(false);
+    } finally {
+      setBusy(false);
+    }
+  };
 
   const trapPairingFocus = (event: ReactKeyboardEvent<HTMLDivElement>) => {
     if (event.key === "Escape") {
@@ -777,6 +812,14 @@ export function Cashier() {
               <button data-telemetry-id="b.routes.cashier.21" className="dialog-close" onClick={closePairing} aria-label="Eşleştirme penceresini kapat">×</button>
             </div>
             <p id="pairing-description">Müşteri ekranındaki 8 karakterli kodu girin veya mevcut ekran yetkisini kaldırın.</p>
+            <p className="pairing-session" role="status">
+              {displaySession === null
+                ? "Bağlı ekran bilgisi alınıyor…"
+                : displaySession.paired && displaySession.expiresAt
+                  ? `Bağlı ekran var; bağlantı ${new Date(displaySession.expiresAt).toLocaleString("tr-TR")} tarihine kadar geçerli (kullanıldıkça uzar).`
+                  : "Şu an bağlı müşteri ekranı yok."}
+            </p>
+            {error && <div className="alert error" role="alert">{error}</div>}
             <label>
               Eşleştirme kodu
               <input
@@ -802,14 +845,19 @@ export function Cashier() {
             <div className="dialog-danger-zone">
               <strong>Bağlantıyı sonlandır</strong>
               <span>Yetki kaldırıldığında müşteri ekranı yeniden kod ister.</span>
-              <button data-telemetry-id="b.routes.cashier.24"
-                className="danger-text"
-                disabled={busy}
-                onClick={() => void execute(
-                  () => api.revokeDisplay(terminalId),
-                  "Ekran yetkisi kaldırıldı.",
-                ).then((completed) => { if (completed) closePairing(); })}
-              >Aktif ekran yetkisini kaldır</button>
+              {confirmRevoke ? (
+                <div className="dialog-actions">
+                  <span>Müşteri ekranı kod isteyecek. Emin misiniz?</span>
+                  <button data-telemetry-id="b.routes.cashier.25" className="secondary" disabled={busy} onClick={() => setConfirmRevoke(false)}>Vazgeç</button>
+                  <button data-telemetry-id="b.routes.cashier.26" className="danger-text" disabled={busy} onClick={() => void revokeDisplay()}>Evet, yetkiyi kaldır</button>
+                </div>
+              ) : (
+                <button data-telemetry-id="b.routes.cashier.24"
+                  className="danger-text"
+                  disabled={busy}
+                  onClick={() => setConfirmRevoke(true)}
+                >Aktif ekran yetkisini kaldır</button>
+              )}
             </div>
           </div>
         </div>

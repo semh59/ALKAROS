@@ -2,6 +2,7 @@ using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using Microsoft.AspNetCore.Http;
 using ALKAROS.Identity.DeviceSessions;
 using Npgsql;
 using NpgsqlTypes;
@@ -87,7 +88,9 @@ public sealed partial class DualScreenStore
         command.Parameters.AddWithValue("terminal_id", terminalId);
         command.Parameters.AddWithValue("code_hash", DualScreenToken.Hash(normalized));
         if (await command.ExecuteScalarAsync(cancellationToken) is null)
-            throw new DualScreenNotFoundException("Pairing code is invalid or expired.");
+            throw new DualScreenPairingException(
+                DualScreenPairingException.CodeInvalid, StatusCodes.Status404NotFound,
+                "Eşleştirme kodu yanlış, süresi dolmuş ya da daha önce kullanılmış.");
     }
 
     public async Task<(PairingCompleted Result, string RawToken)> CompletePairingAsync(
@@ -134,8 +137,22 @@ public sealed partial class DualScreenStore
             throw new DualScreenUnauthorizedException("Pairing secret is invalid.");
         }
 
-        if (row.ExpiresAt <= DateTimeOffset.UtcNow || row.ApprovedAt is null || row.ConsumedAt is not null || row.TerminalId is null)
-            throw new DualScreenConflictException("Pairing request is not approved, has expired, or was consumed.");
+        if (row.FailedAttempts >= 5)
+            throw new DualScreenPairingException(
+                DualScreenPairingException.Locked, StatusCodes.Status423Locked,
+                "Bu eşleştirme isteği çok sayıda hatalı denemeyle kilitlendi. Ekranda yeni kod isteyin.");
+        if (row.ConsumedAt is not null)
+            throw new DualScreenPairingException(
+                DualScreenPairingException.Consumed, StatusCodes.Status410Gone,
+                "Bu eşleştirme kodu daha önce kullanıldı. Ekranda yeni kod isteyin.");
+        if (row.ExpiresAt <= DateTimeOffset.UtcNow)
+            throw new DualScreenPairingException(
+                DualScreenPairingException.Expired, StatusCodes.Status410Gone,
+                "Eşleştirme kodunun süresi doldu. Ekranda yeni kod isteyin.");
+        if (row.ApprovedAt is null || row.TerminalId is null)
+            throw new DualScreenPairingException(
+                DualScreenPairingException.NotApproved, StatusCodes.Status409Conflict,
+                "Eşleştirme henüz kasadan onaylanmadı.");
 
         var (rawToken, tokenHash) = DualScreenToken.Create("alkaros-display-session:");
         var sessionId = Guid.NewGuid();
@@ -145,10 +162,11 @@ public sealed partial class DualScreenStore
             """
             UPDATE customer_display.display_sessions
             SET revoked_at = now()
-            WHERE display_id = @display_id AND revoked_at IS NULL;
+            WHERE (display_id = @display_id OR terminal_id = @terminal_id) AND revoked_at IS NULL;
             """))
         {
             revoke.Parameters.AddWithValue("display_id", row.DisplayId);
+            revoke.Parameters.AddWithValue("terminal_id", row.TerminalId.Value);
             await revoke.ExecuteNonQueryAsync(cancellationToken);
         }
 
@@ -278,6 +296,23 @@ public sealed partial class DualScreenStore
             displayId, terminalId, orderId, order.Revision, state, order.Status == "Draft", order.Number, lines,
             order.Subtotal, order.Discount, order.Tax, order.Total, order.Currency,
             DateTimeOffset.UtcNow, message);
+    }
+
+    /// <summary>When the terminal's live display session ends, or null without one: lets the till show it.</summary>
+    public async Task<DateTimeOffset?> GetDisplaySessionExpiryAsync(Guid terminalId, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT expires_at
+            FROM customer_display.display_sessions
+            WHERE terminal_id = @terminal_id AND revoked_at IS NULL AND expires_at > now()
+            ORDER BY created_at DESC
+            LIMIT 1;
+            """);
+        command.Parameters.AddWithValue("terminal_id", terminalId);
+        return await command.ExecuteScalarAsync(cancellationToken) is DateTime expiresAt
+            ? new DateTimeOffset(DateTime.SpecifyKind(expiresAt, DateTimeKind.Utc))
+            : null;
     }
 
     public async Task<Guid?> GetActiveDisplayIdAsync(Guid terminalId, CancellationToken cancellationToken)

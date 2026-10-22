@@ -1,0 +1,60 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/routes/CustomerDisplay.test.tsx (4 tests | 3 failed) 297ms
+     × renders an active order's lines and total, authoritative from the snapshot 57ms
+     × conceals a completed order's line detail after the thank-you screen, showing the welcome card instead 16ms
+     × has no critical or serious axe violations on the active order screen 16ms
+ ❯ src/stale.test.ts (9 tests | 1 failed) 3628ms
+     × maps Paying to an explicit presentation without leaking money 11ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/stale.test.ts > customer display freshness > maps Paying to an explicit presentation without leaking money
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/stale.test.ts:55:40
+     53|     const presentation = displayPresentation({ ...snapshot, state });
+     54|     expect(presentation).toBe(expected);
+     55|     expect(exposesMoney(presentation)).toBe(money);
+       |                                        ^
+     56|   });
+     57| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > renders an active order's lines and total, authoritative from the snapshot
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > conceals a completed order's line detail after the thank-you screen, showing the welcome card instead
+ FAIL  src/routes/CustomerDisplay.test.tsx > CustomerDisplay > has no critical or serious axe violations on the active order screen
+TypeError: connection.onreconnected is not a function
+ ❯ src/routes/CustomerDisplay.tsx:145:16
+    143|     connection.on("SnapshotChanged", () => void refresh());
+    144|     connection.onreconnecting(() => setFreshness((previous) => ({ ...p…
+    145|     connection.onreconnected(() => void refresh());
+       |                ^
+    146|     connection.onclose(() => {
+    147|       if (disposed) return;
+ ❯ Object.react_stack_bottom_frame node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:25989:20
+ ❯ runWithFiberInDEV node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:874:13
+ ❯ commitHookEffectListMount node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:13249:29
+ ❯ commitHookPassiveMountEffects node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:13336:11
+ ❯ commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:15484:13
+ ❯ recursivelyTraversePassiveMountEffects node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:15439:11
+ ❯ commitPassiveMountOnFiber node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:15519:11
+ ❯ flushPassiveEffects node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:18432:9
+ ❯ node_modules/.pnpm/react-dom@19.2.8_react@19.2.8/node_modules/react-dom/cjs/react-dom-client.development.js:17923:15
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  4 failed | 9 passed (13)
+   Start at  20:57:35
+   Duration  19.00s (transform 2.47s, setup 0ms, import 1.62s, tests 3.92s, environment 27.17s)
+

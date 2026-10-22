@@ -493,10 +493,10 @@ public static partial class DualScreenApplication
             PairingRequestCreate request,
             DualScreenStore store,
             CancellationToken cancellationToken) =>
-            Results.Created(
-                $"/api/v1/customer-displays/pairing-requests/{request.DisplayId:D}",
-            await store.CreatePairingRequestAsync(request.DisplayId, cancellationToken)))
-            .RequireRateLimiting("pairing-create");
+        {
+            var created = await store.CreatePairingRequestAsync(request.DisplayId, cancellationToken);
+            return Results.Created($"/api/v1/customer-displays/pairing-requests/{created.RequestId:D}", created);
+        }).RequireRateLimiting("pairing-create");
 
         app.MapPost("/api/v1/terminals/{terminalId:guid}/pairings/approve", async (
             Guid terminalId,
@@ -506,7 +506,15 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             await RequireCashierAsync(context, terminalId, store, cancellationToken);
-            await store.ApprovePairingAsync(terminalId, request.Code, cancellationToken);
+            try
+            {
+                await store.ApprovePairingAsync(terminalId, request.Code, cancellationToken);
+            }
+            catch (DualScreenPairingException failure)
+            {
+                return PairingFailureResult(failure);
+            }
+
             return Results.NoContent();
         }).RequireRateLimiting("pairing-approve");
 
@@ -517,9 +525,16 @@ public static partial class DualScreenApplication
             DualScreenStore store,
             CancellationToken cancellationToken) =>
         {
-            var completion = await store.CompletePairingAsync(requestId, request.Secret, cancellationToken);
-            AppendCookie(context, DisplayCookieName, completion.RawToken, completion.Result.ExpiresAt);
-            return Results.Ok(completion.Result);
+            try
+            {
+                var completion = await store.CompletePairingAsync(requestId, request.Secret, cancellationToken);
+                AppendCookie(context, DisplayCookieName, completion.RawToken, completion.Result.ExpiresAt);
+                return Results.Ok(completion.Result);
+            }
+            catch (DualScreenPairingException failure)
+            {
+                return PairingFailureResult(failure);
+            }
         }).RequireRateLimiting("pairing-complete");
 
         app.MapGet("/api/v1/customer-displays/{displayId:guid}/snapshot", async (
@@ -529,8 +544,21 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             var principal = await RequireDisplayAsync(context, displayId, store, cancellationToken);
+            // The server end of the session slides with use; the browser's copy of the cookie slides with it.
+            AppendCookie(context, DisplayCookieName, context.Request.Cookies[DisplayCookieName]!, principal.ExpiresAt);
             return Results.Ok(await store.GetSnapshotAsync(displayId, principal.TerminalId, cancellationToken));
         }).RequireRateLimiting("display-read");
+
+        app.MapGet("/api/v1/terminals/{terminalId:guid}/display-sessions/current", async (
+            Guid terminalId,
+            HttpContext context,
+            DualScreenStore store,
+            CancellationToken cancellationToken) =>
+        {
+            await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            var expiresAt = await store.GetDisplaySessionExpiryAsync(terminalId, cancellationToken);
+            return Results.Ok(new { paired = expiresAt is not null, expiresAt });
+        }).RequireRateLimiting("terminal-read");
 
         app.MapPost("/api/v1/terminals/{terminalId:guid}/display-sessions/revoke", async (
             Guid terminalId,
@@ -543,6 +571,11 @@ public static partial class DualScreenApplication
             return Results.Ok(new { revoked = count });
         }).RequireRateLimiting("terminal-write");
     }
+
+    private static IResult PairingFailureResult(DualScreenPairingException failure)
+        => Results.Json(
+            new { error = new { code = failure.Code, message = failure.Message } },
+            statusCode: failure.StatusCode);
 
     private static async Task<CashierPrincipal> RequireCashierPermissionAsync(
         HttpContext context,

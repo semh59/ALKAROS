@@ -155,7 +155,7 @@ export interface DisplaySnapshot {
   terminalId: string;
   orderId: string | null;
   revision: number;
-  state: "Idle" | "Active" | "Paying" | "Completed" | "Unavailable";
+  state: "Idle" | "Active" | "Completed" | "Unavailable";
   editable: boolean;
   orderNumber: string | null;
   lines: DisplayLine[];
@@ -174,6 +174,12 @@ export interface PairingCreated {
   secret: string;
   code: string;
   expiresAt: string;
+}
+
+// The till's view of its customer display: whether one is paired and when that pairing ends.
+export interface DisplaySessionStatus {
+  paired: boolean;
+  expiresAt: string | null;
 }
 
 export interface PairingCompleted {

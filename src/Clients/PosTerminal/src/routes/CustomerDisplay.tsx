@@ -9,6 +9,11 @@ import { savedId } from "../storage";
 
 type DisplaySession = "checking" | "pairing" | "ready" | "error";
 
+// A pairing request the Host will never accept again: the display must ask for a fresh code on its own.
+const endedPairingCodes = new Set(["PAIRING_EXPIRED", "PAIRING_CONSUMED", "PAIRING_LOCKED"]);
+
+const retryDelay = (attempt: number) => Math.min(15_000, 1_000 * 2 ** Math.min(attempt, 4));
+
 export function CustomerDisplay() {
   const [displayId] = useState(() => savedId("alkaros.customer-display-id"));
   const [pairing, setPairing] = useState<PairingCreated | null>(null);
@@ -24,6 +29,9 @@ export function CustomerDisplay() {
   const initialized = useRef(false);
   const pairingRequestInFlight = useRef(false);
   const hasSuccessfulSnapshot = useRef(false);
+  const requestSequence = useRef(0);
+  const appliedSequence = useRef(0);
+  const [failedAttempts, setFailedAttempts] = useState(0);
 
   const beginPairing = useCallback(async () => {
     if (pairingRequestInFlight.current) return;
@@ -42,23 +50,38 @@ export function CustomerDisplay() {
   }, [displayId]);
 
   const refresh = useCallback(async () => {
+    // Polling, the hub and the online event can overlap; an answer older than one already shown is dropped.
+    const sequence = ++requestSequence.current;
     try {
       const snapshot = await api.snapshot(displayId);
+      if (sequence < appliedSequence.current) return;
+      appliedSequence.current = sequence;
       hasSuccessfulSnapshot.current = true;
+      setFailedAttempts(0);
       setFreshness(afterSnapshot(snapshot, Date.now()));
       setPairing(null);
       setPairingError("");
       setDisplaySession("ready");
     } catch (reason) {
+      if (sequence < appliedSequence.current) return;
       setFreshness((previous) => afterFailure(previous, Date.now()));
       if (reason instanceof ApiError && reason.status === 401) {
         await beginPairing();
       } else if (!hasSuccessfulSnapshot.current) {
         setPairingError(reason instanceof ApiError ? reason.message : "Ekran bilgisi alınamadı.");
+        setFailedAttempts((count) => count + 1);
         setDisplaySession("error");
       }
     }
   }, [beginPairing, displayId]);
+
+  // A network drop, a 5xx or a 429 on the first load used to leave the error screen up until someone touched
+  // it; the screen now tries again by itself, backing off up to 15 seconds.
+  useEffect(() => {
+    if (displaySession !== "error") return;
+    const timer = window.setTimeout(() => void refresh(), retryDelay(Math.max(0, failedAttempts - 1)));
+    return () => window.clearTimeout(timer);
+  }, [displaySession, failedAttempts, refresh]);
 
   useEffect(() => {
     if (initialized.current) return;
@@ -75,14 +98,20 @@ export function CustomerDisplay() {
           return refresh();
         })
         .catch((reason: unknown) => {
-          if (reason instanceof ApiError && reason.status === 409) return;
+          // Not approved yet, a dropped connection, a 429 or a 5xx: keep polling the same request.
+          if (!(reason instanceof ApiError) || reason.status === 409 || reason.status === 429 || reason.status >= 500 || reason.status === 0) return;
+          // The request is over (expired, used, locked, unknown): ask for a new code instead of an error screen.
+          if (endedPairingCodes.has(reason.code) || reason.status === 404 || reason.status === 401) {
+            void beginPairing();
+            return;
+          }
           setPairing(null);
-          setPairingError(reason instanceof ApiError ? reason.message : "Eşleştirme tamamlanamadı.");
+          setPairingError(reason.message);
           setDisplaySession("error");
         });
     }, 2_000);
     return () => window.clearInterval(timer);
-  }, [displaySession, pairing, refresh]);
+  }, [beginPairing, displaySession, pairing, refresh]);
 
   useEffect(() => {
     if (!pairing) return;
@@ -94,16 +123,36 @@ export function CustomerDisplay() {
   useEffect(() => {
     if (displaySession !== "ready") return;
     const polling = window.setInterval(() => void refresh(), 5_000);
+    // The reconnect policy never gives up, and a connection that still ends (or never starts) is started
+    // again with the same backoff, so live updates return without a page reload.
     const connection = new HubConnectionBuilder()
       .withUrl("/hubs/customer-display")
-      .withAutomaticReconnect([0, 1_000, 3_000, 5_000])
+      .withAutomaticReconnect({ nextRetryDelayInMilliseconds: (context) => retryDelay(context.previousRetryCount) })
       .configureLogging(LogLevel.Warning)
       .build();
+    let disposed = false;
+    let attempt = 0;
+    let restartTimer: number | undefined;
+    const start = () => {
+      connection.start().then(() => { attempt = 0; }).catch(() => {
+        if (disposed) return;
+        setFreshness((previous) => ({ ...previous, connectionLost: true }));
+        restartTimer = window.setTimeout(start, retryDelay(attempt++));
+      });
+    };
     connection.on("SnapshotChanged", () => void refresh());
     connection.onreconnecting(() => setFreshness((previous) => ({ ...previous, connectionLost: true })));
-    void connection.start().catch(() => setFreshness((previous) => ({ ...previous, connectionLost: true })));
+    connection.onreconnected(() => void refresh());
+    connection.onclose(() => {
+      if (disposed) return;
+      setFreshness((previous) => ({ ...previous, connectionLost: true }));
+      restartTimer = window.setTimeout(start, retryDelay(attempt++));
+    });
+    start();
     return () => {
+      disposed = true;
       window.clearInterval(polling);
+      window.clearTimeout(restartTimer);
       void connection.stop();
     };
   }, [displaySession, refresh]);
@@ -190,9 +239,9 @@ export function CustomerDisplay() {
           <h1>Müşteri ekranını<br />kasaya bağlayın</h1>
           {pairing ? (
             <>
-              <p>Bu kodu kasa ekranındaki “Müşteri ekranı bağlantısı” alanına girin.</p>
+              <p>Bu kodu kasadaki “Ekranı eşleştir” düğmesiyle açılan pencereye girin.</p>
               <div className="pairing-code">{pairing.code}</div>
-              <small>Kod iki dakika sonra otomatik olarak yenilenir.</small>
+              <small>Kod {Math.max(1, Math.round((new Date(pairing.expiresAt).getTime() - Date.now()) / 60_000))} dakika sonra otomatik olarak yenilenir.</small>
             </>
           ) : <><span className="loading-spinner" aria-hidden="true" /><p>Güvenli eşleştirme kodu hazırlanıyor…</p></>}
         </section>
@@ -273,10 +322,9 @@ export function CustomerDisplay() {
     );
   }
 
-  const paying = presentation === "paying";
   const submitted = presentation === "active" && !snapshot.editable;
   return (
-    <main className={`display-shell active-display ${paying ? "paying-display" : ""}`}>
+    <main className="display-shell active-display">
       {freshness.connectionLost && <ConnectionBanner />}
       <header className="display-header">
         <DisplayBrand />
@@ -284,8 +332,8 @@ export function CustomerDisplay() {
           <span>Sipariş</span>
           <strong>{snapshot.orderNumber}</strong>
         </div>
-        <div className={`display-phase ${paying ? "paying" : submitted ? "submitted" : "active"}`} role="status">
-          {paying ? "Ödeme işlemi sürüyor" : submitted ? "Sipariş kasadan gönderildi" : "Sipariş güncelleniyor"}
+        <div className={`display-phase ${submitted ? "submitted" : "active"}`} role="status">
+          {submitted ? "Sipariş kasadan gönderildi" : "Sipariş güncelleniyor"}
         </div>
       </header>
       <section className="display-order-grid">
@@ -306,7 +354,7 @@ export function CustomerDisplay() {
           </div>
         </div>
         <aside className="display-total-card">
-          <span className="display-kicker">{paying ? "ÖDEMEDEKİ TUTAR" : "ÖDENECEK TOPLAM"}</span>
+          <span className="display-kicker">ÖDENECEK TOPLAM</span>
           <strong>{formatMoney(snapshot.total, snapshot.currency)}</strong>
           <div className="display-total-breakdown">
             <div><span>Ara toplam</span><span>{formatMoney(snapshot.subtotal, snapshot.currency)}</span></div>
@@ -315,7 +363,7 @@ export function CustomerDisplay() {
             )}
             <div><span>İçindeki KDV</span><span>{formatMoney(snapshot.taxTotal, snapshot.currency)}</span></div>
           </div>
-          <div className="display-message"><span>{paying ? "…" : "✓"}</span><p>{snapshot.message}</p></div>
+          <div className="display-message"><span>✓</span><p>{snapshot.message}</p></div>
           <small>Canlı güncelleme · v{snapshot.revision}</small>
         </aside>
       </section>

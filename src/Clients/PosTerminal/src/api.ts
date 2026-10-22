@@ -2,6 +2,7 @@ import type {
   AccentPaletteResponse,
   ApiErrorBody,
   CatalogProduct,
+  DisplaySessionStatus,
   DisplaySnapshot,
   LoginResponse,
   MutationResult,
@@ -87,7 +88,12 @@ async function withIdempotentRetry<T>(attempt: () => Promise<T>): Promise<T> {
 
 // `keepSessionOn401`: the manager-only help-request calls answer 401 to a cashier-only session, which
 // must not be read as that cashier's own session having ended.
-async function request<T>(path: string, init?: RequestInit, keepSessionOn401 = false): Promise<T> {
+async function request<T>(
+  path: string,
+  init?: RequestInit,
+  keepSessionOn401 = false,
+  onHeaders?: (headers: Headers) => void,
+): Promise<T> {
   let response: Response;
   try {
     const timeout = AbortSignal.timeout(8_000);
@@ -125,8 +131,30 @@ async function request<T>(path: string, init?: RequestInit, keepSessionOn401 = f
       body?.error?.message ?? "İşlem tamamlanamadı.",
     );
   }
+  onHeaders?.(response.headers);
   if (response.status === 204) return undefined as T;
   return (await response.json()) as T;
+}
+
+// The Host pages the catalog (X-Next-Cursor); stopping after the first page silently dropped every product
+// beyond it from the till.
+const MaximumCatalogPages = 50;
+async function fetchAllCatalogPages(terminalId: string): Promise<CatalogProduct[]> {
+  const products: CatalogProduct[] = [];
+  let cursor: string | null = null;
+  for (let page = 0; page < MaximumCatalogPages; page++) {
+    let next: string | null = null;
+    const query = cursor === null ? "" : `?cursor=${encodeURIComponent(cursor)}`;
+    products.push(...await request<CatalogProduct[]>(
+      `/api/v1/terminals/${terminalId}/catalog${query}`,
+      undefined,
+      false,
+      (headers) => { next = headers.get("X-Next-Cursor"); },
+    ));
+    if (next === null) break;
+    cursor = next;
+  }
+  return products;
 }
 
 export const api = {
@@ -149,8 +177,7 @@ export const api = {
       method: "POST",
       body: "{}",
     }),
-  catalog: (terminalId: string) =>
-    request<CatalogProduct[]>(`/api/v1/terminals/${terminalId}/catalog`),
+  catalog: (terminalId: string) => fetchAllCatalogPages(terminalId),
   activeOrder: (terminalId: string) =>
     request<DisplaySnapshot>(`/api/v1/terminals/${terminalId}/orders/active`),
   startOrder: (terminalId: string) =>
@@ -269,6 +296,8 @@ export const api = {
   },
   removeScreensaver: () =>
     request<void>("/api/v1/management/customer-display/screensaver", { method: "DELETE" }),
+  displaySession: (terminalId: string) =>
+    request<DisplaySessionStatus>(`/api/v1/terminals/${terminalId}/display-sessions/current`),
   revokeDisplay: (terminalId: string) =>
     request<{ revoked: number }>(`/api/v1/terminals/${terminalId}/display-sessions/revoke`, {
       method: "POST",

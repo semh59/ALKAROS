@@ -289,3 +289,102 @@ describe("Cashier unanswered help calls", () => {
     expect(document.querySelector(".help-alert")).not.toBeNull();
   });
 });
+
+// The till's screen-pairing dialog shares this file's SignalR mock (the till opens the help-request hub on sign-in).
+type Handler = (path: string, init?: RequestInit) => Response | undefined;
+
+async function openPairingDialog(handler: Handler) {
+  localStorage.setItem("alkaros.terminal-id", "pair-terminal");
+  const fetchMock = vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+    const path = String(input);
+    const custom = handler(path, init);
+    if (custom) return custom;
+    if (path.includes("/auth/session")) return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
+    if (path.endsWith("/catalog")) return jsonResponse([]);
+    if (path.endsWith("/orders/active")) return jsonResponse(null);
+    if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
+    return jsonResponse({});
+  });
+  vi.stubGlobal("fetch", fetchMock);
+  const { Cashier } = await import("./Cashier");
+  const { RouterProvider } = await import("../router");
+  document.body.innerHTML = '<div id="root"></div>';
+  root = createRoot(document.getElementById("root")!);
+  await act(async () => { root!.render(createElement(RouterProvider, null, createElement(Cashier))); });
+  await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+  await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+  const trigger = [...document.querySelectorAll("button")].find((button) => button.textContent === "Ekranı eşleştir")!;
+  await act(async () => { trigger.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+  await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+  return fetchMock;
+}
+
+const click = (button: Element | undefined) => act(async () => {
+  button!.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+  await new Promise((resolve) => setTimeout(resolve, 0));
+});
+
+const byText = (text: string) => [...document.querySelectorAll(".pairing-dialog button")].filter((button) => button.textContent === text).at(-1);
+
+const typeCode = (value: string) => act(async () => {
+  const input = document.querySelector<HTMLInputElement>(".pairing-dialog input")!;
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")!.set!;
+  setter.call(input, value);
+  input.dispatchEvent(new Event("input", { bubbles: true }));
+});
+
+describe("Cashier display pairing dialog", () => {
+  it("shows when the paired screen's connection ends, so it is not found out in front of a customer", async () => {
+    await openPairingDialog((path) => path.endsWith("/display-sessions/current")
+      ? jsonResponse({ paired: true, expiresAt: "2026-12-01T20:00:00Z" })
+      : undefined);
+
+    expect(document.querySelector(".pairing-session")?.textContent).toContain("Bağlı ekran var");
+    expect(document.querySelector(".pairing-session")?.textContent).toContain("kullanıldıkça uzar");
+  });
+
+  it("says so when no screen is paired", async () => {
+    await openPairingDialog((path) => path.endsWith("/display-sessions/current")
+      ? jsonResponse({ paired: false, expiresAt: null })
+      : undefined);
+
+    expect(document.querySelector(".pairing-session")?.textContent).toContain("bağlı müşteri ekranı yok");
+  });
+
+  it("shows a refused code inside the dialog and clears the code once it is closed", async () => {
+    await openPairingDialog((path, init) => init?.method === "POST" && path.endsWith("/pairings/approve")
+      ? jsonResponse({ error: { code: "PAIRING_CODE_INVALID", message: "Eşleştirme kodu yanlış, süresi dolmuş ya da daha önce kullanılmış." } }, 404)
+      : undefined);
+    await typeCode("ABCD2345");
+
+    await click(byText("Ekranı eşleştir"));
+
+    expect(document.querySelector(".pairing-dialog [role='alert']")?.textContent).toContain("Eşleştirme kodu yanlış");
+
+    await click(byText("Vazgeç"));
+    expect(document.querySelector(".pairing-dialog")).toBeNull();
+    const trigger = [...document.querySelectorAll("button")].find((button) => button.textContent === "Ekranı eşleştir")!;
+    await click(trigger);
+    expect(document.querySelector<HTMLInputElement>(".pairing-dialog input")!.value).toBe("");
+    expect(document.querySelector(".pairing-dialog [role='alert']")).toBeNull();
+  });
+
+  it("asks before removing the screen's access and reports how many screens it ended", async () => {
+    const fetchMock = await openPairingDialog((path, init) => init?.method === "POST" && path.endsWith("/display-sessions/revoke")
+      ? jsonResponse({ revoked: 2 })
+      : undefined);
+    const revokeCalls = () => fetchMock.mock.calls.filter(([path]) => String(path).endsWith("/display-sessions/revoke")).length;
+
+    await click(byText("Aktif ekran yetkisini kaldır"));
+    expect(revokeCalls()).toBe(0);
+    expect(document.querySelector(".pairing-dialog")?.textContent).toContain("Emin misiniz?");
+
+    await click(byText("Vazgeç"));
+    expect(revokeCalls()).toBe(0);
+
+    await click(byText("Aktif ekran yetkisini kaldır"));
+    await click(byText("Evet, yetkiyi kaldır"));
+    expect(revokeCalls()).toBe(1);
+    expect(document.body.textContent).toContain("2 ekranın yetkisi kaldırıldı.");
+  });
+});

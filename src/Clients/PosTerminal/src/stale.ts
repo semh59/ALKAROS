@@ -6,14 +6,14 @@ export interface DisplayFreshness {
   connectionLost: boolean;
 }
 
-export type DisplayPresentation = "idle" | "active" | "paying" | "completed" | "unavailable";
+export type DisplayPresentation = "idle" | "active" | "completed" | "unavailable";
 
 export function displayPresentation(snapshot: DisplaySnapshot): DisplayPresentation {
   return snapshot.state.toLocaleLowerCase("en-US") as DisplayPresentation;
 }
 
 export function exposesMoney(presentation: DisplayPresentation): boolean {
-  return presentation === "active" || presentation === "paying";
+  return presentation === "active";
 }
 
 export function afterSnapshot(snapshot: DisplaySnapshot, now: number): DisplayFreshness {

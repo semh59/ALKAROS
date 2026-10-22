@@ -430,7 +430,6 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .active-display { padding: 2rem 2.5rem 2.5rem; }
 .display-header { min-height: 66px; display: grid; grid-template-columns: 1fr auto auto; align-items: center; gap: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #2d3944; }
 .display-phase { min-height: 44px; display: inline-flex; align-items: center; border: 1px solid #43515d; border-radius: 999px; padding: .55rem .9rem; color: #d8e0e6; background: #1d2933; font-size: .78rem; font-weight: 850; }
-.display-phase.paying { color: #fff0c7; border-color: #806b34; background: #3a321e; }
 .display-phase.submitted { color: #c8f0df; border-color: #356b58; background: #1d3b31; }
 .display-order-number { display: grid; justify-items: end; gap: .2rem; }
 .display-order-number span { color: #758490; font-size: .72rem; text-transform: uppercase; letter-spacing: .14em; }

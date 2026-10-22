@@ -88,6 +88,9 @@ başarısız olsa bile periyodik snapshot reconciliation doğru durumu getirir.
    Command, admin, report, identity, fiscal, printer ve payment-provider uçları bu principal için reddedilir.
 6. Display kaydı silinince, terminal devre dışı kalınca, yeni display eşleşince veya operatör bağlantıyı kaldırınca
    session derhal iptal edilir. Uzun ömürlü credential URL, localStorage veya log içine yazılmaz.
+7. Session süresi 12 saat kayandır: kullanıldıkça uzar (satır dakikada en çok bir kez yazılır), kullanılmayan
+   oturum biter. Bitişi kasadaki eşleştirme penceresinde görünür. Pairing adımları ayrı hata koduyla döner:
+   `PAIRING_CODE_INVALID`, `PAIRING_NOT_APPROVED`, `PAIRING_EXPIRED`, `PAIRING_CONSUMED`, `PAIRING_LOCKED`.
 
 Pairing ekranı ve bağlantı hatası ekranı hiçbir sipariş verisi göstermez. Başarısız auth durumunda eski snapshot
 temizlenir ve client `Unavailable` durumuna geçer.
