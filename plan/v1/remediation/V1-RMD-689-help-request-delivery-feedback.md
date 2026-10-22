@@ -1,8 +1,8 @@
 # V1-RMD-689 - Yardım çağrısı kalıcı, geri bildirimli ve kasada görünür
 
 - Task ID: V1-RMD-689
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01MwPj6Y6uC4Kbceoi6Rzzby
 - Work type: implementation
 - Surface state: Planned
 
