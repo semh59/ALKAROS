@@ -75,7 +75,10 @@ public sealed record DualScreenOptions(
     // generic, broader --trusted-network allowlist (ForwardedHeaders'
     // KnownNetworks) is deliberately NOT reused for this — that list also
     // covers `postgres`/`migrate`/`provision`'s network, which have no
-    // business satisfying an NFC-relay transport exemption.
+    // business satisfying an NFC-relay transport exemption. A request whose
+    // TCP peer is inside this network is also confined to the NFC/QR route
+    // allowlist (no /api other than nfc and qr, no /hubs), whatever forwarded
+    // address the tunnel edge reports for the visitor.
     IReadOnlyList<ForwardedNetwork>? NfcTrustedNetworks = null,
     // V12-CWB-001: found while wiring the QR customer page — in --api-only
     // mode this process serves no static files at all (the reverse proxy

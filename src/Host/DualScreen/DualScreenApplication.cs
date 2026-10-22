@@ -422,7 +422,23 @@ public static partial class DualScreenApplication
         });
 
         var app = builder.Build();
+        // The TCP peer is read before forwarded headers can replace it: a tunnel edge sends the visitor's
+        // address, which would otherwise hide that the request really came from the relay connector.
+        app.Use((context, next) =>
+        {
+            context.Items[PeerAddressItem] = context.Connection.RemoteIpAddress;
+            return next();
+        });
         app.UseForwardedHeaders();
+        // Set before every gate and static file so refusals, rate-limit rejections and the public QR/NFC pages carry them too.
+        // Routed responses replace the policy with the full one further down.
+        app.Use(async (context, next) =>
+        {
+            context.Response.Headers["Content-Security-Policy"] = "frame-ancestors 'none'; object-src 'none'; base-uri 'none'";
+            context.Response.Headers["X-Content-Type-Options"] = "nosniff";
+            context.Response.Headers["Referrer-Policy"] = "no-referrer";
+            await next();
+        });
         app.Use(async (context, next) =>
         {
             var insecureDevelopmentLoopback = app.Environment.IsDevelopment()
@@ -461,9 +477,7 @@ public static partial class DualScreenApplication
                 (options.NfcLoopbackOriginTrusted
                     && IPAddress.IsLoopback(context.Connection.LocalIpAddress ?? IPAddress.None)
                     && IPAddress.IsLoopback(remoteAddress ?? IPAddress.None))
-                || (remoteAddress is not null
-                    && options.NfcTrustedNetworks is { Count: > 0 } nfcTrustedNetworks
-                    && nfcTrustedNetworks.Any(network => network.Contains(remoteAddress)));
+                || FromRelayNetwork(context, options.NfcTrustedNetworks);
             if (!context.Request.IsHttps && !insecureDevelopmentLoopback && !loopbackReadinessProbe && !nfcRelayRequest)
             {
                 await Error(
@@ -553,7 +567,8 @@ public static partial class DualScreenApplication
         var nfcOriginPorts = options.NfcOriginPorts.ToHashSet();
         var nfcOriginHeader = options.NfcOriginHeader;
         var nfcLoopbackOriginTrusted = options.NfcLoopbackOriginTrusted;
-        if (nfcOriginPorts.Count > 0 || nfcOriginHeader is not null || nfcLoopbackOriginTrusted)
+        var nfcTrustedNetworks = options.NfcTrustedNetworks;
+        if (nfcOriginPorts.Count > 0 || nfcOriginHeader is not null || nfcLoopbackOriginTrusted || nfcTrustedNetworks is { Count: > 0 })
         {
             app.Use(async (context, next) =>
             {
@@ -566,9 +581,11 @@ public static partial class DualScreenApplication
                             StringComparison.Ordinal))
                     || (nfcLoopbackOriginTrusted
                         && context.Connection.RemoteIpAddress is { } remoteAddress
-                        && IPAddress.IsLoopback(remoteAddress));
+                        && IPAddress.IsLoopback(remoteAddress))
+                    || FromRelayNetwork(context, nfcTrustedNetworks);
                 var path = context.Request.Path;
-                var isApi = path.StartsWithSegments("/api", StringComparison.Ordinal);
+                var isApi = path.StartsWithSegments("/api", StringComparison.Ordinal)
+                    || path.StartsWithSegments("/hubs", StringComparison.Ordinal);
                 var isNfcApi = path.StartsWithSegments("/api/v1/nfc", StringComparison.Ordinal)
                     || path.StartsWithSegments("/api/v1/qr", StringComparison.Ordinal);
 
@@ -800,6 +817,14 @@ public static partial class DualScreenApplication
             QueueLimit = 0,
             AutoReplenishment = true,
         });
+
+    private const string PeerAddressItem = "alkaros.peer-address";
+
+    // True when the TCP peer (not a forwarded address) sits inside the dedicated relay network.
+    private static bool FromRelayNetwork(HttpContext context, IReadOnlyList<Microsoft.AspNetCore.HttpOverrides.IPNetwork>? networks)
+        => networks is { Count: > 0 }
+            && context.Items[PeerAddressItem] is IPAddress peer
+            && networks.Any(network => network.Contains(peer));
 
     private static string ClientPartition(HttpContext context)
         => context.Connection.RemoteIpAddress?.ToString() ?? "unknown";
