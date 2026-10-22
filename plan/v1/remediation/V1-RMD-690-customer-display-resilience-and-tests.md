@@ -1,8 +1,8 @@
 # V1-RMD-690 - Müşteri ekranı: toparlanma, oturum, eşleştirme ve iptal deneyimi, sunucu testleri
 
 - Task ID: V1-RMD-690
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
 
