@@ -48,4 +48,4 @@ Host modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar bağ�
 
 ## Handoff
 
-- V1-RMD-600
+- V1-RMD-688
