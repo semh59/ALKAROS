@@ -84,6 +84,22 @@ public sealed class KitchenOperationsStoreNotificationDispatchTests
         Assert.Empty(hub.Clients.GroupCalls);
     }
 
+    [Fact]
+    public void EachReadyItemGetsItsOwnPushTagSoTwoDishesDoNotReplaceEachOther()
+    {
+        var first = KitchenOperationsStore.ItemReadyPushMessage(NewItem(), tableNumber: null);
+        var second = KitchenOperationsStore.ItemReadyPushMessage(NewItem(), tableNumber: null);
+
+        Assert.NotEqual(first.Tag, second.Tag);
+        Assert.StartsWith("alkaros-order-ready-", first.Tag, StringComparison.Ordinal);
+    }
+
+    [Theory]
+    [InlineData("7", "7 masası: Mercimek çorbası hazır")]
+    [InlineData(null, "Mercimek çorbası hazır")]
+    public void TheReadyPushNamesTheTableWhenItIsKnown(string? tableNumber, string expectedBody)
+        => Assert.Equal(expectedBody, KitchenOperationsStore.ItemReadyPushMessage(NewItem(), tableNumber).Body);
+
     private static KitchenTicketItem NewItem() =>
         new(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Mercimek çorbası", 1);
 

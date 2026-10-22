@@ -11,8 +11,9 @@ namespace ALKAROS.Host.Experience.WebPush;
 /// Deliberately best-effort. A notification that cannot be delivered must
 /// never fail the thing it was announcing - an order still reaches the
 /// kitchen if a push service is down - so every failure here is logged and
-/// swallowed, and only a permanently dead subscription (404/410) changes any
-/// state, by deleting itself.
+/// swallowed (only the caller's own cancellation passes through). A dead
+/// subscription (404/410) deletes itself; one that keeps failing is deleted
+/// after <see cref="MaximumConsecutiveFailures"/> failures in a row.
 /// </summary>
 public sealed class WebPushSender
 {
@@ -41,6 +42,11 @@ public sealed class WebPushSender
             LogLevel.Warning,
             new EventId(5603, nameof(LogUndelivered)),
             "A web push could not be delivered.");
+
+    /// <summary>Soft failures (timeouts, 5xx, rejected keys) in a row before a subscription is dropped.</summary>
+    public const int MaximumConsecutiveFailures = 10;
+
+    private const int MaximumParallelSends = 8;
 
     private readonly HttpClient _httpClient;
     private readonly PushSubscriptionStore _store;
@@ -135,10 +141,11 @@ public sealed class WebPushSender
         }
 
         var payload = JsonSerializer.Serialize(message);
-        foreach (var subscription in subscriptions)
-        {
-            await SendOneAsync(subscription, payload, keys, cancellationToken);
-        }
+        // One slow or dead push service must not hold up the others; each send handles its own failures.
+        await Parallel.ForEachAsync(
+            subscriptions,
+            new ParallelOptions { MaxDegreeOfParallelism = MaximumParallelSends, CancellationToken = cancellationToken },
+            async (subscription, token) => await SendOneAsync(subscription, payload, keys, token));
     }
 
     private async Task SendOneAsync(
@@ -181,13 +188,26 @@ public sealed class WebPushSender
             }
 
             LogRejected(_logger, (int)response.StatusCode, null);
-            await _store.MarkFailureAsync(subscription.Endpoint, cancellationToken);
+            await _store.MarkFailureAsync(subscription.Endpoint, MaximumConsecutiveFailures, cancellationToken);
         }
-        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException or FormatException or ArgumentException)
+        catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
         {
-            // A push service that is unreachable, slow, or a subscription
-            // whose stored keys no longer parse. None of it is worth failing
-            // the caller over.
+            // An unreachable or slow push service, keys that no longer parse, a failing database: none of it is
+            // worth failing the caller over or stopping the remaining devices from being notified.
+            LogUndelivered(_logger, ex);
+            if (ex is HttpRequestException or TaskCanceledException)
+                await MarkFailureQuietlyAsync(subscription.Endpoint, cancellationToken);
+        }
+    }
+
+    private async Task MarkFailureQuietlyAsync(string endpoint, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await _store.MarkFailureAsync(endpoint, MaximumConsecutiveFailures, cancellationToken);
+        }
+        catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+        {
             LogUndelivered(_logger, ex);
         }
     }

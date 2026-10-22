@@ -1,5 +1,6 @@
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.DeviceSessions;
+using ALKAROS.Secrets;
 using ALKAROS.TestHelpers;
 
 namespace ALKAROS.Host.Experience.WebPush.Tests;
@@ -43,6 +44,37 @@ public sealed class WebPushTestDatabase : PgTestDatabase
 
         return $"{DualScreenApplication.CashierCookieName}={raw}";
     }
+
+    /// <summary>A store whose envelope master key is a fresh random one; pass the same provider to model a restart.</summary>
+    public PushSubscriptionStore NewStore(ISecretProvider? secrets = null)
+        => new(DataSource, secrets ?? NewSecrets());
+
+    public static InMemorySecretProvider NewSecrets()
+    {
+        var secrets = new InMemorySecretProvider();
+        secrets.Set(new SecretReference("envelope-master-key"), Convert.ToBase64String(System.Security.Cryptography.RandomNumberGenerator.GetBytes(32)));
+        return secrets;
+    }
+
+    public Task<int> DeactivateUserAsync(Guid userId)
+        => ExecuteAsync("UPDATE identity.users SET active = false WHERE user_id = @user_id;", ("user_id", userId));
+
+    public Task<int> FailureCountAsync(string endpoint)
+        => ScalarAsync<int>($"SELECT failure_count FROM notifications.push_subscriptions WHERE endpoint = '{endpoint}';");
+
+    public Task<Guid> SubscriptionOwnerAsync(string endpoint)
+        => ScalarAsync<Guid>($"SELECT user_id FROM notifications.push_subscriptions WHERE endpoint = '{endpoint}';");
+
+    public Task<bool> VapidPrivateKeyIsPlaintextAsync()
+        => ScalarAsync<bool>("SELECT private_key IS NOT NULL FROM notifications.vapid_keys;");
+
+    public Task<bool> VapidEnvelopeExistsAsync()
+        => ScalarAsync<bool>("SELECT private_key_envelope IS NOT NULL FROM notifications.vapid_keys;");
+
+    public Task<int> SeedPlaintextVapidAsync(string publicKey, string privateKey)
+        => ExecuteAsync(
+            "INSERT INTO notifications.vapid_keys (single_row, public_key, private_key, subject) VALUES (TRUE, @public_key, @private_key, 'mailto:old@alkaros.local');",
+            ("public_key", publicKey), ("private_key", privateKey));
 
     public Task<long> SubscriptionCountAsync()
         => ScalarAsync<long>("SELECT count(*) FROM notifications.push_subscriptions;");

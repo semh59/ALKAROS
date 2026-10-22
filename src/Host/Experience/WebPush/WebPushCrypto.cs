@@ -27,6 +27,7 @@ public static class WebPushCrypto
     private const int KeyBytes = 16;
     private const int NonceBytes = 12;
     private const int UncompressedPointBytes = 65;
+    private const int AuthSecretBytes = 16;
 
     /// <summary>
     /// Encrypts <paramref name="payload"/> for one subscription and returns
@@ -186,6 +187,25 @@ public static class WebPushCrypto
     {
         var uri = new Uri(endpoint, UriKind.Absolute);
         return $"{uri.Scheme}://{uri.Authority}";
+    }
+
+    /// <summary>
+    /// True when <paramref name="p256dh"/> is a 65-byte uncompressed point that lies on P-256 and
+    /// <paramref name="auth"/> is the 16-byte secret RFC 8291 defines: anything else could only ever
+    /// fail at send time, where nobody sees the error.
+    /// </summary>
+    public static bool AreValidSubscriptionKeys(string p256dh, string auth)
+    {
+        try
+        {
+            using var key = ImportUncompressedPoint(FromBase64Url(p256dh));
+            return FromBase64Url(auth).Length == AuthSecretBytes;
+        }
+        catch (Exception ex) when (ex is FormatException or ArgumentException or CryptographicException or PlatformNotSupportedException)
+        {
+            // Windows reports a point that is not on the curve as an unsupported curve rather than a cryptographic error.
+            return false;
+        }
     }
 
     public static string ToBase64Url(byte[] value) =>

@@ -15,6 +15,21 @@ import { state } from './state.js';
 import { toast } from './toast.js';
 import { apiUrl, api } from './api.js';
 
+// Remembers that this person turned notifications on, so a subscription the browser dropped (it rotates them)
+// or the server pruned is re-registered the next time the app opens instead of silently staying off.
+const PUSH_WANTED_KEY = 'alkaros_waiter_push_wanted';
+
+function setPushWanted(wanted) {
+  try {
+    if (wanted) localStorage.setItem(PUSH_WANTED_KEY, '1');
+    else localStorage.removeItem(PUSH_WANTED_KEY);
+  } catch { /* private mode: the flag is only a convenience */ }
+}
+
+function pushWanted() {
+  try { return localStorage.getItem(PUSH_WANTED_KEY) === '1'; } catch { return false; }
+}
+
 export function pushSupported() {
   return 'serviceWorker' in navigator && 'PushManager' in window && 'Notification' in window;
 }
@@ -86,12 +101,28 @@ export async function enablePush() {
     permission = 'denied';
   }
   if (permission !== 'granted') {
-    toast('Bildirim izni verilmedi.', { warning: true });
+    // 'denied' is a browser setting the waiter has to change; 'default' means the prompt was only dismissed.
+    toast(permission === 'denied'
+      ? 'Bildirim izni kapalı. Tarayıcı ayarlarından bu site için bildirimi açın.'
+      : 'Bildirim izni verilmedi. Tekrar deneyip "İzin ver"i seçin.', { warning: true });
     return;
   }
 
+  if (await subscribeAndRegister(true)) toast('Uygulama kapalıyken de bildirim gelecek.');
+}
+
+// Re-registers this device when the person had notifications on: after a sign-out that did not complete, or when the
+// browser or the server no longer holds the subscription. Never asks for permission and never shows a message.
+export async function restorePush(force = false) {
+  if (!pushSupported() || !window.isSecureContext || state.offlineDisabled) return;
+  if (Notification.permission !== 'granted') return;
+  if (!force && !pushWanted() && !state.pushEnabled) return;
+  await subscribeAndRegister(false);
+}
+
+async function subscribeAndRegister(announce) {
   const key = await api(apiUrl('/push/public-key'));
-  if (!key.ok) { toast(key.message, { warning: true }); return; }
+  if (!key.ok) { if (announce) toast(key.message, { warning: true }); return false; }
 
   try {
     // V1-RMD-170: a bare `await navigator.serviceWorker.ready` still has
@@ -125,13 +156,15 @@ export async function enablePush() {
       // Registering the subscription is what makes it reachable; a browser
       // subscription the server does not know about is worse than none.
       await subscription.unsubscribe();
-      toast(saved.message, { warning: true });
-      return;
+      if (announce) toast(saved.message, { warning: true });
+      return false;
     }
     state.pushEnabled = true;
-    toast('Uygulama kapalıyken de bildirim gelecek.');
+    setPushWanted(true);
+    return true;
   } catch {
-    toast('Bildirim aboneliği kurulamadı.', { warning: true });
+    if (announce) toast('Bildirim aboneliği kurulamadı.', { warning: true });
+    return false;
   }
 }
 
@@ -148,6 +181,7 @@ export async function unsubscribePush() {
     // endpoint on its own the next time it sends (RFC 8030 §7.3).
   }
   state.pushEnabled = false;
+  setPushWanted(false);
 }
 
 export async function disablePush() {

@@ -28,13 +28,13 @@ public sealed class SignalRPendingOrderAnnouncer : IPendingOrderAnnouncer
     private readonly IHubContext<WaiterOrderStatusHub> _hub;
     private readonly WaiterPresenceTracker _presence;
     private readonly SuggestedWaiterResolver _suggestedWaiter;
-    private readonly WebPushSender? _push;
+    private readonly WebPushDispatchService? _push;
 
     public SignalRPendingOrderAnnouncer(
         IHubContext<WaiterOrderStatusHub> hub,
         WaiterPresenceTracker presence,
         SuggestedWaiterResolver suggestedWaiter,
-        WebPushSender? push = null)
+        WebPushDispatchService? push = null)
     {
         _hub = hub ?? throw new ArgumentNullException(nameof(hub));
         _presence = presence ?? throw new ArgumentNullException(nameof(presence));

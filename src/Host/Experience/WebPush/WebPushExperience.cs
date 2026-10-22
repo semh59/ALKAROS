@@ -2,8 +2,10 @@ using ALKAROS.Host.DualScreen;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using ALKAROS.Secrets;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Logging;
 
 namespace ALKAROS.Host.Experience.WebPush;
 
@@ -18,18 +20,27 @@ public static class WebPushExperience
     public static IServiceCollection AddWebPushExperience(this IServiceCollection services)
     {
         ArgumentNullException.ThrowIfNull(services);
+        // The VAPID private key is stored as an envelope under the master key from the environment.
+        services.TryAddTransient<ISecretProvider, EnvironmentVariableSecretProvider>();
         services.TryAddSingleton<PushSubscriptionStore>();
         // Same reason the other four Experience areas each register it: this
         // one needs it only to authenticate the cashier session on its own
         // endpoints, and TryAdd keeps a shared composition to one instance.
         services.TryAddSingleton<DualScreenStore>();
-        // A named client rather than the ambient one: a push service that
-        // hangs must not hold a request thread, and a notification is never
-        // worth waiting ten seconds for.
-        services.AddHttpClient<WebPushSender>(client =>
+        // Its own long-lived client rather than the ambient one: a push service that hangs must not hold a
+        // request thread, a notification is never worth waiting ten seconds for, redirects are not followed
+        // (a push service has no reason to send this host elsewhere), and the connection only ever goes to
+        // a public address. The pooled connections are refreshed so a changed DNS answer is picked up.
+        services.TryAddSingleton(provider => new WebPushSender(
+            new HttpClient(PushEndpointPolicy.CreateHandler()) { Timeout = TimeSpan.FromSeconds(10) },
+            provider.GetRequiredService<PushSubscriptionStore>(),
+            provider.GetRequiredService<ILogger<WebPushSender>>()));
+        if (!services.Any(descriptor => descriptor.ServiceType == typeof(WebPushDispatchService)))
         {
-            client.Timeout = TimeSpan.FromSeconds(10);
-        });
+            services.AddSingleton<WebPushDispatchService>();
+            services.AddHostedService(provider => provider.GetRequiredService<WebPushDispatchService>());
+        }
+
         return services;
     }
 
@@ -77,33 +88,28 @@ public static class WebPushExperience
                 return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Abonelik bilgileri eksik." } });
             }
 
-            if (!Uri.TryCreate(request.Endpoint, UriKind.Absolute, out var endpoint)
-                || endpoint.Scheme != Uri.UriSchemeHttps)
+            if (!PushEndpointPolicy.IsAcceptable(request.Endpoint))
             {
-                // Every real push service is https. Refusing anything else
-                // keeps this endpoint from being turned into a request
-                // forwarder pointed at an internal address.
+                // Every real push service is an https name on the default port. Refusing anything else keeps
+                // this endpoint from being turned into a request forwarder pointed at an internal address.
                 return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Abonelik adresi geçersiz." } });
             }
 
-            // Parsing both keys here rather than at send time means a
+            // Checking both keys here rather than at send time means a
             // malformed subscription is rejected while someone can still see
             // the error, instead of silently never receiving anything.
-            try
-            {
-                _ = WebPushCrypto.FromBase64Url(request.P256dh);
-                _ = WebPushCrypto.FromBase64Url(request.Auth);
-            }
-            catch (FormatException)
+            if (!WebPushCrypto.AreValidSubscriptionKeys(request.P256dh, request.Auth))
             {
                 return Results.BadRequest(new { error = new { code = "VALIDATION_FAILED", message = "Abonelik anahtarları çözümlenemedi." } });
             }
 
-            await store.SaveAsync(
+            var saved = await store.SaveAsync(
                 new PushSubscriptionRecord(
                     Guid.NewGuid(), request.Endpoint, request.P256dh, request.Auth, principal.UserId, terminalId),
                 cancellationToken);
-            return Results.NoContent();
+            return saved
+                ? Results.NoContent()
+                : Results.Conflict(new { error = new { code = "PUSH_ENDPOINT_IN_USE", message = "Bu cihaz adresi başka bir kullanıcıya ait." } });
         });
 
         // V1-RMD-160: found by the 2026-09-10 Garson audit — this used to

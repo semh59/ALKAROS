@@ -106,3 +106,30 @@ def test_waiter_help_request_is_honest_about_delivery_and_hears_back():
     assert "connectedRecipients === 0" in sheet
     assert "Çağrınız kaydedildi" in sheet
     assert "hub.on('HelpRequestSeen'" in app_code
+
+
+def test_waiter_pwa_push_flow_survives_lost_subscriptions_and_explains_a_denied_permission():
+    """Notifications are re-registered when the browser or server dropped them, and a blocked permission says how to fix it."""
+    push = (WWWROOT / "js" / "push.js").read_text(encoding="utf-8")
+    app_code = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
+
+    assert "export async function restorePush(force = false)" in push
+    assert "permission === 'denied'" in push
+    assert "Tarayıcı ayarlarından" in push
+    assert "setPushWanted(true)" in push and "setPushWanted(false)" in push
+    # Re-registering never asks for permission again.
+    assert push.index("async function subscribeAndRegister") > push.index("export async function restorePush")
+    assert "refreshPushState().then(() => restorePush())" in app_code
+    # A logout that failed leaves the person signed in, so their device keeps receiving notifications.
+    assert "void restorePush(true);" in app_code
+
+
+def test_waiter_pwa_ready_notification_tag_is_unique_per_item_like_the_server_push():
+    """Two dishes ready together must show two notifications; the in-page tag must match the server's push tag."""
+    app_code = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
+    kitchen_store = (
+        WORKSPACE / "src" / "Host" / "Experience" / "KitchenOperations" / "KitchenOperationsStore.cs"
+    ).read_text(encoding="utf-8")
+
+    assert "`alkaros-order-ready-${payload && payload.orderItemId}`" in app_code
+    assert '$"alkaros-order-ready-{item.OrderItemId}"' in kitchen_store

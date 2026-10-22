@@ -1,3 +1,5 @@
+using ALKAROS.Secrets;
+using ALKAROS.SensitiveData;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -21,11 +23,22 @@ public sealed record VapidKeyPair(string PublicKey, string PrivateKey, string Su
 
 public sealed class PushSubscriptionStore
 {
-    private readonly NpgsqlDataSource _dataSource;
+    /// <summary>One person's phones and tablets; the oldest registration is dropped beyond this.</summary>
+    public const int MaximumSubscriptionsPerUser = 10;
 
-    public PushSubscriptionStore(NpgsqlDataSource dataSource)
+    private const string VapidPrivateKeyField = "vapid_private_key";
+    private static readonly SecretReference MasterKey = new("envelope-master-key");
+
+    private readonly NpgsqlDataSource _dataSource;
+    private readonly SensitivePayloadProtector _protector;
+
+    public PushSubscriptionStore(NpgsqlDataSource dataSource, ISecretProvider secretProvider)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        ArgumentNullException.ThrowIfNull(secretProvider);
+
+        var policy = new PushVapidAccessPolicy();
+        _protector = new SensitivePayloadProtector(new AesGcmEnvelopeCipher(new SecretResolver(secretProvider, policy)), policy);
     }
 
     /// <summary>
@@ -33,12 +46,18 @@ public sealed class PushSubscriptionStore
     /// endpoint. A browser reissues a subscription (same endpoint, new keys)
     /// whenever its own keys rotate, and the same physical device can also
     /// change hands between staff - both cases must update the row rather
-    /// than add a second one.
+    /// than add a second one. An endpoint that belongs to another terminal
+    /// and another user is not taken over: returns false and leaves the row
+    /// alone. Beyond <see cref="MaximumSubscriptionsPerUser"/> the user's
+    /// oldest registrations are removed.
     /// </summary>
-    public async Task SaveAsync(PushSubscriptionRecord subscription, CancellationToken cancellationToken = default)
+    public async Task<bool> SaveAsync(PushSubscriptionRecord subscription, CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNull(subscription);
-        await using var cmd = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await using var save = new NpgsqlCommand(
             """
             INSERT INTO notifications.push_subscriptions
                 (subscription_id, endpoint, p256dh, auth, user_id, terminal_id)
@@ -48,23 +67,46 @@ public sealed class PushSubscriptionStore
                 auth = EXCLUDED.auth,
                 user_id = EXCLUDED.user_id,
                 terminal_id = EXCLUDED.terminal_id,
-                failure_count = 0;
-            """);
-        cmd.Parameters.Add("subscription_id", NpgsqlDbType.Uuid).Value = subscription.SubscriptionId;
-        cmd.Parameters.Add("endpoint", NpgsqlDbType.Text).Value = subscription.Endpoint;
-        cmd.Parameters.Add("p256dh", NpgsqlDbType.Text).Value = subscription.P256dh;
-        cmd.Parameters.Add("auth", NpgsqlDbType.Text).Value = subscription.Auth;
-        cmd.Parameters.Add("user_id", NpgsqlDbType.Uuid).Value = subscription.UserId;
-        cmd.Parameters.Add("terminal_id", NpgsqlDbType.Uuid).Value = subscription.TerminalId;
-        await cmd.ExecuteNonQueryAsync(cancellationToken);
+                created_at = now(),
+                failure_count = 0
+            WHERE notifications.push_subscriptions.terminal_id = EXCLUDED.terminal_id
+               OR notifications.push_subscriptions.user_id = EXCLUDED.user_id;
+            """, connection, transaction);
+        save.Parameters.Add("subscription_id", NpgsqlDbType.Uuid).Value = subscription.SubscriptionId;
+        save.Parameters.Add("endpoint", NpgsqlDbType.Text).Value = subscription.Endpoint;
+        save.Parameters.Add("p256dh", NpgsqlDbType.Text).Value = subscription.P256dh;
+        save.Parameters.Add("auth", NpgsqlDbType.Text).Value = subscription.Auth;
+        save.Parameters.Add("user_id", NpgsqlDbType.Uuid).Value = subscription.UserId;
+        save.Parameters.Add("terminal_id", NpgsqlDbType.Uuid).Value = subscription.TerminalId;
+        if (await save.ExecuteNonQueryAsync(cancellationToken) == 0)
+            return false;
+
+        await using var prune = new NpgsqlCommand(
+            """
+            DELETE FROM notifications.push_subscriptions
+            WHERE subscription_id IN (
+                SELECT subscription_id
+                FROM notifications.push_subscriptions
+                WHERE user_id = @user_id
+                ORDER BY created_at DESC, subscription_id
+                OFFSET @maximum);
+            """, connection, transaction);
+        prune.Parameters.Add("user_id", NpgsqlDbType.Uuid).Value = subscription.UserId;
+        prune.Parameters.Add("maximum", NpgsqlDbType.Integer).Value = MaximumSubscriptionsPerUser;
+        await prune.ExecuteNonQueryAsync(cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+        return true;
     }
 
+    /// <summary>Every device of an active user; a deactivated person's devices are never notified.</summary>
     public async Task<IReadOnlyList<PushSubscriptionRecord>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         await using var cmd = _dataSource.CreateCommand(
             """
-            SELECT subscription_id, endpoint, p256dh, auth, user_id, terminal_id
-            FROM notifications.push_subscriptions;
+            SELECT s.subscription_id, s.endpoint, s.p256dh, s.auth, s.user_id, s.terminal_id
+            FROM notifications.push_subscriptions s
+            JOIN identity.users u ON u.user_id = s.user_id AND u.active;
             """);
         var results = new List<PushSubscriptionRecord>();
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
@@ -91,9 +133,10 @@ public sealed class PushSubscriptionStore
     {
         await using var cmd = _dataSource.CreateCommand(
             """
-            SELECT subscription_id, endpoint, p256dh, auth, user_id, terminal_id
-            FROM notifications.push_subscriptions
-            WHERE user_id = @user_id;
+            SELECT s.subscription_id, s.endpoint, s.p256dh, s.auth, s.user_id, s.terminal_id
+            FROM notifications.push_subscriptions s
+            JOIN identity.users u ON u.user_id = s.user_id AND u.active
+            WHERE s.user_id = @user_id;
             """);
         cmd.Parameters.Add("user_id", NpgsqlDbType.Uuid).Value = userId;
         var results = new List<PushSubscriptionRecord>();
@@ -157,15 +200,24 @@ public sealed class PushSubscriptionStore
         await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 
-    public async Task MarkFailureAsync(string endpoint, CancellationToken cancellationToken = default)
+    /// <summary>
+    /// Counts one more failed delivery and removes the subscription once
+    /// <paramref name="maximumFailures"/> have failed in a row (a success
+    /// resets the count), so a permanently broken endpoint is not retried
+    /// on every notification for the life of the deployment.
+    /// </summary>
+    public async Task MarkFailureAsync(string endpoint, int maximumFailures, CancellationToken cancellationToken = default)
     {
         await using var cmd = _dataSource.CreateCommand(
             """
             UPDATE notifications.push_subscriptions
             SET failure_count = failure_count + 1
             WHERE endpoint = @endpoint;
+            DELETE FROM notifications.push_subscriptions
+            WHERE endpoint = @endpoint AND failure_count >= @maximum;
             """);
         cmd.Parameters.Add("endpoint", NpgsqlDbType.Text).Value = endpoint;
+        cmd.Parameters.Add("maximum", NpgsqlDbType.Integer).Value = maximumFailures;
         await cmd.ExecuteNonQueryAsync(cancellationToken);
     }
 
@@ -182,13 +234,13 @@ public sealed class PushSubscriptionStore
         var (publicKey, privateKey) = WebPushCrypto.CreateKeyPair();
         await using (var insert = _dataSource.CreateCommand(
             """
-            INSERT INTO notifications.vapid_keys (single_row, public_key, private_key, subject)
-            VALUES (TRUE, @public_key, @private_key, @subject)
+            INSERT INTO notifications.vapid_keys (single_row, public_key, private_key_envelope, subject)
+            VALUES (TRUE, @public_key, @private_key_envelope, @subject)
             ON CONFLICT (single_row) DO NOTHING;
             """))
         {
             insert.Parameters.Add("public_key", NpgsqlDbType.Text).Value = publicKey;
-            insert.Parameters.Add("private_key", NpgsqlDbType.Text).Value = privateKey;
+            insert.Parameters.Add("private_key_envelope", NpgsqlDbType.Bytea).Value = Seal(privateKey);
             insert.Parameters.Add("subject", NpgsqlDbType.Text).Value = subject;
             await insert.ExecuteNonQueryAsync(cancellationToken);
         }
@@ -199,10 +251,45 @@ public sealed class PushSubscriptionStore
 
     private async Task<VapidKeyPair?> ReadVapidKeysAsync(CancellationToken cancellationToken)
     {
-        await using var cmd = _dataSource.CreateCommand(
-            "SELECT public_key, private_key, subject FROM notifications.vapid_keys WHERE single_row;");
-        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
-        if (!await reader.ReadAsync(cancellationToken)) return null;
-        return new VapidKeyPair(reader.GetString(0), reader.GetString(1), reader.GetString(2));
+        string publicKey;
+        string? plaintextPrivateKey;
+        byte[]? envelope;
+        string subject;
+        await using (var cmd = _dataSource.CreateCommand(
+            "SELECT public_key, private_key, private_key_envelope, subject FROM notifications.vapid_keys WHERE single_row;"))
+        await using (var reader = await cmd.ExecuteReaderAsync(cancellationToken))
+        {
+            if (!await reader.ReadAsync(cancellationToken)) return null;
+            publicKey = reader.GetString(0);
+            plaintextPrivateKey = reader.IsDBNull(1) ? null : reader.GetString(1);
+            envelope = reader.IsDBNull(2) ? null : reader.GetFieldValue<byte[]>(2);
+            subject = reader.GetString(3);
+        }
+
+        if (envelope is not null)
+            return new VapidKeyPair(publicKey, Open(envelope), subject);
+
+        // A key stored in plaintext by an earlier version: protect it now and clear the plaintext column.
+        await using var protect = _dataSource.CreateCommand(
+            """
+            UPDATE notifications.vapid_keys
+            SET private_key_envelope = @private_key_envelope, private_key = NULL
+            WHERE single_row AND private_key_envelope IS NULL;
+            """);
+        protect.Parameters.Add("private_key_envelope", NpgsqlDbType.Bytea).Value = Seal(plaintextPrivateKey!);
+        await protect.ExecuteNonQueryAsync(cancellationToken);
+        return new VapidKeyPair(publicKey, plaintextPrivateKey!, subject);
     }
+
+    private byte[] Seal(string privateKey)
+    {
+        var payload = new SensitivePayload(
+            new Dictionary<string, string> { [VapidPrivateKeyField] = privateKey },
+            new Dictionary<string, SensitiveCategory> { [VapidPrivateKeyField] = SensitiveCategory.Credential });
+        return _protector.Protect(payload, MasterKey, PushVapidAccessPolicy.Accessor).ToPersistenceBytes();
+    }
+
+    private string Open(byte[] envelope)
+        => _protector.Unprotect(SensitiveEnvelope.FromPersistenceBytes(envelope), MasterKey, PushVapidAccessPolicy.Accessor)
+            .Fields[VapidPrivateKeyField];
 }

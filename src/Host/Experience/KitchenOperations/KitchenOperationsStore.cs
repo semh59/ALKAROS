@@ -35,7 +35,7 @@ public sealed class KitchenOperationsStore
     private readonly IOrderRepository _orders;
     private readonly IHubContext<WaiterOrderStatusHub> _waiterHub;
     private readonly WaiterPresenceTracker _waiterPresence;
-    private readonly WebPushSender? _push;
+    private readonly WebPushDispatchService? _push;
     private readonly NpgsqlDataSource _dataSource;
     private readonly CatalogManagementStore _catalog;
     private readonly IAuthorizationGrantRepository _grants;
@@ -59,7 +59,7 @@ public sealed class KitchenOperationsStore
         IAuthorizationGrantRepository grants,
         IPhysicalPrintRecoveryService recovery,
         IPrinterTransport printerTransport,
-        WebPushSender? push = null)
+        WebPushDispatchService? push = null)
     {
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
         _printers = printers ?? throw new ArgumentNullException(nameof(printers));
@@ -280,10 +280,13 @@ public sealed class KitchenOperationsStore
     /// <see cref="DispatchItemReadyNotificationAsync"/> so it can be
     /// exercised without a full store.
     /// </summary>
-    private Task NotifyWaitersItemIsReadyAsync(
+    private async Task NotifyWaitersItemIsReadyAsync(
         Guid orderId, KitchenTicketItem item, CancellationToken cancellationToken)
-        => DispatchItemReadyNotificationAsync(
-            _waiterHub, _waiterPresence, _push, _orders, orderId, item, cancellationToken);
+    {
+        var tableNumber = _push is null ? null : (await ResolveTableLabelAsync(orderId, cancellationToken)).TableNumber;
+        await DispatchItemReadyNotificationAsync(
+            _waiterHub, _waiterPresence, _push, _orders, orderId, item, cancellationToken, tableNumber);
+    }
 
     /// <summary>
     /// V1-RMD-201: an order with a known <see cref="Order.ServingUserId"/>
@@ -301,26 +304,32 @@ public sealed class KitchenOperationsStore
     public static async Task DispatchItemReadyNotificationAsync(
         IHubContext<WaiterOrderStatusHub> waiterHub,
         WaiterPresenceTracker waiterPresence,
-        WebPushSender? push,
+        WebPushDispatchService? push,
         IOrderRepository orders,
         Guid orderId,
         KitchenTicketItem item,
-        CancellationToken cancellationToken)
+        CancellationToken cancellationToken,
+        string? tableNumber = null)
     {
         var order = await orders.GetByIdAsync(orderId, cancellationToken);
         var servingUserId = order?.ServingUserId;
         var payload = new OrderItemReadyV1(orderId, order?.TableId, item.OrderItemId, item.ProductNameSnapshot);
         // V1-WTR-011: SignalR only reaches a device whose app is open, which
         // is exactly the case a plated dish is not in — the waiter is on the
-        // floor with the phone pocketed. The sender swallows its own failures.
-        var pushMessage = push is null
-            ? null
-            : new WebPushMessage("Sipariş hazır", $"{item.ProductNameSnapshot} hazır", "alkaros-order-ready");
+        // floor with the phone pocketed. One tag per item, so two dishes ready together show two notifications.
+        var pushMessage = push is null ? null : ItemReadyPushMessage(item, tableNumber);
 
         await WaiterNotificationDispatch.SendAsync(
             waiterHub, waiterPresence, push, servingUserId,
             WaiterOrderStatusHub.OrderItemReady, payload, pushMessage, cancellationToken);
     }
+
+    /// <summary>One tag per item, so two dishes ready together show two notifications instead of one replacing the other.</summary>
+    public static WebPushMessage ItemReadyPushMessage(KitchenTicketItem item, string? tableNumber)
+        => new(
+            "Sipariş hazır",
+            tableNumber is null ? $"{item.ProductNameSnapshot} hazır" : $"{tableNumber} masası: {item.ProductNameSnapshot} hazır",
+            $"alkaros-order-ready-{item.OrderItemId}");
 
     /// <summary>
     /// V1-RMD-219: found by an independent audit (2026-09-16) - the

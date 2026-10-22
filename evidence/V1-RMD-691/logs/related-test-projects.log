@@ -1,0 +1,10 @@
+== tests/Host/Experience/KitchenOperations/ALKAROS.Host.Experience.KitchenOperations.Tests.csproj
+Başarılı!  - Başarısız:     0, Başarılı:    69, Atlanan:     0, Toplam:    69, Süre: 3 m 21 s - ALKAROS.Host.Experience.KitchenOperations.Tests.dll (net8.0)
+== tests/Host/Experience/PendingOrderNotifications/ALKAROS.Host.Experience.PendingOrderNotifications.Tests.csproj
+Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 3 s - ALKAROS.Host.Experience.PendingOrderNotifications.Tests.dll (net8.0)
+== tests/Host/Experience/Composition/ALKAROS.Host.Experience.Composition.Tests.csproj
+Başarılı!  - Başarısız:     0, Başarılı:    22, Atlanan:     0, Toplam:    22, Süre: 2 m 7 s - ALKAROS.Host.Experience.Composition.Tests.dll (net8.0)
+== tests/Host/Experience/HelpRequests/ALKAROS.Host.Experience.HelpRequests.Tests.csproj
+Başarılı!  - Başarısız:     0, Başarılı:    22, Atlanan:     0, Toplam:    22, Süre: 6 s - ALKAROS.Host.Experience.HelpRequests.Tests.dll (net8.0)
+== tests/Host/Experience/Orders/TableDraft/ALKAROS.Host.Experience.Orders.TableDraft.Tests.csproj
+Başarılı!  - Başarısız:     0, Başarılı:    93, Atlanan:     0, Toplam:    93, Süre: 1 m 5 s - ALKAROS.Host.Experience.Orders.TableDraft.Tests.dll (net8.0)

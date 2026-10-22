@@ -54,7 +54,7 @@ import {
 } from './js/sheets/pending-orders.js';
 import { openFailedOrdersSheet, dismissFailedOrder, clearAllFailedOrders } from './js/sheets/failed-orders.js';
 import { sendDraft, flushQueue, reconcileOfflineActions } from './js/offline-queue.js';
-import { refreshPushState, enablePush, unsubscribePush, disablePush } from './js/push.js';
+import { refreshPushState, restorePush, enablePush, unsubscribePush, disablePush } from './js/push.js';
 import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js';
 
 (function () {
@@ -149,6 +149,8 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     // A failed logout leaves the server session open: stay signed in and say so instead of pretending to leave.
     if (!result.ok && result.status !== 401) {
       toast('Çıkış yapılamadı. Bağlantıyı kontrol edip tekrar deneyin.', { warning: true });
+      // Still signed in, so this device must keep receiving notifications.
+      void restorePush(true);
       return;
     }
     localStorage.removeItem('alkaros_waiter_pin_armed');
@@ -806,9 +808,9 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     hub.on('OrderItemReady', (payload) => {
       const name = (payload && payload.productName) || 'Bir ürün';
       toast(`${name} hazır.`);
-      // Same tag the service worker's push handler uses, so an online device
+      // Same per-item tag the service worker's push handler uses, so an online device
       // that receives both channels shows one notification, not two.
-      notify('Sipariş hazır', `${name} hazır`, 'alkaros-order-ready');
+      notify('Sipariş hazır', `${name} hazır`, `alkaros-order-ready-${payload && payload.orderItemId}`);
     });
 
     // Sent only to the waiter who raised the call, once a manager took it.
@@ -863,7 +865,7 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     registerOfflineWorker();
     connectHub();
     resetIdleTimer();
-    void refreshPushState();
+    void refreshPushState().then(() => restorePush());
     void flushQueue();
     // V1-WTR-019: the age badge is computed client-side from the already-
     // loaded openedAt, so ticking it forward needs only a re-render, not a
