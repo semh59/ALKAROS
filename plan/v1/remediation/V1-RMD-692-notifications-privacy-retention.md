@@ -23,7 +23,7 @@ V1-RMD-599 bulguları B006, B007, B014, B043, B106, B109, B113, B115, B138 kapan
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/HelpRequests/** - yalnız saklama
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/WebPush/** - yalnız saklama
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Privacy/** - yalnız plan ve envanter
-- Sınırlı ek (paylaşılan, geri-tik olmadan): database/migrations/V1/V1-RMD-692/** - yeni göç dosyaları
+- `database/migrations/V1/V1-RMD-692/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/compliance/** - yalnız KVKK envanteri ve runbook
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/operations/data-housekeeping.md - yalnız yeni tablolar
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız yeni test

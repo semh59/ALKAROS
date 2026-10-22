@@ -19,7 +19,7 @@ V1-RMD-599 bulguları B002, B067, B073, B082, N001 kapanır. Bağlı yönetici y
 - `plan/v1/remediation/V1-RMD-689-help-request-delivery-feedback.md`
 - `evidence/V1-RMD-689/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/HelpRequests/** - yalnız çağrı akışı
-- Sınırlı ek (paylaşılan, geri-tik olmadan): database/migrations/V1/V1-RMD-689/** - yeni göç dosyaları
+- `database/migrations/V1/V1-RMD-689/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/** - yalnız kasa yardım uyarısı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/** - yalnız yardım çağrısı geri bildirimi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız yeni test

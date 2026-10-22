@@ -23,7 +23,7 @@ V1-RMD-599 bulguları B005, B008, B009, B010, B011, B012, B013, B029, B059, B060
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/KitchenOperations/** - yalnız bildirim çağrısı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/PendingOrderNotifications/** - yalnız bildirim çağrısı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/** - yalnız push açma ve service worker
-- Sınırlı ek (paylaşılan, geri-tik olmadan): database/migrations/V1/V1-RMD-691/** - yeni göç dosyaları
+- `database/migrations/V1/V1-RMD-691/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json - yalnız yeni göç girdisi

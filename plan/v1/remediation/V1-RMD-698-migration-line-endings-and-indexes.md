@@ -19,7 +19,7 @@ V1-RMD-599 bulguları B047, B054, B055, B110, B111, B112 kapanır. Göç dosyala
 - `plan/v1/remediation/V1-RMD-698-migration-line-endings-and-indexes.md`
 - `evidence/V1-RMD-698/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): .gitattributes - yeni dosya
-- Sınırlı ek (paylaşılan, geri-tik olmadan): database/migrations/V1/V1-RMD-698/** - yeni göç dosyaları
+- `database/migrations/V1/V1-RMD-698/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/** - yalnız ekran koruyucu okuma ve sıralama
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/CustomerAccounts/** - yalnız indeks
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/** - yalnız sağlama toplamı
