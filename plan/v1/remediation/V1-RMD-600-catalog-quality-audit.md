@@ -1,8 +1,8 @@
 # V1-RMD-600 - Catalog modülünün bağımsız test ve kalite denetimi
 
 - Task ID: V1-RMD-600
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: validation
 - Surface state: Planned
 
@@ -18,6 +18,7 @@ Catalog modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar ba
 
 - `plan/v1/remediation/V1-RMD-600-catalog-quality-audit.md`
 - `evidence/V1-RMD-600/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-701-terminal-binding.md - yalnız Out of scope notu
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 
 ## In scope

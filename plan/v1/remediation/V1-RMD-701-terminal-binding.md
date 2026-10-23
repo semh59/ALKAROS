@@ -41,6 +41,7 @@ V1-RMD-599 bulguları B035 ve B088 kapanır. PO kararı: tarayıcıya bağlı gi
 ## Out of scope
 
 - Cihaz kayıt ve onay akışı (yönetici onaylı yeni terminal ekleme) ayrı ürün işidir.
+- Catalog modülünün bağımsız denetimi V1-RMD-600 görevindedir.
 
 ## Dependencies
 
