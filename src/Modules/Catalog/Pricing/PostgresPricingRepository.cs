@@ -121,6 +121,53 @@ public sealed class PostgresPricingRepository : IPricingRepository
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    public async Task AddReplacingEarlierAsync(ProductPrice price, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(price);
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await using (var close = new NpgsqlCommand(
+            $"""
+            UPDATE {Table}
+            SET effective_to = @effective_from
+            WHERE product_id = @product_id
+              AND price_type = @price_type
+              AND currency_code = @currency_code
+              AND effective_from < @effective_from
+              AND (effective_to IS NULL OR effective_to > @effective_from);
+            """, connection, transaction))
+        {
+            close.Parameters.AddWithValue("product_id", price.ProductId);
+            close.Parameters.AddWithValue("price_type", (int)price.PriceType);
+            close.Parameters.AddWithValue("currency_code", price.CurrencyCode);
+            close.Parameters.AddWithValue("effective_from", price.EffectiveFrom);
+            await close.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await using (var insert = new NpgsqlCommand(
+            $"""
+            INSERT INTO {Table} (
+                product_price_id, product_id, price_type, price, currency_code,
+                effective_from, effective_to)
+            VALUES (@id, @product_id, @price_type, @price, @currency_code,
+                    @effective_from, @effective_to);
+            """, connection, transaction))
+        {
+            insert.Parameters.AddWithValue("id", price.Id);
+            insert.Parameters.AddWithValue("product_id", price.ProductId);
+            insert.Parameters.AddWithValue("price_type", (int)price.PriceType);
+            insert.Parameters.AddWithValue("price", price.Price);
+            insert.Parameters.AddWithValue("currency_code", price.CurrencyCode);
+            insert.Parameters.AddWithValue("effective_from", price.EffectiveFrom);
+            insert.Parameters.AddWithValue("effective_to", (object?)price.EffectiveTo ?? DBNull.Value);
+            await insert.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+    }
+
     private static ProductPrice ReadProductPrice(NpgsqlDataReader reader)
     {
         return new ProductPrice(

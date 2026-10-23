@@ -199,9 +199,9 @@ public sealed class CatalogManagementStore
             request.PriceType,
             request.Price,
             request.EffectiveFrom,
-            NormalizeCurrency(request.CurrencyCode),
+            NormalizeSaleCurrency(request.CurrencyCode),
             request.EffectiveTo);
-        await _prices.AddAsync(price, cancellationToken);
+        await _prices.AddReplacingEarlierAsync(price, cancellationToken);
 
         // Found by an independent audit (2026-09-07): this used to set
         // current_price to the just-inserted request.Price whenever that row
@@ -232,12 +232,21 @@ public sealed class CatalogManagementStore
         var effective = await _prices.GetEffectivePriceAsync(
             productId, PriceType.SalePrice, currencyCode, at, cancellationToken);
 
+        // With no price in force, only a product whose dated pricing has already
+        // started loses its price; a seed price waits for the first dated one.
         await using var cmd = _dataSource.CreateCommand(
             """
-            UPDATE catalog.products
-            SET current_price = @current_price
-            WHERE product_id = @product_id;
+            UPDATE catalog.products p
+            SET current_price = @current_price::numeric
+            WHERE p.product_id = @product_id
+              AND (@current_price::numeric IS NOT NULL OR EXISTS (
+                  SELECT 1 FROM catalog.product_prices pp
+                  WHERE pp.product_id = p.product_id
+                    AND pp.price_type = 1
+                    AND pp.currency_code = 'TRY'
+                    AND pp.effective_from <= @at));
             """);
+        cmd.Parameters.AddWithValue("at", at);
         cmd.Parameters.AddWithValue("current_price", (object?)effective?.Price ?? DBNull.Value);
         cmd.Parameters.AddWithValue("product_id", productId);
         await cmd.ExecuteNonQueryAsync(cancellationToken);
@@ -598,6 +607,14 @@ public sealed class CatalogManagementStore
             return null;
         if (maximumLength is not null && normalized.Length > maximumLength.Value)
             throw new ArgumentException($"Value cannot exceed {maximumLength.Value} characters.", parameterName);
+        return normalized;
+    }
+
+    private static string NormalizeSaleCurrency(string value)
+    {
+        var normalized = NormalizeCurrency(value);
+        if (normalized != "TRY")
+            throw new ArgumentException("A sale price can only be in TRY.", nameof(value));
         return normalized;
     }
 

@@ -19,4 +19,11 @@ public interface IPricingRepository
         CancellationToken cancellationToken = default);
     Task<IReadOnlyList<ProductPrice>> GetByProductAsync(Guid productId, CancellationToken cancellationToken = default);
     Task AddAsync(ProductPrice price, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Appends a price and, in the same transaction, ends every earlier price of
+    /// the same product, type and currency that is still running at the new
+    /// start, so a price change does not collide with its predecessor.
+    /// </summary>
+    Task AddReplacingEarlierAsync(ProductPrice price, CancellationToken cancellationToken = default);
 }

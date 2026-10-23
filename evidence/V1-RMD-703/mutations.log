@@ -1,0 +1,6 @@
+M1 KILLED restored=true price added without closing the predecessor
+M2 KILLED restored=true predecessor not closed
+M3 KILLED restored=true non-TRY sale price accepted
+M4 KILLED restored=true seed price cleared by first future price
+M5 KILLED restored=true sweep clears seed price before first dated price starts
+M6 KILLED restored=true sweep counts non-TRY rows

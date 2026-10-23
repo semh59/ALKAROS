@@ -233,9 +233,9 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
                 productId,
                 PriceType.SalePrice,
                 110,
-                start.AddMinutes(30),
+                start.AddMinutes(-30),
                 "TRY",
-                start.AddHours(3)));
+                start.AddHours(1)));
         Assert.Equal(HttpStatusCode.Conflict, overlap.StatusCode);
         Assert.Equal("OVERLAPPING_EFFECTIVE_PRICE", (await ReadErrorAsync(overlap)).Error.Code);
         Assert.Equal(
@@ -483,6 +483,96 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
     }
 
     [Fact]
+    public async Task NewPriceEndsTheRunningOneAtItsStartSoAPriceChangeIsAccepted()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = await CreateTaxedProductAsync(client);
+        var now = DateTimeOffset.UtcNow;
+        var firstId = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/prices",
+            new CreateProductPriceV1(firstId, productId, PriceType.SalePrice, 100, now.AddDays(-2)));
+        Assert.Equal(100m, await CurrentPriceAsync(productId));
+
+        var tomorrow = now.AddDays(1);
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/prices",
+            new CreateProductPriceV1(Guid.NewGuid(), productId, PriceType.SalePrice, 120, tomorrow));
+
+        Assert.Equal(100m, await CurrentPriceAsync(productId));
+        var end = await PriceEndAsync(firstId);
+        Assert.NotNull(end);
+        Assert.Equal(tomorrow.UtcDateTime, end!.Value.UtcDateTime, TimeSpan.FromMilliseconds(1));
+
+        var nowRaise = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/prices",
+            new CreateProductPriceV1(nowRaise, productId, PriceType.SalePrice, 110, now.AddMinutes(-1), "TRY", tomorrow));
+        Assert.Equal(110m, await CurrentPriceAsync(productId));
+    }
+
+    [Fact]
+    public async Task OverlappingNewPriceStillConflictsWhenALaterPriceAlreadyExists()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = await CreateTaxedProductAsync(client);
+        var now = DateTimeOffset.UtcNow;
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/prices",
+            new CreateProductPriceV1(Guid.NewGuid(), productId, PriceType.SalePrice, 100, now.AddDays(-2)));
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/prices",
+            new CreateProductPriceV1(Guid.NewGuid(), productId, PriceType.SalePrice, 130, now.AddDays(2)));
+
+        using var response = await client.PostAsJsonAsync("/api/v1/management/catalog/prices",
+            new CreateProductPriceV1(Guid.NewGuid(), productId, PriceType.SalePrice, 120, now.AddDays(1), "TRY", now.AddDays(3)));
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task FirstFuturePriceKeepsTheSeedPriceUntilItStartsAndSweepDoesNotClearIt()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
+            new CreateProductV1(productId, "FUT-" + Guid.NewGuid().ToString("N")[..8], "Seed then future", ProductType.MenuItem, StockMode.Untracked, CurrentPrice: 42m, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
+
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/prices",
+            new CreateProductPriceV1(Guid.NewGuid(), productId, PriceType.SalePrice, 50, DateTimeOffset.UtcNow.AddDays(1)));
+        Assert.Equal(42m, await CurrentPriceAsync(productId));
+
+        await CatalogPriceRecomputeHostedService.RecomputeAllAsync(_database.DataSource, CancellationToken.None);
+        Assert.Equal(42m, await CurrentPriceAsync(productId));
+    }
+
+    [Fact]
+    public async Task SweepIgnoresAPriceInAnotherCurrencyWhenDecidingToClearTheSeedPrice()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
+            new CreateProductV1(productId, "USD-" + Guid.NewGuid().ToString("N")[..8], "Seed with foreign row", ProductType.MenuItem, StockMode.Untracked, CurrentPrice: 42m, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
+        await _database.ExecuteAsync(
+            """
+            INSERT INTO catalog.product_prices (product_price_id, product_id, price_type, price, currency_code, effective_from, effective_to)
+            VALUES (@id, @product_id, 1, 2, 'USD', @from, NULL);
+            """,
+            ("id", Guid.NewGuid()), ("product_id", productId), ("from", DateTimeOffset.UtcNow.AddHours(-1)));
+
+        await CatalogPriceRecomputeHostedService.RecomputeAllAsync(_database.DataSource, CancellationToken.None);
+
+        Assert.Equal(42m, await CurrentPriceAsync(productId));
+    }
+
+    [Fact]
+    public async Task SalePriceInAnotherCurrencyIsRejectedAndNotInserted()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = await CreateTaxedProductAsync(client);
+        var priceId = Guid.NewGuid();
+        using var response = await client.PostAsJsonAsync("/api/v1/management/catalog/prices",
+            new CreateProductPriceV1(priceId, productId, PriceType.SalePrice, 2, DateTimeOffset.UtcNow.AddHours(-1), "USD"));
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Null(await PriceEndAsync(priceId));
+        Assert.Equal(0L, await PriceCountAsync(priceId));
+    }
+
+    [Fact]
     public async Task ProductWithoutAnExistingActiveTaxProfileIsRejectedAndNotInserted()
     {
         using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
@@ -580,6 +670,31 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         await using var command = _database.DataSource.CreateCommand(
             "SELECT count(*) FROM catalog.products WHERE product_id = @product_id;");
         command.Parameters.AddWithValue("product_id", productId);
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    private static async Task<Guid> CreateTaxedProductAsync(HttpClient client)
+    {
+        var productId = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
+            new CreateProductV1(productId, "PRC-" + Guid.NewGuid().ToString("N")[..8], "Priced", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
+        return productId;
+    }
+
+    private async Task<DateTimeOffset?> PriceEndAsync(Guid priceId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT effective_to FROM catalog.product_prices WHERE product_price_id = @id;");
+        command.Parameters.AddWithValue("id", priceId);
+        var result = await command.ExecuteScalarAsync();
+        return result is null or DBNull ? null : new DateTimeOffset(DateTime.SpecifyKind((DateTime)result, DateTimeKind.Utc));
+    }
+
+    private async Task<long> PriceCountAsync(Guid priceId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT count(*) FROM catalog.product_prices WHERE product_price_id = @id;");
+        command.Parameters.AddWithValue("id", priceId);
         return (long)(await command.ExecuteScalarAsync())!;
     }
 }

@@ -115,12 +115,15 @@ public sealed class CatalogPriceRecomputeHostedService : BackgroundService
               -- A product that has NEVER had a product_prices row is not
               -- using the dated pricing system at all — its current_price is
               -- a plain seed value set directly on the product record
-              -- (CreateProductV1.CurrentPrice) and must be left alone. Only a
-              -- product that has actually entered the dated system (>=1 row)
-              -- but has none effective right now should be cleared.
+              -- (CreateProductV1.CurrentPrice) and must be left alone until its
+              -- first dated TRY price has started. Only a product whose dated
+              -- pricing has started but has none effective right now is cleared.
               AND EXISTS (
                   SELECT 1 FROM catalog.product_prices pp
                   WHERE pp.product_id = p.product_id
+                    AND pp.price_type = 1
+                    AND pp.currency_code = 'TRY'
+                    AND pp.effective_from <= now()
               )
               AND NOT EXISTS (
                   SELECT 1 FROM catalog.product_prices pp
