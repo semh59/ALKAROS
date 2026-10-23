@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Http;
@@ -47,6 +48,9 @@ public static class ApiErrorHandling
                 context.Abort();
             }
         });
+        // A handler that ends a request with a bare 404/405/401 and no body (Results.NotFound() and the like) still
+        // answers an API client with the standard envelope.
+        application.UseStatusCodePages(WriteStatusEnvelopeAsync);
         return application.UseExceptionHandler(new ExceptionHandlerOptions
         {
             // An area's 404 (NOT_FOUND and similar) is a handled answer, not "no handler found".
@@ -56,6 +60,20 @@ public static class ApiErrorHandling
             ExceptionHandler = context => ApiExceptionHandler.WriteAsync(
                 context, context.Features.Get<IExceptionHandlerFeature>()!.Error),
         });
+    }
+
+    private static Task WriteStatusEnvelopeAsync(StatusCodeContext statusCode)
+    {
+        var context = statusCode.HttpContext;
+        if (!context.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase))
+            return Task.CompletedTask;
+
+        var status = context.Response.StatusCode;
+        var (code, message) = ApiErrorCatalog.StatusAnswer(status);
+        context.Response.ContentType = "application/json; charset=utf-8";
+        return context.Response.WriteAsJsonAsync(
+            new ApiErrorEnvelope(new ApiError(code, message, status, context.TraceIdentifier)),
+            cancellationToken: context.RequestAborted);
     }
 
     /// <summary>

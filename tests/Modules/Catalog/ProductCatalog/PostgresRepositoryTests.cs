@@ -326,12 +326,27 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
             ("id", id)));
 
         var staleUpdate = loaded.Suspend();
-        var ex = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+        var ex = await Assert.ThrowsAsync<CatalogConcurrencyException>(() =>
             _products.UpdateAsync(staleUpdate, loaded.RowVersion));
         Assert.Contains(id.ToString(), ex.Message);
 
         var reloaded = await _products.GetByIdAsync(id);
         Assert.True(reloaded!.IsAvailable);
+    }
+
+    [Fact]
+    public async Task UpdatingARecordThatDoesNotExistThrowsTheNotFoundType()
+    {
+        var id = Guid.NewGuid();
+
+        await Assert.ThrowsAsync<CatalogRecordNotFoundException>(() =>
+            _categories.UpdateAsync(new Category(id, "GONE", "Gone")));
+        await Assert.ThrowsAsync<CatalogRecordNotFoundException>(() =>
+            _taxProfiles.UpdateAsync(new TaxProfile(id, "GONE", "Gone", 0m)));
+        await Assert.ThrowsAsync<CatalogRecordNotFoundException>(() =>
+            _modifierGroups.UpdateAsync(new ModifierGroup(id, "GONE", "Gone", SelectionType.SelectMany)));
+        await Assert.ThrowsAsync<CatalogRecordNotFoundException>(() =>
+            _modifiers.UpdateAsync(new Modifier(id, Guid.NewGuid(), "GONE", "Gone", 1m)));
     }
 
     [Fact]

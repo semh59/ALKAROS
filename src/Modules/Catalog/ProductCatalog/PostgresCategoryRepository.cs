@@ -139,7 +139,7 @@ public sealed class PostgresCategoryRepository : ICategoryRepository
 
         var affected = await command.ExecuteNonQueryAsync(cancellationToken);
         if (affected == 0)
-            throw new InvalidOperationException($"Category {category.Id} not found.");
+            throw new CatalogRecordNotFoundException($"Category {category.Id} not found.");
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)

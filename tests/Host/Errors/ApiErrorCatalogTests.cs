@@ -1,3 +1,4 @@
+using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.TenderHandler;
 using ALKAROS.Host.Composition.Errors;
@@ -71,7 +72,8 @@ public sealed class ApiErrorCatalogTests
         { "CatalogManagement", Pg("23514", null), 400, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor." },
         { "CatalogManagement", Uninitialized<ArgumentException>(), 400, "VALIDATION_FAILED", "İstek doğrulanamadı." },
         { "CatalogManagement", Uninitialized<BadHttpRequestException>(), 400, "VALIDATION_FAILED", "İstek doğrulanamadı." },
-        { "CatalogManagement", Uninitialized<InvalidOperationException>(), 409, "CONCURRENCY_CONFLICT", "Katalog kaydı başka bir işlem tarafından değiştirildi." },
+        { "CatalogManagement", new CatalogConcurrencyException("sample"), 409, "CONCURRENCY_CONFLICT", "Katalog kaydı başka bir işlem tarafından değiştirildi." },
+        { "CatalogManagement", new CatalogRecordNotFoundException("sample"), 404, "NOT_FOUND", "İstenen katalog kaydı bulunamadı." },
         { "CatalogManagement", Uninitialized<NpgsqlException>(), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
         { "CustomerCreditTerms", Uninitialized<CustomerCreditUnauthorizedException>(), 401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş." },
         { "CustomerCreditTerms", Uninitialized<AuthorizationDeniedException>(), 403, "FORBIDDEN", "Kredi limitini yalnız yönetici değiştirebilir." },
@@ -181,7 +183,8 @@ public sealed class ApiErrorCatalogTests
         { "EndOfDay", Uninitialized<NpgsqlException>(), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
         { "RoleManagement", Uninitialized<RoleManagementUnauthorizedException>(), 401, "UNAUTHORIZED", "Yönetici ya da vardiya sorumlusu oturumu gerekiyor." },
         { "RoleManagement", Uninitialized<AuthorizationDeniedException>(), 403, "FORBIDDEN", "Rol ya da yetki yönetimi izni gerekiyor." },
-        { "RoleManagement", Uninitialized<InvalidOperationException>(), 409, "ROLE_MANAGEMENT_CONFLICT", "Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı." },
+        { "RoleManagement", new RoleManagementConflictException("sample"), 409, "ROLE_MANAGEMENT_CONFLICT", "Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı." },
+        { "RoleManagement", new LastRoleManagerException(), 409, "LAST_ROLE_MANAGER", "Rol yönetimi yetkisine sahip son kişi kaldırılamaz; önce bu yetkiyi başka bir yöneticiye verin." },
         { "RoleManagement", Uninitialized<BadHttpRequestException>(), 400, "VALIDATION_FAILED", "İstek doğrulanamadı." },
         { "RoleManagement", Uninitialized<ArgumentException>(), 400, "VALIDATION_FAILED", "İstek doğrulanamadı." },
         { "RoleManagement", Uninitialized<NpgsqlException>(), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
@@ -226,7 +229,14 @@ public sealed class ApiErrorCatalogTests
         { null, Uninitialized<OverAllocationException>(), 409, "OVER_ALLOCATION", "İstenen tutar hesabın kalan bakiyesini aşıyor." },
         { null, Uninitialized<ArgumentException>(), 400, "VALIDATION_FAILED", "İstek doğrulanamadı." },
         { null, Uninitialized<BadHttpRequestException>(), 400, "VALIDATION_FAILED", "İstek doğrulanamadı." },
-        { null, Pg("XX000", null), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
+        { null, Pg("57P03", null), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
+        { null, Pg("08006", null), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
+        { null, Pg("53300", null), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
+        { null, new NpgsqlException("sample"), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
+        { null, Pg("58P01", null), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
+        { null, Pg("XX000", null), 500, "INTERNAL_ERROR", "İşlem tamamlanamadı." },
+        { null, Pg("22003", null), 500, "INTERNAL_ERROR", "İşlem tamamlanamadı." },
+        { "CatalogManagement", new NpgsqlException("sample"), 503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı." },
         { null, new TimeoutException("sample"), 500, "INTERNAL_ERROR", "İşlem tamamlanamadı." },
     };
 
@@ -255,10 +265,10 @@ public sealed class ApiErrorCatalogTests
     public void AnAreaWithNoAnswerPassesTheExceptionToTheNextAreaOut()
     {
         // A caught type with no matching arm used to be rethrown to the next handler out.
-        var inner = new ApiErrorArea([typeof(InvalidOperationException)], _ => null);
+        var inner = new ApiErrorArea([typeof(CatalogConcurrencyException)], _ => null);
 
         var mapped = ApiExceptionHandler.Resolve(
-            [ApiErrorCatalog.CatalogManagement, inner], new InvalidOperationException("sample"));
+            [ApiErrorCatalog.CatalogManagement, inner], new CatalogConcurrencyException("sample"));
 
         Assert.Equal((409, "CONCURRENCY_CONFLICT", "Katalog kaydı başka bir işlem tarafından değiştirildi."), mapped);
     }
@@ -270,6 +280,44 @@ public sealed class ApiErrorCatalogTests
             [ApiErrorCatalog.CatalogManagement, ApiErrorCatalog.MenuManagement], Uninitialized<AuthorizationDeniedException>());
 
         Assert.Equal((403, "FORBIDDEN", "Menü yönetimi izni gerekiyor."), mapped);
+    }
+
+    [Theory]
+    [InlineData(400, "VALIDATION_FAILED")]
+    [InlineData(401, "UNAUTHORIZED")]
+    [InlineData(403, "FORBIDDEN")]
+    [InlineData(404, "NOT_FOUND")]
+    [InlineData(405, "METHOD_NOT_ALLOWED")]
+    [InlineData(415, "UNSUPPORTED_MEDIA_TYPE")]
+    [InlineData(429, "TOO_MANY_REQUESTS")]
+    [InlineData(502, "INTERNAL_ERROR")]
+    [InlineData(409, "REQUEST_REFUSED")]
+    public void ABodylessStatusGetsItsOwnCode(int status, string code)
+        => Assert.Equal(code, ApiErrorCatalog.StatusAnswer(status).Code);
+
+    [Fact]
+    public async Task ABodylessRefusalOnAnApiPathCarriesTheEnvelopeButOtherPathsStayBodyless()
+    {
+        var builder = Microsoft.AspNetCore.Builder.WebApplication.CreateBuilder();
+        Microsoft.AspNetCore.Hosting.HostingAbstractionsWebHostBuilderExtensions.UseUrls(builder.WebHost, "http://127.0.0.1:0");
+        builder.Services.AddApiErrorHandling();
+        await using var app = builder.Build();
+        app.UseApiErrorHandling();
+        Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapGet(app, "/api/empty", () => Microsoft.AspNetCore.Http.Results.NotFound());
+        Microsoft.AspNetCore.Builder.EndpointRouteBuilderExtensions.MapGet(app, "/other/empty", () => Microsoft.AspNetCore.Http.Results.NotFound());
+        await app.StartAsync();
+        var address = app.Urls.Single();
+        using var client = new HttpClient { BaseAddress = new Uri(address) };
+
+        using var api = await client.GetAsync("/api/empty");
+        var body = await api.Content.ReadAsStringAsync();
+        Assert.Equal(System.Net.HttpStatusCode.NotFound, api.StatusCode);
+        Assert.Contains("\"code\":\"NOT_FOUND\"", body, StringComparison.Ordinal);
+        Assert.Contains("\"status\":404", body, StringComparison.Ordinal);
+        Assert.Contains("traceId", body, StringComparison.Ordinal);
+
+        using var other = await client.GetAsync("/other/empty");
+        Assert.Equal(string.Empty, await other.Content.ReadAsStringAsync());
     }
 
     private static ApiErrorArea Area(string name)

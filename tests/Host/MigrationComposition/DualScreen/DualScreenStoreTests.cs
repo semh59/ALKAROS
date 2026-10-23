@@ -68,6 +68,32 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AnUnknownLineIsNotFoundButALineThatIsNoLongerDraftIsAConflict()
+    {
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        var added = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision), CancellationToken.None);
+        var itemId = await ScalarAsync<Guid>(
+            "SELECT order_item_id FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId));
+
+        await Assert.ThrowsAsync<DualScreenNotFoundException>(() => _store.RemoveItemAsync(
+            terminalId, order.OrderId, Guid.NewGuid(), added.Revision, CancellationToken.None));
+
+        await using (var command = _dataSource!.CreateCommand(
+            "UPDATE orders.order_items SET status = 'Active' WHERE order_item_id = @id;"))
+        {
+            command.Parameters.AddWithValue("id", itemId);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.RemoveItemAsync(
+            terminalId, order.OrderId, itemId, added.Revision, CancellationToken.None));
+        await Assert.ThrowsAsync<DualScreenConflictException>(() => _store.ChangeItemQuantityAsync(
+            terminalId, order.OrderId, itemId, new ChangeOrderItemQuantityRequest(2m, added.Revision), CancellationToken.None));
+    }
+
+    [Fact]
     public async Task ConcurrentAddsWithSameRevisionCannotCommitCumulative1000()
     {
         var terminalId = Guid.NewGuid();

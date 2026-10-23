@@ -20,6 +20,9 @@ public sealed class ApiExceptionHandler : IExceptionHandler
             new EventId(5000, nameof(LogServerError)),
             "Unhandled error on {Path} (TraceIdentifier: {TraceIdentifier})");
 
+    /// <summary>Seconds a client is told to wait when the database could not be reached.</summary>
+    public const int DatabaseRetryAfterSeconds = 5;
+
     public async ValueTask<bool> TryHandleAsync(
         HttpContext httpContext, Exception exception, CancellationToken cancellationToken)
     {
@@ -50,6 +53,8 @@ public sealed class ApiExceptionHandler : IExceptionHandler
             LogFailure(context, exception);
 
         context.Response.StatusCode = status;
+        if (status == StatusCodes.Status503ServiceUnavailable)
+            context.Response.Headers.RetryAfter = DatabaseRetryAfterSeconds.ToString(System.Globalization.CultureInfo.InvariantCulture);
         context.Response.ContentType = "application/json; charset=utf-8";
         await context.Response.WriteAsJsonAsync(
             new ApiErrorEnvelope(new ApiError(code, message, status, context.TraceIdentifier)),

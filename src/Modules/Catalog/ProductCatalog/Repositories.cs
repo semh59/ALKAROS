@@ -57,3 +57,9 @@ public interface IProductModifierGroupRepository
     Task AddAsync(ProductModifierGroup productModifierGroup, CancellationToken cancellationToken = default);
     Task DeleteAsync(Guid id, CancellationToken cancellationToken = default);
 }
+
+/// <summary>An update or delete addressed a catalog record that does not exist.</summary>
+public sealed class CatalogRecordNotFoundException(string message) : InvalidOperationException(message);
+
+/// <summary>A catalog record was changed (or removed) by someone else since the caller read it.</summary>
+public sealed class CatalogConcurrencyException(string message) : InvalidOperationException(message);

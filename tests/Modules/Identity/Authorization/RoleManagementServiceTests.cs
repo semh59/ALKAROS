@@ -119,6 +119,36 @@ public sealed class RoleManagementServiceTests : IClassFixture<AuthorizationTest
     }
 
     [Fact]
+    public async Task ARoleThatAlreadyExistsAndAnUnknownPermissionAreTypedConflicts()
+    {
+        var (manager, _) = await InsertActorsAsync();
+        var roleId = (await _roles.GetRoleIdsForUserAsync(manager)).Single();
+        var code = "dup_" + Guid.NewGuid().ToString("N")[..8];
+        await _service.CreateRoleAsync(manager, code, "Kopya");
+
+        var duplicate = () => _service.CreateRoleAsync(manager, code, "Kopya");
+        var unknown = () => _service.AssignPermissionAsync(manager, roleId, "no.such.permission");
+
+        await duplicate.Should().ThrowAsync<RoleManagementConflictException>();
+        await unknown.Should().ThrowAsync<RoleManagementConflictException>();
+    }
+
+    [Fact]
+    public async Task TheRepositoryReportsALostInsertRaceAsATypedConflict()
+    {
+        var code = "race_" + Guid.NewGuid().ToString("N")[..8];
+        await _roles.AddAsync(new Role(Guid.NewGuid(), code, "Ilk"));
+        var username = "race_" + Guid.NewGuid().ToString("N")[..8];
+        await _roles.CreateUserAsync(username, "hash", "Ilk");
+
+        var role = () => _roles.AddAsync(new Role(Guid.NewGuid(), code, "Ikinci"));
+        var user = () => _roles.CreateUserAsync(username, "hash", "Ikinci");
+
+        await role.Should().ThrowAsync<RoleManagementConflictException>();
+        await user.Should().ThrowAsync<RoleManagementConflictException>();
+    }
+
+    [Fact]
     public async Task DeniedActorCannotAssignPermissionAndNoRowPersists()
     {
         var (manager, staff) = await InsertActorsAsync();
@@ -278,7 +308,7 @@ public sealed class RoleManagementServiceTests : IClassFixture<AuthorizationTest
 
         var act = () => _service.CreateUserAsync(manager, username, "another-password", "Garson İkinci");
 
-        await act.Should().ThrowAsync<InvalidOperationException>();
+        await act.Should().ThrowAsync<RoleManagementConflictException>();
         (await _database.CountAsync("identity.users")).Should().Be(before);
     }
 

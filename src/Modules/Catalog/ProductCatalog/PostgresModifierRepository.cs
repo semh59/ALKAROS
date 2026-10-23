@@ -121,7 +121,7 @@ public sealed class PostgresModifierRepository : IModifierRepository
 
         var affected = await command.ExecuteNonQueryAsync(cancellationToken);
         if (affected == 0)
-            throw new InvalidOperationException($"Modifier {modifier.Id} not found.");
+            throw new CatalogRecordNotFoundException($"Modifier {modifier.Id} not found.");
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)

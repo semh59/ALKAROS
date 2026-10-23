@@ -248,6 +248,10 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Conflict, second.StatusCode);
         var body = await second.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal("TENDER_UNSETTLED_PAYMENT_EXISTS", body.GetProperty("error").GetProperty("code").GetString());
+        var message = body.GetProperty("error").GetProperty("message").GetString()!;
+        foreach (var status in Enum.GetNames<ALKAROS.Payments.PaymentAggregate.PaymentStatus>())
+            Assert.DoesNotContain($"'{status}'", message, StringComparison.Ordinal);
+        Assert.Matches("'(Başlatıldı|Beklemede|Sonucu bilinmiyor|Mutabakat bekliyor)'", message);
     }
 
     [Fact]
@@ -323,11 +327,29 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         var loser = responses.Single(r => r.StatusCode == HttpStatusCode.Conflict);
         var loserBody = await loser.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal("TENDER_OVER_ALLOCATION", loserBody.GetProperty("error").GetProperty("code").GetString());
-        Assert.Contains("₺", loserBody.GetProperty("error").GetProperty("message").GetString());
+        Assert.Contains("40,00 ₺", loserBody.GetProperty("error").GetProperty("message").GetString());
 
         var summary = await GetAsync(clientA, TendersPath(terminalId, billId), cookie);
         var summaryBody = await summary.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal(60m, summaryBody.GetProperty("allocatedTotal").GetDecimal());
+    }
+
+    [Theory]
+    [MemberData(nameof(EveryPaymentStatus))]
+    public void EveryPaymentStatusHasATurkishName(ALKAROS.Payments.PaymentAggregate.PaymentStatus status)
+    {
+        var text = ALKAROS.Host.DualScreen.DualScreenApplication.PaymentStatusText(status.ToString());
+
+        Assert.NotEqual("Çözülmemiş", text);
+        Assert.NotEqual(status.ToString(), text);
+    }
+
+    public static TheoryData<ALKAROS.Payments.PaymentAggregate.PaymentStatus> EveryPaymentStatus()
+    {
+        var data = new TheoryData<ALKAROS.Payments.PaymentAggregate.PaymentStatus>();
+        foreach (var status in Enum.GetValues<ALKAROS.Payments.PaymentAggregate.PaymentStatus>())
+            data.Add(status);
+        return data;
     }
 
     [Fact]
@@ -345,6 +367,9 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
         var body = await response.Content.ReadFromJsonAsync<JsonElement>();
         Assert.Equal("TENDER_METHOD_NOT_REGISTERED", body.GetProperty("error").GetProperty("code").GetString());
+        var message = body.GetProperty("error").GetProperty("message").GetString()!;
+        Assert.Contains("Yemek kartı", message, StringComparison.Ordinal);
+        Assert.DoesNotContain("MealCard", message, StringComparison.Ordinal);
     }
 
     [Fact]

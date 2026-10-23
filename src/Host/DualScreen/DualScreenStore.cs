@@ -394,12 +394,14 @@ public sealed partial class DualScreenStore
         {
             updated = remove ? order.RemoveItem(itemId) : order.ChangeItemQuantity(itemId, quantity);
         }
-        catch (Exception exception) when (exception is ArgumentException or InvalidOperationException)
+        catch (ArgumentException)
         {
-            // Unknown item, or an item no longer Draft (already Active/void) —
-            // the raw SQL this replaces made no such distinction either
-            // (DELETE/UPDATE affecting 0 rows for either reason).
             throw new DualScreenNotFoundException("Draft order item was not found.");
+        }
+        catch (InvalidOperationException)
+        {
+            // The item exists but is no longer Draft (already sent or voided): the line cannot change any more.
+            throw new DualScreenConflictException("Draft order item can no longer be changed.");
         }
 
         var revision = await _orderRepository.SaveAsync(updated, order.RowVersion, connection, transaction, cancellationToken);

@@ -133,7 +133,7 @@ public sealed class PostgresTaxProfileRepository : ITaxProfileRepository
 
         var affected = await command.ExecuteNonQueryAsync(cancellationToken);
         if (affected == 0)
-            throw new InvalidOperationException($"Tax profile {taxProfile.Id} not found.");
+            throw new CatalogRecordNotFoundException($"Tax profile {taxProfile.Id} not found.");
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)

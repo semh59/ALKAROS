@@ -188,7 +188,7 @@ public sealed class PostgresProductRepository : IProductRepository
 
         var result = await command.ExecuteScalarAsync(cancellationToken);
         if (result is null)
-            throw new InvalidOperationException(
+            throw new CatalogConcurrencyException(
                 $"Product '{product.Id}' not found or concurrent modification (expected row version {expectedRowVersion}).");
     }
 

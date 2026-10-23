@@ -46,7 +46,7 @@ public sealed class RoleManagementService : IRoleManagementService
 
         if (await _permissionRepository.GetByCodeAsync(code, cancellationToken) is not null)
         {
-            throw new InvalidOperationException($"Permission '{code}' already exists.");
+            throw new RoleManagementConflictException($"Permission '{code}' already exists.");
         }
 
         await _permissionRepository.AddAsync(new PermissionEntry(Guid.NewGuid(), code, name), cancellationToken);
@@ -61,7 +61,7 @@ public sealed class RoleManagementService : IRoleManagementService
 
         if (await _roleRepository.GetByCodeAsync(code, cancellationToken) is not null)
         {
-            throw new InvalidOperationException($"Role '{code}' already exists.");
+            throw new RoleManagementConflictException($"Role '{code}' already exists.");
         }
 
         var role = new Role(Guid.NewGuid(), code, name);
@@ -76,7 +76,7 @@ public sealed class RoleManagementService : IRoleManagementService
         await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.RolesManage, cancellationToken);
 
         var permission = await _permissionRepository.GetByCodeAsync(permissionCode, cancellationToken)
-            ?? throw new InvalidOperationException($"Permission '{permissionCode}' does not exist.");
+            ?? throw new RoleManagementConflictException($"Permission '{permissionCode}' does not exist.");
 
         await _roleRepository.AssignPermissionAsync(roleId, permission.Id, cancellationToken);
     }
@@ -129,7 +129,7 @@ public sealed class RoleManagementService : IRoleManagementService
         await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.UsersManage, cancellationToken);
 
         if (await _roleRepository.UsernameExistsAsync(username, cancellationToken))
-            throw new InvalidOperationException($"Username '{username}' already exists.");
+            throw new RoleManagementConflictException($"Username '{username}' already exists.");
 
         var passwordHash = new PasswordHasher().Hash(password);
         return await _roleRepository.CreateUserAsync(username, passwordHash, displayName, cancellationToken);
@@ -160,6 +160,20 @@ public sealed class RoleManagementService : IRoleManagementService
     {
         await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.UsersManage, cancellationToken);
         return await _roleRepository.ListUsersAsync(cancellationToken);
+    }
+}
+
+/// <summary>A role, permission or username already exists, or a role or permission it refers to does not.</summary>
+public sealed class RoleManagementConflictException : InvalidOperationException
+{
+    public RoleManagementConflictException(string message)
+        : base(message)
+    {
+    }
+
+    public RoleManagementConflictException(string message, Exception innerException)
+        : base(message, innerException)
+    {
     }
 }
 

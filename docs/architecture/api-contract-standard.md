@@ -56,10 +56,28 @@
     }
     ```
 
-    `code` is a stable machine-readable key from the catalogue
-   (`docs/engineering/error-code-catalogue.md` — owned by the first API
-   implementation task); `message` is user-facing Turkish; `details` optional
-   per-failure diagnostics; envelope is JSON.
+    `code` is a stable machine-readable key; `message` is user-facing Turkish;
+   `details` optional per-failure diagnostics; envelope is JSON.
+
+    The catalogue is the code, not a separate document:
+   `src/Host/Composition/Errors/ApiErrorCatalog.cs` maps every domain exception
+   to its status, `code` and Turkish `message` (one area per management
+   screen, plus a Host default), and `ApiExceptionHandler` writes it. Clients
+   show `message` as sent and never translate or compose their own text for a
+   failure. What this guarantees:
+
+    - A database that cannot be reached (connection lost or refused, server
+      starting up or out of resources) answers `503` `DATABASE_UNAVAILABLE`
+      with `Retry-After`; a query the database ran and refused is `500`.
+    - A domain exception maps to its own status. In the shared catalog a generic
+      `InvalidOperationException` is never read as a conflict: it is a `500`.
+    - A bodyless `401/403/404/405/429/5xx` on an `/api` path is completed
+      with this envelope (`UseStatusCodePages`); a known path called with the
+      wrong method answers `405` with `Allow`.
+    - Some endpoints still write the shorter `{ "error": { "code", "message" } }`
+      (no `status`/`traceId`) from local mappers; clients read only `code` and
+      `message`, which both shapes carry. Folding them into one shape is a
+      separate piece of work.
 6. **Event schema: CloudEvents.** Domain/integration events are published
    with a CloudEvents envelope (`id`, `source`, `type`, `time`, `datacontenttype`,
    `data`). Event type names are English, reverse-domain or module-scoped
@@ -114,7 +132,7 @@ Deterministic semantics:
 
 - Success → `201` payment + allocation summary; `changeAmount` returned
   separately, never as a negative allocation (PDF:I.13.1).
-- Insufficient remaining payable → `422` envelope `code: ALLOCATION_EXCEEDS_PAYABLE`
+- Insufficient remaining payable → `409` envelope `code: TENDER_OVER_ALLOCATION`
   (PDF:II.6.6).
 - Replay with same key → original `201`; duplicate callback cannot create
   duplicate allocations (PDF:III.8.2).

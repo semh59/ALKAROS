@@ -1497,10 +1497,54 @@ public sealed class DualScreenApiOnlyOriginTests : IDisposable
             StringComparison.Ordinal);
     }
 
-    private static async Task<WebApplication> StartApiOnlyAsync(IReadOnlyList<IPAddress> trustedProxies)
+    [Fact]
+    public async Task AWrongMethodOnAKnownApiPathAnswers405WithTheAllowedMethods()
+    {
+        await using var app = await StartApiOnlyAsync([IPAddress.Loopback]);
+        using var client = CreateClient(app);
+
+        using var request = Forwarded(HttpMethod.Delete, "/api/v1/auth/session", "198.51.100.9");
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.MethodNotAllowed, response.StatusCode);
+        Assert.Contains("GET", response.Content.Headers.Allow);
+        Assert.Contains("METHOD_NOT_ALLOWED", await response.Content.ReadAsStringAsync(), StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AMethodTheRouteDoesAcceptIsNeverReportedAsNotAllowed()
+    {
+        await using var app = await StartApiOnlyAsync([IPAddress.Loopback]);
+        using var client = CreateClient(app);
+
+        using var request = Forwarded(HttpMethod.Post, "/api/v1/auth/login", "198.51.100.11");
+        request.Content = new StringContent("x", System.Text.Encoding.UTF8, "text/plain");
+        using var response = await client.SendAsync(request);
+
+        Assert.NotEqual(HttpStatusCode.MethodNotAllowed, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task AnUnreachableDatabaseAnswers503WithRetryAfterAndTheEnvelope()
+    {
+        await using var app = await StartApiOnlyAsync([IPAddress.Loopback], "Host=127.0.0.1;Port=1;Database=x;Username=x;Password=x;Timeout=2");
+        using var client = CreateClient(app);
+
+        using var response = await client.GetAsync("/health/ready");
+
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, response.StatusCode);
+        Assert.Equal("5", Assert.Single(response.Headers.GetValues("Retry-After")));
+        var body = await response.Content.ReadAsStringAsync();
+        Assert.Contains("DATABASE_UNAVAILABLE", body, StringComparison.Ordinal);
+        Assert.Contains("traceId", body, StringComparison.Ordinal);
+    }
+
+    private static async Task<WebApplication> StartApiOnlyAsync(
+        IReadOnlyList<IPAddress> trustedProxies,
+        string connectionString = "Host=localhost;Database=unused;Username=unused;Password=unused")
     {
         var app = DualScreenApplication.Build(new DualScreenOptions(
-            "Host=localhost;Database=unused;Username=unused;Password=unused",
+            connectionString,
             WebRoot: string.Empty,
             "http://127.0.0.1:0",
             trustedProxies,

@@ -79,7 +79,7 @@ public sealed class PostgresPermissionRepository : IPermissionRepository
         }
         catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation)
         {
-            throw new InvalidOperationException(
+            throw new RoleManagementConflictException(
                 $"Permission '{permission.Code}' already exists.", ex);
         }
     }

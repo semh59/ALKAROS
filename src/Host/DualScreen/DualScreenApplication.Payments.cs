@@ -347,7 +347,7 @@ public static partial class DualScreenApplication
             catch (OverAllocationException exception)
             {
                 return Results.Json(
-                    new { error = new { code = "TENDER_OVER_ALLOCATION", message = $"Tutar kalan {exception.RemainingPayable:0.00} ₺'yi aşıyor." } },
+                    new { error = new { code = "TENDER_OVER_ALLOCATION", message = $"Tutar kalan {FormatLira(exception.RemainingPayable)}'yi aşıyor." } },
                     statusCode: StatusCodes.Status409Conflict);
             }
             catch (ManualPaymentResolutionException exception)
@@ -489,7 +489,7 @@ public static partial class DualScreenApplication
                         error = new
                         {
                             code = "TENDER_OVER_ALLOCATION",
-                            message = $"Tutar kalan {ex.RemainingPayable:0.00} ₺'yi aşıyor.",
+                            message = $"Tutar kalan {FormatLira(ex.RemainingPayable)}'yi aşıyor.",
                         },
                     },
                     statusCode: StatusCodes.Status409Conflict);
@@ -506,7 +506,7 @@ public static partial class DualScreenApplication
                         error = new
                         {
                             code = "TENDER_UNSETTLED_PAYMENT_EXISTS",
-                            message = $"Bu hesapta '{ex.ExistingStatus}' durumunda çözülmemiş bir ödeme var; " +
+                            message = $"Bu hesapta '{PaymentStatusText(ex.ExistingStatus)}' durumunda çözülmemiş bir ödeme var; " +
                                 "yeni bir tahsilat eklemeden önce mutabakat tamamlanmalı.",
                         },
                     },
@@ -526,7 +526,7 @@ public static partial class DualScreenApplication
                         error = new
                         {
                             code = "TENDER_UNSETTLED_PAYMENT_EXISTS",
-                            message = $"Bu hesapta '{ex.ExistingStatus}' durumunda çözülmemiş bir ödeme var; " +
+                            message = $"Bu hesapta '{PaymentStatusText(ex.ExistingStatus)}' durumunda çözülmemiş bir ödeme var; " +
                                 "yeni bir tahsilat eklemeden önce mutabakat tamamlanmalı.",
                         },
                     },
@@ -555,7 +555,7 @@ public static partial class DualScreenApplication
                         error = new
                         {
                             code = "TENDER_OVER_ALLOCATION",
-                            message = $"Tutar kalan {ex.RemainingPayable:0.00} ₺'yi aşıyor.",
+                            message = $"Tutar kalan {FormatLira(ex.RemainingPayable)}'yi aşıyor.",
                         },
                     },
                     statusCode: StatusCodes.Status409Conflict);
@@ -589,10 +589,10 @@ public static partial class DualScreenApplication
                 TenderRoutingHandled { Result: TenderRequiresReconciliation pending } =>
                     Results.Ok(new SubmitBillTenderResultV1("RequiresReconciliation", null, pending.Reason)),
                 TenderMethodNotRegistered notRegistered => Results.Json(
-                    new { error = new { code = TenderMethodNotRegistered.Code, message = notRegistered.Message } },
+                    new { error = new { code = TenderMethodNotRegistered.Code, message = $"'{TenderMethodText(notRegistered.Method)}' ödeme yöntemi için kayıtlı bir işleyici yok." } },
                     statusCode: StatusCodes.Status409Conflict),
                 TenderVersionNotEnabled notEnabled => Results.Json(
-                    new { error = new { code = TenderVersionNotEnabled.Code, message = notEnabled.Message } },
+                    new { error = new { code = TenderVersionNotEnabled.Code, message = $"'{TenderMethodText(notEnabled.Method)}' ödeme yöntemi bu sürümde etkin değil." } },
                     statusCode: StatusCodes.Status400BadRequest),
                 _ => Results.Json(
                     new { error = new { code = "INTERNAL_ERROR", message = "İşlem tamamlanamadı." } },
@@ -602,6 +602,35 @@ public static partial class DualScreenApplication
 
         return group;
     }
+
+    private static string FormatLira(decimal amount)
+        => amount.ToString("N2", System.Globalization.CultureInfo.GetCultureInfo("tr-TR")) + " ₺";
+
+    public static string PaymentStatusText(string status)
+        => status switch
+        {
+            nameof(PaymentStatus.Initiated) => "Başlatıldı",
+            nameof(PaymentStatus.Pending) => "Beklemede",
+            nameof(PaymentStatus.Approved) => "Onaylandı",
+            nameof(PaymentStatus.Declined) => "Reddedildi",
+            nameof(PaymentStatus.Cancelled) => "İptal edildi",
+            nameof(PaymentStatus.Unknown) => "Sonucu bilinmiyor",
+            nameof(PaymentStatus.ReconciliationRequired) => "Mutabakat bekliyor",
+            nameof(PaymentStatus.Refunded) => "İade edildi",
+            nameof(PaymentStatus.PartiallyRefunded) => "Kısmen iade edildi",
+            _ => "Çözülmemiş",
+        };
+
+    private static string TenderMethodText(TenderMethod method)
+        => method switch
+        {
+            TenderMethod.Cash => "Nakit",
+            TenderMethod.BankCard => "Banka/kredi kartı",
+            TenderMethod.MealCard => "Yemek kartı",
+            TenderMethod.Eft => "EFT/Havale",
+            TenderMethod.CustomerAccount => "Cari hesap",
+            _ => "Ödeme",
+        };
 }
 
 /// <summary>V13-PUI-001: request/response DTOs for the generic (non-Cash) tender HTTP surface.</summary>

@@ -76,7 +76,7 @@ public sealed class PostgresRoleRepository : IRoleRepository
         }
         catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation)
         {
-            throw new InvalidOperationException($"Role '{role.Code}' already exists.", ex);
+            throw new RoleManagementConflictException($"Role '{role.Code}' already exists.", ex);
         }
     }
 
@@ -97,12 +97,12 @@ public sealed class PostgresRoleRepository : IRoleRepository
         }
         catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation)
         {
-            throw new InvalidOperationException(
+            throw new RoleManagementConflictException(
                 $"Permission '{permissionId}' is already assigned to role '{roleId}'.", ex);
         }
         catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.ForeignKeyViolation)
         {
-            throw new InvalidOperationException(
+            throw new RoleManagementConflictException(
                 $"Role '{roleId}' or permission '{permissionId}' does not exist.", ex);
         }
     }
@@ -137,12 +137,12 @@ public sealed class PostgresRoleRepository : IRoleRepository
         }
         catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation)
         {
-            throw new InvalidOperationException(
+            throw new RoleManagementConflictException(
                 $"User '{userId}' already has role '{roleId}'.", ex);
         }
         catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.ForeignKeyViolation)
         {
-            throw new InvalidOperationException(
+            throw new RoleManagementConflictException(
                 $"User '{userId}' or role '{roleId}' does not exist.", ex);
         }
     }
@@ -296,7 +296,7 @@ public sealed class PostgresRoleRepository : IRoleRepository
             when (ex.SqlState == PostgresErrorCodes.UniqueViolation && ex.ConstraintName == "ux_users_username")
         {
             // A concurrent create for the same username won the insert.
-            throw new InvalidOperationException($"Username '{username}' already exists.");
+            throw new RoleManagementConflictException($"Username '{username}' already exists.");
         }
 
         return userId;

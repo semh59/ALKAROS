@@ -766,11 +766,16 @@ public static partial class DualScreenApplication
         app.MapMethods(
             "/api/{**path}",
             ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-            (HttpContext context) => Error(
-                context,
-                StatusCodes.Status404NotFound,
-                "NOT_FOUND",
-                "İstenen API adresi bulunamadı."));
+            (HttpContext context, Microsoft.AspNetCore.Routing.EndpointDataSource endpoints) =>
+            {
+                var allowed = MethodsAllowedAt(context.Request.Path, endpoints);
+                if (allowed.Count == 0 || allowed.Contains(context.Request.Method))
+                    return Error(context, StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen API adresi bulunamadı.");
+
+                context.Response.Headers.Allow = string.Join(", ", allowed);
+                return Error(
+                    context, StatusCodes.Status405MethodNotAllowed, "METHOD_NOT_ALLOWED", "Bu adres bu yöntemi desteklemiyor.");
+            });
 
         if (options.ApiOnly)
         {
@@ -868,6 +873,28 @@ public static partial class DualScreenApplication
     {
         var headerValue = context.Request.Headers[headerName].ToString();
         return $"{operation}:{(string.IsNullOrEmpty(headerValue) ? "missing" : headerValue)}";
+    }
+
+    /// <summary>The methods the real API routes accept at a path (the catch-all fallback does not count).</summary>
+    private static SortedSet<string> MethodsAllowedAt(PathString path, Microsoft.AspNetCore.Routing.EndpointDataSource endpoints)
+    {
+        var allowed = new SortedSet<string>(StringComparer.Ordinal);
+        foreach (var endpoint in endpoints.Endpoints.OfType<Microsoft.AspNetCore.Routing.RouteEndpoint>())
+        {
+            if (endpoint.RoutePattern.RawText is not { } template
+                || template.Contains("{**path}", StringComparison.Ordinal)
+                || endpoint.Metadata.GetMetadata<Microsoft.AspNetCore.Routing.HttpMethodMetadata>() is not { } methods)
+            {
+                continue;
+            }
+
+            var matcher = new Microsoft.AspNetCore.Routing.Template.TemplateMatcher(
+                Microsoft.AspNetCore.Routing.Template.TemplateParser.Parse(template), new Microsoft.AspNetCore.Routing.RouteValueDictionary());
+            if (matcher.TryMatch(path, new Microsoft.AspNetCore.Routing.RouteValueDictionary()))
+                allowed.UnionWith(methods.HttpMethods);
+        }
+
+        return allowed;
     }
 
     private static IResult Error(HttpContext context, int status, string code, string message)

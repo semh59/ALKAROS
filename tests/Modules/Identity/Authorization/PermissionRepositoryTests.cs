@@ -53,7 +53,7 @@ public sealed class PermissionRepositoryTests : IClassFixture<AuthorizationTestD
 
         var act = () => _repository.AddAsync(duplicate);
 
-        await act.Should().ThrowAsync<InvalidOperationException>()
+        await act.Should().ThrowAsync<RoleManagementConflictException>()
             .WithMessage($"Permission '{PermissionCodes.RolesManage}' already exists.");
     }
 }

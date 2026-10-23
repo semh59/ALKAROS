@@ -1,5 +1,6 @@
 // V1-RMD-431: generated from the thirteen per-area MapError switches it replaces; each arm is unchanged.
 using ALKAROS.Cash.Contracts;
+using ALKAROS.Catalog.ProductCatalog;
 using ALKAROS.Cash.TenderHandler;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Authorization;
@@ -89,7 +90,7 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             ArgumentException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Karar kaydedilemedi."),
             _ => null,
         });
@@ -103,7 +104,8 @@ public static class ApiErrorCatalog
             typeof(NpgsqlException),
             typeof(BadHttpRequestException),
             typeof(ArgumentException),
-            typeof(InvalidOperationException),
+            typeof(CatalogRecordNotFoundException),
+            typeof(CatalogConcurrencyException),
         ],
         exception => exception switch
         {
@@ -123,9 +125,11 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            InvalidOperationException =>
+            CatalogRecordNotFoundException =>
+                (StatusCodes.Status404NotFound, "NOT_FOUND", "İstenen katalog kaydı bulunamadı."),
+            CatalogConcurrencyException =>
                 (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Katalog kaydı başka bir işlem tarafından değiştirildi."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -197,7 +201,7 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -235,7 +239,7 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -284,7 +288,7 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -349,7 +353,7 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -386,7 +390,7 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
             ArgumentException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -418,7 +422,7 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -450,7 +454,7 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status409Conflict, "DUPLICATE_RESOURCE", "Aynı kimlikte bir kayıt zaten var."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -462,7 +466,8 @@ public static class ApiErrorCatalog
             typeof(AuthorizationDeniedException),
             typeof(InvalidPolicyException),
             typeof(ALKAROS.Identity.Authorization.Policies.AuthorizationPolicyConcurrencyException),
-            typeof(InvalidOperationException),
+            typeof(LastRoleManagerException),
+            typeof(RoleManagementConflictException),
             typeof(BadHttpRequestException),
             typeof(ArgumentException),
             typeof(NpgsqlException),
@@ -484,14 +489,14 @@ public static class ApiErrorCatalog
                     "Rol yönetimi yetkisine sahip son kişi kaldırılamaz; önce bu yetkiyi başka bir yöneticiye verin."),
             // V1-RMD-426: the exception's own text is English and names internal codes (UI_STYLE_GUIDE); the
             // cases behind it are an existing role, permission or username, or a missing permission code.
-            InvalidOperationException =>
+            RoleManagementConflictException =>
                 (StatusCodes.Status409Conflict, "ROLE_MANAGEMENT_CONFLICT",
                     "Bu rol, yetki ya da kullanıcı adı zaten var veya belirtilen yetki bulunamadı."),
             BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             ArgumentException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -520,7 +525,7 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status409Conflict, "CONCURRENCY_CONFLICT", "Sürüm kaydı başka bir işlem tarafından değiştirildi."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -564,7 +569,7 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            NpgsqlException =>
+            Exception when IsDatabaseUnavailable(exception) =>
                 (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => null,
         });
@@ -606,7 +611,39 @@ public static class ApiErrorCatalog
             // actually has left.
             OverAllocationException => (409, "OVER_ALLOCATION", "İstenen tutar hesabın kalan bakiyesini aşıyor."),
             ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
-            PostgresException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
+            _ when IsDatabaseUnavailable(exception) => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
             _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
+        };
+
+    /// <summary>
+    /// True when the database could not be reached or is not accepting work (connection refused or lost, a timeout,
+    /// a server that is starting up, shutting down or out of resources); the caller may retry in a moment. A query
+    /// the database ran and refused (a constraint, a bad value, a bug) is not an outage and stays an error.
+    /// </summary>
+    public static bool IsDatabaseUnavailable(Exception exception)
+        => exception switch
+        {
+            PostgresException postgres => postgres.SqlState is { } state
+                && (state.StartsWith("08", StringComparison.Ordinal)
+                    || state.StartsWith("53", StringComparison.Ordinal)
+                    || state.StartsWith("57P0", StringComparison.Ordinal)
+                    || state.StartsWith("58", StringComparison.Ordinal)),
+            NpgsqlException => true,
+            _ => false,
+        };
+
+    /// <summary>The envelope answer for a response that carries a failure status but no body of its own.</summary>
+    public static (string Code, string Message) StatusAnswer(int status)
+        => status switch
+        {
+            400 => ("VALIDATION_FAILED", "İstek doğrulanamadı."),
+            401 => ("UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
+            403 => ("FORBIDDEN", "Bu işlem için yetkiniz yok."),
+            404 => ("NOT_FOUND", "İstenen kayıt bulunamadı."),
+            405 => ("METHOD_NOT_ALLOWED", "Bu adres bu yöntemi desteklemiyor."),
+            415 => ("UNSUPPORTED_MEDIA_TYPE", "Desteklenmeyen içerik türü."),
+            429 => ("TOO_MANY_REQUESTS", "Çok fazla istek gönderildi; biraz bekleyip tekrar deneyin."),
+            >= 500 => ("INTERNAL_ERROR", "İşlem tamamlanamadı."),
+            _ => ("REQUEST_REFUSED", "İstek reddedildi."),
         };
 }

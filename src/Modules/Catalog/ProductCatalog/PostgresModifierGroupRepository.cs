@@ -145,7 +145,7 @@ public sealed class PostgresModifierGroupRepository : IModifierGroupRepository
 
         var affected = await command.ExecuteNonQueryAsync(cancellationToken);
         if (affected == 0)
-            throw new InvalidOperationException($"Modifier group {modifierGroup.Id} not found.");
+            throw new CatalogRecordNotFoundException($"Modifier group {modifierGroup.Id} not found.");
     }
 
     public async Task DeleteAsync(Guid id, CancellationToken cancellationToken = default)
