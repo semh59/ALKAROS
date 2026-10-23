@@ -25,6 +25,10 @@ V1-RMD-599 bulguları B021, B022, B024, B065, B083, B084, B085, B089, B092, B096
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/architecture/api-contract-standard.md - yalnız hata kodu adı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/** - yalnız yeni test
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Catalog/** - yalnız alana özel istisna türleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Identity/Authorization/** - yalnız alana özel istisna türleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Catalog/** - yalnız mevcut testin uyarlanması
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Identity/** - yalnız mevcut testin uyarlanması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-692-notifications-privacy-retention.md - yalnız Handoff satırı
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 

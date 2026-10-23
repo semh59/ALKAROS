@@ -41,6 +41,7 @@ V1-RMD-599 bulguları B006, B007, B014, B043, B106, B109, B113, B115, B138 kapan
 
 ## Out of scope
 
+- `kvkk-retention` için zamanlanmış compose servisi: `compose*.yaml` bu görevin yüzeyinde değil, ayrı iş.
 - Yedekten geri yüklenen verinin silme taleplerine uygunluğu: Semih sorusu S7 yanıtlanınca ayrı görev olur.
 
 ## Dependencies
