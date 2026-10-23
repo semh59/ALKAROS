@@ -41,6 +41,19 @@ public sealed class LowStockAlertHubSessionTests : IAsyncLifetime
         Assert.Equal(0, sessions.Count);
     }
 
+    [Fact]
+    public async Task DisconnectingReleasesTheTrackedConnection()
+    {
+        var sessions = new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance);
+        var connection = Connect(InventoryReportingTestDatabase.ViewerToken, sessions);
+        await connection.Hub.OnConnectedAsync();
+        Assert.Equal(1, sessions.Count);
+
+        await connection.Hub.OnDisconnectedAsync(null);
+
+        Assert.Equal(0, sessions.Count);
+    }
+
     private (LowStockAlertHub Hub, FakeContext Context) Connect(string token, HubSessionRegistry sessions)
     {
         var httpContext = new DefaultHttpContext();
