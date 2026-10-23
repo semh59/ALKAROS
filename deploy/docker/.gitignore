@@ -2,3 +2,11 @@ db_password
 !db_password.example
 admin_password
 !admin_password.example
+app_db_password
+!app_db_password.example
+restore_db_password
+!restore_db_password.example
+db_tls_ca.crt
+db_tls.crt
+db_tls.key
+.tls.*

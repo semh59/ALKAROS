@@ -370,7 +370,7 @@ public sealed record DualScreenOptions(
         if (!hasHttp && !hasHttps)
             throw new DualScreenStartupException("--urls must contain at least one absolute HTTP or HTTPS URL.");
 
-        var connectionString = new NpgsqlConnectionStringBuilder
+        var connectionBuilder = new NpgsqlConnectionStringBuilder
         {
             Host = uri.Host,
             Port = uri.IsDefaultPort ? 5432 : uri.Port,
@@ -379,7 +379,9 @@ public sealed record DualScreenOptions(
             Password = password,
             ApplicationName = "ALKAROS.DualScreen",
             Pooling = true,
-        }.ConnectionString;
+        };
+        ALKAROS.QrRelay.LocalConnector.DatabaseSslSettings.Apply(connectionBuilder);
+        var connectionString = connectionBuilder.ConnectionString;
 
         return new DualScreenOptions(
             connectionString,

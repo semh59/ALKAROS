@@ -14,6 +14,13 @@ name: alkaros
 #
 # The `ops` profile keeps them inert even if this file is passed to `up`.
 
+# The same TLS decision as compose.yaml: the database accepts only TLS connections from the compose network.
+x-db-tls-environment: &db-tls-environment
+  ALKAROS_DB_SSL_MODE: verify-full
+  ALKAROS_DB_SSL_ROOT_CERT: /run/secrets/db_tls_ca
+  PGSSLMODE: verify-full
+  PGSSLROOTCERT: /run/secrets/db_tls_ca
+
 services:
   # Logical backup (V1-RMD-086). Uses the digest-pinned postgres:18 image so
   # pg_dump matches the server major version. Artifacts land in alkaros-backups.
@@ -26,7 +33,8 @@ services:
       ALKAROS_DB_USER: alkaros
       ALKAROS_DB_NAME: alkaros
       ALKAROS_BACKUP_DIR: /backups
-    secrets: [db_password]
+      <<: *db-tls-environment
+    secrets: [db_password, db_tls_ca]
     volumes:
       - ./deploy/docker:/repo/deploy/docker:ro
       - alkaros-backups:/backups
@@ -46,7 +54,8 @@ services:
       ALKAROS_DB_USER: alkaros
       ALKAROS_BASEBACKUP_DIR: /backups/base
       ALKAROS_WAL_ARCHIVE_DIR: /wal-archive
-    secrets: [db_password]
+      <<: *db-tls-environment
+    secrets: [db_password, db_tls_ca]
     volumes:
       - ./deploy/docker:/repo/deploy/docker:ro
       - alkaros-backups:/backups
@@ -68,8 +77,10 @@ services:
       dockerfile: deploy/docker/Dockerfile
       target: api
     profiles: ["ops"]
+    environment:
+      <<: *db-tls-environment
     entrypoint: ["/bin/sh", "-eu", "-c"]
-    secrets: [db_password]
+    secrets: [db_password, db_tls_ca]
     command:
       - |
         export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
@@ -88,8 +99,10 @@ services:
       dockerfile: deploy/docker/Dockerfile
       target: api
     profiles: ["ops"]
+    environment:
+      <<: *db-tls-environment
     entrypoint: ["/bin/sh", "-eu", "-c"]
-    secrets: [db_password]
+    secrets: [db_password, db_tls_ca]
     command:
       - |
         export ALKAROS_DB_PASSWORD="$(tr -d '\r\n' < /run/secrets/db_password)"
@@ -99,6 +112,8 @@ services:
 secrets:
   db_password:
     file: ./deploy/docker/db_password
+  db_tls_ca:
+    file: ./deploy/docker/db_tls_ca.crt
 
 volumes:
   alkaros-backups:

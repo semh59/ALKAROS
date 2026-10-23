@@ -358,6 +358,7 @@ public static class HostComposition
                 Username = !string.IsNullOrEmpty(uri.UserInfo) ? Uri.UnescapeDataString(uri.UserInfo.Split(':')[0]) : "postgres",
                 Password = psql.Password
             };
+            ALKAROS.QrRelay.LocalConnector.DatabaseSslSettings.Apply(builder);
             return NpgsqlDataSource.Create(builder.ConnectionString);
         }
 

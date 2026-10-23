@@ -602,7 +602,7 @@ public static class Program
         if (userInfo.Length != 1 || string.IsNullOrWhiteSpace(userInfo[0]))
             throw new ArgumentException("--db-url must contain a username and must not contain a password.");
 
-        return new NpgsqlConnectionStringBuilder
+        var builder = new NpgsqlConnectionStringBuilder
         {
             Host = uri.Host,
             Port = uri.IsDefaultPort ? 5432 : uri.Port,
@@ -617,7 +617,9 @@ public static class Program
             // path builds its own pooled connection string in
             // DualScreenOptions. (deep-analysis finding B-5)
             Pooling = false,
-        }.ConnectionString;
+        };
+        ALKAROS.QrRelay.LocalConnector.DatabaseSslSettings.Apply(builder);
+        return builder.ConnectionString;
     }
 
     private static async Task<Guid> UpsertReturningIdAsync(

@@ -125,6 +125,9 @@ public static class PsqlScriptRunner
             if (!string.IsNullOrEmpty(uri.Host))
             {
                 startInfo.Environment["PGHOST"] = uri.Host;
+                startInfo.Environment["PGSSLMODE"] = ALKAROS.QrRelay.LocalConnector.DatabaseSslSettings.PsqlMode(uri.Host);
+                if (ALKAROS.QrRelay.LocalConnector.DatabaseSslSettings.RootCertificate() is { } rootCertificate)
+                    startInfo.Environment["PGSSLROOTCERT"] = rootCertificate;
                 startInfo.ArgumentList.Add("-h");
                 startInfo.ArgumentList.Add(uri.Host);
             }

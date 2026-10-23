@@ -26,6 +26,18 @@ V1-RMD-599 bulguları B036 ve B077 kapanır. Uygulama (api) ve QR bağlayıcıs�
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/SecurityAdministration/** - yalnız geri yükleme provası yetkisi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Integrations/QrRelay/LocalConnector/** - yalnız SSL kipi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız yeni test
+- Sınırlı ek (paylaşılan, geri-tik olmadan): compose.ops.yaml - yalnız TLS ortamı ve gizli anahtar
+- Sınırlı ek (paylaşılan, geri-tik olmadan): compose.dev.yaml - yalnız TLS ortamı ve gizli anahtar
+- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/operations/** - yalnız canlıya geçiş kontrol listesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-699-client-accessibility-and-doc-deviations.md - yalnız Out of scope notu
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ModuleBoundaries/** - yalnız DualScreen için QrRelay bağımlılığı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/architecture/** - yalnız DualScreen için QrRelay bağımlılığı
+- `deploy/docker/roles.sql`
+- `deploy/docker/generate-db-tls.sh`
+- `deploy/docker/app_db_password.example`
+- `deploy/docker/restore_db_password.example`
+- `tests/Host/MigrationComposition/Composition/DatabaseRolesTests.cs`
+- `tests/Host/MigrationComposition/Composition/DatabaseSslTests.cs`
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope

@@ -50,8 +50,7 @@ public static class SecurityAdministrationEndpoints
         // The Operations module defaults the restore drill to NpgsqlDataSource.ConnectionString,
         // which has no password; use the host's full connection string (or the explicit override).
         services.AddSingleton<IIsolatedRestoreDatabaseFactory>(provider => new NpgsqlIsolatedRestoreDatabaseFactory(
-            Environment.GetEnvironmentVariable("ALKAROS_RESTORE_MAINTENANCE_CONNECTION")
-                ?? provider.GetRequiredService<HostDatabaseConnection>().ConnectionString));
+            provider.GetRequiredService<HostDatabaseConnection>().RestoreMaintenanceConnectionString()));
 
         // Scheduled and manager-triggerable operational jobs (V1-RMD-268 onward).
         services.TryAddSingleton<MaintenanceJobRunner>();

@@ -18,6 +18,10 @@ Operator maintenance tools (`backup`, `basebackup`, `housekeeping`) live in
 
 1. Create `deploy/docker/db_password` with a deployment-only database password.
 2. Create `deploy/docker/admin_password` with a unique manager password of 12-256 non-whitespace characters.
+   Create `deploy/docker/app_db_password` and `deploy/docker/restore_db_password` the same way (each unique, 32+ random
+   characters): they are the passwords of the `alkaros_app` and `alkaros_restore` database roles described below.
+   Run `sh deploy/docker/generate-db-tls.sh` once to create the database's TLS certificate and CA
+   (`db_tls_ca.crt`, `db_tls.crt`, `db_tls.key`, all gitignored).
 3. Optionally export `ALKAROS_BOOTSTRAP_USERNAME`, `ALKAROS_BOOTSTRAP_DISPLAY_NAME` or
    `ALKAROS_KITCHEN_STATION_ID`; defaults are `admin`, `ALKAROS Manager` and `kitchen-main`.
 4. Export `ALKAROS_PROXY_HOST` with the host name or LAN IP the devices use (default `localhost`).
@@ -35,6 +39,25 @@ Compose definition (including the previous single-container `host` / `proxy` lay
 standalone containers or their data.
 
 The stack does not claim fiscal, payment-provider, printer or signed go-live readiness.
+
+## Database roles and TLS (V1-RMD-700)
+
+- `alkaros` (the `postgres` service's bootstrap user) owns the schema: migrations, backups, `provision` and the `ops`
+  commands use it. `api` and `connector` log in as `alkaros_app`: not a superuser, no create-database / create-role /
+  create-table, no access to the migration history, data rights (`SELECT/INSERT/UPDATE/DELETE`) on every application
+  table. The restore drill logs in as `alkaros_restore`, which may create (and drop) its own scratch databases and reaches
+  no application table. `roles.sql` creates and grants all this and runs at the end of **every** `migrate` run, so
+  tables a migration adds are granted at once; running it again changes nothing. Passwords come from the
+  `app_db_password` / `restore_db_password` secrets, not from a command line.
+- The database accepts a non-loopback connection only over TLS (`hostssl` in `pg_hba.conf`; plain text is rejected).
+  Every client verifies the server certificate against `db_tls_ca.crt` (`verify-full`, host name `postgres`):
+  `ALKAROS_DB_SSL_MODE` / `ALKAROS_DB_SSL_ROOT_CERT` for the .NET processes, `PGSSLMODE` / `PGSSLROOTCERT` for psql,
+  pg_dump and pg_restore. Without `ALKAROS_DB_SSL_MODE` a client requires TLS for any host that is not loopback.
+  Rotate the certificate with `ALKAROS_TLS_FORCE=1 sh deploy/docker/generate-db-tls.sh`, then recreate the stack; the
+  certificate is valid 825 days.
+- `api` and `connector` also run with every Linux capability dropped and `no-new-privileges`.
+- Moving an existing deployment: create the two password files and the TLS material, then `docker compose up --build
+  --force-recreate`; `migrate` creates the roles before `api` starts.
 
 ## TLS
 

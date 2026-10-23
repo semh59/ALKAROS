@@ -19,6 +19,15 @@ name: alkaros
 # psql/Postgres dependency) is compose.test.yaml:
 #   docker compose -f compose.yaml -f compose.test.yaml run --build --rm test
 
+# One TLS decision for every database client: the .NET host and connector read ALKAROS_DB_SSL_*, libpq (psql,
+# pg_dump, pg_restore) reads PGSSL*. verify-full checks the server certificate against the CA below and the
+# service name `postgres`; the certificate comes from deploy/docker/generate-db-tls.sh.
+x-db-tls-environment: &db-tls-environment
+  ALKAROS_DB_SSL_MODE: verify-full
+  ALKAROS_DB_SSL_ROOT_CERT: /run/secrets/db_tls_ca
+  PGSSLMODE: verify-full
+  PGSSLROOTCERT: /run/secrets/db_tls_ca
+
 services:
   postgres:
     image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
@@ -31,7 +40,7 @@ services:
     entrypoint:
       - "bash"
       - "-c"
-      - 'install -d -o postgres -g postgres -m 750 /wal-archive && exec docker-entrypoint.sh "$@"'
+      - 'install -d -o postgres -g postgres -m 750 /wal-archive && install -d -o postgres -g postgres -m 700 /run/alkaros-tls && install -o postgres -g postgres -m 600 /run/secrets/db_tls_key /run/alkaros-tls/server.key && install -o postgres -g postgres -m 644 /run/secrets/db_tls_cert /run/alkaros-tls/server.crt && exec docker-entrypoint.sh "$@"'
       - "--"
     command:
       - "postgres"
@@ -41,7 +50,7 @@ services:
       POSTGRES_DB: alkaros
       POSTGRES_USER: alkaros
       POSTGRES_PASSWORD_FILE: /run/secrets/db_password
-    secrets: [db_password]
+    secrets: [db_password, db_tls_cert, db_tls_key]
     # Must be >= shared_buffers in postgresql.tuned.conf.
     shm_size: 512mb
     volumes:
@@ -77,14 +86,22 @@ services:
       context: .
       dockerfile: deploy/docker/Dockerfile
       target: api
+    environment:
+      <<: *db-tls-environment
     entrypoint: ["/bin/sh", "-eu", "-c"]
-    secrets: [db_password]
+    secrets: [db_password, app_db_password, restore_db_password, db_tls_ca]
+    volumes:
+      - ./deploy/docker/roles.sql:/roles.sql:ro
     depends_on:
       postgres: { condition: service_healthy }
     command:
       - |
         export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
-        exec dotnet ALKAROS.Host.dll --order-manifest /app/database/MigrationComposition/order.json --migrations-dir /app/database/migrations --db-url postgresql://alkaros@postgres:5432/alkaros
+        dotnet ALKAROS.Host.dll --order-manifest /app/database/MigrationComposition/order.json --migrations-dir /app/database/migrations --db-url postgresql://alkaros@postgres:5432/alkaros
+        # After every migration run: (re)create the runtime roles and grant them whatever the migrations added.
+        export APP_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/app_db_password)"
+        export RESTORE_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/restore_db_password)"
+        PGPASSWORD="$$ALKAROS_DB_PASSWORD" exec psql -X -q -w -v ON_ERROR_STOP=1 -h postgres -U alkaros -d alkaros -f /roles.sql
     restart: "no"
 
   provision:
@@ -95,8 +112,9 @@ services:
     environment:
       ALKAROS_BOOTSTRAP_USERNAME: ${ALKAROS_BOOTSTRAP_USERNAME:-admin}
       ALKAROS_BOOTSTRAP_DISPLAY_NAME: ${ALKAROS_BOOTSTRAP_DISPLAY_NAME:-ALKAROS Manager}
+      <<: *db-tls-environment
     entrypoint: ["/bin/sh", "-eu", "-c"]
-    secrets: [db_password, admin_password]
+    secrets: [db_password, admin_password, db_tls_ca]
     depends_on:
       migrate: { condition: service_completed_successfully }
     command:
@@ -112,6 +130,10 @@ services:
       dockerfile: deploy/docker/Dockerfile
       target: api
     environment:
+      <<: *db-tls-environment
+      # The restore drill creates and drops its own scratch databases; the application role cannot, so it uses this one.
+      ALKAROS_RESTORE_DB_USER: alkaros_restore
+      ALKAROS_RESTORE_DB_PASSWORD_FILE: /run/secrets/restore_db_password
       ALKAROS_KITCHEN_STATION_ID: ${ALKAROS_KITCHEN_STATION_ID:-kitchen-main}
       # Absolute origin the browser reaches the customer display on (the `web`
       # display vhost, published on 8443). runtime-configuration hands this to
@@ -145,7 +167,7 @@ services:
     entrypoint: ["/bin/sh", "-eu", "-c"]
     command:
       - |
-        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
+        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/app_db_password)"
         # --api-only: no static file pipeline, no --web-root; `web` serves the
         # bundles. --customer-display-origin-header is the proxy-mode B-4 origin
         # signal (Caddy sets X-Alkaros-Origin: display on the display vhost).
@@ -172,8 +194,11 @@ services:
         # tags its proxied /api/v1/nfc|qr/* requests X-Alkaros-Origin: nfc,
         # so a customer on the restaurant's own WiFi reaches the same
         # isolated surface a relay-connected customer does.
-        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --nfc-trusted-network 172.28.90.0/28 --nfc-origin-header X-Alkaros-Origin --qr-web-root /app/qr-web --nfc-web-root /app/nfc-web --trusted-network 172.16.0.0/12
-    secrets: [db_password]
+        exec dotnet ALKAROS.Host.dll serve --db-url postgresql://alkaros_app@postgres:5432/alkaros --urls 'http://0.0.0.0:5080' --api-only --customer-display-origin-header X-Alkaros-Origin --nfc-loopback-origin --nfc-trusted-network 172.28.90.0/28 --nfc-origin-header X-Alkaros-Origin --qr-web-root /app/qr-web --nfc-web-root /app/nfc-web --trusted-network 172.16.0.0/12
+    secrets: [app_db_password, restore_db_password, db_tls_ca]
+    # No Linux capability and no privilege gain: the API only listens on a high port and talks to the database.
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
     depends_on:
       provision: { condition: service_completed_successfully }
     networks:
@@ -228,8 +253,11 @@ services:
       context: .
       dockerfile: deploy/docker/Dockerfile
       target: connector
-    secrets: [db_password]
+    secrets: [app_db_password, db_tls_ca]
+    cap_drop: [ALL]
+    security_opt: ["no-new-privileges:true"]
     environment:
+      <<: *db-tls-environment
       # The tunnel token is read from the database encrypted under this key, so the connector
       # needs the same one as api; without it the public QR path never starts.
       ALKAROS_SECRET_ENVELOPE_MASTER_KEY: ${ALKAROS_SECRET_ENVELOPE_MASTER_KEY:?Set ALKAROS_SECRET_ENVELOPE_MASTER_KEY in a local .env file (openssl rand -base64 32)}
@@ -261,8 +289,8 @@ services:
       relay-internal: {}
     command:
       - |
-        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/db_password)"
-        exec dotnet ALKAROS.QrRelay.ConnectorHost.dll --db-url postgresql://alkaros@postgres:5432/alkaros
+        export ALKAROS_DB_PASSWORD="$$(tr -d '\r\n' < /run/secrets/app_db_password)"
+        exec dotnet ALKAROS.QrRelay.ConnectorHost.dll --db-url postgresql://alkaros_app@postgres:5432/alkaros
     entrypoint: ["/bin/sh", "-eu", "-c"]
     restart: unless-stopped
     deploy:
@@ -312,6 +340,16 @@ secrets:
     file: ./deploy/docker/db_password
   admin_password:
     file: ./deploy/docker/admin_password
+  app_db_password:
+    file: ./deploy/docker/app_db_password
+  restore_db_password:
+    file: ./deploy/docker/restore_db_password
+  db_tls_ca:
+    file: ./deploy/docker/db_tls_ca.crt
+  db_tls_cert:
+    file: ./deploy/docker/db_tls.crt
+  db_tls_key:
+    file: ./deploy/docker/db_tls.key
 
 volumes:
   alkaros-postgres:

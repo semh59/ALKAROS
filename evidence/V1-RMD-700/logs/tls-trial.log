@@ -1,0 +1,27 @@
+-----
+-----
+Certificate request self-signature ok
+subject=CN=postgres
+-----
+-----
+Certificate request self-signature ok
+subject=CN=postgres
+PASS server started with the production entrypoint, config and pg_hba
+PASS server key is 0600 and owned by postgres (600 postgres)
+PASS verify-full connection against the generated CA is encrypted
+PASS plain-text (sslmode=disable) connection is rejected
+PASS verify-full against a different CA is refused
+PASS roles.sql applies
+PASS roles.sql applies a second time unchanged
+PASS alkaros_app logs in with its password over TLS and holds no administrative attribute
+PASS alkaros_app with a wrong password is refused
+PASS alkaros_app cannot: CREATE DATABASE trial_nope;
+PASS alkaros_app cannot: CREATE ROLE trial_nope;
+PASS alkaros_app cannot: CREATE TABLE public.trial_nope (id int);
+PASS alkaros_app cannot: CREATE SCHEMA trial_nope;
+PASS alkaros_restore creates a scratch database
+PASS alkaros_restore drops its scratch database
+PASS roles.sql rotates the application password
+PASS the old application password stops working
+PASS the new application password works
+failures=0

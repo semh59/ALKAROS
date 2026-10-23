@@ -53,6 +53,9 @@ Per-deployment, on the site host:
 
 - [ ] `deploy/docker/db_password` — a unique 32+ char random string, file mode
       `600`, owned by the deploy user. Never reused from another environment.
+- [ ] `deploy/docker/app_db_password` and `deploy/docker/restore_db_password` — unique 32+ char random strings (the
+      `alkaros_app` and `alkaros_restore` roles; see `deploy/docker/README.md`, "Database roles and TLS").
+- [ ] `sh deploy/docker/generate-db-tls.sh` run once; note the certificate expiry (825 days) in the maintenance calendar.
 - [ ] `deploy/docker/admin_password` — a unique 12-256 non-whitespace manager
       password; hand it to the manager out-of-band, then rotate after first login.
 - [ ] Set `ALKAROS_PROXY_HOST` to the LAN IP / hostname the devices use **before**

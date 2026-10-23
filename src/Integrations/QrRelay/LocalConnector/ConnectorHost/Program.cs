@@ -105,13 +105,15 @@ public static class Program
         if (userInfo.Length != 1 || string.IsNullOrWhiteSpace(userInfo[0]))
             throw new ArgumentException("--db-url must contain a username and must not contain a password.");
 
-        return new NpgsqlConnectionStringBuilder
+        var builder = new NpgsqlConnectionStringBuilder
         {
             Host = uri.Host,
             Port = uri.IsDefaultPort ? 5432 : uri.Port,
             Database = Uri.UnescapeDataString(uri.AbsolutePath.Trim('/')),
             Username = Uri.UnescapeDataString(userInfo[0]),
             Password = password,
-        }.ConnectionString;
+        };
+        DatabaseSslSettings.Apply(builder);
+        return builder.ConnectionString;
     }
 }

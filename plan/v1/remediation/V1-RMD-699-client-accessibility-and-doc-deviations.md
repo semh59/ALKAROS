@@ -42,6 +42,7 @@ V1-RMD-599 bulguları B068, B122, B123, B127, B128, B131, B133, B135, B137, B139
 ## Out of scope
 
 - Table-draft siparişleri müşteri ekranında (Semih sorusu S9); bilinen B133/B140 çözümleri başka görevdedir.
+- Veritabanı rolü ve TLS (B036, B077) V1-RMD-700 görevindedir.
 
 ## Dependencies
 

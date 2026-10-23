@@ -52,7 +52,10 @@ services:
   seed:
     image: postgres:18@sha256:4ef4dbc939d61acea57712655ddb4b4ab27419c913f94cca0cd57cb3ea3c2280
     profiles: ["seed"]
-    secrets: [db_password]
+    environment:
+      PGSSLMODE: verify-full
+      PGSSLROOTCERT: /run/secrets/db_tls_ca
+    secrets: [db_password, db_tls_ca]
     depends_on:
       postgres: { condition: service_healthy }
     volumes:

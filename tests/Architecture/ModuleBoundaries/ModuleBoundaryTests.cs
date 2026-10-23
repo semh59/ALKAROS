@@ -287,7 +287,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.Recipes"] =
                 ["ALKAROS.Identity", "ALKAROS.Recipes"],
             ["ALKAROS.Host.DualScreen"] =
-                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Observability", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.Privacy", "ALKAROS.QrOrdering", "ALKAROS.Security", "ALKAROS.Settings", "ALKAROS.CustomerAccounts"],
+                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Observability", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.Privacy", "ALKAROS.QrOrdering", "ALKAROS.QrRelay", "ALKAROS.Security", "ALKAROS.Settings", "ALKAROS.CustomerAccounts"],
             ["ALKAROS.Host.Experience.Billing"] =
                 ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Cash", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Orders", "ALKAROS.Payments", "ALKAROS.Settings"],
             ["ALKAROS.Host.Experience.CustomerAccounts"] =
