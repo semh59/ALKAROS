@@ -1,8 +1,8 @@
 # V1-RMD-700 - Düşük yetkili veritabanı rolü ve veritabanı TLS
 
 - Task ID: V1-RMD-700
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
 
