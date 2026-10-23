@@ -1,7 +1,7 @@
 # V1-RMD-707 - Kasa araması ve garson menü hatası
 
 - Task ID: V1-RMD-707
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
