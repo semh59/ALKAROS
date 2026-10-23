@@ -81,11 +81,7 @@ public sealed class CatalogManagementStore
         EnsureIdentifier(request.Id, nameof(request.Id));
         EnsureDefined(request.ProductType, nameof(request.ProductType));
         EnsureDefined(request.StockMode, nameof(request.StockMode));
-        var taxProfile = request.TaxProfileId is { } taxProfileId
-            ? await _taxProfiles.GetByIdAsync(taxProfileId, cancellationToken)
-            : null;
-        if (taxProfile is not { Active: true })
-            throw new ArgumentException("A product needs an existing, active tax profile.", nameof(request));
+        await EnsureActiveTaxProfileAsync(request.TaxProfileId, cancellationToken);
         var product = new Product(
             request.Id,
             NormalizeRequired(request.Sku, 100, nameof(request.Sku)),
@@ -103,6 +99,37 @@ public sealed class CatalogManagementStore
             prepTimeMinutes: request.PrepTimeMinutes);
         await _products.AddAsync(product, cancellationToken);
         return ToDto(product);
+    }
+
+    public async Task<ProductV1?> UpdateProductDetailsAsync(
+        Guid productId,
+        UpdateProductDetailsV1 request,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        EnsureIdentifier(productId, nameof(productId));
+        var product = await _products.GetByIdAsync(productId, cancellationToken);
+        if (product is null)
+            return null;
+        await EnsureActiveTaxProfileAsync(request.TaxProfileId, cancellationToken);
+        var updated = product.WithDetails(
+            NormalizeRequired(request.Sku, 100, nameof(request.Sku)),
+            NormalizeRequired(request.Name, 300, nameof(request.Name)),
+            request.CategoryId,
+            request.TaxProfileId,
+            NormalizeOptional(request.Description, null, nameof(request.Description)),
+            request.DisplayOrder);
+        await _products.UpdateAsync(updated, product.RowVersion, cancellationToken);
+        return ToDto(updated);
+    }
+
+    private async Task EnsureActiveTaxProfileAsync(Guid? taxProfileId, CancellationToken cancellationToken)
+    {
+        var taxProfile = taxProfileId is { } id
+            ? await _taxProfiles.GetByIdAsync(id, cancellationToken)
+            : null;
+        if (taxProfile is not { Active: true })
+            throw new ArgumentException("A product needs an existing, active tax profile.", nameof(taxProfileId));
     }
 
     /// <summary>V1-WTR-017: same single-field-update shape as SetProductAvailabilityAsync.</summary>

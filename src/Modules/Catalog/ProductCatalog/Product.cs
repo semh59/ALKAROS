@@ -98,6 +98,12 @@ public sealed class Product
         Id, Sku, Name, ProductType, StockMode, CategoryId, TaxProfileId, Description,
         PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, IsAvailable, RowVersion, prepTimeMinutes);
 
+    /// <summary>Corrects the manager-entered identity, classification and display fields.</summary>
+    public Product WithDetails(
+        string sku, string name, Guid? categoryId, Guid? taxProfileId, string? description, int displayOrder) => new(
+        Id, sku, name, ProductType, StockMode, categoryId, taxProfileId, description,
+        PrinterRoutePolicy, displayOrder, CurrentPrice, Active, IsAvailable, RowVersion, PrepTimeMinutes);
+
     private Product WithAvailability(bool isAvailable) => new(
         Id, Sku, Name, ProductType, StockMode, CategoryId, TaxProfileId, Description,
         PrinterRoutePolicy, DisplayOrder, CurrentPrice, Active, isAvailable, RowVersion, PrepTimeMinutes);

@@ -573,6 +573,69 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
     }
 
     [Fact]
+    public async Task ProductDetailsCanBeCorrectedWithoutTouchingTheCachedPrice()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = await CreateTaxedProductAsync(client);
+        var categoryId = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/categories",
+            new CreateCategoryV1(categoryId, "FIX-" + Guid.NewGuid().ToString("N")[..8], "Düzeltme"));
+        await _database.ExecuteAsync(
+            "UPDATE catalog.products SET current_price = 99 WHERE product_id = @product_id;",
+            ("product_id", productId));
+        var sku = "FIXED-" + Guid.NewGuid().ToString("N")[..8];
+
+        using var response = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{productId:D}/details",
+            new UpdateProductDetailsV1(sku, "Doğru ad", categoryId, CatalogApiTestDatabase.TaxProfileId, "Açıklama", 7));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Doğru ad", await ScalarAsync<string>("SELECT name FROM catalog.products WHERE product_id = @value;", productId));
+        Assert.Equal(sku, await ScalarAsync<string>("SELECT sku FROM catalog.products WHERE product_id = @value;", productId));
+        Assert.Equal(categoryId, await ScalarAsync<Guid>("SELECT category_id FROM catalog.products WHERE product_id = @value;", productId));
+        Assert.Equal(7, await ScalarAsync<int>("SELECT display_order FROM catalog.products WHERE product_id = @value;", productId));
+        Assert.Equal(99m, await CurrentPriceAsync(productId));
+    }
+
+    [Fact]
+    public async Task ProductDetailsRejectAMissingUnknownOrInactiveTaxProfileAndKeepTheRow()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = await CreateTaxedProductAsync(client);
+        var inactiveId = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/tax-profiles",
+            new CreateTaxProfileV1(inactiveId, "OFF-" + Guid.NewGuid().ToString("N")[..8], "Pasif KDV", 10, Active: false));
+        foreach (var taxProfileId in new Guid?[] { null, Guid.NewGuid(), inactiveId })
+        {
+            using var response = await client.PostAsJsonAsync(
+                $"/api/v1/management/catalog/products/{productId:D}/details",
+                new UpdateProductDetailsV1("CHANGED-" + Guid.NewGuid().ToString("N")[..8], "Değişti", null, taxProfileId));
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("Priced", await ScalarAsync<string>("SELECT name FROM catalog.products WHERE product_id = @value;", productId));
+        }
+    }
+
+    [Fact]
+    public async Task ProductDetailsReportDuplicateSkuAndUnknownProduct()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var first = await CreateTaxedProductAsync(client);
+        var second = await CreateTaxedProductAsync(client);
+        var firstSku = await ScalarAsync<string>("SELECT sku FROM catalog.products WHERE product_id = @value;", first);
+
+        using var duplicate = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{second:D}/details",
+            new UpdateProductDetailsV1(firstSku, "Aynı SKU", null, CatalogApiTestDatabase.TaxProfileId));
+        Assert.Equal(HttpStatusCode.Conflict, duplicate.StatusCode);
+        Assert.Equal("DUPLICATE_SKU", (await ReadErrorAsync(duplicate)).Error.Code);
+
+        using var missing = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{Guid.NewGuid():D}/details",
+            new UpdateProductDetailsV1("NOPE-1", "Yok", null, CatalogApiTestDatabase.TaxProfileId));
+        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+    }
+
+    [Fact]
     public async Task ProductWithoutAnExistingActiveTaxProfileIsRejectedAndNotInserted()
     {
         using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);

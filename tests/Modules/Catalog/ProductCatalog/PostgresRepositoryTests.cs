@@ -309,6 +309,21 @@ public sealed class PostgresRepositoryTests : IClassFixture<CatalogTestDatabase>
     }
 
     [Fact]
+    public async Task UpdateAsyncNeverOverwritesTheCachedPriceAnotherWriterChanged()
+    {
+        var id = Guid.NewGuid();
+        await _products.AddAsync(new Product(id, "SKU-CACHE", "Cache", ProductType.MenuItem, StockMode.Untracked, currentPrice: 10m));
+        var loaded = await _products.GetByIdAsync(id);
+
+        await _database.ExecuteAsync(
+            "UPDATE catalog.products SET current_price = 99 WHERE product_id = @id;",
+            ("id", id));
+        await _products.UpdateAsync(loaded!.Suspend(), loaded.RowVersion);
+
+        Assert.Equal(99m, (await _products.GetByIdAsync(id))!.CurrentPrice);
+    }
+
+    [Fact]
     public async Task UpdateAsyncThrowsWhenTheProductWasConcurrentlyModified()
     {
         // Regression test for an independent audit finding (2026-09-05, B6):

@@ -1,5 +1,5 @@
 import { notifySessionExpired } from "../../api";
-import type { CatalogCreateInput, CatalogData } from "./models";
+import type { CatalogCreateInput, CatalogData, CatalogProductDetailsInput } from "./models";
 
 export class CatalogApiError extends Error {
   constructor(public readonly status: number, public readonly code: string, message: string) { super(message); }
@@ -8,6 +8,7 @@ export class CatalogApiError extends Error {
 export interface CatalogManagementClient {
   load: () => Promise<CatalogData>;
   create: (input: CatalogCreateInput) => Promise<unknown>;
+  updateProduct: (productId: string, details: CatalogProductDetailsInput) => Promise<unknown>;
   setAvailability: (productId: string, isAvailable: boolean) => Promise<unknown>;
   setPrepTime: (productId: string, prepTimeMinutes: number | null) => Promise<unknown>;
 }
@@ -61,6 +62,8 @@ export function createCatalogManagementClient(fetcher: typeof fetch = fetch): Ca
       const paths = { categories: "/categories", taxes: "/tax-profiles", products: "/products", modifierGroups: "/modifier-groups", modifiers: "/modifiers", prices: "/prices", assignments: "/product-modifier-assignments" } as const;
       return request(`${paths[input.kind]}`, { method: "POST", body: JSON.stringify(input.value) });
     },
+    updateProduct: (productId, details) =>
+      request(`/products/${productId}/details`, { method: "POST", body: JSON.stringify(details) }),
     setAvailability: (productId, isAvailable) =>
       request(`/products/${productId}/availability`, { method: "POST", body: JSON.stringify({ isAvailable }) }),
     setPrepTime: (productId, prepTimeMinutes) =>

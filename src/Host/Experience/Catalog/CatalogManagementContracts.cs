@@ -65,6 +65,14 @@ public sealed record CreateProductV1(
     bool IsAvailable = true,
     int? PrepTimeMinutes = null);
 
+public sealed record UpdateProductDetailsV1(
+    string Sku,
+    string Name,
+    Guid? CategoryId,
+    Guid? TaxProfileId,
+    string? Description = null,
+    int DisplayOrder = 0);
+
 public sealed record SetProductAvailabilityV1(bool IsAvailable);
 
 /// <summary>V1-WTR-017: sets or clears (null) a product's prep-time estimate.</summary>

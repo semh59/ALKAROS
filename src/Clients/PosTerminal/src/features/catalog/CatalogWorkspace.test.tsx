@@ -229,6 +229,36 @@ describe("catalog workspace", () => {
     expect(document.body.textContent).toContain(title);
   });
 
+  it("edits a product's identity and tax profile without asking for price or stock mode", async () => {
+    const onUpdateProduct = vi.fn().mockResolvedValue(undefined);
+    const withDetails = { ...data, products: [{ ...data.products[0], description: "Sıcak içecek", displayOrder: 5 }] };
+    await render(<CatalogWorkspace {...baseProps({ onUpdateProduct, data: withDetails })} />);
+    await click([...document.querySelectorAll(".catalog-details button")].find((button) => button.textContent === "Ürünü düzenle")!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    expect(dialog.textContent).toContain("Ürünü düzenle");
+    expect(dialog.textContent).not.toContain("Satış fiyatı");
+    expect(dialog.textContent).not.toContain("Stok modu");
+    const inputs = dialog.querySelectorAll<HTMLInputElement>("input");
+    expect(inputs[0].value).toBe("ESP-01");
+    await fill(inputs[1], "Çift espresso");
+    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Kaydet")!);
+    expect(onUpdateProduct).toHaveBeenCalledWith("product-1", expect.objectContaining({ sku: "ESP-01", name: "Çift espresso", taxProfileId: "tax-1", categoryId: "cat-1", description: "Sıcak içecek", displayOrder: 5 }));
+  });
+
+  it("keeps the edit dialog open with the server's message when the update is refused", async () => {
+    const onUpdateProduct = vi.fn().mockRejectedValue(new ApiError(409, "DUPLICATE_SKU", "Bu SKU zaten kullanılıyor."));
+    await render(<CatalogWorkspace {...baseProps({ onUpdateProduct })} />);
+    await click([...document.querySelectorAll(".catalog-details button")].find((button) => button.textContent === "Ürünü düzenle")!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Kaydet")!);
+    expect(document.querySelector('[role="dialog"]')!.textContent).toContain("Bu SKU zaten kullanılıyor.");
+  });
+
+  it("offers no product edit without the update capability", async () => {
+    await render(<CatalogWorkspace {...baseProps()} />);
+    expect(document.querySelector(".catalog-details")!.textContent).not.toContain("Ürünü düzenle");
+  });
+
   it("lists the groups bound to a product and assigns another one", async () => {
     const withGroups = {
       ...data,

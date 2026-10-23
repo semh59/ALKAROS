@@ -1,0 +1,11 @@
+S1 KILLED restored=true details update skips the tax profile check
+S2 KILLED restored=true category not updated
+S3 SURVIVED restored=true product update writes the cached price again
+S4 KILLED restored=true unknown product answers 200
+S5 KILLED restored=true sku change ignored
+C1 KILLED restored=true wrong details route
+C2 KILLED restored=true edit offered without capability
+C3 KILLED restored=true edit demands a price
+C4 KILLED restored=true description and order wiped on edit
+C5 KILLED restored=true edit shows product type
+S3b KILLED restored=true product update writes the cached price again (SET and parameter reintroduced; S3 mutant lacked the parameter and was inert)

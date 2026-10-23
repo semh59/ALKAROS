@@ -105,12 +105,22 @@ export type CatalogCreateInput =
   | { kind: "assignments"; value: CatalogAssignment }
   | { kind: "prices"; value: Omit<CatalogPrice, "effectiveTo"> & { effectiveTo?: string | null } };
 
+export interface CatalogProductDetailsInput {
+  sku: string;
+  name: string;
+  categoryId: string | null;
+  taxProfileId: string | null;
+  description: string | null;
+  displayOrder: number;
+}
+
 export interface CatalogWorkspaceProps {
   state: CatalogWorkspaceState;
   data: CatalogData;
   canManage: boolean;
   onRefresh: () => void | Promise<void>;
   onCreate?: (input: CatalogCreateInput) => void | Promise<void>;
+  onUpdateProduct?: (productId: string, details: CatalogProductDetailsInput) => void | Promise<void>;
   onSetAvailability?: (productId: string, isAvailable: boolean) => void | Promise<void>;
   onSetPrepTime?: (productId: string, prepTimeMinutes: number | null) => void | Promise<void>;
   errorMessage?: string;

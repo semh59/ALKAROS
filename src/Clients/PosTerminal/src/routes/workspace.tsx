@@ -9,7 +9,7 @@ import { TableManagementApiError, TableWorkspace, createTableManagementClient, t
 import { PendingChecksWorkspace } from "../features/pending-checks";
 import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
 import { BillingSplitApiError, BillSplitWorkspace, RefundPanel, createBillFromOrder, createBillingRefundClient, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
-import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, isCatalogEmpty, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
+import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, isCatalogEmpty, type CatalogCreateInput, type CatalogData, type CatalogProductDetailsInput, type CatalogWorkspaceState } from "../features/catalog";
 import { KitchenOperationsApiError, KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
 import { SystemHealthWorkspace, type SystemHealthState } from "../features/system-health";
 import { AuthorizationDecisionsWorkspace, createAuthorizationDecisionsClient, type AuthorizationDecisionState, type AuthorizationDecisionsData } from "../features/authorization-decisions";
@@ -476,9 +476,10 @@ function CatalogRoute({ canManage }: { canManage: boolean }) {
   }, [canManage, client]);
   useEffect(() => { void load(); }, [load]);
   const create = async (input: CatalogCreateInput) => { await client.create(input); await load(); };
+  const updateProduct = async (productId: string, details: CatalogProductDetailsInput) => { await client.updateProduct(productId, details); await load(); };
   const setAvailability = async (productId: string, isAvailable: boolean) => { await client.setAvailability(productId, isAvailable); await load(); };
   const setPrepTime = async (productId: string, prepTimeMinutes: number | null) => { await client.setPrepTime(productId, prepTimeMinutes); await load(); };
-  return <CatalogWorkspace state={state} data={data} canManage={canManage} onRefresh={load} onCreate={canManage ? create : undefined} onSetAvailability={canManage ? setAvailability : undefined} onSetPrepTime={canManage ? setPrepTime : undefined} errorMessage={errorMessage} lastUpdated={lastUpdated} />;
+  return <CatalogWorkspace state={state} data={data} canManage={canManage} onRefresh={load} onCreate={canManage ? create : undefined} onUpdateProduct={canManage ? updateProduct : undefined} onSetAvailability={canManage ? setAvailability : undefined} onSetPrepTime={canManage ? setPrepTime : undefined} errorMessage={errorMessage} lastUpdated={lastUpdated} />;
 }
 
 function SystemHealthRoute({ terminalId, canView }: { terminalId: string; canView: boolean }) {

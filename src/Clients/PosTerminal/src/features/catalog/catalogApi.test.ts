@@ -71,6 +71,12 @@ describe("catalog management client", () => {
     expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/management/catalog/product-modifier-assignments", expect.objectContaining({ method: "POST", body: expect.stringContaining("g-1") }));
   });
 
+  it("posts the corrected product details to the details resource", async () => {
+    const fetcher = vi.fn().mockResolvedValueOnce(response({ id: "p-1" }));
+    await createCatalogManagementClient(fetcher).updateProduct("p-1", { sku: "A-1", name: "Yeni", categoryId: null, taxProfileId: "t-1", description: null, displayOrder: 0 });
+    expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/management/catalog/products/p-1/details", expect.objectContaining({ method: "POST", body: expect.stringContaining("\"taxProfileId\":\"t-1\"") }));
+  });
+
   it("posts a prep-time update, including the null-to-clear case", async () => {
     // V1-WTR-017.
     const fetcher = vi.fn().mockResolvedValueOnce(response({ id: "p-1" })).mockResolvedValueOnce(response({ id: "p-1" }));

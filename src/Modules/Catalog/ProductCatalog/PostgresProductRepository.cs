@@ -162,7 +162,6 @@ public sealed class PostgresProductRepository : IProductRepository
                 description = @description,
                 printer_route_policy = @printer_route_policy,
                 display_order = @display_order,
-                current_price = @current_price,
                 active = @active,
                 is_available = @is_available,
                 prep_time_minutes = @prep_time_minutes,
@@ -180,7 +179,6 @@ public sealed class PostgresProductRepository : IProductRepository
         command.Parameters.AddWithValue("description", (object?)product.Description ?? DBNull.Value);
         command.Parameters.AddWithValue("printer_route_policy", (object?)product.PrinterRoutePolicy ?? DBNull.Value);
         command.Parameters.AddWithValue("display_order", product.DisplayOrder);
-        command.Parameters.AddWithValue("current_price", (object?)product.CurrentPrice ?? DBNull.Value);
         command.Parameters.AddWithValue("active", product.Active);
         command.Parameters.AddWithValue("is_available", product.IsAvailable);
         command.Parameters.AddWithValue("prep_time_minutes", (object?)product.PrepTimeMinutes ?? DBNull.Value);
