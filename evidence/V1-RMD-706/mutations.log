@@ -1,0 +1,12 @@
+A1 KILLED restored=true no audit event written
+A2 SURVIVED restored=true rejected writes audited too
+A3 KILLED restored=true actor missing
+A4 KILLED restored=true action name lost
+A5 KILLED restored=true result snapshot lost
+A6 SURVIVED restored=true aggregate type lost
+A1 KILLED restored=true no audit event written
+A2 KILLED restored=true rejected writes audited too
+A3 KILLED restored=true actor missing
+A4 KILLED restored=true action name lost
+A5 KILLED restored=true result snapshot lost
+A6 KILLED restored=true aggregate type lost

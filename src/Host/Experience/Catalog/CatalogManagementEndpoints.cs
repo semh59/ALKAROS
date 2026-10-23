@@ -1,3 +1,5 @@
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.Composition.Errors;
 using ALKAROS.Catalog.Pricing;
 using ALKAROS.Catalog.ProductCatalog;
@@ -29,6 +31,7 @@ public static class CatalogManagementEndpoints
         services.TryAddScoped<IModifierRepository, PostgresModifierRepository>();
         services.TryAddScoped<IProductModifierGroupRepository, PostgresProductModifierGroupRepository>();
         services.TryAddScoped<IPricingRepository, PostgresPricingRepository>();
+        services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
         services.TryAddScoped<CatalogManagerAuthentication>();
         services.TryAddScoped<CatalogManagementStore>();
         // Found by an independent audit (2026-09-05): CatalogManagerEndpointFilter
@@ -245,13 +248,16 @@ public sealed class CatalogManagerEndpointFilter : IEndpointFilter
 {
     private readonly CatalogManagerAuthentication _authentication;
     private readonly IAuthorizationService _authorization;
+    private readonly IAuditEventStore _audit;
 
     public CatalogManagerEndpointFilter(
         CatalogManagerAuthentication authentication,
-        IAuthorizationService authorization)
+        IAuthorizationService authorization,
+        IAuditEventStore audit)
     {
         _authentication = authentication ?? throw new ArgumentNullException(nameof(authentication));
         _authorization = authorization ?? throw new ArgumentNullException(nameof(authorization));
+        _audit = audit ?? throw new ArgumentNullException(nameof(audit));
     }
 
     public async ValueTask<object?> InvokeAsync(
@@ -266,7 +272,46 @@ public sealed class CatalogManagerEndpointFilter : IEndpointFilter
             actorId,
             CatalogManagementEndpoints.ManagePermission,
             context.HttpContext.RequestAborted);
-        return await next(context);
+        var result = await next(context);
+        if (!HttpMethods.IsGet(context.HttpContext.Request.Method)
+            && result is IStatusCodeHttpResult { StatusCode: >= 200 and < 300 })
+        {
+            await AppendAuditAsync(context.HttpContext, actorId, result);
+        }
+
+        return result;
+    }
+
+    // The business write has already committed when this runs (the stores take no
+    // caller transaction), so a failure here surfaces as a server error instead of
+    // being swallowed: the missing record is then visible, not silent.
+    private async Task AppendAuditAsync(HttpContext http, Guid actorId, object? result)
+    {
+        var value = (result as IValueHttpResult)?.Value;
+        var aggregateId = value?.GetType().GetProperty("Id")?.GetValue(value) as Guid?
+            ?? (http.Request.RouteValues.Values.OfType<string>().Select(raw => Guid.TryParse(raw, out var id) ? id : (Guid?)null)
+                .FirstOrDefault(id => id is not null));
+        if (aggregateId is null)
+            return;
+
+        var segments = (http.GetEndpoint() as RouteEndpoint)?.RoutePattern.RawText?
+            .Split("/catalog/", 2)[^1]
+            .Split('/', StringSplitOptions.RemoveEmptyEntries)
+            .Where(segment => !segment.StartsWith('{'))
+            .ToArray() ?? [];
+        var resource = segments.FirstOrDefault() ?? "unknown";
+        var action = segments.Length > 1 ? segments[1] : "create";
+        await _audit.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: $"catalog.{resource}.{action}",
+                aggregateType: $"catalog.{resource}",
+                aggregateId: aggregateId.Value,
+                actorType: "User",
+                correlationId: http.TraceIdentifier,
+                actorId: actorId,
+                afterStateJson: value is null ? null : JsonSerializer.Serialize(value)),
+            http.RequestAborted);
     }
 
 }

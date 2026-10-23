@@ -20,6 +20,8 @@ V1-RMD-600 bulgusu B008 kapanır. Katalog yönetimindeki her başarılı yazma (
 - `evidence/V1-RMD-706/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Catalog/** - yalnız yazma sonrası denetim kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Catalog/** - yalnız yeni test
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs - yalnız Catalog Host bağımlılık listesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/architecture/module-dependency-rules.md - yalnız Catalog Host satırı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-600-catalog-quality-audit.md - yalnız Out of scope notu
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 

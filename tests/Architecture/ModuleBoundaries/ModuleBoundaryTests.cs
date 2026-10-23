@@ -303,7 +303,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.Authorization"] =
                 ["ALKAROS.Identity"],
             ["ALKAROS.Host.Experience.Catalog"] =
-                ["ALKAROS.Catalog", "ALKAROS.Identity"],
+                ["ALKAROS.Audit", "ALKAROS.Catalog", "ALKAROS.Identity"],
             ["ALKAROS.Host.Experience.CustomerCredit"] =
                 ["ALKAROS.Identity", "ALKAROS.CustomerAccounts"],
             ["ALKAROS.Host.Experience.HelpRequests"] =

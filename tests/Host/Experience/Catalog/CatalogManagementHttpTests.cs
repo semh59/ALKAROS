@@ -636,6 +636,46 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
     }
 
     [Fact]
+    public async Task EverySuccessfulCatalogWriteLeavesAnAuditEventWithTheActor()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = await CreateTaxedProductAsync(client);
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/prices",
+            new CreateProductPriceV1(Guid.NewGuid(), productId, PriceType.SalePrice, 80, DateTimeOffset.UtcNow.AddHours(-1)));
+        using var response = await client.PostAsJsonAsync(
+            $"/api/v1/management/catalog/products/{productId:D}/availability", new SetProductAvailabilityV1(false));
+        response.EnsureSuccessStatusCode();
+
+        var events = await AuditEventsAsync(productId);
+        Assert.Contains("catalog.products.create", events);
+        Assert.Contains("catalog.products.availability", events);
+        Assert.Equal("catalog.products", await ScalarAsync<string>(
+            "SELECT aggregate_type FROM audit.audit_events WHERE aggregate_id = @value AND event_name = 'catalog.products.create';", productId));
+        Assert.Equal(CatalogApiTestDatabase.ManagerUserId, await ScalarAsync<Guid>(
+            "SELECT actor_id FROM audit.audit_events WHERE aggregate_id = @value AND event_name = 'catalog.products.create';", productId));
+        Assert.Contains("\"Sku\"", await ScalarAsync<string>(
+            "SELECT after_state_json::text FROM audit.audit_events WHERE aggregate_id = @value AND event_name = 'catalog.products.create';", productId), StringComparison.OrdinalIgnoreCase);
+    }
+
+    [Fact]
+    public async Task RejectedAndReadOnlyCatalogRequestsLeaveNoAuditEvent()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var productId = Guid.NewGuid();
+        using var rejected = await client.PostAsJsonAsync("/api/v1/management/catalog/products",
+            new CreateProductV1(productId, "AUD-" + Guid.NewGuid().ToString("N")[..8], "No tax", ProductType.MenuItem, StockMode.Untracked));
+        Assert.Equal(HttpStatusCode.BadRequest, rejected.StatusCode);
+        using var read = await client.GetAsync("/api/v1/management/catalog/products?limit=1");
+        read.EnsureSuccessStatusCode();
+
+        Assert.Empty(await AuditEventsAsync(productId));
+        var unknown = Guid.NewGuid();
+        using var notFound = await client.PostAsJsonAsync($"/api/v1/management/catalog/products/{unknown:D}/availability", new SetProductAvailabilityV1(false));
+        Assert.Equal(HttpStatusCode.NotFound, notFound.StatusCode);
+        Assert.Empty(await AuditEventsAsync(unknown));
+    }
+
+    [Fact]
     public async Task ProductWithoutAnExistingActiveTaxProfileIsRejectedAndNotInserted()
     {
         using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
@@ -759,5 +799,17 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
             "SELECT count(*) FROM catalog.product_prices WHERE product_price_id = @id;");
         command.Parameters.AddWithValue("id", priceId);
         return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    private async Task<List<string>> AuditEventsAsync(Guid aggregateId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT event_name FROM audit.audit_events WHERE aggregate_id = @id ORDER BY occurred_at;");
+        command.Parameters.AddWithValue("id", aggregateId);
+        await using var reader = await command.ExecuteReaderAsync();
+        var names = new List<string>();
+        while (await reader.ReadAsync())
+            names.Add(reader.GetString(0));
+        return names;
     }
 }

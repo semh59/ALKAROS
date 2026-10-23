@@ -42,6 +42,7 @@ Catalog modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar ba
 - Mevcut kasa ve garson test dosyalarındaki kodlama kaynaklı kırmızılar V1-RMD-707 kapsamı dışındadır.
 - Kategori, KDV profili, fiyat ve seçenek düzeltme ile ürün tipi/stok modu değişikliği V1-RMD-709 kapsamı dışındadır.
 - Süpürme denetimi, aynı işlemde denetim ve ProductCatalogChanged olayı V1-RMD-706 kapsamı dışındadır.
+- Host bağımlılık listesi dışındaki mimari kurallar V1-RMD-706 kapsamı dışındadır.
 
 ## Dependencies
 

@@ -22,6 +22,7 @@
 
   <ItemGroup>
     <None Include="..\..\..\..\database\migrations\V1\V1-IAM-001\005-users.up.sql" Link="Fixtures\sql\005-users.up.sql" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\..\..\..\database\migrations\V1\V1-OPS-001\015-audit-log.up.sql" Link="Fixtures\sql\015-audit-log.up.sql" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-CAT-001\006-catalog.up.sql" Link="Fixtures\sql\006-catalog.up.sql" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-CAT-002\007-catalog-pricing.up.sql" Link="Fixtures\sql\007-catalog-pricing.up.sql" CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\..\..\..\database\migrations\V1\V1-IAM-002\008-identity-authorization.up.sql" Link="Fixtures\sql\008-identity-authorization.up.sql" CopyToOutputDirectory="PreserveNewest" />
