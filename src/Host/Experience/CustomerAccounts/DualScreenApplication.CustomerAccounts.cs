@@ -1,4 +1,6 @@
 using System.Globalization;
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.PaymentClosure;
 using ALKAROS.Cash.SessionLifecycle;
 using ALKAROS.CustomerAccounts.AccountPayments;
@@ -73,18 +75,34 @@ public static partial class DualScreenApplication
             Guid customerId,
             UpdateCustomerTaxIdentityV1 request,
             CustomerAccountsStore accounts,
+            IAuditEventStore auditEvents,
             DualScreenStore store,
             IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierPermissionAsync(context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
+            var principal = await RequireCashierPermissionAsync(context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
             try
             {
                 var updated = await accounts.UpdateTaxIdentityAsync(customerId, request, cancellationToken);
-                return updated is null
-                    ? AccountError(context, StatusCodes.Status404NotFound, "CUSTOMER_NOT_FOUND", "Müşteri bulunamadı.")
-                    : Results.Ok(updated);
+                if (updated is null)
+                    return AccountError(context, StatusCodes.Status404NotFound, "CUSTOMER_NOT_FOUND", "Müşteri bulunamadı.");
+
+                // The server read the full profile with the manager role to rewrite it; the audit event records who
+                // asked for the change and which kind of identity it replaced, never the number.
+                await auditEvents.AppendAsync(
+                    new AuditEvent(
+                        id: Guid.NewGuid(),
+                        eventName: "customer.tax_identity_changed",
+                        aggregateType: "Customer",
+                        aggregateId: customerId,
+                        actorType: "User",
+                        correlationId: context.TraceIdentifier,
+                        actorId: principal.UserId,
+                        beforeStateJson: JsonSerializer.Serialize(new { kind = updated.PreviousKind }),
+                        afterStateJson: JsonSerializer.Serialize(new { kind = updated.NewKind })),
+                    cancellationToken);
+                return Results.Ok(updated.Summary);
             }
             catch (CustomerAccountValidationException exception)
             {

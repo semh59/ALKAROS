@@ -3,6 +3,7 @@ using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.CustomerData.Profiles;
 using ALKAROS.Host.DualScreen;
@@ -306,6 +307,48 @@ public sealed class CustomerAccountsHttpTests : IAsyncLifetime
         Assert.Equal("Ayşe Yılmaz", final.Name);
         Assert.Equal("*******3322", final.PhoneMasked);
     }
+
+    [Fact]
+    public async Task EveryTaxIdentityChangeIsAuditedWithItsActorAndNeverTheNumber()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd692-audit");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var customer = await CreateCustomerAsync(client, terminalId, cookie, "Ayşe Yılmaz", null);
+        var path = $"/api/v1/terminals/{terminalId:D}/customers/{customer.CustomerId:D}/tax-identity";
+
+        await SendJsonAsync(client, HttpMethod.Put, path, cookie, new UpdateCustomerTaxIdentityV1("Tckn", "10000000146", null));
+        await SendJsonAsync(client, HttpMethod.Put, path, cookie, new UpdateCustomerTaxIdentityV1("VKN", "9876543217", "Çankaya"));
+        await SendJsonAsync(client, HttpMethod.Put, path, cookie, new UpdateCustomerTaxIdentityV1("Tckn", "10000000147", null));
+        await SendJsonAsync(client, HttpMethod.Put, path, cookie, new UpdateCustomerTaxIdentityV1(null, null, null));
+
+        await using var lookup = _database.DataSource.CreateCommand(
+            "SELECT user_id FROM identity.device_sessions WHERE device_id = @device;");
+        lookup.Parameters.AddWithValue("device", $"cashier:{terminalId:D}");
+        var cashierId = (Guid)(await lookup.ExecuteScalarAsync())!;
+        var events = (await app.Services.GetRequiredService<IAuditEventStore>()
+            .GetByAggregateAsync("Customer", customer.CustomerId))
+            .Where(audit => audit.EventName == "customer.tax_identity_changed")
+            .OrderBy(audit => audit.OccurredAt)
+            .ToList();
+        Assert.Equal(3, events.Count);
+        Assert.All(events, audit =>
+        {
+            Assert.Equal("User", audit.ActorType);
+            Assert.Equal(cashierId, audit.ActorId);
+            Assert.DoesNotContain("10000000146", audit.BeforeStateJson + audit.AfterStateJson, StringComparison.Ordinal);
+            Assert.DoesNotContain("9876543217", audit.BeforeStateJson + audit.AfterStateJson, StringComparison.Ordinal);
+        });
+        Assert.Equal(
+            [("null", "Tckn"), ("Tckn", "Vkn"), ("Vkn", "null")],
+            events.Select(audit => (Kind(audit.BeforeStateJson), Kind(audit.AfterStateJson))));
+    }
+
+    private static string Kind(string? json)
+        => JsonDocument.Parse(json!).RootElement.GetProperty("kind").ValueKind == JsonValueKind.Null
+            ? "null"
+            : JsonDocument.Parse(json!).RootElement.GetProperty("kind").GetString()!;
 
     [Fact]
     public async Task UpdatingTheTaxIdentityOfAnUnknownCustomerOrWithABadNumberIsRefused()

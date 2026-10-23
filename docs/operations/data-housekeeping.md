@@ -14,8 +14,16 @@ service. It is a database-hygiene job, not a compliance job.
 | `idempotency_keys` | `expires_at < now()` | Duplicate-submit guard with a 24 h retention window (V0-ARC-003). Past expiry the stored `response_envelope` (BYTEA) is dead weight. |
 | `identity.device_sessions` | `expires_at < now() - grace` **or** `revoked_at < now() - grace` | An expired or long-revoked auth session cannot be used. `token_hash` is already a hash, not a credential. The `identity.session_operations` children cascade (`ON DELETE CASCADE`). |
 
+| `customer_display.display_sessions` | same as `identity.device_sessions` | A second-screen session that expired or was revoked cannot be used again. |
+| `customer_display.pairing_requests` | `expires_at < now() - grace` **or** `consumed_at < now() - grace` | A pairing code past its life or already used is dead. |
+| `notifications.serving_handoff_notes` | `created_at < now() - notification-days` | A hand-off note is read once; an unread one loses its meaning after weeks. |
+| `notifications.push_subscriptions` | not used for `notification-days`, or the user is inactive | A device that has not received a successful push for months, or belongs to a deactivated person, is not reachable in any useful way. |
+| `notifications.help_requests` | `created_at < now() - help-request-days` | The record of who called for help; kept a year by default. |
+
 `grace` defaults to **7 days** (`--grace-days N`), so recently expired/revoked
-rows stay briefly visible for debugging.
+rows stay briefly visible for debugging. `--notification-days` defaults to **90** and
+`--help-request-days` to **365**; they are proposed values until the Product Owner decides
+the retention lengths, and can be changed per run.
 
 ## What it never touches
 
@@ -40,17 +48,18 @@ Directly:
 
 ```sh
 ALKAROS_DB_PASSWORD=... dotnet ALKAROS.Host.dll housekeeping \
-  --db-url postgresql://alkaros@postgres:5432/alkaros [--grace-days 7]
+  --db-url postgresql://alkaros@postgres:5432/alkaros [--grace-days 7] [--notification-days 90] [--help-request-days 365]
 ```
 
 Output (exit code 0):
 
 ```text
-housekeeping: idempotency_keys=<n> device_sessions=<n> grace_days=7 seconds=<s>
+housekeeping: idempotency_keys=<n> device_sessions=<n> display_sessions=<n> display_pairings=<n> handoff_notes=<n> push_subscriptions=<n> help_requests=<n> grace_days=7 notification_days=90 help_request_days=365 seconds=<s>
 ```
 
-All deletes run in one `READ COMMITTED` transaction; a failure rolls back with a
-non-zero exit and no partial deletion.
+Deletes run in batches of 5000 rows, each batch committing on its own, so a large
+backlog never holds one long lock. A failure stops with a non-zero exit after the batches that
+already finished; running the verb again continues where it stopped.
 
 ### Suggested schedule
 

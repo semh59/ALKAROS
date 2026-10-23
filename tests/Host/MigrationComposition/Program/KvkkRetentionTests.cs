@@ -54,6 +54,12 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
         var oldDraft = await SeedOrderAsync(productId, status: "Draft", createdAgoYears: 6, note: "taslak notu");
         var heldOrder = await SeedOrderAsync(productId, status: "Completed", createdAgoYears: 6, note: "davalı - saklanacak");
 
+        await SeedHandoffNoteAsync(oldStaff, activeStaff, "Ahmet Bey şikayetçi");
+        await SeedHandoffNoteAsync(activeStaff, oldStaff, "Teşekkürler");
+        await SeedHandoffNoteAsync(recentStaff, activeStaff, "Masa 4 tatlı bekliyor");
+        await SeedPushSubscriptionAsync(oldStaff, "old-staff");
+        await SeedPushSubscriptionAsync(activeStaff, "active-staff");
+
         var tableId = await SeedTableAsync();
         await SeedReservationAsync(tableId, status: "Expired", reservedAgoYears: 6, reason: "Mehmet Aile - 6 kişi");
         await SeedReservationAsync(tableId, status: "Active", reservedAgoYears: 0, reason: "aktif rezervasyon");
@@ -120,6 +126,20 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
                 "SELECT display_name FROM identity.users WHERE user_id = @id;", ("id", oldStaff)));
             Assert.True(await ScalarAsync<bool>(
                 "SELECT email IS NULL AND phone IS NULL FROM identity.users WHERE user_id = @id;", ("id", oldStaff)));
+            Assert.True(await ScalarAsync<bool>(
+                "SELECT pin_hash IS NULL FROM identity.users WHERE user_id = @id;", ("id", oldStaff)));
+            Assert.Equal(2L, await ScalarAsync<long>(
+                "SELECT count(*) FROM notifications.serving_handoff_notes WHERE note = @m;", ("m", Marker)));
+            Assert.Equal(0L, await ScalarAsync<long>(
+                "SELECT count(*) FROM notifications.push_subscriptions WHERE user_id = @id;", ("id", oldStaff)));
+
+            // the notes and devices of people who were not anonymized stay
+            Assert.Equal("Masa 4 tatlı bekliyor", await ScalarAsync<string>(
+                "SELECT note FROM notifications.serving_handoff_notes WHERE from_user_id = @id;", ("id", recentStaff)));
+            Assert.Equal(1L, await ScalarAsync<long>(
+                "SELECT count(*) FROM notifications.push_subscriptions WHERE user_id = @id;", ("id", activeStaff)));
+            Assert.Equal("pin-hash", await ScalarAsync<string>(
+                "SELECT pin_hash FROM identity.users WHERE user_id = @id;", ("id", recentStaff)));
             Assert.Equal(1L, await ScalarAsync<long>(
                 "SELECT count(*) FROM table_mgmt.table_reservations WHERE reason = @m AND status = 'Expired';", ("m", Marker)));
 
@@ -281,8 +301,8 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
         var id = Guid.NewGuid();
         await using var command = _dataSource!.CreateCommand(
             """
-            INSERT INTO identity.users (user_id, username, password_hash, display_name, email, phone, active, created_at, updated_at)
-            VALUES (@id, @u, 'hash', 'Gerçek Ad', 'a@b.com', '05001112233', @active,
+            INSERT INTO identity.users (user_id, username, password_hash, pin_hash, display_name, email, phone, active, created_at, updated_at)
+            VALUES (@id, @u, 'hash', 'pin-hash', 'Gerçek Ad', 'a@b.com', '05001112233', @active,
                     now() - interval '900 days', now() - make_interval(days => @ago));
             """);
         command.Parameters.AddWithValue("id", id);
@@ -291,6 +311,34 @@ public sealed class KvkkRetentionTests : IAsyncLifetime
         command.Parameters.AddWithValue("ago", updatedAgoDays);
         await command.ExecuteNonQueryAsync();
         return id;
+    }
+
+    private async Task SeedHandoffNoteAsync(Guid from, Guid to, string note)
+    {
+        await using var command = _dataSource!.CreateCommand(
+            """
+            INSERT INTO notifications.serving_handoff_notes (handoff_note_id, from_user_id, to_user_id, note, consumed_at)
+            VALUES (@id, @from, @to, @note, now());
+            """);
+        command.Parameters.AddWithValue("id", Guid.NewGuid());
+        command.Parameters.AddWithValue("from", from);
+        command.Parameters.AddWithValue("to", to);
+        command.Parameters.AddWithValue("note", note);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    private async Task SeedPushSubscriptionAsync(Guid userId, string name)
+    {
+        await using var command = _dataSource!.CreateCommand(
+            """
+            INSERT INTO notifications.push_subscriptions (subscription_id, endpoint, p256dh, auth, user_id, terminal_id)
+            VALUES (@id, @endpoint, 'k', 'a', @user, @terminal);
+            """);
+        command.Parameters.AddWithValue("id", Guid.NewGuid());
+        command.Parameters.AddWithValue("endpoint", $"https://push.example.net/{name}");
+        command.Parameters.AddWithValue("user", userId);
+        command.Parameters.AddWithValue("terminal", Guid.NewGuid());
+        await command.ExecuteNonQueryAsync();
     }
 
     private async Task<Guid> SeedOldCustomerAndSupplierAsync()

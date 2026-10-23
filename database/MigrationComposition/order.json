@@ -1712,6 +1712,15 @@
         "vapid_keys"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "200",
+      "phase": "B",
+      "tables": [
+        "serving_handoff_notes",
+        "help_requests"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

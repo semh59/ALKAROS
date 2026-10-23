@@ -241,18 +241,26 @@ public static class Program
         return (int)HostExitCode.Success;
     }
 
+    private const int HousekeepingBatchSize = 5000;
+
     /// <summary>
     /// One-shot operational data housekeeping: deletes expired ephemeral rows
-    /// that carry no value after expiry and would otherwise grow without bound
-    /// (V1-RMD-091). Not a KVKK personal-data retention job (that is V15-KVK-001,
-    /// with 5-10 year retention per the V0-CMP-003 inventory) and it never
-    /// touches orders, bills, fiscal or invoice records.
-    /// Usage: housekeeping --db-url &lt;url&gt; [--grace-days &lt;N&gt;]
+    /// that carry no value after expiry and would otherwise grow without bound,
+    /// and ages out the notification and second-screen tables that hold
+    /// staff-directed operational data. It is not the personal-data retention
+    /// job (that is the kvkk-retention verb, with 5-10 year windows from the
+    /// approved data inventory) and it never touches orders, bills, fiscal or
+    /// invoice records. Deletes run in batches, each its own transaction, so a
+    /// large backlog never holds one long lock; a failed run can simply be repeated.
+    /// Usage: housekeeping --db-url &lt;url&gt; [--grace-days &lt;N&gt;] [--notification-days &lt;N&gt;]
+    ///        [--help-request-days &lt;N&gt;]
     /// </summary>
     private static async Task<int> HousekeepingAsync(string[] args)
     {
         string? databaseUrl = null;
         var graceDays = 7;
+        var notificationDays = 90;
+        var helpRequestDays = 365;
         for (var i = 0; i < args.Length; i++)
         {
             switch (args[i])
@@ -263,6 +271,14 @@ public static class Program
                 case "--grace-days" when i + 1 < args.Length:
                     if (!int.TryParse(args[++i], out graceDays) || graceDays < 0)
                         throw new ArgumentException("--grace-days must be a non-negative integer.");
+                    break;
+                case "--notification-days" when i + 1 < args.Length:
+                    if (!int.TryParse(args[++i], out notificationDays) || notificationDays < 1)
+                        throw new ArgumentException("--notification-days must be a positive integer.");
+                    break;
+                case "--help-request-days" when i + 1 < args.Length:
+                    if (!int.TryParse(args[++i], out helpRequestDays) || helpRequestDays < 1)
+                        throw new ArgumentException("--help-request-days must be a positive integer.");
                     break;
                 default:
                     throw new ArgumentException($"Unrecognized housekeeping argument '{args[i]}'.");
@@ -277,41 +293,75 @@ public static class Program
 
         await using var connection = new NpgsqlConnection(connectionString);
         await connection.OpenAsync();
-        await using var transaction = await connection.BeginTransactionAsync(System.Data.IsolationLevel.ReadCommitted);
 
         var started = DateTimeOffset.UtcNow;
 
-        int idempotencyDeleted;
-        await using (var command = new NpgsqlCommand(
-            "DELETE FROM idempotency_keys WHERE expires_at < now();",
-            connection,
-            transaction))
-        {
-            idempotencyDeleted = await command.ExecuteNonQueryAsync();
-        }
-
+        var idempotencyDeleted = await DeleteInBatchesAsync(
+            connection, "idempotency_keys", "expires_at < now()", graceDays);
         // identity.session_operations rows cascade with their parent session.
-        int sessionsDeleted;
-        await using (var command = new NpgsqlCommand(
-            """
-            DELETE FROM identity.device_sessions
-            WHERE expires_at < now() - make_interval(days => @grace)
-               OR (revoked_at IS NOT NULL AND revoked_at < now() - make_interval(days => @grace));
-            """,
+        var sessionsDeleted = await DeleteInBatchesAsync(
             connection,
-            transaction))
-        {
-            command.Parameters.AddWithValue("grace", graceDays);
-            sessionsDeleted = await command.ExecuteNonQueryAsync();
-        }
-
-        await transaction.CommitAsync();
+            "identity.device_sessions",
+            "expires_at < now() - make_interval(days => @days) OR (revoked_at IS NOT NULL AND revoked_at < now() - make_interval(days => @days))",
+            graceDays);
+        var displaySessionsDeleted = await DeleteInBatchesAsync(
+            connection,
+            "customer_display.display_sessions",
+            "expires_at < now() - make_interval(days => @days) OR (revoked_at IS NOT NULL AND revoked_at < now() - make_interval(days => @days))",
+            graceDays);
+        var displayPairingsDeleted = await DeleteInBatchesAsync(
+            connection,
+            "customer_display.pairing_requests",
+            "expires_at < now() - make_interval(days => @days) OR (consumed_at IS NOT NULL AND consumed_at < now() - make_interval(days => @days))",
+            graceDays);
+        var handoffNotesDeleted = await DeleteInBatchesAsync(
+            connection,
+            "notifications.serving_handoff_notes",
+            "created_at < now() - make_interval(days => @days)",
+            notificationDays);
+        var pushSubscriptionsDeleted = await DeleteInBatchesAsync(
+            connection,
+            "notifications.push_subscriptions",
+            "COALESCE(last_success_at, created_at) < now() - make_interval(days => @days) "
+            + "OR user_id IN (SELECT user_id FROM identity.users WHERE NOT active)",
+            notificationDays);
+        var helpRequestsDeleted = await DeleteInBatchesAsync(
+            connection,
+            "notifications.help_requests",
+            "created_at < now() - make_interval(days => @days)",
+            helpRequestDays);
 
         var seconds = (DateTimeOffset.UtcNow - started).TotalSeconds;
         Console.Out.WriteLine(
             $"housekeeping: idempotency_keys={idempotencyDeleted} device_sessions={sessionsDeleted} "
-            + $"grace_days={graceDays} seconds={seconds:F2}");
+            + $"display_sessions={displaySessionsDeleted} display_pairings={displayPairingsDeleted} "
+            + $"handoff_notes={handoffNotesDeleted} push_subscriptions={pushSubscriptionsDeleted} "
+            + $"help_requests={helpRequestsDeleted} grace_days={graceDays} notification_days={notificationDays} "
+            + $"help_request_days={helpRequestDays} seconds={seconds:F2}");
         return (int)HostExitCode.Success;
+    }
+
+    /// <summary>
+    /// Deletes the rows of <paramref name="table"/> that match <paramref name="condition"/> (which binds
+    /// <c>@days</c>) in batches of <see cref="HousekeepingBatchSize"/>, each batch committing on its own. Both
+    /// arguments are fixed text of this file, never user input.
+    /// </summary>
+    private static async Task<int> DeleteInBatchesAsync(
+        NpgsqlConnection connection, string table, string condition, int days)
+    {
+        var total = 0;
+        while (true)
+        {
+            await using var command = new NpgsqlCommand(
+                $"DELETE FROM {table} WHERE ctid IN (SELECT ctid FROM {table} WHERE {condition} LIMIT @batch);",
+                connection);
+            command.Parameters.AddWithValue("days", days);
+            command.Parameters.AddWithValue("batch", HousekeepingBatchSize);
+            var deleted = await command.ExecuteNonQueryAsync();
+            total += deleted;
+            if (deleted < HousekeepingBatchSize)
+                return total;
+        }
     }
 
     /// <summary>
@@ -691,12 +741,13 @@ public static class Program
         writer.WriteLine("  --rollback        Run the rollback script of the given position instead of forward");
         writer.WriteLine("  Database password is read from the ALKAROS_DB_PASSWORD environment variable.");
         writer.WriteLine();
-        writer.WriteLine("Verbs: serve | provision-manager --db-url <url> | housekeeping --db-url <url> [--grace-days <N>]");
+        writer.WriteLine("Verbs: serve | provision-manager --db-url <url> | housekeeping --db-url <url> [--grace-days <N>] [--notification-days <N>] [--help-request-days <N>]");
         writer.WriteLine("       | kvkk-retention --db-url <url> [--apply] [--as-of <ISO date>] [--exclude-order-ids-file <path>]");
         writer.WriteLine("       | audit-disposal --db-url <url> [--apply] [--as-of <ISO date>]");
         writer.WriteLine("  audit-disposal    Drop yearly audit-log partitions whose 10-year retention has ended. Dry run unless --apply.");
-        writer.WriteLine("  housekeeping      Delete expired idempotency_keys and expired/long-revoked device_sessions");
-        writer.WriteLine("                    (operational hygiene only; not KVKK personal-data retention).");
+        writer.WriteLine("  housekeeping      Delete expired idempotency_keys, device and display sessions, old pairing requests,");
+        writer.WriteLine("                    hand-off notes, unused push subscriptions and old help requests (in batches;");
+        writer.WriteLine("                    operational hygiene only, not KVKK personal-data retention).");
         writer.WriteLine("  kvkk-retention    Anonymize personal data past its V0-CMP-003 retention window");
         writer.WriteLine("                    (staff / order notes / reservation reasons). Dry run unless --apply.");
         writer.WriteLine("                    Fiscal / invoice / financial data and append-only audit are never touched.");
@@ -729,10 +780,16 @@ internal sealed class KvkkAnonymizationPlans : IAnonymizationPlans
                 """
                 UPDATE identity.users
                 SET username = 'anon-' || left(user_id::text, 8), display_name = @m, email = NULL, phone = NULL,
-                    password_hash = '!kvkk-retention-disabled', updated_at = now()
+                    password_hash = '!kvkk-retention-disabled', pin_hash = NULL, updated_at = now()
                 WHERE user_id = @subject AND active = false AND display_name <> @m;
                 """,
-                "SELECT count(*) FROM identity.users WHERE user_id = @subject AND active = false AND (display_name <> @m OR email IS NOT NULL OR phone IS NOT NULL);"),
+                "SELECT count(*) FROM identity.users WHERE user_id = @subject AND active = false AND (display_name <> @m OR email IS NOT NULL OR phone IS NOT NULL OR pin_hash IS NOT NULL);"),
+            new("notifications.serving_handoff_notes",
+                "UPDATE notifications.serving_handoff_notes SET note = @m WHERE (from_user_id = @subject OR to_user_id = @subject) AND note <> @m;",
+                "SELECT count(*) FROM notifications.serving_handoff_notes WHERE (from_user_id = @subject OR to_user_id = @subject) AND note <> @m;"),
+            new("notifications.push_subscriptions",
+                "DELETE FROM notifications.push_subscriptions WHERE user_id = @subject;",
+                "SELECT count(*) FROM notifications.push_subscriptions WHERE user_id = @subject;"),
         ], Parameters),
         [RetentionClass.OrderNotes] = new(null,
         [

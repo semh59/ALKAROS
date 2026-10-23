@@ -13,6 +13,9 @@ namespace ALKAROS.Host.Experience.CustomerAccounts;
 /// Cashier role; the phone is masked to its last four digits before it leaves the server, and the tax number
 /// (V1-RMD-453) arrives already masked by the profile access policy.
 /// </summary>
+/// <summary>The masked customer after a tax identity change, with the identity kind before and after it.</summary>
+public sealed record TaxIdentityUpdateResult(CustomerAccountSummaryV1 Summary, string? PreviousKind, string? NewKind);
+
 public sealed class CustomerAccountsStore
 {
     /// <summary>Upper bound on the customers the till lists; search filters within it.</summary>
@@ -90,9 +93,10 @@ public sealed class CustomerAccountsStore
     /// <summary>
     /// V1-RMD-453: replaces the customer's tax identity and keeps every other field. Reads the full profile with the
     /// Manager role on the server only, because the update rewrites the whole envelope; the answer is the masked
-    /// summary. Returns null for an unknown or anonymized customer.
+    /// summary and the kind it replaced, which the caller writes to the audit log (the number itself is never
+    /// logged). Returns null for an unknown or anonymized customer.
     /// </summary>
-    public async Task<CustomerAccountSummaryV1?> UpdateTaxIdentityAsync(
+    public async Task<TaxIdentityUpdateResult?> UpdateTaxIdentityAsync(
         Guid customerId, UpdateCustomerTaxIdentityV1 request, CancellationToken cancellationToken)
     {
         var taxIdentity = ParseTaxIdentity(request.TaxIdKind, request.TaxIdNumber, request.TaxOffice);
@@ -113,7 +117,10 @@ public sealed class CustomerAccountsStore
             return null;
         }
 
-        return await GetAsync(customerId, cancellationToken);
+        var summary = await GetAsync(customerId, cancellationToken);
+        return summary is null
+            ? null
+            : new TaxIdentityUpdateResult(summary, profile.TaxIdentity?.Kind.ToString(), taxIdentity?.Kind.ToString());
     }
 
     /// <summary>No kind, number or office means "no tax identity"; anything else must be a complete, valid one.</summary>

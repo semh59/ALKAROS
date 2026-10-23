@@ -9,7 +9,7 @@ public sealed class ManifestTests : IDisposable
     private static readonly string[] FirstEntryTables = ["idempotency_keys"];
     private static readonly string[] RuntimeManifestIds =
     [
-        "001", "002", "003", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022", "023", "024", "025", "026", "027", "028", "029", "030", "031", "032", "033", "034", "035", "036", "037", "038", "039", "040", "041", "042", "043", "044", "045", "046", "047", "048", "049", "050", "051", "052", "053", "054", "055", "056", "057", "058", "059", "060", "061", "062", "063", "064", "065", "066", "067", "068", "069", "070", "071", "072", "073", "074", "075", "076", "077", "078", "079", "080", "081", "082", "083", "084", "085", "086", "087", "088", "089", "090", "091", "092", "093", "094", "095", "096", "097", "098", "099", "100", "101", "102", "103", "104", "105", "106", "107", "108", "109", "110", "111", "112", "113", "114", "115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130", "131", "132", "133", "134", "135", "136", "137", "138", "139", "140", "141", "142", "143", "144", "145", "146", "147", "148", "149", "150", "151", "152", "153", "154", "155", "156", "157", "158", "159", "160", "161", "162", "163", "164", "165", "166", "167", "168", "169", "170", "171", "172", "173", "174", "175", "176", "177", "178", "179", "180", "181", "182", "183", "184", "185", "186", "187", "188", "189", "190", "191", "192", "193", "194", "195", "196", "197", "198", "199",
+        "001", "002", "003", "005", "006", "007", "008", "009", "010", "011", "012", "013", "014", "015", "016", "017", "018", "019", "020", "021", "022", "023", "024", "025", "026", "027", "028", "029", "030", "031", "032", "033", "034", "035", "036", "037", "038", "039", "040", "041", "042", "043", "044", "045", "046", "047", "048", "049", "050", "051", "052", "053", "054", "055", "056", "057", "058", "059", "060", "061", "062", "063", "064", "065", "066", "067", "068", "069", "070", "071", "072", "073", "074", "075", "076", "077", "078", "079", "080", "081", "082", "083", "084", "085", "086", "087", "088", "089", "090", "091", "092", "093", "094", "095", "096", "097", "098", "099", "100", "101", "102", "103", "104", "105", "106", "107", "108", "109", "110", "111", "112", "113", "114", "115", "116", "117", "118", "119", "120", "121", "122", "123", "124", "125", "126", "127", "128", "129", "130", "131", "132", "133", "134", "135", "136", "137", "138", "139", "140", "141", "142", "143", "144", "145", "146", "147", "148", "149", "150", "151", "152", "153", "154", "155", "156", "157", "158", "159", "160", "161", "162", "163", "164", "165", "166", "167", "168", "169", "170", "171", "172", "173", "174", "175", "176", "177", "178", "179", "180", "181", "182", "183", "184", "185", "186", "187", "188", "189", "190", "191", "192", "193", "194", "195", "196", "197", "198", "199", "200",
     ];
     // V1-RMD-244: this literal (and RuntimeManifestIds/the count below) has
     // now gone stale THREE times (098 in V1-RMD-157, 099 in V1-WTR-012, and
@@ -51,8 +51,8 @@ public sealed class ManifestTests : IDisposable
     // And for migration 185 (shift refund allowance on cash sessions, approval mode on refund requests).
     // And for migration 186 (items and quantities a refund request pays back).
     // And for migration 187 (error events, their occurrences and the monitoring counters).
-    // And for migration 191 (raw UI interaction log) and 192 (trace id column on it); 193 adds the printer profile column; 194 adds the table-wide clear guard on audit.audit_events; 195 adds the grant and delegation guards; 197 makes setting history immutable and bounds the logo table; 198 adds the acknowledgement columns on help requests; 199 keeps the push signing key as an envelope (the last entry); 196 seeds the waiter discount policy.
-    private static readonly string[] LastEntryTables = ["vapid_keys"];
+    // And for migration 191 (raw UI interaction log) and 192 (trace id column on it); 193 adds the printer profile column; 194 adds the table-wide clear guard on audit.audit_events; 195 adds the grant and delegation guards; 197 makes setting history immutable and bounds the logo table; 198 adds the acknowledgement columns on help requests; 199 keeps the push signing key as an envelope; 200 makes the pending hand-off note unique per waiter (the last entry); 196 seeds the waiter discount policy.
+    private static readonly string[] LastEntryTables = ["serving_handoff_notes", "help_requests"];
     private readonly string _directory = Path.Combine(
         Path.GetTempPath(), "alkaros-fnd004-" + Guid.NewGuid().ToString("N")[..8]);
 
@@ -71,7 +71,7 @@ public sealed class ManifestTests : IDisposable
     {
         var manifest = MigrationManifest.Load(Path.Combine("Fixtures", "order.json"));
 
-        Assert.Equal(198, manifest.Migrations.Count);
+        Assert.Equal(199, manifest.Migrations.Count);
         Assert.Equal(RuntimeManifestIds, manifest.Migrations.Select(entry => entry.Id));
         Assert.Equal(
             FirstEntryTables,

@@ -14,15 +14,32 @@ apply always pick the same records. The multi-store checkpoint/resume workflow i
 
 | Class | Table / columns | Window | Action |
 | --- | --- | --- | --- |
-| Staff record | `identity.users` — `username`, `display_name`, `email`, `phone`, `password_hash` | `active = false` **and** `updated_at` older than **1 year** (employment + 1 yr) | `username -> 'anon-<id8>'`, `display_name -> '[anonymized]'`, `email`/`phone -> NULL`, `password_hash -> '!kvkk-retention-disabled'`. The row is kept for referential integrity (roles, audit actor, reservation actor). |
+| Staff record | `identity.users` — `username`, `display_name`, `email`, `phone`, `password_hash`, `pin_hash` | `active = false` **and** `updated_at` older than **1 year** (employment + 1 yr) | `username -> 'anon-<id8>'`, `display_name -> '[anonymized]'`, `email`/`phone -> NULL`, `password_hash -> '!kvkk-retention-disabled'`, `pin_hash -> NULL`. The row is kept for referential integrity (roles, audit actor, reservation actor). |
 | Order note | `orders.orders.notes` | order `status IN (Completed, Cancelled, Rejected)` **and** `created_at` older than **5 years** | `notes -> '[anonymized]'` |
 | Order line note | `orders.order_items.notes` | parent order past the same window | `notes -> '[anonymized]'` |
 | Reservation reason | `table_mgmt.table_reservations.reason`, `release_reason` | `status IN (Claimed, Cancelled, Expired)` **and** `reserved_at` older than **5 years** | both `-> '[anonymized]'` |
 
 ### Staff data that is kept, and for how long (V1-RMD-672)
 
-- `identity.users` also holds `pin_hash` (a PBKDF2 hash of the cashier PIN). It is personal data of the staff member; it is cleared together with the other fields when the staff record is anonymized (code change tracked in V1-RMD-673).
+- `identity.users` also holds `pin_hash` (a PBKDF2 hash of the cashier PIN). It is personal data of the staff member; it is cleared together with the other fields when the staff record is anonymized.
 - The authorization trail (`identity.authorization_grants`, delegations, behavioural tightenings, the personal comp budget record) and the access log of those decisions are kept **10 years**, the same as the audit log (Product Owner, 2026-10-21).
+
+### Notification and second-screen tables
+
+These tables hold staff-directed operational data. They are aged out by the `housekeeping` verb (see `docs/operations/data-housekeeping.md`), in batches; the windows below are the proposed defaults while the Product Owner's answers on retention lengths are open, and each can be changed with a command-line argument without a code change.
+
+| Table | Personal data | Default window | When a staff record is anonymized |
+| --- | --- | --- | --- |
+| `notifications.serving_handoff_notes` | the free-text note and the sender and receiver ids | **90 days** after creation (`--notification-days`) | `note -> '[anonymized]'` for notes the person sent or received |
+| `notifications.push_subscriptions` | the push address and keys of a device, tied to a user | not used for **90 days** (`--notification-days`), or the user is inactive | the person's subscriptions are deleted |
+| `notifications.help_requests` | who called for help at which table | **365 days** after creation (`--help-request-days`) | the row keeps only the user id, which no longer identifies anyone |
+| `customer_display.display_sessions`, `customer_display.pairing_requests` | none (hashes and device ids) | expired or consumed more than the grace period ago (`--grace-days`, 7) | not applicable |
+
+A pending hand-off note is unique per receiving waiter; a newer one closes the older one.
+
+### Customer tax identity (VKN / T.C. kimlik no)
+
+Changing a customer's tax identity writes an audit event `customer.tax_identity_changed` (aggregate `Customer`) with the actor, the time and the identity kind before and after. The number itself is never written to the audit log. The server reads the full profile with the manager role to rewrite it; the audit event is the access trail for that read and for the change.
 
 ### Customers and suppliers
 
@@ -147,6 +164,6 @@ dotnet ALKAROS.Host.dll audit-disposal --db-url ... --apply --operator "<your na
 - Each drop writes an `audit.partition.disposed` event with the partition name, year, row count and operator name only.
 - `audit_events_default` holds any date outside the pre-created years (2020-2060); it is never dropped by the command. After 2060 new partitions must be created before the year starts.
 - There is no legal-hold class for the audit log; a hold would have to be added to `Privacy.RetentionExecution` first.
-- Schedule it with `docker compose -f compose.yaml -f compose.ops.yaml run --rm audit-disposal` (service in `compose.ops.yaml`, runs with `--apply`) at least every six months, like `kvkk-retention`.
+- Schedule it with `docker compose -f compose.yaml -f compose.ops.yaml run --rm audit-disposal` (service in `compose.ops.yaml`, runs with `--apply`) at least every six months. `kvkk-retention` has no compose service of its own: schedule it with the cron entry above.
 - A non-zero `default_partition_rows` in its summary line means rows with dates outside 2020-2060; they stay until someone creates a partition for them. The command then exits with code `3` and prints a warning. To move them into a new year partition (the rows cannot be updated or deleted, so this is a copy under maintenance): stop writers, `CREATE TABLE audit.audit_events_yNNNN (LIKE audit.audit_events INCLUDING ALL)`, copy the matching rows with `INSERT ... SELECT`, verify the counts, detach and drop the old default partition inside a maintenance window, attach the new table with `ATTACH PARTITION ... FOR VALUES FROM (...) TO (...)`, re-create the default partition, and call `audit.guard_audit_partition(...)` on each new partition. Do this with a database administrator; it is not part of the disposal command.
 - After a database restore from a backup run `audit-disposal` (dry run first) and `kvkk-retention` again: a backup can bring back partitions and rows that were already disposed of (see `docs/recovery/backup-restore-runbook.md`).
