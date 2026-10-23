@@ -1,0 +1,5 @@
+Paylaşılan dosyalarda bu görevin rotaları (rota bazlı bölme):
+src/Host/DualScreen/DualScreenApplication.Endpoints.cs : GET /api/v1/terminals/{terminalId}/catalog (satır ~360 ve çağırdığı yardımcılar)
+src/Host/DualScreen/DualScreenStore.cs : katalog sayfalama (DefaultCatalogPageSize, MaximumCatalogPageSize, imleç) ve katalog sorguları
+src/Host/Experience/SecurityAdministration/** : kapsam dışı
+Katalog yönetim izni: src/Modules/Identity/Authorization/Catalog/ApplicationPermissions.cs (catalog.manage) ve CatalogManagementEndpoints.ManagePermission

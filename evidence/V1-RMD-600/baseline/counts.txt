@@ -1,0 +1,9 @@
+dosya sayısı: 71
+satır sayısı:
+  7639 total
+komut: git ls-files <dilim yolları> | sort -u > scope-files.txt; xargs wc -l
+src/Modules/Catalog: 20 dosya, 1576 satır
+src/Host/Experience/Catalog: 4 dosya, 1202 satır
+tests/Modules/Catalog: 10 dosya, 1692 satır
+tests/Host/Experience/Catalog: 4 dosya, 1190 satır
+src/Clients/PosTerminal/src/features/catalog: 7 dosya, 701 satır
