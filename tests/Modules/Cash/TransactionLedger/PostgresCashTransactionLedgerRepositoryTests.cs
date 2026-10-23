@@ -1,6 +1,7 @@
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
+using ALKAROS.Cash.TenderHandler;
 using ALKAROS.Cash.TransactionLedger.Tests.Fixtures;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Payments.PaymentAggregate;
@@ -182,6 +183,71 @@ public sealed class PostgresCashTransactionLedgerRepositoryTests : IClassFixture
 
         var exception = await Assert.ThrowsAsync<PostgresException>(() => command.ExecuteNonQueryAsync());
         Assert.Equal(ForeignKeyViolation, exception.SqlState);
+    }
+
+    [Theory]
+    [InlineData(CashTransactionType.CashIn, CashTransactionDirection.In)]
+    [InlineData(CashTransactionType.CashOut, CashTransactionDirection.Out)]
+    public async Task AMovementIsRefusedOnceTheSessionIsNoLongerOpen(CashTransactionType type, CashTransactionDirection direction)
+    {
+        var sessionId = await SeedCashSessionAsync();
+        await SetSessionStatusAsync(sessionId, "Counting");
+
+        var act = () => _ledger.RecordAsync(new CashTransaction(Guid.NewGuid(), sessionId, type, 10m, direction));
+
+        await act.Should().ThrowAsync<ClosedCashSessionException>();
+        (await _ledger.GetBySessionIdAsync(sessionId)).Should().BeEmpty();
+    }
+
+    [Fact]
+    public async Task ASaleIsRefusedOnceTheSessionIsNoLongerOpen()
+    {
+        var sessionId = await SeedCashSessionAsync();
+        var (payment, _) = await SeedTwoPaymentsAsync();
+        await SetSessionStatusAsync(sessionId, "Closing");
+
+        var act = () => _ledger.RecordAsync(
+            new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.Sale, 100m, CashTransactionDirection.In, payment.Id));
+
+        await act.Should().ThrowAsync<ClosedCashSessionException>();
+    }
+
+    [Fact]
+    public async Task AMovementForAnUnknownSessionIsNotFound()
+    {
+        var act = () => _ledger.RecordAsync(
+            new CashTransaction(Guid.NewGuid(), Guid.NewGuid(), CashTransactionType.CashIn, 10m, CashTransactionDirection.In));
+
+        await act.Should().ThrowAsync<CashSessionNotFoundException>();
+    }
+
+    [Fact]
+    public async Task StartingTheCountWaitsForAMovementAlreadyInFlightSoTheCountSeesIt()
+    {
+        var sessionId = await SeedCashSessionAsync();
+        await using var movementConnection = await _dataSource.OpenConnectionAsync();
+        await using var movementTransaction = await movementConnection.BeginTransactionAsync();
+        await _ledger.RecordAsync(
+            new CashTransaction(Guid.NewGuid(), sessionId, CashTransactionType.CashIn, 40m, CashTransactionDirection.In),
+            movementConnection, movementTransaction);
+
+        var counting = SetSessionStatusAsync(sessionId, "Counting");
+        await Task.Delay(500);
+        counting.IsCompleted.Should().BeFalse("the count must wait for the movement that is still being written");
+
+        await movementTransaction.CommitAsync();
+        await counting;
+
+        (await _ledger.ComputeExpectedCashAsync(sessionId)).Should().Be(40m);
+    }
+
+    private async Task SetSessionStatusAsync(Guid sessionId, string status)
+    {
+        await using var command = _dataSource.CreateCommand(
+            "UPDATE cash.cash_sessions SET status = @status, row_version = row_version + 1 WHERE cash_session_id = @id;");
+        command.Parameters.AddWithValue("status", status);
+        command.Parameters.AddWithValue("id", sessionId);
+        await command.ExecuteNonQueryAsync();
     }
 
     private async Task<Guid> SeedCashSessionAsync()

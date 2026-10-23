@@ -244,9 +244,19 @@ public sealed partial class DualScreenStore
         // serializes every mutation of this order (a concurrent racer blocks
         // on that lock, not this one) — the two concurrency tests in
         // DualScreenStoreTests cover exactly this.
-        var order = await _orderRepository.GetByIdAsync(orderId, cancellationToken)
+        var order = await PostgresOrderRepository.GetByIdAsync(orderId, connection, transaction, cancellationToken)
             ?? throw new DualScreenNotFoundException("Active order was not found for this terminal.");
-        var existing = order.Items.FirstOrDefault(i => i.ProductId == request.ProductId && i.Status == OrderItemState.Draft);
+        // Only a bare line of the same product at today's price takes the extra quantity; a line with modifiers, a
+        // note, a seat, a course or a discount is a different line and would pass its extras on to the new portions.
+        var existing = order.Items.FirstOrDefault(i =>
+            i.ProductId == request.ProductId
+            && i.Status == OrderItemState.Draft
+            && i.Modifiers.Count == 0
+            && string.IsNullOrWhiteSpace(i.Notes)
+            && i.SeatId is null
+            && i.CourseNumber is null
+            && i.DiscountAmount == 0m
+            && i.UnitPrice == product.UnitPrice);
 
         Order updated;
         if (existing is not null)

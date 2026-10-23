@@ -36,6 +36,7 @@ const receipt = {
     { paymentId: "p1", amount: 60, method: "Cash", status: "Approved", at: "2026-10-13T10:30:00Z" },
     { paymentId: "p2", amount: 30, method: "Account", status: "Approved", at: "2026-10-13T10:31:00Z" },
     { paymentId: "p3", amount: 20, method: "Manual", status: "Refunded", at: "2026-10-13T10:32:00Z" },
+    { paymentId: "p4", amount: 15, method: "Card", status: "Approved", at: "2026-10-13T10:33:00Z" },
   ],
 };
 
@@ -100,10 +101,11 @@ describe("split-payment.js information receipt", () => {
     expect(text).toMatch(/İndirim-₺10,00|İndirim-\s?₺?\s?10,00/);
     expect(text).toContain("Nakit");
     expect(text).toContain("Cari hesap");
-    expect(text).toContain("Kart / EFT / diğer (İade edildi)");
+    expect(text).toContain("Banka kartı");
+    expect(text).toContain("EFT / diğer (İade edildi)");
     expect(sheet().querySelector("b")).toBeNull();
     expect(text).toContain("Ayran <b>");
-    expect(text).not.toMatch(/Approved|Refunded|Manual|DiscountAmount/);
+    expect(text).not.toMatch(/Approved|Refunded|Manual|Card|DiscountAmount/);
   });
 
   it("lists refunded units, the amount paid back per payment and the net amount kept", async () => {

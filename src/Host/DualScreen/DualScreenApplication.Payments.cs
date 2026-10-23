@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.Adjustments;
@@ -51,6 +52,21 @@ public static partial class DualScreenApplication
     /// correctly re-derive its lock state after a reload instead of relying
     /// on in-memory state alone.
     /// </summary>
+    private static readonly Action<ILogger, Guid, Exception?> OrderNotCompletedLog =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Error, new EventId(6940, "BillClosedOrderNotCompleted"),
+            "Bill {BillId} closed but its order could not be completed.");
+
+    private static readonly Action<ILogger, Guid, Exception?> DisplayPushFailedLog =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Warning, new EventId(6941, "BillClosedDisplayPushFailed"),
+            "Customer display push after closing bill {BillId} failed.");
+
+    private static readonly Action<ILogger, Guid, Exception?> CloseFailedLog =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Error, new EventId(6942, "BillCloseFailed"),
+            "Closing bill {BillId} after a payment failed; the bill stays open.");
+
     /// <summary>
     /// V1-RMD-276: closes the bill after a successful tender. Best effort by design: the money
     /// has already been recorded, so a failure to flip the bill state must never turn a
@@ -66,10 +82,11 @@ public static partial class DualScreenApplication
     /// its own Turkish thank-you message) was the one real gap: nothing told the display, so it kept showing
     /// the last active order forever after the bill that completed it was paid.
     /// </summary>
-    private static async Task<bool> TryCloseBillAsync(
+    public static async Task<bool> TryCloseBillAsync(
         IBillClosureService billClosure, OrderSettlementService orderSettlement, Guid billId,
-        IHubContext<CustomerDisplayHub> hub, Guid terminalId, CancellationToken cancellationToken)
+        IHubContext<CustomerDisplayHub> hub, ILoggerFactory loggerFactory, Guid terminalId, CancellationToken cancellationToken)
     {
+        var logger = loggerFactory.CreateLogger("ALKAROS.Host.DualScreen.BillClosure");
         try
         {
             var result = await billClosure.TryCloseAsync(billId, cancellationToken);
@@ -77,7 +94,16 @@ public static partial class DualScreenApplication
             // V1-RMD-282: a settled check closes its order (and frees a table it was still attached to).
             if (closed)
             {
-                await orderSettlement.CompleteForPaidBillAsync(billId, cancellationToken);
+                try
+                {
+                    await orderSettlement.CompleteForPaidBillAsync(billId, cancellationToken);
+                }
+                catch (Exception exception) when (exception is not OperationCanceledException)
+                {
+                    // The bill is closed and the money is recorded; only the order/table hand-over failed. The
+                    // answer stays "closed" and the order is completed by the manual close-settled action.
+                    OrderNotCompletedLog(logger, billId, exception);
+                }
                 // Best effort: nobody may be watching (no paired display, or it is offline), and a failed
                 // push must never turn a successful payment into an error response - the display simply
                 // shows the stale state until its own next natural refresh.
@@ -88,13 +114,14 @@ public static partial class DualScreenApplication
                 }
                 catch (Exception exception) when (exception is not OperationCanceledException)
                 {
-                    // Best effort by design (see above).
+                    DisplayPushFailedLog(logger, billId, exception);
                 }
             }
             return closed;
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
+            CloseFailedLog(logger, billId, exception);
             return false;
         }
     }
@@ -206,6 +233,7 @@ public static partial class DualScreenApplication
             IAuthorizationService authorization,
             DualScreenStore store,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -236,7 +264,7 @@ public static partial class DualScreenApplication
                     cancellationToken);
                 // V1-RMD-412 (V1-RMD-393 F-06): the unresolved attempt was what kept an otherwise settled check
                 // open; like card approval and every tender, try to close it now (a check still short stays open).
-                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
+                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
                 return Results.Ok(new ResolveUnsettledPaymentResultV1(paymentId, result.NewStatus, closed));
             }
             catch (ManualResolutionReasonInvalidException)
@@ -315,6 +343,7 @@ public static partial class DualScreenApplication
             IAuthorizationService authorization,
             DualScreenStore store,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -341,7 +370,7 @@ public static partial class DualScreenApplication
                             })),
                         connection, transaction, token),
                     cancellationToken);
-                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
+                var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
                 return Results.Ok(new CardConfirmationResultV1(decided.Id, decided.Status.ToString(), closed));
             }
             catch (OverAllocationException exception)
@@ -406,6 +435,7 @@ public static partial class DualScreenApplication
             DualScreenStore store,
             IAuthorizationService authorization,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -464,7 +494,7 @@ public static partial class DualScreenApplication
                         cancellationToken);
 
                     var cardClosed = settlement.Outcome == CardSettlementOutcome.Approved
-                        && await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
+                        && await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
                     return settlement.Outcome switch
                     {
                         CardSettlementOutcome.Approved =>
@@ -578,7 +608,7 @@ public static partial class DualScreenApplication
             // V1-RMD-276: an approved tender may have completed the bill; close it now
             // (idempotent, and a bill that is still short of its total simply stays open).
             var closed = routing is TenderRoutingHandled { Result: TenderApproved }
-                && await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
+                && await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
 
             return routing switch
             {

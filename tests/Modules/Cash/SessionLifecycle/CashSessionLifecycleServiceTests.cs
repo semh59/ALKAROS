@@ -77,9 +77,39 @@ public sealed class CashSessionLifecycleServiceTests : IClassFixture<CashSession
     }
 
     [Fact]
+    public async Task TheActiveQueryReturnsOnlyTheActiveSessionNotTheClosedHistory()
+    {
+        var terminalId = Guid.NewGuid();
+        (await _repository.GetActiveByTerminalIdAsync(terminalId)).Should().BeEmpty();
+
+        var first = new OpenCashSessionCommand(Guid.NewGuid(), Guid.NewGuid(), terminalId, 100.00m);
+        await _service.OpenSessionAsync(first);
+        await _service.StartCountAsync(new StartCashCountCommand(first.CashSessionId, Guid.NewGuid()));
+        (await _repository.GetActiveByTerminalIdAsync(terminalId)).Should().ContainSingle(s => s.Status == CashSessionStatus.Counting);
+        await _service.CloseSessionAsync(
+            new CloseCashSessionCommand(first.CashSessionId, 100.00m, Guid.NewGuid()), expectedCash: 100.00m);
+        (await _repository.GetActiveByTerminalIdAsync(terminalId)).Should().BeEmpty();
+
+        var second = new OpenCashSessionCommand(Guid.NewGuid(), Guid.NewGuid(), terminalId, 150.00m);
+        await _service.OpenSessionAsync(second);
+
+        (await _repository.GetActiveByTerminalIdAsync(terminalId))
+            .Should().ContainSingle(s => s.CashSessionId == second.CashSessionId && s.Status == CashSessionStatus.Open);
+        await using (var closing = _dataSource.CreateCommand(
+            "UPDATE cash.cash_sessions SET status = 'Closing' WHERE cash_session_id = @id;"))
+        {
+            closing.Parameters.AddWithValue("id", second.CashSessionId);
+            await closing.ExecuteNonQueryAsync();
+        }
+
+        (await _repository.GetActiveByTerminalIdAsync(terminalId))
+            .Should().ContainSingle(s => s.CashSessionId == second.CashSessionId && s.Status == CashSessionStatus.Closing);
+    }
+
+    [Fact]
     public async Task ConcurrentOpenSessionAsyncCallsOnTheSameTerminalNeverBothSucceed()
     {
-        // The GetByTerminalIdAsync check and the insert are not atomic; two
+        // The GetActiveByTerminalIdAsync check and the insert are not atomic; two
         // truly concurrent opens on the same terminal must still resolve
         // to exactly one winner (the DB's partial unique index, migration
         // 122), with the loser seeing the same domain exception a

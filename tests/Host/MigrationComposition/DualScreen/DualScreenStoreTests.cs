@@ -68,6 +68,125 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task EveryOrderMutationWorksOnASingleConnectionPool()
+    {
+        // A mutation holds the order's row lock on its own connection; reading the order through a second pooled
+        // connection would wait for a free one that the first still holds.
+        await using var tiny = NpgsqlDataSource.Create(
+            new NpgsqlConnectionStringBuilder(CreateConnectionString()) { MaxPoolSize = 1, Timeout = 5 }.ConnectionString);
+        var store = new DualScreenStore(tiny);
+        var terminalId = Guid.NewGuid();
+        var order = await store.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+
+        var added = await store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision), CancellationToken.None);
+        var merged = await store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, added.Revision), CancellationToken.None);
+        var itemId = await ScalarAsync<Guid>(
+            "SELECT order_item_id FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId));
+        var changed = await store.ChangeItemQuantityAsync(
+            terminalId, order.OrderId, itemId, new ChangeOrderItemQuantityRequest(5m, merged.Revision), CancellationToken.None);
+        await store.RemoveItemAsync(terminalId, order.OrderId, itemId, changed.Revision, CancellationToken.None);
+
+        Assert.Equal(0L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+    }
+
+    [Fact]
+    public async Task AddingTheSameProductAgainDoesNotMergeIntoALineWithModifiers()
+    {
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        var first = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision), CancellationToken.None);
+        var groupId = Guid.NewGuid();
+        var suffix = groupId.ToString("N")[..12];
+        await using (var seed = _dataSource!.CreateCommand(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type) VALUES (@group_id, @code, 'Ekstra', 1);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta) VALUES (@modifier_id, @group_id, @code, 'Peynir', 2.50);
+            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity)
+            SELECT gen_random_uuid(), order_item_id, @modifier_id, 'Peynir', 2.50, 1 FROM orders.order_items WHERE order_id = @order_id;
+            """))
+        {
+            seed.Parameters.AddWithValue("group_id", groupId);
+            seed.Parameters.AddWithValue("modifier_id", Guid.NewGuid());
+            seed.Parameters.AddWithValue("code", "MOD" + suffix);
+            seed.Parameters.AddWithValue("order_id", order.OrderId);
+            await seed.ExecuteNonQueryAsync();
+        }
+
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, first.Revision), CancellationToken.None);
+
+        Assert.Equal(2L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_item_modifiers m JOIN orders.order_items i USING (order_item_id) WHERE i.order_id = @order_id;",
+            ("order_id", order.OrderId)));
+    }
+
+    [Fact]
+    public async Task AddingTheSameProductAgainMergesOnlyIntoABareLine()
+    {
+        var terminalId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, Guid.NewGuid(), CancellationToken.None);
+        var first = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, order.Revision), CancellationToken.None);
+        var second = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 2m, first.Revision), CancellationToken.None);
+
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+        Assert.Equal(3m, await ScalarAsync<decimal>(
+            "SELECT sum(quantity) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+
+        await using (var price = _dataSource!.CreateCommand(
+            "UPDATE catalog.products SET current_price = 2.00 WHERE product_id = @id;"))
+        {
+            price.Parameters.AddWithValue("id", _productId);
+            await price.ExecuteNonQueryAsync();
+        }
+
+        var beforePrice = await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId));
+        second = await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, second.Revision), CancellationToken.None);
+        Assert.Equal(beforePrice + 1, await ScalarAsync<long>(
+            "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+
+        await using (var priceBack = _dataSource!.CreateCommand(
+            "UPDATE catalog.products SET current_price = 1.00 WHERE product_id = @id;"))
+        {
+            priceBack.Parameters.AddWithValue("id", _productId);
+            await priceBack.ExecuteNonQueryAsync();
+        }
+
+        foreach (var extra in new[] { "notes = 'soğansız'", "seat_id = gen_random_uuid()", "course_number = 2", "discount_amount = 1" })
+        {
+            await using (var command = _dataSource!.CreateCommand(
+                $"UPDATE orders.order_items SET {extra} WHERE order_id = @order_id;"))
+            {
+                command.Parameters.AddWithValue("order_id", order.OrderId);
+                await command.ExecuteNonQueryAsync();
+            }
+
+            var before = await ScalarAsync<long>(
+                "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId));
+            second = await _store.AddItemAsync(
+                terminalId, order.OrderId, new AddOrderItemRequest(_productId, 1m, second.Revision), CancellationToken.None);
+
+            Assert.Equal(before + 1, await ScalarAsync<long>(
+                "SELECT count(*) FROM orders.order_items WHERE order_id = @order_id;", ("order_id", order.OrderId)));
+
+            await using var reset = _dataSource!.CreateCommand(
+                "UPDATE orders.order_items SET notes = NULL, seat_id = NULL, course_number = NULL, discount_amount = 0 WHERE order_id = @order_id;");
+            reset.Parameters.AddWithValue("order_id", order.OrderId);
+            await reset.ExecuteNonQueryAsync();
+        }
+    }
+
+    [Fact]
     public async Task AnUnknownLineIsNotFoundButALineThatIsNoLongerDraftIsAConflict()
     {
         var terminalId = Guid.NewGuid();
@@ -150,6 +269,40 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         var snapshot = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
 
         Assert.Equal(4.00m, Assert.Single(snapshot.Lines).LineTotal);
+    }
+
+    [Fact]
+    public async Task AComplimentaryLineWithAModifierIsShownAtItsFullPrice()
+    {
+        var terminalId = Guid.NewGuid();
+        var displayId = Guid.NewGuid();
+        var order = await _store!.StartOrderAsync(terminalId, displayId, CancellationToken.None);
+        await _store.AddItemAsync(
+            terminalId, order.OrderId, new AddOrderItemRequest(_productId, 2m, order.Revision), CancellationToken.None);
+        var groupId = Guid.NewGuid();
+        var modifierId = Guid.NewGuid();
+        var suffix = groupId.ToString("N")[..12];
+        await using (var seed = _dataSource!.CreateCommand(
+            """
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type) VALUES (@group_id, @code, 'Ekstra', 1);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta) VALUES (@modifier_id, @group_id, @code, 'Peynir', 2.50);
+            INSERT INTO orders.order_item_modifiers (order_item_modifier_id, order_item_id, modifier_id, modifier_name_snapshot, price_delta, quantity)
+            SELECT gen_random_uuid(), order_item_id, @modifier_id, 'Peynir', 2.50, 2 FROM orders.order_items WHERE order_id = @order_id;
+            UPDATE orders.order_items
+            SET status = 'Complimentary', discount_amount = 2, net_amount = 0, tax_amount = 0, gross_amount = 0
+            WHERE order_id = @order_id;
+            """))
+        {
+            seed.Parameters.AddWithValue("group_id", groupId);
+            seed.Parameters.AddWithValue("modifier_id", modifierId);
+            seed.Parameters.AddWithValue("code", "MOD" + suffix);
+            seed.Parameters.AddWithValue("order_id", order.OrderId);
+            await seed.ExecuteNonQueryAsync();
+        }
+
+        var snapshot = await _store.GetSnapshotAsync(displayId, terminalId, CancellationToken.None);
+
+        Assert.Equal(7.00m, Assert.Single(snapshot.Lines).LineTotal);
     }
 
     [Fact]

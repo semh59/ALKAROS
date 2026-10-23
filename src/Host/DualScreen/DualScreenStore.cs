@@ -386,7 +386,7 @@ public sealed partial class DualScreenStore
         // properties (found by an independent audit, 2026-09-07, boundary
         // wave). LockDraftOrderAsync above already holds the order's lock, so
         // this plain read cannot race with another mutator of the same order.
-        var order = await _orderRepository.GetByIdAsync(orderId, cancellationToken)
+        var order = await PostgresOrderRepository.GetByIdAsync(orderId, connection, transaction, cancellationToken)
             ?? throw new DualScreenNotFoundException("Active order was not found for this terminal.");
 
         Order updated;

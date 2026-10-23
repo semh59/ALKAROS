@@ -1326,7 +1326,7 @@
   }
 
   // Bilgi fişi: mali olmayan hesap özeti; sunucudan okunur, #receipt-print içine yazılır ve tarayıcı yazdırma penceresi açılır.
-  var RECEIPT_METHODS = { Cash: 'Nakit', Account: 'Cari hesap', Manual: 'Kart / EFT / diğer' };
+  var RECEIPT_METHODS = { Cash: 'Nakit', Account: 'Cari hesap', Card: 'Banka kartı', Manual: 'EFT / diğer' };
   var RECEIPT_ADJUSTMENTS = {
     DiscountPercentage: 'İndirim', DiscountAmount: 'İndirim', ServiceFee: 'Hizmet bedeli',
     Kuver: 'Kuver', Tip: 'Bahşiş', CustomFee: 'Ek ücret',

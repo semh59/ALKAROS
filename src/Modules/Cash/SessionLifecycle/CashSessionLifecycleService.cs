@@ -29,7 +29,7 @@ public sealed class CashSessionLifecycleService : ICashSessionLifecycleService
         ArgumentNullException.ThrowIfNull(command);
         command.Validate();
 
-        var existingTerminalSessions = await _repository.GetByTerminalIdAsync(command.TerminalId, cancellationToken);
+        var existingTerminalSessions = await _repository.GetActiveByTerminalIdAsync(command.TerminalId, cancellationToken);
         _policy.ValidateCanOpenSession(command, existingTerminalSessions);
 
         var now = DateTimeOffset.UtcNow;
@@ -75,7 +75,7 @@ public sealed class CashSessionLifecycleService : ICashSessionLifecycleService
             // unique index (defense in depth, migration 122); this only
             // translates that race's raw constraint violation back into
             // the same domain exception a sequential caller would see.
-            var stillActive = await _repository.GetByTerminalIdAsync(command.TerminalId, cancellationToken);
+            var stillActive = await _repository.GetActiveByTerminalIdAsync(command.TerminalId, cancellationToken);
             var winner = stillActive.First(s => s.IsActive);
             throw new ActiveCashSessionExistsException(command.TerminalId, winner.CashSessionId);
         }

@@ -41,6 +41,20 @@ public sealed class PostgresOrderRepository : IOrderRepository
         await using var transaction = await connection.BeginTransactionAsync(
             System.Data.IsolationLevel.RepeatableRead, cancellationToken);
 
+        return await GetByIdAsync(id, connection, transaction, cancellationToken);
+    }
+
+    /// <summary>
+    /// Reads the aggregate inside the caller's transaction, so a caller that already holds the order's row lock does
+    /// not take a second pooled connection. The caller's lock is what keeps the four reads consistent here; the
+    /// standalone overload pins a repeatable-read snapshot instead.
+    /// </summary>
+    public static async Task<Order?> GetByIdAsync(
+        Guid id, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
         var order = await ReadOrderAsync(connection, transaction, id, cancellationToken);
         if (order is null)
             return null;

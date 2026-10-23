@@ -147,6 +147,8 @@ public static partial class DualScreenApplication
                                       AND a.transaction_type = 'Charge') THEN 'Account'
                        WHEN EXISTS (SELECT 1 FROM cash.cash_transactions c
                                     WHERE c.related_payment_id = p.id AND c.type = 'Sale') THEN 'Cash'
+                       WHEN EXISTS (SELECT 1 FROM payments.card_settlement_attempts s
+                                    WHERE s.payment_id = p.id AND s.outcome = 'Approved') THEN 'Card'
                        ELSE 'Manual' END
             FROM unnest(@ids) AS p(id);
             """);

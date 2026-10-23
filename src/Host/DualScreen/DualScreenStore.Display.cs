@@ -213,8 +213,13 @@ public sealed partial class DualScreenStore
         Guid terminalId,
         CancellationToken cancellationToken)
     {
+        // One snapshot for the terminal pointer, the order and its lines, so a write between the reads cannot show an
+        // order's header from before it and its lines from after.
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(
+            System.Data.IsolationLevel.RepeatableRead, cancellationToken);
         Guid? orderId;
-        await using (var terminalCommand = _dataSource.CreateCommand(
+        await using (var terminalCommand = CreateCommand(connection, transaction,
             "SELECT active_order_id FROM customer_display.terminals WHERE terminal_id = @terminal_id;"))
         {
             terminalCommand.Parameters.AddWithValue("terminal_id", terminalId);
@@ -226,7 +231,7 @@ public sealed partial class DualScreenStore
             return IdleSnapshot(displayId, terminalId);
 
         OrderRow order;
-        await using (var orderCommand = _dataSource.CreateCommand(
+        await using (var orderCommand = CreateCommand(connection, transaction,
             """
             SELECT order_number, status, subtotal, discount_total, tax_total, total, currency_code, row_version
             FROM orders.orders
@@ -243,10 +248,13 @@ public sealed partial class DualScreenStore
         }
 
         var lines = new List<CustomerDisplayLineDto>();
-        await using (var lineCommand = _dataSource.CreateCommand(
+        await using (var lineCommand = CreateCommand(connection, transaction,
             """
-            SELECT order_item_id, product_name_snapshot, quantity, unit_price, gross_amount, status
-            FROM orders.order_items
+            SELECT order_item_id, product_name_snapshot, quantity, unit_price, gross_amount, status,
+                   COALESCE((SELECT sum(round(m.price_delta * m.quantity, 2))
+                             FROM orders.order_item_modifiers m
+                             WHERE m.order_item_id = i.order_item_id), 0)
+            FROM orders.order_items i
             WHERE order_id = @order_id AND status IN ('Draft', 'Active', 'Complimentary')
             ORDER BY created_at, order_item_id;
             """))
@@ -259,6 +267,7 @@ public sealed partial class DualScreenStore
                 var unitPrice = reader.GetDecimal(3);
                 var storedGrossAmount = reader.GetDecimal(4);
                 var status = reader.GetString(5);
+                var modifierTotal = reader.GetDecimal(6);
                 // V1-CUI-011: a Complimentary item's own persisted
                 // gross_amount is 0 (PDF:I.28.1/V0-DOM-006 - "effective
                 // payable amounts" are zeroed), so showing it as-is would
@@ -266,13 +275,11 @@ public sealed partial class DualScreenStore
                 // price with the discount surfaced separately in
                 // DiscountTotal (same "real price + separate discount line"
                 // contract as BillItem.cs, V1-RMD-228). Reconstructed from
-                // unit_price/quantity (menu prices are tax-inclusive, so that
-                // is the gross OrderItem's own constructor derives for a
-                // non-discounted line); like the rest of this query, it does
-                // not account for modifiers (gross_amount already didn't for
-                // any status before this fix either).
+                // unit_price/quantity plus the line's modifiers (menu prices
+                // are tax-inclusive, so that is the gross OrderItem's own
+                // constructor derives for a non-discounted line).
                 var lineTotal = status == "Complimentary"
-                    ? Math.Round(unitPrice * quantity, 2, MidpointRounding.AwayFromZero)
+                    ? Math.Round(unitPrice * quantity + modifierTotal, 2, MidpointRounding.AwayFromZero)
                     : storedGrossAmount;
                 lines.Add(new CustomerDisplayLineDto(
                     reader.GetGuid(0), reader.GetString(1), quantity, unitPrice, lineTotal));

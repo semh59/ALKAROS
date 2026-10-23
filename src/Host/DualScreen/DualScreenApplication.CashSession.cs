@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using ALKAROS.Cash.Contracts;
 using ALKAROS.Cash.SessionLifecycle;
 using ALKAROS.Cash.TenderHandler;
@@ -52,8 +53,7 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             await RequireCashDrawerAsync(context, terminalId, store, authorization, cancellationToken);
-            var sessions = await sessionRepository.GetByTerminalIdAsync(terminalId, cancellationToken);
-            var active = sessions.FirstOrDefault(s => s.IsActive);
+            var active = await sessionRepository.GetActiveByTerminalIdAsync(terminalId, cancellationToken) is [var only] ? only : null;
             return active is null ? Results.NotFound() : Results.Ok(active);
         });
 
@@ -209,11 +209,7 @@ public static partial class DualScreenApplication
             // here, unlike cash-tender's own idempotency-key handling.
             var replay = await ledger.GetBySessionAndIdempotencyKeyAsync(cashSessionId, request.IdempotencyKey, cancellationToken);
             if (replay is not null)
-            {
-                return Results.Created(
-                    $"/api/v1/terminals/{terminalId:D}/cash-sessions/{cashSessionId:D}/cash-movements/{replay.Id:D}",
-                    replay);
-            }
+                return MovementReplay(replay, request, terminalId, cashSessionId);
 
             var session = await sessionRepository.GetByIdAsync(cashSessionId, cancellationToken)
                 ?? throw new CashSessionNotFoundException(cashSessionId);
@@ -230,6 +226,7 @@ public static partial class DualScreenApplication
             var movement = new Cash.TransactionLedger.CashTransaction(
                 Guid.NewGuid(), cashSessionId, transactionType, request.Amount, direction,
                 recordedBy: principal.UserId, notes: request.Notes, idempotencyKey: request.IdempotencyKey);
+            var recorded = movement;
             try
             {
                 await ledger.RecordAsync(movement, cancellationToken);
@@ -238,16 +235,11 @@ public static partial class DualScreenApplication
             {
                 // A concurrent request for the same key won the race between
                 // the check above and this insert; its row is the real one.
-                var raced = await ledger.GetBySessionAndIdempotencyKeyAsync(cashSessionId, request.IdempotencyKey, cancellationToken);
-                if (raced is null)
+                recorded = await ledger.GetBySessionAndIdempotencyKeyAsync(cashSessionId, request.IdempotencyKey, cancellationToken);
+                if (recorded is null)
                     throw;
-                return Results.Created(
-                    $"/api/v1/terminals/{terminalId:D}/cash-sessions/{cashSessionId:D}/cash-movements/{raced.Id:D}",
-                    raced);
             }
-            return Results.Created(
-                $"/api/v1/terminals/{terminalId:D}/cash-sessions/{cashSessionId:D}/cash-movements/{movement.Id:D}",
-                movement);
+            return MovementReplay(recorded, request, terminalId, cashSessionId);
         });
 
         group.MapPost("/{cashSessionId:guid}/cash-tender", async (
@@ -260,6 +252,7 @@ public static partial class DualScreenApplication
             DualScreenStore store,
             IAuthorizationService authorization,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
             HttpContext context,
             ICashSessionRepository sessionRepository,
             CancellationToken cancellationToken) =>
@@ -275,11 +268,31 @@ public static partial class DualScreenApplication
                 cancellationToken);
             // V1-RMD-276: a cash tender that covers the bill completes it (a replay of the same key stays a no-op).
             // V1-RMD-294: and (best effort) pokes the paired customer display to refresh.
-            await TryCloseBillAsync(billClosure, orderSettlement, request.BillId, customerDisplayHub, terminalId, cancellationToken);
+            await TryCloseBillAsync(billClosure, orderSettlement, request.BillId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
             return Results.Ok(result);
         });
 
         return group;
+    }
+
+    /// <summary>
+    /// A repeated idempotency key returns the recorded movement only when it is the same movement; the same key with
+    /// another amount or direction is a client mistake that must not be answered with a different movement's result.
+    /// </summary>
+    private static IResult MovementReplay(
+        Cash.TransactionLedger.CashTransaction recorded, RecordCashMovementRequestV1 request, Guid terminalId, Guid cashSessionId)
+    {
+        var direction = request.Direction == CashMovementDirectionV1.In ? CashTransactionDirection.In : CashTransactionDirection.Out;
+        if (recorded.Amount != request.Amount || recorded.Direction != direction)
+        {
+            return Results.Json(
+                new { error = new { code = "IDEMPOTENCY_KEY_REUSED", message = "Bu işlem anahtarı farklı bir nakit hareketi için zaten kullanılmış." } },
+                statusCode: StatusCodes.Status409Conflict);
+        }
+
+        return Results.Created(
+            $"/api/v1/terminals/{terminalId:D}/cash-sessions/{cashSessionId:D}/cash-movements/{recorded.Id:D}",
+            recorded);
     }
 
     /// <summary>
@@ -291,7 +304,7 @@ public static partial class DualScreenApplication
         ICashSessionRepository sessionRepository, Guid cashSessionId, Guid terminalId, CancellationToken cancellationToken)
     {
         var session = await sessionRepository.GetByIdAsync(cashSessionId, cancellationToken);
-        if (session is not null && session.Snapshot.TerminalId != terminalId)
+        if (session is null || session.Snapshot.TerminalId != terminalId)
             throw new CashSessionNotFoundException(cashSessionId);
     }
 

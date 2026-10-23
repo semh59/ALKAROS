@@ -42,7 +42,7 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
         return ReadRecord(reader);
     }
 
-    public async Task<IReadOnlyList<CashSessionSnapshot>> GetByTerminalIdAsync(Guid terminalId, CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<CashSessionSnapshot>> GetActiveByTerminalIdAsync(Guid terminalId, CancellationToken cancellationToken = default)
     {
         if (terminalId == Guid.Empty)
             throw new ArgumentException("Terminal id cannot be empty.", nameof(terminalId));
@@ -55,18 +55,14 @@ public sealed class PostgresCashSessionRepository : ICashSessionRepository
                    opened_at, closed_at, row_version
             FROM {Sessions}
             WHERE terminal_id = @terminal_id
-            ORDER BY opened_at
-            LIMIT {MaxUnpagedRows + 1};
+              AND status IN ('Open', 'Counting', 'Closing')
+            LIMIT 2;
             """);
         command.Parameters.AddWithValue("terminal_id", terminalId);
 
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
             result.Add(ReadSnapshot(reader));
-
-        if (result.Count > MaxUnpagedRows)
-            throw new InvalidOperationException(
-                $"GetByTerminalIdAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
 
         return result;
     }

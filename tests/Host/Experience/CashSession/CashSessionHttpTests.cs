@@ -355,6 +355,43 @@ public sealed class CashSessionHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ExpectedCashForASessionThatDoesNotExistIsNotFound()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd694-unknown-session");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var preview = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{Guid.NewGuid():D}/expected-cash", cookie);
+
+        Assert.Equal(HttpStatusCode.NotFound, preview.StatusCode);
+    }
+
+    [Theory]
+    [InlineData("In", 80)]
+    [InlineData("Out", 75)]
+    public async Task ReusingAMovementKeyForADifferentAmountOrDirectionIsAConflict(string direction, int amount)
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd694-key-reuse-" + direction);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var opened = await PostAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions", cookie, new { OpeningBalance = 100m });
+        var sessionId = (await opened.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("cashSessionId").GetGuid();
+        var path = $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/cash-movements";
+        var key = Guid.NewGuid().ToString();
+        var first = await PostAsync(client, path, cookie, new { Direction = "In", Amount = 75m, Notes = (string?)null, IdempotencyKey = key });
+        Assert.Equal(HttpStatusCode.Created, first.StatusCode);
+
+        var reuse = await PostAsync(client, path, cookie, new { Direction = direction, Amount = (decimal)amount, Notes = (string?)null, IdempotencyKey = key });
+
+        Assert.Equal(HttpStatusCode.Conflict, reuse.StatusCode);
+        Assert.Equal("IDEMPOTENCY_KEY_REUSED", (await reuse.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error").GetProperty("code").GetString());
+        var preview = await GetAsync(client, $"/api/v1/terminals/{terminalId:D}/cash-sessions/{sessionId:D}/expected-cash", cookie);
+        Assert.Equal(175m, (await preview.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("expectedCash").GetDecimal());
+    }
+
+    [Fact]
     public async Task RetryingACashMovementWithTheSameIdempotencyKeyDoesNotDuplicateIt()
     {
         // V1-RMD-241: unlike cash-tender, this endpoint used to accept no

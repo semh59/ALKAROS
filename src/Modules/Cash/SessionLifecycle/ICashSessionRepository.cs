@@ -13,8 +13,12 @@ public interface ICashSessionRepository
     /// <summary>Loads a cash session (with its audit-trail fields) by id. Returns null if not found.</summary>
     Task<CashSessionRecord?> GetByIdAsync(Guid cashSessionId, CancellationToken cancellationToken = default);
 
-    /// <summary>Loads every session ever opened on a terminal (used by the single-open-session policy check).</summary>
-    Task<IReadOnlyList<CashSessionSnapshot>> GetByTerminalIdAsync(Guid terminalId, CancellationToken cancellationToken = default);
+    /// <summary>
+    /// Loads the terminal's active (Open, Counting or Closing) session: at most one, as the unique index
+    /// guarantees. Used by the single-open-session policy check and the active-session endpoint, so neither
+    /// reads the terminal's whole history.
+    /// </summary>
+    Task<IReadOnlyList<CashSessionSnapshot>> GetActiveByTerminalIdAsync(Guid terminalId, CancellationToken cancellationToken = default);
 
     /// <summary>
     /// The real (counted) actual cash of the terminal's most recent

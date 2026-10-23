@@ -43,7 +43,9 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
             BillAdjustment.CreateTip(Guid.NewGuid(), billId, 10m, "Tip", actor, createdBy: actor));
         await _database.SeedCollectedAsync(billId, 60m);
         await _database.SeedCollectedAsync(billId, 20m);
-        await _database.SeedCollectedAsync(billId, 30m);
+        await _database.SeedCollectedAsync(billId, 25m);
+        await _database.SeedCollectedAsync(billId, 5m);
+        await MarkCardAsync(await FirstPaymentIdAsync(billId, 5m));
         await MarkCashAsync(await FirstPaymentIdAsync(billId, 60m), actor);
         await MarkAccountAsync(await FirstPaymentIdAsync(billId, 20m), actor);
         await SetApprovedAtAsync(await FirstPaymentIdAsync(billId, 60m), hoursFromNow: 1);
@@ -70,12 +72,13 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Equal(100m, body.GetProperty("subtotal").GetDecimal());
         Assert.Equal(110m, body.GetProperty("payableAmount").GetDecimal());
         var payments = body.GetProperty("payments").EnumerateArray().ToList();
-        Assert.Equal(3, payments.Count);
-        Assert.Equal([20m, 30m, 60m], payments.Select(p => p.GetProperty("amount").GetDecimal()).ToArray());
+        Assert.Equal(4, payments.Count);
+        Assert.Equal([20m, 25m, 5m, 60m], payments.Select(p => p.GetProperty("amount").GetDecimal()).ToArray());
         Assert.All(payments, p => Assert.NotEqual(JsonValueKind.Null, p.GetProperty("at").ValueKind));
         Assert.Equal(60m, payments.Single(p => p.GetProperty("method").GetString() == "Cash").GetProperty("amount").GetDecimal());
         Assert.Equal(20m, payments.Single(p => p.GetProperty("method").GetString() == "Account").GetProperty("amount").GetDecimal());
-        Assert.Equal(30m, payments.Single(p => p.GetProperty("method").GetString() == "Manual").GetProperty("amount").GetDecimal());
+        Assert.Equal(25m, payments.Single(p => p.GetProperty("method").GetString() == "Manual").GetProperty("amount").GetDecimal());
+        Assert.Equal(5m, payments.Single(p => p.GetProperty("method").GetString() == "Card").GetProperty("amount").GetDecimal());
         Assert.All(payments, p => Assert.Equal("Approved", p.GetProperty("status").GetString()));
     }
 
@@ -245,6 +248,19 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         await using var command = _database.DataSource.CreateCommand(
             "UPDATE payments.payments SET approved_at = approved_at + make_interval(hours => @h) WHERE payment_id = @p;");
         command.Parameters.AddWithValue("h", hoursFromNow);
+        command.Parameters.AddWithValue("p", paymentId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    private async Task MarkCardAsync(Guid paymentId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            """
+            INSERT INTO payments.card_settlement_attempts
+                (card_settlement_attempt_id, idempotency_key, provider_correlation_id, payment_id, bill_id, outcome, approved_amount, allocation_id, fiscal_handoff_queued, created_at)
+            SELECT gen_random_uuid(), @key, @key, @p, bill_id, 'Approved', 5, (SELECT payment_allocation_id FROM payments.payment_allocations WHERE payment_id = @p LIMIT 1), true, now() FROM payments.payments WHERE payment_id = @p;
+            """);
+        command.Parameters.AddWithValue("key", "receipt-card-" + paymentId.ToString("N"));
         command.Parameters.AddWithValue("p", paymentId);
         await command.ExecuteNonQueryAsync();
     }

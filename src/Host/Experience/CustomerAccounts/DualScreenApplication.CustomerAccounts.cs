@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 using System.Globalization;
 using System.Text.Json;
 using ALKAROS.Audit.EventStore;
@@ -142,6 +143,7 @@ public static partial class DualScreenApplication
             DualScreenStore store,
             IAuthorizationService authorization,
             IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -163,7 +165,7 @@ public static partial class DualScreenApplication
                 return AccountError(context, StatusCodes.Status404NotFound, "CUSTOMER_NOT_FOUND", "Müşteri bulunamadı.");
             }
 
-            var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, terminalId, cancellationToken);
+            var closed = await TryCloseBillAsync(billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
             var balance = (await accounts.GetAsync(request.CustomerId, cancellationToken))?.Balance ?? 0m;
             return Results.Ok(new AccountChargeResultV1(result.ApprovedAmount, closed, result.WasReplayed, balance));
         }).RequireRateLimiting("terminal-write");

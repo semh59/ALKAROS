@@ -1,4 +1,5 @@
 using ALKAROS.Cash.Contracts;
+using ALKAROS.Cash.TenderHandler;
 using Npgsql;
 
 namespace ALKAROS.Cash.TransactionLedger;
@@ -37,6 +38,9 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentNullException.ThrowIfNull(dbTransaction);
 
+        if (transaction.Type is CashTransactionType.Sale or CashTransactionType.CashIn or CashTransactionType.CashOut)
+            await LockOpenSessionAsync(transaction.CashSessionId, connection, dbTransaction, cancellationToken);
+
         var command = connection.CreateCommand();
         command.Transaction = dbTransaction;
         command.CommandText =
@@ -62,6 +66,26 @@ public sealed class PostgresCashTransactionLedgerRepository : ICashTransactionLe
             command.Parameters.AddWithValue("idempotency_key", (object?)transaction.IdempotencyKey ?? DBNull.Value);
             await command.ExecuteNonQueryAsync(cancellationToken);
         }
+    }
+
+    /// <summary>
+    /// Takes a shared lock on the session row and requires it to be Open. Counting and closing update that row, so
+    /// they wait for a movement already in flight and see it when they compute the expected cash; a movement that
+    /// arrives after the session left Open is refused instead of landing behind the count.
+    /// </summary>
+    private static async Task LockOpenSessionAsync(
+        Guid cashSessionId, NpgsqlConnection connection, NpgsqlTransaction dbTransaction, CancellationToken cancellationToken)
+    {
+        await using var command = connection.CreateCommand();
+        command.Transaction = dbTransaction;
+        command.CommandText = "SELECT status FROM cash.cash_sessions WHERE cash_session_id = @id FOR SHARE;";
+        command.Parameters.AddWithValue("id", cashSessionId);
+        var status = await command.ExecuteScalarAsync(cancellationToken) as string
+            ?? throw new CashSessionNotFoundException(cashSessionId);
+        if (!Enum.TryParse<CashSessionStatus>(status, out var parsed))
+            throw new InvalidOperationException($"Cash session '{cashSessionId}' has an unknown status '{status}'.");
+        if (parsed != CashSessionStatus.Open)
+            throw new ClosedCashSessionException(cashSessionId, parsed);
     }
 
     public async Task<CashTransaction?> GetBySessionAndIdempotencyKeyAsync(
