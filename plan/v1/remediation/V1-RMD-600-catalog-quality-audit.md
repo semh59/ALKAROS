@@ -38,6 +38,7 @@ Catalog modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar ba
 - Modifikatör atamasını kaldırma ve modifikatör formuna ürün alanı V1-RMD-705 kapsamı dışındadır.
 - Katalog düzenleme ve pasifleştirme uçları ile ekran titremesi V1-RMD-704 kapsamı dışındadır.
 - Rota düzeyi testler dışında kalan ekran testleri V1-RMD-704 kapsamı dışındadır.
+- Garson yenileme aralığı, ortak boş mesaj ve SKU otomatik ekleme V1-RMD-707 kapsamı dışındadır.
 
 ## Dependencies
 
