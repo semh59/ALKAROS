@@ -40,6 +40,7 @@ Catalog modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar ba
 - Rota düzeyi testler dışında kalan ekran testleri V1-RMD-704 kapsamı dışındadır.
 - Garson yenileme aralığı, ortak boş mesaj ve SKU otomatik ekleme V1-RMD-707 kapsamı dışındadır.
 - Mevcut kasa ve garson test dosyalarındaki kodlama kaynaklı kırmızılar V1-RMD-707 kapsamı dışındadır.
+- Kategori, KDV profili, fiyat ve seçenek düzeltme ile ürün tipi/stok modu değişikliği V1-RMD-709 kapsamı dışındadır.
 
 ## Dependencies
 
