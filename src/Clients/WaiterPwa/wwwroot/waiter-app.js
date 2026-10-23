@@ -273,10 +273,12 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
       if (catalogLoadedAt === 0) {
         state.products = [];
         state.categories = [];
+        state.catalogFailed = true;
       }
       return;
     }
     catalogLoadedAt = Date.now();
+    state.catalogFailed = false;
     const list = result.items;
     state.products = list.map((product) => ({
       id: product.productId,
@@ -458,6 +460,10 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     });
 
     el.productList.addEventListener('click', (event) => {
+      if (event.target.closest('[data-retry-catalog]')) {
+        loadCatalog().then(() => { renderCategories(); renderProducts(); });
+        return;
+      }
       const half = event.target.closest('[data-half]');
       if (half) {
         const product = state.products.find((candidate) => candidate.id === half.dataset.half);

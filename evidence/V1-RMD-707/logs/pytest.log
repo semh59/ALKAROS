@@ -1,0 +1,9 @@
+  C:\Users\semih\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\_pytest\cacheprovider.py:423: PytestCacheWarning: could not create cache path D:\PROJECT\ALKAROS\.pytest_cache\v\cache\lastfailed: [WinError 5] Eriþim engellendi: 'D:\\PROJECT\\ALKAROS\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+FAILED tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_nothing_is_authorized_without_a_budget
+FAILED tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_anything_outside_the_budget_is_refused_not_approved
+FAILED tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py::test_confirm_paths_queue_offline_and_reconnect_reconciles
+FAILED tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py::test_waiter_pwa_html_landmarks_and_meta
+FAILED tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py::test_waiter_pwa_has_a_staff_sign_in_flow
+FAILED tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py::test_waiter_pwa_real_api_and_reliable_queue
+6 failed, 24 passed, 2 warnings in 0.86s

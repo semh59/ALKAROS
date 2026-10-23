@@ -18,7 +18,7 @@ V1-RMD-600 bulguları U-007/F-011 ve U-005, U-006 kapanır. Kasa ürün araması
 
 - `plan/v1/remediation/V1-RMD-707-cashier-waiter-catalog-search-and-retry.md`
 - `evidence/V1-RMD-707/**`
-- `tests/Clients/Cashier/Frontend/test_cashier_catalog_search.py`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/Cashier/Frontend/** - yalnız yeni arama testi
 - `tests/Clients/WaiterPwa/Frontend/test_waiter_catalog_retry.py`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/cashier-app.js - yalnız ürün arama ve boş ızgara mesajı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/waiter-app.js - yalnız katalog hatası ve yeniden dene

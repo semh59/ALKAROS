@@ -86,6 +86,7 @@ export const state = {
   zones: [],
   tables: [],
   products: [],
+  catalogFailed: false,
   categories: [],
 
   activeZone: 'all',

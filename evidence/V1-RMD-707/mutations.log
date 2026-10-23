@@ -1,0 +1,8 @@
+M1 KILLED restored=true query lowercased without Turkish rules
+M2 KILLED restored=true name compared without Turkish rules
+M3 KILLED restored=true no empty message
+M4 KILLED restored=true failure never flagged
+M5 KILLED restored=true flag never cleared
+M6 KILLED restored=true retry click ignored
+M7 KILLED restored=true failed menu shows the empty message
+M8 KILLED restored=true state field missing

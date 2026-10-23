@@ -21,6 +21,13 @@ export function draftQuantityOf(productId) {
 }
 
 export function renderProducts() {
+  if (state.products.length === 0) {
+    el.productList.innerHTML = state.catalogFailed
+      ? '<div class="empty">Menü alınamadı.<br><button type="button" class="btn" data-retry-catalog>Yeniden dene</button></div>'
+      : '<div class="empty">Menüde ürün yok.</div>';
+    return;
+  }
+
   const query = state.search.trim().toLocaleLowerCase('tr-TR');
   const visible = state.products.filter((product) => {
     const matchesCategory = state.activeCategory === 'all' || product.categoryCode === state.activeCategory;
