@@ -1,7 +1,7 @@
 # V1-RMD-702 - Ürün KDV profili olmadan açılamaz
 
 - Task ID: V1-RMD-702
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
