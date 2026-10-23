@@ -1,7 +1,7 @@
 # V1-RMD-696 - Hız sınırı, kimlik, hub oturumu ve veritabanı rolü sertleştirme
 
 - Task ID: V1-RMD-696
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
