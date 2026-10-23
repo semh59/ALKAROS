@@ -1,7 +1,7 @@
 # V1-RMD-692 - KVKK ve saklama: bildirim tabloları, anonimleştirme, PIN özeti, vergi kimliği izi
 
 - Task ID: V1-RMD-692
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
