@@ -1,7 +1,7 @@
 # V1-RMD-705 - Modifikatör grubunu ürüne bağlama ekranı
 
 - Task ID: V1-RMD-705
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
