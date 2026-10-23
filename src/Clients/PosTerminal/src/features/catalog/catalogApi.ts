@@ -36,13 +36,13 @@ export function createCatalogManagementClient(fetcher: typeof fetch = fetch): Ca
   const list = <T>(path: string) => request<Page<T> | T[]>(`${path}?limit=100`).then((result) => Array.isArray(result) ? result : result.items);
   return {
     load: async () => {
-      const [categories, taxes, products, modifierGroups, modifiers, prices] = await Promise.all([
-        list("/categories"), list("/tax-profiles"), list("/products"), list("/modifier-groups"), list("/modifiers"), list("/prices"),
+      const [categories, taxes, products, modifierGroups, modifiers, prices, assignments] = await Promise.all([
+        list("/categories"), list("/tax-profiles"), list("/products"), list("/modifier-groups"), list("/modifiers"), list("/prices"), list("/product-modifier-assignments"),
       ]);
-      return { categories, taxes, products, modifierGroups, modifiers, prices } as CatalogData;
+      return { categories, taxes, products, modifierGroups, modifiers, prices, assignments } as CatalogData;
     },
     create: (input) => {
-      const paths = { categories: "/categories", taxes: "/tax-profiles", products: "/products", modifierGroups: "/modifier-groups", modifiers: "/modifiers", prices: "/prices" } as const;
+      const paths = { categories: "/categories", taxes: "/tax-profiles", products: "/products", modifierGroups: "/modifier-groups", modifiers: "/modifiers", prices: "/prices", assignments: "/product-modifier-assignments" } as const;
       return request(`${paths[input.kind]}`, { method: "POST", body: JSON.stringify(input.value) });
     },
     setAvailability: (productId, isAvailable) =>

@@ -446,7 +446,7 @@ function BillingRoute({ terminalId, canManage, canCancel, canRequestRefund, canA
 }
 
 const emptyCatalogData: CatalogData = {
-  categories: [], taxes: [], products: [], modifierGroups: [], modifiers: [], prices: [],
+  categories: [], taxes: [], products: [], modifierGroups: [], modifiers: [], prices: [], assignments: [],
 };
 
 function CatalogRoute({ canManage }: { canManage: boolean }) {

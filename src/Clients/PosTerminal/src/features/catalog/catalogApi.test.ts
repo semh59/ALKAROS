@@ -9,7 +9,8 @@ describe("catalog management client", () => {
   it("loads all versioned manager resources with bounded pages", async () => {
     const fetcher = vi.fn().mockResolvedValue(response({ items: [], nextCursor: null }));
     await createCatalogManagementClient(fetcher).load();
-    expect(fetcher).toHaveBeenCalledTimes(6);
+    expect(fetcher).toHaveBeenCalledTimes(7);
+    expect(fetcher).toHaveBeenCalledWith("/api/v1/management/catalog/product-modifier-assignments?limit=100", expect.objectContaining({ credentials: "same-origin" }));
     expect(fetcher).toHaveBeenCalledWith("/api/v1/management/catalog/products?limit=100", expect.objectContaining({ credentials: "same-origin" }));
   });
 
@@ -30,6 +31,12 @@ describe("catalog management client", () => {
     const client = createCatalogManagementClient(fetcher);
     await client.create({ kind: "modifierGroups", value: { id: "g-1", code: "MILK", name: "Süt seçimi", selectionType: "SelectOne", minSelections: 0, maxSelections: 1 } });
     expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/management/catalog/modifier-groups", expect.objectContaining({ method: "POST", body: expect.stringContaining("MILK") }));
+  });
+
+  it("posts a product modifier group assignment to its own resource", async () => {
+    const fetcher = vi.fn().mockResolvedValueOnce(response({ id: "a-1" }));
+    await createCatalogManagementClient(fetcher).create({ kind: "assignments", value: { id: "a-1", productId: "p-1", modifierGroupId: "g-1" } });
+    expect(fetcher).toHaveBeenNthCalledWith(1, "/api/v1/management/catalog/product-modifier-assignments", expect.objectContaining({ method: "POST", body: expect.stringContaining("g-1") }));
   });
 
   it("posts a prep-time update, including the null-to-clear case", async () => {

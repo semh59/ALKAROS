@@ -1,0 +1,6 @@
+M1 KILLED restored=true assignments never loaded
+M2 KILLED restored=true assignment posted to wrong resource
+M3 KILLED restored=true wrong groups listed as bound
+M4 KILLED restored=true bound group offered again
+M5 KILLED restored=true assign control shown without permission
+M6 KILLED restored=true wrong group sent

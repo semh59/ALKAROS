@@ -16,6 +16,7 @@ const data: CatalogData = {
   modifierGroups: [{ id: "group-1", code: "MILK", name: "Süt seçimi", selectionType: "SelectOne", minSelections: 0, maxSelections: 1, active: true }],
   modifiers: [{ id: "modifier-1", modifierGroupId: "group-1", code: "OAT", name: "Yulaf sütü", priceDelta: 15, productId: null, active: true }],
   prices: [{ id: "price-1", productId: "product-1", priceType: "SalePrice", price: 95, currencyCode: "TRY", effectiveFrom: "2026-01-01T00:00:00Z", effectiveTo: null }],
+  assignments: [],
 };
 
 function baseProps(overrides: Partial<ComponentProps<typeof CatalogWorkspace>> = {}) {
@@ -156,6 +157,29 @@ describe("catalog workspace", () => {
   ] as const)("shows bounded %s state", async (state, title) => {
     await render(<CatalogWorkspace {...baseProps({ state, errorMessage: "API kapalı" })} />);
     expect(document.body.textContent).toContain(title);
+  });
+
+  it("lists the groups bound to a product and assigns another one", async () => {
+    const withGroups = {
+      ...data,
+      modifierGroups: [...data.modifierGroups, { ...data.modifierGroups[0], id: "group-2", code: "SYRUP", name: "Şurup" }],
+      assignments: [{ id: "assignment-1", productId: "product-1", modifierGroupId: "group-1" }],
+    };
+    const onCreate = vi.fn().mockResolvedValue(undefined);
+    await render(<CatalogWorkspace {...baseProps({ onCreate, data: withGroups })} />);
+    const detail = document.querySelector(".catalog-details")!;
+    expect(detail.textContent).toContain("BAĞLI MODİFİKATÖR GRUPLARI");
+    expect(detail.textContent).toContain("Süt seçimi");
+    const select = [...detail.querySelectorAll("label")].find((label) => label.textContent?.startsWith("Grup ata"))!.querySelector("select")!;
+    expect([...select.options].map((option) => option.textContent)).toEqual(["Grup seçin", "Şurup"]);
+    await choose(detail, "Grup ata", "group-2");
+    await click([...detail.querySelectorAll("button")].find((button) => button.textContent === "Grubu ata")!);
+    expect(onCreate).toHaveBeenCalledWith({ kind: "assignments", value: expect.objectContaining({ productId: "product-1", modifierGroupId: "group-2" }) });
+  });
+
+  it("offers no group assignment without manage permission", async () => {
+    await render(<CatalogWorkspace {...baseProps({ canManage: false })} />);
+    expect(document.querySelector(".catalog-details")!.textContent).not.toContain("Grubu ata");
   });
 
   it("suspends a product from the menu with a single action", async () => {

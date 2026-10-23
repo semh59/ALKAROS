@@ -85,6 +85,13 @@ export interface CatalogData {
   modifierGroups: readonly CatalogModifierGroup[];
   modifiers: readonly CatalogModifier[];
   prices: readonly CatalogPrice[];
+  assignments: readonly CatalogAssignment[];
+}
+
+export interface CatalogAssignment {
+  id: string;
+  productId: string;
+  modifierGroupId: string;
 }
 
 export type CatalogCreateInput =
@@ -93,6 +100,7 @@ export type CatalogCreateInput =
   | { kind: "products"; value: Omit<CatalogProduct, "active" | "isAvailable" | "prepTimeMinutes"> & { active?: boolean; isAvailable?: boolean; prepTimeMinutes?: number | null } }
   | { kind: "modifierGroups"; value: Omit<CatalogModifierGroup, "active"> & { active?: boolean } }
   | { kind: "modifiers"; value: Omit<CatalogModifier, "active"> & { active?: boolean } }
+  | { kind: "assignments"; value: CatalogAssignment }
   | { kind: "prices"; value: Omit<CatalogPrice, "effectiveTo"> & { effectiveTo?: string | null } };
 
 export interface CatalogWorkspaceProps {
