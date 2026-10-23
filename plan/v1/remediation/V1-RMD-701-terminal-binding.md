@@ -25,6 +25,13 @@ V1-RMD-599 bulguları B035 ve B088 kapanır. PO kararı: tarayıcıya bağlı gi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/** - yalnız terminal sıfırlama ekranı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/** - yalnız yeni test
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs - yalnız PhaseBMax
+- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/data/migration-rehearsal-profile.md - yalnız yeni göç satırı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ApiConventions/idempotency_allowlist.json - yalnız sıfırlama ucu
+- Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-700-database-role-and-tls.md - yalnız Out of scope notu
+- `database/migrations/V1/V1-RMD-701/**`
+- `src/Host/DualScreen/DualScreenStore.TerminalKey.cs`
+- `tests/Host/MigrationComposition/DualScreen/TerminalKeyTests.cs`
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope

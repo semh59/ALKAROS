@@ -78,10 +78,21 @@ public static partial class DualScreenApplication
             // V1-RMD-406 (V1-RMD-399 H-01): every staff session lives SessionTokenIssuer.DefaultLifetime (8 h,
             // V1-IAM-031); the literal 12 h here used to override that decision.
             var deviceId = $"cashier:{request.TerminalId:D}";
+            var terminalKeyCookie = TerminalKeyCookieName(request.TerminalId);
+            var (keyResult, newTerminalKey) = await store.ClaimTerminalKeyAsync(
+                request.TerminalId, context.Request.Cookies[terminalKeyCookie], cancellationToken);
+            if (keyResult == TerminalKeyResult.Rejected)
+            {
+                securityDetectors?.LoginFailures.Record(SecurityBurstDetectors.TerminalLabel(request.TerminalId));
+                return Error(context, StatusCodes.Status403Forbidden, "TERMINAL_KEY_MISMATCH",
+                    "Bu terminal başka bir tarayıcıya bağlı. Yönetici, Güvenlik ekranından terminali sıfırlamalıdır.");
+            }
+
+            if (newTerminalKey is not null)
+                AppendCookie(context, terminalKeyCookie, newTerminalKey, DateTimeOffset.UtcNow.Add(TerminalKeyLifetime));
             await sessions.RevokeDeviceAsync(success.UserId, deviceId, cancellationToken);
             var (session, rawToken) = await sessions.CreateSessionAsync(
                 success.UserId, deviceId, SessionTokenIssuer.DefaultLifetime, cancellationToken);
-            await store.EnsureTerminalAsync(request.TerminalId, cancellationToken);
             AppendCookie(context, CashierCookieName, rawToken, session.ExpiresAt);
             var capabilities = await roles.GetPermissionCodesForUserAsync(success.UserId, cancellationToken);
             await sessions.RevokeDeviceAsync(success.UserId, $"manager:{request.TerminalId:D}", cancellationToken);
@@ -626,6 +637,11 @@ public static partial class DualScreenApplication
             CustomerDisplayHub.SnapshotChanged,
             new { orderId, revision, kind = "OrderChanged" },
             cancellationToken);
+
+    private static readonly TimeSpan TerminalKeyLifetime = TimeSpan.FromDays(5 * 365);
+
+    // One cookie per terminal id: a browser that is used for several terminal ids keeps a key for each.
+    private static string TerminalKeyCookieName(Guid terminalId) => $"alkaros.terminal-key.{terminalId:N}";
 
     private static void AppendCookie(
         HttpContext context,

@@ -47,6 +47,7 @@ V1-RMD-599 bulguları B036 ve B077 kapanır. Uygulama (api) ve QR bağlayıcıs�
 ## Out of scope
 
 - Canlı yığına dokunmak; canlıya geçiş ayrı onaylı bir adımdır.
+- Terminal kimliğinin sunucuda doğrulanması V1-RMD-701 görevindedir.
 
 ## Dependencies
 

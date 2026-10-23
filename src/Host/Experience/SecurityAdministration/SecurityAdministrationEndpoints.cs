@@ -40,6 +40,7 @@ public static class SecurityAdministrationEndpoints
         services.TryAddScoped<IDenialEventSink, PostgresDenialEventSink>();
         services.TryAddScoped<IAuthorizationService, AuthorizationService>();
         services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
+        services.TryAddSingleton<DualScreenStore>();
         // Replaces the in-memory reference sink of the Security module: a
         // recovery action that vanishes on restart is not an audit trail.
         services.AddSingleton<ISuspiciousLoginAuditSink, AuditEventStoreSuspiciousLoginSink>();
@@ -117,6 +118,42 @@ public static class SecurityAdministrationEndpoints
                 : Results.Json(
                     new ApiErrorEnvelope(new ApiError(
                         "NOT_FOUND", "İstenen kullanıcı bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
+                    statusCode: StatusCodes.Status404NotFound);
+        });
+
+        // A terminal id is bound to the browser that first signed in with it; a manager releases a terminal whose
+        // browser data was lost (the next login claims it again).
+        group.MapGet("/terminals", async (DualScreenStore store, CancellationToken cancellationToken) =>
+            Results.Ok((await store.ListTerminalsAsync(cancellationToken))
+                .Select(terminal => new TerminalBindingV1(
+                    terminal.TerminalId, terminal.Bound, terminal.CreatedAt, terminal.LastUserName, terminal.LastLoginAt))));
+
+        group.MapPost("/terminals/{terminalId:guid}/reset-binding", async (
+            Guid terminalId,
+            DualScreenStore store,
+            IAuditEventStore auditEvents,
+            HttpContext context,
+            CancellationToken cancellationToken) =>
+        {
+            var actorId = SecurityAdministrationEndpointFilter.RequireActorId(context);
+            var reset = await store.ResetTerminalKeyAsync(
+                terminalId,
+                (connection, transaction, token) => auditEvents.AppendAsync(
+                    new AuditEvent(
+                        id: Guid.NewGuid(),
+                        eventName: "security.terminal-binding-reset",
+                        aggregateType: "Terminal",
+                        aggregateId: terminalId,
+                        actorType: "User",
+                        correlationId: context.TraceIdentifier,
+                        actorId: actorId),
+                    connection, transaction, token),
+                cancellationToken);
+            return reset
+                ? Results.Ok(new TerminalBindingResetV1(terminalId))
+                : Results.Json(
+                    new ApiErrorEnvelope(new ApiError(
+                        "NOT_FOUND", "İstenen terminal bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
                     statusCode: StatusCodes.Status404NotFound);
         });
 
@@ -267,6 +304,8 @@ public sealed record UserLookupResultV1(Guid UserId, string DisplayName, bool Ac
 public sealed record RevokeSessionsResultV1(Guid UserId, int RevokedSessions);
 
 public sealed record ForceUnlockResultV1(Guid UserId, bool Unlocked);
+public sealed record TerminalBindingV1(Guid TerminalId, bool Bound, DateTimeOffset CreatedAt, string? LastUserName, DateTimeOffset? LastLoginAt);
+public sealed record TerminalBindingResetV1(Guid TerminalId);
 
 /// <summary>V1-RMD-405: the account's active flag after a deactivate/reactivate call.</summary>
 public sealed record AccountActiveResultV1(Guid UserId, bool Active);

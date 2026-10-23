@@ -1,5 +1,5 @@
 import type {
-  Alert, AlertAction, CloseSettledResult, DiagnosticBundle, HealthCheck, MaintenanceJob, OrderBacklog, RestoreAttempt, RpoStatus, UserLookup,
+  Alert, AlertAction, CloseSettledResult, DiagnosticBundle, HealthCheck, MaintenanceJob, OrderBacklog, RestoreAttempt, RpoStatus, TerminalBinding, UserLookup,
 } from "./models";
 import { ManagementApiError, createRequester } from "../management/http";
 
@@ -7,6 +7,8 @@ export interface SecurityClient {
   lookupUser: (username: string) => Promise<UserLookup | null>;
   revokeSessions: (userId: string) => Promise<number>;
   forceUnlock: (userId: string) => Promise<void>;
+  listTerminals: () => Promise<readonly TerminalBinding[]>;
+  resetTerminal: (terminalId: string) => Promise<void>;
   listJobs: () => Promise<readonly MaintenanceJob[]>;
   runJob: (name: string) => Promise<MaintenanceJob>;
   backupRpo: () => Promise<readonly RpoStatus[]>;
@@ -31,6 +33,8 @@ export function createSecurityClient(fetcher: typeof fetch = fetch): SecurityCli
     },
     revokeSessions: async (userId) => (await post<{ revokedSessions: number }>(`/security/users/${userId}/revoke-sessions`)).revokedSessions,
     forceUnlock: async (userId) => { await post(`/security/users/${userId}/force-unlock`); },
+    listTerminals: () => json("/security/terminals"),
+    resetTerminal: async (terminalId) => { await post(`/security/terminals/${terminalId}/reset-binding`); },
     listJobs: () => json("/security/maintenance/jobs"),
     runJob: (name) => post(`/security/maintenance/jobs/${encodeURIComponent(name)}/run`),
     backupRpo: () => json("/security/backup/rpo"),

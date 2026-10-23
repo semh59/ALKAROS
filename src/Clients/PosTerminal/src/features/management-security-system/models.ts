@@ -1,4 +1,5 @@
 export interface UserLookup { userId: string; displayName: string; active: boolean; isLocked: boolean }
+export interface TerminalBinding { terminalId: string; bound: boolean; createdAt: string; lastUserName: string | null; lastLoginAt: string | null }
 export interface MaintenanceJob {
   name: string; description: string; intervalSeconds: number; enabled: boolean; disabledReason: string | null;
   lastStatus: string; lastRunAt: string | null; lastDurationMilliseconds: number | null; lastSummary: string | null;

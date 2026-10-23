@@ -216,6 +216,37 @@ public sealed class SecurityAdministrationHttpTests : IAsyncLifetime
         Assert.Equal(0, await _database.AuditCountAsync("security.account-deactivated", manager, manager));
     }
 
+    [Fact]
+    public async Task AManagerListsTheTerminalsAndReleasesABoundOneWithAnAuditRecord()
+    {
+        var manager = SecurityAdministrationTestDatabase.ManagerUserId;
+        var bound = Guid.NewGuid();
+        var open = Guid.NewGuid();
+        await _database.SeedTerminalAsync(bound, bound: true);
+        await _database.SeedTerminalAsync(open, bound: false);
+        var resetPath = $"/api/v1/management/security/terminals/{bound:D}/reset-binding";
+
+        using var anonymous = CreateClient(null);
+        Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync("/api/v1/management/security/terminals")).StatusCode);
+        using var viewOnly = CreateClient(SecurityAdministrationTestDatabase.ViewOnlyManagerToken);
+        Assert.Equal(HttpStatusCode.Forbidden, (await viewOnly.PostAsync(resetPath, null)).StatusCode);
+        Assert.Equal(1, await _database.BoundTerminalCountAsync(bound));
+
+        using var client = CreateClient(SecurityAdministrationTestDatabase.ManagerToken);
+        var listed = await client.GetFromJsonAsync<JsonElement>("/api/v1/management/security/terminals");
+        var rows = listed.EnumerateArray().ToDictionary(row => row.GetProperty("terminalId").GetGuid(), row => row.GetProperty("bound").GetBoolean());
+        Assert.True(rows[bound]);
+        Assert.False(rows[open]);
+
+        using var reset = await client.PostAsync(resetPath, null);
+        Assert.Equal(HttpStatusCode.OK, reset.StatusCode);
+        Assert.Equal(0, await _database.BoundTerminalCountAsync(bound));
+        Assert.Equal(1, await _database.AuditCountAsync("security.terminal-binding-reset", bound, manager));
+
+        using var missing = await client.PostAsync($"/api/v1/management/security/terminals/{Guid.NewGuid():D}/reset-binding", null);
+        Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+    }
+
     private const string BundlePath = "/api/v1/management/security/diagnostic-bundle";
     private static readonly string[] OneCorrelation = ["c"];
     private static readonly string[] BundleCorrelation = ["rmd267-corr"];

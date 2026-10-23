@@ -103,6 +103,15 @@ public sealed class SecurityAdministrationTestDatabase : PgTestDatabase
             """);
     }
 
+    public Task SeedTerminalAsync(Guid terminalId, bool bound)
+        => RunAsync(
+            DataSource,
+            $"INSERT INTO customer_display.terminals (terminal_id, row_version, created_at, updated_at, terminal_key_hash) VALUES ('{terminalId:D}', 1, now(), now(), {(bound ? $"'{new string('A', 64)}'" : "NULL")});");
+
+    public Task<long> BoundTerminalCountAsync(Guid terminalId)
+        => ScalarAsync<long>(
+            $"SELECT count(*) FROM customer_display.terminals WHERE terminal_id = '{terminalId:D}' AND terminal_key_hash IS NOT NULL;");
+
     public Task<long> ActiveSessionCountAsync(Guid userId)
         => ScalarAsync<long>(
             $"SELECT count(*) FROM identity.device_sessions WHERE user_id = '{userId:D}' AND revoked_at IS NULL;");

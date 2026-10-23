@@ -126,7 +126,8 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
     [Fact]
     public async Task TheLookupIndexesExistAndRollingBackTheMigrationRemovesEverythingItAdded()
     {
-        Migrate(OrderPath(), MigrationsPath());
+        var (order, migrations) = CopyUpTo("201");
+        Migrate(order, migrations);
         await using var source = NpgsqlDataSource.Create(ConnectionString());
 
         Assert.Equal(6, await SchemaObjectCountAsync(source));
@@ -138,12 +139,30 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
             await IndexDefinitionAsync(source, "ix_account_transactions_source_reference"),
             StringComparison.Ordinal);
 
-        Rollback(OrderPath(), MigrationsPath(), "201");
+        Rollback(order, migrations, "201");
         Assert.Equal(0, await SchemaObjectCountAsync(source));
         Assert.Equal("integer", await ScalarAsync<string>(source, RowVersionType));
 
-        Migrate(OrderPath(), MigrationsPath());
+        Migrate(order, migrations);
         Assert.Equal(6, await SchemaObjectCountAsync(source));
+    }
+
+    [Fact]
+    public async Task TheTerminalKeyColumnExistsAndRollingBackTheMigrationRemovesIt()
+    {
+        const string columnCount = "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'customer_display' AND table_name = 'terminals' AND column_name = 'terminal_key_hash';";
+        const string constraintCount = "SELECT count(*) FROM pg_constraint WHERE conname = 'ck_customer_display_terminal_key_hash';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal(1L, await ScalarAsync<long>(source, columnCount));
+        Assert.Equal(1L, await ScalarAsync<long>(source, constraintCount));
+
+        Rollback(OrderPath(), MigrationsPath(), "202");
+        Assert.Equal(0L, await ScalarAsync<long>(source, columnCount));
+        Assert.Equal(0L, await ScalarAsync<long>(source, constraintCount));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(1L, await ScalarAsync<long>(source, columnCount));
     }
 
     [Theory]

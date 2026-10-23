@@ -890,6 +890,74 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         Assert.True(sessionBody.GetProperty("pinSet").GetBoolean());
     }
 
+    [Fact]
+    public async Task ATerminalIdBelongsToTheBrowserThatFirstSignedInWithItAndOtherBrowsersAreRefused()
+    {
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var first = await PostLoginAsync(client, terminalId, "198.51.100.171", null);
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        var keySetCookie = first.Headers.GetValues("Set-Cookie")
+            .Single(value => value.StartsWith($"alkaros.terminal-key.{terminalId:N}=", StringComparison.Ordinal));
+        Assert.Contains("httponly", keySetCookie, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("samesite=strict", keySetCookie, StringComparison.OrdinalIgnoreCase);
+        var keyCookie = keySetCookie.Split(';', 2)[0];
+
+        using var sameBrowser = await PostLoginAsync(client, terminalId, "198.51.100.171", keyCookie);
+        Assert.Equal(HttpStatusCode.OK, sameBrowser.StatusCode);
+        Assert.DoesNotContain(sameBrowser.Headers.GetValues("Set-Cookie"), value => value.StartsWith("alkaros.terminal-key.", StringComparison.Ordinal));
+
+        using var otherBrowser = await PostLoginAsync(client, terminalId, "198.51.100.171", null);
+        Assert.Equal(HttpStatusCode.Forbidden, otherBrowser.StatusCode);
+        Assert.Equal("TERMINAL_KEY_MISMATCH", await ErrorCodeAsync(otherBrowser));
+        Assert.False(otherBrowser.Headers.TryGetValues("Set-Cookie", out var cookies)
+            && cookies.Any(value => value.StartsWith(DualScreenApplication.CashierCookieName + "=", StringComparison.Ordinal)));
+
+        using var wrongKey = await PostLoginAsync(client, terminalId, "198.51.100.171", $"alkaros.terminal-key.{terminalId:N}=tk-guess");
+        Assert.Equal(HttpStatusCode.Forbidden, wrongKey.StatusCode);
+
+        using var anotherTerminal = await PostLoginAsync(client, Guid.NewGuid(), "198.51.100.171", keyCookie);
+        Assert.Equal(HttpStatusCode.OK, anotherTerminal.StatusCode);
+    }
+
+    [Fact]
+    public async Task AWrongPasswordNeverClaimsOrRevealsTheBindingOfATerminal()
+    {
+        var userId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var claim = await PostLoginAsync(client, terminalId, "198.51.100.172", null);
+        Assert.Equal(HttpStatusCode.OK, claim.StatusCode);
+
+        using var request = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent(new { terminalId, username = "cashier", password = "wrong-password-1" }),
+        };
+        AddTrustedForwarding(request, "198.51.100.172");
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Unauthorized, response.StatusCode);
+        Assert.Equal("INVALID_CREDENTIALS", await ErrorCodeAsync(response));
+    }
+
+    private static async Task<HttpResponseMessage> PostLoginAsync(HttpClient client, Guid terminalId, string forwardedFor, string? cookie)
+    {
+        using var login = new HttpRequestMessage(HttpMethod.Post, "/api/v1/auth/login")
+        {
+            Content = JsonContent(new { terminalId, username = "cashier", password = Password }),
+        };
+        if (cookie is not null)
+            login.Headers.TryAddWithoutValidation("Cookie", cookie);
+        AddTrustedForwarding(login, forwardedFor);
+        return await client.SendAsync(login);
+    }
+
     private static async Task<HttpResponseMessage> SendJsonAsync(HttpClient client, string path, string cookie, object body)
     {
         using var request = CreateForwardedRequest(HttpMethod.Post, path, "198.51.100.54", cookie);

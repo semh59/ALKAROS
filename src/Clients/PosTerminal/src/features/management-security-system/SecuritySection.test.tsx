@@ -14,6 +14,8 @@ function fakeClient(overrides: Partial<SecurityClient> = {}): SecurityClient {
     lookupUser: vi.fn().mockResolvedValue({ userId: "u1", displayName: "Ali Veli", active: true, isLocked: true }),
     revokeSessions: vi.fn().mockResolvedValue(2),
     forceUnlock: vi.fn().mockResolvedValue(undefined),
+    listTerminals: vi.fn().mockResolvedValue([]),
+    resetTerminal: vi.fn().mockResolvedValue(undefined),
     listJobs: vi.fn().mockResolvedValue([job, { ...job, name: "offsite-backup", description: "Yedeği uzak hedefe yükler.", enabled: false, disabledReason: "Uzak hedef tanımlı değil." }]),
     runJob: vi.fn().mockResolvedValue({ ...job, lastStatus: "Succeeded" }),
     backupRpo: vi.fn().mockResolvedValue([
