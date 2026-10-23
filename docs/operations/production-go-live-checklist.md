@@ -41,7 +41,12 @@ Repository state, verified 2026-09-01:
   tracked and never appear in git history; `deploy/docker/.gitignore` allows
   only the `*.example` files.
 - Compose passes both through Docker **secrets** (`/run/secrets/*`), read via the
-  `_FILE` convention; no secret is in the Compose environment or in logs.
+  `_FILE` convention; the database and admin passwords are not in the Compose
+  environment or in logs. Two values are, by design, read from the local `.env`
+  and passed as environment variables: `ALKAROS_SECRET_ENVELOPE_MASTER_KEY`
+  (api and connector) and the Telegram bot key (watchdog). Keep `.env` out of
+  git and out of the image build context (`.dockerignore` excludes it) and
+  back it up separately.
 - PostgreSQL 18 and Caddy images are digest-pinned.
 
 Per-deployment, on the site host:

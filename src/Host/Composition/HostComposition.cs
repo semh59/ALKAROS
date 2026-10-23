@@ -70,18 +70,56 @@ public static class HostComposition
             $"{discovery.Files.Count} script(s).");
 
         if (options.RollbackMigrationId is not null)
-            return RunRollback(manifest, discovery, options, output, cancellationToken);
+            return RunRollback(manifest, discovery, options, effectiveDataSource, output, cancellationToken);
 
-        return RunForward(manifest, discovery, options, output, cancellationToken);
+        return RunForward(manifest, discovery, options, effectiveDataSource, output, cancellationToken);
+    }
+
+    // Two runs at once (two replicas starting together, a manual run next to the deployment's) would both
+    // read the history table and race to apply the same position; the loser fails halfway. Held on its own
+    // connection for the whole run and released when that connection closes.
+    public const long MigrationLockKey = 0x414C4B4D49475231L;
+
+    private static bool TryLockMigrations(NpgsqlDataSource? dataSource, TextWriter output, out NpgsqlConnection? lockConnection)
+    {
+        lockConnection = null;
+        if (dataSource is null)
+            return true;
+
+        try
+        {
+            var connection = dataSource.OpenConnection();
+            using var command = new NpgsqlCommand("SELECT pg_try_advisory_lock(@key);", connection);
+            command.Parameters.AddWithValue("key", MigrationLockKey);
+            if (command.ExecuteScalar() is true)
+            {
+                lockConnection = connection;
+                return true;
+            }
+
+            connection.Dispose();
+            output.WriteLine("Another migration run holds the migration lock; nothing was executed.");
+            return false;
+        }
+        catch (NpgsqlException)
+        {
+            // An unreachable database is reported by the migration step itself, with psql's own message.
+            return true;
+        }
     }
 
     private static HostExitCode RunForward(
         MigrationManifest manifest,
         MigrationDiscoveryResult discovery,
         HostCompositionOptions options,
+        NpgsqlDataSource? dataSource,
         TextWriter output,
         CancellationToken cancellationToken)
     {
+        if (!TryLockMigrations(dataSource, output, out var lockConnection))
+            return HostExitCode.StartupFailed;
+        using var heldLock = lockConnection;
+
         var forwardFiles = discovery.Files
             .Where(f => f.Kind == MigrationScriptKind.Up)
             .ToDictionary(f => f.Id, StringComparer.Ordinal);
@@ -117,6 +155,7 @@ public static class HostComposition
         MigrationManifest manifest,
         MigrationDiscoveryResult discovery,
         HostCompositionOptions options,
+        NpgsqlDataSource? dataSource,
         TextWriter output,
         CancellationToken cancellationToken)
     {
@@ -134,6 +173,10 @@ public static class HostComposition
             output.WriteLine($"Rollback refused: no rollback script declares position [{rollbackId}].");
             return HostExitCode.StartupFailed;
         }
+
+        if (!TryLockMigrations(dataSource, output, out var lockConnection))
+            return HostExitCode.StartupFailed;
+        using var heldLock = lockConnection;
 
         var forwardFiles = discovery.Files
             .Where(f => f.Kind == MigrationScriptKind.Up)

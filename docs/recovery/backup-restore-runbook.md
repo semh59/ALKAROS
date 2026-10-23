@@ -64,7 +64,10 @@ RPO is then approximately the cron interval.
 
 `restore.sh` **never touches the live `alkaros` database.** It drops and
 recreates a *separate* target database (default `alkaros_restore`) and loads the
-artifact there. Promotion of a restored copy to live is a deliberate manual step.
+artifact there. The script enforces this: a target named like the live database
+(`ALKAROS_LIVE_DB`, default `alkaros`) or `postgres` is refused with exit **5**
+before anything is dropped. Promotion of a restored copy to live is a deliberate
+manual step.
 
 ```sh
 docker compose -f compose.yaml -f compose.ops.yaml run --rm backup \
@@ -84,12 +87,21 @@ the most recent `orders` / `reporting.daily_business_days` timestamps.
 
 ### Promoting a restored copy to live
 
-1. Stop the `api` service: `docker compose stop api`.
+1. Stop everything that holds a connection to the live database: `docker compose stop api connector watchdog`.
+   The renames below fail while another session is connected, and the QR relay
+   `connector` keeps its own connection pool.
 2. Rename databases (psql as a superuser):
    `ALTER DATABASE alkaros RENAME TO alkaros_broken_<date>;`
    `ALTER DATABASE alkaros_restore RENAME TO alkaros;`
-3. Start `api`: `docker compose start api`.
+3. Start the services again: `docker compose start api connector watchdog`.
 4. Once confirmed healthy, drop `alkaros_broken_<date>`.
+
+### What a backup does not contain
+
+The database backup holds data only. Keep separate, protected copies of:
+
+- `.env` (the envelope master key, the Telegram key and chat id) and `deploy/docker/db_password` / `admin_password`;
+- the Caddy volume `caddy-data` (the internal CA that issued the devices' certificates: without it every device must install a new root certificate after a rebuild);
 
 ### After a restore: disposal jobs and the master key
 

@@ -42,6 +42,10 @@
 	encode gzip
 	root * /srv/app
 	handle {
+		# Hashed bundles under /assets never change; everything else (the app shell, the service worker,
+		# the client shells) must be re-checked on every load so a phone never keeps a stale shell.
+		@revalidate not path /assets/*
+		header @revalidate Cache-Control "no-cache"
 		try_files {path} {path}/ /index.html
 		file_server
 	}

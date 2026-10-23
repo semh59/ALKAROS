@@ -39,6 +39,18 @@ public sealed class AccessHardeningTests : IDisposable
     }
 
     [Fact]
+    public async Task TheHostWaitsForInFlightWorkLongerThanTheDefaultButShorterThanTheContainerGrace()
+    {
+        await using var app = await StartAsync();
+
+        var timeout = app.Services.GetRequiredService<Microsoft.Extensions.Options.IOptions<Microsoft.Extensions.Hosting.HostOptions>>()
+            .Value.ShutdownTimeout;
+
+        Assert.Equal(DualScreenApplication.ShutdownTimeout, timeout);
+        Assert.True(timeout > TimeSpan.FromSeconds(30) && timeout < TimeSpan.FromSeconds(50));
+    }
+
+    [Fact]
     public async Task EveryApiRouteWithoutItsOwnPolicyIsBoundedPerClientAddress()
     {
         await using var app = await StartAsync(apiPermits: 3);

@@ -131,6 +131,17 @@ services:
       DOTNET_gcServer: "1"
       DOTNET_GCDynamicAdaptationMode: "1"
       DOTNET_TieredPGO: "1"
+      # The off-site backup job reads the logical backups from here (the volume the ops `backup`
+      # service writes) and copies them to the off-site directory. Mount real external storage on
+      # alkaros-offsite-backup (or replace the volume) to make the copy a genuine off-site one.
+      ALKAROS_BACKUP_DIR: /backups
+      ALKAROS_OFFSITE_BACKUP_DIR: /offsite-backup
+    volumes:
+      - alkaros-backups:/backups:ro
+      - alkaros-offsite-backup:/offsite-backup
+    # Longer than the host's own shutdown timeout (DualScreenApplication.ShutdownTimeout) so in-flight
+    # requests finish before Docker sends SIGKILL.
+    stop_grace_period: 50s
     entrypoint: ["/bin/sh", "-eu", "-c"]
     command:
       - |
@@ -306,6 +317,8 @@ volumes:
   alkaros-postgres:
   alkaros-watchdog:
   alkaros-wal-archive:
+  alkaros-backups:
+  alkaros-offsite-backup:
   caddy-data:
   caddy-config:
 

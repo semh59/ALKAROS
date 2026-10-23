@@ -26,20 +26,20 @@ services:
   postgres:
     # 5433 on the host (5432 is often taken by a standalone test-db container).
     ports:
-      - "5433:5432"
+      - "127.0.0.1:5433:5432"
 
   api:
     ports:
-      - "5080:5080"
+      - "127.0.0.1:5080:5080"
     environment:
       # dev customer-display origin is the :81 listener published on 8091
       ALKAROS_CUSTOMER_DISPLAY_ORIGIN_URL: http://localhost:8091
 
   web:
     ports: !override
-      - "8090:80"
-      - "8091:81"
-      - "8092:82"
+      - "127.0.0.1:8090:80"
+      - "127.0.0.1:8091:81"
+      - "127.0.0.1:8092:82"
     volumes:
       - ./deploy/docker/Caddyfile.dev:/etc/caddy/Caddyfile:ro
     healthcheck:

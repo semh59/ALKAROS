@@ -348,6 +348,7 @@ public static partial class DualScreenApplication
         });
         builder.Services.AddSignalR(options => options.EnableDetailedErrors = false);
         builder.Services.AddHubSessionTracking();
+        builder.Services.Configure<HostOptions>(host => host.ShutdownTimeout = ShutdownTimeout);
         builder.Services.Configure<ForwardedHeadersOptions>(forwarded =>
         {
             forwarded.ForwardedHeaders = options.TrustedProxies is { Count: > 0 }
@@ -838,6 +839,9 @@ public static partial class DualScreenApplication
         => (application.ApplicationServices.GetService<ALKAROS.Observability.ErrorEvents.ErrorEventWriter>() is null
             ? application
             : application.UseMonitoringRequestTiming()).UseApiErrorHandling();
+
+    // Shorter than compose's stop_grace_period, so the host finishes in-flight work and closes hubs before Docker kills it.
+    public static readonly TimeSpan ShutdownTimeout = TimeSpan.FromSeconds(35);
 
     private const string QrOrderPolicyName = "qr-order";
 

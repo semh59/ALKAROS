@@ -88,8 +88,11 @@ every 5 minutes). `deploy/docker/pg_hba.conf` allows the replication connection
 
    `restore-pitr.sh` checksum-gates the base (exit 4 on mismatch), refuses a
    non-empty target (exit 2), matches the primary's `max_connections` etc. from
-   `pg_control`, writes `restore_command` + `recovery_target_time`, and replays
-   WAL to the target. Use `latest` (or omit the time) to replay everything.
+   `pg_control`, and writes `restore_command` + `recovery_target_time` plus
+   `recovery.signal`. It does not replay anything itself: the WAL is replayed
+   when PostgreSQL is started on the prepared directory (step 3). The target
+   directory is on the `alkaros-restore` volume, so it survives the one-off
+   container. Use `latest` (or omit the time) to replay everything.
 
 3. **Verify** the recovered cluster on a spare port as the postgres user
    (`SELECT pg_is_in_recovery()` returns `f`; check row counts and the newest

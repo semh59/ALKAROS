@@ -22,6 +22,7 @@ V1-RMD-599 bulguları B037, B038, B039, B040, B041, B042, B044, B045, B046, B107
 - Sınırlı ek (paylaşılan, geri-tik olmadan): compose.ops.yaml - yalnız yedek ve geri yükleme servisleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): compose.dev.yaml - yalnız port bağlama
 - Sınırlı ek (paylaşılan, geri-tik olmadan): .dockerignore - yalnız dışlamalar
+- `.dockerignore` - yalnız .env ve .git dışlamaları
 - Sınırlı ek (paylaşılan, geri-tik olmadan): deploy/** - yalnız betikler, Caddyfile ve yapılandırma
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/recovery/** - yalnız kurtarma belgeleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/operations/** - yalnız operasyon belgeleri
@@ -29,6 +30,11 @@ V1-RMD-599 bulguları B037, B038, B039, B040, B041, B042, B044, B045, B046, B107
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Program.cs - yalnız göç koşucusu kilidi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Operations/** - yalnız yedek işi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız yeni test
+- `tests/Host/MigrationComposition/Composition/DeployFilesTests.cs` - yeni dosya
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/** - yalnız paket kilit dosyası
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız kapanış süresi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/HostComposition.cs - yalnız göç koşucusu kilidi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/packages.lock.json - yalnız Npgsql referansı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-696-access-rate-limits-and-hub-sessions.md - yalnız Handoff satırı
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.

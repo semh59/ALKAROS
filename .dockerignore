@@ -25,6 +25,11 @@ pytest.ini
 .gitleaks.toml
 .markdownlint-cli2.jsonc
 
-# Real deployment secrets - never in the build context.
+# Real deployment secrets - never in the build context. `COPY . .` in the build stages would
+# otherwise leave .env (the envelope master key, the Telegram key) in an intermediate layer.
+.env
+.env.*
+!.env.example
+.git
 deploy/docker/db_password
 deploy/docker/admin_password

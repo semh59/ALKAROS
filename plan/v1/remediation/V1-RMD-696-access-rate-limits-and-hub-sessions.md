@@ -41,6 +41,7 @@ V1-RMD-599 bulguları B016, B031, B032, B033, B034, B035, B036, B064, B077, B078
 
 ## Out of scope
 
+- V1-RMD-697 kapsam genişlemesi (göç koşucusu kilidi, kapanış süresi, kilit dosyaları) bu görevi etkilemez.
 - CSP/HSTS (V1-RMD-335).
 
 ## Dependencies

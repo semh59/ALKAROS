@@ -51,6 +51,9 @@ services:
       - ./deploy/docker:/repo/deploy/docker:ro
       - alkaros-backups:/backups
       - alkaros-wal-archive:/wal-archive
+      # Recovered data directories land here and outlive the `run --rm` container, so they can be
+      # started and checked afterwards.
+      - alkaros-restore:/restore
     entrypoint: ["/bin/sh"]
     command: ["/repo/deploy/docker/basebackup.sh"]
     restart: "no"
@@ -100,3 +103,4 @@ secrets:
 volumes:
   alkaros-backups:
   alkaros-wal-archive:
+  alkaros-restore:

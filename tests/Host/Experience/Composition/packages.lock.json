@@ -239,7 +239,8 @@
           "ALKAROS.Settings": "[1.0.0, )",
           "ALKAROS.Support": "[1.0.0, )",
           "ALKAROS.Tables": "[1.0.0, )",
-          "Microsoft.Extensions.DependencyInjection": "[8.0.1, )"
+          "Microsoft.Extensions.DependencyInjection": "[8.0.1, )",
+          "Npgsql": "[9.0.2, )"
         }
       },
       "alkaros.identity": {

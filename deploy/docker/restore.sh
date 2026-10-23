@@ -15,9 +15,12 @@
 #   ALKAROS_RESTORE_DB   default target if arg 2 unset (default: alkaros_restore)
 #   Password: /run/secrets/db_password if present, else $ALKAROS_DB_PASSWORD.
 #
+#   ALKAROS_LIVE_DB      the live database name        (default: alkaros)
+#
 # Exit codes:
 #   0 ok | 2 usage / artifact missing | 3 missing sidecar |
-#   4 checksum mismatch (refused) | non-zero from pg_restore on failure.
+#   4 checksum mismatch (refused) | 5 target is the live database (refused) |
+#   non-zero from pg_restore on failure.
 set -eu
 
 ARTIFACT="${1:-}"
@@ -26,6 +29,12 @@ if [ -z "$ARTIFACT" ]; then
   exit 2
 fi
 TARGET_DB="${2:-${ALKAROS_RESTORE_DB:-alkaros_restore}}"
+
+LIVE_DB="${ALKAROS_LIVE_DB:-alkaros}"
+if [ "$TARGET_DB" = "$LIVE_DB" ] || [ "$TARGET_DB" = "postgres" ]; then
+  echo "restore: refusing to drop and recreate \"${TARGET_DB}\"; restore into a side database and promote it (see the runbook)" >&2
+  exit 5
+fi
 
 PGHOST="${ALKAROS_DB_HOST:-postgres}"
 PGPORT="${ALKAROS_DB_PORT:-5432}"

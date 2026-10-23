@@ -91,6 +91,55 @@ public sealed class MigrationExecutionTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ARunWhileAnotherHoldsTheMigrationLockIsRefusedAndExecutesNothing()
+    {
+        using var set = TestMigrationSet.Create(Script("001", "stores"));
+        var options = new HostCompositionOptions(set.ManifestPath, set.DirectoryPath, _database.PsqlOptions);
+        using var dataSource = HostComposition.TryCreateDataSource(_database.PsqlOptions);
+        await using (var holder = await dataSource!.OpenConnectionAsync())
+        {
+            await using var take = new Npgsql.NpgsqlCommand($"SELECT pg_advisory_lock({HostComposition.MigrationLockKey});", holder);
+            await take.ExecuteNonQueryAsync();
+            using var refused = new StringWriter();
+
+            var exitCode = HostComposition.Run(options, refused);
+
+            Assert.Equal(HostExitCode.StartupFailed, exitCode);
+            Assert.Contains("migration lock", refused.ToString(), StringComparison.Ordinal);
+            Assert.False(await _database.TableExistsAsync("stores"));
+        }
+
+        using var applied = new StringWriter();
+        await dataSource!.CreateCommand("SELECT pg_advisory_unlock_all();").ExecuteNonQueryAsync();
+
+        var second = HostComposition.Run(options, applied);
+
+        Assert.Equal(HostExitCode.Success, second);
+        Assert.True(await _database.TableExistsAsync("stores"));
+    }
+
+    [Fact]
+    public async Task ARollbackWhileAnotherHoldsTheMigrationLockIsRefusedAndChangesNothing()
+    {
+        using var set = TestMigrationSet.Create(Script("001", "stores"), Script("002", "payments"));
+        var applied = HostComposition.Run(
+            new HostCompositionOptions(set.ManifestPath, set.DirectoryPath, _database.PsqlOptions), TextWriter.Null);
+        Assert.Equal(HostExitCode.Success, applied);
+        using var dataSource = HostComposition.TryCreateDataSource(_database.PsqlOptions);
+        await using var holder = await dataSource!.OpenConnectionAsync();
+        await using var take = new Npgsql.NpgsqlCommand($"SELECT pg_advisory_lock({HostComposition.MigrationLockKey});", holder);
+        await take.ExecuteNonQueryAsync();
+        using var refused = new StringWriter();
+
+        var exitCode = HostComposition.Run(
+            new HostCompositionOptions(set.ManifestPath, set.DirectoryPath, _database.PsqlOptions, "002"), refused);
+
+        Assert.Equal(HostExitCode.StartupFailed, exitCode);
+        Assert.Contains("migration lock", refused.ToString(), StringComparison.Ordinal);
+        Assert.True(await _database.TableExistsAsync("payments"));
+    }
+
+    [Fact]
     public async Task DuplicatePositionPreventsAnyExecution()
     {
         using var set = TestMigrationSet.Create(
