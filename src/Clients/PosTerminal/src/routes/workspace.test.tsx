@@ -416,6 +416,33 @@ describe("workspace /catalog route surfaces the real backend error message", () 
     expect(document.body.textContent).toContain("Katalog şu anda bakımda; yeniden deneyin.");
     expect(document.body.textContent).not.toContain("Katalog verisi alınamadı.");
   });
+
+  it("shows the empty-catalog start message when the server holds no catalog record", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/management/catalog/")) {
+        return new Response(JSON.stringify({ items: [], nextCursor: null }), { status: 200, headers: { "Content-Type": "application/json" } });
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+    window.history.replaceState({}, "", "/catalog");
+    await render(
+      <RouterProvider>
+        <ExperiencePage
+          terminalId="77777777-7777-7777-7777-777777777777"
+          displayName="Test Kullanıcı"
+          capabilities={["catalog.manage"]}
+          path="/catalog"
+          backendStatus="online"
+          onLogout={async () => {}}
+        />
+      </RouterProvider>,
+    );
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("Katalog kaydı yok");
+  });
 });
 
 /**

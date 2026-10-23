@@ -88,6 +88,8 @@ export interface CatalogData {
   assignments: readonly CatalogAssignment[];
 }
 
+export const isCatalogEmpty = (data: CatalogData) => Object.values(data).every((items) => items.length === 0);
+
 export interface CatalogAssignment {
   id: string;
   productId: string;

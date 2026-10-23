@@ -20,6 +20,7 @@ V1-RMD-600 bulguları B012 (yönetim listesi ilk 100 kayıtla sınırlı), B010 
 - `evidence/V1-RMD-704/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/catalog/** - yalnız sayfalama, hata gösterimi, çift gönderim ve tarih varsayılanı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.tsx - yalnız boş katalog durumu
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.test.tsx - yalnız katalog rotası boş durum testi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/api.ts - yalnız oturum-bitti bildirimini dışa açma
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-600-catalog-quality-audit.md - yalnız Out of scope notu
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.

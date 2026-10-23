@@ -50,6 +50,10 @@ export function registerSessionExpiredHandler(handler: (() => void) | null): voi
   onSessionExpired = handler;
 }
 
+export function notifySessionExpired(): void {
+  onSessionExpired?.();
+}
+
 export class ApiError extends Error {
   constructor(
     public readonly status: number,

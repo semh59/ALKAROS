@@ -9,7 +9,7 @@ import { TableManagementApiError, TableWorkspace, createTableManagementClient, t
 import { PendingChecksWorkspace } from "../features/pending-checks";
 import { OnlineFoodHub, canSeeOnlineTab, onlineHubPaths, onlineHubTabFor, onlineTabCapabilities } from "../features/online-hub";
 import { BillingSplitApiError, BillSplitWorkspace, RefundPanel, createBillFromOrder, createBillingRefundClient, createBillingSplitClient, type BillSplitDesign, type BillSplitWorkspaceState, type SaveSplitRequest, type SplitOwnerOption } from "../features/billing";
-import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
+import { CatalogApiError, CatalogWorkspace, createCatalogManagementClient, isCatalogEmpty, type CatalogCreateInput, type CatalogData, type CatalogWorkspaceState } from "../features/catalog";
 import { KitchenOperationsApiError, KitchenOperationsWorkspace, createKitchenOperationsClient, loadKitchenRuntimeConfiguration, type KitchenData, type KitchenOperationsClient, type KitchenWorkspaceState } from "../features/kitchen-operations";
 import { SystemHealthWorkspace, type SystemHealthState } from "../features/system-health";
 import { AuthorizationDecisionsWorkspace, createAuthorizationDecisionsClient, type AuthorizationDecisionState, type AuthorizationDecisionsData } from "../features/authorization-decisions";
@@ -460,9 +460,10 @@ function CatalogRoute({ canManage }: { canManage: boolean }) {
     setState("loading");
     setErrorMessage(undefined);
     try {
-      setData(await client.load());
+      const loaded = await client.load();
+      setData(loaded);
       setLastUpdated(new Date().toISOString());
-      setState("ready");
+      setState(isCatalogEmpty(loaded) ? "empty" : "ready");
     } catch (reason) {
       const status = (reason as { status?: number }).status;
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "conflict" : "error");

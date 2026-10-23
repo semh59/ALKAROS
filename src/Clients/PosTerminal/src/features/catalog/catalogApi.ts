@@ -1,3 +1,4 @@
+import { notifySessionExpired } from "../../api";
 import type { CatalogCreateInput, CatalogData } from "./models";
 
 export class CatalogApiError extends Error {
@@ -10,6 +11,8 @@ export interface CatalogManagementClient {
   setAvailability: (productId: string, isAvailable: boolean) => Promise<unknown>;
   setPrepTime: (productId: string, prepTimeMinutes: number | null) => Promise<unknown>;
 }
+
+const MaximumPages = 100;
 
 interface Page<T> { items: T[]; nextCursor: string | null }
 
@@ -28,12 +31,25 @@ export function createCatalogManagementClient(fetcher: typeof fetch = fetch): Ca
       throw new CatalogApiError(0, "NETWORK_UNAVAILABLE", "Katalog sunucusuna ulaşılamadı.");
     }
     if (!response.ok) {
+      if (response.status === 401) notifySessionExpired();
       const body = await response.json().catch(() => undefined) as { error?: { code?: string; message?: string } } | undefined;
       throw new CatalogApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? "Katalog işlemi tamamlanamadı.");
     }
     return response.status === 204 ? undefined as T : response.json() as Promise<T>;
   }
-  const list = <T>(path: string) => request<Page<T> | T[]>(`${path}?limit=100`).then((result) => Array.isArray(result) ? result : result.items);
+  const list = async <T>(path: string): Promise<T[]> => {
+    const items: T[] = [];
+    let cursor: string | null = null;
+    for (let page = 0; page < MaximumPages; page++) {
+      const query: string = cursor ? `limit=100&cursor=${encodeURIComponent(cursor)}` : "limit=100";
+      const result: Page<T> | T[] = await request<Page<T> | T[]>(`${path}?${query}`);
+      if (Array.isArray(result)) return result;
+      items.push(...result.items);
+      if (!result.nextCursor) return items;
+      cursor = result.nextCursor;
+    }
+    throw new CatalogApiError(500, "CATALOG_TOO_LARGE", "Katalog çok büyük; liste eksiksiz alınamadı.");
+  };
   return {
     load: async () => {
       const [categories, taxes, products, modifierGroups, modifiers, prices, assignments] = await Promise.all([

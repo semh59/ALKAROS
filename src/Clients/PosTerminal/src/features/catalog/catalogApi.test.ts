@@ -1,7 +1,9 @@
 // @vitest-environment jsdom
 
 import { describe, expect, it, vi } from "vitest";
+import { registerSessionExpiredHandler } from "../../api";
 import { createCatalogManagementClient, CatalogApiError } from "./catalogApi";
+import { isCatalogEmpty } from "./models";
 
 const response = (body: unknown, status = 200, ok = true) => ({ ok, status, json: vi.fn().mockResolvedValue(body) }) as unknown as Response;
 
@@ -12,6 +14,36 @@ describe("catalog management client", () => {
     expect(fetcher).toHaveBeenCalledTimes(7);
     expect(fetcher).toHaveBeenCalledWith("/api/v1/management/catalog/product-modifier-assignments?limit=100", expect.objectContaining({ credentials: "same-origin" }));
     expect(fetcher).toHaveBeenCalledWith("/api/v1/management/catalog/products?limit=100", expect.objectContaining({ credentials: "same-origin" }));
+  });
+
+  it("follows the cursor until every page of a resource is loaded", async () => {
+    const fetcher = vi.fn().mockImplementation(async (url: string) => {
+      if (url.startsWith("/api/v1/management/catalog/products?") && !url.includes("cursor=")) return response({ items: [{ id: "p-1" }], nextCursor: "next page/1" });
+      if (url.includes("cursor=next%20page%2F1")) return response({ items: [{ id: "p-2" }], nextCursor: null });
+      return response({ items: [], nextCursor: null });
+    });
+    const data = await createCatalogManagementClient(fetcher).load();
+    expect(data.products.map((item) => (item as { id: string }).id)).toEqual(["p-1", "p-2"]);
+    expect(fetcher).toHaveBeenCalledWith("/api/v1/management/catalog/products?limit=100&cursor=next%20page%2F1", expect.anything());
+  });
+
+  it("stops with an error instead of silently truncating a runaway cursor chain", async () => {
+    const fetcher = vi.fn().mockResolvedValue(response({ items: [], nextCursor: "again" }));
+    await expect(createCatalogManagementClient(fetcher).load()).rejects.toMatchObject({ code: "CATALOG_TOO_LARGE" });
+  });
+
+  it("reports a 401 to the shared session-expired handler", async () => {
+    const handler = vi.fn();
+    registerSessionExpiredHandler(handler);
+    const fetcher = vi.fn().mockResolvedValue(response({ error: { code: "UNAUTHORIZED", message: "Oturum gerekli." } }, 401, false));
+    await expect(createCatalogManagementClient(fetcher).setAvailability("p-1", false)).rejects.toBeInstanceOf(CatalogApiError);
+    registerSessionExpiredHandler(null);
+    expect(handler).toHaveBeenCalledTimes(1);
+  });
+
+  it("treats a catalog with no records at all as empty", () => {
+    expect(isCatalogEmpty({ categories: [], taxes: [], products: [], modifierGroups: [], modifiers: [], prices: [], assignments: [] })).toBe(true);
+    expect(isCatalogEmpty({ categories: [], taxes: [{ id: "t" }], products: [], modifierGroups: [], modifiers: [], prices: [], assignments: [] } as never)).toBe(false);
   });
 
   it("posts a typed product create and preserves server conflict details", async () => {

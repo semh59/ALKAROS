@@ -82,6 +82,76 @@ describe("catalog workspace", () => {
     expect(dialog.querySelector<HTMLInputElement>("input")?.value).toBe("ESP-01");
   });
 
+  it("shows a Turkish conflict inside the dialog by status code and plain errors without the conflict wording", async () => {
+    const onCreate = vi.fn()
+      .mockRejectedValueOnce(new ApiError(409, "OVERLAPPING_EFFECTIVE_PRICE", "Fiyat aralığı mevcut bir fiyatla çakışıyor."))
+      .mockRejectedValueOnce(new ApiError(400, "VALIDATION_FAILED", "Bu SKU duplicate görünüyor."));
+    await render(<CatalogWorkspace {...baseProps({ onCreate })} />);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("Ürün ekle"))!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const inputs = dialog.querySelectorAll<HTMLInputElement>("input");
+    await fill(inputs[0], "ESP-01");
+    await fill(inputs[1], "Espresso");
+    await fill(inputs[2], "95");
+    await choose(dialog, "KDV profili", "tax-1");
+    const submit = () => click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Kaydı oluştur")!);
+    await submit();
+    expect(dialog.textContent).toContain("Kayıt çakıştı: Fiyat aralığı mevcut bir fiyatla çakışıyor.");
+    await submit();
+    expect(dialog.textContent).toContain("Bu SKU duplicate görünüyor.");
+    expect(dialog.textContent).not.toContain("Kayıt çakıştı");
+  });
+
+  it("sends a second submit while the first is pending only once", async () => {
+    let finish: () => void = () => undefined;
+    const onCreate = vi.fn().mockReturnValue(new Promise<void>((resolve) => { finish = resolve; }));
+    await render(<CatalogWorkspace {...baseProps({ onCreate })} />);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("Ürün ekle"))!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const inputs = dialog.querySelectorAll<HTMLInputElement>("input");
+    await fill(inputs[0], "ESP-01");
+    await fill(inputs[1], "Espresso");
+    await fill(inputs[2], "95");
+    await choose(dialog, "KDV profili", "tax-1");
+    const form = dialog.querySelector("form")!;
+    const submitForm = () => act(async () => { form.dispatchEvent(new Event("submit", { bubbles: true, cancelable: true })); });
+    await submitForm();
+    await submitForm();
+    expect(onCreate).toHaveBeenCalledTimes(1);
+    await act(async () => finish());
+  });
+
+  it("retries a failed create with the same record id", async () => {
+    const onCreate = vi.fn().mockRejectedValueOnce(new ApiError(500, "FAILED", "Sunucu hatası.")).mockResolvedValueOnce(undefined);
+    await render(<CatalogWorkspace {...baseProps({ onCreate })} />);
+    await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("Ürün ekle"))!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const inputs = dialog.querySelectorAll<HTMLInputElement>("input");
+    await fill(inputs[0], "ESP-01");
+    await fill(inputs[1], "Espresso");
+    await fill(inputs[2], "95");
+    await choose(dialog, "KDV profili", "tax-1");
+    const submit = () => click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Kaydı oluştur")!);
+    await submit();
+    await submit();
+    expect(onCreate).toHaveBeenCalledTimes(2);
+    expect(onCreate.mock.calls[0][0].value.id).toBe(onCreate.mock.calls[1][0].value.id);
+  });
+
+  it("defaults the price start to the local clock, not UTC", async () => {
+    vi.useFakeTimers({ toFake: ["Date"] });
+    vi.setSystemTime(new Date("2026-01-01T10:00:00Z"));
+    vi.spyOn(Date.prototype, "getTimezoneOffset").mockReturnValue(-180);
+    try {
+      await render(<CatalogWorkspace {...baseProps()} />);
+      await click([...document.querySelectorAll("nav button")].find((button) => button.textContent?.startsWith("Fiyat"))!);
+      await click([...document.querySelectorAll("button")].find((button) => button.textContent?.includes("ekle"))!);
+      expect(document.querySelector<HTMLInputElement>('[role="dialog"] input[type="datetime-local"]')!.value).toBe("2026-01-01T13:00");
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
   it("does not offer the untracked stock mode the sale path ignores and shows older records in Turkish", async () => {
     // V1-RMD-437 (V1-RMD-398 G-11): an order is only accepted for a product with a stock mapping (V1-RMD-143),
     // whatever its stock mode, so "Untracked" is no longer offered and the raw enum is never shown.
