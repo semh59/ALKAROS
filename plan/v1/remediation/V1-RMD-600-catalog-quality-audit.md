@@ -34,6 +34,7 @@ Catalog modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar ba
 - Kod, test, göç veya yapılandırma değişikliği: doğrulanan her bulgu ayrı düzeltme görevi olur.
 - Canlı yığına (8090, 5080, 5433) veri yazan her işlem, başka projenin konteynerleri, `kvkk-retention --apply`, `audit-disposal` ve gerçek dış servislere istek.
 - Düzeltme görevleri V1-RMD-702 ve sonrası olarak ayrıca planlanır; profilsiz mevcut ürünlerin dönüşümü PO kararı bekler.
+- Fiyat ekranında bitiş tarihi ve fiyat düzeltme uçları V1-RMD-703 kapsamı dışında kalır.
 
 ## Dependencies
 
