@@ -1,5 +1,7 @@
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Identity.Authorization;
+using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Payments.PaymentAggregate;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -48,10 +50,12 @@ public static partial class DualScreenApplication
                 IPaymentRepository paymentRepository,
                 NpgsqlDataSource dataSource,
                 DualScreenStore store,
+                IAuthorizationService authorization,
                 HttpContext context,
                 CancellationToken cancellationToken) =>
             {
-                await RequireCashierAsync(context, terminalId, store, cancellationToken);
+                await RequireCashierPermissionAsync(
+                    context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
 
                 var bill = await billRepository.GetByIdAsync(billId, cancellationToken);
                 if (bill is null)

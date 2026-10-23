@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.PendingOrderNotifications;
 using ALKAROS.Orders.Integration;
@@ -18,6 +19,7 @@ public static class WaiterNotificationsExperience
         // this codebase each register their own dependencies defensively —
         // see OfflineReconciliation/AddOfflineReconciliationExperience).
         services.AddSignalR(options => options.EnableDetailedErrors = false);
+        services.AddHubSessionTracking();
         // V1-RMD-203: shared by the hub itself and by every targeted-send
         // caller (KitchenOperationsStore, SignalRPendingOrderAnnouncer) that
         // needs to know whether a group send would actually reach anyone.

@@ -102,8 +102,16 @@ public sealed record DualScreenOptions(
     // RelaySettings/ReservationStation's own code or route names at all —
     // the same isolation goal V1-RMD-139's origin gate already protects at
     // the API layer, now also true of the static bundle itself.
-    string? NfcWebRoot = null)
+    string? NfcWebRoot = null,
+    // Requests per minute and client address for every /api route that has no policy of its own
+    // (management, kitchen, billing and the other staff areas).
+    int ApiRateLimitPermits = 1200,
+    // Requests per minute and client address for QR order calls, whatever session header they carry. Wider than the
+    // per-address session cap because guests of one venue can share an address.
+    int QrOrderAddressPermits = 300)
 {
+    // The connection string and the database password it carries must never reach a log line.
+    public override string ToString() => $"{nameof(DualScreenOptions)} {{ Url = {Url} }}";
 
     /// <summary>
     /// Local TCP ports that belong to the customer-display origin. A request

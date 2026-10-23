@@ -40,6 +40,7 @@ V1-RMD-599 bulguları B025, B026, B048, B049, B050, B090, B091, B093, B094, B095
 
 ## Out of scope
 
+- V1-RMD-696 kapsam genişlemesi (hub oturumu, hız sınırı, platform adresi) bu görevi etkilemez.
 - RefundIntentsModule kaydı (V13-HUG-003, bilinen).
 
 ## Dependencies

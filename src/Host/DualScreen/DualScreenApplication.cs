@@ -347,6 +347,7 @@ public static partial class DualScreenApplication
                 kitchen);
         });
         builder.Services.AddSignalR(options => options.EnableDetailedErrors = false);
+        builder.Services.AddHubSessionTracking();
         builder.Services.Configure<ForwardedHeadersOptions>(forwarded =>
         {
             forwarded.ForwardedHeaders = options.TrustedProxies is { Count: > 0 }
@@ -388,6 +389,8 @@ public static partial class DualScreenApplication
                         rejected.HttpContext.TraceIdentifier)),
                     cancellationToken);
             };
+            rateLimiter.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+                GlobalPartition(context, options.ApiRateLimitPermits, options.QrOrderAddressPermits));
             rateLimiter.AddPolicy("login", context =>
                 FixedWindow(ClientPartition(context), LoginRateLimitPermits()));
             rateLimiter.AddPolicy("pairing-create", context =>
@@ -427,8 +430,8 @@ public static partial class DualScreenApplication
             // (RelayAbusePolicy.PerTokenRequestLimit) rather than by IP —
             // several customers at one table share a NAT'd/mobile IP, but
             // each holds a distinct session.
-            rateLimiter.AddPolicy("qr-order", context =>
-                FixedWindow(HeaderPartition(context, QrOrderingEndpoints.SessionHeaderName, "qr-order"), RelayAbusePolicy.PerTokenRequestLimit));
+            rateLimiter.AddPolicy(QrOrderPolicyName, context =>
+                FixedWindow(HeaderPartition(context, QrOrderingEndpoints.SessionHeaderName, QrOrderPolicyName), RelayAbusePolicy.PerTokenRequestLimit));
             // V1-SET-007/008: /branding and /logo are deliberately session-free
             // (the page's first render happens before a session exists), so
             // HeaderPartition would collapse every visitor without a session
@@ -836,6 +839,22 @@ public static partial class DualScreenApplication
             ? application
             : application.UseMonitoringRequestTiming()).UseApiErrorHandling();
 
+    private const string QrOrderPolicyName = "qr-order";
+
+    // A QR visitor controls the session header, so the per-session cap alone is bypassed by sending a
+    // different value each time (every value costs a database lookup); the per-address cap holds regardless.
+    // Applies to every request before its own policy: the QR address cap above, and a per-address default
+    // for any /api route that names no policy of its own.
+    private static RateLimitPartition<string> GlobalPartition(HttpContext context, int apiPermits, int qrOrderPermits)
+    {
+        var policy = context.GetEndpoint()?.Metadata.GetMetadata<EnableRateLimitingAttribute>()?.PolicyName;
+        if (policy == QrOrderPolicyName)
+            return FixedWindow($"{ClientPartition(context)}:qr-order-address", qrOrderPermits);
+        if (policy is null && context.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase))
+            return FixedWindow($"{ClientPartition(context)}:api-default", apiPermits);
+        return RateLimitPartition.GetNoLimiter("none");
+    }
+
     private static RateLimitPartition<string> FixedWindow(string partitionKey, int permitLimit)
         => RateLimitPartition.GetFixedWindowLimiter(partitionKey, _ => new FixedWindowRateLimiterOptions
         {
@@ -873,8 +892,11 @@ public static partial class DualScreenApplication
     // keeps today's 10/minute exactly as-is.
     private static int LoginRateLimitPermits()
         => int.TryParse(Environment.GetEnvironmentVariable("ALKAROS_LOGIN_RATE_LIMIT_PERMITS"), out var configured) && configured > 0
-            ? configured
+            ? Math.Min(configured, MaxLoginRateLimitPermits)
             : 10;
+
+    // The override exists for end-to-end runs; a mistyped or hostile value must not remove the brute-force bound.
+    public const int MaxLoginRateLimitPermits = 600;
 
     private static string RoutePartition(HttpContext context, string routeName, string operation)
     {

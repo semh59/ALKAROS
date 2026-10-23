@@ -216,10 +216,46 @@ public sealed class PostgresOnlinePlatformCredentialStore : IOnlinePlatformCrede
             if (platform.Field(name)!.IsUrl
                 && !(Uri.TryCreate(value, UriKind.Absolute, out var uri) && uri.Scheme == Uri.UriSchemeHttps && uri.UserInfo.Length == 0))
                 throw new InvalidOnlinePlatformCredentialException(OnlinePlatformCredentialProblem.InvalidUrl, name);
+            if (platform.Field(name)!.IsUrl && !IsPublicHost(new Uri(value).Host))
+                throw new InvalidOnlinePlatformCredentialException(OnlinePlatformCredentialProblem.PrivateUrl, name);
             values[name] = value;
         }
 
         return values;
+    }
+
+    /// <summary>
+    /// The credentials travel to this host, so it must name a public internet service: not a single-label or local
+    /// name (container and LAN hosts) and not an address in a loopback, private or link-local range. A public name
+    /// that later resolves to a private address is not detected here.
+    /// </summary>
+    public static bool IsPublicHost(string host)
+    {
+        var bare = host.Trim('[', ']');
+        if (System.Net.IPAddress.TryParse(bare, out var address))
+            return !IsNonPublic(address.IsIPv4MappedToIPv6 ? address.MapToIPv4() : address);
+
+        var name = bare.TrimEnd('.');
+        return name.Contains('.', StringComparison.Ordinal)
+            && !name.EndsWith(".local", StringComparison.OrdinalIgnoreCase)
+            && !name.EndsWith(".localhost", StringComparison.OrdinalIgnoreCase)
+            && !name.EndsWith(".internal", StringComparison.OrdinalIgnoreCase)
+            && !name.EndsWith(".lan", StringComparison.OrdinalIgnoreCase)
+            && !name.EndsWith(".home.arpa", StringComparison.OrdinalIgnoreCase);
+    }
+
+    private static bool IsNonPublic(System.Net.IPAddress address)
+    {
+        if (System.Net.IPAddress.IsLoopback(address) || address.Equals(System.Net.IPAddress.Any) || address.Equals(System.Net.IPAddress.IPv6Any))
+            return true;
+        var bytes = address.GetAddressBytes();
+        return address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork
+            ? bytes[0] is 0 or 10 or 127 || bytes[0] >= 224
+                || (bytes[0] == 100 && bytes[1] is >= 64 and <= 127)
+                || (bytes[0] == 169 && bytes[1] == 254)
+                || (bytes[0] == 172 && bytes[1] is >= 16 and <= 31)
+                || (bytes[0] == 192 && bytes[1] == 168)
+            : address.IsIPv6LinkLocal || address.IsIPv6SiteLocal || address.IsIPv6Multicast || (bytes[0] & 0xFE) == 0xFC;
     }
 
     private static OnlinePlatformCredentialStatus Status(

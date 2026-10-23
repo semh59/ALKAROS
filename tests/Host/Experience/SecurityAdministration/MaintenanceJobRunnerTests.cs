@@ -13,7 +13,7 @@ public sealed class MaintenanceJobRunnerTests
 {
     private static MaintenanceJobRunner CreateRunner(params IMaintenanceJob[] jobs)
     {
-        var provider = new ServiceCollection().BuildServiceProvider();
+        var provider = new ServiceCollection().AddScoped<MaintenanceRunContext>().BuildServiceProvider();
         return new MaintenanceJobRunner(jobs, provider.GetRequiredService<IServiceScopeFactory>(), NullLogger<MaintenanceJobRunner>.Instance);
     }
 
@@ -63,6 +63,58 @@ public sealed class MaintenanceJobRunnerTests
     }
 
     [Fact]
+    public async Task AManualRunLeavesTheActorInTheLogAndATimerRunDoesNot()
+    {
+        var logger = new CapturingLogger();
+        var provider = new ServiceCollection().AddScoped<MaintenanceRunContext>().BuildServiceProvider();
+        var runner = new MaintenanceJobRunner(
+            [new FakeJob("tracked")], provider.GetRequiredService<IServiceScopeFactory>(), logger);
+        var actorId = Guid.NewGuid();
+
+        await runner.RunAsync("tracked", CancellationToken.None);
+        Assert.DoesNotContain(logger.Messages, message => message.Contains("by hand", StringComparison.Ordinal));
+
+        var status = await runner.RunManuallyAsync("tracked", actorId, CancellationToken.None);
+        await runner.RunManuallyAsync("unknown", Guid.NewGuid(), CancellationToken.None);
+
+        Assert.Equal("Succeeded", status!.LastStatus);
+        var manual = Assert.Single(logger.Messages, message => message.Contains("by hand", StringComparison.Ordinal));
+        Assert.Contains("tracked", manual, StringComparison.Ordinal);
+        Assert.Contains(actorId.ToString("D"), manual, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AJobSeesWhoStartedItSoItsAuditEventsCanNameThem()
+    {
+        var job = new FakeJob("who");
+        var runner = CreateRunner(job);
+        var actorId = Guid.NewGuid();
+
+        await runner.RunAsync("who", CancellationToken.None);
+        Assert.Equal("timer", job.SeenTriggeredBy);
+
+        await runner.RunManuallyAsync("who", actorId, CancellationToken.None);
+        Assert.Equal(actorId.ToString("D"), job.SeenTriggeredBy);
+    }
+
+    private sealed class CapturingLogger : Microsoft.Extensions.Logging.ILogger<MaintenanceJobRunner>
+    {
+        public List<string> Messages { get; } = [];
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+        public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) => true;
+
+        public void Log<TState>(
+            Microsoft.Extensions.Logging.LogLevel logLevel,
+            Microsoft.Extensions.Logging.EventId eventId,
+            TState state,
+            Exception? exception,
+            Func<TState, Exception?, string> formatter)
+            => Messages.Add(formatter(state, exception));
+    }
+
+    [Fact]
     public async Task AnUnknownJobNameReturnsNull()
     {
         Assert.Null(await CreateRunner().RunAsync("nope", CancellationToken.None));
@@ -74,6 +126,7 @@ public sealed class MaintenanceJobRunnerTests
         public string? Disabled { get; init; }
         public Exception? Throw { get; init; }
         public Task? Gate { get; init; }
+        public string? SeenTriggeredBy { get; private set; }
 
         public string Name => name;
         public string Description => "test";
@@ -83,6 +136,7 @@ public sealed class MaintenanceJobRunnerTests
         public async Task<MaintenanceJobOutcome> ExecuteAsync(IServiceProvider scopedServices, CancellationToken cancellationToken)
         {
             Runs++;
+            SeenTriggeredBy = scopedServices.GetRequiredService<MaintenanceRunContext>().TriggeredBy;
             if (Gate is not null)
                 await Gate;
             if (Throw is not null)

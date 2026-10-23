@@ -96,9 +96,15 @@ public sealed class DatabaseHealthProbeHostedService : BackgroundService
         }
         catch (Exception ex) when (ex is NpgsqlException or TimeoutException)
         {
-            // The exception's own message, not its full ToString() - a real probe result should say WHY
-            // it failed without carrying arbitrary connection-string/stack-trace detail into a persisted row.
-            return (HealthStatus.Unhealthy, $$"""{"error":"{{ex.Message.Replace("\"", "'")}}"}""");
+            return (HealthStatus.Unhealthy, FailureDetails(ex));
         }
     }
+
+    /// <summary>The exception type and SQLSTATE only: the message can carry the server address, user or connection string.</summary>
+    public static string FailureDetails(Exception exception)
+        => System.Text.Json.JsonSerializer.Serialize(new
+        {
+            error = exception.GetType().Name,
+            sqlState = (exception as PostgresException)?.SqlState,
+        });
 }

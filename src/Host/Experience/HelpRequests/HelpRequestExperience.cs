@@ -32,6 +32,7 @@ public static class HelpRequestExperience
         // AddSignalR is idempotent to call more than once (see
         // WaiterNotificationsExperience's own note on this).
         services.AddSignalR(options => options.EnableDetailedErrors = false);
+        services.AddHubSessionTracking();
         services.TryAddSingleton<DualScreenStore>();
         // V1-SET-004: HelpRequestStore now checks GarsonFeature.HelpRequest —
         // same DbDataSource/ISettingValidator gap KitchenOperationsEndpoints

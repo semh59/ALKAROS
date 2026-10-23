@@ -1,3 +1,5 @@
+using ALKAROS.Host.DualScreen;
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Connections.Features;
@@ -98,8 +100,41 @@ public sealed class HelpRequestHubTests : IAsyncLifetime
         Assert.Equal(0, recipients.Count);
     }
 
+    [Fact]
+    public async Task ARevokedManagerSessionIsDroppedByTheSweepAndReleasedOnDisconnect()
+    {
+        var (_, rawToken) = await _database.SeedManagementSessionAsync("manager");
+        var sessions = new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance);
+        var (hub, context, _) = Build($"alkaros.manager={rawToken}", sessions: sessions);
+        await hub.OnConnectedAsync();
+        Assert.Equal(0, await sessions.AbortRevokedAsync(CancellationToken.None));
+        Assert.False(context.Aborted);
+
+        await using var revoke = _database.DataSource.CreateCommand(
+            "UPDATE identity.device_sessions SET revoked_at = now() WHERE device_id LIKE 'manager:%';");
+        await revoke.ExecuteNonQueryAsync();
+
+        Assert.Equal(1, await sessions.AbortRevokedAsync(CancellationToken.None));
+        Assert.True(context.Aborted);
+        Assert.Equal(0, sessions.Count);
+    }
+
+    [Fact]
+    public async Task DisconnectingReleasesTheTrackedConnection()
+    {
+        var (_, rawToken) = await _database.SeedManagementSessionAsync("manager");
+        var sessions = new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance);
+        var (hub, _, _) = Build($"alkaros.manager={rawToken}", sessions: sessions);
+        await hub.OnConnectedAsync();
+        Assert.Equal(1, sessions.Count);
+
+        await hub.OnDisconnectedAsync(null);
+
+        Assert.Equal(0, sessions.Count);
+    }
+
     private (HelpRequestHub Hub, FakeHubCallerContext Context, FakeGroupManager Groups) Build(
-        string? cookie, HelpRequestRecipientTracker? recipients = null)
+        string? cookie, HelpRequestRecipientTracker? recipients = null, HubSessionRegistry? sessions = null)
     {
         var httpContext = new DefaultHttpContext();
         if (cookie is not null)
@@ -107,7 +142,7 @@ public sealed class HelpRequestHubTests : IAsyncLifetime
 
         var context = new FakeHubCallerContext(httpContext);
         var groups = new FakeGroupManager();
-        var hub = new HelpRequestHub(_database.DataSource, recipients ?? new HelpRequestRecipientTracker()) { Context = context, Groups = groups };
+        var hub = new HelpRequestHub(_database.DataSource, recipients ?? new HelpRequestRecipientTracker(), sessions ?? new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance)) { Context = context, Groups = groups };
         return (hub, context, groups);
     }
 }

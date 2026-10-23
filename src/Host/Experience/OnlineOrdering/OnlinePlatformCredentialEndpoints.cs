@@ -178,6 +178,7 @@ public sealed class OnlinePlatformCredentialExceptionFilter : IEndpointFilter
         OnlinePlatformCredentialProblem.TooLong => "Değer çok uzun.",
         OnlinePlatformCredentialProblem.InvalidCharacters => "Değer geçersiz karakter içeriyor.",
         OnlinePlatformCredentialProblem.InvalidUrl => "Adres https:// ile başlayan geçerli bir adres olmalıdır.",
+        OnlinePlatformCredentialProblem.PrivateUrl => "Adres herkese açık bir internet adresi olmalıdır; yerel ve özel ağ adresleri kabul edilmez.",
         _ => "İstek doğrulanamadı.",
     };
 }

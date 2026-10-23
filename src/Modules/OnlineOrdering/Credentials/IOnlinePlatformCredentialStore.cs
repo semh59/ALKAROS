@@ -39,6 +39,7 @@ public enum OnlinePlatformCredentialProblem
     TooLong,
     InvalidCharacters,
     InvalidUrl,
+    PrivateUrl,
 }
 
 public sealed class InvalidOnlinePlatformCredentialException : Exception

@@ -46,16 +46,19 @@ public sealed class HelpRequestHub : Hub
 
     private readonly NpgsqlDataSource _dataSource;
     private readonly HelpRequestRecipientTracker _recipients;
+    private readonly HubSessionRegistry _sessions;
 
-    public HelpRequestHub(NpgsqlDataSource dataSource, HelpRequestRecipientTracker recipients)
+    public HelpRequestHub(NpgsqlDataSource dataSource, HelpRequestRecipientTracker recipients, HubSessionRegistry sessions)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _recipients = recipients ?? throw new ArgumentNullException(nameof(recipients));
+        _sessions = sessions ?? throw new ArgumentNullException(nameof(sessions));
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
         _recipients.Disconnected(Context.ConnectionId);
+        _sessions.Release(Context.ConnectionId);
         return base.OnDisconnectedAsync(exception);
     }
 
@@ -73,6 +76,8 @@ public sealed class HelpRequestHub : Hub
 
         await Groups.AddToGroupAsync(Context.ConnectionId, RecipientsGroup, Context.ConnectionAborted);
         _recipients.Connected(Context.ConnectionId);
+        _sessions.Track(Context, async cancellationToken => await ManagementSessionLookup.ResolveActorAsync(
+            _dataSource, rawToken, allowSupervisor: true, cancellationToken) is not null);
         await base.OnConnectedAsync();
     }
 

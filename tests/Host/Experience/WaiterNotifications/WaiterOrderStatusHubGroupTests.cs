@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Security.Claims;
 using ALKAROS.Host.DualScreen;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +32,7 @@ public sealed class WaiterOrderStatusHubGroupTests : IAsyncLifetime
         var terminalId = Guid.NewGuid();
         var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId);
         var presence = new WaiterPresenceTracker();
-        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource), presence);
+        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource), presence, new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance));
         var groups = new FakeGroupManager();
         var context = new FakeHubCallerContext(cookie, terminalId);
         hub.Context = context;
@@ -52,7 +53,7 @@ public sealed class WaiterOrderStatusHubGroupTests : IAsyncLifetime
         var terminalId = Guid.NewGuid();
         var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId);
         var presence = new WaiterPresenceTracker();
-        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource), presence);
+        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource), presence, new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance));
         hub.Context = new FakeHubCallerContext(cookie, terminalId);
         hub.Groups = new FakeGroupManager();
 
@@ -65,10 +66,32 @@ public sealed class WaiterOrderStatusHubGroupTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADeactivatedUserIsDroppedByTheSweep()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedCashierSessionAsync(terminalId);
+        var sessions = new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance);
+        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource), new WaiterPresenceTracker(), sessions);
+        var context = new FakeHubCallerContext(cookie, terminalId);
+        hub.Context = context;
+        hub.Groups = new FakeGroupManager();
+        await hub.OnConnectedAsync();
+        Assert.Equal(0, await sessions.AbortRevokedAsync(CancellationToken.None));
+        Assert.False(context.Aborted);
+
+        await using var deactivate = _database.DataSource.CreateCommand("UPDATE identity.users SET active = false WHERE user_id = @id;");
+        deactivate.Parameters.AddWithValue("id", userId);
+        await deactivate.ExecuteNonQueryAsync();
+
+        Assert.Equal(1, await sessions.AbortRevokedAsync(CancellationToken.None));
+        Assert.True(context.Aborted);
+    }
+
+    [Fact]
     public async Task AnUnauthenticatedConnectionIsAbortedAndJoinsNoGroup()
     {
         var terminalId = Guid.NewGuid();
-        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource), new WaiterPresenceTracker());
+        var hub = new WaiterOrderStatusHub(new DualScreenStore(_database.DataSource), new WaiterPresenceTracker(), new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance));
         var groups = new FakeGroupManager();
         var context = new FakeHubCallerContext(
             $"{DualScreenApplication.CashierCookieName}=not-a-real-token", terminalId);

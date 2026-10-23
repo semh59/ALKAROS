@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging.Abstractions;
 using System.Globalization;
 using System.Net;
 using System.Net.Http.Json;
@@ -1229,14 +1230,15 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         Assert.Equal(JsonValueKind.Null, idle.GetProperty("orderId").ValueKind);
     }
 
-    private CustomerDisplayHub BuildDisplayHub(string? cookie, out FakeDisplayHubContext context, out FakeDisplayGroups groups)
+    private CustomerDisplayHub BuildDisplayHub(
+        string? cookie, out FakeDisplayHubContext context, out FakeDisplayGroups groups, HubSessionRegistry? sessions = null)
     {
         var httpContext = new DefaultHttpContext();
         if (cookie is not null)
             httpContext.Request.Headers.Append("Cookie", cookie);
         context = new FakeDisplayHubContext(httpContext);
         groups = new FakeDisplayGroups();
-        return new CustomerDisplayHub(new DualScreenStore(_dataSource!)) { Context = context, Groups = groups };
+        return new CustomerDisplayHub(new DualScreenStore(_dataSource!), sessions ?? new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance)) { Context = context, Groups = groups };
     }
 
     [Fact]
@@ -1258,12 +1260,16 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         await cashierOnly.OnConnectedAsync();
         Assert.True(cashierContext.Aborted);
 
-        var paired = BuildDisplayHub(displayCookie, out var pairedContext, out var pairedGroups);
+        var sessions = new HubSessionRegistry(NullLogger<HubSessionRegistry>.Instance);
+        var paired = BuildDisplayHub(displayCookie, out var pairedContext, out var pairedGroups, sessions);
         await paired.OnConnectedAsync();
         Assert.False(pairedContext.Aborted);
         Assert.Contains((pairedContext.ConnectionId, DualScreenApplication.TerminalGroup(terminalId)), pairedGroups.Memberships);
+        Assert.Equal(0, await sessions.AbortRevokedAsync(CancellationToken.None));
 
         await ExecuteAsync("UPDATE customer_display.display_sessions SET revoked_at = now() WHERE terminal_id = @id;", ("id", terminalId));
+        Assert.Equal(1, await sessions.AbortRevokedAsync(CancellationToken.None));
+        Assert.True(pairedContext.Aborted);
         var revoked = BuildDisplayHub(displayCookie, out var revokedContext, out var revokedGroups);
         await revoked.OnConnectedAsync();
         Assert.True(revokedContext.Aborted);

@@ -55,6 +55,7 @@ public static class SecurityAdministrationEndpoints
 
         // Scheduled and manager-triggerable operational jobs (V1-RMD-268 onward).
         services.TryAddSingleton<MaintenanceJobRunner>();
+        services.TryAddScoped<MaintenanceRunContext>();
         services.TryAddSingleton<ALKAROS.Host.Experience.Orders.OrderSettlementService>();
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, RetentionSweepMaintenanceJob>());
         services.TryAddEnumerable(ServiceDescriptor.Singleton<IMaintenanceJob, OffsiteBackupMaintenanceJob>());
@@ -167,7 +168,8 @@ public static class SecurityAdministrationEndpoints
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            var status = await runner.RunAsync(name, cancellationToken);
+            var actorId = SecurityAdministrationEndpointFilter.RequireActorId(context);
+            var status = await runner.RunManuallyAsync(name, actorId, cancellationToken);
             return status is null
                 ? Results.Json(
                     new ApiErrorEnvelope(new ApiError(

@@ -66,6 +66,22 @@ public sealed class DatabaseHealthProbeHostedServiceTests : IAsyncLifetime
 
         var recent = await observability.GetLatestHealthChecksByTargetAsync(
             DatabaseHealthProbeHostedService.Target, limit: 1);
-        Assert.Equal(HealthStatus.Unhealthy, Assert.Single(recent).Status);
+        var recorded = Assert.Single(recent);
+        Assert.Equal(HealthStatus.Unhealthy, recorded.Status);
+        using var details = System.Text.Json.JsonDocument.Parse(recorded.DetailsJson!);
+        Assert.Equal("NpgsqlException", details.RootElement.GetProperty("error").GetString());
+        Assert.DoesNotContain("127.0.0.1", recorded.DetailsJson, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void FailureDetailsStayValidJsonAndNeverCarryTheMessage()
+    {
+        var failure = new TimeoutException("password=\"s3cret\" \\ host=db\r\nline");
+
+        using var details = System.Text.Json.JsonDocument.Parse(DatabaseHealthProbeHostedService.FailureDetails(failure));
+
+        Assert.Equal("TimeoutException", details.RootElement.GetProperty("error").GetString());
+        Assert.Equal(System.Text.Json.JsonValueKind.Null, details.RootElement.GetProperty("sqlState").ValueKind);
+        Assert.DoesNotContain("s3cret", details.RootElement.ToString(), StringComparison.Ordinal);
     }
 }

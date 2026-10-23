@@ -21,7 +21,8 @@ public sealed class RetentionSweepMaintenanceJob : IMaintenanceJob
     public async Task<MaintenanceJobOutcome> ExecuteAsync(IServiceProvider scopedServices, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(scopedServices);
-        var correlationId = $"retention-sweep:{Guid.NewGuid():N}";
+        var triggeredBy = scopedServices.GetRequiredService<MaintenanceRunContext>().TriggeredBy;
+        var correlationId = $"retention-sweep:{triggeredBy}:{Guid.NewGuid():N}";
 
         var sweep = await scopedServices.GetRequiredService<RetentionExecutionService>()
             .RunSweepAsync(DateTimeOffset.UtcNow, correlationId, cancellationToken);

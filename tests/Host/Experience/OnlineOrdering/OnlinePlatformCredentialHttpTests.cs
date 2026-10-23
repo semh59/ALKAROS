@@ -223,8 +223,33 @@ public sealed class OnlinePlatformCredentialHttpTests : IAsyncLifetime, IDisposa
     }
 
     [Theory]
+    [InlineData("api.partner.example", true)]
+    [InlineData("8.8.8.8", true)]
+    [InlineData("172.32.0.1", true)]
+    [InlineData("2001:4860:4860::8888", true)]
+    [InlineData("172.16.0.1", false)]
+    [InlineData("100.64.0.1", false)]
+    [InlineData("0.0.0.0", false)]
+    [InlineData("fd00::1", false)]
+    [InlineData("fe80::1", false)]
+    [InlineData("::ffff:10.0.0.1", false)]
+    [InlineData("host.internal", false)]
+    [InlineData("nas.home.arpa", false)]
+    [InlineData("singlelabel", false)]
+    public void OnlyPublicInternetHostsAreAcceptedForPlatformAddresses(string host, bool expected)
+        => Assert.Equal(expected, PostgresOnlinePlatformCredentialStore.IsPublicHost(host));
+
+    [Theory]
     [InlineData("yemeksepeti", "{\"values\":{\"api-base-url\":\"http://partner.example.test\"}}", "api-base-url", "Adres https:// ile başlayan geçerli bir adres olmalıdır.")]
     [InlineData("yemeksepeti", "{\"values\":{\"api-base-url\":\"https://user:pw@partner.example.test\"}}", "api-base-url", "Adres https:// ile başlayan geçerli bir adres olmalıdır.")]
+    [InlineData("yemeksepeti", "{\"values\":{\"api-base-url\":\"https://127.0.0.1/\"}}", "api-base-url", "Adres herkese açık bir internet adresi olmalıdır; yerel ve özel ağ adresleri kabul edilmez.")]
+    [InlineData("yemeksepeti", "{\"values\":{\"api-base-url\":\"https://localhost/\"}}", "api-base-url", "Adres herkese açık bir internet adresi olmalıdır; yerel ve özel ağ adresleri kabul edilmez.")]
+    [InlineData("yemeksepeti", "{\"values\":{\"api-base-url\":\"https://postgres:5432/\"}}", "api-base-url", "Adres herkese açık bir internet adresi olmalıdır; yerel ve özel ağ adresleri kabul edilmez.")]
+    [InlineData("yemeksepeti", "{\"values\":{\"api-base-url\":\"https://10.1.2.3/\"}}", "api-base-url", "Adres herkese açık bir internet adresi olmalıdır; yerel ve özel ağ adresleri kabul edilmez.")]
+    [InlineData("yemeksepeti", "{\"values\":{\"api-base-url\":\"https://192.168.1.10/\"}}", "api-base-url", "Adres herkese açık bir internet adresi olmalıdır; yerel ve özel ağ adresleri kabul edilmez.")]
+    [InlineData("yemeksepeti", "{\"values\":{\"api-base-url\":\"https://169.254.169.254/latest\"}}", "api-base-url", "Adres herkese açık bir internet adresi olmalıdır; yerel ve özel ağ adresleri kabul edilmez.")]
+    [InlineData("yemeksepeti", "{\"values\":{\"api-base-url\":\"https://[::1]/\"}}", "api-base-url", "Adres herkese açık bir internet adresi olmalıdır; yerel ve özel ağ adresleri kabul edilmez.")]
+    [InlineData("yemeksepeti", "{\"values\":{\"api-base-url\":\"https://printer.local/\"}}", "api-base-url", "Adres herkese açık bir internet adresi olmalıdır; yerel ve özel ağ adresleri kabul edilmez.")]
     [InlineData("yemeksepeti", "{\"values\":{\"supplier-id\":\"s1\"}}", "supplier-id", "Bu platformda böyle bir alan yok.")]
     [InlineData("yemeksepeti", "{\"cleared\":[\"api-key\"]}", "api-key", "Bu platformda böyle bir alan yok.")]
     [InlineData("yemeksepeti", "{\"values\":{\"chain-id\":\"   \"}}", "chain-id", "Alan boş bırakılamaz; silmek için Kaldır'ı kullanın.")]
@@ -318,8 +343,8 @@ public sealed class OnlinePlatformCredentialHttpTests : IAsyncLifetime, IDisposa
             values = new Dictionary<string, string>
             {
                 ["webhook-secret"] = WebhookSecret,
-                // Nothing listens on port 1, so reaching the network proves every setting was found.
-                ["api-base-url"] = "https://127.0.0.1:1/",
+                // The name never resolves, so reaching the network proves every setting was found.
+                ["api-base-url"] = "https://unreachable.invalid/",
                 ["chain-id"] = "chain-1",
                 ["vendor-id"] = "vendor-1",
                 ["client-id"] = "client-1",

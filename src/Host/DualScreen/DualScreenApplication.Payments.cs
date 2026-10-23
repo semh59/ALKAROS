@@ -161,10 +161,12 @@ public static partial class DualScreenApplication
             IManualCardConfirmationRepository confirmations,
             IBillAdjustmentRepository adjustmentRepository,
             DualScreenStore store,
+            IAuthorizationService authorization,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await RequireCashierAsync(context, terminalId, store, cancellationToken);
+            await RequireCashierPermissionAsync(
+                context, terminalId, store, authorization, ApplicationPermissions.PaymentsTake, cancellationToken);
 
             var bill = await billRepository.GetByIdAsync(billId, cancellationToken);
             if (bill is null)

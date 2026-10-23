@@ -7,4 +7,7 @@ namespace ALKAROS.Host.Experience.SecurityAdministration;
 /// drill provisions and drops a scratch database) cannot derive it from the
 /// data source and would fail authentication.
 /// </summary>
-public sealed record HostDatabaseConnection(string ConnectionString);
+public sealed record HostDatabaseConnection(string ConnectionString)
+{
+    public override string ToString() => nameof(HostDatabaseConnection);
+}

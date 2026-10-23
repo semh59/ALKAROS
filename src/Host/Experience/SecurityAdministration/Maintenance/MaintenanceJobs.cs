@@ -54,6 +54,14 @@ public sealed record MaintenanceJobStatusV1(
     long? LastDurationMilliseconds,
     string? LastSummary);
 
+/// <summary>Who started the current run; jobs put it into the correlation id of the audit events they write.</summary>
+public sealed class MaintenanceRunContext
+{
+    public const string Timer = "timer";
+
+    public string TriggeredBy { get; set; } = Timer;
+}
+
 /// <summary>
 /// Runs jobs (from the timer or from the manager API), never overlapping a job
 /// with itself, and remembers the last outcome per job. State is in memory: the
@@ -72,6 +80,12 @@ public sealed class MaintenanceJobRunner
             LogLevel.Error,
             new EventId(5821, nameof(LogFault)),
             "Maintenance job {Job} failed.");
+
+    private static readonly Action<ILogger, string, Guid, Exception?> LogManualRun =
+        LoggerMessage.Define<string, Guid>(
+            LogLevel.Information,
+            new EventId(5822, nameof(LogManualRun)),
+            "Maintenance job {Job} started by hand by {ActorId}.");
 
     private readonly IReadOnlyDictionary<string, IMaintenanceJob> _jobs;
     private readonly Dictionary<string, SemaphoreSlim> _gates;
@@ -117,8 +131,19 @@ public sealed class MaintenanceJobRunner
         }
     }
 
-    /// <summary>Runs one job now. Returns null for an unknown job name.</summary>
-    public async Task<MaintenanceJobStatusV1?> RunAsync(string name, CancellationToken cancellationToken)
+    /// <summary>Runs one job now on a manager's request, leaving the actor in the log. Returns null for an unknown job name.</summary>
+    public Task<MaintenanceJobStatusV1?> RunManuallyAsync(string name, Guid actorId, CancellationToken cancellationToken)
+    {
+        if (_jobs.ContainsKey(name))
+            LogManualRun(_logger, name, actorId, null);
+        return RunAsync(name, actorId.ToString("D"), cancellationToken);
+    }
+
+    /// <summary>Runs one job now as the timer. Returns null for an unknown job name.</summary>
+    public Task<MaintenanceJobStatusV1?> RunAsync(string name, CancellationToken cancellationToken)
+        => RunAsync(name, MaintenanceRunContext.Timer, cancellationToken);
+
+    private async Task<MaintenanceJobStatusV1?> RunAsync(string name, string triggeredBy, CancellationToken cancellationToken)
     {
         if (!_jobs.TryGetValue(name, out var job))
             return null;
@@ -143,6 +168,7 @@ public sealed class MaintenanceJobRunner
                 try
                 {
                     await using var scope = _scopeFactory.CreateAsyncScope();
+                    scope.ServiceProvider.GetRequiredService<MaintenanceRunContext>().TriggeredBy = triggeredBy;
                     var outcome = await job.ExecuteAsync(scope.ServiceProvider, cancellationToken).ConfigureAwait(false);
                     Record(job, outcome.Status, outcome.Summary, ElapsedMilliseconds(started));
                     LogOutcome(_logger, job.Name, outcome.Summary, null);

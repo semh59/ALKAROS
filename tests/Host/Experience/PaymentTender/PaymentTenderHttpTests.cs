@@ -1023,7 +1023,7 @@ internal sealed class PaymentTenderHttpTestDatabase
         return $"alkaros.cashier={rawToken}";
     }
 
-    /// <summary>Seeds a user holding reconciliation.manage with a cashier device session on <paramref name="terminalId"/>.</summary>
+    /// <summary>Seeds a user holding reconciliation.manage and payments.take (as the manager role does) with a cashier device session on <paramref name="terminalId"/>.</summary>
     public async Task<string> SeedManagerSessionAsync(Guid terminalId, string rawToken)
     {
         var userId = Guid.NewGuid();
@@ -1034,7 +1034,7 @@ internal sealed class PaymentTenderHttpTestDatabase
             VALUES (@user_id, @username, 'x', 'PaymentTender Test Manager', true);
             INSERT INTO identity.roles (role_id, code, name) VALUES (@role_id, @role_code, 'PaymentTender Test Manager Role');
             INSERT INTO identity.role_permissions (role_permission_id, role_id, permission_id)
-            SELECT gen_random_uuid(), @role_id, permission_id FROM identity.permissions WHERE code = 'reconciliation.manage';
+            SELECT gen_random_uuid(), @role_id, permission_id FROM identity.permissions WHERE code IN ('reconciliation.manage', 'payments.take');
             INSERT INTO identity.user_roles (user_role_id, user_id, role_id) VALUES (gen_random_uuid(), @user_id, @role_id);
             INSERT INTO identity.device_sessions (session_id, user_id, device_id, token_hash, expires_at)
             VALUES (gen_random_uuid(), @user_id, @device_id, @token_hash, now() + interval '1 hour');

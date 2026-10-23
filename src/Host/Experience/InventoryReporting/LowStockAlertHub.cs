@@ -18,10 +18,12 @@ public sealed class LowStockAlertHub : Hub
     public const string StockBecameCritical = "StockBecameCritical";
 
     private readonly NpgsqlDataSource _dataSource;
+    private readonly HubSessionRegistry _sessions;
 
-    public LowStockAlertHub(NpgsqlDataSource dataSource)
+    public LowStockAlertHub(NpgsqlDataSource dataSource, HubSessionRegistry sessions)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
+        _sessions = sessions ?? throw new ArgumentNullException(nameof(sessions));
     }
 
     public override async Task OnConnectedAsync()
@@ -36,7 +38,15 @@ public sealed class LowStockAlertHub : Hub
             return;
         }
 
+        _sessions.Track(Context, async cancellationToken => await ManagementSessionLookup.ResolveActorAsync(
+            _dataSource, rawToken, allowSupervisor: true, cancellationToken) is not null);
         await base.OnConnectedAsync();
+    }
+
+    public override Task OnDisconnectedAsync(Exception? exception)
+    {
+        _sessions.Release(Context.ConnectionId);
+        return base.OnDisconnectedAsync(exception);
     }
 
     // Duplicated by design, not a boundary violation — see

@@ -1,3 +1,4 @@
+using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Reporting.MenuInventory;
@@ -41,6 +42,7 @@ public static class InventoryReportingEndpoints
         // AddSignalR is idempotent to call more than once (see
         // HelpRequestExperience's own note on this).
         services.AddSignalR(options => options.EnableDetailedErrors = false);
+        services.AddHubSessionTracking();
         services.AddHostedService<LowStockAlertHostedService>();
         return services;
     }

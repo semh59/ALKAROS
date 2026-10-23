@@ -124,7 +124,16 @@ public static class DualScreenTls
         try
         {
             Directory.CreateDirectory(cacheDirectory);
-            File.WriteAllBytes(cachePath, pfx);
+            // The key must never exist with wider permissions, even briefly, so the owner-only mode is part of the creation.
+            var createOptions = new FileStreamOptions { Mode = FileMode.Create, Access = FileAccess.Write, Share = FileShare.None };
+            if (!OperatingSystem.IsWindows())
+                createOptions.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
+            using (var stream = new FileStream(cachePath, createOptions))
+            {
+                stream.Write(pfx);
+            }
+
+            // A file left by an earlier run keeps its old mode through Create.
             if (!OperatingSystem.IsWindows())
                 File.SetUnixFileMode(cachePath, UnixFileMode.UserRead | UnixFileMode.UserWrite);
         }

@@ -170,6 +170,23 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
     }
 
+    [Fact]
+    public async Task WithoutPaymentsTakeTheReceiptAndThePaymentSummaryAreForbidden()
+    {
+        var terminalId = Guid.NewGuid();
+        var waiter = await _database.SeedCashierSessionAsync(terminalId, "receipt-no-payments", takesPayments: false);
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var receipt = await GetAsync(client, ReceiptPath(terminalId, billId), waiter);
+        var summary = await GetAsync(
+            client, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/tenders/", waiter);
+
+        Assert.Equal(HttpStatusCode.Forbidden, receipt.StatusCode);
+        Assert.Equal(HttpStatusCode.Forbidden, summary.StatusCode);
+    }
+
     private async Task<Guid> UserIdAsync()
     {
         await using var command = _database.DataSource.CreateCommand("SELECT user_id FROM identity.users ORDER BY username LIMIT 1;");

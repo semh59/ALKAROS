@@ -714,6 +714,12 @@ public static class Program
         if (rollbackId is not null && !IsPosition(rollbackId))
             return null;
 
+        if (PsqlScriptRunner.UrlCarriesPassword(databaseUrl))
+        {
+            Console.Error.WriteLine("--db-url must not contain a password; set ALKAROS_DB_PASSWORD instead.");
+            return null;
+        }
+
         var password = Environment.GetEnvironmentVariable(PasswordEnvironmentVariable);
         if (string.IsNullOrWhiteSpace(password))
             return null;

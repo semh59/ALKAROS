@@ -35,11 +35,13 @@ public sealed class WaiterOrderStatusHub : Hub
 
     private readonly DualScreenStore _store;
     private readonly WaiterPresenceTracker _presence;
+    private readonly HubSessionRegistry _sessions;
 
-    public WaiterOrderStatusHub(DualScreenStore store, WaiterPresenceTracker presence)
+    public WaiterOrderStatusHub(DualScreenStore store, WaiterPresenceTracker presence, HubSessionRegistry sessions)
     {
         _store = store ?? throw new ArgumentNullException(nameof(store));
         _presence = presence ?? throw new ArgumentNullException(nameof(presence));
+        _sessions = sessions ?? throw new ArgumentNullException(nameof(sessions));
     }
 
     public override async Task OnConnectedAsync()
@@ -67,11 +69,14 @@ public sealed class WaiterOrderStatusHub : Hub
         // no principal of its own) knows whose count to decrement.
         Context.Items[ConnectedUserIdItemKey] = principal.UserId;
         _presence.Connected(principal.UserId);
+        _sessions.Track(Context, async cancellationToken =>
+            await _store.AuthenticateCashierAsync(rawToken, terminalId, cancellationToken) is not null);
         await base.OnConnectedAsync();
     }
 
     public override Task OnDisconnectedAsync(Exception? exception)
     {
+        _sessions.Release(Context.ConnectionId);
         if (Context.Items.TryGetValue(ConnectedUserIdItemKey, out var value) && value is Guid userId)
             _presence.Disconnected(userId);
         return base.OnDisconnectedAsync(exception);

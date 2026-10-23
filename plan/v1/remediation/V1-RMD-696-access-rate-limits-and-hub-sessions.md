@@ -27,6 +27,10 @@ V1-RMD-599 bulguları B016, B031, B032, B033, B034, B035, B036, B064, B077, B078
 - Sınırlı ek (paylaşılan, geri-tik olmadan): compose.yaml - yalnız rol ve kullanıcı ayarları
 - Sınırlı ek (paylaşılan, geri-tik olmadan): deploy/docker/** - yalnız rol ve TLS dosya izinleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız yeni test
+- `src/Host/DualScreen/HubSessionRegistry.cs` - yeni dosya, hub oturum kaydı ve tarayıcı
+- `tests/Host/MigrationComposition/DualScreen/AccessHardeningTests.cs` - yeni dosya
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/OnlineOrdering/** - yalnız platform adresi ana makine kısıtı (B080)
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/OnlineOrdering/** - yalnız platform adresi hata iletisi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-695-module-boundaries-and-composition.md - yalnız Handoff satırı
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.

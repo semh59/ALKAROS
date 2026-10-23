@@ -14,6 +14,9 @@ public sealed record PsqlOptions(
     TimeSpan Timeout = default)
 {
     public TimeSpan EffectiveTimeout => Timeout == default ? TimeSpan.FromMinutes(5) : Timeout;
+
+    // The URL and Password members carry credentials; a printed record must show neither.
+    public override string ToString() => nameof(PsqlOptions);
 }
 
 public sealed record ScriptExecutionResult(bool Success, string StandardOutput, string StandardError)
@@ -82,7 +85,12 @@ public static class PsqlScriptRunner
         return await RunProcessAsync(startInfo, options, cancellationToken).ConfigureAwait(false);
     }
 
-    private static ProcessStartInfo CreateStartInfo(PsqlOptions options)
+    /// <summary>True when the URL carries a password; the password belongs in <see cref="PsqlOptions.Password"/>, not in a process argument.</summary>
+    public static bool UrlCarriesPassword(string databaseUrl)
+        => Uri.TryCreate(databaseUrl, UriKind.Absolute, out var uri)
+            && uri.UserInfo.Split(':', 2) is [_, { Length: > 0 }];
+
+    public static ProcessStartInfo CreateStartInfo(PsqlOptions options)
     {
         var startInfo = new ProcessStartInfo(options.PsqlExecutable)
         {
@@ -138,11 +146,6 @@ public static class PsqlScriptRunner
                     startInfo.Environment["PGUSER"] = user;
                     startInfo.ArgumentList.Add("-U");
                     startInfo.ArgumentList.Add(user);
-                }
-
-                if (userParts.Length > 1 && !string.IsNullOrEmpty(userParts[1]))
-                {
-                    startInfo.Environment["PGPASSWORD"] = Uri.UnescapeDataString(userParts[1]);
                 }
             }
 

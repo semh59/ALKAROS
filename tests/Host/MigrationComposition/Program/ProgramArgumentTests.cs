@@ -50,6 +50,36 @@ public sealed class ProgramArgumentTests
     }
 
     [Fact]
+    public void ADatabaseUrlCarryingAPasswordIsRejectedWithoutWritingTheSecret()
+    {
+        const string secret = "url-secret-must-not-appear";
+        var originalPassword = Environment.GetEnvironmentVariable("ALKAROS_DB_PASSWORD");
+        var originalError = Console.Error;
+        using var error = new StringWriter();
+        try
+        {
+            Environment.SetEnvironmentVariable("ALKAROS_DB_PASSWORD", "test-password");
+            Console.SetError(error);
+
+            var exitCode = ALKAROS.Host.Program.Main(
+            [
+                "--order-manifest", "manifest.json",
+                "--migrations-dir", "migrations",
+                "--db-url", $"postgresql://user:{secret}@host:5432/database",
+            ]);
+
+            Assert.Equal((int)HostExitCode.StartupFailed, exitCode);
+            Assert.Contains("must not contain a password", error.ToString(), StringComparison.Ordinal);
+            Assert.DoesNotContain(secret, error.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            Console.SetError(originalError);
+            Environment.SetEnvironmentVariable("ALKAROS_DB_PASSWORD", originalPassword);
+        }
+    }
+
+    [Fact]
     public void RollbackArgumentIsForwardedToTheHostComposition()
     {
         using var set = TestMigrationSet.CreateWithFiles(

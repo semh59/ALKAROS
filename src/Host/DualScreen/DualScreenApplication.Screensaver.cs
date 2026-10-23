@@ -28,6 +28,20 @@ public static partial class DualScreenApplication
     private static readonly string[] AllowedScreensaverImageContentTypes = ["image/png", "image/jpeg", "image/webp"];
     private static readonly string[] AllowedScreensaverVideoContentTypes = ["video/mp4"];
 
+    private static async Task<IFormFile?> ReadScreensaverFileAsync(HttpRequest request, CancellationToken cancellationToken)
+    {
+        if (!request.HasFormContentType)
+            return null;
+        try
+        {
+            return (await request.ReadFormAsync(cancellationToken)).Files.GetFile("file");
+        }
+        catch (InvalidDataException)
+        {
+            return null;
+        }
+    }
+
     /// <summary>
     /// V1-CDP-001: the business's own idle-screen image (V1-CUI-007's Faz 0
     /// decision leaves the default branded card in place when none is set;
@@ -46,14 +60,10 @@ public static partial class DualScreenApplication
         ArgumentNullException.ThrowIfNull(app);
         ApiErrorHandling.EnsureFor(app);
 
-        // V1-RMD-235: this group's own PUT binds an IFormFile, which ASP.NET
-        // Core's minimal-API model binder reads eagerly as part of argument
-        // binding — before any IEndpointFilter (including
-        // CatalogManagerEndpointFilter below) ever runs, and RouteGroupBuilder
-        // itself has no `Use` (it is not an IApplicationBuilder). A Kestrel
-        // body-size limit has to be set from plain host-level middleware
-        // ahead of that binding step to have any effect, path-scoped here so
-        // no other route's own limit is touched.
+        // The PUT reads its form inside the handler, after CatalogManagerEndpointFilter has run: an
+        // IFormFile parameter would be bound before any endpoint filter, so an unauthenticated caller
+        // could make the server read the whole upload. A Kestrel body-size limit has to be raised from
+        // plain host-level middleware, path-scoped here so no other route's own limit is touched.
         app.Use(async (context, next) =>
         {
             if (HttpMethods.IsPut(context.Request.Method)
@@ -73,11 +83,11 @@ public static partial class DualScreenApplication
             .AddEndpointFilter<CatalogManagerEndpointFilter>();
 
         management.MapPut("/screensaver", async (
-            IFormFile? file,
             DualScreenStore store,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
+            var file = await ReadScreensaverFileAsync(context.Request, cancellationToken);
             if (file is null || file.Length == 0)
                 return ScreensaverValidationError(context, "Bir görsel veya video dosyası seçilmedi.");
             var isImage = AllowedScreensaverImageContentTypes.Contains(file.ContentType);
