@@ -36,6 +36,7 @@ Catalog modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar ba
 - Düzeltme görevleri V1-RMD-702 ve sonrası olarak ayrıca planlanır; profilsiz mevcut ürünlerin dönüşümü PO kararı bekler.
 - Fiyat ekranında bitiş tarihi ve fiyat düzeltme uçları V1-RMD-703 kapsamı dışında kalır.
 - Modifikatör atamasını kaldırma ve modifikatör formuna ürün alanı V1-RMD-705 kapsamı dışındadır.
+- Katalog düzenleme ve pasifleştirme uçları ile ekran titremesi V1-RMD-704 kapsamı dışındadır.
 
 ## Dependencies
 
