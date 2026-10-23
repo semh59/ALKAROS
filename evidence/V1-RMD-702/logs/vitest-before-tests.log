@@ -1,0 +1,46 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/src/Clients/PosTerminal
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx (17 tests | 2 failed) 517ms
+     × validates manager product price and keeps the form on a conflict 91ms
+     × does not offer the untracked stock mode the sale path ignores and shows older records in Turkish 48ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/features/catalog/CatalogWorkspace.test.tsx > catalog workspace > validates manager product price and keeps the form on a conflict
+AssertionError: expected 'YÖNETİM / KATALOGMenü ve katalogFiyat…' to contain 'Kayıt çakıştı'
+
+Expected: "Kayıt çakıştı"
+Received: "YÖNETİM / KATALOGMenü ve katalogFiyat, ürün ve modifikatör kayıtları+ Ürün ekleYenileÜrünler1Kategoriler1Vergi profilleri1Modifikatör grupları1Modifikatörler1Fiyatlar1Katalog araYayınlama yok · yalnızca yönetici ekleyip düzenleyebilirEspressoAktifESP-01 · Menü ürünü95.00 TRYSEÇİLİ KAYITEspressoÜrünlerKod / kimlikESP-01 · Menü ürünüDurumAktifDeğer95.00 TRYStok moduTakipsiz (eski kayıt)KDV profiliKDV %10MODİFİKATÖR ATAMALARIBu ürüne modifikatör atanmadı.GEÇERLİ FİYAT ZAMAN ÇİZELGESİ95.00 TRY01.01.2026 → açık uçluBu ekran yalnız kayıt yönetir. Yayınlama veya kasiyer görünürlüğü, aktif ve geçerli fiyat kuralları sağlanmadan değişmez.Yeni ürün×Formu kontrol edinKDV profili seçin.SKUÜrün adıÜrün tipiMenü ürünüModifikatörEk ürünAmbalajHizmet kalemiStok moduSiparişin onaylanması için ürünün stok eşlemesi olmalı.Miktar takipliPorsiyon takipliReçetedenKDV profiliKDV profili seçinKDV %10 · %10Kategori (opsiyonel)KategorisizSıcak içecekSatış fiyatı (TRY)Hazırlama süresi (dk, opsiyonel)VazgeçKaydı oluştur"
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx:72:39
+     70|     await fill(inputs[2], "95");
+     71|     await click([...dialog.querySelectorAll("button")].find((button) =…
+     72|     expect(document.body.textContent).toContain("Kayıt çakıştı");
+       |                                       ^
+     73|     expect(dialog.querySelector<HTMLInputElement>("input")?.value).toB…
+     74|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/features/catalog/CatalogWorkspace.test.tsx > catalog workspace > does not offer the untracked stock mode the sale path ignores and shows older records in Turkish
+AssertionError: expected "vi.fn()" to be called with arguments: [ { kind: 'products', …(1) } ]
+
+Number of calls: 0
+
+ ❯ src/features/catalog/CatalogWorkspace.test.tsx:98:22
+     96|     await fill(inputs[2], "20");
+     97|     await click([...dialog.querySelectorAll("button")].find((button) =…
+     98|     expect(onCreate).toHaveBeenCalledWith({ kind: "products", value: e…
+       |                      ^
+     99|   });
+    100|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 19 passed (21)
+   Start at  22:54:05
+   Duration  1.81s (transform 202ms, setup 0ms, import 410ms, tests 528ms, environment 1.43s)
+

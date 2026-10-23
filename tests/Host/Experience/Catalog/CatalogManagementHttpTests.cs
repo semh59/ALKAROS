@@ -193,11 +193,11 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         await AssertCreatedAsync(
             client,
             "/api/v1/management/catalog/products",
-            new CreateProductV1(productId, sku, "Atomic", ProductType.MenuItem, StockMode.Untracked));
+            new CreateProductV1(productId, sku, "Atomic", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
 
         using var duplicate = await client.PostAsJsonAsync(
             "/api/v1/management/catalog/products",
-            new CreateProductV1(Guid.NewGuid(), sku, "Duplicate", ProductType.MenuItem, StockMode.Untracked));
+            new CreateProductV1(Guid.NewGuid(), sku, "Duplicate", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
         Assert.Equal(HttpStatusCode.Conflict, duplicate.StatusCode);
         Assert.Equal("DUPLICATE_SKU", (await ReadErrorAsync(duplicate)).Error.Code);
         Assert.Equal(1L, await ScalarAsync<long>("SELECT count(*) FROM catalog.products WHERE sku = @value;", sku));
@@ -264,7 +264,7 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         using var secondClient = CreateClient(CatalogApiTestDatabase.ManagerToken);
         var sku = "RACE-" + Guid.NewGuid().ToString("N")[..8];
         var firstRequest = new CreateProductV1(
-            Guid.NewGuid(), sku, "First", ProductType.MenuItem, StockMode.Untracked);
+            Guid.NewGuid(), sku, "First", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId);
         var secondRequest = firstRequest with { Id = Guid.NewGuid(), Name = "Second" };
 
         var responses = await Task.WhenAll(
@@ -294,7 +294,7 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         var productId = Guid.NewGuid();
         var sku = "AVAIL-" + Guid.NewGuid().ToString("N")[..8];
         await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
-            new CreateProductV1(productId, sku, "Suspendable", ProductType.MenuItem, StockMode.Untracked));
+            new CreateProductV1(productId, sku, "Suspendable", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
 
         using var response = await client.PostAsJsonAsync(
             $"/api/v1/management/catalog/products/{productId:D}/availability",
@@ -326,7 +326,7 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         var productId = Guid.NewGuid();
         var sku = "PREP-" + Guid.NewGuid().ToString("N")[..8];
         await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
-            new CreateProductV1(productId, sku, "Kavurma", ProductType.MenuItem, StockMode.Untracked));
+            new CreateProductV1(productId, sku, "Kavurma", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
 
         using var setResponse = await client.PostAsJsonAsync(
             $"/api/v1/management/catalog/products/{productId:D}/prep-time",
@@ -358,7 +358,7 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         var productId = Guid.NewGuid();
         var sku = "PREPX-" + Guid.NewGuid().ToString("N")[..8];
         await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
-            new CreateProductV1(productId, sku, "Aşırı yavaş", ProductType.MenuItem, StockMode.Untracked));
+            new CreateProductV1(productId, sku, "Aşırı yavaş", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
 
         using var response = await client.PostAsJsonAsync(
             $"/api/v1/management/catalog/products/{productId:D}/prep-time",
@@ -385,7 +385,7 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         var productId = Guid.NewGuid();
         var sku = "STALE-" + Guid.NewGuid().ToString("N")[..8];
         await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
-            new CreateProductV1(productId, sku, "Stale price product", ProductType.MenuItem, StockMode.Untracked));
+            new CreateProductV1(productId, sku, "Stale price product", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
 
         var expiredFrom = DateTimeOffset.UtcNow.AddHours(-2);
         var expiredTo = DateTimeOffset.UtcNow.AddHours(-1);
@@ -423,7 +423,7 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
 
         var activatingProductId = Guid.NewGuid();
         await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
-            new CreateProductV1(activatingProductId, $"ACT-{suffix}", "Now-active product", ProductType.MenuItem, StockMode.Untracked));
+            new CreateProductV1(activatingProductId, $"ACT-{suffix}", "Now-active product", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
         // A price whose window already started, inserted directly (bypassing
         // the HTTP endpoint's own instant recompute) to simulate a price that
         // was scheduled well ahead of time and simply crossed into effect
@@ -438,7 +438,7 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
 
         var expiringProductId = Guid.NewGuid();
         await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
-            new CreateProductV1(expiringProductId, $"EXP-{suffix}", "Newly-expired product", ProductType.MenuItem, StockMode.Untracked));
+            new CreateProductV1(expiringProductId, $"EXP-{suffix}", "Newly-expired product", ProductType.MenuItem, StockMode.Untracked, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
         await _database.ExecuteAsync(
             """
             INSERT INTO catalog.product_prices (product_price_id, product_id, price_type, price, currency_code, effective_from, effective_to)
@@ -474,12 +474,34 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         await AssertCreatedAsync(client, "/api/v1/management/catalog/products",
             new CreateProductV1(
                 productId, "SEED-" + Guid.NewGuid().ToString("N")[..8], "Seed-priced product",
-                ProductType.MenuItem, StockMode.Untracked, CurrentPrice: 42m));
+                ProductType.MenuItem, StockMode.Untracked, CurrentPrice: 42m, TaxProfileId: CatalogApiTestDatabase.TaxProfileId));
         Assert.Equal(42m, await CurrentPriceAsync(productId));
 
         await CatalogPriceRecomputeHostedService.RecomputeAllAsync(_database.DataSource, CancellationToken.None);
 
         Assert.Equal(42m, await CurrentPriceAsync(productId));
+    }
+
+    [Fact]
+    public async Task ProductWithoutAnExistingActiveTaxProfileIsRejectedAndNotInserted()
+    {
+        using var client = CreateClient(CatalogApiTestDatabase.ManagerToken);
+        var inactiveId = Guid.NewGuid();
+        await AssertCreatedAsync(client, "/api/v1/management/catalog/tax-profiles",
+            new CreateTaxProfileV1(inactiveId, "OFF-" + Guid.NewGuid().ToString("N")[..8], "Pasif KDV", 10, Active: false));
+        var taxProfiles = new Guid?[] { null, Guid.NewGuid(), inactiveId };
+        foreach (var taxProfileId in taxProfiles)
+        {
+            var productId = Guid.NewGuid();
+            using var response = await client.PostAsJsonAsync(
+                "/api/v1/management/catalog/products",
+                new CreateProductV1(
+                    productId, "TAX-" + Guid.NewGuid().ToString("N")[..8], "No tax",
+                    ProductType.MenuItem, StockMode.Untracked, TaxProfileId: taxProfileId));
+            Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+            Assert.Equal("VALIDATION_FAILED", (await ReadErrorAsync(response)).Error.Code);
+            Assert.Equal(0L, await ProductCountAsync(productId));
+        }
     }
 
     [Fact]
@@ -495,7 +517,8 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
                 "Invalid reference",
                 ProductType.MenuItem,
                 StockMode.Untracked,
-                Guid.NewGuid()));
+                Guid.NewGuid(),
+                CatalogApiTestDatabase.TaxProfileId));
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal("REFERENCE_NOT_FOUND", (await ReadErrorAsync(response)).Error.Code);
         Assert.Equal(
@@ -550,5 +573,13 @@ public sealed class CatalogManagementHttpTests : IClassFixture<CatalogApiTestDat
         command.Parameters.AddWithValue("product_id", productId);
         var result = await command.ExecuteScalarAsync();
         return result is null or DBNull ? null : (decimal)result;
+    }
+
+    private async Task<long> ProductCountAsync(Guid productId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT count(*) FROM catalog.products WHERE product_id = @product_id;");
+        command.Parameters.AddWithValue("product_id", productId);
+        return (long)(await command.ExecuteScalarAsync())!;
     }
 }

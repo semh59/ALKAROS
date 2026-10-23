@@ -7,6 +7,7 @@ public sealed class CatalogApiTestDatabase : PgTestDatabase
 {
     public static readonly Guid ManagerUserId = Guid.Parse("71000000-0000-0000-0000-000000000001");
     public static readonly Guid DeniedUserId = Guid.Parse("71000000-0000-0000-0000-000000000002");
+    public static readonly Guid TaxProfileId = Guid.Parse("71000000-0000-0000-0000-0000000000a1");
     public const string ManagerToken = "catalog-manager-test-token";
     public const string DeniedToken = "catalog-denied-test-token";
 
@@ -19,6 +20,10 @@ public sealed class CatalogApiTestDatabase : PgTestDatabase
         var sqlDirectory = Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql");
         foreach (var file in Directory.GetFiles(sqlDirectory, "*.up.sql").OrderBy(path => path, StringComparer.Ordinal))
             await RunAsync(DataSource, await File.ReadAllTextAsync(file));
+
+        await RunAsync(
+            DataSource,
+            $"INSERT INTO catalog.tax_profiles (tax_profile_id, code, name, vat_rate, active) VALUES ('{TaxProfileId:D}', 'TEST-VAT', 'Test KDV', 10, TRUE);");
 
         await RunAsync(
             DataSource,

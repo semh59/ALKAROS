@@ -81,6 +81,11 @@ public sealed class CatalogManagementStore
         EnsureIdentifier(request.Id, nameof(request.Id));
         EnsureDefined(request.ProductType, nameof(request.ProductType));
         EnsureDefined(request.StockMode, nameof(request.StockMode));
+        var taxProfile = request.TaxProfileId is { } taxProfileId
+            ? await _taxProfiles.GetByIdAsync(taxProfileId, cancellationToken)
+            : null;
+        if (taxProfile is not { Active: true })
+            throw new ArgumentException("A product needs an existing, active tax profile.", nameof(request));
         var product = new Product(
             request.Id,
             NormalizeRequired(request.Sku, 100, nameof(request.Sku)),

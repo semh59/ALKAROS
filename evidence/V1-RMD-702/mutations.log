@@ -1,0 +1,5 @@
+M1 KILLED restored=true no profile check
+M2 KILLED restored=true inactive profile accepted
+M3 KILLED restored=true no client validation
+M4 KILLED restored=true profile not sent
+M5 KILLED restored=true category not sent

@@ -40,6 +40,13 @@ describe("catalog workspace", () => {
       input.dispatchEvent(new Event("change", { bubbles: true }));
     });
   }
+  async function choose(dialog: Element, labelStart: string, value: string) {
+    const select = [...dialog.querySelectorAll("label")].find((label) => label.textContent?.startsWith(labelStart))!.querySelector("select")!;
+    await act(async () => {
+      Object.getOwnPropertyDescriptor(HTMLSelectElement.prototype, "value")!.set!.call(select, value);
+      select.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+  }
   afterEach(async () => { if (root) await act(async () => root!.unmount()); root = null; vi.restoreAllMocks(); });
 
   it("renders searchable entity tabs with authoritative product detail", async () => {
@@ -68,6 +75,7 @@ describe("catalog workspace", () => {
     await fill(inputs[0], "ESP-01");
     await fill(inputs[1], "Espresso");
     await fill(inputs[2], "95");
+    await choose(dialog, "KDV profili", "tax-1");
     await click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Kaydı oluştur")!);
     expect(document.body.textContent).toContain("Kayıt çakıştı");
     expect(dialog.querySelector<HTMLInputElement>("input")?.value).toBe("ESP-01");
@@ -95,7 +103,12 @@ describe("catalog workspace", () => {
     await fill(inputs[1], "Su");
     await fill(inputs[2], "20");
     await click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Kaydı oluştur")!);
-    expect(onCreate).toHaveBeenCalledWith({ kind: "products", value: expect.objectContaining({ sku: "SU-01", stockMode: "QuantityTracked" }) });
+    expect(dialog.textContent).toContain("KDV profili seçin.");
+    expect(onCreate).not.toHaveBeenCalled();
+    await choose(dialog, "KDV profili", "tax-1");
+    await choose(dialog, "Kategori", "cat-1");
+    await click([...dialog.querySelectorAll("button")].find((button) => button.textContent === "Kaydı oluştur")!);
+    expect(onCreate).toHaveBeenCalledWith({ kind: "products", value: expect.objectContaining({ sku: "SU-01", stockMode: "QuantityTracked", taxProfileId: "tax-1", categoryId: "cat-1" }) });
   });
 
   it("shows product type, tax profile and price type in Turkish instead of raw values", async () => {
