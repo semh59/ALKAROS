@@ -499,10 +499,14 @@ public sealed class KitchenOperationsHttpTests : IAsyncLifetime
             await _database.ScalarAsync<string>(
                 "SELECT status FROM kitchen.physical_print_deliveries WHERE id = '" + seed.DeliveryId + "';"));
 
-        // Give the accept loop a moment to pick up the reprint's own connection (it may
-        // race after the background dispatcher's), then stop it and inspect everything
+        // The accept loop picks up the reprint's own connection (it may race after the
+        // background dispatcher's); wait for its text, then stop the loop and inspect everything
         // the listener actually received.
-        await Task.Delay(500);
+        var reprintText = "Station checked; original ticket was not printed.";
+        var deadline = DateTime.UtcNow.AddSeconds(30);
+        while (!receivedConnections.ToArray().Any(bytes => Encoding.UTF8.GetString(bytes).Contains(reprintText, StringComparison.Ordinal))
+               && DateTime.UtcNow < deadline)
+            await Task.Delay(10);
         acceptCts.Cancel();
         try { await acceptLoopTask; } catch (OperationCanceledException) { }
         var allReceivedText = string.Join(

@@ -248,7 +248,7 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
         }
 
         var cancel = Task.Run(() => Sync.CancelByRestaurantAsync(orderId, OnlineCancellationReason.TooBusy, Guid.NewGuid()));
-        await Task.Delay(TimeSpan.FromMilliseconds(700));
+        await WaitUntilBlockedAsync(_database.DataSource);
         Assert.False(cancel.IsCompleted);
         await kitchenWrite.CommitAsync();
 
@@ -256,6 +256,21 @@ public sealed class YemeksepetiStatusSyncTests : IAsyncLifetime
         // The kitchen had started, so the portion is wasted, not put back on sale.
         Assert.Equal(new[] { ("Waste", "Online") }, await _database.HoldsAsync(orderId));
         Assert.All(await KitchenItemStatusesAsync(orderId), status => Assert.Equal("Cancelled", status));
+    }
+
+    /// <summary>Waits until some session of this database is blocked on a lock, instead of guessing how long that takes.</summary>
+    private static async Task WaitUntilBlockedAsync(NpgsqlDataSource dataSource)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(30);
+        while (DateTime.UtcNow < deadline)
+        {
+            await using var command = dataSource.CreateCommand(
+                "SELECT count(*) FROM pg_stat_activity WHERE datname = current_database() AND wait_event_type = 'Lock';");
+            if ((long)(await command.ExecuteScalarAsync())! > 0) return;
+            await Task.Delay(10);
+        }
+
+        throw new TimeoutException("No session started waiting for a lock.");
     }
 
     [Fact]

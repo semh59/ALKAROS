@@ -39,6 +39,7 @@ V1-RMD-599 bulguları B047, B054, B055, B110, B111, B112 kapanır. Göç dosyala
 
 ## Out of scope
 
+- V1-RMD-699 kapsam genişlemesi (kasa bekleyen hesap uyarısı, dokunma hedefleri, bağlayıcı ağ açıklamaları) bu görevi etkilemez.
 - Büyük veride göç süresi ölçümü (V20-DRL-001).
 
 ## Dependencies

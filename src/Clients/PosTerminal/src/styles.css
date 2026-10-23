@@ -71,7 +71,7 @@ button:focus-visible, input:focus-visible, summary:focus-visible, a:focus-visibl
 .primary, .secondary, .header-action, .icon-action, .danger-text, .display-retry {
   border: 0;
   border-radius: 12px;
-  min-height: 46px;
+  min-height: 48px;
   padding: .75rem 1rem;
   font-weight: 850;
 }
@@ -164,10 +164,11 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .pos-brand span { color: #8e9ca8; font-size: .72rem; }
 .pos-header-actions { gap: .65rem; }
 .system-state.compact { color: #aeb8c1; border-right: 1px solid #34404b; padding-right: 1rem; }
-.header-action, .icon-action { min-height: 46px; color: #e8edf1; border: 1px solid #4d5e6c; background: #202c37; }
+.header-action, .icon-action { min-height: 48px; color: #e8edf1; border: 1px solid #4d5e6c; background: #202c37; }
 .header-action:hover, .icon-action:hover { background: #2a3844; }
+.header-action__badge { display: inline-block; min-width: 1.4rem; margin-left: .45rem; padding: 0 .4rem; border-radius: 999px; color: #fff; background: #d6452a; font-size: .8rem; font-weight: 800; line-height: 1.4rem; text-align: center; }
 .experience-header-link, .experience-header-button {
-  min-height: 44px;
+  min-height: 48px;
   display: inline-flex;
   align-items: center;
   border: 1px solid #72808b;
@@ -214,7 +215,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .toast-message.error { color: #922c36; border: 1px solid #efbdc2; background: #fff0f1; }
 .toast-message.unauthorized { color: #7d251f; border: 1px solid #edb8ae; background: #fff1ed; }
 .toast-message.conflict { color: #6d4a05; border: 1px solid #e1c373; background: #fff8df; }
-.toast-message button { min-width: 44px; min-height: 44px; border: 0; color: currentColor; background: transparent; font-size: 1.3rem; }
+.toast-message button { min-width: 48px; min-height: 48px; border: 0; color: currentColor; background: transparent; font-size: 1.3rem; }
 
 /* V1-WTR-014: a waiter's real-time call for help - deliberately its own,
    more insistent style than .toast-message (a stronger border/background),
@@ -245,7 +246,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
   border: 1.5px solid #e28a7a;
   background: #fff1ed;
 }
-.help-alert button { min-width: 44px; min-height: 44px; border: 0; color: currentColor; background: transparent; font-size: 1.3rem; }
+.help-alert button { min-width: 48px; min-height: 48px; border: 0; color: currentColor; background: transparent; font-size: 1.3rem; }
 .mobile-ticket-bar { display: none; }
 .pos-workspace {
   height: calc(100vh - 72px);
@@ -347,9 +348,9 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .ticket-line-main small { color: var(--muted); font-size: .75rem; }
 .line-total { font-size: .9rem; white-space: nowrap; }
 .quantity-controls { grid-column: 1 / -1; display: flex; align-items: center; gap: .4rem; }
-.quantity-controls button { min-width: 44px; height: 44px; color: #26313b; border: 1px solid #ccd3d9; border-radius: 10px; background: #f6f7f8; font-size: 1.1rem; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; }
+.quantity-controls button { min-width: 48px; height: 48px; color: #26313b; border: 1px solid #ccd3d9; border-radius: 10px; background: #f6f7f8; font-size: 1.1rem; font-weight: 900; display: inline-flex; align-items: center; justify-content: center; }
 .quantity-controls span { min-width: 36px; text-align: center; font-weight: 850; }
-.quantity-controls .remove { min-width: 44px; min-height: 44px; margin-left: auto; padding: 0 .9rem; color: var(--red); border-color: #efd0d3; background: #fff5f6; font-size: .8rem; display: inline-flex; align-items: center; justify-content: center; }
+.quantity-controls .remove { min-width: 48px; min-height: 48px; margin-left: auto; padding: 0 .9rem; color: var(--red); border-color: #efd0d3; background: #fff5f6; font-size: .8rem; display: inline-flex; align-items: center; justify-content: center; }
 .ticket-totals { display: grid; gap: .5rem; padding: 1rem 1.25rem .8rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .86rem; }
 .ticket-totals > div { display: flex; justify-content: space-between; }
 .ticket-totals .grand-total { align-items: end; margin-top: .2rem; padding-top: .75rem; color: var(--ink); border-top: 1px dashed #cbd2d8; font-size: 1rem; font-weight: 850; }
@@ -360,7 +361,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .submitted-state > div { display: grid; gap: .15rem; }
 .submitted-state small { color: #588575; }
 .pairing-card { border-top: 1px solid var(--line); background: #fafbfb; }
-.pairing-card summary { display: grid; gap: .15rem; padding: .9rem 1.25rem; cursor: pointer; list-style: none; min-height: 44px; }
+.pairing-card summary { display: grid; gap: .15rem; padding: .9rem 1.25rem; cursor: pointer; list-style: none; min-height: 48px; }
 .pairing-card summary::-webkit-details-marker { display: none; }
 .pairing-card summary span { font-size: .82rem; font-weight: 850; }
 .pairing-card summary small { color: var(--muted); font-size: .68rem; }
@@ -394,7 +395,7 @@ input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgb(var(--accen
 .pairing-dialog p { margin: 0; color: var(--muted); line-height: 1.5; }
 .dialog-heading { display: flex; align-items: start; justify-content: space-between; gap: 1rem; }
 .dialog-heading h2 { margin: .25rem 0 0; font-size: clamp(1.35rem, 4vw, 1.8rem); }
-.dialog-close { min-width: 44px; min-height: 44px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); background: #f5f6f7; font-size: 1.5rem; }
+.dialog-close { min-width: 48px; min-height: 48px; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); background: #f5f6f7; font-size: 1.5rem; }
 .dialog-actions { display: flex; justify-content: flex-end; gap: .7rem; }
 .dialog-actions > button { min-width: 124px; }
 .dialog-danger-zone { display: grid; gap: .35rem; margin-top: .4rem; border-top: 1px solid var(--line); padding-top: 1rem; }

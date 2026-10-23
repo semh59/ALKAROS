@@ -16,7 +16,7 @@ namespace ALKAROS.Host;
 /// point is exposed as a callable <c>Main</c> returning the process exit code;
 /// the executable packaging is owned by the release tasks.
 /// Exit codes: 0 = success, 1 = migration execution failed, 2 = startup or
-/// validation failed.
+/// validation failed, 3 = the command finished but found something an operator must look at.
 /// </summary>
 public static class Program
 {
@@ -498,7 +498,7 @@ public static class Program
     /// <summary>
     /// Drops the yearly partitions of the append-only audit log whose ten-year retention has ended (the year counts from its
     /// end, so year Y goes on 1 January of Y+11). Dry run unless --apply; --as-of only previews, so it cannot be combined with --apply.
-    /// Usage: audit-disposal --db-url &lt;url&gt; [--apply] [--as-of &lt;ISO date&gt;]
+    /// Usage: audit-disposal --db-url &lt;url&gt; [--apply] [--operator &lt;name&gt;] [--as-of &lt;ISO date&gt;]
     /// </summary>
     private static async Task<int> AuditDisposalAsync(string[] args)
     {
@@ -749,8 +749,12 @@ public static class Program
         writer.WriteLine();
         writer.WriteLine("Verbs: serve | provision-manager --db-url <url> | housekeeping --db-url <url> [--grace-days <N>] [--notification-days <N>] [--help-request-days <N>]");
         writer.WriteLine("       | kvkk-retention --db-url <url> [--apply] [--as-of <ISO date>] [--exclude-order-ids-file <path>]");
-        writer.WriteLine("       | audit-disposal --db-url <url> [--apply] [--as-of <ISO date>]");
+        writer.WriteLine("       | audit-disposal --db-url <url> [--apply] [--operator <name>] [--as-of <ISO date>]");
+        writer.WriteLine("       | watchdog --health-url <url> --buffer <path> [--interval-seconds <N>] [--failures-before-alarm <N>]");
         writer.WriteLine("  audit-disposal    Drop yearly audit-log partitions whose 10-year retention has ended. Dry run unless --apply.");
+        writer.WriteLine("                    --apply needs --operator (the name written to the audit trail); --as-of only previews.");
+        writer.WriteLine("  watchdog          Separate-container outage watcher: probes --health-url and reports an outage straight to the");
+        writer.WriteLine("                    notification channel while the API and database are down. Runs until stopped.");
         writer.WriteLine("  housekeeping      Delete expired idempotency_keys, device and display sessions, old pairing requests,");
         writer.WriteLine("                    hand-off notes, unused push subscriptions and old help requests (in batches;");
         writer.WriteLine("                    operational hygiene only, not KVKK personal-data retention).");

@@ -145,6 +145,23 @@ public sealed class ApplicationPermissionsTests
     }
 
     [Fact]
+    public void EveryMigrationSeededCodeIsSeededByAMigrationAndStaysOutOfTheCatalog()
+    {
+        var directory = AppContext.BaseDirectory;
+        while (directory is not null && !File.Exists(Path.Combine(directory, "ALKAROS.slnx")))
+            directory = Path.GetDirectoryName(directory);
+        var seeds = Directory.EnumerateFiles(Path.Combine(directory!, "database", "migrations"), "*.up.sql", SearchOption.AllDirectories)
+            .Select(File.ReadAllText)
+            .Where(sql => sql.Contains("identity.permissions", StringComparison.Ordinal))
+            .ToList();
+
+        ApplicationPermissions.MigrationSeededCodes.Should().OnlyHaveUniqueItems().And.HaveCount(11);
+        ApplicationPermissions.MigrationSeededCodes.Should().NotIntersectWith(ApplicationPermissions.Codes);
+        foreach (var code in ApplicationPermissions.MigrationSeededCodes)
+            seeds.Should().Contain(sql => sql.Contains($"'{code}'", StringComparison.Ordinal), "'{0}' must be seeded by a migration", code);
+    }
+
+    [Fact]
     public void EveryRoleGrantIsAKnownCode()
     {
         foreach (var (role, grants) in ApplicationPermissions.RoleGrants)

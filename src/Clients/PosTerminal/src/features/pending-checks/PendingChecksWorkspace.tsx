@@ -1,8 +1,10 @@
 import { HubConnectionBuilder, LogLevel } from "@microsoft/signalr";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { BillingSplitApiError, createBillFromOrder } from "../billing";
+import { playNewItemChime } from "../../audioAlerts";
 import { formatMoney } from "../../format";
 import { PendingChecksApiError, collectionHref, loadPendingChecks, recallPendingCheck, type PendingCheck } from "./pendingChecksApi";
+import { hasNewCheck } from "./usePendingChecksAlert";
 import "./pending-checks.css";
 
 // V1-RMD-287: the live push below refreshes the list at once; this poll is only the safety net for a
@@ -28,10 +30,17 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
   const [checks, setChecks] = useState<readonly PendingCheck[] | null>(null);
   const [error, setError] = useState<string>();
   const [openingOrderId, setOpeningOrderId] = useState<string>();
+  const [liveLinkUp, setLiveLinkUp] = useState(true);
+  const [loadedAt, setLoadedAt] = useState<Date>();
+  const knownIds = useRef<ReadonlySet<string> | null>(null);
 
   const load = useCallback(async () => {
     try {
-      setChecks(await loadPendingChecks(terminalId));
+      const loaded = await loadPendingChecks(terminalId);
+      if (hasNewCheck(knownIds.current, loaded)) playNewItemChime();
+      knownIds.current = new Set(loaded.map((check) => check.orderId));
+      setChecks(loaded);
+      setLoadedAt(new Date());
       setError(undefined);
     } catch (reason) {
       setError(reason instanceof PendingChecksApiError ? reason.message : "Bekleyen hesaplar okunamadı.");
@@ -63,15 +72,18 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
     let attempt = 0;
     let retryTimer: number | undefined;
     const start = () => {
-      connection.start().then(() => { attempt = 0; void load(); }).catch(() => {
+      connection.start().then(() => { attempt = 0; setLiveLinkUp(true); void load(); }).catch(() => {
         if (disposed) return;
+        setLiveLinkUp(false);
         retryTimer = window.setTimeout(start, hubRetryDelay(attempt++));
       });
     };
     connection.on("PendingChecksChanged", () => { void load(); });
-    connection.onreconnected(() => { attempt = 0; void load(); });
+    connection.onreconnected(() => { attempt = 0; setLiveLinkUp(true); void load(); });
+    connection.onreconnecting(() => setLiveLinkUp(false));
     connection.onclose(() => {
       if (disposed) return;
+      setLiveLinkUp(false);
       retryTimer = window.setTimeout(start, hubRetryDelay(attempt++));
     });
     start();
@@ -109,6 +121,8 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
   return (
     <section className="pending-checks" aria-label="Bekleyen hesaplar">
       {error && <p className="pending-checks__error" role="alert">{error}</p>}
+      {!liveLinkUp && <p className="pending-checks__offline" role="status">Canlı güncelleme yok: liste en geç dakikada bir yenilenir, yeni hesap geldiğinde ses çalmayabilir.</p>}
+      {error && checks !== null && loadedAt && <p className="pending-checks__stale" role="status">Aşağıdaki liste eski olabilir: son yenileme {sentAt(loadedAt.toISOString())}.</p>}
       {checks === null && !error && <p className="pending-checks__empty">Bekleyen hesaplar yükleniyor…</p>}
       {checks !== null && checks.length === 0 && <p className="pending-checks__empty">Ödeme bekleyen hesap yok.</p>}
       <ul className="pending-checks__list">

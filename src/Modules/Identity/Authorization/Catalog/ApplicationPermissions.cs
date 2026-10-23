@@ -5,9 +5,11 @@ namespace ALKAROS.Identity.Authorization.Catalog;
 /// coarse <c>pos.cashier.mutate</c> grant into one code per protected command
 /// family, per <c>docs/domain/authorization-model.md</c> §2-3.
 ///
-/// Every Experience endpoint checks one of these codes (V1-IAM-024). The grant
-/// map below is the single source the seed migration and the endpoints share,
-/// so an endpoint's code cannot desync from what its role is granted.
+/// Every Experience endpoint checks one of the codes in <see cref="Codes"/> or one of
+/// <see cref="MigrationSeededCodes"/>: the second group is older (management and
+/// administration areas) and seeded by its own migrations, so it is deliberately not part of
+/// <see cref="Codes"/> or <see cref="RoleGrants"/>. The grant map below is the single source
+/// the seed migration and the endpoints share for the first group.
 /// </summary>
 public static class ApplicationPermissions
 {
@@ -97,6 +99,17 @@ public static class ApplicationPermissions
     public const string RoleManager = "manager";
     /// <summary>V1-IAM-028: line kitchen staff ("Mutfak Personeli") — holds only <see cref="KitchenAdvance"/>, defined and seeded in migration 109, not in <see cref="RoleGrants"/> below (that dictionary only covers the four FOH roles; kitchen-staff's single grant is seeded directly by the migration).</summary>
     public const string RoleKitchenStaff = "kitchen-staff";
+
+    /// <summary>
+    /// Codes endpoints check by their string value that migrations seed (and grant to the manager role) outside this
+    /// catalog, listed so a reader finds every code in one place. <c>settings.manage</c> is the eleventh, see <see cref="SettingsManage"/>.
+    /// </summary>
+    public static readonly IReadOnlyList<string> MigrationSeededCodes = new[]
+    {
+        "catalog.manage", "inventory.manage", "menu.manage", "production.manage", "purchasing.manage",
+        "kitchen.routing.manage", "kitchen.reprint", "kitchen.availability.suspend", "operations.backup",
+        "identity.roles.manage", SettingsManage,
+    };
 
     /// <summary>Every code this catalog introduces, in seed order.</summary>
     public static readonly IReadOnlyList<string> Codes = new[]

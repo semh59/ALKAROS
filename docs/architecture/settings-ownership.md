@@ -63,4 +63,5 @@ history row naming who changed it).
 Reading rules: a missing, deactivated or unreadable value falls back to the
 default. History lists show the newest 5000 changes, newest first, and ties on
 the same instant are ordered by history id so paging is stable.
-Making history rows immutable in the database is a separate migration task.
+The database enforces this since migration 197: a trigger refuses deleting a history row and changing anything in it
+except clearing `changed_by` when that user is removed, and a setting that still has history cannot be deleted.

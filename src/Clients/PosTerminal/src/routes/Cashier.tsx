@@ -17,6 +17,7 @@ import { savedId } from "../storage";
 import { playNewItemChime } from "../audioAlerts";
 import { onlineHubTabFor } from "../features/online-hub";
 import { useNewOrderChime } from "../features/online-operations/useNewOrderChime";
+import { usePendingChecksAlert } from "../features/pending-checks";
 import { ExperiencePage, type BackendStatus } from "./workspace";
 
 type CashierSession = "checking" | "anonymous" | "ready";
@@ -66,6 +67,8 @@ export function Cashier() {
   const [capabilities, setCapabilities] = useState<string[]>([]);
   // The queue screen chimes for itself; the sales screen and every other one still have to tell the till that an order landed.
   useNewOrderChime(terminalId, capabilities.includes("orders.create") && onlineHubTabFor(currentPath) !== "orders");
+  // The pending-checks screen sounds and lists for itself; every other screen still has to tell the till that a check was sent over.
+  const pendingCheckCount = usePendingChecksAlert(terminalId, capabilities.includes("orders.create") && currentPath !== "/pending-checks");
   const [catalog, setCatalog] = useState<CatalogProduct[]>([]);
   const [order, setOrder] = useState<DisplaySnapshot | null>(null);
   const [pairingCode, setPairingCode] = useState("");
@@ -533,7 +536,7 @@ export function Cashier() {
               Rezervasyon istasyonu
             </button>
           )}
-          {capabilities.includes("orders.create") && <a className="header-action" href="/pending-checks" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/pending-checks"); } }}>Bekleyen hesaplar</a>}
+          {capabilities.includes("orders.create") && <a className="header-action" href="/pending-checks" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/pending-checks"); } }}>Bekleyen hesaplar{pendingCheckCount > 0 && <span className="header-action__badge" aria-label={`${pendingCheckCount} bekleyen hesap`}>{pendingCheckCount}</span>}</a>}
           {capabilities.includes("payments.take") && <a className="header-action" href="/cashier/payments/customer-accounts/index.html">Cari hesaplar</a>}
           <a className="header-action" href="/tables" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/tables"); } }}>Masalar</a>
           <a className="header-action" href="/kitchen" onClick={(event) => { if (isPlainClick(event)) { event.preventDefault(); navigate("/kitchen"); } }}>Mutfak</a>
@@ -630,7 +633,7 @@ export function Cashier() {
             view of the SAME product grid shows, so role="tab" + aria-selected
             is the right pair (not radiogroup/radio, which Module 3's
             split-payment fix used for a VALUE choice instead). */}
-        <nav className="category-rail" aria-label="Ürün kategorileri" role="tablist">
+        <div className="category-rail" aria-label="Ürün kategorileri" role="tablist">
           <button data-telemetry-id="b.routes.cashier.12"
             className={activeCategory === "ALL" ? "active" : ""}
             role="tab"
@@ -654,7 +657,7 @@ export function Cashier() {
               <small>{catalog.filter((product) => product.categoryCode === category.code).length}</small>
             </button>
           ))}
-        </nav>
+        </div>
 
         <section className="catalog-workspace">
           <div className="catalog-toolbar">
@@ -792,7 +795,7 @@ export function Cashier() {
         </aside>
       </div>
       {pairingOpen && (
-        <div className="dialog-backdrop" onMouseDown={(event) => {
+        <div className="dialog-backdrop" role="presentation" onKeyDown={trapPairingFocus} onMouseDown={(event) => {
           if (event.target === event.currentTarget) closePairing();
         }}>
           <div
@@ -802,7 +805,6 @@ export function Cashier() {
             aria-modal="true"
             aria-labelledby="pairing-title"
             aria-describedby="pairing-description"
-            onKeyDown={trapPairingFocus}
           >
             <div className="dialog-heading">
               <div>

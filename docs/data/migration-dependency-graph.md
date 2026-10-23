@@ -19,6 +19,11 @@
 > `roles` üçlüsünden ayrıldı: 004 `stores`, 005 `users` (V1-IAM-001), 006 `roles` (V1-IAM-002) olur; sonraki
 > pozisyonlar 005-024 → 007-026 olarak +2 kayar (Phase B 031-035 değişmez). Kayma, migration scriptleri henüz
 > oluşturulmadan yapıldığı için mevcut hiçbir scripti etkilemez.
+>
+> **Güncel durum (tarihsel not):** Aşağıdaki Phase A listesi ve pozisyon numaraları bu kayıtlı kararın o günkü
+> hâlidir. Uygulanan sıra `database/MigrationComposition/order.json` dosyasındadır: 004 pozisyonu kullanılmaz
+> (001-003 sonrası 005 `users`, 006 katalog tabloları, 008 `roles` ve `permissions` gelir) ve Phase B 031 ile
+> `MigrationManifest.PhaseBMax` arasındadır (şu an 201). Numara için her zaman `order.json` esastır.
 
 ## 1. Entity Dependency Graph
 
@@ -155,7 +160,7 @@ ALTER TABLE invoices ADD COLUMN fiscal_document_id UUID REFERENCES fiscal_docume
 20. refund_ledger_entries
 21. reconciliation_cases, alerts
 
-### Phase B (migrations 031-040)
+### Phase B (migrations 031-040 at the time of writing; the applied order and its current upper bound are in `order.json`)
 
  1. invoices, invoice_lines (migration 031; cycle FKs applied in migrations 032-035, see Section 4)
 

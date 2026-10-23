@@ -20,6 +20,10 @@
 | Browser | Chrome 120 | Chrome 130+ | Latest | Cashier kiosk + PWA |
 | Architecture | x64 | x64 | arm64 (tablet only) | |
 
+> **Güncel durum (2026-10-23):** Tablodaki .NET 10 hedef durumdur; depo bugün `net8.0` ile derlenir ve çalışır
+> (`Directory.Build.props`). Kural 3'teki ".NET 10 runtime" önkoşulu .NET 10'a geçişle birlikte geçerli olur; o güne kadar
+> çalışan yığının gerçek önkoşulu .NET 8 runtime'dır.
+
 ## 2. Rules
 
 1. Fresh install requires all minimums met.

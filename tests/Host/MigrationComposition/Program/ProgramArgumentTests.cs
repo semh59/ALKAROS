@@ -29,6 +29,34 @@ public sealed class ProgramArgumentTests
     }
 
     [Fact]
+    public void TheUsageTextNamesEveryVerbAndTheOperatorOptionOfAuditDisposal()
+    {
+        var originalError = Console.Error;
+        using var error = new StringWriter();
+        try
+        {
+            Console.SetError(error);
+
+            var exitCode = ALKAROS.Host.Program.Main(["--no-such-option"]);
+
+            Assert.Equal((int)HostExitCode.StartupFailed, exitCode);
+            foreach (var expected in new[]
+            {
+                "Verbs: serve | provision-manager",
+                "| housekeeping --db-url",
+                "| kvkk-retention --db-url",
+                "| audit-disposal --db-url <url> [--apply] [--operator <name>]",
+                "| watchdog --health-url <url> --buffer <path>",
+            })
+                Assert.Contains(expected, error.ToString(), StringComparison.Ordinal);
+        }
+        finally
+        {
+            Console.SetError(originalError);
+        }
+    }
+
+    [Fact]
     public void CommandLinePasswordIsRejectedWithoutWritingTheSecret()
     {
         const string secret = "secret-must-not-appear";

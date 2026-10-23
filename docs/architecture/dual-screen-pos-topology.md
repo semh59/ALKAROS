@@ -60,8 +60,10 @@ DOM'u veya mock service authoritative state değildir. Müşteri ekranı mutatio
 
 ### Realtime update
 
-- Commit sonrasında SignalR bildirimi yalnız `displayId`, `orderId`, `revision` ve değişiklik türünü taşır; ürün,
-  ödeme veya kimlik verisini event payload'ına kopyalamaz.
+- Commit sonrasında SignalR bildirimi (`SnapshotChanged`) terminal grubuna gider ve yalnız `orderId`, `revision` ve
+  değişiklik türünü (`kind = "OrderChanged"`) taşır; hesap kapanışında yalnız `kind = "BillSettled"` gider. Payload
+  `displayId` taşımaz (alıcı grup terminal kimliğiyle belirlenir); ürün, ödeme veya kimlik verisini event payload'ına
+  kopyalamaz.
 - Bildirim alan müşteri ekranı yeni HTTP snapshot'ını çeker. Aynı veya daha eski revision yok sayılır; revision
   boşluğu ve order kimliği değişimi koşulsuz tam snapshot yenilemesi başlatır.
 - SignalR kaybını telafi etmek için aktif görünüm en geç beş saniyede bir HTTP snapshot ile reconcile edilir.
@@ -83,9 +85,10 @@ başarısız olsa bile periyodik snapshot reconciliation doğru durumu getirir.
    sınırlandırılır; süresi dolan veya kullanılan kod yeniden kabul edilmez.
 3. Kimliği doğrulanmış cashier, doğru `TerminalId` ve fiziksel ekranı görerek eşleşmeyi onaylar.
 4. Customer display kendi pairing request'ini poll eder. Onaydan sonra sunucu yalnız bu display'e ait `HttpOnly`,
-   `Secure`, `SameSite=Strict` session cookie'si verir; secret ve kısa kod geçersizleşir.
-5. Display principal yalnız `customer-display:read` yetkisine, tek `DisplayId` ve tek `TerminalId` claim'ine sahiptir.
-   Command, admin, report, identity, fiscal, printer ve payment-provider uçları bu principal için reddedilir.
+   `SameSite=Strict` session cookie'si verir; `Secure` yalnız HTTPS isteklerinde konur (üretim HTTPS ister, yalnız
+   geliştirmedeki loopback HTTP'de çerez `Secure` olmaz); secret ve kısa kod geçersizleşir.
+5. Display principal ayrı bir izin kodu taşımaz: yetkisi `alkaros.customer-display` çerez oturumu ve rota izin listesiyle
+   sınırlıdır; oturum tek `DisplayId` ve tek `TerminalId`'ye bağlıdır. Command, admin, report, identity, fiscal, printer ve payment-provider uçları bu principal için reddedilir.
 6. Display kaydı silinince, terminal devre dışı kalınca, yeni display eşleşince veya operatör bağlantıyı kaldırınca
    session derhal iptal edilir. Uzun ömürlü credential URL, localStorage veya log içine yazılmaz.
 7. Session süresi 12 saat kayandır: kullanıldıkça uzar (satır dakikada en çok bir kez yazılır), kullanılmayan
@@ -199,7 +202,7 @@ Bu senaryo release candidate, exact installer artifact ve iki fiziksel ekran üz
 
 ## Affected tasks and custody
 
-- `V1-RMD-004`: Mock kalır; production backend, iki-screen synchronization veya go-live kanıtı sayılmaz.
+- `V1-RMD-004`: Mock kalır (tarihsel; sunucu tarafı `V1-RMD-006` ile uygulandı); production backend, iki-screen synchronization veya go-live kanıtı sayılmaz.
 - `V1-CUI-001`, `V1-CUI-002`, `V1-CUI-003`: Tarihsel cashier davranışları yeniden açılmaz; yeni entegrasyon bunların
   kontratlarını tüketir.
 - `V1-ORD-002`, `V1-IAM-003`, `V1-SEC-002`, `V1-OBS-001`: Sipariş otoritesi, device session, sensitive payload ve
@@ -210,9 +213,10 @@ Bu senaryo release candidate, exact installer artifact ve iki fiziksel ekran üz
 - `V20-REL-002`, `V20-REL-003`, `V20-REL-004`: Sentetik pilot, signed go-live ve production deployment bu kararı ve
   gerçek donanım kanıtını tüketir.
 
-Mevcut planda customer-display server projection, read-only client ve cashier/display integration yüzeylerini sahiplenen
-uygulama görevleri yoktur. Bu karar production davranışı tamamlanmış saymaz. Bu üç sorumluluk ve composition/build
-entegrasyonu, çakışmasız exact owned surface'lerle ayrı plan değişikliğinde kabul edilmeden uygulama kodu yazılamaz.
+Tarihsel not: bu karar yazıldığında customer-display server projection, read-only client ve cashier/display integration
+yüzeylerini sahiplenen uygulama görevi yoktu; sonradan `V1-RMD-006` (ve devamındaki ekran görevleri) bu yüzeyleri
+uyguladı (`src/Host/DualScreen/**`). Karar production davranışı tamamlanmış saymaz; production izni yine yalnız aşağıdaki
+release sınırına bağlıdır.
 
 ## Release boundary
 

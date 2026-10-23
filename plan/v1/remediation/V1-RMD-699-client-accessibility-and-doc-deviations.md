@@ -29,6 +29,9 @@ V1-RMD-599 bulguları B068, B122, B123, B127, B128, B131, B133, B135, B137, B139
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız bekleme düzeltmeleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/** - yalnız bekleme düzeltmeleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/** - yalnız yeni test
+- Sınırlı ek (paylaşılan, geri-tik olmadan): deploy/docker/README.md - yalnız bağlayıcı ağ açıklaması
+- Sınırlı ek (paylaşılan, geri-tik olmadan): deploy/docker/Dockerfile - yalnız bağlayıcı ağ yorumu
+- `src/Clients/PosTerminal/src/touchTargets.test.ts`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-698-migration-line-endings-and-indexes.md - yalnız Handoff satırı
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 

@@ -131,10 +131,9 @@ ENTRYPOINT ["dotnet", "ALKAROS.Host.dll", "serve", \
 # ---------------------------------------------------------------------------
 # connector: V12-QRT-005. runtime (not aspnet) — ConnectorHost has no
 # ASP.NET Core dependency, only Microsoft.Extensions.Hosting. Runs in its own
-# container sharing `api`'s network namespace (compose.yaml's
-# `network_mode: "service:api"`) so `cloudflared`'s tunnel ingress target
-# (`http://localhost:5080`, RelayProvisioningService.LocalOriginService)
-# keeps reaching the API unchanged.
+# container on the compose network; `cloudflared`'s tunnel ingress target
+# (`http://api:5080`, RelayProvisioningService.LocalOriginService) reaches
+# the API by its service name. It no longer shares `api`'s network namespace.
 # ---------------------------------------------------------------------------
 FROM mcr.microsoft.com/dotnet/runtime:8.0-alpine@sha256:023a2daa7f8303c8915915ff68657492e0d99bfe2d095b2eb22c6f4c1e459b83 AS connector
 RUN apk update \

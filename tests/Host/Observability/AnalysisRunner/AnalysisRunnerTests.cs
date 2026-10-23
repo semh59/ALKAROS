@@ -116,9 +116,19 @@ public sealed class AnalysisRunnerTests : IClassFixture<RunnerDatabase>
             broken, writer, new DetectorHeartbeats(), TimeSpan.FromMilliseconds(30));
 
         await runner.StartAsync(CancellationToken.None);
-        await Task.Delay(5000);
+        await WaitUntilAsync(() => runner.Failures > 1);
         await runner.StopAsync(CancellationToken.None);
 
         runner.Failures.Should().BeGreaterThan(1);
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(30);
+        while (!condition())
+        {
+            if (DateTime.UtcNow > deadline) throw new TimeoutException("The condition did not become true.");
+            await Task.Delay(10);
+        }
     }
 }

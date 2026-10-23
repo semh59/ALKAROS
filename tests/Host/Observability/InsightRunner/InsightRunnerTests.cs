@@ -44,7 +44,7 @@ public sealed class InsightRunnerTests : IClassFixture<RunnerDatabase>
             await using var update = new NpgsqlCommand("UPDATE runner_probe SET id = 1 WHERE id = 1;", waiter);
             await update.ExecuteNonQueryAsync();
         });
-        await Task.Delay(1500);
+        await WaitUntilBlockedAsync(_database.DataSource);
         await using var writer = new ErrorEventWriter(_database.DataSource, flushInterval: TimeSpan.FromMinutes(5));
         var runner = new InsightRunnerHostedService(new PostgresInsightService(_database.DataSource), writer);
 
@@ -70,9 +70,34 @@ public sealed class InsightRunnerTests : IClassFixture<RunnerDatabase>
             new PostgresInsightService(broken), writer, TimeSpan.FromMilliseconds(30));
 
         await runner.StartAsync(CancellationToken.None);
-        await Task.Delay(5000);
+        await WaitUntilAsync(() => runner.Failures > 1);
         await runner.StopAsync(CancellationToken.None);
 
         runner.Failures.Should().BeGreaterThan(1);
+    }
+
+    private static async Task WaitUntilAsync(Func<bool> condition)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(30);
+        while (!condition())
+        {
+            if (DateTime.UtcNow > deadline) throw new TimeoutException("The condition did not become true.");
+            await Task.Delay(10);
+        }
+    }
+
+    /// <summary>Waits until some session of this database is blocked on a lock, instead of guessing how long that takes.</summary>
+    private static async Task WaitUntilBlockedAsync(NpgsqlDataSource dataSource)
+    {
+        var deadline = DateTime.UtcNow.AddSeconds(30);
+        while (DateTime.UtcNow < deadline)
+        {
+            await using var command = dataSource.CreateCommand(
+                "SELECT count(*) FROM pg_stat_activity WHERE datname = current_database() AND wait_event_type = 'Lock';");
+            if ((long)(await command.ExecuteScalarAsync())! > 0) return;
+            await Task.Delay(10);
+        }
+
+        throw new TimeoutException("No session started waiting for a lock.");
     }
 }

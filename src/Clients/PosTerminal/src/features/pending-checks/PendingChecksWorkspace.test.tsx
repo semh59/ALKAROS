@@ -5,9 +5,12 @@ import axe from "axe-core";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { PendingChecksWorkspace } from "./PendingChecksWorkspace";
 
+const chime = vi.hoisted(() => vi.fn());
+vi.mock("../../audioAlerts", () => ({ playNewItemChime: chime }));
+
 // V1-RMD-287: the live link is faked so a test can fire the hub event directly.
 const hubHandlers: Record<string, () => void> = {};
-const hubLifecycle: { reconnected?: () => void } = {};
+const hubLifecycle: { reconnected?: () => void; reconnecting?: () => void } = {};
 const hubStart = vi.fn(async () => undefined);
 vi.mock("@microsoft/signalr", () => ({
   LogLevel: { Warning: 2 },
@@ -19,6 +22,7 @@ vi.mock("@microsoft/signalr", () => ({
       return {
         on: (event: string, handler: () => void) => { hubHandlers[event] = handler; },
         onreconnected: (callback: () => void) => { hubLifecycle.reconnected = callback; },
+        onreconnecting: (callback: () => void) => { hubLifecycle.reconnecting = callback; },
         onclose: () => undefined,
         start: hubStart,
         stop: async () => undefined,
@@ -43,6 +47,7 @@ describe("PendingChecksWorkspace", () => {
     document.body.innerHTML = '<div id="root"></div>';
     fetchMock.mockReset();
     hubStart.mockReset();
+    chime.mockClear();
     hubStart.mockImplementation(async () => undefined);
     hubUrls.length = 0;
     vi.stubGlobal("fetch", fetchMock);
@@ -176,6 +181,47 @@ describe("PendingChecksWorkspace", () => {
 
     await act(async () => { hubLifecycle.reconnected?.(); });
     expect(awaitingCalls()).toBe(before + 2);
+  });
+
+  it("stays quiet for checks already waiting and chimes once for a check it has not seen", async () => {
+    fetchMock.mockResolvedValue(ok([sample[0]]));
+    await render();
+    expect(chime).not.toHaveBeenCalled();
+
+    await act(async () => { hubHandlers.PendingChecksChanged(); });
+    expect(chime).not.toHaveBeenCalled();
+
+    fetchMock.mockResolvedValue(ok(sample));
+    await act(async () => { hubHandlers.PendingChecksChanged(); });
+    expect(chime).toHaveBeenCalledTimes(1);
+
+    await act(async () => { hubHandlers.PendingChecksChanged(); });
+    expect(chime).toHaveBeenCalledTimes(1);
+  });
+
+  it("says the live update is down while the link is down and drops the notice once it is back", async () => {
+    fetchMock.mockResolvedValue(ok(sample));
+    hubStart.mockImplementation(async () => { throw new Error("down"); });
+    await render();
+    expect(document.querySelector(".pending-checks__offline")?.textContent).toContain("Canlı güncelleme yok");
+
+    await act(async () => { hubLifecycle.reconnected?.(); });
+    expect(document.querySelector(".pending-checks__offline")).toBeNull();
+
+    await act(async () => { hubLifecycle.reconnecting?.(); });
+    expect(document.querySelector(".pending-checks__offline")).not.toBeNull();
+  });
+
+  it("marks the list as possibly out of date when a refresh fails, with the time of the last good one", async () => {
+    fetchMock.mockResolvedValue(ok(sample));
+    await render();
+    expect(document.querySelector(".pending-checks__stale")).toBeNull();
+
+    fetchMock.mockResolvedValue({ ok: false, status: 500, json: async () => ({}) });
+    await act(async () => { hubHandlers.PendingChecksChanged(); });
+
+    expect(document.querySelector(".pending-checks__stale")?.textContent).toMatch(/eski olabilir: son yenileme \d{2}:\d{2}/);
+    expect(document.body.textContent).toContain("S-001");
   });
 
   // V1-RMD-370 (module-by-module UI audit, 2026-09-27): unlike ~13 other

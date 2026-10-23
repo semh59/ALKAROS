@@ -66,9 +66,9 @@ Point the customer displays at `https://display.<ALKAROS_PROXY_HOST>:8443/displa
 ## QR/NFC public relay origin scope (relay scope hardening, 2026-09-09)
 
 The Cloudflare Tunnel connector (`ALKAROS.QrRelay.LocalConnector`, provisioned
-from Settings → Relay) runs in the same container as `api` and reaches it over
-loopback (`RelayProvisioningService`'s own tunnel configuration points at
-`http://localhost:5080`) — it never goes through `web`/Caddy at all. Before
+from Settings → Relay) runs as its own `connector` container on the compose
+network and reaches `api` there (`RelayProvisioningService`'s own tunnel
+configuration points at `http://api:5080`) — it never goes through `web`/Caddy at all. Before
 this flag, a provisioned tunnel exposed the **entire** application (every
 Cashier and manager API included) to the public internet, protected only by
 the app's own authentication — a much larger blast radius than intended for a

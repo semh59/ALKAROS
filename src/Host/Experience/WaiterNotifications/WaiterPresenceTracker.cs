@@ -9,8 +9,10 @@ namespace ALKAROS.Host.Experience.WaiterNotifications;
 /// SignalR group send gives no feedback about whether it reached anyone.
 ///
 /// A single user can hold more than one connection (two tabs, phone and
-/// desktop), hence a count rather than a flag; the entry is removed once
-/// it reaches zero so this never grows unbounded over a long-running host.
+/// desktop), hence a count rather than a flag; a count that reaches zero
+/// stays in the dictionary (IsConnected reads the count, not key presence), so
+/// it holds one entry per distinct signed-in user ever seen - bounded by the
+/// number of staff accounts, not by connections.
 /// Single-process, in-memory by design (V0-ARC-001: this deployment model
 /// has one Host instance).
 /// </summary>

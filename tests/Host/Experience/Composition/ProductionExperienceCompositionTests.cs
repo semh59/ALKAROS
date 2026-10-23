@@ -145,11 +145,11 @@ public sealed class ProductionExperienceCompositionTests
     }
 
     /// <summary>
-    /// Relay scope hardening (2026-09-09): the Cloudflare Tunnel connector
-    /// reaches this process over loopback (RelayProvisioningService's own
-    /// LocalOriginService, "http://localhost:5080") — --nfc-loopback-origin
-    /// treats that connection the same as the dedicated-port/header signals
-    /// above. This test's HttpClient necessarily connects via 127.0.0.1
+    /// Relay scope hardening (2026-09-09): --nfc-loopback-origin treats a
+    /// connection that arrives over loopback the same as the dedicated-port/
+    /// header signals above. (The tunnel connector itself now reaches the API
+    /// as "http://api:5080" from the compose network, see
+    /// RelayProvisioningService.LocalOriginService.) This test's HttpClient necessarily connects via 127.0.0.1
     /// too (an in-process test has no second machine to call from), which
     /// is exactly what proves the mechanism itself works: a loopback caller
     /// really is restricted to the NFC route allowlist once the flag is on.

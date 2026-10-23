@@ -67,6 +67,15 @@ public sealed class ManifestTests : IDisposable
     }
 
     [Fact]
+    public void TheDeclaredPhaseBRangeMatchesTheRangeTheLoaderEnforces()
+    {
+        var range = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(Path.Combine("Fixtures", "order.json")))!["phaseBRange"]!;
+
+        Assert.Equal(MigrationManifest.PhaseBMin, range["min"]!.GetValue<string>());
+        Assert.Equal(MigrationManifest.PhaseBMax, range["max"]!.GetValue<string>());
+    }
+
+    [Fact]
     public void RuntimeManifestContainsOnlyImplementedMigrationPairs()
     {
         var manifest = MigrationManifest.Load(Path.Combine("Fixtures", "order.json"));
