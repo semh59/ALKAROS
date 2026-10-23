@@ -24,6 +24,9 @@ V1-RMD-599 bulguları B023, B051, B052, B053, B056, B057, B086, B102, B130 kapan
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-693-error-catalog-and-envelope.md - yalnız Handoff satırı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/CustomerAccounts/** - yalnız hesap kapatma çağrısının günlükleyici parametresi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/split-payment/** - yalnız fiş ödeme yöntemi etiketleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/** - yalnız fiş etiketi testi
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope

@@ -39,6 +39,7 @@ V1-RMD-599 bulguları B021, B022, B024, B065, B083, B084, B085, B089, B092, B096
 ## Out of scope
 
 - İki farklı hata zarfı biçiminin birleştirilmesi (bilinen, ayrı karar).
+- Yerel uç nokta eşleyicilerinin (`PostgresException or NpgsqlException => 503`) kataloğa taşınması yapılmadı; V1-RMD-694 kapsam genişlemesi bu görevi etkilemez.
 
 ## Dependencies
 
