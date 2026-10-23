@@ -81,6 +81,12 @@ public sealed class HelpRequestTestDatabase : PgTestDatabase
         return helpRequestId;
     }
 
+    /// <summary>Makes every request look as if it was raised the given number of seconds ago.</summary>
+    public Task AgeRequestsAsync(int seconds)
+        => ExecuteAsync(
+            "UPDATE notifications.help_requests SET created_at = now() - make_interval(secs => @seconds);",
+            ("seconds", (double)seconds));
+
     public Task<long> AcknowledgedCountAsync()
         => ScalarAsync<long>("SELECT count(*) FROM notifications.help_requests WHERE acknowledged_at IS NOT NULL;");
 

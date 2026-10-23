@@ -118,37 +118,31 @@ public static partial class DualScreenApplication
             // budget, so #userRole on the client has a real name to show
             // from the moment of sign-in rather than only after the next
             // /auth/session poll.
-            Role? loginRole = null;
             if (governingRole is not null)
             {
-                var role = governingRole;
-                loginRole = role;
-                if (role is not null)
+                var budget = await offlineBudgets.IssueAsync(
+                    success.UserId, governingRole.Code, session.SessionId, cancellationToken: cancellationToken);
+                offlineBudget = new
                 {
-                    var budget = await offlineBudgets.IssueAsync(
-                        success.UserId, role.Code, session.SessionId, cancellationToken: cancellationToken);
-                    offlineBudget = new
+                    budgetId = budget.BudgetId,
+                    // The reconnect endpoint requires RequesterRoleCode on every replayed action and
+                    // checks it against this same governing role; no other response carries the code.
+                    roleCode = governingRole.Code,
+                    expiresAt = budget.ExpiresAt,
+                    lines = budget.Lines.Select(line => new
                     {
-                        budgetId = budget.BudgetId,
-                        // V1-RMD-297: the reconnect endpoint requires RequesterRoleCode on every replayed action and
-                        // checks it against this same governing role; no other response carries the code.
-                        roleCode = role.Code,
-                        expiresAt = budget.ExpiresAt,
-                        lines = budget.Lines.Select(line => new
-                        {
-                            permissionCode = line.PermissionCode,
-                            limitAmount = line.LimitAmount,
-                            maxCount = line.MaxCount,
-                        }),
-                    };
-                }
+                        permissionCode = line.PermissionCode,
+                        limitAmount = line.LimitAmount,
+                        maxCount = line.MaxCount,
+                    }),
+                };
             }
 
             return Results.Ok(new
             {
                 userId = success.UserId,
                 displayName = success.DisplayName,
-                roleName = loginRole?.Name,
+                roleName = governingRole?.Name,
                 terminalId = request.TerminalId,
                 capabilities,
                 offlineBudget,
@@ -602,7 +596,7 @@ public static partial class DualScreenApplication
             return principal;
 
         var displayToken = context.Request.Cookies[DisplayCookieName];
-        if (await store.AuthenticateDisplayAsync(displayToken, null, cancellationToken) is not null)
+        if (await store.AuthenticateDisplayAsync(displayToken, cancellationToken) is not null)
             throw new DualScreenForbiddenException("Customer display sessions cannot mutate cashier resources.");
         throw new DualScreenUnauthorizedException("Cashier authentication is required.");
     }
@@ -614,7 +608,7 @@ public static partial class DualScreenApplication
         CancellationToken cancellationToken)
     {
         var token = context.Request.Cookies[DisplayCookieName];
-        var principal = await store.AuthenticateDisplayAsync(token, null, cancellationToken);
+        var principal = await store.AuthenticateDisplayAsync(token, cancellationToken);
         if (principal is null)
             throw new DualScreenUnauthorizedException("Customer display authentication is required.");
         if (principal.DisplayId != displayId)

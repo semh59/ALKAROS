@@ -17,7 +17,7 @@ public sealed class CustomerDisplayHub : Hub
     {
         var httpContext = Context.GetHttpContext();
         var rawToken = httpContext?.Request.Cookies[DualScreenApplication.DisplayCookieName];
-        var principal = await _store.AuthenticateDisplayAsync(rawToken, null, Context.ConnectionAborted);
+        var principal = await _store.AuthenticateDisplayAsync(rawToken, Context.ConnectionAborted);
         if (principal is null)
         {
             Context.Abort();

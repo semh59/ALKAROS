@@ -11,9 +11,14 @@ namespace ALKAROS.Host.Experience;
 /// RoleManagementAuthentication, AuthorizationDecisionAuthentication and
 /// CatalogManagerAuthentication by an independent boundary audit
 /// (2026-09-07) — a code-duplication/maintenance risk (a future change to
-/// one copy could silently not apply to the others), not a module-boundary
-/// violation: each caller reads identity's own schema for its own session
-/// check, which V0-ARC-001 always allows.
+/// one copy could silently not apply to the others).
+///
+/// The statements below also WRITE <c>identity.device_sessions.last_seen_at</c>
+/// and re-implement the revoked/expired/active-user rules of
+/// <c>DeviceSessionService</c> in SQL; the Host-to-identity read access the
+/// architecture allows does not cover that write. Any change to those session
+/// rules has to be made here as well until the lookup moves into the identity
+/// module.
 /// </summary>
 internal static class ManagementSessionLookup
 {

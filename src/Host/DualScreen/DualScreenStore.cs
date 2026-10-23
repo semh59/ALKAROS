@@ -26,14 +26,11 @@ public sealed partial class DualScreenStore
     public DualScreenStore(NpgsqlDataSource dataSource)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
-        // Not DI-injected: DualScreenStore is registered by five different
-        // Experience areas (Tables, Orders, Billing, Kitchen, OfflineReconciliation
-        // — see their AddXxxExperience() TryAddSingleton<DualScreenStore>() calls)
-        // purely for its cashier/display session authentication, none of which
-        // compose the Orders module or its IOrderRepository registration. Building
-        // the repository from the same NpgsqlDataSource this store already holds
-        // (rather than requiring a fifth DI registration everywhere) keeps those
-        // four unrelated compositions working unchanged.
+        // Not DI-injected: several Experience areas register DualScreenStore themselves
+        // (TryAddSingleton<DualScreenStore>() in their AddXxxExperience()) purely for cashier/display session
+        // authentication, and those stand-alone compositions do not include the Orders module. The serve container
+        // does register IOrderRepository through OrdersModule, but building the repository from the data source
+        // this store already holds keeps the stand-alone compositions working without a registration each.
         _orderRepository = new PostgresOrderRepository(dataSource);
     }
 
@@ -121,7 +118,6 @@ public sealed partial class DualScreenStore
 
     public async Task<DisplayPrincipal?> AuthenticateDisplayAsync(
         string? rawToken,
-        Guid? requiredDisplayId,
         CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(rawToken))
@@ -138,7 +134,6 @@ public sealed partial class DualScreenStore
                   AND revoked_at IS NULL
                   AND expires_at > now()
                   AND (last_seen_at IS NULL OR last_seen_at <= now() - @refresh)
-                  AND (@display_id IS NULL OR display_id = @display_id)
                 RETURNING session_id, display_id, terminal_id, expires_at
             )
             SELECT session_id, display_id, terminal_id, expires_at FROM touched
@@ -148,11 +143,9 @@ public sealed partial class DualScreenStore
             WHERE token_hash = @token_hash
               AND revoked_at IS NULL
               AND expires_at > now()
-              AND last_seen_at > now() - @refresh
-              AND (@display_id IS NULL OR display_id = @display_id);
+              AND last_seen_at > now() - @refresh;
             """);
         command.Parameters.AddWithValue("token_hash", DualScreenToken.Hash(rawToken));
-        command.Parameters.Add("display_id", NpgsqlDbType.Uuid).Value = requiredDisplayId ?? (object)DBNull.Value;
         command.Parameters.Add("lifetime", NpgsqlDbType.Interval).Value = DisplaySessionLifetime;
         command.Parameters.Add("refresh", NpgsqlDbType.Interval).Value = DisplaySessionRefreshInterval;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
@@ -545,7 +538,7 @@ public sealed partial class DualScreenStore
         Guid DisplayId,
         Guid? TerminalId,
         string SecretHash,
-        DateTimeOffset ExpiresAt,
+        bool Expired,
         DateTimeOffset? ApprovedAt,
         DateTimeOffset? ConsumedAt,
         short FailedAttempts);

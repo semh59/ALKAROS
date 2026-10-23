@@ -467,7 +467,7 @@ internal sealed class TableManagementSessionAuthorizer : ITableManagementSession
         if (cashier is null)
         {
             var displayToken = context.Request.Cookies[DualScreenApplication.DisplayCookieName];
-            if (await _sessions.AuthenticateDisplayAsync(displayToken, null, cancellationToken) is not null)
+            if (await _sessions.AuthenticateDisplayAsync(displayToken, cancellationToken) is not null)
                 throw new TableManagementForbiddenException("Customer displays cannot access table management resources.");
             throw new TableManagementUnauthorizedException("A valid terminal-bound cashier session is required.");
         }

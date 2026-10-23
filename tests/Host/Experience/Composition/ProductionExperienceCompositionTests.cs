@@ -351,6 +351,25 @@ public sealed class ProductionExperienceCompositionTests
 
             Assert.NotEmpty(moduleServices);
             using var scope = app.Services.CreateScope();
+            using var otherScope = app.Services.CreateScope();
+
+            // An approved decorator that no module registers any more is a stale approval that would hide the next
+            // real mismatch.
+            Assert.All(
+                ApprovedHostDecoratedModuleServices.Keys,
+                key => Assert.Contains(moduleServices, d => d.ServiceType == key));
+
+            // Two modules may declare the same service only when they declare it the same way: same implementation
+            // and same lifetime, so which one the container keeps does not matter.
+            foreach (var shared in moduleServices
+                .Where(d => d.ImplementationInstance is null && d.ImplementationFactory is null)
+                .GroupBy(d => (d.ServiceType, d.ImplementationType))
+                .Where(g => g.Count() > 1))
+            {
+                Assert.True(
+                    shared.Select(d => d.Lifetime).Distinct().Count() == 1,
+                    $"{shared.Key.ServiceType.Name} is declared with different lifetimes by different modules.");
+            }
 
             // A service type registered by more than one module (e.g.
             // IIntegrationEventConsumer, one implementation per module) is an
@@ -399,6 +418,14 @@ public sealed class ProductionExperienceCompositionTests
                     continue;
 
                 Assert.IsType(descriptor.ImplementationType, resolved);
+
+                // The declared lifetime holds in the serve container: a singleton is one instance everywhere, a
+                // scoped or transient service is not shared between scopes.
+                var other = otherScope.ServiceProvider.GetService(descriptor.ServiceType);
+                if (descriptor.Lifetime.ToString() == "Singleton")
+                    Assert.Same(resolved, other);
+                else
+                    Assert.NotSame(resolved, other);
             }
         }
         finally

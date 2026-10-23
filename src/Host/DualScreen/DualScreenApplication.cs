@@ -30,7 +30,6 @@ using ALKAROS.Payments.Allocations.Persistence;
 using ALKAROS.Identity.Authentication;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.DeviceSessions;
-using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Kitchen.Routing;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Orders.OrderAggregate;
@@ -103,9 +102,32 @@ public static partial class DualScreenApplication
     public static int Run(string[] args)
     {
         var options = DualScreenOptions.Parse(args);
+        RequireKitchenStation(Environment.GetEnvironmentVariable(KitchenStationEnvironmentVariable));
         var app = Build(options);
-        app.Run();
+        try
+        {
+            app.Run();
+        }
+        catch (Exception exception) when (exception is IOException or System.Net.Sockets.SocketException)
+        {
+            // A busy port or an unusable certificate is an operator problem, reported like the other startup errors.
+            throw new DualScreenStartupException($"The server could not start: {exception.Message}");
+        }
+
         return 0;
+    }
+
+    /// <summary>
+    /// The fallback kitchen station is needed by every order submission and by the runtime configuration; a missing
+    /// value used to surface as an error on the first request instead of at startup.
+    /// </summary>
+    public static void RequireKitchenStation(string? stationId)
+    {
+        if (string.IsNullOrWhiteSpace(stationId))
+        {
+            throw new DualScreenStartupException(
+                $"{KitchenStationEnvironmentVariable} is required (the fallback kitchen station for order submission).");
+        }
     }
 
     public static WebApplication Build(DualScreenOptions options)
@@ -239,7 +261,7 @@ public static partial class DualScreenApplication
                 {
                     firstSeen = new ReleaseRegistry(monitoring).RegisterAsync(version).GetAwaiter().GetResult();
                 }
-                catch (Npgsql.NpgsqlException)
+                catch (Exception exception) when (exception is Npgsql.NpgsqlException or TimeoutException or InvalidOperationException)
                 {
                     firstSeen = null;
                 }

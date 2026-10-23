@@ -149,7 +149,7 @@ public sealed partial class DualScreenStore
         }
 
         var orderId = Guid.NewGuid();
-        var orderNumber = $"POS-{DateTimeOffset.UtcNow:yyyyMMdd-HHmmss}-{orderId:N}"[..32].ToUpperInvariant();
+        var orderNumber = OrderNumber(DateTimeOffset.UtcNow, orderId);
         // V1-RMD-120: was a raw INSERT hand-duplicating the Order aggregate's
         // own defaults (Draft/NotRequired/TRY/zeroed totals/row_version 1)
         // instead of going through it — found by an independent audit
@@ -206,6 +206,12 @@ public sealed partial class DualScreenStore
         await transaction.CommitAsync(cancellationToken);
         return new StartOrderResponse(orderId, orderNumber, 1);
     }
+
+    private static readonly TimeZoneInfo RestaurantTimeZone = TimeZoneInfo.FindSystemTimeZoneById("Europe/Istanbul");
+
+    /// <summary>The order number carries the restaurant's local date and time; uniqueness comes from the id part.</summary>
+    public static string OrderNumber(DateTimeOffset utcNow, Guid orderId)
+        => $"POS-{TimeZoneInfo.ConvertTime(utcNow, RestaurantTimeZone):yyyyMMdd-HHmmss}-{orderId:N}"[..32].ToUpperInvariant();
 
     public async Task<OrderMutationResult> AddItemAsync(
         Guid terminalId,

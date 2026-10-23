@@ -68,6 +68,45 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APairingIsApprovedThenCompletedWithExpiriesFromTheDatabaseClock()
+    {
+        var displayId = Guid.NewGuid();
+        var terminalId = Guid.NewGuid();
+        var created = await _store!.CreatePairingRequestAsync(displayId, CancellationToken.None);
+        await _store.ApprovePairingAsync(terminalId, created.Code, CancellationToken.None);
+
+        var (completed, token) = await _store.CompletePairingAsync(created.RequestId, created.Secret, CancellationToken.None);
+
+        Assert.False(string.IsNullOrEmpty(token));
+        Assert.Equal(displayId, completed.DisplayId);
+        Assert.Equal(terminalId, completed.TerminalId);
+        // The pairing code lives two minutes and the display session twelve hours, both counted from the database now().
+        Assert.InRange(created.ExpiresAt - DateTimeOffset.UtcNow, TimeSpan.FromSeconds(60), TimeSpan.FromMinutes(2.1));
+        Assert.InRange(completed.ExpiresAt - DateTimeOffset.UtcNow, TimeSpan.FromHours(11.9), TimeSpan.FromHours(12.1));
+        Assert.Equal(1L, await ScalarAsync<long>(
+            "SELECT count(*) FROM customer_display.display_sessions WHERE display_id = @id AND expires_at > now();",
+            ("id", displayId)));
+    }
+
+    [Fact]
+    public async Task AnExpiredPairingCannotBeCompleted()
+    {
+        var created = await _store!.CreatePairingRequestAsync(Guid.NewGuid(), CancellationToken.None);
+        await _store.ApprovePairingAsync(Guid.NewGuid(), created.Code, CancellationToken.None);
+        await using (var expire = _dataSource!.CreateCommand(
+            "UPDATE customer_display.pairing_requests SET expires_at = now() - interval '1 second' WHERE request_id = @id;"))
+        {
+            expire.Parameters.AddWithValue("id", created.RequestId);
+            await expire.ExecuteNonQueryAsync();
+        }
+
+        var exception = await Assert.ThrowsAsync<DualScreenPairingException>(() =>
+            _store.CompletePairingAsync(created.RequestId, created.Secret, CancellationToken.None));
+
+        Assert.Equal(DualScreenPairingException.Expired, exception.Code);
+    }
+
+    [Fact]
     public async Task EveryOrderMutationWorksOnASingleConnectionPool()
     {
         // A mutation holds the order's row lock on its own connection; reading the order through a second pooled

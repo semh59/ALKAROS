@@ -560,7 +560,6 @@ internal sealed class KitchenOperationsSessionAuthorizer : IKitchenOperationsSes
 
         if (await _sessions.AuthenticateDisplayAsync(
                 context.Request.Cookies[DualScreenApplication.DisplayCookieName],
-                null,
                 cancellationToken) is not null)
         {
             throw new KitchenOperationsForbiddenException("Customer displays cannot access kitchen operations.");

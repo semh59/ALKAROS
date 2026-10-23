@@ -49,6 +49,10 @@ public static class ModuleBoundaryTests
         "ALKAROS.Privacy",
     };
 
+    // The two building-block assemblies the Host edge list also names: they carry secrets and the relay, so a Host
+    // area reaching them must say so like it does for a domain module.
+    private static readonly string[] HostEdgeAssemblies = ModuleAssemblies.Concat(["ALKAROS.Secrets", "ALKAROS.QrRelay"]).ToArray();
+
     private static readonly string[] EmptyDependencies = Array.Empty<string>();
     private static readonly string[] DependencyOnA = { "A" };
     private static readonly string[] DependencyOnAB = { "A", "B" };
@@ -294,6 +298,61 @@ public static class ModuleBoundaryTests
                 ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Operations", "ALKAROS.Secrets", "ALKAROS.Security", "ALKAROS.Support"],
             ["ALKAROS.Host.Observability"] =
                 ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Observability", "ALKAROS.Operations", "ALKAROS.QrRelay"],
+            // Areas added when the list was widened to every Host namespace: each is pinned to the modules it
+            // used on that day, so a new module reference anywhere in the Host fails here.
+            ["ALKAROS.Host.Experience.Authorization"] =
+                ["ALKAROS.Identity"],
+            ["ALKAROS.Host.Experience.Catalog"] =
+                ["ALKAROS.Catalog", "ALKAROS.Identity"],
+            ["ALKAROS.Host.Experience.CustomerCredit"] =
+                ["ALKAROS.Identity", "ALKAROS.CustomerAccounts"],
+            ["ALKAROS.Host.Experience.HelpRequests"] =
+                ["ALKAROS.Settings"],
+            ["ALKAROS.Host.Experience.Inventory"] =
+                ["ALKAROS.Reporting", "ALKAROS.Identity", "ALKAROS.Inventory"],
+            ["ALKAROS.Host.Experience.InventoryReporting"] =
+                ["ALKAROS.Reporting", "ALKAROS.Identity"],
+            ["ALKAROS.Host.Experience.InvoiceSettings"] =
+                ["ALKAROS.Identity", "ALKAROS.Invoicing"],
+            ["ALKAROS.Host.Experience.Menu"] =
+                ["ALKAROS.Identity", "ALKAROS.Menu"],
+            ["ALKAROS.Host.Experience.NfcOrdering"] =
+                ["ALKAROS.Orders", "ALKAROS.Kitchen", "ALKAROS.Recipes", "ALKAROS.Inventory"],
+            ["ALKAROS.Host.Experience.OfflineReconciliation"] =
+                ["ALKAROS.Identity"],
+            ["ALKAROS.Host.Experience.OnlineOrdering"] =
+                ["ALKAROS.Orders", "ALKAROS.Kitchen", "ALKAROS.Catalog", "ALKAROS.Identity", "ALKAROS.Audit", "ALKAROS.Inventory", "ALKAROS.OnlineOrdering", "ALKAROS.Invoicing", "ALKAROS.Secrets"],
+            ["ALKAROS.Host.Experience.OrderInvoices"] =
+                ["ALKAROS.Invoicing"],
+            ["ALKAROS.Host.Experience.PendingOrderNotifications"] =
+                ["ALKAROS.Orders"],
+            ["ALKAROS.Host.Experience.Production"] =
+                ["ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Production"],
+            ["ALKAROS.Host.Experience.Purchasing"] =
+                ["ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Purchasing", "ALKAROS.Invoicing"],
+            ["ALKAROS.Host.Experience.QnbCredentialSettings"] =
+                ["ALKAROS.Identity", "ALKAROS.Invoicing", "ALKAROS.Secrets"],
+            ["ALKAROS.Host.Experience.QrOrdering"] =
+                ["ALKAROS.Tables", "ALKAROS.Settings", "ALKAROS.QrOrdering"],
+            ["ALKAROS.Host.Experience.Reconciliation"] =
+                ["ALKAROS.Reporting", "ALKAROS.Reconciliation", "ALKAROS.Identity", "ALKAROS.OnlineOrdering", "ALKAROS.Payments"],
+            ["ALKAROS.Host.Experience.RelaySettings"] =
+                ["ALKAROS.Identity", "ALKAROS.QrOrdering", "ALKAROS.QrRelay"],
+            ["ALKAROS.Host.Experience.Reporting"] =
+                ["ALKAROS.Reporting", "ALKAROS.Identity"],
+            ["ALKAROS.Host.Experience.Roles"] =
+                ["ALKAROS.Identity", "ALKAROS.Audit"],
+            ["ALKAROS.Host.Experience.Settings"] =
+                ["ALKAROS.Settings", "ALKAROS.Identity", "ALKAROS.Audit"],
+            ["ALKAROS.Host.Experience.Tables"] =
+                ["ALKAROS.Tables", "ALKAROS.Identity"],
+            ["ALKAROS.Host.Experience.TokenTerminalSettings"] =
+                ["ALKAROS.Identity", "ALKAROS.Payments", "ALKAROS.Secrets"],
+            ["ALKAROS.Host.Experience.WaiterNotifications"] =
+                ["ALKAROS.Orders"],
+            ["ALKAROS.Host.Experience.WebPush"] =
+                ["ALKAROS.Secrets"],
+            ["ALKAROS.Host.Outbox"] = [],
         };
 
     [Fact]
@@ -304,7 +363,7 @@ public static class ModuleBoundaryTests
 
         foreach (var (ns, approved) in ApprovedHostOrchestrationEdges)
         {
-            var disallowed = ModuleAssemblies.Except(approved, StringComparer.Ordinal).ToArray();
+            var disallowed = HostEdgeAssemblies.Except(approved, StringComparer.Ordinal).ToArray();
             var result = Types.InAssembly(hostAssembly)
                 .That().ResideInNamespaceStartingWith(ns)
                 .Should().NotHaveDependencyOnAny(disallowed)
@@ -323,6 +382,45 @@ public static class ModuleBoundaryTests
             "A Host/Experience orchestrator references a module assembly outside its approved edge list. " +
             "Add the edge to ApprovedHostOrchestrationEdges and docs/architecture/module-dependency-rules.md " +
             "together, or remove the dependency. Failures: " + string.Join("; ", failures));
+    }
+
+    // The Host entry point, the shared Experience wiring and the module composition root register every module by
+    // design; they are not areas with their own module edges.
+    private static readonly HashSet<string> CompositionRootNamespaces = new(StringComparer.Ordinal)
+    {
+        "ALKAROS.Host",
+        "ALKAROS.Host.Experience",
+    };
+
+    [Fact]
+    public static void EveryHostAreaIsCoveredByAnApprovedEdgeEntry()
+    {
+        var hostAssembly = typeof(ALKAROS.Host.Experience.Orders.OrderStockConsumption.OrderStockConsumptionService).Assembly;
+        var uncovered = hostAssembly.GetTypes()
+            .Select(type => type.Namespace)
+            .OfType<string>()
+            .Where(ns => ns.StartsWith("ALKAROS.Host", StringComparison.Ordinal))
+            .Where(ns => !CompositionRootNamespaces.Contains(ns) && !ns.StartsWith("ALKAROS.Host.Composition", StringComparison.Ordinal))
+            .Where(ns => !ApprovedHostOrchestrationEdges.Keys.Any(key => ns == key || ns.StartsWith(key + ".", StringComparison.Ordinal)))
+            .Select(ns => string.Join('.', ns.Split('.').Take(ns.StartsWith("ALKAROS.Host.Experience.", StringComparison.Ordinal) ? 4 : 3)))
+            .Distinct(StringComparer.Ordinal)
+            .Order(StringComparer.Ordinal)
+            .ToArray();
+
+        var report = uncovered.Select(area =>
+        {
+            var used = HostEdgeAssemblies
+                .Where(module => !Types.InAssembly(hostAssembly).That().ResideInNamespaceStartingWith(area)
+                    .Should().NotHaveDependencyOn(module).GetResult().IsSuccessful)
+                .ToArray();
+            return $"[\"{area}\"] = [{string.Join(", ", used.Select(u => $"\"{u}\""))}]";
+        }).ToArray();
+
+        Assert.True(
+            report.Length == 0,
+            "These Host areas are not covered by ApprovedHostOrchestrationEdges, so a new module reference there " +
+            "would pass unnoticed. Add an entry with the modules the area really uses:" + Environment.NewLine
+            + string.Join(Environment.NewLine, report));
     }
 
     [Fact]

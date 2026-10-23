@@ -84,16 +84,17 @@ public sealed class HelpRequestStore
         // problem at the same table is a new call, and while it is open the repeat adds nothing.
         await using (var cooldownCheck = new NpgsqlCommand(
             """
-            SELECT created_at FROM notifications.help_requests
+            SELECT EXTRACT(EPOCH FROM (now() - created_at))::float8 FROM notifications.help_requests
             WHERE table_id = @table_id AND acknowledged_at IS NULL
             ORDER BY created_at DESC
             LIMIT 1;
             """, connection, transaction))
         {
             cooldownCheck.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
-            if (await cooldownCheck.ExecuteScalarAsync(cancellationToken) is DateTime lastRaisedAtUtc)
+            // Both ends of the age come from the database clock, the one that stamped created_at.
+            if (await cooldownCheck.ExecuteScalarAsync(cancellationToken) is double elapsedSeconds)
             {
-                var elapsed = DateTime.UtcNow - DateTime.SpecifyKind(lastRaisedAtUtc, DateTimeKind.Utc);
+                var elapsed = TimeSpan.FromSeconds(elapsedSeconds);
                 if (elapsed < Cooldown)
                     throw new HelpRequestCooldownActiveException(Cooldown - elapsed);
             }

@@ -297,7 +297,7 @@ public static class HostComposition
         }
     }
 
-    private static NpgsqlDataSource? TryCreateDataSource(PsqlOptions? psql)
+    public static NpgsqlDataSource? TryCreateDataSource(PsqlOptions? psql)
     {
         if (psql is null || string.IsNullOrWhiteSpace(psql.DatabaseUrl))
             return null;
@@ -311,8 +311,8 @@ public static class HostComposition
             {
                 Host = string.IsNullOrEmpty(uri.Host) ? "localhost" : uri.Host,
                 Port = uri.Port > 0 ? uri.Port : 5432,
-                Database = string.IsNullOrEmpty(uri.AbsolutePath.TrimStart('/')) ? "alkaros" : uri.AbsolutePath.TrimStart('/'),
-                Username = !string.IsNullOrEmpty(uri.UserInfo) ? uri.UserInfo.Split(':')[0] : "postgres",
+                Database = string.IsNullOrEmpty(uri.AbsolutePath.TrimStart('/')) ? "alkaros" : Uri.UnescapeDataString(uri.AbsolutePath.TrimStart('/')),
+                Username = !string.IsNullOrEmpty(uri.UserInfo) ? Uri.UnescapeDataString(uri.UserInfo.Split(':')[0]) : "postgres",
                 Password = psql.Password
             };
             return NpgsqlDataSource.Create(builder.ConnectionString);

@@ -213,6 +213,30 @@ public sealed class HelpRequestHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheCooldownIsCountedFromWhenTheRequestWasRaised()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId);
+        var (tableId, _) = await _database.SeedTableAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var first = await client.SendAsync(JsonRequest(HelpRequestPath(terminalId), cookie,
+            new HelpRequestV1(tableId, HelpRequestTypeCatalog.Spill)));
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        await _database.AgeRequestsAsync(100);
+        using var stillWaiting = await client.SendAsync(JsonRequest(HelpRequestPath(terminalId), cookie,
+            new HelpRequestV1(tableId, HelpRequestTypeCatalog.Spill)));
+        await _database.AgeRequestsAsync(130);
+        using var allowed = await client.SendAsync(JsonRequest(HelpRequestPath(terminalId), cookie,
+            new HelpRequestV1(tableId, HelpRequestTypeCatalog.Spill)));
+
+        Assert.Equal((HttpStatusCode)429, stillWaiting.StatusCode);
+        Assert.InRange((int)stillWaiting.Headers.RetryAfter!.Delta!.Value.TotalSeconds, 1, 21);
+        Assert.Equal(HttpStatusCode.OK, allowed.StatusCode);
+    }
+
+    [Fact]
     public async Task TheAnswerSaysHowManyManagersWereConnectedWhenTheCallWentOut()
     {
         var terminalId = Guid.NewGuid();

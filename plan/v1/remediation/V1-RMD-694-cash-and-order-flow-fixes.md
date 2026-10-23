@@ -36,6 +36,7 @@ V1-RMD-599 bulguları B023, B051, B052, B053, B056, B057, B086, B102, B130 kapan
 ## Out of scope
 
 - Kart tahsilatı yer tutucu (V13-HUG-001, dış bağımlılık); 'kart çekilmedi' kuralı (Semih sorusu S8).
+- Host composition test klasörüne eklenen yeni test dosyası bu görevi etkilemez; sahibi V1-RMD-695 olur.
 
 ## Dependencies
 

@@ -28,6 +28,7 @@ V1-RMD-599 bulguları B025, B026, B048, B049, B050, B090, B091, B093, B094, B095
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/CustomerData/** - yalnız anonimleştirme portu
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/** - yalnız kenar testi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/** - yalnız yeni test
+- `tests/Host/MigrationComposition/Composition/DatabaseUrlTests.cs` - yeni dosya, bağlantı dizesi, açılış ve sipariş numarası testleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ApiConventions/idempotency_allowlist.json - yalnız yeni uç girdisi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-694-cash-and-order-flow-fixes.md - yalnız Handoff satırı

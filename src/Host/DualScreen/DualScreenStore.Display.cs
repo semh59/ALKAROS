@@ -20,7 +20,7 @@ public sealed partial class DualScreenStore
             var requestId = Guid.NewGuid();
             var (secret, secretHash) = DualScreenToken.Create("alkaros-display-pairing:");
             var code = CreatePairingCode();
-            var expiresAt = DateTimeOffset.UtcNow.Add(PairingLifetime);
+            DateTimeOffset expiresAt;
             await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
             try
             {
@@ -42,15 +42,20 @@ public sealed partial class DualScreenStore
                         request_id, display_id, terminal_id, pairing_secret_hash, code_hash,
                         expires_at, approved_at, consumed_at, failed_attempts, created_at)
                     VALUES (@request_id, @display_id, NULL, @secret_hash, @code_hash,
-                            @expires_at, NULL, NULL, 0, now());
+                            now() + @lifetime, NULL, NULL, 0, now())
+                    RETURNING expires_at;
                     """))
                 {
                     insert.Parameters.AddWithValue("request_id", requestId);
                     insert.Parameters.AddWithValue("display_id", displayId);
                     insert.Parameters.AddWithValue("secret_hash", secretHash);
                     insert.Parameters.AddWithValue("code_hash", DualScreenToken.Hash(NormalizeCode(code)));
-                    insert.Parameters.AddWithValue("expires_at", expiresAt);
-                    await insert.ExecuteNonQueryAsync(cancellationToken);
+                    insert.Parameters.Add("lifetime", NpgsqlDbType.Interval).Value = PairingLifetime;
+                    await using (var created = await insert.ExecuteReaderAsync(cancellationToken))
+            {
+                await created.ReadAsync(cancellationToken);
+                expiresAt = created.GetFieldValue<DateTimeOffset>(0);
+            }
                 }
 
                 await transaction.CommitAsync(cancellationToken);
@@ -103,7 +108,7 @@ public sealed partial class DualScreenStore
         PairingRow row;
         await using (var select = CreateCommand(connection, transaction,
             """
-            SELECT display_id, terminal_id, pairing_secret_hash, expires_at, approved_at, consumed_at, failed_attempts
+            SELECT display_id, terminal_id, pairing_secret_hash, expires_at <= now(), approved_at, consumed_at, failed_attempts
             FROM customer_display.pairing_requests
             WHERE request_id = @request_id
             FOR UPDATE;
@@ -117,7 +122,7 @@ public sealed partial class DualScreenStore
                 reader.GetGuid(0),
                 reader.IsDBNull(1) ? null : reader.GetGuid(1),
                 reader.GetString(2),
-                reader.GetFieldValue<DateTimeOffset>(3),
+                reader.GetBoolean(3),
                 reader.IsDBNull(4) ? null : reader.GetFieldValue<DateTimeOffset>(4),
                 reader.IsDBNull(5) ? null : reader.GetFieldValue<DateTimeOffset>(5),
                 reader.GetInt16(6));
@@ -145,7 +150,7 @@ public sealed partial class DualScreenStore
             throw new DualScreenPairingException(
                 DualScreenPairingException.Consumed, StatusCodes.Status410Gone,
                 "Bu eşleştirme kodu daha önce kullanıldı. Ekranda yeni kod isteyin.");
-        if (row.ExpiresAt <= DateTimeOffset.UtcNow)
+        if (row.Expired)
             throw new DualScreenPairingException(
                 DualScreenPairingException.Expired, StatusCodes.Status410Gone,
                 "Eşleştirme kodunun süresi doldu. Ekranda yeni kod isteyin.");
@@ -156,7 +161,7 @@ public sealed partial class DualScreenStore
 
         var (rawToken, tokenHash) = DualScreenToken.Create("alkaros-display-session:");
         var sessionId = Guid.NewGuid();
-        var sessionExpiresAt = DateTimeOffset.UtcNow.Add(DisplaySessionLifetime);
+        DateTimeOffset sessionExpiresAt;
 
         await using (var revoke = CreateCommand(connection, transaction,
             """
@@ -174,15 +179,20 @@ public sealed partial class DualScreenStore
             """
             INSERT INTO customer_display.display_sessions (
                 session_id, display_id, terminal_id, token_hash, created_at, expires_at, revoked_at, last_seen_at)
-            VALUES (@session_id, @display_id, @terminal_id, @token_hash, now(), @expires_at, NULL, now());
+            VALUES (@session_id, @display_id, @terminal_id, @token_hash, now(), now() + @lifetime, NULL, now())
+            RETURNING expires_at;
             """))
         {
             create.Parameters.AddWithValue("session_id", sessionId);
             create.Parameters.AddWithValue("display_id", row.DisplayId);
             create.Parameters.AddWithValue("terminal_id", row.TerminalId.Value);
             create.Parameters.AddWithValue("token_hash", tokenHash);
-            create.Parameters.AddWithValue("expires_at", sessionExpiresAt);
-            await create.ExecuteNonQueryAsync(cancellationToken);
+            create.Parameters.Add("lifetime", NpgsqlDbType.Interval).Value = DisplaySessionLifetime;
+            await using (var created = await create.ExecuteReaderAsync(cancellationToken))
+            {
+                await created.ReadAsync(cancellationToken);
+                sessionExpiresAt = created.GetFieldValue<DateTimeOffset>(0);
+            }
         }
 
         await using (var consume = CreateCommand(connection, transaction,
