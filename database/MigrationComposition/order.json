@@ -1721,6 +1721,18 @@
         "help_requests"
       ],
       "deferredConstraints": []
+    },
+    {
+      "id": "201",
+      "phase": "B",
+      "tables": [
+        "screensaver_images",
+        "pairing_requests",
+        "display_sessions",
+        "terminals",
+        "account_transactions"
+      ],
+      "deferredConstraints": []
     }
   ]
 }

@@ -94,7 +94,7 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         var created = await _store!.CreatePairingRequestAsync(Guid.NewGuid(), CancellationToken.None);
         await _store.ApprovePairingAsync(Guid.NewGuid(), created.Code, CancellationToken.None);
         await using (var expire = _dataSource!.CreateCommand(
-            "UPDATE customer_display.pairing_requests SET expires_at = now() - interval '1 second' WHERE request_id = @id;"))
+            "UPDATE customer_display.pairing_requests SET created_at = now() - interval '1 hour', expires_at = now() - interval '1 second' WHERE request_id = @id;"))
         {
             expire.Parameters.AddWithValue("id", created.RequestId);
             await expire.ExecuteNonQueryAsync();
@@ -582,6 +582,36 @@ public sealed class DualScreenStoreTests : IAsyncLifetime
         var item = Assert.Single(page.Items);
         Assert.Equal(_productId, item.ProductId);
         Assert.Null(page.NextCursor);
+    }
+
+    [Fact]
+    public async Task TheCatalogIsOrderedByTurkishAlphabetAcrossPages()
+    {
+        foreach (var name in new[] { "Dolma", "Çay", "Cacık" })
+        {
+            await using var insert = _dataSource!.CreateCommand(
+                """
+                INSERT INTO catalog.products (
+                    product_id, sku, name, category_id, tax_profile_id, product_type,
+                    stock_mode, active, display_order, current_price)
+                VALUES (gen_random_uuid(), @sku, @name, NULL, NULL, 1, 1, true, 0, 1.00);
+                """);
+            insert.Parameters.AddWithValue("sku", $"TR-{name}");
+            insert.Parameters.AddWithValue("name", name);
+            await insert.ExecuteNonQueryAsync();
+        }
+
+        var names = new List<string>();
+        string? cursor = null;
+        do
+        {
+            var page = await _store!.GetCatalogAsync(null, 1, cursor, CancellationToken.None);
+            names.AddRange(page.Items.Select(item => item.Name));
+            cursor = page.NextCursor;
+        }
+        while (cursor is not null);
+
+        Assert.Equal(["Cacık", "Çay", "Dolma", "Quantity invariant product"], names);
     }
 
     private async Task SeedStockMappingAsync(Guid productId, decimal quantityMultiplier, decimal onHand)

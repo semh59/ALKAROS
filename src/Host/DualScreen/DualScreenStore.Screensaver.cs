@@ -39,6 +39,17 @@ public sealed partial class DualScreenStore
         await command.ExecuteNonQueryAsync(cancellationToken);
     }
 
+    /// <summary>The ETag of the stored screensaver without reading its bytes; null when none is set.</summary>
+    public async Task<string?> GetScreensaverETagAsync(CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            "SELECT updated_at FROM customer_display.screensaver_images WHERE id = 1;");
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        return await reader.ReadAsync(cancellationToken)
+            ? ScreensaverImage.ETagOf(reader.GetFieldValue<DateTimeOffset>(0))
+            : null;
+    }
+
     /// <summary>V1-CDP-001: null when no screensaver has been set — the caller renders the default branded idle card.</summary>
     public async Task<ScreensaverImage?> GetScreensaverAsync(CancellationToken cancellationToken)
     {
@@ -58,5 +69,7 @@ public sealed partial class DualScreenStore
 public sealed record ScreensaverImage(byte[] Content, string ContentType, DateTimeOffset UpdatedAt)
 {
     /// <summary>A weak ETag derived from the row's own update timestamp - two reads of the same row always agree, any real change always changes it.</summary>
-    public string ETag => $"\"{UpdatedAt.UtcTicks:x}\"";
+    public string ETag => ETagOf(UpdatedAt);
+
+    public static string ETagOf(DateTimeOffset updatedAt) => $"\"{updatedAt.UtcTicks:x}\"";
 }

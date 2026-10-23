@@ -185,7 +185,7 @@ public sealed partial class DualScreenStore
                    COALESCE(c.code, 'OTHER'), COALESCE(c.name, 'Diğer'),
                    p.current_price, COALESCE(t.vat_rate, 0),
                    COALESCE(c.sort_order, 2147483647), p.display_order,
-                   p.name COLLATE "C", p.sku COLLATE "C",
+                   p.name COLLATE "tr-TR-x-icu", p.sku COLLATE "tr-TR-x-icu",
                    p.prep_time_minutes,
                    remaining.remaining_count
             FROM catalog.products p
@@ -220,8 +220,8 @@ public sealed partial class DualScreenStore
                   OR (
                       COALESCE(c.sort_order, 2147483647),
                       p.display_order,
-                      p.name COLLATE "C",
-                      p.sku COLLATE "C",
+                      p.name COLLATE "tr-TR-x-icu",
+                      p.sku COLLATE "tr-TR-x-icu",
                       p.product_id
                   ) > (
                       @cursor_category_sort,
@@ -233,8 +233,8 @@ public sealed partial class DualScreenStore
               )
             ORDER BY COALESCE(c.sort_order, 2147483647),
                      p.display_order,
-                     p.name COLLATE "C",
-                     p.sku COLLATE "C",
+                     p.name COLLATE "tr-TR-x-icu",
+                     p.sku COLLATE "tr-TR-x-icu",
                      p.product_id
             LIMIT @fetch_limit;
             """);

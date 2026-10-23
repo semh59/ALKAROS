@@ -1101,7 +1101,7 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
         using var client = CreateClient(app);
         var expired = await CreatePairingAsync(client, "198.51.100.41");
         await ExecuteAsync(
-            "UPDATE customer_display.pairing_requests SET expires_at = now() - interval '1 minute' WHERE request_id = @id;",
+            "UPDATE customer_display.pairing_requests SET created_at = now() - interval '1 hour', expires_at = now() - interval '1 minute' WHERE request_id = @id;",
             ("id", expired.RequestId));
         using var late = await CompleteAsync(client, expired.RequestId, expired.Secret, "198.51.100.41");
         Assert.Equal(HttpStatusCode.Gone, late.StatusCode);

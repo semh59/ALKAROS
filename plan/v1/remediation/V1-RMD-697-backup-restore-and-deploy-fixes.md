@@ -45,6 +45,7 @@ V1-RMD-599 bulguları B037, B038, B039, B040, B041, B042, B044, B045, B046, B107
 
 ## Out of scope
 
+- V1-RMD-698 kapsam genişlemesi (göç satır sonu politikası, göç 201, ekran koruyucu okuması) bu görevi etkilemez.
 - Gerçek yedek ve geri yükleme provasının canlıda koşulması (V20-DRL-001).
 
 ## Dependencies

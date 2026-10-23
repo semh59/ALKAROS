@@ -144,11 +144,14 @@ public static partial class DualScreenApplication
             CancellationToken cancellationToken) =>
         {
             await RequireDisplayAsync(context, displayId, store, cancellationToken);
-            var image = await store.GetScreensaverAsync(cancellationToken)
+            var currentETag = await store.GetScreensaverETagAsync(cancellationToken)
                 ?? throw new DualScreenNotFoundException("No screensaver image has been set.");
 
-            if (context.Request.Headers.IfNoneMatch.Contains(image.ETag))
+            if (context.Request.Headers.IfNoneMatch.Contains(currentETag))
                 return Results.StatusCode(StatusCodes.Status304NotModified);
+
+            var image = await store.GetScreensaverAsync(cancellationToken)
+                ?? throw new DualScreenNotFoundException("No screensaver image has been set.");
 
             context.Response.Headers.ETag = image.ETag;
             context.Response.Headers.CacheControl = "private, max-age=300";

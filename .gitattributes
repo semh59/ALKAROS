@@ -1,0 +1,3 @@
+# Migration scripts are hashed byte for byte (the history table stores the SHA-256 of the file), so git must never
+# rewrite their line endings, whatever core.autocrlf a clone uses.
+database/migrations/** -text

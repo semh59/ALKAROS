@@ -445,6 +445,74 @@ public sealed class DualScreenScreensaverTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
     }
 
+    [Fact]
+    public async Task AnUnchangedScreensaverAnswersNotModifiedAndAChangedOneANewTag()
+    {
+        await using var app = DualScreenApplication.Build(BuildOptions());
+        await app.StartAsync();
+        await _store!.SaveScreensaverAsync([1, 2, 3], "image/png", CancellationToken.None);
+        var displayId = Guid.NewGuid();
+        await SeedDisplaySessionAsync(displayId, "display-token-3");
+        using var client = CreateClient(app);
+        client.DefaultRequestHeaders.Add("Cookie", "alkaros.customer-display=display-token-3");
+
+        using var first = await GetScreensaverAsync(client, displayId, null);
+        var etag = first.Headers.ETag!.Tag;
+        using var unchanged = await GetScreensaverAsync(client, displayId, etag);
+        await _store.SaveScreensaverAsync([4, 5, 6], "image/png", CancellationToken.None);
+        using var changed = await GetScreensaverAsync(client, displayId, etag);
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.NotModified, unchanged.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, changed.StatusCode);
+        Assert.NotEqual(etag, changed.Headers.ETag!.Tag);
+        Assert.Equal(new byte[] { 4, 5, 6 }, await changed.Content.ReadAsByteArrayAsync());
+    }
+
+    [Fact]
+    public async Task TheScreensaverTagIsReadWithoutTouchingTheContent()
+    {
+        Assert.Null(await _store!.GetScreensaverETagAsync(CancellationToken.None));
+        await _store.SaveScreensaverAsync([1, 2, 3], "image/png", CancellationToken.None);
+        var expected = (await _store.GetScreensaverAsync(CancellationToken.None))!.ETag;
+        var role = "ss_probe_" + Guid.NewGuid().ToString("N")[..8];
+        await _dataSource!.CreateCommand(
+            $"""
+            CREATE ROLE {role} LOGIN PASSWORD 'probe';
+            GRANT CONNECT ON DATABASE "{_database.Name}" TO {role};
+            GRANT USAGE ON SCHEMA customer_display TO {role};
+            GRANT SELECT (id, updated_at) ON customer_display.screensaver_images TO {role};
+            """).ExecuteNonQueryAsync();
+        try
+        {
+            var probe = new NpgsqlConnectionStringBuilder(CreateConnectionString())
+            {
+                Username = role,
+                Password = "probe",
+            }.ConnectionString;
+            await using var probeSource = NpgsqlDataSource.Create(probe);
+            var probeStore = new DualScreenStore(probeSource);
+
+            Assert.Equal(expected, await probeStore.GetScreensaverETagAsync(CancellationToken.None));
+            var denied = await Assert.ThrowsAsync<PostgresException>(
+                () => probeStore.GetScreensaverAsync(CancellationToken.None));
+            Assert.Equal(PostgresErrorCodes.InsufficientPrivilege, denied.SqlState);
+        }
+        finally
+        {
+            await _dataSource.CreateCommand($"DROP OWNED BY {role}; DROP ROLE {role};").ExecuteNonQueryAsync();
+        }
+    }
+
+    private static async Task<HttpResponseMessage> GetScreensaverAsync(HttpClient client, Guid displayId, string? ifNoneMatch)
+    {
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/customer-displays/{displayId:D}/screensaver");
+        AddTrustedForwarding(request);
+        if (ifNoneMatch is not null)
+            request.Headers.TryAddWithoutValidation("If-None-Match", ifNoneMatch);
+        return await client.SendAsync(request);
+    }
+
     private DualScreenOptions BuildOptions() => new(
         CreateConnectionString(),
         _webRoot,
