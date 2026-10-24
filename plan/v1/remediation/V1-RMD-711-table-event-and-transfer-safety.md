@@ -1,8 +1,8 @@
 # V1-RMD-711 - Masa olayları, transfer ve durum ucu güvenliği
 
 - Task ID: V1-RMD-711
-- Status: Planned
-- Assignee: unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
 
@@ -18,6 +18,7 @@ V1-RMD-601 bulguları B005 (S1, S3), B006, B007 (transfer, durum ve masa düzenl
 
 - `plan/v1/remediation/V1-RMD-711-table-event-and-transfer-safety.md`
 - `evidence/V1-RMD-711/**`
+- `tests/Host/Experience/Tables/TableGuardsHttpTests.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Tables/** - yalnız ilgili düzeltme
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Tables/** - yalnız ilgili düzeltme
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Tables/** - yalnız yeni ve düzeltilen test
