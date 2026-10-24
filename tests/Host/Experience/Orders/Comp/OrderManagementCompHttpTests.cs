@@ -86,6 +86,79 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ResendingAnAppliedCompWithTheSameKeyAnswersWithTheFirstResultInsteadOfAConflict()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.comp");
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var body = new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "VIPGuest");
+
+        using var first = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, body));
+        using var resent = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, body));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, resent.StatusCode);
+        var firstBody = await first.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>();
+        var resentBody = await resent.Content.ReadFromJsonAsync<ApplyComplimentaryResultV1>();
+        Assert.Equal(firstBody!.NewOrderRowVersion, resentBody!.NewOrderRowVersion);
+        Assert.Single(await new PostgresAuditEventStore(_database.DataSource).GetByAggregateAsync("Order", orderId));
+    }
+
+    [Fact]
+    public async Task TheSameKeyWithADifferentCompRequestIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.comp");
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var key = Guid.NewGuid().ToString();
+
+        using var first = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, new ApplyComplimentaryRequestV1(key, 1, "VIPGuest")));
+        using var other = await client.SendAsync(JsonRequest(CompPath(terminalId, orderId, itemId), cookie, new ApplyComplimentaryRequestV1(key, 1, "CustomerSatisfaction")));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, other.StatusCode);
+        Assert.Contains("IDEMPOTENCY_KEY_REUSED", await other.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
+    public async Task ACompOnAnOrderThatIsAlreadyCompletedIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.comp");
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync();
+        await _database.SetOrderStatusAsync(orderId, "Completed");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            CompPath(terminalId, orderId, itemId), cookie, new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "VIPGuest")));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("ORDER_CLOSED", await response.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
+    public async Task ACompOnAnItemWhoseBillIsAlreadyPaidIsRefusedAndTheItemStaysActive()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.comp");
+        var (orderId, itemId) = await _database.SeedActiveOrderWithOneItemAsync();
+        await _database.SeedBillForItemAsync(orderId, itemId, ALKAROS.Billing.BillFoundation.BillState.Paid);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            CompPath(terminalId, orderId, itemId), cookie, new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "VIPGuest")));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("BILL_NOT_MODIFIABLE", await response.Content.ReadAsStringAsync());
+    }
+
+    [Fact]
     public async Task ARoleWithoutBillsCompAndNoPolicyOrDelegationEscalatesToPending()
     {
         var terminalId = Guid.NewGuid();

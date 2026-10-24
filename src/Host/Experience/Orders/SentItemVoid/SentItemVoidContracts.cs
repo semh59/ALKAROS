@@ -45,6 +45,18 @@ public sealed class ItemNotYetSentException : Exception
     public Guid OrderItemId { get; }
 }
 
+/// <summary>The order is Completed, Cancelled or Rejected, so a complimentary can no longer be applied to its items.</summary>
+public sealed class OrderClosedException : Exception
+{
+    public OrderClosedException(Guid orderId, string status)
+        : base($"Order '{orderId}' is {status}; the item can no longer be changed.")
+    {
+        OrderId = orderId;
+    }
+
+    public Guid OrderId { get; }
+}
+
 /// <summary>The item already reached KitchenState.Served — void no longer applies; that is comp/refund territory.</summary>
 public sealed class ItemAlreadyServedException : Exception
 {

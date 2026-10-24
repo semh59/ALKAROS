@@ -79,6 +79,23 @@ public sealed class PostgresBillRepository : IBillRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
 
+        var newRowVersion = await SaveAsync(bill, expectedRowVersion, connection, transaction, cancellationToken);
+
+        await transaction.CommitAsync(cancellationToken);
+        return newRowVersion;
+    }
+
+    public async Task<long> SaveAsync(
+        Bill bill,
+        long expectedRowVersion,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(bill);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
         var newRowVersion = await UpdateBillAsync(connection, transaction, bill, expectedRowVersion, cancellationToken);
 
         var existingItemIds = (await ReadItemIdsAsync(connection, transaction, bill.Id, cancellationToken)).ToHashSet();
@@ -99,7 +116,6 @@ public sealed class PostgresBillRepository : IBillRepository
                 await InsertBillItemAsync(connection, transaction, item, cancellationToken);
         }
 
-        await transaction.CommitAsync(cancellationToken);
         return newRowVersion;
     }
 

@@ -1,3 +1,5 @@
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Orders.OrderAggregate;
 using Npgsql;
@@ -24,13 +26,16 @@ public sealed class OrderReadStore
     private readonly IOrderRepository _repository;
     private readonly IRoleRepository _roles;
     private readonly OrderDtoAssembler _assembler;
+    private readonly IAuditEventStore _auditEvents;
 
     public OrderReadStore(
         NpgsqlDataSource dataSource,
         IOrderRepository repository,
         IRoleRepository roles,
-        OrderDtoAssembler assembler)
+        OrderDtoAssembler assembler,
+        IAuditEventStore auditEvents)
     {
+        _auditEvents = auditEvents ?? throw new ArgumentNullException(nameof(auditEvents));
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _roles = roles ?? throw new ArgumentNullException(nameof(roles));
@@ -74,7 +79,7 @@ public sealed class OrderReadStore
     /// decision is not this method's job. Guards only against a no-op
     /// transfer and a target who cannot actually serve.
     /// </summary>
-    public async Task<int> TransferServingUserAsync(Guid fromUserId, Guid toUserId, CancellationToken cancellationToken = default)
+    public async Task<int> TransferServingUserAsync(Guid fromUserId, Guid toUserId, Guid actorId, CancellationToken cancellationToken = default)
     {
         if (fromUserId == toUserId)
             throw new InvalidTransferTargetException("A server cannot transfer their own checks to themselves.");
@@ -83,7 +88,24 @@ public sealed class OrderReadStore
         if (!exists || !active)
             throw new InvalidTransferTargetException($"Target user {toUserId} does not exist or is not active.");
 
-        return await _repository.ReassignServingUserAsync(fromUserId, toUserId, cancellationToken);
+        // The hand-off changes who is answerable for every open check of the leaving server, so it is recorded in the
+        // same transaction: it is not made unless the record is kept.
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var count = await _repository.ReassignServingUserAsync(fromUserId, toUserId, connection, transaction, cancellationToken);
+        await _auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: "Order.ServerTransferred",
+                aggregateType: "User",
+                aggregateId: fromUserId,
+                actorType: "User",
+                correlationId: Guid.NewGuid().ToString("N"),
+                actorId: actorId,
+                afterStateJson: JsonSerializer.Serialize(new { fromUserId, toUserId, ordersChanged = count })),
+            connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return count;
     }
 
     /// <summary>

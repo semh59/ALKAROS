@@ -39,6 +39,14 @@ public interface IBillRepository
     /// </summary>
     Task<long> SaveAsync(Bill bill, long expectedRowVersion, CancellationToken cancellationToken = default);
 
+    /// <summary>The same optimistic save inside the caller's transaction, so a change that spans modules commits as one.</summary>
+    Task<long> SaveAsync(
+        Bill bill,
+        long expectedRowVersion,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Checks whether an order item has already been billed in any active BillItem.
     /// </summary>

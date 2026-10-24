@@ -715,6 +715,68 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AServerHandOffIsRecordedWithWhoMadeItAndHowManyChecksMoved()
+    {
+        var terminalId = Guid.NewGuid();
+        var (fromWaiterId, fromCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create", "orders.send", "orders.transfer-server");
+        var (toWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(Guid.NewGuid(), "waiter", "orders.create");
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), fromCookie,
+            new CreateTableDraftRequest(tableId, "M-14", [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)])));
+        Assert.Equal(HttpStatusCode.OK, draftResponse.StatusCode);
+
+        using var transferResponse = await client.SendAsync(JsonRequest(
+            TransferPath(terminalId), fromCookie, new TransferServingUserRequestV1(fromWaiterId, toWaiterId)));
+
+        Assert.Equal(HttpStatusCode.OK, transferResponse.StatusCode);
+        var recorded = Assert.Single(
+            await new ALKAROS.Audit.EventStore.PostgresAuditEventStore(_database.DataSource).GetByAggregateAsync("User", fromWaiterId));
+        Assert.Equal("Order.ServerTransferred", recorded.EventName);
+        Assert.Equal(fromWaiterId, recorded.ActorId);
+        Assert.Equal(1, JsonDocument.Parse(recorded.AfterStateJson!).RootElement.GetProperty("ordersChanged").GetInt32());
+    }
+
+    [Fact]
+    public async Task AServerHandOffWhoseRecordCannotBeWrittenMovesNothing()
+    {
+        var terminalId = Guid.NewGuid();
+        var (fromWaiterId, fromCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.create", "orders.send", "orders.transfer-server");
+        var (toWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(Guid.NewGuid(), "waiter", "orders.create");
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Çorba", 60m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), fromCookie,
+            new CreateTableDraftRequest(tableId, "M-15", [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 60m)])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+
+        await using (var install = _database.DataSource.CreateCommand(
+            """
+            CREATE OR REPLACE FUNCTION audit.test_refuse_transfer() RETURNS trigger AS $fn$
+            BEGIN
+                IF NEW.event_name = 'Order.ServerTransferred' THEN RAISE EXCEPTION 'audit write refused by the test'; END IF;
+                RETURN NEW;
+            END;
+            $fn$ LANGUAGE plpgsql;
+            CREATE TRIGGER test_refuse_transfer BEFORE INSERT ON audit.audit_events FOR EACH ROW EXECUTE FUNCTION audit.test_refuse_transfer();
+            """))
+            await install.ExecuteNonQueryAsync();
+
+        using var transferResponse = await client.SendAsync(JsonRequest(
+            TransferPath(terminalId), fromCookie, new TransferServingUserRequestV1(fromWaiterId, toWaiterId)));
+
+        Assert.False(transferResponse.IsSuccessStatusCode);
+        Assert.Equal(fromWaiterId, await _database.GetServingUserIdAsync(draft!.OrderId));
+    }
+
+    [Fact]
     public async Task AWaiterWithOnlySelfTransferCannotMoveAnotherServersOrders()
     {
         var terminalId = Guid.NewGuid();

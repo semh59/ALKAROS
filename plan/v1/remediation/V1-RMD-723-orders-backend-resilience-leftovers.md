@@ -30,6 +30,7 @@ V1-RMD-602 bulguları B012, B015, B016 ve B017 kapanır. Mutfak olayı tüketici
 
 ## Out of scope
 
+- Gönderilmiş kalem iptalinin tek işlem yapılması ve iptal/ikram idempotency'si V1-RMD-722'de yapıldı.
 - Havuz ayarı (varsayılan Npgsql) değişmez.
 - V1-RMD-602 B011'in sunucu yarısı (taslak kalemlerin faturaya girmesi, Draft siparişin kasaya gönderilmesi) V1-RMD-719'da bırakıldı; taslak kalemin faturalanıp faturalanmayacağı iş kuralı kararı gerektirir, bu görevde yalnız mevcut davranış testle sabitlenir.
 

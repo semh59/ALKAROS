@@ -82,4 +82,12 @@ public interface IOrderRepository
         Guid fromUserId,
         Guid toUserId,
         CancellationToken cancellationToken = default);
+
+    /// <summary>The same hand-off inside the caller's transaction, so its audit record commits with it.</summary>
+    Task<int> ReassignServingUserAsync(
+        Guid fromUserId,
+        Guid toUserId,
+        Npgsql.NpgsqlConnection connection,
+        Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default);
 }

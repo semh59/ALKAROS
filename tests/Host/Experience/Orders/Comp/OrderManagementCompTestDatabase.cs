@@ -1,3 +1,4 @@
+using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Orders.OrderAggregate;
@@ -187,6 +188,20 @@ public sealed class OrderManagementCompTestDatabase : PgTestDatabase
         await repository.AddAsync(order);
 
         return (order.Id, orderItem.Id);
+    }
+
+    public Task SetOrderStatusAsync(Guid orderId, string status)
+        => ExecuteAsync("UPDATE orders.orders SET status = @status WHERE order_id = @order_id;", ("status", status), ("order_id", orderId));
+
+    /// <summary>Seeds a bill with a single Sale line for the order's item, at the given status.</summary>
+    public async Task SeedBillForItemAsync(Guid orderId, Guid itemId, BillState status)
+    {
+        var order = await new PostgresOrderRepository(DataSource).GetByIdAsync(orderId)
+            ?? throw new InvalidOperationException("The seeded order is missing.");
+        var billId = Guid.NewGuid();
+        var billItem = BillItem.FromOrderItem(billId, order.Items.Single(i => i.Id == itemId));
+        await new PostgresBillRepository(DataSource).AddAsync(
+            new Bill(billId, "BILL-" + billId.ToString("N")[..8], new[] { billItem }, orderId: orderId, status: status));
     }
 
     public Task SeedPolicyAsync(string permissionCode, string roleCode, string mode, decimal? limitAmount = null, int? maxCount = null, int? windowSeconds = null)

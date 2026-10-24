@@ -145,6 +145,7 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IKitchenTicketRepository, PostgresKitchenTicketRepository>();
         services.TryAddSingleton<IBillRepository, PostgresBillRepository>();
         services.TryAddSingleton<SentItemVoidStore>();
+        services.TryAddSingleton<OrderCommandReplayStore>();
         // V1-RMD-143: Semih's decision (2026-09-09) that Accept should really
         // consume stock — see OrderStockConsumptionService's own doc comment.
         // ITableRepository-style same-module ownership: these are Inventory's
@@ -643,6 +644,8 @@ public static class OrderManagementEndpoints
             Guid itemId,
             ApplyComplimentaryRequestV1 request,
             ItemExceptionHandler itemExceptions,
+            OrderCommandReplayStore replays,
+            IBillRepository bills,
             IOrderRepository orders,
             IRoleRepository roles,
             IAuthorizationGrantService grants,
@@ -724,17 +727,27 @@ public static class OrderManagementEndpoints
                 request.ReasonCode,
                 CorrelationId: context.TraceIdentifier,
                 request.Notes);
-            var result = await itemExceptions.ApplyComplimentaryAsync(command, cancellationToken);
-            return Results.Ok(new ApplyComplimentaryResultV1(
-                "Applied",
-                result.OrderId,
-                result.OrderItemId,
-                result.NewItemStatus.ToString(),
-                result.NewOrderRowVersion,
-                result.NewOrderTotal,
-                result.AppliedAt,
-                null,
-                personalBudgetRemaining));
+            var applied = await replays.ExecuteAsync(
+                $"orders:{terminalId:N}:{userId:N}:comp",
+                request.IdempotencyKey,
+                request,
+                async () =>
+                {
+                    await RequireItemChangeableAsync(orders, bills, orderId, itemId, cancellationToken);
+                    var result = await itemExceptions.ApplyComplimentaryAsync(command, cancellationToken);
+                    return new ApplyComplimentaryResultV1(
+                        "Applied",
+                        result.OrderId,
+                        result.OrderItemId,
+                        result.NewItemStatus.ToString(),
+                        result.NewOrderRowVersion,
+                        result.NewOrderTotal,
+                        result.AppliedAt,
+                        null,
+                        personalBudgetRemaining);
+                },
+                cancellationToken);
+            return Results.Ok(applied);
         });
 
         // V1-IAM-027: V0-DOM-006 amendment (Semih, 2026-09-04) — a sent-but-
@@ -750,6 +763,7 @@ public static class OrderManagementEndpoints
             Guid itemId,
             VoidSentItemRequestV1 request,
             SentItemVoidStore store,
+            OrderCommandReplayStore replays,
             IOrderRepository orders,
             IRoleRepository roles,
             IAuthorizationGrantService grants,
@@ -819,34 +833,27 @@ public static class OrderManagementEndpoints
                 request.ReasonCode,
                 CorrelationId: context.TraceIdentifier,
                 request.Notes);
-            var result = await store.VoidAsync(command, cancellationToken);
-            await auditEvents.AppendAsync(
-                new AuditEvent(
-                    id: Guid.NewGuid(),
-                    eventName: "order-item.void-sent",
-                    aggregateType: "OrderItem",
-                    aggregateId: itemId,
-                    actorType: "User",
-                    correlationId: context.TraceIdentifier,
-                    actorId: userId,
-                    reason: request.ReasonCode,
-                    afterStateJson: JsonSerializer.Serialize(new
-                    {
-                        kitchenTicketItemCancelled = result.KitchenTicketItemCancelled,
-                        billLineConvertedToWaste = result.BillLineConvertedToWaste,
-                    })),
+            var applied = await replays.ExecuteAsync(
+                $"orders:{terminalId:N}:{userId:N}:void-sent",
+                request.IdempotencyKey,
+                request,
+                async () =>
+                {
+                    var result = await store.VoidAsync(command, cancellationToken);
+                    return new VoidSentItemResultV1(
+                        "Applied",
+                        result.OrderId,
+                        result.OrderItemId,
+                        result.NewOrderRowVersion,
+                        result.NewOrderTotal,
+                        result.KitchenTicketItemCancelled,
+                        result.BillLineConvertedToWaste,
+                        result.StockRestored,
+                        result.AppliedAt,
+                        null);
+                },
                 cancellationToken);
-            return Results.Ok(new VoidSentItemResultV1(
-                "Applied",
-                result.OrderId,
-                result.OrderItemId,
-                result.NewOrderRowVersion,
-                result.NewOrderTotal,
-                result.KitchenTicketItemCancelled,
-                result.BillLineConvertedToWaste,
-                result.StockRestored,
-                result.AppliedAt,
-                null));
+            return Results.Ok(applied);
         });
 
         // V1-RMD-137: found by an independent audit (2026-09-09) — an
@@ -967,7 +974,7 @@ public static class OrderManagementEndpoints
             // else's behalf), for the target to see once. A no-op when the
             // note is empty (LeaveAsync's own contract).
             await handoffNotes.LeaveAsync(actingUserId, request.ToUserId, request.HandoffNote, cancellationToken);
-            var count = await store.TransferServingUserAsync(request.FromUserId, request.ToUserId, cancellationToken);
+            var count = await store.TransferServingUserAsync(request.FromUserId, request.ToUserId, actingUserId, cancellationToken);
             return Results.Ok(new TransferServingUserResultV1(count));
         });
 
@@ -1007,6 +1014,22 @@ public static class OrderManagementEndpoints
         }).RequireRateLimiting("terminal-read");
 
         return group;
+    }
+
+    // A complimentary changes what the guest owes, so it needs an order that is still alive and a bill that can still change.
+    private static async Task RequireItemChangeableAsync(
+        IOrderRepository orders, IBillRepository bills, Guid orderId, Guid itemId, CancellationToken cancellationToken)
+    {
+        var order = await orders.GetByIdAsync(orderId, cancellationToken)
+            ?? throw new OrderItemNotFoundException(orderId, itemId);
+        if (order.Status is OrderState.Completed or OrderState.Cancelled or OrderState.Rejected)
+            throw new OrderClosedException(orderId, order.Status.ToString());
+
+        foreach (var bill in await bills.GetByOrderIdAsync(orderId, cancellationToken))
+        {
+            if (bill.Items.Any(line => line.OrderItemId == itemId) && bill.Status is not (BillState.Open or BillState.Reopened))
+                throw new BillNotModifiableForWasteException(bill.Id, bill.Status.ToString());
+        }
     }
 
     private static async Task<Guid> RequireCashierSessionAsync(
@@ -1132,6 +1155,7 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         ItemNotYetSentException => (409, "NOT_YET_SENT", "Ürün henüz mutfağa gönderilmedi."),
         ItemAlreadyServedException => (409, "ALREADY_SERVED", "Ürün zaten servis edildi."),
         BillNotModifiableForWasteException => (409, "BILL_NOT_MODIFIABLE", "Hesap bu durumda değiştirilemez."),
+        OrderClosedException => (409, "ORDER_CLOSED", "Sipariş kapanmış; bu işlem yapılamaz."),
         VoidStockRestoreFailedException => (409, "STOCK_RESTORE_FAILED", "Ürünün stoğu geri verilemedi; iptal yapılmadı."),
         OrderNotAwaitingConfirmationException => (409, "ORDER_NOT_PENDING_CONFIRMATION", "Sipariş onay bekleyen durumda değil."),
         // V1-RMD-143: Semih's decision (2026-09-09) — Accept refuses outright

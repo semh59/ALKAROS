@@ -140,6 +140,40 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AVoidWhoseItemRecordCannotBeWrittenLeavesTheKitchenTicketAndTheBillLineAsTheyWere()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, productId, item) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Preparing);
+        await _database.SeedKitchenTicketAsync(orderId, itemId, productId, KitchenTicketItemState.Preparing);
+        await _database.SeedOpenBillAsync(orderId, item);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        await using (await RefuseAuditEventAsync("order-item.void-sent"))
+        {
+            using var response = await client.SendAsync(JsonRequest(
+                VoidSentPath(terminalId, orderId, itemId), cookie,
+                new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange", "sent by mistake")));
+
+            Assert.False(response.IsSuccessStatusCode);
+        }
+
+        // The step order used to be order, then kitchen, then bill, each committed alone; now all of it or none of it.
+        var (status, _) = await _database.ReloadItemStateAsync(orderId, itemId);
+        Assert.Equal(OrderItemState.Active, status);
+        Assert.Equal("Preparing", await ScalarTextAsync("SELECT status FROM kitchen.kitchen_ticket_items WHERE order_item_id = @id;", itemId));
+        Assert.Equal("Sale", await ScalarTextAsync("SELECT line_type FROM billing.bill_items WHERE order_item_id = @id;", itemId));
+    }
+
+    private async Task<string?> ScalarTextAsync(string sql, Guid itemId)
+    {
+        await using var command = _database.DataSource.CreateCommand(sql);
+        command.Parameters.AddWithValue("id", itemId);
+        return (string?)await command.ExecuteScalarAsync();
+    }
+
+    [Fact]
     public async Task ARepeatedVoidOfTheSameSentItemGivesItsStockBackOnlyOnce()
     {
         var terminalId = Guid.NewGuid();
@@ -159,6 +193,48 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.OK, first.StatusCode);
         Assert.NotEqual(HttpStatusCode.InternalServerError, second.StatusCode);
         Assert.Equal(10m, await _database.GetOnHandQuantityAsync(stockItemId));
+    }
+
+    [Fact]
+    public async Task ResendingAnAppliedVoidWithTheSameKeyAnswersWithTheFirstResultAndRestoresTheStockOnce()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Sent);
+        var (stockItemId, _) = await _database.SeedConsumedStockForItemAsync(itemId, onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var body = new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange");
+
+        using var first = await client.SendAsync(JsonRequest(VoidSentPath(terminalId, orderId, itemId), cookie, body));
+        using var resent = await client.SendAsync(JsonRequest(VoidSentPath(terminalId, orderId, itemId), cookie, body));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, resent.StatusCode);
+        var firstBody = await first.Content.ReadFromJsonAsync<VoidSentItemResultV1>();
+        var resentBody = await resent.Content.ReadFromJsonAsync<VoidSentItemResultV1>();
+        Assert.Equal(firstBody!.NewOrderRowVersion, resentBody!.NewOrderRowVersion);
+        Assert.True(resentBody.StockRestored);
+        Assert.Equal(10m, await _database.GetOnHandQuantityAsync(stockItemId));
+        Assert.Single(await new PostgresAuditEventStore(_database.DataSource).GetByAggregateAsync("OrderItem", itemId));
+    }
+
+    [Fact]
+    public async Task TheSameKeyWithADifferentVoidRequestIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Sent);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var key = Guid.NewGuid().ToString();
+
+        using var first = await client.SendAsync(JsonRequest(VoidSentPath(terminalId, orderId, itemId), cookie, new VoidSentItemRequestV1(key, 1, "CustomerChange")));
+        using var other = await client.SendAsync(JsonRequest(VoidSentPath(terminalId, orderId, itemId), cookie, new VoidSentItemRequestV1(key, 1, "OperatorError")));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, other.StatusCode);
+        Assert.Contains("IDEMPOTENCY_KEY_REUSED", await other.Content.ReadAsStringAsync());
     }
 
     /// <summary>The database refuses the named audit event, as a broken audit write would; disposing the result lifts the refusal.</summary>

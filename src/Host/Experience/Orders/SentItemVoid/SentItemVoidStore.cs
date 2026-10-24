@@ -20,13 +20,9 @@ namespace ALKAROS.Host.Experience.Orders.SentItemVoid;
 /// Orders/Kitchen/Billing stay decoupled from each other (V0-ARC-001);
 /// this is the composition root that already depends on all three.
 ///
-/// Writes three aggregates (Order, KitchenTicket, Bill) across separate
-/// short transactions, not one atomic transaction — the same accepted
-/// tradeoff V1-KIT-005 documented: a crash between commits can leave the
-/// kitchen ticket item or bill line one step behind the order, but every
-/// consumer of this state is already at-least-once/out-of-order tolerant,
-/// and the Order write (the money-bearing one) always happens first and
-/// alone decides whether the item is voided.
+/// Writes three aggregates (Order, KitchenTicket, Bill) and both audit records in ONE transaction: the item is
+/// either voided everywhere (order, stock, kitchen ticket, bill line, audit) or nowhere, so a crash between steps
+/// can no longer leave the kitchen cooking a voided item or the bill at full price.
 ///
 /// V1-RMD-143 follow-up (Semih, 2026-09-09): the policy doc's own
 /// definition of Waste (docs/domain/void-complimentary-discount-policy.md
@@ -134,6 +130,8 @@ public sealed class SentItemVoidStore
         var restoresStock = item.KitchenState is KitchenState.Sent or KitchenState.Held;
         long newOrderRowVersion;
         bool stockRestored;
+        bool kitchenCancelled;
+        bool wasteConverted;
         await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false))
         await using (var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false))
         {
@@ -142,17 +140,16 @@ public sealed class SentItemVoidStore
             stockRestored = restoresStock
                 && await RestoreStockForVoidedItemAsync(item, command, connection, transaction, cancellationToken)
                     .ConfigureAwait(false);
+            kitchenCancelled = await CancelKitchenTicketItemAsync(
+                command.OrderId, command.OrderItemId, historyReason, now, connection, transaction, cancellationToken).ConfigureAwait(false);
+            wasteConverted = billContext is not null
+                && await ApplyBillWasteConversionAsync(
+                    billContext.Value.Bill, billContext.Value.BillItem, item, command.ReasonCode, connection, transaction, cancellationToken)
+                    .ConfigureAwait(false);
             await AppendAuditAsync(connection, transaction, order.Id, item, command, stockRestored, cancellationToken).ConfigureAwait(false);
+            await AppendItemEventAsync(connection, transaction, item, command, kitchenCancelled, wasteConverted, cancellationToken).ConfigureAwait(false);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
         }
-
-        var kitchenCancelled = await CancelKitchenTicketItemAsync(
-            command.OrderId, command.OrderItemId, historyReason, now, cancellationToken).ConfigureAwait(false);
-        var wasteConverted = billContext is not null
-            ? await ApplyBillWasteConversionAsync(
-                billContext.Value.Bill, billContext.Value.BillItem, item, command.ReasonCode, cancellationToken)
-                .ConfigureAwait(false)
-            : false;
 
         return new SentItemVoidResult(
             order.Id, item.Id, newOrderRowVersion, voidedOrder.Total, kitchenCancelled, wasteConverted, stockRestored, now);
@@ -219,16 +216,19 @@ public sealed class SentItemVoidStore
     }
 
     /// <summary>
-    /// Best-effort mirror cancellation on the matching kitchen ticket item, if
-    /// one exists — the Order write above is the authority on whether the
-    /// item is voided; a missing ticket item (should not happen once
-    /// kitchen.live_sync_enabled is on, but is not this store's job to
-    /// enforce) is not a reason to fail the void.
+    /// Mirror cancellation on the matching kitchen ticket item, if one exists, inside the void's transaction. A
+    /// missing ticket item (the live kitchen sync may be off) is not a reason to fail the void.
     /// </summary>
     private async Task<bool> CancelKitchenTicketItemAsync(
-        Guid orderId, Guid orderItemId, string reason, DateTimeOffset now, CancellationToken cancellationToken)
+        Guid orderId,
+        Guid orderItemId,
+        string reason,
+        DateTimeOffset now,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
     {
-        var tickets = await _tickets.GetByOrderIdAsync(orderId, cancellationToken).ConfigureAwait(false);
+        var tickets = await _tickets.GetByOrderIdAsync(orderId, connection, transaction, cancellationToken).ConfigureAwait(false);
         foreach (var ticket in tickets)
         {
             var match = ticket.Items.FirstOrDefault(i => i.OrderItemId == orderItemId);
@@ -236,7 +236,7 @@ public sealed class SentItemVoidStore
                 continue;
 
             var updated = ticket.UpdateItemStatus(match.Id, KitchenTicketItemState.Cancelled, reason, now);
-            await _tickets.SaveAsync(updated, ticket.RowVersion, cancellationToken).ConfigureAwait(false);
+            await _tickets.SaveAsync(updated, ticket.RowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
             return true;
         }
 
@@ -280,7 +280,13 @@ public sealed class SentItemVoidStore
     /// meantime.
     /// </summary>
     private async Task<bool> ApplyBillWasteConversionAsync(
-        Bill bill, BillItem billItem, OrderItem item, string reasonCode, CancellationToken cancellationToken)
+        Bill bill,
+        BillItem billItem,
+        OrderItem item,
+        string reasonCode,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
     {
         var wasteItem = new BillItem(
             Guid.NewGuid(),
@@ -299,7 +305,7 @@ public sealed class SentItemVoidStore
             notes: $"Void:{reasonCode}");
 
         var updatedBill = bill.RemoveItem(billItem.Id).AddItem(wasteItem);
-        await _bills.SaveAsync(updatedBill, bill.RowVersion, cancellationToken).ConfigureAwait(false);
+        await _bills.SaveAsync(updatedBill, bill.RowVersion, connection, transaction, cancellationToken).ConfigureAwait(false);
         return true;
     }
 
@@ -335,6 +341,32 @@ public sealed class SentItemVoidStore
                     ItemId = item.Id,
                     Status = OrderItemState.Cancelled.ToString(),
                     StockRestored = stockRestored,
+                })),
+            connection, transaction, cancellationToken);
+
+    // The per-item record of what the kitchen and bill steps achieved; it commits with them.
+    private Task AppendItemEventAsync(
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        OrderItem item,
+        SentItemVoidCommand command,
+        bool kitchenTicketItemCancelled,
+        bool billLineConvertedToWaste,
+        CancellationToken cancellationToken)
+        => _auditEvents.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: "order-item.void-sent",
+                aggregateType: "OrderItem",
+                aggregateId: item.Id,
+                actorType: "User",
+                correlationId: command.CorrelationId,
+                actorId: command.ActorId,
+                reason: command.ReasonCode,
+                afterStateJson: JsonSerializer.Serialize(new
+                {
+                    kitchenTicketItemCancelled,
+                    billLineConvertedToWaste,
                 })),
             connection, transaction, cancellationToken);
 }

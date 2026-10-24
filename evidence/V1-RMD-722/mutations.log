@@ -1,0 +1,9 @@
+M1-kitchen-step-skipped KILLED restored=true
+M2-item-event-after-commit KILLED restored=true
+M3-different-request-accepted KILLED restored=true
+M4-replay-lookup-off KILLED restored=true
+M5-closed-order-comp-allowed KILLED restored=true
+M6-paid-bill-comp-allowed KILLED restored=true
+M7-transfer-not-audited KILLED restored=true
+M8-transfer-commits-before-audit KILLED restored=true
+DONE

@@ -254,7 +254,21 @@ public sealed class PostgresOrderRepository : IOrderRepository
         // in fact just changed under them. Bumping row_version here, same
         // convention as every other order mutation, makes a shift transfer
         // count as a real change like any other.
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+        var changed = await ReassignServingUserAsync(fromUserId, toUserId, connection, transaction, cancellationToken);
+        await transaction.CommitAsync(cancellationToken);
+        return changed;
+    }
+
+    public async Task<int> ReassignServingUserAsync(
+        Guid fromUserId,
+        Guid toUserId,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        await using var command = CreateCommand(connection, transaction,
             $"""
             UPDATE {Orders}
             SET serving_user_id = @to_user_id,
