@@ -24,6 +24,7 @@ V1-RMD-602 bulguları B009, B010, B013, B014, B024 ve B025 kapanır. Gönderilmi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Orders/** - yalnız yeni ve düzeltilen test
 - `database/migrations/V1/V1-RMD-722/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ApiConventions/idempotency_allowlist.json - yalnız bu uçların çıkarılması
+- `src/Host/Experience/Orders/OrderCommandReplayStore.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Billing/BillFoundation/IBillRepository.cs - yalnız işlem içi SaveAsync aşırı yüklemesi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Billing/BillFoundation/PostgresBillRepository.cs - yalnız işlem içi SaveAsync aşırı yüklemesi
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.

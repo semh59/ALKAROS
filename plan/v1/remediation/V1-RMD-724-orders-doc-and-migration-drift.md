@@ -30,6 +30,7 @@ V1-RMD-602 bulguları B008, B022, B023, B030 ve B031 kapanır. Dokümanlar koda 
 
 ## Out of scope
 
+- İptal ve ikramın tek işlem ve idempotency işi V1-RMD-722'de yapıldı.
 - Üretim davranışı değişikliği.
 
 ## Dependencies
