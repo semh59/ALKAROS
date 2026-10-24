@@ -1,0 +1,2 @@
+findings-raw.md dosya:satir referansi 19; var ve aralikta 19; dosya bulunamadi 0; aralik disi 0 (varlik/aralik kontrolu, alinti karsilastirmasi yok)
+

@@ -1,0 +1,6 @@
+total files: 120
+total lines: 23055
+src cs files: 35
+test files: 40
+migrations: 20
+client files: 21

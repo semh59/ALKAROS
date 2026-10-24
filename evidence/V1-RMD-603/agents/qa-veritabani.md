@@ -1,0 +1,25 @@
+# qa-veritabani - V1-RMD-603 Billing (SHA feb38368)
+
+Kontrol: 35/35 kalem (20 göç dosyası: 019, 020, 021, 032, 036, 075, 108, 123, 180, 181 up+down; 3 Postgres deposu; 4 Host SQL dosyası; 5 test csproj; 4 kayıt noktası). Yöntem: kod okuması + geçici veritabanı qa_dbv_603_* (55432; DROP güvenlik freni engelledi, veritabanı duruyor, ad tmp/qa/V1-RMD-603/qa-veritabani/dbname.txt). Düzey: Ç Çalıştırıldı, K Kod okuması, Çk Çıkarım. Bilinen kayıtla eşleşme yok.
+
+| No | Önem | Kanıt | Sorun | Etki |
+|---|---|---|---|---|
+| B1 | Orta | Ç 180-bill-cancellation.down.sql:10-11 | İptal edilmiş + aynı bill_number'lı aktif hesap bir aradayken down `could not create unique index "bills_bill_number_key"` ile çöküyor (019+180 up, çakışan iki satır, 180 down ile yeniden üretildi). Temizleme betiği yok. | Bu veri oluştuktan sonra 180 geri alınamaz |
+| B2 | Orta | K 036-nonnegative-line-amounts.up.sql:1-21; Ç ikinci up "ck_order_items_nonnegative_amounts already exists" | ADD CONSTRAINT korumasız; CHECK NOT VALID değil (orders.order_items üzerinde ACCESS EXCLUSIVE tam tarama); eski satır gross=net+tax ihlalinde göç hata verir; migration-rehearsal-profile'da 036 yok; Billing göçü Orders şemasına DDL yazıyor. | Gerçek veride başarısız/kilit |
+| B3 | Düşük | K 108 up:20-28; 123 up:10-17; 180 down:7,11 | Korumasız ADD CONSTRAINT; 108 yetim authorized_by/created_by satırlarında çöker. | Yeniden çalıştırma güvenilmez |
+| B4 | Orta | K BillingSplitStore.cs:61,69,86-87,221-233 | Hesap/durum FOR UPDATE'ten önce okunuyor; kilit sonrası yeniden kontrol yok (TOCTOU) – BillCancellation.cs:50 ile yarışta iptalli hesaba indirim/bahşiş yazılır. | Tutarsız para kaydı |
+| B5 | Orta | K BillingSplitStore.cs:103-104; BillingSplitContracts.cs:108 | Null/boş idempotency anahtarı eski null satırla eşleşir; boş anahtar ayrı indirimleri tekrar sayar; aynı anahtar farklı tutar yok sayılır. allowlist'te discount/tip uçları yok. | Kayıp/çifte indirim |
+| B6 | Orta | K PaymentRefunds.cs:453-456; Bill.cs:180 | Tam iadede SQL Paid->Cancelled yapıyor, alan matrisini atlıyor; DB durum CHECK'i yok. | Model-veri ayrışması |
+| B7 | Orta | K BillCancellation.cs:71-73; BillingSplitStore.cs:358-361; PaymentRefunds.cs:463 | Billing table_mgmt.tables.current_bill_id'ye doğrudan yazıyor (3 yer; SKILL kural 2). Başka modülden billing'e yazım yok. | Şema sınırı ihlali |
+| B8 | Düşük | K PostgresBillRepository.cs:105-108; 032 up:24-28,40-44 | Kalem silinince bağlı bill_allocations/bill_adjustments ON DELETE CASCADE ile silinir; kalem çıkarma yolu erişilebilirliği doğrulanamadı. | Olası finansal kayıt kaybı |
+| B9 | Düşük | K 019 up:10-23; 180 up:16-17 | bills tutarlarında CHECK yok; Cancelled <-> cancelled_at/reason ilişkisi yok; reason uzunluğu yalnız uygulamada; cancelled_by FK'sız; bill_allocations.tax_amount >=0 CHECK yok; PostgresBillRepository.cs:162-176 iptalde neden/kullanıcı NULL. | Bütünlük uygulamaya bırakılmış |
+| B10 | Düşük | K 019 up:59 ix_bill_items_bill; 032 up:10-11 | Gereksiz indeks (unique indeksin öneki). | Yazma maliyeti |
+| B11 | Düşük | K PostgresSplitDesignRepository.cs:73-129,194-205; PostgresBillAdjustmentRepository.cs:144-157,176-191; PostgresBillRepository.cs:49-56 | Kilitsiz/durum-kontrolsüz SaveSplitDesignAsync/DeleteSplitDesignAsync; RemoveAsync finansal satırı siler; GetTotalFeeAmountAsync bahşişi fee sayar; GetByTableIdAsync LIMIT'siz; üretim çağrısı yok (ölü ama açık). | İleride yanlış çağrıda veri bozulur |
+| B12 | Düşük | K PostgresSplitDesignRepository.cs:542,512-513 | Allocation row_version hep 1; DB saati/uygulama saati karışık; bill_allocations'ta updated_at yok. | Zayıf eşzamanlılık denetimi |
+| B13 | Düşük | K order.json 123 kaydı | 123 payments.payments ve billing.bills'e de kısıt ekliyor, tablolar listelenmemiş. | Bağımlılık grafiği eksik |
+| B14 | Düşük | K PaymentRefunds.cs:457 | cancellation_reason DB'de Türkçe düz yazı 'Ödeme iade edildi'. | Kodlu değer ilkesiyle tutarsız |
+| B15 | Orta | K fixture csproj'ları; Ç grep: 032, 075, 108, 123, 180 down için test yok | 032 ve 108 hiçbir modül fixture'ında uygulanmıyor; çoğu down betiği testsiz (B1 bu yüzden yakalanmadı). | Geri alma hatası sessiz geçer |
+
+Temiz: NUMERIC(18,2)/(18,3)/(5,2), float yok; row_version korumalı güncellemeler; tüm komutlar parametreli; okuma limitleri (5001); kısmi unique indeksler (075, 180; 180 up iki kez hatasız); 032 ikinci up hatasız; 181 izin tohumu ON CONFLICT DO NOTHING ve kayıtlı; Held/Nfc down çökmesi Billing'de yok; runner --single-transaction; ILIKE/lower yok; owner_reference yapılandırılmış.
+
+Doğrulanamayanlar: indirim akışı (hesap kilidi -> payment-allocation advisory kilidi, BillingSplitStore.cs:86,142) ile tahsilat (advisory önce, PostgresPaymentAllocationRepository.cs:156) arasındaki olası kilit sırası döngüsü; Host Billing testlerinin göç seti; B5 canlı etkisi; B8 erişilebilirliği; 036'nın gerçek veride başarısızlığı. Gözlem: PaymentTender.log satır 709 kırmızı test (ACheckThatWasAlreadySentToTheTillCompletesButItsTableIsNeverTouched).

@@ -1,0 +1,43 @@
+id	durum	onem	not
+B001	DOGRULANDI	Yuksek	BillPaymentClosureCalculator.cs:71 adjustedPayable>0; AdjustmentCalculator.cs:58 yalniz asani reddeder; split-payment.js:265 paid fazi; TryCloseAsync yalniz tahsilat sonrasi; ana oturum kodda yeniden acti
+B002	DOGRULANDI	Yuksek	PaymentRefunds.cs:174-175 butce yolu ayni islemde Completed; 183 benzersiz dizin yalniz acik istekler; ana oturum kodda yeniden acti
+B003	CURUTULDU(uretim)	Dusuk	Test fikstürü table_sent_checks yazmiyor (PaymentTenderHttpTests.cs:1233-1282); uretim kusuru degil, kapanis kapisini kirmizi tutar; N1 mekanizma
+B004	KISMEN	Orta	Kok neden dogru; CheckViolation 400 (503 degil); Orders yazimi once kirilir; gecici yol hesap indirimi
+B005	CURUTULDU(davranis)	Dusuk	SplitEngine.cs:302 eksik toplami reddeder; test bosluğu B037'ye
+B006	CURUTULDU(davranis)	Dusuk	BillingSplitStore.cs:217,223 korumalar var; test bosluğu B037'ye
+B007	KISMEN(bilinen remaining-gaps-register:52)	Orta	Kilit bilincli; kusur uyari metni
+B008	DOGRULANDI	Orta	
+B009	DOGRULANDI	Orta	
+B010	KISMEN	Dusuk	
+B011	DOGRULANDI	Orta	
+B012	DOGRULANDI	Orta	
+B013	DOGRULANDI	Orta	
+B014	KISMEN	Orta	
+B015	DOGRULANDI(karar)	Orta	PO karari
+B016	KISMEN	Dusuk	Toplam odemeyi asamaz, son birim iadesi 409
+B017	DOGRULANDI	Orta	
+B018	KISMEN	Orta	
+B019	KISMEN	Orta	
+B020	DOGRULANDI	Orta	
+B021	KISMEN	Dusuk	
+B022	KISMEN	Dusuk	
+B023	DOGRULANDI	Orta	
+B024	KISMEN	Orta	
+B025	DOGRULANDI	Dusuk	
+B026	KISMEN	Dusuk	PO karari (V0-CMP-004 vs V1-WTR-020)
+B027	DOGRULANDI	Orta	
+B028	DOGRULANDI	Orta	dis bagimlilik
+B029	KISMEN	Dusuk	
+B030	DOGRULANDI	Dusuk	
+B031	KISMEN	Dusuk	
+B032	DOGRULANDI	Orta	
+B033	KISMEN	Orta	
+B034	KISMEN	Orta	
+B035	DOGRULANDI(bilinen remaining-gaps-register:46)	Orta	
+B036	KISMEN	Orta	
+B037	KISMEN(+B005,B006)	Orta	
+B038	DOGRULANDI(test kaynakli)	Dusuk	üretim ORDER BY created_at eşitlik ayırıcısız
+B039	KISMEN	Dusuk	
+B040	DOGRULANDI	Dusuk	
+N1	YENI	Dusuk	PostgresTablePointerProjector.cs:154 current_status yazar, TablePointerRepairHostedService.cs:9-10 yorumuyla çelişir
+N2	YENI	Dusuk	PostgresSplitDesignRepository.cs:40 allocation listesinde eşitlik ayırıcı yok

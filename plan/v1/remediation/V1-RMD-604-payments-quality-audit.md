@@ -36,6 +36,19 @@ Payments modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar b
 ## Dependencies
 
 - V1-RMD-603
+- V1-RMD-726
+- V1-RMD-727
+- V1-RMD-728
+- V1-RMD-729
+- V1-RMD-730
+- V1-RMD-731
+- V1-RMD-732
+- V1-RMD-733
+- V1-RMD-734
+- V1-RMD-735
+- V1-RMD-736
+- V1-RMD-737
+- V1-RMD-738
 
 ## Acceptance evidence
 
