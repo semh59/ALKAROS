@@ -1,7 +1,7 @@
 # V1-RMD-724 - Orders doküman sapmaları, down betikleri ve sınır istisnası
 
 - Task ID: V1-RMD-724
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01XYCVWVTbShZKMmSzdAGR6K
 - Work type: implementation
 - Surface state: Planned
