@@ -1,8 +1,8 @@
 # V1-RMD-718 - Garson çevrimdışı kuyruğu ve hatalı tur ekranı
 
 - Task ID: V1-RMD-718
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
 
