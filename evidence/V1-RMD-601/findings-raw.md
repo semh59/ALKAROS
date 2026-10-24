@@ -1,0 +1,41 @@
+# V1-RMD-601 birleşik ham bulgular (SHA c794e951)
+
+Kaynak: agents/*.md (9 rapor; qa-sinir-mimari bekleniyor, gelince "Ek" bölümüne). Aynı kök neden tek satırda; "Ajanlar" bütün raporlayanları sayar. Önem = ajanların önerisi; doğrulayıcı "bugün tetiklenebilir mi" ölçütüyle yeniden belirler.
+
+| ID | Önerilen | Kök neden | Ana kanıt | Ajanlar |
+|---|---|---|---|---|
+| B001 | Yüksek | Sunucu hiçbir masa için "Unmerge" komutu yayınlamaz; PosTerminal'de ayırma düğmesi kalıcı pasif; Semih senaryosu (3+4 birleştir, ayır) arayüzden yapılamaz (bilinen RMD032-F004/V1-RMD-117) | `TableManagementContracts.cs:283-293`, `FloorPlanWorkspace.tsx:437-438` | api, backend, frontend, ux, güvenlik, performans |
+| B002 | Yüksek | Boş/siparişsiz/hesapsız masa birleştirilince `Guid.Empty` yazılır → FK 23503 (probe ile çalıştırıldı) | `PostgresTableMergeRepository.Merge.cs:239-240,313-314` | test-kalitesi (probe), güvenlik |
+| B003 | Yüksek | Birleşim katılımcının tüm açık siparişlerini/hesaplarını taşır ama yalnız bir original_order_id/bill_id saklar; fazlası ayırmada ana masada kalır (probe ile çalıştırıldı) | `Merge.cs:239-246`, `024-table-merges.up.sql`, `PostgresOrderRepository.cs:207` | test-kalitesi (probe), veritabanı, backend, api, performans |
+| B004 | Yüksek | Unmerge ana masa işaretçisini ORDER BY'sız LIMIT 1 ile, geri verilecek siparişleri dışlamadan seçer; test sıra şansıyla geçer | `Unmerge.cs:215-239`, `PostgresTableMergeTests.cs:186-191` | veritabanı, backend, api, performans |
+| B005 | Yüksek/Orta | Outbox tüketicileri `table_id` ile taşır; olay kimliği dedupe/sıra yok; yeniden teslim/geç TableMerged/transfer sonrası yeni oturan müşterinin siparişi taşınır; "idempotent by construction" yorumu yanlış; test yok | `TableEventOrderConsumer.cs:14-66`, `OutboxStore.cs:354-355`, `OutboxFanoutSink.cs:24-38`, `Transfer.cs:290-310` | hepsi (güvenlik, backend, api, performans, doküman) |
+| B006 | Yüksek/Orta | Genel durum ucu (tables.status, garson dahil) açık siparişli/faturalı masayı Available yapar; current_order_id temizlenir, current_bill_id temizlenmez; audit yok | `TableManagementStore.cs:183-242`, `PostgresTableRepository.cs:141-149` | güvenlik, backend, api |
+| B007 | Orta | Transfer/SetAvailable/masa PUT/ödeme tamamlama aktif birleşimi bilmez; birleşim Active kalır; ayırma sonra etkisiz/hayalet | `Transfer.cs:183-186`, `OrderSettlementService.cs:80-85`, `Merge.cs:128-140` | backend, güvenlik, api, performans |
+| B008 | Orta | Ayırma, katılımcıyı sonradan kapanmış siparişe işaret eden Occupied yapar | `Unmerge.cs:138-188` | backend, güvenlik, api, performans |
+| B009 | Yüksek | 8 sn yoklama "loading" yapar → FloorPlanWorkspace sökülür; kat planı taslağı ve açık modal kaybolur; yorum yanlış | `workspace.tsx:205,241`, `TableWorkspace.tsx:333` | frontend, ux, performans |
+| B010 | Yüksek | ReservationStation `canManage={false}` → "Onayla" sessizce hiçbir şey yapmaz | `ReservationStation.tsx:144`, `TableWorkspace.tsx:289` | frontend, ux, performans |
+| B011 | Yüksek | Eylem hataları modal arkasındaki sayfa şeridine yazılır; formErrors boş; 409 sonrası "güncel durum yüklendi" yalanı, modal eski rowVersion'la | `TableWorkspace.tsx:324-327,365`, `workspace.tsx:250` | frontend |
+| B012 | Orta | `TableManagementApiError` ApiError'dan türemez → çakışma tespiti hiç çalışmaz, İngilizce regex, "Taslağınız korundu" çıkmaz | `FloorPlanWorkspace.tsx:252-253`, `tableApi.ts:14,56` | frontend, ux, performans |
+| B013 | Orta | İstemci zaman damgaları audit occurred_at ve kayıtlara yazılır; rezervasyon OrderId doğrulanmaz | `TableManagementApplication.cs:272-387`, rezervasyon deposu `:147,213,404` | güvenlik, backend, api |
+| B014 | Orta | Rezervasyon: otomatik süre dolumu yok, UI expiresAt/ad/saat/telefon yok, expire süre kontrolsüz, actor_type='System' sabit | `Application.cs:325`, `tableApi.ts:82` | hepsi |
+| B015 | Orta | Occupied için "Reserve" sunulur, depo her zaman reddeder | `Contracts.cs:288`, `ReservationRepository.cs:178` | güvenlik, api, doküman, backend |
+| B016 | Orta | KASA-1 teknik masa gerçek masa gibi listelenir/seçilir/birleştirilir | `098-...up.sql`, `TableManagementStore.cs:76-96` | backend, api, doküman |
+| B017 | Orta | WaiterPwa `currentOrderOpenedAt` okur, sunucu `occupiedSince` gönderir → masa yaşı rozeti ölü | `tables.js:41`, `Contracts.cs:146` | frontend, backend |
+| B018 | Orta | WaiterPwa liste hatası boş liste olur; yoklama yok; transfer 409 sonrası yenilenmez | `tables.js:20-28`, `waiter-app.js:879`, `transfer.js:56-59` | frontend, ux, performans |
+| B019 | Orta | Kasiyer/yönetici ekranında hata sonrası yoklama durur; yoklama hatasında kat görünümü gizlenir | `workspace.tsx:217,239-243` | performans, ux |
+| B020 | Orta | Hedef listeleri durumdan bağımsız; zorunlu serbest metin gerekçe; iki masayı birleştirmek için önce "Masayı aç"; farklı bölge birleşimi ayrılamaz | `TableWorkspace.tsx:168,209,291,303-306`, `Merge.cs:92-140`, `Unmerge.cs:79-80` | ux, frontend, backend, performans |
+| B021 | Orta | Zone/masa/kat planı yazmalarında audit yok; PUT masa Occupied/Reserved'ı pasifleştirebilir, bölge silme açık masaları denetlemez | `TableManagementStore.cs:115-148`, `ZoneConcurrencyStore.cs:91-111` | güvenlik, backend, api |
+| B022 | Orta | status_changed_at yalnız tek overload'da güncellenir | `PostgresTableRepository.cs:146` | api, backend, veritabanı |
+| B023 | Orta | DB: aktif birleşim/rezervasyon için kısmi benzersiz indeks yok; CHECK/FK boşlukları; xmin satır sürümü | `024`, `025`, `ZoneConcurrencyStore.cs:20,72` | veritabanı, backend, performans, doküman |
+| B024 | Orta | Hata eşlemesi: 40P01/40001/22001/23503 → yanlış 503/409; kilit sırası ters (kat planı vs ayırma) | `Application.cs:538-582`, `Unmerge.cs:26-98`, `FloorPlanRepository.cs:37,145,170` | api, backend, performans |
+| B025 | Orta | İşaretçi yeniden kurma çağıranı yok; seçim politikası projektör DESC vs transfer ASC; QR akışı satırsız Reserved | `PostgresTablePointerProjector.cs:242-326,404`, `Transfer.cs:268` | hepsi |
+| B026 | Orta | Kat planı kaydı bölgedeki her masanın row_version'ını ister → serviste sık 409 | `PostgresTableFloorPlanRepository.cs:44-48` | api |
+| B027 | Orta | Test boşlukları: boş masa merge, siparişsiz merge, kısmen ödenmiş merge/unmerge, tekrar teslim, eşzamanlılık (Task.WhenAll yok), çok sipariş, rezerve masa merge; ReservationStation/Unmerge/axe color-contrast testleri | test-kalitesi, veritabanı, frontend | |
+| B028 | Orta | Erişilebilirlik/UX: accent #00cfff metin kontrastı 1,85:1, 8-10 px yazı, pasif düğme nedeni yalnız title, teknik jargon ("v12", "Satır sürümü", GUID), lastUpdated ham ISO, onay diyaloğu sonucu özetlemez | `floorPlan.css:48,79-81`, `tables.css`, `TableWorkspace.tsx:472-508` | ux, frontend |
+| B029 | Orta | Masa tutarı yalnız işaretçi siparişini toplar (birleşik/çok siparişte eksik); birleşik masa PWA'da 0 ₺ Dolu | `TableManagementStore.cs:34-41` | backend, api |
+| B030 | Orta | Cashier handoff'ta gönderilmiş hesap table_id'de kalır; sonraki transfer/merge onu da sürükler | `CashierHandoffStore.cs:44-50` | backend |
+| B031 | Orta | İdempotency anahtarı yok: tekrar gönderimde ayırma 404, birleştirme/transfer 409 (bilinen V1-IAM-024); zaman aşımı "tekrar deneyin" | `idempotency_allowlist.json`, `tableApi.ts:50-60` | hepsi |
+| B032 | Orta | Doküman sapmaları: yaşam döngüsü matrisi, projection-ownership TableStateChanged, nullable-unique zone_tables, reservation-policy "süre yok", api-contract X-Idempotency-Key/örnek, check-and-table eski kod atfı, module-dependency-rules Tables "none" ve audit INSERT, V12-QRO-003 durumu, single-branch-key table_number | qa-dokuman D1,D3,D4,D7-D14 | |
+| B033 | Düşük | Düşük bag: ReservationStation iki aynı dal (ağ hatası giriş formu), PWA "Servis dışı" rengi, katılımcı sayısı/reason/partySize sınırı yok, N+1 (Reserved, RebuildAll), "atomik" jargonu, 404/yinelenen kayıt mesajları, oxlint 2 uyarı, bölge/masa formunda meşgul kilidi yok, PUT masa kapasite sınırı, masa no "3"/"03", X-Correlation-Id okunmaz, NetArchTest lisansı, eski kanıt atıfları, yorum yanlışları | çoklu | |
+
+Doğrulanamayan (ajan): PWA'da birleşik katılımcıda sipariş açılması, KASA-1 istemcide görünmesi, gerçek tarayıcı görselleri, outbox gecikme/sıra sıklığı, V1-RMD-128 karşılığı, xmin dondurma, performans bütçesi.

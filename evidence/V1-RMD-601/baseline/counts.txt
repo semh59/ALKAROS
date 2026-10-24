@@ -1,0 +1,11 @@
+dosya sayısı: 123
+satır sayısı:
+ 18327 total
+komut: git ls-files <dilim yolları> | sort -u > scope-files.txt; xargs wc -l
+src/Modules/Tables: 45 dosya
+src/Host/Experience/Tables: 4 dosya
+tests/Modules/Tables: 30 dosya
+tests/Host/Experience/Tables: 6 dosya
+database/migrations: 16 dosya
+src/Clients: 13 dosya
+tests/E2E: 2 dosya

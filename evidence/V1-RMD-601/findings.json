@@ -1,0 +1,246 @@
+{
+ "task": "V1-RMD-601",
+ "sha": "c794e951",
+ "counts": {
+  "DOGRULANDI": 25,
+  "KISMEN": 8,
+  "YENI": 1
+ },
+ "findings": [
+  {
+   "id": "V1-RMD-601-B001",
+   "state": "DOGRULANDI",
+   "severity": "Yuksek",
+   "fix": "V1-RMD-710"
+  },
+  {
+   "id": "V1-RMD-601-B002",
+   "state": "DOGRULANDI",
+   "severity": "Yuksek",
+   "fix": "V1-RMD-710"
+  },
+  {
+   "id": "V1-RMD-601-B003",
+   "state": "DOGRULANDI",
+   "severity": "Yuksek(B001 grubu)",
+   "fix": "V1-RMD-710"
+  },
+  {
+   "id": "V1-RMD-601-B004",
+   "state": "DOGRULANDI",
+   "severity": "Yuksek(B001 grubu)",
+   "fix": "V1-RMD-710"
+  },
+  {
+   "id": "V1-RMD-601-B005",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-711"
+  },
+  {
+   "id": "V1-RMD-601-B006",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-711"
+  },
+  {
+   "id": "V1-RMD-601-B007",
+   "state": "DOGRULANDI",
+   "severity": "Yuksek",
+   "fix": "V1-RMD-710"
+  },
+  {
+   "id": "V1-RMD-601-B008",
+   "state": "DOGRULANDI",
+   "severity": "Orta(B001 grubu)",
+   "fix": "V1-RMD-710"
+  },
+  {
+   "id": "V1-RMD-601-B009",
+   "state": "KISMEN",
+   "severity": "Yuksek",
+   "fix": "V1-RMD-713"
+  },
+  {
+   "id": "V1-RMD-601-B010",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-713"
+  },
+  {
+   "id": "V1-RMD-601-B011",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-713"
+  },
+  {
+   "id": "V1-RMD-601-B012",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-713"
+  },
+  {
+   "id": "V1-RMD-601-B013",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-712"
+  },
+  {
+   "id": "V1-RMD-601-B014",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-712"
+  },
+  {
+   "id": "V1-RMD-601-B015",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-712"
+  },
+  {
+   "id": "V1-RMD-601-B016",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-712"
+  },
+  {
+   "id": "V1-RMD-601-B017",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-713"
+  },
+  {
+   "id": "V1-RMD-601-B018",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-713"
+  },
+  {
+   "id": "V1-RMD-601-B019",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-713"
+  },
+  {
+   "id": "V1-RMD-601-B020",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-713"
+  },
+  {
+   "id": "V1-RMD-601-B021",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-711"
+  },
+  {
+   "id": "V1-RMD-601-B022",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-711"
+  },
+  {
+   "id": "V1-RMD-601-B023",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-714"
+  },
+  {
+   "id": "V1-RMD-601-B024",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-711"
+  },
+  {
+   "id": "V1-RMD-601-B025",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-711"
+  },
+  {
+   "id": "V1-RMD-601-B026",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-712"
+  },
+  {
+   "id": "V1-RMD-601-B027",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-714"
+  },
+  {
+   "id": "V1-RMD-601-B028",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-713"
+  },
+  {
+   "id": "V1-RMD-601-B029",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-712"
+  },
+  {
+   "id": "V1-RMD-601-B030",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-710"
+  },
+  {
+   "id": "V1-RMD-601-B031",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-714"
+  },
+  {
+   "id": "V1-RMD-601-B032",
+   "state": "KISMEN",
+   "severity": "Dokuman",
+   "fix": "V1-RMD-714"
+  },
+  {
+   "id": "V1-RMD-601-B033",
+   "state": "KISMEN",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-714"
+  },
+  {
+   "id": "V1-RMD-601-N1",
+   "state": "YENI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-710"
+  },
+  {
+   "id": "V1-RMD-601-S2",
+   "state": "AJAN-KOD-OKUMASI (karşı denetçiden geçmedi)",
+   "severity": "Yuksek",
+   "fix": "V1-RMD-711"
+  },
+  {
+   "id": "V1-RMD-601-S4",
+   "state": "AJAN-KOD-OKUMASI (karşı denetçiden geçmedi)",
+   "severity": "Orta",
+   "fix": "V1-RMD-714"
+  },
+  {
+   "id": "V1-RMD-601-S5",
+   "state": "AJAN-KOD-OKUMASI (karşı denetçiden geçmedi)",
+   "severity": "Orta",
+   "fix": "V1-RMD-714"
+  },
+  {
+   "id": "V1-RMD-601-S6",
+   "state": "AJAN-KOD-OKUMASI (karşı denetçiden geçmedi)",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-714"
+  },
+  {
+   "id": "V1-RMD-601-S7",
+   "state": "AJAN-KOD-OKUMASI (karşı denetçiden geçmedi)",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-714"
+  }
+ ],
+ "note": "S1=B005, S3=B005/B003 (aynı kök). S2,S4-S7 qa-sinir-mimari'den, kod okuması; karşı denetçi koşusundan sonra geldi."
+}

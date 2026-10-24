@@ -1,0 +1,8 @@
+GÖREV: V1-RMD-601 Tables (masa, kat planı, birleştirme, ayırma, transfer, rezervasyon, ödeme topolojisi). SHA: c794e951. Salt okunur denetim.
+Dilim dosya listesi: evidence/V1-RMD-601/baseline/scope-files.txt (123 dosya, M=123). Listede olmayan dosyayı yalnız sözleşmeyi doğrulamak için okuyabilirsin.
+Yazabileceğin tek yer: tmp/qa/V1-RMD-601/<ajan>/ (raporu ayrıca metin olarak döndür; ana oturum kaydeder).
+Derleme/test kayıtları: evidence/V1-RMD-601/runs/ (testler ana oturumca şu an koşuyor, bitmemiş olabilir; yeniden koşma; yalnız qa-test-kalitesi test koşabilir, mutasyon yalnız repo dışı git worktree kopyasında ve tek koşu).
+Beklenen çıktı: rolündeki rapor biçimi; "N/123 kalem kontrol edildi" satırı.
+Özel dikkat: mevcut sipariş işaretçisinde kayma/yeniden kurma; kısmen ödenmiş masayı taşıma veya birleştirme; rezervasyon; birleştirme, ayırma ve transfer olaylarının idempotent işlenmesi. Semih senaryosu: 3 ve 4 numaralı masalar birleştirilir, sonra ayrılır; ürünler doğru masaya dönmeli. Çalışanın işini azaltma, hız, öğrenme eşiği de değerlendir.
+Bilinen kayıtlar (aynen "bilinen" işaretle): V1-RMD-114 ve V1-RMD-367 (masa ekranı ham hata mesajı), V1-RMD-128 (is_available), eski bulgu kimlikleri evidence/ ve plan/ altındadır.
+Güvenlik: canlı yığına (8090, 5080, 5433; alkaros-api-1, alkaros-postgres-1, alkaros-web-1, alkaros-connector-1, alkaros-watchdog-1) ve başka projenin konteynerlerine dokunma. Veritabanı gerekiyorsa yalnız 127.0.0.1:55432 test PostgreSQL ve benzersiz adlı geçici veritabanı; DROP/silme komutu çalıştırma. .env, sır veya dev yönetici parolası kullanma/yazma.
