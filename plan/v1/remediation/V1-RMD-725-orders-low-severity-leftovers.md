@@ -1,7 +1,7 @@
 # V1-RMD-725 - Orders düşük önemli kalan bulgular (B031 kod kalemleri)
 
 - Task ID: V1-RMD-725
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01XYCVWVTbShZKMmSzdAGR6K
 - Work type: implementation
 - Surface state: Planned
