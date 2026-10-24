@@ -261,63 +261,105 @@ describe("cashier-app.js", () => {
     expect(body.assignedWaiterUserId).toBeUndefined();
   });
 
-  it("V1-RMD-232: still releases KASA-1 when table-draft's response body fails to parse", async () => {
-    // The fetch stub's json() is normally fixed to resolve route.body -
-    // this test needs one route (table-draft) whose json() actually
-    // rejects, to reproduce a 2xx response with an unparseable body (a
-    // dropped connection mid-body). Built inline here rather than
-    // extending the shared fetchRouter, which every other test in this
-    // file also depends on.
-    const routes = standardRoutes();
-    const RECOVERED_ROW_VERSION = 7;
-    const fetchMock = vi.fn(async (url, init) => {
-      const href = typeof url === "string" ? url : String(url);
-      if (href.endsWith("/orders/table-draft") && init?.method === "POST") {
-        return {
-          ok: true,
-          status: 200,
-          json: async () => { throw new SyntaxError("Unexpected end of JSON input"); },
-          headers: { get: () => null },
-        };
-      }
-      if (href.includes("/orders/table/") && (!init || init.method === undefined)) {
-        // The recovery query dispatchOrderToKitchen falls back to when the
-        // draft response body cannot be parsed.
-        return {
-          ok: true,
-          status: 200,
-          json: async () => ({ orderId: ORDER_ID, rowVersion: RECOVERED_ROW_VERSION }),
-          headers: { get: () => null },
-        };
-      }
-      const route = routes.find((candidate) => candidate.test(href, init));
-      if (!route) throw new Error(`No fetch route matched ${init?.method ?? "GET"} ${href}`);
-      const status = route.status ?? 200;
-      return {
-        ok: status >= 200 && status < 300,
-        status,
-        json: async () => route.body ?? {},
-        headers: { get: (name) => route.headers?.[name] ?? null },
-      };
-    });
-    vi.stubGlobal("fetch", fetchMock);
-    await loadApp(htmlPath, scriptPath);
+  describe("a dispatch whose answer is lost or refused", () => {
+    // Answers are queued per path; the stub records every call so a test can compare the ids that were sent.
+    function scriptedFetch(script) {
+      const routes = standardRoutes();
+      const fetchMock = vi.fn(async (url, init) => {
+        const href = typeof url === "string" ? url : String(url);
+        const step = Object.entries(script).find(([suffix]) => href.endsWith(suffix) && init?.method === "POST");
+        if (step && step[1].length > 0) {
+          const answer = step[1].shift();
+          if (answer === "network") throw new TypeError("Failed to fetch");
+          if (answer === "bad-body") return { ok: true, status: 200, json: async () => { throw new SyntaxError("end"); }, headers: { get: () => null } };
+          return { ok: answer.status < 300, status: answer.status, json: async () => answer.body ?? {}, headers: { get: () => null } };
+        }
+        const route = routes.find((candidate) => candidate.test(href, init));
+        if (!route) throw new Error(`No fetch route matched ${init?.method ?? "GET"} ${href}`);
+        const status = route.status ?? 200;
+        return { ok: status < 300, status, json: async () => route.body ?? {}, headers: { get: (name) => route.headers?.[name] ?? null } };
+      });
+      vi.stubGlobal("fetch", fetchMock);
+      return fetchMock;
+    }
 
-    await vi.waitFor(() => {
-      if (!document.querySelector(".pos-product-card")) throw new Error("catalog not rendered yet");
-    });
-    document.querySelector(".pos-product-card").click();
-    document.getElementById("btnDispatchOrder").click();
+    const callsTo = (fetchMock, suffix) => fetchMock.mock.calls.filter(([url, init]) => String(url).endsWith(suffix) && init?.method === "POST");
 
-    await vi.waitFor(() => {
-      const releaseCall = fetchMock.mock.calls.find(([callUrl, callInit]) =>
-        typeof callUrl === "string" && callUrl.endsWith(`/orders/${ORDER_ID}/send-to-cashier`) && callInit?.method === "POST");
-      if (!releaseCall) throw new Error("KASA-1 not released yet");
+    async function openTicketAndPress(fetchMock) {
+      await loadApp(htmlPath, scriptPath);
+      await vi.waitFor(() => { if (!document.querySelector(".pos-product-card")) throw new Error("catalog not rendered yet"); });
+      document.querySelector(".pos-product-card").click();
+      document.getElementById("btnDispatchOrder").click();
+    }
+
+    async function settle() {
+      await vi.waitFor(() => { if (document.getElementById("btnDispatchOrder").disabled) throw new Error("still sending"); });
+    }
+
+    it("keeps KASA-1 attached and resends the same round when the draft answer cannot be read, then releases once", async () => {
+      const fetchMock = scriptedFetch({ "/orders/table-draft": ["bad-body"] });
+      await openTicketAndPress(fetchMock);
+      await vi.waitFor(() => expect(toastMessages()).toContainEqual(expect.stringContaining("ikilenmez")));
+      await settle();
+      expect(callsTo(fetchMock, `/orders/${ORDER_ID}/send-to-cashier`)).toHaveLength(0);
+
+      document.getElementById("btnDispatchOrder").click();
+      await vi.waitFor(() => expect(callsTo(fetchMock, `/orders/${ORDER_ID}/send-to-cashier`)).toHaveLength(1));
+      const [first, second] = callsTo(fetchMock, "/orders/table-draft").map(([, init]) => JSON.parse(init.body));
+      expect(second.id).toBe(first.id);
+      expect(second.items.map((line) => line.id)).toEqual(first.items.map((line) => line.id));
+      await vi.waitFor(() => expect(toastMessages()).toContainEqual(expect.stringContaining("mutfağa iletildi")));
     });
-    // Before V1-RMD-232, `draft` stayed null when draftResponse.json()
-    // threw, so `finally`'s `if (draft && draft.orderId)` never fired and
-    // this release call never happened at all - KASA-1 stayed stuck.
-    expect(toastMessages()).toContainEqual(expect.stringContaining("Sunucuya ulaşılamadı"));
+
+    it("does not release KASA-1 when the submit call is lost, and the retry reuses the same ids", async () => {
+      const fetchMock = scriptedFetch({ [`/orders/${ORDER_ID}/submit-draft`]: ["network"] });
+      await openTicketAndPress(fetchMock);
+      await vi.waitFor(() => expect(toastMessages()).toContainEqual(expect.stringContaining("ikilenmez")));
+      await settle();
+      expect(callsTo(fetchMock, `/orders/${ORDER_ID}/send-to-cashier`)).toHaveLength(0);
+
+      document.getElementById("btnDispatchOrder").click();
+      await vi.waitFor(() => expect(callsTo(fetchMock, `/orders/${ORDER_ID}/send-to-cashier`)).toHaveLength(1));
+      const ids = callsTo(fetchMock, "/orders/table-draft").map(([, init]) => JSON.parse(init.body).id);
+      expect(new Set(ids).size).toBe(1);
+      expect(ids).toHaveLength(2);
+    });
+
+    it("shows the server's own message for a final refusal, releases KASA-1 and starts the next round with a new id", async () => {
+      const refusal = { status: 409, body: { error: { code: "INSUFFICIENT_STOCK", message: "Kola için stok yetersiz." } } };
+      const fetchMock = scriptedFetch({ [`/orders/${ORDER_ID}/submit-draft`]: [refusal] });
+      await openTicketAndPress(fetchMock);
+      await vi.waitFor(() => expect(toastMessages()).toContainEqual("Kola için stok yetersiz."));
+      await vi.waitFor(() => expect(callsTo(fetchMock, `/orders/${ORDER_ID}/send-to-cashier`)).toHaveLength(1));
+      await settle();
+
+      document.getElementById("btnDispatchOrder").click();
+      await vi.waitFor(() => expect(callsTo(fetchMock, "/orders/table-draft")).toHaveLength(2));
+      const ids = callsTo(fetchMock, "/orders/table-draft").map(([, init]) => JSON.parse(init.body).id);
+      expect(ids[1]).not.toBe(ids[0]);
+    });
+
+    it("starts the next customer's round with a new id once the previous one went through", async () => {
+      const fetchMock = scriptedFetch({});
+      await openTicketAndPress(fetchMock);
+      await vi.waitFor(() => expect(callsTo(fetchMock, `/orders/${ORDER_ID}/send-to-cashier`)).toHaveLength(1));
+      await settle();
+
+      document.querySelector(".pos-product-card").click();
+      document.getElementById("btnDispatchOrder").click();
+      await vi.waitFor(() => expect(callsTo(fetchMock, "/orders/table-draft")).toHaveLength(2));
+      const ids = callsTo(fetchMock, "/orders/table-draft").map(([, init]) => JSON.parse(init.body).id);
+      expect(ids[1]).not.toBe(ids[0]);
+    });
+
+    it("keeps the round for a retry when the server only lost a row-version race", async () => {
+      const race = { status: 409, body: { error: { code: "CONCURRENCY_CONFLICT", message: "Sipariş başka bir işlem tarafından değiştirildi." } } };
+      const fetchMock = scriptedFetch({ [`/orders/${ORDER_ID}/submit-draft`]: [race] });
+      await openTicketAndPress(fetchMock);
+      await vi.waitFor(() => expect(toastMessages()).toContainEqual(expect.stringContaining("değiştirildi")));
+      await settle();
+      expect(callsTo(fetchMock, `/orders/${ORDER_ID}/send-to-cashier`)).toHaveLength(0);
+    });
   });
 
   it("V1-RMD-232: loads with an empty parked-ticket list instead of crashing when localStorage is corrupted", async () => {

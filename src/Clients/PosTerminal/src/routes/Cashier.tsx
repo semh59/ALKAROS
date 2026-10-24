@@ -140,6 +140,12 @@ export function Cashier() {
     setBackendStatus("online");
   }, [terminalId]);
 
+  // After a sale action only the order can have changed; session, catalog and config are read on sign-in and on a conflict.
+  const reloadOrder = useCallback(async () => {
+    setOrder(await api.activeOrder(terminalId));
+    setBackendStatus("online");
+  }, [terminalId]);
+
   const restoreSession = useCallback(async () => {
     try {
       await reload();
@@ -352,7 +358,7 @@ export function Cashier() {
     setNotice("");
     try {
       await action();
-      await reload();
+      await reloadOrder();
       if (success) {
         setFeedbackKind("success");
         setNotice(success);

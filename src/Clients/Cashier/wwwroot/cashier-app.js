@@ -122,6 +122,8 @@
     categories: [{ id: 'all', name: 'Tüm Ürünler' }],
     products: [],
     dispatchInFlight: false,
+    // The round whose outcome the server may not have told us yet; a retry resends it unchanged (same ids).
+    pendingDispatch: null,
     isOnline: navigator.onLine,
 
     // V1-RMD-205: who runs this order to the customer. null (the default,
@@ -686,7 +688,7 @@
     // Order.ServingUserId, from the session this request already carries.
     // Removed rather than wired in; a free-text field the client could set
     // to anything would only be a weaker, spoofable duplicate of that.
-    const orderPayload = {
+    const orderPayload = state.pendingDispatch || {
       id: crypto.randomUUID(),
       tableId: '00000000-0000-0000-0000-000000000001',
       tableNumber: 'KASA-1',
@@ -712,79 +714,27 @@
       }))
     };
 
-    // V1-RMD-167: found in independent review of V1-RMD-157 — the release
-    // call used to live inline between the submit fetch and its ok check,
-    // so it only ran when the submit CALL ITSELF completed (whether it
-    // then succeeded or failed). If table-draft attached the order but
-    // then draftResponse.json() failed to parse, or the submit fetch
-    // itself threw (a dropped connection), execution jumped straight to
-    // the outer catch and skipped release entirely — leaving KASA-1
-    // attached to a half-finished order for the next customer to merge
-    // into, exactly the bug V1-RMD-157 exists to close. `draft` is now
-    // captured outside the try/catch and the release is attempted in
-    // `finally` whenever an orderId was ever obtained, regardless of what
-    // happened afterward.
-    let draft = null;
+    state.pendingDispatch = orderPayload;
+    // KASA-1 is a fixed, shared endpoint for unrelated walk-up customers, not a real table: the order is released
+    // from it (send-to-cashier) only once the kitchen has taken it. Until then the same payload is resent on every
+    // press, so a lost answer never opens a second order or a second kitchen ticket.
     try {
-      // V1-RMD-163: found by the 2026-09-10 Garson audit — an
-      // X-Idempotency-Key header used to be sent here too, carrying the
-      // exact same value as orderPayload.id in the body below. No endpoint
-      // anywhere ever reads that header (grep confirmed); the real,
-      // working idempotency protection is orderPayload.id itself, which
-      // the server persists as Order.SourceReferenceId behind a partial
-      // unique index (V1-RMD-123). Removed the header as a pointless
-      // duplicate rather than wiring up a second mechanism for the same
-      // value.
       const draftResponse = await fetch(`/api/v1/terminals/${state.terminalId}/orders/table-draft`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(orderPayload)
       });
 
       if (!draftResponse.ok) {
-        showToast(describeHttpFailure(draftResponse.status), 'error');
+        const failure = await readFailure(draftResponse);
+        if (isFinalRejection(draftResponse.status, failure.code)) state.pendingDispatch = null;
+        showToast(failure.message, 'error');
         return;
       }
 
-      try {
-        draft = await draftResponse.json();
-      } catch (parseError) {
-        // V1-RMD-232: found by an independent audit (2026-09-17) — the
-        // fetch above already returned 2xx, meaning table-draft attached
-        // this order to KASA-1 server-side, even though reading its
-        // response body then failed (a dropped connection mid-body, a
-        // malformed response). Before this, `draft` stayed null, so the
-        // `finally` below's `if (draft && draft.orderId)` never fired and
-        // KASA-1 stayed attached for the next customer to merge into —
-        // exactly the bug V1-RMD-167 exists to close, just from a
-        // different failure point. Query KASA-1's own active order back so
-        // `finally` can still release it.
-        console.error('table-draft yanıtı çözülemedi:', parseError);
-        try {
-          const recoveryResponse = await fetch(
-            `/api/v1/terminals/${state.terminalId}/orders/table/${orderPayload.tableId}`,
-            { credentials: 'include' });
-          if (recoveryResponse.ok) {
-            draft = await recoveryResponse.json();
-          }
-        } catch (recoveryError) {
-          console.error('KASA-1 kurtarma sorgusu başarısız:', recoveryError);
-        }
-        showToast('Sunucuya ulaşılamadı. Sipariş iletilemedi.', 'error');
-        return;
-      }
-      // Found by an independent audit (2026-09-06): the draft above was
-      // never followed by a submit call, so the order stayed in Draft
-      // forever and was never dispatched to the kitchen even though the
-      // user was told it had been sent.
-      //
-      // operationId is deterministic (not a fresh UUID per attempt): a
-      // retry of submitting this exact order (e.g. the response was lost
-      // to a dropped connection) must reuse the same idempotency key so
-      // the server replays instead of rejecting it as a duplicate.
+      const draft = await draftResponse.json();
+
       const submitResponse = await fetch(`/api/v1/terminals/${state.terminalId}/orders/${draft.orderId}/submit-draft`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -797,45 +747,65 @@
       });
 
       if (!submitResponse.ok) {
-        showToast(describeHttpFailure(submitResponse.status), 'error');
+        const failure = await readFailure(submitResponse);
+        if (isFinalRejection(submitResponse.status, failure.code)) {
+          // The kitchen will never take this round as it is: free the shared table so the next customer is not merged into it.
+          state.pendingDispatch = null;
+          await releaseSharedTable(draft.orderId, orderPayload.tableId);
+        }
+        showToast(failure.message, 'error');
         return;
       }
 
-      const total = state.ticketItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const itemCount = state.ticketItems.reduce((sum, item) => sum + item.quantity, 0);
+      state.pendingDispatch = null;
+      await releaseSharedTable(draft.orderId, orderPayload.tableId);
+
+      // Lines added while the answer was on its way stay in the cart for the next round.
+      const sentLines = new Map(orderPayload.items.map(line => [line.id, line.quantity]));
+      const sentItems = state.ticketItems.filter(item => sentLines.get(item.id) === item.quantity);
+      const total = sentItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const itemCount = sentItems.reduce((sum, item) => sum + item.quantity, 0);
       state.shiftTotalOrders += 1;
-      state.ticketItems = [];
+      state.ticketItems = state.ticketItems.filter(item => !sentItems.includes(item));
       renderTicket();
       showToast(`Sipariş mutfağa iletildi. (${itemCount} kalem, ${formatMoney(total)})`, 'success');
-      // V1-RMD-360: the moment a dispatch succeeds is also the moment the NEXT customer's order
-      // starts - the same "scanner needs a focused field" reasoning as init()'s own focus call.
+      // The moment a dispatch succeeds is also the moment the NEXT customer's order starts: the scanner needs a focused field.
       if (el.searchInput) el.searchInput.focus({ preventScroll: true });
     } catch {
-      showToast('Sunucuya ulaşılamadı. Sipariş iletilemedi.', 'error');
+      showToast('Bağlantı koptu. Sipariş iletilmiş olabilir; tekrar basarsanız ikilenmez.', 'error');
     } finally {
-      // V1-RMD-157: KASA-1 is a fixed, shared endpoint for unrelated
-      // walk-up customers, not a real table — a successful table-draft
-      // above attached this order to it. Whatever happened afterward
-      // (submit succeeded, failed, or threw), release the table now so
-      // the next customer's dispatch never merges into this one (the
-      // exact cross-customer merge the audit found). A failed release
-      // here is logged only — it must never block or change the outcome
-      // already shown to the cashier.
-      if (draft && draft.orderId) {
-        try {
-          await fetch(`/api/v1/terminals/${state.terminalId}/orders/${draft.orderId}/send-to-cashier`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            credentials: 'include',
-            body: JSON.stringify({ tableId: orderPayload.tableId })
-          });
-        } catch (releaseError) {
-          console.error('KASA-1 serbest bırakılamadı:', releaseError);
-        }
-      }
       state.dispatchInFlight = false;
       updateDispatchAvailability();
     }
+  }
+
+  // A 4xx other than a timeout, a rate limit or a row-version race is the server's last word on this round.
+  function isFinalRejection(status, code) {
+    if (status === 409) return code !== 'CONCURRENCY_CONFLICT';
+    return status >= 400 && status < 500 && status !== 408 && status !== 429;
+  }
+
+  async function releaseSharedTable(orderId, tableId) {
+    try {
+      const response = await fetch(`/api/v1/terminals/${state.terminalId}/orders/${orderId}/send-to-cashier`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ tableId })
+      });
+      if (!response.ok) console.error('KASA-1 serbest bırakılamadı:', response.status);
+      return response.ok;
+    } catch (releaseError) {
+      console.error('KASA-1 serbest bırakılamadı:', releaseError);
+      return false;
+    }
+  }
+
+  // The server's own Turkish message when it sent one, the status-based text otherwise.
+  async function readFailure(response) {
+    let error = null;
+    try { error = (await response.json()).error; } catch { /* not JSON */ }
+    return { code: error && error.code, message: (error && error.message) || describeHttpFailure(response.status) };
   }
 
   function parkCurrentTicket() {

@@ -1,0 +1,7 @@
+M1-fresh-id-every-press KILLED restored=true
+M2-release-on-every-submit-failure KILLED restored=true
+M3-all-409-retryable KILLED restored=true
+M4-server-message-ignored KILLED restored=true
+M5-pending-kept-after-success SURVIVED restored=true
+M6-full-reload-after-action KILLED restored=true
+M5-pending-kept-after-success KILLED restored=true

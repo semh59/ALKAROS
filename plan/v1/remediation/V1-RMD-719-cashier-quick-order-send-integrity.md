@@ -25,6 +25,7 @@ V1-RMD-602 bulguları B002, B011 ve B027 kapanır. Kasa hızlı sipariş gönder
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/** - yalnız Kasa gönderim testleri
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Orders/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Billing/** - yalnız yeni test
+- `src/Clients/PosTerminal/src/routes/Cashier.sale-refresh.test.tsx`
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 
 ## In scope
