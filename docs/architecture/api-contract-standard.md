@@ -35,7 +35,7 @@
    validator in the owning module. FluentValidation dependency is introduced
    by the first API implementation task (V1-FND-001 or V1-CAT-001).
 3. **Headers: `X-` prefixed corporate set.**
-   - `X-Idempotency-Key` — required on all mutating commands (replay-safe). Known deviation: Table Management endpoints (reservation, transfer, merge, unmerge) do not take it; they are protected by `expectedRowVersion` in the body, so a repeated submission answers 404 or 409 instead of replaying the first result.
+   - `X-Idempotency-Key` — required on all mutating commands (replay-safe). Table Management takes it on reservation create, transfer, merge and unmerge (`TableIdempotencyFilter`, stored in `idempotency_keys` for 24 hours, scoped to terminal and user): a repeat answers with the first result and the same key with another request is refused. The header is optional there; without it `expectedRowVersion` alone protects the command and a repeat answers 404 or 409. Other Table Management commands (status change, zone and table edits, claim, cancel, expire) still lack the key.
    - `X-Row-Version` — optimistic concurrency token on updates/deletes.
    - `X-Correlation-Id` — request correlation; echoed in responses and logs.
    - `X-Request-Id` — server-assigned request identifier.

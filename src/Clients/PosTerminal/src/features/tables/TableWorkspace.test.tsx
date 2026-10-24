@@ -200,7 +200,11 @@ describe("table workspace", () => {
       select.dispatchEvent(new Event("change", { bubbles: true }));
     });
     await click(confirm);
-    expect(onAction).toHaveBeenCalledWith({ table: tables[1], action: "Transfer", reason: "Misafir masa değiştirdi", targetTableId: "table-09", targetTableVersion: 3, participantTableIds: undefined, participantTableVersions: undefined });
+    expect(onAction).toHaveBeenCalledWith({ idempotencyKey: expect.stringMatching(/.+/), table: tables[1], action: "Transfer", reason: "Misafir masa değiştirdi", targetTableId: "table-09", targetTableVersion: 3, participantTableIds: undefined, participantTableVersions: undefined });
+    // Pressing "Onayla" again repeats the same command, so it carries the same key.
+    await click(confirm);
+    expect(onAction).toHaveBeenCalledTimes(2);
+    expect(onAction.mock.calls[1][0].idempotencyKey).toBe(onAction.mock.calls[0][0].idempotencyKey);
     // The conflict is reported inside the dialog, which stays open for a second look.
     expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Masa başka biri tarafından değiştirildi");
     expect(document.body.textContent).toContain("Sipariş #order-12");

@@ -21,6 +21,26 @@ describe("table management client", () => {
     expect(fetcher).toHaveBeenNthCalledWith(2, "/api/v1/terminals/terminal%2F1/table-management/tables", expect.objectContaining({ method: "POST", body: JSON.stringify({ expectedRowVersion: 0, tableNumber: "S-11", zoneId: null, capacity: 4 }) }));
   });
 
+  it("sends the idempotency key for transfer, merge, unmerge and reserve but not for a status change", async () => {
+    const fetcher = vi.fn().mockResolvedValue(response(undefined, { status: 204 }));
+    const client = createTableManagementClient("terminal-1", fetcher);
+    const table = {
+      tableId: "table-10", tableNumber: "S-10", zoneId: null, capacity: 2, active: true,
+      status: "Occupied" as const, currentOrderId: null, currentBillId: null, rowVersion: 9,
+      allowedCommands: [], activeReservationId: null, reservationRowVersion: null, statusChangedAt: new Date().toISOString(),
+    };
+    const versions = [{ tableId: "table-09", rowVersion: 4 }];
+
+    await client.execute({ idempotencyKey: "k-1", table, action: "Transfer", targetTableId: "table-09", targetTableVersion: 4, reason: "Servis" });
+    await client.execute({ idempotencyKey: "k-2", table, action: "Merge", participantTableVersions: versions, reason: "Birleştir" });
+    await client.execute({ idempotencyKey: "k-3", table, action: "Unmerge", mergeGroupId: "g", participantTableVersions: versions, reason: "Ayır" });
+    await client.execute({ idempotencyKey: "k-4", table, action: "Reserve", reason: "Telefon" });
+    await client.execute({ idempotencyKey: "k-5", table, action: "SetAvailable" });
+
+    const keys = fetcher.mock.calls.map(([, init]) => (init as { headers: Record<string, string> }).headers["X-Idempotency-Key"]);
+    expect(keys).toEqual(["k-1", "k-2", "k-3", "k-4", undefined]);
+  });
+
   it("sends authoritative row versions for status, transfer, merge and unmerge mutations", async () => {
     const fetcher = vi.fn().mockResolvedValue(response(undefined, { status: 204 }));
     const client = createTableManagementClient("terminal-1", fetcher);

@@ -1,4 +1,4 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useMemo, useRef, useState, type FormEvent } from "react";
 import { ApiError } from "../../api";
 import {
   Button,
@@ -183,8 +183,11 @@ export function TableWorkspace({
   const mergeTargets = tables.filter((table) => table.tableId !== actionTable?.tableId && table.active && (table.status === "Available" || table.status === "Occupied"));
   const canCreate = canManage && Boolean(onCreateZone && onCreateTable);
 
+  // One key per opened dialog: a retry after a timeout repeats the same command, so the server answers it once.
+  const actionKey = useRef("");
   const openAction = (nextAction: TableAction, targetTable = selectedTable) => {
     if (!targetTable) return;
+    actionKey.current = crypto.randomUUID();
     setAction(nextAction);
     setActionTableId(targetTable.tableId);
     setReason("");
@@ -323,6 +326,7 @@ export function TableWorkspace({
           .map((table) => ({ tableId: table.tableId, rowVersion: table.tableRowVersion }))
         : undefined;
       await onAction({
+        idempotencyKey: actionKey.current,
         table: actionTable,
         action,
         reason: effectiveReason || undefined,

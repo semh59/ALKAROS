@@ -1,7 +1,7 @@
 # V1-RMD-717 - Masa idempotency, olay tekilleştirme ve ölü olay yeniden oynatma
 
 - Task ID: V1-RMD-717
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
@@ -21,6 +21,7 @@ V1-RMD-601 bulgusu B031 kapanır: tekrar gönderimde ayırma, birleştirme ve tr
 - `src/Host/Experience/Tables/TableIdempotencyFilter.cs`
 - `tests/Host/Experience/Tables/TableIdempotencyHttpTests.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Tables/** - yalnız ilgili düzeltme
+- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/architecture/api-contract-standard.md - yalnız idempotency anahtarı satırı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/tables/** - yalnız ilgili düzeltme
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Tables/** - yalnız yeni ve düzeltilen test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Tables/** - yalnız yeni ve düzeltilen test

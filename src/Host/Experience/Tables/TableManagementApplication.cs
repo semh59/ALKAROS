@@ -11,6 +11,7 @@ using ALKAROS.Tables.TableMerge;
 using ALKAROS.Tables.TableTransfer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -285,6 +286,7 @@ public static class TableManagementApplication
 
         group.MapPost("/reservations", async (
             Guid terminalId,
+            [FromHeader(Name = TableIdempotencyFilter.HeaderName)] string? idempotencyKey,
             CreateTableReservationRequest request,
             ITableManagementSessionAuthorizer authorizer,
             ITableReservationService service,
@@ -303,7 +305,7 @@ public static class TableManagementApplication
                 null,
                 request.ExpiresAt), cancellationToken);
             return Results.Created($"{Prefix(terminalId)}/reservations/{result.ReservationId:D}", result);
-        });
+        }).AddEndpointFilter<TableIdempotencyFilter>();
 
         group.MapPost("/reservations/{reservationId:guid}/claim", async (
             Guid terminalId,
@@ -364,6 +366,7 @@ public static class TableManagementApplication
 
         group.MapPost("/transfers", async (
             Guid terminalId,
+            [FromHeader(Name = TableIdempotencyFilter.HeaderName)] string? idempotencyKey,
             TransferTableRequest request,
             ITableManagementSessionAuthorizer authorizer,
             ITableTransferService service,
@@ -379,10 +382,11 @@ public static class TableManagementApplication
                 request.Reason,
                 principal.UserId,
                 null), cancellationToken));
-        });
+        }).AddEndpointFilter<TableIdempotencyFilter>();
 
         group.MapPost("/merges", async (
             Guid terminalId,
+            [FromHeader(Name = TableIdempotencyFilter.HeaderName)] string? idempotencyKey,
             MergeTablesRequest request,
             ITableManagementSessionAuthorizer authorizer,
             ITableMergeService service,
@@ -397,10 +401,11 @@ public static class TableManagementApplication
                 request.Reason,
                 principal.UserId,
                 null), cancellationToken));
-        });
+        }).AddEndpointFilter<TableIdempotencyFilter>();
 
         group.MapPost("/merges/{mergeGroupId:guid}/unmerge", async (
             Guid terminalId,
+            [FromHeader(Name = TableIdempotencyFilter.HeaderName)] string? idempotencyKey,
             Guid mergeGroupId,
             UnmergeTablesRequest request,
             ITableManagementSessionAuthorizer authorizer,
@@ -416,7 +421,7 @@ public static class TableManagementApplication
                 request.Reason,
                 principal.UserId,
                 null), cancellationToken));
-        });
+        }).AddEndpointFilter<TableIdempotencyFilter>();
 
         return group;
     }

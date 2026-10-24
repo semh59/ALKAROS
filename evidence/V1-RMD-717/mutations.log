@@ -1,0 +1,8 @@
+I1 KILLED restored=true the same key with another request replays the first answer
+I2 KILLED restored=true two requests with one key run at the same time
+I4 KILLED restored=true a successful answer is never stored
+C1 KILLED restored=true the client sends no key
+C2 KILLED restored=true the dialog opens without a key
+C3 KILLED restored=true the dialog drops the key
+I3 KILLED restored=true the key is not scoped to the signed-in user
+I5 KILLED restored=true an expired key still replays

@@ -33,6 +33,7 @@ export interface TableManagementClient {
 interface RequestOptions {
   method?: string;
   body?: unknown;
+  idempotencyKey?: string;
 }
 
 function createRequest(terminalId: string, fetcher: typeof fetch): TableManagementClient {
@@ -44,7 +45,11 @@ function createRequest(terminalId: string, fetcher: typeof fetch): TableManageme
       response = await fetcher(`${prefix}${path}`, {
         method: options.method ?? "GET",
         credentials: "same-origin",
-        headers: { "Content-Type": "application/json", "X-Correlation-Id": crypto.randomUUID() },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Correlation-Id": crypto.randomUUID(),
+          ...(options.idempotencyKey ? { "X-Idempotency-Key": options.idempotencyKey } : {}),
+        },
         body: options.body === undefined ? undefined : JSON.stringify(options.body),
         signal: AbortSignal.timeout(8_000),
       });
@@ -73,13 +78,13 @@ function createRequest(terminalId: string, fetcher: typeof fetch): TableManageme
     }),
     getFloorPlan: (zoneId) => request<FloorPlan>(`/floor-plans/${encodeURIComponent(zoneId)}`),
     saveFloorPlan: (zoneId, input) => request<SaveFloorPlanResult>(`/floor-plans/${encodeURIComponent(zoneId)}`, { method: "PUT", body: input }),
-    execute: async ({ table, action, reason, partySize, targetTableId, targetTableVersion, participantTableIds, participantTableVersions, mergeGroupId }) => {
+    execute: async ({ idempotencyKey, table, action, reason, partySize, targetTableId, targetTableVersion, participantTableIds, participantTableVersions, mergeGroupId }) => {
       if (action === "SetOccupied" || action === "SetAvailable" || action === "SetCleaning" || action === "SetOutOfService") {
         await request(`/tables/${table.tableId}/status`, { method: "POST", body: { expectedRowVersion: table.rowVersion, status: action.slice(3) } });
         return;
       }
       if (action === "Reserve") {
-        await request("/reservations", { method: "POST", body: { tableId: table.tableId, expectedTableRowVersion: table.rowVersion, partySize: partySize ?? table.capacity ?? 2, reason } });
+        await request("/reservations", { method: "POST", body: { tableId: table.tableId, expectedTableRowVersion: table.rowVersion, partySize: partySize ?? table.capacity ?? 2, reason }, idempotencyKey });
         return;
       }
       if (action === "ClaimReservation" || action === "CancelReservation") {
@@ -101,16 +106,16 @@ function createRequest(terminalId: string, fetcher: typeof fetch): TableManageme
       if (action === "Transfer") {
         if (!targetTableId) throw new TableManagementApiError(400, "TARGET_REQUIRED", "Hedef masa gerekli.");
         if (targetTableVersion === undefined) throw new TableManagementApiError(400, "TARGET_VERSION_REQUIRED", "Hedef masanın güncel sürümü gerekli.");
-        await request("/transfers", { method: "POST", body: { sourceTableId: table.tableId, expectedSourceRowVersion: table.rowVersion, targetTableId, expectedTargetRowVersion: targetTableVersion, reason } });
+        await request("/transfers", { method: "POST", body: { sourceTableId: table.tableId, expectedSourceRowVersion: table.rowVersion, targetTableId, expectedTargetRowVersion: targetTableVersion, reason }, idempotencyKey });
         return;
       }
       if (action === "Merge") {
-        await request("/merges", { method: "POST", body: { primaryTableId: table.tableId, expectedPrimaryRowVersion: table.rowVersion, participants: (participantTableVersions ?? (participantTableIds ?? []).map((tableId) => ({ tableId, rowVersion: 0 }))).map(({ tableId, rowVersion }) => ({ tableId, expectedRowVersion: rowVersion })), reason } });
+        await request("/merges", { method: "POST", body: { primaryTableId: table.tableId, expectedPrimaryRowVersion: table.rowVersion, participants: (participantTableVersions ?? (participantTableIds ?? []).map((tableId) => ({ tableId, rowVersion: 0 }))).map(({ tableId, rowVersion }) => ({ tableId, expectedRowVersion: rowVersion })), reason }, idempotencyKey });
         return;
       }
       if (action === "Unmerge") {
         if (!mergeGroupId) throw new TableManagementApiError(400, "MERGE_GROUP_REQUIRED", "Birleşim kimliği gerekli.");
-        await request(`/merges/${encodeURIComponent(mergeGroupId)}/unmerge`, { method: "POST", body: { expectedPrimaryRowVersion: table.rowVersion, participants: (participantTableVersions ?? []).map(({ tableId, rowVersion }) => ({ tableId, expectedRowVersion: rowVersion })), reason } });
+        await request(`/merges/${encodeURIComponent(mergeGroupId)}/unmerge`, { method: "POST", body: { expectedPrimaryRowVersion: table.rowVersion, participants: (participantTableVersions ?? []).map(({ tableId, rowVersion }) => ({ tableId, expectedRowVersion: rowVersion })), reason }, idempotencyKey });
         return;
       }
       throw new TableManagementApiError(409, "UNSUPPORTED_ACTION", "Bu masa işlemi bu ekranda kullanılamıyor.");

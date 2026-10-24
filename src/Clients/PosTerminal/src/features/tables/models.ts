@@ -166,6 +166,7 @@ export type TableAction =
   | "SetOutOfService";
 
 export interface TableActionRequest {
+  idempotencyKey?: string;
   table: TableRecord;
   action: TableAction;
   reason?: string;

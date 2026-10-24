@@ -677,18 +677,6 @@
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V12-QRT-003"
     },
-    "POST /api/v1/terminals/{terminalId:guid}/table-management/merges": {
-      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
-      "task": "V1-IAM-024"
-    },
-    "POST /api/v1/terminals/{terminalId:guid}/table-management/merges/{mergeGroupId:guid}/unmerge": {
-      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
-      "task": "V1-IAM-024"
-    },
-    "POST /api/v1/terminals/{terminalId:guid}/table-management/reservations": {
-      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
-      "task": "V1-IAM-024"
-    },
     "POST /api/v1/terminals/{terminalId:guid}/table-management/reservations/{reservationId:guid}/cancel": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-IAM-024"
@@ -706,10 +694,6 @@
       "task": "V1-IAM-024"
     },
     "POST /api/v1/terminals/{terminalId:guid}/table-management/tables/{tableId:guid}/status": {
-      "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
-      "task": "V1-IAM-024"
-    },
-    "POST /api/v1/terminals/{terminalId:guid}/table-management/transfers": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-IAM-024"
     },

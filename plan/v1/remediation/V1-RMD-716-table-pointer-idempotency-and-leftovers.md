@@ -37,7 +37,7 @@ V1-RMD-601 bulguları B020 (sunucu kısmı), B025, B026 ve B033 kapanır: işare
 ## Out of scope
 
 - Doküman sapmaları ve modül sınırı (V1-RMD-715).
-- İdempotency anahtarı (V1-RMD-717). Olay tekilleştirme ve ölü olay yeniden oynatma zaten var (tüketiciler kimlik listesiyle tekrar teslimde değişmez, V1-RMD-288 ekranı).
+- İdempotency anahtarı ve onun doküman satırı (V1-RMD-717). Olay tekilleştirme ve ölü olay yeniden oynatma zaten var (tüketiciler kimlik listesiyle tekrar teslimde değişmez, V1-RMD-288 ekranı).
 
 ## Dependencies
 
