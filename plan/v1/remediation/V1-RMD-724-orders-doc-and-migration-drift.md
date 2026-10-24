@@ -20,6 +20,7 @@ V1-RMD-602 bulguları B008, B022, B023, B030 ve B031 kapanır. Dokümanlar koda 
 - `evidence/V1-RMD-724/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/** - yalnız Orders ile ilgili sapmalar
 - `database/migrations/V1/V1-RMD-724/**`
+- `tests/Host/MigrationComposition/OrdersRollbackTests.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tools/consistency-audit/consistency_audit.py - yalnız Tables durum yazımı istisnasının daraltılması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/** - yeni geri alma testi ve manifest listesine 206
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json - yalnız 206 girişi

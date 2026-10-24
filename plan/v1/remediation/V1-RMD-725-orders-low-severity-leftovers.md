@@ -28,6 +28,7 @@ V1-RMD-602 B031'in kod gerektiren alt kalemleri tek tek kodla yeniden doğrulan�
 
 - Doküman, down betiği ve denetim istisnası V1-RMD-724'te yapıldı.
 - Ürün kararı gerektiren kalemler (PO soruları) sorulmadan değiştirilmez.
+- Void ve ikram gerekçesinin (`order_status_history.reason`) KVKK temizliği: kod görevi olarak 725 başlarken değerlendirilir; 724 yalnız runbook'a açık olarak yazdı.
 
 ## Dependencies
 
