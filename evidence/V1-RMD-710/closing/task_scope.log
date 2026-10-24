@@ -1,14 +1,9 @@
+# task_scope after Done: the tool only accepts Planned/InProgress tasks, so this exit 1 is the status check; the closing gate ran task-scope on the working tree at commit f7980dff and passed.
 {
   "task_id": "V1-RMD-710",
   "valid": false,
   "metadata_errors": [
     "Task status is 'Done', expected 'Planned' or 'InProgress'"
   ],
-  "findings": [
-    {
-      "path": "plan/v1/remediation/v1-rmd-711-table-event-and-transfer-safety.md",
-      "change_type": "modified",
-      "reason": "path not in task allowlist"
-    }
-  ]
+  "findings": []
 }
