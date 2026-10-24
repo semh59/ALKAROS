@@ -226,7 +226,7 @@ public sealed partial class PostgresTableMergeRepository
 
         const string selectRemainingOrderSql = $"""
             SELECT order_id FROM {OrdersTable}
-            WHERE table_id = @primary_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected')
+            WHERE table_id = @primary_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected') {NotSentOrder}
               AND NOT (order_id = ANY(@restored_ids))
             ORDER BY created_at, order_id
             LIMIT 1;
@@ -242,7 +242,7 @@ public sealed partial class PostgresTableMergeRepository
 
         const string selectRemainingBillSql = $"""
             SELECT bill_id FROM {BillsTable}
-            WHERE table_id = @primary_id AND status NOT IN ('Paid', 'Cancelled')
+            WHERE table_id = @primary_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill}
               AND NOT (bill_id = ANY(@restored_ids))
             ORDER BY opened_at, created_at, bill_id
             LIMIT 1;

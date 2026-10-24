@@ -426,6 +426,64 @@ public sealed class PostgresTableReservationTests : IClassFixture<TableReservati
         (await GetTableAsync(tableId)).Status.Should().Be("Reserved");
     }
 
+    [Fact]
+    public async Task TwoReservationsRacingForTheSameTableLetExactlyOneWin()
+    {
+        var tableId = await CreateTableAsync("R-901", "Available", 1);
+
+        var attempts = await Task.WhenAll(TryReserveAsync(tableId, "First"), TryReserveAsync(tableId, "Second"));
+
+        attempts.Count(error => error is null).Should().Be(1);
+        attempts.Single(error => error is not null).Should().BeAssignableTo<TableReservationException>();
+    }
+
+    [Fact]
+    public async Task TheDatabaseRefusesASecondActiveReservationAndBadPartyOrExpiry()
+    {
+        var tableId = await CreateTableAsync("R-902", "Available", 1);
+        await InsertReservationRowAsync(tableId, "Active", 2, null);
+
+        var second = () => InsertReservationRowAsync(tableId, "Active", 2, null);
+        var guestlessTable = await CreateTableAsync("R-903", "Available", 1);
+        var backwardsTable = await CreateTableAsync("R-904", "Available", 1);
+        var noGuests = () => InsertReservationRowAsync(guestlessTable, "Active", 0, null);
+        var backwards = () => InsertReservationRowAsync(backwardsTable, "Active", 2, DateTimeOffset.UtcNow.AddHours(-1));
+
+        (await second.Should().ThrowAsync<PostgresException>()).Which.SqlState.Should().Be("23505");
+        (await noGuests.Should().ThrowAsync<PostgresException>()).Which.SqlState.Should().Be("23514");
+        (await backwards.Should().ThrowAsync<PostgresException>()).Which.SqlState.Should().Be("23514");
+        await InsertReservationRowAsync(tableId, "Cancelled", 2, null);
+    }
+
+    private async Task<Exception?> TryReserveAsync(Guid tableId, string reason)
+    {
+        try
+        {
+            await _service.CreateReservationAsync(new CreateReservationRequest(
+                tableId, 1, null, _userId, TableReservationActorType.User, reason, 2));
+            return null;
+        }
+        catch (Exception exception)
+        {
+            return exception;
+        }
+    }
+
+    private async Task InsertReservationRowAsync(Guid tableId, string status, int partySize, DateTimeOffset? expiresAt)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var cmd = new NpgsqlCommand(
+            """
+            INSERT INTO table_mgmt.table_reservations (table_reservation_id, table_id, actor_type, status, reason, party_size, reserved_at, expires_at, row_version)
+            VALUES (gen_random_uuid(), @table_id, 'User', @status, 'Direct', @party, now(), @expires, 1);
+            """, connection);
+        cmd.Parameters.AddWithValue("table_id", tableId);
+        cmd.Parameters.AddWithValue("status", status);
+        cmd.Parameters.AddWithValue("party", partySize);
+        cmd.Parameters.AddWithValue("expires", (object?)expiresAt ?? DBNull.Value);
+        await cmd.ExecuteNonQueryAsync();
+    }
+
     // Helper methods for database assertions
     private async Task<Guid> CreateTableAsync(string tableNumber, string status, long rowVersion, bool active = true)
     {

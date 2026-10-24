@@ -1,6 +1,9 @@
 using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Audit.EventStore;
+using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Tables;
 using ALKAROS.Tables.Reservations;
 using ALKAROS.Tables.TableMerge;
@@ -170,6 +173,68 @@ public sealed class TableServerRulesHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(request);
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task TheTableTotalSumsEveryOpenOrderAndAMergedGroupShowsOneTotal()
+    {
+        var (client, app, terminalId, cookie) = await StartSessionAsync();
+        await using var _ = app;
+        using var __ = client;
+        var zone = await PostAsync<ZoneDto>(client, Prefix(terminalId) + "/zones", cookie, new CreateZoneRequest(0, "ZSR6", "Hall SR6"));
+        var leader = await CreateTableInZoneAsync(client, terminalId, cookie, zone, "S-51");
+        var follower = await CreateTableInZoneAsync(client, terminalId, cookie, zone, "S-52");
+        var third = await CreateTableInZoneAsync(client, terminalId, cookie, zone, "S-53");
+        await _database.SeedCurrentOrderWithItemsAsync(leader.TableId, (100m, "Active"), (20m, "Cancelled"));
+        var followerOrder = await _database.SeedCurrentOrderWithItemsAsync(follower.TableId, (40m, "Draft"));
+        var sentOrder = await _database.SeedCurrentOrderWithItemsAsync(third.TableId, (60m, "Active"));
+        await Exec("UPDATE orders.orders SET table_id = @leader WHERE order_id IN (@follower_order, @sent);",
+            ("leader", leader.TableId), ("follower_order", followerOrder), ("sent", sentOrder));
+        var fourth = await CreateTableInZoneAsync(client, terminalId, cookie, zone, "S-54");
+        var closedOrder = await _database.SeedCurrentOrderWithItemsAsync(fourth.TableId, (500m, "Active"));
+        await Exec("UPDATE orders.orders SET table_id = @leader, status = 'Completed' WHERE order_id = @closed;",
+            ("leader", leader.TableId), ("closed", closedOrder));
+        await Exec("INSERT INTO table_mgmt.table_sent_checks (order_id, table_id) VALUES (@sent, @third);", ("sent", sentOrder), ("third", third.TableId));
+        await Exec(
+            """
+            INSERT INTO table_mgmt.table_merges (table_merge_id, merge_group_id, primary_table_id, merged_table_id, status, reason, merged_by, merged_at, row_version)
+            VALUES (gen_random_uuid(), gen_random_uuid(), @a, @b, 'Active', 'Joined', (SELECT user_id FROM identity.users LIMIT 1), now(), 1);
+            """, ("a", leader.TableId), ("b", follower.TableId));
+
+        var tables = await GetAsync<List<TableDto>>(client, $"{Prefix(terminalId)}/tables?zoneId={zone.ZoneId:D}", cookie);
+
+        Assert.Equal(140m, tables.Single(t => t.TableId == leader.TableId).CurrentOrderTotal);
+        Assert.Equal(140m, tables.Single(t => t.TableId == follower.TableId).CurrentOrderTotal);
+    }
+
+    [Fact]
+    public async Task SendingACheckToTheTillRecordsItAndRecallingItForgetsIt()
+    {
+        var (client, app, terminalId, cookie) = await StartSessionAsync();
+        await using var _ = app;
+        using var __ = client;
+        var zone = await PostAsync<ZoneDto>(client, Prefix(terminalId) + "/zones", cookie, new CreateZoneRequest(0, "ZSR7", "Hall SR7"));
+        var table = await CreateTableInZoneAsync(client, terminalId, cookie, zone, "S-61");
+        var orderId = await _database.SeedCurrentOrderWithItemsAsync(table.TableId, (50m, "Active"));
+        await Exec("UPDATE orders.orders SET status = 'Submitted' WHERE order_id = @id;", ("id", orderId));
+        await Exec("UPDATE table_mgmt.tables SET current_status = 'Occupied' WHERE table_id = @id;", ("id", table.TableId));
+        var store = new CashierHandoffStore(_database.Source);
+        var sentRecords = $"SELECT count(*) FROM table_mgmt.table_sent_checks WHERE order_id = '{orderId:D}';";
+
+        var sent = await store.SendCheckToCashierAsync(table.TableId, orderId);
+        Assert.False(sent.AlreadySent);
+        Assert.Equal(1L, await _database.ScalarAsync<long>(sentRecords));
+
+        await store.RecallCheckAsync(table.TableId, orderId, new PostgresBillRepository(_database.Source),
+            new PostgresAuditEventStore(_database.Source), Guid.NewGuid(), "test");
+        Assert.Equal(0L, await _database.ScalarAsync<long>(sentRecords));
+
+        // A repeated recall (the check is already back on the table) clears a stale record too.
+        await Exec("INSERT INTO table_mgmt.table_sent_checks (order_id, table_id) VALUES (@order, @table);", ("order", orderId), ("table", table.TableId));
+        var again = await store.RecallCheckAsync(table.TableId, orderId, new PostgresBillRepository(_database.Source),
+            new PostgresAuditEventStore(_database.Source), Guid.NewGuid(), "test");
+        Assert.Equal("AlreadyAttached", again.Outcome);
+        Assert.Equal(0L, await _database.ScalarAsync<long>(sentRecords));
     }
 
     private async Task<(HttpClient Client, WebApplication App, Guid TerminalId, string Cookie)> StartSessionAsync()

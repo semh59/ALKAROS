@@ -633,6 +633,165 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
     }
 
     // Helper methods for database seeding and asserting
+    [Fact]
+    public async Task ACheckSentToTheTillIsNeitherMovedNorCountedByAMerge()
+    {
+        var primaryId = await CreateTableAsync("K-101", "Occupied", 1);
+        var participantId = await CreateTableAsync("K-102", "Occupied", 1);
+        var primaryOrder = await CreateOrderAsync(primaryId, "ORD-K0", 50m);
+        await SetTablePointersAsync(primaryId, primaryOrder, null);
+        var sentCheck = await CreateOrderAsync(participantId, "ORD-K1", 80m);
+        var currentOrder = await CreateOrderAsync(participantId, "ORD-K2", 120m);
+        await SetTablePointersAsync(participantId, currentOrder, null);
+        await MarkSentToTheTillAsync(sentCheck, participantId);
+        // Money still pending on a check that already left the table must not block the merge.
+        var sentBill = await CreateBillAsync(participantId, sentCheck, "BIL-K1", 80m, 0m, 0m, "Open");
+        await CreatePaymentAsync(sentBill, "Pending", requestedAmount: 80m);
+        var primarySent = await CreateOrderAsync(primaryId, "ORD-K3", 30m);
+        await MarkSentToTheTillAsync(primarySent, primaryId);
+
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "New party joined", _userId));
+        await DrainTableEventsAsync();
+
+        var record = (await _repository.GetByGroupIdAsync(merge.MergeGroupId)).Single();
+        record.OriginalOrderIds.Should().BeEquivalentTo(new[] { currentOrder });
+        (await GetOrderAsync(currentOrder)).TableId.Should().Be(primaryId);
+        (await GetOrderAsync(sentCheck)).TableId.Should().Be(participantId);
+        (await GetBillAsync(sentBill)).TableId.Should().Be(participantId);
+        (await GetOrderAsync(primarySent)).TableId.Should().Be(primaryId);
+    }
+
+    [Fact]
+    public async Task AnUnmergeNeverPointsThePrimaryAtACheckSentToTheTill()
+    {
+        var primaryId = await CreateTableAsync("K-401", "Occupied", 1);
+        var participantId = await CreateTableAsync("K-402", "Occupied", 1);
+        var sentCheck = await CreateOrderAsync(primaryId, "ORD-K41", 70m);
+        var sentBill = await CreateBillAsync(primaryId, sentCheck, "BIL-K41", 70m, 0m, 0m, "Open");
+        await MarkSentToTheTillAsync(sentCheck, primaryId);
+        var ownOrder = await CreateOrderAsync(primaryId, "ORD-K42", 20m);
+        var ownBill = await CreateBillAsync(primaryId, ownOrder, "BIL-K42", 20m, 0m, 0m, "Open");
+        await SetTablePointersAsync(primaryId, ownOrder, ownBill);
+        var participantOrder = await CreateOrderAsync(participantId, "ORD-K43", 10m);
+        await SetTablePointersAsync(participantId, participantOrder, null);
+
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "Joined", _userId));
+        await DrainTableEventsAsync();
+        await _service.UnmergeTablesAsync(new TableUnmergeRequest(
+            merge.MergeGroupId, 2, new[] { new TableMergeParticipant(participantId, 2) }, "Apart", _userId));
+        await DrainTableEventsAsync();
+
+        var primary = await GetTableAsync(primaryId);
+        primary.CurrentOrderId.Should().Be(ownOrder);
+        primary.CurrentBillId.Should().Be(ownBill);
+        (await GetOrderAsync(sentCheck)).TableId.Should().Be(primaryId);
+        (await GetBillAsync(sentBill)).TableId.Should().Be(primaryId);
+    }
+
+    [Fact]
+    public async Task APrimaryWithOnlyASentCheckTakesItsPointersFromTheParticipant()
+    {
+        var primaryId = await CreateTableAsync("K-501", "Occupied", 1);
+        var participantId = await CreateTableAsync("K-502", "Occupied", 1);
+        var sentCheck = await CreateOrderAsync(primaryId, "ORD-K51", 70m);
+        await CreateBillAsync(primaryId, sentCheck, "BIL-K51", 70m, 0m, 0m, "Open");
+        await MarkSentToTheTillAsync(sentCheck, primaryId);
+        var participantOrder = await CreateOrderAsync(participantId, "ORD-K52", 20m);
+        var participantBill = await CreateBillAsync(participantId, participantOrder, "BIL-K52", 20m, 0m, 0m, "Open");
+        await SetTablePointersAsync(participantId, participantOrder, participantBill);
+
+        await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "Joined", _userId));
+
+        var primary = await GetTableAsync(primaryId);
+        primary.CurrentOrderId.Should().Be(participantOrder);
+        primary.CurrentBillId.Should().Be(participantBill);
+    }
+
+    [Fact]
+    public async Task TwoMergesRacingForTheSameParticipantLetExactlyOneWin()
+    {
+        var firstPrimary = await CreateTableAsync("K-201", "Occupied", 1);
+        var secondPrimary = await CreateTableAsync("K-202", "Occupied", 1);
+        var participantId = await CreateTableAsync("K-203", "Occupied", 1);
+        foreach (var (tableId, number) in new[] { (firstPrimary, "ORD-K21"), (secondPrimary, "ORD-K22"), (participantId, "ORD-K23") })
+            await SetTablePointersAsync(tableId, await CreateOrderAsync(tableId, number, 10m), null);
+
+        var attempts = await Task.WhenAll(
+            TryMergeAsync(firstPrimary, participantId),
+            TryMergeAsync(secondPrimary, participantId));
+
+        attempts.Count(error => error is null).Should().Be(1);
+        attempts.Single(error => error is not null).Should().BeAssignableTo<TableMergeException>();
+        (await ActiveMergeRowsAsync(participantId)).Should().Be(1);
+    }
+
+    [Fact]
+    public async Task TheDatabaseRefusesASecondActiveMergeRowForTheSameParticipantAndASelfMerge()
+    {
+        var firstPrimary = await CreateTableAsync("K-301", "Occupied", 1);
+        var secondPrimary = await CreateTableAsync("K-302", "Occupied", 1);
+        var participantId = await CreateTableAsync("K-303", "Occupied", 1);
+        await InsertMergeRowAsync(firstPrimary, participantId, "Active");
+
+        var second = () => InsertMergeRowAsync(secondPrimary, participantId, "Active");
+        var self = () => InsertMergeRowAsync(firstPrimary, firstPrimary, "Active");
+
+        (await second.Should().ThrowAsync<PostgresException>()).Which.SqlState.Should().Be("23505");
+        (await self.Should().ThrowAsync<PostgresException>()).Which.SqlState.Should().Be("23514");
+        await InsertMergeRowAsync(secondPrimary, participantId, "Unmerged");
+    }
+
+    private async Task<Exception?> TryMergeAsync(Guid primaryId, Guid participantId)
+    {
+        try
+        {
+            await _service.MergeTablesAsync(new TableMergeRequest(
+                primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "Racing merge", _userId));
+            return null;
+        }
+        catch (Exception exception)
+        {
+            return exception;
+        }
+    }
+
+    private async Task<long> ActiveMergeRowsAsync(Guid participantId)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var cmd = new NpgsqlCommand(
+            "SELECT count(*) FROM table_mgmt.table_merges WHERE merged_table_id = @id AND status = 'Active';", connection);
+        cmd.Parameters.AddWithValue("id", participantId);
+        return (long)(await cmd.ExecuteScalarAsync())!;
+    }
+
+    private async Task MarkSentToTheTillAsync(Guid orderId, Guid tableId)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var cmd = new NpgsqlCommand(
+            "INSERT INTO table_mgmt.table_sent_checks (order_id, table_id) VALUES (@order_id, @table_id);", connection);
+        cmd.Parameters.AddWithValue("order_id", orderId);
+        cmd.Parameters.AddWithValue("table_id", tableId);
+        await cmd.ExecuteNonQueryAsync();
+    }
+
+    private async Task InsertMergeRowAsync(Guid primaryId, Guid mergedId, string status)
+    {
+        await using var connection = await _db.DataSource.OpenConnectionAsync();
+        await using var cmd = new NpgsqlCommand(
+            """
+            INSERT INTO table_mgmt.table_merges (table_merge_id, merge_group_id, primary_table_id, merged_table_id, status, reason, merged_by, merged_at, row_version)
+            VALUES (gen_random_uuid(), gen_random_uuid(), @primary, @merged, @status, 'Direct', @user, now(), 1);
+            """, connection);
+        cmd.Parameters.AddWithValue("primary", primaryId);
+        cmd.Parameters.AddWithValue("merged", mergedId);
+        cmd.Parameters.AddWithValue("status", status);
+        cmd.Parameters.AddWithValue("user", _userId);
+        await cmd.ExecuteNonQueryAsync();
+    }
+
     private async Task<Guid> CreateTableAsync(string tableNumber, string status, long rowVersion, bool active = true)
     {
         var id = Guid.NewGuid();

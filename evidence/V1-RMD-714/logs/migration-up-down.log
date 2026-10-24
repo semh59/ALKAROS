@@ -1,0 +1,90 @@
+DROP DATABASE
+psql:/tmp/mig714.sql:1: NOTICE:  database "alkaros_verify_714" does not exist, skipping
+CREATE DATABASE
+You are now connected to database "alkaros_verify_714" as user "postgres".
+CREATE SCHEMA
+CREATE SCHEMA
+CREATE SCHEMA
+CREATE SCHEMA
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE TABLE
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+CREATE INDEX
+INSERT 0 2
+INSERT 0 1
+--- UP then UP again (idempotent)
+CREATE INDEX
+CREATE INDEX
+DO
+CREATE TABLE
+CREATE INDEX
+psql:/tmp/205.up.sql:5: NOTICE:  relation "ux_table_reservations_active_table" already exists, skipping
+CREATE INDEX
+psql:/tmp/205.up.sql:9: NOTICE:  relation "ux_table_merges_active_participant" already exists, skipping
+CREATE INDEX
+DO
+CREATE TABLE
+psql:/tmp/205.up.sql:38: NOTICE:  relation "table_sent_checks" already exists, skipping
+CREATE INDEX
+--- second active reservation refused (expect ERROR 23505)
+psql:/tmp/205.up.sql:40: NOTICE:  relation "ix_table_sent_checks_table" already exists, skipping
+INSERT 0 1
+--- zero party refused (expect ERROR 23514)
+psql:/tmp/mig714.sql:20: ERROR:  duplicate key value violates unique constraint "ux_table_reservations_active_table"
+DETAIL:  Key (table_id)=(00000000-0000-0000-0000-0000000000a1) already exists.
+psql:/tmp/mig714.sql:23: ERROR:  new row for relation "table_reservations" violates check constraint "ck_table_reservations_party_size"
+DETAIL:  Failing row contains (66a18110-ed53-4739-bebe-c521f1f7a651, 00000000-0000-0000-0000-0000000000a2, null, null, User, Active, x, 0, 2026-10-24 05:49:03.93576+00, null, null, null, null, 1).
+--- sent checks table exists (expect 1)
+ count 
+-------
+     1
+(1 row)
+
+--- DOWN
+DROP TABLE
+ALTER TABLE
+ALTER TABLE
+ALTER TABLE
+DROP INDEX
+DROP INDEX
+DROP TABLE
+psql:/tmp/205.down.sql:1: NOTICE:  table "table_sent_checks" does not exist, skipping
+psql:/tmp/205.down.sql:3: NOTICE:  constraint "ck_table_merges_distinct_tables" of relation "table_merges" does not exist, skipping
+ALTER TABLE
+psql:/tmp/205.down.sql:4: NOTICE:  constraint "ck_table_reservations_expiry" of relation "table_reservations" does not exist, skipping
+ALTER TABLE
+psql:/tmp/205.down.sql:5: NOTICE:  constraint "ck_table_reservations_party_size" of relation "table_reservations" does not exist, skipping
+ALTER TABLE
+DROP INDEX
+DROP INDEX
+psql:/tmp/205.down.sql:7: NOTICE:  index "ux_table_merges_active_participant" does not exist, skipping
+psql:/tmp/205.down.sql:8: NOTICE:  index "ux_table_reservations_active_table" does not exist, skipping
+ sent_checks_after_down 
+------------------------
+                      0
+(1 row)
+
+ indexes_after_down 
+--------------------
+                  0
+(1 row)
+
+ checks_after_down 
+-------------------
+                 0
+(1 row)
+
+--- a second active reservation is accepted again after down (expect INSERT 0 1)
+INSERT 0 1
+You are now connected to database "postgres" as user "postgres".
+DROP DATABASE

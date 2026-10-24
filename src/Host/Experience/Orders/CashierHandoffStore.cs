@@ -63,8 +63,28 @@ public sealed class CashierHandoffStore
             }
         }
 
+        await using (var mark = new NpgsqlCommand(
+            """
+            INSERT INTO table_mgmt.table_sent_checks (order_id, table_id) VALUES (@order_id, @table_id)
+            ON CONFLICT (order_id) DO UPDATE SET table_id = EXCLUDED.table_id, sent_at = now();
+            """, connection, transaction))
+        {
+            mark.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+            mark.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+            await mark.ExecuteNonQueryAsync(cancellationToken);
+        }
+
         await transaction.CommitAsync(cancellationToken);
         return new SendCheckToCashierResultV1(orderId, tableId, AlreadySent: false);
+    }
+
+    private static async Task ForgetSentCheckAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
+    {
+        await using var forget = new NpgsqlCommand(
+            "DELETE FROM table_mgmt.table_sent_checks WHERE order_id = @order_id;", connection, transaction);
+        forget.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+        await forget.ExecuteNonQueryAsync(cancellationToken);
     }
 
     /// <summary>
@@ -113,6 +133,7 @@ public sealed class CashierHandoffStore
             // never cancels a bill that money has since moved on.
             if (!await HasMoneyAsync(connection, transaction, orderId, cancellationToken))
                 await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);
+            await ForgetSentCheckAsync(connection, transaction, orderId, cancellationToken);
             await transaction.CommitAsync(cancellationToken);
             return new RecallCheckResultV1(orderId, tableId, "AlreadyAttached");
         }
@@ -147,6 +168,8 @@ public sealed class CashierHandoffStore
             if (await attach.ExecuteNonQueryAsync(cancellationToken) == 0)
                 throw new TableHasNewerCheckException(tableId);
         }
+
+        await ForgetSentCheckAsync(connection, transaction, orderId, cancellationToken);
 
         await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);
         await auditEvents.AppendAsync(

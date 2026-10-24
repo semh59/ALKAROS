@@ -149,7 +149,7 @@ public sealed partial class PostgresTableMergeRepository
         const string checkBillsSql = $"""
             SELECT bill_id
             FROM {BillsTable}
-            WHERE table_id = ANY(@table_ids) AND status NOT IN ('Paid', 'Cancelled');
+            WHERE table_id = ANY(@table_ids) AND status NOT IN ('Paid', 'Cancelled') {NotSentBill};
             """;
 
         await using (var cmd = new NpgsqlCommand(checkBillsSql, connection, transaction))
@@ -174,7 +174,7 @@ public sealed partial class PostgresTableMergeRepository
         // Gather primary table's existing orders and bills
         const string selectPrimaryOrdersSql = $"""
             SELECT order_id FROM {OrdersTable}
-            WHERE table_id = @primary_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected');
+            WHERE table_id = @primary_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected') {NotSentOrder};
             """;
         await using (var cmd = new NpgsqlCommand(selectPrimaryOrdersSql, connection, transaction))
         {
@@ -188,7 +188,7 @@ public sealed partial class PostgresTableMergeRepository
 
         const string selectPrimaryBillsSql = $"""
             SELECT bill_id FROM {BillsTable}
-            WHERE table_id = @primary_id AND status NOT IN ('Paid', 'Cancelled');
+            WHERE table_id = @primary_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill};
             """;
         await using (var cmd = new NpgsqlCommand(selectPrimaryBillsSql, connection, transaction))
         {
@@ -208,7 +208,7 @@ public sealed partial class PostgresTableMergeRepository
             var participantOrderIds = new List<Guid>();
             const string selectPartOrdersSql = $"""
                 SELECT order_id FROM {OrdersTable}
-                WHERE table_id = @part_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected');
+                WHERE table_id = @part_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected') {NotSentOrder};
                 """;
             await using (var cmd = new NpgsqlCommand(selectPartOrdersSql, connection, transaction))
             {
@@ -224,7 +224,7 @@ public sealed partial class PostgresTableMergeRepository
             var participantBillIds = new List<Guid>();
             const string selectPartBillsSql = $"""
                 SELECT bill_id FROM {BillsTable}
-                WHERE table_id = @part_id AND status NOT IN ('Paid', 'Cancelled');
+                WHERE table_id = @part_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill};
                 """;
             await using (var cmd = new NpgsqlCommand(selectPartBillsSql, connection, transaction))
             {

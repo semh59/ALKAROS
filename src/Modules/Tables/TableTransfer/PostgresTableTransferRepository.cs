@@ -20,6 +20,9 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
     private const string TableMergesTable = "table_mgmt.table_merges";
     private const string OrdersTable = "orders.orders";
     private const string BillsTable = "billing.bills";
+    // A check sent to the till no longer belongs to its table: a transfer neither moves nor counts it.
+    private const string NotSentOrder = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = orders.orders.order_id)";
+    private const string NotSentBill = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = billing.bills.order_id)";
     private const string AuditEventsTable = "audit.audit_events";
 
     // Defensive ceiling for a filtered list read: a real filter returns
@@ -259,7 +262,7 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
         const string selectBillsSql = $"""
             SELECT bill_id, status
             FROM {BillsTable}
-            WHERE table_id = @source_id AND status NOT IN ('Paid', 'Cancelled');
+            WHERE table_id = @source_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill};
             """;
 
         await using (var cmd = new NpgsqlCommand(selectBillsSql, connection, transaction))
@@ -280,7 +283,7 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
         const string selectOrdersSql = $"""
             SELECT order_id
             FROM {OrdersTable}
-            WHERE table_id = @source_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected')
+            WHERE table_id = @source_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected') {NotSentOrder}
             ORDER BY created_at ASC;
             """;
 

@@ -21,6 +21,8 @@ public sealed class TableManagementStore
         _reservationRepository = reservationRepository ?? throw new ArgumentNullException(nameof(reservationRepository));
     }
 
+    // A merged group shows one total on every table of the group, and a table with several open
+    // orders shows their sum; a check already sent to the till is not part of the table any more.
     // V1-RMD-135: found by an independent audit (2026-09-09) — WaiterPwa's
     // table list always rendered every table's running total as empty
     // because TableDto never carried one at all; the client was
@@ -36,7 +38,14 @@ public sealed class TableManagementStore
         COALESCE((
             SELECT SUM(oi.gross_amount)
             FROM orders.order_items oi
-            WHERE oi.order_id = t.current_order_id AND oi.status IN ('Draft', 'Active')
+            JOIN orders.orders o ON o.order_id = oi.order_id
+            WHERE o.table_id = COALESCE(
+                    (SELECT m.primary_table_id FROM table_mgmt.table_merges m
+                     WHERE m.merged_table_id = t.table_id AND m.status = 'Active'),
+                    t.table_id)
+              AND o.status NOT IN ('Completed', 'Cancelled', 'Rejected')
+              AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = o.order_id)
+              AND oi.status IN ('Draft', 'Active')
         ), 0)
         """;
 

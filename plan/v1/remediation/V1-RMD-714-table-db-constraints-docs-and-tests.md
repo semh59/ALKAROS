@@ -1,7 +1,7 @@
 # V1-RMD-714 - Masa veri kısıtları, test boşlukları, masa tutarı ve gönderilmiş hesap
 
 - Task ID: V1-RMD-714
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
@@ -18,6 +18,8 @@ V1-RMD-601 bulguları B023, B027, B029 ve B030 kapanır. Aktif birleşim ve akti
 
 - `plan/v1/remediation/V1-RMD-714-table-db-constraints-docs-and-tests.md`
 - `evidence/V1-RMD-714/**`
+- `database/migrations/V1/V1-RMD-714/205-table-constraints-and-sent-checks.up.sql`
+- `database/migrations/V1/V1-RMD-714/205-table-constraints-and-sent-checks.down.sql`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/migrations/** - yalnız yeni migration
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json - yalnız yeni migration kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs - yalnız yeni migration kaydı

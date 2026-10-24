@@ -520,6 +520,60 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
     }
 
     // Helper methods for database seeding and asserting
+    [Fact]
+    public async Task ACheckSentToTheTillStaysBehindWhenTheTableMoves()
+    {
+        var sourceTableId = await CreateTableAsync("TR-301", "Occupied", 1);
+        var targetTableId = await CreateTableAsync("TR-302", "Available", 1);
+        var sentCheck = await CreateOrderAsync(sourceTableId, "ORD-TR31", 90m);
+        var sentBill = await CreateBillAsync(sourceTableId, sentCheck, "BIL-TR31", 90m, 0m, 0m, "Open");
+        var currentOrder = await CreateOrderAsync(sourceTableId, "ORD-TR32", 60m);
+        await SetTablePointersAsync(sourceTableId, currentOrder, null);
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var mark = new NpgsqlCommand(
+            "INSERT INTO table_mgmt.table_sent_checks (order_id, table_id) VALUES (@order_id, @table_id);", connection))
+        {
+            mark.Parameters.AddWithValue("order_id", sentCheck);
+            mark.Parameters.AddWithValue("table_id", sourceTableId);
+            await mark.ExecuteNonQueryAsync();
+        }
+
+        await _service.TransferTableAsync(new TableTransferRequest(
+            sourceTableId, 1, targetTableId, 1, "Guest moved", _userId));
+        await DrainTableEventsAsync();
+
+        (await GetOrderAsync(currentOrder)).TableId.Should().Be(targetTableId);
+        (await GetOrderAsync(sentCheck)).TableId.Should().Be(sourceTableId);
+        (await GetBillAsync(sentBill)).TableId.Should().Be(sourceTableId);
+    }
+
+    [Fact]
+    public async Task TwoTransfersRacingFromTheSameTableLetExactlyOneWin()
+    {
+        var sourceTableId = await CreateTableAsync("TR-401", "Occupied", 1);
+        var firstTarget = await CreateTableAsync("TR-402", "Available", 1);
+        var secondTarget = await CreateTableAsync("TR-403", "Available", 1);
+        await SetTablePointersAsync(sourceTableId, await CreateOrderAsync(sourceTableId, "ORD-TR41", 30m), null);
+
+        var attempts = await Task.WhenAll(TryTransferAsync(sourceTableId, firstTarget), TryTransferAsync(sourceTableId, secondTarget));
+
+        attempts.Count(error => error is null).Should().Be(1);
+        attempts.Single(error => error is not null).Should().BeAssignableTo<TableTransferException>();
+    }
+
+    private async Task<Exception?> TryTransferAsync(Guid sourceTableId, Guid targetTableId)
+    {
+        try
+        {
+            await _service.TransferTableAsync(new TableTransferRequest(sourceTableId, 1, targetTableId, 1, "Racing transfer", _userId));
+            return null;
+        }
+        catch (Exception exception)
+        {
+            return exception;
+        }
+    }
+
     private async Task<Guid> CreateTableAsync(string tableNumber, string status, long rowVersion, bool active = true)
     {
         var id = Guid.NewGuid();

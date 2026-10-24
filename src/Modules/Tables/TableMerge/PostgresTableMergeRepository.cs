@@ -19,6 +19,9 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
     // Order/Bill row moves are requested through a table integration event.
     private const string OrdersTable = "orders.orders";
     private const string BillsTable = "billing.bills";
+    // A check sent to the till no longer belongs to its table: merges neither move nor count it.
+    private const string NotSentOrder = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = orders.orders.order_id)";
+    private const string NotSentBill = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = billing.bills.order_id)";
     private const string AuditEventsTable = "audit.audit_events";
 
     // Defensive ceiling for a filtered list read: a real filter returns
