@@ -163,6 +163,20 @@ public sealed class BillPaymentClosureCalculatorTests
         projection.Blockers.Should().BeEmpty();
     }
 
+    [Fact]
+    public void ComputeMarksAFullyDiscountedBillSatisfiedWithNoPayment()
+    {
+        var bill = MakeBill(payable: 100m);
+        var discount = BillAdjustment.CreateDiscountAmount(
+            Guid.NewGuid(), bill.Id, discountAmount: 100m, taxRate: 0m, reason: "Test discount", authorizedBy: Guid.NewGuid());
+
+        var projection = BillPaymentClosureCalculator.Compute(bill, payments: [], allocations: [], adjustments: [discount]);
+
+        projection.PayableAmount.Should().Be(0m);
+        projection.PaymentSatisfied.Should().BeTrue();
+        projection.Blockers.Should().BeEmpty();
+    }
+
     private static Bill MakeBill(decimal payable)
     {
         var billId = Guid.NewGuid();

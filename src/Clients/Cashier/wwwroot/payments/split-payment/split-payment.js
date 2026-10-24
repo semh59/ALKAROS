@@ -55,6 +55,7 @@
     discountValueDraft: '',
     discountNoteDraft: '',
     discountBusy: false,
+    discountConfirm: false,
     discountError: null,
     discountNotice: null,
     tipAmountDraft: '',
@@ -416,6 +417,15 @@
       render();
       return;
     }
+    // An unintended 100 instead of 10 would close the whole bill with nothing collected: ask once before that.
+    var takeOff = state.discountCalcType === 'Percentage' ? remainingAmount() * value / 100 : value;
+    if (takeOff >= remainingAmount() - 0.004 && !state.discountConfirm) {
+      state.discountConfirm = true;
+      state.discountError = null;
+      render();
+      return;
+    }
+    state.discountConfirm = false;
     state.discountBusy = true;
     state.discountError = null;
     state.discountNotice = null;
@@ -822,6 +832,10 @@
       // discount attempt succeeded OR failed, only a sighted cashier watching the screen saw it.
       (state.discountNotice ? '<div class="sp-alert-body" role="status">' + escapeHtml(state.discountNotice) + '</div>' : '') +
       (state.discountError ? '<div class="sp-alert-body" role="alert" style="color:var(--color-danger)">' + escapeHtml(state.discountError) + '</div>' : '') +
+      (state.discountConfirm
+        ? '<div class="sp-alert-body" role="alert">Bu indirim hesabın kalan tutarının tamamını (' + escapeHtml(formatMoney(remainingAmount())) +
+          ') kapatır; hesap tahsilat yapılmadan kapanır. Doğruysa "Evet, indirimi uygula" düğmesine basın.</div>'
+        : '') +
       '<select class="sp-input" id="discount-reason" aria-label="İndirim gerekçesi">' +
       Object.keys(DISCOUNT_REASON_LABELS).map(function (code) {
         return '<option value="' + code + '"' + (state.discountReason === code ? ' selected' : '') + '>' +
@@ -839,7 +853,7 @@
       '<input class="sp-input" type="text" id="discount-note" maxlength="500" placeholder="Not (opsiyonel)" aria-label="İndirim notu (opsiyonel)" value="' +
       escapeHtml(state.discountNoteDraft) + '">' +
       '<button class="sp-btn sp-btn-secondary" id="submit-discount" type="button"' + disabled + '>' +
-      (state.discountBusy ? 'Gönderiliyor…' : 'İndirim uygula') + '</button>' +
+      (state.discountBusy ? 'Gönderiliyor…' : (state.discountConfirm ? 'Evet, indirimi uygula' : 'İndirim uygula')) + '</button>' +
       '</div>'
     );
   }
@@ -1559,9 +1573,9 @@
     var discountReasonInput = document.getElementById('discount-reason');
     if (discountReasonInput) discountReasonInput.addEventListener('change', function () { state.discountReason = this.value; });
     var discountCalcTypeInput = document.getElementById('discount-calc-type');
-    if (discountCalcTypeInput) discountCalcTypeInput.addEventListener('change', function () { state.discountCalcType = this.value; });
+    if (discountCalcTypeInput) discountCalcTypeInput.addEventListener('change', function () { state.discountCalcType = this.value; state.discountConfirm = false; });
     var discountValueInput = document.getElementById('discount-value');
-    if (discountValueInput) discountValueInput.addEventListener('input', function () { state.discountValueDraft = this.value; });
+    if (discountValueInput) discountValueInput.addEventListener('input', function () { state.discountValueDraft = this.value; state.discountConfirm = false; });
     var discountNoteInput = document.getElementById('discount-note');
     if (discountNoteInput) discountNoteInput.addEventListener('input', function () { state.discountNoteDraft = this.value; });
     var submitDiscountButton = document.getElementById('submit-discount');

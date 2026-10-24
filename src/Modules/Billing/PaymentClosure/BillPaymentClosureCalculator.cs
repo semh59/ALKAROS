@@ -67,8 +67,9 @@ public static class BillPaymentClosureCalculator
         // AllocateAsync's own remaining-payable invariant (V0-DOM-004, now adjustment-aware - see
         // PaymentAllocationFactory.Create) means allocatedTotal can never legitimately exceed adjustedPayable
         // — >= rather than == only guards against that invariant ever being violated upstream, it never
-        // changes the outcome in practice.
-        var paymentSatisfied = adjustedPayable > 0 && allocatedTotal >= adjustedPayable;
+        // changes the outcome in practice. A bill whose adjusted payable is 0 (fully discounted or comped) is
+        // settled with no payment at all.
+        var paymentSatisfied = allocatedTotal >= adjustedPayable;
 
         return new BillPaymentClosureProjection(
             bill.Id,

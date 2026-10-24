@@ -209,4 +209,34 @@ describe("split-payment.js failure states", () => {
 
     expect(app().querySelector('a[href="/pending-checks"]')).not.toBeNull();
   });
+
+  it("asks once before a discount that closes the whole bill and sends nothing until confirmed", async () => {
+    const fetchMock = await open(routes({
+      extra: [{ test: (url, init) => url.endsWith("/discount") && init?.method === "POST", body: { status: "Applied" } }],
+    }));
+    await vi.waitFor(() => expect(document.getElementById("submit-discount")).not.toBeNull());
+    type("#discount-value", "100");
+    const discountCalls = () => fetchMock.mock.calls.filter(([url]) => url.endsWith("/discount")).length;
+
+    document.getElementById("submit-discount").click();
+
+    await vi.waitFor(() => expect(app().textContent).toContain("Evet, indirimi uygula"));
+    expect(discountCalls()).toBe(0);
+
+    document.getElementById("submit-discount").click();
+
+    await vi.waitFor(() => expect(discountCalls()).toBe(1));
+  });
+
+  it("applies a small discount at once without the extra question", async () => {
+    const fetchMock = await open(routes({
+      extra: [{ test: (url, init) => url.endsWith("/discount") && init?.method === "POST", body: { status: "Applied" } }],
+    }));
+    await vi.waitFor(() => expect(document.getElementById("submit-discount")).not.toBeNull());
+    type("#discount-value", "10");
+
+    document.getElementById("submit-discount").click();
+
+    await vi.waitFor(() => expect(fetchMock.mock.calls.some(([url]) => url.endsWith("/discount"))).toBe(true));
+  });
 });

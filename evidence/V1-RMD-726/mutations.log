@@ -1,0 +1,5 @@
+M1-zero-payable-never-satisfied KILLED restored=true
+M2-zero-discount-does-not-close KILLED restored=true
+M3-full-discount-not-confirmed KILLED restored=true
+M4-small-discount-always-asks KILLED restored=true
+DONE

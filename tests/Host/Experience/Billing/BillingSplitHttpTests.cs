@@ -861,6 +861,26 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADiscountThatTakesThePayableToZeroClosesTheBill()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(
+            HttpMethod.Post,
+            $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
+            cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 100m, "PromotionalOffer"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Paid", await _database.BillStatusAsync(seeded.BillId));
+    }
+
+    [Fact]
     public async Task ConcurrentDiscountsOnTheSameBillDoNotExceedThePayableAmount()
     {
         // Regression test for an independent audit finding (2026-09-06): a
@@ -1261,6 +1281,13 @@ internal sealed class BillingSplitTestDatabase
         await using var command = DataSource.CreateCommand("SELECT amount FROM identity.authorization_grants WHERE grant_id = @grant_id;");
         command.Parameters.AddWithValue("grant_id", grantId);
         return (decimal)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<string> BillStatusAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT status FROM billing.bills WHERE bill_id = @bill_id;");
+        command.Parameters.AddWithValue("bill_id", billId);
+        return (string)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<long> BillAdjustmentCountAsync(Guid billId)

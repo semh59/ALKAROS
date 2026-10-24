@@ -1,6 +1,7 @@
 using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Billing.PaymentClosure;
 using ALKAROS.Billing.SplitDesign;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
@@ -9,12 +10,16 @@ using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Identity.Authorization.Delegations;
 using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Identity.Authorization.Policies;
+using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Payments.Allocations.Persistence;
+using ALKAROS.Payments.PaymentAggregate;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
@@ -56,6 +61,13 @@ public static class BillingSplitApplication
         // Same registration set as AddOrderManagementExperience so this
         // module's standalone composition can resolve the filter chain.
         services.TryAddSingleton<IBillAdjustmentRepository, PostgresBillAdjustmentRepository>();
+        // A discount that zeroes the payable closes the bill, so the standalone composition needs the closure chain.
+        services.AddSignalR();
+        services.TryAddSingleton<IPaymentRepository, PostgresPaymentRepository>();
+        services.TryAddSingleton<IPaymentAllocationRepository, PostgresPaymentAllocationRepository>();
+        services.TryAddSingleton<IBillPaymentClosureProjector, BillPaymentClosureProjector>();
+        services.TryAddSingleton<IBillClosureService, BillClosureService>();
+        services.TryAddSingleton<OrderSettlementService>();
         services.TryAddSingleton<IAuthorizationGrantRepository, PostgresAuthorizationGrantRepository>();
         services.TryAddSingleton<IAuthorizationPolicyRepository, PostgresAuthorizationPolicyRepository>();
         services.TryAddSingleton<IAuthorizationDelegationRepository, PostgresAuthorizationDelegationRepository>();
@@ -134,6 +146,10 @@ public static class BillingSplitApplication
             IRoleRepository roles,
             IAuthorizationGrantService grants,
             IAuditEventStore auditEvents,
+            IBillClosureService billClosure,
+            OrderSettlementService orderSettlement,
+            IHubContext<CustomerDisplayHub> customerDisplayHub,
+            ILoggerFactory loggerFactory,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -188,6 +204,10 @@ public static class BillingSplitApplication
 
             var (adjustment, summary) = await store.ApplyDiscountAsync(
                 billId, request, principal.UserId, auditEvents, context.TraceIdentifier, cancellationToken);
+            // A discount that takes the payable to zero leaves nothing to collect, so no tender will ever close the bill.
+            if (summary.AdjustedPayableAmount <= 0m)
+                await DualScreenApplication.TryCloseBillAsync(
+                    billClosure, orderSettlement, billId, customerDisplayHub, loggerFactory, terminalId, cancellationToken);
             return Results.Ok(new ApplyBillDiscountResultV1(
                 "Applied",
                 billId,
