@@ -33,16 +33,21 @@ export function PendingChecksWorkspace({ terminalId, navigateTo = (href: string)
   const [liveLinkUp, setLiveLinkUp] = useState(true);
   const [loadedAt, setLoadedAt] = useState<Date>();
   const knownIds = useRef<ReadonlySet<string> | null>(null);
+  const latestLoad = useRef(0);
 
   const load = useCallback(async () => {
+    // The poll, the live push and a recall can overlap; only the newest request may write the list.
+    const ticket = ++latestLoad.current;
     try {
       const loaded = await loadPendingChecks(terminalId);
+      if (ticket !== latestLoad.current) return;
       if (hasNewCheck(knownIds.current, loaded)) playNewItemChime();
       knownIds.current = new Set(loaded.map((check) => check.orderId));
       setChecks(loaded);
       setLoadedAt(new Date());
       setError(undefined);
     } catch (reason) {
+      if (ticket !== latestLoad.current) return;
       setError(reason instanceof PendingChecksApiError ? reason.message : "Bekleyen hesaplar okunamadı.");
     }
   }, [terminalId]);

@@ -271,3 +271,27 @@ describe("waiter-app.js", () => {
     });
   });
 });
+
+// A modifier group whose ceiling is 0 allows no extras (the Host refuses them), so the picker must not offer them.
+describe("product sheet modifier ceiling", () => {
+  it("refuses an extra from a group that allows none", async () => {
+    document.body.innerHTML = `<div id="toasts"></div><div id="ribbon"></div><span id="ribbonText"></span><button id="ribbonQueue"></button>
+<div id="optionsBackdrop"></div><div id="optionsSheet"></div><span id="optionsTitle"></span><span id="optionsSub"></span><div id="optionsBody"></div>
+<button id="optionsClose"></button><button id="optionsConfirm"></button><span id="optionsFootLabel"></span><span id="optionsFootValue"></span>`;
+    const wwwroot = resolve(repoRoot, "src/Clients/WaiterPwa/wwwroot/js");
+    const { state, el } = await import(resolve(wwwroot, "state.js"));
+    const { toggleModifier } = await import(resolve(wwwroot, "sheets/product-sheet.js"));
+    state.optionsContext = {
+      product: {
+        modifierGroups: [{ modifierGroupId: "g1", name: "Sos", maxSelections: 0, modifiers: [{ modifierId: "m1", name: "Acı", priceDelta: 0 }] }],
+      },
+      quantity: 1,
+      chosen: new Map(),
+    };
+
+    toggleModifier({ dataset: { modifier: "m1", group: "g1" } });
+
+    expect(state.optionsContext.chosen.size).toBe(0);
+    expect(el.toasts.textContent).toContain("Sos için seçim yapılamaz.");
+  });
+});

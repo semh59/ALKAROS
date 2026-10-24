@@ -129,6 +129,39 @@ export function NfcOrder() {
     void loadCatalog();
   }, [tableId, loadCatalog]);
 
+  // The option picker is a modal: focus moves into it, Tab stays inside, Escape closes it, and focus returns to the
+  // product that opened it.
+  const pickerRef = useRef<HTMLDivElement>(null);
+  const pickerOpen = picking !== null;
+  useEffect(() => {
+    const dialog = pickerRef.current;
+    if (!pickerOpen || !dialog) return;
+    const opener = document.activeElement as HTMLElement | null;
+    dialog.querySelector<HTMLElement>("input, button")?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setPicking(null);
+        return;
+      }
+      if (event.key !== "Tab") return;
+      const controls = [...dialog.querySelectorAll<HTMLElement>("input, button:not([disabled])")];
+      const first = controls[0];
+      const last = controls[controls.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      opener?.focus();
+    };
+  }, [pickerOpen]);
+
   const changeQuantity = (key: string, delta: number) => {
     setCart((previous) => {
       const next = Math.max(0, (previous[key] ?? 0) + delta);
@@ -379,7 +412,7 @@ export function NfcOrder() {
         })}
       </div>
       {picking && (
-        <div className="nfc-picker" role="dialog" aria-modal="true" aria-label={`${picking.product.name} seçenekleri`}>
+        <div ref={pickerRef} className="nfc-picker" role="dialog" aria-modal="true" aria-label={`${picking.product.name} seçenekleri`}>
           <h2>{picking.product.name}</h2>
           {groupsOf(picking.product).map((group) => (
             <fieldset key={group.modifierGroupId}>

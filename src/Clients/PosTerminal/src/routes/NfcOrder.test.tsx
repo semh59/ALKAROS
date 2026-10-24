@@ -285,6 +285,23 @@ describe("NfcOrder", () => {
       expect(body.items[0].modifiers.map((m: { modifierId: string }) => m.modifierId).sort()).toEqual(["m2", "m3"]);
     });
 
+    it("the option picker takes focus, closes on Escape and gives focus back to the product", async () => {
+      vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(CATALOG_WITH_EXTRAS)));
+      await render("/nfc/table-1");
+      await act(async () => Promise.resolve());
+
+      const opener = document.querySelector<HTMLElement>('[aria-label="Burger için seçenekleri aç"]')!;
+      opener.focus();
+      await click(opener);
+      const dialog = document.querySelector('[role="dialog"]')!;
+      expect(dialog.contains(document.activeElement)).toBe(true);
+
+      await act(async () => { document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape", bubbles: true })); });
+
+      expect(document.querySelector('[role="dialog"]')).toBeNull();
+      expect(document.activeElement).toBe(opener);
+    });
+
     it("the same product with different extras becomes separate lines", async () => {
       vi.stubGlobal("fetch", vi.fn(async () => jsonResponse(CATALOG_WITH_EXTRAS)));
       await render("/nfc/table-1");

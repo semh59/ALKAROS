@@ -1,6 +1,8 @@
 namespace ALKAROS.Orders.SubmitOrder;
 
 using ALKAROS.Orders.OrderAggregate;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 
 /// <summary>
@@ -16,13 +18,22 @@ public sealed class SubmitOrderHandler
     private readonly IOrderRepository _orderRepository;
     private readonly IOrderSubmissionDispatcher? _dispatcher;
     private readonly TimeSpan _idempotencyRetention;
+    private readonly ILogger _logger;
+
+    private static readonly Action<ILogger, Guid, int, Exception?> LogDeadlockRetry =
+        LoggerMessage.Define<Guid, int>(
+            LogLevel.Warning,
+            new EventId(5211, nameof(LogDeadlockRetry)),
+            "Order '{OrderId}' submission lost a deadlock on attempt {Attempt}; retrying.");
 
     public SubmitOrderHandler(
         NpgsqlDataSource dataSource,
         IOrderRepository orderRepository,
         TimeSpan? idempotencyRetention = null,
-        IOrderSubmissionDispatcher? dispatcher = null)
+        IOrderSubmissionDispatcher? dispatcher = null,
+        ILogger<SubmitOrderHandler>? logger = null)
     {
+        _logger = logger ?? NullLogger<SubmitOrderHandler>.Instance;
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _orderRepository = orderRepository ?? throw new ArgumentNullException(nameof(orderRepository));
         _dispatcher = dispatcher;
@@ -67,6 +78,7 @@ public sealed class SubmitOrderHandler
                 // retry: several losers of the same deadlock cycle would
                 // otherwise restart in lockstep and have a real chance of
                 // immediately re-forming the same cycle against each other.
+                LogDeadlockRetry(_logger, command.OrderId, attempt, ex);
                 var backoff = TimeSpan.FromMilliseconds(Random.Shared.Next(20, 120) * attempt);
                 await Task.Delay(backoff, cancellationToken).ConfigureAwait(false);
             }

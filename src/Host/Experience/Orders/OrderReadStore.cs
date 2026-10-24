@@ -81,12 +81,7 @@ public sealed class OrderReadStore
     /// </summary>
     public async Task<int> TransferServingUserAsync(Guid fromUserId, Guid toUserId, Guid actorId, CancellationToken cancellationToken = default)
     {
-        if (fromUserId == toUserId)
-            throw new InvalidTransferTargetException("A server cannot transfer their own checks to themselves.");
-
-        var (exists, active) = await _roles.GetUserStateAsync(toUserId, cancellationToken);
-        if (!exists || !active)
-            throw new InvalidTransferTargetException($"Target user {toUserId} does not exist or is not active.");
+        await EnsureTransferTargetAsync(fromUserId, toUserId, cancellationToken);
 
         // The hand-off changes who is answerable for every open check of the leaving server, so it is recorded in the
         // same transaction: it is not made unless the record is kept.
@@ -106,6 +101,20 @@ public sealed class OrderReadStore
             connection, transaction, cancellationToken);
         await transaction.CommitAsync(cancellationToken);
         return count;
+    }
+
+    /// <summary>
+    /// Refuses a hand-off to oneself or to someone who cannot serve. Callable on its own so a caller can reject a bad
+    /// target before it leaves anything behind (the hand-off note).
+    /// </summary>
+    public async Task EnsureTransferTargetAsync(Guid fromUserId, Guid toUserId, CancellationToken cancellationToken = default)
+    {
+        if (fromUserId == toUserId)
+            throw new InvalidTransferTargetException("A server cannot transfer their own checks to themselves.");
+
+        var (exists, active) = await _roles.GetUserStateAsync(toUserId, cancellationToken);
+        if (!exists || !active)
+            throw new InvalidTransferTargetException($"Target user {toUserId} does not exist or is not active.");
     }
 
     /// <summary>
@@ -129,7 +138,8 @@ public sealed class OrderReadStore
               ON i.order_id = o.order_id AND i.status <> 'Cancelled'
             WHERE o.status = 'PendingConfirmation'
             GROUP BY o.order_id, o.table_id, t.table_number, o.total, o.created_at
-            ORDER BY o.created_at;
+            ORDER BY o.created_at
+            LIMIT 200;
             """);
 
         await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);

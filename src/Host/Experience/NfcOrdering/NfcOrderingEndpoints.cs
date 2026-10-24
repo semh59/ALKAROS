@@ -39,11 +39,12 @@ public static class NfcOrderingEndpoints
         services.TryAddSingleton<DualScreenStore>();
         services.TryAddSingleton<IOrderRepository, PostgresOrderRepository>();
         services.TryAddSingleton<SubmitOrderHandler>();
-        // Same factory OrderManagementEndpoints registers (V1-RMD-113) —
-        // TryAdd, so in the real Host composition (which wires both
-        // modules) whichever runs first wins; either way it is the exact
-        // same station-id-driven dispatcher, so it makes no behavioural
-        // difference which one does.
+        // Fallback for a standalone NFC composition only: kitchen ticket at
+        // the configured station, nothing else. In the real Host the
+        // DualScreenApplication registration (kitchen routing plus stock) is
+        // added with AddSingleton, so it is the one that resolves whatever
+        // order the modules register in; this TryAdd and the one in
+        // OrderManagementEndpoints never apply there.
         services.TryAddSingleton<IKitchenTicketRepository, PostgresKitchenTicketRepository>();
         services.TryAddSingleton<IOrderSubmissionDispatcher>(sp =>
         {

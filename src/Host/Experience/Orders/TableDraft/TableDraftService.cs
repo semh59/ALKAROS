@@ -42,6 +42,7 @@ public sealed class TableDraftService
     private const decimal MaximumOrderQuantity = 9999m;
     private const int MaximumItemsPerDraft = 200;
     private const int MaximumNoteLength = 1000;
+    private const int MaximumModifiersPerItem = 50;
 
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _repository;
@@ -566,6 +567,10 @@ public sealed class TableDraftService
                     $"Special instructions for product {item.ProductId} may not exceed {MaximumNoteLength} characters.");
 
             if (item.Modifiers is not { Count: > 0 }) continue;
+            if (item.Modifiers.Count > MaximumModifiersPerItem)
+                throw new ArgumentOutOfRangeException(
+                    nameof(request),
+                    $"Product {item.ProductId} may not carry more than {MaximumModifiersPerItem} modifiers; got {item.Modifiers.Count}.");
             foreach (var modifier in item.Modifiers)
             {
                 if (modifier.Quantity is { } quantity && quantity > MaximumOrderQuantity)

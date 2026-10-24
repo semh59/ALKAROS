@@ -116,6 +116,41 @@ describe("Cashier help alerts", () => {
       expect.objectContaining({ method: "POST" }),
     );
   });
+
+  it("keeps the call on screen and says so when the acknowledgement does not reach the Host", async () => {
+    localStorage.setItem("alkaros.terminal-id", "call-terminal");
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, _init?: RequestInit) => {
+      const path = String(input);
+      if (path.includes("/auth/session")) {
+        return jsonResponse({ userId: "user", displayName: "Deniz Kaya", terminalId: "terminal" });
+      }
+      if (path.endsWith("/catalog")) return jsonResponse([]);
+      if (path.endsWith("/orders/active")) return jsonResponse(null);
+      if (path.endsWith("/health/ready")) return jsonResponse({ status: "ready" });
+      if (path.endsWith("/acknowledge")) return jsonResponse({ error: { code: "INTERNAL_ERROR", message: "Çağrı kaydedilemedi." } }, 500);
+      return jsonResponse({});
+    }));
+    const { Cashier } = await import("./Cashier");
+    const { RouterProvider: FreshRouterProvider } = await import("../router");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => {
+      root!.render(createElement(FreshRouterProvider, null, createElement(Cashier)));
+    });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 0)); });
+    await act(async () => {
+      handlers.HelpRequested({
+        helpRequestId: "call-2", tableId: "table-6", tableNumber: "T-6", requestType: "Complaint", requestedByDisplayName: "Ayşe",
+      });
+    });
+
+    const seen = document.querySelector(".help-alert button")!;
+    await act(async () => { seen.dispatchEvent(new MouseEvent("click", { bubbles: true })); });
+
+    expect(document.querySelector(".help-alert")).not.toBeNull();
+    expect(document.body.textContent).toContain("Çağrı kaydedilemedi.");
+  });
 });
 
 // V1-RMD-286: the connection used to give up for good after five automatic

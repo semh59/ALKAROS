@@ -308,6 +308,65 @@ public sealed class PostgresOrderTests : IClassFixture<OrdersTestDatabase>
         Assert.Single(loaded.Items);
     }
 
+    [Fact]
+    public async Task ACourseChangedByAResentRoundIsSavedEvenWhenNothingElseChanged()
+    {
+        var product = await SeedProduct();
+        var order = NewOrder(product);
+        await _orders.AddAsync(order);
+        var original = order.Items.Single();
+        var resent = new OrderItem(
+            original.Id, order.Id, product, "Lahmacun", 2, 120m, 10m, skuSnapshot: "LAH-001", courseNumber: 2);
+
+        await _orders.SaveAsync(order.ReconcileRound([resent]), order.RowVersion);
+
+        Assert.Equal(2, (await _orders.GetByIdAsync(order.Id))!.Items.Single().CourseNumber);
+    }
+
+    [Fact]
+    public async Task ACancelledItemCarriesTheTimeItWasCancelled()
+    {
+        var product = await SeedProduct();
+        var created = DateTimeOffset.UtcNow.AddHours(-1);
+        var item = new OrderItem(
+            Guid.NewGuid(), Guid.NewGuid(), product, "Lahmacun", 2, 120m, 10m, createdAt: created);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, UniqueNumber(), [item]);
+        await _orders.AddAsync(order);
+
+        await _orders.SaveAsync(order.CancelItem(item.Id, reason: "customer changed mind"), order.RowVersion);
+
+        var cancelled = (await _orders.GetByIdAsync(order.Id))!.Items.Single();
+        Assert.True(cancelled.UpdatedAt > created.AddMinutes(30), $"UpdatedAt stayed at {cancelled.UpdatedAt:O}");
+    }
+
+    [Fact]
+    public async Task HistoryRowsWithTheSameInstantComeBackInAStableOrder()
+    {
+        var product = await SeedProduct();
+        var order = NewOrder(product);
+        await _orders.AddAsync(order);
+        var now = DateTimeOffset.UtcNow;
+        var at = new DateTimeOffset(now.Ticks - now.Ticks % 10, TimeSpan.Zero);
+        var ids = Enumerable.Range(0, 8).Select(_ => Guid.NewGuid()).ToArray();
+        foreach (var id in ids)
+        {
+            await using var command = _dataSource.CreateCommand(
+                """
+                INSERT INTO orders.order_status_history (order_status_history_id, order_id, old_status, new_status, changed_at)
+                VALUES (@id, @order, 'Draft', 'Draft', @at);
+                """);
+            command.Parameters.AddWithValue("id", id);
+            command.Parameters.AddWithValue("order", order.Id);
+            command.Parameters.AddWithValue("at", at);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        var loaded = await _orders.GetByIdAsync(order.Id);
+
+        var sameInstant = loaded!.History.Where(row => row.ChangedAt == at).Select(row => row.Id).ToArray();
+        Assert.Equal(ids.OrderBy(id => id.ToString("D"), StringComparer.Ordinal).ToArray(), sameInstant);
+    }
+
     private async Task<Guid> SeedProduct()
     {
         var productId = Guid.NewGuid();

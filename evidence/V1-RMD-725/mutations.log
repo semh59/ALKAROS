@@ -1,0 +1,23 @@
+M1-hangup-logged-as-error KILLED restored=true
+M2-truncation-is-an-outage KILLED restored=true
+M3-hub-failure-fails-the-request KILLED restored=true
+M4-pending-list-uncapped KILLED restored=true
+M5-history-no-tie-break KILLED restored=true
+M6-course-change-skipped KILLED restored=true
+M7-item-time-not-advanced KILLED restored=true
+M8-deadlock-retry-silent KILLED restored=true
+M9-modifier-count-unbounded KILLED restored=true
+M10-note-left-for-bad-target SURVIVED restored=true
+M11-help-ack-failure-silent KILLED restored=true
+M12-stale-read-wins NOT-APPLIED
+M13-picker-ignores-escape KILLED restored=true
+M14-zero-ceiling-means-unlimited KILLED restored=true
+DONE
+M10-note-left-for-bad-target KILLED restored=true
+DONE
+M12-stale-read-wins NOT-APPLIED
+DONE
+M12-stale-read-wins NOT-APPLIED
+DONE
+M12-stale-read-wins KILLED restored=true
+DONE

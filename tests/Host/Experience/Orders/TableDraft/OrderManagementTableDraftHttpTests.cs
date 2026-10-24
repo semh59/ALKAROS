@@ -955,6 +955,22 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ATransferToOneselfLeavesNoHandoffNoteBehind()
+    {
+        var terminalId = Guid.NewGuid();
+        var (waiterId, cookie) = await _database.SeedCashierSessionWithPermissionsAsync(
+            terminalId, "waiter", "orders.transfer-server");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var transfer = await client.SendAsync(JsonRequest(TransferPath(terminalId), cookie,
+            new TransferServingUserRequestV1(waiterId, waiterId, "5 nolu masa tatlı bekliyor")));
+
+        Assert.Equal(HttpStatusCode.BadRequest, transfer.StatusCode);
+        Assert.Equal(0L, await _database.ScalarAsync<long>("SELECT count(*) FROM notifications.serving_handoff_notes;"));
+    }
+
+    [Fact]
     public async Task ATooLongHandoffNoteIsRejected()
     {
         var terminalId = Guid.NewGuid();
@@ -982,7 +998,8 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         var terminalId = Guid.NewGuid();
         var (fromWaiterId, fromCookie) = await _database.SeedCashierSessionWithPermissionsAsync(
             terminalId, "waiter", "orders.create", "orders.send", "orders.transfer-server");
-        var toWaiterId = Guid.NewGuid();
+        var (toWaiterId, _) = await _database.SeedCashierSessionWithPermissionsAsync(
+            Guid.NewGuid(), "waiter", "orders.create");
         var tableId = await _database.SeedTableAsync();
         var product = await _database.SeedProductAsync("Çorba", 60m);
         await using var app = await StartAsync();
@@ -1558,6 +1575,29 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
         using var response = await client.SendAsync(JsonRequest(
             DraftPath(terminalId), cookie,
             new CreateTableDraftRequest(tableId, "M-59", items)));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+    }
+
+    [Fact]
+    public async Task TooManyModifiersOnOneLineAreRejected()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Çorba", 90m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        // Real, assignable modifiers: only the count may be what gets the line refused.
+        var modifiers = new List<OrderItemModifierSelectionDto>();
+        for (var i = 0; i < 51; i++)
+            modifiers.Add(new OrderItemModifierSelectionDto(await _database.SeedModifierAsync(product, "Ekstra " + i, 1m)));
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-60",
+                [new OrderItemDraftDto(Guid.NewGuid(), product, "Çorba", 1, 90m, modifiers)])));
 
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
     }

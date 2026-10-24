@@ -419,7 +419,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 kitchen_state = @kitchen_state,
                 portion_reservation_status = @portion_reservation_status,
                 notes = @notes,
-                updated_at = @updated_at,
+                updated_at = now(),
                 seat_id = @seat_id,
                 course_number = @course_number,
                 row_version = row_version + 1
@@ -669,7 +669,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
             SELECT order_status_history_id, order_id, old_status, new_status, reason, changed_by, changed_at
             FROM {History}
             WHERE order_id = @order_id
-            ORDER BY changed_at;
+            ORDER BY changed_at, order_status_history_id;
             """);
         command.Parameters.AddWithValue("order_id", orderId);
 
@@ -700,7 +700,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
         await using var command = CreateCommand(connection, transaction,
             $"""
             SELECT order_item_id, quantity, discount_amount, tax_amount, net_amount, gross_amount,
-                   status, kitchen_state, portion_reservation_status, notes
+                   status, kitchen_state, portion_reservation_status, notes, seat_id, course_number
             FROM {Items}
             WHERE order_id = @order_id;
             """);
@@ -718,7 +718,9 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 reader.GetString(6),
                 reader.GetString(7),
                 reader.GetString(8),
-                reader.IsDBNull(9) ? null : reader.GetString(9));
+                reader.IsDBNull(9) ? null : reader.GetString(9),
+                reader.IsDBNull(10) ? null : reader.GetGuid(10),
+                reader.IsDBNull(11) ? null : (int)reader.GetInt16(11));
         }
 
         return result;
@@ -738,7 +740,9 @@ public sealed class PostgresOrderRepository : IOrderRepository
         string Status,
         string KitchenState,
         string PortionReservationStatus,
-        string? Notes)
+        string? Notes,
+        Guid? SeatId,
+        int? CourseNumber)
     {
         public bool Matches(OrderItem item) =>
             Quantity == item.Quantity
@@ -749,7 +753,9 @@ public sealed class PostgresOrderRepository : IOrderRepository
             && Status == item.Status.ToString()
             && KitchenState == item.KitchenState.ToString()
             && PortionReservationStatus == item.PortionReservationStatus.ToString()
-            && Notes == item.Notes;
+            && Notes == item.Notes
+            && SeatId == item.SeatId
+            && CourseNumber == item.CourseNumber;
     }
 
     private static async Task<IReadOnlyList<Guid>> ReadHistoryIdsAsync(

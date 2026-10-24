@@ -68,6 +68,21 @@ describe("PendingChecksWorkspace", () => {
 
   const ok = (body: unknown) => ({ ok: true, status: 200, json: async () => body });
 
+  it("keeps the newest list when an older read finishes last", async () => {
+    let finishOld: (value: unknown) => void = () => undefined;
+    fetchMock
+      .mockImplementationOnce(() => new Promise((resolve) => { finishOld = resolve; }))
+      .mockResolvedValue(ok(sample));
+    await render();
+
+    await act(async () => { hubHandlers.PendingChecksChanged?.(); });
+    expect(document.querySelectorAll("button.pending-checks__row")).toHaveLength(2);
+
+    await act(async () => { finishOld(ok([])); });
+
+    expect(document.querySelectorAll("button.pending-checks__row")).toHaveLength(2);
+  });
+
   it("tells two checks of the same table apart by number, time, items and remaining amount", async () => {
     fetchMock.mockResolvedValue(ok(sample));
     await render();

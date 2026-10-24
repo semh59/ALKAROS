@@ -1,3 +1,10 @@
+using ALKAROS.Host.DualScreen;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
+using Npgsql;
 using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.Experience.Orders;
@@ -436,6 +443,41 @@ public sealed class OrderManagementConfirmationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ThePendingListIsCappedAt200OldestFirst()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, _) = await _database.SeedPendingConfirmationOrderAsync();
+        await _database.ExecuteAsync(
+            $$"""
+            DO $do$
+            DECLARE cols text; sel text;
+            BEGIN
+                SELECT string_agg(quote_ident(column_name), ',' ORDER BY ordinal_position),
+                       string_agg(CASE column_name
+                                      WHEN 'order_id' THEN 'gen_random_uuid()'
+                                      WHEN 'order_number' THEN '''LIM-'' || g'
+                                      WHEN 'created_at' THEN 'o.created_at + make_interval(secs => g)'
+                                      ELSE 'o.' || quote_ident(column_name) END, ',' ORDER BY ordinal_position)
+                INTO cols, sel
+                FROM information_schema.columns WHERE table_schema = 'orders' AND table_name = 'orders';
+                EXECUTE format('INSERT INTO orders.orders (%s) SELECT %s FROM orders.orders o, generate_series(1, 205) g WHERE o.order_id = %L',
+                               cols, sel, '{{orderId:D}}');
+            END $do$;
+            """);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = new HttpRequestMessage(HttpMethod.Get, PendingPath(terminalId));
+        request.Headers.Add("Cookie", cookie);
+        using var response = await client.SendAsync(request);
+
+        var pending = await response.Content.ReadFromJsonAsync<PendingOrderSummaryV1[]>();
+        Assert.Equal(200, pending!.Length);
+        Assert.Equal(orderId, pending[0].OrderId);
+    }
+
+    [Fact]
     public async Task ListingPendingOrdersWithoutASessionIsUnauthorized()
     {
         var terminalId = Guid.NewGuid();
@@ -485,3 +527,112 @@ public sealed class OrderManagementConfirmationHttpTests : IAsyncLifetime
 
 [CollectionDefinition("Order confirmation PostgreSQL HTTP", DisableParallelization = true)]
 public sealed class OrderConfirmationPostgresqlDefinition;
+
+public sealed class OrderRequestRobustnessTests
+{
+    [Fact]
+    public async Task ACallerThatHungUpGetsNoErrorAndNothingIsLoggedAsAFailure()
+    {
+        using var aborted = new CancellationTokenSource();
+        await aborted.CancelAsync();
+        var http = new DefaultHttpContext { RequestAborted = aborted.Token };
+        var logger = new FailureCountingLogger();
+
+        var result = await new OrderManagementExceptionFilter(logger).InvokeAsync(
+            new DefaultEndpointFilterInvocationContext(http),
+            _ => throw new OperationCanceledException(aborted.Token));
+
+        Assert.Equal(StatusCodes.Status499ClientClosedRequest, ((IStatusCodeHttpResult)result!).StatusCode);
+        Assert.Equal(0, logger.Failures);
+    }
+
+    [Fact]
+    public async Task ATimeoutWhileTheCallerIsStillThereIsStillAServerError()
+    {
+        var logger = new FailureCountingLogger();
+
+        var result = await new OrderManagementExceptionFilter(logger).InvokeAsync(
+            new DefaultEndpointFilterInvocationContext(new DefaultHttpContext()),
+            _ => throw new OperationCanceledException());
+
+        Assert.Equal(StatusCodes.Status500InternalServerError, ((IStatusCodeHttpResult)result!).StatusCode);
+        Assert.Equal(1, logger.Failures);
+    }
+
+    [Fact]
+    public async Task ATextTooLongForItsColumnIsABadRequestNotAnOutage()
+    {
+        var truncation = new PostgresException(
+            "value too long", "ERROR", "ERROR", PostgresErrorCodes.StringDataRightTruncation);
+
+        var result = await new OrderManagementExceptionFilter(NullLogger<OrderManagementExceptionFilter>.Instance).InvokeAsync(
+            new DefaultEndpointFilterInvocationContext(new DefaultHttpContext()),
+            _ => throw truncation);
+
+        Assert.Equal(StatusCodes.Status400BadRequest, ((IStatusCodeHttpResult)result!).StatusCode);
+    }
+
+    [Fact]
+    public async Task ABrokenDisplayHubDoesNotFailAnOrderThatIsAlreadyCommitted()
+    {
+        var logger = new FailureCountingLogger();
+
+        await CustomerDisplayNotifier.NotifyOrderChangedAsync(
+            new ThrowingHub(), logger, Guid.NewGuid(), Guid.NewGuid(), 3, CancellationToken.None);
+
+        Assert.Equal(1, logger.Warnings);
+    }
+
+    private sealed class FailureCountingLogger : ILogger, ILogger<OrderManagementExceptionFilter>
+    {
+        public int Failures { get; private set; }
+
+        public int Warnings { get; private set; }
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            if (logLevel == LogLevel.Error)
+                Failures++;
+            if (logLevel == LogLevel.Warning)
+                Warnings++;
+        }
+    }
+
+    private sealed class ThrowingHub : IHubContext<CustomerDisplayHub>
+    {
+        public IHubClients Clients { get; } = new ThrowingClients();
+
+        public IGroupManager Groups => throw new NotSupportedException();
+
+        private sealed class ThrowingClients : IHubClients
+        {
+            public IClientProxy All => throw new NotSupportedException();
+
+            public IClientProxy AllExcept(IReadOnlyList<string> excludedConnectionIds) => throw new NotSupportedException();
+
+            public IClientProxy Client(string connectionId) => throw new NotSupportedException();
+
+            public IClientProxy Clients(IReadOnlyList<string> connectionIds) => throw new NotSupportedException();
+
+            public IClientProxy Group(string groupName) => new ThrowingProxy();
+
+            public IClientProxy GroupExcept(string groupName, IReadOnlyList<string> excludedConnectionIds) => throw new NotSupportedException();
+
+            public IClientProxy Groups(IReadOnlyList<string> groupNames) => throw new NotSupportedException();
+
+            public IClientProxy User(string userId) => throw new NotSupportedException();
+
+            public IClientProxy Users(IReadOnlyList<string> userIds) => throw new NotSupportedException();
+        }
+
+        private sealed class ThrowingProxy : IClientProxy
+        {
+            public Task SendCoreAsync(string method, object?[] args, CancellationToken cancellationToken = default)
+                => throw new InvalidOperationException("hub is down");
+        }
+    }
+}

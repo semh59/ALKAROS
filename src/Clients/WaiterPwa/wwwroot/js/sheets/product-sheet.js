@@ -147,10 +147,12 @@ export function toggleModifier(button) {
   } else {
     if (button.dataset.single === 'true') {
       for (const other of group.modifiers) context.chosen.delete(other.modifierId);
-    } else if (group.maxSelections > 0) {
+    } else if (Number.isInteger(group.maxSelections)) {
       const chosenInGroup = group.modifiers.filter((candidate) => context.chosen.has(candidate.modifierId)).length;
       if (chosenInGroup >= group.maxSelections) {
-        toast(`${group.name} için en fazla ${group.maxSelections} seçim yapılabilir.`, { warning: true });
+        toast(group.maxSelections === 0
+          ? `${group.name} için seçim yapılamaz.`
+          : `${group.name} için en fazla ${group.maxSelections} seçim yapılabilir.`, { warning: true });
         return;
       }
     }

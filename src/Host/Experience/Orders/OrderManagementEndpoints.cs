@@ -531,6 +531,7 @@ public static class OrderManagementEndpoints
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             IHubContext<CustomerDisplayHub> hub,
+            ILogger<CustomerDisplayHub> logger,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -540,10 +541,7 @@ public static class OrderManagementEndpoints
             var submitted = await store.SubmitOrderAsync(
                 terminalId, orderId, request.ExpectedRowVersion, request.OperationId, userId, cancellationToken);
 
-            await hub.Clients.Group(DualScreenApplication.TerminalGroup(terminalId)).SendAsync(
-                CustomerDisplayHub.SnapshotChanged,
-                new { orderId, revision = submitted.RowVersion, kind = "OrderChanged" },
-                cancellationToken);
+            await CustomerDisplayNotifier.NotifyOrderChangedAsync(hub, logger, terminalId, orderId, submitted.RowVersion, cancellationToken);
 
             return Results.Ok(submitted);
         });
@@ -561,6 +559,7 @@ public static class OrderManagementEndpoints
             DualScreenStore dualStore,
             IAuthorizationService authorization,
             IHubContext<CustomerDisplayHub> hub,
+            ILogger<CustomerDisplayHub> logger,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -569,10 +568,7 @@ public static class OrderManagementEndpoints
 
             var fired = await store.FireCourseAsync(orderId, request.CourseNumber, userId, cancellationToken);
 
-            await hub.Clients.Group(DualScreenApplication.TerminalGroup(terminalId)).SendAsync(
-                CustomerDisplayHub.SnapshotChanged,
-                new { orderId, revision = fired.RowVersion, kind = "OrderChanged" },
-                cancellationToken);
+            await CustomerDisplayNotifier.NotifyOrderChangedAsync(hub, logger, terminalId, orderId, fired.RowVersion, cancellationToken);
 
             return Results.Ok(fired);
         });
@@ -973,6 +969,7 @@ public static class OrderManagementEndpoints
             // cashier using orders.transfer-server-any transfers on someone
             // else's behalf), for the target to see once. A no-op when the
             // note is empty (LeaveAsync's own contract).
+            await store.EnsureTransferTargetAsync(request.FromUserId, request.ToUserId, cancellationToken);
             await handoffNotes.LeaveAsync(actingUserId, request.ToUserId, request.HandoffNote, cancellationToken);
             var count = await store.TransferServingUserAsync(request.FromUserId, request.ToUserId, actingUserId, cancellationToken);
             return Results.Ok(new TransferServingUserResultV1(count));
@@ -1065,6 +1062,40 @@ public static class OrderManagementEndpoints
     }
 }
 
+public static class CustomerDisplayNotifier
+{
+    private static readonly Action<ILogger, Guid, Exception?> LogNotifyFailed =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Warning,
+            new EventId(5202, nameof(LogNotifyFailed)),
+            "Customer display could not be told about order '{OrderId}' after it was committed; the kitchen already has it.");
+
+    /// <summary>
+    /// The order is already committed when this runs, so a hub failure must not turn the
+    /// request into an error the client would retry.
+    /// </summary>
+    public static async Task NotifyOrderChangedAsync(
+        IHubContext<CustomerDisplayHub> hub,
+        ILogger logger,
+        Guid terminalId,
+        Guid orderId,
+        long revision,
+        CancellationToken cancellationToken)
+    {
+        try
+        {
+            await hub.Clients.Group(DualScreenApplication.TerminalGroup(terminalId)).SendAsync(
+                CustomerDisplayHub.SnapshotChanged,
+                new { orderId, revision, kind = "OrderChanged" },
+                cancellationToken);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            LogNotifyFailed(logger, orderId, exception);
+        }
+    }
+}
+
 /// <summary>
 /// V1-ORD-005: catches every domain exception this group's endpoints throw —
 /// principally <see cref="DualScreenUnauthorizedException"/> from the shared
@@ -1115,6 +1146,11 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
         try
         {
             return await next(context);
+        }
+        catch (OperationCanceledException) when (context.HttpContext.RequestAborted.IsCancellationRequested)
+        {
+            // The caller hung up; there is nobody to answer and nothing failed on our side.
+            return Results.StatusCode(StatusCodes.Status499ClientClosedRequest);
         }
         catch (Exception exception)
         {
@@ -1207,7 +1243,7 @@ public sealed class OrderManagementExceptionFilter : IEndpointFilter
             (409, "DUPLICATE_RESOURCE", "Aynı kayıt zaten mevcut."),
         PostgresException { SqlState: PostgresErrorCodes.ForeignKeyViolation } =>
             (400, "REFERENCE_NOT_FOUND", "İşaret edilen bir kayıt bulunamadı."),
-        PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
+        PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange or PostgresErrorCodes.StringDataRightTruncation } =>
             (400, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),

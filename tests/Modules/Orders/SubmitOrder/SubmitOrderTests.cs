@@ -368,4 +368,56 @@ public sealed class PostgresSubmitOrderIntegrationTests : IClassFixture<SubmitOr
         results.Count(r => !r.IsReplay).Should().Be(1);
         results.Count(r => r.IsReplay).Should().Be(4);
     }
+
+    [Fact]
+    public async Task ALostDeadlockIsRetriedAndLeftInTheLog()
+    {
+        var order = await CreateSampleDraftOrderAsync();
+        var suffix = order.Id.ToString("N")[..8];
+        await using (var setup = _dataSource.CreateCommand(
+            $$"""
+            CREATE SEQUENCE orders.dl_seq_{{suffix}};
+            CREATE FUNCTION orders.dl_once_{{suffix}}() RETURNS trigger LANGUAGE plpgsql AS $f$
+            BEGIN
+                IF nextval('orders.dl_seq_{{suffix}}') = 1 THEN
+                    RAISE EXCEPTION 'injected deadlock' USING ERRCODE = '40P01';
+                END IF;
+                RETURN NEW;
+            END $f$;
+            CREATE TRIGGER dl_once_{{suffix}} BEFORE UPDATE ON orders.orders
+                FOR EACH ROW WHEN (OLD.order_id = '{{order.Id:D}}') EXECUTE FUNCTION orders.dl_once_{{suffix}}();
+            """))
+        {
+            await setup.ExecuteNonQueryAsync();
+        }
+
+        var logger = new WarningCountingLogger();
+        var handler = new SubmitOrderHandler(_dataSource, _repository, logger: logger);
+
+        var result = await handler.HandleAsync(new SubmitOrderCommand(
+            "waiter-pwa-01", "op-deadlock-" + suffix, order.Id, order.RowVersion, Reason: "retry"));
+
+        result.Status.Should().Be(OrderState.Submitted);
+        logger.Warnings.Should().Be(1);
+    }
+
+    private sealed class WarningCountingLogger : Microsoft.Extensions.Logging.ILogger<SubmitOrderHandler>
+    {
+        public int Warnings { get; private set; }
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+        public bool IsEnabled(Microsoft.Extensions.Logging.LogLevel logLevel) => true;
+
+        public void Log<TState>(
+            Microsoft.Extensions.Logging.LogLevel logLevel,
+            Microsoft.Extensions.Logging.EventId eventId,
+            TState state,
+            Exception? exception,
+            Func<TState, Exception?, string> formatter)
+        {
+            if (logLevel == Microsoft.Extensions.Logging.LogLevel.Warning)
+                Warnings++;
+        }
+    }
 }

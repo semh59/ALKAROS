@@ -116,7 +116,9 @@ export function Cashier() {
   const acknowledgeHelpAlert = useCallback(async (helpRequestId: string) => {
     try {
       await api.acknowledgeHelpRequest(terminalId, helpRequestId);
-    } catch {
+    } catch (reason) {
+      // The call stays on screen, so the manager must be told the tap did not register.
+      setError(reason instanceof ApiError ? reason.message : "Çağrı onaylanamadı. Tekrar deneyin.");
       return;
     }
     setHelpAlerts((previous) => previous.filter((candidate) => candidate.id !== helpRequestId));
