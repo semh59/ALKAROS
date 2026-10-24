@@ -37,6 +37,7 @@ V1-RMD-601 bulguları B023, B025, B026, B027, B029, B030, B031 (tekrar gönderim
 - V1-RMD-711 kapsamındaki olay yükü, transfer ve durum ucu düzeltmeleri.
 - status_changed_at için tetikleyici (V1-RMD-711).
 - Rezervasyon sunucu kuralları (V1-RMD-712).
+- Garson masa listesi yoklaması ve masa değiştirme çakışması (V1-RMD-713).
 
 ## Dependencies
 

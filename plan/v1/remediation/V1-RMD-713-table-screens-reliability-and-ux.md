@@ -22,6 +22,9 @@ V1-RMD-601 bulguları B009, B010, B011, B012, B017, B018, B019, B020, B028 ve is
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.tsx - yalnız masa yoklaması ve hata gösterimi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/ReservationStation.tsx - yalnız yetki ve hata durumu
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/js/screens/** - yalnız masa listesi ve transfer
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/waiter-app.js - yalnız masa yoklaması
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/js/state.js - yalnız masa listesi hata işareti
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/js/sheets/transfer.js - yalnız masa değiştirme çakışması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/WaiterPwa/Frontend/** - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-601-tables-quality-audit.md - yalnız Out of scope notu
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
