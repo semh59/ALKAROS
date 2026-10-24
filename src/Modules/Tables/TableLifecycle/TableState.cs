@@ -3,8 +3,8 @@ namespace ALKAROS.Tables.TableLifecycle;
 /// <summary>
 /// Canonical table status values (canonical-value-catalog.md section C,
 /// PDF:II.5.15). Occupied is only reported by the billing/orders flow;
-/// entering <see cref="Reserved"/> is only issued by the QR order flow
-/// (table-reservation-policy.md). Table state is an application-layer
+/// <see cref="Reserved"/> is entered by the QR order flow and by a cashier's
+/// manual reservation record (table-reservation-policy.md). Table state is an application-layer
 /// invariant and never drives financial coupling at DB level.
 /// </summary>
 public enum TableState

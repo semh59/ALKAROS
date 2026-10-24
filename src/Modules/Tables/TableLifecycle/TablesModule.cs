@@ -15,6 +15,10 @@ public sealed class TablesModule : IModule
     // row 3), so nothing is declared here.
     public IReadOnlyCollection<string> DependsOn => Array.Empty<string>();
 
+    // Only the table, zone and floor-plan repositories are registered here. The merge, transfer
+    // and reservation services and the pointer projector are registered by the Host's
+    // AddTableManagementExperience, which every Host test of the table endpoints builds on its
+    // own without loading modules; registering them in both places would create two lifetimes.
     public void Register(ModuleContext context)
     {
         context

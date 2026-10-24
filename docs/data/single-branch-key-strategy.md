@@ -21,7 +21,7 @@
 | fiscal_documents | UUID | document_number | fiscal device assigned |
 | invoices | UUID | invoice_number | sequence per customer |
 | products | UUID | sku | alphanumeric |
-| tables | UUID | table_number | numeric per store |
+| tables | UUID | table_number | text, unique per zone (unzoned tables share one namespace) |
 | cash_sessions | UUID | session_number | `CSH-{yyMMdd}-{seq}` |
 
 ## 2. Rules

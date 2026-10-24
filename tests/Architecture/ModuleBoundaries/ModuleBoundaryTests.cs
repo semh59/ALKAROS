@@ -449,13 +449,25 @@ public static class ModuleBoundaryTests
     // Every audit row goes through AuditEventWriter (sanitizer + validation). Orders and OnlineOrdering may not reference the
     // Audit module (module-dependency-rules.md), so these three files still write their fixed-shape rows by SQL: catalog
     // reason codes, ids and statuses (item exceptions), provider and field names (credentials), provider and state (store
-    // status). No other file may add a raw insert.
+    // status). Tables writes its fixed-shape rows (table, reservation, merge ids, statuses, row versions and the staff
+    // member's reason) inside the same transaction as the table change and may not reference the Audit module either
+    // (module-dependency-rules.md). No other file may add a raw insert.
     private static readonly string[] RawAuditInsertAllowList =
     [
         "src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs",
         "src/Modules/OnlineOrdering/Credentials/PostgresOnlinePlatformCredentialStore.cs",
         "src/Modules/OnlineOrdering/StoreStatus/OnlineStoreStatusService.cs",
+        "src/Modules/Tables/CurrentPointers/PostgresTablePointerProjector.cs",
+        "src/Modules/Tables/Reservations/PostgresTableReservationRepository.cs",
+        "src/Modules/Tables/TableMerge/PostgresTableMergeRepository.Merge.cs",
+        "src/Modules/Tables/TableMerge/PostgresTableMergeRepository.Unmerge.cs",
+        "src/Modules/Tables/TableTransfer/PostgresTableTransferRepository.cs",
     ];
+
+    // The table name may be spelled out or hidden behind an audit-named constant; both count as a raw insert.
+    private static readonly System.Text.RegularExpressions.Regex RawAuditInsert = new(
+        @"INSERT\s+INTO\s+(audit\.audit_events|\{\w*[Aa]udit\w*\})",
+        System.Text.RegularExpressions.RegexOptions.IgnoreCase | System.Text.RegularExpressions.RegexOptions.CultureInvariant);
 
     [Fact]
     public static void RawAuditInsertsStayOnTheKnownList()
@@ -466,13 +478,23 @@ public static class ModuleBoundaryTests
             .Where(f => !f.StartsWith(auditModule, StringComparison.Ordinal)
                 && !f.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
                 && !f.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}"))
-            .Where(f => File.ReadAllText(f).Contains("INSERT INTO audit.audit_events", StringComparison.OrdinalIgnoreCase))
+            .Where(f => RawAuditInsert.IsMatch(File.ReadAllText(f)))
             .Select(f => Path.GetRelativePath(repoRoot, f).Replace(Path.DirectorySeparatorChar, '/'))
             .Order(StringComparer.Ordinal)
             .ToArray();
 
         Assert.Equal(RawAuditInsertAllowList.Order(StringComparer.Ordinal), offenders);
     }
+
+    [Theory]
+    [InlineData("INSERT INTO audit.audit_events (id)", true)]
+    [InlineData("insert   into audit.audit_events (id)", true)]
+    [InlineData("INSERT INTO {AuditEventsTable} (id)", true)]
+    [InlineData("INSERT INTO {AuditTable} (id)", true)]
+    [InlineData("INSERT INTO billing.bills (id)", false)]
+    [InlineData("INSERT INTO {OrdersTable} (id)", false)]
+    public static void TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(string sql, bool expected)
+        => Assert.Equal(expected, RawAuditInsert.IsMatch(sql));
 
     private static string FindRepoRoot()
     {

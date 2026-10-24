@@ -22,7 +22,6 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
 
     private const string TableMergesTable = "table_mgmt.table_merges";
     private const string TableReservationsTable = "table_mgmt.table_reservations";
-    private const string AuditEventsTable = "audit.audit_events";
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -168,7 +167,7 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
 
         // Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
         const string insertAuditSql = $"""
-            INSERT INTO {AuditEventsTable} (
+            INSERT INTO audit.audit_events (
                 id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
                 reason, correlation_id, causation_id, before_state_json, after_state_json,
                 metadata_json, occurred_at

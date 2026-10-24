@@ -35,7 +35,7 @@
    validator in the owning module. FluentValidation dependency is introduced
    by the first API implementation task (V1-FND-001 or V1-CAT-001).
 3. **Headers: `X-` prefixed corporate set.**
-   - `X-Idempotency-Key` — required on all mutating commands (replay-safe).
+   - `X-Idempotency-Key` — required on all mutating commands (replay-safe). Known deviation: Table Management endpoints (reservation, transfer, merge, unmerge) do not take it; they are protected by `expectedRowVersion` in the body, so a repeated submission answers 404 or 409 instead of replaying the first result.
    - `X-Row-Version` — optimistic concurrency token on updates/deletes.
    - `X-Correlation-Id` — request correlation; echoed in responses and logs.
    - `X-Request-Id` — server-assigned request identifier.
@@ -104,7 +104,7 @@ X-Idempotency-Key: 9f1c...e2
 X-Correlation-Id: 3a0b...77
 Content-Type: application/json
 
-{ "channel": "Waiter", "tableId": 12, "items": [ { "productId": 101, "quantity": 2 } ] }
+{ "channel": "Waiter", "tableId": "7f0c2d1e-9b34-4c58-a6d2-3e1f5a8b9c40", "items": [ { "productId": "0b8e5f2a-6c17-4d93-8a41-2f7d9c3e6b15", "quantity": 2 } ] }
 ```
 
 Deterministic semantics:

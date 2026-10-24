@@ -23,7 +23,6 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
     // A check sent to the till no longer belongs to its table: a transfer neither moves nor counts it.
     private const string NotSentOrder = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = orders.orders.order_id)";
     private const string NotSentBill = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = billing.bills.order_id)";
-    private const string AuditEventsTable = "audit.audit_events";
 
     // Defensive ceiling for a filtered list read: a real filter returns
     // far fewer rows. Hitting this means the filter is too broad, or the
@@ -393,7 +392,7 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
 
         // 10. Persist Audit Event in the SAME transaction (AUD-01: Fail-Closed)
         const string insertAuditSql = $"""
-            INSERT INTO {AuditEventsTable} (
+            INSERT INTO audit.audit_events (
                 id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
                 reason, correlation_id, causation_id, before_state_json, after_state_json,
                 metadata_json, occurred_at

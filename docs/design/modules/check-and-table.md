@@ -10,6 +10,8 @@
 
 ## 1. Bugünkü davranış (kod okunarak doğrulandı)
 
+> **Tarihsel not:** Bu bölüm 2026-09-10 tarihli kodun anlık görüntüsüdür. Atıf verilen `OrderManagementStore.cs` satırları sonradan taşındı, hesabı `Paid` yapan akış V1.2'de eklendi ve kasaya gönderilen hesap artık masa kaydından ayrı tutulur (`table_mgmt.table_sent_checks`). Güncel davranış için koda ve ilgili görev kanıtlarına bakın.
+
 Masa 5'in müşterileri kalkıp kasaya gidiyor; sistemde bunu işaretleyen hiçbir
 şey yok. Yeni müşteri oturuyor:
 

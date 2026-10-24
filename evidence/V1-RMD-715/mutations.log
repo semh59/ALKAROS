@@ -1,0 +1,5 @@
+A1 KILLED restored=true a Tables file with a raw audit insert is missing from the list
+A2 KILLED restored=true an Orders file with a raw audit insert is missing from the list
+A4 KILLED restored=true the pattern depends on the current culture
+A5 KILLED restored=true the scan finds nothing
+A3 KILLED restored=true the pattern ignores an audit-named constant

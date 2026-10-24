@@ -45,7 +45,7 @@ same-transaction flow"; incoming rows from other modules are not repeated.
 | --- | --- | --- | --- | --- |
 | 1 | Identity & Authorization | none (cross-cutting; consumed by all modules for actor/role checks) | none | II.2.1 |
 | 2 | Catalog | none | ProductCatalogChanged → Menu, Order, OnlineOrdering | II.2.2 |
-| 3 | Table Management | none | TableMerged / TableTransferred / TableUnmerged → Order, Bill (reparent still-active orders/bills after a merge / transfer / unmerge; v1-wave25 — via the transactional outbox, not a direct call); TableOccupancyChanged (planned: no code publishes it yet) → Order, Bill, QR Ordering | II.2.3, II.5.15 |
+| 3 | Table Management | none as a C# dependency; same-transaction raw SQL: reads `orders.orders`, `billing.bills` and `payments.payments` (the last with `FOR UPDATE`, in the payment-aware merge and transfer policy) and inserts its own audit rows into `audit.audit_events` | TableMerged / TableTransferred / TableUnmerged → Order, Bill (reparent still-active orders/bills after a merge / transfer / unmerge; v1-wave25 — via the transactional outbox, not a direct call); TableOccupancyChanged (planned: no code publishes it yet) → Order, Bill, QR Ordering | II.2.3, II.5.15 |
 | 4 | Order | Identity (actor validation), Catalog (item snapshot), Table Management (table association) | OrderStateChanged → Kitchen, Bill, QR Ordering, Online Ordering, Reporting, Reconciliation | II.5.1, II.7 |
 | 5 | Bill | Order (order items into bill), Identity, Payment (the separate Billing.PaymentClosure module reads approved Payments and allocations to project payment-satisfied and to close a fully paid Bill; V13-ALC-002, V1-RMD-276) | BillStateChanged → Payment, Fiscal, Reporting, Reconciliation | II.3.3, II.5.2, III.7 |
 | 6 | Payment | Bill (allocation target), Identity | PaymentStateChanged → Bill, Fiscal, Meal Card, Customer Account, Reconciliation | II.5.3, III.8 |
@@ -115,6 +115,11 @@ Notes:
   modules append to it through `IAuditEventStore` (rows 28-30 and the Host
   orchestration rows below) so the audit row commits with the business change,
   but no domain decision ever reads from it.
+- Table Management may not reference the Audit module, so its merge, transfer, unmerge, reservation and pointer-rebuild
+  paths insert their fixed-shape audit rows by SQL in the same transaction as the table change (reasons come from staff
+  input; no personal data is written). `RawAuditInsertsStayOnTheKnownList` lists these files and also catches an insert
+  that hides the table name behind an audit-named constant. The Host's table endpoints append their audit rows through
+  `IAuditEventStore` (see the Host orchestration table).
 - Table state coupling to Order/Bill is an application-layer invariant, not a
   database constraint (PDF:II.5.15). After a merge / transfer / unmerge, Table
   Management writes one table event to the outbox in its own transaction;

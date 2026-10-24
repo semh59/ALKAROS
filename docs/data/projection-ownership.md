@@ -14,7 +14,7 @@
 | Projection | Source-of-Truth | Writer | Transaction | Drift Detector | Rebuild Path |
 | ------------ | ----------------- | -------- | ------------- | ---------------- | -------------- |
 | CurrentPrice | Product entity | PriceChanged event handler | Same tx as event | Nightly diff vs products | Full rebuild from products |
-| TablePointer | Table entity | TableStateChanged event | Same tx | Real-time check | Full rebuild from tables |
+| TablePointer | Table entity | The table operation itself (create, status change, transfer, merge, unmerge, reservation) updates `current_order_id`/`current_bill_id` in its own transaction; no `TableStateChanged` event exists | Same tx | On demand: the current-pointer endpoint compares the pointers with the authoritative orders and bills (no scheduled job yet) | `PostgresTablePointerProjector` rebuild per table (current-pointer endpoint) |
 | KitchenStatus | KitchenTicket entity | TicketStateChanged event | Same tx | N/A (real-time) | Full rebuild from tickets |
 | MenuCounter | DailyMenu entity | MenuItemSold event | Same tx | Nightly count diff | Full rebuild from orders |
 | StockBalance | StockLedgerEntry | StockEntryPosted event | Same tx | Nightly sum vs ledger | Full rebuild from ledger |

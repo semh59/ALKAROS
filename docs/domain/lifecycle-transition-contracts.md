@@ -93,7 +93,7 @@ forbidden edges are rejected.
 | Invoice | Draft→Validating; Validating→PendingProvider; PendingProvider→Issued\|Rejected\|ReconciliationRequired; {Draft,Validating,PendingProvider}→Cancelled | Issued→PendingProvider; Rejected→Issued; incoming provider invoices are not forced into this lifecycle (PDF:II.5.11) |
 | ReconciliationCase | Open→Investigating; Investigating→WaitingProvider; {Open,Investigating,WaitingProvider}→Resolved\|Dismissed\|Escalated | Resolved→Investigating; Dismissed→Open |
 | Alert | Open→Acknowledged; Open→Escalated; Acknowledged→Escalated; Open\|Acknowledged\|Escalated→Suppressed; {Open,Acknowledged,Escalated,Suppressed}→Resolved | Resolved→Open; Suppressed→Escalated without new event |
-| Table | Available→Occupied\|Reserved\|Cleaning\|OutOfService; Occupied→Reserved (via order); {Occupied,Reserved,Cleaning}→Available; Available→OutOfService; OutOfService→Available\|Cleaning | Available→Available (no-op); Table state never drives financial transitions (application-layer only) |
+| Table | Available→Occupied\|Reserved\|Cleaning\|OutOfService; Occupied→Available\|Reserved\|Cleaning; Reserved→Available\|Occupied; Cleaning→Available\|Occupied\|OutOfService; OutOfService→Available\|Cleaning (`Table.CanTransitionTo`; a manual or QR reservation is only created from `Available`, so `Occupied→Reserved` is never issued by a reservation) | Available→Available (no-op); Occupied\|Reserved→OutOfService; Reserved→Cleaning; Table state never drives financial transitions (application-layer only) |
 
 ## Examples
 

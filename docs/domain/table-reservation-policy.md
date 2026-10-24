@@ -23,7 +23,7 @@ seating race: `PendingConfirmation` moves the table to `Reserved`,
 | `Reserved` meaning | The table is not physically occupied but not free for other seating; it is owned by exactly one owner — a pending QR order, or one active manual reservation record (`table_mgmt.table_reservations`, `status = 'Active'`) | PDF `II.5.15` + CORR:C5 fix; Amendment 2026-09-03 |
 | Who creates `Reserved` | (a) the QR order state machine — entering `PendingConfirmation` moves the table `Available → Reserved`; (b) a cashier-authorized terminal — the POS/Cashier client's manual reservation action (`POST .../table-management/{terminalId}/reservations`), gated by the `pos.cashier.mutate` permission and a valid cashier session. The WaiterPwa has no reservation action; the customer display is forbidden (`403`). | CORR:C5 fix; Amendment 2026-09-03 (Semih) |
 | Exit transitions | `PendingConfirmation → Accepted` ⇒ `Reserved → Occupied`; `Rejected`/`Cancelled` ⇒ `Reserved → Available` (subject to optimistic concurrency — if another process changed the table, its change wins) | CORR:C5 fix; I.14 |
-| Expiry | No time-based expiry: `Reserved` persists as long as the owning order is `PendingConfirmation`; the order state machine is the single owner | Avoids a second timer state the PDF does not define |
+| Expiry | A table reserved for a QR order has no time-based expiry: `Reserved` persists as long as the owning order is `PendingConfirmation`; the order state machine is the single owner. A manual reservation may carry an end time (`expires_at`, future only): a background worker expires `Active` reservations whose end time has passed every 60 seconds and frees the table; manual expiry is refused before the end time, and a reservation without an end time never expires by itself | Avoids a second timer state for the QR path; a manual record is its own single owner |
 | Walk-in priority | A `Reserved` table is never assigned to a walk-in; walk-in allocation considers only `Available` tables | "not free for other seating" (CORR:C5) |
 | Transfer/merge | `Reserved` tables cannot be transferred or merged; transfer/merge apply to `Occupied` tables and carry the soft cache pointers | PDF `III.5.3/III.5.4`; keeping Reserved single-owner |
 | Concurrency | All table transitions use `row_version` optimistic concurrency; stale updates are rejected | PDF `II.5.15`/I.14 |
@@ -72,7 +72,7 @@ seating race: `PendingConfirmation` moves the table to `Reserved`,
   the manual reservation record is itself the single owner.
 - **Affected tasks:** `V1-TBL-004` (scope text reconciled), `V1-RMD-013`
   (Host `POST /reservations` surface), `V12-QRO-003` (QR reservation path,
-  still deferred).
+  done since).
 - **Not changed:** no `waiter` IAM role is introduced and `pos.cashier.mutate`
   is not split; a finer permission split remains deferred work noted in
   `V1-RMD-097`.

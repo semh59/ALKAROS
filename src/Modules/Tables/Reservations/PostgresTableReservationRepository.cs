@@ -13,7 +13,6 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
 {
     private const string ReservationsTable = "table_mgmt.table_reservations";
     private const string TablesTable = "table_mgmt.tables";
-    private const string AuditEventsTable = "audit.audit_events";
 
     // Defensive ceiling for a filtered list read: a real filter returns
     // far fewer rows. Hitting this means the filter is too broad, or the
@@ -252,7 +251,7 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
 
         // 5. Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
         const string insertAuditSql = $"""
-            INSERT INTO {AuditEventsTable} (
+            INSERT INTO audit.audit_events (
                 id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
                 reason, correlation_id, causation_id, before_state_json, after_state_json,
                 metadata_json, occurred_at
@@ -428,7 +427,7 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         // 5. Append Audit Event
         // Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
         const string insertAuditSql = $"""
-            INSERT INTO {AuditEventsTable} (
+            INSERT INTO audit.audit_events (
                 id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
                 reason, correlation_id, causation_id, before_state_json, after_state_json,
                 metadata_json, occurred_at
@@ -583,7 +582,7 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
 
         // 5. Append Audit Event (AUD-01: Fail-Closed)
         const string insertAuditSql = $"""
-            INSERT INTO {AuditEventsTable} (
+            INSERT INTO audit.audit_events (
                 id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
                 reason, correlation_id, causation_id, before_state_json, after_state_json,
                 metadata_json, occurred_at
@@ -743,7 +742,7 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         // 5. Append Audit Event
         // Append Audit Event to audit.audit_events (AUD-01: Fail-Closed)
         const string insertAuditSql = $"""
-            INSERT INTO {AuditEventsTable} (
+            INSERT INTO audit.audit_events (
                 id, event_name, aggregate_type, aggregate_id, actor_id, actor_type,
                 reason, correlation_id, causation_id, before_state_json, after_state_json,
                 metadata_json, occurred_at
