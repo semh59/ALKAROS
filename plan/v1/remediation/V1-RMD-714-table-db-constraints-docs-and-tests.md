@@ -24,9 +24,8 @@ V1-RMD-601 bulguları B023, B027, B029 ve B030 kapanır. Aktif birleşim ve akti
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs - yalnız yeni migration kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Tables/** - yalnız ilgili düzeltme
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Tables/** - yalnız ilgili düzeltme
-- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Orders/** - yalnız kasaya gönderilmiş siparişin masadan ayrılması
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Orders/CashierHandoffStore.cs - yalnız gönderilmiş hesabın masa kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Tables/** - yalnız yeni ve düzeltilen test
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Orders/** - yalnız yeni ve düzeltilen test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Tables/** - yalnız yeni ve düzeltilen test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-601-tables-quality-audit.md - yalnız Out of scope notu
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.

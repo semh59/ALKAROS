@@ -33,6 +33,7 @@ V1-RMD-601 bulguları B032 ve sınır kalemleri S4, S5, S6, S7 kapanır. Tables'
 ## Out of scope
 
 - Davranış değişikliği getiren masa düzeltmeleri (V1-RMD-710 ile V1-RMD-714 ve V1-RMD-716).
+- Gönderilmiş hesap kaydı tablosunun (V1-RMD-714) doküman satırı bu görevde yazılır.
 
 ## Dependencies
 
