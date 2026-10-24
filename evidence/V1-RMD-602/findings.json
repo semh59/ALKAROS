@@ -1,0 +1,203 @@
+{
+ "task": "V1-RMD-602",
+ "sha": "54c6455c",
+ "counts": {
+  "DOGRULANDI": 18,
+  "KISMEN": 13,
+  "CURUTULDU": 1
+ },
+ "findings": [
+  {
+   "id": "V1-RMD-602-B001",
+   "state": "DOGRULANDI",
+   "severity": "Yuksek",
+   "fix": "V1-RMD-718"
+  },
+  {
+   "id": "V1-RMD-602-B002",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-719"
+  },
+  {
+   "id": "V1-RMD-602-B003",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-720"
+  },
+  {
+   "id": "V1-RMD-602-B004",
+   "state": "KISMEN (bilinen V1-RMD-702, PO S1)",
+   "severity": "Orta",
+   "fix": "V1-RMD-702"
+  },
+  {
+   "id": "V1-RMD-602-B005",
+   "state": "KISMEN",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-721"
+  },
+  {
+   "id": "V1-RMD-602-B006",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-721"
+  },
+  {
+   "id": "V1-RMD-602-B007",
+   "state": "KISMEN",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-721"
+  },
+  {
+   "id": "V1-RMD-602-B008",
+   "state": "KISMEN (dokuman sapmasi)",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-724"
+  },
+  {
+   "id": "V1-RMD-602-B009",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-722"
+  },
+  {
+   "id": "V1-RMD-602-B010",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-722"
+  },
+  {
+   "id": "V1-RMD-602-B011",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-719"
+  },
+  {
+   "id": "V1-RMD-602-B012",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-723"
+  },
+  {
+   "id": "V1-RMD-602-B013",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-722"
+  },
+  {
+   "id": "V1-RMD-602-B014",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-722"
+  },
+  {
+   "id": "V1-RMD-602-B015",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-723"
+  },
+  {
+   "id": "V1-RMD-602-B016",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-723"
+  },
+  {
+   "id": "V1-RMD-602-B017",
+   "state": "KISMEN",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-723"
+  },
+  {
+   "id": "V1-RMD-602-B018",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-721"
+  },
+  {
+   "id": "V1-RMD-602-B019",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-721"
+  },
+  {
+   "id": "V1-RMD-602-B020",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-721"
+  },
+  {
+   "id": "V1-RMD-602-B021",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-721"
+  },
+  {
+   "id": "V1-RMD-602-B022",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-724"
+  },
+  {
+   "id": "V1-RMD-602-B023",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-724"
+  },
+  {
+   "id": "V1-RMD-602-B024",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-722"
+  },
+  {
+   "id": "V1-RMD-602-B025",
+   "state": "DOGRULANDI",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-722"
+  },
+  {
+   "id": "V1-RMD-602-B026",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-721"
+  },
+  {
+   "id": "V1-RMD-602-B027",
+   "state": "DOGRULANDI",
+   "severity": "Orta",
+   "fix": "V1-RMD-719"
+  },
+  {
+   "id": "V1-RMD-602-B028",
+   "state": "KISMEN",
+   "severity": "Orta",
+   "fix": "V1-RMD-718"
+  },
+  {
+   "id": "V1-RMD-602-B029",
+   "state": "CURUTULDU",
+   "severity": "-",
+   "fix": "-"
+  },
+  {
+   "id": "V1-RMD-602-B030",
+   "state": "KISMEN (dokuman sapmasi)",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-724"
+  },
+  {
+   "id": "V1-RMD-602-B031",
+   "state": "KISMEN",
+   "severity": "Dusuk",
+   "fix": "V1-RMD-724"
+  },
+  {
+   "id": "V1-RMD-602-B032",
+   "state": "DOGRULANDI (test-kalitesi, mutant kaniti)",
+   "severity": "Orta",
+   "fix": "V1-RMD-720"
+  }
+ ]
+}

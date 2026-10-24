@@ -1,0 +1,11 @@
+src/Modules/Orders: 26 dosya
+src/Host/Experience/Orders: 21 dosya
+src/Host/Experience/NfcOrdering: 3 dosya
+src/Host/Experience/PendingOrderNotifications: 1 dosya
+tests/Modules/Orders: 10 dosya
+tests/Host/Experience/Orders: 18 dosya
+database/migrations: 22 dosya
+src/Clients: 27 dosya
+tests/E2E: 7 dosya
+dosya sayısı: 142
+  29079 total

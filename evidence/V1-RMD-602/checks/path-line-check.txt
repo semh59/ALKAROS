@@ -1,0 +1,1 @@
+referans=107 gecerli=107 sorunlu=0

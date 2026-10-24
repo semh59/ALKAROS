@@ -1,0 +1,7 @@
+B001 DOGRULANDI Yuksek; B002 KISMEN Orta (PK order_item_id blocks dup; perm 409); B003 DOGRULANDI Orta (test-only);
+B004 KISMEN Orta (create/update enforce since RMD-709; legacy NULL rows, no backfill); B005 KISMEN Orta; B006 DOGRULANDI Orta;
+B007 KISMEN Dusuk; B008 KISMEN Dusuk (ticket yes, stock no); B009 DOGRULANDI Orta; B010 DOGRULANDI Dusuk; B011 DOGRULANDI Orta;
+B012 KISMEN Dusuk; B013 DOGRULANDI Orta; B014 KISMEN Dusuk (PO decision); B015 KISMEN Dusuk (FK refutes 2nd half);
+B016 DOGRULANDI Orta; B017 KISMEN Dusuk; B018 KISMEN Orta (expiry part refuted); B019 DOGRULANDI Orta; B020 DOGRULANDI Dusuk;
+B021 DOGRULANDI Dusuk; B022 DOGRULANDI Dusuk; B023 DOGRULANDI Dusuk; B024 KISMEN Orta; B025 DOGRULANDI Dusuk; B026 KISMEN Orta;
+B027 DOGRULANDI Orta; B028 KISMEN Orta; B029 CURUTULDU; B030 KISMEN doc; B031 KISMEN Dusuk
