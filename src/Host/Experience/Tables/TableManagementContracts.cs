@@ -466,3 +466,15 @@ public sealed class TableManagementConflictException : Exception
     public TableManagementConflictException(string message, Exception? innerException = null)
         : base(message, innerException) { }
 }
+
+/// <summary>A table operation refused because of the table's current work; the message is shown to staff as is.</summary>
+public sealed class TableOperationBlockedException : Exception
+{
+    public TableOperationBlockedException(string code, string message)
+        : base(message)
+    {
+        Code = code;
+    }
+
+    public string Code { get; }
+}

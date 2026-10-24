@@ -1,0 +1,16 @@
+N1 KILLED restored=true merge event names no orders
+N2 KILLED restored=true transfer event names no orders
+N3 KILLED restored=true order consumer applies a merge that is no longer active
+N4 KILLED restored=true bill consumer applies a merge that is no longer active
+N5 KILLED restored=true order consumer moves nothing on a transfer
+N6 KILLED restored=true transfer ignores active merges
+N7 KILLED restored=true status endpoint skips the open work guard
+N8 KILLED restored=true status endpoint releases merged tables
+N9 KILLED restored=true an empty draft blocks releasing the table
+N10 KILLED restored=true occupied table can be switched off
+N11 KILLED restored=true status change audit renamed
+N12 KILLED restored=true blocked operation loses its code
+N13 SURVIVED restored=true timestamp moves on every update
+N14 KILLED restored=true floor plan audit renamed
+N15 KILLED restored=true zone creation audit renamed
+N13 KILLED restored=true timestamp moves on every update

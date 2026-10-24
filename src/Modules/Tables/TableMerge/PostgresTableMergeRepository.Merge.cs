@@ -256,7 +256,8 @@ public sealed partial class PostgresTableMergeRepository
                     "table_merge",
                     participant.TableId,
                     IntegrationEventSerializer.Serialize(new TableMerged(
-                        mergeGroupId, participant.TableId, request.PrimaryTableId, now))),
+                        mergeGroupId, participant.TableId, request.PrimaryTableId, now,
+                        participantOrderIds, participantBillIds))),
                 connection,
                 transaction,
                 cancellationToken);

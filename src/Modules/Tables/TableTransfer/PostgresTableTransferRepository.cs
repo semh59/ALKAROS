@@ -17,6 +17,7 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
 {
     private const string TableTransfersTable = "table_mgmt.table_transfers";
     private const string TablesTable = "table_mgmt.tables";
+    private const string TableMergesTable = "table_mgmt.table_merges";
     private const string OrdersTable = "orders.orders";
     private const string BillsTable = "billing.bills";
     private const string AuditEventsTable = "audit.audit_events";
@@ -231,6 +232,21 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             throw new TableTransferConcurrencyException(request.TargetTableId, request.ExpectedTargetRowVersion, targetRowVersion);
         }
 
+        // A table that is part of an active merge (leader or participant) cannot move on its own:
+        // the merge would keep pointing at the old table and could never be undone.
+        const string activeMergeSql = $"""
+            SELECT 1 FROM {TableMergesTable}
+            WHERE status = 'Active'
+              AND (primary_table_id = ANY(@table_ids) OR merged_table_id = ANY(@table_ids))
+            LIMIT 1;
+            """;
+        await using (var cmd = new NpgsqlCommand(activeMergeSql, connection, transaction))
+        {
+            cmd.Parameters.AddWithValue("table_ids", tableIdsToLock);
+            if (await cmd.ExecuteScalarAsync(cancellationToken) is not null)
+                throw new TableInActiveMergeException(request.SourceTableId);
+        }
+
         // 3. Payment-aware topology policy (V13-TBL-001): a Bill with any
         // Payment currently Pending/Unknown/ReconciliationRequired locks
         // this table out of transfer until it settles. A Bill that is
@@ -288,7 +304,8 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
                 "table_transfer",
                 transferId,
                 IntegrationEventSerializer.Serialize(new TableTransferred(
-                    transferId, request.SourceTableId, request.TargetTableId, now))),
+                    transferId, request.SourceTableId, request.TargetTableId, now,
+                    activeOrderIds, activeBillIds))),
             connection,
             transaction,
             cancellationToken);

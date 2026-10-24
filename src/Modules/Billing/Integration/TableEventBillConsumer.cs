@@ -11,9 +11,11 @@ namespace ALKAROS.Billing.Integration;
 /// <c>billing.bills</c>.
 /// </summary>
 /// <remarks>
-/// Delivery is at-least-once. Every operation here is idempotent by
-/// construction: the reparent updates rows <c>WHERE table_id = @from</c>, so a
-/// redelivery after the move finds nothing and changes nothing.
+/// Delivery is at-least-once and not ordered. A move names the exact bills and
+/// the table they must still be on, so a redelivery changes nothing; a merge
+/// move is applied only while its merge is still active, so a late merge event
+/// cannot undo an unmerge that already happened. Events from before the id
+/// lists existed fall back to moving everything that sits on the source table.
 /// </remarks>
 public sealed class TableEventBillConsumer : IIntegrationEventConsumer
 {
@@ -41,18 +43,45 @@ public sealed class TableEventBillConsumer : IIntegrationEventConsumer
             case IntegrationEventTypes.TableMerged:
             {
                 var e = IntegrationEventSerializer.Deserialize<TableMerged>(payload.Span);
-                await _bills.ReparentActiveBillsToTableAsync(
-                    e.ParticipantTableId, e.PrimaryTableId, e.OccurredAt, connection, transaction, cancellationToken)
-                    .ConfigureAwait(false);
+                if (e.BillIds is null)
+                {
+                    await _bills.ReparentActiveBillsToTableAsync(
+                        e.ParticipantTableId, e.PrimaryTableId, e.OccurredAt, connection, transaction, cancellationToken)
+                        .ConfigureAwait(false);
+                    break;
+                }
+
+                if (!await IsMergeActiveAsync(e.MergeGroupId, e.ParticipantTableId, connection, transaction, cancellationToken).ConfigureAwait(false))
+                    break;
+
+                foreach (var id in e.BillIds)
+                {
+                    await _bills.ReparentBillToTableAsync(
+                        id, e.ParticipantTableId, e.PrimaryTableId, e.OccurredAt, connection, transaction, cancellationToken)
+                        .ConfigureAwait(false);
+                }
+
                 break;
             }
 
             case IntegrationEventTypes.TableTransferred:
             {
                 var e = IntegrationEventSerializer.Deserialize<TableTransferred>(payload.Span);
-                await _bills.ReparentActiveBillsToTableAsync(
-                    e.SourceTableId, e.TargetTableId, e.OccurredAt, connection, transaction, cancellationToken)
-                    .ConfigureAwait(false);
+                if (e.BillIds is null)
+                {
+                    await _bills.ReparentActiveBillsToTableAsync(
+                        e.SourceTableId, e.TargetTableId, e.OccurredAt, connection, transaction, cancellationToken)
+                        .ConfigureAwait(false);
+                    break;
+                }
+
+                foreach (var id in e.BillIds)
+                {
+                    await _bills.ReparentBillToTableAsync(
+                        id, e.SourceTableId, e.TargetTableId, e.OccurredAt, connection, transaction, cancellationToken)
+                        .ConfigureAwait(false);
+                }
+
                 break;
             }
 
@@ -75,5 +104,19 @@ public sealed class TableEventBillConsumer : IIntegrationEventConsumer
         }
 
         await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
+    }
+
+    private static async Task<bool> IsMergeActiveAsync(
+        Guid mergeGroupId, Guid participantTableId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM table_mgmt.table_merges
+                WHERE merge_group_id = @group_id AND merged_table_id = @table_id AND status = 'Active');
+            """, connection, transaction);
+        command.Parameters.AddWithValue("group_id", mergeGroupId);
+        command.Parameters.AddWithValue("table_id", participantTableId);
+        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
     }
 }

@@ -440,6 +440,85 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
         ex.Which.TableId.Should().Be(nonExistentTargetId);
     }
 
+    [Fact]
+    public async Task ARedeliveredTransferEventLeavesTheNextGuestsOrderAlone()
+    {
+        var sourceTableId = await CreateTableAsync("TR-101", "Occupied", 1);
+        var targetTableId = await CreateTableAsync("TR-102", "Available", 1);
+        var orderId = await CreateOrderAsync(sourceTableId, "ORD-TR1", 150m);
+        var billId = await CreateBillAsync(sourceTableId, orderId, "BIL-TR1", 150m, 0m, 0m, "Open");
+        await SetTablePointersAsync(sourceTableId, orderId, billId);
+
+        await _service.TransferTableAsync(new TableTransferRequest(
+            sourceTableId, 1, targetTableId, 1, "Guest moved", _userId));
+        await DrainTableEventsAsync();
+
+        // A new party sits at the freed table before the same event is delivered a second time.
+        var newOrderId = await CreateOrderAsync(sourceTableId, "ORD-TR2", 40m);
+        var newBillId = await CreateBillAsync(sourceTableId, newOrderId, "BIL-TR2", 40m, 0m, 0m, "Open");
+        var late = IntegrationEventSerializer.Serialize(new TableTransferred(
+            Guid.NewGuid(), sourceTableId, targetTableId, DateTimeOffset.UtcNow, [orderId], [billId]));
+        await new TableEventOrderConsumer(_db.DataSource, new PostgresOrderRepository(_db.DataSource))
+            .HandleAsync(IntegrationEventTypes.TableTransferred, late, CancellationToken.None);
+        await new TableEventBillConsumer(_db.DataSource, new PostgresBillRepository(_db.DataSource))
+            .HandleAsync(IntegrationEventTypes.TableTransferred, late, CancellationToken.None);
+
+        (await GetOrderAsync(newOrderId)).TableId.Should().Be(sourceTableId);
+        (await GetBillAsync(newBillId)).TableId.Should().Be(sourceTableId);
+        (await GetOrderAsync(orderId)).TableId.Should().Be(targetTableId);
+        (await GetBillAsync(billId)).TableId.Should().Be(targetTableId);
+    }
+
+    [Fact]
+    public async Task ATransferEventMovesOnlyTheOrdersItNames()
+    {
+        var sourceTableId = await CreateTableAsync("TN-101", "Occupied", 1);
+        var targetTableId = await CreateTableAsync("TN-102", "Available", 1);
+        var orderId = await CreateOrderAsync(sourceTableId, "ORD-TN1", 150m);
+        var billId = await CreateBillAsync(sourceTableId, orderId, "BIL-TN1", 150m, 0m, 0m, "Open");
+        await SetTablePointersAsync(sourceTableId, orderId, billId);
+
+        await _service.TransferTableAsync(new TableTransferRequest(
+            sourceTableId, 1, targetTableId, 1, "Guest moved", _userId));
+
+        // The freed table is seated again before the outbox delivers the move.
+        var newOrderId = await CreateOrderAsync(sourceTableId, "ORD-TN2", 40m);
+        var newBillId = await CreateBillAsync(sourceTableId, newOrderId, "BIL-TN2", 40m, 0m, 0m, "Open");
+        await DrainTableEventsAsync();
+
+        (await GetOrderAsync(orderId)).TableId.Should().Be(targetTableId);
+        (await GetBillAsync(billId)).TableId.Should().Be(targetTableId);
+        (await GetOrderAsync(newOrderId)).TableId.Should().Be(sourceTableId);
+        (await GetBillAsync(newBillId)).TableId.Should().Be(sourceTableId);
+    }
+
+    [Fact]
+    public async Task ATableInAnActiveMergeCannotBeTransferred()
+    {
+        var sourceTableId = await CreateTableAsync("TM-101", "Occupied", 1);
+        var mergedTableId = await CreateTableAsync("TM-102", "Occupied", 1);
+        var targetTableId = await CreateTableAsync("TM-103", "Available", 1);
+
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var cmd = new NpgsqlCommand(
+            """
+            INSERT INTO table_mgmt.table_merges (table_merge_id, merge_group_id, primary_table_id, merged_table_id, status, reason, merged_by, merged_at, row_version)
+            VALUES (gen_random_uuid(), gen_random_uuid(), @primary, @merged, 'Active', 'Joined', @user, now(), 1);
+            """, connection))
+        {
+            cmd.Parameters.AddWithValue("primary", sourceTableId);
+            cmd.Parameters.AddWithValue("merged", mergedTableId);
+            cmd.Parameters.AddWithValue("user", _userId);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        foreach (var source in new[] { sourceTableId, mergedTableId })
+        {
+            var act = () => _service.TransferTableAsync(new TableTransferRequest(source, 1, targetTableId, 1, "Move", _userId));
+            await act.Should().ThrowAsync<TableInActiveMergeException>();
+        }
+    }
+
     // Helper methods for database seeding and asserting
     private async Task<Guid> CreateTableAsync(string tableNumber, string status, long rowVersion, bool active = true)
     {

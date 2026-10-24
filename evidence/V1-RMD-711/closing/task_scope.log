@@ -1,0 +1,1 @@
+# task_scope after Done: the tool only accepts Planned/InProgress tasks; the closing gate ran task-scope on the working tree at commit time.

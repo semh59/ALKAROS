@@ -585,6 +585,53 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
         (await GetBillAsync(bill)).TableId.Should().Be(participantId);
     }
 
+    [Fact]
+    public async Task ALateMergeEventDoesNotUndoAnUnmerge()
+    {
+        var primaryId = await CreateTableAsync("LE-101", "Occupied", 1);
+        var participantId = await CreateTableAsync("LE-102", "Occupied", 1);
+        var order = await CreateOrderAsync(participantId, "ORD-LE1", 100m);
+        var bill = await CreateBillAsync(participantId, order, "BIL-LE1", 100m, 0m, 0m, "Open");
+        await SetTablePointersAsync(participantId, order, bill);
+
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "Joined", _userId));
+        await DrainTableEventsAsync();
+        await _service.UnmergeTablesAsync(new TableUnmergeRequest(
+            merge.MergeGroupId, 2, new[] { new TableMergeParticipant(participantId, 2) }, "Apart", _userId));
+        await DrainTableEventsAsync();
+        (await GetOrderAsync(order)).TableId.Should().Be(participantId);
+
+        // The merge event is delivered once more after the tables were already separated.
+        var late = IntegrationEventSerializer.Serialize(new TableMerged(
+            merge.MergeGroupId, participantId, primaryId, DateTimeOffset.UtcNow, [order], [bill]));
+        await new TableEventOrderConsumer(_db.DataSource, new PostgresOrderRepository(_db.DataSource))
+            .HandleAsync(IntegrationEventTypes.TableMerged, late, CancellationToken.None);
+        await new TableEventBillConsumer(_db.DataSource, new PostgresBillRepository(_db.DataSource))
+            .HandleAsync(IntegrationEventTypes.TableMerged, late, CancellationToken.None);
+
+        (await GetOrderAsync(order)).TableId.Should().Be(participantId);
+        (await GetBillAsync(bill)).TableId.Should().Be(participantId);
+    }
+
+    [Fact]
+    public async Task AMergeEventMovesOnlyTheOrdersItNames()
+    {
+        var primaryId = await CreateTableAsync("NM-101", "Occupied", 1);
+        var participantId = await CreateTableAsync("NM-102", "Occupied", 1);
+        var named = await CreateOrderAsync(participantId, "ORD-NM1", 10m);
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "Joined", _userId));
+
+        // An order opened on the participant after the merge request was taken is not part of it.
+        var other = await CreateOrderAsync(participantId, "ORD-NM2", 20m);
+        await DrainTableEventsAsync();
+
+        (await GetOrderAsync(named)).TableId.Should().Be(primaryId);
+        (await GetOrderAsync(other)).TableId.Should().Be(participantId);
+        merge.MergeGroupId.Should().NotBeEmpty();
+    }
+
     // Helper methods for database seeding and asserting
     private async Task<Guid> CreateTableAsync(string tableNumber, string status, long rowVersion, bool active = true)
     {

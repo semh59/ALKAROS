@@ -22,7 +22,9 @@ public sealed record TableMerged(
     Guid MergeGroupId,
     Guid ParticipantTableId,
     Guid PrimaryTableId,
-    DateTimeOffset OccurredAt);
+    DateTimeOffset OccurredAt,
+    IReadOnlyList<Guid>? OrderIds = null,
+    IReadOnlyList<Guid>? BillIds = null);
 
 /// <summary>
 /// Table Management transferred a table's active work to another table. Order
@@ -32,7 +34,9 @@ public sealed record TableTransferred(
     Guid TransferId,
     Guid SourceTableId,
     Guid TargetTableId,
-    DateTimeOffset OccurredAt);
+    DateTimeOffset OccurredAt,
+    IReadOnlyList<Guid>? OrderIds = null,
+    IReadOnlyList<Guid>? BillIds = null);
 
 /// <summary>
 /// Table Management unmerged a participant table out of a merge group. Order

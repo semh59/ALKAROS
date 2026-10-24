@@ -1,0 +1,50 @@
+psql:/tmp/mig711.sql:1: NOTICE:  database "alkaros_verify_711" does not exist, skipping
+DROP DATABASE
+CREATE DATABASE
+You are now connected to database "alkaros_verify_711" as user "postgres".
+CREATE SCHEMA
+CREATE TABLE
+INSERT 0 1
+--- UP
+CREATE FUNCTION
+DROP TRIGGER
+psql:/tmp/204.up.sql:13: NOTICE:  trigger "trg_tables_status_changed_at" for relation "table_mgmt.tables" does not exist, skipping
+CREATE TRIGGER
+CREATE FUNCTION
+DROP TRIGGER
+CREATE TRIGGER
+--- capacity change keeps the timestamp (expect t)
+UPDATE 1
+ kept 
+------
+ t
+(1 row)
+
+--- status change moves the timestamp (expect t)
+UPDATE 1
+ moved 
+-------
+ t
+(1 row)
+
+--- DOWN
+DROP TRIGGER
+DROP FUNCTION
+ triggers_after_down 
+---------------------
+                   0
+(1 row)
+
+ functions_after_down 
+----------------------
+                    0
+(1 row)
+
+UPDATE 1
+ untouched_after_down 
+----------------------
+ t
+(1 row)
+
+You are now connected to database "postgres" as user "postgres".
+DROP DATABASE

@@ -345,7 +345,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.Settings"] =
                 ["ALKAROS.Settings", "ALKAROS.Identity", "ALKAROS.Audit"],
             ["ALKAROS.Host.Experience.Tables"] =
-                ["ALKAROS.Tables", "ALKAROS.Identity"],
+                ["ALKAROS.Tables", "ALKAROS.Identity", "ALKAROS.Audit"],
             ["ALKAROS.Host.Experience.TokenTerminalSettings"] =
                 ["ALKAROS.Identity", "ALKAROS.Payments", "ALKAROS.Secrets"],
             ["ALKAROS.Host.Experience.WaiterNotifications"] =

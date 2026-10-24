@@ -122,6 +122,20 @@ public sealed class TableManagementStore
         var expected = TableContractMapper.RequiredVersion(request.ExpectedRowVersion, nameof(request.ExpectedRowVersion));
         _ = new Table(tableId, request.TableNumber, request.ZoneId, request.Capacity, request.Active);
 
+        // A table that is busy or part of a merge cannot be switched off from the layout screen:
+        // its guests, order and bill would be left on a table nobody can see.
+        if (!request.Active)
+        {
+            var existing = await _repository.GetByIdAsync(tableId, cancellationToken);
+            if (existing is { Active: true })
+            {
+                if (await IsInActiveMergeAsync(tableId, cancellationToken))
+                    throw new TableOperationBlockedException("TABLE_IN_MERGE", "Bu masa bir birleşimde. Önce birleşimi ayırın.");
+                if (existing.State is TableState.Occupied or TableState.Reserved)
+                    throw new TableOperationBlockedException("TABLE_BUSY", "Dolu veya rezerve masa pasife alınamaz. Önce masayı boşaltın.");
+            }
+        }
+
         await using var command = _dataSource.CreateCommand(
             """
             UPDATE table_mgmt.tables
@@ -194,6 +208,11 @@ public sealed class TableManagementStore
             throw new TableManagementConflictException(exception.Message, exception);
         }
 
+        // Leaving Occupied by hand must not hide a check that is still open or a table that is held
+        // together with others: the guests' order and bill would be left behind with nobody to pay.
+        if (current.State == TableState.Occupied)
+            await EnsureNoOpenWorkAsync(current, cancellationToken);
+
         // Found by an independent audit (2026-09-07): this generic status
         // change was the ONLY UI-reachable way to release a Reserved table
         // (Claim/Cancel/Expire all require a reservation row version no
@@ -239,6 +258,41 @@ public sealed class TableManagementStore
 
         return await _repository.GetByIdAsync(tableId, cancellationToken)
             ?? throw new TableManagementNotFoundException($"Table {tableId} was not found after status update.");
+    }
+
+    private async Task<bool> IsInActiveMergeAsync(Guid tableId, CancellationToken cancellationToken)
+    {
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM table_mgmt.table_merges
+                WHERE status = 'Active' AND (primary_table_id = @table_id OR merged_table_id = @table_id));
+            """);
+        command.Parameters.AddWithValue("table_id", tableId);
+        return (bool)(await command.ExecuteScalarAsync(cancellationToken))!;
+    }
+
+    private async Task EnsureNoOpenWorkAsync(Table current, CancellationToken cancellationToken)
+    {
+        if (await IsInActiveMergeAsync(current.Id, cancellationToken))
+            throw new TableOperationBlockedException("TABLE_IN_MERGE", "Bu masa bir birleşimde. Önce birleşimi ayırın.");
+
+        // An empty draft is not work worth protecting; a submitted order or an unpaid bill is.
+        await using var command = _dataSource.CreateCommand(
+            """
+            SELECT EXISTS (
+                SELECT 1 FROM orders.orders
+                WHERE order_id = @order_id AND status NOT IN ('Draft', 'Completed', 'Cancelled', 'Rejected'))
+                OR EXISTS (
+                SELECT 1 FROM billing.bills
+                WHERE bill_id = @bill_id AND status NOT IN ('Paid', 'Cancelled'));
+            """);
+        command.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = (object?)current.CurrentOrderId ?? DBNull.Value;
+        command.Parameters.Add("bill_id", NpgsqlDbType.Uuid).Value = (object?)current.CurrentBillId ?? DBNull.Value;
+        if ((bool)(await command.ExecuteScalarAsync(cancellationToken))!)
+            throw new TableOperationBlockedException(
+                "TABLE_HAS_OPEN_WORK",
+                "Masada açık sipariş veya hesap var. Önce hesabı kapatın veya masayı devredin.");
     }
 
     private async Task<Table> MissingOrConflictAsync(

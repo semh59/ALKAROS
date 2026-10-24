@@ -1,3 +1,5 @@
+using System.Text.Json;
+using ALKAROS.Audit.EventStore;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
@@ -40,6 +42,8 @@ public static class TableManagementApplication
         services.TryAddSingleton<ITableReservationService, TableReservationService>();
         services.TryAddSingleton<ITablePointerProjector, PostgresTablePointerProjector>();
 
+        services.TryAddSingleton<IAuditEventStore, PostgresAuditEventStore>();
+        services.TryAddSingleton<TableAuditWriter>();
         services.TryAddSingleton<ZoneConcurrencyStore>();
         services.TryAddSingleton<TableManagementStore>();
         services.TryAddSingleton<ITableManagementSessionAuthorizer, TableManagementSessionAuthorizer>();
@@ -80,11 +84,13 @@ public static class TableManagementApplication
             ITableManagementSessionAuthorizer authorizer,
             ZoneConcurrencyStore store,
             IZoneRepository repository,
+            TableAuditWriter audit,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             var created = await store.CreateAsync(request, repository, cancellationToken);
+            await audit.WriteAsync(context, principal.UserId, "tables.zone.created", "tables.zone", created.ZoneId, null, created, cancellationToken);
             return Results.Created($"{Prefix(terminalId)}/zones/{created.ZoneId:D}", created);
         });
 
@@ -94,11 +100,14 @@ public static class TableManagementApplication
             UpdateZoneRequest request,
             ITableManagementSessionAuthorizer authorizer,
             ZoneConcurrencyStore store,
+            TableAuditWriter audit,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
-            return Results.Ok(await store.UpdateAsync(zoneId, request, cancellationToken));
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
+            var updated = await store.UpdateAsync(zoneId, request, cancellationToken);
+            await audit.WriteAsync(context, principal.UserId, "tables.zone.updated", "tables.zone", zoneId, null, updated, cancellationToken);
+            return Results.Ok(updated);
         });
 
         group.MapDelete("/zones/{zoneId:guid}", async (
@@ -107,11 +116,13 @@ public static class TableManagementApplication
             long? expectedRowVersion,
             ITableManagementSessionAuthorizer authorizer,
             ZoneConcurrencyStore store,
+            TableAuditWriter audit,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
-            await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
+            var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             await store.DeleteAsync(zoneId, expectedRowVersion, cancellationToken);
+            await audit.WriteAsync(context, principal.UserId, "tables.zone.deleted", "tables.zone", zoneId, null, null, cancellationToken);
             return Results.NoContent();
         });
 
@@ -156,11 +167,14 @@ public static class TableManagementApplication
             CreateTableRequest request,
             ITableManagementSessionAuthorizer authorizer,
             TableManagementStore store,
+            TableAuditWriter audit,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
             var created = await store.CreateAsync(request, cancellationToken);
+            await audit.WriteAsync(context, principal.UserId, "tables.table.created", "tables.table", created.Id, null,
+                new { created.TableNumber, created.ZoneId, created.Capacity, created.Active }, cancellationToken);
             var dto = await ToDtoWithStatusChangedAtAsync(store, created, principal.Permissions, activeReservation: null, cancellationToken);
             return Results.Created($"{Prefix(terminalId)}/tables/{created.Id:D}", dto);
         });
@@ -171,11 +185,16 @@ public static class TableManagementApplication
             UpdateTableRequest request,
             ITableManagementSessionAuthorizer authorizer,
             TableManagementStore store,
+            TableAuditWriter audit,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.FloorplanManage, cancellationToken);
+            var before = await store.GetAsync(tableId, cancellationToken);
             var updated = await store.UpdateAsync(tableId, request, cancellationToken);
+            await audit.WriteAsync(context, principal.UserId, "tables.table.updated", "tables.table", tableId,
+                before is null ? null : new { before.Value.Table.TableNumber, before.Value.Table.ZoneId, before.Value.Table.Capacity, before.Value.Table.Active },
+                new { updated.TableNumber, updated.ZoneId, updated.Capacity, updated.Active }, cancellationToken);
             return Results.Ok(await ToDtoWithStatusChangedAtAsync(store, updated, principal.Permissions, activeReservation: null, cancellationToken));
         });
 
@@ -186,11 +205,16 @@ public static class TableManagementApplication
             ITableManagementSessionAuthorizer authorizer,
             TableManagementStore store,
             ITableReservationRepository reservations,
+            TableAuditWriter audit,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
             var principal = await authorizer.RequireMutationAsync(context, terminalId, ApplicationPermissions.TablesStatus, cancellationToken);
+            var before = await store.GetAsync(tableId, cancellationToken);
             var updated = await store.ChangeStatusAsync(tableId, request, principal.UserId, cancellationToken);
+            await audit.WriteAsync(context, principal.UserId, "tables.table.status_changed", "tables.table", tableId,
+                before is null ? null : new { Status = before.Value.Table.State.ToString() },
+                new { Status = updated.State.ToString() }, cancellationToken);
             var activeReservation = await ActiveReservationOrNullAsync(updated, reservations, cancellationToken);
             return Results.Ok(await ToDtoWithStatusChangedAtAsync(store, updated, principal.Permissions, activeReservation, cancellationToken));
         });
@@ -229,6 +253,7 @@ public static class TableManagementApplication
             SaveFloorPlanRequest request,
             ITableManagementSessionAuthorizer authorizer,
             ITableFloorPlanRepository repository,
+            TableAuditWriter audit,
             HttpContext context,
             CancellationToken cancellationToken) =>
         {
@@ -236,6 +261,8 @@ public static class TableManagementApplication
             var result = await repository.SaveAsync(
                 TableContractMapper.ToCommand(zoneId, request),
                 cancellationToken);
+            await audit.WriteAsync(context, principal.UserId, "tables.floor_plan.saved", "tables.zone", zoneId, null,
+                new { result.FloorPlan.RowVersion, TableCount = result.FloorPlan.Tables.Count }, cancellationToken);
             return Results.Ok(TableContractMapper.ToDto(result, principal.Permissions));
         });
 
@@ -561,6 +588,9 @@ internal sealed class TableManagementExceptionFilter : IEndpointFilter
             or ALKAROS.Tables.TableMerge.PaymentPolicyRequiredException =>
             (409, "PAYMENT_UNSETTLED",
                 "Bu masanın hesabında çözülmemiş bir ödeme var. Ödeme mutabakatı tamamlanmadan masa taşınamaz veya birleştirilemez."),
+        TableOperationBlockedException blocked => (409, blocked.Code, blocked.Message),
+        ALKAROS.Tables.TableTransfer.TableInActiveMergeException =>
+            (409, "TABLE_IN_MERGE", "Bu masa bir birleşimde. Önce birleşimi ayırın."),
         TableManagementConflictException
             or SameTableTransferException
             or InvalidSourceTableStateException
@@ -571,6 +601,10 @@ internal sealed class TableManagementExceptionFilter : IEndpointFilter
             or TableNotAvailableForReservationException
             or InvalidReservationStateException =>
             (409, "DOMAIN_CONFLICT", "Masa işlemi mevcut durumla çakışıyor."),
+        PostgresException postgres when postgres.SqlState is PostgresErrorCodes.SerializationFailure or PostgresErrorCodes.DeadlockDetected =>
+            (409, "CONCURRENT_MODIFICATION", "Kayıt başka bir işlem tarafından değiştirildi."),
+        PostgresException postgres when postgres.SqlState == PostgresErrorCodes.StringDataRightTruncation =>
+            (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException postgres when postgres.SqlState == PostgresErrorCodes.UniqueViolation =>
             (409, "DUPLICATE_RESOURCE", "Aynı kimlikte bir masa kaydı zaten var."),
         PostgresException postgres when postgres.SqlState == PostgresErrorCodes.ForeignKeyViolation =>
@@ -580,4 +614,37 @@ internal sealed class TableManagementExceptionFilter : IEndpointFilter
             (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
     };
+}
+
+/// <summary>Records who changed the table layout and table status, one event per successful write.</summary>
+public sealed class TableAuditWriter
+{
+    private readonly IAuditEventStore _audit;
+
+    public TableAuditWriter(IAuditEventStore audit)
+    {
+        _audit = audit ?? throw new ArgumentNullException(nameof(audit));
+    }
+
+    public Task WriteAsync(
+        HttpContext context,
+        Guid actorId,
+        string eventName,
+        string aggregateType,
+        Guid aggregateId,
+        object? before,
+        object? after,
+        CancellationToken cancellationToken)
+        => _audit.AppendAsync(
+            new AuditEvent(
+                id: Guid.NewGuid(),
+                eventName: eventName,
+                aggregateType: aggregateType,
+                aggregateId: aggregateId,
+                actorType: "User",
+                correlationId: context.TraceIdentifier,
+                actorId: actorId,
+                beforeStateJson: before is null ? null : JsonSerializer.Serialize(before),
+                afterStateJson: after is null ? null : JsonSerializer.Serialize(after)),
+            cancellationToken);
 }

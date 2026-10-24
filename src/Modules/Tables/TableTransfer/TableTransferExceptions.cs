@@ -104,3 +104,15 @@ public sealed class TableTransferConcurrencyException : TableTransferException
     public long ExpectedVersion { get; }
     public long ActualVersion { get; }
 }
+
+/// <summary>A table that belongs to an active merge cannot be transferred until the merge is undone.</summary>
+public sealed class TableInActiveMergeException : TableTransferException
+{
+    public TableInActiveMergeException(Guid tableId)
+        : base($"Table '{tableId}' is part of an active merge.")
+    {
+        TableId = tableId;
+    }
+
+    public Guid TableId { get; }
+}
