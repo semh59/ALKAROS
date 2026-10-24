@@ -12,7 +12,7 @@
 
 ## Goal
 
-V1-RMD-601 bulguları B005 (S1, S3), B006, B007 (transfer, durum ve masa düzenleme), B021, B022 ve B024 kapanır. Birleşim ve transfer olayları taşınacak sipariş ve hesap kimliklerini taşır; tüketiciler yalnız o kimlikleri ve yalnız hâlâ beklenen masada duranları taşır; eski bir birleşim olayı yeniden teslim edilse de ayrılmış birleşimi geri kurmaz; transfer aktif birleşimdeki masayı reddeder; genel durum ucu açık siparişi veya hesabı olan ya da aktif birleşimdeki masayı boşaltmayı reddeder ve her durum değişikliği denetim kaydı bırakır; masa düzenleme dolu veya rezerveli masayı pasife almayı reddeder; bölge, masa ve kat planı yazmaları denetim kaydı bırakır; status_changed_at her durum geçişinde güncellenir; 40001 ve 40P01 çakışma olarak (409) döner.
+V1-RMD-601 bulguları B005 (S1, S3), B006, B007 (transfer, durum ve masa düzenleme), B021, B022 ve B024 kapanır. Birleşim ve transfer olayları taşınacak sipariş ve hesap kimliklerini taşır; tüketiciler yalnız o kimlikleri ve yalnız hâlâ beklenen masada duranları taşır; eski bir birleşim olayı yeniden teslim edilse de ayrılmış birleşimi geri kurmaz; transfer aktif birleşimdeki masayı reddeder; genel durum ucu açık siparişi veya hesabı olan ya da aktif birleşimdeki masayı boşaltmayı reddeder ve her durum değişikliği denetim kaydı bırakır; masa düzenleme dolu veya rezerveli masayı pasife almayı reddeder; bölge, masa ve kat planı yazmaları denetim kaydı bırakır; status_changed_at, durum değiştiren her yazım için veritabanı tetikleyicisiyle güncellenir; 40001 ve 40P01 çakışma olarak (409) döner.
 
 ## Owned surface
 
@@ -31,6 +31,10 @@ V1-RMD-601 bulguları B005 (S1, S3), B006, B007 (transfer, durum ve masa düzenl
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs - yalnız Tables ana makine kenarına Audit
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/architecture/module-dependency-rules.md - yalnız Tables ana makine kenarı satırı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-601-tables-quality-audit.md - yalnız Out of scope notu
+- `database/migrations/V1/V1-RMD-711/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json - yalnız yeni migration girdisi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs - yalnız PhaseBMax
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs - yalnız yeni migration kimliği
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope

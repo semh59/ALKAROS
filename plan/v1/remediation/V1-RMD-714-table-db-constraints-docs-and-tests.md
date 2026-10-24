@@ -35,6 +35,7 @@ V1-RMD-601 bulguları B023, B025, B027, B030, B031 (tekrar gönderim yanıtı), 
 
 - Mevcut migration dosyalarını değiştirmek.
 - V1-RMD-711 kapsamındaki olay yükü, transfer ve durum ucu düzeltmeleri.
+- status_changed_at için tetikleyici (V1-RMD-711).
 
 ## Dependencies
 
