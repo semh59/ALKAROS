@@ -1,8 +1,8 @@
 # V1-RMD-722 - Gönderilmiş kalem iptali ve ikramın atomikliği ve izi
 
 - Task ID: V1-RMD-722
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
 
