@@ -75,6 +75,37 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         return ReadRecord(reader);
     }
 
+    public async Task<IReadOnlyDictionary<Guid, TableReservationRecord>> GetActiveByTableIdsAsync(
+        IReadOnlyCollection<Guid> tableIds,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(tableIds);
+        var result = new Dictionary<Guid, TableReservationRecord>();
+        if (tableIds.Count == 0)
+            return result;
+
+        const string sql = $"""
+            SELECT table_reservation_id, table_id, order_id, actor_id, actor_type,
+                   status, reason, party_size, reserved_at, expires_at, released_at,
+                   released_by, release_reason, row_version
+            FROM {ReservationsTable}
+            WHERE table_id = ANY(@table_ids) AND status = 'Active';
+            """;
+
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var cmd = new NpgsqlCommand(sql, connection);
+        cmd.Parameters.AddWithValue("table_ids", tableIds.ToArray());
+
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+        {
+            var record = ReadRecord(reader);
+            result[record.TableId] = record;
+        }
+
+        return result;
+    }
+
     public async Task<TableReservationRecord?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default)
     {
         if (orderId == Guid.Empty)

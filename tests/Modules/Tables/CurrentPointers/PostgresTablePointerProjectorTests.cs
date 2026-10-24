@@ -226,6 +226,63 @@ public sealed class PostgresTablePointerProjectorTests : IClassFixture<TablePoin
     }
 
     [Fact]
+    public async Task AQrOrderHoldingTheTableReservedIsNotDriftAndRebuildLeavesItReserved()
+    {
+        var tableId = await CreateTableAsync("P-651", "Reserved", 1);
+        var qrOrderId = await CreateOrderAsync(tableId, "ORD-QR651", 0m, "PendingConfirmation");
+        await SetTablePointersAsync(tableId, qrOrderId, null);
+
+        var discrepancy = await _projector.DetectTableDriftAsync(tableId);
+
+        discrepancy!.HasDrift.Should().BeFalse();
+        discrepancy.ProjectedStatus.Should().Be("Reserved");
+        var result = await _projector.RebuildTablePointersAsync(tableId);
+        result.WasModified.Should().BeFalse();
+        (await GetTableAsync(tableId)).Status.Should().Be("Reserved");
+    }
+
+    [Fact]
+    public async Task ACheckSentToTheTillDoesNotKeepTheTableOccupied()
+    {
+        var tableId = await CreateTableAsync("P-661", "Available", 1);
+        var sentOrder = await CreateOrderAsync(tableId, "ORD-SENT661", 90m, "Submitted");
+        await CreateBillAsync(tableId, sentOrder, "BIL-SENT661", 90m, "Open");
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var mark = new NpgsqlCommand(
+            "INSERT INTO table_mgmt.table_sent_checks (order_id, table_id) VALUES (@order_id, @table_id);", connection))
+        {
+            mark.Parameters.AddWithValue("order_id", sentOrder);
+            mark.Parameters.AddWithValue("table_id", tableId);
+            await mark.ExecuteNonQueryAsync();
+        }
+
+        var discrepancy = await _projector.DetectTableDriftAsync(tableId);
+
+        discrepancy!.HasDrift.Should().BeFalse();
+        discrepancy.AuthoritativeOrderId.Should().BeNull();
+        discrepancy.AuthoritativeBillId.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task RepairFixesAGhostPointerButNeverFreesATableMarkedOccupiedByHand()
+    {
+        var ghostId = await CreateTableAsync("P-671", "Occupied", 1);
+        var doneOrder = await CreateOrderAsync(ghostId, "ORD-DONE671", 50m, "Completed");
+        await SetTablePointersAsync(ghostId, doneOrder, null);
+        var walkInId = await CreateTableAsync("P-672", "Occupied", 1);
+
+        var repaired = await _projector.RepairPointerDriftAsync();
+
+        repaired.Should().BeGreaterThanOrEqualTo(1);
+        var ghost = await GetTableAsync(ghostId);
+        ghost.CurrentOrderId.Should().BeNull();
+        ghost.Status.Should().Be("Available");
+        var walkIn = await GetTableAsync(walkInId);
+        walkIn.Status.Should().Be("Occupied");
+        walkIn.RowVersion.Should().Be(1);
+    }
+
+    [Fact]
     public async Task CleaningAndOutOfServiceStatesArePreservedWhenNoActiveOrders()
     {
         var cleaningTableId = await CreateTableAsync("P-701", "Cleaning", 1);

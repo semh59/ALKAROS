@@ -19,6 +19,8 @@ public sealed record TableMergeRequest(
             throw new ArgumentOutOfRangeException(nameof(ExpectedPrimaryRowVersion), "Expected primary row version must be positive.");
         if (Participants is null || Participants.Count == 0)
             throw new ArgumentException("Merge request must contain at least one participant table.", nameof(Participants));
+        if (Participants.Count > TableLimits.MaxMergeParticipants)
+            throw new ArgumentException($"Merge request cannot hold more than {TableLimits.MaxMergeParticipants} participant tables.", nameof(Participants));
 
         var seenIds = new HashSet<Guid> { PrimaryTableId };
         foreach (var participant in Participants)
@@ -33,8 +35,7 @@ public sealed record TableMergeRequest(
                 throw new DuplicateMergeParticipantException(participant.TableId);
         }
 
-        if (string.IsNullOrWhiteSpace(Reason))
-            throw new ArgumentException("Merge reason cannot be empty.", nameof(Reason));
+        TableLimits.RequireReason(Reason, "Merge reason", nameof(Reason));
         if (MergedBy == Guid.Empty)
             throw new ArgumentException("MergedBy user ID cannot be empty.", nameof(MergedBy));
     }
@@ -57,8 +58,7 @@ public sealed record TableUnmergeRequest(
             throw new ArgumentException("Merge group ID cannot be empty.", nameof(MergeGroupId));
         if (ExpectedPrimaryRowVersion <= 0)
             throw new ArgumentOutOfRangeException(nameof(ExpectedPrimaryRowVersion), "Expected primary row version must be positive.");
-        if (ExpectedParticipantVersions is null || ExpectedParticipantVersions.Count == 0)
-            throw new ArgumentException("Expected participant versions must contain at least one participant.", nameof(ExpectedParticipantVersions));
+        ArgumentNullException.ThrowIfNull(ExpectedParticipantVersions);
 
         foreach (var participant in ExpectedParticipantVersions)
         {
@@ -68,8 +68,7 @@ public sealed record TableUnmergeRequest(
                 throw new ArgumentOutOfRangeException(nameof(ExpectedParticipantVersions), "Participant expected row version must be positive.");
         }
 
-        if (string.IsNullOrWhiteSpace(Reason))
-            throw new ArgumentException("Unmerge reason cannot be empty.", nameof(Reason));
+        TableLimits.RequireReason(Reason, "Unmerge reason", nameof(Reason));
         if (UnmergedBy == Guid.Empty)
             throw new ArgumentException("UnmergedBy user ID cannot be empty.", nameof(UnmergedBy));
     }

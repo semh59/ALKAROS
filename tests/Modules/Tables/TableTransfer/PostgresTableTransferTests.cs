@@ -548,6 +548,25 @@ public sealed class PostgresTableTransferTests : IClassFixture<TableTransferTest
     }
 
     [Fact]
+    public async Task WithoutASourcePointerTheNewestOrderAndBillBecomeTheTargetPointers()
+    {
+        var sourceTableId = await CreateTableAsync("TR-501", "Occupied", 1);
+        var targetTableId = await CreateTableAsync("TR-502", "Available", 1);
+        var oldOrder = await CreateOrderAsync(sourceTableId, "ORD-TR51", 40m);
+        var oldBill = await CreateBillAsync(sourceTableId, oldOrder, "BIL-TR51", 40m, 0m, 0m, "Open");
+        await Task.Delay(20);
+        var newOrder = await CreateOrderAsync(sourceTableId, "ORD-TR52", 70m);
+        var newBill = await CreateBillAsync(sourceTableId, newOrder, "BIL-TR52", 70m, 0m, 0m, "Open");
+
+        await _service.TransferTableAsync(new TableTransferRequest(
+            sourceTableId, 1, targetTableId, 1, "Guest moved", _userId));
+
+        var target = await GetTableAsync(targetTableId);
+        target.CurrentOrderId.Should().Be(newOrder);
+        target.CurrentBillId.Should().Be(newBill);
+    }
+
+    [Fact]
     public async Task TwoTransfersRacingFromTheSameTableLetExactlyOneWin()
     {
         var sourceTableId = await CreateTableAsync("TR-401", "Occupied", 1);

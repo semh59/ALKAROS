@@ -22,8 +22,8 @@ public sealed class Table
     {
         if (string.IsNullOrWhiteSpace(tableNumber))
             throw new ArgumentException("Table number cannot be empty.", nameof(tableNumber));
-        if (capacity < 0)
-            throw new ArgumentException("Capacity cannot be negative.", nameof(capacity));
+        if (capacity is < 0 or > TableLimits.MaxCapacity)
+            throw new ArgumentException($"Capacity must be between 0 and {TableLimits.MaxCapacity}.", nameof(capacity));
 
         Id = id;
         TableNumber = tableNumber;

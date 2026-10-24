@@ -157,15 +157,15 @@ describe("floor plan workspace", () => {
       tables: [
         {
           tableId: "table-a",
-          expectedTableRowVersion: 7,
           expectedLayoutRowVersion: 2,
           x: 108,
           seats: [{ seatId: "seat-a", expectedRowVersion: 3, x: 108 }],
         },
-        { tableId: "table-b", expectedTableRowVersion: 2, expectedLayoutRowVersion: 1 },
+        { tableId: "table-b", expectedLayoutRowVersion: 1 },
       ],
     });
-    expect(document.body.textContent).toContain("Salon planı atomik olarak kaydedildi");
+    expect(onSave.mock.calls[0][1].tables[0]).not.toHaveProperty("expectedTableRowVersion");
+    expect(document.body.textContent).toContain("Salon planı kaydedildi");
   });
 
   it("keeps the edited draft and setup mode after a conflict", async () => {

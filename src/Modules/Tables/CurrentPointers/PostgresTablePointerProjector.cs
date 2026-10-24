@@ -15,6 +15,10 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
     private const string OrdersTable = "orders.orders";
     private const string BillsTable = "billing.bills";
 
+    // A check sent to the till stays off the table (same rule as transfer and merge).
+    private const string NotSentOrder = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = orders.orders.order_id)";
+    private const string NotSentBill = "AND NOT EXISTS (SELECT 1 FROM table_mgmt.table_sent_checks sc WHERE sc.order_id = billing.bills.order_id)";
+
     // Defensive ceiling for an unpaged read: a full-table drift scan must page
     // once the table catalog outgrows this. Hitting it is a signal to scan in
     // pages, not a limit to silently raise.
@@ -238,6 +242,20 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
             now);
     }
 
+    public async Task<int> RepairPointerDriftAsync(CancellationToken cancellationToken = default)
+    {
+        var repaired = 0;
+        foreach (var drift in await DetectAllDriftAsync(cancellationToken))
+        {
+            if ((drift.DriftTypes & ~TablePointerDriftType.StatusMismatch) == TablePointerDriftType.None)
+                continue;
+            if ((await RebuildTablePointersAsync(drift.TableId, cancellationToken)).WasModified)
+                repaired++;
+        }
+
+        return repaired;
+    }
+
     public async Task<TablePointerRebuildSummary> RebuildAllTablePointersAsync(
         CancellationToken cancellationToken = default)
     {
@@ -317,10 +335,11 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
 
         // 2. Discover authoritative open orders (Multi-Open Source policy: most recent by created_at DESC)
         var openOrderIds = new List<Guid>();
+        Guid? pendingQrOrderId = null;
         const string selectOrdersSql = $"""
-            SELECT order_id
+            SELECT order_id, status
             FROM {OrdersTable}
-            WHERE table_id = @table_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected')
+            WHERE table_id = @table_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected') {NotSentOrder}
             ORDER BY created_at DESC;
             """;
 
@@ -330,7 +349,10 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
             await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
             while (await reader.ReadAsync(cancellationToken))
             {
-                openOrderIds.Add(reader.GetGuid(0));
+                var orderId = reader.GetGuid(0);
+                openOrderIds.Add(orderId);
+                if (pendingQrOrderId is null && reader.GetString(1) == "PendingConfirmation")
+                    pendingQrOrderId = orderId;
             }
         }
 
@@ -339,7 +361,7 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
         const string selectBillsSql = $"""
             SELECT bill_id
             FROM {BillsTable}
-            WHERE table_id = @table_id AND status NOT IN ('Paid', 'Cancelled')
+            WHERE table_id = @table_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill}
             ORDER BY opened_at DESC, created_at DESC;
             """;
 
@@ -404,6 +426,13 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
         {
             projectedStatus = "Reserved";
             authOrderId = reservationOrderId ?? openOrderIds.FirstOrDefault();
+            authBillId = null;
+        }
+        else if (currentStatus == "Reserved" && pendingQrOrderId is not null)
+        {
+            // A QR order holds its table Reserved without a reservation row until the cashier confirms it.
+            projectedStatus = "Reserved";
+            authOrderId = pendingQrOrderId;
             authBillId = null;
         }
         else if (openOrderIds.Count > 0 || openBillIds.Count > 0)

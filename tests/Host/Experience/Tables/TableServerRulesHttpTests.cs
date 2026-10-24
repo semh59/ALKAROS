@@ -106,6 +106,46 @@ public sealed class TableServerRulesHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADuplicateTableNumberNamesTheRealCause()
+    {
+        var (client, app, terminalId, cookie) = await StartSessionAsync();
+        await using var _ = app;
+        using var __ = client;
+        var zone = await PostAsync<ZoneDto>(client, Prefix(terminalId) + "/zones", cookie, new CreateZoneRequest(0, "ZSR7", "Hall SR7"));
+        await CreateTableInZoneAsync(client, terminalId, cookie, zone, "S-71");
+
+        using var request = JsonRequest(HttpMethod.Post, Prefix(terminalId) + "/tables", cookie,
+            new CreateTableRequest(0, "S-71", zone.ZoneId, 4));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        var error = (await response.Content.ReadFromJsonAsync<TableManagementErrorEnvelope>())!.Error;
+        Assert.Equal("DUPLICATE_RESOURCE", error.Code);
+        Assert.Equal("Bu bölgede aynı numaralı bir masa zaten var.", error.Message);
+    }
+
+    [Fact]
+    public async Task AnUnmergeWithoutAnyParticipantVersionStillSplitsTheGroup()
+    {
+        var (client, app, terminalId, cookie) = await StartSessionAsync();
+        await using var _ = app;
+        using var __ = client;
+        var zone = await PostAsync<ZoneDto>(client, Prefix(terminalId) + "/zones", cookie, new CreateZoneRequest(0, "ZSR8", "Hall SR8"));
+        var primary = await CreateTableInZoneAsync(client, terminalId, cookie, zone, "S-81");
+        var joined = await CreateTableInZoneAsync(client, terminalId, cookie, zone, "S-82");
+        var merge = await PostAsync<TableMergeResult>(client, Prefix(terminalId) + "/merges", cookie,
+            new MergeTablesRequest(primary.TableId, primary.RowVersion, [new TableMergeParticipantRequest(joined.TableId, joined.RowVersion)], "Group"));
+
+        using var request = JsonRequest(HttpMethod.Post, $"{Prefix(terminalId)}/merges/{merge.MergeGroupId:D}/unmerge", cookie,
+            new { expectedPrimaryRowVersion = merge.NewPrimaryRowVersion, reason = "Split" });
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("Available", await _database.ScalarAsync<string>(
+            $"SELECT current_status FROM table_mgmt.tables WHERE table_id = '{joined.TableId:D}';"));
+    }
+
+    [Fact]
     public async Task AnOccupiedTableIsNotOfferedTheReserveCommand()
     {
         var (client, app, terminalId, cookie) = await StartSessionAsync();

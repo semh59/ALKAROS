@@ -77,9 +77,6 @@ public sealed partial class PostgresTableMergeRepository
 
         foreach (var mergeRecord in mergeRecords)
         {
-            if (!expectedVersionMap.TryGetValue(mergeRecord.MergedTableId, out var expectedVersion))
-                throw new ArgumentException($"Missing expected row version for participant table {mergeRecord.MergedTableId}.", nameof(request));
-
             const string selectPartSql = $"""
                 SELECT table_id, row_version
                 FROM {TablesTable}
@@ -93,8 +90,12 @@ public sealed partial class PostgresTableMergeRepository
             if (!await reader.ReadAsync(cancellationToken))
                 throw new TableNotFoundException(mergeRecord.MergedTableId, $"Participant table '{mergeRecord.MergedTableId}' not found.");
 
+            // A participant in another zone is not on the caller's floor plan; it is locked here, so its
+            // current version stands in for one that was not sent.
             var actualVersion = reader.GetInt64(1);
-            if (actualVersion != expectedVersion)
+            if (!expectedVersionMap.TryGetValue(mergeRecord.MergedTableId, out var expectedVersion))
+                expectedVersionMap[mergeRecord.MergedTableId] = actualVersion;
+            else if (actualVersion != expectedVersion)
                 throw new TableMergeConcurrencyException(mergeRecord.MergedTableId, expectedVersion, actualVersion);
         }
 

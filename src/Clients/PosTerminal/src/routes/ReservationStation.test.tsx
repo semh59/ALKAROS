@@ -43,6 +43,17 @@ describe("ReservationStation", () => {
     expect(document.body.textContent).toContain("Personel girişi");
   });
 
+  it("when the server cannot be reached, offers a retry instead of the login form", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => { throw new TypeError("Failed to fetch"); }));
+
+    await render(<ReservationStation />);
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("Sunucuya ulaşılamadı");
+    expect(document.body.textContent).not.toContain("Personel girişi");
+    expect([...document.querySelectorAll("button")].some((button) => button.textContent === "Tekrar dene")).toBe(true);
+  });
+
   it("with a session but the deployment has not turned the station on, shows the disabled message", async () => {
     vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
       const path = String(input);

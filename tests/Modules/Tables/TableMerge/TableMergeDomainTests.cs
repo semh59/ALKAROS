@@ -247,7 +247,7 @@ public sealed class TableMergeDomainTests
     }
 
     [Fact]
-    public void TableUnmergeRequestEmptyParticipantVersionsThrowsArgumentException()
+    public void TableUnmergeRequestMayOmitParticipantVersions()
     {
         var request = new TableUnmergeRequest(
             Guid.NewGuid(),
@@ -258,8 +258,7 @@ public sealed class TableMergeDomainTests
 
         var act = () => request.Validate();
 
-        act.Should().Throw<ArgumentException>()
-            .WithParameterName("ExpectedParticipantVersions");
+        act.Should().NotThrow();
     }
 
     [Fact]

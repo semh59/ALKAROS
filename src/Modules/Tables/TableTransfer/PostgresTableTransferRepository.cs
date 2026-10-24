@@ -261,7 +261,8 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
         const string selectBillsSql = $"""
             SELECT bill_id, status
             FROM {BillsTable}
-            WHERE table_id = @source_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill};
+            WHERE table_id = @source_id AND status NOT IN ('Paid', 'Cancelled') {NotSentBill}
+            ORDER BY opened_at DESC, created_at DESC;
             """;
 
         await using (var cmd = new NpgsqlCommand(selectBillsSql, connection, transaction))
@@ -283,7 +284,7 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             SELECT order_id
             FROM {OrdersTable}
             WHERE table_id = @source_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected') {NotSentOrder}
-            ORDER BY created_at ASC;
+            ORDER BY created_at DESC;
             """;
 
         await using (var cmd = new NpgsqlCommand(selectOrdersSql, connection, transaction))
@@ -312,7 +313,7 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
             transaction,
             cancellationToken);
 
-        // 7. Determine Target Table Primary Order & Bill Pointers
+        // 7. Determine Target Table Primary Order & Bill Pointers (newest first, the same pick as the pointer projector)
         var primaryOrderId = sourceCurrentOrderId ?? (activeOrderIds.Count > 0 ? activeOrderIds[0] : (Guid?)null);
         var primaryBillId = sourceCurrentBillId ?? (activeBillIds.Count > 0 ? activeBillIds[0] : (Guid?)null);
 

@@ -100,7 +100,6 @@ export interface SaveFloorPlanSeatInput {
 
 export interface SaveFloorPlanTableInput {
   tableId: string;
-  expectedTableRowVersion: number;
   expectedLayoutRowVersion: number;
   x: number;
   y: number;

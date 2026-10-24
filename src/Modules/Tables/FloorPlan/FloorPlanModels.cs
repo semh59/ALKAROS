@@ -61,7 +61,6 @@ public sealed record SaveFloorSeat(
 
 public sealed record SaveFloorTable(
     Guid TableId,
-    long ExpectedTableRowVersion,
     long ExpectedLayoutRowVersion,
     int X,
     int Y,

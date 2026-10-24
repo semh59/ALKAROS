@@ -57,7 +57,6 @@ public sealed class FloorPlanHttpTests : IAsyncLifetime
                 800,
                 [new SaveFloorTableRequest(
                     table.TableId,
-                    table.RowVersion,
                     0,
                     120,
                     100,
@@ -87,6 +86,7 @@ public sealed class FloorPlanHttpTests : IAsyncLifetime
             Assert.Equal(1, createdTable.LayoutRowVersion);
             Assert.Equal([seatId, secondSeatId], createdTable.Seats.Select(seat => seat.SeatId));
             Assert.Contains("Reserve", createdTable.AllowedCommands);
+            Assert.Contains("Merge", createdTable.AllowedCommands);
 
             using (var staleRequest = JsonRequest(HttpMethod.Put, FloorPath(terminalId, zone.ZoneId), cookie, createRequest))
             using (var stale = await client.SendAsync(staleRequest))
@@ -110,8 +110,9 @@ public sealed class FloorPlanHttpTests : IAsyncLifetime
                 table = (await tableUpdate.Content.ReadFromJsonAsync<TableDto>())!;
             }
 
-            using (var staleTableVersionRequest = JsonRequest(
-                HttpMethod.Put,
+            // A table row change (here the capacity edit above) does not make the layout stale.
+            var afterTableEdit = await PutAsync<SaveFloorPlanResponse>(
+                client,
                 FloorPath(terminalId, zone.ZoneId),
                 cookie,
                 createRequest with
@@ -121,14 +122,15 @@ public sealed class FloorPlanHttpTests : IAsyncLifetime
                     {
                         ExpectedLayoutRowVersion = createdTable.LayoutRowVersion,
                         X = 200,
+                        Seats = [
+                            createRequest.Tables[0].Seats[0] with { ExpectedRowVersion = createdTable.Seats[0].RowVersion },
+                            createRequest.Tables[0].Seats[1] with { ExpectedRowVersion = createdTable.Seats[1].RowVersion },
+                        ],
                     }],
-                }))
-            using (var staleTableVersion = await client.SendAsync(staleTableVersionRequest))
-            {
-                Assert.Equal(HttpStatusCode.Conflict, staleTableVersion.StatusCode);
-            }
-            Assert.Equal(120, await _database.ScalarAsync<int>(
+                });
+            Assert.Equal(200, await _database.ScalarAsync<int>(
                 $"SELECT x FROM table_mgmt.table_layouts WHERE table_id = '{table.TableId:D}';"));
+            createdTable = Assert.Single(afterTableEdit.FloorPlan.Tables);
 
             var updated = await PutAsync<SaveFloorPlanResponse>(
                 client,
@@ -136,10 +138,9 @@ public sealed class FloorPlanHttpTests : IAsyncLifetime
                 cookie,
                 createRequest with
                 {
-                    ExpectedRowVersion = created.FloorPlan.RowVersion,
+                    ExpectedRowVersion = afterTableEdit.FloorPlan.RowVersion,
                     Tables = [createRequest.Tables[0] with
                     {
-                        ExpectedTableRowVersion = table.RowVersion,
                         ExpectedLayoutRowVersion = createdTable.LayoutRowVersion,
                         X = 240,
                         Seats = [
@@ -158,9 +159,9 @@ public sealed class FloorPlanHttpTests : IAsyncLifetime
                         ],
                     }],
                 });
-            Assert.Equal(2, updated.FloorPlan.RowVersion);
-            Assert.Equal(2, updated.FloorPlan.Tables[0].LayoutRowVersion);
-            Assert.All(updated.FloorPlan.Tables[0].Seats, seat => Assert.Equal(2, seat.RowVersion));
+            Assert.Equal(3, updated.FloorPlan.RowVersion);
+            Assert.Equal(3, updated.FloorPlan.Tables[0].LayoutRowVersion);
+            Assert.All(updated.FloorPlan.Tables[0].Seats, seat => Assert.Equal(3, seat.RowVersion));
         }
 
         await using (var restartedApp = await StartAsync())
@@ -196,8 +197,8 @@ public sealed class FloorPlanHttpTests : IAsyncLifetime
             1_280,
             800,
             [
-                new SaveFloorTableRequest(primary.TableId, primary.RowVersion, 0, 100, 100, 160, 96, "Rectangle", 0, []),
-                new SaveFloorTableRequest(merged.TableId, merged.RowVersion, 0, 180, 120, 160, 96, "Rectangle", 0, []),
+                new SaveFloorTableRequest(primary.TableId, 0, 100, 100, 160, 96, "Rectangle", 0, []),
+                new SaveFloorTableRequest(merged.TableId, 0, 180, 120, 160, 96, "Rectangle", 0, []),
             ]);
 
         using (var overlapRequest = JsonRequest(HttpMethod.Put, FloorPath(terminalId, zone.ZoneId), cookie, request))

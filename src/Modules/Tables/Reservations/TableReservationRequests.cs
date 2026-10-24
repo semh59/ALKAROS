@@ -20,10 +20,9 @@ public sealed record CreateReservationRequest(
             throw new ArgumentException("Table ID cannot be empty.", nameof(TableId));
         if (ExpectedTableRowVersion <= 0)
             throw new ArgumentOutOfRangeException(nameof(ExpectedTableRowVersion), "Expected table row version must be positive.");
-        if (string.IsNullOrWhiteSpace(Reason))
-            throw new ArgumentException("Reservation reason cannot be empty.", nameof(Reason));
-        if (PartySize <= 0)
-            throw new ArgumentOutOfRangeException(nameof(PartySize), "Party size must be positive.");
+        TableLimits.RequireReason(Reason, "Reservation reason", nameof(Reason));
+        if (PartySize is <= 0 or > TableLimits.MaxPartySize)
+            throw new ArgumentOutOfRangeException(nameof(PartySize), $"Party size must be between 1 and {TableLimits.MaxPartySize}.");
         if (ExpiresAt.HasValue && ReservedAt.HasValue && ExpiresAt.Value <= ReservedAt.Value)
             throw new ArgumentException("ExpiresAt must be after ReservedAt.", nameof(ExpiresAt));
     }
@@ -70,8 +69,7 @@ public sealed record CancelReservationRequest(
             throw new ArgumentOutOfRangeException(nameof(ExpectedReservationRowVersion), "Expected reservation row version must be positive.");
         if (ExpectedTableRowVersion <= 0)
             throw new ArgumentOutOfRangeException(nameof(ExpectedTableRowVersion), "Expected table row version must be positive.");
-        if (string.IsNullOrWhiteSpace(Reason))
-            throw new ArgumentException("Cancellation reason cannot be empty.", nameof(Reason));
+        TableLimits.RequireReason(Reason, "Cancellation reason", nameof(Reason));
     }
 }
 
@@ -94,7 +92,6 @@ public sealed record ExpireReservationRequest(
             throw new ArgumentOutOfRangeException(nameof(ExpectedReservationRowVersion), "Expected reservation row version must be positive.");
         if (ExpectedTableRowVersion <= 0)
             throw new ArgumentOutOfRangeException(nameof(ExpectedTableRowVersion), "Expected table row version must be positive.");
-        if (string.IsNullOrWhiteSpace(Reason))
-            throw new ArgumentException("Expiry reason cannot be empty.", nameof(Reason));
+        TableLimits.RequireReason(Reason, "Expiry reason", nameof(Reason));
     }
 }

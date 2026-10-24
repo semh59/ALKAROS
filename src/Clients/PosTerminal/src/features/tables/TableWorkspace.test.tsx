@@ -4,7 +4,6 @@ import { act, type ComponentProps, type ReactElement } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import axe from "axe-core";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { ApiError } from "../../api";
 import { TableWorkspace, type TableRecord, type TableZone } from "./index";
 import { TableManagementApiError } from "./tableApi";
 

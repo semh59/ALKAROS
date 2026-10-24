@@ -81,8 +81,6 @@ public static class FloorPlanValidator
     {
         if (table.TableId == Guid.Empty)
             throw new FloorPlanValidationException("Table ID cannot be empty.");
-        if (table.ExpectedTableRowVersion <= 0)
-            throw new FloorPlanValidationException("Expected table row version must be positive.");
         if (table.ExpectedLayoutRowVersion < 0)
             throw new FloorPlanValidationException("Expected table-layout row version cannot be negative.");
         if (table.Width is < MinimumTableSize or > MaximumTableSize

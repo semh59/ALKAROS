@@ -49,6 +49,7 @@ public static class TableManagementApplication
         services.TryAddSingleton<ITableManagementSessionAuthorizer, TableManagementSessionAuthorizer>();
         services.TryAddTransient<TableManagementExceptionFilter>();
         services.AddHostedService<ReservationExpiryHostedService>();
+        services.AddHostedService<TablePointerRepairHostedService>();
         return services;
     }
 
@@ -138,10 +139,12 @@ public static class TableManagementApplication
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             var tables = await store.GetAllAsync(zoneId, cancellationToken);
+            var reservedIds = tables.Where(row => row.Table.State == TableState.Reserved).Select(row => row.Table.Id).ToArray();
+            var activeReservations = await reservations.GetActiveByTableIdsAsync(reservedIds, cancellationToken);
             var dtos = new List<TableDto>(tables.Count);
             foreach (var (table, currentOrderTotal, currentOrderOpenedAt, statusChangedAt) in tables)
             {
-                var activeReservation = await ActiveReservationOrNullAsync(table, reservations, cancellationToken);
+                activeReservations.TryGetValue(table.Id, out var activeReservation);
                 dtos.Add(TableContractMapper.ToDto(table, principal.Permissions, activeReservation, currentOrderTotal, currentOrderOpenedAt, statusChangedAt));
             }
             return Results.Ok(dtos);
@@ -409,7 +412,7 @@ public static class TableManagementApplication
             return Results.Ok(await service.UnmergeTablesAsync(new TableUnmergeRequest(
                 mergeGroupId,
                 TableContractMapper.RequiredVersion(request.ExpectedPrimaryRowVersion, nameof(request.ExpectedPrimaryRowVersion)),
-                TableContractMapper.ToParticipants(request.Participants, nameof(request.Participants)),
+                request.Participants is null ? [] : TableContractMapper.ToParticipants(request.Participants, nameof(request.Participants)),
                 request.Reason,
                 principal.UserId,
                 null), cancellationToken));
@@ -609,7 +612,13 @@ internal sealed class TableManagementExceptionFilter : IEndpointFilter
         PostgresException postgres when postgres.SqlState == PostgresErrorCodes.StringDataRightTruncation =>
             (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
         PostgresException postgres when postgres.SqlState == PostgresErrorCodes.UniqueViolation =>
-            (409, "DUPLICATE_RESOURCE", "Aynı kimlikte bir masa kaydı zaten var."),
+            (409, "DUPLICATE_RESOURCE", postgres.ConstraintName switch
+            {
+                "ux_tables_zone_number" => "Bu bölgede aynı numaralı bir masa zaten var.",
+                "ux_table_reservations_active_table" => "Bu masanın zaten aktif bir rezervasyonu var.",
+                "ux_table_merges_active_participant" => "Bu masa zaten bir birleşimde.",
+                _ => "Aynı kayıt zaten var.",
+            }),
         PostgresException postgres when postgres.SqlState == PostgresErrorCodes.ForeignKeyViolation =>
             (409, "RESOURCE_IN_USE", "Bağlı kayıtlar nedeniyle işlem tamamlanamadı."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),

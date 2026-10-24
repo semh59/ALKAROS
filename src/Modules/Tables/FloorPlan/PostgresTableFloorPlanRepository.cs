@@ -41,15 +41,10 @@ public sealed class PostgresTableFloorPlanRepository : ITableFloorPlanRepository
         RequireVersion("floor plan", request.ZoneId, request.ExpectedRowVersion, currentFloorVersion);
 
         var tables = await GetTablesAsync(connection, transaction, request.ZoneId, cancellationToken);
-        foreach (var table in request.Tables)
-        {
-            if (tables.TryGetValue(table.TableId, out var current))
-                RequireVersion("table", table.TableId, table.ExpectedTableRowVersion, current.RowVersion);
-        }
         var overlapPairs = await GetMergeOverlapPairsAsync(connection, transaction, request.ZoneId, cancellationToken);
         var warnings = FloorPlanValidator.Validate(
             request,
-            tables.ToDictionary(pair => pair.Key, pair => pair.Value.Capacity),
+            tables,
             (left, right) => overlapPairs.Contains(CanonicalPair(left, right)));
 
         var currentLayouts = await GetLayoutVersionsAsync(
@@ -134,21 +129,21 @@ public sealed class PostgresTableFloorPlanRepository : ITableFloorPlanRepository
         return value is null ? null : (long)value;
     }
 
-    private static async Task<Dictionary<Guid, (int Capacity, long RowVersion)>> GetTablesAsync(
+    private static async Task<Dictionary<Guid, int>> GetTablesAsync(
         NpgsqlConnection connection,
         NpgsqlTransaction transaction,
         Guid zoneId,
         CancellationToken cancellationToken)
     {
-        var result = new Dictionary<Guid, (int Capacity, long RowVersion)>();
+        var result = new Dictionary<Guid, int>();
         await using var command = new NpgsqlCommand(
-            "SELECT table_id, capacity, row_version FROM table_mgmt.tables WHERE zone_id = @zone_id ORDER BY table_id FOR UPDATE;",
+            "SELECT table_id, capacity FROM table_mgmt.tables WHERE zone_id = @zone_id ORDER BY table_id FOR UPDATE;",
             connection,
             transaction);
         command.Parameters.AddWithValue("zone_id", zoneId);
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
-            result.Add(reader.GetGuid(0), (reader.GetInt32(1), reader.GetInt64(2)));
+            result.Add(reader.GetGuid(0), reader.GetInt32(1));
         return result;
     }
 

@@ -24,8 +24,7 @@ public sealed record TableTransferRequest(
             throw new ArgumentOutOfRangeException(nameof(ExpectedSourceRowVersion), "Expected source row version must be positive.");
         if (ExpectedTargetRowVersion <= 0)
             throw new ArgumentOutOfRangeException(nameof(ExpectedTargetRowVersion), "Expected target row version must be positive.");
-        if (string.IsNullOrWhiteSpace(Reason))
-            throw new ArgumentException("Transfer reason cannot be empty.", nameof(Reason));
+        TableLimits.RequireReason(Reason, "Transfer reason", nameof(Reason));
         if (TransferredBy == Guid.Empty)
             throw new ArgumentException("TransferredBy user ID cannot be empty.", nameof(TransferredBy));
     }

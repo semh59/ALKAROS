@@ -37,6 +37,7 @@ V1-RMD-601 bulgusu B031 ve ertelenen olay kalemleri kapanır: tekrar gönderimde
 ## Out of scope
 
 - İşaretçi onarımı, kat planı sürüm kuralı, düşük bulgular (V1-RMD-716).
+- Birleşim ayırmada eksik katılımcı sürümü (V1-RMD-716 kapattı).
 
 ## Dependencies
 

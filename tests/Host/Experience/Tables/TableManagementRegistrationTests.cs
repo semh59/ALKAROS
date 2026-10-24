@@ -37,6 +37,7 @@ public sealed class TableManagementRegistrationTests
         Assert.NotNull(provider.GetRequiredService<ZoneConcurrencyStore>());
         Assert.NotNull(provider.GetRequiredService<TableManagementStore>());
         Assert.Single(provider.GetServices<IHostedService>().OfType<ReservationExpiryHostedService>());
+        Assert.Single(provider.GetServices<IHostedService>().OfType<TablePointerRepairHostedService>());
     }
 
     [Fact]

@@ -1,7 +1,7 @@
 # V1-RMD-716 - Masa işaretçisi, kat planı sürüm kuralı ve düşük bulgular
 
 - Task ID: V1-RMD-716
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
@@ -18,10 +18,14 @@ V1-RMD-601 bulguları B020 (sunucu kısmı), B025, B026 ve B033 kapanır: işare
 
 - `plan/v1/remediation/V1-RMD-716-table-pointer-idempotency-and-leftovers.md`
 - `evidence/V1-RMD-716/**`
+- `src/Modules/Tables/TableLimits.cs`
+- `src/Host/Experience/Tables/TablePointerRepairHostedService.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Tables/** - yalnız ilgili düzeltme
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Tables/** - yalnız ilgili düzeltme
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/tables/** - yalnız ilgili düzeltme
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/ReservationStation.tsx - yalnız iki aynı dal
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/ReservationStation.test.tsx - yalnız ulaşılamayan sunucu testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/data/projection-ownership.md - yalnız işaretçi onarımı satırı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Tables/** - yalnız yeni ve düzeltilen test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Tables/** - yalnız yeni ve düzeltilen test
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.

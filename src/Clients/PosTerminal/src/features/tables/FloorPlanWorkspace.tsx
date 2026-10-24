@@ -141,7 +141,6 @@ function toInput(plan: DraftPlan): SaveFloorPlanInput {
     canvasHeight: plan.canvasHeight,
     tables: plan.tables.map((table) => ({
       tableId: table.tableId,
-      expectedTableRowVersion: table.tableRowVersion,
       expectedLayoutRowVersion: table.layoutRowVersion,
       x: table.x,
       y: table.y,
@@ -247,7 +246,7 @@ export function FloorPlanWorkspace({
       setSaveState("success");
       setSaveMessage(result.warnings.length
         ? `Plan kaydedildi. ${result.warnings.map((warning) => warning.message).join(" ")}`
-        : "Salon planı atomik olarak kaydedildi.");
+        : "Salon planı kaydedildi.");
       setMode("operation");
     } catch (reason) {
       const message = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Salon planı kaydedilemedi.";

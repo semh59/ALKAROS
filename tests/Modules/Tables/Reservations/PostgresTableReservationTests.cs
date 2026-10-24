@@ -60,6 +60,26 @@ public sealed class PostgresTableReservationTests : IClassFixture<TableReservati
     public Task DisposeAsync() => Task.CompletedTask;
 
     [Fact]
+    public async Task ActiveReservationsOfSeveralTablesComeBackInOneLookup()
+    {
+        var first = await CreateTableAsync("R-901", "Available", 1);
+        var second = await CreateTableAsync("R-902", "Available", 1);
+        var untouched = await CreateTableAsync("R-903", "Available", 1);
+        var firstResult = await _service.CreateReservationAsync(new CreateReservationRequest(
+            first, 1, null, _userId, TableReservationActorType.User, "Birthday", 4, ExpiresAt: DateTimeOffset.UtcNow.AddHours(2)));
+        await _service.CreateReservationAsync(new CreateReservationRequest(
+            second, 1, null, _userId, TableReservationActorType.User, "Business lunch", 2, ExpiresAt: DateTimeOffset.UtcNow.AddHours(2)));
+        await _service.CancelReservationAsync(new CancelReservationRequest(
+            firstResult.ReservationId, firstResult.ReservationRowVersion, firstResult.NewTableRowVersion, _userId, "Guest called off"));
+
+        var active = await _repository.GetActiveByTableIdsAsync([first, second, untouched]);
+
+        active.Keys.Should().BeEquivalentTo([second]);
+        active[second].Reason.Should().Be("Business lunch");
+        (await _repository.GetActiveByTableIdsAsync([])).Should().BeEmpty();
+    }
+
+    [Fact]
     public async Task CreateReservationAndClaimExecutesCleanlyAndProjectsStatus()
     {
         // 1. Create table

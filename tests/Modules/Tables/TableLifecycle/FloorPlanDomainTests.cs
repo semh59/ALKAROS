@@ -50,7 +50,6 @@ public sealed class FloorPlanDomainTests
         var duplicateSeat = Guid.NewGuid();
         var invalid = new SaveFloorTable(
             tableId,
-            1,
             0,
             1_200,
             40,
@@ -76,7 +75,6 @@ public sealed class FloorPlanDomainTests
         var tableId = Guid.NewGuid();
         var request = Plan(new SaveFloorTable(
             tableId,
-            1,
             0,
             40,
             40,
@@ -101,7 +99,7 @@ public sealed class FloorPlanDomainTests
         int x,
         int y,
         IReadOnlyList<SaveFloorSeat>? seats = null)
-        => new(tableId, 1, 0, x, y, 120, 80, FloorTableShape.Rectangle, 0, seats ?? []);
+        => new(tableId, 0, x, y, 120, 80, FloorTableShape.Rectangle, 0, seats ?? []);
 
     private static SaveFloorSeat Seat(int number)
         => new(Guid.NewGuid(), 0, number, $"Seat {number}", 40 + number * 20, 30);

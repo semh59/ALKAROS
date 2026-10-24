@@ -26,6 +26,13 @@ public interface ITablePointerProjector
         CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Rebuilds only the tables whose order or bill pointer is missing, stale or ghost, and returns how many it changed.
+    /// A status mismatch alone is left alone: a table a waiter marked occupied before any order exists would
+    /// otherwise be freed under the guests.
+    /// </summary>
+    Task<int> RepairPointerDriftAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Scans and rebuilds pointer projections for all tables in the system transactionally.
     /// </summary>
     Task<TablePointerRebuildSummary> RebuildAllTablePointersAsync(

@@ -113,10 +113,9 @@ public sealed class TableGuardsHttpTests : IAsyncLifetime
         using (var response = await client.SendAsync(update))
             Assert.Equal(HttpStatusCode.OK, response.StatusCode);
 
-        var current = await GetTableRowVersionAsync(table.TableId);
         using (var save = JsonRequest(HttpMethod.Put, $"{Prefix(terminalId)}/floor-plans/{table.ZoneId:D}", cookie,
             new SaveFloorPlanRequest(0, 1_280, 800,
-                [new SaveFloorTableRequest(table.TableId, current, 0, 120, 100, 160, 96, "Rectangle", 0, [])])))
+                [new SaveFloorTableRequest(table.TableId, 0, 120, 100, 160, 96, "Rectangle", 0, [])])))
         using (var response = await client.SendAsync(save))
             Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
 
@@ -175,9 +174,6 @@ public sealed class TableGuardsHttpTests : IAsyncLifetime
         var zone = await PostAsync<ZoneDto>(client, Prefix(terminalId) + "/zones", cookie, new CreateZoneRequest(0, "Z" + number.Replace("-", ""), "Hall " + number));
         return await PostAsync<TableDto>(client, Prefix(terminalId) + "/tables", cookie, new CreateTableRequest(0, number, zone.ZoneId, 4));
     }
-
-    private async Task<long> GetTableRowVersionAsync(Guid tableId)
-        => await _database.ScalarAsync<long>($"SELECT row_version FROM table_mgmt.tables WHERE table_id = '{tableId:D}';");
 
     private async Task<string> StatusOfAsync(Guid tableId)
         => await _database.ScalarAsync<string>($"SELECT current_status FROM table_mgmt.tables WHERE table_id = '{tableId:D}';");

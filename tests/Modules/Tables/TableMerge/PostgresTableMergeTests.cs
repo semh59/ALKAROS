@@ -433,6 +433,61 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
     }
 
     [Fact]
+    public async Task FreeTablesPushedTogetherBeforeTheGuestsSitAreMergedAndSplitAgain()
+    {
+        var primaryId = await CreateTableAsync("F-101", "Available", 1);
+        var partId = await CreateTableAsync("F-102", "Available", 1);
+
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(partId, 1) }, "Large party expected", _userId));
+        await DrainTableEventsAsync();
+
+        (await GetTableAsync(primaryId)).Status.Should().Be("Occupied");
+        (await GetTableAsync(partId)).Status.Should().Be("Occupied");
+
+        await _service.UnmergeTablesAsync(new TableUnmergeRequest(
+            merge.MergeGroupId, 2, new[] { new TableMergeParticipant(partId, 2) }, "Party cancelled", _userId));
+        await DrainTableEventsAsync();
+
+        (await GetTableAsync(primaryId)).Status.Should().Be("Available");
+        (await GetTableAsync(partId)).Status.Should().Be("Available");
+    }
+
+    [Fact]
+    public async Task AnUnmergeNeedsNoVersionForAParticipantTheCallerCannotSee()
+    {
+        var primaryId = await CreateTableAsync("Z-101", "Occupied", 1);
+        var nearId = await CreateTableAsync("Z-102", "Occupied", 1);
+        var farId = await CreateTableAsync("Z-103", "Occupied", 1);
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(nearId, 1), new TableMergeParticipant(farId, 1) }, "Two zones", _userId));
+        await DrainTableEventsAsync();
+
+        await _service.UnmergeTablesAsync(new TableUnmergeRequest(
+            merge.MergeGroupId, 2, new[] { new TableMergeParticipant(nearId, 2) }, "Split again", _userId));
+        await DrainTableEventsAsync();
+
+        (await GetTableAsync(nearId)).Status.Should().Be("Available");
+        (await GetTableAsync(farId)).Status.Should().Be("Available");
+        (await _repository.GetByGroupIdAsync(merge.MergeGroupId)).Should().OnlyContain(record => !record.IsActive);
+    }
+
+    [Fact]
+    public async Task AParticipantVersionThatIsSentStillGuardsTheUnmerge()
+    {
+        var primaryId = await CreateTableAsync("Z-201", "Occupied", 1);
+        var nearId = await CreateTableAsync("Z-202", "Occupied", 1);
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(nearId, 1) }, "One zone", _userId));
+        await DrainTableEventsAsync();
+
+        var act = () => _service.UnmergeTablesAsync(new TableUnmergeRequest(
+            merge.MergeGroupId, 2, new[] { new TableMergeParticipant(nearId, 1) }, "Stale", _userId));
+
+        await act.Should().ThrowAsync<TableMergeConcurrencyException>();
+    }
+
+    [Fact]
     public async Task EveryOpenOrderAndBillOfAParticipantComesBackOnUnmerge()
     {
         var primaryId = await CreateTableAsync("L-101", "Occupied", 1);

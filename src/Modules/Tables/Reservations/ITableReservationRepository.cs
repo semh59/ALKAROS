@@ -16,6 +16,13 @@ public interface ITableReservationRepository
     Task<TableReservationRecord?> GetActiveByTableIdAsync(Guid tableId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    /// Retrieves the active reservations of several tables in one query, keyed by table.
+    /// </summary>
+    Task<IReadOnlyDictionary<Guid, TableReservationRecord>> GetActiveByTableIdsAsync(
+        IReadOnlyCollection<Guid> tableIds,
+        CancellationToken cancellationToken = default);
+
+    /// <summary>
     /// Retrieves a reservation associated with an order ID.
     /// </summary>
     Task<TableReservationRecord?> GetByOrderIdAsync(Guid orderId, CancellationToken cancellationToken = default);

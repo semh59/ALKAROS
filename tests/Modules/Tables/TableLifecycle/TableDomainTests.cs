@@ -157,4 +157,48 @@ public class ZoneDomainTests
         act.Should().Throw<ArgumentException>()
             .WithParameterName(nameof(name));
     }
+
+    [Fact]
+    public void TableCapacityAboveTheLimitIsRejected()
+    {
+        var act = () => new Table(Guid.NewGuid(), "5", null, TableLimits.MaxCapacity + 1);
+
+        act.Should().Throw<ArgumentException>().WithParameterName("capacity");
+        new Table(Guid.NewGuid(), "5", null, TableLimits.MaxCapacity).Capacity.Should().Be(TableLimits.MaxCapacity);
+    }
+
+    [Fact]
+    public void ACommandReasonLongerThanTheLimitIsRejectedByEveryRequest()
+    {
+        var longReason = new string('x', TableLimits.MaxReasonLength + 1);
+        var id = Guid.NewGuid();
+        var other = Guid.NewGuid();
+        var requests = new Action[]
+        {
+            () => new ALKAROS.Tables.TableTransfer.TableTransferRequest(id, 1, other, 1, longReason, id).Validate(),
+            () => new ALKAROS.Tables.TableMerge.TableMergeRequest(id, 1, [new ALKAROS.Tables.TableMerge.TableMergeParticipant(other, 1)], longReason, id).Validate(),
+            () => new ALKAROS.Tables.TableMerge.TableUnmergeRequest(id, 1, [], longReason, id).Validate(),
+            () => new ALKAROS.Tables.Reservations.CreateReservationRequest(id, 1, null, id, ALKAROS.Tables.Reservations.TableReservationActorType.User, longReason).Validate(),
+            () => new ALKAROS.Tables.Reservations.CancelReservationRequest(id, 1, 1, id, longReason).Validate(),
+            () => new ALKAROS.Tables.Reservations.ExpireReservationRequest(id, 1, 1, id, longReason).Validate(),
+        };
+
+        foreach (var request in requests)
+            request.Should().Throw<ArgumentException>().Which.ParamName.Should().Be("Reason");
+    }
+
+    [Fact]
+    public void APartySizeAndAMergeSizeAboveTheLimitAreRejected()
+    {
+        var id = Guid.NewGuid();
+        var party = () => new ALKAROS.Tables.Reservations.CreateReservationRequest(
+            id, 1, null, id, ALKAROS.Tables.Reservations.TableReservationActorType.User, "Birthday", TableLimits.MaxPartySize + 1).Validate();
+        var crowd = Enumerable.Range(0, TableLimits.MaxMergeParticipants + 1)
+            .Select(_ => new ALKAROS.Tables.TableMerge.TableMergeParticipant(Guid.NewGuid(), 1))
+            .ToList();
+        var merge = () => new ALKAROS.Tables.TableMerge.TableMergeRequest(id, 1, crowd, "Wedding", id).Validate();
+
+        party.Should().Throw<ArgumentOutOfRangeException>();
+        merge.Should().Throw<ArgumentException>().Which.ParamName.Should().Be("Participants");
+    }
 }

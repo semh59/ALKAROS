@@ -40,7 +40,6 @@ public sealed record SaveFloorPlanRequest(
 
 public sealed record SaveFloorTableRequest(
     Guid TableId,
-    long? ExpectedTableRowVersion,
     long? ExpectedLayoutRowVersion,
     int X,
     int Y,
@@ -284,7 +283,7 @@ internal static class TableContractMapper
             ? ["Update"]
             : table.State switch
             {
-                TableState.Available => ["Update", "SetOccupied", "Reserve", "SetOutOfService"],
+                TableState.Available => ["Update", "SetOccupied", "Reserve", "Merge", "SetOutOfService"],
                 TableState.Occupied => ["Update", "SetAvailable", "Transfer", "Merge"],
                 TableState.Reserved => ["Update", "SetAvailable", "ClaimReservation", "CancelReservation"],
                 TableState.Cleaning => ["Update", "SetAvailable"],
@@ -312,7 +311,6 @@ internal static class TableContractMapper
             request.CanvasHeight,
             tables.Select(table => new SaveFloorTable(
                 table.TableId,
-                RequiredVersion(table.ExpectedTableRowVersion, nameof(table.ExpectedTableRowVersion)),
                 RequiredVersionOrCreate(table.ExpectedLayoutRowVersion, nameof(table.ExpectedLayoutRowVersion)),
                 table.X,
                 table.Y,

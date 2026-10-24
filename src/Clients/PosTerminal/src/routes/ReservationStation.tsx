@@ -4,7 +4,7 @@ import { RouterProvider } from "../router";
 import { savedId } from "../storage";
 import { TableRoute } from "./workspace";
 
-type StationSession = "checking" | "anonymous" | "disabled" | "ready";
+type StationSession = "checking" | "anonymous" | "unreachable" | "disabled" | "ready";
 
 /**
  * V1-CUI-006: the dedicated Reservation Station screen — a lean `/reservations`
@@ -40,7 +40,7 @@ export function ReservationStation() {
       setDisplayName(sessionInfo.displayName);
       setSession(config.reservationStationEnabled ? "ready" : "disabled");
     } catch (reason) {
-      setSession(reason instanceof ApiError && reason.status === 401 ? "anonymous" : "anonymous");
+      setSession(reason instanceof ApiError && reason.status === 401 ? "anonymous" : "unreachable");
     }
   }, [terminalId]);
 
@@ -78,6 +78,21 @@ export function ReservationStation() {
 
   if (session === "checking") {
     return <main className="login-shell"><p>Oturum kontrol ediliyor…</p></main>;
+  }
+
+  if (session === "unreachable") {
+    return (
+      <main className="login-shell">
+        <section className="login-card">
+          <div className="login-card-heading">
+            <span>Rezervasyon istasyonu</span>
+            <h2>Sunucuya ulaşılamadı</h2>
+            <p>Bağlantı kurulamadı. Oturumunuz kapanmadı; bağlantıyı kontrol edip tekrar deneyin.</p>
+          </div>
+          <button data-telemetry-id="b.routes.reservationstation.3" className="primary login-submit" onClick={() => { setSession("checking"); void restoreSession(); }}>Tekrar dene</button>
+        </section>
+      </main>
+    );
   }
 
   if (session === "disabled") {
