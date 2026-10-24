@@ -1,0 +1,16 @@
+S1 KILLED restored=true reservation time taken from the client
+S2 KILLED restored=true claim time taken from the client
+S3 KILLED restored=true cancel time taken from the client
+S4 KILLED restored=true expire time taken from the client
+S5 KILLED restored=true transfer time taken from the client
+S6 KILLED restored=true merge time taken from the client
+S7 KILLED restored=true unmerge time taken from the client
+S8 KILLED restored=true create skips the order ownership check
+S9 KILLED restored=true claim skips the order ownership check
+S10 KILLED restored=true manual expiry works before the end time
+S11 KILLED restored=true sweep picks the not yet due reservations
+S12 KILLED restored=true an end time in the past is accepted
+S13 KILLED restored=true occupied table is offered Reserve
+S14 KILLED restored=true quick-sale anchor listed as a floor table
+S15 KILLED restored=true not-due refusal loses its code
+S16 KILLED restored=true expiry worker not registered

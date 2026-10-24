@@ -91,3 +91,16 @@ public sealed class TableReservationConcurrencyException : TableReservationExcep
     public long ExpectedVersion { get; }
     public long ActualVersion { get; }
 }
+
+/// <summary>Thrown when someone tries to expire a reservation whose end time has not come.</summary>
+public sealed class TableReservationNotDueException : TableReservationException
+{
+    public TableReservationNotDueException(Guid reservationId)
+        : base($"Reservation {reservationId} has no end time or it has not passed yet.")
+    {
+        ReservationId = reservationId;
+    }
+
+    public Guid ReservationId { get; }
+}
+

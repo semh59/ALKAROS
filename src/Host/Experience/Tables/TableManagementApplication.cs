@@ -48,6 +48,7 @@ public static class TableManagementApplication
         services.TryAddSingleton<TableManagementStore>();
         services.TryAddSingleton<ITableManagementSessionAuthorizer, TableManagementSessionAuthorizer>();
         services.TryAddTransient<TableManagementExceptionFilter>();
+        services.AddHostedService<ReservationExpiryHostedService>();
         return services;
     }
 
@@ -296,7 +297,7 @@ public static class TableManagementApplication
                 TableReservationActorType.User,
                 request.Reason,
                 request.PartySize,
-                request.ReservedAt,
+                null,
                 request.ExpiresAt), cancellationToken);
             return Results.Created($"{Prefix(terminalId)}/reservations/{result.ReservationId:D}", result);
         });
@@ -317,7 +318,7 @@ public static class TableManagementApplication
                 TableContractMapper.RequiredVersion(request.ExpectedTableRowVersion, nameof(request.ExpectedTableRowVersion)),
                 request.OrderId,
                 principal.UserId,
-                request.ClaimedAt), cancellationToken));
+                null), cancellationToken));
         });
 
         group.MapPost("/reservations/{reservationId:guid}/cancel", async (
@@ -336,7 +337,7 @@ public static class TableManagementApplication
                 TableContractMapper.RequiredVersion(request.ExpectedTableRowVersion, nameof(request.ExpectedTableRowVersion)),
                 principal.UserId,
                 request.Reason,
-                request.CancelledAt), cancellationToken));
+                null), cancellationToken));
         });
 
         group.MapPost("/reservations/{reservationId:guid}/expire", async (
@@ -355,7 +356,7 @@ public static class TableManagementApplication
                 TableContractMapper.RequiredVersion(request.ExpectedTableRowVersion, nameof(request.ExpectedTableRowVersion)),
                 principal.UserId,
                 request.Reason,
-                request.ExpiredAt), cancellationToken));
+                null), cancellationToken));
         });
 
         group.MapPost("/transfers", async (
@@ -374,7 +375,7 @@ public static class TableManagementApplication
                 TableContractMapper.RequiredVersion(request.ExpectedTargetRowVersion, nameof(request.ExpectedTargetRowVersion)),
                 request.Reason,
                 principal.UserId,
-                request.TransferredAt), cancellationToken));
+                null), cancellationToken));
         });
 
         group.MapPost("/merges", async (
@@ -392,7 +393,7 @@ public static class TableManagementApplication
                 TableContractMapper.ToParticipants(request.Participants, nameof(request.Participants)),
                 request.Reason,
                 principal.UserId,
-                request.MergedAt), cancellationToken));
+                null), cancellationToken));
         });
 
         group.MapPost("/merges/{mergeGroupId:guid}/unmerge", async (
@@ -411,7 +412,7 @@ public static class TableManagementApplication
                 TableContractMapper.ToParticipants(request.Participants, nameof(request.Participants)),
                 request.Reason,
                 principal.UserId,
-                request.UnmergedAt), cancellationToken));
+                null), cancellationToken));
         });
 
         return group;
@@ -591,6 +592,8 @@ internal sealed class TableManagementExceptionFilter : IEndpointFilter
         TableOperationBlockedException blocked => (409, blocked.Code, blocked.Message),
         ALKAROS.Tables.TableTransfer.TableInActiveMergeException =>
             (409, "TABLE_IN_MERGE", "Bu masa bir birleşimde. Önce birleşimi ayırın."),
+        ALKAROS.Tables.Reservations.TableReservationNotDueException =>
+            (409, "RESERVATION_NOT_DUE", "Rezervasyonun süresi henüz dolmadı."),
         TableManagementConflictException
             or SameTableTransferException
             or InvalidSourceTableStateException

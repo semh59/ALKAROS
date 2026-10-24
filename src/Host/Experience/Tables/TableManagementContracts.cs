@@ -285,7 +285,7 @@ internal static class TableContractMapper
             : table.State switch
             {
                 TableState.Available => ["Update", "SetOccupied", "Reserve", "SetOutOfService"],
-                TableState.Occupied => ["Update", "SetAvailable", "Reserve", "Transfer", "Merge"],
+                TableState.Occupied => ["Update", "SetAvailable", "Transfer", "Merge"],
                 TableState.Reserved => ["Update", "SetAvailable", "ClaimReservation", "CancelReservation"],
                 TableState.Cleaning => ["Update", "SetAvailable"],
                 TableState.OutOfService => ["Update", "SetAvailable", "SetCleaning"],

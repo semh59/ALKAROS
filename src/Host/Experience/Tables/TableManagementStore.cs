@@ -84,7 +84,8 @@ public sealed class TableManagementStore
                    t.current_order_id, t.current_bill_id, t.row_version, {CurrentOrderTotalSql}, {CurrentOrderOpenedAtSql},
                    t.status_changed_at
             FROM table_mgmt.tables t
-            WHERE @zone_id IS NULL OR t.zone_id = @zone_id
+            WHERE (@zone_id IS NULL OR t.zone_id = @zone_id)
+              AND t.table_id <> '00000000-0000-0000-0000-000000000001'
             ORDER BY t.table_number, t.table_id;
             """);
         command.Parameters.Add("zone_id", NpgsqlDbType.Uuid).Value = zoneId ?? (object)DBNull.Value;

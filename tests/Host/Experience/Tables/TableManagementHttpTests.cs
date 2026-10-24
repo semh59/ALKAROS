@@ -424,7 +424,14 @@ public sealed class TableManagementHttpTests : IAsyncLifetime
             client,
             Prefix(terminalId) + "/reservations",
             cookie,
-            new CreateTableReservationRequest(expireTable.TableId, expireTable.RowVersion, null, "Timed hold"));
+            new CreateTableReservationRequest(expireTable.TableId, expireTable.RowVersion, null, "Timed hold", 1, null, DateTimeOffset.UtcNow.AddHours(1)));
+        await using (var pastDue = _database.Source.CreateCommand(
+            "UPDATE table_mgmt.table_reservations SET reserved_at = now() - interval '2 hours', expires_at = now() - interval '1 hour' WHERE table_reservation_id = @id;"))
+        {
+            pastDue.Parameters.AddWithValue("id", expireReservation.ReservationId);
+            await pastDue.ExecuteNonQueryAsync();
+        }
+
         var expired = await PostAsync<TableReservationReleaseResult>(
             client,
             $"{Prefix(terminalId)}/reservations/{expireReservation.ReservationId:D}/expire",

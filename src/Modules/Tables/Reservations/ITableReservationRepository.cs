@@ -52,4 +52,9 @@ public interface ITableReservationRepository
     Task<TableReservationReleaseResult> ExpireReservationAsync(
         ExpireReservationRequest request,
         CancellationToken cancellationToken = default);
+
+    /// <summary>
+    /// Expires every active reservation whose end time has passed and frees its table. Returns how many were expired.
+    /// </summary>
+    Task<int> ExpireDueAsync(DateTimeOffset now, CancellationToken cancellationToken = default);
 }

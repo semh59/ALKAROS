@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Xunit;
 
@@ -35,6 +36,7 @@ public sealed class TableManagementRegistrationTests
         Assert.IsType<PostgresTablePointerProjector>(provider.GetRequiredService<ITablePointerProjector>());
         Assert.NotNull(provider.GetRequiredService<ZoneConcurrencyStore>());
         Assert.NotNull(provider.GetRequiredService<TableManagementStore>());
+        Assert.Single(provider.GetServices<IHostedService>().OfType<ReservationExpiryHostedService>());
     }
 
     [Fact]

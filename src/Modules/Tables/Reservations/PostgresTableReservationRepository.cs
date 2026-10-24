@@ -145,6 +145,8 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         request.Validate();
 
         var now = request.ReservedAt ?? DateTimeOffset.UtcNow;
+        if (request.ExpiresAt <= now)
+            throw new ArgumentException("ExpiresAt must be in the future.", nameof(request));
         var reservationId = Guid.NewGuid();
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
@@ -195,6 +197,8 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             if (existingResId is not null and not DBNull)
                 throw new TableNotAvailableForReservationException(request.TableId, "Reserved", "Table already has an active reservation.");
         }
+
+        await EnsureOrderBelongsToTableAsync(request.OrderId, request.TableId, connection, transaction, cancellationToken);
 
         // 3. Atomically transition Table from Available to Reserved
         long newTableRowVersion;
@@ -367,6 +371,8 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             if (tableRowVersion != request.ExpectedTableRowVersion)
                 throw new TableReservationConcurrencyException(tableId, "Table", request.ExpectedTableRowVersion, tableRowVersion);
         }
+
+        await EnsureOrderBelongsToTableAsync(request.OrderId, tableId, connection, transaction, cancellationToken);
 
         // 3. Update Reservation to Claimed
         long newResRowVersion;
@@ -629,7 +635,7 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
         long resRowVersion;
 
         const string selectResSql = $"""
-            SELECT table_id, status, row_version
+            SELECT table_id, status, row_version, expires_at
             FROM {ReservationsTable}
             WHERE table_reservation_id = @id
             FOR UPDATE;
@@ -648,6 +654,9 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
 
             if (resStatus != TableReservationStatus.Active)
                 throw new InvalidReservationStateException(request.ReservationId, resStatus, "Expire");
+
+            if (reader.IsDBNull(3) || reader.GetFieldValue<DateTimeOffset>(3) > now)
+                throw new TableReservationNotDueException(request.ReservationId);
 
             if (resRowVersion != request.ExpectedReservationRowVersion)
                 throw new TableReservationConcurrencyException(request.ReservationId, "Reservation", request.ExpectedReservationRowVersion, resRowVersion);
@@ -766,6 +775,62 @@ public sealed class PostgresTableReservationRepository : ITableReservationReposi
             TableReservationStatus.Expired,
             finalTableStatus,
             now);
+    }
+
+    public async Task<int> ExpireDueAsync(DateTimeOffset now, CancellationToken cancellationToken = default)
+    {
+        var due = new List<(Guid ReservationId, long ReservationVersion, long TableVersion)>();
+        await using (var connection = await _dataSource.OpenConnectionAsync(cancellationToken))
+        await using (var cmd = new NpgsqlCommand(
+            $"""
+            SELECT r.table_reservation_id, r.row_version, t.row_version
+            FROM {ReservationsTable} r
+            JOIN {TablesTable} t ON t.table_id = r.table_id
+            WHERE r.status = 'Active' AND r.expires_at <= @now
+            ORDER BY r.expires_at;
+            """, connection))
+        {
+            cmd.Parameters.AddWithValue("now", now);
+            await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+                due.Add((reader.GetGuid(0), reader.GetInt64(1), reader.GetInt64(2)));
+        }
+
+        var expired = 0;
+        foreach (var (reservationId, reservationVersion, tableVersion) in due)
+        {
+            try
+            {
+                await ExpireReservationAsync(
+                    new ExpireReservationRequest(reservationId, reservationVersion, tableVersion, null, "Reservation expired", now),
+                    cancellationToken);
+                expired++;
+            }
+            catch (TableReservationConcurrencyException)
+            {
+                // Someone changed the reservation or the table in between: the next sweep sees the new state.
+            }
+            catch (InvalidReservationStateException)
+            {
+                // Claimed or cancelled in between.
+            }
+        }
+
+        return expired;
+    }
+
+    private static async Task EnsureOrderBelongsToTableAsync(
+        Guid? orderId, Guid tableId, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    {
+        if (orderId is null)
+            return;
+
+        await using var cmd = new NpgsqlCommand(
+            "SELECT 1 FROM orders.orders WHERE order_id = @order_id AND table_id = @table_id;", connection, transaction);
+        cmd.Parameters.AddWithValue("order_id", orderId.Value);
+        cmd.Parameters.AddWithValue("table_id", tableId);
+        if (await cmd.ExecuteScalarAsync(cancellationToken) is null)
+            throw new ArgumentException("The order does not belong to the reserved table.", nameof(orderId));
     }
 
     private static TableReservationRecord ReadRecord(NpgsqlDataReader reader)

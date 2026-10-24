@@ -207,7 +207,9 @@ public sealed class PostgresTableReservationTests : IClassFixture<TableReservati
             ActorId: _userId,
             ActorType: TableReservationActorType.System,
             Reason: "QR pending confirmation hold",
-            PartySize: 2);
+            PartySize: 2,
+            ReservedAt: DateTimeOffset.UtcNow.AddHours(-2),
+            ExpiresAt: DateTimeOffset.UtcNow.AddHours(-1));
 
         var reserveResult = await _service.CreateReservationAsync(reserveRequest);
 
@@ -350,6 +352,78 @@ public sealed class PostgresTableReservationTests : IClassFixture<TableReservati
         var ex = await act.Should().ThrowAsync<InvalidReservationStateException>();
         ex.Which.ReservationId.Should().Be(reserveResult.ReservationId);
         ex.Which.ActualStatus.Should().Be(TableReservationStatus.Cancelled);
+    }
+
+    [Fact]
+    public async Task ExpireBeforeEndTimeOrWithoutEndTimeIsRefused()
+    {
+        var timedTable = await CreateTableAsync("R-801", "Available", 1);
+        var openTable = await CreateTableAsync("R-802", "Available", 1);
+        var timed = await _service.CreateReservationAsync(new CreateReservationRequest(
+            timedTable, 1, null, _userId, TableReservationActorType.User, "Timed", 2, ExpiresAt: DateTimeOffset.UtcNow.AddHours(1)));
+        var open = await _service.CreateReservationAsync(new CreateReservationRequest(
+            openTable, 1, null, _userId, TableReservationActorType.User, "No end time", 2));
+
+        var early = () => _service.ExpireReservationAsync(new ExpireReservationRequest(timed.ReservationId, timed.ReservationRowVersion, 2, null, "early"));
+        var noEnd = () => _service.ExpireReservationAsync(new ExpireReservationRequest(open.ReservationId, open.ReservationRowVersion, 2, null, "none"));
+
+        await early.Should().ThrowAsync<TableReservationNotDueException>();
+        await noEnd.Should().ThrowAsync<TableReservationNotDueException>();
+        (await GetTableAsync(timedTable)).Status.Should().Be("Reserved");
+    }
+
+    [Fact]
+    public async Task ExpireDueFreesOnlyOverdueReservationsWithAnEndTime()
+    {
+        var overdueTable = await CreateTableAsync("R-811", "Available", 1);
+        var futureTable = await CreateTableAsync("R-812", "Available", 1);
+        var openTable = await CreateTableAsync("R-813", "Available", 1);
+        var overdue = await _service.CreateReservationAsync(new CreateReservationRequest(
+            overdueTable, 1, null, _userId, TableReservationActorType.User, "Overdue", 2,
+            ReservedAt: DateTimeOffset.UtcNow.AddHours(-2), ExpiresAt: DateTimeOffset.UtcNow.AddHours(-1)));
+        await _service.CreateReservationAsync(new CreateReservationRequest(
+            futureTable, 1, null, _userId, TableReservationActorType.User, "Future", 2, ExpiresAt: DateTimeOffset.UtcNow.AddHours(1)));
+        await _service.CreateReservationAsync(new CreateReservationRequest(
+            openTable, 1, null, _userId, TableReservationActorType.User, "No end", 2));
+
+        var expired = await _repository.ExpireDueAsync(DateTimeOffset.UtcNow);
+
+        expired.Should().BeGreaterThanOrEqualTo(1);
+        (await GetTableAsync(overdueTable)).Status.Should().Be("Available");
+        (await GetTableAsync(futureTable)).Status.Should().Be("Reserved");
+        (await GetTableAsync(openTable)).Status.Should().Be("Reserved");
+        (await _repository.GetByIdAsync(overdue.ReservationId))!.Status.Should().Be(TableReservationStatus.Expired);
+        (await _repository.ExpireDueAsync(DateTimeOffset.UtcNow)).Should().Be(0);
+    }
+
+    [Fact]
+    public async Task CreateWithOrderOfAnotherTableIsRefused()
+    {
+        var tableId = await CreateTableAsync("R-821", "Available", 1);
+        var otherTable = await CreateTableAsync("R-822", "Occupied", 1);
+        var foreignOrder = await CreateOrderAsync(otherTable, "R-821-O", 10m);
+
+        var act = () => _service.CreateReservationAsync(new CreateReservationRequest(
+            tableId, 1, foreignOrder, _userId, TableReservationActorType.User, "Wrong order", 2));
+
+        await act.Should().ThrowAsync<ArgumentException>();
+        (await GetTableAsync(tableId)).Status.Should().Be("Available");
+    }
+
+    [Fact]
+    public async Task ClaimWithOrderOfAnotherTableIsRefused()
+    {
+        var tableId = await CreateTableAsync("R-831", "Available", 1);
+        var otherTable = await CreateTableAsync("R-832", "Occupied", 1);
+        var foreignOrder = await CreateOrderAsync(otherTable, "R-831-O", 10m);
+        var reserved = await _service.CreateReservationAsync(new CreateReservationRequest(
+            tableId, 1, null, _userId, TableReservationActorType.User, "To claim", 2));
+
+        var act = () => _service.ClaimReservationAsync(new ClaimReservationRequest(
+            reserved.ReservationId, reserved.ReservationRowVersion, 2, foreignOrder, _userId));
+
+        await act.Should().ThrowAsync<ArgumentException>();
+        (await GetTableAsync(tableId)).Status.Should().Be("Reserved");
     }
 
     // Helper methods for database assertions
