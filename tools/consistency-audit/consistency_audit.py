@@ -213,6 +213,21 @@ HOST_AREA_EXTRA_SCHEMAS = {
     "DualScreen": {"table_mgmt"},
 }
 
+# V1-RMD-724: the table_mgmt allowance above covers Tables' own `tables` row only
+# (pointers and the occupied/reserved status they imply). Any other table_mgmt
+# relation a Host store writes needs its own justified entry here:
+# (area, file name, relation).
+HOST_TABLE_MGMT_WRITE_EXCEPTIONS = {
+    # Settling an order on a merged table closes the merge record in the same
+    # transaction as the payment that freed the tables.
+    ("Experience/Orders", "OrderSettlementService.cs", "table_merges"),
+    # Sending a check to the till marks it in table_sent_checks, in the same transaction that detaches it from its table.
+    ("Experience/Orders", "CashierHandoffStore.cs", "table_sent_checks"),
+}
+
+_TABLE_MGMT_WRITE_RE = re.compile(
+    r"\b(?:UPDATE|INSERT\s+INTO|DELETE\s+FROM)\s+table_mgmt\.(\w+)", re.IGNORECASE)
+
 # The CLI/bootstrap entry point (provisioning, session revocation, migration
 # commands) is the composition root itself, not a per-request Experience
 # store — it legitimately touches several schemas for one-off admin
@@ -425,6 +440,16 @@ def audit() -> list[str]:
             text = path.read_text(encoding="utf-8")
             for number, _const_name, literal_schema, line in _find_write_targets(text):
                 schema = literal_schema
+                if schema == "table_mgmt" and schema in allowed_extra and schema != own_schema:
+                    relation = next(
+                        (m.group(1).lower() for m in _TABLE_MGMT_WRITE_RE.finditer(text)
+                         if text.count(chr(10), 0, m.start()) + 1 == number),
+                        "tables")
+                    if relation != "tables" and (area, path.name, relation) not in HOST_TABLE_MGMT_WRITE_EXCEPTIONS:
+                        violations.append(
+                            f"{_rel(path)}:{number}: Host area '{area}' writes table_mgmt.{relation}; only "
+                            f"table_mgmt.tables is allowed without an entry in HOST_TABLE_MGMT_WRITE_EXCEPTIONS: {line[:120]}")
+                    continue
                 if not schema or schema == "audit" or schema == own_schema or schema in allowed_extra:
                     continue
                 violations.append(

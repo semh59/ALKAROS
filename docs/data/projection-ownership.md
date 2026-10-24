@@ -18,7 +18,7 @@
 | KitchenStatus | KitchenTicket entity | TicketStateChanged event | Same tx | N/A (real-time) | Full rebuild from tickets |
 | MenuCounter | DailyMenu entity | MenuItemSold event | Same tx | Nightly count diff | Full rebuild from orders |
 | StockBalance | StockLedgerEntry | StockEntryPosted event | Same tx | Nightly sum vs ledger | Full rebuild from ledger |
-| BillTotal | Bill entity | BillLineChanged event | Same tx | N/A | Full rebuild from bill_order_items |
+| BillTotal | Bill entity | BillLineChanged event | Same tx | N/A | Full rebuild from bill_items |
 | PaymentTotal | Payment entity | PaymentStateChanged event | Same tx | N/A | Full rebuild from payments |
 | AccountBalance | AccountTransaction | TransactionPosted event | Same tx | Nightly sum vs transactions | Full rebuild from transactions |
 | SettlementStatus | MealCardSettlement | SettlementStateChanged event | Same tx | N/A | Full rebuild from settlements |

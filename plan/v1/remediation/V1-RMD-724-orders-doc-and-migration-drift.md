@@ -12,7 +12,7 @@
 
 ## Goal
 
-V1-RMD-602 bulguları B008, B022, B023, B030 ve B031 kapanır. Dokümanlar koda hizalanır (kanonik katalogda Nfc ve Held, sipariş numarası biçimi, OrderStateChanged, api-contract örneği, void politikası, Measurements, projection-ownership adı); 077 ve 105 down betikleri değerleri geri alırken çökmez; Host'un Tables durumuna ham SQL yazması denetim aracında gerekçeli dar istisnaya bağlanır; B031'in örneklenmemiş alt kalemleri (yaklaşık 35) kodla yeniden sayılır ve kapatılır.
+V1-RMD-602 bulguları B008, B022, B023, B030 ve B031 kapanır. Dokümanlar koda hizalanır (kanonik katalogda Nfc ve Held, sipariş numarası biçimi, OrderStateChanged, api-contract örneği, void politikası, Measurements, projection-ownership adı); 077 ve 105 down betikleri değerleri geri alırken çökmez; Host'un Tables durumuna ham SQL yazması denetim aracında gerekçeli dar istisnaya bağlanır; B031'in alt kalemleri tek tek sınıflanır: doküman ve runbook olanlar burada kapanır, kod gerektirenler V1-RMD-725'e taşınır.
 
 ## Owned surface
 
@@ -21,7 +21,9 @@ V1-RMD-602 bulguları B008, B022, B023, B030 ve B031 kapanır. Dokümanlar koda 
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/** - yalnız Orders ile ilgili sapmalar
 - `database/migrations/V1/V1-RMD-724/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tools/consistency-audit/consistency_audit.py - yalnız Tables durum yazımı istisnasının daraltılması
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/** - yalnız yeni test
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/** - yeni geri alma testi ve manifest listesine 206
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json - yalnız 206 girişi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs - yalnız PhaseBMax 206
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 
 ## In scope
@@ -46,4 +48,4 @@ V1-RMD-602 bulguları B008, B022, B023, B030 ve B031 kapanır. Dokümanlar koda 
 
 ## Handoff
 
-- V1-RMD-603
+- V1-RMD-725

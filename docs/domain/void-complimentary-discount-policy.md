@@ -158,3 +158,11 @@ Adjustment`.
 - **Not changed:** everything else in this document, including the
   `Preparing`/`Ready` void path's own existing Waste/bill-conversion
   behaviour and every rule not about stock.
+
+## Documentation alignment (V1-RMD-724, 2026-10-24)
+
+No decision changes here; this records what the code does today where the text above reads differently. Items marked PO are open questions for the Product Owner.
+
+- **Void authority table (line 31):** a not-yet-sent (`NotSent`) line is removed with `orders.create`, the permission the waiter already has to build the order; the `bills.void` grant applies to a line already sent to the kitchen (2026-09-04 amendment). PO: whether removing an unsent line should also need a manager.
+- **Stock reversal (2026-09-09 amendment):** a submitted line becomes `Sent` whether or not kitchen live-sync is on, so the reversal applies to `Sent` and also to `Held` lines (V1-RMD-318: a later course never reached the kitchen's cooking). The live-sync toggle only controls whether the kitchen reports `Preparing`/`Ready` back.
+- **Audit store:** the reason of a void or comp is kept in `orders.order_status_history.reason`; a sent-item void also writes its audit event in the same transaction as the change (V1-RMD-722).

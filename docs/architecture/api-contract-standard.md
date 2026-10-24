@@ -96,6 +96,11 @@
 
 ## Example contract 1 — `POST /api/v1/orders`
 
+> Illustrative shape of the standard. The live waiter/cashier flow is two calls,
+> `POST /api/v1/terminals/{terminalId}/orders/table-draft` then `.../orders/{orderId}/submit-draft`;
+> idempotency travels in the request body (`id` / `operationId`, `IdempotencyKey` for void and comp), not in a header,
+> and a row-version race answers `409 CONCURRENCY_CONFLICT`.
+
 Request:
 
 ```http

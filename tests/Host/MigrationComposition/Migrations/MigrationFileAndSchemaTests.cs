@@ -157,7 +157,9 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         Assert.Equal(1L, await ScalarAsync<long>(source, columnCount));
         Assert.Equal(1L, await ScalarAsync<long>(source, constraintCount));
 
-        Rollback(OrderPath(), MigrationsPath(), "202");
+        // A migration can only be rolled back once every later one is, so unwind from the newest down to 202.
+        foreach (var id in new[] { "206", "205", "204", "203", "202" })
+            Rollback(OrderPath(), MigrationsPath(), id);
         Assert.Equal(0L, await ScalarAsync<long>(source, columnCount));
         Assert.Equal(0L, await ScalarAsync<long>(source, constraintCount));
 

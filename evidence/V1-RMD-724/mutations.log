@@ -1,0 +1,6 @@
+M1-nfc-rows-not-remapped KILLED restored=true
+M2-held-rows-not-remapped KILLED restored=true
+M3-sent-checks-exception-removed KILLED restored=true
+M4-merges-exception-removed KILLED restored=true
+M5-tables-write-flagged KILLED restored=true
+DONE

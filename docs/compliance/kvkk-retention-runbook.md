@@ -81,6 +81,14 @@ such as a username), so the highest-risk data is not stored in the first place.
 The financial columns of orders and bills are **not** touched — the row stays a
 complete financial record, only the free-text / identifying fields are scrubbed.
 
+## Known gap: void and comp reasons
+
+The reason (and optional note) of a void or complimentary item is stored in
+`orders.order_status_history.reason`. The retention job does not scrub that column
+(V1-RMD-724, found by the V1-RMD-602 audit); the reason can carry a free-text
+note, which is the exposure. Scrubbing it is a
+production change tracked separately, not done by documentation.
+
 ## What it never touches (legal retention)
 
 Per the `V0-CMP-003` disposal column, these are **retain (legal)** and are out

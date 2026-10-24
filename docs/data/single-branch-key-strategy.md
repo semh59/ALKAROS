@@ -15,7 +15,7 @@
 | ------- | ------------- | ------------- | -------- |
 | stores | UUID | store_code | `STR-{n}` |
 | users | UUID | username | alphanumeric |
-| orders | UUID | order_number | `ORD-{yyMMddHHmm}-{seq}` |
+| orders | UUID | order_number | per channel: `TBL-{table}-{HHmmssff}-{id8}` (waiter/cashier), `NFC-{table}-{HHmmssff}-{id8}`, `QR-{table6}-{submission8}`; `orders_order_number_key` rejects a collision |
 | bills | UUID | bill_number | `BIL-{yyMMdd}-{seq}` |
 | payments | UUID | payment_ref | provider reference |
 | fiscal_documents | UUID | document_number | fiscal device assigned |

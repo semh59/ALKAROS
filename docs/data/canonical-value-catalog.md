@@ -59,9 +59,9 @@ enumerated list (C7 closed):
 
 | Field | Canonical values | Source |
 | --- | --- | --- |
-| `orders.source` | `Cashier, Waiter, Qr, Online` | III.6.1 |
+| `orders.source` | `Cashier, Waiter, Qr, Online, Nfc` — `Nfc` added by V12-NFC-001 (migration 077) | III.6.1 |
 | `order_items.status` | `Draft, Active, Cancelled, Waste, Complimentary` | III.6.2 |
-| `order_items.kitchen_state` | `NotSent, Sent, Preparing, Ready, Served, Cancelled` | III.6.2 |
+| `order_items.kitchen_state` | `NotSent, Held, Sent, Preparing, Ready, Served, Cancelled` — `Held` added by V1-WTR-025 (migration 105): a later course fired with the round but not yet called in | III.6.2 |
 | `order_items.portion_reservation_status` | `NotApplicable, NotReserved, Reserved, Released, Consumed, Waste` | III.6.2 (CORR:C2) |
 | `bill_items.line_type` | `Sale, Discount, Complimentary, Refund, Waste, Adjustment` | III.7.2 |
 | `payments.payment_method` | `Cash, BankCard, MealCard, CustomerAccount` — `SplitPayment` is not a member (III.8.1, I.26, II.5.3) | III.8.1 |

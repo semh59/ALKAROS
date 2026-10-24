@@ -69,7 +69,7 @@ Layer 2 (FK to Layer 1):
 Layer 3 (FK to Layer 1-2):
   ┌─────────────────────────────┐
   │ bills                       │
-  │ bill_order_items            │
+  │ bill_items                  │
   │ payments                    │
   │ payment_allocations         │
   │ fiscal_documents            │
@@ -147,7 +147,7 @@ ALTER TABLE invoices ADD COLUMN fiscal_document_id UUID REFERENCES fiscal_docume
 7. recipes, recipe_items
 8. daily_menus, menu_items
 9. purchase_orders, purchase_order_items
-10. bills, bill_order_items
+10. bills, bill_items
 11. payments, payment_allocations
 12. fiscal_documents (without invoice FK)
 13. kitchen_tickets, kitchen_ticket_items

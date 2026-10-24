@@ -72,6 +72,13 @@ izler: masa `Reserved` olur (`Occupied` değil), sipariş `PendingConfirmation`
 kuyruğuna düşer — NFC'nin normal "doğrudan kabul" kısayolu bu tek istisnada
 devre dışı kalır.
 
+**Kodla hizalama (V1-RMD-724, 2026-10-24; karar değişikliği yok):** yaş kısıtlı bir
+NFC sepetinde mutfak fişi ve stok düşümü onaydan önce gider (2026-09-09 kararı:
+mutfak beklemesin); garson reddederse ya da süre dolarsa sipariş reddedilir. Süre
+dolumu yalnız mutfak henüz hiçbir kalemi başlatmamışsa uygulanır (başlamışsa
+garsona bırakılır). "Her zaman garson onayına düşer" cümlesi bu yüzden yalnız
+siparişin durumu için doğrudur, mutfak fişi için değildir.
+
 ## 5. Onay zaman aşımı — ayarlanabilir, sabit kod değil
 
 - Varsayılan: **5 dakika** (15 dakika çok uzun bulundu — hem garsonun normal
