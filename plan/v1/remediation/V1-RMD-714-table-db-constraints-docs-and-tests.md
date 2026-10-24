@@ -12,7 +12,7 @@
 
 ## Goal
 
-V1-RMD-601 bulguları B023, B027, B031 (tekrar gönderim yanıtı), B032 ve B033 kapanır. Aktif birleşim ve aktif rezervasyon için kısmi benzersiz indeksler eklenir; eşzamanlılık, tekrar teslim ve kısmen ödenmiş birleşim testleri eklenir; yaşam döngüsü, projeksiyon, nullable-unique, rezervasyon politikası ve bağımlılık dokümanları koda göre düzeltilir; Tables'ın ham audit INSERT'leri `IAuditEventStore` üzerinden yazılır, modül DI kaydı modüle taşınır ve Payments okuması dokümana yazılır (V1-RMD-601 S4, S5, S6, S7).
+V1-RMD-601 bulguları B023, B025, B027, B030, B031 (tekrar gönderim yanıtı), B032 ve B033 kapanır. Aktif birleşim ve aktif rezervasyon için kısmi benzersiz indeksler eklenir; eşzamanlılık, tekrar teslim ve kısmen ödenmiş birleşim testleri eklenir; yaşam döngüsü, projeksiyon, nullable-unique, rezervasyon politikası ve bağımlılık dokümanları koda göre düzeltilir; Tables'ın ham audit INSERT'leri `IAuditEventStore` üzerinden yazılır, modül DI kaydı modüle taşınır ve Payments okuması dokümana yazılır; ölü masa olayı için uyarı ve işaretçi onarım işi, kasaya gönderilmiş siparişin masadan ayrılması ve olay kimliği tekilleştirmesi ele alınır (V1-RMD-601 S2, S4, S5, S6, S7).
 
 ## Owned surface
 
