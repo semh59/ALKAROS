@@ -1,7 +1,7 @@
 # V1-RMD-726 - Sıfır tutarlı hesap kapanışı ve yüzde yüz indirim (603 B001)
 
 - Task ID: V1-RMD-726
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01XYCVWVTbShZKMmSzdAGR6K
 - Work type: implementation
 - Surface state: Planned
