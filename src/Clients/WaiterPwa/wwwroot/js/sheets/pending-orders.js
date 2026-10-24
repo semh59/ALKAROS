@@ -32,6 +32,9 @@ export function renderPendingBanner() {
   measureChrome();
 }
 
+// A guest order is thrown away by Reddet, so the first tap only asks and the second tap on the same order rejects.
+let armedRejectId = null;
+
 export function openPendingSheet() {
   if (state.pending.length === 0) return;
   const body = state.pending.map((order) => `
@@ -45,7 +48,7 @@ export function openPendingSheet() {
       </div>
       <div class="line-side">
         <button type="button" class="btn btn-send btn-compact" data-accept="${escapeHtml(order.orderId)}">Onayla</button>
-        <button type="button" class="btn-void" data-reject="${escapeHtml(order.orderId)}">Reddet</button>
+        <button type="button" class="btn-void" data-reject="${escapeHtml(order.orderId)}">${armedRejectId === order.orderId ? 'Reddedilsin mi? Evet' : 'Reddet'}</button>
       </div>
     </div>`).join('');
   openOptions('pending', 'Misafir siparişi', 'QR ile verilen siparişler onayınızı bekliyor', body, '', '', '');
@@ -56,6 +59,12 @@ export function openPendingSheet() {
 // the call, re-enabling them only on failure - success already
 // re-renders the sheet (or closes it), which throws these nodes away.
 export async function resolvePendingGuarded(button, orderId, accept) {
+  if (!accept && armedRejectId !== orderId) {
+    armedRejectId = orderId;
+    openPendingSheet();
+    return;
+  }
+  armedRejectId = null;
   const line = button.closest('.line-side') || button.parentElement;
   const pair = line ? line.querySelectorAll('[data-accept], [data-reject]') : [button];
   pair.forEach((candidate) => { candidate.disabled = true; });

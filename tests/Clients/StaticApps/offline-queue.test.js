@@ -101,9 +101,51 @@ describe("sortQueueByPriority", () => {
 });
 
 describe("what the device keeps when the server does not take an answer", () => {
-  it("keeps a round on a session, lock, timeout, conflict or rate-limit answer, and drops it on a real rejection", () => {
-    for (const status of [401, 403, 408, 409, 423, 429]) expect(isTransientOrderStatus(status)).toBe(true);
+  it("keeps a round on a session, lock, timeout, row-version race or rate-limit answer, and drops it on a real rejection", () => {
+    for (const status of [401, 403, 408, 423, 429]) expect(isTransientOrderStatus(status)).toBe(true);
+    expect(isTransientOrderStatus(409, "CONCURRENCY_CONFLICT")).toBe(true);
+    for (const code of ["INSUFFICIENT_STOCK", "PRODUCT_STOCK_NOT_CONFIGURED", "TABLE_CHECK_ALREADY_OPEN", "TABLE_LIMIT_REACHED", "DUPLICATE_RESOURCE", "IDEMPOTENCY_KEY_REUSED", undefined]) {
+      expect(isTransientOrderStatus(409, code)).toBe(false);
+    }
     for (const status of [400, 404, 422]) expect(isTransientOrderStatus(status)).toBe(false);
+  });
+
+  async function flushWith(answers) {
+    state.terminalId = "t1";
+    state.isOnline = true;
+    state.user = { userId: "w1" };
+    state.failedOrders = [];
+    state.offlineQueue = answers.map((answer, index) => ({ id: `round-${index}`, ownerUserId: "w1", tableNumber: index + 1, items: [], queuedAt: `2026-09-15T10:00:0${index}.000Z`, answer }));
+    const sent = [];
+    vi.stubGlobal("fetch", vi.fn((url, config) => {
+      if (!config || !config.body || String(url).includes("submit-draft")) return Promise.resolve(new Response("{}", { status: 200 }));
+      const body = JSON.parse(config.body);
+      sent.push(body.id);
+      const answer = answers[Number(body.id.split("-")[1])];
+      return Promise.resolve(new Response(JSON.stringify(answer.body ?? {}), { status: answer.status }));
+    }));
+    try {
+      await flushQueue();
+    } finally {
+      vi.unstubAllGlobals();
+    }
+    const result = { sent, queued: state.offlineQueue.map((round) => round.id), failed: state.failedOrders.map((round) => round.id) };
+    state.offlineQueue = [];
+    state.failedOrders = [];
+    state.user = null;
+    return result;
+  }
+
+  it("moves a round the server will never take to the failed list and still sends the rounds behind it", async () => {
+    const stock = { status: 409, body: { error: { code: "INSUFFICIENT_STOCK", message: "Stok yetersiz." } } };
+    const result = await flushWith([stock, { status: 200 }]);
+    expect(result).toEqual({ sent: ["round-0", "round-1"], queued: [], failed: ["round-0"] });
+  });
+
+  it("keeps a round that lost a row-version race and stops, so the order of rounds is kept", async () => {
+    const race = { status: 409, body: { error: { code: "CONCURRENCY_CONFLICT", message: "Çakışma." } } };
+    const result = await flushWith([race, { status: 200 }]);
+    expect(result).toEqual({ sent: ["round-0"], queued: ["round-0", "round-1"], failed: [] });
   });
 
   it("treats a network failure, an expired session, a busy server and any 5xx as retryable for offline actions", () => {

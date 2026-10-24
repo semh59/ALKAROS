@@ -129,7 +129,7 @@ function ownQueue() {
   return state.offlineQueue.filter((payload) => isQueuedFor(payload, userId));
 }
 
-function queueOrder(payload) {
+export function queueOrder(payload) {
   const ownerUserId = state.user && state.user.userId;
   state.offlineQueue.push(Object.assign({}, payload, { queuedAt: new Date().toISOString(), ownerUserId }));
   persistQueue();
@@ -214,10 +214,13 @@ export function scheduleQueueRetry() {
   }, queueRetryDelay);
 }
 
-// A round that met one of these answers is kept: the session, a lock or a conflict can clear while the device waits, and
-// moving the round to the rejected list would end its life for a reason that is not the round's fault.
-export function isTransientOrderStatus(status) {
-  return status === 401 || status === 403 || status === 408 || status === 409 || status === 423 || status === 429;
+// A round that met one of these answers is kept: the session, a lock or a busy server can clear while the device waits,
+// and moving the round to the rejected list would end its life for a reason that is not the round's fault. A 409 is
+// only a row-version race when the server says so; every other 409 (no stock, table already has a check, reused key)
+// is a final answer about this round and must not hold back the rounds queued behind it.
+export function isTransientOrderStatus(status, errorCode) {
+  if (status === 409) return errorCode === 'CONCURRENCY_CONFLICT';
+  return status === 401 || status === 403 || status === 408 || status === 423 || status === 429;
 }
 
 // Offline authority actions are kept for the next attempt on a network failure, an expired session or a busy/failing
@@ -248,7 +251,7 @@ export async function flushQueue() {
         state.offlineQueue = state.offlineQueue.filter((queued) => queued.id !== payload.id);
         // A success means the server is back; drop the backoff.
         queueRetryDelay = QUEUE_RETRY_MIN_MS;
-      } else if (isTransientOrderStatus(result.status)) {
+      } else if (isTransientOrderStatus(result.status, result.data && result.data.error && result.data.error.code)) {
         // Retryable (rate limit, session, lock, conflict): filing it as
         // permanently failed would destroy the round.
         break;

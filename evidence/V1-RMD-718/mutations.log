@@ -1,0 +1,7 @@
+M1-409-always-transient KILLED restored=true
+M2-conflict-not-kept KILLED restored=true
+M3-code-ignored KILLED restored=true
+M4-delete-without-arming KILLED restored=true
+M5-retry-keeps-failed KILLED restored=true
+M6-retry-keeps-error KILLED restored=true
+M7-reject-without-arming KILLED restored=true

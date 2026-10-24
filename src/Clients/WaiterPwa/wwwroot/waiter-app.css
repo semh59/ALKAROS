@@ -207,7 +207,7 @@ input {
    color, well under --target-min. */
 .ribbon .queue {
   margin-left: auto;
-  min-height: 28px;
+  min-height: var(--target-min);
   padding: 2px var(--space-2);
   border: 1.5px solid currentColor;
   border-radius: var(--radius-sm);

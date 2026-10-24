@@ -10,7 +10,7 @@ import { state, el } from '../state.js';
 import { escapeHtml, formatQuantity } from '../util.js';
 import { openOptions, closeOptions } from '../options-sheet.js';
 import { toast } from '../toast.js';
-import { persistQueue } from '../offline-queue.js';
+import { persistQueue, queueOrder } from '../offline-queue.js';
 
 // V1-RMD-171: found by the 2026-09-10 Garson audit — the ribbon's own
 // "N hatalı" count was the whole story: no table, no content, and no
@@ -41,13 +41,34 @@ export function openFailedOrdersSheet() {
   el.optionsConfirm.hidden = failed.length === 0;
 }
 
+// A rejected round holds what the waiter typed, so the first tap only asks; the second tap on the same row deletes.
+let armedFailedId = null;
+
 export function dismissFailedOrder(payloadId) {
+  if (armedFailedId !== payloadId) {
+    armedFailedId = payloadId;
+    openFailedOrdersSheet();
+    return;
+  }
+  armedFailedId = null;
   state.failedOrders = state.failedOrders.filter((payload) => payload.id !== payloadId);
   persistQueue();
   openFailedOrdersSheet();
 }
 
+export function retryFailedOrder(payloadId) {
+  const payload = state.failedOrders.find((candidate) => candidate.id === payloadId);
+  if (!payload) return;
+  armedFailedId = null;
+  state.failedOrders = state.failedOrders.filter((candidate) => candidate.id !== payloadId);
+  const { rejectedAt, error, ...round } = payload;
+  queueOrder(round);
+  openFailedOrdersSheet();
+  toast(`${payload.tableNumber || '?'} siparişi yeniden gönderilecek.`);
+}
+
 export function clearAllFailedOrders() {
+  armedFailedId = null;
   state.failedOrders = [];
   persistQueue();
   closeOptions();
@@ -68,7 +89,8 @@ function queuedOrderRow(payload, isFailed) {
         ${isFailed && payload.error ? `<span class="line-unit">${escapeHtml(payload.error)}</span>` : ''}
       </span>
       ${isFailed
-        ? `<button type="button" class="btn-void" data-dismiss-failed="${escapeHtml(payload.id)}">Sil</button>`
+        ? `<button type="button" class="btn" data-retry-failed="${escapeHtml(payload.id)}">Yeniden gönder</button>
+           <button type="button" class="btn-void" data-dismiss-failed="${escapeHtml(payload.id)}">${armedFailedId === payload.id ? 'Silinsin mi? Evet' : 'Sil'}</button>`
         : ''}
     </div>`;
 }

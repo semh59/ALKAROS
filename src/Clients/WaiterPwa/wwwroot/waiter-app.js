@@ -52,7 +52,7 @@ import {
   loadPending, renderPendingBanner, openPendingSheet, resolvePendingGuarded,
   openSendToCashierSheet, confirmSendToCashier,
 } from './js/sheets/pending-orders.js';
-import { openFailedOrdersSheet, dismissFailedOrder, clearAllFailedOrders } from './js/sheets/failed-orders.js';
+import { openFailedOrdersSheet, dismissFailedOrder, retryFailedOrder, clearAllFailedOrders } from './js/sheets/failed-orders.js';
 import { sendDraft, flushQueue, reconcileOfflineActions } from './js/offline-queue.js';
 import { refreshPushState, restorePush, enablePush, unsubscribePush, disablePush } from './js/push.js';
 import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js';
@@ -662,6 +662,12 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     const dismissFailed = event.target.closest('[data-dismiss-failed]');
     if (dismissFailed && state.optionsMode === 'failed-orders') {
       dismissFailedOrder(dismissFailed.dataset.dismissFailed);
+      return;
+    }
+
+    const retryFailed = event.target.closest('[data-retry-failed]');
+    if (retryFailed && state.optionsMode === 'failed-orders') {
+      retryFailedOrder(retryFailed.dataset.retryFailed);
       return;
     }
 
