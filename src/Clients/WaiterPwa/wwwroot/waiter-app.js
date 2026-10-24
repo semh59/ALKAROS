@@ -395,6 +395,7 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     });
 
     el.tablesGrid.addEventListener('click', (event) => {
+      if (event.target.closest('[data-retry-tables]')) { void loadTables(); return; }
       const quick = event.target.closest('[data-quick]');
       if (quick) { void openTable(quick.dataset.quick, true); return; }
       const table = event.target.closest('[data-table]');
@@ -877,6 +878,11 @@ import { openProfileSheet, openShiftSummarySheet } from './js/sheets/profile.js'
     // loaded openedAt, so ticking it forward needs only a re-render, not a
     // re-fetch - cheap even when the tables screen is not the one showing.
     window.setInterval(renderTables, 60000);
+    // Other waiters and the cashier change tables all the time; poll while the list is the
+    // screen being looked at, and keep going after a failure so it recovers on its own.
+    window.setInterval(() => {
+      if (!document.hidden && el.tablesScreen.dataset.state === 'on') void loadTables();
+    }, 15000);
   }
 
   async function init() {

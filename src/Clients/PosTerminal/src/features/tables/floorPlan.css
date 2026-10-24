@@ -21,7 +21,7 @@
 .floor-plan-shell__toolbar > div:first-child { min-width: 0; display: grid; gap: .14rem; }
 .floor-plan-shell__toolbar strong { overflow: hidden; font-size: 1.05rem; text-overflow: ellipsis; white-space: nowrap; }
 .floor-plan-shell__toolbar small { color: #b8c7ce; font-size: .72rem; }
-.floor-plan-shell__eyebrow { color: #ffb38f; font-size: .64rem; font-weight: 900; letter-spacing: .16em; }
+.floor-plan-shell__eyebrow { color: #ffb38f; font-size: .75rem; font-weight: 900; letter-spacing: .16em; }
 .floor-plan-shell__mode-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--ds-space-2); }
 .floor-plan-shell__mode-actions .ds-button { min-height: var(--ds-target-min); }
 .floor-plan-shell__notice { margin: var(--ds-space-3); border: 1px solid #6a7b83; border-radius: var(--ds-radius-sm); padding: var(--ds-space-3); color: #29424e; background: #f7fafb; font-weight: 700; }
@@ -45,7 +45,7 @@
   background-size: 10% 10%, 10% 10%, 2% 2%, 2% 2%;
   box-shadow: inset 0 0 0 1px rgb(255 255 255 / 85%);
 }
-.floor-plan-canvas__north { position: absolute; z-index: 1; top: .65rem; left: .8rem; color: #687980; font-size: .62rem; font-weight: 900; letter-spacing: .14em; }
+.floor-plan-canvas__north { position: absolute; z-index: 1; top: .65rem; left: .8rem; color: #4d5d64; font-size: .75rem; font-weight: 900; letter-spacing: .14em; }
 .floor-plan-table-wrap { position: absolute; min-width: 2.75rem; min-height: 2.75rem; }
 .floor-plan-table {
   width: 100%;
@@ -76,9 +76,9 @@
 .floor-plan-table--outofservice { border-color: #8d3b45; color: #61262d; background: #f8dde0; }
 .floor-plan-table--round { border-radius: 50%; }
 .floor-plan-table--square { border-radius: .3rem; }
-.floor-plan-table__number { font-size: clamp(.68rem, 1.15vw, 1rem); font-weight: 950; letter-spacing: -.03em; }
-.floor-plan-table__state, .floor-plan-table__context, .floor-plan-table__elapsed { overflow: hidden; font-size: clamp(.48rem, .72vw, .64rem); text-overflow: ellipsis; white-space: nowrap; }
-.floor-plan-table__badge { width: fit-content; justify-self: center; border-radius: 999px; padding: .08rem .32rem; color: #fff; background: #253d48; font-size: .48rem; font-weight: 900; }
+.floor-plan-table__number { font-size: clamp(.75rem, 1.15vw, 1rem); font-weight: 950; letter-spacing: -.03em; }
+.floor-plan-table__state, .floor-plan-table__context, .floor-plan-table__elapsed { overflow: hidden; font-size: clamp(.7rem, .85vw, .8rem); text-overflow: ellipsis; white-space: nowrap; }
+.floor-plan-table__badge { width: fit-content; justify-self: center; border-radius: 999px; padding: .08rem .32rem; color: #fff; background: #253d48; font-size: .7rem; font-weight: 900; }
 /* V1-TBL-009: the passive "just vacated" hint — informational, not the
    generic dark badge tone above which reads as a warning/status marker. */
 .floor-plan-table__badge--info { color: var(--ds-color-info); background: var(--ds-color-info-soft); }
@@ -95,7 +95,7 @@
   color: #fff;
   background: #334d59;
   box-shadow: 0 2px 5px rgb(12 29 36 / 25%);
-  font-size: .58rem;
+  font-size: .7rem;
   font-weight: 900;
   pointer-events: none;
 }
@@ -104,12 +104,12 @@
 
 .floor-plan-inspector { min-width: 0; display: grid; align-content: start; gap: var(--ds-space-4); border-left: 1px solid #bac5ca; padding: var(--ds-space-4); background: #fff; }
 .floor-plan-inspector__title { display: grid; gap: .18rem; padding-bottom: var(--ds-space-3); border-bottom: 1px solid var(--table-line); }
-.floor-plan-inspector__title span { color: var(--ds-color-accent); font-size: .64rem; font-weight: 900; letter-spacing: .14em; }
+.floor-plan-inspector__title span { color: var(--table-accent-text, #00627a); font-size: .75rem; font-weight: 900; letter-spacing: .14em; }
 .floor-plan-inspector__title strong { font-size: 1.75rem; letter-spacing: -.045em; }
 .floor-plan-inspector__title small { color: var(--table-muted); }
 .floor-plan-inspector__signals { display: grid; grid-template-columns: 1fr 1fr; gap: var(--ds-space-2); margin: 0; }
 .floor-plan-inspector__signals div { min-width: 0; display: grid; gap: .15rem; border-radius: var(--ds-radius-sm); padding: var(--ds-space-2); background: var(--ds-color-surface-subtle); }
-.floor-plan-inspector__signals dt { color: var(--table-muted); font-size: .62rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.floor-plan-inspector__signals dt { color: var(--table-muted); font-size: .7rem; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
 .floor-plan-inspector__signals dd { min-width: 0; margin: 0; overflow: hidden; font-size: .78rem; font-weight: 800; text-overflow: ellipsis; }
 .floor-plan-inspector__commands > span { color: var(--table-muted); font-size: .7rem; font-weight: 900; text-transform: uppercase; }
 .floor-plan-inspector__command-buttons { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .5rem; margin-top: .5rem; }
@@ -128,7 +128,7 @@
 .floor-plan-review ul { margin: 0; padding-left: 1.15rem; font-size: .72rem; line-height: 1.5; }
 .floor-plan-review__errors { color: var(--ds-color-danger); }
 .floor-plan-review__warnings { color: #765300; }
-.floor-plan-review p { margin: 0; color: var(--table-muted); font-size: .68rem; line-height: 1.5; }
+.floor-plan-review p { margin: 0; color: var(--table-muted); font-size: .75rem; line-height: 1.5; }
 .floor-plan-dense-list { display: none; }
 
 @media (max-width: 1023px) {

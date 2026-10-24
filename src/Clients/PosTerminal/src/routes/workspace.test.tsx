@@ -819,3 +819,122 @@ describe("KitchenRoute printer setup wiring", () => {
     expect(printerListReads()).toBeGreaterThan(readsBefore);
   });
 });
+
+/**
+ * A background refresh must not swap the table screen for the loading state (that unmounts an
+ * open dialog and an unsaved floor plan draft), a failed one must keep the last known tables
+ * on screen, and a screen that failed to load must recover by itself.
+ */
+describe("workspace /tables route background refresh", () => {
+  let root: Root | null = null;
+
+  const tableJson = {
+    tableId: "table-1", tableNumber: "S-01", zoneId: null, capacity: 4, active: true, status: "Available",
+    currentOrderId: null, currentBillId: null, rowVersion: 1, allowedCommands: ["Update", "Reserve"],
+    activeReservationId: null, reservationRowVersion: null, statusChangedAt: "2026-01-01T10:00:00Z",
+  };
+
+  async function renderRoute() {
+    document.documentElement.lang = "tr";
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    window.history.replaceState({}, "", "/tables");
+    await act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage
+          terminalId="bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"
+          displayName="Test Kullanıcı"
+          capabilities={["tables.status"]}
+          path="/tables"
+          backendStatus="online"
+          onLogout={async () => {}}
+        />
+      </RouterProvider>,
+    ));
+    await act(async () => Promise.resolve());
+    await act(async () => Promise.resolve());
+  }
+
+  const tick = () => act(async () => { await vi.advanceTimersByTimeAsync(8_000); });
+
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+    vi.useRealTimers();
+  });
+
+  it("refreshes without unmounting the workspace", async () => {
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) =>
+      jsonResponse(String(input).includes("/tables") ? [tableJson] : [])));
+    vi.useFakeTimers();
+    await renderRoute();
+    const workspace = document.querySelector(".table-workspace")!;
+    expect(workspace.textContent).toContain("S-01");
+
+    await tick();
+
+    expect(document.querySelector(".table-workspace")).toBe(workspace);
+    expect(document.body.textContent).not.toContain("Masa düzeni yükleniyor");
+  });
+
+  it("keeps the last known tables and shows a banner when a refresh fails, then clears it", async () => {
+    let failing = false;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      if (failing) return jsonResponse({ error: { code: "X", message: "Sunucu hatası." } }, 500);
+      return jsonResponse(String(input).includes("/tables") ? [tableJson] : []);
+    }));
+    vi.useFakeTimers();
+    await renderRoute();
+
+    failing = true;
+    await tick();
+    expect(document.body.textContent).toContain("S-01");
+    expect(document.querySelector(".table-workspace__refresh-error")?.textContent).toContain("son bilinen durum");
+
+    failing = false;
+    await tick();
+    expect(document.querySelector(".table-workspace__refresh-error")).toBeNull();
+    expect(document.body.textContent).toContain("S-01");
+  });
+
+  it("keeps the floor plan view when only the plan refresh fails", async () => {
+    let planFails = false;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/floor-plans/")) {
+        return planFails
+          ? jsonResponse({ error: { code: "X", message: "Sunucu hatası." } }, 500)
+          : jsonResponse({ zoneId: "zone-1", zoneCode: "Z", zoneName: "Salon", canvasWidth: 1000, canvasHeight: 600, rowVersion: 1, tables: [] });
+      }
+      if (path.includes("/zones")) return jsonResponse([{ zoneId: "zone-1", code: "Z", name: "Salon", sortOrder: 1, active: true, rowVersion: 1 }]);
+      return jsonResponse([{ ...tableJson, zoneId: "zone-1" }]);
+    }));
+    vi.useFakeTimers();
+    await renderRoute();
+    expect(document.querySelector(".table-workspace__floor-plan")).not.toBeNull();
+
+    planFails = true;
+    await tick();
+
+    expect(document.querySelector(".table-workspace__floor-plan")).not.toBeNull();
+  });
+
+  it("recovers by itself after the first load failed", async () => {
+    let failing = true;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      if (failing) return jsonResponse({ error: { code: "X", message: "Sunucu hatası." } }, 500);
+      return jsonResponse(String(input).includes("/tables") ? [tableJson] : []);
+    }));
+    vi.useFakeTimers();
+    await renderRoute();
+    expect(document.body.textContent).toContain("Masa düzeni alınamadı");
+
+    failing = false;
+    await tick();
+
+    expect(document.body.textContent).toContain("S-01");
+    expect(document.body.textContent).not.toContain("Masa düzeni alınamadı");
+  });
+});

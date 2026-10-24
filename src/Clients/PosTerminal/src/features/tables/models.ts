@@ -199,6 +199,7 @@ export interface TableWorkspaceProps {
   floorPlanError?: string;
   onSaveFloorPlan?: (zoneId: string, input: SaveFloorPlanInput) => SaveFloorPlanResult | Promise<SaveFloorPlanResult>;
   errorMessage?: string;
+  refreshError?: string;
   lastUpdated?: string;
 }
 

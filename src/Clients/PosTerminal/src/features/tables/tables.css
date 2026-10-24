@@ -25,7 +25,7 @@
 .table-workspace__heading { min-width: 0; }
 .table-workspace__heading h2 { margin: .2rem 0 .35rem; font-size: clamp(1.65rem, 2.5vw, 2.25rem); letter-spacing: -.04em; }
 .table-workspace__heading p { margin: 0; color: var(--table-muted); }
-.table-workspace__kicker { color: var(--ds-color-accent); font-size: .7rem; font-weight: 900; letter-spacing: .15em; }
+.table-workspace__kicker { color: var(--table-accent-text, #00627a); font-size: .75rem; font-weight: 900; letter-spacing: .15em; }
 .table-workspace__toolbar-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--ds-space-2); }
 
 .table-workspace__feedback {
@@ -136,10 +136,12 @@
 .table-card__select:focus-visible,
 .table-card__quick-action:focus-visible { outline: 3px solid var(--ds-color-focus); outline-offset: 3px; }
 .table-card__top { display: flex; align-items: center; justify-content: space-between; gap: .5rem; }
+.table-workspace__refresh-error { margin: .3rem 0 0; color: #8d3b45; font-size: .85rem; font-weight: 800; }
+.table-details__disabled-reason { display: block; margin-top: .4rem; color: var(--table-muted); font-size: .8rem; }
 .table-card__top strong { font-size: 1.35rem; letter-spacing: -.035em; }
 .table-card__status-group { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; justify-content: flex-end; }
 .table-status { width: fit-content; border-radius: 999px; padding: .25rem .5rem; color: var(--ds-color-success); background: var(--ds-color-success-soft); font-size: .7rem; font-weight: 900; }
-.table-card--occupied .table-status { color: var(--ds-color-accent-hover); background: #fff0eb; }
+.table-card--occupied .table-status { color: var(--table-accent-text, #00627a); background: #fff0eb; }
 .table-card--reserved .table-status { color: var(--ds-color-warning); background: var(--ds-color-warning-soft); }
 .table-card--outofservice .table-status { color: var(--ds-color-danger); background: var(--ds-color-danger-soft); }
 /* V1-TBL-009: a passive, informational hint — never the accent/warning/
@@ -160,7 +162,7 @@
 .table-card__elapsed--ok { color: var(--ds-heat-fresh); }
 .table-card__elapsed--warn { color: var(--ds-heat-active); font-weight: 900; }
 .table-card__elapsed--crit { color: var(--ds-heat-stale); font-weight: 900; }
-.table-card__quick-action { min-width: var(--ds-target-min); min-height: var(--ds-target-min); display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--ds-color-accent); border-radius: var(--ds-radius-sm); padding: .5rem .7rem; color: var(--ds-color-accent); background: var(--ds-color-surface); font: inherit; font-weight: 900; }
+.table-card__quick-action { min-width: var(--ds-target-min); min-height: var(--ds-target-min); display: inline-flex; align-items: center; justify-content: center; border: 1px solid var(--ds-color-accent); border-radius: var(--ds-radius-sm); padding: .5rem .7rem; color: var(--table-accent-text, #00627a); background: var(--ds-color-surface); font: inherit; font-weight: 900; }
 .table-card__quick-action:hover { color: var(--ds-color-surface); background: var(--ds-color-accent); }
 
 .table-details { position: sticky; top: var(--ds-space-4); display: grid; gap: var(--ds-space-4); border: 1px solid var(--table-line); border-radius: var(--ds-radius-md); padding: var(--ds-space-5); background: var(--ds-color-surface); box-shadow: var(--ds-shadow-raised); }
@@ -169,7 +171,7 @@
 .table-details h3 { margin: .2rem 0 .25rem; font-size: 2rem; letter-spacing: -.05em; }
 .table-details__header > div > span:last-child { color: var(--table-muted); font-size: .82rem; }
 .table-details__status { border-radius: 999px; padding: .35rem .6rem; color: var(--ds-color-success); background: var(--ds-color-success-soft); font-size: .75rem; font-weight: 900; }
-.table-details__status--occupied { color: var(--ds-color-accent-hover); background: #fff0eb; }
+.table-details__status--occupied { color: var(--table-accent-text, #00627a); background: #fff0eb; }
 .table-details__status--reserved { color: var(--ds-color-warning); background: var(--ds-color-warning-soft); }
 .table-details__facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--ds-space-2); }
 .table-details__facts div { display: grid; gap: .2rem; }

@@ -141,7 +141,7 @@ export function ReservationStation() {
         </div>
       </header>
       <RouterProvider>
-        <TableRoute terminalId={terminalId} canManage={false} />
+        <TableRoute terminalId={terminalId} canManage reservationOnly />
       </RouterProvider>
     </main>
   );

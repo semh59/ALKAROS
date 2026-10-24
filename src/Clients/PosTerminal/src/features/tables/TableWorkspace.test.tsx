@@ -109,7 +109,8 @@ describe("table workspace", () => {
     expect(document.body.textContent).toContain("S-10");
     expect(document.body.textContent).toContain("Sipariş #order-12");
     expect(document.body.textContent).toContain("30 dk");
-    expect(document.body.textContent).toContain("Satır sürümü");
+    expect(document.body.textContent).not.toContain("Satır sürümü");
+    expect(document.body.textContent).not.toContain("order-12345678");
     expect(document.querySelectorAll(".table-card")).toHaveLength(2);
     expect(document.querySelector('.table-workspace__filters[role="group"][aria-label="Masa filtreleri"]')).not.toBeNull();
     expect(document.querySelector('.table-workspace__stats[role="group"][aria-label="Masa özeti"]')).not.toBeNull();
@@ -152,7 +153,8 @@ describe("table workspace", () => {
     await click(quickAction);
     expect(onSelectTable).not.toHaveBeenCalled();
     expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Masayı aç");
-    expect(document.querySelector('[role="dialog"]')?.textContent).toContain("S-09 · Müsait · v3");
+    expect(document.querySelector('[role="dialog"]')?.textContent).toContain("S-09 · Müsait");
+    expect(document.querySelector('[role="dialog"]')?.textContent).not.toContain("v3");
   });
 
   it("keeps manager drafts on validation and submits zone/table creation", async () => {
@@ -198,12 +200,68 @@ describe("table workspace", () => {
       select.value = "table-09";
       select.dispatchEvent(new Event("change", { bubbles: true }));
     });
-    const reasonInput = dialog.querySelector<HTMLInputElement>("input")!;
-    await fillInput(reasonInput, "Servis yönlendirmesi");
     await click(confirm);
-    expect(onAction).toHaveBeenCalledWith({ table: tables[1], action: "Transfer", reason: "Servis yönlendirmesi", targetTableId: "table-09", targetTableVersion: 3, participantTableIds: undefined, participantTableVersions: undefined });
+    expect(onAction).toHaveBeenCalledWith({ table: tables[1], action: "Transfer", reason: "Misafir masa değiştirdi", targetTableId: "table-09", targetTableVersion: 3, participantTableIds: undefined, participantTableVersions: undefined });
+    // The conflict is reported inside the dialog, which stays open for a second look.
+    expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Masa başka biri tarafından değiştirildi");
     expect(document.body.textContent).toContain("Sipariş #order-12");
-    expect(document.body.textContent).toContain("Masa güncellendi");
+  });
+
+  it("offers a prepared reason and asks for free text only for 'Diğer'", async () => {
+    const onAction = vi.fn().mockResolvedValue(undefined);
+    await render(<TableWorkspace {...baseProps({ selectedTableId: "table-10", onAction })} />);
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
+    const dialog = document.querySelector('[role="dialog"]')!;
+    const [targetSelect, reasonSelect] = [...dialog.querySelectorAll("select")] as HTMLSelectElement[];
+    await act(async () => { targetSelect.value = "table-09"; targetSelect.dispatchEvent(new Event("change", { bubbles: true })); });
+    expect(dialog.querySelector("input")).toBeNull();
+
+    await act(async () => { reasonSelect.value = "__other"; reasonSelect.dispatchEvent(new Event("change", { bubbles: true })); });
+    const confirm = [...dialog.querySelectorAll("button")].find((button) => button.textContent === "Onayla")!;
+    await click(confirm);
+    expect(dialog.textContent).toContain("Bu işlem için açıklama gerekli.");
+    await fillInput(dialog.querySelector<HTMLInputElement>("input")!, "Müşteri isteği");
+    await click(confirm);
+    expect(onAction).toHaveBeenCalledWith(expect.objectContaining({ action: "Transfer", reason: "Müşteri isteği" }));
+  });
+
+  it("offers only free tables as transfer targets and only free or busy ones for a merge", async () => {
+    const mixed: TableRecord[] = [
+      tables[1],
+      { ...tables[0], tableId: "t-free", tableNumber: "F-1", status: "Available" },
+      { ...tables[0], tableId: "t-res", tableNumber: "R-1", status: "Reserved" },
+      { ...tables[0], tableId: "t-busy", tableNumber: "B-1", status: "Occupied" },
+      { ...tables[0], tableId: "t-clean", tableNumber: "C-1", status: "Cleaning" },
+      { ...tables[0], tableId: "t-off", tableNumber: "X-1", status: "OutOfService" },
+      { ...tables[0], tableId: "t-inactive", tableNumber: "I-1", status: "Available", active: false },
+    ];
+    await render(<TableWorkspace {...baseProps({ tables: mixed, selectedTableId: "table-10" })} />);
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
+    const transferOptions = [...document.querySelectorAll('[role="dialog"] select')[0].querySelectorAll("option")].map((option) => option.textContent);
+    expect(transferOptions).toEqual(["Hedef seçin", "F-1"]);
+
+    await click([...document.querySelectorAll('[role="dialog"] button')].find((button) => button.textContent === "Vazgeç")!);
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masaları birleştir")!);
+    const mergeLabels = [...document.querySelectorAll('[role="dialog"] fieldset label')].map((label) => label.textContent?.trim());
+    expect(mergeLabels).toEqual(["F-1 · Müsait", "B-1 · Dolu"]);
+  });
+
+  it("says so when there is no free table to transfer to", async () => {
+    await render(<TableWorkspace {...baseProps({ tables: [tables[1]], selectedTableId: "table-10" })} />);
+    await click([...document.querySelectorAll(".table-details button")].find((button) => button.textContent === "Masa değiştir")!);
+    expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Şu anda boş masa yok");
+  });
+
+  it("shows why an action is dimmed as text, not only as a tooltip", async () => {
+    const reserved: TableRecord = { ...tables[0], status: "Reserved", allowedCommands: ["ClaimReservation", "CancelReservation"], activeReservationId: null };
+    await render(<TableWorkspace {...baseProps({ tables: [reserved], selectedTableId: "table-09" })} />);
+    expect(document.querySelector(".table-details__disabled-reason")?.textContent).toContain("aktif rezervasyon bulunamadı");
+  });
+
+  it("raises a banner for a failed background refresh and keeps the tables on screen", async () => {
+    await render(<TableWorkspace {...baseProps({ refreshError: "Sunucuya ulaşılamadı." })} />);
+    expect(document.querySelector(".table-workspace__refresh-error")?.textContent).toContain("son bilinen durum");
+    expect(document.querySelectorAll(".table-card")).toHaveLength(2);
   });
 
   it("shows the backend's own message for an unsettled-payment rejection, not the generic retry text or the stale-conflict text", async () => {
@@ -218,11 +276,10 @@ describe("table workspace", () => {
       select.value = "table-09";
       select.dispatchEvent(new Event("change", { bubbles: true }));
     });
-    await fillInput(dialog.querySelector<HTMLInputElement>("input")!, "Servis yönlendirmesi");
     await click(confirm);
-    expect(document.body.textContent).toContain(message);
+    expect(dialog.textContent).toContain(message);
     expect(document.body.textContent).not.toContain("Tekrar deneyin");
-    expect(document.body.textContent).not.toContain("Masa güncellendi");
+    expect(document.body.textContent).not.toContain("başka biri tarafından değiştirildi");
   });
 
   it.each([

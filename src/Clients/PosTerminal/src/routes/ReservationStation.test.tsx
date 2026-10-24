@@ -76,6 +76,74 @@ describe("ReservationStation", () => {
     expect(document.body.textContent).not.toContain("Bu ekran etkin değil");
   });
 
+  it("lets the station staff act on a table but never edit the structure", async () => {
+    const calls: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(input);
+      if (path.includes("/auth/session")) return jsonResponse({ userId: "u1", displayName: "Ayşe", terminalId: "t1" });
+      if (path.includes("/runtime-configuration")) return jsonResponse({ kitchenStationId: "hot-line", reservationStationEnabled: true });
+      if (path.includes("/table-management/zones")) return jsonResponse([]);
+      if (path.includes("/table-management/tables")) {
+        return jsonResponse([{
+          tableId: "table-1", tableNumber: "S-01", zoneId: null, capacity: 4, active: true, status: "Available",
+          currentOrderId: null, currentBillId: null, rowVersion: 1, allowedCommands: ["Reserve"],
+          activeReservationId: null, reservationRowVersion: null, statusChangedAt: "2026-01-01T10:00:00Z",
+        }]);
+      }
+      if (path.endsWith("/table-management/reservations") && init?.method === "POST") {
+        calls.push(path);
+        return jsonResponse({ reservationId: "r1" }, 201);
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render(<ReservationStation />);
+    for (let i = 0; i < 4; i += 1) await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).not.toContain("+ Bölge ekle");
+    expect(document.body.textContent).not.toContain("Masayı düzenle");
+    expect(document.body.textContent).not.toContain("Masada sipariş aç");
+    await act(async () => (document.querySelector(".table-card__quick-action") as HTMLElement).click());
+    const confirm = [...document.querySelectorAll('[role="dialog"] button')].find((button) => button.textContent === "Onayla")!;
+    await act(async () => (confirm as HTMLElement).click());
+    await act(async () => Promise.resolve());
+
+    expect(calls).toHaveLength(1);
+  });
+
+  it("reports a refused action inside the dialog and reloads the tables", async () => {
+    let tableLoads = 0;
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(input);
+      if (path.includes("/auth/session")) return jsonResponse({ userId: "u1", displayName: "Ayşe", terminalId: "t1" });
+      if (path.includes("/runtime-configuration")) return jsonResponse({ kitchenStationId: "hot-line", reservationStationEnabled: true });
+      if (path.includes("/table-management/zones")) return jsonResponse([]);
+      if (path.endsWith("/table-management/reservations") && init?.method === "POST") {
+        return jsonResponse({ error: { code: "CONCURRENT_MODIFICATION", message: "Kayıt başka bir işlem tarafından değiştirildi." } }, 409);
+      }
+      if (path.includes("/table-management/tables")) {
+        tableLoads += 1;
+        return jsonResponse([{
+          tableId: "table-1", tableNumber: "S-01", zoneId: null, capacity: 4, active: true, status: "Available",
+          currentOrderId: null, currentBillId: null, rowVersion: tableLoads, allowedCommands: ["Reserve"],
+          activeReservationId: null, reservationRowVersion: null, statusChangedAt: "2026-01-01T10:00:00Z",
+        }]);
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render(<ReservationStation />);
+    for (let i = 0; i < 4; i += 1) await act(async () => Promise.resolve());
+    const loadsBefore = tableLoads;
+    await act(async () => (document.querySelector(".table-card__quick-action") as HTMLElement).click());
+    const confirm = [...document.querySelectorAll('[role="dialog"] button')].find((button) => button.textContent === "Onayla")!;
+    await act(async () => (confirm as HTMLElement).click());
+    for (let i = 0; i < 4; i += 1) await act(async () => Promise.resolve());
+
+    expect(document.querySelector('[role="dialog"]')?.textContent).toContain("Masa başka biri tarafından değiştirildi");
+    expect(tableLoads).toBeGreaterThan(loadsBefore);
+  });
+
   // V1-RMD-373 (module-by-module UI audit, 2026-09-27): unlike ~13 other
   // feature workspaces, none of the Ayarlar (settings) screens had an
   // axe-core scan.

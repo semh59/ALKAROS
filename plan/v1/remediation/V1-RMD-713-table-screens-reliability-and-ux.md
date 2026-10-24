@@ -1,7 +1,7 @@
 # V1-RMD-713 - Masa ekranlarının güvenilirliği ve sadeliği
 
 - Task ID: V1-RMD-713
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
@@ -18,9 +18,12 @@ V1-RMD-601 bulguları B009, B010, B011, B012, B017, B018, B019, B020, B028 ve is
 
 - `plan/v1/remediation/V1-RMD-713-table-screens-reliability-and-ux.md`
 - `evidence/V1-RMD-713/**`
+- `tests/Clients/WaiterPwa/Frontend/test_waiter_tables_reliability.py`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/tables/** - yalnız ilgili düzeltme
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.tsx - yalnız masa yoklaması ve hata gösterimi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/ReservationStation.tsx - yalnız yetki ve hata durumu
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/ReservationStation.test.tsx - yalnız istasyon eylem testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/workspace.test.tsx - yalnız masa yoklaması testi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/js/screens/** - yalnız masa listesi ve transfer
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/waiter-app.js - yalnız masa yoklaması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/js/state.js - yalnız masa listesi hata işareti

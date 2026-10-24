@@ -79,6 +79,16 @@ function isRecentlyVacated(table: TableRecord): boolean {
   return minutesSinceChange !== null && minutesSinceChange < RECENTLY_VACATED_MINUTES;
 }
 
+// A prepared reason per action, so the common case needs no typing; "other" opens a free text field.
+const OTHER_REASON = "__other";
+const reasonPresets: Partial<Record<TableAction, readonly string[]>> = {
+  Reserve: ["Telefonla rezervasyon", "Yüz yüze rezervasyon"],
+  CancelReservation: ["Misafir vazgeçti", "Misafir gelmedi"],
+  Transfer: ["Misafir masa değiştirdi", "Masa sorunlu"],
+  Merge: ["Kalabalık grup", "Misafir isteği"],
+  Unmerge: ["Grup ayrıldı"],
+};
+
 function errorMessage(reason: unknown) {
   // V1-RMD-114: only ApiError's message is guaranteed to come from the
   // backend's own Turkish-mapped exception filter — a raw network failure
@@ -122,6 +132,7 @@ export function TableWorkspace({
   floorPlanError,
   onSaveFloorPlan,
   errorMessage: suppliedError,
+  refreshError,
   lastUpdated,
 }: TableWorkspaceProps) {
   const [view, setView] = useState<TableView>("map");
@@ -149,6 +160,7 @@ export function TableWorkspace({
   const [tableEditOpen, setTableEditOpen] = useState(false);
   const [tableEdit, setTableEdit] = useState<UpdateTableInput>({ tableNumber: "", zoneId: null, capacity: 2, active: true });
   const [reason, setReason] = useState("");
+  const [reasonChoice, setReasonChoice] = useState(OTHER_REASON);
   const [partySize, setPartySize] = useState(2);
   const [targetTableId, setTargetTableId] = useState("");
   const [participantTableIds, setParticipantTableIds] = useState<string[]>([]);
@@ -165,7 +177,10 @@ export function TableWorkspace({
   const selectedTable = tables.find((table) => table.tableId === selectedTableId) ?? filteredTables[0] ?? null;
   const selectedZone = selectedTable ? zones.find((zone) => zone.zoneId === selectedTable.zoneId) : undefined;
   const actionTable = tables.find((table) => table.tableId === actionTableId) ?? selectedTable;
-  const availableTargets = tables.filter((table) => table.tableId !== actionTable?.tableId && table.active);
+  // The server only accepts a free table as the transfer target and refuses reserved, cleaning
+  // and out-of-service tables in a merge, so the lists offer only what can succeed.
+  const transferTargets = tables.filter((table) => table.tableId !== actionTable?.tableId && table.active && table.status === "Available");
+  const mergeTargets = tables.filter((table) => table.tableId !== actionTable?.tableId && table.active && (table.status === "Available" || table.status === "Occupied"));
   const canCreate = canManage && Boolean(onCreateZone && onCreateTable);
 
   const openAction = (nextAction: TableAction, targetTable = selectedTable) => {
@@ -173,6 +188,7 @@ export function TableWorkspace({
     setAction(nextAction);
     setActionTableId(targetTable.tableId);
     setReason("");
+    setReasonChoice(reasonPresets[nextAction]?.[0] ?? OTHER_REASON);
     setPartySize(targetTable.capacity || 2);
     setTargetTableId("");
     setParticipantTableIds([]);
@@ -287,8 +303,9 @@ export function TableWorkspace({
   const submitAction = async (event: FormEvent) => {
     event.preventDefault();
     if (!actionTable || !action || !onAction) return;
+    const effectiveReason = reasonChoice === OTHER_REASON ? reason.trim() : reasonChoice;
     const errors = [
-      actionNeedsReason(action) && !reason.trim() ? "Bu işlem için açıklama gerekli." : "",
+      actionNeedsReason(action) && !effectiveReason ? "Bu işlem için açıklama gerekli." : "",
       action === "Transfer" && !targetTableId ? "Hedef masa seçin." : "",
       action === "Merge" && participantTableIds.length === 0 ? "En az bir katılımcı masa seçin." : "",
     ].filter(Boolean);
@@ -308,7 +325,7 @@ export function TableWorkspace({
       await onAction({
         table: actionTable,
         action,
-        reason: reason.trim() || undefined,
+        reason: effectiveReason || undefined,
         partySize: action === "Reserve" ? partySize : undefined,
         targetTableId: targetTableId || undefined,
         targetTableVersion: targetTableId ? tables.find((table) => table.tableId === targetTableId)?.rowVersion : undefined,
@@ -322,9 +339,11 @@ export function TableWorkspace({
       setActionTableId(null);
       setFeedback({ tone: "success", message: `${tableActionLabels[action]} tamamlandı.` });
     } catch (reasonValue) {
-      const message = errorMessage(reasonValue);
-      const conflict = isConcurrencyConflict(reasonValue);
-      setFeedback({ tone: conflict ? "conflict" : "error", message: conflict ? "Masa güncellendi. Güncel durum yüklendi; işlem tekrarlanmadı." : message });
+      // The failure belongs to the dialog the person is looking at; the dialog stays open and,
+      // after a concurrency conflict, already shows the refreshed table.
+      setFormErrors([isConcurrencyConflict(reasonValue)
+        ? "Masa başka biri tarafından değiştirildi. Güncel durum yüklendi; işlem tekrarlanmadı, bilgileri kontrol edip yeniden onaylayın."
+        : errorMessage(reasonValue)]);
     } finally {
       setActionBusy(false);
     }
@@ -353,6 +372,7 @@ export function TableWorkspace({
           <span className="table-workspace__kicker">OPERASYON / MASALAR</span>
           <h2>Masa düzeni</h2>
           <p>{lastUpdated ? `Son güncelleme ${lastUpdated}` : "Canlı masa ve sipariş bağlamı"}</p>
+          {refreshError && <p className="table-workspace__refresh-error" role="alert">Masa durumu güncellenemedi; son bilinen durum gösteriliyor. {refreshError}</p>}
         </div>
         <div className="table-workspace__toolbar-actions">
           {canCreate && <><Button data-telemetry-id="b.tables.tableworkspace.4" variant="secondary" onClick={() => { setFormErrors([]); setZoneDialogOpen(true); }}>+ Bölge ekle</Button><Button data-telemetry-id="b.tables.tableworkspace.5" onClick={() => { setFormErrors([]); setTableDialogOpen(true); }}>+ Masa ekle</Button></>}
@@ -469,12 +489,20 @@ export function TableWorkspace({
       <ModalDialog open={action !== null} title={action ? tableActionLabels[action] ?? "Masa işlemi" : "Masa işlemi"} onClose={() => { if (!actionBusy) { setAction(null); setActionTableId(null); } }}>
         <form className="table-form" onSubmit={(event) => void submitAction(event)}>
           <ValidationSummary title="İşlem bilgilerini kontrol edin" errors={formErrors} />
-          {actionTable && <p className="table-form__context"><strong>{actionTable.tableNumber}</strong> · {tableStatusLabels[actionTable.status]} · v{actionTable.rowVersion}</p>}
-          {action === "Transfer" && <SelectField label="Hedef masa" value={targetTableId} onChange={(event) => setTargetTableId(event.target.value)}><option value="">Hedef seçin</option>{availableTargets.map((table) => <option key={table.tableId} value={table.tableId}>{table.tableNumber} · {tableStatusLabels[table.status]}</option>)}</SelectField>}
+          {actionTable && <p className="table-form__context"><strong>{actionTable.tableNumber}</strong> · {tableStatusLabels[actionTable.status]}</p>}
+          {action === "Transfer" && (transferTargets.length === 0
+            ? <p className="table-form__context">Şu anda boş masa yok; masa değiştirilemez.</p>
+            : <SelectField label="Hedef masa" value={targetTableId} onChange={(event) => setTargetTableId(event.target.value)}><option value="">Hedef seçin</option>{transferTargets.map((table) => <option key={table.tableId} value={table.tableId}>{table.tableNumber}</option>)}</SelectField>)}
           {action === "Reserve" && <TextField label="Kişi sayısı" type="number" min={1} max={50} value={partySize} onChange={(event) => setPartySize(Math.max(1, Number(event.target.value)))} />}
-          {action === "Merge" && <fieldset className="table-form__checklist"><legend>Birleştirilecek masalar</legend>{availableTargets.map((table) => <label key={table.tableId}><input type="checkbox" checked={participantTableIds.includes(table.tableId)} onChange={(event) => setParticipantTableIds(event.target.checked ? [...participantTableIds, table.tableId] : participantTableIds.filter((id) => id !== table.tableId))} /> <span>{table.tableNumber} · {tableStatusLabels[table.status]}</span></label>)}</fieldset>}
+          {action === "Merge" && <fieldset className="table-form__checklist"><legend>Birleştirilecek masalar</legend>{mergeTargets.map((table) => <label key={table.tableId}><input type="checkbox" checked={participantTableIds.includes(table.tableId)} onChange={(event) => setParticipantTableIds(event.target.checked ? [...participantTableIds, table.tableId] : participantTableIds.filter((id) => id !== table.tableId))} /> <span>{table.tableNumber} · {tableStatusLabels[table.status]}</span></label>)}</fieldset>}
           {action === "Unmerge" && <p className="table-form__context">Birleşimdeki tüm katılımcı masalar güncel satır sürümleriyle ayrılacaktır.</p>}
-          {(action && actionNeedsReason(action)) && <TextField label="Açıklama" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="İşlem gerekçesi" autoComplete="off" />}
+          {(action && actionNeedsReason(action)) && <>
+            <SelectField label="Gerekçe" value={reasonChoice} onChange={(event) => setReasonChoice(event.target.value)}>
+              {(reasonPresets[action] ?? []).map((preset) => <option key={preset} value={preset}>{preset}</option>)}
+              <option value={OTHER_REASON}>Diğer (yazın)</option>
+            </SelectField>
+            {reasonChoice === OTHER_REASON && <TextField label="Açıklama" value={reason} onChange={(event) => setReason(event.target.value)} placeholder="İşlem gerekçesi" autoComplete="off" />}
+          </>}
           <div className="table-form__actions"><Button data-telemetry-id="b.tables.tableworkspace.26" variant="secondary" disabled={actionBusy} onClick={() => { setAction(null); setActionTableId(null); }}>Vazgeç</Button><Button data-telemetry-id="b.tables.tableworkspace.27" type="submit" disabled={actionBusy}>{actionBusy ? "İşleniyor…" : "Onayla"}</Button></div>
         </form>
       </ModalDialog>
@@ -494,7 +522,7 @@ function TableCard({ table, selected, onSelect, onAction }: { table: TableRecord
       <span className="table-card__capacity">◉ {table.capacity} kişilik</span>
       <span className="table-card__context">{table.currentOrderId ? `Sipariş #${table.currentOrderId.slice(0, 8)}` : table.currentBillId ? `Hesap #${table.currentBillId.slice(0, 8)}` : "Sipariş yok"}</span>
     </button>
-    <footer className="table-card__footer"><span className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : `v${table.rowVersion}`}</span>{command && <button data-telemetry-id="b.tables.tableworkspace.29" type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
+    <footer className="table-card__footer"><span className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : ""}</span>{command && <button data-telemetry-id="b.tables.tableworkspace.29" type="button" className="table-card__quick-action" aria-label={`${table.tableNumber}: ${tableActionLabels[command]}`} onClick={() => onAction(command)}>{tableActionLabels[command]}</button>}</footer>
   </article>;
 }
 
@@ -502,9 +530,8 @@ function TableDetails({ table, zoneName, onAction }: { table: TableRecord; zoneN
   const commands = table.allowedCommands.filter((value): value is TableAction => value in tableActionLabels);
   return <section className="table-details" aria-label={`${table.tableNumber} masa bağlamı`}>
     <div className="table-details__header"><div><span className="table-workspace__kicker">SEÇİLİ MASA</span><h3>{table.tableNumber}</h3><span>{zoneName ?? "Bölge atanmamış"}</span></div><div className="table-details__status-group"><span className={`table-details__status table-details__status--${table.status.toLowerCase()}`}>{tableStatusLabels[table.status]}</span>{isRecentlyVacated(table) && <span className="table-card__recently-vacated" title="Masa az önce boşaldı, kontrol edilmesi faydalı olabilir">Az önce boşaldı</span>}</div></div>
-    <div className="table-details__facts"><div><span>Kapasite</span><strong>{table.capacity} kişi</strong></div><div><span>Satır sürümü</span><strong>v{table.rowVersion}</strong></div><div><span>Geçen süre</span><strong className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : "—"}</strong></div></div>
-    <div className="table-details__pointer"><span className="table-details__label">AKTİF BAĞLAM</span>{table.currentOrderId ? <p><strong>Sipariş</strong><code>{table.currentOrderId}</code></p> : <p className="is-muted">Bu masada aktif sipariş yok.</p>}{table.currentBillId && <p><strong>Hesap</strong><code>{table.currentBillId}</code></p>}</div>
-    {commands.length > 0 ? <div className="table-details__actions"><span className="table-details__label">İŞLEMLER</span>{commands.map((command) => <Button data-telemetry-id="b.tables.tableworkspace.30" key={command} variant={command === "SetOutOfService" ? "secondary" : "primary"} disabled={!isClientExecutableAction(command, table)} title={isClientExecutableAction(command, table) ? undefined : "Bu masa için aktif rezervasyon bulunamadığından işlem güvenli biçimde kapalı."} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}</div> : <StateMessage tone="forbidden" title="İşlem kullanılamıyor"><p>Bu masa için sunucu tarafından izin verilen işlem yok.</p></StateMessage>}
-    <p className="table-details__authority">Sunucu yetkisi ve v{table.rowVersion} kaynak gerçek. Çakışmada bu bağlam korunur.</p>
+    <div className="table-details__facts"><div><span>Kapasite</span><strong>{table.capacity} kişi</strong></div><div><span>Geçen süre</span><strong className={table.status === "Occupied" ? `table-card__elapsed table-card__elapsed--${occupancyTone(table.occupiedSince)}` : undefined}>{table.status === "Occupied" ? elapsedLabel(table.occupiedSince) : "—"}</strong></div></div>
+    <div className="table-details__pointer"><span className="table-details__label">AKTİF BAĞLAM</span>{table.currentOrderId ? <p><strong>Açık sipariş var</strong></p> : <p className="is-muted">Bu masada aktif sipariş yok.</p>}{table.currentBillId && <p><strong>Açık hesap var</strong></p>}</div>
+    {commands.length > 0 ? <div className="table-details__actions"><span className="table-details__label">İŞLEMLER</span>{commands.map((command) => <Button data-telemetry-id="b.tables.tableworkspace.30" key={command} variant={command === "SetOutOfService" ? "secondary" : "primary"} disabled={!isClientExecutableAction(command, table)} onClick={() => onAction(command)}>{tableActionLabels[command]}</Button>)}{commands.some((command) => !isClientExecutableAction(command, table)) && <small className="table-details__disabled-reason">Soluk işlem kullanılamıyor: bu masa için aktif rezervasyon bulunamadı.</small>}</div> : <StateMessage tone="forbidden" title="İşlem kullanılamıyor"><p>Bu masa için sunucu tarafından izin verilen işlem yok.</p></StateMessage>}
   </section>;
 }

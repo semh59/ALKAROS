@@ -15,6 +15,7 @@ import {
   type TableStatus,
   tableActionLabels,
 } from "./models";
+import { TableManagementApiError } from "./tableApi";
 import "./floorPlan.css";
 
 type WorkspaceMode = "operation" | "setup";
@@ -249,8 +250,8 @@ export function FloorPlanWorkspace({
         : "Salon planı atomik olarak kaydedildi.");
       setMode("operation");
     } catch (reason) {
-      const message = reason instanceof ApiError ? reason.message : "Salon planı kaydedilemedi.";
-      const conflict = /409|conflict|concurrent|version/i.test(message);
+      const message = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Salon planı kaydedilemedi.";
+      const conflict = reason instanceof TableManagementApiError && reason.code === "CONCURRENT_MODIFICATION";
       setSaveState(conflict ? "conflict" : "error");
       setSaveMessage(conflict
         ? "Plan sunucuda değişti. Taslağınız korundu; güncel sürümü açıp değişiklikleri karşılaştırın."
@@ -324,7 +325,7 @@ export function FloorPlanWorkspace({
         <div>
           <span className="floor-plan-shell__eyebrow">{mode === "setup" ? "KURULUM MODU" : "CANLI SALON"}</span>
           <strong>{plan.zoneName}</strong>
-          <small>{draft.canvasWidth} × {draft.canvasHeight} · v{draft.rowVersion} · {lastUpdated ? `güncellendi ${lastUpdated}` : "sunucu durumu"}</small>
+          <small>{draft.canvasWidth} × {draft.canvasHeight} · {lastUpdated ? `güncellendi ${lastUpdated}` : "sunucu durumu"}</small>
         </div>
         <div className="floor-plan-shell__mode-actions">
           {mode === "operation" && canManage && onSave && <Button data-telemetry-id="b.tables.floorplanworkspace.1" variant="secondary" onClick={beginSetup}>Planı düzenle</Button>}

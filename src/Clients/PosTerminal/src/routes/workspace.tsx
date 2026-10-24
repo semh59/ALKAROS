@@ -171,7 +171,7 @@ export function ExperiencePage({
 // Exported for the standalone Reservation Station screen (V1-CUI-006),
 // which reuses this exact table-fetching + floor-plan wiring rather than
 // duplicating it.
-export function TableRoute({ terminalId, canManage }: { terminalId: string; canManage: boolean }) {
+export function TableRoute({ terminalId, canManage, reservationOnly = false }: { terminalId: string; canManage: boolean; reservationOnly?: boolean }) {
   const { navigate } = useRouter();
   const client = useMemo(() => createTableManagementClient(terminalId), [terminalId]);
   const [state, setState] = useState<TableWorkspaceState>("loading");
@@ -183,37 +183,50 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
   const [floorPlanError, setFloorPlanError] = useState<string>();
   const [errorMessage, setErrorMessage] = useState<string>();
   const [lastUpdated, setLastUpdated] = useState<string>();
+  const [refreshError, setRefreshError] = useState<string>();
   const [selectedTableId, setSelectedTableId] = useState<string | null>(null);
   const [orderBusy, setOrderBusy] = useState(false);
   const [orderError, setOrderError] = useState<string>();
 
-  const loadFloorPlanForZone = useCallback(async (zoneId: string, currentZones: Awaited<ReturnType<typeof client.listZones>>) => {
+  const loadFloorPlanForZone = useCallback(async (zoneId: string, currentZones: Awaited<ReturnType<typeof client.listZones>>, keepOnFailure = false) => {
     const targetZoneId = (zoneId === "all" && currentZones.length > 0) ? currentZones[0].zoneId : zoneId;
     if (targetZoneId && targetZoneId !== "all") {
       try {
         const plan = await client.getFloorPlan(targetZoneId);
         setFloorPlan(plan);
       } catch {
-        setFloorPlan(undefined);
+        if (!keepOnFailure) setFloorPlan(undefined);
       }
     } else {
       setFloorPlan(undefined);
     }
   }, [client]);
 
-  const load = useCallback(async () => {
-    setState("loading");
-    setErrorMessage(undefined);
+  // A background refresh (silent) never swaps the screen for the loading state, so an open
+  // dialog and an unsaved floor plan draft survive it; a failed one only raises a banner.
+  const load = useCallback(async (silent = false) => {
+    if (!silent) {
+      setState("loading");
+      setErrorMessage(undefined);
+    }
     try {
       const [nextZones, nextTables] = await Promise.all([client.listZones(), client.listTables()]);
       setZones(nextZones);
       setTables(nextTables);
       setSelectedTableId((current) => current && nextTables.some((table) => table.tableId === current) ? current : nextTables[0]?.tableId ?? null);
-      await loadFloorPlanForZone(selectedZoneId, nextZones);
-      setLastUpdated(new Date().toISOString());
+      await loadFloorPlanForZone(selectedZoneId, nextZones, silent);
+      setLastUpdated(new Date().toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit", second: "2-digit" }));
+      setRefreshError(undefined);
+      setErrorMessage(undefined);
       setState(nextTables.length ? "ready" : "empty");
     } catch (reason) {
       const status = (reason as { status?: number }).status;
+      const failure = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Masa verisi alınamadı.";
+      if (silent) {
+        if (status === 401) setState("unauthorized");
+        else setRefreshError(failure);
+        return;
+      }
       setState(status === 0 ? "offline" : status === 401 ? "unauthorized" : status === 409 ? "stale" : "error");
       // V1-RMD-367 (module-by-module UI audit, reopening module 6):
       // tableApi.ts throws its own TableManagementApiError, not the shared
@@ -221,7 +234,7 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
       // helper already checks both for its action failures, but this
       // route-level load() (the first fetch, and the one behind the
       // error/offline/stale states) never got the same fix.
-      setErrorMessage(reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Masa verisi alınamadı.");
+      setErrorMessage(failure);
     }
   }, [client, selectedZoneId, loadFloorPlanForZone]);
 
@@ -236,9 +249,10 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
   // offline/stale state is already asking for a manual action, and safe during floor-plan
   // editing (FloorPlanWorkspace's own effect only re-syncs its draft from a fresh `plan` prop
   // while in "operation" mode, never while "setup").
+  // It keeps polling after a failure too, so the screen recovers by itself when the server returns.
   useEffect(() => {
-    if (state !== "ready" && state !== "empty") return;
-    const timer = window.setInterval(() => { void load(); }, 8_000);
+    if (state === "loading" || state === "unauthorized") return;
+    const timer = window.setInterval(() => { void load(true); }, 8_000);
     return () => window.clearInterval(timer);
   }, [state, load]);
 
@@ -247,7 +261,7 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
     void loadFloorPlanForZone(zoneId, zones);
   };
 
-  const mutate = async (action: () => Promise<unknown>) => { await action(); await load(); };
+  const mutate = async (action: () => Promise<unknown>) => { try { await action(); } finally { await load(true); } };
   const handleSaveFloorPlan = async (zoneId: string, input: SaveFloorPlanInput): Promise<SaveFloorPlanResult> => {
     setFloorPlanBusy(true);
     setFloorPlanError(undefined);
@@ -275,7 +289,7 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
       navigate("/");
     } catch (reason) {
       setOrderError(reason instanceof ApiError ? reason.message : "Masa siparişi açılamadı.");
-      await load().catch(() => undefined);
+      await load(true);
     } finally {
       setOrderBusy(false);
     }
@@ -290,21 +304,22 @@ export function TableRoute({ terminalId, canManage }: { terminalId: string; canM
       onSelectTable={(tableId) => { setSelectedTableId(tableId); setOrderError(undefined); }}
       selectedZoneId={selectedZoneId}
       onSelectZone={handleSelectZone}
-      onRefresh={load}
-      onCreateZone={canManage ? (input: CreateZoneInput) => mutate(() => client.createZone(input)) : undefined}
-      onCreateTable={canManage ? (input: CreateTableInput) => mutate(() => client.createTable(input)) : undefined}
-      onUpdateZone={canManage ? (zone, input) => mutate(() => client.updateZone(zone, input)) : undefined}
-      onDeleteZone={canManage ? (zone) => mutate(() => client.deleteZone(zone)) : undefined}
-      onUpdateTable={canManage ? (table, input) => mutate(() => client.updateTable(table, input)) : undefined}
+      onRefresh={() => load()}
+      onCreateZone={canManage && !reservationOnly ? (input: CreateZoneInput) => mutate(() => client.createZone(input)) : undefined}
+      onCreateTable={canManage && !reservationOnly ? (input: CreateTableInput) => mutate(() => client.createTable(input)) : undefined}
+      onUpdateZone={canManage && !reservationOnly ? (zone, input) => mutate(() => client.updateZone(zone, input)) : undefined}
+      onDeleteZone={canManage && !reservationOnly ? (zone) => mutate(() => client.deleteZone(zone)) : undefined}
+      onUpdateTable={canManage && !reservationOnly ? (table, input) => mutate(() => client.updateTable(table, input)) : undefined}
       onAction={canManage ? (request: TableActionRequest) => mutate(() => client.execute(request)) : undefined}
       floorPlan={floorPlan}
       floorPlanBusy={floorPlanBusy}
       floorPlanError={floorPlanError}
-      onSaveFloorPlan={canManage ? handleSaveFloorPlan : undefined}
+      onSaveFloorPlan={canManage && !reservationOnly ? handleSaveFloorPlan : undefined}
       errorMessage={errorMessage}
+      refreshError={refreshError}
       lastUpdated={lastUpdated}
     />
-    {selectedTable && state === "ready" && <section className="table-order-bridge" aria-label="Masa sipariş bağlamı">
+    {selectedTable && state === "ready" && !reservationOnly && <section className="table-order-bridge" aria-label="Masa sipariş bağlamı">
       <div>
         <span className="table-order-bridge__kicker">SİPARİŞ BAĞLAMI</span>
         <strong>{selectedTable.tableNumber}</strong>

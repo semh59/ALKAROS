@@ -25,7 +25,13 @@ export async function loadZones() {
 
 export async function loadTables() {
   const result = await api(apiUrl('/table-management/tables'));
-  const list = result.ok ? (Array.isArray(result.data) ? result.data : result.data.tables || []) : [];
+  // A failed fetch is not an empty restaurant: keep the last known tables and say so.
+  state.tablesFailed = !result.ok;
+  if (!result.ok) {
+    renderTables();
+    return false;
+  }
+  const list = Array.isArray(result.data) ? result.data : result.data.tables || [];
   state.tables = list.map((table) => ({
     id: table.tableId,
     number: table.tableNumber,
@@ -38,11 +44,12 @@ export async function loadTables() {
     // V1-WTR-019: when the table's current order was opened
     // (orders.orders.created_at) - null when there is no current order.
     // The "masa yaşlanma" (table ageing) badge's own source of truth.
-    openedAt: table.currentOrderOpenedAt || null,
+    openedAt: table.occupiedSince || null,
     // foundations §0.2: which actions are valid is the server's answer.
     allowedCommands: table.allowedCommands || []
   }));
   renderTables();
+  return true;
 }
 
 // V1-WTR-022: the table's floor-plan seats, for the "koltuk bazlı atama"
@@ -110,12 +117,19 @@ export function renderTables() {
     ? state.tables
     : state.tables.filter((table) => table.zoneId === state.activeZone);
 
+  if (state.tablesFailed && state.tables.length === 0) {
+    el.tablesGrid.innerHTML = '<div class="empty">Masalar alınamadı.<br><button type="button" class="btn" data-retry-tables>Yeniden dene</button></div>';
+    return;
+  }
   if (visible.length === 0) {
     el.tablesGrid.innerHTML = '<div class="empty">Bu bölgede masa yok.</div>';
     return;
   }
 
-  el.tablesGrid.innerHTML = visible.map((table) => {
+  const stale = state.tablesFailed
+    ? '<div class="empty" role="status">Masalar güncellenemedi; son bilinen durum gösteriliyor.</div>'
+    : '';
+  el.tablesGrid.innerHTML = stale + visible.map((table) => {
     // V1-RMD-259: TABLE_STATUS above covers every real TableState value
     // (canonical-value-catalog.md section C) - this fallback only guards
     // against a future/unknown value ever reaching this screen, and must

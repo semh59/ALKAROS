@@ -38,6 +38,7 @@ V1-RMD-601 bulguları B023, B025, B026, B027, B029, B030, B031 (tekrar gönderim
 - status_changed_at için tetikleyici (V1-RMD-711).
 - Rezervasyon sunucu kuralları (V1-RMD-712).
 - Garson masa listesi yoklaması ve masa değiştirme çakışması (V1-RMD-713).
+- B020 sunucu kısmı: farklı bölgedeki masaların birleşiminin ayrılamaması ve birleştirme için önce masayı açma zorunluluğu (V1-RMD-713 yalnız istemciyi kapattı).
 
 ## Dependencies
 

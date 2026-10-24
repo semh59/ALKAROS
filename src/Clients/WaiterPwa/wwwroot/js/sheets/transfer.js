@@ -56,6 +56,13 @@ export async function confirmTransfer() {
   if (!result.ok) {
     toast(result.message, { warning: true });
     el.optionsConfirm.disabled = false;
+    // A conflict means the tables moved under us: refresh them and the open table so a second
+    // try is made against the current versions instead of failing the same way.
+    if (result.status === 409) {
+      await loadTables();
+      const current = state.tables.find((table) => table.id === state.table.id);
+      if (current) state.table = current;
+    }
     return;
   }
   const from = state.table.number;
