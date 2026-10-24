@@ -18,11 +18,20 @@ V1-RMD-602 B031'in kod gerektiren alt kalemleri tek tek kodla yeniden doğrulan�
 
 - `plan/v1/remediation/V1-RMD-725-orders-low-severity-leftovers.md`
 - `evidence/V1-RMD-725/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Orders/**
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Orders/**
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Orders/**
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Orders/**
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/NfcOrder.tsx
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/NfcOrder.test.tsx
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/nfc-order.css
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/index.html - yalnız İngilizce başlık metni
+- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/operations/** - yalnız Orders geri yükleme ve alarm kalemleri
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 
 ## In scope
 
-- Yukarıdaki kalemlerin kodla yeniden sayımı; gerçek olanların testle düzeltilmesi. Kod yüzeyi göreve başlarken Sınırlı ek satırlarıyla genişletilir.
+- Yukarıdaki kalemlerin kodla yeniden sayımı; gerçek olanların testle düzeltilmesi. Kod yüzeyi yukarıdaki Sınırlı ek satırlarıdır.
 
 ## Out of scope
 
