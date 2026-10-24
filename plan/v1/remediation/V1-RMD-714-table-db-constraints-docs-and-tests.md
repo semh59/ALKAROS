@@ -1,8 +1,8 @@
-# V1-RMD-714 - Masa veri kısıtları, doküman ve test boşlukları
+# V1-RMD-714 - Masa veri kısıtları, test boşlukları, masa tutarı ve gönderilmiş hesap
 
 - Task ID: V1-RMD-714
-- Status: Planned
-- Assignee: unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
 
@@ -12,33 +12,36 @@
 
 ## Goal
 
-V1-RMD-601 bulguları B023, B025, B026, B027, B029, B030, B031 (tekrar gönderim yanıtı), B032 ve B033 kapanır. Aktif birleşim ve aktif rezervasyon için kısmi benzersiz indeksler eklenir; eşzamanlılık, tekrar teslim ve kısmen ödenmiş birleşim testleri eklenir; yaşam döngüsü, projeksiyon, nullable-unique, rezervasyon politikası ve bağımlılık dokümanları koda göre düzeltilir; Tables'ın ham audit INSERT'leri `IAuditEventStore` üzerinden yazılır, modül DI kaydı modüle taşınır ve Payments okuması dokümana yazılır; ölü masa olayı için uyarı ve işaretçi onarım işi, kasaya gönderilmiş siparişin masadan ayrılması ve olay kimliği tekilleştirmesi ele alınır (V1-RMD-601 S2, S4, S5, S6, S7).
+V1-RMD-601 bulguları B023, B027, B029 ve B030 kapanır. Aktif birleşim ve aktif rezervasyon için kısmi benzersiz indeksler eklenir; eşzamanlılık, tekrar teslim, boş masa, siparişsiz, rezerve ve kısmen ödenmiş birleşim testleri eklenir; masa tutarı birleşik ve çok siparişli masada tüm açık siparişleri toplar; kasaya gönderilmiş siparişin masadan ayrılması sonraki transfer ve birleşimde yanlış sürüklenmez.
 
 ## Owned surface
 
 - `plan/v1/remediation/V1-RMD-714-table-db-constraints-docs-and-tests.md`
 - `evidence/V1-RMD-714/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/migrations/** - yalnız yeni migration
-- Sınırlı ek (paylaşılan, geri-tik olmadan): docs/** - yalnız Tables ile ilgili doküman düzeltmesi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json - yalnız yeni migration kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs - yalnız yeni migration kaydı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs - yalnız yeni migration kaydı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Tables/** - yalnız ilgili düzeltme
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Tables/** - yalnız ilgili düzeltme
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Orders/** - yalnız kasaya gönderilmiş siparişin masadan ayrılması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Tables/** - yalnız yeni ve düzeltilen test
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Orders/** - yalnız yeni ve düzeltilen test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Tables/** - yalnız yeni ve düzeltilen test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-601-tables-quality-audit.md - yalnız Out of scope notu
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
 
-- Kısmi benzersiz indeksler (up ve down), test boşlukları, doküman sapmaları, Düşük bag.
+- Kısmi benzersiz indeksler (up ve down), test boşlukları, masa tutarı toplamı, gönderilmiş hesabın masadan ayrılması.
 
 ## Out of scope
 
 - Mevcut migration dosyalarını değiştirmek.
-- V1-RMD-711 kapsamındaki olay yükü, transfer ve durum ucu düzeltmeleri.
-- status_changed_at için tetikleyici (V1-RMD-711).
-- Rezervasyon sunucu kuralları (V1-RMD-712).
-- Garson masa listesi yoklaması ve masa değiştirme çakışması (V1-RMD-713).
-- B020 sunucu kısmı: farklı bölgedeki masaların birleşiminin ayrılamaması ve birleştirme için önce masayı açma zorunluluğu (V1-RMD-713 yalnız istemciyi kapattı).
+- V1-RMD-711 kapsamındaki olay yükü, transfer ve durum ucu düzeltmeleri; V1-RMD-712 rezervasyon sunucu kuralları; V1-RMD-713 istemci ekranları.
+- Doküman sapmaları (B032) ve sınır/mimari kalemleri S4–S7: V1-RMD-715.
+- B025, B026, B031, B033, olay kimliği tekilleştirmesi ve ölü olay onarımı: V1-RMD-716.
+- B020 sunucu kısmı (farklı bölge birleşiminin ayrılması, birleştirme için önce masayı açma) V1-RMD-716.
 
 ## Dependencies
 
@@ -51,4 +54,4 @@ V1-RMD-601 bulguları B023, B025, B026, B027, B029, B030, B031 (tekrar gönderim
 
 ## Handoff
 
-- V1-RMD-602
+- V1-RMD-715
