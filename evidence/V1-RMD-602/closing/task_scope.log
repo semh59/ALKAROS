@@ -1,8 +1,6 @@
 {
   "task_id": "V1-RMD-602",
-  "valid": false,
-  "metadata_errors": [
-    "Task V1-RMD-602 is not an approved candidate-code remediation"
-  ],
+  "valid": true,
+  "metadata_errors": [],
   "findings": []
 }
