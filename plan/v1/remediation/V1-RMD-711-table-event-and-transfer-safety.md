@@ -12,7 +12,7 @@
 
 ## Goal
 
-V1-RMD-601 bulguları B005, B006, B007 (transfer ve durum ucu), B021, B022, B024 ve B025 kapanır. Birleşim, transfer ve durum olayları taşınacak sipariş ve hesap kimliklerini taşır ve tüketici yalnız onları taşır; tüketiciler olay kimliğiyle tekilleştirir; transfer ve genel durum ucu aktif birleşimi ve açık sipariş veya hesabı denetler ve denetim kaydı yazar; masa PUT ile bölge ve kat planı yazmaları denetim kaydı bırakır; status_changed_at her durum geçişinde güncellenir; 40001 ve 40P01 sınırlı yeniden denenir; işaretçi yeniden kurma zamanlı işle çalışır; ölü (dead) masa olayı için uyarı ve yeniden oynatma yolu bulunur (V1-RMD-601 S1, S2, S3).
+V1-RMD-601 bulguları B005, B006, B030, B007 (transfer ve durum ucu), B021, B022, B024 ve B025 kapanır. Birleşim, transfer ve durum olayları taşınacak sipariş ve hesap kimliklerini taşır ve tüketici yalnız onları taşır; tüketiciler olay kimliğiyle tekilleştirir; transfer ve genel durum ucu aktif birleşimi ve açık sipariş veya hesabı denetler ve denetim kaydı yazar; masa PUT ile bölge ve kat planı yazmaları denetim kaydı bırakır; status_changed_at her durum geçişinde güncellenir; 40001 ve 40P01 sınırlı yeniden denenir; işaretçi yeniden kurma zamanlı işle çalışır; ölü (dead) masa olayı için uyarı ve yeniden oynatma yolu bulunur (V1-RMD-601 S1, S2, S3).
 
 ## Owned surface
 

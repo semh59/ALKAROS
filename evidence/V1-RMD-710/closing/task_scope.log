@@ -1,0 +1,14 @@
+{
+  "task_id": "V1-RMD-710",
+  "valid": false,
+  "metadata_errors": [
+    "Task status is 'Done', expected 'Planned' or 'InProgress'"
+  ],
+  "findings": [
+    {
+      "path": "plan/v1/remediation/v1-rmd-711-table-event-and-transfer-safety.md",
+      "change_type": "modified",
+      "reason": "path not in task allowlist"
+    }
+  ]
+}

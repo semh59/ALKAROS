@@ -237,6 +237,11 @@ public sealed class FloorPlanHttpTests : IAsyncLifetime
         Assert.Equal(2, saved.Warnings.Count);
         Assert.All(saved.Warnings, warning => Assert.Equal("CAPACITY_SEAT_MISMATCH", warning.Code));
         Assert.All(saved.FloorPlan.Tables, table => Assert.NotNull(table.MergeGroupId));
+
+        var primaryDto = saved.FloorPlan.Tables.Single(table => table.TableId == primary.TableId);
+        Assert.True(primaryDto.IsMergePrimary);
+        Assert.Contains("Unmerge", primaryDto.AllowedCommands);
+        Assert.DoesNotContain("Unmerge", saved.FloorPlan.Tables.Single(table => table.TableId == merged.TableId).AllowedCommands);
     }
 
     private async Task<WebApplication> StartAsync()

@@ -174,7 +174,7 @@ public sealed partial class PostgresTableMergeRepository
         // Gather primary table's existing orders and bills
         const string selectPrimaryOrdersSql = $"""
             SELECT order_id FROM {OrdersTable}
-            WHERE table_id = @primary_id AND status NOT IN ('Completed', 'Cancelled');
+            WHERE table_id = @primary_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected');
             """;
         await using (var cmd = new NpgsqlCommand(selectPrimaryOrdersSql, connection, transaction))
         {
@@ -208,7 +208,7 @@ public sealed partial class PostgresTableMergeRepository
             var participantOrderIds = new List<Guid>();
             const string selectPartOrdersSql = $"""
                 SELECT order_id FROM {OrdersTable}
-                WHERE table_id = @part_id AND status NOT IN ('Completed', 'Cancelled');
+                WHERE table_id = @part_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected');
                 """;
             await using (var cmd = new NpgsqlCommand(selectPartOrdersSql, connection, transaction))
             {
@@ -236,8 +236,14 @@ public sealed partial class PostgresTableMergeRepository
                 }
             }
 
-            var origOrderId = pData.CurrentOrderId ?? participantOrderIds.FirstOrDefault();
-            var origBillId = pData.CurrentBillId ?? participantBillIds.FirstOrDefault();
+            // The pointer the participant showed is restored on unmerge, but only when that row is
+            // still open work the participant brought along; an empty table has no pointer at all.
+            Guid? origOrderId = pData.CurrentOrderId is { } pointedOrder && participantOrderIds.Contains(pointedOrder)
+                ? pointedOrder
+                : participantOrderIds.Count > 0 ? participantOrderIds[0] : null;
+            Guid? origBillId = pData.CurrentBillId is { } pointedBill && participantBillIds.Contains(pointedBill)
+                ? pointedBill
+                : participantBillIds.Count > 0 ? participantBillIds[0] : null;
 
             // The participant's still-active orders and bills follow the table
             // to the primary. One table event is written to the outbox in this
@@ -285,12 +291,12 @@ public sealed partial class PostgresTableMergeRepository
             const string insertMergeSql = $"""
                 INSERT INTO {TableMergesTable} (
                     table_merge_id, merge_group_id, primary_table_id, merged_table_id,
-                    original_order_id, original_bill_id, status, reason, merged_by,
-                    merged_at, row_version
+                    original_order_id, original_bill_id, original_order_ids, original_bill_ids,
+                    status, reason, merged_by, merged_at, row_version
                 ) VALUES (
                     @id, @group_id, @primary_id, @merged_id,
-                    @order_id, @bill_id, 'Active', @reason, @merged_by,
-                    @merged_at, 1
+                    @order_id, @bill_id, @order_ids, @bill_ids,
+                    'Active', @reason, @merged_by, @merged_at, 1
                 );
                 """;
 
@@ -302,6 +308,8 @@ public sealed partial class PostgresTableMergeRepository
                 cmd.Parameters.AddWithValue("merged_id", participant.TableId);
                 cmd.Parameters.AddWithValue("order_id", (object?)origOrderId ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("bill_id", (object?)origBillId ?? DBNull.Value);
+                cmd.Parameters.Add(new NpgsqlParameter("order_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid) { Value = participantOrderIds.ToArray() });
+                cmd.Parameters.Add(new NpgsqlParameter("bill_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid) { Value = participantBillIds.ToArray() });
                 cmd.Parameters.AddWithValue("reason", request.Reason);
                 cmd.Parameters.AddWithValue("merged_by", request.MergedBy);
                 cmd.Parameters.AddWithValue("merged_at", now);
@@ -310,8 +318,8 @@ public sealed partial class PostgresTableMergeRepository
         }
 
         // 5. Update Primary Table
-        var finalPrimaryOrderId = primaryCurrentOrderId ?? allConsolidatedOrderIds.FirstOrDefault();
-        var finalPrimaryBillId = primaryCurrentBillId ?? allConsolidatedBillIds.FirstOrDefault();
+        var finalPrimaryOrderId = primaryCurrentOrderId ?? allConsolidatedOrderIds.Cast<Guid?>().FirstOrDefault();
+        var finalPrimaryBillId = primaryCurrentBillId ?? allConsolidatedBillIds.Cast<Guid?>().FirstOrDefault();
         long newPrimaryRowVersion;
 
         const string updatePrimarySql = $"""

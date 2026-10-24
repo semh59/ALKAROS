@@ -122,6 +122,24 @@ describe("floor plan workspace", () => {
     expect(onOpenAction).toHaveBeenCalledWith("Transfer", tables[0]);
   });
 
+  it("offers the unmerge action only when the server sends it for the merge leader", async () => {
+    const leader = (allowedCommands: string[]) => ({ ...plan, tables: [{ ...plan.tables[0], allowedCommands } as FloorPlan["tables"][number], plan.tables[1]] });
+    const ungated = leader(["Transfer", "Merge"]);
+    await render(<FloorPlanWorkspace plan={ungated} tables={tables} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={vi.fn()} onSave={vi.fn()} />);
+    expect([...document.querySelectorAll("button")].some((button) => button.textContent === "Birleşimi ayır")).toBe(false);
+    await act(async () => root!.unmount());
+    root = null;
+
+    const onOpenAction = vi.fn();
+    const gated = leader(["Transfer", "Merge", "Unmerge"]);
+    const gatedTables = tables.map((table, index) => index === 0 ? { ...table, allowedCommands: gated.tables[0].allowedCommands } : table);
+    await render(<FloorPlanWorkspace plan={gated} tables={gatedTables} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onOpenAction={onOpenAction} onSave={vi.fn()} />);
+    const unmerge = [...document.querySelectorAll("button")].find((button) => button.textContent === "Birleşimi ayır") as HTMLButtonElement;
+    expect(unmerge.disabled).toBe(false);
+    await click(unmerge);
+    expect(onOpenAction).toHaveBeenCalledWith("Unmerge", gatedTables[0]);
+  });
+
   it("moves by keyboard and sends every authoritative version in one save", async () => {
     const onSave = vi.fn().mockResolvedValue({ floorPlan: { ...plan, rowVersion: 5 }, warnings: [] });
     await render(<FloorPlanWorkspace plan={plan} tables={tables} selectedTableId="table-a" canManage onSelectTable={vi.fn()} onSave={onSave} />);

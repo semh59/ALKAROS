@@ -278,7 +278,7 @@ internal static class TableContractMapper
         currentOrderOpenedAt,
         statusChangedAt);
 
-    public static IReadOnlyList<string> AllowedCommands(Table table, IReadOnlySet<string> permissions)
+    public static IReadOnlyList<string> AllowedCommands(Table table, IReadOnlySet<string> permissions, bool mergePrimary = false)
     {
         IReadOnlyList<string> candidates = !table.Active
             ? ["Update"]
@@ -291,6 +291,9 @@ internal static class TableContractMapper
                 TableState.OutOfService => ["Update", "SetAvailable", "SetCleaning"],
                 _ => [],
             };
+
+        if (mergePrimary && table.Active)
+            candidates = [.. candidates, "Unmerge"];
 
         return candidates
             .Where(command => !CommandPermission.TryGetValue(command, out var code)
@@ -375,7 +378,8 @@ internal static class TableContractMapper
                 table.CurrentOrderId,
                 table.CurrentBillId,
                 table.TableRowVersion),
-                permissions)))
+                permissions,
+                table.IsMergePrimary)))
             .ToList());
 
     public static SaveFloorPlanResponse ToDto(FloorPlanSaveResult result, IReadOnlySet<string> permissions) => new(

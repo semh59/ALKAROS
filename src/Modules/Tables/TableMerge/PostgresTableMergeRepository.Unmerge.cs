@@ -26,7 +26,8 @@ public sealed partial class PostgresTableMergeRepository
         const string selectMergesSql = $"""
             SELECT table_merge_id, merge_group_id, primary_table_id, merged_table_id,
                    original_order_id, original_bill_id, status, reason, merged_by,
-                   merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version
+                   merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version,
+                   original_order_ids, original_bill_ids
             FROM {TableMergesTable}
             WHERE merge_group_id = @group_id AND status = 'Active'
             FOR UPDATE;
@@ -130,12 +131,17 @@ public sealed partial class PostgresTableMergeRepository
         {
             var expectedVersion = expectedVersionMap[mergeRecord.MergedTableId];
 
-            // The identified order/bill move back from the primary to the table
-            // they came from. One table event carries both; Order and Bill
-            // apply their own move when the outbox delivers it (V0-ARC-001
-            // row 3). The move is a no-op if the row is no longer on the
-            // primary, so the restored-id lists are optimistic.
-            if (mergeRecord.OriginalOrderId.HasValue || mergeRecord.OriginalBillId.HasValue)
+            // Only rows still open come back: one the guests already paid stays settled.
+            var openOrderIds = await SelectOpenIdsAsync(
+                SelectOpenOrdersSql, mergeRecord.OriginalOrderIds, connection, transaction, cancellationToken);
+            var openBillIds = await SelectOpenIdsAsync(
+                SelectOpenBillsSql, mergeRecord.OriginalBillIds, connection, transaction, cancellationToken);
+
+            // The identified orders and bills move back from the primary to the table
+            // they came from. One table event carries them; Order and Bill apply their
+            // own move when the outbox delivers it. The move is a
+            // no-op for a row that is no longer on the primary.
+            if (openOrderIds.Count > 0 || openBillIds.Count > 0)
             {
                 await OutboxStore.EnqueueAsync(
                     new OutboxEnvelope(
@@ -146,22 +152,27 @@ public sealed partial class PostgresTableMergeRepository
                             mergeRecord.MergeGroupId,
                             mergeRecord.MergedTableId,
                             primaryTableId,
-                            mergeRecord.OriginalOrderId,
-                            mergeRecord.OriginalBillId,
-                            now))),
+                            openOrderIds.Count > 0 ? openOrderIds[0] : null,
+                            openBillIds.Count > 0 ? openBillIds[0] : null,
+                            now,
+                            openOrderIds,
+                            openBillIds))),
                     connection,
                     transaction,
                     cancellationToken);
 
-                if (mergeRecord.OriginalOrderId.HasValue)
-                    restoredOrderIds.Add(mergeRecord.OriginalOrderId.Value);
-                if (mergeRecord.OriginalBillId.HasValue)
-                    restoredBillIds.Add(mergeRecord.OriginalBillId.Value);
+                restoredOrderIds.AddRange(openOrderIds);
+                restoredBillIds.AddRange(openBillIds);
             }
 
             // Restore participant table state & pointers
-            var hasRestoredWork = mergeRecord.OriginalOrderId.HasValue || mergeRecord.OriginalBillId.HasValue;
-            var targetStatus = hasRestoredWork ? "Occupied" : "Available";
+            Guid? partOrderId = mergeRecord.OriginalOrderId is { } pointedOrder && openOrderIds.Contains(pointedOrder)
+                ? pointedOrder
+                : openOrderIds.Count > 0 ? openOrderIds[0] : null;
+            Guid? partBillId = mergeRecord.OriginalBillId is { } pointedBill && openBillIds.Contains(pointedBill)
+                ? pointedBill
+                : openBillIds.Count > 0 ? openBillIds[0] : null;
+            var targetStatus = openOrderIds.Count > 0 || openBillIds.Count > 0 ? "Occupied" : "Available";
 
             const string updatePartTableSql = $"""
                 UPDATE {TablesTable}
@@ -176,8 +187,8 @@ public sealed partial class PostgresTableMergeRepository
             await using (var cmd = new NpgsqlCommand(updatePartTableSql, connection, transaction))
             {
                 cmd.Parameters.AddWithValue("status", targetStatus);
-                cmd.Parameters.AddWithValue("order_id", (object?)mergeRecord.OriginalOrderId ?? DBNull.Value);
-                cmd.Parameters.AddWithValue("bill_id", (object?)mergeRecord.OriginalBillId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("order_id", (object?)partOrderId ?? DBNull.Value);
+                cmd.Parameters.AddWithValue("bill_id", (object?)partBillId ?? DBNull.Value);
                 cmd.Parameters.AddWithValue("part_id", mergeRecord.MergedTableId);
                 cmd.Parameters.AddWithValue("expected_version", expectedVersion);
                 var result = await cmd.ExecuteScalarAsync(cancellationToken);
@@ -208,18 +219,22 @@ public sealed partial class PostgresTableMergeRepository
             }
         }
 
-        // 6. Restore Primary Table state & pointers
+        // 6. Restore Primary Table state & pointers. The rows handed back above are still on the
+        // primary until the outbox delivers them, so they are excluded from what stays.
         Guid? remainingOrderId = null;
         Guid? remainingBillId = null;
 
         const string selectRemainingOrderSql = $"""
             SELECT order_id FROM {OrdersTable}
-            WHERE table_id = @primary_id AND status NOT IN ('Completed', 'Cancelled')
+            WHERE table_id = @primary_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected')
+              AND NOT (order_id = ANY(@restored_ids))
+            ORDER BY created_at, order_id
             LIMIT 1;
             """;
         await using (var cmd = new NpgsqlCommand(selectRemainingOrderSql, connection, transaction))
         {
             cmd.Parameters.AddWithValue("primary_id", primaryTableId);
+            cmd.Parameters.Add(new NpgsqlParameter("restored_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid) { Value = restoredOrderIds.ToArray() });
             var res = await cmd.ExecuteScalarAsync(cancellationToken);
             if (res is not null and not DBNull)
                 remainingOrderId = (Guid)res;
@@ -228,11 +243,14 @@ public sealed partial class PostgresTableMergeRepository
         const string selectRemainingBillSql = $"""
             SELECT bill_id FROM {BillsTable}
             WHERE table_id = @primary_id AND status NOT IN ('Paid', 'Cancelled')
+              AND NOT (bill_id = ANY(@restored_ids))
+            ORDER BY opened_at, created_at, bill_id
             LIMIT 1;
             """;
         await using (var cmd = new NpgsqlCommand(selectRemainingBillSql, connection, transaction))
         {
             cmd.Parameters.AddWithValue("primary_id", primaryTableId);
+            cmd.Parameters.Add(new NpgsqlParameter("restored_ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid) { Value = restoredBillIds.ToArray() });
             var res = await cmd.ExecuteScalarAsync(cancellationToken);
             if (res is not null and not DBNull)
                 remainingBillId = (Guid)res;
@@ -318,4 +336,35 @@ public sealed partial class PostgresTableMergeRepository
             now);
     }
 
+    private const string SelectOpenOrdersSql = $"""
+        SELECT order_id FROM {OrdersTable}
+        WHERE order_id = ANY(@ids) AND status NOT IN ('Completed', 'Cancelled', 'Rejected')
+        ORDER BY created_at, order_id;
+        """;
+
+    private const string SelectOpenBillsSql = $"""
+        SELECT bill_id FROM {BillsTable}
+        WHERE bill_id = ANY(@ids) AND status NOT IN ('Paid', 'Cancelled')
+        ORDER BY opened_at, created_at, bill_id;
+        """;
+
+    private static async Task<List<Guid>> SelectOpenIdsAsync(
+        string sql,
+        IReadOnlyList<Guid> ids,
+        NpgsqlConnection connection,
+        NpgsqlTransaction transaction,
+        CancellationToken cancellationToken)
+    {
+        var open = new List<Guid>();
+        if (ids.Count == 0)
+            return open;
+
+        await using var cmd = new NpgsqlCommand(sql, connection, transaction);
+        cmd.Parameters.Add(new NpgsqlParameter("ids", NpgsqlDbType.Array | NpgsqlDbType.Uuid) { Value = ids.ToArray() });
+        await using var reader = await cmd.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            open.Add(reader.GetGuid(0));
+
+        return open;
+    }
 }

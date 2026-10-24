@@ -1,7 +1,7 @@
 # V1-RMD-710 - Birleştirme ve ayırmanın doğruluğu
 
 - Task ID: V1-RMD-710
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
@@ -12,7 +12,7 @@
 
 ## Goal
 
-V1-RMD-601 bulguları B001, B002, B003, B004, B007, B008, B030 ve N1 kapanır. Boş veya hesapsız masa birleştirilebilir; birleşim her katılımcının tüm açık sipariş ve hesaplarını kaydeder ve ayırmada hepsini geri verir; ayırma işaretçileri geri verilen kayıtları dışlayarak sıralı seçer; ödeme tamamlanınca birleşim kapanır; kapanmış siparişe işaret eden masa kurulmaz; sunucu ana masa için Unmerge komutunu yayınlar ve PosTerminal ayırma düğmesi çalışır. Semih senaryosu (3 ve 4 birleştirilir, ayrılır, ürünler doğru masaya döner) gerçek PostgreSQL testiyle kanıtlanır.
+V1-RMD-601 bulguları B001, B002, B003, B004, B007, B008 ve N1 kapanır (B030 V1-RMD-711'e devredildi). Boş veya hesapsız masa birleştirilebilir; birleşim her katılımcının tüm açık sipariş ve hesaplarını kaydeder ve ayırmada hepsini geri verir; ayırma işaretçileri geri verilen kayıtları dışlayarak sıralı seçer; ödeme tamamlanınca birleşim kapanır; kapanmış siparişe işaret eden masa kurulmaz; sunucu ana masa için Unmerge komutunu yayınlar ve PosTerminal ayırma düğmesi çalışır. Semih senaryosu (3 ve 4 birleştirilir, ayrılır, ürünler doğru masaya döner) gerçek PostgreSQL testiyle kanıtlanır.
 
 ## Owned surface
 
@@ -27,6 +27,7 @@ V1-RMD-601 bulguları B001, B002, B003, B004, B007, B008, B030 ve N1 kapanır. B
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/tables/** - yalnız Unmerge komutunun ekrana bağlanması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-601-tables-quality-audit.md - yalnız Out of scope notu
 - `database/migrations/V1/V1-RMD-710/**`
+- `tests/Host/Experience/Tables/MergeSettlementTests.cs`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json - yalnız yeni migration girdisi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs - yalnız PhaseBMax
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs - yalnız yeni migration kimliği

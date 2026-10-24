@@ -1,0 +1,8 @@
+CurrentPointers exit 0
+Reservations exit 0
+TableTransfer exit 0
+TableLifecycle exit 0
+PaymentTopology exit 0
+Tables exit 0
+manifest exit 1
+done

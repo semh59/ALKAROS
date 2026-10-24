@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "202"
+    "max": "203"
   },
   "migrations": [
     {
@@ -1739,6 +1739,14 @@
       "phase": "B",
       "tables": [
         "terminals"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "203",
+      "phase": "B",
+      "tables": [
+        "table_merges"
       ],
       "deferredConstraints": []
     }

@@ -321,7 +321,7 @@ public sealed class PostgresTablePointerProjector : ITablePointerProjector
         const string selectOrdersSql = $"""
             SELECT order_id
             FROM {OrdersTable}
-            WHERE table_id = @table_id AND status NOT IN ('Completed', 'Cancelled')
+            WHERE table_id = @table_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected')
             ORDER BY created_at DESC;
             """;
 

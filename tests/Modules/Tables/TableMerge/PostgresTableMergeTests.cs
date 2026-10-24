@@ -408,6 +408,183 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
         ex.Which.MergeGroupId.Should().Be(nonExistentGroupId);
     }
 
+    [Fact]
+    public async Task TablesWithoutOrdersOrBillsMergeAndUnmerge()
+    {
+        var primaryId = await CreateTableAsync("E-101", "Occupied", 1);
+        var participantId = await CreateTableAsync("E-102", "Occupied", 1);
+
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "Empty tables pushed together", _userId));
+        await DrainTableEventsAsync();
+
+        var record = (await _repository.GetByGroupIdAsync(merge.MergeGroupId)).Single();
+        record.OriginalOrderId.Should().BeNull();
+        record.OriginalBillId.Should().BeNull();
+        record.OriginalOrderIds.Should().BeEmpty();
+        record.OriginalBillIds.Should().BeEmpty();
+
+        await _service.UnmergeTablesAsync(new TableUnmergeRequest(
+            merge.MergeGroupId, 2, new[] { new TableMergeParticipant(participantId, 2) }, "Split again", _userId));
+        await DrainTableEventsAsync();
+
+        (await GetTableAsync(participantId)).Status.Should().Be("Available");
+        (await GetTableAsync(primaryId)).Status.Should().Be("Available");
+    }
+
+    [Fact]
+    public async Task EveryOpenOrderAndBillOfAParticipantComesBackOnUnmerge()
+    {
+        var primaryId = await CreateTableAsync("L-101", "Occupied", 1);
+        var participantId = await CreateTableAsync("L-102", "Occupied", 1);
+
+        var primaryOrder = await CreateOrderAsync(primaryId, "ORD-L0", 50m);
+        var primaryBill = await CreateBillAsync(primaryId, primaryOrder, "BIL-L0", 50m, 0m, 0m, "Open");
+        await SetTablePointersAsync(primaryId, primaryOrder, primaryBill);
+
+        var firstOrder = await CreateOrderAsync(participantId, "ORD-L1", 100m);
+        var secondOrder = await CreateOrderAsync(participantId, "ORD-L2", 200m);
+        var firstBill = await CreateBillAsync(participantId, firstOrder, "BIL-L1", 100m, 0m, 0m, "Open");
+        var secondBill = await CreateBillAsync(participantId, secondOrder, "BIL-L2", 200m, 0m, 0m, "Open");
+        await SetTablePointersAsync(participantId, secondOrder, secondBill);
+
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "Second round joined", _userId));
+        await DrainTableEventsAsync();
+
+        var record = (await _repository.GetByGroupIdAsync(merge.MergeGroupId)).Single();
+        record.OriginalOrderIds.Should().BeEquivalentTo(new[] { firstOrder, secondOrder });
+        record.OriginalBillIds.Should().BeEquivalentTo(new[] { firstBill, secondBill });
+        record.OriginalOrderId.Should().Be(secondOrder);
+        record.OriginalBillId.Should().Be(secondBill);
+
+        var unmerge = await _service.UnmergeTablesAsync(new TableUnmergeRequest(
+            merge.MergeGroupId, 2, new[] { new TableMergeParticipant(participantId, 2) }, "Back apart", _userId));
+        await DrainTableEventsAsync();
+
+        unmerge.RestoredOrderIds.Should().BeEquivalentTo(new[] { firstOrder, secondOrder });
+        unmerge.RestoredBillIds.Should().BeEquivalentTo(new[] { firstBill, secondBill });
+        (await GetOrderAsync(firstOrder)).TableId.Should().Be(participantId);
+        (await GetOrderAsync(secondOrder)).TableId.Should().Be(participantId);
+        (await GetBillAsync(firstBill)).TableId.Should().Be(participantId);
+        (await GetBillAsync(secondBill)).TableId.Should().Be(participantId);
+        (await GetOrderAsync(primaryOrder)).TableId.Should().Be(primaryId);
+
+        var participant = await GetTableAsync(participantId);
+        participant.Status.Should().Be("Occupied");
+        participant.CurrentOrderId.Should().Be(secondOrder);
+        participant.CurrentBillId.Should().Be(secondBill);
+
+        var primary = await GetTableAsync(primaryId);
+        primary.CurrentOrderId.Should().Be(primaryOrder);
+        primary.CurrentBillId.Should().Be(primaryBill);
+    }
+
+    [Fact]
+    public async Task APrimaryWithoutItsOwnWorkDoesNotKeepPointingAtTheReturnedOrder()
+    {
+        var primaryId = await CreateTableAsync("P-101", "Occupied", 1);
+        var participantId = await CreateTableAsync("P-102", "Occupied", 1);
+
+        var order = await CreateOrderAsync(participantId, "ORD-PT1", 100m);
+        var bill = await CreateBillAsync(participantId, order, "BIL-PT1", 100m, 0m, 0m, "Open");
+        await SetTablePointersAsync(participantId, order, bill);
+
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "Joined", _userId));
+        await DrainTableEventsAsync();
+        (await GetOrderAsync(order)).TableId.Should().Be(primaryId);
+
+        await _service.UnmergeTablesAsync(new TableUnmergeRequest(
+            merge.MergeGroupId, 2, new[] { new TableMergeParticipant(participantId, 2) }, "Apart", _userId));
+
+        // The order is still on the primary until the outbox delivers the unmerge event: the
+        // primary must already point at nothing, not at the order that is on its way back.
+        var primary = await GetTableAsync(primaryId);
+        primary.CurrentOrderId.Should().BeNull();
+        primary.CurrentBillId.Should().BeNull();
+        primary.Status.Should().Be("Available");
+
+        await DrainTableEventsAsync();
+        (await GetOrderAsync(order)).TableId.Should().Be(participantId);
+        (await GetTableAsync(participantId)).CurrentOrderId.Should().Be(order);
+    }
+
+    [Fact]
+    public async Task APaidParticipantOrderStaysSettledOnUnmerge()
+    {
+        var primaryId = await CreateTableAsync("S-101", "Occupied", 1);
+        var participantId = await CreateTableAsync("S-102", "Occupied", 1);
+
+        var order = await CreateOrderAsync(participantId, "ORD-S1", 100m);
+        var bill = await CreateBillAsync(participantId, order, "BIL-S1", 100m, 0m, 0m, "Open");
+        await SetTablePointersAsync(participantId, order, bill);
+
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "Joined", _userId));
+        await DrainTableEventsAsync();
+
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var cmd = new NpgsqlCommand(
+            "UPDATE orders.orders SET status = 'Completed' WHERE order_id = @o; UPDATE billing.bills SET status = 'Paid', paid_amount = payable_amount, allocated_amount = payable_amount WHERE bill_id = @b;",
+            connection))
+        {
+            cmd.Parameters.AddWithValue("o", order);
+            cmd.Parameters.AddWithValue("b", bill);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        var unmerge = await _service.UnmergeTablesAsync(new TableUnmergeRequest(
+            merge.MergeGroupId, 2, new[] { new TableMergeParticipant(participantId, 2) }, "Apart", _userId));
+        await DrainTableEventsAsync();
+
+        unmerge.RestoredOrderIds.Should().BeEmpty();
+        unmerge.RestoredBillIds.Should().BeEmpty();
+        var participant = await GetTableAsync(participantId);
+        participant.Status.Should().Be("Available");
+        participant.CurrentOrderId.Should().BeNull();
+        participant.CurrentBillId.Should().BeNull();
+    }
+
+    [Fact]
+    public async Task ARejectedOrderIsNotMovedByAMerge()
+    {
+        var primaryId = await CreateTableAsync("R-101", "Occupied", 1);
+        var participantId = await CreateTableAsync("R-102", "Occupied", 1);
+
+        var rejected = await CreateOrderAsync(participantId, "ORD-R1", 10m, "Rejected");
+        var live = await CreateOrderAsync(participantId, "ORD-R2", 20m);
+        await SetTablePointersAsync(participantId, live, null);
+
+        var merge = await _service.MergeTablesAsync(new TableMergeRequest(
+            primaryId, 1, new[] { new TableMergeParticipant(participantId, 1) }, "Joined", _userId));
+        await DrainTableEventsAsync();
+
+        (await GetOrderAsync(live)).TableId.Should().Be(primaryId);
+        (await GetOrderAsync(rejected)).TableId.Should().Be(participantId);
+        (await _repository.GetByGroupIdAsync(merge.MergeGroupId)).Single().OriginalOrderIds
+            .Should().BeEquivalentTo(new[] { live });
+    }
+
+    [Fact]
+    public async Task AnUnmergeEventFromBeforeTheListColumnsStillMovesItsSingleOrderAndBill()
+    {
+        var primaryId = await CreateTableAsync("V-101", "Occupied", 1);
+        var participantId = await CreateTableAsync("V-102", "Occupied", 1);
+        var order = await CreateOrderAsync(primaryId, "ORD-V1", 10m);
+        var bill = await CreateBillAsync(primaryId, order, "BIL-V1", 10m, 0m, 0m, "Open");
+
+        var payload = IntegrationEventSerializer.Serialize(new TableUnmerged(
+            Guid.NewGuid(), participantId, primaryId, order, bill, DateTimeOffset.UtcNow));
+        await new TableEventOrderConsumer(_db.DataSource, new PostgresOrderRepository(_db.DataSource))
+            .HandleAsync(IntegrationEventTypes.TableUnmerged, payload, CancellationToken.None);
+        await new TableEventBillConsumer(_db.DataSource, new PostgresBillRepository(_db.DataSource))
+            .HandleAsync(IntegrationEventTypes.TableUnmerged, payload, CancellationToken.None);
+
+        (await GetOrderAsync(order)).TableId.Should().Be(participantId);
+        (await GetBillAsync(bill)).TableId.Should().Be(participantId);
+    }
+
     // Helper methods for database seeding and asserting
     private async Task<Guid> CreateTableAsync(string tableNumber, string status, long rowVersion, bool active = true)
     {
@@ -443,7 +620,7 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
         await cmd.ExecuteNonQueryAsync();
     }
 
-    private async Task<Guid> CreateOrderAsync(Guid tableId, string orderNumber, decimal total)
+    private async Task<Guid> CreateOrderAsync(Guid tableId, string orderNumber, decimal total, string status = "Submitted")
     {
         var id = Guid.NewGuid();
         await using var connection = await _db.DataSource.OpenConnectionAsync();
@@ -452,7 +629,7 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
                 order_id, source, table_id, status, confirmation_status, order_number,
                 subtotal, discount_total, tax_total, total, created_at, updated_at, row_version
             ) VALUES (
-                @id, 'Cashier', @table_id, 'Submitted', 'Accepted', @order_number,
+                @id, 'Cashier', @table_id, @status, 'Accepted', @order_number,
                 @total, 0, 0, @total, now(), now(), 1
             );
             """;
@@ -461,6 +638,7 @@ public sealed class PostgresTableMergeTests : IClassFixture<TableMergeTestDataba
         cmd.Parameters.AddWithValue("table_id", tableId);
         cmd.Parameters.AddWithValue("order_number", orderNumber);
         cmd.Parameters.AddWithValue("total", total);
+        cmd.Parameters.AddWithValue("status", status);
         await cmd.ExecuteNonQueryAsync();
         return id;
     }

@@ -838,6 +838,8 @@ internal sealed class TableManagementTestDatabase
             ?? throw new InvalidOperationException("Scalar query returned null."));
     }
 
+    public NpgsqlDataSource Source => DataSource;
+
     private NpgsqlDataSource DataSource
         => _dataSource ?? throw new InvalidOperationException("Test database is not initialized.");
 

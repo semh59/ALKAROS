@@ -434,9 +434,6 @@ export function FloorPlanWorkspace({
                         }}
                       >{tableActionLabels[command]}</Button>)}</div>
                     : <p>Bu durumda kullanılabilir işlem yok.</p>}
-                  {selected.isMergePrimary && !selected.allowedCommands.includes("Unmerge") && <div className="floor-plan-inspector__command-buttons">
-                    <Button data-telemetry-id="b.tables.floorplanworkspace.7" variant="secondary" disabled title="Sunucu bu birleşim için ayırma komutunu henüz yayınlamadı.">Birleşimi ayır</Button>
-                  </div>}
                 </div>
                 <p className="floor-plan-inspector__hint">Operasyon modunda geometri kilitlidir. İşlemler yalnız sunucunun bu masa için döndürdüğü komutlardan açılır.</p>
               </>;

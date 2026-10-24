@@ -264,7 +264,7 @@ public sealed class PostgresTableTransferRepository : ITableTransferRepository
         const string selectOrdersSql = $"""
             SELECT order_id
             FROM {OrdersTable}
-            WHERE table_id = @source_id AND status NOT IN ('Completed', 'Cancelled')
+            WHERE table_id = @source_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected')
             ORDER BY created_at ASC;
             """;
 

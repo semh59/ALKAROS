@@ -204,7 +204,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
             SET table_id = @to_table_id,
                 updated_at = @timestamp,
                 row_version = row_version + 1
-            WHERE table_id = @from_table_id AND status NOT IN ('Completed', 'Cancelled');
+            WHERE table_id = @from_table_id AND status NOT IN ('Completed', 'Cancelled', 'Rejected');
             """);
         command.Parameters.AddWithValue("to_table_id", toTableId);
         command.Parameters.AddWithValue("from_table_id", fromTableId);
@@ -232,7 +232,7 @@ public sealed class PostgresOrderRepository : IOrderRepository
                 row_version = row_version + 1
             WHERE order_id = @order_id
               AND table_id = @from_table_id
-              AND status NOT IN ('Completed', 'Cancelled');
+              AND status NOT IN ('Completed', 'Cancelled', 'Rejected');
             """);
         command.Parameters.AddWithValue("to_table_id", toTableId);
         command.Parameters.AddWithValue("from_table_id", expectedFromTableId);

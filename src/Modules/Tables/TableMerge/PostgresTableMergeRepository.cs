@@ -41,7 +41,8 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
         const string sql = $"""
             SELECT table_merge_id, merge_group_id, primary_table_id, merged_table_id,
                    original_order_id, original_bill_id, status, reason, merged_by,
-                   merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version
+                   merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version,
+                   original_order_ids, original_bill_ids
             FROM {TableMergesTable}
             WHERE table_merge_id = @id;
             """;
@@ -67,7 +68,8 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
         var sql = $"""
             SELECT table_merge_id, merge_group_id, primary_table_id, merged_table_id,
                    original_order_id, original_bill_id, status, reason, merged_by,
-                   merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version
+                   merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version,
+                   original_order_ids, original_bill_ids
             FROM {TableMergesTable}
             WHERE merge_group_id = @group_id
             ORDER BY merged_at ASC
@@ -102,7 +104,8 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
         var sql = $"""
             SELECT table_merge_id, merge_group_id, primary_table_id, merged_table_id,
                    original_order_id, original_bill_id, status, reason, merged_by,
-                   merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version
+                   merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version,
+                   original_order_ids, original_bill_ids
             FROM {TableMergesTable}
             WHERE primary_table_id = @primary_id AND status = 'Active'
             ORDER BY merged_at ASC
@@ -137,7 +140,8 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
         const string sql = $"""
             SELECT table_merge_id, merge_group_id, primary_table_id, merged_table_id,
                    original_order_id, original_bill_id, status, reason, merged_by,
-                   merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version
+                   merged_at, unmerged_at, unmerged_by, unmerge_reason, row_version,
+                   original_order_ids, original_bill_ids
             FROM {TableMergesTable}
             WHERE merged_table_id = @merged_id AND status = 'Active'
             LIMIT 1;
@@ -170,6 +174,8 @@ public sealed partial class PostgresTableMergeRepository : ITableMergeRepository
             unmergedAt: reader.IsDBNull(10) ? null : reader.GetFieldValue<DateTimeOffset>(10),
             unmergedBy: reader.IsDBNull(11) ? null : reader.GetGuid(11),
             unmergeReason: reader.IsDBNull(12) ? null : reader.GetString(12),
-            rowVersion: reader.GetInt64(13));
+            rowVersion: reader.GetInt64(13),
+            originalOrderIds: reader.GetFieldValue<Guid[]>(14),
+            originalBillIds: reader.GetFieldValue<Guid[]>(15));
     }
 }

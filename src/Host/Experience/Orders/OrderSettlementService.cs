@@ -15,7 +15,8 @@ namespace ALKAROS.Host.Experience.Orders;
 ///
 /// If the order was still the table's ATTACHED check (paid at the table, never sent to the till), the table
 /// pointer is cleared in the same transaction and an Occupied table becomes Available - the party has paid
-/// and left. A check that went to the till was already detached, so its table is never touched here.
+/// and left. A check that went to the till was already detached, so its table is never touched here. A merged
+/// table keeps its pointer on its next open order and is only freed, ending the merge, once none is left.
 /// </summary>
 public sealed class OrderSettlementService
 {
@@ -75,16 +76,91 @@ public sealed class OrderSettlementService
     private static async Task ReleaseAttachedTableAsync(
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid orderId, CancellationToken cancellationToken)
     {
-        await using var command = new NpgsqlCommand(
-            """
-            UPDATE table_mgmt.tables
-            SET current_order_id = NULL,
-                current_bill_id = NULL,
-                current_status = CASE WHEN current_status = 'Occupied' THEN 'Available' ELSE current_status END,
-                row_version = row_version + 1
-            WHERE current_order_id = @order_id;
-            """, connection, transaction);
-        command.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
-        await command.ExecuteNonQueryAsync(cancellationToken);
+        var tableIds = new List<Guid>();
+        await using (var find = new NpgsqlCommand(
+            "SELECT table_id FROM table_mgmt.tables WHERE current_order_id = @order_id FOR UPDATE;", connection, transaction))
+        {
+            find.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+            await using var reader = await find.ExecuteReaderAsync(cancellationToken);
+            while (await reader.ReadAsync(cancellationToken))
+                tableIds.Add(reader.GetGuid(0));
+        }
+
+        foreach (var tableId in tableIds)
+        {
+            // A merged table still holds the other tables' open orders: the pointer moves on to
+            // the next one and the merge stays until the last of them is paid.
+            Guid? nextOrderId;
+            await using (var next = new NpgsqlCommand(
+                """
+                SELECT order_id FROM orders.orders
+                WHERE table_id = @table_id AND order_id <> @order_id
+                  AND status NOT IN ('Completed', 'Cancelled', 'Rejected')
+                ORDER BY created_at, order_id
+                LIMIT 1;
+                """, connection, transaction))
+            {
+                next.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+                next.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
+                nextOrderId = await next.ExecuteScalarAsync(cancellationToken) as Guid?;
+            }
+
+            if (nextOrderId is { } followingOrderId)
+            {
+                await using var advance = new NpgsqlCommand(
+                    """
+                    UPDATE table_mgmt.tables
+                    SET current_order_id = @next_order_id,
+                        current_bill_id = (
+                            SELECT bill_id FROM billing.bills
+                            WHERE table_id = @table_id AND status NOT IN ('Paid', 'Cancelled')
+                            ORDER BY (order_id = @next_order_id) DESC, opened_at, created_at, bill_id
+                            LIMIT 1),
+                        row_version = row_version + 1
+                    WHERE table_id = @table_id;
+                    """, connection, transaction);
+                advance.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+                advance.Parameters.Add("next_order_id", NpgsqlDbType.Uuid).Value = followingOrderId;
+                await advance.ExecuteNonQueryAsync(cancellationToken);
+                continue;
+            }
+
+            await using (var free = new NpgsqlCommand(
+                """
+                UPDATE table_mgmt.tables
+                SET current_order_id = NULL,
+                    current_bill_id = NULL,
+                    current_status = CASE WHEN current_status = 'Occupied' THEN 'Available' ELSE current_status END,
+                    row_version = row_version + 1
+                WHERE table_id = @table_id;
+                """, connection, transaction))
+            {
+                free.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+                await free.ExecuteNonQueryAsync(cancellationToken);
+            }
+
+            // Everyone has paid and left: the merge ends and its participant tables are free again.
+            await using var close = new NpgsqlCommand(
+                """
+                WITH closed AS (
+                    UPDATE table_mgmt.table_merges
+                    SET status = 'Unmerged',
+                        unmerged_at = now(),
+                        unmerge_reason = 'Hesap ödendi',
+                        row_version = row_version + 1
+                    WHERE primary_table_id = @table_id AND status = 'Active'
+                    RETURNING merged_table_id
+                )
+                UPDATE table_mgmt.tables
+                SET current_status = 'Available',
+                    current_order_id = NULL,
+                    current_bill_id = NULL,
+                    row_version = row_version + 1
+                WHERE table_id IN (SELECT merged_table_id FROM closed)
+                  AND current_status = 'Occupied' AND current_order_id IS NULL;
+                """, connection, transaction);
+            close.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
+            await close.ExecuteNonQueryAsync(cancellationToken);
+        }
     }
 }

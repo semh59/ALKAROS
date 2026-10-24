@@ -59,10 +59,11 @@ public sealed class TableEventBillConsumer : IIntegrationEventConsumer
             case IntegrationEventTypes.TableUnmerged:
             {
                 var e = IntegrationEventSerializer.Deserialize<TableUnmerged>(payload.Span);
-                if (e.OriginalBillId is { } billId)
+                var billIds = e.BillIds ?? (e.OriginalBillId is { } billId ? [billId] : []);
+                foreach (var id in billIds)
                 {
                     await _bills.ReparentBillToTableAsync(
-                        billId, e.PrimaryTableId, e.MergedTableId, e.OccurredAt, connection, transaction, cancellationToken)
+                        id, e.PrimaryTableId, e.MergedTableId, e.OccurredAt, connection, transaction, cancellationToken)
                         .ConfigureAwait(false);
                 }
 

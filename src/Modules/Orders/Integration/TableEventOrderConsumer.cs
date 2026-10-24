@@ -59,10 +59,11 @@ public sealed class TableEventOrderConsumer : IIntegrationEventConsumer
             case IntegrationEventTypes.TableUnmerged:
             {
                 var e = IntegrationEventSerializer.Deserialize<TableUnmerged>(payload.Span);
-                if (e.OriginalOrderId is { } orderId)
+                var orderIds = e.OrderIds ?? (e.OriginalOrderId is { } orderId ? [orderId] : []);
+                foreach (var id in orderIds)
                 {
                     await _orders.ReparentOrderToTableAsync(
-                        orderId, e.PrimaryTableId, e.MergedTableId, e.OccurredAt, connection, transaction, cancellationToken)
+                        id, e.PrimaryTableId, e.MergedTableId, e.OccurredAt, connection, transaction, cancellationToken)
                         .ConfigureAwait(false);
                 }
 

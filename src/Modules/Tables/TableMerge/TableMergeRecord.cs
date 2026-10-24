@@ -20,7 +20,9 @@ public sealed class TableMergeRecord
         DateTimeOffset? unmergedAt = null,
         Guid? unmergedBy = null,
         string? unmergeReason = null,
-        long rowVersion = 1)
+        long rowVersion = 1,
+        IReadOnlyList<Guid>? originalOrderIds = null,
+        IReadOnlyList<Guid>? originalBillIds = null)
     {
         if (id == Guid.Empty)
             throw new ArgumentException("Merge ID cannot be empty.", nameof(id));
@@ -53,6 +55,8 @@ public sealed class TableMergeRecord
         UnmergedBy = unmergedBy;
         UnmergeReason = unmergeReason;
         RowVersion = rowVersion;
+        OriginalOrderIds = originalOrderIds ?? (originalOrderId is { } orderId ? [orderId] : []);
+        OriginalBillIds = originalBillIds ?? (originalBillId is { } billId ? [billId] : []);
     }
 
     public Guid Id { get; }
@@ -61,6 +65,12 @@ public sealed class TableMergeRecord
     public Guid MergedTableId { get; }
     public Guid? OriginalOrderId { get; }
     public Guid? OriginalBillId { get; }
+
+    /// <summary>Every open order the participant brought to the primary; <see cref="OriginalOrderId"/> is the one its pointer showed.</summary>
+    public IReadOnlyList<Guid> OriginalOrderIds { get; }
+
+    /// <summary>Every open bill the participant brought to the primary; <see cref="OriginalBillId"/> is the one its pointer showed.</summary>
+    public IReadOnlyList<Guid> OriginalBillIds { get; }
     public TableMergeStatus Status { get; }
     public string Reason { get; }
     public Guid MergedBy { get; }

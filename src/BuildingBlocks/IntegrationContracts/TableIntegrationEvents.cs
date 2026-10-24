@@ -46,4 +46,6 @@ public sealed record TableUnmerged(
     Guid PrimaryTableId,
     Guid? OriginalOrderId,
     Guid? OriginalBillId,
-    DateTimeOffset OccurredAt);
+    DateTimeOffset OccurredAt,
+    IReadOnlyList<Guid>? OrderIds = null,
+    IReadOnlyList<Guid>? BillIds = null);
