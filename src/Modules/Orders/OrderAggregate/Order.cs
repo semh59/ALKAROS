@@ -573,7 +573,10 @@ public sealed class Order
     /// item. A no-op — returns this same instance — when the item is no
     /// longer Active (already voided/comped before the event arrived) or
     /// already at that state, so an at-least-once redelivery of the same
-    /// event never produces a spurious write.
+    /// event never produces a spurious write. Events can also arrive out of
+    /// order: a state never moves backwards (a late "Queued" must not undo
+    /// "Ready") and a held course item is only released by
+    /// <see cref="FireCourse"/>, never by a kitchen "Queued" event.
     /// </summary>
     public Order AdvanceItemKitchenState(Guid orderItemId, KitchenState kitchenState)
     {
@@ -585,7 +588,7 @@ public sealed class Order
             if (item.Id == orderItemId)
             {
                 found = true;
-                if (item.Status == OrderItemState.Active && item.KitchenState != kitchenState)
+                if (item.Status == OrderItemState.Active && KitchenStateMovesForward(item.KitchenState, kitchenState))
                 {
                     items.Add(item.AdvanceKitchenState(kitchenState));
                     changed = true;
@@ -600,6 +603,15 @@ public sealed class Order
             throw new ArgumentException($"Order {Id} has no item {orderItemId}.", nameof(orderItemId));
 
         return changed ? RebuildWith(items: items) : this;
+    }
+
+    private static bool KitchenStateMovesForward(KitchenState current, KitchenState next)
+    {
+        if (current == KitchenState.Cancelled || current == next)
+            return false;
+        if (current == KitchenState.Held && next == KitchenState.Sent)
+            return false;
+        return next > current;
     }
 
     /// <summary>

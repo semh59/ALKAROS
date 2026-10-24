@@ -2,6 +2,7 @@ using ALKAROS.IntegrationContracts;
 using ALKAROS.Orders.Integration;
 using ALKAROS.Orders.OrderAggregate.Tests.Fixtures;
 using FluentAssertions;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using Xunit;
 
@@ -17,12 +18,13 @@ public sealed class KitchenEventOrderConsumerTests : IClassFixture<OrdersTestDat
     private readonly NpgsqlDataSource _dataSource;
     private readonly PostgresOrderRepository _orders;
     private readonly KitchenEventOrderConsumer _consumer;
+    private readonly CapturingLogger _logger = new();
 
     public KitchenEventOrderConsumerTests(OrdersTestDatabase database)
     {
         _dataSource = database.DataSource;
         _orders = new PostgresOrderRepository(database.DataSource);
-        _consumer = new KitchenEventOrderConsumer(database.DataSource, _orders);
+        _consumer = new KitchenEventOrderConsumer(database.DataSource, _orders, _logger);
     }
 
     [Fact]
@@ -102,6 +104,85 @@ public sealed class KitchenEventOrderConsumerTests : IClassFixture<OrdersTestDat
         var reloaded = await _orders.GetByIdAsync(order.Id);
         reloaded!.Items.Single().Status.Should().Be(OrderItemState.Cancelled);
         reloaded.Items.Single().KitchenState.Should().Be(KitchenState.Cancelled, "the void's own kitchen state must not be overwritten");
+    }
+
+    [Theory]
+    [InlineData("Ready", "Queued", KitchenState.Ready)]
+    [InlineData("Ready", "Preparing", KitchenState.Ready)]
+    [InlineData("Served", "Ready", KitchenState.Served)]
+    public async Task ALateEarlierStateNeverMovesTheItemBackwards(string first, string late, KitchenState expected)
+    {
+        var (order, itemId) = await SeedOrderAsync(KitchenState.NotSent);
+
+        await DeliverAsync(order.Id, itemId, first);
+        await DeliverAsync(order.Id, itemId, late);
+
+        (await _orders.GetByIdAsync(order.Id))!.Items.Single().KitchenState.Should().Be(expected);
+    }
+
+    [Fact]
+    public async Task AQueuedEventDoesNotReleaseAHeldCourseItem()
+    {
+        var (order, itemId) = await SeedOrderAsync(KitchenState.Held);
+
+        await DeliverAsync(order.Id, itemId, "Queued");
+
+        var reloaded = await _orders.GetByIdAsync(order.Id);
+        reloaded!.Items.Single().KitchenState.Should().Be(KitchenState.Held);
+        reloaded.RowVersion.Should().Be(order.RowVersion, "a stale event is not a write");
+    }
+
+    [Fact]
+    public async Task ACancelledEventStillReachesAnItemTheKitchenAlreadyStarted()
+    {
+        var (order, itemId) = await SeedOrderAsync(KitchenState.NotSent);
+
+        await DeliverAsync(order.Id, itemId, "Preparing");
+        await DeliverAsync(order.Id, itemId, "Cancelled");
+
+        (await _orders.GetByIdAsync(order.Id))!.Items.Single().KitchenState.Should().Be(KitchenState.Cancelled);
+    }
+
+    [Fact]
+    public async Task EventsThatCannotBeMirroredAreLoggedWithTheirReason()
+    {
+        var (order, itemId) = await SeedOrderAsync(KitchenState.NotSent);
+
+        await DeliverAsync(order.Id, itemId, "SomethingNew");
+        await DeliverAsync(Guid.NewGuid(), itemId, "Ready");
+        await DeliverAsync(order.Id, Guid.NewGuid(), "Ready");
+
+        _logger.Warnings.Should().HaveCount(3);
+        _logger.Warnings[0].Should().Contain("unknown item state 'SomethingNew'");
+        _logger.Warnings[1].Should().Contain("order not found");
+        _logger.Warnings[2].Should().Contain("order has no such item");
+    }
+
+    private async Task<(Order Order, Guid ItemId)> SeedOrderAsync(KitchenState kitchenState)
+    {
+        var product = await SeedProduct();
+        var itemId = Guid.NewGuid();
+        var item = new OrderItem(
+            itemId, Guid.NewGuid(), product, "Lahmacun", 1, 120m, 10m,
+            status: OrderItemState.Active, kitchenState: kitchenState);
+        var order = new Order(Guid.NewGuid(), OrderSource.Waiter, UniqueNumber(), [item]);
+        await _orders.AddAsync(order);
+        return (order, itemId);
+    }
+
+    private sealed class CapturingLogger : ILogger<KitchenEventOrderConsumer>
+    {
+        public List<string> Warnings { get; } = [];
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            if (logLevel == LogLevel.Warning)
+                Warnings.Add(formatter(state, exception));
+        }
     }
 
     private async Task DeliverAsync(Guid orderId, Guid orderItemId, string itemState)

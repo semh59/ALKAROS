@@ -1,5 +1,7 @@
 using ALKAROS.IntegrationContracts;
 using ALKAROS.Orders.OrderAggregate;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 
 namespace ALKAROS.Orders.Integration;
@@ -15,17 +17,29 @@ namespace ALKAROS.Orders.Integration;
 /// Delivery is at-least-once and the underlying domain method
 /// (<see cref="Order.AdvanceItemKitchenState"/>) is idempotent: a redelivery
 /// of an already-applied (or now-stale, e.g. the item was voided in the
-/// meantime) state change is a no-op.
+/// meantime) state change is a no-op. An event that cannot be mirrored at all
+/// (unknown state, missing order or item) is logged and dropped, never retried.
 /// </remarks>
 public sealed class KitchenEventOrderConsumer : IIntegrationEventConsumer
 {
+    private static readonly Action<ILogger, string, Guid, Guid, Exception?> LogUnmirrorable =
+        LoggerMessage.Define<string, Guid, Guid>(
+            LogLevel.Warning,
+            new EventId(5531, nameof(LogUnmirrorable)),
+            "Kitchen item event dropped: {Reason} (order '{OrderId}', item '{OrderItemId}').");
+
     private readonly NpgsqlDataSource _dataSource;
     private readonly IOrderRepository _orders;
+    private readonly ILogger _logger;
 
-    public KitchenEventOrderConsumer(NpgsqlDataSource dataSource, IOrderRepository orders)
+    public KitchenEventOrderConsumer(
+        NpgsqlDataSource dataSource,
+        IOrderRepository orders,
+        ILogger<KitchenEventOrderConsumer>? logger = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
+        _logger = logger ?? NullLogger<KitchenEventOrderConsumer>.Instance;
     }
 
     public bool CanHandle(string eventType) => eventType is KitchenIntegrationEventTypes.KitchenTicketItemStateChanged;
@@ -38,7 +52,10 @@ public sealed class KitchenEventOrderConsumer : IIntegrationEventConsumer
         var e = IntegrationEventSerializer.Deserialize<KitchenTicketItemStateChanged>(payload.Span);
         var kitchenState = MapKitchenState(e.ItemState);
         if (kitchenState is null)
-            return; // Unknown/future state name — nothing to mirror yet, not an error.
+        {
+            LogUnmirrorable(_logger, $"unknown item state '{e.ItemState}'", e.OrderId, e.OrderItemId, null);
+            return;
+        }
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken).ConfigureAwait(false);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
@@ -46,8 +63,7 @@ public sealed class KitchenEventOrderConsumer : IIntegrationEventConsumer
         var order = await _orders.GetByIdAsync(e.OrderId, cancellationToken).ConfigureAwait(false);
         if (order is null)
         {
-            // Order no longer exists (should not happen — Orders never
-            // hard-deletes) — nothing to mirror onto.
+            LogUnmirrorable(_logger, "order not found", e.OrderId, e.OrderItemId, null);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             return;
         }
@@ -59,8 +75,7 @@ public sealed class KitchenEventOrderConsumer : IIntegrationEventConsumer
         }
         catch (ArgumentException)
         {
-            // The order no longer has this item id (should not happen) —
-            // treat as an unrecoverable mismatch, not a retryable failure.
+            LogUnmirrorable(_logger, "order has no such item", e.OrderId, e.OrderItemId, null);
             await transaction.CommitAsync(cancellationToken).ConfigureAwait(false);
             return;
         }

@@ -12,6 +12,7 @@ using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Recipes.CatalogMapping;
 using ALKAROS.Recipes.TheoreticalConsumption;
 using ALKAROS.Recipes.Versioning;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using Xunit;
 
@@ -113,6 +114,44 @@ public sealed class QrOrderExpiryHostedServiceTests : IAsyncLifetime
         Assert.Equal(0, expiredCount);
         var order = await _database.ReloadOrderAsync(orderId);
         Assert.Equal(OrderState.PendingConfirmation, order.Status);
+    }
+
+    [Fact]
+    public async Task AnOrderThatKeepsFailingIsLoggedAndTheOrdersBehindItStillExpire()
+    {
+        var (poisonId, _) = await _database.SeedOverdueQrPendingOrderAsync(TimeSpan.FromMinutes(10));
+        var (healthyId, _) = await _database.SeedOverdueQrPendingOrderAsync(TimeSpan.FromMinutes(10));
+        await _database.ExecuteAsync(
+            $"""
+            CREATE FUNCTION orders.poison_order() RETURNS trigger LANGUAGE plpgsql AS $$
+            BEGIN RAISE EXCEPTION 'poison order'; END $$;
+            CREATE TRIGGER poison_order BEFORE UPDATE ON orders.orders
+                FOR EACH ROW WHEN (OLD.order_id = '{poisonId:D}') EXECUTE FUNCTION orders.poison_order();
+            """);
+        var logger = new ErrorCountingLogger();
+
+        var expiredCount = await QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(
+            _database.DataSource, CreateStore(), TimeSpan.FromMinutes(5), logger, CancellationToken.None);
+
+        Assert.Equal(1, expiredCount);
+        Assert.Equal(OrderState.Rejected, (await _database.ReloadOrderAsync(healthyId)).Status);
+        Assert.Equal(OrderState.PendingConfirmation, (await _database.ReloadOrderAsync(poisonId)).Status);
+        Assert.Equal(1, logger.Errors);
+    }
+
+    private sealed class ErrorCountingLogger : ILogger
+    {
+        public int Errors { get; private set; }
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+        {
+            if (logLevel == LogLevel.Error)
+                Errors++;
+        }
     }
 
     // V1-RMD-143: only RejectAsync is exercised by this file's own tests

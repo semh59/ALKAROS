@@ -1,0 +1,19 @@
+M1-backwards-allowed KILLED restored=true
+M2-held-released-by-queued BUILD-ERROR restored=true
+M3-unknown-state-not-logged KILLED restored=true
+M4-missing-order-not-logged KILLED restored=true
+M5-missing-item-not-logged KILLED restored=true
+M6-inactive-table-claimed KILLED restored=true
+M7-out-of-service-table-claimed KILLED restored=true
+M8-live-order-pointer-overwritten KILLED restored=true
+M9-poison-order-stops-the-pass BUILD-ERROR restored=true
+M10-poison-order-not-logged BUILD-ERROR restored=true
+DONE
+M2-held-released-by-queued BUILD-ERROR restored=true
+DONE
+M9-poison-order-stops-the-pass KILLED restored=true
+DONE
+M10-poison-order-not-logged KILLED restored=true
+DONE
+M2-held-released-by-queued KILLED restored=true
+DONE

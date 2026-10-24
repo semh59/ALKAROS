@@ -638,6 +638,78 @@ public sealed class CheckLifecycleHttpTests : IAsyncLifetime
         Assert.Equal(2, await _database.KitchenTicketItemCountAsync(first.OrderId));
     }
 
+    [Theory]
+    [InlineData("PendingConfirmation")]
+    [InlineData("Accepted")]
+    [InlineData("Preparing")]
+    public async Task ALiveOrderThatIsNotTheWaitersOwnKeepsTheTablePointerAndRefusesANewCheck(string status)
+    {
+        var (client, cookie, terminalId, tableId, product, app) = await SeedBusyTableAsync();
+        await using var _ = app;
+        using var __ = client;
+        var live = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await _database.ExecuteAsync(
+            "UPDATE orders.orders SET status = @status WHERE order_id = @id;", ("status", status), ("id", live.OrderId));
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-05", [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m)], Id: Guid.NewGuid())));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Contains("TABLE_CHECK_ALREADY_OPEN", await response.Content.ReadAsStringAsync());
+        Assert.True(await _database.TablePointsAtAsync(tableId, live.OrderId));
+    }
+
+    [Theory]
+    [InlineData("Completed")]
+    [InlineData("Cancelled")]
+    [InlineData("Rejected")]
+    public async Task AFinishedOrderOnTheTablePointerDoesNotBlockTheNextParty(string status)
+    {
+        var (client, cookie, terminalId, tableId, product, app) = await SeedBusyTableAsync();
+        await using var _ = app;
+        using var __ = client;
+        var finished = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+        await _database.ExecuteAsync(
+            "UPDATE orders.orders SET status = @status WHERE order_id = @id;", ("status", status), ("id", finished.OrderId));
+
+        var next = await SendRoundAsync(client, cookie, terminalId, tableId,
+            new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m));
+
+        Assert.NotEqual(finished.OrderId, next.OrderId);
+        Assert.True(await _database.TablePointsAtAsync(tableId, next.OrderId));
+    }
+
+    [Theory]
+    [InlineData("UPDATE table_mgmt.tables SET active = FALSE WHERE table_id = @id;")]
+    [InlineData("UPDATE table_mgmt.tables SET current_status = 'OutOfService' WHERE table_id = @id;")]
+    public async Task AnInactiveOrOutOfServiceTableTakesNoNewCheck(string makeUnavailable)
+    {
+        var (client, cookie, terminalId, tableId, product, app) = await SeedBusyTableAsync();
+        await using var _ = app;
+        using var __ = client;
+        await _database.ExecuteAsync(makeUnavailable, ("id", tableId));
+
+        using var response = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-05", [new OrderItemDraftDto(Guid.NewGuid(), product, "Köfte", 1, 280m)], Id: Guid.NewGuid())));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.False(await _database.TableHasOpenCheckAsync(tableId));
+    }
+
+    private async Task<(HttpClient Client, string Cookie, Guid TerminalId, Guid TableId, Guid Product, WebApplication App)> SeedBusyTableAsync()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedStockedProductAsync("Köfte", 280m, 50m);
+        var app = await StartAsync();
+        return (CreateClient(app), cookie, terminalId, tableId, product, app);
+    }
+
     private static string VoidPath(Guid terminalId, Guid orderId, Guid itemId)
         => $"/api/v1/terminals/{terminalId:D}/orders/{orderId:D}/items/{itemId:D}/void";
 

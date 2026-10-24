@@ -236,7 +236,10 @@ public sealed class TableDraftService
             }
 
             // V1-ORD-006: the pointer is only claimed when the table has no
-            // open check on it.
+            // open check on it — that includes a QR/NFC order still waiting
+            // for confirmation or already accepted, which this endpoint
+            // cannot see as "its" check but the cashier can. An inactive or
+            // out-of-service table cannot take a new check at all.
             //
             // On the ordinary path this branch is only reached when there was
             // no attached check to begin with, so the condition holds by
@@ -260,12 +263,14 @@ public sealed class TableDraftService
                     current_status = 'Occupied',
                     row_version = row_version + 1
                 WHERE t.table_id = @table_id
+                  AND t.active
+                  AND t.current_status <> 'OutOfService'
                   AND (t.current_order_id IS NULL
                        OR NOT EXISTS (
                             SELECT 1
                             FROM orders.orders o
                             WHERE o.order_id = t.current_order_id
-                              AND o.status IN ('Draft', 'Submitted')));
+                              AND o.status NOT IN ('Completed', 'Cancelled', 'Rejected')));
                 """, connection, transaction);
             cmd.Parameters.Add("order_id", NpgsqlDbType.Uuid).Value = orderId;
             cmd.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = request.TableId;

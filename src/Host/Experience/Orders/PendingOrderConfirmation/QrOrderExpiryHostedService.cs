@@ -49,6 +49,12 @@ public sealed class QrOrderExpiryHostedService : BackgroundService
             new EventId(5521, nameof(LogExpired)),
             "QR order '{OrderId}' auto-rejected after exceeding its confirmation timeout.");
 
+    private static readonly Action<ILogger, Guid, Exception?> LogOrderFault =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Error,
+            new EventId(5522, nameof(LogOrderFault)),
+            "QR order '{OrderId}' could not be auto-rejected; the rest of the pass continues and it is retried next pass.");
+
     private readonly IServiceScopeFactory _scopeFactory;
     private readonly ILogger<QrOrderExpiryHostedService> _logger;
 
@@ -123,6 +129,11 @@ public sealed class QrOrderExpiryHostedService : BackgroundService
                 // Staff already acted on it (or another tick already
                 // expired it) since the scan above — the order moved on,
                 // nothing left for this pass to do. Not an error.
+            }
+            catch (Exception ex) when (!cancellationToken.IsCancellationRequested)
+            {
+                // One order that keeps failing must not stop every order behind it from expiring.
+                LogOrderFault(logger, orderId, ex);
             }
         }
 
