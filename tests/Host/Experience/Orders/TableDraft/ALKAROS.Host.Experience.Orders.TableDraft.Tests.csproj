@@ -34,6 +34,9 @@
     <None Include="../../../../../database/migrations/V1/V1-OPS-001/015-audit-log.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-TBL-001/010-tables.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-ORD-001/011-orders.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-TBL-003/024-table-merges.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-TBL-004/025-table-reservations.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../../database/migrations/V1/V1-RMD-714/205-table-constraints-and-sent-checks.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-RMD-097/042-authorization-role-catalog.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-IAM-017/043-authorization-permission-split.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../../database/migrations/V1/V1-RMD-111/055-orders-transfer-server-permissions.up.sql" Link="Fixtures\sql\%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />

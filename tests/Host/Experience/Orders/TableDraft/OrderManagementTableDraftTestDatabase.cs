@@ -70,6 +70,16 @@ public sealed class OrderManagementTableDraftTestDatabase : PgTestDatabase
     public Task<long> KitchenTicketCountAsync(Guid orderId)
         => ScalarAsync<long>($"SELECT count(*) FROM kitchen.kitchen_tickets WHERE order_id = '{orderId:D}';");
 
+    /// <summary>Seeds the dedicated ticket a fired course would print, as if an earlier attempt of that fire had already committed it.</summary>
+    public Task SeedFiredCourseTicketAsync(Guid orderId, int courseNumber)
+        => ExecuteAsync(
+            """
+            INSERT INTO kitchen.kitchen_tickets (id, order_id, ticket_number, station_id, status)
+            SELECT @id, order_id, ticket_number || '-FIRE-' || @course, station_id, 'Queued'
+            FROM kitchen.kitchen_tickets WHERE order_id = @order ORDER BY created_at LIMIT 1;
+            """,
+            ("id", Guid.NewGuid()), ("course", courseNumber.ToString(System.Globalization.CultureInfo.InvariantCulture)), ("order", orderId));
+
     /// <summary>Seeds a cashier device session whose user holds orders.create and orders.send.</summary>
     public async Task<string> SeedCashierSessionAsync(Guid terminalId)
     {

@@ -418,6 +418,38 @@ public sealed class OrderManagementTableDraftHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task FiringACourseWhoseTicketIsAlreadyPrintedDoesNotPrintItAgain()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId);
+        var tableId = await _database.SeedTableAsync();
+        var starter = await _database.SeedStockedProductAsync("Çorba", 90m, 10m);
+        var main = await _database.SeedStockedProductAsync("Izgara", 350m, 10m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var draftResponse = await client.SendAsync(JsonRequest(
+            DraftPath(terminalId), cookie,
+            new CreateTableDraftRequest(tableId, "M-10",
+            [
+                new OrderItemDraftDto(Guid.NewGuid(), starter, "Çorba", 1, 90m, CourseNumber: 1),
+                new OrderItemDraftDto(Guid.NewGuid(), main, "Izgara", 1, 350m, CourseNumber: 2),
+            ])));
+        var draft = await draftResponse.Content.ReadFromJsonAsync<OrderDto>();
+        using var submitResponse = await client.SendAsync(JsonRequest(
+            SubmitPath(terminalId, draft!.OrderId), cookie,
+            new SubmitTableOrderRequest(draft.OrderId, draft.RowVersion, Guid.NewGuid().ToString())));
+        Assert.Equal(HttpStatusCode.OK, submitResponse.StatusCode);
+        await _database.SeedFiredCourseTicketAsync(draft.OrderId, 2);
+
+        using var fireResponse = await client.SendAsync(JsonRequest(
+            FireCoursePath(terminalId, draft.OrderId), cookie, new FireCourseRequestV1(2)));
+
+        Assert.Equal(HttpStatusCode.OK, fireResponse.StatusCode);
+        Assert.Equal(2, await _database.KitchenTicketCountAsync(draft.OrderId));
+    }
+
+    [Fact]
     public async Task FiringACourseWithNothingHeldForItReturnsAConflict()
     {
         var terminalId = Guid.NewGuid();

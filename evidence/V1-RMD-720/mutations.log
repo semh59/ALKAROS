@@ -1,0 +1,8 @@
+A1-held-not-computed KILLED restored=true
+A1b-first-course-is-max KILLED restored=true
+A2-discount-limit-off-by-one KILLED restored=true
+A4-comp-dropped-from-totals KILLED restored=true
+A5-bankers-rounding KILLED restored=true
+T1-duplicate-fire-ticket KILLED restored=true
+V4-commit-before-audit KILLED restored=true
+DONE

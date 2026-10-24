@@ -101,7 +101,69 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
-        // The database refuses the audit event, as a broken audit write would.
+        await using (await RefuseAuditEventAsync("Order.SentItemVoided"))
+        {
+            using var response = await client.SendAsync(JsonRequest(
+                VoidSentPath(terminalId, orderId, itemId), cookie,
+                new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange", "sent by mistake")));
+
+            Assert.False(response.IsSuccessStatusCode);
+        }
+
+        var (status, _) = await _database.ReloadItemStateAsync(orderId, itemId);
+        Assert.Equal(OrderItemState.Active, status);
+    }
+
+    [Fact]
+    public async Task AVoidWhoseAuditRecordCannotBeWrittenLeavesTheConsumedStockConsumed()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Sent);
+        var (stockItemId, _) = await _database.SeedConsumedStockForItemAsync(itemId, onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        await using (await RefuseAuditEventAsync("Order.SentItemVoided"))
+        {
+            using var response = await client.SendAsync(JsonRequest(
+                VoidSentPath(terminalId, orderId, itemId), cookie,
+                new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+            Assert.False(response.IsSuccessStatusCode);
+        }
+
+        // The stock giving-back sits in the same transaction as the audit row, so a refused audit takes it back too.
+        Assert.Equal(9m, await _database.GetOnHandQuantityAsync(stockItemId));
+        var (status, _) = await _database.ReloadItemStateAsync(orderId, itemId);
+        Assert.Equal(OrderItemState.Active, status);
+    }
+
+    [Fact]
+    public async Task ARepeatedVoidOfTheSameSentItemGivesItsStockBackOnlyOnce()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.void");
+        var (orderId, itemId, _, _) = await _database.SeedActiveOrderWithOneItemAsync(KitchenState.Sent);
+        var (stockItemId, _) = await _database.SeedConsumedStockForItemAsync(itemId, onHandAfterConsumption: 9m, consumedQuantity: 1m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var first = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+        using var second = await client.SendAsync(JsonRequest(
+            VoidSentPath(terminalId, orderId, itemId), cookie,
+            new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange")));
+
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        Assert.NotEqual(HttpStatusCode.InternalServerError, second.StatusCode);
+        Assert.Equal(10m, await _database.GetOnHandQuantityAsync(stockItemId));
+    }
+
+    /// <summary>The database refuses the named audit event, as a broken audit write would; disposing the result lifts the refusal.</summary>
+    private async Task<IAsyncDisposable> RefuseAuditEventAsync(string eventName)
+    {
         await using (var install = _database.DataSource.CreateCommand(
             """
             CREATE OR REPLACE FUNCTION audit.test_refuse_event() RETURNS trigger AS $fn$
@@ -115,24 +177,18 @@ public sealed class OrderManagementVoidSentHttpTests : IAsyncLifetime
             """))
             await install.ExecuteNonQueryAsync();
         await using (var attach = _database.DataSource.CreateCommand(
-            "CREATE TRIGGER test_refuse_event BEFORE INSERT ON audit.audit_events FOR EACH ROW EXECUTE FUNCTION audit.test_refuse_event('Order.SentItemVoided');"))
+            $"CREATE TRIGGER test_refuse_event BEFORE INSERT ON audit.audit_events FOR EACH ROW EXECUTE FUNCTION audit.test_refuse_event('{eventName}');"))
             await attach.ExecuteNonQueryAsync();
-        try
-        {
-            using var response = await client.SendAsync(JsonRequest(
-                VoidSentPath(terminalId, orderId, itemId), cookie,
-                new VoidSentItemRequestV1(Guid.NewGuid().ToString(), 1, "CustomerChange", "sent by mistake")));
+        return new AuditRefusal(_database.DataSource);
+    }
 
-            Assert.False(response.IsSuccessStatusCode);
-        }
-        finally
+    private sealed class AuditRefusal(Npgsql.NpgsqlDataSource dataSource) : IAsyncDisposable
+    {
+        public async ValueTask DisposeAsync()
         {
-            await using var detach = _database.DataSource.CreateCommand("DROP TRIGGER IF EXISTS test_refuse_event ON audit.audit_events;");
+            await using var detach = dataSource.CreateCommand("DROP TRIGGER IF EXISTS test_refuse_event ON audit.audit_events;");
             await detach.ExecuteNonQueryAsync();
         }
-
-        var (status, _) = await _database.ReloadItemStateAsync(orderId, itemId);
-        Assert.Equal(OrderItemState.Active, status);
     }
 
     [Fact]
