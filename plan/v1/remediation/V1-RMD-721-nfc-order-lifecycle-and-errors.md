@@ -1,7 +1,7 @@
 # V1-RMD-721 - NFC siparişinin yaşam döngüsü ve hata yolları
 
 - Task ID: V1-RMD-721
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01CEenPfDb6pEWVcDd9W7VdF
 - Work type: implementation
 - Surface state: Planned
