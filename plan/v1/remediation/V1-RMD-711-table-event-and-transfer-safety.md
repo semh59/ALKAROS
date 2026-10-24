@@ -33,6 +33,7 @@ V1-RMD-601 bulguları B005, B006, B007 (transfer ve durum ucu), B021, B022, B024
 
 ## Out of scope
 
+- Birleşim olaylarına kimlik listesi eklenmesi (V1-RMD-710 yaptı; bu görev tüketici tekilleştirmesini ve diğer olayları yapar).
 - Rezervasyon alanları ve istemci düzeltmeleri (V1-RMD-712, V1-RMD-713).
 
 ## Dependencies

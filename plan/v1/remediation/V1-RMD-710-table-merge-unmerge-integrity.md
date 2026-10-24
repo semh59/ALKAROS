@@ -26,6 +26,15 @@ V1-RMD-601 bulguları B001, B002, B003, B004, B007, B008, B030 ve N1 kapanır. B
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Billing/** - yalnız birleşim kapanışı ve olay tüketicisi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/tables/** - yalnız Unmerge komutunun ekrana bağlanması
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-601-tables-quality-audit.md - yalnız Out of scope notu
+- `database/migrations/V1/V1-RMD-710/**`
+- Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/order.json - yalnız yeni migration girdisi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs - yalnız PhaseBMax
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/Manifest/ManifestTests.cs - yalnız yeni migration kimliği
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Orders/OrderSettlementService.cs - yalnız ödeme sonrası masa ve birleşim kapanışı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/BuildingBlocks/IntegrationContracts/TableIntegrationEvents.cs - yalnız birleşim olaylarına kimlik listeleri
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Orders/** - yalnız yeni test
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Orders/** - yalnız yeni test
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Billing/** - yalnız yeni test
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
 
 ## In scope
