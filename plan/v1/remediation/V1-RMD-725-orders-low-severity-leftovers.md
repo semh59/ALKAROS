@@ -26,6 +26,13 @@ V1-RMD-602 B031'in kod gerektiren alt kalemleri tek tek kodla yeniden doğrulan�
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/NfcOrder.test.tsx
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/nfc-order.css
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/index.html - yalnız İngilizce başlık metni
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.tsx - yalnız çağrı onayı hatası
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/Cashier.help-alerts.test.tsx
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx - yalnız yenileme sırası
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.test.tsx
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/WaiterPwa/wwwroot/js/sheets/product-sheet.js - yalnız maxSelections 0
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/waiter-app.test.js
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/NfcOrdering/NfcOrderingEndpoints.cs - yalnız dispatcher yorumu
 - Sınırlı ek (paylaşılan, geri-tik olmadan): docs/operations/** - yalnız Orders geri yükleme ve alarm kalemleri
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 

@@ -36,6 +36,7 @@ Billing modülü ile ona bağlı Host uçları, göçler, testler ve ekranlar ba
 ## Dependencies
 
 - V1-RMD-602
+- V1-RMD-725
 
 ## Acceptance evidence
 
