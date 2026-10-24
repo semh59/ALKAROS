@@ -404,7 +404,14 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
     /// SeedPendingConfirmationOrderAsync's channel-agnostic OrderSource.Waiter
     /// above) since the expiry query filters on source = 'Qr'.
     /// </summary>
-    public async Task<(Guid OrderId, Guid TableId)> SeedOverdueQrPendingOrderAsync(TimeSpan age)
+    public Task<(Guid OrderId, Guid TableId)> SeedOverdueQrPendingOrderAsync(TimeSpan age)
+        => SeedOverduePendingOrderAsync(OrderSource.Qr, age, kitchenStarted: false);
+
+    /// <summary>An age-restricted NFC order held for a waiter; <paramref name="kitchenStarted"/> puts its ticket item at Preparing.</summary>
+    public Task<(Guid OrderId, Guid TableId)> SeedOverdueNfcPendingOrderAsync(TimeSpan age, bool kitchenStarted)
+        => SeedOverduePendingOrderAsync(OrderSource.Nfc, age, kitchenStarted);
+
+    private async Task<(Guid OrderId, Guid TableId)> SeedOverduePendingOrderAsync(OrderSource source, TimeSpan age, bool kitchenStarted)
     {
         var tableId = Guid.NewGuid();
         await ExecuteAsync(
@@ -431,7 +438,7 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
 
         var order = new Order(
             Guid.NewGuid(),
-            OrderSource.Qr,
+            source,
             "QRO002-" + orderItem.Id.ToString("N")[..8],
             new[] { orderItem },
             tableId: tableId,
@@ -440,6 +447,8 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
 
         var repository = new PostgresOrderRepository(DataSource);
         await repository.AddAsync(order);
+        await SeedKitchenTicketAsync(
+            order.Id, orderItem.Id, productId, kitchenStarted ? KitchenTicketItemState.Preparing : KitchenTicketItemState.Queued);
 
         await ExecuteAsync(
             """
@@ -454,15 +463,15 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
     }
 
     /// <summary>Seeds a single-item kitchen ticket (Preparing) matching the order's own item, mirroring what NfcOrderingStore's immediate dispatch already created.</summary>
-    public async Task SeedKitchenTicketAsync(Guid orderId, Guid orderItemId, Guid productId)
+    public async Task SeedKitchenTicketAsync(Guid orderId, Guid orderItemId, Guid productId, KitchenTicketItemState itemState = KitchenTicketItemState.Preparing)
     {
         var ticketId = Guid.NewGuid();
         var ticketItem = new KitchenTicketItem(
             Guid.NewGuid(), ticketId, orderItemId, productId, "Confirmation Test Product", quantity: 1,
-            status: KitchenTicketItemState.Preparing, isAgeRestricted: true);
+            status: itemState, isAgeRestricted: true);
         var ticket = new KitchenTicket(
             ticketId, orderId, "KT-" + ticketId.ToString("N")[..8], "hot-line",
-            new[] { ticketItem }, status: KitchenTicketState.Preparing);
+            new[] { ticketItem }, status: itemState == KitchenTicketItemState.Preparing ? KitchenTicketState.Preparing : KitchenTicketState.Queued);
 
         var repository = new PostgresKitchenTicketRepository(DataSource);
         await repository.AddAsync(ticket);

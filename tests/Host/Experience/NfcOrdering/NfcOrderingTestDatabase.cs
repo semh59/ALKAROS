@@ -23,6 +23,18 @@ public sealed class NfcOrderingTestDatabase : PgTestDatabase
             await RunAsync(DataSource, await File.ReadAllTextAsync(file));
     }
 
+    public Task<string> OrderNumberAsync(Guid orderId)
+        => ScalarAsync<string>($"SELECT order_number FROM orders.orders WHERE order_id = '{orderId:D}';");
+
+    /// <summary>Leaves the product's stock item without a default location, as an incomplete stock set-up would.</summary>
+    public Task RemoveDefaultStockLocationAsync(Guid productId)
+        => ExecuteAsync(
+            """
+            UPDATE inventory.stock_items SET default_location_id = NULL
+            WHERE id IN (SELECT stock_item_id FROM inventory.product_stock_mappings WHERE product_id = @product_id);
+            """,
+            ("product_id", productId));
+
     public Task<long> KitchenTicketCountAsync(Guid orderId)
         => ScalarAsync<long>($"SELECT count(*) FROM kitchen.kitchen_tickets WHERE order_id = '{orderId:D}';");
 

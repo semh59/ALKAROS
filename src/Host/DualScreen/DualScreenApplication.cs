@@ -417,8 +417,10 @@ public static partial class DualScreenApplication
             // V12-TGO-002: Trendyol Go retries a failed delivery at most 3 times, a minute apart.
             rateLimiter.AddPolicy("trendyol-go-webhook", context =>
                 FixedWindow($"{ClientPartition(context)}:trendyol-go-webhook", 300));
+            // The table bucket is wide enough for the guests of one table; one device is bounded separately in
+            // GlobalPartition so that it cannot use up a table's whole bucket alone.
             rateLimiter.AddPolicy("nfc-order", context =>
-                FixedWindow(RoutePartition(context, "tableId", "nfc-order"), 30));
+                FixedWindow(RoutePartition(context, "tableId", "nfc-order"), 120));
             // V12-CWB-001: relay-facing, so unlike every other unauthenticated
             // policy above there is no table id to partition on yet at this
             // route (a session does not exist until it succeeds) — keyed by
@@ -849,11 +851,15 @@ public static partial class DualScreenApplication
     // different value each time (every value costs a database lookup); the per-address cap holds regardless.
     // Applies to every request before its own policy: the QR address cap above, and a per-address default
     // for any /api route that names no policy of its own.
+    public const int NfcOrderAddressPermits = 20;
+
     private static RateLimitPartition<string> GlobalPartition(HttpContext context, int apiPermits, int qrOrderPermits)
     {
         var policy = context.GetEndpoint()?.Metadata.GetMetadata<EnableRateLimitingAttribute>()?.PolicyName;
         if (policy == QrOrderPolicyName)
             return FixedWindow($"{ClientPartition(context)}:qr-order-address", qrOrderPermits);
+        if (policy == "nfc-order")
+            return FixedWindow($"{ClientPartition(context)}:nfc-order-address", NfcOrderAddressPermits);
         if (policy is null && context.Request.Path.StartsWithSegments("/api", StringComparison.OrdinalIgnoreCase))
             return FixedWindow($"{ClientPartition(context)}:api-default", apiPermits);
         return RateLimitPartition.GetNoLimiter("none");

@@ -30,7 +30,7 @@ public sealed class QrOrderExpiryHostedService : BackgroundService
 {
     private static readonly TimeSpan PollInterval = TimeSpan.FromMinutes(1);
     private const int BatchSize = 50;
-    private const string ExpiryReason = "QR siparişi zaman aşımına uğradı, personel onayı gelmedi.";
+    private const string ExpiryReason = "Sipariş zaman aşımına uğradı, personel onayı gelmedi.";
 
     // A stable, non-empty actor id standing in for "the system" in the
     // audit trail — never a real user, and intentionally distinct from
@@ -134,10 +134,18 @@ public sealed class QrOrderExpiryHostedService : BackgroundService
     {
         await using var command = dataSource.CreateCommand(
             """
-            SELECT order_id, row_version
-            FROM orders.orders
-            WHERE source = 'Qr' AND status = 'PendingConfirmation' AND updated_at < now() - @timeout
-            ORDER BY updated_at
+            SELECT o.order_id, o.row_version
+            FROM orders.orders o
+            WHERE o.status = 'PendingConfirmation' AND o.updated_at < now() - @timeout
+              AND (o.source = 'Qr'
+                   -- An age-restricted NFC cart is held for a waiter although its ticket was already sent; it expires
+                   -- like a QR order only while the kitchen has not started any of it.
+                   OR (o.source = 'Nfc' AND NOT EXISTS (
+                       SELECT 1
+                       FROM kitchen.kitchen_tickets t
+                       JOIN kitchen.kitchen_ticket_items ti ON ti.ticket_id = t.id
+                       WHERE t.order_id = o.order_id AND ti.status NOT IN ('Queued', 'Cancelled'))))
+            ORDER BY o.updated_at
             LIMIT @batch_size;
             """);
         command.Parameters.Add("timeout", NpgsqlDbType.Interval).Value = timeout;

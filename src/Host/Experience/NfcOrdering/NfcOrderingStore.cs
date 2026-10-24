@@ -3,9 +3,12 @@ using ALKAROS.Host.Experience.Orders;
 using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Host.Experience.Orders.PendingOrderConfirmation;
 using ALKAROS.Host.Experience.Orders.TableDraft;
+using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Orders.Integration;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using Npgsql;
 using NpgsqlTypes;
 
@@ -55,19 +58,34 @@ public sealed class NfcOrderingStore
     /// missing announcer only means nobody is told, the order is unaffected.
     /// </summary>
     private readonly IPendingOrderAnnouncer? _announcer;
+    private readonly ILogger<NfcOrderingStore> _logger;
+
+    private static readonly Action<ILogger, Guid, Exception?> LogAnnouncementFailed =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Warning,
+            new EventId(5310, nameof(LogAnnouncementFailed)),
+            "NFC order {OrderId} was placed but the waiter announcement failed.");
+
+    private static readonly Action<ILogger, Guid, Exception?> LogStockNotConsumed =
+        LoggerMessage.Define<Guid>(
+            LogLevel.Warning,
+            new EventId(5311, nameof(LogStockNotConsumed)),
+            "NFC order {OrderId} stays at PendingConfirmation: stock could not be consumed.");
 
     public NfcOrderingStore(
         NpgsqlDataSource dataSource,
         IOrderRepository repository,
         SubmitOrderHandler submitHandler,
         OrderStockConsumptionService stockConsumption,
-        IPendingOrderAnnouncer? announcer = null)
+        IPendingOrderAnnouncer? announcer = null,
+        ILogger<NfcOrderingStore>? logger = null)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _repository = repository ?? throw new ArgumentNullException(nameof(repository));
         _submitHandler = submitHandler ?? throw new ArgumentNullException(nameof(submitHandler));
         _stockConsumption = stockConsumption ?? throw new ArgumentNullException(nameof(stockConsumption));
         _announcer = announcer;
+        _logger = logger ?? NullLogger<NfcOrderingStore>.Instance;
     }
 
     public async Task<OrderDto> PlaceOrderAsync(Guid tableId, NfcOrderRequest request, CancellationToken cancellationToken = default)
@@ -94,6 +112,7 @@ public sealed class NfcOrderingStore
             if (existingOrderId is { } replayOrderId)
             {
                 await transaction.CommitAsync(cancellationToken);
+                await EnsureReplayMatchesAsync(replayOrderId, tableId, request, cancellationToken);
                 return await LoadDtoAfterEnsuringAcceptedAsync(replayOrderId, tableId, request.Id, cancellationToken);
             }
 
@@ -108,6 +127,7 @@ public sealed class NfcOrderingStore
             if (await FindOrderIdBySubmissionAsync(connection, transaction, tableId, request.Id, cancellationToken) is { } lockedReplayOrderId)
             {
                 await transaction.CommitAsync(cancellationToken);
+                await EnsureReplayMatchesAsync(lockedReplayOrderId, tableId, request, cancellationToken);
                 return await LoadDtoAfterEnsuringAcceptedAsync(lockedReplayOrderId, tableId, request.Id, cancellationToken);
             }
 
@@ -160,7 +180,7 @@ public sealed class NfcOrderingStore
             var order = new Order(
                 orderId,
                 OrderSource.Nfc,
-                $"NFC-{table.Value.TableNumber}-{now:HHmmssff}",
+                $"NFC-{table.Value.TableNumber}-{now:HHmmssff}-{orderId.ToString("N")[..8]}",
                 items,
                 tableId: tableId,
                 sourceReferenceId: request.Id,
@@ -184,7 +204,11 @@ public sealed class NfcOrderingStore
                 await transaction.RollbackAsync(cancellationToken);
                 var concurrentOrderId = await FindOrderIdBySubmissionAsync(tableId, request.Id, cancellationToken);
                 if (concurrentOrderId is { } foundOrderId)
+                {
+                    await EnsureReplayMatchesAsync(foundOrderId, tableId, request, cancellationToken);
                     return await LoadDtoAfterEnsuringAcceptedAsync(foundOrderId, tableId, request.Id, cancellationToken);
+                }
+
                 throw;
             }
 
@@ -212,6 +236,30 @@ public sealed class NfcOrderingStore
 
             return await LoadDtoAfterEnsuringAcceptedAsync(orderId, tableId, request.Id, cancellationToken);
         }
+    }
+
+    /// <summary>
+    /// A resent submission id replays its order only when the cart is the same one. A different cart under the same
+    /// id used to get the old order back with the new lines silently dropped.
+    /// </summary>
+    private async Task EnsureReplayMatchesAsync(Guid orderId, Guid tableId, NfcOrderRequest request, CancellationToken cancellationToken)
+    {
+        var existing = await _repository.GetByIdAsync(orderId, cancellationToken)
+            ?? throw new InvalidOperationException($"Order {orderId} was not found.");
+        // A resend builds new line ids, so the cart is compared by what it contains.
+        static string Key(Guid productId, decimal quantity, string? notes, IEnumerable<Guid> modifierIds)
+            => string.Join('|', productId, quantity.ToString("0.###", System.Globalization.CultureInfo.InvariantCulture), notes ?? string.Empty,
+                string.Join(',', modifierIds.OrderBy(id => id)));
+        var sent = request.Items
+            .Select(line => Key(line.ProductId, line.Quantity, line.SpecialInstructions, (line.Modifiers ?? []).Select(m => m.ModifierId)))
+            .Order(StringComparer.Ordinal)
+            .ToList();
+        var stored = existing.Items
+            .Select(item => Key(item.ProductId, item.Quantity, item.Notes, item.Modifiers.Select(m => m.ModifierId)))
+            .Order(StringComparer.Ordinal)
+            .ToList();
+        if (!sent.SequenceEqual(stored))
+            throw new SubmitOrderIdempotencyConflictException($"nfc:{tableId:D}", request.Id.ToString());
     }
 
     /// <summary>
@@ -280,10 +328,18 @@ public sealed class NfcOrderingStore
         // told about either.
         if (_announcer is not null && order.Status == OrderState.PendingConfirmation)
         {
-            await _announcer.AnnounceAsync(
-                new PendingOrderAnnouncement(
-                    order.Id, order.TableId, tableNumber, order.Items.Count, order.Total, DateTimeOffset.UtcNow),
-                cancellationToken).ConfigureAwait(false);
+            // The order is committed by now; a failed announcement must not turn a placed order into an error for the guest.
+            try
+            {
+                await _announcer.AnnounceAsync(
+                    new PendingOrderAnnouncement(
+                        order.Id, order.TableId, tableNumber, order.Items.Count, order.Total, DateTimeOffset.UtcNow),
+                    cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception) when (exception is not OperationCanceledException)
+            {
+                LogAnnouncementFailed(_logger, order.Id, exception);
+            }
         }
 
         return MapToDto(order, tableNumber);
@@ -320,13 +376,14 @@ public sealed class NfcOrderingStore
             await _repository.SaveAsync(accepted, order.RowVersion, connection, transaction, cancellationToken);
             await transaction.CommitAsync(cancellationToken);
         }
-        catch (ProductStockNotConfiguredException)
+        catch (Exception exception) when (exception is ProductStockNotConfiguredException
+            or InsufficientOrderStockException
+            or StockItemHasNoDefaultLocationException
+            or StockItemNotFoundException)
         {
-            // Stays at PendingConfirmation; a waiter resolves it later.
-        }
-        catch (InsufficientOrderStockException)
-        {
-            // Stays at PendingConfirmation; a waiter resolves it later.
+            // Stays at PendingConfirmation; a waiter resolves it later. The order is already committed and on the
+            // kitchen ticket, so the guest is not shown an error for a stock set-up problem.
+            LogStockNotConsumed(_logger, order.Id, exception);
         }
         catch (InvalidOperationException)
         {

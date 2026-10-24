@@ -1,0 +1,10 @@
+N1-replay-not-compared KILLED restored=true
+N2-order-number-no-suffix KILLED restored=true
+N3-announce-failure-escapes KILLED restored=true
+N4-no-location-escapes KILLED restored=true
+X1-nfc-not-expired KILLED restored=true
+X2-cooking-nfc-expired KILLED restored=true
+R1-address-limit-off KILLED restored=true
+U1-pending-text-missing KILLED restored=true
+U2-id-not-reset KILLED restored=true
+DONE

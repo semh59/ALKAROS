@@ -69,7 +69,38 @@ public sealed class QrOrderExpiryHostedServiceTests : IAsyncLifetime
         Assert.Equal("Reserved", status);
     }
 
-    /// <summary>A channel-agnostic order (e.g. Waiter, or NFC's own age-restricted hold) is never touched by the QR-only expiry sweep.</summary>
+    [Fact]
+    public async Task AnOverdueNfcAgeRestrictedHoldWhoseKitchenHasNotStartedIsRejectedAndItsTableReleased()
+    {
+        var (orderId, tableId) = await _database.SeedOverdueNfcPendingOrderAsync(TimeSpan.FromMinutes(10), kitchenStarted: false);
+        var store = CreateStore();
+
+        var expiredCount = await QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(
+            _database.DataSource, store, TimeSpan.FromMinutes(5), NullLogger.Instance, CancellationToken.None);
+
+        Assert.Equal(1, expiredCount);
+        Assert.Equal(OrderState.Rejected, (await _database.ReloadOrderAsync(orderId)).Status);
+        var (status, currentOrderId) = await _database.GetTableStateAsync(tableId);
+        Assert.Equal("Available", status);
+        Assert.Null(currentOrderId);
+    }
+
+    [Fact]
+    public async Task AnOverdueNfcHoldWhoseKitchenAlreadyStartedCookingIsLeftForTheWaiter()
+    {
+        var (orderId, tableId) = await _database.SeedOverdueNfcPendingOrderAsync(TimeSpan.FromMinutes(10), kitchenStarted: true);
+        var store = CreateStore();
+
+        var expiredCount = await QrOrderExpiryHostedService.ExpireOverdueOrdersAsync(
+            _database.DataSource, store, TimeSpan.FromMinutes(5), NullLogger.Instance, CancellationToken.None);
+
+        Assert.Equal(0, expiredCount);
+        Assert.Equal(OrderState.PendingConfirmation, (await _database.ReloadOrderAsync(orderId)).Status);
+        var (status, _) = await _database.GetTableStateAsync(tableId);
+        Assert.Equal("Reserved", status);
+    }
+
+    /// <summary>A channel-agnostic order (e.g. Waiter) is never touched by the expiry sweep.</summary>
     [Fact]
     public async Task ANonQrPendingOrderIsNeverExpiredByThisSweep()
     {

@@ -2,6 +2,7 @@ using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Host.DualScreen;
 using ALKAROS.Host.Experience.Orders;
+using ALKAROS.Orders.Integration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -109,6 +110,97 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
 
         Assert.Equal(firstOrder!.OrderId, retryOrder!.OrderId);
         Assert.Equal(1, await _database.KitchenTicketCountAsync(firstOrder.OrderId));
+    }
+
+    [Fact]
+    public async Task ResendingTheSameCartWithNewLineIdsStillReplaysTheOrder()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Köfte", 280m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var submissionId = Guid.NewGuid();
+
+        using var first = await client.PostAsJsonAsync(
+            OrdersPath(tableId), new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), product, 2)], submissionId));
+        using var resent = await client.PostAsJsonAsync(
+            OrdersPath(tableId), new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), product, 2)], submissionId));
+
+        Assert.Equal(HttpStatusCode.OK, resent.StatusCode);
+        Assert.Equal(
+            (await first.Content.ReadFromJsonAsync<OrderDto>())!.OrderId,
+            (await resent.Content.ReadFromJsonAsync<OrderDto>())!.OrderId);
+        Assert.Equal(1, await _database.OrderCountAsync());
+    }
+
+    [Fact]
+    public async Task ADifferentCartUnderTheSameSubmissionIdIsRefusedInsteadOfDroppingTheNewLines()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Köfte", 280m);
+        var other = await _database.SeedProductAsync("Ayran", 20m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var submissionId = Guid.NewGuid();
+
+        using var first = await client.PostAsJsonAsync(
+            OrdersPath(tableId), new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), product, 1)], submissionId));
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+
+        using var changed = await client.PostAsJsonAsync(
+            OrdersPath(tableId),
+            new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), product, 1), new NfcOrderItemRequestDto(Guid.NewGuid(), other, 1)], submissionId));
+
+        Assert.Equal(HttpStatusCode.Conflict, changed.StatusCode);
+        Assert.Contains("IDEMPOTENCY_KEY_REUSED", await changed.Content.ReadAsStringAsync());
+        Assert.Equal(1, await _database.OrderCountAsync());
+    }
+
+    [Fact]
+    public async Task AnOrderNumberCarriesPartOfTheOrderIdSoTwoOrdersInTheSameInstantCannotCollide()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Köfte", 280m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId), new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), product, 1)], Guid.NewGuid()));
+        var order = await response.Content.ReadFromJsonAsync<OrderDto>();
+
+        var number = await _database.OrderNumberAsync(order!.OrderId);
+        Assert.EndsWith(order.OrderId.ToString("N")[..8], number, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task AFailedWaiterAnnouncementDoesNotTurnAPlacedOrderIntoAnError()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var beer = await _database.SeedProductAsync("Bira", 120m, isAgeRestricted: true);
+        await using var app = await StartAsync(services => services.AddSingleton<IPendingOrderAnnouncer>(new ThrowingAnnouncer()));
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId), new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), beer, 1)], Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("PendingConfirmation", (await response.Content.ReadFromJsonAsync<OrderDto>())!.Status);
+    }
+
+    [Fact]
+    public async Task AStockItemWithoutADefaultLocationLeavesThePlacedOrderForTheWaiterInsteadOfFailingTheGuest()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var product = await _database.SeedProductAsync("Köfte", 280m);
+        await _database.RemoveDefaultStockLocationAsync(product);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.PostAsJsonAsync(
+            OrdersPath(tableId), new NfcOrderRequest([new NfcOrderItemRequestDto(Guid.NewGuid(), product, 1)], Guid.NewGuid()));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        Assert.Equal("PendingConfirmation", (await response.Content.ReadFromJsonAsync<OrderDto>())!.Status);
     }
 
     [Fact]
@@ -481,7 +573,7 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
 
     private static string OrdersPath(Guid tableId) => $"/api/v1/nfc/tables/{tableId:D}/orders";
 
-    private async Task<WebApplication> StartAsync()
+    private async Task<WebApplication> StartAsync(Action<IServiceCollection>? configure = null)
     {
         var builder = WebApplication.CreateBuilder(new WebApplicationOptions { Args = [] });
         builder.WebHost.UseUrls("http://127.0.0.1:0");
@@ -492,6 +584,7 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
         builder.Services.AddRateLimiter(options =>
             options.AddPolicy("nfc-order", _ =>
                 System.Threading.RateLimiting.RateLimitPartition.GetNoLimiter("test")));
+        configure?.Invoke(builder.Services);
         builder.Services.AddNfcOrderingExperience();
         var app = builder.Build();
         app.UseRateLimiter();
@@ -506,6 +599,12 @@ public sealed class NfcOrderingHttpTests : IAsyncLifetime
         var address = server.Features.Get<IServerAddressesFeature>()!.Addresses.Single();
         return new HttpClient { BaseAddress = new Uri(address) };
     }
+}
+
+internal sealed class ThrowingAnnouncer : IPendingOrderAnnouncer
+{
+    public Task AnnounceAsync(PendingOrderAnnouncement announcement, CancellationToken cancellationToken = default)
+        => throw new InvalidOperationException("The announcer is down.");
 }
 
 [CollectionDefinition("NFC ordering PostgreSQL HTTP", DisableParallelization = true)]

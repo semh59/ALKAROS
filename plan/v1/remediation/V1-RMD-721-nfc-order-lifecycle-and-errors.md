@@ -24,6 +24,9 @@ V1-RMD-602 bulguları B005, B006, B007, B018, B019, B020, B021 ve B026 kapanır.
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/NfcOrder.tsx
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/NfcOrdering/**
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Orders/Confirmation/** - yalnız yeni test
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.cs - yalnız nfc-order hız sınırı
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/DualScreen/AccessHardeningTests.cs - yalnız nfc-order hız sınırı testi
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/NfcOrder.test.tsx - yalnız onay bekleme ve kimlik sıfırlama testi
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 
 ## In scope

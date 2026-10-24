@@ -32,6 +32,7 @@ V1-RMD-602 bulguları B009, B010, B013, B014, B024 ve B025 kapanır. Gönderilmi
 
 ## Out of scope
 
+- NFC ucundaki istisna eşlemesi ve hız sınırı V1-RMD-721'de ele alınır.
 - Sahiplik süzgecinin ürün kararı gerektiren kısmı (tüm garsonların tüm masaları görmesi) PO sorusu olarak kalır.
 
 ## Dependencies

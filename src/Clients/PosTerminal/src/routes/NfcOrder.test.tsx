@@ -112,6 +112,55 @@ describe("NfcOrder", () => {
     expect(document.body.textContent).toContain("Çorba");
   });
 
+  it("tells the guest an age-restricted order is waiting for the waiter instead of saying it went to the kitchen", async () => {
+    const pendingOrder = {
+      orderId: "o2", tableId: "table-1", tableNumber: "T-01", status: "PendingConfirmation", rowVersion: 2, totalAmount: 60,
+      items: [{ itemId: "i1", productId: "p1", productName: "Çorba", quantity: 1, unitPrice: 60, totalPrice: 60, specialInstructions: null }],
+      createdAt: new Date().toISOString(),
+    };
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/catalog")) return jsonResponse(CATALOG);
+      if (path.includes("/orders")) return jsonResponse(pendingOrder);
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render("/nfc/table-1");
+    await act(async () => Promise.resolve());
+    await act(async () => document.querySelector<HTMLButtonElement>('[aria-label="Çorba adedini artır"]')!.click());
+    await act(async () => [...document.querySelectorAll("button")].find((b) => b.textContent === "Siparişi Gönder")!.click());
+    await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("garsonun onayını bekliyor");
+    expect(document.body.textContent).not.toContain("mutfağa iletildi");
+  });
+
+  it("starts a fresh submission id when the server says the old one belongs to a different cart", async () => {
+    const sentIds: string[] = [];
+    vi.stubGlobal("fetch", vi.fn(async (input: RequestInfo | URL, init?: RequestInit) => {
+      const path = String(input);
+      if (path.includes("/catalog")) return jsonResponse(CATALOG);
+      if (path.includes("/orders")) {
+        sentIds.push(JSON.parse(String(init?.body)).id);
+        return jsonResponse({ error: { code: "IDEMPOTENCY_KEY_REUSED", message: "x" } }, 409);
+      }
+      throw new Error(`unexpected fetch: ${path}`);
+    }));
+
+    await render("/nfc/table-1");
+    await act(async () => Promise.resolve());
+    await act(async () => document.querySelector<HTMLButtonElement>('[aria-label="Çorba adedini artır"]')!.click());
+    const send = () => [...document.querySelectorAll("button")].find((b) => b.textContent === "Siparişi Gönder")!.click();
+    await act(async () => send());
+    await act(async () => Promise.resolve());
+    await act(async () => send());
+    await act(async () => Promise.resolve());
+
+    expect(sentIds).toHaveLength(2);
+    expect(sentIds[1]).not.toBe(sentIds[0]);
+    expect(document.body.textContent).toContain("Sepetiniz önceki denemeden farklı");
+  });
+
   // V1-RMD-348 (independent 2026-09-26 audit, orta seviye bulgu): before this,
   // submissionIdRef lived only in a React ref - a page reload/navigation away
   // while a submission was in flight lost it entirely, so a retry generated

@@ -206,6 +206,13 @@ export function NfcOrder() {
         setState("blocked");
         return;
       }
+      if (reason instanceof ApiError && reason.code === "IDEMPOTENCY_KEY_REUSED") {
+        // The server already holds an order under this submission id, but with a different cart.
+        setSubmissionId(null);
+        setMessage("Sepetiniz önceki denemeden farklı. Önceki sipariş garsonda görünüyorsa tekrar göndermeyin; görünmüyorsa Siparişi Gönder'e yeniden basın.");
+        setState("browsing");
+        return;
+      }
       setMessage(reason instanceof ApiError ? reason.message : "Sipariş gönderilemedi.");
       setState("browsing");
     }
@@ -264,7 +271,11 @@ export function NfcOrder() {
         <div className="nfc-confirmation">
           <div className="nfc-confirmation__icon"><Icon name="check" /></div>
           <h1>Siparişiniz alındı</h1>
-          <p>Siparişiniz mutfağa iletildi, afiyet olsun.</p>
+          <p>
+            {result.status === "PendingConfirmation"
+              ? "Siparişiniz alındı ve garsonun onayını bekliyor. Garsonumuz kısa süre içinde yanınıza gelecek."
+              : "Siparişiniz mutfağa iletildi, afiyet olsun."}
+          </p>
           <div className="nfc-confirmation__summary">
             {result.items.map((item) => (
               <div className="nfc-confirmation__summary-line" key={item.itemId}>

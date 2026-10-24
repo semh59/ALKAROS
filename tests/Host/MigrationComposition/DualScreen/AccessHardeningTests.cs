@@ -102,6 +102,28 @@ public sealed class AccessHardeningTests : IDisposable
     }
 
     [Fact]
+    public async Task NfcOrderRequestsAreBoundedPerAddressSoOneDeviceCannotUseUpATablesWholeBucket()
+    {
+        const int limit = DualScreenApplication.NfcOrderAddressPermits;
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        // An empty cart is refused before the database is touched, so only the limiter is under test.
+        const string EmptyOrderJson = "{\"items\":[],\"id\":\"00000000-0000-0000-0000-000000000000\"}";
+        var table = Guid.Empty;
+
+        for (var attempt = 0; attempt < limit; attempt++)
+        {
+            using var allowed = await SendAsync(client, HttpMethod.Post, $"/api/v1/nfc/tables/{table}/orders", "198.51.100.71", EmptyOrderJson);
+            Assert.NotEqual(HttpStatusCode.TooManyRequests, allowed.StatusCode);
+        }
+
+        using var limited = await SendAsync(client, HttpMethod.Post, $"/api/v1/nfc/tables/{table}/orders", "198.51.100.71", EmptyOrderJson);
+        using var otherAddress = await SendAsync(client, HttpMethod.Post, $"/api/v1/nfc/tables/{table}/orders", "198.51.100.72", EmptyOrderJson);
+        Assert.Equal(HttpStatusCode.TooManyRequests, limited.StatusCode);
+        Assert.NotEqual(HttpStatusCode.TooManyRequests, otherAddress.StatusCode);
+    }
+
+    [Fact]
     public async Task TheLoginLimitOverrideCannotRaiseTheBoundPastItsCeiling()
     {
         Environment.SetEnvironmentVariable(LoginLimitVariable, "1000000");

@@ -151,6 +151,12 @@ public sealed class NfcOrderingExceptionFilter : IEndpointFilter
             new EventId(5300, nameof(LogRequestFailure)),
             "NFC ordering request failed on {Path} ({TraceIdentifier}).");
 
+    private static readonly Action<ILogger, string, string, Exception?> LogRequestRefused =
+        LoggerMessage.Define<string, string>(
+            LogLevel.Warning,
+            new EventId(5301, nameof(LogRequestRefused)),
+            "NFC ordering request refused on {Path} ({TraceIdentifier}) by a state conflict.");
+
     private readonly ILogger<NfcOrderingExceptionFilter> _logger;
 
     public NfcOrderingExceptionFilter(ILogger<NfcOrderingExceptionFilter> logger)
@@ -171,6 +177,11 @@ public sealed class NfcOrderingExceptionFilter : IEndpointFilter
             {
                 LogRequestFailure(_logger, context.HttpContext.Request.Path, context.HttpContext.TraceIdentifier, exception);
             }
+            else if (mapped.Code is "CONCURRENCY_CONFLICT")
+            {
+                // A 409 that is not a known business refusal hides a real fault (a missing row, a broken set-up) otherwise.
+                LogRequestRefused(_logger, context.HttpContext.Request.Path, context.HttpContext.TraceIdentifier, exception);
+            }
 
             return Results.Json(
                 new { error = new { code = mapped.Code, message = mapped.Message } },
@@ -186,6 +197,8 @@ public sealed class NfcOrderingExceptionFilter : IEndpointFilter
         SubmitOrderIdempotencyConflictException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
         InvalidOperationException => (409, "CONCURRENCY_CONFLICT", "Sipariş başka bir işlem tarafından değiştirildi."),
         ArgumentException or BadHttpRequestException => (400, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+        PostgresException { SqlState: PostgresErrorCodes.UniqueViolation or PostgresErrorCodes.SerializationFailure or PostgresErrorCodes.DeadlockDetected }
+            => (409, "CONCURRENCY_CONFLICT", "Sipariş şu anda başka bir işlemle çakıştı, lütfen tekrar deneyin."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
     };
