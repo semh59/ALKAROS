@@ -1,8 +1,8 @@
 # V1-RMD-734 - Kasa istemcisi düzeltmeleri (603 B007, B032, B033, B036)
 
 - Task ID: V1-RMD-734
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
 
