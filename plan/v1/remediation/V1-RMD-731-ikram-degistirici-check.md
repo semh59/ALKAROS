@@ -1,7 +1,7 @@
 # V1-RMD-731 - Değiştiricili ikramda 036 CHECK uyumsuzluğu (603 B004)
 
 - Task ID: V1-RMD-731
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
