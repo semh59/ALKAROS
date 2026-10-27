@@ -235,4 +235,46 @@ public sealed class AdjustmentsDomainTests
         Assert.Throws<InvalidOperationException>(() =>
             AdjustmentCalculator.Calculate(bill, new[] { foreignAdjustment }));
     }
+
+    [Fact]
+    public void ADiscountOnAMixedRateBillTakesOffTheTaxInTheBillsOwnProportion()
+    {
+        var billId = Guid.NewGuid();
+        BillItem Item(decimal price, decimal rate) => new(
+            Guid.NewGuid(), billId, Guid.NewGuid(), Guid.NewGuid(), "Item", 1, price, rate);
+        var bill = new Bill(billId, "BILL-MIX", new[] { Item(1000m, 1m), Item(1000m, 20m) });
+
+        var discount = BillAdjustment.CreateDiscountPercentage(
+            Guid.NewGuid(), billId, 50m, bill.PayableAmount, bill.EffectiveTaxRatePercent,
+            "Promo", Guid.NewGuid());
+
+        // 50% of 2000 = 1000; its tax is half of the bill's 176.57 tax. A rate rounded to 2 decimals gave 88.26.
+        Assert.Equal(1000m, discount.GrossAmount);
+        Assert.Equal(BillMath.RoundCurrency(1000m * bill.TaxTotal / bill.PayableAmount), discount.TaxAmount);
+        Assert.Equal(88.29m, discount.TaxAmount);
+        Assert.Equal(discount.GrossAmount, discount.NetAmount + discount.TaxAmount);
+    }
+
+    [Fact]
+    public void TheTaxBreakdownAddsUpToTheAdjustedTotalsPerRateWithTipsLeftOut()
+    {
+        var billId = Guid.NewGuid();
+        BillItem Item(decimal price, decimal rate) => new(
+            Guid.NewGuid(), billId, Guid.NewGuid(), Guid.NewGuid(), "Item", 1, price, rate);
+        var bill = new Bill(billId, "BILL-BRK", new[] { Item(1000m, 1m), Item(1000m, 20m), Item(333.33m, 10m) });
+        var adjustments = new[]
+        {
+            BillAdjustment.CreateDiscountPercentage(
+                Guid.NewGuid(), billId, 33m, bill.PayableAmount, bill.EffectiveTaxRatePercent, "Promo", Guid.NewGuid()),
+            BillAdjustment.CreateTip(Guid.NewGuid(), billId, 50m, "Tip", Guid.NewGuid()),
+        };
+        var summary = AdjustmentCalculator.Calculate(bill, adjustments);
+
+        var lines = TaxBreakdown.Build(bill, summary);
+
+        Assert.Equal([1m, 10m, 20m], lines.Select(line => line.RatePercent));
+        Assert.Equal(summary.AdjustedPayableAmount - summary.TotalTips, lines.Sum(line => line.Gross));
+        Assert.Equal(summary.AdjustedTaxTotal, lines.Sum(line => line.Tax));
+        Assert.All(lines, line => Assert.Equal(line.Gross, line.Net + line.Tax));
+    }
 }

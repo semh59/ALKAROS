@@ -106,11 +106,9 @@ public sealed class BillingSplitStore
             return (replay, AdjustmentCalculator.Calculate(bill, existingAdjustments));
         }
 
-        // A bill's items can carry different tax rates; the discount is
-        // split net/tax using the bill's own effective (weighted-average)
-        // rate rather than an arbitrary single item's rate.
-        var netBase = bill.PayableAmount - bill.TaxTotal;
-        var effectiveTaxRate = netBase > 0 ? BillMath.RoundCurrency(bill.TaxTotal / netBase * 100m) : 0m;
+        // A bill's items can carry different tax rates; the discount is split net/tax in the bill's own
+        // proportion (its unrounded weighted-average rate), not an arbitrary single item's rate.
+        var effectiveTaxRate = bill.EffectiveTaxRatePercent;
 
         var adjustmentId = Guid.NewGuid();
         var adjustment = request.CalculationType switch

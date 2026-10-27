@@ -1366,6 +1366,19 @@
     return '<tr class="sp-receipt-total"><td>Net tahsilat</td><td>' + formatMoney(paid - refunded) + '</td></tr>';
   }
 
+  // KDV dökümü: oran başına matrah ve KDV; toplam satırı ödenecek tutardaki KDV'dir.
+  function receiptTaxHtml(receipt) {
+    var lines = receipt.taxLines || [];
+    if (!lines.length) return '';
+    return '<table>' +
+      lines.map(function (line) {
+        return '<tr><td>KDV %' + escapeHtml(Number(line.ratePercent).toLocaleString('tr-TR')) +
+          ' (matrah ' + formatMoney(line.net) + ')</td><td>' + formatMoney(line.tax) + '</td></tr>';
+      }).join('') +
+      '<tr class="sp-receipt-total"><td>Toplam KDV</td><td>' + formatMoney(receipt.taxTotal) + '</td></tr>' +
+      '</table>';
+  }
+
   function receiptHtml(receipt) {
     var opened = receipt.openedAt ? new Date(receipt.openedAt).toLocaleString('tr-TR') : '';
     return (
@@ -1375,6 +1388,9 @@
       '<table>' +
       receipt.items.map(function (item) {
         return '<tr><td>' + escapeHtml(Number(item.quantity).toLocaleString('tr-TR')) + ' × ' + escapeHtml(item.name) + '</td><td>' + formatMoney(item.amount) + '</td></tr>' +
+          (item.lineDiscount > 0
+            ? '<tr class="sp-receipt-refund"><td>İndirim / ikram</td><td>-' + formatMoney(item.lineDiscount) + '</td></tr>'
+            : '') +
           (item.refundedQuantity > 0
             ? '<tr class="sp-receipt-refund"><td>İade edildi: ' + escapeHtml(Number(item.refundedQuantity).toLocaleString('tr-TR')) + ' adet</td><td></td></tr>'
             : '');
@@ -1388,6 +1404,7 @@
       }).join('') +
       '<tr class="sp-receipt-total"><td>Toplam</td><td>' + formatMoney(receipt.payableAmount) + '</td></tr>' +
       '</table>' +
+      receiptTaxHtml(receipt) +
       '<table>' +
       receipt.payments.map(function (payment) {
         var status = RECEIPT_PAYMENT_STATUS[payment.status];

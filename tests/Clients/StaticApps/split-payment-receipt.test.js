@@ -108,6 +108,33 @@ describe("split-payment.js information receipt", () => {
     expect(text).not.toMatch(/Approved|Refunded|Manual|Card|DiscountAmount/);
   });
 
+  it("prints the tax per rate with a total and the line discount under its item", async () => {
+    const taxed = {
+      ...receipt,
+      items: [{ name: "Menü", quantity: 1, unitPrice: 120, amount: 100, lineDiscount: 20 }],
+      adjustments: [],
+      subtotal: 100,
+      payableAmount: 100,
+      taxTotal: 14,
+      taxLines: [
+        { ratePercent: 10, net: 50, tax: 5, gross: 55 },
+        { ratePercent: 20, net: 37.5, tax: 9, gross: 45 },
+      ],
+    };
+    await open({ body: taxed });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+
+    document.getElementById("print-receipt").click();
+
+    await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    const text = document.getElementById("receipt-print").textContent;
+    expect(text).toContain("İndirim / ikram");
+    expect(text).toMatch(/KDV %10 \(matrah [^)]*50,00\)/);
+    expect(text).toMatch(/KDV %20 \(matrah [^)]*37,50\)/);
+    expect(text).toContain("Toplam KDV");
+    expect(text).toContain("14,00");
+  });
+
   it("lists refunded units, the amount paid back per payment and the net amount kept", async () => {
     const refunded = {
       ...receipt,

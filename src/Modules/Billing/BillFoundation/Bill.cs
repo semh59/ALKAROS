@@ -156,6 +156,13 @@ public sealed class Bill
         }
     }
 
+    /// <summary>
+    /// The weighted tax rate of a bill with mixed rates, kept unrounded: a 2-decimal rate drifts by kuruş on a
+    /// large discount, while tax share = discount x TaxTotal / PayableAmount is exact.
+    /// </summary>
+    public decimal EffectiveTaxRatePercent
+        => PayableAmount - TaxTotal is var net and > 0m ? TaxTotal / net * 100m : 0m;
+
     public decimal PayableAmount
     {
         get

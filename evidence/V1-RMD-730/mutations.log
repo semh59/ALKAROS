@@ -1,0 +1,9 @@
+M1-discount-tax-uses-rounded-rate KILLED restored=true
+M2-tax-remainder-dropped KILLED restored=true
+M3-receipt-subtotal-back-to-line-subtotal KILLED restored=true
+M4-receipt-without-tax-lines KILLED restored=true
+M5-tips-counted-in-tax-gross KILLED restored=true
+M6-line-discount-not-reported KILLED restored=true
+M7-tax-table-not-printed KILLED restored=true
+M8-line-discount-row-not-printed KILLED restored=true
+DONE

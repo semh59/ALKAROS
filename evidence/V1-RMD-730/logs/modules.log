@@ -1,0 +1,8 @@
+tests/Modules/Billing/SplitDesign
+Başarılı!  - Başarısız:     0, Başarılı:    31, Atlanan:     0, Toplam:    31, Süre: 878 ms - ALKAROS.Billing.SplitDesign.Tests.dll (net8.0)
+tests/Modules/Billing/Adjustments
+Başarılı!  - Başarısız:     0, Başarılı:    19, Atlanan:     0, Toplam:    19, Süre: 683 ms - ALKAROS.Billing.Adjustments.Tests.dll (net8.0)
+tests/Modules/Billing/BillFoundation
+Başarılı!  - Başarısız:     0, Başarılı:    44, Atlanan:     0, Toplam:    44, Süre: 999 ms - ALKAROS.Billing.BillFoundation.Tests.dll (net8.0)
+tests/Architecture/ApiConventions
+Başarılı!  - Başarısız:     0, Başarılı:     5, Atlanan:     0, Toplam:     5, Süre: 20 s - ALKAROS.Architecture.ApiConventions.Tests.dll (net8.0)

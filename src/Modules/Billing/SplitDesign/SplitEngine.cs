@@ -43,30 +43,27 @@ public static class SplitEngine
                 $"Cannot split payable amount {totalPayable} equally among {personCount} people because amount per person is less than 0.01 TRY.");
         }
 
-        var baseTax = totalTax > 0 ? BillMath.RoundCurrency(Math.Floor((totalTax / personCount) * 100m) / 100m) : 0m;
-
         var amountRemainder = totalPayable - (baseAmount * personCount);
-        var taxRemainder = totalTax - (baseTax * personCount);
+        var amounts = Enumerable.Range(0, personCount)
+            .Select(index => baseAmount + (index == personCount - 1 ? amountRemainder : 0m))
+            .ToArray();
+        var taxes = ApportionTax(totalTax, amounts);
 
         var allocations = new List<BillAllocation>(personCount);
 
         for (var i = 0; i < personCount; i++)
         {
-            var isLast = i == personCount - 1;
             var label = personLabels is not null && i < personLabels.Count && !string.IsNullOrWhiteSpace(personLabels[i])
                 ? personLabels[i]
                 : $"Person {i + 1}";
-
-            var allocatedAmount = baseAmount + (isLast ? amountRemainder : 0m);
-            var taxAmount = baseTax + (isLast ? taxRemainder : 0m);
 
             allocations.Add(new BillAllocation(
                 id: Guid.NewGuid(),
                 billId: bill.Id,
                 ownerType: AllocationOwnerType.Person,
                 ownerReference: label,
-                allocatedAmount: allocatedAmount,
-                taxAmount: taxAmount,
+                allocatedAmount: amounts[i],
+                taxAmount: taxes[i],
                 createdBy: createdBy));
         }
 
@@ -110,25 +107,12 @@ public static class SplitEngine
         }
 
         var allocations = new List<BillAllocation>(targets.Count);
-        var runningTax = 0m;
+        var amountTaxes = ApportionTax(totalTax, targets.Select(t => BillMath.RoundCurrency(t.Amount)).ToArray());
 
         for (var i = 0; i < targets.Count; i++)
         {
             var (owner, amount) = targets[i];
             var roundedAmount = BillMath.RoundCurrency(amount);
-
-            decimal taxAmount;
-            if (i == targets.Count - 1)
-            {
-                taxAmount = BillMath.RoundCurrency(totalTax - runningTax);
-            }
-            else
-            {
-                taxAmount = totalPayable > 0
-                    ? FloorCurrency(totalTax * (roundedAmount / totalPayable))
-                    : 0m;
-                runningTax += taxAmount;
-            }
 
             allocations.Add(new BillAllocation(
                 id: Guid.NewGuid(),
@@ -136,7 +120,7 @@ public static class SplitEngine
                 ownerType: AllocationOwnerType.Amount,
                 ownerReference: owner,
                 allocatedAmount: roundedAmount,
-                taxAmount: taxAmount,
+                taxAmount: amountTaxes[i],
                 createdBy: createdBy));
         }
 
@@ -306,14 +290,11 @@ public static class SplitEngine
         }
 
         var allocations = new List<BillAllocation>(targets.Count);
-        var runningTax = 0m;
+        var customTaxes = ApportionTax(totalTax, roundedAmounts);
         for (var index = 0; index < targets.Count; index++)
         {
             var target = targets[index];
-            var tax = index == targets.Count - 1
-                ? BillMath.RoundCurrency(totalTax - runningTax)
-                : FloorCurrency(totalTax * (roundedAmounts[index] / totalPayable));
-            runningTax += tax;
+            var tax = customTaxes[index];
 
             allocations.Add(new BillAllocation(
                 Guid.NewGuid(),
@@ -332,6 +313,13 @@ public static class SplitEngine
 
     private static decimal FloorCurrency(decimal value)
         => BillMath.RoundCurrency(Math.Floor(value * 100m) / 100m);
+
+    /// <summary>
+    /// The tax of each share, in proportion to its amount: the shares add up to the total and none can exceed its
+    /// amount, because tax is always a fraction of its gross.
+    /// </summary>
+    private static decimal[] ApportionTax(decimal totalTax, IReadOnlyList<decimal> amounts)
+        => BillMath.Apportion(totalTax, amounts);
 }
 
 /// <summary>

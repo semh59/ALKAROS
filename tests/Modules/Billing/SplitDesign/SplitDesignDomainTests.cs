@@ -586,4 +586,42 @@ public sealed class SplitDesignDomainTests
                 new CustomSplitTarget(secondOwner, 100m, item.Id, 1m),
             ]));
     }
+
+    [Fact]
+    public void TaxSharesAddUpToTheBillTaxAndNeverExceedTheirAmount()
+    {
+        // 1.00 gross carrying 0.50 tax split 0.97 / 0.01 / 0.01 / 0.01: handing the whole rounding remainder to the
+        // last target gave it 0.02 tax on 0.01.
+        var item = new BillItem(
+            Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Item", 1, 0.50m, 100m,
+            taxAmount: 0.50m, netAmount: 0.50m, grossAmount: 1.00m);
+        var bill = new Bill(item.BillId, "BILL-TAX", new[] { item });
+
+        var amountSplit = SplitEngine.CreateAmountSplit(
+            bill, [("A", 0.97m), ("B", 0.01m), ("C", 0.01m), ("D", 0.01m)]);
+        var customSplit = SplitEngine.CreateCustomSplit(bill, [
+            new CustomSplitTarget("A", 0.97m), new CustomSplitTarget("B", 0.01m),
+            new CustomSplitTarget("C", 0.01m), new CustomSplitTarget("D", 0.01m)]);
+
+        foreach (var split in new[] { amountSplit, customSplit })
+        {
+            Assert.Equal(0.50m, split.Sum(allocation => allocation.TaxAmount));
+            Assert.All(split, allocation => Assert.True(allocation.TaxAmount <= allocation.AllocatedAmount));
+        }
+    }
+
+    [Fact]
+    public void EqualSplitSharesTheTaxInWholeKurusWithoutOverloadingTheLastPerson()
+    {
+        var item = new BillItem(
+            Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Item", 1, 0.07m, 100m,
+            taxAmount: 0.05m, netAmount: 0.02m, grossAmount: 0.07m);
+        var bill = new Bill(item.BillId, "BILL-EQ", new[] { item });
+
+        var split = SplitEngine.CreateEqualSplit(bill, 7);
+
+        Assert.Equal(0.05m, split.Sum(allocation => allocation.TaxAmount));
+        Assert.All(split, allocation => Assert.True(allocation.TaxAmount <= allocation.AllocatedAmount));
+        Assert.Equal(5, split.Count(allocation => allocation.TaxAmount == 0.01m));
+    }
 }

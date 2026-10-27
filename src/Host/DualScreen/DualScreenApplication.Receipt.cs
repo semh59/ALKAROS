@@ -11,7 +11,10 @@ using NpgsqlTypes;
 namespace ALKAROS.Host.DualScreen;
 
 public sealed record BillReceiptItemV1(
-    string Name, decimal Quantity, decimal UnitPrice, decimal Amount, Guid BillItemId, decimal RefundedQuantity);
+    string Name, decimal Quantity, decimal UnitPrice, decimal Amount, Guid BillItemId, decimal RefundedQuantity,
+    decimal LineDiscount = 0m);
+
+public sealed record BillReceiptTaxLineV1(decimal RatePercent, decimal Net, decimal Tax, decimal Gross);
 
 public sealed record BillReceiptAdjustmentV1(string Type, decimal Amount, bool IsDeduction);
 
@@ -30,7 +33,8 @@ public sealed record BillReceiptV1(
     decimal Subtotal,
     decimal PayableAmount,
     decimal TaxTotal,
-    IReadOnlyList<BillReceiptPaymentV1> Payments);
+    IReadOnlyList<BillReceiptPaymentV1> Payments,
+    IReadOnlyList<BillReceiptTaxLineV1>? TaxLines = null);
 
 public static partial class DualScreenApplication
 {
@@ -77,12 +81,14 @@ public static partial class DualScreenApplication
                     bill.ClosedAt,
                     bill.Items
                         .Select(i => new BillReceiptItemV1(
-                            i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, i.Id, refunded.GetValueOrDefault(i.Id)))
+                            i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, i.Id, refunded.GetValueOrDefault(i.Id),
+                            i.DiscountAmount))
                         .ToList(),
                     adjustments
                         .Select(a => new BillReceiptAdjustmentV1(a.AdjustmentType.ToString(), a.GrossAmount, a.IsDeduction))
                         .ToList(),
-                    summary.OriginalSubtotal,
+                    // The printed lines are after any line discount or complimentary, so the subtotal is their sum.
+                    bill.PayableAmount,
                     summary.AdjustedPayableAmount,
                     summary.AdjustedTaxTotal,
                     payments
@@ -95,6 +101,9 @@ public static partial class DualScreenApplication
                             p.Status.ToString(),
                             p.ApprovedAt,
                             paidBack.GetValueOrDefault(p.Id)))
+                        .ToList(),
+                    TaxBreakdown.Build(bill, summary)
+                        .Select(line => new BillReceiptTaxLineV1(line.RatePercent, line.Net, line.Tax, line.Gross))
                         .ToList()));
             })
             .WithTags("BillReceipt")

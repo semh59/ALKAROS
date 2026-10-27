@@ -155,6 +155,40 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task TheReceiptFootsAndCarriesTheTaxPerRateAfterALineDiscountAndABillDiscount()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-tax");
+        var billId = await _database.SeedBillAsync(payable: 100m);
+        var actor = await UserIdAsync();
+        // A 120 line with 20 off: gross 100 at 10% tax (9.09), so the lines print 100 while the line subtotal is 120.
+        await using (var line = _database.DataSource.CreateCommand(
+            "UPDATE billing.bill_items SET discount_amount = 20, tax_rate = 10, tax_amount = 9.09, net_amount = 90.91 WHERE bill_id = @id;"))
+        {
+            line.Parameters.AddWithValue("id", billId);
+            await line.ExecuteNonQueryAsync();
+        }
+        await new PostgresBillAdjustmentRepository(_database.DataSource).AddAsync(
+            BillAdjustment.CreateDiscountAmount(Guid.NewGuid(), billId, 10m, 10m, "Discount", actor, createdBy: actor));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var body = await (await GetAsync(client, ReceiptPath(terminalId, billId), cookie)).Content.ReadFromJsonAsync<JsonElement>();
+
+        var item = Assert.Single(body.GetProperty("items").EnumerateArray());
+        Assert.Equal(100m, item.GetProperty("amount").GetDecimal());
+        Assert.Equal(20m, item.GetProperty("lineDiscount").GetDecimal());
+        Assert.Equal(100m, body.GetProperty("subtotal").GetDecimal());
+        Assert.Equal(90m, body.GetProperty("payableAmount").GetDecimal());
+        var tax = Assert.Single(body.GetProperty("taxLines").EnumerateArray());
+        Assert.Equal(10m, tax.GetProperty("ratePercent").GetDecimal());
+        Assert.Equal(90m, tax.GetProperty("gross").GetDecimal());
+        Assert.Equal(body.GetProperty("taxTotal").GetDecimal(), tax.GetProperty("tax").GetDecimal());
+        Assert.Equal(90m, tax.GetProperty("net").GetDecimal() + tax.GetProperty("tax").GetDecimal());
+        Assert.True(tax.GetProperty("tax").GetDecimal() > 0m);
+    }
+
+    [Fact]
     public async Task AnUnknownBillIsNotFoundAndAnAnonymousCallIsRefused()
     {
         var terminalId = Guid.NewGuid();
