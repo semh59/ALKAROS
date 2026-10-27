@@ -37,7 +37,7 @@ public sealed class PostgresSplitDesignRepository : ISplitDesignRepository
                    created_at, created_by, row_version
             FROM {AllocationsTable}
             WHERE bill_id = @bill_id
-            ORDER BY created_at ASC
+            ORDER BY created_at ASC, bill_allocation_id ASC
             LIMIT {MaxUnpagedRows + 1};
             """;
 

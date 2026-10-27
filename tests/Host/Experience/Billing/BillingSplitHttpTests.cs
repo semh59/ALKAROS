@@ -107,6 +107,24 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AllocationsSavedTogetherComeBackInAStableOrder()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var tie = DateTimeOffset.UtcNow;
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+        var repository = new ALKAROS.Billing.SplitDesign.PostgresSplitDesignRepository(source);
+        var allocations = Enumerable.Range(1, 6).Select(n => new ALKAROS.Billing.SplitDesign.BillAllocation(
+            id: Guid.NewGuid(), billId: seeded.BillId, ownerType: ALKAROS.Billing.SplitDesign.AllocationOwnerType.Person,
+            ownerReference: "Kişi " + n, allocatedAmount: 10m, taxAmount: 1m, createdAt: tie)).ToList();
+        await repository.SaveSplitDesignAsync(seeded.BillId, allocations);
+
+        var loaded = await repository.GetAllocationsByBillIdAsync(seeded.BillId);
+
+        Assert.Single(loaded.Select(allocation => allocation.CreatedAt).Distinct());
+        Assert.Equal(allocations.Select(allocation => allocation.Id).Order(), loaded.Select(allocation => allocation.Id));
+    }
+
+    [Fact]
     public async Task MalformedJsonBodyReturns400WithoutReachingTheEndpointFilter()
     {
         // An independent audit (2026-09-06) claimed BadHttpRequestException

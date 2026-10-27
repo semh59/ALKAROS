@@ -700,6 +700,7 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
         var (orderId, tableId) = await _database.BillOrderAndTableAsync(billId);
         // The waiter sent the check to the till and a NEW party already sits at the table.
         await _database.SetTableStatusAsync(tableId, "Occupied");
+        await _database.MarkCheckSentAsync(orderId, tableId);
         await using var app = await StartAsync();
         using var client = CreateClient(app);
 
@@ -1162,6 +1163,16 @@ internal sealed class PaymentTenderHttpTestDatabase
         await using var command = DataSource.CreateCommand("UPDATE table_mgmt.tables SET current_status = @status WHERE table_id = @id;");
         command.Parameters.AddWithValue("status", status);
         command.Parameters.AddWithValue("id", tableId);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    /// <summary>Records what sending the check to the till writes, so the table repair knows the table was released.</summary>
+    public async Task MarkCheckSentAsync(Guid orderId, Guid tableId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "INSERT INTO table_mgmt.table_sent_checks (order_id, table_id) VALUES (@order, @table);");
+        command.Parameters.AddWithValue("order", orderId);
+        command.Parameters.AddWithValue("table", tableId);
         await command.ExecuteNonQueryAsync();
     }
 
