@@ -29,6 +29,7 @@ V1-RMD-603 B007 (kart kilidi uyarısında tutar ve müdüre yönlendirme), B032,
 
 ## Out of scope
 
+- Bilgi fişi uç noktasının hata zarfı (404) V1-RMD-733 kapsamındadır; bu görev ona dokunmaz.
 - Ürün kararı gerektiren kalemler (PO soruları) sorulmadan değiştirilmez.
 - Bu görevin başlığında adı geçmeyen bulguların düzeltmesi.
 

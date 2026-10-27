@@ -23,6 +23,7 @@ V1-RMD-603 B023, B029: GRANT_DENIED İngilizce ve zarfsız; tüm iade ve bölme 
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Billing/**
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/**
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Receipt.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Architecture/ApiConventions/**
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 
