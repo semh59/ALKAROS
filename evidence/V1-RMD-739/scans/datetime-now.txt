@@ -1,0 +1,346 @@
+src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:40: var createdAt = DateTimeOffset.UtcNow;
+src/Clients/Cashier/wwwroot/telemetry/telemetry.js:45: return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+src/Clients/Cashier/wwwroot/telemetry/telemetry.js:54: var now = options.now || function () { return Date.now(); };
+src/Clients/PosTerminal/src/features/interaction-telemetry/installInteractionTelemetry.ts:38: if (!open || open.traceId || Date.now() > open.until) return;
+src/Clients/PosTerminal/src/features/interaction-telemetry/installInteractionTelemetry.ts:61: const wall = Date.now();
+src/Clients/PosTerminal/src/features/interaction-telemetry/interactionRecorder.ts:35: const now = options.now ?? (() => Date.now());
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:164: const [now, setNow] = useState(() => Date.now());
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:179: const timer = setInterval(() => setNow(Date.now()), 1_000);
+src/Clients/PosTerminal/src/features/kitchen-operations/models.ts:325: export function isHealthSnapshotStale(capturedAt: string, now: number = Date.now()): boolean {
+src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx:172: const elapsedMinutes = Math.max(0, Math.floor((Date.now() - Date.parse(occupiedSince)) / 60_000));
+src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx:187: const minutesSinceChange = Math.max(0, Math.floor((Date.now() - started) / 60_000));
+src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:46: return Math.max(0, Math.floor((Date.now() - started) / 60_000));
+src/Clients/PosTerminal/src/routes/Cashier.tsx:270: addHelpAlerts([{ id: payload.helpRequestId ?? `${payload.tableId}-${Date.now()}`, tableNumber: payload.tableNumber,
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:61: setFreshness(afterSnapshot(snapshot, Date.now()));
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:67: setFreshness((previous) => afterFailure(previous, Date.now()));
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:118: const expiresIn = Math.max(0, new Date(pairing.expiresAt).getTime() - Date.now());
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:162: const remaining = Math.max(0, 10_000 - (Date.now() - freshness.lastSuccessAt));
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:164: () => setFreshness((previous) => afterFailure(previous, Date.now())),
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:171: const markOffline = () => setFreshness((previous) => afterFailure(previous, Date.now()));
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:244: <small>Kod {Math.max(1, Math.round((new Date(pairing.expiresAt).getTime() - Date.now()) / 60_000))} dakika sonra otomatik olarak yenilenir.</small>
+src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:25: // the real timestamp is server-authoritative (DateTimeOffset.UtcNow at
+src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:177: export function sortQueueByPriority(queue, now = Date.now()) {
+src/Clients/WaiterPwa/wwwroot/js/screens/tables.js:105: return Math.max(0, Math.floor((Date.now() - opened) / 60000));
+src/Clients/WaiterPwa/wwwroot/js/state.js:332: export function offlineAuthorityFor(permissionCode, amount, now = Date.now()) {
+src/Clients/WaiterPwa/wwwroot/telemetry/telemetry.js:45: return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+src/Clients/WaiterPwa/wwwroot/telemetry/telemetry.js:54: var now = options.now || function () { return Date.now(); };
+src/Clients/WaiterPwa/wwwroot/vendor/signalr.min.js:1: var t,e;t=self,e=()=>(()=>{var t={d:(e,s)=>{for(var i in s)t.o(s,i)&&!t.o(e,i)&&Object.defineProperty(e,i,{enumerable:!0,get:s[i]})}};t.g=function(){if("object"
+src/Clients/WaiterPwa/wwwroot/waiter-app.js:280: catalogLoadedAt = Date.now();
+src/Clients/WaiterPwa/wwwroot/waiter-app.js:314: if (Date.now() - catalogLoadedAt < CATALOG_REFRESH_INTERVAL_MS) return;
+src/Host/DualScreen/DualScreenApplication.Endpoints.cs:71: request.Username.Trim(), request.Password, DateTimeOffset.UtcNow, cancellationToken);
+src/Host/DualScreen/DualScreenApplication.Endpoints.cs:92: AppendCookie(context, terminalKeyCookie, newTerminalKey, DateTimeOffset.UtcNow.Add(TerminalKeyLifetime));
+src/Host/DualScreen/DualScreenApplication.Endpoints.cs:213: principal.UserId, request.Pin, DateTimeOffset.UtcNow, cancellationToken);
+src/Host/DualScreen/DualScreenApplication.Endpoints.cs:267: principal.UserId, request.CurrentPassword, request.Pin, DateTimeOffset.UtcNow, cancellationToken);
+src/Host/DualScreen/DualScreenApplication.Endpoints.cs:492: principal.UserId, DateTimeOffset.UtcNow, "Cashier submitted order"), cancellationToken);
+src/Host/DualScreen/DualScreenStore.Display.cs:315: DateTimeOffset.UtcNow, message);
+src/Host/DualScreen/DualScreenStore.Orders.cs:152: var orderNumber = OrderNumber(DateTimeOffset.UtcNow, orderId);
+src/Host/DualScreen/DualScreenStore.Screensaver.cs:30: command.Parameters.AddWithValue("updated_at", DateTimeOffset.UtcNow);
+src/Host/DualScreen/DualScreenStore.cs:521: DateTimeOffset.UtcNow, "Sıradaki işlem bekleniyor.");
+src/Host/DualScreen/DualScreenTls.cs:94: var now = DateTimeOffset.UtcNow;
+src/Host/DualScreen/DualScreenTls.cs:110: if (cached.NotAfter.ToUniversalTime() > DateTime.UtcNow.AddDays(RenewWhenWithinDays))
+src/Host/Experience/Authorization/AuthorizationDecisionStore.cs:35: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);
+src/Host/Experience/Billing/BillCancellation.cs:37: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Billing/PaymentRefunds.cs:188: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Billing/PaymentRefunds.cs:355: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Billing/PaymentRefunds.cs:395: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Billing/PaymentRefunds.cs:421: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Catalog/CatalogManagementStore.cs:250: request.ProductId, price.CurrencyCode, DateTimeOffset.UtcNow, cancellationToken);
+src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:376: DateTimeOffset.UtcNow,
+src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:486: DateTimeOffset.UtcNow);
+src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:738: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:145: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:298: SubmittedAt: DateTimeOffset.UtcNow,
+src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:336: order.Id, order.TableId, tableNumber, order.Items.Count, order.Total, DateTimeOffset.UtcNow),
+src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:370: OrderState.Accepted, reason: "NFC güvenilir kanal - onay gerekmez.", changedAt: DateTimeOffset.UtcNow);
+src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:426: var next = order.TransitionTo(target, reason: reason, changedAt: DateTimeOffset.UtcNow);
+src/Host/Experience/OnlineOrdering/OnlineMenuEndpoints.cs:141: var mapping = await mappings.MapIfUnownedAsync(sku, productId, DateTimeOffset.UtcNow, userId, cancellationToken);
+src/Host/Experience/OnlineOrdering/OnlineMenuEndpoints.cs:163: return await mappings.CloseOpenMappingAsync(productId, DateTimeOffset.UtcNow, userId, cancellationToken)
+src/Host/Experience/OnlineOrdering/YemeksepetiOrderIntakeService.cs:199: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/OnlineOrdering/YemeksepetiOrderIntakeService.cs:347: externalOrderId, OnlineOutboundStatus.Cancelled, OnlineCancellationReason.ItemUnavailable, items, DateTimeOffset.UtcNow),
+src/Host/Experience/OnlineOrdering/YemeksepetiStatusSyncService.cs:170: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/OnlineOrdering/YemeksepetiStatusSyncService.cs:221: externalOrderId, OnlineOutboundStatus.Cancelled, reason, LineReferences(order), DateTimeOffset.UtcNow),
+src/Host/Experience/OnlineOrdering/YemeksepetiStatusSyncService.cs:262: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Orders/CashierHandoffStore.cs:135: await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);
+src/Host/Experience/Orders/CashierHandoffStore.cs:174: await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);
+src/Host/Experience/Orders/OrderManagementEndpoints.cs:703: var startOfUtcDay = new DateTimeOffset(DateTime.UtcNow.Date, TimeSpan.Zero);
+src/Host/Experience/Orders/OrderSubmissionCoordinator.cs:62: actorId, DateTimeOffset.UtcNow, "Masa siparişi mutfağa gönderildi."),
+src/Host/Experience/Orders/PendingOrderConfirmation/PendingOrderConfirmationStore.cs:107: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Orders/PendingOrderConfirmation/PendingOrderConfirmationStore.cs:169: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:113: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Orders/ShiftSummaryStore.cs:43: var startOfUtcDay = new DateTimeOffset(DateTimeOffset.UtcNow.UtcDateTime.Date, TimeSpan.Zero);
+src/Host/Experience/Orders/SuggestedWaiterResolver.cs:126: command.Parameters.Add("now", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
+src/Host/Experience/Orders/TableDraft/TableDraftService.cs:114: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Reporting/EndOfDayEndpoints.cs:65: var day = await reports.OpenBusinessDayAsync(request.BusinessDate, DateTimeOffset.UtcNow, cancellationToken);
+src/Host/Experience/Reporting/EndOfDayEndpoints.cs:82: DateTimeOffset.UtcNow,
+src/Host/Experience/Reporting/EndOfDayEndpoints.cs:122: CancellationsCount, DiscountsAppliedAmount, DateTimeOffset.UtcNow);
+src/Host/Experience/Reporting/EndOfDayEndpoints.cs:129: => new(Guid.NewGuid(), businessDate, StationName, TotalPrintJobs, FailedPrintJobs, RecoveredPrintJobs, DateTimeOffset.UtcNow);
+src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs:28: .RunSweepAsync(DateTimeOffset.UtcNow, correlationId, cancellationToken);
+src/Host/Experience/SecurityAdministration/SecretRotationAdministration.cs:66: var record = SecretRotationRecord.Initialize(name, DateTimeOffset.UtcNow);
+src/Host/Experience/SecurityAdministration/SecretRotationAdministration.cs:88: var rotated = record.Rotate(DateTimeOffset.UtcNow, TimeSpan.FromHours(request.OverlapHours));
+src/Host/Experience/SecurityAdministration/SecretRotationAdministration.cs:106: var revoked = record.Revoke(request.Version, DateTimeOffset.UtcNow);
+src/Host/Experience/SecurityAdministration/SecretRotationAdministration.cs:124: var rolledBack = record.Rollback(request.Version, DateTimeOffset.UtcNow);
+src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs:93: user.UserId, user.DisplayName, user.Active, (user.LockedUntil ?? DateTimeOffset.MinValue) > DateTimeOffset.UtcNow
+src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs:94: || (user.PinLockedUntil ?? DateTimeOffset.MinValue) > DateTimeOffset.UtcNow));
+src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs:223: var now = DateTimeOffset.UtcNow;
+src/Host/Experience/Tables/ReservationExpiryHostedService.cs:47: var expired = await repository.ExpireDueAsync(DateTimeOffset.UtcNow, stoppingToken).ConfigureAwait(false);
+src/Host/Experience/WebPush/WebPushSender.cs:162: DateTimeOffset.UtcNow);
+src/Host/Observability/AnalysisRunner/AnalysisRunner.cs:24: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Host/Observability/BrowserErrors/BrowserErrors.cs:34: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Host/Observability/CrashChannel/CrashChannel.cs:90: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Host/Observability/CrashChannel/CrashChannel.cs:182: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Host/Observability/InteractionTelemetry/InteractionTelemetry.cs:37: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Host/Observability/OfflineQueueReport/SlowQueryPlanner.cs:42: _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Host/Observability/SecurityDetectors/SecurityDetectors.cs:20: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Host/Observability/ServerDetectors/ServerDetectors.cs:232: await RunOnceAsync(DateTimeOffset.UtcNow, stoppingToken);
+src/Host/Observability/ServerDetectorsDeep/ServerDetectorsDeep.cs:224: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Host/Observability/ServerDetectorsDeep/ServerDetectorsDeep.cs:225: private readonly DateTimeOffset _startedAt = (clock ?? (() => DateTimeOffset.UtcNow))();
+src/Host/Observability/TraceCorrelation/TraceCorrelation.cs:133: var startedAt = DateTimeOffset.UtcNow;
+src/Host/Outbox/OutboxDispatcherHostedService.cs:110: if (DateTimeOffset.UtcNow < _nextPurge)
+src/Host/Outbox/OutboxDispatcherHostedService.cs:112: _nextPurge = DateTimeOffset.UtcNow + PurgeInterval;
+src/Host/Program.cs:297: var started = DateTimeOffset.UtcNow;
+src/Host/Program.cs:334: var seconds = (DateTimeOffset.UtcNow - started).TotalSeconds;
+src/Host/Program.cs:391: var asOf = DateTimeOffset.UtcNow;
+src/Host/Program.cs:543: var now = asOf ?? DateTimeOffset.UtcNow;
+src/Integrations/QrRelay/LocalConnector/RelayConnectorStatusPublisher.cs:93: command.Parameters.Add("updated_at", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
+src/Integrations/QrRelay/LocalConnector/RelayConnectorSupervisor.cs:164: ? DateTimeOffset.UtcNow - startedAt
+src/Integrations/QrRelay/LocalConnector/RelayConnectorSupervisor.cs:211: SetStatus(CurrentStatus with { State = RelayConnectorState.Running, LastStartedAt = DateTimeOffset.UtcNow });
+src/Integrations/QrRelay/PublicGateway/PostgresRelayConnectorStatusReporter.cs:32: : this(dataSource, () => DateTimeOffset.UtcNow)
+src/Integrations/QrRelay/PublicGateway/PostgresRelayProviderConfigStore.cs:37: command.Parameters.Add("updated_at", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
+src/Integrations/QrRelay/PublicGateway/PostgresRelayTunnelStore.cs:57: command.Parameters.Add("updated_at", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
+src/Modules/Audit/EventStore/AuditEvent.cs:37: OccurredAt = occurredAt?.ToUniversalTime() ?? DateTimeOffset.UtcNow;
+src/Modules/Billing/Adjustments/BillAdjustment.cs:77: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Billing/BillFoundation/Bill.cs:63: OpenedAt = openedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Billing/BillFoundation/Bill.cs:68: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Billing/BillFoundation/Bill.cs:205: var at = changedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Billing/BillFoundation/Bill.cs:325: openedAt: openedAt ?? DateTimeOffset.UtcNow);
+src/Modules/Billing/BillFoundation/Bill.cs:336: RowVersion, CreatedAt, DateTimeOffset.UtcNow);
+src/Modules/Billing/BillFoundation/Bill.cs:358: DateTimeOffset.UtcNow);
+src/Modules/Billing/BillFoundation/BillItem.cs:63: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Billing/BillFoundation/BillItem.cs:220: DateTimeOffset.UtcNow);
+src/Modules/Billing/BillFoundation/BillSourceOperations.cs:53: openedAt: openedAt ?? DateTimeOffset.UtcNow);
+src/Modules/Billing/BillFoundation/BillSourceOperations.cs:111: openedAt: openedAt ?? DateTimeOffset.UtcNow));
+src/Modules/Billing/SplitDesign/BillAllocation.cs:49: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:35: var now = DateTimeOffset.UtcNow;
+src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:97: var now = DateTimeOffset.UtcNow;
+src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:120: command.CashSessionId, command.CountedAmount, command.CountedBy, command.Notes, DateTimeOffset.UtcNow);
+src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:135: var now = DateTimeOffset.UtcNow;
+src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:169: var now = DateTimeOffset.UtcNow;
+src/Modules/Cash/SessionLifecycle/PostgresCashSessionRepository.cs:164: command.Parameters.AddWithValue("updated_at", DateTimeOffset.UtcNow);
+src/Modules/Cash/SessionLifecycle/PostgresCashSessionRepository.cs:202: var now = DateTimeOffset.UtcNow;
+src/Modules/Cash/TransactionLedger/CashTransaction.cs:72: OccurredAt = occurredAt ?? DateTimeOffset.UtcNow;
+src/Modules/CustomerAccounts/AccountReceipts/PostgresAccountReceiptService.cs:73: idempotencyKey, issuedBy, DateTimeOffset.UtcNow);
+src/Modules/CustomerAccounts/BalanceProjection/PostgresAccountBalanceProjection.cs:47: var updatedAt = DateTimeOffset.UtcNow;
+src/Modules/CustomerAccounts/BalanceProjection/PostgresBalanceSnapshotStore.cs:23: var createdAt = DateTimeOffset.UtcNow;
+src/Modules/CustomerAccounts/BillCharges/AccountChargeHandler.cs:135: occurredAt: DateTimeOffset.UtcNow);
+src/Modules/CustomerAccounts/CashReceipts/CashAccountReceiptHandler.cs:79: var now = DateTimeOffset.UtcNow;
+src/Modules/CustomerAccounts/CreditTerms/CreditTermsCreditPolicy.cs:44: var overdue = await OverdueAmountAsync(customerId, DateTimeOffset.UtcNow.AddDays(-termDays), cancellationToken);
+src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:46: var requestedAt = DateTimeOffset.UtcNow;
+src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:140: var anonymizedAt = DateTimeOffset.UtcNow;
+src/Modules/CustomerData/Profiles/PostgresCustomerProfileStore.cs:66: command.Parameters.Add("created_at", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
+src/Modules/Identity/Authorization/AuthorizationService.cs:50: new DenialEvent(userId, permissionCode, reason, DateTimeOffset.UtcNow),
+src/Modules/Identity/Authorization/Behavioural/BehaviouralTighteningService.cs:12: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Identity/Authorization/Grants/AuthorizationGrantService.cs:37: /// UTC clock; defaults to <see cref="DateTimeOffset.UtcNow"/>. Injected so the
+src/Modules/Identity/Authorization/Grants/AuthorizationGrantService.cs:51: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Identity/Authorization/Offline/OfflineAuthorityBudgetService.cs:12: /// UTC clock; defaults to <see cref="DateTimeOffset.UtcNow"/>. Injected so the
+src/Modules/Identity/Authorization/Offline/OfflineAuthorityBudgetService.cs:22: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Identity/Authorization/Offline/OfflineGrantReconciler.cs:37: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Identity/Authorization/PersonalBudgets/PersonalCompBudgetEscalationResolver.cs:36: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:23: var now = DateTimeOffset.UtcNow;
+src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:46: => _repository.RevokeAsync(sessionId, DateTimeOffset.UtcNow, cancellationToken);
+src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:52: return _repository.RevokeForDeviceAsync(userId, deviceId, DateTimeOffset.UtcNow, cancellationToken);
+src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:56: => _repository.RevokeAllForUserAsync(userId, DateTimeOffset.UtcNow, cancellationToken);
+src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:79: DateTimeOffset.UtcNow,
+src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:123: if (session.ExpiresAt <= DateTimeOffset.UtcNow)
+src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:130: await _repository.UpdateLastSeenAsync(session.SessionId, DateTimeOffset.UtcNow, cancellationToken);
+src/Modules/Inventory/BalanceProjection/StockBalance.cs:30: UpdatedAt = updatedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Inventory/BalanceProjection/StockBalance.cs:55: updatedAt: DateTimeOffset.UtcNow,
+src/Modules/Inventory/BalanceProjection/StockBalance.cs:63: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Inventory/BalanceProjection/StockBalance.cs:70: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Inventory/CrossChannelReservation/PostgresCrossChannelPortionArbiter.cs:135: var now = DateTimeOffset.UtcNow;
+src/Modules/Inventory/ModifierStock/ModifierStockMapping.cs:36: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Inventory/MovementLedger/StockMovement.cs:80: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Inventory/MovementLedger/StockMovement.cs:151: createdAt: DateTimeOffset.UtcNow);
+src/Modules/Inventory/MovementLedger/StockMovement.cs:180: createdAt: DateTimeOffset.UtcNow);
+src/Modules/Inventory/PhysicalCounts/StockPhysicalCount.cs:43: CountedAt = countedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Inventory/PortionReservations/Concurrency/PostgresPortionReservationArbitratorRepository.cs:113: var now = DateTimeOffset.UtcNow;
+src/Modules/Inventory/PortionReservations/Lifecycle/PortionReservationModels.cs:118: reservedAt: DateTimeOffset.UtcNow,
+src/Modules/Inventory/PortionReservations/Lifecycle/PortionReservationModels.cs:143: TransitionedAt = at ?? DateTimeOffset.UtcNow;
+src/Modules/Inventory/StockMaster/ProductStockMapping.cs:26: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Inventory/StockMaster/StockItem.cs:39: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Inventory/StockMaster/StockItem.cs:79: createdAt: DateTimeOffset.UtcNow,
+src/Modules/Inventory/StockMaster/StockLocation.cs:28: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Inventory/StockMaster/StockLocation.cs:52: createdAt: DateTimeOffset.UtcNow,
+src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:157: recordedAt: DateTimeOffset.UtcNow,
+src/Modules/Invoicing/Qnb/CredentialRegistration/PostgresQnbCredentialStore.cs:64: command.Parameters.Add("updated_at", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
+src/Modules/Kitchen/OrderItemStateSync/KitchenOrderItemStateSyncPublisher.cs:48: item.TicketId, orderId, item.OrderItemId, item.Status.ToString(), DateTimeOffset.UtcNow)));
+src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintDelivery.cs:83: var now = timestamp ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:79: var printed = delivery.MarkPrinted(DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:92: var unknown = delivery.MarkUnknown(crashReason, DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:106: var approved = delivery.ApproveReprint(operatorId, reason, DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:120: var rejected = delivery.RejectReprint(operatorId, reason, DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:152: var claimed = delivery.BeginApprovedReprint(DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:163: var uncertain = claimed.MarkReprintUnknown(ex.Message, DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:168: var reprinted = claimed.MarkReprinted(DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PrintQueue/EscPosTicketFormatter.cs:36: var ts = printTimestamp ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/PrintQueue/KitchenPrinterSimulator.cs:20: new(true, null, bytes, DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PrintQueue/KitchenPrinterSimulator.cs:23: new(false, error, 0, DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PrintQueue/PostgresPrintQueueRepository.cs:262: cmd.Parameters.AddWithValue("updated_at", (object?)job.UpdatedAt ?? DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PrintQueue/PrintJob.cs:56: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/PrintQueue/PrintJob.cs:86: var at = timestamp ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/PrintQueue/PrintQueueService.cs:71: var now = DateTimeOffset.UtcNow;
+src/Modules/Kitchen/PrintQueue/PrintQueueService.cs:77: var inFlight = job.MarkPrinting(workerId, DateTimeOffset.UtcNow);
+src/Modules/Kitchen/PrintQueue/PrintQueueService.cs:106: var executionTimestamp = DateTimeOffset.UtcNow;
+src/Modules/Kitchen/PrintQueue/PrintQueueService.cs:133: return _repository.RecoverExpiredLeasesAsync(DateTimeOffset.UtcNow, ct);
+src/Modules/Kitchen/Routing/Printer.cs:36: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/Routing/Printer.cs:63: updatedAt: timestamp ?? DateTimeOffset.UtcNow,
+src/Modules/Kitchen/Routing/PrinterRoute.cs:36: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/Routing/PrinterRoute.cs:96: updatedAt: timestamp ?? DateTimeOffset.UtcNow);
+src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:55: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:154: var at = timestamp ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:214: var at = timestamp ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:314: updatedAt: timestamp ?? DateTimeOffset.UtcNow,
+src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:353: var at = timestamp ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/TicketLifecycle/KitchenTicketItem.cs:53: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/TicketLifecycle/KitchenTicketItem.cs:138: var now = timestamp ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/TicketLifecycle/KitchenTicketItem.cs:196: var at = timestamp ?? DateTimeOffset.UtcNow;
+src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs:276: cmd.Parameters.AddWithValue("updated_at", (object?)ticket.UpdatedAt ?? DateTimeOffset.UtcNow);
+src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs:341: itemCmd.Parameters.AddWithValue("updated_at", (object?)item.UpdatedAt ?? DateTimeOffset.UtcNow);
+src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs:69: evtCmd.Parameters.AddWithValue(evt.OccurredAt ?? DateTimeOffset.UtcNow);
+src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs:151: evtCmd.Parameters.AddWithValue(evt.OccurredAt ?? DateTimeOffset.UtcNow);
+src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs:234: evtCmd.Parameters.AddWithValue(evt.OccurredAt ?? DateTimeOffset.UtcNow);
+src/Modules/Menu/DailyMenuLifecycle/DailyMenu.cs:45: var now = DateTimeOffset.UtcNow;
+src/Modules/Menu/DailyMenuLifecycle/DailyMenu.cs:66: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Menu/DailyMenuLifecycle/DailyMenu.cs:81: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Menu/DailyMenuLifecycle/DailyMenuItem.cs:83: var now = DateTimeOffset.UtcNow;
+src/Modules/Menu/DailyMenuLifecycle/DailyMenuItem.cs:110: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Menu/DailyMenuLifecycle/DailyMenuItem.cs:119: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Menu/DailyMenuLifecycle/DailyMenuItem.cs:125: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Menu/DailyMenuLifecycle/DailyMenuService.cs:55: menu.Open(command.OpenedAt ?? DateTimeOffset.UtcNow);
+src/Modules/Menu/DailyMenuLifecycle/DailyMenuService.cs:73: menu.Close(command.ClosedBy, command.ClosedAt ?? DateTimeOffset.UtcNow);
+src/Modules/Menu/DailyMenuLifecycle/DailyMenuService.cs:157: ChangedAt: DateTimeOffset.UtcNow);
+src/Modules/Menu/DailyMenuLifecycle/DailyMenuService.cs:191: ChangedAt: DateTimeOffset.UtcNow);
+src/Modules/Menu/DailyMenuLifecycle/DailyMenuService.cs:222: ChangedAt: DateTimeOffset.UtcNow);
+src/Modules/Menu/DailyMenuLifecycle/IBusinessDateProvider.cs:21: var utc = utcNow ?? DateTimeOffset.UtcNow;
+src/Modules/Menu/StaticMenu/Menu.cs:37: var now = DateTimeOffset.UtcNow;
+src/Modules/Menu/StaticMenu/Menu.cs:48: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Menu/StaticMenu/Menu.cs:54: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Menu/StaticMenu/Menu.cs:60: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Menu/StaticMenu/MenuItem.cs:42: var now = DateTimeOffset.UtcNow;
+src/Modules/Menu/StaticMenu/MenuItem.cs:52: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Menu/StaticMenu/MenuItem.cs:58: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:176: var now = DateTimeOffset.UtcNow;
+src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:344: var now = DateTimeOffset.UtcNow;
+src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:414: var now = DateTimeOffset.UtcNow;
+src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:478: var now = DateTimeOffset.UtcNow;
+src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:542: var now = DateTimeOffset.UtcNow;
+src/Modules/Observability/ErrorAnalysis/ErrorAnalysis.cs:97: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Observability/ErrorEvents/ErrorEventWriter.cs:51: _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Observability/ErrorNotifications/ErrorNotifications.cs:55: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Observability/ErrorNotifications/ErrorNotifications.cs:91: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Observability/Foundation/PostgresHealthCheckRepository.cs:44: var now = DateTimeOffset.UtcNow;
+src/Modules/Observability/PerformanceBudgets/PerformanceBudgets.cs:23: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Observability/PerformanceBudgets/PerformanceBudgets.cs:54: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Modules/Observability/PerformanceMetrics/PerformanceMetrics.cs:94: _clock = clock ?? (() => DateTimeOffset.UtcNow);
+src/Modules/OnlineOrdering/Credentials/PostgresOnlinePlatformCredentialStore.cs:103: var now = DateTimeOffset.UtcNow;
+src/Modules/OnlineOrdering/Providers/TrendyolGo/OrderIntake/TrendyolGoOnlineOrderProvider.cs:149: new TrendyolGoStatusUpdateRequested(Guid.NewGuid(), externalOrderId, TrendyolGoPackageAction.Picked, null, DateTimeOffset.UtcNow),
+src/Modules/Operations/BackupHealth/BackupHealthService.cs:83: var now = DateTimeOffset.UtcNow;
+src/Modules/Operations/BackupHealth/PostgresBackupHealthRepository.cs:83: var startedAt = DateTimeOffset.UtcNow;
+src/Modules/Operations/BackupHealth/PostgresBackupHealthRepository.cs:230: var capturedAt = DateTimeOffset.UtcNow;
+src/Modules/Operations/OffsiteBackup/OffsiteBackupUploadService.cs:74: DateTimeOffset.UtcNow);
+src/Modules/Operations/RestoreVerification/RestoreVerificationOrchestrator.cs:49: var startedAtUtc = DateTimeOffset.UtcNow;
+src/Modules/Orders/Integration/QrOrderSubmittedConsumer.cs:78: var now = DateTimeOffset.UtcNow;
+src/Modules/Orders/Integration/QrOrderSubmittedConsumer.cs:167: SubmittedAt: DateTimeOffset.UtcNow,
+src/Modules/Orders/Integration/QrOrderSubmittedConsumer.cs:221: var next = order.TransitionTo(target, reason: reason, changedAt: DateTimeOffset.UtcNow);
+src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs:73: var now = DateTimeOffset.UtcNow;
+src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs:200: var now = DateTimeOffset.UtcNow;
+src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs:366: cmd.Parameters.AddWithValue("occurred_at", DateTimeOffset.UtcNow);
+src/Modules/Orders/OrderAggregate/Order.cs:84: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Orders/OrderAggregate/Order.cs:268: var at = changedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Orders/OrderAggregate/Order.cs:563: var at = changedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Orders/OrderAggregate/OrderItem.cs:90: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Orders/OrderAggregate/OrderItem.cs:269: updatedAt: DateTimeOffset.UtcNow,
+src/Modules/Orders/OrderAggregate/OrderStatusHistoryEntry.cs:26: ChangedAt = changedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Orders/OrderAggregate/PostgresOrderRepository.cs:587: -- round from one DateTimeOffset.UtcNow), so `created_at` alone
+src/Modules/Orders/SubmitOrder/SubmitOrderHandler.cs:220: submitted.SubmittedAt ?? DateTimeOffset.UtcNow,
+src/Modules/Orders/SubmitOrder/SubmitOrderRequestHash.cs:15: /// <c>DateTimeOffset.UtcNow</c> fresh on every call, so a legitimate
+src/Modules/Payments/Allocations/Persistence/PaymentAllocation.cs:43: AllocatedAt = allocatedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/Allocations/RefundIntents/RefundIntent.cs:69: RequestedAt = requestedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/Allocations/RefundIntents/RefundIntent.cs:101: RefundIntentStatus.Rejected, RequestedBy, RequestedAt, at ?? DateTimeOffset.UtcNow, reason, RowVersion);
+src/Modules/Payments/CardSettlement/CardSettlementAttempt.cs:57: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/ManualResolution/ManualCardConfirmationService.cs:83: ManualCardConfirmationStatus.Pending, requesterUserId, DateTimeOffset.UtcNow, trimmedNote,
+src/Modules/Payments/ManualResolution/ManualCardConfirmationService.cs:154: var decidedAt = DateTimeOffset.UtcNow;
+src/Modules/Payments/ManualResolution/ManualCardConfirmationService.cs:188: var decidedAt = DateTimeOffset.UtcNow;
+src/Modules/Payments/PaymentAggregate/Payment.cs:97: var at = updatedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/PaymentAggregate/Payment.cs:168: var when = at ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/PaymentAggregate/Payment.cs:193: var when = at ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/PaymentAggregate/Payment.cs:220: var when = at ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/PaymentAggregate/Payment.cs:237: var when = at ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/PaymentAggregate/Payment.cs:253: var when = at ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/PaymentAggregate/Payment.cs:275: var when = at ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/PaymentAggregate/Payment.cs:291: var when = at ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/PaymentAggregate/PaymentStatusHistoryEntry.cs:26: ChangedAt = changedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/PaymentAggregate/PostgresPaymentReversalRepository.cs:70: var when = at ?? DateTimeOffset.UtcNow;
+src/Modules/Payments/Token/TerminalCredential/PostgresTokenTerminalCredentialStore.cs:75: command.Parameters.Add("updated_at", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
+src/Modules/Production/BatchLifecycle/ProductionBatch.cs:115: var now = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Production/BatchLifecycle/ProductionBatch.cs:189: var now = startedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Production/BatchLifecycle/ProductionBatch.cs:208: var now = completedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Production/BatchLifecycle/ProductionBatch.cs:223: var now = cancelledAt ?? DateTimeOffset.UtcNow;
+src/Modules/Production/StockEffects/ProductionStockEffectService.cs:56: var now = command.ExecutedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:165: var receivedAt = DateTimeOffset.UtcNow;
+src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:98: DateTimeOffset.UtcNow);
+src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:187: var now = DateTimeOffset.UtcNow;
+src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:211: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:226: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:241: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:256: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceService.cs:55: supplier?.Id, parsed.Currency, source, PurchaseInvoiceStatuses.Draft, importedBy, DateTimeOffset.UtcNow, lines,
+src/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceService.cs:170: sourceReferenceId: receiptId, reason: receipt.ReceiptNumber, createdBy: null, createdAt: DateTimeOffset.UtcNow),
+src/Modules/Purchasing/Suppliers/Supplier.cs:52: var now = DateTimeOffset.UtcNow;
+src/Modules/Purchasing/Suppliers/Supplier.cs:78: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Purchasing/Suppliers/Supplier.cs:84: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/Purchasing/Suppliers/Supplier.cs:90: UpdatedAt = DateTimeOffset.UtcNow;
+src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs:52: var now = DateTimeOffset.UtcNow;
+src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs:76: var now = DateTimeOffset.UtcNow;
+src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs:88: _repository.RevokeAsync(sessionId, DateTimeOffset.UtcNow, reason, cancellationToken);
+src/Modules/QrOrdering/PendingOrders/QrPendingOrderStore.cs:108: var submittedAt = DateTimeOffset.UtcNow;
+src/Modules/QrOrdering/RelayCredential/PostgresRelayCredentialStore.cs:52: command.Parameters.Add("updated_at", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
+src/Modules/QrOrdering/RelaySecurity/RelayRequestValidator.cs:56: var now = DateTimeOffset.UtcNow;
+src/Modules/QrOrdering/TokenLifecycle/TableTokenService.cs:41: var now = DateTimeOffset.UtcNow;
+src/Modules/QrOrdering/TokenLifecycle/TableTokenService.cs:68: var now = DateTimeOffset.UtcNow;
+src/Modules/QrOrdering/TokenLifecycle/TableTokenService.cs:84: await _repository.RevokeAsync(existing.TokenId, DateTimeOffset.UtcNow, reason, cancellationToken);
+src/Modules/QrOrdering/TokenLifecycle/TableTokenService.cs:103: if (token.IsExpired(DateTimeOffset.UtcNow))
+src/Modules/Recipes/CatalogMapping/ProductRecipeMapping.cs:32: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Recipes/CostSnapshots/RecipeCostSnapshotModels.cs:97: DateTimeOffset.UtcNow);
+src/Modules/Recipes/CostSnapshots/RecipeCostSnapshotModels.cs:152: DateTimeOffset.UtcNow);
+src/Modules/Recipes/TheoreticalConsumption/TheoreticalConsumptionRecord.cs:80: RecordedAt = recordedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Recipes/Units/UnitConversion.cs:31: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Recipes/Versioning/Recipe.cs:44: createdAt: createdAt ?? DateTimeOffset.UtcNow,
+src/Modules/Recipes/Versioning/RecipeIngredientItem.cs:42: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Recipes/Versioning/RecipeIngredientItem.cs:86: createdAt: DateTimeOffset.UtcNow);
+src/Modules/Recipes/Versioning/RecipeLifecycleService.cs:143: await _versionRepo.ActivateVersionAsync(recipeId, versionNumber, activatedAt ?? DateTimeOffset.UtcNow, ct);
+src/Modules/Recipes/Versioning/RecipeVersion.cs:58: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;
+src/Modules/Recipes/Versioning/RecipeVersion.cs:106: createdAt: createdAt ?? DateTimeOffset.UtcNow,
+src/Modules/Recipes/Versioning/RecipeVersion.cs:243: EffectiveTo = DateTimeOffset.UtcNow;
+src/Modules/Recipes/Versioning/RecipeVersion.cs:272: createdAt: createdAt ?? DateTimeOffset.UtcNow,
+src/Modules/Reconciliation/CaseFoundation/PostgresReconciliationRepository.cs:130: var now = DateTimeOffset.UtcNow;
+src/Modules/Reconciliation/CaseFoundation/PostgresReconciliationRepository.cs:225: var now = DateTimeOffset.UtcNow;
+src/Modules/Reconciliation/CaseFoundation/PostgresReconciliationRepository.cs:480: AddParameter(cmd, "at", DateTimeOffset.UtcNow);
+src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs:136: command.Parameters.Add("disposed_at", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;
+src/Modules/Security/IdentityHardening/AccountRecoveryService.cs:46: DateTimeOffset.UtcNow,
+src/Modules/Security/IdentityHardening/AccountRecoveryService.cs:73: DateTimeOffset.UtcNow,
+src/Modules/Security/IdentityHardening/AccountRecoveryService.cs:118: DateTimeOffset.UtcNow,
+src/Modules/Security/IdentityHardening/SessionRotationService.cs:41: var remaining = current.ExpiresAt - DateTimeOffset.UtcNow - TimeSpan.FromSeconds(1);
+src/Modules/Settings/BusinessIdentity/BusinessLogoStore.cs:61: AddParameter(command, "updated_at", DateTimeOffset.UtcNow);
+src/Modules/Settings/TypedSettings/PostgresSettingsRepository.cs:169: var now = DateTimeOffset.UtcNow;
+src/Modules/Settings/TypedSettings/PostgresSettingsRepository.cs:250: var now = DateTimeOffset.UtcNow;
+src/Modules/Settings/TypedSettings/PostgresSettingsRepository.cs:379: var now = DateTimeOffset.UtcNow;
+src/Modules/Tables/CurrentPointers/PostgresTablePointerProjector.cs:94: var now = DateTimeOffset.UtcNow;
+src/Modules/Tables/CurrentPointers/PostgresTablePointerProjector.cs:262: var startedAt = DateTimeOffset.UtcNow;
+src/Modules/Tables/CurrentPointers/PostgresTablePointerProjector.cs:293: var completedAt = DateTimeOffset.UtcNow;
+src/Modules/Tables/Reservations/PostgresTableReservationRepository.cs:177: var now = request.ReservedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Tables/Reservations/PostgresTableReservationRepository.cs:342: var now = request.ClaimedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Tables/Reservations/PostgresTableReservationRepository.cs:501: var now = request.CancelledAt ?? DateTimeOffset.UtcNow;
+src/Modules/Tables/Reservations/PostgresTableReservationRepository.cs:657: var now = request.ExpiredAt ?? DateTimeOffset.UtcNow;
+src/Modules/Tables/TableMerge/PostgresTableMergeRepository.Merge.cs:20: var now = request.MergedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Tables/TableMerge/PostgresTableMergeRepository.Unmerge.cs:20: var now = request.UnmergedAt ?? DateTimeOffset.UtcNow;
+src/Modules/Tables/TableTransfer/PostgresTableTransferRepository.cs:137: var now = request.TransferredAt ?? DateTimeOffset.UtcNow;

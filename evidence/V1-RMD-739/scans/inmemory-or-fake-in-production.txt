@@ -1,0 +1,9 @@
+src/BuildingBlocks/Security/Secrets/InMemorySecretProvider.cs:9: public sealed class InMemorySecretProvider : ISecretProvider
+src/Modules/Identity/Authentication/AuthenticationService.cs:65: _verify(password, PasswordHasher.DummyHash);
+src/Modules/Identity/Authentication/PasswordHasher.cs:26: public const string DummyPassword = "alkaros-dummy-user-verify";
+src/Modules/Identity/Authentication/PasswordHasher.cs:29: /// A valid 600k-iteration encoded hash of <see cref="DummyPassword"/>,
+src/Modules/Identity/Authentication/PasswordHasher.cs:33: public const string DummyHash =
+src/Modules/Security/IdentityHardening/InMemorySuspiciousLoginAuditSink.cs:11: public sealed class InMemorySuspiciousLoginAuditSink : ISuspiciousLoginAuditSink
+src/Modules/Security/SecretRotation/InMemorySecretRotationStore.cs:11: public sealed class InMemorySecretRotationStore : ISecretRotationStore
+src/Modules/Security/SecurityModule.cs:33: // InMemorySuspiciousLoginAuditSink is a real, order-preserving
+src/Modules/Security/SecurityModule.cs:36: context.RegisterSingleton<ISuspiciousLoginAuditSink, InMemorySuspiciousLoginAuditSink>();

@@ -1,0 +1,1 @@
+tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py:76: pytest.skip("node is not installed")

@@ -1,0 +1,5 @@
+src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs:29: (SELECT cash_session_id FROM changed), (SELECT refund_allowance_used FROM changed);
+src/Modules/Observability/PerformanceMetrics/PerformanceMetrics.cs:174: buckets = ARRAY(SELECT a + b FROM unnest(s.buckets, EXCLUDED.buckets) AS u(a, b));
+src/Modules/OnlineOrdering/AvailabilityPublishing/AvailabilityPublicationService.cs:142: OR upserted.desired_quantity <> (SELECT desired_quantity FROM previous);
+src/Modules/OnlineOrdering/StoreStatus/OnlineStoreStatusService.cs:174: "SELECT provider, desired_state, closed_until, close_reason, delivered_at IS NOT NULL, last_error IS NOT NULL FROM online_ordering.platform_store_status;"))
+src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs:111: SELECT @version, r.data_class, r.years FROM unnest(@classes, @years) AS r (data_class, years);

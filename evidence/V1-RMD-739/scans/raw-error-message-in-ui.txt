@@ -1,0 +1,146 @@
+src/Clients/Cashier/wwwroot/cashier-app.js:732: showToast(failure.message, 'error');
+src/Clients/Cashier/wwwroot/cashier-app.js:756: showToast(failure.message, 'error');
+src/Clients/Cashier/wwwroot/cashier-app.js:808: return { code: error && error.code, message: (error && error.message) || describeHttpFailure(response.status) };
+src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js:80: if (body && body.error && body.error.message) return body.error.message;
+src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js:362: state.error = result.body.error.message;
+src/Clients/Cashier/wwwroot/payments/customer-accounts/customer-accounts.js:75: if (body && body.error && body.error.message) return body.error.message;
+src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js:117: if (body && body.error && body.error.message) return body.error.message;
+src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js:450: state.error = result.status === 403 && !(result.body && result.body.error && result.body.error.message)
+src/Clients/PosTerminal/src/api.ts:135: body?.error?.message ?? "İşlem tamamlanamadı.",
+src/Clients/PosTerminal/src/api.ts:297: errorBody?.error?.message ?? "İşlem tamamlanamadı.",
+src/Clients/PosTerminal/src/api.ts:454: errorBody?.error?.message ?? "İşlem tamamlanamadı.",
+src/Clients/PosTerminal/src/features/authorization-decisions/AuthorizationDecisionsWorkspace.tsx:57: setActionError(reason instanceof Error && reason.message ? reason.message : text.actionFailed);
+src/Clients/PosTerminal/src/features/authorization-decisions/client.ts:55: body?.error?.message ?? "Yetki işlemi tamamlanamadı.",
+src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx:109: const message = reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : "Dağıtım kaydedilemedi.";
+src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx:128: } catch (reason) { setFeedback({ tone: "error", message: reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : "Dağıtım sıfırl
+src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx:134: {feedback && <div className={`bill-split__feedback bill-split__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"}>{feedback.me
+src/Clients/PosTerminal/src/features/billing/billingApi.ts:53: throw new BillingSplitApiError(response.status, payload?.error?.code ?? "REQUEST_FAILED", payload?.error?.message ?? "Hesap dağıtımı kaydedilemedi.");
+src/Clients/PosTerminal/src/features/billing/billingApi.ts:101: throw new BillingSplitApiError(response.status, payload?.error?.code ?? "REQUEST_FAILED", payload?.error?.message ?? "Adisyon oluşturulamadı.");
+src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:120: const message = reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Ürün güncellenemedi.";
+src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:140: const message = reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Kayıt oluşturulamadı.";
+src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:159: setFeedback({ tone: "error", message: reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Modifikatör grubu atanamadı." });
+src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:175: setFeedback({ tone: "error", message: reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Kullanılabilirlik güncellenemedi." });
+src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:204: setFeedback({ tone: "error", message: reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Hazırlama süresi güncellenemedi." });
+src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:218: {feedback && <div className={`catalog-workspace__feedback catalog-workspace__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"
+src/Clients/PosTerminal/src/features/catalog/catalogApi.ts:37: throw new CatalogApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? "Katalog işlemi tamamlanamadı.");
+src/Clients/PosTerminal/src/features/invoice-settings/SellerProfileCard.tsx:20: .catch((reason: unknown) => { if (current) setProblem(reason instanceof SellerProfileApiError ? reason.message : t.loadFailed); })
+src/Clients/PosTerminal/src/features/invoice-settings/SellerProfileCard.tsx:37: setProblem(reason instanceof SellerProfileApiError ? reason.message : t.saveFailed);
+src/Clients/PosTerminal/src/features/invoice-settings/sellerProfileApi.ts:27: const message = response.status === 401 ? "Oturum sona erdi." : response.status === 403 ? "Bu işlem için yetkiniz yok." : payload?.error?.message ?? fallback;
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:97: // fire - it tested error.message against an English regex, but the
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:282: setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Mutfak verisi değişti. Güncel kartı alın; işlem tekrarlanmadı." : er
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:297: setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Geri alma penceresi kapandı veya kart değişti. Güncel kartı alın." :
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:386: setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Ürün başka bir işlemle değişti; tekrar deneyin." : error instanceof 
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:421: setFeedback({ tone: isConflict(error) ? "conflict" : "error", message: isConflict(error) ? "Kayıt değişti; listeyi yenileyin." : error instanceof KitchenOperati
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:461: {feedback && <div className={`kitchen-workspace__feedback kitchen-workspace__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:903: setRouteFeedback({ tone: "error", message: error instanceof KitchenOperationsApiError ? error.message : "Rota kaydedilemedi." });
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:913: {printerFeedback && !printerForm && <p className={`kitchen-route-form__feedback kitchen-route-form__feedback--${printerFeedback.tone}`}>{printerFeedback.message
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:917: {printerFeedback && <p className={`kitchen-route-form__feedback kitchen-route-form__feedback--${printerFeedback.tone}`}>{printerFeedback.message}</p>}
+src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:951: {routeFeedback && <p className={`kitchen-route-form__feedback kitchen-route-form__feedback--${routeFeedback.tone}`}>{routeFeedback.message}</p>}
+src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts:68: body?.error?.message ?? "Mutfak yapılandırması alınamadı.",
+src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts:99: throw new KitchenOperationsApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? "Mutfak işlemi tamamlanamadı.");
+src/Clients/PosTerminal/src/features/management-closing/ClosingSection.tsx:34: {panel.state === "error" && <StateMessage tone="error" title={t.loadFailed} actions={<Button data-telemetry-id="b.management-closing.closingsection.1" variant="
+src/Clients/PosTerminal/src/features/management-menus-recipe-cost/RecipeCostSection.tsx:56: {query.versionId && snapshot.state === "error" && <p role="alert">{snapshot.message}</p>}
+src/Clients/PosTerminal/src/features/management-security-system/DiagnosticBacklogPanels.tsx:33: setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.diagnostic.failed });
+src/Clients/PosTerminal/src/features/management-security-system/DiagnosticBacklogPanels.tsx:75: setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.backlog.failed });
+src/Clients/PosTerminal/src/features/management-security-system/MaintenanceBackupPanels.tsx:24: setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.maintenance.failed });
+src/Clients/PosTerminal/src/features/management-security-system/RecoveryPanel.tsx:25: setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.failed });
+src/Clients/PosTerminal/src/features/management-security-system/SystemSection.tsx:40: setNotice({ tone: "error", text: failure instanceof ManagementApiError ? failure.message : t.actionFailed });
+src/Clients/PosTerminal/src/features/management-security-system/SystemSection.tsx:53: <span>{alert.message}</span>
+src/Clients/PosTerminal/src/features/management-security-system/TerminalsPanel.tsx:25: setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.failed });
+src/Clients/PosTerminal/src/features/management-settings-history/SettingEditor.tsx:44: setProblem(failure instanceof ManagementApiError ? failure.message : t.saveFailed);
+src/Clients/PosTerminal/src/features/management-staff-roles/StaffSection.tsx:33: setNotice({ tone: "error", text: reason instanceof ManagementApiError ? reason.message : t.actionFailed });
+src/Clients/PosTerminal/src/features/management-stock/StockSection.tsx:32: {panel.state === "error" && <StateMessage tone="error" title={t.loadFailed} actions={<Button data-telemetry-id="b.management-stock.stocksection.1" variant="seco
+src/Clients/PosTerminal/src/features/management/http.ts:33: throw new ManagementApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? fallbackByStatus(response.status));
+src/Clients/PosTerminal/src/features/management/panel.tsx:7: export const errorText = (reason: unknown, fallback: string) => (reason instanceof ManagementApiError ? reason.message : fallback);
+src/Clients/PosTerminal/src/features/management/panel.tsx:33: {panel.state === "error" && <StateMessage tone="error" title={failed} actions={<Button data-telemetry-id="b.management.panel.1" variant="secondary" onClick={onR
+src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.tsx:87: setError(reason instanceof OnlineHubApiError ? reason.message : "Platform durumu okunamadı.");
+src/Clients/PosTerminal/src/features/online-menu/OnlineMenuTab.tsx:22: const failure = (error: unknown, fallback: string) => (error instanceof OnlineMenuApiError ? error.message : fallback);
+src/Clients/PosTerminal/src/features/online-menu/onlineMenuApi.ts:93: const message = response.status === 401 ? "Oturum sona erdi." : response.status === 403 ? "Bu işlem için yetkiniz yok." : payload?.error?.message ?? fallback;
+src/Clients/PosTerminal/src/features/online-operations/OnlineOperationsWorkspace.tsx:75: setLoadError(reason instanceof OnlineOperationsApiError ? reason.message : "Online siparişler okunamadı.");
+src/Clients/PosTerminal/src/features/online-operations/OnlineOperationsWorkspace.tsx:114: setActionError(reason instanceof OnlineOperationsApiError ? reason.message : "İşlem tamamlanamadı. Tekrar deneyin.");
+src/Clients/PosTerminal/src/features/online-operations/OnlineOperationsWorkspace.tsx:134: setActionError(reason instanceof OnlineOperationsApiError ? reason.message : "Müşteri notu açılamadı.");
+src/Clients/PosTerminal/src/features/online-operations/onlineOperationsApi.ts:64: const message = response.status === 401 ? "Oturum sona erdi." : response.status === 403 ? "Bu işlem için yetkiniz yok." : payload?.error?.message ?? fallback;
+src/Clients/PosTerminal/src/features/online-platform-credentials/OnlinePlatformCredentialsWorkspace.tsx:18: return error.field ? `${fieldLabel(error.field)}: ${error.message}` : error.message;
+src/Clients/PosTerminal/src/features/online-platform-credentials/onlinePlatformCredentialsApi.ts:64: const message = response.status === 401 ? "Oturum sona erdi." : response.status === 403 ? "Bu işlem için yetkiniz yok." : payload?.error?.message ?? fallback;
+src/Clients/PosTerminal/src/features/online-problems/OnlineProblemsTab.tsx:18: const failure = (error: unknown, fallback: string) => (error instanceof OnlineProblemsApiError ? error.message : fallback);
+src/Clients/PosTerminal/src/features/online-problems/onlineProblemsApi.ts:60: const message = response.status === 401 ? "Oturum sona erdi." : response.status === 403 ? "Bu işlem için yetkiniz yok." : payload?.error?.message ?? fallback;
+src/Clients/PosTerminal/src/features/online-store-status/OnlineStoreStatusPanel.tsx:34: setLoadError(error instanceof OnlineStoreStatusApiError ? error.message : "Restoran durumu okunamadı.");
+src/Clients/PosTerminal/src/features/online-store-status/OnlineStoreStatusPanel.tsx:51: setActionError(error instanceof OnlineStoreStatusApiError ? error.message : "Restoran durumu değiştirilemedi.");
+src/Clients/PosTerminal/src/features/online-store-status/onlineStoreStatusApi.ts:63: const message = response.status === 401 ? "Oturum sona erdi." : response.status === 403 ? "Bu işlem için yetkiniz yok." : payload?.error?.message ?? fallback;
+src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:51: setError(reason instanceof PendingChecksApiError ? reason.message : "Bekleyen hesaplar okunamadı.");
+src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:109: setError(reason instanceof PendingChecksApiError || reason instanceof BillingSplitApiError ? reason.message : "Hesap açılamadı. Tekrar deneyin.");
+src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:122: setError(reason instanceof PendingChecksApiError ? reason.message : "Hesap masaya geri gönderilemedi.");
+src/Clients/PosTerminal/src/features/pending-checks/pendingChecksApi.ts:63: throw new PendingChecksApiError(response.status, payload?.error?.message ?? "Hesap masaya geri gönderilemedi.");
+src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx:248: ? `Plan kaydedildi. ${result.warnings.map((warning) => warning.message).join(" ")}`
+src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx:252: const message = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Salon planı kaydedilemedi.";
+src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:103: ? reason.message
+src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:389: {feedback && <div className={`table-workspace__feedback table-workspace__feedback--${feedback.tone}`} role={feedback.tone === "error" || feedback.tone === "conf
+src/Clients/PosTerminal/src/features/tables/tableApi.ts:61: throw new TableManagementApiError(response.status, body?.error?.code ?? "REQUEST_FAILED", body?.error?.message ?? "İşlem tamamlanamadı.");
+src/Clients/PosTerminal/src/routes/BusinessIdentitySettings.tsx:93: setError(reason instanceof ApiError ? reason.message : "Mevcut ayarlar okunamadı.");
+src/Clients/PosTerminal/src/routes/BusinessIdentitySettings.tsx:108: if (reason instanceof ApiError && reason.status !== 401) setError(reason.message);
+src/Clients/PosTerminal/src/routes/BusinessIdentitySettings.tsx:121: setError(reason instanceof ApiError ? reason.message : fallback);
+src/Clients/PosTerminal/src/routes/BusinessIdentitySettings.tsx:142: setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
+src/Clients/PosTerminal/src/routes/Cashier.tsx:121: setError(reason instanceof ApiError ? reason.message : "Çağrı onaylanamadı. Tekrar deneyin.");
+src/Clients/PosTerminal/src/routes/Cashier.tsx:330: setError(reason instanceof ApiError ? reason.message : "Ekran yetkisi kaldırılamadı.");
+src/Clients/PosTerminal/src/routes/Cashier.tsx:380: // reason.message for ANY Error, not just ApiError — a raw network
+src/Clients/PosTerminal/src/routes/Cashier.tsx:385: setError(reason instanceof ApiError ? reason.message : "İşlem tamamlanamadı.");
+src/Clients/PosTerminal/src/routes/Cashier.tsx:407: setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
+src/Clients/PosTerminal/src/routes/Cashier.tsx:430: setError(reason instanceof ApiError ? reason.message : "Oturum kapatılamadı.");
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:45: setPairingError(reason instanceof ApiError ? reason.message : "Eşleştirme başlatılamadı.");
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:71: setPairingError(reason instanceof ApiError ? reason.message : "Ekran bilgisi alınamadı.");
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:109: setPairingError(reason.message);
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:282: description={snapshot.message || "Siparişiniz tamamlandı. Afiyet olsun."}
+src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:366: <div className="display-message"><span>✓</span><p>{snapshot.message}</p></div>
+src/Clients/PosTerminal/src/routes/CustomerDisplayScreensaverSettings.tsx:80: setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
+src/Clients/PosTerminal/src/routes/CustomerDisplayScreensaverSettings.tsx:137: setError(reason instanceof ApiError ? reason.message : "Yüklenemedi.");
+src/Clients/PosTerminal/src/routes/CustomerDisplayScreensaverSettings.tsx:154: setError(reason instanceof ApiError ? reason.message : "Kaldırılamadı.");
+src/Clients/PosTerminal/src/routes/NfcOrder.tsx:118: setMessage(reason instanceof ApiError ? reason.message : "Menü yüklenemedi.");
+src/Clients/PosTerminal/src/routes/NfcOrder.tsx:238: setMessage(reason.message);
+src/Clients/PosTerminal/src/routes/NfcOrder.tsx:249: setMessage(reason instanceof ApiError ? reason.message : "Sipariş gönderilemedi.");
+src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx:51: setError(reason instanceof ApiError ? reason.message : "Durum alınamadı.");
+src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx:88: setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
+src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx:110: setError(reason instanceof ApiError ? reason.message : "Kaydedilemedi.");
+src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx:123: setTestResult({ success: false, message: reason instanceof ApiError ? reason.message : "Bağlantı denenemedi." });
+src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx:234: {testResult.message}
+src/Clients/PosTerminal/src/routes/RelaySettings.tsx:63: setError(reason instanceof ApiError ? reason.message : "Durum alınamadı.");
+src/Clients/PosTerminal/src/routes/RelaySettings.tsx:100: setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
+src/Clients/PosTerminal/src/routes/RelaySettings.tsx:126: setError(reason instanceof ApiError ? reason.message : "Kaydedilemedi.");
+src/Clients/PosTerminal/src/routes/RelaySettings.tsx:143: setProvisionError(reason instanceof ApiError ? reason.message : "Bağlantı etkinleştirilemedi.");
+src/Clients/PosTerminal/src/routes/ReservationStation.tsx:62: setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
+src/Clients/PosTerminal/src/routes/SecurityAdministration.tsx:63: setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
+src/Clients/PosTerminal/src/routes/TokenTerminalSettings.tsx:57: setError(reason instanceof ApiError ? reason.message : "Durum alınamadı.");
+src/Clients/PosTerminal/src/routes/TokenTerminalSettings.tsx:94: setError(reason instanceof ApiError ? reason.message : "Giriş yapılamadı.");
+src/Clients/PosTerminal/src/routes/TokenTerminalSettings.tsx:139: setError(reason instanceof ApiError ? reason.message : "Kaydedilemedi.");
+src/Clients/PosTerminal/src/routes/workspace.tsx:224: const failure = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Masa verisi alınamadı.";
+src/Clients/PosTerminal/src/routes/workspace.tsx:273: const msg = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : "Kat planı kaydedilemedi.";
+src/Clients/PosTerminal/src/routes/workspace.tsx:291: setOrderError(reason instanceof ApiError ? reason.message : "Masa siparişi açılamadı.");
+src/Clients/PosTerminal/src/routes/workspace.tsx:394: setErrorMessage(reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : "Hesap bölme verisi alınamadı.");
+src/Clients/PosTerminal/src/routes/workspace.tsx:487: setErrorMessage(reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : "Katalog verisi alınamadı.");
+src/Clients/PosTerminal/src/routes/workspace.tsx:525: setErrorMessage(reason instanceof ApiError || reason instanceof KitchenOperationsApiError ? reason.message : "Sağlık verisi alınamadı.");
+src/Clients/PosTerminal/src/routes/workspace.tsx:553: setErrorMessage(reason instanceof ApiError ? reason.message : "Yetki verisi alınamadı.");
+src/Clients/PosTerminal/src/routes/workspace.tsx:607: setErrorMessage(reason instanceof ApiError || reason instanceof KitchenOperationsApiError ? reason.message : "Mutfak verisi alınamadı.");
+src/Clients/WaiterPwa/wwwroot/js/api.js:54: // The server's own error.message is already Turkish everywhere this
+src/Clients/WaiterPwa/wwwroot/js/api.js:56: message: (data && data.error && data.error.message) || describeHttpFailure(response.status)
+src/Clients/WaiterPwa/wwwroot/js/kiosk-lock.js:121: toast(result.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:262: state.failedOrders.push(Object.assign({}, payload, { rejectedAt: new Date().toISOString(), error: result.message }));
+src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:263: console.error('Order rejected by server:', payload.id, result.status, result.message);
+src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:346: toast(result.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:409: toast(`Çevrimdışı işlemler uzlaştırılamadı: ${result.message}`, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/push.js:125: if (!key.ok) { if (announce) toast(key.message, { warning: true }); return false; }
+src/Clients/WaiterPwa/wwwroot/js/push.js:159: if (announce) toast(saved.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/sheets/bill.js:52: if (!result.ok) { toast(result.message, { warning: true }); return; }
+src/Clients/WaiterPwa/wwwroot/js/sheets/help-request.js:53: toast(result.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/sheets/pending-orders.js:82: if (!detail.ok) { toast(detail.message, { warning: true }); return; }
+src/Clients/WaiterPwa/wwwroot/js/sheets/pending-orders.js:89: if (!result.ok) { toast(result.message, { warning: true }); return; }
+src/Clients/WaiterPwa/wwwroot/js/sheets/pending-orders.js:139: toast(result.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/sheets/pending-orders.js:172: toast(result.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/sheets/profile.js:68: <span>${escapeHtml(result.message || 'Vardiya özeti alınamadı.')}</span>
+src/Clients/WaiterPwa/wwwroot/js/sheets/transfer.js:57: toast(result.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/sheets/transfer.js:87: if (!result.ok) { closeOptions(); toast(result.message, { warning: true }); return; }
+src/Clients/WaiterPwa/wwwroot/js/sheets/transfer.js:136: toast(result.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/sheets/void-comp.js:21: toast(authority.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/sheets/void-comp.js:88: toast(result.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/sheets/void-comp.js:164: toast(result.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/js/sheets/void-comp.js:248: toast(result.message, { warning: true });
+src/Clients/WaiterPwa/wwwroot/vendor/signalr.min.js:1: var t,e;t=self,e=()=>(()=>{var t={d:(e,s)=>{for(var i in s)t.o(s,i)&&!t.o(e,i)&&Object.defineProperty(e,i,{enumerable:!0,get:s[i]})}};t.g=function(){if("object"
+src/Clients/WaiterPwa/wwwroot/waiter-app.js:122: : result.message;

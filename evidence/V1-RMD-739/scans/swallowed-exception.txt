@@ -1,0 +1,1 @@
+src/Clients/WaiterPwa/wwwroot/vendor/signalr.min.js:1: var t,e;t=self,e=()=>(()=>{var t={d:(e,s)=>{for(var i in s)t.o(s,i)&&!t.o(e,i)&&Object.defineProperty(e,i,{enumerable:!0,get:s[i]})}};t.g=function(){if("object"
