@@ -1,8 +1,8 @@
 # V1-RMD-727 - İade akışı sertleştirme (603 B002, B016, B017, B018)
 
 - Task ID: V1-RMD-727
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
 
