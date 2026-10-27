@@ -201,6 +201,9 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
         var anonymous = await GetAsync(client, ReceiptPath(terminalId, billId), cookie: null);
 
         Assert.Equal(HttpStatusCode.NotFound, missing.StatusCode);
+        var error = (await missing.Content.ReadFromJsonAsync<JsonElement>()).GetProperty("error");
+        Assert.Equal("NOT_FOUND", error.GetProperty("code").GetString());
+        Assert.Equal("İstenen hesap bulunamadı.", error.GetProperty("message").GetString());
         Assert.Equal(HttpStatusCode.Unauthorized, anonymous.StatusCode);
     }
 

@@ -1,5 +1,6 @@
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Identity.Authorization;
 using ALKAROS.Identity.Authorization.Catalog;
 using ALKAROS.Payments.PaymentAggregate;
@@ -63,7 +64,10 @@ public static partial class DualScreenApplication
 
                 var bill = await billRepository.GetByIdAsync(billId, cancellationToken);
                 if (bill is null)
-                    return Results.NotFound();
+                    return Results.Json(
+                        new BillingSplitErrorEnvelope(new BillingSplitError(
+                            "NOT_FOUND", "İstenen hesap bulunamadı.", StatusCodes.Status404NotFound, context.TraceIdentifier)),
+                        statusCode: StatusCodes.Status404NotFound);
 
                 var adjustments = await adjustmentRepository.GetByBillIdAsync(billId, cancellationToken);
                 var summary = AdjustmentCalculator.Calculate(bill, adjustments);

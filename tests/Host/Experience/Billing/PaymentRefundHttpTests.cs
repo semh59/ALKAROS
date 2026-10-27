@@ -153,7 +153,7 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
             Post($"refund-requests/{request.RequestId:D}/complete", _cashierCookie, new RefundCompleteInputV1(" ", null))))
         {
             Assert.Equal(HttpStatusCode.BadRequest, noSlip.StatusCode);
-            Assert.Equal("REFUND_INPUT_INVALID", await ErrorCode(noSlip));
+            Assert.Equal("REFUND_TEXT_INVALID", await ErrorCode(noSlip));
         }
 
         using var complete = await client.SendAsync(
@@ -590,7 +590,7 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         Assert.Equal(HttpStatusCode.Forbidden, toSelf.StatusCode);
         Assert.Equal("SELF_DECISION", await ErrorCode(toSelf));
         Assert.Equal(HttpStatusCode.BadRequest, negative.StatusCode);
-        Assert.Equal("REFUND_INPUT_INVALID", await ErrorCode(negative));
+        Assert.Equal("ALLOWANCE_INVALID", await ErrorCode(negative));
         Assert.Equal(HttpStatusCode.Conflict, noSession.StatusCode);
         Assert.Equal("NO_OPEN_CASH_SESSION", await ErrorCode(noSession));
 
@@ -739,10 +739,14 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
 
         Assert.Equal(HttpStatusCode.Conflict, tooMuch.StatusCode);
         Assert.Equal("REFUND_AMOUNT_EXCEEDS_PAYMENT", await ErrorCode(tooMuch));
-        foreach (var response in new[] { twice, zero, negative, fraction, foreign, noStockService })
+        foreach (var (response, code) in new[]
+        {
+            (twice, "REFUND_ITEMS_DUPLICATE"), (zero, "REFUND_QUANTITY_INVALID"), (negative, "REFUND_QUANTITY_INVALID"),
+            (fraction, "REFUND_QUANTITY_INVALID"), (foreign, "REFUND_ITEM_NOT_ON_BILL"), (noStockService, "REFUND_STOCK_UNAVAILABLE"),
+        })
         {
             Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
-            Assert.Equal("REFUND_INPUT_INVALID", await ErrorCode(response));
+            Assert.Equal(code, await ErrorCode(response));
         }
 
         Assert.Equal(0L, await Scalar<long>(

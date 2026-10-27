@@ -46,7 +46,14 @@ public sealed record RefundAllowanceInputV1(Guid CashierUserId, decimal Amount);
 
 public sealed record RefundAllowanceV1(bool HasOpenSession, decimal Allowance, decimal Used, decimal Remaining);
 
-public sealed class RefundInputException(string message) : Exception(message);
+/// <summary>An input the refund flow refused; <see cref="Code"/> and <see cref="UserMessage"/> are what the screen shows.</summary>
+public sealed class RefundInputException(string message, string code = "REFUND_INPUT_INVALID", string? userMessage = null)
+    : Exception(message)
+{
+    public string Code { get; } = code;
+
+    public string? UserMessage { get; } = userMessage;
+}
 
 public sealed class RefundPaymentNotRefundableException(Guid paymentId)
     : Exception($"Payment {paymentId} is not an approved payment of this bill.");
@@ -108,10 +115,12 @@ public sealed class PaymentRefundStore
         Guid billId, Guid paymentId, string? reason, Guid userId, IReadOnlyList<RefundItemInputV1>? items,
         string? idempotencyKey, CancellationToken cancellationToken)
     {
-        var text = RequireText(reason, MaxTextLength, "Refund reason");
+        var text = RequireText(reason, MaxTextLength, "Refund reason", "İade gerekçesi");
         var key = idempotencyKey?.Trim();
         if (string.IsNullOrEmpty(key) || key.Length > MaxKeyLength)
-            throw new RefundInputException("An idempotency key of at most 128 characters is required.");
+            throw new RefundInputException(
+                "An idempotency key of at most 128 characters is required.", "IDEMPOTENCY_KEY_INVALID",
+                "İşlem anahtarı boş olamaz ve 128 karakteri aşamaz.");
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         await LockBillAsync(connection, transaction, billId, cancellationToken);
@@ -223,11 +232,13 @@ public sealed class PaymentRefundStore
         CancellationToken cancellationToken)
     {
         if (items.Select(item => item.BillItemId).Distinct().Count() != items.Count)
-            throw new RefundInputException("Each bill item may appear once.");
+            throw new RefundInputException("Each bill item may appear once.", "REFUND_ITEMS_DUPLICATE", "Aynı kalem iade listesinde bir kez yer alabilir.");
         if (items.Any(item => item.Quantity <= 0m || decimal.Round(item.Quantity, 3) != item.Quantity))
-            throw new RefundInputException("Quantity must be above zero with at most 3 decimals.");
+            throw new RefundInputException(
+                "Quantity must be above zero with at most 3 decimals.", "REFUND_QUANTITY_INVALID",
+                "İade adedi sıfırdan büyük olmalı ve en çok 3 ondalık içermeli.");
         if (_stockReturn is null && items.Any(item => item.RestoreStock))
-            throw new RefundInputException("Stock return is not available.");
+            throw new RefundInputException("Stock return is not available.", "REFUND_STOCK_UNAVAILABLE", "Stoka geri alma bu işletmede kullanılamıyor.");
 
         var bill = await _bills.GetByIdAsync(billId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
@@ -241,7 +252,8 @@ public sealed class PaymentRefundStore
         foreach (var item in items)
         {
             var line = bill.Items.FirstOrDefault(candidate => candidate.Id == item.BillItemId)
-                ?? throw new RefundInputException($"Bill item {item.BillItemId} is not on this bill.");
+                ?? throw new RefundInputException(
+                    $"Bill item {item.BillItemId} is not on this bill.", "REFUND_ITEM_NOT_ON_BILL", "Seçilen kalem bu hesapta yok.");
             var left = line.Quantity - refunded.GetValueOrDefault(item.BillItemId);
             if (item.Quantity > left)
                 throw new RefundItemQuantityException(item.BillItemId);
@@ -249,7 +261,7 @@ public sealed class PaymentRefundStore
         }
 
         if (total <= 0m)
-            throw new RefundInputException("The refund amount must be above zero.");
+            throw new RefundInputException("The refund amount must be above zero.", "REFUND_AMOUNT_INVALID", "İade tutarı sıfırdan büyük olmalı.");
         return (total, items.Select(item => new RefundRequestItem(item.BillItemId, item.Quantity, item.RestoreStock)).ToList());
     }
 
@@ -275,7 +287,9 @@ public sealed class PaymentRefundStore
         Guid cashierUserId, decimal amount, Guid actorId, CancellationToken cancellationToken)
     {
         if (amount < 0 || amount > MaxAllowance)
-            throw new RefundInputException($"Allowance must be between 0 and {MaxAllowance}.");
+            throw new RefundInputException(
+                $"Allowance must be between 0 and {MaxAllowance}.", "ALLOWANCE_INVALID",
+                $"İade bütçesi 0 ile {MaxAllowance:N0} arasında olmalı.");
         amount = decimal.Round(amount, 2);
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
@@ -284,7 +298,9 @@ public sealed class PaymentRefundStore
         if (change.SessionId is not { } sessionId)
             throw new RefundNoOpenCashSessionException(cashierUserId);
         if (!change.Applied)
-            throw new RefundInputException("Allowance cannot be lower than what the cashier already used.");
+            throw new RefundInputException(
+                "Allowance cannot be lower than what the cashier already used.", "ALLOWANCE_BELOW_USED",
+                "İade bütçesi kasiyerin şimdiye kadar kullandığı tutarın altına indirilemez.");
         var before = change.Previous;
         var used = change.Used;
 
@@ -367,7 +383,7 @@ public sealed class PaymentRefundStore
     public async Task<RefundRequestV1> RejectAsync(
         Guid requestId, Guid deciderId, string? note, CancellationToken cancellationToken)
     {
-        var text = RequireText(note, MaxTextLength, "Rejection note");
+        var text = RequireText(note, MaxTextLength, "Rejection note", "Ret notu");
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         var request = await LoadAsync(connection, transaction, requestId, cancellationToken);
@@ -393,8 +409,8 @@ public sealed class PaymentRefundStore
     public async Task<RefundRequestV1> CompleteManualAsync(
         Guid requestId, string? slipNumber, string? note, Guid userId, CancellationToken cancellationToken)
     {
-        var slip = RequireText(slipNumber, MaxSlipLength, "Slip number");
-        var noteText = string.IsNullOrWhiteSpace(note) ? null : RequireText(note, MaxTextLength, "Note");
+        var slip = RequireText(slipNumber, MaxSlipLength, "Slip number", "Fiş numarası");
+        var noteText = string.IsNullOrWhiteSpace(note) ? null : RequireText(note, MaxTextLength, "Note", "Not");
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
         var request = await LoadAsync(connection, transaction, requestId, cancellationToken);
@@ -532,7 +548,7 @@ public sealed class PaymentRefundStore
         NpgsqlConnection connection, NpgsqlTransaction transaction, Guid requestId, CancellationToken cancellationToken)
     {
         var row = await PostgresRefundRequestRepository.LoadForUpdateAsync(requestId, connection, transaction, cancellationToken)
-            ?? throw new BillingSplitNotFoundException($"Refund request {requestId} was not found.");
+            ?? throw new BillingSplitNotFoundException($"Refund request {requestId} was not found.", "iade isteği");
         return WithItems(ToDto(row), await PostgresRefundRequestRepository.LoadItemsAsync(requestId, connection, transaction, cancellationToken));
     }
 
@@ -546,11 +562,13 @@ public sealed class PaymentRefundStore
         row.RequestedAt, row.DecidedBy, row.DecidedAt, row.SlipNumber, BillCancelled: false,
         ApprovedFromAllowance: row.ApprovalMode == "Allowance");
 
-    private static string RequireText(string? value, int max, string what)
+    private static string RequireText(string? value, int max, string what, string turkishName)
     {
         var trimmed = value?.Trim();
         if (string.IsNullOrEmpty(trimmed) || trimmed.Length > max)
-            throw new RefundInputException($"{what} must be 1 to {max} characters.");
+            throw new RefundInputException(
+                $"{what} must be 1 to {max} characters.", "REFUND_TEXT_INVALID",
+                $"{turkishName} 1 ile {max} karakter arasında olmalı.");
         return trimmed;
     }
 }

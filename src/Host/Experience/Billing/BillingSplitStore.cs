@@ -205,9 +205,13 @@ public sealed class BillingSplitStore
     private static void ValidateKeyAndNotes(string? idempotencyKey, string? notes)
     {
         if (string.IsNullOrWhiteSpace(idempotencyKey) || idempotencyKey.Length > MaxIdempotencyKeyLength)
-            throw new ArgumentException("An idempotency key of at most 128 characters is required.", nameof(idempotencyKey));
+            throw new BillingValidationException(
+                "IDEMPOTENCY_KEY_INVALID", "An idempotency key of at most 128 characters is required.",
+                "İşlem anahtarı boş olamaz ve 128 karakteri aşamaz.");
         if (notes is { Length: > MaxNotesLength })
-            throw new ArgumentException($"Notes may be at most {MaxNotesLength} characters.", nameof(notes));
+            throw new BillingValidationException(
+                "NOTES_TOO_LONG", $"Notes may be at most {MaxNotesLength} characters.",
+                $"Not en çok {MaxNotesLength} karakter olabilir.");
     }
 
     /// <summary>Everything that can be judged from the request alone, shared by the grant request and the apply path.</summary>
@@ -216,17 +220,23 @@ public sealed class BillingSplitStore
         ArgumentNullException.ThrowIfNull(request);
         ValidateKeyAndNotes(request.IdempotencyKey, request.Notes);
         if (!DiscountReasonCatalog.IsValid(request.ReasonCode))
-            throw new ArgumentException(
-                $"Reason '{request.ReasonCode}' is not a valid discount catalog reason.", nameof(request));
+            throw new BillingValidationException(
+                "DISCOUNT_REASON_INVALID", $"Reason '{request.ReasonCode}' is not a valid discount catalog reason.",
+                "İndirim gerekçesi geçerli değil.");
         var upper = request.CalculationType switch
         {
             "Percentage" => 100m,
             "FixedAmount" => MaxAdjustmentAmount,
-            _ => throw new ArgumentException(
-                $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
+            _ => throw new BillingValidationException(
+                "DISCOUNT_TYPE_INVALID", $"Unknown discount calculation type '{request.CalculationType}'.",
+                "İndirim türü yüzde ya da tutar olmalı."),
         };
         if (request.Value <= 0m || request.Value > upper)
-            throw new ArgumentException($"Discount value must be above 0 and at most {upper}.", nameof(request));
+            throw new BillingValidationException(
+                "DISCOUNT_VALUE_INVALID", $"Discount value must be above 0 and at most {upper}.",
+                request.CalculationType == "Percentage"
+                    ? "İndirim yüzdesi 0'dan büyük, en çok 100 olmalı."
+                    : $"İndirim tutarı 0'dan büyük, en çok {MaxAdjustmentAmount:N0} olmalı.");
     }
 
     /// <summary>A discount request for a bill that exists and can still take one, before any grant is opened for it.</summary>
@@ -283,7 +293,9 @@ public sealed class BillingSplitStore
         ArgumentNullException.ThrowIfNull(request);
         ValidateKeyAndNotes(request.IdempotencyKey, request.Notes);
         if (request.Amount <= 0 || request.Amount > MaxAdjustmentAmount)
-            throw new ArgumentException($"Tip amount must be above 0 and at most {MaxAdjustmentAmount}.", nameof(request));
+            throw new BillingValidationException(
+                "TIP_AMOUNT_INVALID", $"Tip amount must be above 0 and at most {MaxAdjustmentAmount}.",
+                $"Bahşiş tutarı 0'dan büyük, en çok {MaxAdjustmentAmount:N0} olmalı.");
         // V1-SET-004: this deployment turned the voluntary-tip line off.
         // Refused outright, not silently zeroed — unlike the tolerant
         // optional-field handling elsewhere, an explicit tip call when the
@@ -399,10 +411,10 @@ public sealed class BillingSplitStore
         }
 
         var order = await _orders.GetByIdAsync(orderId, cancellationToken)
-            ?? throw new BillingSplitNotFoundException($"Order {orderId} was not found.");
+            ?? throw new BillingSplitNotFoundException($"Order {orderId} was not found.", "sipariş");
 
         if (order.Status is OrderState.Cancelled or OrderState.Rejected)
-            throw new InvalidOperationException($"Cannot create a bill from an order in '{order.Status}' state.");
+            throw new UnsupportedOrderStateException($"Cannot create a bill from an order in '{order.Status}' state.");
 
         var billId = Guid.NewGuid();
         var billNumber = $"BILL-{order.OrderNumber}";
@@ -764,8 +776,28 @@ public sealed class BillingSplitStore
 
 public sealed class BillingSplitNotFoundException : Exception
 {
-    public BillingSplitNotFoundException(string message) : base(message) { }
+    public BillingSplitNotFoundException(string message, string resource = "hesap") : base(message)
+    {
+        Resource = resource;
+    }
+
+    /// <summary>What was not found, in the words the screen shows (bill, order, refund request).</summary>
+    public string Resource { get; }
 }
+
+/// <summary>The order is in a state that cannot be billed (cancelled, rejected): a conflict, not a malformed request.</summary>
+public sealed class UnsupportedOrderStateException(string message) : InvalidOperationException(message);
+
+/// <summary>A request the server refuses before doing anything; <see cref="Code"/> and <see cref="UserMessage"/> reach the screen.</summary>
+public sealed class BillingValidationException(string code, string message, string userMessage) : ArgumentException(message)
+{
+    public string Code { get; } = code;
+
+    public string UserMessage { get; } = userMessage;
+}
+
+/// <summary>A discount request the approval policy refused.</summary>
+public sealed class GrantDeniedException() : Exception("The discount request was denied.");
 
 /// <summary>
 /// V1-RMD-413: an item split was requested on a bill whose adjustments (discount, fee, tip) change what is owed.

@@ -18,7 +18,9 @@ using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
@@ -96,13 +98,26 @@ public static class BillingSplitApplication
         return services;
     }
 
+    /// <summary>Reads count against the terminal's read budget and everything else against its write budget.</summary>
+    private static RouteGroupBuilder WithTerminalRateLimits(this RouteGroupBuilder group)
+    {
+        ((IEndpointConventionBuilder)group).Add(builder =>
+        {
+            var methods = builder.Metadata.OfType<IHttpMethodMetadata>().SelectMany(metadata => metadata.HttpMethods);
+            var policy = methods.Contains(HttpMethods.Get, StringComparer.OrdinalIgnoreCase) ? "terminal-read" : "terminal-write";
+            builder.Metadata.Add(new EnableRateLimitingAttribute(policy));
+        });
+        return group;
+    }
+
     public static RouteGroupBuilder MapBillingSplitApi(this IEndpointRouteBuilder endpoints)
     {
         ArgumentNullException.ThrowIfNull(endpoints);
 
         var billsGroup = endpoints.MapGroup(BillsRoutePrefix)
             .WithTags("Billing")
-            .AddEndpointFilter<BillingSplitExceptionFilter>();
+            .AddEndpointFilter<BillingSplitExceptionFilter>()
+            .WithTerminalRateLimits();
 
         billsGroup.MapPost("/from-order/{orderId:guid}", async (
             Guid terminalId,
@@ -190,9 +205,7 @@ public static class BillingSplitApplication
                 switch (resolution.Outcome)
                 {
                     case GrantOutcome.Refused:
-                        return Results.Json(
-                            new { error = new { code = "GRANT_DENIED", message = "Discount request was denied." } },
-                            statusCode: StatusCodes.Status403Forbidden);
+                        throw new GrantDeniedException();
                     case GrantOutcome.Pending:
                         return Results.Accepted(value: new ApplyBillDiscountResultV1(
                             "Pending", billId, null, null, resolution.Grant.GrantId));
@@ -289,7 +302,8 @@ public static class BillingSplitApplication
 
         var refundsGroup = endpoints.MapGroup("/api/v1/terminals/{terminalId:guid}/billing")
             .WithTags("BillingRefunds")
-            .AddEndpointFilter<BillingSplitExceptionFilter>();
+            .AddEndpointFilter<BillingSplitExceptionFilter>()
+            .WithTerminalRateLimits();
 
         refundsGroup.MapPost("/bills/{billId:guid}/refund-requests", async (
             Guid terminalId,
@@ -402,7 +416,8 @@ public static class BillingSplitApplication
 
         var group = endpoints.MapGroup(RoutePrefix)
             .WithTags("BillingSplitDesign")
-            .AddEndpointFilter<BillingSplitExceptionFilter>();
+            .AddEndpointFilter<BillingSplitExceptionFilter>()
+            .WithTerminalRateLimits();
 
         group.MapGet("", async (
             Guid terminalId,
@@ -604,7 +619,11 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
     {
         BillingSplitUnauthorizedException => (401, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
         AuthorizationDeniedException => (403, "FORBIDDEN", "Bu işlem için yetkiniz yok."),
-        BillingSplitNotFoundException or KeyNotFoundException => (404, "NOT_FOUND", "İstenen hesap bulunamadı."),
+        BillingSplitNotFoundException notFound => (404, "NOT_FOUND", $"İstenen {notFound.Resource} bulunamadı."),
+        KeyNotFoundException => (404, "NOT_FOUND", "İstenen hesap bulunamadı."),
+        GrantDeniedException => (403, "GRANT_DENIED", "İndirim isteği reddedildi."),
+        UnsupportedOrderStateException => (409, "UNSUPPORTED_ORDER_STATE", "Bu sipariş durumunda hesap açılamaz."),
+        BillingValidationException validation => (400, validation.Code, validation.UserMessage),
         SplitDesignConcurrencyException => (409, "CONCURRENT_MODIFICATION", "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi."),
         SplitDesignUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda bölme tasarımı değiştirilemez."),
         BillDiscountUnsupportedBillStateException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap durumunda indirim uygulanamaz."),
@@ -612,7 +631,8 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         SplitItemsOnAdjustedBillException => (409, "ITEM_SPLIT_ON_ADJUSTED_BILL", "İndirim veya ek ücret uygulanmış hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın."),
         BillCancelHasPaymentException => (409, "BILL_HAS_PAYMENT", "Bu hesapta ödeme var; iptal etmeden önce ödeme iade edilmeli."),
         BillCancelNotAllowedException => (409, "UNSUPPORTED_BILL_STATE", "Bu hesap zaten iptal edilmiş."),
-        RefundInputException => (400, "REFUND_INPUT_INVALID", "İade bilgisi geçersiz: gerekçe, not ve fiş numarası 1 ile 500 (fiş için 50) karakter olmalı."),
+        RefundInputException refundInput => (
+            400, refundInput.Code, refundInput.UserMessage ?? "İade bilgisi geçersiz."),
         RefundPaymentNotRefundableException => (409, "PAYMENT_NOT_REFUNDABLE", "Bu ödeme iade edilemez; yalnızca onaylanmış ve iade edilmemiş ödeme iade istenebilir."),
         RefundAlreadyRequestedException => (409, "REFUND_ALREADY_REQUESTED", "Bu ödeme için açık bir iade isteği zaten var."),
         RefundStateException => (409, "REFUND_STATE", "İade isteği bu durumda değil; sayfayı yenileyin."),

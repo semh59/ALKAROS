@@ -14,6 +14,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Metadata;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -171,6 +172,127 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
             => Entries.Add((logLevel, formatter(state, exception)));
+    }
+
+    private static async Task<(string Code, string Message)> ErrorOf(HttpResponseMessage response)
+    {
+        var envelope = (await response.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!;
+        return (envelope.Error.Code, envelope.Error.Message);
+    }
+
+    [Fact]
+    public async Task ARefusedDiscountRequestAnswersInTurkishInTheCommonEnvelope()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer");
+
+        using var pending = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, request);
+        await _database.DenyGrantAsync((await pending.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>())!.GrantId!.Value);
+        using var denied = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, request);
+
+        Assert.Equal(HttpStatusCode.Forbidden, denied.StatusCode);
+        var (code, message) = await ErrorOf(denied);
+        Assert.Equal("GRANT_DENIED", code);
+        Assert.Equal("İndirim isteği reddedildi.", message);
+    }
+
+    [Fact]
+    public async Task ValidationAndLookupFailuresNameTheirCauseInTurkish()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        var cancelledOrder = await _database.SeedOrderWithoutBillAsync();
+        await _database.SetOrderStatusByIdAsync(cancelledOrder, "Cancelled");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var billsPath = $"/api/v1/terminals/{terminalId:D}/billing/bills";
+
+        using var blankKey = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(" ", "Percentage", 10m, "PromotionalOffer"));
+        using var badValue = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), "Percentage", 500m, "PromotionalOffer"));
+        using var badTip = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), -5m));
+        using var cancelled = await client.SendAsync(Request(HttpMethod.Post, $"{billsPath}/from-order/{cancelledOrder:D}", cookie));
+        using var missingOrder = await client.SendAsync(Request(HttpMethod.Post, $"{billsPath}/from-order/{Guid.NewGuid():D}", cookie));
+        using var missingBill = await SendDiscountAsync(client, terminalId, Guid.NewGuid(), cookie, new(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"));
+
+        Assert.Equal("IDEMPOTENCY_KEY_INVALID", (await ErrorOf(blankKey)).Code);
+        Assert.Equal("DISCOUNT_VALUE_INVALID", (await ErrorOf(badValue)).Code);
+        Assert.Equal("TIP_AMOUNT_INVALID", (await ErrorOf(badTip)).Code);
+        Assert.Equal(HttpStatusCode.Conflict, cancelled.StatusCode);
+        Assert.Equal("UNSUPPORTED_ORDER_STATE", (await ErrorOf(cancelled)).Code);
+        Assert.Equal(("NOT_FOUND", "İstenen sipariş bulunamadı."), await ErrorOf(missingOrder));
+        Assert.Equal(("NOT_FOUND", "İstenen hesap bulunamadı."), await ErrorOf(missingBill));
+        Assert.All(new[] { blankKey, badValue, badTip }, response => Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode));
+    }
+
+    [Fact]
+    public async Task NoBillingEndpointAnswersWithoutASessionOrWithASessionOfAnotherTerminal()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, otherTerminalCookie) = await _database.SeedSessionWithPermissionsAsync(
+            Guid.NewGuid(), "supervisor", "bills.discount", "bills.split", "bills.cancel", "payments.refund.request");
+        var seeded = await _database.SeedBillAsync();
+        var id = Guid.NewGuid();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var bills = $"/api/v1/terminals/{terminalId:D}/billing/bills";
+        var billing = $"/api/v1/terminals/{terminalId:D}/billing";
+        var body = new { };
+        var table = new (HttpMethod Method, string Path)[]
+        {
+            (HttpMethod.Post, $"{bills}/from-order/{id:D}"),
+            (HttpMethod.Post, $"{bills}/{seeded.BillId:D}/cancel"),
+            (HttpMethod.Post, $"{bills}/{seeded.BillId:D}/discount"),
+            (HttpMethod.Post, $"{bills}/{seeded.BillId:D}/tip"),
+            (HttpMethod.Get, $"{bills}/{seeded.BillId:D}/adjustments"),
+            (HttpMethod.Get, $"{bills}/{seeded.BillId:D}/split-design"),
+            (HttpMethod.Put, $"{bills}/{seeded.BillId:D}/split-design/equal"),
+            (HttpMethod.Post, $"{bills}/{seeded.BillId:D}/refund-requests"),
+            (HttpMethod.Get, $"{billing}/refund-requests"),
+            (HttpMethod.Post, $"{billing}/refund-requests/{id:D}/approve"),
+            (HttpMethod.Post, $"{billing}/refund-requests/{id:D}/reject"),
+            (HttpMethod.Post, $"{billing}/refund-requests/{id:D}/complete"),
+            (HttpMethod.Get, $"{billing}/refund-allowance"),
+            (HttpMethod.Put, $"{billing}/refund-allowance"),
+        };
+
+        foreach (var (method, path) in table)
+        {
+            using var anonymous = new HttpRequestMessage(method, path) { Content = JsonContent.Create(body) };
+            using var anonymousResponse = await client.SendAsync(anonymous);
+            using var foreign = Request(method, path, otherTerminalCookie);
+            foreign.Content = JsonContent.Create(body);
+            using var foreignResponse = await client.SendAsync(foreign);
+
+            Assert.True(anonymousResponse.StatusCode == HttpStatusCode.Unauthorized, $"{method} {path} anonymous: {anonymousResponse.StatusCode}");
+            Assert.True(
+                foreignResponse.StatusCode is HttpStatusCode.Unauthorized or HttpStatusCode.Forbidden,
+                $"{method} {path} other terminal: {foreignResponse.StatusCode}");
+        }
+    }
+
+    [Fact]
+    public async Task EveryBillingEndpointCarriesTheTerminalRateLimitOfItsKind()
+    {
+        await using var app = await StartAsync();
+        var endpoints = app.Services.GetRequiredService<EndpointDataSource>().Endpoints
+            .OfType<RouteEndpoint>()
+            .Where(endpoint => endpoint.RoutePattern.RawText?.Contains("/billing/", StringComparison.Ordinal) == true)
+            .ToList();
+
+        Assert.NotEmpty(endpoints);
+        foreach (var endpoint in endpoints)
+        {
+            var methods = endpoint.Metadata.GetMetadata<HttpMethodMetadata>()!.HttpMethods;
+            var expected = methods.Contains("GET") ? "terminal-read" : "terminal-write";
+            var policy = endpoint.Metadata.GetMetadata<EnableRateLimitingAttribute>()?.PolicyName;
+            Assert.True(expected == policy, $"{string.Join(',', methods)} {endpoint.RoutePattern.RawText}: expected {expected}, got {policy ?? "none"}");
+        }
     }
 
     [Fact]
@@ -1605,6 +1727,24 @@ internal sealed class BillingSplitTestDatabase
         return approverId;
     }
 
+    public Task DenyGrantAsync(Guid grantId)
+    {
+        var approverId = Guid.NewGuid();
+        return ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
+            VALUES (@approver_id, @approver_username, 'not-used', 'Billing API Test Denier', true);
+            UPDATE identity.authorization_grants
+            SET status = 'denied', policy_path = 'manual',
+                approver_user_id = @approver_id, resolved_at = now()
+            WHERE grant_id = @grant_id;
+            """,
+            ("grant_id", grantId),
+            ("approver_id", approverId),
+            ("approver_username", "rmd733-denier-" + approverId.ToString("N")));
+    }
+
     public async Task<Guid> AdjustmentAuthorizedByAsync(Guid billId)
     {
         await using var command = DataSource.CreateCommand(
@@ -1625,6 +1765,9 @@ internal sealed class BillingSplitTestDatabase
             ("bill_id", billId));
 
     /// <summary>V1-WTR-021 review fix: sets a seeded bill's underlying order's own status directly (bypassing the aggregate) for the shift-summary Cancelled-exclusion test.</summary>
+    public Task SetOrderStatusByIdAsync(Guid orderId, string status)
+        => ExecuteAsync(DataSource, "UPDATE orders.orders SET status = @status WHERE order_id = @id;", ("status", status), ("id", orderId));
+
     public Task SetOrderStatusAsync(Guid billId, string status)
         => ExecuteAsync(
             DataSource,
