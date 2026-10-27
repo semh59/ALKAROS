@@ -25,6 +25,7 @@ V1-RMD-603 B019, B020, B030, B040: iade sonrası Paid->Cancelled ham SQL ve geç
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Payments.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/PaymentTender/**
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Payments/**
+- `src/Host/Experience/Billing/BillClosureSweeper.cs`
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 
 ## In scope

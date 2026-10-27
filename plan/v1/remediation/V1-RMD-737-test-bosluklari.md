@@ -33,6 +33,8 @@ V1-RMD-603 B005, B006, B037: mutasyonla ortaya çıkan test boşlukları: Adjust
 - Ürün kararı gerektiren kalemler (PO soruları) sorulmadan değiştirilmez.
 - Bu görevin başlığında adı geçmeyen bulguların düzeltmesi.
 
+- Hesap kapatma süpürücüsü (`BillClosureSweeper.cs`) V1-RMD-736 kapsamındadır; bu görev ona dokunmaz.
+
 ## Dependencies
 
 - V1-RMD-603
