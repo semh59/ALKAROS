@@ -1,0 +1,5 @@
+M1-pointer-failure-not-logged KILLED restored=true
+M2-nonnegative-check-dropped KILLED restored=true
+M3-cancelled-by-fk-dropped KILLED restored=true
+M4-redundant-index-kept KILLED restored=true
+DONE

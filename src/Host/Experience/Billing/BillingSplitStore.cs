@@ -7,6 +7,7 @@ using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace ALKAROS.Host.Experience.Billing;
@@ -19,6 +20,7 @@ public sealed class BillingSplitStore
     private readonly NpgsqlDataSource? _dataSource;
     private readonly IBillAdjustmentRepository? _adjustments;
     private readonly ISettingsService? _settings;
+    private readonly ILogger<BillingSplitStore>? _logger;
 
     public BillingSplitStore(
         IBillRepository bills,
@@ -26,7 +28,8 @@ public sealed class BillingSplitStore
         IOrderRepository? orders = null,
         NpgsqlDataSource? dataSource = null,
         IBillAdjustmentRepository? adjustments = null,
-        ISettingsService? settings = null)
+        ISettingsService? settings = null,
+        ILogger<BillingSplitStore>? logger = null)
     {
         _bills = bills ?? throw new ArgumentNullException(nameof(bills));
         _splitDesigns = splitDesigns ?? throw new ArgumentNullException(nameof(splitDesigns));
@@ -34,7 +37,14 @@ public sealed class BillingSplitStore
         _dataSource = dataSource;
         _adjustments = adjustments;
         _settings = settings;
+        _logger = logger;
     }
+
+    private static readonly Action<ILogger, Guid, Guid, Exception?> LogTablePointerNotWritten =
+        LoggerMessage.Define<Guid, Guid>(
+            LogLevel.Warning,
+            new EventId(5201, nameof(LogTablePointerNotWritten)),
+            "The bill {BillId} was created but the pointer on table {TableId} was not written; the table repair will correct it.");
 
     /// <summary>
     /// V1-RMD-103 (B1): applies a bill-level discount. Domain-complete since
@@ -441,10 +451,10 @@ public sealed class BillingSplitStore
             }
             catch (Exception ex) when (ex is NpgsqlException or InvalidOperationException)
             {
-                // table_mgmt.tables.current_bill_id is a soft cache; a failed
-                // write here does not fail the bill creation and is repaired by
-                // PostgresTablePointerProjector's drift detection. Only expected
-                // transport/state faults are swallowed; nothing else.
+                // table_mgmt.tables.current_bill_id is a soft cache; a failed write here does not fail the bill
+                // creation and is repaired by PostgresTablePointerProjector's drift detection. Logged, not hidden.
+                if (_logger is not null)
+                    LogTablePointerNotWritten(_logger, billId, order.TableId.Value, ex);
             }
         }
 

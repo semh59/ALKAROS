@@ -9,7 +9,7 @@
   },
   "phaseBRange": {
     "min": "031",
-    "max": "208"
+    "max": "209"
   },
   "migrations": [
     {
@@ -1057,7 +1057,9 @@
       "id": "123",
       "phase": "B",
       "tables": [
-        "payment_allocations"
+        "payment_allocations",
+        "payments",
+        "bills"
       ],
       "deferredConstraints": []
     },
@@ -1788,6 +1790,15 @@
       "phase": "B",
       "tables": [
         "order_items",
+        "bill_items"
+      ],
+      "deferredConstraints": []
+    },
+    {
+      "id": "209",
+      "phase": "B",
+      "tables": [
+        "bills",
         "bill_items"
       ],
       "deferredConstraints": []

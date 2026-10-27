@@ -158,7 +158,7 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         Assert.Equal(1L, await ScalarAsync<long>(source, constraintCount));
 
         // A migration can only be rolled back once every later one is, so unwind from the newest down to 202.
-        foreach (var id in new[] { "208", "207", "206", "205", "204", "203", "202" })
+        foreach (var id in new[] { "209", "208", "207", "206", "205", "204", "203", "202" })
             Rollback(OrderPath(), MigrationsPath(), id);
         Assert.Equal(0L, await ScalarAsync<long>(source, columnCount));
         Assert.Equal(0L, await ScalarAsync<long>(source, constraintCount));
@@ -167,11 +167,35 @@ public sealed class MigrationSchemaTests : IAsyncLifetime
         Assert.Equal(1L, await ScalarAsync<long>(source, columnCount));
     }
 
+    [Fact]
+    public async Task TheBillsIntegrityRulesExistAndRollingBackTheMigrationRemovesThem()
+    {
+        const string rules = "SELECT count(*) FROM pg_constraint WHERE conname IN ('ck_bills_nonnegative_amounts', 'fk_bills_cancelled_by');";
+        const string redundantIndex = "SELECT count(*) FROM pg_indexes WHERE schemaname = 'billing' AND indexname = 'ix_bill_items_bill';";
+        Migrate(OrderPath(), MigrationsPath());
+        await using var source = NpgsqlDataSource.Create(ConnectionString());
+        Assert.Equal(2L, await ScalarAsync<long>(source, rules));
+        Assert.Equal(0L, await ScalarAsync<long>(source, redundantIndex));
+
+        Rollback(OrderPath(), MigrationsPath(), "209");
+        Assert.Equal(0L, await ScalarAsync<long>(source, rules));
+        Assert.Equal(1L, await ScalarAsync<long>(source, redundantIndex));
+
+        Migrate(OrderPath(), MigrationsPath());
+        Assert.Equal(2L, await ScalarAsync<long>(source, rules));
+    }
+
     [Theory]
+    [InlineData("032")]
+    [InlineData("075")]
     [InlineData("096")]
     [InlineData("100")]
     [InlineData("101")]
+    [InlineData("108")]
     [InlineData("119")]
+    [InlineData("123")]
+    [InlineData("180")]
+    [InlineData("209")]
     public void AMigrationWithoutItsOwnEvidenceRollsBackAndAppliesAgain(string id)
     {
         var (order, migrations) = CopyUpTo(id);

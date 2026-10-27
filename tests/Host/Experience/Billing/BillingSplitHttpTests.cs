@@ -16,6 +16,7 @@ using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 using Xunit;
 
@@ -122,6 +123,54 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
 
         Assert.Single(loaded.Select(allocation => allocation.CreatedAt).Distinct());
         Assert.Equal(allocations.Select(allocation => allocation.Id).Order(), loaded.Select(allocation => allocation.Id));
+    }
+
+    [Fact]
+    public async Task AFailedTablePointerWriteIsLoggedAndTheBillIsStillCreated()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var orderId = await _database.OrderIdOfBillAsync(seeded.BillId);
+        await _database.SetBillStatusAsync(seeded.BillId, "Cancelled");
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+        await using (var supersede = source.CreateCommand(
+            "UPDATE billing.bill_items SET superseded_at = now() WHERE bill_id = @id;"))
+        {
+            supersede.Parameters.AddWithValue("id", seeded.BillId);
+            await supersede.ExecuteNonQueryAsync();
+        }
+        await using (var block = source.CreateCommand(
+            """
+            CREATE FUNCTION public.rmd732_block() RETURNS trigger AS $$ BEGIN RAISE EXCEPTION 'blocked'; END $$ LANGUAGE plpgsql;
+            CREATE TRIGGER rmd732_block BEFORE UPDATE ON table_mgmt.tables FOR EACH ROW EXECUTE FUNCTION public.rmd732_block();
+            """))
+            await block.ExecuteNonQueryAsync();
+        await using var app = await StartAsyncWithOrders();
+        var logger = new ListLogger();
+        var store = new BillingSplitStore(
+            app.Services.GetRequiredService<IBillRepository>(),
+            app.Services.GetRequiredService<ALKAROS.Billing.SplitDesign.ISplitDesignRepository>(),
+            app.Services.GetRequiredService<IOrderRepository>(),
+            source,
+            logger: logger);
+
+        var created = await store.CreateBillFromOrderAsync(orderId, canMutate: true);
+
+        Assert.NotEqual(seeded.BillId, created.BillId);
+        var warning = Assert.Single(logger.Entries);
+        Assert.Equal(LogLevel.Warning, warning.Level);
+        Assert.Contains(created.BillId.ToString(), warning.Message, StringComparison.Ordinal);
+    }
+
+    private sealed class ListLogger : ILogger<BillingSplitStore>
+    {
+        public List<(LogLevel Level, string Message)> Entries { get; } = [];
+
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+
+        public bool IsEnabled(LogLevel logLevel) => true;
+
+        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception? exception, Func<TState, Exception?, string> formatter)
+            => Entries.Add((logLevel, formatter(state, exception)));
     }
 
     [Fact]
@@ -1502,6 +1551,13 @@ internal sealed class BillingSplitTestDatabase
     {
         await using var command = DataSource.CreateCommand("SELECT count(*) FROM identity.authorization_grants;");
         return (long)(await command.ExecuteScalarAsync())!;
+    }
+
+    public async Task<Guid> OrderIdOfBillAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT order_id FROM billing.bills WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        return (Guid)(await command.ExecuteScalarAsync())!;
     }
 
     public async Task<IReadOnlyList<Guid>> AllocationIdsAsync(Guid billId)

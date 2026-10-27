@@ -93,11 +93,12 @@ public sealed class BillCancellationHttpTests : IAsyncLifetime
     public async Task ACancellationWhoseAuditRecordCannotBeWrittenIsNotKept()
     {
         var seeded = await _database.SeedBillAsync();
+        var (userId, _) = await _database.SeedSessionWithPermissionsAsync(Guid.NewGuid(), "cashier", "bills.cancel");
         await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
         var store = new BillCancellationStore(source, new FailingAuditEventStore());
 
         await Assert.ThrowsAsync<InvalidOperationException>(
-            () => store.CancelAsync(seeded.BillId, "Müşteri vazgeçti", Guid.NewGuid(), "corr", CancellationToken.None));
+            () => store.CancelAsync(seeded.BillId, "Müşteri vazgeçti", userId, "corr", CancellationToken.None));
 
         await using var read = source.CreateCommand(
             """
