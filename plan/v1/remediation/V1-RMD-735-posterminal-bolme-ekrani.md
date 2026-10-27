@@ -1,7 +1,7 @@
 # V1-RMD-735 - PosTerminal bölme ekranı ve ürün bazlı bölme bağlantısı (603 B034, B035)
 
 - Task ID: V1-RMD-735
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
