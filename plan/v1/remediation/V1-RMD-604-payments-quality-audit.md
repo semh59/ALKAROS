@@ -1,8 +1,8 @@
 # V1-RMD-604 - Payments modülünün bağımsız test ve kalite denetimi
 
 - Task ID: V1-RMD-604
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: validation
 - Surface state: Planned
 
