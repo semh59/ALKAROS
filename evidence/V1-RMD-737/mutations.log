@@ -1,0 +1,25 @@
+P1-discount-equal-to-payable-refused KILLED restored=true
+P2-line-discounts-dropped KILLED restored=true
+P3-adjusted-tax-unclamped KILLED restored=true
+P4-discount-tax-added KILLED restored=true
+P5-rate-100-refused-ctor KILLED restored=true
+P6-rate-100-refused-factory KILLED restored=true
+P7-half-kurus-to-even KILLED restored=true
+P8-zero-price-refused KILLED restored=true
+P9-custom-split-shortfall-allowed KILLED restored=true
+P10-reconciliation-not-a-blocker KILLED restored=true
+P11-no-retry KILLED restored=true
+P12-blockers-ignored KILLED restored=true
+Q1-nothing-left-refundable KILLED restored=true
+Q2-self-decision-allowed KILLED restored=true
+Q3-allowance-max-refused KILLED restored=true
+Q4-allowance-zero-refused KILLED restored=true
+Q5-partly-refunded-ignored KILLED restored=true
+Q6-unknown-ignored KILLED restored=true
+Q7-in-flight-payment-ignored KILLED restored=true
+Q8-refunded-still-blocks KILLED restored=true
+Q9-discount-may-undercut-by-equal KILLED restored=true
+Q10-tip-on-settled-bill KILLED restored=true
+Q11-tip-feature-ignored KILLED restored=true
+DONE
+Q12-refund-key-cleared-on-server-fault KILLED restored=true (StaticApps, elle: split-payment.js:1289)

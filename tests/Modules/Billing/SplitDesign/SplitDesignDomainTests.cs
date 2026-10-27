@@ -624,4 +624,19 @@ public sealed class SplitDesignDomainTests
         Assert.All(split, allocation => Assert.True(allocation.TaxAmount <= allocation.AllocatedAmount));
         Assert.Equal(5, split.Count(allocation => allocation.TaxAmount == 0.01m));
     }
+
+    [Fact]
+    public void ACustomSplitThatFallsShortOfThePayableIsRefusedJustLikeOneThatOvershoots()
+    {
+        var item = new BillItem(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Item", 1, 100m, 0m);
+        var bill = new Bill(item.BillId, "BILL-SHORT", new[] { item });
+
+        var shortfall = Assert.Throws<InvalidOperationException>(() => SplitEngine.CreateCustomSplit(
+            bill, [new CustomSplitTarget("A", 40m), new CustomSplitTarget("B", 50m)]));
+        var overshoot = Assert.Throws<InvalidOperationException>(() => SplitEngine.CreateCustomSplit(
+            bill, [new CustomSplitTarget("A", 60m), new CustomSplitTarget("B", 50m)]));
+
+        Assert.Contains("does not match", shortfall.Message);
+        Assert.Contains("does not match", overshoot.Message);
+    }
 }

@@ -1232,6 +1232,56 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADiscountThatLeavesExactlyWhatWasAlreadyCollectedIsAllowed()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedCollectedAsync(seeded.BillId, 225m, userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var exact = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie,
+            new(Guid.NewGuid().ToString(), "FixedAmount", 25m, "PromotionalOffer"));
+
+        Assert.Equal(HttpStatusCode.OK, exact.StatusCode);
+    }
+
+    [Fact]
+    public async Task ATipOnASettledBillIsRefusedAndRecordsNothing()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await _database.SetBillStatusAsync(seeded.BillId, "Paid");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), 10m));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("UNSUPPORTED_BILL_STATE", (await ErrorOf(response)).Code);
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task ATipIsRefusedWhenTheDeploymentTurnedTheVoluntaryTipOff()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await _database.TurnOffTheVoluntaryTipAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), 10m));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal("FEATURE_DISABLED", (await ErrorOf(response)).Code);
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
     public async Task ADiscountThatTakesThePayableToZeroClosesTheBill()
     {
         var terminalId = Guid.NewGuid();
@@ -1567,6 +1617,42 @@ internal sealed class BillingSplitTestDatabase
                 DataSource, new ALKAROS.Billing.Adjustments.PostgresBillAdjustmentRepository(DataSource))
             .AllocateAsync(payment, bill, amount, "rmd410-" + Guid.NewGuid().ToString("N"));
     }
+
+    /// <summary>Seeds a payment in the given status. Refunded ones were approved and allocated first; in-flight ones have no allocation.</summary>
+    public async Task<Guid> SeedPaymentAsync(Guid billId, string status, decimal amount, Guid actor)
+    {
+        var payments = new ALKAROS.Payments.PaymentAggregate.PostgresPaymentRepository(DataSource);
+        var tendered = new ALKAROS.Payments.PaymentAggregate.Payment(Guid.NewGuid(), billId, amount).Tender(amount, changedBy: actor);
+        if (status is "Pending" or "Unknown" or "ReconciliationRequired")
+        {
+            var inFlight = status switch
+            {
+                "Pending" => tendered,
+                "Unknown" => tendered.MarkUnknown(changedBy: actor),
+                _ => tendered.MarkUnknown(changedBy: actor).RequestReconciliation(changedBy: actor),
+            };
+            await payments.AddAsync(inFlight);
+            return inFlight.Id;
+        }
+
+        var approved = tendered.Approve(amount, changedBy: actor);
+        await payments.AddAsync(approved);
+        var bill = await new PostgresBillRepository(DataSource).GetByIdAsync(billId)
+            ?? throw new InvalidOperationException("Seeded bill not found.");
+        await new ALKAROS.Payments.Allocations.Persistence.PostgresPaymentAllocationRepository(
+                DataSource, new ALKAROS.Billing.Adjustments.PostgresBillAdjustmentRepository(DataSource))
+            .AllocateAsync(approved, bill, amount, "rmd737-" + Guid.NewGuid().ToString("N"));
+        await payments.SaveAsync(approved.ApplyRefund(status == "Refunded" ? amount : amount / 2m, changedBy: actor), approved.RowVersion);
+        return approved.Id;
+    }
+
+    public Task TurnOffTheVoluntaryTipAsync()
+        => ExecuteAsync(
+            DataSource,
+            """
+            INSERT INTO settings.settings (setting_id, setting_key, setting_value, data_type, scope, module_owner)
+            VALUES (gen_random_uuid(), 'garson.voluntary_tip_enabled', 'false', 'Boolean', 'Global', 'waiter');
+            """);
 
     public async Task<SeededBill> SeedBillAsync()
     {

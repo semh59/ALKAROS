@@ -304,6 +304,84 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ARequesterCannotRejectTheirOwnRequestEither()
+    {
+        var (selfId, selfCookie) = await _database.SeedSessionWithPermissionsAsync(
+            _terminalId, "supervisor", "payments.refund.request", "payments.refund.approve");
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(selfId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme", selfCookie);
+
+        using var response = await client.SendAsync(
+            Post($"refund-requests/{request.RequestId:D}/reject", selfCookie, new RefundDecisionInputV1("Vazgeçtim")));
+
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+        Assert.Equal("SELF_DECISION", await ErrorCode(response));
+        Assert.Equal("Requested", await Scalar<string>(
+            "SELECT status FROM payments.refund_requests WHERE refund_request_id = @p", request.RequestId));
+    }
+
+    [Fact]
+    public async Task TheAllowanceMayBeClearedToZeroOrSetToTheMaximumButNotBeyond()
+    {
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var maximum = await GrantAsync(client, _cashierId, PaymentRefundStore.MaxAllowance);
+        var cleared = await GrantAsync(client, _cashierId, 0m);
+        using var beyond = await PutAllowanceAsync(client, _cashierId, PaymentRefundStore.MaxAllowance + 0.01m, _managerCookie);
+
+        Assert.Equal(PaymentRefundStore.MaxAllowance, maximum.Allowance);
+        Assert.Equal(0m, cleared.Allowance);
+        Assert.Equal(HttpStatusCode.BadRequest, beyond.StatusCode);
+    }
+
+    [Fact]
+    public async Task APaymentWithNothingLeftToRefundCannotBeRequestedAgain()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await Execute(
+            """
+            INSERT INTO payments.payment_reversals (reversal_id, payment_id, reversal_type, amount, reason, refunded_by, idempotency_key, occurred_at)
+            VALUES (gen_random_uuid(), @p, 'PartialRefund', 100, 'Önceki iade', @u, 'rmd737-full', now());
+            """, paymentId, ("u", _managerId));
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(
+            Post($"bills/{seeded.BillId:D}/refund-requests", _cashierCookie, new RefundRequestInputV1(paymentId, "Tekrar")));
+
+        Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+        Assert.Equal("PAYMENT_NOT_REFUNDABLE", await ErrorCode(response));
+    }
+
+    [Theory]
+    [InlineData("Pending")]
+    [InlineData("Unknown")]
+    [InlineData("ReconciliationRequired")]
+    [InlineData("PartiallyRefunded")]
+    public async Task RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(string siblingStatus)
+    {
+        var seeded = await _database.SeedBillAsync();
+        var cashPayment = await CashPaymentAsync(seeded.BillId, 100m);
+        await _database.SeedPaymentAsync(seeded.BillId, siblingStatus, 50m, _cashierId);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var request = await RequestAsync(client, seeded.BillId, cashPayment, "Birinci");
+        var done = await DecideAsync(client, request.RequestId, "approve", _managerCookie);
+
+        Assert.False(done.BillCancelled);
+        Assert.NotEqual("Cancelled", await Scalar<string>("SELECT status FROM billing.bills WHERE bill_id = @p", seeded.BillId));
+    }
+
+    [Fact]
     public async Task ARejectedRequestLeavesThePaymentAloneAndAllowsANewRequest()
     {
         var seeded = await _database.SeedBillAsync();

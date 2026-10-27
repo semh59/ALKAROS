@@ -529,4 +529,22 @@ public sealed class BillDomainTests
         };
         Assert.Throws<InvalidOperationException>(() => BillSourceOperations.CreateSplitBills(order, missingPartitions));
     }
+
+    [Theory]
+    [InlineData("2.345", "2.35")]
+    [InlineData("0.005", "0.01")]
+    [InlineData("-2.345", "-2.35")]
+    public void AHalfKurusAlwaysRoundsAwayFromZero(string value, string expected)
+        => Assert.Equal(decimal.Parse(expected, System.Globalization.CultureInfo.InvariantCulture),
+            BillMath.RoundCurrency(decimal.Parse(value, System.Globalization.CultureInfo.InvariantCulture)));
+
+    [Fact]
+    public void ALineWithAZeroUnitPriceIsAllowedButANegativeOneIsNot()
+    {
+        var free = new BillItem(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Free", 1, 0m, 10m);
+
+        Assert.Equal(0m, free.GrossAmount);
+        Assert.Throws<ArgumentException>(() =>
+            new BillItem(Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Bad", 1, -0.01m, 10m));
+    }
 }

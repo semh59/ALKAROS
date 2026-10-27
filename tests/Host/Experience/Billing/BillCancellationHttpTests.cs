@@ -177,6 +177,49 @@ public sealed class BillCancellationHttpTests : IAsyncLifetime
         Assert.NotEqual("Cancelled", await StatusAsync(seeded.BillId));
     }
 
+    [Theory]
+    [InlineData("Pending")]
+    [InlineData("Unknown")]
+    [InlineData("ReconciliationRequired")]
+    public async Task APaymentStillInFlightKeepsTheBillFromBeingCancelled(string status)
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "cashier", "bills.split", "bills.cancel");
+        var seeded = await _database.SeedBillAsync();
+        await _database.SeedPaymentAsync(seeded.BillId, status, 100m, userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var refused = await client.SendAsync(Cancel(terminalId, seeded.BillId, cookie, "Deneme"));
+
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Equal("BILL_HAS_PAYMENT", await ErrorCode(refused));
+        Assert.NotEqual("Cancelled", await StatusAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task ABillWhoseOnlyPaymentWasRefundedInFullCanBeCancelledButAPartialRefundStillBlocks()
+    {
+        var terminalId = Guid.NewGuid();
+        var (userId, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "cashier", "bills.split", "bills.cancel");
+        var refunded = await _database.SeedBillAsync();
+        await _database.SeedPaymentAsync(refunded.BillId, "Refunded", 100m, userId);
+        var partlyRefunded = await _database.SeedBillAsync();
+        await _database.SeedPaymentAsync(partlyRefunded.BillId, "PartiallyRefunded", 100m, userId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var allowed = await client.SendAsync(Cancel(terminalId, refunded.BillId, cookie, "İade edildi"));
+        using var blocked = await client.SendAsync(Cancel(terminalId, partlyRefunded.BillId, cookie, "Deneme"));
+
+        Assert.Equal(HttpStatusCode.OK, allowed.StatusCode);
+        Assert.Equal("Cancelled", await StatusAsync(refunded.BillId));
+        Assert.Equal(HttpStatusCode.Conflict, blocked.StatusCode);
+        Assert.NotEqual("Cancelled", await StatusAsync(partlyRefunded.BillId));
+    }
+
     [Fact]
     public async Task APaidBillIsRefusedWithThePaymentMessage()
     {

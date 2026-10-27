@@ -107,6 +107,29 @@ describe("split-payment.js cancel and refund", () => {
     await vi.waitFor(() => expect(app().textContent).toContain("İade isteği gönderildi"));
   });
 
+  it("retries a refund request that hit a server fault under the same idempotency key", async () => {
+    const routeSet = routes({ summary: paidSummary, post: { request: { status: 500, body: {} } } });
+    const requestUrl = `/api/v1/terminals/${TERMINAL_ID}/billing/bills/${BILL_ID}/refund-requests`;
+    const refundRoute = routeSet.find((route) => route.test(requestUrl, { method: "POST" }));
+    const fetchMock = await open(routeSet);
+    await vi.waitFor(() => expect(document.querySelector('[data-refund-action="request"]')).not.toBeNull());
+    type(`[data-refund-reason="${PAYMENT_ID}"]`, "Müşteri fazla ödedi");
+
+    document.querySelector('[data-refund-action="request"]').click();
+    await vi.waitFor(() => expect(app().textContent).toContain("Sunucu tarafında bir sorun"));
+    refundRoute.status = 200;
+    refundRoute.body = request("Requested");
+    document.querySelector('[data-refund-action="request"]').click();
+    await vi.waitFor(() => expect(app().textContent).toContain("İade isteği gönderildi"));
+
+    const keys = fetchMock.mock.calls
+      .filter(([url, init]) => url.endsWith("/refund-requests") && init?.method === "POST")
+      .map(([, init]) => init.headers["X-Idempotency-Key"]);
+    expect(keys).toHaveLength(2);
+    expect(keys[0]).toBeTruthy();
+    expect(keys[1]).toBe(keys[0]);
+  });
+
   it("cancels an unpaid bill with the reason and shows it as cancelled", async () => {
     const fetchMock = await open(routes({ summary: unpaidSummary }));
     await vi.waitFor(() => expect(document.querySelector('[data-reason-select="cancel"]')).not.toBeNull());

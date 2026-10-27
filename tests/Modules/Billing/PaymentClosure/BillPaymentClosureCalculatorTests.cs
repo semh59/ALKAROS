@@ -84,6 +84,18 @@ public sealed class BillPaymentClosureCalculatorTests
     }
 
     [Fact]
+    public void ComputeReportsHasPendingPaymentBlockerForAPaymentAwaitingReconciliation()
+    {
+        var bill = MakeBill(payable: 100m);
+        var reconciling = new Payment(Guid.NewGuid(), bill.Id, 100m, currencyCode: "TRY").Tender(100m).MarkUnknown().RequestReconciliation();
+
+        var projection = BillPaymentClosureCalculator.Compute(bill, [reconciling], allocations: [], adjustments: []);
+
+        reconciling.Status.Should().Be(PaymentStatus.ReconciliationRequired);
+        projection.Blockers.Should().Contain(BillClosureBlocker.HasPendingPayment);
+    }
+
+    [Fact]
     public void ComputeReportsHasUnknownPaymentBlockerForAnUnresolvedProviderTimeout()
     {
         var bill = MakeBill(payable: 100m);

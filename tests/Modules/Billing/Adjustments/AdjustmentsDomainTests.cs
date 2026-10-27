@@ -277,4 +277,57 @@ public sealed class AdjustmentsDomainTests
         Assert.Equal(summary.AdjustedTaxTotal, lines.Sum(line => line.Tax));
         Assert.All(lines, line => Assert.Equal(line.Gross, line.Net + line.Tax));
     }
+
+    private static Bill BillOfOneItem(Guid billId, decimal unitPrice, decimal lineDiscount = 0m)
+    {
+        var item = new BillItem(
+            id: Guid.NewGuid(), billId: billId, orderItemId: Guid.NewGuid(), productId: Guid.NewGuid(),
+            productNameSnapshot: "Item", quantity: 1, unitPrice: unitPrice, taxRate: 10m, discountAmount: lineDiscount);
+        return new Bill(billId, "BILL-ADJ-T", new[] { item });
+    }
+
+    [Fact]
+    public void TheAdjustedTotalsAddTheAdjustmentsToWhatTheBillAlreadyCarries()
+    {
+        var billId = Guid.NewGuid();
+        var managerId = Guid.NewGuid();
+        var bill = BillOfOneItem(billId, 200m, lineDiscount: 20m);
+        var discount = BillAdjustment.CreateDiscountAmount(Guid.NewGuid(), billId, 55m, 10m, "Discount", managerId);
+        var fee = BillAdjustment.CreateServiceFee(Guid.NewGuid(), billId, 22m, 10m, "Fee", managerId);
+        Assert.True(bill.DiscountTotal > 0m && bill.TaxTotal > 0m && discount.TaxAmount > 0m && fee.TaxAmount > 0m);
+
+        var summary = AdjustmentCalculator.Calculate(bill, new[] { discount, fee });
+
+        Assert.Equal(bill.DiscountTotal + 55m, summary.AdjustedDiscountTotal);
+        Assert.Equal(bill.TaxTotal - discount.TaxAmount + fee.TaxAmount, summary.AdjustedTaxTotal);
+    }
+
+    [Fact]
+    public void ADiscountThatEqualsThePayableIsAllowedAndTheAdjustedTaxNeverGoesBelowZero()
+    {
+        var billId = Guid.NewGuid();
+        var bill = BillOfOneItem(billId, 100m);
+        // 110.00 payable; a 20% tax rate on the discount takes more tax out (18.33) than the bill carries (10.00).
+        var discount = BillAdjustment.CreateDiscountAmount(Guid.NewGuid(), billId, bill.PayableAmount, 20m, "Full", Guid.NewGuid());
+        Assert.True(discount.TaxAmount > bill.TaxTotal);
+
+        var summary = AdjustmentCalculator.Calculate(bill, new[] { discount });
+
+        Assert.Equal(0m, summary.AdjustedPayableAmount);
+        Assert.Equal(0m, summary.AdjustedTaxTotal);
+    }
+
+    [Fact]
+    public void ADiscountOfExactlyOneHundredPercentIsAccepted()
+    {
+        var managerId = Guid.NewGuid();
+
+        var created = BillAdjustment.CreateDiscountPercentage(Guid.NewGuid(), Guid.NewGuid(), 100m, 80m, 10m, "Comp", managerId);
+        var constructed = new BillAdjustment(
+            Guid.NewGuid(), Guid.NewGuid(), AdjustmentType.DiscountPercentage, AdjustmentCalculationType.Percentage,
+            10m, 9.09m, 10m, "Reason", managerId, rate: 100m);
+
+        Assert.Equal(80m, created.GrossAmount);
+        Assert.Equal(100m, constructed.Rate);
+    }
 }
