@@ -17,5 +17,5 @@ Pilot: Payments dilimi (V1-RMD-604) tamam: 15 tamam, 17 düzeltilmeli, 1 yeniden
 
 ## Aşama 2 durumu (oturum limiti nedeniyle durdu)
 - Kart yöntemi: CARD_METHOD.md; gruplar batches.json (139 grup, her biri 9 görev; pilot 33 görev hariç).
-- Biten gruplar: B001-B015, B017 (kartlar tasks/ altında). B016, B018, B019, B020, B021 ajanları çalışırken oturum limiti doldu; kartları tasks/ altında yazılmışsa tamam, yoksa yeniden koşulmalı.
+- Biten gruplar: B001-B058 ve B060 (kartlar tasks/ altında); B059 çalışıyor. Sonraki B061.
 - Sonraki: B022'den itibaren aynı yöntemle devam; sonra %15 bağımsız kontrol, düzeltme görevleri, md güncelleme, Aşama 5.
