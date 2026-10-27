@@ -938,3 +938,42 @@ describe("workspace /tables route background refresh", () => {
     expect(document.body.textContent).not.toContain("Masa düzeni alınamadı");
   });
 });
+
+const billingJson = (body: unknown) => new Response(JSON.stringify(body), { status: 200, headers: { "Content-Type": "application/json" } });
+const orderBillDesign = {
+  billId: "55555555-5555-5555-5555-555555555555", billNumber: "H-1", billStatus: "Open", currencyCode: "TRY",
+  payableAmount: 10, taxTotal: 1, billRowVersion: 1, mode: "None", executionState: "DesignOnly",
+  allowedCommands: [], items: [], allocations: [],
+};
+
+describe("workspace /billing route opens an order's bill once", () => {
+  let root: Root | null = null;
+  afterEach(async () => {
+    if (root) await act(async () => root!.unmount());
+    root = null;
+    vi.unstubAllGlobals();
+  });
+
+  it("opens a bill from an order with a single POST", async () => {
+    const fetchMock = vi.fn(async (input: RequestInfo | URL) => {
+      const path = String(input);
+      if (path.includes("/from-order/")) return billingJson(orderBillDesign);
+      if (path.endsWith("/owners")) return billingJson([]);
+      throw new Error(`unexpected fetch: ${path}`);
+    });
+    vi.stubGlobal("fetch", fetchMock);
+    window.history.replaceState({}, "", "/billing?orderId=77777777-7777-7777-7777-777777777777");
+    document.body.innerHTML = '<div id="root"></div>';
+    root = createRoot(document.getElementById("root")!);
+    await act(async () => root!.render(
+      <RouterProvider>
+        <ExperiencePage terminalId="66666666-6666-6666-6666-666666666666" displayName="Test" capabilities={["bills.split"]}
+          path="/billing" backendStatus="online" onLogout={async () => {}} />
+      </RouterProvider>,
+    ));
+    for (let i = 0; i < 6; i++) await act(async () => Promise.resolve());
+
+    expect(document.body.textContent).toContain("H-1");
+    expect(fetchMock.mock.calls.filter(([url]) => String(url).includes("/from-order/"))).toHaveLength(1);
+  });
+});

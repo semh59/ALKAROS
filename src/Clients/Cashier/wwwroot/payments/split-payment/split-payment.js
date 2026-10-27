@@ -25,6 +25,7 @@
     selectedMethod: 'Cash',
     splitCount: 2,
     splitLeft: 0,
+    savedShares: [],
     amountDraft: '0.00',
     noteDraft: '',
     resolveReason: '',
@@ -241,6 +242,30 @@
     });
   }
 
+  // The split saved on the POS screen (who owes what) becomes one-tap amounts here; a failure just hides them.
+  function loadSavedShares() {
+    var designBase = billBase() + '/split-design';
+    Promise.all([api(designBase), api(designBase + '/owners')]).then(function (results) {
+      if (!results[0].ok || !results[0].body) return;
+      var labels = {};
+      (results[1].ok && Array.isArray(results[1].body) ? results[1].body : []).forEach(function (owner) {
+        labels[owner.ownerId] = owner.label;
+      });
+      var totals = {};
+      var order = [];
+      (results[0].body.allocations || []).forEach(function (allocation) {
+        var id = allocation.ownerId || allocation.legacyOwnerReference;
+        if (!id) return;
+        if (!(id in totals)) { totals[id] = 0; order.push(id); }
+        totals[id] += Number(allocation.amount) || 0;
+      });
+      state.savedShares = order.map(function (id) {
+        return { label: labels[id] || 'Kişi ' + (order.indexOf(id) + 1), amount: Math.round(totals[id] * 100) / 100 };
+      });
+      render();
+    }).catch(function () { state.savedShares = []; });
+  }
+
   function loadEverything() {
     Promise.all([
       api(tendersBase()),
@@ -290,6 +315,7 @@
       // this load is stale.
       state.tenderIdempotencyKey = null;
       loadRefundRequests();
+      loadSavedShares();
       render();
     }).catch(function () {
       state.error = 'Hesap bilgisi okunamadı. Bağlantınızı kontrol edin.';
@@ -1477,6 +1503,15 @@
     });
   }
 
+  function renderSavedShares() {
+    if (!state.savedShares.length) return '';
+    return '<div class="sp-field"><span class="sp-field-label">Kayıtlı dağılım (kişi başı)</span><div class="sp-method-chips">' +
+      state.savedShares.map(function (share, index) {
+        return '<button type="button" class="sp-method-chip" data-share="' + index + '">' +
+          escapeHtml(share.label) + ' · ' + formatMoney(share.amount) + '</button>';
+      }).join('') + '</div></div>';
+  }
+
   function renderLoadError() {
     app.innerHTML =
       '<div class="sp-card sp-center-text">' +
@@ -1533,6 +1568,7 @@
         '<input class="sp-input" type="number" min="2" step="1" id="split-count" aria-label="Kişi sayısı" value="' + state.splitCount + '">' +
         '<button class="sp-btn sp-btn-secondary" id="apply-split" type="button">Hesapla</button>' +
         '</div></div>' +
+        renderSavedShares() +
         '<div class="sp-field"><span class="sp-field-label">Ödeme yöntemi</span>' + renderMethodChips() + '</div>' +
         '<div class="sp-field"><span class="sp-field-label">Tutar</span>' +
         '<div class="sp-amount-field"><input type="number" step="0.01" min="0.01" id="amount-draft" aria-label="Ödeme tutarı" value="' + state.amountDraft + '">' +
@@ -1581,6 +1617,16 @@
     });
     var splitCountInput = document.getElementById('split-count');
     if (splitCountInput) splitCountInput.addEventListener('input', function () { state.splitCount = this.value; });
+    document.querySelectorAll('[data-share]').forEach(function (button) {
+      button.addEventListener('click', function () {
+        var share = state.savedShares[Number(button.getAttribute('data-share'))];
+        if (!share) return;
+        state.splitLeft = 0;
+        state.amountDraft = Math.min(share.amount, remainingAmount()).toFixed(2);
+        state.tenderIdempotencyKey = null;
+        render();
+      });
+    });
     var applySplit = document.getElementById('apply-split');
     if (applySplit) applySplit.addEventListener('click', submitEqualSplit);
     var amountInput = document.getElementById('amount-draft');

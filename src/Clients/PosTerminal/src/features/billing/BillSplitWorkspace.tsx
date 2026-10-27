@@ -49,11 +49,13 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
   const [amountDraft, setAmountDraft] = useState<AmountDraft>(seeded.amountDraft);
   const [busy, setBusy] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [confirmClear, setConfirmClear] = useState(false);
   const [feedback, setFeedback] = useState<{ tone: "success" | "error" | "conflict"; message: string }>();
 
   useEffect(() => {
-    if (dirty || !suppliedDesign) return;
+    if (!suppliedDesign) return;
     setDesign(suppliedDesign);
+    if (dirty) return;
     const next = initialDraft(suppliedDesign);
     setEqualOwners(next.equalOwners); setItemDraft(next.itemDraft); setAmountDraft(next.amountDraft);
   }, [dirty, suppliedDesign]);
@@ -69,6 +71,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
   const validation = (() => {
     const errors: string[] = [];
     if (!mutableState) errors.push(`${billStatusLabels[design.billStatus] ?? "Bilinmiyor"} durumundaki hesap değiştirilemez.`);
+    if (owners.length === 0) errors.push("Bu hesap için kayıtlı sandalye veya kişi yok; önce masaya sandalye ya da kişi ekleyin.");
     if (mode === "EqualByPerson" && selectedOwners.length < 2) errors.push("Eşit bölme için en az iki sandalye veya kişi seçin.");
     if (mode === "ByAmount" && Object.values(amountDraft).some((amount) => amount <= 0)) errors.push("Girilen her tutar sıfırdan büyük olmalı.");
     if (mode === "ByAmount" && round(allocated) !== round(design.payableAmount)) errors.push("Dağıtılan tutar, ödenecek tutara tam eşit olmalı.");
@@ -104,11 +107,19 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
       // failure, not just a 409) was silently replaced with the generic
       // fallback below.
       const message = reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : "Dağıtım kaydedilemedi.";
-      const conflict = (reason as { status?: number }).status === 409;
+      const { status, code } = reason as { status?: number; code?: string };
+      const conflict = status === 409 && code !== "ITEM_SPLIT_ON_ADJUSTED_BILL";
       setFeedback({ tone: conflict ? "conflict" : "error", message: conflict ? "Hesap başka bir yerde değişti. Taslağınız korundu; hesabı yenileyip karşılaştırın." : message });
     } finally { setBusy(false); }
   };
+  const discardDraft = () => {
+    if (!design) return;
+    const next = initialDraft(design);
+    setEqualOwners(next.equalOwners); setItemDraft(next.itemDraft); setAmountDraft(next.amountDraft);
+    setDirty(false); setFeedback(undefined);
+  };
   const clear = async () => {
+    setConfirmClear(false);
     if (busy || !design.allowedCommands.includes("Clear")) return;
     setBusy(true); setFeedback(undefined);
     try {
@@ -120,7 +131,7 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
 
   return <section className="bill-split" aria-label="Hesap bölme çalışma alanı">
     <header className="bill-split__header"><div><span>HESAP / DAĞITIM TASARIMI</span><h2>{design.billNumber}</h2><p>{billStatusLabels[design.billStatus] ?? "Bilinmiyor"} · {lastUpdated ? `Güncellendi ${new Date(lastUpdated).toLocaleTimeString("tr-TR", { hour: "2-digit", minute: "2-digit" })}` : "Henüz güncellenmedi"}</p></div><div className="bill-split__totals"><span>Ödenecek<strong>{money(design.payableAmount, design.currencyCode)}</strong></span><span>Vergi<strong>{money(design.taxTotal, design.currencyCode)}</strong></span></div></header>
-    {feedback && <div className={`bill-split__feedback bill-split__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"}>{feedback.message}</div>}
+    {feedback && <div className={`bill-split__feedback bill-split__feedback--${feedback.tone}`} role={feedback.tone === "success" ? "status" : "alert"}>{feedback.message}{feedback.tone === "conflict" && <span className="bill-split__recovery"> <Button data-telemetry-id="b.billing.billsplitworkspace.5" variant="secondary" onClick={() => void onRefresh()}>Hesabı yenile</Button> <Button data-telemetry-id="b.billing.billsplitworkspace.6" variant="secondary" onClick={discardDraft}>Taslağı at</Button></span>}</div>}
     <div className="bill-split__modes" role="tablist" aria-label="Dağıtım modu">{(Object.keys(modeLabels) as SplitMode[]).map((option) => <button data-telemetry-id="b.billing.billsplitworkspace.1" key={option} type="button" role="tab" aria-selected={mode === option} onClick={() => setModeSafely(option)}>{modeLabels[option]}</button>)}</div>
     <div className="bill-split__layout">
       <main className="bill-split__editor">
@@ -133,7 +144,9 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
         <ValidationSummary title="Kaydetmeden önce düzeltin" errors={validation} />
         <p>Bu ekran yalnız hesap dağıtım tasarımını kaydeder; tahsilat veya ödeme yürütmez.</p>
         <Button data-telemetry-id="b.billing.billsplitworkspace.2" disabled={!canMutate || busy || validation.length > 0} onClick={() => void save()}>{busy ? "Kaydediliyor…" : "Dağıtımı kaydet"}</Button>
-        <Button data-telemetry-id="b.billing.billsplitworkspace.3" variant="secondary" disabled={!canMutate || busy || !design.allowedCommands.includes("Clear") || design.allocations.length === 0} onClick={() => void clear()}>Dağıtımı sıfırla</Button>
+        {confirmClear
+          ? <div role="alertdialog" aria-label="Sıfırlamayı onayla"><p>Kayıtlı dağıtım silinecek. Emin misiniz?</p><Button data-telemetry-id="b.billing.billsplitworkspace.7" onClick={() => void clear()}>Evet, sıfırla</Button> <Button data-telemetry-id="b.billing.billsplitworkspace.8" variant="secondary" onClick={() => setConfirmClear(false)}>Vazgeç</Button></div>
+          : <Button data-telemetry-id="b.billing.billsplitworkspace.3" variant="secondary" disabled={!canMutate || busy || !design.allowedCommands.includes("Clear") || design.allocations.length === 0} onClick={() => setConfirmClear(true)}>Dağıtımı sıfırla</Button>}
       </aside>
     </div>
   </section>;
@@ -142,15 +155,28 @@ export function BillSplitWorkspace({ state, design: suppliedDesign, owners, canM
 const ownerKindLabel = (owner: SplitOwnerOption) => (owner.kind === "Seat" ? "Kalıcı sandalye" : "Kişi");
 
 function OwnerPicker({ owners, selected, onChange }: { owners: readonly SplitOwnerOption[]; selected: readonly string[]; onChange: (next: string[]) => void }) {
-  return <section className="bill-split__owner-picker" aria-labelledby="equal-title"><div><span>1</span><h3 id="equal-title">Sandalye veya kişi seçin</h3></div><p>Sunucu kuruş farkını seçilen sahipler arasında deterministik dağıtır.</p><div>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key}><input type="checkbox" checked={selected.includes(key)} onChange={(event) => onChange(event.target.checked ? [...selected, key] : selected.filter((value) => value !== key))} /><span><strong>{owner.label}</strong><small>{owner.secondaryLabel ?? ownerKindLabel(owner)}</small></span></label>; })}</div></section>;
+  if (owners.length === 0) return <NoOwners />;
+  return <section className="bill-split__owner-picker" aria-labelledby="equal-title"><div><span>1</span><h3 id="equal-title">Sandalye veya kişi seçin</h3></div><p>Kuruş farkı seçilen kişilere sunucu tarafından otomatik paylaştırılır.</p><div>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key} aria-label={owner.label}><input type="checkbox" checked={selected.includes(key)} onChange={(event) => onChange(event.target.checked ? [...selected, key] : selected.filter((value) => value !== key))} /><span><strong>{owner.label}</strong><small>{owner.secondaryLabel ?? ownerKindLabel(owner)}</small></span></label>; })}</div></section>;
+}
+
+function NoOwners() {
+  return <p className="bill-split__empty" role="status">Bu hesap için kayıtlı sandalye veya kişi yok. Önce masaya sandalye ya da kişi ekleyin.</p>;
+}
+
+function setCell<T>(draft: Record<string, T>, key: string, raw: string, parse: (value: string) => T): Record<string, T> {
+  const { [key]: _removed, ...rest } = draft;
+  return raw === "" ? rest : { ...rest, [key]: parse(raw) };
 }
 
 function ItemEditor({ design, owners, draft, onChange }: { design: BillSplitDesign; owners: readonly SplitOwnerOption[]; draft: ItemDraft; onChange: (next: ItemDraft) => void }) {
-  return <section className="bill-split__items" aria-labelledby="item-title"><div><span>1</span><h3 id="item-title">Ürün miktarlarını dağıtın</h3></div>{design.items.map((item) => <article key={item.billItemId}><header><div><strong>{item.productName}</strong><small>{item.quantity} adet · {money(item.grossAmount, design.currencyCode)}</small></div><span>Kalan {round(item.quantity - Object.values(draft[item.billItemId] ?? {}).reduce((sum, quantity) => sum + quantity, 0))}</span></header><div>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key}><span>{owner.label}</span><input aria-label={`${item.productName} / ${owner.label} miktarı`} type="number" min="0" step="0.001" value={draft[item.billItemId]?.[key] ?? ""} onChange={(event) => onChange({ ...draft, [item.billItemId]: { ...draft[item.billItemId], [key]: Number(event.target.value) } })} /></label>; })}</div></article>)}</section>;
+  if (owners.length === 0) return <NoOwners />;
+  const adjusted = round(design.items.reduce((sum, item) => sum + item.grossAmount, 0)) !== round(design.payableAmount);
+  return <section className="bill-split__items" aria-labelledby="item-title"><div><span>1</span><h3 id="item-title">Ürün miktarlarını dağıtın</h3></div>{adjusted && <p className="bill-split__empty" role="status">Bu hesapta indirim veya ek ücret var; ürün bazında bölme kullanılamaz. Eşit bölme veya tutar girme modunu kullanın.</p>}{design.items.map((item) => <article key={item.billItemId}><header><div><strong>{item.productName}</strong><small>{item.quantity} adet · {money(item.grossAmount, design.currencyCode)}</small></div><span>Kalan {round(item.quantity - Object.values(draft[item.billItemId] ?? {}).reduce((sum, quantity) => sum + quantity, 0))}</span></header><div>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key}><span>{owner.label}</span><input aria-label={`${item.productName} / ${owner.label} miktarı`} type="number" min="0" step="0.001" value={draft[item.billItemId]?.[key] ?? ""} onChange={(event) => onChange({ ...draft, [item.billItemId]: setCell(draft[item.billItemId] ?? {}, key, event.target.value, Number) })} /></label>; })}</div></article>)}</section>;
 }
 
 function AmountEditor({ design, owners, draft, onChange }: { design: BillSplitDesign; owners: readonly SplitOwnerOption[]; draft: AmountDraft; onChange: (next: AmountDraft) => void }) {
-  return <section className="bill-split__amounts" aria-labelledby="amount-title"><div><span>1</span><h3 id="amount-title">Kişi tutarlarını girin</h3></div><p>Toplam tam olarak {money(design.payableAmount, design.currencyCode)} olmalıdır.</p>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key}><span><strong>{owner.label}</strong><small>{owner.secondaryLabel ?? ownerKindLabel(owner)}</small></span><input aria-label={`${owner.label} tutarı`} type="number" min="0" step="0.01" value={draft[key] ?? ""} onChange={(event) => onChange({ ...draft, [key]: Number(event.target.value) })} /></label>; })}</section>;
+  if (owners.length === 0) return <NoOwners />;
+  return <section className="bill-split__amounts" aria-labelledby="amount-title"><div><span>1</span><h3 id="amount-title">Kişi tutarlarını girin</h3></div><p>Toplam tam olarak {money(design.payableAmount, design.currencyCode)} olmalıdır.</p>{owners.map((owner) => { const key = ownerKey(owner); return <label key={key}><span><strong>{owner.label}</strong><small>{owner.secondaryLabel ?? ownerKindLabel(owner)}</small></span><input aria-label={`${owner.label} tutarı`} type="number" min="0" step="0.01" value={draft[key] ?? ""} onChange={(event) => onChange(setCell(draft, key, event.target.value, Number))} /></label>; })}</section>;
 }
 
 function BoundedState({ state, message, onRefresh }: { state: BillSplitWorkspaceProps["state"]; message?: string; onRefresh: BillSplitWorkspaceProps["onRefresh"] }) {

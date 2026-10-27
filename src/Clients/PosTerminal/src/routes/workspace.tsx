@@ -346,10 +346,10 @@ function BillingRoute({ terminalId, canManage, canCancel, canRequestRefund, canA
   const [billId, setBillId] = useState<string>(
     () => searchParams.get("billId") || tryGetItem("alkaros.current-bill-id") || "",
   );
-  const client = useMemo(
-    () => (billId ? createBillingSplitClient(terminalId, billId) : null),
-    [terminalId, billId],
-  );
+  // Read inside load() without being a dependency: learning the bill id from the first load must not
+  // re-run it (a second createBillFromOrder POST).
+  const billIdRef = useRef(billId);
+  useEffect(() => { billIdRef.current = billId; }, [billId]);
   const [state, setState] = useState<BillSplitWorkspaceState>("loading");
   const [design, setDesign] = useState<BillSplitDesign | null>(null);
   // Owners come from the server (table seats + existing person allocations), not
@@ -361,7 +361,7 @@ function BillingRoute({ terminalId, canManage, canCancel, canRequestRefund, canA
   const load = useCallback(async () => {
     setState("loading");
     setErrorMessage(undefined);
-    if (!orderParam && !client) {
+    if (!orderParam && !billIdRef.current) {
       setState("error");
       setErrorMessage("Aktif adisyon yok. Bir masa veya siparişten hesap açın.");
       return;
@@ -369,15 +369,13 @@ function BillingRoute({ terminalId, canManage, canCancel, canRequestRefund, canA
     try {
       const nextDesign = orderParam
         ? await createBillFromOrder(terminalId, orderParam)
-        : await client!.get();
+        : await createBillingSplitClient(terminalId, billIdRef.current).get();
       setDesign(nextDesign);
-      if (nextDesign.billId && nextDesign.billId !== billId) {
+      if (nextDesign.billId && nextDesign.billId !== billIdRef.current) {
         setBillId(nextDesign.billId);
         trySetItem("alkaros.current-bill-id", nextDesign.billId);
       }
-      const ownerClient = nextDesign.billId && nextDesign.billId !== billId
-        ? createBillingSplitClient(terminalId, nextDesign.billId)
-        : client!;
+      const ownerClient = createBillingSplitClient(terminalId, nextDesign.billId);
       try {
         setOwners(await ownerClient.getOwners());
       } catch {
@@ -395,7 +393,7 @@ function BillingRoute({ terminalId, canManage, canCancel, canRequestRefund, canA
       // backend's own Turkish message for every real billing-split failure.
       setErrorMessage(reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : "Hesap bölme verisi alınamadı.");
     }
-  }, [client, orderParam, terminalId, billId]);
+  }, [orderParam, terminalId]);
 
   useEffect(() => { void load(); }, [load]);
 

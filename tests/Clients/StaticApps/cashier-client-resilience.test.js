@@ -160,6 +160,23 @@ describe("Cashier payment pages: failing server and slow network", () => {
     expect(split).toMatch(/\.sp-method-chip\s*\{[^}]*min-height:\s*var\(--touch-target\)/);
   });
 
+  it("offers each person's saved share from the POS split as a one-tap amount", async () => {
+    const routes = splitRoutes([200], [100]);
+    routes.unshift(
+      { test: (url) => url.endsWith("/split-design"), body: { allocations: [
+        { ownerId: "o1", amount: 30, mode: "ByItem" }, { ownerId: "o2", amount: 50, mode: "ByItem" }, { ownerId: "o1", amount: 20, mode: "ByItem" },
+      ] } },
+      { test: (url) => url.endsWith("/split-design/owners"), body: [{ ownerId: "o1", label: "Sandalye 1" }, { ownerId: "o2", label: "Sandalye 2" }] },
+    );
+    await openSplit(routes);
+    await vi.waitFor(() => expect(document.querySelectorAll("[data-share]")).toHaveLength(2));
+    expect(app().textContent).toContain("Sandalye 1");
+
+    document.querySelector('[data-share="0"]').click();
+
+    expect(document.getElementById("amount-draft").value).toBe("50.00");
+  });
+
   it("tells the cashier a locked card payment needs a manager", async () => {
     const locked = { ...bill(100), unsettledPayment: { paymentId: "p1", status: "RequiresReconciliation", reason: "x", pendingConfirmation: null } };
     const routes = splitRoutes([200], [100]);
