@@ -101,13 +101,16 @@ export function createBillingRefundClient(terminalId: string, billId: string, fe
   const billBase = `${base}/bills/${encodeURIComponent(billId)}`;
   const refundsBase = `${base}/refund-requests`;
 
-  async function call<T>(url: string, method = "GET", body?: unknown): Promise<T> {
+  // A retry of the same request after a lost response reuses its key; the key is dropped once the server answered.
+  let pendingRefund: { signature: string; key: string } | undefined;
+
+  async function call<T>(url: string, method = "GET", body?: unknown, headers?: Record<string, string>): Promise<T> {
     let response: Response;
     try {
       response = await fetcher(url, {
         method,
         credentials: "same-origin",
-        headers: { "Content-Type": "application/json", "X-Correlation-Id": crypto.randomUUID() },
+        headers: { "Content-Type": "application/json", "X-Correlation-Id": crypto.randomUUID(), ...headers },
         body: body === undefined ? undefined : JSON.stringify(body),
         signal: AbortSignal.timeout(8_000),
       });
@@ -123,10 +126,17 @@ export function createBillingRefundClient(terminalId: string, billId: string, fe
 
   return {
     getTenders: () => call<BillTenderSummary>(`${billBase}/tenders/`),
-    listRequests: async () => (await call<readonly RefundRequestRow[]>(refundsBase))
+    listRequests: async () => (await call<readonly RefundRequestRow[]>(`${refundsBase}?billId=${encodeURIComponent(billId)}`))
       .filter((row) => row.billId === billId),
     cancelBill: async (reason) => { await call(`${billBase}/cancel`, "POST", { reason }); },
-    requestRefund: (paymentId, reason, items) => call(`${billBase}/refund-requests`, "POST", { paymentId, reason, items }),
+    requestRefund: async (paymentId, reason, items) => {
+      const body = { paymentId, reason, items };
+      const signature = JSON.stringify(body);
+      if (pendingRefund?.signature !== signature) pendingRefund = { signature, key: crypto.randomUUID() };
+      const result = await call<RefundRequestRow>(`${billBase}/refund-requests`, "POST", body, { "X-Idempotency-Key": pendingRefund.key });
+      pendingRefund = undefined;
+      return result;
+    },
     getItems: async () => (await call<{ items: readonly BillReceiptItem[] }>(`${billBase}/receipt`)).items,
     approve: (requestId) => call(`${refundsBase}/${encodeURIComponent(requestId)}/approve`, "POST"),
     reject: (requestId, note) => call(`${refundsBase}/${encodeURIComponent(requestId)}/reject`, "POST", { note }),

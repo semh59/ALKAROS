@@ -17,7 +17,8 @@ public sealed record RefundRequest(
     Guid? DecidedBy,
     DateTimeOffset? DecidedAt,
     string? SlipNumber,
-    string? ApprovalMode = null);
+    string? ApprovalMode = null,
+    string? IdempotencyKey = null);
 
 /// <summary>One bill item (and quantity) a refund request pays back.</summary>
 public sealed record RefundRequestItem(Guid BillItemId, decimal Quantity, bool RestoreStock);
@@ -31,9 +32,10 @@ public static class PostgresRefundRequestRepository
 {
     private const string Columns =
         "refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at, "
-        + "decided_by, decided_at, slip_number, approval_mode";
+        + "decided_by, decided_at, slip_number, approval_mode, idempotency_key";
 
     /// <summary>Inserts a Requested row; returns false when the payment already has an open request.</summary>
+    /// <remarks>The caller looks the idempotency key up first (under the bill lock), so a clash on it is not expected here.</remarks>
     public static async Task<bool> TryInsertAsync(
         RefundRequest request, NpgsqlConnection connection, NpgsqlTransaction transaction,
         CancellationToken cancellationToken = default)
@@ -43,8 +45,9 @@ public static class PostgresRefundRequestRepository
             await using var insert = new NpgsqlCommand(
                 """
                 INSERT INTO payments.refund_requests
-                    (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at)
-                VALUES (@id, @bill, @payment, @amount, @method, @reason, 'Requested', @by, @at);
+                    (refund_request_id, bill_id, payment_id, amount, method, reason, status, requested_by, requested_at,
+                     idempotency_key)
+                VALUES (@id, @bill, @payment, @amount, @method, @reason, 'Requested', @by, @at, @key);
                 """, connection, transaction);
             insert.Parameters.Add("id", NpgsqlDbType.Uuid).Value = request.Id;
             insert.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = request.BillId;
@@ -54,13 +57,28 @@ public static class PostgresRefundRequestRepository
             insert.Parameters.Add("reason", NpgsqlDbType.Text).Value = request.Reason;
             insert.Parameters.Add("by", NpgsqlDbType.Uuid).Value = request.RequestedBy;
             insert.Parameters.Add("at", NpgsqlDbType.TimestampTz).Value = request.RequestedAt.UtcDateTime;
+            insert.Parameters.Add("key", NpgsqlDbType.Text).Value = (object?)request.IdempotencyKey ?? DBNull.Value;
             await insert.ExecuteNonQueryAsync(cancellationToken);
             return true;
         }
-        catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation)
+        catch (PostgresException ex) when (ex.SqlState == PostgresErrorCodes.UniqueViolation
+                                           && ex.ConstraintName == "uq_refund_requests_open_per_payment")
         {
             return false;
         }
+    }
+
+    public static async Task<RefundRequest?> FindByKeyAsync(
+        Guid billId, string idempotencyKey, NpgsqlConnection connection, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+    {
+        await using var command = new NpgsqlCommand(
+            $"SELECT {Columns} FROM payments.refund_requests WHERE bill_id = @bill AND idempotency_key = @key;",
+            connection, transaction);
+        command.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = billId;
+        command.Parameters.Add("key", NpgsqlDbType.Text).Value = idempotencyKey;
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        return await reader.ReadAsync(cancellationToken) ? Read(reader) : null;
     }
 
     public static async Task<RefundRequest?> LoadForUpdateAsync(
@@ -75,17 +93,26 @@ public static class PostgresRefundRequestRepository
         return await reader.ReadAsync(cancellationToken) ? Read(reader) : null;
     }
 
+    public const int MaxListLimit = 200;
+
+    /// <summary>Newest first; <paramref name="before"/> pages back from the last row of the previous page.</summary>
     public static async Task<IReadOnlyList<RefundRequest>> ListAsync(
-        NpgsqlDataSource dataSource, string? status, CancellationToken cancellationToken = default)
+        NpgsqlDataSource dataSource, string? status, Guid? billId, DateTimeOffset? before, int limit,
+        CancellationToken cancellationToken = default)
     {
         await using var command = dataSource.CreateCommand(
             $"""
             SELECT {Columns} FROM payments.refund_requests
-            WHERE @status::text IS NULL OR status = @status
-            ORDER BY requested_at DESC
-            LIMIT 200;
+            WHERE (@status::text IS NULL OR status = @status)
+              AND (@bill::uuid IS NULL OR bill_id = @bill)
+              AND (@before::timestamptz IS NULL OR requested_at < @before)
+            ORDER BY requested_at DESC, refund_request_id DESC
+            LIMIT @limit;
             """);
         command.Parameters.Add("status", NpgsqlDbType.Text).Value = (object?)status ?? DBNull.Value;
+        command.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = (object?)billId ?? DBNull.Value;
+        command.Parameters.Add("before", NpgsqlDbType.TimestampTz).Value = before is { } at ? at.UtcDateTime : DBNull.Value;
+        command.Parameters.Add("limit", NpgsqlDbType.Integer).Value = Math.Clamp(limit, 1, MaxListLimit);
         var result = new List<RefundRequest>();
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         while (await reader.ReadAsync(cancellationToken))
@@ -260,5 +287,6 @@ public static class PostgresRefundRequestRepository
         reader.IsDBNull(9) ? null : reader.GetGuid(9),
         reader.IsDBNull(10) ? null : new DateTimeOffset(reader.GetDateTime(10), TimeSpan.Zero),
         reader.IsDBNull(11) ? null : reader.GetString(11),
-        reader.IsDBNull(12) ? null : reader.GetString(12));
+        reader.IsDBNull(12) ? null : reader.GetString(12),
+        reader.IsDBNull(13) ? null : reader.GetString(13));
 }

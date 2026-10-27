@@ -425,6 +425,90 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ARetriedRequestWithTheSameKeyReturnsTheStoredRefundAndPaysOutOnce()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        var other = await CashPaymentAsync(seeded.BillId, 40m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await GrantAsync(client, _cashierId, 500m);
+        var path = $"bills/{seeded.BillId:D}/refund-requests";
+
+        using var first = await client.SendAsync(Post(path, _cashierCookie, new RefundRequestInputV1(paymentId, "Yanlış tutar"), "retry-1"));
+        using var again = await client.SendAsync(Post(path, _cashierCookie, new RefundRequestInputV1(paymentId, "Yanlış tutar"), "retry-1"));
+        using var reused = await client.SendAsync(Post(path, _cashierCookie, new RefundRequestInputV1(other, "Başka ödeme"), "retry-1"));
+
+        var created = (await first.Content.ReadFromJsonAsync<RefundRequestV1>())!;
+        var replayed = (await again.Content.ReadFromJsonAsync<RefundRequestV1>())!;
+        Assert.Equal("Completed", created.Status);
+        Assert.Equal(created.RequestId, replayed.RequestId);
+        Assert.Equal(1L, await Scalar<long>(
+            "SELECT count(*) FROM cash.cash_transactions WHERE related_payment_id = @p AND type = 'Refund'", paymentId));
+        Assert.Equal(1L, await Scalar<long>(
+            "SELECT count(*) FROM payments.refund_requests WHERE bill_id = @p", seeded.BillId));
+        Assert.Equal(100m, (await GetAllowanceAsync(client, _cashierCookie)).Used);
+        Assert.Equal(HttpStatusCode.Conflict, reused.StatusCode);
+        Assert.Equal("IDEMPOTENCY_KEY_REUSED", await ErrorCode(reused));
+    }
+
+    [Fact]
+    public async Task ARequestWithoutAnIdempotencyKeyIsRefused()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(
+            Post($"bills/{seeded.BillId:D}/refund-requests", _cashierCookie, new RefundRequestInputV1(paymentId, "Deneme"), " "));
+
+        Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal(0L, await Scalar<long>("SELECT count(*) FROM payments.refund_requests WHERE bill_id = @p", seeded.BillId));
+    }
+
+    [Fact]
+    public async Task TheRequestAndTheApprovalAreAudited()
+    {
+        var seeded = await _database.SeedBillAsync();
+        var paymentId = await CashPaymentAsync(seeded.BillId, 100m);
+        await OpenSessionAsync(_cashierId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = await RequestAsync(client, seeded.BillId, paymentId, "Deneme");
+        await DecideAsync(client, request.RequestId, "approve", _managerCookie);
+
+        Assert.Equal(1L, await Scalar<long>(
+            "SELECT count(*) FROM audit.audit_events WHERE aggregate_id = @p AND event_name = 'refund.requested' AND actor_id = @a",
+            paymentId, ("a", _cashierId)));
+        Assert.Equal(1L, await Scalar<long>(
+            "SELECT count(*) FROM audit.audit_events WHERE aggregate_id = @p AND event_name = 'refund.approved'",
+            paymentId));
+    }
+
+    [Fact]
+    public async Task TheListFiltersByBillAndPagesBackwards()
+    {
+        var first = await _database.SeedBillAsync();
+        var second = await _database.SeedBillAsync();
+        var firstPayment = await CashPaymentAsync(first.BillId, 100m);
+        var secondPayment = await CashPaymentAsync(second.BillId, 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var older = await RequestAsync(client, first.BillId, firstPayment, "Birinci");
+        var newer = await RequestAsync(client, second.BillId, secondPayment, "İkinci");
+
+        var forBill = await ListAsync(client, $"?billId={first.BillId:D}");
+        var page = await ListAsync(client, "?limit=1");
+        var before = await ListAsync(client, $"?limit=1&before={Uri.EscapeDataString(page.Single().RequestedAt.ToString("O"))}");
+
+        Assert.Equal(older.RequestId, forBill.Single().RequestId);
+        Assert.Equal(newer.RequestId, page.Single().RequestId);
+        Assert.Equal(older.RequestId, before.Single().RequestId);
+    }
+
+    [Fact]
     public async Task WithoutAnAllowanceTheRequestWaitsForTheManagerAsBefore()
     {
         var seeded = await _database.SeedBillAsync();
@@ -825,9 +909,9 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         return (await response.Content.ReadFromJsonAsync<RefundRequestV1>())!;
     }
 
-    private async Task<IReadOnlyList<RefundRequestV1>> ListAsync(HttpClient client)
+    private async Task<IReadOnlyList<RefundRequestV1>> ListAsync(HttpClient client, string query = "")
     {
-        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{_terminalId:D}/billing/refund-requests");
+        var request = new HttpRequestMessage(HttpMethod.Get, $"/api/v1/terminals/{_terminalId:D}/billing/refund-requests{query}");
         request.Headers.TryAddWithoutValidation("Cookie", _cashierCookie);
         using var response = await client.SendAsync(request);
         Assert.True(response.IsSuccessStatusCode, await response.Content.ReadAsStringAsync());
@@ -915,10 +999,12 @@ public sealed class PaymentRefundHttpTests : IAsyncLifetime
         return (await response.Content.ReadFromJsonAsync<RefundRequestV1>())!;
     }
 
-    private HttpRequestMessage Post(string path, string cookie, object? body = null)
+    private HttpRequestMessage Post(string path, string cookie, object? body = null, string? key = null)
     {
         var request = new HttpRequestMessage(HttpMethod.Post, $"/api/v1/terminals/{_terminalId:D}/billing/{path}");
         request.Headers.TryAddWithoutValidation("Cookie", cookie);
+        if (path.EndsWith("/refund-requests", StringComparison.Ordinal))
+            request.Headers.TryAddWithoutValidation("X-Idempotency-Key", key ?? Guid.NewGuid().ToString("N"));
         if (body is not null)
             request.Content = JsonContent.Create(body);
         return request;

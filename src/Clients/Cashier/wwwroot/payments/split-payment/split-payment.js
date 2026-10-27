@@ -65,6 +65,8 @@
     // V1-RMD-314 (finding K3): same retry-reuses-the-same-key fix as tenderIdempotencyKey above, for the
     // discount/tip apply requests.
     discountIdempotencyKey: null,
+    refundRequestKey: null,
+    refundRequestSignature: null,
     tipIdempotencyKey: null,
     // V1-RMD-443: "Hesaba yaz" - the customer whose receivable account this bill (or part of it) is written to.
     customerSearch: '',
@@ -125,7 +127,7 @@
     return fetch(path, {
       method: options.method || 'GET',
       credentials: 'include',
-      headers: options.body ? { 'Content-Type': 'application/json' } : undefined,
+      headers: options.body ? Object.assign({ 'Content-Type': 'application/json' }, options.headers) : undefined,
       body: options.body ? JSON.stringify(options.body) : undefined,
     }).then(function (response) {
       // V1-RMD-291: one place catches a dropped session, from ANY call, not
@@ -885,6 +887,19 @@
   };
   var REFUND_METHOD_LABELS = { Cash: 'Nakit', Manual: 'Kart / elle iade' };
 
+  // A retry of the same refund after a lost response reuses its key, so the server returns the stored request
+  // instead of paying out twice; the key is dropped once the server answered.
+  function requestRefundCall(body) {
+    var signature = JSON.stringify(body);
+    if (!state.refundRequestKey || state.refundRequestSignature !== signature) {
+      state.refundRequestKey = crypto.randomUUID();
+      state.refundRequestSignature = signature;
+    }
+    return api(billBase() + '/refund-requests', {
+      method: 'POST', body: body, headers: { 'X-Idempotency-Key': state.refundRequestKey },
+    });
+  }
+
   function refundsBase() {
     return '/api/v1/terminals/' + state.terminalId + '/billing/refund-requests';
   }
@@ -1196,14 +1211,9 @@
       call = api(billBase() + '/cancel', { method: 'POST', body: { reason: state.cancelReason } });
     } else if (action === 'request') {
       var paymentId = element.getAttribute('data-payment-id');
-      call = api(billBase() + '/refund-requests', {
-        method: 'POST', body: { paymentId: paymentId, reason: state.refundReasons[paymentId] || '' },
-      });
+      call = requestRefundCall({ paymentId: paymentId, reason: state.refundReasons[paymentId] || '' });
     } else if (action === 'request-items') {
-      call = api(billBase() + '/refund-requests', {
-        method: 'POST',
-        body: { paymentId: state.itemPayment, reason: state.itemReason, items: chosenItems() || [] },
-      });
+      call = requestRefundCall({ paymentId: state.itemPayment, reason: state.itemReason, items: chosenItems() || [] });
     } else if (action === 'approve') {
       call = api(refundsBase() + '/' + requestId + '/approve', { method: 'POST' });
     } else if (action === 'reject') {
@@ -1221,6 +1231,7 @@
     render();
     call.then(function (result) {
       state.refundBusy = false;
+      if (result.ok) state.refundRequestKey = null;
       if (!result.ok) {
         state.refundError = describeHttpFailure(result.status, result.body);
         render();

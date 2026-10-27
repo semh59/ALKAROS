@@ -22,6 +22,22 @@ describe("billing refund client", () => {
       expect.objectContaining({ method: "POST", body: JSON.stringify({ paymentId: "pay-1", reason: "Fazla ödeme" }) }));
   });
 
+  it("reuses the idempotency key of a refund request retried after a lost response", async () => {
+    const fetcher = vi.fn()
+      .mockRejectedValueOnce(new TypeError("network"))
+      .mockResolvedValue(response({}));
+    const client = createBillingRefundClient("t1", "b1", fetcher);
+
+    await expect(client.requestRefund("p1", "Fazla ödeme")).rejects.toThrow();
+    await client.requestRefund("p1", "Fazla ödeme");
+    await client.requestRefund("p1", "Fazla ödeme");
+
+    const keys = fetcher.mock.calls.map((call) => call[1].headers["X-Idempotency-Key"]);
+    expect(keys[0]).toBeTruthy();
+    expect(keys[1]).toBe(keys[0]);
+    expect(keys[2]).not.toBe(keys[0]);
+  });
+
   it("decides and completes a request on the request route", async () => {
     const fetcher = vi.fn().mockResolvedValue(response({}));
     const client = createBillingRefundClient("t", "b", fetcher);

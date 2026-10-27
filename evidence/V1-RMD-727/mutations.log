@@ -1,0 +1,8 @@
+M1-replay-lookup-skipped KILLED restored=true
+M2-reused-key-other-payment-accepted KILLED restored=true
+M3-missing-key-accepted KILLED restored=true
+M4-request-not-audited KILLED restored=true
+M5-approval-not-audited KILLED restored=true
+M6-bill-filter-dropped KILLED restored=true
+M7-before-filter-dropped KILLED restored=true
+DONE

@@ -465,10 +465,6 @@
       "reason": "Hesap iptali durum makinesiyle korunur: iptal edilmiş hesap ikinci çağrıda 409 (UNSUPPORTED_BILL_STATE) döner, tekrar iptal oluşmaz.",
       "task": "V1-RMD-506"
     },
-    "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/refund-requests": {
-      "reason": "Bir ödeme için tek açık iade isteği vardır (kısmi benzersiz dizin); ikinci çağrı 409 (REFUND_ALREADY_REQUESTED) döner.",
-      "task": "V1-RMD-508"
-    },
     "POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/clear": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-RMD-103"

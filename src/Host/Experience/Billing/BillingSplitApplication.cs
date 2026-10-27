@@ -18,6 +18,7 @@ using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
@@ -291,6 +292,7 @@ public static class BillingSplitApplication
             Guid terminalId,
             Guid billId,
             RefundRequestInputV1 request,
+            [FromHeader(Name = "X-Idempotency-Key")] string? idempotencyKey,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
             PaymentRefundStore store,
@@ -300,12 +302,15 @@ public static class BillingSplitApplication
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
             return Results.Ok(await store.RequestAsync(
-                billId, request.PaymentId, request.Reason, principal.UserId, request.Items, cancellationToken));
+                billId, request.PaymentId, request.Reason, principal.UserId, request.Items, idempotencyKey, cancellationToken));
         });
 
         refundsGroup.MapGet("/refund-requests", async (
             Guid terminalId,
             string? status,
+            Guid? billId,
+            DateTimeOffset? before,
+            int? limit,
             IBillingSplitSessionAuthorizer authorizer,
             IAuthorizationService authorization,
             PaymentRefundStore store,
@@ -314,7 +319,8 @@ public static class BillingSplitApplication
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
             await authorization.AuthorizeAsync(principal.UserId, ApplicationPermissions.PaymentsRefundRequest, cancellationToken);
-            return Results.Ok(await store.ListAsync(status, cancellationToken));
+            return Results.Ok(await store.ListAsync(
+                status, billId, before, limit ?? PostgresRefundRequestRepository.MaxListLimit, cancellationToken));
         });
 
         refundsGroup.MapPost("/refund-requests/{requestId:guid}/approve", async (
