@@ -1,7 +1,7 @@
 # V1-RMD-733 - Hata sözleşmesi ve terminal oran sınırı (603 B023, B029)
 
 - Task ID: V1-RMD-733
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
