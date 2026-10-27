@@ -33,6 +33,7 @@ V1-RMD-603 B019, B020, B030, B040: iade sonrası Paid->Cancelled ham SQL ve geç
 
 ## Out of scope
 
+- Masa işaretçisi yazımında yutulan hatanın günlüğü ve Billing Host testi V1-RMD-732 kapsamındadır; bu görev ona dokunmaz.
 - Ürün kararı gerektiren kalemler (PO soruları) sorulmadan değiştirilmez.
 - Bu görevin başlığında adı geçmeyen bulguların düzeltmesi.
 

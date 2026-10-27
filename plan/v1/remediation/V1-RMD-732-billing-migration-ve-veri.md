@@ -25,6 +25,7 @@ V1-RMD-603 B021, B022, B031: 180 down çakışan bill_number varken çöküyor; 
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Billing/**
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Billing/**
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillingSplitStore.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/**
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 
 ## In scope
