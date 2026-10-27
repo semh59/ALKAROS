@@ -1,3 +1,4 @@
+using ALKAROS.Billing.BillFoundation;
 using System.Net;
 using System.Net.Http.Json;
 using ALKAROS.Audit.EventStore;
@@ -83,6 +84,24 @@ public sealed class OrderManagementCompHttpTests : IAsyncLifetime
         var applied = Assert.Single(events);
         Assert.Equal("Order.ItemComplimentary", applied.EventName);
         Assert.Equal("VIPGuest", applied.Reason);
+    }
+
+    [Fact]
+    public async Task AnItemWithAPricedModifierCanBeCompedAndItsBillLineIsWritten()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "supervisor", "bills.comp");
+        var (orderId, itemId) = await _database.SeedActiveOrderWithAPricedModifierAsync(unitPrice: 100m, modifierPrice: 15m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var request = JsonRequest(CompPath(terminalId, orderId, itemId), cookie,
+            new ApplyComplimentaryRequestV1(Guid.NewGuid().ToString(), 1, "VIPGuest"));
+        using var response = await client.SendAsync(request);
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        await _database.SeedBillForItemAsync(orderId, itemId, BillState.Open);
+        Assert.Equal(115m, await _database.DiscountOfOrderItemAsync(itemId));
     }
 
     [Fact]

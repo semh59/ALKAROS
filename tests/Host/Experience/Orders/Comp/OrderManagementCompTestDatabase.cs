@@ -190,6 +190,57 @@ public sealed class OrderManagementCompTestDatabase : PgTestDatabase
         return (order.Id, orderItem.Id);
     }
 
+    /// <summary>An active order whose one item carries a priced modifier, so its line total is above quantity x price.</summary>
+    public async Task<(Guid OrderId, Guid ItemId)> SeedActiveOrderWithAPricedModifierAsync(decimal unitPrice, decimal modifierPrice)
+    {
+        var productId = Guid.NewGuid();
+        var groupId = Guid.NewGuid();
+        var modifierId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO catalog.products (product_id, sku, name, product_type, stock_mode, active)
+            VALUES (@product_id, @sku, 'Comp Modifier Product', 1, 1, true);
+            INSERT INTO catalog.modifier_groups (modifier_group_id, code, name, selection_type)
+            VALUES (@group_id, @group_code, 'Extras', 1);
+            INSERT INTO catalog.modifiers (modifier_id, modifier_group_id, code, name, price_delta)
+            VALUES (@modifier_id, @group_id, @modifier_code, 'Extra cheese', @price);
+            """,
+            ("product_id", productId),
+            ("sku", "rmd731-" + productId.ToString("N")[..8]),
+            ("group_id", groupId),
+            ("group_code", "G" + groupId.ToString("N")[..10]),
+            ("modifier_id", modifierId),
+            ("modifier_code", "M" + modifierId.ToString("N")[..10]),
+            ("price", modifierPrice));
+
+        var orderItemId = Guid.NewGuid();
+        var orderItem = new OrderItem(
+            orderItemId,
+            Guid.NewGuid(),
+            productId,
+            "Comp Modifier Product",
+            quantity: 1,
+            unitPrice: unitPrice,
+            taxRate: 10m,
+            status: OrderItemState.Active,
+            modifiers: [new OrderItemModifier(Guid.NewGuid(), orderItemId, modifierId, "Extra cheese", modifierPrice)]);
+        var order = new Order(
+            Guid.NewGuid(),
+            OrderSource.Cashier,
+            "RMD-731-" + orderItemId.ToString("N")[..8],
+            new[] { orderItem },
+            status: OrderState.Submitted);
+        await new PostgresOrderRepository(DataSource).AddAsync(order);
+        return (order.Id, orderItem.Id);
+    }
+
+    public async Task<decimal> DiscountOfOrderItemAsync(Guid itemId)
+    {
+        await using var command = DataSource.CreateCommand("SELECT discount_amount FROM orders.order_items WHERE order_item_id = @id;");
+        command.Parameters.AddWithValue("id", itemId);
+        return (decimal)(await command.ExecuteScalarAsync())!;
+    }
+
     public Task SetOrderStatusAsync(Guid orderId, string status)
         => ExecuteAsync("UPDATE orders.orders SET status = @status WHERE order_id = @order_id;", ("status", status), ("order_id", orderId));
 
