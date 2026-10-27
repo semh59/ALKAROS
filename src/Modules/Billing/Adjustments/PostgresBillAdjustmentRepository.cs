@@ -141,21 +141,6 @@ public sealed class PostgresBillAdjustmentRepository : IBillAdjustmentRepository
         return command;
     }
 
-    public async Task RemoveAsync(
-        Guid adjustmentId,
-        CancellationToken cancellationToken = default)
-    {
-        if (adjustmentId == Guid.Empty)
-            throw new ArgumentException("Adjustment id cannot be empty.", nameof(adjustmentId));
-
-        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
-        await using var command = new NpgsqlCommand(
-            $"DELETE FROM {TableName} WHERE bill_adjustment_id = @id;",
-            connection);
-        command.Parameters.AddWithValue("id", adjustmentId);
-        await command.ExecuteNonQueryAsync(cancellationToken);
-    }
-
     public async Task<decimal> GetTotalDiscountAmountAsync(
         Guid billId,
         CancellationToken cancellationToken = default)

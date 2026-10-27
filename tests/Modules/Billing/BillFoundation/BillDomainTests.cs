@@ -339,6 +339,15 @@ public sealed class BillDomainTests
         Assert.Throws<InvalidOperationException>(() => bill.TransitionTo(target));
     }
 
+    [Fact]
+    public void ASettledBillThatIsRefundedInFullCanBeCancelled()
+    {
+        var bill = new Bill(Guid.NewGuid(), "BILL-REFUNDED", status: BillState.Paid);
+
+        Assert.True(bill.CanTransitionTo(BillState.Cancelled));
+        Assert.Equal(BillState.Cancelled, bill.Cancel().Status);
+    }
+
     [Theory]
     [InlineData(BillState.PartiallyAllocated)]
     [InlineData(BillState.Allocated)]

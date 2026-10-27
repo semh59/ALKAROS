@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.Json;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Billing;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.Payments.ManualResolution;
 using ALKAROS.Orders.OrderAggregate;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.AspNetCore.Hosting.Server.Features;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Npgsql;
 using Xunit;
 
@@ -653,6 +655,28 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AFullyPaidBillThatFailedToCloseIsClosedByTheSweepAndAPartlyPaidOneIsLeftAlone()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd736-sweep");
+        var paidBill = await _database.SeedBillAsync(payable: 100m);
+        var partlyPaidBill = await _database.SeedBillAsync(payable: 100m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await PostAsync(client, TendersPath(terminalId, paidBill), cookie, new { Method = "Eft", Amount = 100m, IdempotencyKey = "rmd736-a" });
+        await PostAsync(client, TendersPath(terminalId, partlyPaidBill), cookie, new { Method = "Eft", Amount = 40m, IdempotencyKey = "rmd736-b" });
+        await _database.UncloseBillAsync(paidBill);
+        var sweeper = app.Services.GetServices<IHostedService>().OfType<BillClosureSweeper>().Single();
+
+        var closed = await sweeper.SweepOnceAsync(TimeSpan.Zero, CancellationToken.None);
+
+        Assert.Equal(1, closed);
+        Assert.Equal("Paid", await _database.BillStatusAsync(paidBill));
+        Assert.Equal("Open", await _database.BillStatusAsync(partlyPaidBill));
+        Assert.Equal(0, await sweeper.SweepOnceAsync(TimeSpan.Zero, CancellationToken.None));
+    }
+
+    [Fact]
     public async Task ABillWhoseOnlyPaymentIsAnUnresolvedCardAttemptStaysOpen()
     {
         var terminalId = Guid.NewGuid();
@@ -1232,6 +1256,9 @@ internal sealed class PaymentTenderHttpTestDatabase
         await reader.ReadAsync();
         return (reader.GetDecimal(0), reader.GetDecimal(1));
     }
+
+    public Task UncloseBillAsync(Guid billId)
+        => DataSource.CreateCommand("UPDATE billing.bills SET status = 'Open', closed_at = NULL WHERE bill_id = '" + billId + "';").ExecuteNonQueryAsync();
 
     public async Task<bool> BillHasClosedAtAsync(Guid billId)
     {

@@ -125,28 +125,6 @@ public sealed class PostgresAdjustmentsTests : IClassFixture<AdjustmentsTestData
     }
 
     [Fact]
-    public async Task RemoveAdjustmentDeletesFromDatabase()
-    {
-        var (bill, _) = await CreateAndSaveBillWithItem("Pide", 150m);
-        var managerId = Guid.NewGuid();
-
-        var tip = BillAdjustment.CreateTip(
-            Guid.NewGuid(), bill.Id, 20m, "Service Tip", managerId);
-        await _adjRepo.AddAsync(tip);
-
-        var before = await _adjRepo.GetByBillIdAsync(bill.Id);
-        Assert.Single(before);
-
-        await _adjRepo.RemoveAsync(tip.Id);
-
-        var after = await _adjRepo.GetByBillIdAsync(bill.Id);
-        Assert.Empty(after);
-
-        var totalFee = await _adjRepo.GetTotalFeeAmountAsync(bill.Id);
-        Assert.Equal(0m, totalFee);
-    }
-
-    [Fact]
     public async Task CascadeDeleteOnBillDeletesAdjustments()
     {
         var (bill, _) = await CreateAndSaveBillWithItem("Kebab", 200m);

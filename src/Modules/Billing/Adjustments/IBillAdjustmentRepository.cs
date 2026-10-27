@@ -32,11 +32,6 @@ public interface IBillAdjustmentRepository
         CancellationToken cancellationToken = default);
 
     /// <summary>
-    /// Removes an adjustment line by its ID.
-    /// </summary>
-    Task RemoveAsync(Guid adjustmentId, CancellationToken cancellationToken = default);
-
-    /// <summary>
     /// Returns the sum of discount deductions for a Bill.
     /// </summary>
     Task<decimal> GetTotalDiscountAmountAsync(Guid billId, CancellationToken cancellationToken = default);

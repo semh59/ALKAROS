@@ -25,6 +25,7 @@ using Microsoft.AspNetCore.Routing;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using System.Data.Common;
@@ -70,6 +71,7 @@ public static class BillingSplitApplication
         services.TryAddSingleton<IPaymentAllocationRepository, PostgresPaymentAllocationRepository>();
         services.TryAddSingleton<IBillPaymentClosureProjector, BillPaymentClosureProjector>();
         services.TryAddSingleton<IBillClosureService, BillClosureService>();
+        services.TryAddEnumerable(ServiceDescriptor.Singleton<IHostedService, BillClosureSweeper>());
         services.TryAddSingleton<OrderSettlementService>();
         services.TryAddSingleton<IAuthorizationGrantRepository, PostgresAuthorizationGrantRepository>();
         services.TryAddSingleton<IAuthorizationPolicyRepository, PostgresAuthorizationPolicyRepository>();
@@ -643,10 +645,13 @@ internal sealed class BillingSplitExceptionFilter : IEndpointFilter
         RefundAccountChargeUnsupportedException => (409, "ACCOUNT_REFUND_UNSUPPORTED", "Müşteri hesabına yazılan ödeme buradan iade edilemez."),
         BillCancelReasonException => (400, "REASON_REQUIRED", "İptal gerekçesi 1 ile 500 karakter arasında olmalı."),
         IdempotencyKeyReusedException => (409, "IDEMPOTENCY_KEY_REUSED", "Bu işlem anahtarı farklı bir istek için zaten kullanılmış."),
+        OperationCanceledException => (499, "REQUEST_CANCELLED", "İstek iptal edildi."),
         GarsonFeatureDisabledException => (403, "FEATURE_DISABLED", "Bu özellik bu işletme için kapatılmış."),
         ArgumentException or InvalidOperationException or BadHttpRequestException => (400, "VALIDATION_FAILED", "Hesap bölme isteği doğrulanamadı."),
         PostgresException postgres when postgres.SqlState == PostgresErrorCodes.SerializationFailure =>
             (409, "CONCURRENT_MODIFICATION", "Hesap bölme tasarımı başka bir işlem tarafından değiştirildi."),
+        PostgresException postgres when postgres.SqlState is PostgresErrorCodes.DeadlockDetected or PostgresErrorCodes.LockNotAvailable =>
+            (503, "BILL_BUSY", "Hesap şu anda başka bir işlem tarafından kullanılıyor; birkaç saniye sonra tekrar deneyin."),
         PostgresException or NpgsqlException => (503, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
         _ => (500, "INTERNAL_ERROR", "İşlem tamamlanamadı."),
     };

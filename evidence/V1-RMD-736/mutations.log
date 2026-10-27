@@ -1,0 +1,7 @@
+M1-paid-to-cancelled-forbidden KILLED restored=true
+M2-cancel-is-500 KILLED restored=true
+M4-sweep-skips-open-bills KILLED restored=true
+M5-sweep-counts-nothing-closed KILLED restored=true
+M6-sweeper-not-registered KILLED restored=true
+M3-lock-faults-not-mapped KILLED restored=true
+DONE

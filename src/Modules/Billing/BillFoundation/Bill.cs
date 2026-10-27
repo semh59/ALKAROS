@@ -184,8 +184,9 @@ public sealed class Bill
         BillState.Allocated => Status is BillState.Open or BillState.PartiallyAllocated or BillState.Reopened,
         BillState.PartiallyPaid => Status is BillState.Allocated,
         BillState.Paid => Status is BillState.Allocated or BillState.PartiallyPaid,
+        // Paid -> Cancelled is the result of refunding a settled bill in full (PaymentRefunds writes it in its own transaction).
         BillState.Cancelled => Status is BillState.Open or BillState.PartiallyAllocated
-            or BillState.Allocated or BillState.PartiallyPaid or BillState.Reopened,
+            or BillState.Allocated or BillState.PartiallyPaid or BillState.Reopened or BillState.Paid,
         BillState.Reopened => Status is BillState.Paid or BillState.Cancelled,
         _ => false,
     };
