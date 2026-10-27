@@ -1,8 +1,8 @@
 # V1-RMD-730 - KDV, fiş ve bölme doğruluğu (603 B012, B013, B025)
 
 - Task ID: V1-RMD-730
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
 
