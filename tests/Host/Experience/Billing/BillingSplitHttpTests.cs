@@ -102,8 +102,8 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
             Assert.NotNull(error.Error.Conflict);
         }
         Assert.Equal(
-            equal.Allocations.Select(allocation => allocation.AllocationId),
-            await _database.AllocationIdsAsync(seeded.BillId));
+            equal.Allocations.Select(allocation => allocation.AllocationId).Order(),
+            (await _database.AllocationIdsAsync(seeded.BillId)).Order());
     }
 
     [Fact]
@@ -190,7 +190,7 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
                     ])))
             using (var overflow = await client.SendAsync(overflowRequest))
                 Assert.Equal(HttpStatusCode.BadRequest, overflow.StatusCode);
-            Assert.Equal(current.Allocations.Select(allocation => allocation.AllocationId), await _database.AllocationIdsAsync(seeded.BillId));
+            Assert.Equal(current.Allocations.Select(allocation => allocation.AllocationId).Order(), (await _database.AllocationIdsAsync(seeded.BillId)).Order());
 
             current = await PutAsync<BillSplitDesignDto>(
                 client,
@@ -424,7 +424,7 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(
             "ITEM_SPLIT_ON_ADJUSTED_BILL",
             (await items.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!.Error.Code);
-        Assert.Equal(saved.Allocations.Select(allocation => allocation.AllocationId), await _database.AllocationIdsAsync(seeded.BillId));
+        Assert.Equal(saved.Allocations.Select(allocation => allocation.AllocationId).Order(), (await _database.AllocationIdsAsync(seeded.BillId)).Order());
     }
 
     /// <summary>
@@ -535,7 +535,7 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
 
         await Assert.ThrowsAsync<InvalidOperationException>(() => store.ApplyDiscountAsync(
             seeded.BillId, new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"),
-            userId, failing, "corr", CancellationToken.None));
+            userId, failing, "corr", cancellationToken: CancellationToken.None));
         await Assert.ThrowsAsync<InvalidOperationException>(() => store.ApplyTipAsync(
             seeded.BillId, new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 50m), userId, failing, "corr", CancellationToken.None));
 
@@ -809,6 +809,188 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         var genuineBody = await genuineRetry.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
         Assert.Equal("Applied", genuineBody!.Status);
         Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    private static async Task<HttpResponseMessage> SendDiscountAsync(
+        HttpClient client, Guid terminalId, Guid billId, string cookie, ApplyBillDiscountRequestV1 body)
+        => await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/discount", cookie, body));
+
+    private static async Task<HttpResponseMessage> SendTipAsync(
+        HttpClient client, Guid terminalId, Guid billId, string cookie, ApplyBillTipRequestV1 body)
+        => await client.SendAsync(JsonRequest(
+            HttpMethod.Post, $"/api/v1/terminals/{terminalId:D}/billing/bills/{billId:D}/tip", cookie, body));
+
+    [Fact]
+    public async Task ADiscountOrTipWithoutAKeyOrAboveTheLimitsIsRefusedAndWritesNothing()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var longNote = new string('x', BillingSplitStore.MaxNotesLength + 1);
+
+        var refused = new[]
+        {
+            await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(" ", "Percentage", 10m, "PromotionalOffer")),
+            await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), "Percentage", 101m, "PromotionalOffer")),
+            await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), "FixedAmount", BillingSplitStore.MaxAdjustmentAmount + 1m, "PromotionalOffer")),
+            await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer", longNote)),
+            await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(" ", 5m)),
+            await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), BillingSplitStore.MaxAdjustmentAmount + 1m)),
+            await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), 5m, longNote)),
+        };
+
+        Assert.All(refused, response => Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode));
+        Assert.Equal(0L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task TheSameKeyWithAnotherBodyOrKindIsAConflictAndTheSameBodyReplays()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var tipKey = Guid.NewGuid().ToString();
+        var discountKey = Guid.NewGuid().ToString();
+
+        using var tip = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(tipKey, 5m));
+        using var tipReplay = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(tipKey, 5m));
+        using var tipOtherAmount = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(tipKey, 6m));
+        using var discountOnTipKey = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(tipKey, "Percentage", 10m, "PromotionalOffer"));
+        using var discount = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(discountKey, "Percentage", 10m, "PromotionalOffer"));
+        using var discountReplay = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(discountKey, "Percentage", 10m, "PromotionalOffer"));
+        using var discountOtherValue = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(discountKey, "Percentage", 20m, "PromotionalOffer"));
+        using var tipOnDiscountKey = await SendTipAsync(client, terminalId, seeded.BillId, cookie, new(discountKey, 5m));
+
+        Assert.All(new[] { tip, tipReplay, discount, discountReplay }, response => Assert.Equal(HttpStatusCode.OK, response.StatusCode));
+        foreach (var conflict in new[] { tipOtherAmount, discountOnTipKey, discountOtherValue, tipOnDiscountKey })
+        {
+            Assert.Equal(HttpStatusCode.Conflict, conflict.StatusCode);
+            Assert.Equal("IDEMPOTENCY_KEY_REUSED", (await conflict.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!.Error.Code);
+        }
+        Assert.Equal(2L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task ADiscountRequestForAMissingBillOrABadValueOpensNoGrant()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var missingBill = await SendDiscountAsync(client, terminalId, Guid.NewGuid(), cookie, new(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"));
+        using var badValue = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), "Percentage", 500m, "PromotionalOffer"));
+        await _database.SetBillStatusAsync(seeded.BillId, "Paid");
+        using var paidBill = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"));
+
+        Assert.Equal(HttpStatusCode.NotFound, missingBill.StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, badValue.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, paidBill.StatusCode);
+        Assert.Equal(0L, await _database.GrantCountAsync());
+    }
+
+    [Fact]
+    public async Task AGrantApprovedDiscountRecordsWhoApprovedItAndWhichGrant()
+    {
+        var terminalId = Guid.NewGuid();
+        var (requesterId, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "waiter");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var request = new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer");
+
+        using var pending = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, request);
+        var grantId = (await pending.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>())!.GrantId!.Value;
+        var approverId = await _database.ApproveGrantAsync(grantId);
+        using var applied = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, request);
+
+        Assert.Equal(HttpStatusCode.OK, applied.StatusCode);
+        Assert.Equal(approverId, await _database.AdjustmentAuthorizedByAsync(seeded.BillId));
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+        var events = await new PostgresAuditEventStore(source).GetByAggregateAsync("Bill", seeded.BillId);
+        var audit = Assert.Single(events, e => e.EventName == "bill.discount.applied");
+        Assert.Equal(requesterId, audit.ActorId);
+        using var state = JsonDocument.Parse(audit.AfterStateJson!);
+        Assert.Equal(approverId, state.RootElement.GetProperty("approverUserId").GetGuid());
+        Assert.Equal(grantId, state.RootElement.GetProperty("grantId").GetGuid());
+    }
+
+    [Fact]
+    public async Task ADiscountOrTipRefusesASplitSavedAgainstTheOlderBillVersion()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var split = new SaveEqualSplitRequest(
+            seeded.BillRowVersion, [],
+            [new SplitOwnerRequest("Seat", seeded.SeatId), new SplitOwnerRequest("Person", Guid.NewGuid())]);
+
+        using var discount = await SendDiscountAsync(client, terminalId, seeded.BillId, cookie, new(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"));
+        using var staleAfterDiscount = await client.SendAsync(JsonRequest(HttpMethod.Put, Path(terminalId, seeded.BillId) + "/equal", cookie, split));
+
+        Assert.Equal(HttpStatusCode.OK, discount.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, staleAfterDiscount.StatusCode);
+        Assert.Equal("CONCURRENT_MODIFICATION", (await staleAfterDiscount.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!.Error.Code);
+
+        var fresh = await _database.SeedBillAsync();
+        var freshSplit = split with { ExpectedBillRowVersion = fresh.BillRowVersion };
+        using var tip = await SendTipAsync(client, terminalId, fresh.BillId, cookie, new(Guid.NewGuid().ToString(), 5m));
+        using var staleAfterTip = await client.SendAsync(JsonRequest(HttpMethod.Put, Path(terminalId, fresh.BillId) + "/equal", cookie, freshSplit));
+
+        Assert.Equal(HttpStatusCode.OK, tip.StatusCode);
+        Assert.Equal(HttpStatusCode.Conflict, staleAfterTip.StatusCode);
+    }
+
+    [Fact]
+    public async Task TheBillStateIsReadOnlyAfterTheLockSoAWaitingDiscountOrTipSeesAPaidBill()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "supervisor", "bills.discount", "bills.split");
+        var discountBill = await _database.SeedBillAsync();
+        var tipBill = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        await using var source = NpgsqlDataSource.Create(_database.ConnectionString);
+
+        foreach (var (billId, send) in new (Guid, Func<Task<HttpResponseMessage>>)[]
+        {
+            (discountBill.BillId, () => SendDiscountAsync(client, terminalId, discountBill.BillId, cookie, new(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer"))),
+            (tipBill.BillId, () => SendTipAsync(client, terminalId, tipBill.BillId, cookie, new(Guid.NewGuid().ToString(), 5m))),
+        })
+        {
+            await using var holder = await source.OpenConnectionAsync();
+            await using var transaction = await holder.BeginTransactionAsync();
+            await using (var hold = new NpgsqlCommand("SELECT 1 FROM billing.bills WHERE bill_id = @id FOR UPDATE;", holder, transaction))
+            {
+                hold.Parameters.AddWithValue("id", billId);
+                await hold.ExecuteScalarAsync();
+            }
+
+            var waiting = send();
+            await Task.Delay(1500);
+            await using (var pay = new NpgsqlCommand("UPDATE billing.bills SET status = 'Paid' WHERE bill_id = @id;", holder, transaction))
+            {
+                pay.Parameters.AddWithValue("id", billId);
+                await pay.ExecuteNonQueryAsync();
+            }
+            await transaction.CommitAsync();
+
+            using var response = await waiting;
+            Assert.Equal(HttpStatusCode.Conflict, response.StatusCode);
+            Assert.Equal(0L, await _database.BillAdjustmentCountAsync(billId));
+        }
     }
 
     [Fact]
@@ -1316,6 +1498,12 @@ internal sealed class BillingSplitTestDatabase
         return (long)(await command.ExecuteScalarAsync())!;
     }
 
+    public async Task<long> GrantCountAsync()
+    {
+        await using var command = DataSource.CreateCommand("SELECT count(*) FROM identity.authorization_grants;");
+        return (long)(await command.ExecuteScalarAsync())!;
+    }
+
     public async Task<IReadOnlyList<Guid>> AllocationIdsAsync(Guid billId)
     {
         await using var command = DataSource.CreateCommand(
@@ -1342,10 +1530,10 @@ internal sealed class BillingSplitTestDatabase
     /// amount/reason_code once inserted, so this cannot itself introduce
     /// the tampering the caller is testing against).
     /// </summary>
-    public Task ApproveGrantAsync(Guid grantId)
+    public async Task<Guid> ApproveGrantAsync(Guid grantId)
     {
         var approverId = Guid.NewGuid();
-        return ExecuteAsync(
+        await ExecuteAsync(
             DataSource,
             """
             INSERT INTO identity.users (user_id, username, password_hash, display_name, active)
@@ -1358,6 +1546,15 @@ internal sealed class BillingSplitTestDatabase
             ("grant_id", grantId),
             ("approver_id", approverId),
             ("approver_username", "rmd103-approver-" + approverId.ToString("N")));
+        return approverId;
+    }
+
+    public async Task<Guid> AdjustmentAuthorizedByAsync(Guid billId)
+    {
+        await using var command = DataSource.CreateCommand(
+            "SELECT authorized_by FROM billing.bill_adjustments WHERE bill_id = @id;");
+        command.Parameters.AddWithValue("id", billId);
+        return (Guid)(await command.ExecuteScalarAsync())!;
     }
 
     /// <summary>V1-WTR-021: attributes a seeded bill's underlying order to a waiter for the shift-summary test.</summary>

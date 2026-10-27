@@ -156,10 +156,10 @@ public static class BillingSplitApplication
         {
             var principal = await authorizer.RequireReadAsync(context, terminalId, cancellationToken);
 
-            if (!DiscountReasonCatalog.IsValid(request.ReasonCode))
-                throw new ArgumentException(
-                    $"Reason '{request.ReasonCode}' is not a valid discount catalog reason.", nameof(request));
+            await store.EnsureDiscountRequestableAsync(billId, request, cancellationToken);
 
+            Guid? approverId = null;
+            Guid? grantId = null;
             var permissions = await roles.GetPermissionCodesForUserAsync(principal.UserId, cancellationToken);
             if (!permissions.Contains(ApplicationPermissions.BillsDiscount, StringComparer.Ordinal))
             {
@@ -197,6 +197,8 @@ public static class BillingSplitApplication
                         return Results.Accepted(value: new ApplyBillDiscountResultV1(
                             "Pending", billId, null, null, resolution.Grant.GrantId));
                     case GrantOutcome.Authorized:
+                        approverId = resolution.Grant.ApproverUserId;
+                        grantId = resolution.Grant.GrantId;
                         break;
                     default:
                         throw new InvalidOperationException($"Unhandled grant outcome '{resolution.Outcome}'.");
@@ -204,7 +206,8 @@ public static class BillingSplitApplication
             }
 
             var (adjustment, summary) = await store.ApplyDiscountAsync(
-                billId, request, principal.UserId, auditEvents, context.TraceIdentifier, cancellationToken);
+                billId, request, principal.UserId, auditEvents, context.TraceIdentifier, approverId, grantId,
+                cancellationToken);
             // A discount that takes the payable to zero leaves nothing to collect, so no tender will ever close the bill.
             if (summary.AdjustedPayableAmount <= 0m)
                 await DualScreenApplication.TryCloseBillAsync(

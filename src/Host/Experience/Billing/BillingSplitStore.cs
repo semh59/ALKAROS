@@ -3,6 +3,7 @@ using ALKAROS.Audit.EventStore;
 using ALKAROS.Billing.Adjustments;
 using ALKAROS.Billing.BillFoundation;
 using ALKAROS.Billing.SplitDesign;
+using ALKAROS.Identity.Authorization.Grants;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Settings.GarsonFeatureToggles;
 using ALKAROS.Settings.TypedSettings;
@@ -50,28 +51,15 @@ public sealed class BillingSplitStore
         Guid actorId,
         IAuditEventStore auditEvents,
         string correlationId,
+        Guid? approverId = null,
+        Guid? grantId = null,
         CancellationToken cancellationToken = default)
     {
         if (_adjustments == null)
             throw new InvalidOperationException("Bill adjustment repository is not configured.");
         if (_dataSource == null)
             throw new InvalidOperationException("Data source is not configured.");
-        ArgumentNullException.ThrowIfNull(request);
-
-        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
-            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
-
-        // Found by an independent audit (2026-09-06): nothing stopped a
-        // discount from being applied to a Paid/PartiallyPaid/Cancelled
-        // bill — money already collected could be discounted after the
-        // fact. Same mutable-state set SplitDesign already enforces (see
-        // BillingSplitDesignDto.Map's `mutable` check).
-        if (!IsDiscountable(bill.Status))
-            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
-
-        if (!DiscountReasonCatalog.IsValid(request.ReasonCode))
-            throw new ArgumentException(
-                $"Reason '{request.ReasonCode}' is not a valid discount catalog reason.", nameof(request));
+        ValidateDiscountRequest(request);
 
         // Found by an independent audit (2026-09-06): a bare read-validate-
         // write here let two concurrent discount requests both read the
@@ -90,6 +78,14 @@ public sealed class BillingSplitStore
             await lockCommand.ExecuteScalarAsync(cancellationToken);
         }
 
+        // Read only after the lock: a status or payable changed by a request that held it first must be seen.
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+        // Found by an independent audit (2026-09-06): nothing stopped a discount from being applied to a
+        // Paid/PartiallyPaid/Cancelled bill; same mutable-state set SplitDesign enforces.
+        if (!IsDiscountable(bill.Status))
+            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
+
         var existingAdjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
 
         // V1-RMD-112: a retried request (network timeout, double-submit)
@@ -104,6 +100,8 @@ public sealed class BillingSplitStore
             a => string.Equals(a.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal));
         if (replay is not null)
         {
+            if (!SameDiscount(replay, request))
+                throw new IdempotencyKeyReusedException(request.IdempotencyKey);
             await lockTransaction.CommitAsync(cancellationToken);
             return (replay, AdjustmentCalculator.Calculate(bill, existingAdjustments));
         }
@@ -119,11 +117,11 @@ public sealed class BillingSplitStore
         {
             "Percentage" => BillAdjustment.CreateDiscountPercentage(
                 adjustmentId, billId, request.Value, bill.PayableAmount, effectiveTaxRate,
-                request.ReasonCode, actorId, notes: request.Notes, createdBy: actorId,
+                request.ReasonCode, approverId ?? actorId, notes: request.Notes, createdBy: actorId,
                 idempotencyKey: request.IdempotencyKey),
             "FixedAmount" => BillAdjustment.CreateDiscountAmount(
                 adjustmentId, billId, request.Value, effectiveTaxRate,
-                request.ReasonCode, actorId, notes: request.Notes, createdBy: actorId,
+                request.ReasonCode, approverId ?? actorId, notes: request.Notes, createdBy: actorId,
                 idempotencyKey: request.IdempotencyKey),
             _ => throw new ArgumentException(
                 $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
@@ -160,6 +158,7 @@ public sealed class BillingSplitStore
         // method holds, from a second, uncommitted connection — a
         // self-deadlock (found while testing this fix).
         await _adjustments.AddAsync(adjustment, connection, lockTransaction, cancellationToken);
+        await BumpBillRowVersionAsync(connection, lockTransaction, billId, cancellationToken);
         await auditEvents.AppendAsync(
             new AuditEvent(
                 id: Guid.NewGuid(),
@@ -176,6 +175,8 @@ public sealed class BillingSplitStore
                     payableAmount = summary.AdjustedPayableAmount,
                     discountId = adjustment.Id,
                     discountValue = request.Value,
+                    approverUserId = approverId,
+                    grantId,
                 })),
             connection, lockTransaction, cancellationToken);
         await lockTransaction.CommitAsync(cancellationToken);
@@ -185,6 +186,70 @@ public sealed class BillingSplitStore
 
     private static bool IsDiscountable(BillState status) => status
         is BillState.Open or BillState.PartiallyAllocated or BillState.Allocated or BillState.Reopened;
+
+    /// <summary>Above anything a bill can hold and well inside NUMERIC(18,2); keeps a typo from reaching the database.</summary>
+    public const decimal MaxAdjustmentAmount = 1_000_000m;
+
+    public const int MaxNotesLength = 500;
+
+    private const int MaxIdempotencyKeyLength = 128;
+
+    private static void ValidateKeyAndNotes(string? idempotencyKey, string? notes)
+    {
+        if (string.IsNullOrWhiteSpace(idempotencyKey) || idempotencyKey.Length > MaxIdempotencyKeyLength)
+            throw new ArgumentException("An idempotency key of at most 128 characters is required.", nameof(idempotencyKey));
+        if (notes is { Length: > MaxNotesLength })
+            throw new ArgumentException($"Notes may be at most {MaxNotesLength} characters.", nameof(notes));
+    }
+
+    /// <summary>Everything that can be judged from the request alone, shared by the grant request and the apply path.</summary>
+    public static void ValidateDiscountRequest(ApplyBillDiscountRequestV1 request)
+    {
+        ArgumentNullException.ThrowIfNull(request);
+        ValidateKeyAndNotes(request.IdempotencyKey, request.Notes);
+        if (!DiscountReasonCatalog.IsValid(request.ReasonCode))
+            throw new ArgumentException(
+                $"Reason '{request.ReasonCode}' is not a valid discount catalog reason.", nameof(request));
+        var upper = request.CalculationType switch
+        {
+            "Percentage" => 100m,
+            "FixedAmount" => MaxAdjustmentAmount,
+            _ => throw new ArgumentException(
+                $"Unknown discount calculation type '{request.CalculationType}'.", nameof(request)),
+        };
+        if (request.Value <= 0m || request.Value > upper)
+            throw new ArgumentException($"Discount value must be above 0 and at most {upper}.", nameof(request));
+    }
+
+    /// <summary>A discount request for a bill that exists and can still take one, before any grant is opened for it.</summary>
+    public async Task EnsureDiscountRequestableAsync(
+        Guid billId, ApplyBillDiscountRequestV1 request, CancellationToken cancellationToken = default)
+    {
+        ValidateDiscountRequest(request);
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+        if (!IsDiscountable(bill.Status))
+            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
+    }
+
+    private static bool SameDiscount(BillAdjustment stored, ApplyBillDiscountRequestV1 request)
+        => request.CalculationType switch
+        {
+            "Percentage" => stored.AdjustmentType == AdjustmentType.DiscountPercentage && stored.Rate == request.Value,
+            _ => stored.AdjustmentType == AdjustmentType.DiscountAmount
+                 && stored.Amount == BillMath.RoundCurrency(request.Value),
+        } && stored.Reason == request.ReasonCode && stored.Notes == request.Notes;
+
+    /// <summary>A discount or tip changes what the bill is worth, so a split saved against the old version must be refused.</summary>
+    private static async Task BumpBillRowVersionAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, Guid billId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(
+            "UPDATE billing.bills SET row_version = row_version + 1, updated_at = now() WHERE bill_id = @bill_id;",
+            connection, transaction);
+        command.Parameters.AddWithValue("bill_id", billId);
+        await command.ExecuteNonQueryAsync(cancellationToken);
+    }
 
     /// <summary>
     /// V1-WTR-020: records a voluntary tip (<see cref="BillAdjustment.CreateTip"/>).
@@ -208,8 +273,9 @@ public sealed class BillingSplitStore
         if (_dataSource == null)
             throw new InvalidOperationException("Data source is not configured.");
         ArgumentNullException.ThrowIfNull(request);
-        if (request.Amount <= 0)
-            throw new ArgumentException("Tip amount must be positive.", nameof(request));
+        ValidateKeyAndNotes(request.IdempotencyKey, request.Notes);
+        if (request.Amount <= 0 || request.Amount > MaxAdjustmentAmount)
+            throw new ArgumentException($"Tip amount must be above 0 and at most {MaxAdjustmentAmount}.", nameof(request));
         // V1-SET-004: this deployment turned the voluntary-tip line off.
         // Refused outright, not silently zeroed — unlike the tolerant
         // optional-field handling elsewhere, an explicit tip call when the
@@ -217,11 +283,6 @@ public sealed class BillingSplitStore
         if (_settings is not null
             && !await GarsonFeatureToggles.IsEnabledAsync(_settings, GarsonFeature.VoluntaryTip, cancellationToken))
             throw new GarsonFeatureDisabledException(GarsonFeature.VoluntaryTip);
-
-        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
-            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
-        if (!IsDiscountable(bill.Status))
-            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
 
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var lockTransaction = await connection.BeginTransactionAsync(cancellationToken);
@@ -231,6 +292,18 @@ public sealed class BillingSplitStore
             lockCommand.Parameters.AddWithValue("bill_id", billId);
             await lockCommand.ExecuteScalarAsync(cancellationToken);
         }
+        // Same per-bill lock a tender takes, so a payment cannot slip in between the read and the insert.
+        await using (var allocationLock = new NpgsqlCommand(
+            "SELECT pg_advisory_xact_lock(hashtext($1)::bigint);", connection, lockTransaction))
+        {
+            allocationLock.Parameters.AddWithValue($"payment-allocation:{billId:N}");
+            await allocationLock.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        var bill = await _bills.GetByIdAsync(billId, cancellationToken)
+            ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
+        if (!IsDiscountable(bill.Status))
+            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
 
         var existingAdjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
 
@@ -238,6 +311,9 @@ public sealed class BillingSplitStore
             a => string.Equals(a.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal));
         if (replay is not null)
         {
+            if (replay.AdjustmentType != AdjustmentType.Tip
+                || replay.Amount != BillMath.RoundCurrency(request.Amount) || replay.Notes != request.Notes)
+                throw new IdempotencyKeyReusedException(request.IdempotencyKey);
             await lockTransaction.CommitAsync(cancellationToken);
             return (replay, AdjustmentCalculator.Calculate(bill, existingAdjustments));
         }
@@ -260,6 +336,7 @@ public sealed class BillingSplitStore
         var summary = AdjustmentCalculator.Calculate(bill, [.. existingAdjustments, adjustment]);
 
         await _adjustments.AddAsync(adjustment, connection, lockTransaction, cancellationToken);
+        await BumpBillRowVersionAsync(connection, lockTransaction, billId, cancellationToken);
         await auditEvents.AppendAsync(
             new AuditEvent(
                 id: Guid.NewGuid(),
