@@ -1,7 +1,7 @@
 # V1-RMD-738 - Billing doküman sapmaları ve KVKK runbook (603 B027, B039)
 
 - Task ID: V1-RMD-738
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
