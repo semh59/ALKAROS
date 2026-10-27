@@ -1,8 +1,8 @@
 # V1-RMD-736 - Durum makinesi, kapanış yeniden denemesi ve ölü kod (603 B019, B020, B030, B040)
 
 - Task ID: V1-RMD-736
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
 
