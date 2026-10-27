@@ -1,0 +1,5808 @@
+[
+{
+"id": "B001",
+"pri": 1,
+"tasks": [
+{
+"task": "V0-DOM-002",
+"file": "plan/v0/domain-contracts/V0-DOM-002-bill-order-cardinality.md"
+},
+{
+"task": "V0-DOM-003",
+"file": "plan/v0/domain-contracts/V0-DOM-003-refund-ledger.md"
+},
+{
+"task": "V0-DOM-004",
+"file": "plan/v0/domain-contracts/V0-DOM-004-payment-allocation-integrity.md"
+},
+{
+"task": "V0-DOM-007",
+"file": "plan/v0/domain-contracts/V0-DOM-007-customer-credit-invoice-semantics.md"
+},
+{
+"task": "V0-GOV-004",
+"file": "plan/v0/governance/V0-GOV-004-plan-dependency-remediation.md"
+},
+{
+"task": "V0-GOV-018",
+"file": "plan/v0/governance/V0-GOV-018-status-reconciliation.md"
+},
+{
+"task": "V0-GOV-034",
+"file": "plan/v0/governance/V0-GOV-034-remediation-task-materialization.md"
+},
+{
+"task": "V0-GOV-037",
+"file": "plan/v0/governance/V0-GOV-037-task-traceability-reconciliation.md"
+},
+{
+"task": "V0-GOV-044",
+"file": "plan/v0/governance/V0-GOV-044-markdownlint-remediation.md"
+}
+]
+},
+{
+"id": "B002",
+"pri": 1,
+"tasks": [
+{
+"task": "V0-GOV-064",
+"file": "plan/v0/governance/V0-GOV-064-override-hugin-t300-device-lock-with-token-beko.md"
+},
+{
+"task": "V1-BIL-001",
+"file": "plan/v1/billing/V1-BIL-001-bill-foundation.md"
+},
+{
+"task": "V1-BIL-002",
+"file": "plan/v1/billing/V1-BIL-002-split-design-persistence.md"
+},
+{
+"task": "V1-BIL-003",
+"file": "plan/v1/billing/V1-BIL-003-discount-fee-lines.md"
+},
+{
+"task": "V1-BIL-004",
+"file": "plan/v1/billing/V1-BIL-004-billing-composite-integrity.md"
+},
+{
+"task": "V1-BIL-005",
+"file": "plan/v1/billing/V1-BIL-005-post-serve-comp-endpoint.md"
+},
+{
+"task": "V1-CSH-001",
+"file": "plan/v1/cash-design/V1-CSH-001-cash-session-design.md"
+},
+{
+"task": "V1-CUI-001",
+"file": "plan/v1/cashier-ui/V1-CUI-001-table-and-session-shell.md"
+},
+{
+"task": "V1-CUI-002",
+"file": "plan/v1/cashier-ui/V1-CUI-002-order-entry.md"
+}
+]
+},
+{
+"id": "B003",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-CUI-003",
+"file": "plan/v1/cashier-ui/V1-CUI-003-operations-and-print-status.md"
+},
+{
+"task": "V1-CUI-004",
+"file": "plan/v1/cashier-ui/V1-CUI-004-cashier-quick-pos-frontend.md"
+},
+{
+"task": "V1-CUI-005",
+"file": "plan/v1/cashier-ui/V1-CUI-005-remove-fake-cashier-payment-and-align-v1.md"
+},
+{
+"task": "V1-CUI-006",
+"file": "plan/v1/cashier-ui/V1-CUI-006-dedicated-reservation-station-screen.md"
+},
+{
+"task": "V1-CUI-007",
+"file": "plan/v1/cashier-ui/V1-CUI-007-kasa-faz0-redesign-kapsam-karari.md"
+},
+{
+"task": "V1-CUI-008",
+"file": "plan/v1/cashier-ui/V1-CUI-008-cashier-app-faz0-token-migration.md"
+},
+{
+"task": "V1-CUI-009",
+"file": "plan/v1/cashier-ui/V1-CUI-009-posterminal-tokens-faz0-migration.md"
+},
+{
+"task": "V1-CUI-010",
+"file": "plan/v1/cashier-ui/V1-CUI-010-cashier-remaining-count-badge.md"
+},
+{
+"task": "V1-CUI-011",
+"file": "plan/v1/cashier-ui/V1-CUI-011-kasa-e2e-test-suite.md"
+}
+]
+},
+{
+"id": "B004",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-CUI-012",
+"file": "plan/v1/cashier-ui/V1-CUI-012-business-identity-settings-screen.md"
+},
+{
+"task": "V1-GOV-017",
+"file": "plan/v1/governance/V1-GOV-017-desktop-pos-and-container-release-custody.md"
+},
+{
+"task": "V1-GOV-018",
+"file": "plan/v1/governance/V1-GOV-018-desktop-pos-custody-correction.md"
+},
+{
+"task": "V1-GOV-019",
+"file": "plan/v1/governance/V1-GOV-019-desktop-pos-custody-recovery.md"
+},
+{
+"task": "V1-GOV-024",
+"file": "plan/v1/governance/V1-GOV-024-reopen-v1-gate-and-admit-final-remediation.md"
+},
+{
+"task": "V1-GOV-026",
+"file": "plan/v1/governance/V1-GOV-026-master-custody-reopen-and-remediation.md"
+},
+{
+"task": "V1-GOV-032",
+"file": "plan/v1/governance/V1-GOV-032-master-custody-reopen-and-remediation-wave-5.md"
+},
+{
+"task": "V1-GOV-038",
+"file": "plan/v1/governance/V1-GOV-038-master-custody-reopen-and-remediation-wave-8.md"
+},
+{
+"task": "V1-GOV-040",
+"file": "plan/v1/governance/V1-GOV-040-master-custody-reopen-and-remediation-wave-9.md"
+}
+]
+},
+{
+"id": "B005",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-GOV-044",
+"file": "plan/v1/governance/V1-GOV-044-master-custody-reopen-and-remediation-wave-11.md"
+},
+{
+"task": "V1-IAM-003",
+"file": "plan/v1/identity-authorization/V1-IAM-003-device-sessions.md"
+},
+{
+"task": "V1-IAM-013",
+"file": "plan/v1/identity-authorization/V1-IAM-013-issued-token-redaction.md"
+},
+{
+"task": "V1-IAM-024",
+"file": "plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md"
+},
+{
+"task": "V1-IAM-026",
+"file": "plan/v1/identity-authorization/V1-IAM-026-grant-class-bill-adjustment-surface.md"
+},
+{
+"task": "V1-IAM-027",
+"file": "plan/v1/identity-authorization/V1-IAM-027-sent-unserved-void-with-waste.md"
+},
+{
+"task": "V1-ORD-005",
+"file": "plan/v1/orders/V1-ORD-005-pre-send-void-endpoint.md"
+},
+{
+"task": "V1-ORD-006",
+"file": "plan/v1/orders/V1-ORD-006-check-detaches-from-table.md"
+},
+{
+"task": "V1-RMD-001",
+"file": "plan/v1/remediation/V1-RMD-001-consolidated-remediation.md"
+}
+]
+},
+{
+"id": "B006",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-002",
+"file": "plan/v1/remediation/V1-RMD-002-deep-audit-remediation.md"
+},
+{
+"task": "V1-RMD-006",
+"file": "plan/v1/remediation/V1-RMD-006-production-dual-screen-pos.md"
+},
+{
+"task": "V1-RMD-027",
+"file": "plan/v1/remediation/V1-RMD-027-operational-bill-splitting-api.md"
+},
+{
+"task": "V1-RMD-029",
+"file": "plan/v1/remediation/V1-RMD-029-seat-aware-order-and-bill-split-workspace.md"
+},
+{
+"task": "V1-RMD-035",
+"file": "plan/v1/remediation/V1-RMD-035-deep-code-audit-remediation.md"
+},
+{
+"task": "V1-RMD-040",
+"file": "plan/v1/remediation/V1-RMD-040-authoritative-order-to-bill-bridge.md"
+},
+{
+"task": "V1-RMD-041",
+"file": "plan/v1/remediation/V1-RMD-041-bill-split-production-navigation-and-flow.md"
+},
+{
+"task": "V1-RMD-047",
+"file": "plan/v1/remediation/V1-RMD-047-cashier-waiter-fail-closed-mock-cleanup.md"
+},
+{
+"task": "V1-RMD-048",
+"file": "plan/v1/remediation/V1-RMD-048-authoritative-order-to-bill-bridge-flow.md"
+}
+]
+},
+{
+"id": "B007",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-051",
+"file": "plan/v1/remediation/V1-RMD-051-waiter-pwa-and-cashier-ui-contract-alignment.md"
+},
+{
+"task": "V1-RMD-052",
+"file": "plan/v1/remediation/V1-RMD-052-authoritative-order-to-bill-and-posterminal-flow.md"
+},
+{
+"task": "V1-RMD-054",
+"file": "plan/v1/remediation/V1-RMD-054-production-composition-and-order-billing-routing.md"
+},
+{
+"task": "V1-RMD-056",
+"file": "plan/v1/remediation/V1-RMD-056-posterminal-infinite-loop-and-billing-participants.md"
+},
+{
+"task": "V1-RMD-057",
+"file": "plan/v1/remediation/V1-RMD-057-audit-sanitizer-unclosed-quotes-and-session-invariants.md"
+},
+{
+"task": "V1-RMD-058",
+"file": "plan/v1/remediation/V1-RMD-058-posterminal-billing-state-synchronization.md"
+},
+{
+"task": "V1-RMD-061",
+"file": "plan/v1/remediation/V1-RMD-061-cashier-park-ticket-protection.md"
+},
+{
+"task": "V1-RMD-073",
+"file": "plan/v1/remediation/V1-RMD-073-cashier-fail-closed-catalog-and-session-identity.md"
+},
+{
+"task": "V1-RMD-077",
+"file": "plan/v1/remediation/V1-RMD-077-cashier-terminal-session-provisioning.md"
+}
+]
+},
+{
+"id": "B008",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-083",
+"file": "plan/v1/remediation/V1-RMD-083-waiter-and-cashier-order-line-note-entry.md"
+},
+{
+"task": "V1-RMD-097",
+"file": "plan/v1/remediation/V1-RMD-097-deep-analysis-wave-24-25-surface-custody.md"
+},
+{
+"task": "V1-RMD-100",
+"file": "plan/v1/remediation/V1-RMD-100-reserve-action-cashier-role-scope.md"
+},
+{
+"task": "V1-RMD-101",
+"file": "plan/v1/remediation/V1-RMD-101-independent-audit-critical-fixes.md"
+},
+{
+"task": "V1-RMD-102",
+"file": "plan/v1/remediation/V1-RMD-102-independent-audit-remaining-findings.md"
+},
+{
+"task": "V1-RMD-103",
+"file": "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md"
+},
+{
+"task": "V1-RMD-106",
+"file": "plan/v1/remediation/V1-RMD-106-wave34-independent-audit-critical-and-high-fixes.md"
+},
+{
+"task": "V1-RMD-109",
+"file": "plan/v1/remediation/V1-RMD-109-static-client-js-test-infrastructure.md"
+},
+{
+"task": "V1-RMD-116",
+"file": "plan/v1/remediation/V1-RMD-116-grant-replay-tampering-audit-exposure-connectivity-badge.md"
+}
+]
+},
+{
+"id": "B009",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-131",
+"file": "plan/v1/remediation/V1-RMD-131-menu-management-experience.md"
+},
+{
+"task": "V1-RMD-132",
+"file": "plan/v1/remediation/V1-RMD-132-purchasing-management-experience.md"
+},
+{
+"task": "V1-RMD-133",
+"file": "plan/v1/remediation/V1-RMD-133-production-management-experience.md"
+},
+{
+"task": "V1-RMD-135",
+"file": "plan/v1/remediation/V1-RMD-135-waiterpwa-table-amount-and-dead-cashier-engines.md"
+},
+{
+"task": "V1-RMD-144",
+"file": "plan/v1/remediation/V1-RMD-144-channel-scoped-stock-consumption.md"
+},
+{
+"task": "V1-RMD-157",
+"file": "plan/v1/remediation/V1-RMD-157-cashier-quick-sale-table-provisioning.md"
+},
+{
+"task": "V1-RMD-179",
+"file": "plan/v1/remediation/V1-RMD-179-stale-order-race-on-table-switch.md"
+},
+{
+"task": "V1-RMD-191",
+"file": "plan/v1/remediation/V1-RMD-191-bill-adjustments-allocations-user-fk.md"
+},
+{
+"task": "V1-RMD-205",
+"file": "plan/v1/remediation/V1-RMD-205-cashier-waiter-assignment-picker.md"
+}
+]
+},
+{
+"id": "B010",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-211",
+"file": "plan/v1/remediation/V1-RMD-211-suggested-waiter-and-cashier-perf-trims.md"
+},
+{
+"task": "V1-RMD-212",
+"file": "plan/v1/remediation/V1-RMD-212-cashier-waiter-picker-load-indicator.md"
+},
+{
+"task": "V1-RMD-216",
+"file": "plan/v1/remediation/V1-RMD-216-close-two-missing-permission-checks.md"
+},
+{
+"task": "V1-RMD-227",
+"file": "plan/v1/remediation/V1-RMD-227-cashier-catalog-field-mismatches.md"
+},
+{
+"task": "V1-RMD-228",
+"file": "plan/v1/remediation/V1-RMD-228-complimentary-line-fiscal-visibility.md"
+},
+{
+"task": "V1-RMD-232",
+"file": "plan/v1/remediation/V1-RMD-232-cashier-stuck-table-and-crash-guards.md"
+},
+{
+"task": "V1-RMD-236",
+"file": "plan/v1/remediation/V1-RMD-236-cash-session-close-supervisor-override-authorization.md"
+},
+{
+"task": "V1-RMD-237",
+"file": "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md"
+},
+{
+"task": "V1-RMD-238",
+"file": "plan/v1/remediation/V1-RMD-238-cashier-escape-html-quote-xss.md"
+}
+]
+},
+{
+"id": "B011",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-241",
+"file": "plan/v1/remediation/V1-RMD-241-cash-movements-idempotency-key.md"
+},
+{
+"task": "V1-RMD-242",
+"file": "plan/v1/remediation/V1-RMD-242-payments-cash-user-fk-norm.md"
+},
+{
+"task": "V1-RMD-248",
+"file": "plan/v1/remediation/V1-RMD-248-cash-payments-module-boundary-drift.md"
+},
+{
+"task": "V1-RMD-252",
+"file": "plan/v1/remediation/V1-RMD-252-cashier-icon-sprite-hidden-attribute-rendering.md"
+},
+{
+"task": "V1-RMD-253",
+"file": "plan/v1/remediation/V1-RMD-253-cashier-alert-to-toast-notifications.md"
+},
+{
+"task": "V1-RMD-255",
+"file": "plan/v1/remediation/V1-RMD-255-cashier-real-logo-asset.md"
+},
+{
+"task": "V1-RMD-261",
+"file": "plan/v1/remediation/V1-RMD-261-table-action-errors-reach-manager-and-unsettled-payment-message.md"
+},
+{
+"task": "V1-RMD-265",
+"file": "plan/v1/remediation/V1-RMD-265-payment-surfaces-reachable.md"
+},
+{
+"task": "V1-RMD-277",
+"file": "plan/v1/remediation/V1-RMD-277-session-token-rotation-on-pin-unlock.md"
+}
+]
+},
+{
+"id": "B012",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-279",
+"file": "plan/v1/remediation/V1-RMD-279-till-queue-follows-the-bill.md"
+},
+{
+"task": "V1-RMD-280",
+"file": "plan/v1/remediation/V1-RMD-280-till-pending-checks-screen.md"
+},
+{
+"task": "V1-RMD-281",
+"file": "plan/v1/remediation/V1-RMD-281-recall-check-sent-by-mistake.md"
+},
+{
+"task": "V1-RMD-286",
+"file": "plan/v1/remediation/V1-RMD-286-cashier-help-hub-resilience.md"
+},
+{
+"task": "V1-RMD-287",
+"file": "plan/v1/remediation/V1-RMD-287-cashier-pending-checks-live-push.md"
+},
+{
+"task": "V1-RMD-290",
+"file": "plan/v1/remediation/V1-RMD-290-e2e-suites-in-ci.md"
+},
+{
+"task": "V1-RMD-291",
+"file": "plan/v1/remediation/V1-RMD-291-posterminal-session-expiry-handling.md"
+},
+{
+"task": "V1-RMD-292",
+"file": "plan/v1/remediation/V1-RMD-292-cashier-discount-tip-adjustment-ui.md"
+},
+{
+"task": "V1-RMD-311",
+"file": "plan/v1/remediation/V1-RMD-311-refund-intent-idempotency-race.md"
+}
+]
+},
+{
+"id": "B013",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-314",
+"file": "plan/v1/remediation/V1-RMD-314-tender-idempotency-key-stable-across-retry.md"
+},
+{
+"task": "V1-RMD-315",
+"file": "plan/v1/remediation/V1-RMD-315-current-bill-id-cleared-on-logout.md"
+},
+{
+"task": "V1-RMD-325",
+"file": "plan/v1/remediation/V1-RMD-325-payment-settlement-business-day-boundary.md"
+},
+{
+"task": "V1-RMD-328",
+"file": "plan/v1/remediation/V1-RMD-328-refund-flow-already-tracked-as-v13-alc-004.md"
+},
+{
+"task": "V1-RMD-343",
+"file": "plan/v1/remediation/V1-RMD-343-parked-cart-cleared-on-shift-close.md"
+},
+{
+"task": "V1-RMD-347",
+"file": "plan/v1/remediation/V1-RMD-347-qnb-test-connection-production-url-override.md"
+},
+{
+"task": "V1-RMD-349",
+"file": "plan/v1/remediation/V1-RMD-349-cashier-pwa-manifest-icons.md"
+},
+{
+"task": "V1-RMD-355",
+"file": "plan/v1/remediation/V1-RMD-355-cashier-parked-ticket-confirm-modal.md"
+},
+{
+"task": "V1-RMD-356",
+"file": "plan/v1/remediation/V1-RMD-356-cashier-accessibility-keyboard-and-labels.md"
+}
+]
+},
+{
+"id": "B014",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-358",
+"file": "plan/v1/remediation/V1-RMD-358-credential-rotation-mechanism-investigated.md"
+},
+{
+"task": "V1-RMD-360",
+"file": "plan/v1/remediation/V1-RMD-360-cashier-main-screen-ui-audit.md"
+},
+{
+"task": "V1-RMD-361",
+"file": "plan/v1/remediation/V1-RMD-361-cash-session-ui-audit.md"
+},
+{
+"task": "V1-RMD-362",
+"file": "plan/v1/remediation/V1-RMD-362-split-payment-ui-audit.md"
+},
+{
+"task": "V1-RMD-364",
+"file": "plan/v1/remediation/V1-RMD-364-posterminal-cashier-ui-audit.md"
+},
+{
+"task": "V1-RMD-366",
+"file": "plan/v1/remediation/V1-RMD-366-posterminal-billing-ui-audit.md"
+},
+{
+"task": "V1-RMD-375",
+"file": "plan/v1/remediation/V1-RMD-375-customerweb-ui-audit.md"
+},
+{
+"task": "V1-RMD-376",
+"file": "plan/v1/remediation/V1-RMD-376-cashier-main-screen-round2-audit.md"
+},
+{
+"task": "V1-RMD-377",
+"file": "plan/v1/remediation/V1-RMD-377-cash-session-round2-audit.md"
+}
+]
+},
+{
+"id": "B015",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-378",
+"file": "plan/v1/remediation/V1-RMD-378-split-payment-round2-audit.md"
+},
+{
+"task": "V1-RMD-380",
+"file": "plan/v1/remediation/V1-RMD-380-posterminal-cashier-round2-audit.md"
+},
+{
+"task": "V1-RMD-382",
+"file": "plan/v1/remediation/V1-RMD-382-posterminal-billing-round2-audit.md"
+},
+{
+"task": "V1-RMD-388",
+"file": "plan/v1/remediation/V1-RMD-388-posterminal-settings-round2-audit.md"
+},
+{
+"task": "V1-RMD-392",
+"file": "plan/v1/remediation/V1-RMD-392-customerweb-bill-round2-audit.md"
+},
+{
+"task": "V1-RMD-393",
+"file": "plan/v1/remediation/V1-RMD-393-money-flow-targeted-audit.md"
+},
+{
+"task": "V1-RMD-400",
+"file": "plan/v1/remediation/V1-RMD-400-cash-drawer-permission-enforcement.md"
+},
+{
+"task": "V1-RMD-411",
+"file": "plan/v1/remediation/V1-RMD-411-cash-session-terminal-ownership.md"
+},
+{
+"task": "V1-RMD-415",
+"file": "plan/v1/remediation/V1-RMD-415-cash-replay-requires-cash-sale.md"
+}
+]
+},
+{
+"id": "B016",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-416",
+"file": "plan/v1/remediation/V1-RMD-416-cash-session-opening-entry-atomic.md"
+},
+{
+"task": "V1-RMD-417",
+"file": "plan/v1/remediation/V1-RMD-417-cash-close-requires-count.md"
+},
+{
+"task": "V1-RMD-435",
+"file": "plan/v1/remediation/V1-RMD-435-anonymization-blocked-by-open-account-balance.md"
+},
+{
+"task": "V1-RMD-440",
+"file": "plan/v1/remediation/V1-RMD-440-per-customer-credit-limit-and-overdue-refusal.md"
+},
+{
+"task": "V1-RMD-442",
+"file": "plan/v1/remediation/V1-RMD-442-account-charge-tender-and-customer-account-api.md"
+},
+{
+"task": "V1-RMD-443",
+"file": "plan/v1/remediation/V1-RMD-443-customer-account-ui.md"
+},
+{
+"task": "V1-RMD-444",
+"file": "plan/v1/remediation/V1-RMD-444-start-internal-quality-and-invoicing-tasks.md"
+},
+{
+"task": "V1-RMD-452",
+"file": "plan/v1/remediation/V1-RMD-452-start-idempotency-invoicing-management-tasks.md"
+},
+{
+"task": "V1-RMD-455",
+"file": "plan/v1/remediation/V1-RMD-455-management-home-link.md"
+}
+]
+},
+{
+"id": "B017",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-467",
+"file": "plan/v1/remediation/V1-RMD-467-tax-inclusive-line-pricing-orders-billing.md"
+},
+{
+"task": "V1-RMD-469",
+"file": "plan/v1/remediation/V1-RMD-469-tax-inclusive-client-screens.md"
+},
+{
+"task": "V1-RMD-470",
+"file": "plan/v1/remediation/V1-RMD-470-online-order-invoice-draft-core.md"
+},
+{
+"task": "V1-RMD-471",
+"file": "plan/v1/remediation/V1-RMD-471-seller-profile-settings.md"
+},
+{
+"task": "V1-RMD-472",
+"file": "plan/v1/remediation/V1-RMD-472-online-order-invoice-on-hand-over.md"
+},
+{
+"task": "V1-RMD-473",
+"file": "plan/v1/remediation/V1-RMD-473-online-order-invoice-list-screen.md"
+},
+{
+"task": "V1-RMD-475",
+"file": "plan/v1/remediation/V1-RMD-475-online-order-invoice-missing-case.md"
+},
+{
+"task": "V1-RMD-476",
+"file": "plan/v1/remediation/V1-RMD-476-online-order-chime-and-tab-permissions.md"
+},
+{
+"task": "V1-RMD-479",
+"file": "plan/v1/remediation/V1-RMD-479-cash-count-retry-duplicate.md"
+}
+]
+},
+{
+"id": "B018",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-489",
+"file": "plan/v1/remediation/V1-RMD-489-purchase-invoice-intake.md"
+},
+{
+"task": "V1-RMD-490",
+"file": "plan/v1/remediation/V1-RMD-490-purchase-invoice-approval.md"
+},
+{
+"task": "V1-RMD-491",
+"file": "plan/v1/remediation/V1-RMD-491-purchase-invoice-screen.md"
+},
+{
+"task": "V1-RMD-492",
+"file": "plan/v1/remediation/V1-RMD-492-qnb-purchase-invoice-inbox.md"
+},
+{
+"task": "V1-RMD-493",
+"file": "plan/v1/remediation/V1-RMD-493-purchase-invoice-credit-note.md"
+},
+{
+"task": "V1-RMD-495",
+"file": "plan/v1/remediation/V1-RMD-495-purchase-invoice-hardening.md"
+},
+{
+"task": "V1-RMD-496",
+"file": "plan/v1/remediation/V1-RMD-496-customer-account-correctness.md"
+},
+{
+"task": "V1-RMD-497",
+"file": "plan/v1/remediation/V1-RMD-497-invoicing-safety.md"
+},
+{
+"task": "V1-RMD-506",
+"file": "plan/v1/remediation/V1-RMD-506-bill-cancellation-and-recreate.md"
+}
+]
+},
+{
+"id": "B019",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-509",
+"file": "plan/v1/remediation/V1-RMD-509-bill-cancel-and-refund-ui.md"
+},
+{
+"task": "V1-RMD-510",
+"file": "plan/v1/remediation/V1-RMD-510-posterminal-bill-cancel-and-refund-ui.md"
+},
+{
+"task": "V1-RMD-511",
+"file": "plan/v1/remediation/V1-RMD-511-refunded-orders-out-of-order-based-reports.md"
+},
+{
+"task": "V1-RMD-512",
+"file": "plan/v1/remediation/V1-RMD-512-cashier-failure-states-and-destructive-confirmation.md"
+},
+{
+"task": "V1-RMD-513",
+"file": "plan/v1/remediation/V1-RMD-513-bill-split-screen-text-leaks.md"
+},
+{
+"task": "V1-RMD-514",
+"file": "plan/v1/remediation/V1-RMD-514-preset-cancel-and-refund-reasons.md"
+},
+{
+"task": "V1-RMD-515",
+"file": "plan/v1/remediation/V1-RMD-515-optional-cash-change-due.md"
+},
+{
+"task": "V1-RMD-516",
+"file": "plan/v1/remediation/V1-RMD-516-bill-info-receipt-endpoint.md"
+},
+{
+"task": "V1-RMD-517",
+"file": "plan/v1/remediation/V1-RMD-517-bill-info-receipt-print.md"
+}
+]
+},
+{
+"id": "B020",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-518",
+"file": "plan/v1/remediation/V1-RMD-518-idempotency-allowlist-for-cancel-and-refund-endpoints.md"
+},
+{
+"task": "V1-RMD-521",
+"file": "plan/v1/remediation/V1-RMD-521-cashier-shift-refund-allowance-ui.md"
+},
+{
+"task": "V1-RMD-522",
+"file": "plan/v1/remediation/V1-RMD-522-partial-refund-closure-keeps-paid.md"
+},
+{
+"task": "V1-RMD-525",
+"file": "plan/v1/remediation/V1-RMD-525-item-refund-ui.md"
+},
+{
+"task": "V1-RMD-526",
+"file": "plan/v1/remediation/V1-RMD-526-item-refund-receipt-and-reports.md"
+},
+{
+"task": "V1-RMD-527",
+"file": "plan/v1/remediation/V1-RMD-527-channel-report-refund-netting.md"
+},
+{
+"task": "V1-RMD-528",
+"file": "plan/v1/remediation/V1-RMD-528-product-margin-refund-netting.md"
+},
+{
+"task": "V1-RMD-529",
+"file": "plan/v1/remediation/V1-RMD-529-product-margin-unallocated-refund.md"
+},
+{
+"task": "V1-RMD-530",
+"file": "plan/v1/remediation/V1-RMD-530-refund-figures-on-report-screens.md"
+}
+]
+},
+{
+"id": "B021",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-531",
+"file": "plan/v1/remediation/V1-RMD-531-login-entry-fixes.md"
+},
+{
+"task": "V1-RMD-553",
+"file": "plan/v1/remediation/V1-RMD-553-vanilla-clients-reporting.md"
+},
+{
+"task": "V1-RMD-582",
+"file": "plan/v1/remediation/V1-RMD-582-qnb-earsiv-send-client.md"
+},
+{
+"task": "V1-RMD-603",
+"file": "plan/v1/remediation/V1-RMD-603-billing-quality-audit.md"
+},
+{
+"task": "V1-RMD-689",
+"file": "plan/v1/remediation/V1-RMD-689-help-request-delivery-feedback.md"
+},
+{
+"task": "V1-RMD-694",
+"file": "plan/v1/remediation/V1-RMD-694-cash-and-order-flow-fixes.md"
+},
+{
+"task": "V1-RMD-707",
+"file": "plan/v1/remediation/V1-RMD-707-cashier-waiter-catalog-search-and-retry.md"
+},
+{
+"task": "V1-RMD-719",
+"file": "plan/v1/remediation/V1-RMD-719-cashier-quick-order-send-integrity.md"
+},
+{
+"task": "V1-RMD-732",
+"file": "plan/v1/remediation/V1-RMD-732-billing-migration-ve-veri.md"
+}
+]
+},
+{
+"id": "B022",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-RMD-734",
+"file": "plan/v1/remediation/V1-RMD-734-cashier-istemci-duzeltmeleri.md"
+},
+{
+"task": "V1-RMD-737",
+"file": "plan/v1/remediation/V1-RMD-737-test-bosluklari.md"
+},
+{
+"task": "V1-RMD-738",
+"file": "plan/v1/remediation/V1-RMD-738-billing-dokuman-ve-kvkk.md"
+},
+{
+"task": "V1-TBL-008",
+"file": "plan/v1/table-management/V1-TBL-008-dedicated-reservation-station-decision.md"
+},
+{
+"task": "V1-WTR-014",
+"file": "plan/v1/waiter-pwa/V1-WTR-014-help-request.md"
+},
+{
+"task": "V1-WTR-016",
+"file": "plan/v1/waiter-pwa/V1-WTR-016-draft-price-changed-badge.md"
+},
+{
+"task": "V1-WTR-018",
+"file": "plan/v1/waiter-pwa/V1-WTR-018-guest-live-bill.md"
+},
+{
+"task": "V1-WTR-020",
+"file": "plan/v1/waiter-pwa/V1-WTR-020-voluntary-tip.md"
+},
+{
+"task": "V1-WTR-033",
+"file": "plan/v1/waiter-pwa/V1-WTR-033-refactor-step3-cashier-handoff-store.md"
+}
+]
+},
+{
+"id": "B023",
+"pri": 1,
+"tasks": [
+{
+"task": "V1-WTR-045",
+"file": "plan/v1/waiter-pwa/V1-WTR-045-js-refactor-step9-bill-features-modules.md"
+},
+{
+"task": "V11-UI-001",
+"file": "plan/v1.1/operations-ui/V11-UI-001-menu-and-recipe-ui.md"
+},
+{
+"task": "V11-UI-002",
+"file": "plan/v1.1/operations-ui/V11-UI-002-production-ui.md"
+},
+{
+"task": "V11-UI-003",
+"file": "plan/v1.1/operations-ui/V11-UI-003-inventory-and-purchasing-ui.md"
+},
+{
+"task": "V12-GOV-003",
+"file": "plan/v1.2/governance/V12-GOV-003-renumber-qr-ordering-as-v1-2.md"
+},
+{
+"task": "V12-QRS-001",
+"file": "plan/v1.2/qr-security/V12-QRS-001-qr-token-lifecycle.md"
+},
+{
+"task": "V12-QRT-005",
+"file": "plan/v1.2/qr-transport/V12-QRT-005-relay-connector-container-isolation.md"
+},
+{
+"task": "V13-ALC-002",
+"file": "plan/v1.3/payment-allocation/V13-ALC-002-bill-closure-projection.md"
+},
+{
+"task": "V13-CSH-001",
+"file": "plan/v1.3/cash/V13-CSH-001-cash-session-lifecycle.md"
+}
+]
+},
+{
+"id": "B024",
+"pri": 1,
+"tasks": [
+{
+"task": "V13-CSH-002",
+"file": "plan/v1.3/cash/V13-CSH-002-cash-transaction-ledger.md"
+},
+{
+"task": "V13-CSH-004",
+"file": "plan/v1.3/cash/V13-CSH-004-cash-session-and-tender-http-composition.md"
+},
+{
+"task": "V13-GOV-001",
+"file": "plan/v1.3/governance/V13-GOV-001-admit-contract-independent-payments-cash-chain.md"
+},
+{
+"task": "V13-GOV-002",
+"file": "plan/v1.3/governance/V13-GOV-002-complimentary-line-fiscal-representation-decision.md"
+},
+{
+"task": "V13-GOV-003",
+"file": "plan/v1.3/governance/V13-GOV-003-split-bill-managed-by-alkaros-decision.md"
+},
+{
+"task": "V13-GOV-005",
+"file": "plan/v1.3/governance/V13-GOV-005-token-cloud-integration-path-decision.md"
+},
+{
+"task": "V13-GOV-006",
+"file": "plan/v1.3/governance/V13-GOV-006-token-payment-request-unverified-draft-authorization.md"
+},
+{
+"task": "V13-GOV-007",
+"file": "plan/v1.4/qnb-esolutions/V13-GOV-007-qnb-efatura-unverified-draft-authorization.md"
+},
+{
+"task": "V13-GOV-008",
+"file": "plan/v1.3/governance/V13-GOV-008-payment-orchestration-dependency-waiver.md"
+}
+]
+},
+{
+"id": "B025",
+"pri": 1,
+"tasks": [
+{
+"task": "V13-PUI-002",
+"file": "plan/v1.3/payments-ui/V13-PUI-002-cash-session-ui.md"
+},
+{
+"task": "V13-PUI-004",
+"file": "plan/v1.3/payments-ui/V13-PUI-004-eft-payment-ui.md"
+},
+{
+"task": "V13-REC-001",
+"file": "plan/v1.3/reconciliation/V13-REC-001-payment-reconciliation.md"
+},
+{
+"task": "V13-RMD-002",
+"file": "plan/v1.3/payments-ui/V13-RMD-002-split-payment-unsettled-lock-survives-reload.md"
+},
+{
+"task": "V13-RMD-003",
+"file": "plan/v1.3/payments-ui/V13-RMD-003-cashier-split-payment-e2e-suite.md"
+},
+{
+"task": "V13-RPT-001",
+"file": "plan/v1.3/reporting/V13-RPT-001-payment-cash-settlement-reports.md"
+},
+{
+"task": "V13-TBL-001",
+"file": "plan/v1.3/table-payment/V13-TBL-001-payment-aware-table-topology.md"
+},
+{
+"task": "V14-ACC-001",
+"file": "plan/v1.4/customer-account/V14-ACC-001-account-transaction-ledger.md"
+},
+{
+"task": "V14-ACC-002",
+"file": "plan/v1.4/customer-account/V14-ACC-002-account-balance-projection.md"
+}
+]
+},
+{
+"id": "B026",
+"pri": 1,
+"tasks": [
+{
+"task": "V14-ACC-003",
+"file": "plan/v1.4/customer-account/V14-ACC-003-bill-account-charge.md"
+},
+{
+"task": "V14-ACC-004",
+"file": "plan/v1.4/customer-account/V14-ACC-004-account-payment-posting.md"
+},
+{
+"task": "V14-ACC-005",
+"file": "plan/v1.4/customer-account/V14-ACC-005-cash-account-receipt.md"
+},
+{
+"task": "V14-ACC-009",
+"file": "plan/v1.4/customer-account/V14-ACC-009-independent-account-receipt.md"
+},
+{
+"task": "V14-INV-001",
+"file": "plan/v1.4/invoicing/V14-INV-001-periodic-source-selection.md"
+},
+{
+"task": "V14-INV-002",
+"file": "plan/v1.4/invoicing/V14-INV-002-invoice-generation.md"
+},
+{
+"task": "V14-INV-003",
+"file": "plan/v1.4/invoicing/V14-INV-003-line-source-traceability.md"
+},
+{
+"task": "V14-QNB-006",
+"file": "plan/v1.4/qnb-esolutions/V14-QNB-006-credential-registration.md"
+},
+{
+"task": "V14-QNB-007",
+"file": "plan/v1.4/qnb-esolutions/V14-QNB-007-connection-test.md"
+}
+]
+},
+{
+"id": "B027",
+"pri": 2,
+"tasks": [
+{
+"task": "V0-ARC-005",
+"file": "plan/v0/platform-architecture/V0-ARC-005-settings-and-secret-classification.md"
+},
+{
+"task": "V0-CMP-003",
+"file": "plan/v0/compliance/V0-CMP-003-kvkk-data-inventory.md"
+},
+{
+"task": "V0-GOV-005",
+"file": "plan/v0/governance/V0-GOV-005-audit-evidence-integrity.md"
+},
+{
+"task": "V0-GOV-006",
+"file": "plan/v0/governance/V0-GOV-006-sec003-boundary-repair.md"
+},
+{
+"task": "V0-GOV-007",
+"file": "plan/v0/governance/V0-GOV-007-plan-audit-tool-integrity.md"
+},
+{
+"task": "V0-GOV-009",
+"file": "plan/v0/governance/V0-GOV-009-final-audit-refresh.md"
+},
+{
+"task": "V0-GOV-011",
+"file": "plan/v0/governance/V0-GOV-011-final-audit-manifest-refresh.md"
+},
+{
+"task": "V0-GOV-012",
+"file": "plan/v0/governance/V0-GOV-012-final-gate-and-audit-reconciliation.md"
+},
+{
+"task": "V0-GOV-013",
+"file": "plan/v0/governance/V0-GOV-013-sensitive-envelope-metadata-integrity.md"
+}
+]
+},
+{
+"id": "B028",
+"pri": 2,
+"tasks": [
+{
+"task": "V0-GOV-016",
+"file": "plan/v0/governance/V0-GOV-016-post-remediation-audit-refresh.md"
+},
+{
+"task": "V0-GOV-017",
+"file": "plan/v0/governance/V0-GOV-017-status-dependency-enforcement.md"
+},
+{
+"task": "V0-GOV-021",
+"file": "plan/v0/governance/V0-GOV-021-candidate-evidence-gate.md"
+},
+{
+"task": "V0-GOV-027",
+"file": "plan/v0/governance/V0-GOV-027-resolve-transition-test-ownership.md"
+},
+{
+"task": "V0-GOV-029",
+"file": "plan/v0/governance/V0-GOV-029-execution-ready-plan-reconciliation.md"
+},
+{
+"task": "V0-GOV-030",
+"file": "plan/v0/governance/V0-GOV-030-gate-evidence-recount.md"
+},
+{
+"task": "V0-GOV-033",
+"file": "plan/v0/governance/V0-GOV-033-audit-remediation-routing.md"
+},
+{
+"task": "V0-GOV-045",
+"file": "plan/v0/governance/V0-GOV-045-head-manifest-integrity.md"
+},
+{
+"task": "V0-GOV-048",
+"file": "plan/v0/governance/V0-GOV-048-final-remediation-audit.md"
+}
+]
+},
+{
+"id": "B029",
+"pri": 2,
+"tasks": [
+{
+"task": "V0-GOV-050",
+"file": "plan/v0/governance/V0-GOV-050-admit-post-closure-remediation.md"
+},
+{
+"task": "V0-GOV-060",
+"file": "plan/v0/governance/V0-GOV-060-v3-b0-blob-alignment.md"
+},
+{
+"task": "V0-GOV-062",
+"file": "plan/v0/governance/V0-GOV-062-rev-deferral.md"
+},
+{
+"task": "V0-GOV-063",
+"file": "plan/v0/governance/V0-GOV-063-defer-gov-041-042.md"
+},
+{
+"task": "V0-GOV-065",
+"file": "plan/v0/governance/V0-GOV-065-self-declared-eadisyon-applicability.md"
+},
+{
+"task": "V0-SEC-001",
+"file": "plan/v0/security-baseline/V0-SEC-001-security-verification-baseline.md"
+},
+{
+"task": "V1-FND-007",
+"file": "plan/v1/foundation/V1-FND-007-audit-remediation.md"
+},
+{
+"task": "V1-FND-008",
+"file": "plan/v1/foundation/V1-FND-008-audit-remediation-round2.md"
+},
+{
+"task": "V1-FND-009",
+"file": "plan/v1/foundation/V1-FND-009-rewrite-pushed-history.md"
+}
+]
+},
+{
+"id": "B030",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-FND-016",
+"file": "plan/v1/foundation/V1-FND-016-markdownlint-format-remediation.md"
+},
+{
+"task": "V1-FND-026",
+"file": "plan/v1/foundation/V1-FND-026-root-integration-custody.md"
+},
+{
+"task": "V1-GOV-001",
+"file": "plan/v1/governance/V1-GOV-001-v1-reconciliation-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-002",
+"file": "plan/v1/governance/V1-GOV-002-post-audit-gate-reseal.md"
+},
+{
+"task": "V1-GOV-003",
+"file": "plan/v1/governance/V1-GOV-003-full-project-production-audit.md"
+},
+{
+"task": "V1-GOV-004",
+"file": "plan/v1/governance/V1-GOV-004-post-remediation-master-audit-reseal.md"
+},
+{
+"task": "V1-GOV-005",
+"file": "plan/v1/governance/V1-GOV-005-audit-custody-correction.md"
+},
+{
+"task": "V1-GOV-008",
+"file": "plan/v1/governance/V1-GOV-008-catalog-api-custody.md"
+},
+{
+"task": "V1-GOV-010",
+"file": "plan/v1/governance/V1-GOV-010-production-experience-task-custody.md"
+}
+]
+},
+{
+"id": "B031",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-012",
+"file": "plan/v1/governance/V1-GOV-012-table-card-remediation-custody.md"
+},
+{
+"task": "V1-GOV-013",
+"file": "plan/v1/governance/V1-GOV-013-table-card-custody-correction.md"
+},
+{
+"task": "V1-GOV-014",
+"file": "plan/v1/governance/V1-GOV-014-a11y-landmark-remediation-custody.md"
+},
+{
+"task": "V1-GOV-015",
+"file": "plan/v1/governance/V1-GOV-015-zoom-reflow-remediation-custody.md"
+},
+{
+"task": "V1-GOV-016",
+"file": "plan/v1/governance/V1-GOV-016-zoom-reflow-scope-recovery.md"
+},
+{
+"task": "V1-GOV-022",
+"file": "plan/v1/governance/V1-GOV-022-kitchen-station-remediation-custody.md"
+},
+{
+"task": "V1-GOV-023",
+"file": "plan/v1/governance/V1-GOV-023-kitchen-and-code-audit-custody.md"
+},
+{
+"task": "V1-GOV-025",
+"file": "plan/v1/governance/V1-GOV-025-final-master-audit-reseal.md"
+},
+{
+"task": "V1-GOV-027",
+"file": "plan/v1/governance/V1-GOV-027-master-audit-reseal-and-gate-closure.md"
+}
+]
+},
+{
+"id": "B032",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-029",
+"file": "plan/v1/governance/V1-GOV-029-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-030",
+"file": "plan/v1/governance/V1-GOV-030-master-custody-reopen-and-remediation-wave-4.md"
+},
+{
+"task": "V1-GOV-031",
+"file": "plan/v1/governance/V1-GOV-031-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-033",
+"file": "plan/v1/governance/V1-GOV-033-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-035",
+"file": "plan/v1/governance/V1-GOV-035-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-036",
+"file": "plan/v1/governance/V1-GOV-036-master-custody-reopen-and-remediation-wave-7.md"
+},
+{
+"task": "V1-GOV-037",
+"file": "plan/v1/governance/V1-GOV-037-wave7-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-039",
+"file": "plan/v1/governance/V1-GOV-039-wave8-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-041",
+"file": "plan/v1/governance/V1-GOV-041-wave9-master-audit-reseal-and-gate-closure.md"
+}
+]
+},
+{
+"id": "B033",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-042",
+"file": "plan/v1/governance/V1-GOV-042-master-custody-reopen-and-remediation-wave-10.md"
+},
+{
+"task": "V1-GOV-043",
+"file": "plan/v1/governance/V1-GOV-043-wave10-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-045",
+"file": "plan/v1/governance/V1-GOV-045-wave11-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-046",
+"file": "plan/v1/governance/V1-GOV-046-master-custody-reopen-and-remediation-wave-12.md"
+},
+{
+"task": "V1-GOV-047",
+"file": "plan/v1/governance/V1-GOV-047-wave12-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-048",
+"file": "plan/v1/governance/V1-GOV-048-master-custody-reopen-and-remediation-wave-13.md"
+},
+{
+"task": "V1-GOV-049",
+"file": "plan/v1/governance/V1-GOV-049-wave13-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-050",
+"file": "plan/v1/governance/V1-GOV-050-master-custody-reopen-and-remediation-wave-14.md"
+},
+{
+"task": "V1-GOV-051",
+"file": "plan/v1/governance/V1-GOV-051-wave14-master-audit-reseal-and-gate-closure.md"
+}
+]
+},
+{
+"id": "B034",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-052",
+"file": "plan/v1/governance/V1-GOV-052-master-custody-reopen-and-remediation-wave-15.md"
+},
+{
+"task": "V1-GOV-053",
+"file": "plan/v1/governance/V1-GOV-053-wave15-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-054",
+"file": "plan/v1/governance/V1-GOV-054-master-custody-reopen-and-remediation-wave-16.md"
+},
+{
+"task": "V1-GOV-055",
+"file": "plan/v1/governance/V1-GOV-055-wave16-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-056",
+"file": "plan/v1/governance/V1-GOV-056-master-custody-reopen-and-remediation-wave-17.md"
+},
+{
+"task": "V1-GOV-057",
+"file": "plan/v1/governance/V1-GOV-057-wave17-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-058",
+"file": "plan/v1/governance/V1-GOV-058-master-custody-reopen-and-remediation-wave-18.md"
+},
+{
+"task": "V1-GOV-059",
+"file": "plan/v1/governance/V1-GOV-059-wave18-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-060",
+"file": "plan/v1/governance/V1-GOV-060-master-custody-reopen-and-remediation-wave-19.md"
+}
+]
+},
+{
+"id": "B035",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-061",
+"file": "plan/v1/governance/V1-GOV-061-wave19-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-062",
+"file": "plan/v1/governance/V1-GOV-062-master-custody-reopen-and-remediation-wave-20.md"
+},
+{
+"task": "V1-GOV-063",
+"file": "plan/v1/governance/V1-GOV-063-wave20-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-064",
+"file": "plan/v1/governance/V1-GOV-064-master-custody-reopen-and-remediation-wave-21.md"
+},
+{
+"task": "V1-GOV-065",
+"file": "plan/v1/governance/V1-GOV-065-wave21-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-066",
+"file": "plan/v1/governance/V1-GOV-066-master-custody-reopen-and-remediation-wave-22.md"
+},
+{
+"task": "V1-GOV-067",
+"file": "plan/v1/governance/V1-GOV-067-wave22-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-068",
+"file": "plan/v1/governance/V1-GOV-068-master-custody-reopen-and-remediation-wave-23.md"
+},
+{
+"task": "V1-GOV-069",
+"file": "plan/v1/governance/V1-GOV-069-wave23-master-audit-reseal-and-gate-closure.md"
+}
+]
+},
+{
+"id": "B036",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-070",
+"file": "plan/v1/governance/V1-GOV-070-wave24-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-071",
+"file": "plan/v1/governance/V1-GOV-071-master-custody-reopen-and-remediation-wave-25.md"
+},
+{
+"task": "V1-GOV-072",
+"file": "plan/v1/governance/V1-GOV-072-wave25-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-073",
+"file": "plan/v1/governance/V1-GOV-073-master-custody-reopen-and-remediation-wave-26.md"
+},
+{
+"task": "V1-GOV-074",
+"file": "plan/v1/governance/V1-GOV-074-wave26-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-075",
+"file": "plan/v1/governance/V1-GOV-075-master-custody-reopen-and-remediation-wave-27.md"
+},
+{
+"task": "V1-GOV-076",
+"file": "plan/v1/governance/V1-GOV-076-wave27-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-077",
+"file": "plan/v1/governance/V1-GOV-077-master-custody-reopen-and-remediation-wave-28.md"
+},
+{
+"task": "V1-GOV-078",
+"file": "plan/v1/governance/V1-GOV-078-wave28-master-audit-reseal-and-gate-closure.md"
+}
+]
+},
+{
+"id": "B037",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-079",
+"file": "plan/v1/governance/V1-GOV-079-master-custody-reopen-and-remediation-wave-29.md"
+},
+{
+"task": "V1-GOV-080",
+"file": "plan/v1/governance/V1-GOV-080-wave29-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-081",
+"file": "plan/v1/governance/V1-GOV-081-master-custody-reopen-and-remediation-wave-30.md"
+},
+{
+"task": "V1-GOV-082",
+"file": "plan/v1/governance/V1-GOV-082-wave30-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-083",
+"file": "plan/v1/governance/V1-GOV-083-master-custody-reopen-and-remediation-wave-31.md"
+},
+{
+"task": "V1-GOV-084",
+"file": "plan/v1/governance/V1-GOV-084-wave31-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-085",
+"file": "plan/v1/governance/V1-GOV-085-master-custody-reopen-and-remediation-wave-32.md"
+},
+{
+"task": "V1-GOV-086",
+"file": "plan/v1/governance/V1-GOV-086-wave32-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-087",
+"file": "plan/v1/governance/V1-GOV-087-master-custody-reopen-and-remediation-wave-33.md"
+}
+]
+},
+{
+"id": "B038",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-088",
+"file": "plan/v1/governance/V1-GOV-088-wave33-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-089",
+"file": "plan/v1/governance/V1-GOV-089-master-custody-reopen-and-remediation-wave-34.md"
+},
+{
+"task": "V1-GOV-090",
+"file": "plan/v1/governance/V1-GOV-090-wave34-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-091",
+"file": "plan/v1/governance/V1-GOV-091-master-custody-reopen-and-remediation-wave-35.md"
+},
+{
+"task": "V1-GOV-092",
+"file": "plan/v1/governance/V1-GOV-092-wave35-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-093",
+"file": "plan/v1/governance/V1-GOV-093-master-custody-reopen-and-remediation-wave-36.md"
+},
+{
+"task": "V1-GOV-094",
+"file": "plan/v1/governance/V1-GOV-094-wave36-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-095",
+"file": "plan/v1/governance/V1-GOV-095-master-custody-reopen-and-remediation-wave-37.md"
+},
+{
+"task": "V1-GOV-096",
+"file": "plan/v1/governance/V1-GOV-096-wave37-master-audit-reseal-and-gate-closure.md"
+}
+]
+},
+{
+"id": "B039",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-097",
+"file": "plan/v1/governance/V1-GOV-097-master-custody-reopen-and-remediation-wave-38.md"
+},
+{
+"task": "V1-GOV-098",
+"file": "plan/v1/governance/V1-GOV-098-wave38-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-099",
+"file": "plan/v1/governance/V1-GOV-099-master-custody-reopen-and-remediation-wave-39.md"
+},
+{
+"task": "V1-GOV-100",
+"file": "plan/v1/governance/V1-GOV-100-wave39-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-101",
+"file": "plan/v1/governance/V1-GOV-101-master-custody-reopen-and-remediation-wave-40.md"
+},
+{
+"task": "V1-GOV-102",
+"file": "plan/v1/governance/V1-GOV-102-wave40-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-103",
+"file": "plan/v1/governance/V1-GOV-103-master-custody-reopen-and-remediation-wave-41.md"
+},
+{
+"task": "V1-GOV-104",
+"file": "plan/v1/governance/V1-GOV-104-wave41-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-105",
+"file": "plan/v1/governance/V1-GOV-105-master-custody-reopen-and-remediation-wave-42.md"
+}
+]
+},
+{
+"id": "B040",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-106",
+"file": "plan/v1/governance/V1-GOV-106-wave42-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-107",
+"file": "plan/v1/governance/V1-GOV-107-master-custody-reopen-and-remediation-wave-43.md"
+},
+{
+"task": "V1-GOV-108",
+"file": "plan/v1/governance/V1-GOV-108-wave43-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-109",
+"file": "plan/v1/governance/V1-GOV-109-master-custody-reopen-and-remediation-wave-44.md"
+},
+{
+"task": "V1-GOV-110",
+"file": "plan/v1/governance/V1-GOV-110-wave44-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-111",
+"file": "plan/v1/governance/V1-GOV-111-master-custody-reopen-and-remediation-wave-45.md"
+},
+{
+"task": "V1-GOV-112",
+"file": "plan/v1/governance/V1-GOV-112-wave45-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-113",
+"file": "plan/v1/governance/V1-GOV-113-master-custody-reopen-and-remediation-wave-46.md"
+},
+{
+"task": "V1-GOV-114",
+"file": "plan/v1/governance/V1-GOV-114-wave46-master-audit-reseal-and-gate-closure.md"
+}
+]
+},
+{
+"id": "B041",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-115",
+"file": "plan/v1/governance/V1-GOV-115-master-custody-reopen-and-remediation-wave-47.md"
+},
+{
+"task": "V1-GOV-116",
+"file": "plan/v1/governance/V1-GOV-116-wave47-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-117",
+"file": "plan/v1/governance/V1-GOV-117-master-custody-reopen-and-remediation-wave-48.md"
+},
+{
+"task": "V1-GOV-118",
+"file": "plan/v1/governance/V1-GOV-118-wave48-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-119",
+"file": "plan/v1/governance/V1-GOV-119-master-custody-reopen-and-remediation-wave-49.md"
+},
+{
+"task": "V1-GOV-120",
+"file": "plan/v1/governance/V1-GOV-120-wave49-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-121",
+"file": "plan/v1/governance/V1-GOV-121-master-custody-reopen-and-remediation-wave-50.md"
+},
+{
+"task": "V1-GOV-122",
+"file": "plan/v1/governance/V1-GOV-122-wave50-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-123",
+"file": "plan/v1/governance/V1-GOV-123-master-custody-reopen-and-remediation-wave-51.md"
+}
+]
+},
+{
+"id": "B042",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-GOV-124",
+"file": "plan/v1/governance/V1-GOV-124-wave51-master-audit-reseal-and-gate-closure.md"
+},
+{
+"task": "V1-GOV-125",
+"file": "plan/v1/governance/V1-GOV-125-garson-audit-register.md"
+},
+{
+"task": "V1-IAM-001",
+"file": "plan/v1/identity-authorization/V1-IAM-001-authentication.md"
+},
+{
+"task": "V1-IAM-002",
+"file": "plan/v1/identity-authorization/V1-IAM-002-authorization.md"
+},
+{
+"task": "V1-IAM-004",
+"file": "plan/v1/identity-authorization/V1-IAM-004-concurrent-lockout.md"
+},
+{
+"task": "V1-IAM-005",
+"file": "plan/v1/identity-authorization/V1-IAM-005-login-timing-contract.md"
+},
+{
+"task": "V1-IAM-007",
+"file": "plan/v1/identity-authorization/V1-IAM-007-session-revocation-linearization.md"
+},
+{
+"task": "V1-IAM-008",
+"file": "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md"
+},
+{
+"task": "V1-IAM-009",
+"file": "plan/v1/identity-authorization/V1-IAM-009-password-iteration-bounds.md"
+}
+]
+},
+{
+"id": "B043",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-IAM-010",
+"file": "plan/v1/identity-authorization/V1-IAM-010-login-work-factor-contract.md"
+},
+{
+"task": "V1-IAM-012",
+"file": "plan/v1/identity-authorization/V1-IAM-012-device-session-lifetime.md"
+},
+{
+"task": "V1-IAM-014",
+"file": "plan/v1/identity-authorization/V1-IAM-014-identity-baseline-reacceptance.md"
+},
+{
+"task": "V1-IAM-015",
+"file": "plan/v1/identity-authorization/V1-IAM-015-session-concurrency-linearization.md"
+},
+{
+"task": "V1-IAM-016",
+"file": "plan/v1/identity-authorization/V1-IAM-016-authorization-model-decision.md"
+},
+{
+"task": "V1-IAM-017",
+"file": "plan/v1/identity-authorization/V1-IAM-017-permission-catalog-split-and-waiter-role.md"
+},
+{
+"task": "V1-IAM-018",
+"file": "plan/v1/identity-authorization/V1-IAM-018-authorization-policy-engine.md"
+},
+{
+"task": "V1-IAM-019",
+"file": "plan/v1/identity-authorization/V1-IAM-019-grant-request-engine-and-event.md"
+},
+{
+"task": "V1-IAM-020",
+"file": "plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md"
+}
+]
+},
+{
+"id": "B044",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-IAM-021",
+"file": "plan/v1/identity-authorization/V1-IAM-021-time-boxed-delegation.md"
+},
+{
+"task": "V1-IAM-022",
+"file": "plan/v1/identity-authorization/V1-IAM-022-bounded-offline-authority.md"
+},
+{
+"task": "V1-IAM-023",
+"file": "plan/v1/identity-authorization/V1-IAM-023-behavioural-tightening.md"
+},
+{
+"task": "V1-IAM-025",
+"file": "plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md"
+},
+{
+"task": "V1-IAM-028",
+"file": "plan/v1/identity-authorization/V1-IAM-028-kitchen-advance-permission-split.md"
+},
+{
+"task": "V1-IAM-029",
+"file": "plan/v1/identity-authorization/V1-IAM-029-kitchen-chef-role.md"
+},
+{
+"task": "V1-IAM-030",
+"file": "plan/v1/identity-authorization/V1-IAM-030-kitchen-chef-routing-permission.md"
+},
+{
+"task": "V1-IAM-031",
+"file": "plan/v1/identity-authorization/V1-IAM-031-session-lifetime-8-hours.md"
+},
+{
+"task": "V1-KIT-008",
+"file": "plan/v1/kitchen-printing/V1-KIT-008-availability-suspend-bridge.md"
+}
+]
+},
+{
+"id": "B045",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-KIT-009",
+"file": "plan/v1/kitchen-printing/V1-KIT-009-kitchen-item-transition-undo.md"
+},
+{
+"task": "V1-OPS-001",
+"file": "plan/v1/operations/V1-OPS-001-audit-foundation.md"
+},
+{
+"task": "V1-RMD-007",
+"file": "plan/v1/remediation/V1-RMD-007-governance-manifest-and-build-provenance.md"
+},
+{
+"task": "V1-RMD-008",
+"file": "plan/v1/remediation/V1-RMD-008-host-api-auth-ratelimit-tls-and-telemetry.md"
+},
+{
+"task": "V1-RMD-011",
+"file": "plan/v1/remediation/V1-RMD-011-web-prototype-hardening-and-touch-targets.md"
+},
+{
+"task": "V1-RMD-012",
+"file": "plan/v1/remediation/V1-RMD-012-root-markdownlint-cleanup.md"
+},
+{
+"task": "V1-RMD-021",
+"file": "plan/v1/remediation/V1-RMD-021-independent-designer-acceptance.md"
+},
+{
+"task": "V1-RMD-032",
+"file": "plan/v1/remediation/V1-RMD-032-integrated-designer-and-release-acceptance.md"
+},
+{
+"task": "V1-RMD-034",
+"file": "plan/v1/remediation/V1-RMD-034-authoritative-kitchen-station-contract.md"
+}
+]
+},
+{
+"id": "B046",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-037",
+"file": "plan/v1/remediation/V1-RMD-037-audit-sanitizer-compilation-and-tests.md"
+},
+{
+"task": "V1-RMD-045",
+"file": "plan/v1/remediation/V1-RMD-045-audit-sanitizer-tests-analyzer-clean-build.md"
+},
+{
+"task": "V1-RMD-046",
+"file": "plan/v1/remediation/V1-RMD-046-authoritative-postgresql-order-store.md"
+},
+{
+"task": "V1-RMD-049",
+"file": "plan/v1/remediation/V1-RMD-049-audit-malformed-payload-regex-fix.md"
+},
+{
+"task": "V1-RMD-066",
+"file": "plan/v1/remediation/V1-RMD-066-order-management-auth-header.md"
+},
+{
+"task": "V1-RMD-072",
+"file": "plan/v1/remediation/V1-RMD-072-audit-sanitizer-malformed-payload-guard.md"
+},
+{
+"task": "V1-RMD-080",
+"file": "plan/v1/remediation/V1-RMD-080-code-identity-english-only-audit.md"
+},
+{
+"task": "V1-RMD-081",
+"file": "plan/v1/remediation/V1-RMD-081-recurring-consistency-audit-tooling.md"
+},
+{
+"task": "V1-RMD-094",
+"file": "plan/v1/remediation/V1-RMD-094-kvkk-retention-anonymization-job.md"
+}
+]
+},
+{
+"id": "B047",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-098",
+"file": "plan/v1/remediation/V1-RMD-098-docker-frontend-backend-split-and-surface-custody.md"
+},
+{
+"task": "V1-RMD-104",
+"file": "plan/v1/remediation/V1-RMD-104-dead-waiter-offline-queue-engine-removal.md"
+},
+{
+"task": "V1-RMD-105",
+"file": "plan/v1/remediation/V1-RMD-105-low-dead-code-and-misleading-layer-cleanup.md"
+},
+{
+"task": "V1-RMD-110",
+"file": "plan/v1/remediation/V1-RMD-110-staff-account-creation-and-admin-permission-grant.md"
+},
+{
+"task": "V1-RMD-111",
+"file": "plan/v1/remediation/V1-RMD-111-waiter-table-serving-ownership-and-transfer.md"
+},
+{
+"task": "V1-RMD-112",
+"file": "plan/v1/remediation/V1-RMD-112-audit-index-cascade-and-discount-idempotency-fixes.md"
+},
+{
+"task": "V1-RMD-115",
+"file": "plan/v1/remediation/V1-RMD-115-audit-closure-error-mapping-and-false-findings.md"
+},
+{
+"task": "V1-RMD-117",
+"file": "plan/v1/remediation/V1-RMD-117-reservation-row-version-and-release-invariant.md"
+},
+{
+"task": "V1-RMD-118",
+"file": "plan/v1/remediation/V1-RMD-118-posterminal-reservation-action-wiring.md"
+}
+]
+},
+{
+"id": "B048",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-119",
+"file": "plan/v1/remediation/V1-RMD-119-catalog-current-price-staleness-and-modifier-group-dead-end.md"
+},
+{
+"task": "V1-RMD-121",
+"file": "plan/v1/remediation/V1-RMD-121-shared-manager-session-authentication.md"
+},
+{
+"task": "V1-RMD-122",
+"file": "plan/v1/remediation/V1-RMD-122-consistency-audit-host-cross-schema-rule.md"
+},
+{
+"task": "V1-RMD-125",
+"file": "plan/v1/remediation/V1-RMD-125-inventory-negative-balance-race.md"
+},
+{
+"task": "V1-RMD-126",
+"file": "plan/v1/remediation/V1-RMD-126-tables-reserved-status-bypass.md"
+},
+{
+"task": "V1-RMD-127",
+"file": "plan/v1/remediation/V1-RMD-127-orders-raw-english-error-leaks.md"
+},
+{
+"task": "V1-RMD-128",
+"file": "plan/v1/remediation/V1-RMD-128-order-item-availability-check.md"
+},
+{
+"task": "V1-RMD-129",
+"file": "plan/v1/remediation/V1-RMD-129-waiterpwa-catalog-field-mismatches.md"
+},
+{
+"task": "V1-RMD-130",
+"file": "plan/v1/remediation/V1-RMD-130-kitchen-physical-print-dispatch.md"
+}
+]
+},
+{
+"id": "B049",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-134",
+"file": "plan/v1/remediation/V1-RMD-134-buildingblocks-dead-foundation-cleanup.md"
+},
+{
+"task": "V1-RMD-136",
+"file": "plan/v1/remediation/V1-RMD-136-nfc-ordering-english-error-leak.md"
+},
+{
+"task": "V1-RMD-137",
+"file": "plan/v1/remediation/V1-RMD-137-nfc-age-restriction-enforcement-and-order-confirmation.md"
+},
+{
+"task": "V1-RMD-138",
+"file": "plan/v1/remediation/V1-RMD-138-nfc-qr-order-bounds-and-relay-hardening.md"
+},
+{
+"task": "V1-RMD-139",
+"file": "plan/v1/remediation/V1-RMD-139-nfc-origin-isolation-and-bundle-splitting.md"
+},
+{
+"task": "V1-RMD-151",
+"file": "plan/v1/remediation/V1-RMD-151-device-session-pin-lock.md"
+},
+{
+"task": "V1-RMD-153",
+"file": "plan/v1/remediation/V1-RMD-153-waiter-client-audit-defects.md"
+},
+{
+"task": "V1-RMD-158",
+"file": "plan/v1/remediation/V1-RMD-158-backend-audit-remainder.md"
+},
+{
+"task": "V1-RMD-172",
+"file": "plan/v1/remediation/V1-RMD-172-offline-reload-and-ribbon-reason.md"
+}
+]
+},
+{
+"id": "B050",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-175",
+"file": "plan/v1/remediation/V1-RMD-175-userrole-server-derived.md"
+},
+{
+"task": "V1-RMD-189",
+"file": "plan/v1/remediation/V1-RMD-189-authorization-tables-user-fk.md"
+},
+{
+"task": "V1-RMD-194",
+"file": "plan/v1/remediation/V1-RMD-194-ci-verify-manifest-crash-9-days.md"
+},
+{
+"task": "V1-RMD-198",
+"file": "plan/v1/remediation/V1-RMD-198-authorization-decision-tests-fk-regression.md"
+},
+{
+"task": "V1-RMD-199",
+"file": "plan/v1/remediation/V1-RMD-199-kitchen-ticket-transition-permission-numeric-bypass.md"
+},
+{
+"task": "V1-RMD-200",
+"file": "plan/v1/remediation/V1-RMD-200-kitchen-frontend-reprint-routing-permission-mismatch.md"
+},
+{
+"task": "V1-RMD-210",
+"file": "plan/v1/remediation/V1-RMD-210-suggested-waiter-resolver-reuses-role-repository.md"
+},
+{
+"task": "V1-RMD-223",
+"file": "plan/v1/kitchen-display/V1-RMD-223-stabilize-report-callback-identity.md"
+},
+{
+"task": "V1-RMD-244",
+"file": "plan/v1/remediation/V1-RMD-244-void-comp-audit-event-write-path.md"
+}
+]
+},
+{
+"id": "B051",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-266",
+"file": "plan/v1/remediation/V1-RMD-266-security-administration-account-recovery.md"
+},
+{
+"task": "V1-RMD-269",
+"file": "plan/v1/remediation/V1-RMD-269-secret-rotation-administration.md"
+},
+{
+"task": "V1-RMD-272",
+"file": "plan/v1/remediation/V1-RMD-272-reachability-gate-for-registered-services.md"
+},
+{
+"task": "V1-RMD-284",
+"file": "plan/v1/remediation/V1-RMD-284-close-settled-orders-backlog.md"
+},
+{
+"task": "V1-RMD-297",
+"file": "plan/v1/remediation/V1-RMD-297-offline-authorized-void-comp-reconciliation.md"
+},
+{
+"task": "V1-RMD-316",
+"file": "plan/v1/remediation/V1-RMD-316-authorization-self-approval-guard.md"
+},
+{
+"task": "V1-RMD-321",
+"file": "plan/v1/remediation/V1-RMD-321-consistency-audit-turkish-identifier-regex.md"
+},
+{
+"task": "V1-RMD-329",
+"file": "plan/v1/remediation/V1-RMD-329-plan-audit-evidence-truth-gap-investigated.md"
+},
+{
+"task": "V1-RMD-331",
+"file": "plan/v1/remediation/V1-RMD-331-security-recovery-endpoints-reachable-from-posterminal.md"
+}
+]
+},
+{
+"id": "B052",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-332",
+"file": "plan/v1/remediation/V1-RMD-332-item-exception-and-confirmation-audit-atomicity.md"
+},
+{
+"task": "V1-RMD-335",
+"file": "plan/v1/remediation/V1-RMD-335-caddy-security-response-headers.md"
+},
+{
+"task": "V1-RMD-338",
+"file": "plan/v1/remediation/V1-RMD-338-consistency-audit-multiline-sql-and-limit-comment-gaps.md"
+},
+{
+"task": "V1-RMD-346",
+"file": "plan/v1/remediation/V1-RMD-346-di-registration-conflict-investigated.md"
+},
+{
+"task": "V1-RMD-348",
+"file": "plan/v1/remediation/V1-RMD-348-nfc-submission-id-sessionstorage.md"
+},
+{
+"task": "V1-RMD-363",
+"file": "plan/v1/remediation/V1-RMD-363-waiterpwa-ui-audit.md"
+},
+{
+"task": "V1-RMD-365",
+"file": "plan/v1/remediation/V1-RMD-365-posterminal-workspace-tables-ui-audit.md"
+},
+{
+"task": "V1-RMD-368",
+"file": "plan/v1/remediation/V1-RMD-368-posterminal-catalog-ui-audit.md"
+},
+{
+"task": "V1-RMD-369",
+"file": "plan/v1/remediation/V1-RMD-369-posterminal-kitchen-operations-ui-audit.md"
+}
+]
+},
+{
+"id": "B053",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-370",
+"file": "plan/v1/remediation/V1-RMD-370-posterminal-pending-checks-ui-audit.md"
+},
+{
+"task": "V1-RMD-371",
+"file": "plan/v1/remediation/V1-RMD-371-posterminal-online-ui-audit.md"
+},
+{
+"task": "V1-RMD-372",
+"file": "plan/v1/remediation/V1-RMD-372-posterminal-system-health-ui-audit.md"
+},
+{
+"task": "V1-RMD-373",
+"file": "plan/v1/remediation/V1-RMD-373-posterminal-settings-ui-audit.md"
+},
+{
+"task": "V1-RMD-374",
+"file": "plan/v1/remediation/V1-RMD-374-posterminal-nfc-customerdisplay-ui-audit.md"
+},
+{
+"task": "V1-RMD-379",
+"file": "plan/v1/remediation/V1-RMD-379-waiterpwa-round2-audit.md"
+},
+{
+"task": "V1-RMD-381",
+"file": "plan/v1/remediation/V1-RMD-381-posterminal-tables-round2-audit.md"
+},
+{
+"task": "V1-RMD-383",
+"file": "plan/v1/remediation/V1-RMD-383-posterminal-catalog-round2-audit.md"
+},
+{
+"task": "V1-RMD-384",
+"file": "plan/v1/remediation/V1-RMD-384-kitchen-operations-round2-audit.md"
+}
+]
+},
+{
+"id": "B054",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-385",
+"file": "plan/v1/remediation/V1-RMD-385-pending-checks-round2-audit.md"
+},
+{
+"task": "V1-RMD-386",
+"file": "plan/v1/remediation/V1-RMD-386-online-operations-round2-audit.md"
+},
+{
+"task": "V1-RMD-387",
+"file": "plan/v1/remediation/V1-RMD-387-system-health-round2-audit.md"
+},
+{
+"task": "V1-RMD-389",
+"file": "plan/v1/remediation/V1-RMD-389-nfcorder-customerdisplay-round2-audit.md"
+},
+{
+"task": "V1-RMD-390",
+"file": "plan/v1/remediation/V1-RMD-390-customerweb-menu-round2-audit.md"
+},
+{
+"task": "V1-RMD-391",
+"file": "plan/v1/remediation/V1-RMD-391-customerweb-orderentry-round2-audit.md"
+},
+{
+"task": "V1-RMD-398",
+"file": "plan/v1/remediation/V1-RMD-398-stock-recipe-flow-targeted-audit.md"
+},
+{
+"task": "V1-RMD-399",
+"file": "plan/v1/remediation/V1-RMD-399-authorization-targeted-audit.md"
+},
+{
+"task": "V1-RMD-403",
+"file": "plan/v1/remediation/V1-RMD-403-supervisor-management-session.md"
+}
+]
+},
+{
+"id": "B055",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-406",
+"file": "plan/v1/remediation/V1-RMD-406-session-lifetime-at-login.md"
+},
+{
+"task": "V1-RMD-408",
+"file": "plan/v1/remediation/V1-RMD-408-governing-role-most-restrictive.md"
+},
+{
+"task": "V1-RMD-425",
+"file": "plan/v1/remediation/V1-RMD-425-audit-test-gaps-n02-n08-m07.md"
+},
+{
+"task": "V1-RMD-429",
+"file": "plan/v1/remediation/V1-RMD-429-api-route-authorization-architecture-test.md"
+},
+{
+"task": "V1-RMD-450",
+"file": "plan/v1/remediation/V1-RMD-450-management-security-system-section.md"
+},
+{
+"task": "V1-RMD-453",
+"file": "plan/v1/remediation/V1-RMD-453-customer-tax-identity.md"
+},
+{
+"task": "V1-RMD-457",
+"file": "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md"
+},
+{
+"task": "V1-RMD-461",
+"file": "plan/v1/remediation/V1-RMD-461-admit-kvkk-retention-ahead-of-v14-exit.md"
+},
+{
+"task": "V1-RMD-480",
+"file": "plan/v1/remediation/V1-RMD-480-admit-load-test-and-anonymization-ahead-of-v14-exit.md"
+}
+]
+},
+{
+"id": "B056",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-481",
+"file": "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md"
+},
+{
+"task": "V1-RMD-482",
+"file": "plan/v1/remediation/V1-RMD-482-schedule-audit-disposal-run.md"
+},
+{
+"task": "V1-RMD-498",
+"file": "plan/v1/remediation/V1-RMD-498-kvkk-concurrency-and-retention-basis.md"
+},
+{
+"task": "V1-RMD-549",
+"file": "plan/v1/remediation/V1-RMD-549-telemetry-privacy-retention.md"
+},
+{
+"task": "V1-RMD-554",
+"file": "plan/v1/remediation/V1-RMD-554-security-and-rule-detectors.md"
+},
+{
+"task": "V1-RMD-559",
+"file": "plan/v1/remediation/V1-RMD-559-monitoring-audit-fixes.md"
+},
+{
+"task": "V1-RMD-562",
+"file": "plan/v1/remediation/V1-RMD-562-telemetry-privacy-policy.md"
+},
+{
+"task": "V1-RMD-583",
+"file": "plan/v1/remediation/V1-RMD-583-asvs5-chapter-map.md"
+},
+{
+"task": "V1-RMD-595",
+"file": "plan/v1/remediation/V1-RMD-595-audit-module-quality-audit.md"
+}
+]
+},
+{
+"id": "B057",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-596",
+"file": "plan/v1/remediation/V1-RMD-596-building-blocks-quality-audit.md"
+},
+{
+"task": "V1-RMD-597",
+"file": "plan/v1/remediation/V1-RMD-597-identity-quality-audit.md"
+},
+{
+"task": "V1-RMD-598",
+"file": "plan/v1/remediation/V1-RMD-598-settings-quality-audit.md"
+},
+{
+"task": "V1-RMD-599",
+"file": "plan/v1/remediation/V1-RMD-599-host-quality-audit.md"
+},
+{
+"task": "V1-RMD-600",
+"file": "plan/v1/remediation/V1-RMD-600-catalog-quality-audit.md"
+},
+{
+"task": "V1-RMD-601",
+"file": "plan/v1/remediation/V1-RMD-601-tables-quality-audit.md"
+},
+{
+"task": "V1-RMD-602",
+"file": "plan/v1/remediation/V1-RMD-602-orders-quality-audit.md"
+},
+{
+"task": "V1-RMD-644",
+"file": "plan/v1/remediation/V1-RMD-644-audit-sanitizer-hardening.md"
+},
+{
+"task": "V1-RMD-645",
+"file": "plan/v1/remediation/V1-RMD-645-audit-append-only-and-disposal-hardening.md"
+}
+]
+},
+{
+"id": "B058",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-647",
+"file": "plan/v1/remediation/V1-RMD-647-audit-atomic-write-discount-tip.md"
+},
+{
+"task": "V1-RMD-648",
+"file": "plan/v1/remediation/V1-RMD-648-audit-atomic-write-order-exceptions.md"
+},
+{
+"task": "V1-RMD-650",
+"file": "plan/v1/remediation/V1-RMD-650-audit-before-admin-actions.md"
+},
+{
+"task": "V1-RMD-651",
+"file": "plan/v1/remediation/V1-RMD-651-audit-atomic-write-retention.md"
+},
+{
+"task": "V1-RMD-652",
+"file": "plan/v1/remediation/V1-RMD-652-audit-atomic-write-customer-anonymization.md"
+},
+{
+"task": "V1-RMD-653",
+"file": "plan/v1/remediation/V1-RMD-653-audit-before-performance-budget-change.md"
+},
+{
+"task": "V1-RMD-654",
+"file": "plan/v1/remediation/V1-RMD-654-audit-atomic-write-sent-item-void.md"
+},
+{
+"task": "V1-RMD-655",
+"file": "plan/v1/remediation/V1-RMD-655-audit-shared-writer-host-sites.md"
+},
+{
+"task": "V1-RMD-656",
+"file": "plan/v1/remediation/V1-RMD-656-audit-shared-writer-module-sites.md"
+}
+]
+},
+{
+"id": "B059",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-657",
+"file": "plan/v1/remediation/V1-RMD-657-audit-tests-ordering-di.md"
+},
+{
+"task": "V1-RMD-658",
+"file": "plan/v1/remediation/V1-RMD-658-audit-docs-small-drifts.md"
+},
+{
+"task": "V1-RMD-664",
+"file": "plan/v1/remediation/V1-RMD-664-typed-envelope-failures.md"
+},
+{
+"task": "V1-RMD-666",
+"file": "plan/v1/remediation/V1-RMD-666-buildingblocks-docs-and-open-decisions.md"
+},
+{
+"task": "V1-RMD-668",
+"file": "plan/v1/remediation/V1-RMD-668-role-management-audit-and-guard.md"
+},
+{
+"task": "V1-RMD-672",
+"file": "plan/v1/remediation/V1-RMD-672-identity-documents-and-licences.md"
+},
+{
+"task": "V1-RMD-673",
+"file": "plan/v1/remediation/V1-RMD-673-grant-and-delegation-database-guards.md"
+},
+{
+"task": "V1-RMD-675",
+"file": "plan/v1/remediation/V1-RMD-675-session-lifetime-and-lockout-audit.md"
+},
+{
+"task": "V1-RMD-677",
+"file": "plan/v1/remediation/V1-RMD-677-authorization-limits-screen.md"
+}
+]
+},
+{
+"id": "B060",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-RMD-692",
+"file": "plan/v1/remediation/V1-RMD-692-notifications-privacy-retention.md"
+},
+{
+"task": "V1-RMD-696",
+"file": "plan/v1/remediation/V1-RMD-696-access-rate-limits-and-hub-sessions.md"
+},
+{
+"task": "V1-RMD-706",
+"file": "plan/v1/remediation/V1-RMD-706-catalog-write-audit-trail.md"
+},
+{
+"task": "V1-RMD-722",
+"file": "plan/v1/remediation/V1-RMD-722-sent-item-void-comp-atomicity-and-audit.md"
+},
+{
+"task": "V1-SEC-001",
+"file": "plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md"
+},
+{
+"task": "V1-SEC-002",
+"file": "plan/v1/security-foundation/V1-SEC-002-sensitive-payload-boundary.md"
+},
+{
+"task": "V1-SEC-003",
+"file": "plan/v1/security-foundation/V1-SEC-003-host-database-secret-input.md"
+},
+{
+"task": "V1-SEC-004",
+"file": "plan/v1/security-foundation/V1-SEC-004-migration-secret-redaction.md"
+},
+{
+"task": "V1-SEC-005",
+"file": "plan/v1/security-foundation/V1-SEC-005-immutable-data-classification.md"
+}
+]
+},
+{
+"id": "B061",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-SEC-006",
+"file": "plan/v1/security-foundation/V1-SEC-006-sanitized-handler-errors.md"
+},
+{
+"task": "V1-SET-007",
+"file": "plan/v1/settings/V1-SET-007-business-identity-qr-branding.md"
+},
+{
+"task": "V1-SET-008",
+"file": "plan/v1/settings/V1-SET-008-business-logo-upload.md"
+},
+{
+"task": "V1-TBL-007",
+"file": "plan/v1/table-management/V1-TBL-007-fail-closed-table-audit.md"
+},
+{
+"task": "V1-WTR-001",
+"file": "plan/v1/waiter-pwa/V1-WTR-001-pwa-session-and-offline-queue.md"
+},
+{
+"task": "V1-WTR-007",
+"file": "plan/v1/waiter-pwa/V1-WTR-007-waiter-host-order-and-session-contract.md"
+},
+{
+"task": "V1-WTR-009",
+"file": "plan/v1/waiter-pwa/V1-WTR-009-order-ready-notification.md"
+},
+{
+"task": "V1-WTR-012",
+"file": "plan/v1/waiter-pwa/V1-WTR-012-personal-comp-budget.md"
+},
+{
+"task": "V1-WTR-026",
+"file": "plan/v1/waiter-pwa/V1-WTR-026-e2e-browser-audit.md"
+}
+]
+},
+{
+"id": "B062",
+"pri": 2,
+"tasks": [
+{
+"task": "V1-WTR-039",
+"file": "plan/v1/waiter-pwa/V1-WTR-039-js-refactor-step3-auth-api-modules.md"
+},
+{
+"task": "V11-RCP-003",
+"file": "plan/v1.1/units-recipes/V11-RCP-003-product-recipe-mapping.md"
+},
+{
+"task": "V11-RMD-002",
+"file": "plan/v1.1/remediation/V11-RMD-002-module-registration-and-inventory-schema-boundary.md"
+},
+{
+"task": "V12-CWB-001",
+"file": "plan/v1.2/customer-web/V12-CWB-001-public-menu-browsing.md"
+},
+{
+"task": "V12-GOV-004",
+"file": "plan/v1.2/governance/V12-GOV-004-yemeksepeti-channel-dependency-waiver.md"
+},
+{
+"task": "V12-GOV-005",
+"file": "plan/v1.2/governance/V12-GOV-005-faz3-audit-governance-remediation.md"
+},
+{
+"task": "V12-ONL-001",
+"file": "plan/v1.2/online-ordering/V12-ONL-001-webhook-inbox.md"
+},
+{
+"task": "V12-QRS-002",
+"file": "plan/v1.2/qr-security/V12-QRS-002-relay-security-controls.md"
+},
+{
+"task": "V12-QRS-003",
+"file": "plan/v1.2/qr-security/V12-QRS-003-customer-session-lifecycle.md"
+}
+]
+},
+{
+"id": "B063",
+"pri": 2,
+"tasks": [
+{
+"task": "V12-QRT-003",
+"file": "plan/v1.2/qr-transport/V12-QRT-003-relay-credential-configuration-ui.md"
+},
+{
+"task": "V12-RMD-007",
+"file": "plan/v1.2/online-ordering/V12-RMD-007-webhook-auth-and-customer-note.md"
+},
+{
+"task": "V13-GOV-009",
+"file": "plan/v1.3/governance/V13-GOV-009-faz2-audit-governance-and-accessibility-remediation.md"
+},
+{
+"task": "V14-CST-002",
+"file": "plan/v1.4/customer-data/V14-CST-002-customer-anonymization-state.md"
+},
+{
+"task": "V14-GOV-001",
+"file": "plan/v1.4/customer-data/V14-GOV-001-v14-gate-unverified-draft-authorization.md"
+},
+{
+"task": "V15-KVK-001",
+"file": "plan/v1.5/kvkk/V15-KVK-001-retention-execution.md"
+},
+{
+"task": "V15-KVK-002",
+"file": "plan/v1.5/kvkk/V15-KVK-002-cross-store-anonymization.md"
+},
+{
+"task": "V15-SEC-001",
+"file": "plan/v1.5/security/V15-SEC-001-secret-management.md"
+},
+{
+"task": "V15-SEC-002",
+"file": "plan/v1.5/security/V15-SEC-002-identity-hardening.md"
+}
+]
+},
+{
+"id": "B064",
+"pri": 2,
+"tasks": [
+{
+"task": "V15-SEC-003",
+"file": "plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md"
+},
+{
+"task": "V0-ARC-009",
+"file": "plan/v0/platform-architecture/V0-ARC-009-qr-relay-topology.md"
+},
+{
+"task": "V0-DOM-005",
+"file": "plan/v0/domain-contracts/V0-DOM-005-table-reservation-policy.md"
+},
+{
+"task": "V0-GOV-038",
+"file": "plan/v0/governance/V0-GOV-038-immutable-history-attestation.md"
+},
+{
+"task": "V0-GOV-051",
+"file": "plan/v0/governance/V0-GOV-051-attest-immutable-post-closure-exceptions.md"
+},
+{
+"task": "V0-QRG-001",
+"file": "plan/v0/qr-relay/V0-QRG-001-relay-threat-and-feasibility.md"
+},
+{
+"task": "V1-FND-002",
+"file": "plan/v1/foundation/V1-FND-002-idempotency-infrastructure.md"
+},
+{
+"task": "V1-FND-022",
+"file": "plan/v1/foundation/V1-FND-022-table-module-integration.md"
+},
+{
+"task": "V1-KDS-001",
+"file": "plan/v1/kitchen-display/V1-KDS-001-mutfak-ekrani-faz-1-yeniden-yazim.md"
+}
+]
+},
+{
+"id": "B065",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-KDS-002",
+"file": "plan/v1/kitchen-display/V1-KDS-002-urun-tukendi-arayuzu.md"
+},
+{
+"task": "V1-KDS-003",
+"file": "plan/v1/kitchen-display/V1-KDS-003-item-undo-arayuzu.md"
+},
+{
+"task": "V1-KDS-004",
+"file": "plan/v1/kitchen-display/V1-KDS-004-canli-senkron-rozeti.md"
+},
+{
+"task": "V1-KDS-005",
+"file": "plan/v1/kitchen-display/V1-KDS-005-expo-masa-etiketi.md"
+},
+{
+"task": "V1-KDS-006",
+"file": "plan/v1/kitchen-display/V1-KDS-006-ayarlanabilir-yogun-mod-esigi.md"
+},
+{
+"task": "V1-KDS-007",
+"file": "plan/v1/kitchen-display/V1-KDS-007-expo-gercek-masa-gruplama.md"
+},
+{
+"task": "V1-KDS-008",
+"file": "plan/v1/kitchen-display/V1-KDS-008-tum-gun-gorunumu.md"
+},
+{
+"task": "V1-KDS-009",
+"file": "plan/v1/kitchen-display/V1-KDS-009-performans-raporu-ekrani.md"
+},
+{
+"task": "V1-KIT-001",
+"file": "plan/v1/kitchen-printing/V1-KIT-001-kitchen-ticket-lifecycle.md"
+}
+]
+},
+{
+"id": "B066",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-KIT-002",
+"file": "plan/v1/kitchen-printing/V1-KIT-002-printer-routing.md"
+},
+{
+"task": "V1-KIT-003",
+"file": "plan/v1/kitchen-printing/V1-KIT-003-print-queue.md"
+},
+{
+"task": "V1-KIT-004",
+"file": "plan/v1/kitchen-printing/V1-KIT-004-physical-retry-semantics.md"
+},
+{
+"task": "V1-KIT-005",
+"file": "plan/v1/kitchen-printing/V1-KIT-005-kitchen-order-item-state-sync.md"
+},
+{
+"task": "V1-KIT-006",
+"file": "plan/v1/kitchen-printing/V1-KIT-006-category-level-printer-routing.md"
+},
+{
+"task": "V1-KIT-007",
+"file": "plan/v1/kitchen-printing/V1-KIT-007-ticket-implicit-accept-on-prepare.md"
+},
+{
+"task": "V1-KIT-010",
+"file": "plan/v1/kitchen-printing/V1-KIT-010-expose-live-sync-state.md"
+},
+{
+"task": "V1-KIT-011",
+"file": "plan/v1/kitchen-printing/V1-KIT-011-document-offline-resilience-advantage.md"
+},
+{
+"task": "V1-KIT-012",
+"file": "plan/v1/kitchen-printing/V1-KIT-012-real-table-label-on-ticket.md"
+}
+]
+},
+{
+"id": "B067",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-KIT-013",
+"file": "plan/v1/kitchen-printing/V1-KIT-013-expose-dense-mode-threshold.md"
+},
+{
+"task": "V1-KIT-014",
+"file": "plan/v1/kitchen-printing/V1-KIT-014-kitchen-performance-report.md"
+},
+{
+"task": "V1-ORD-001",
+"file": "plan/v1/orders/V1-ORD-001-order-aggregate.md"
+},
+{
+"task": "V1-ORD-002",
+"file": "plan/v1/orders/V1-ORD-002-idempotent-submit.md"
+},
+{
+"task": "V1-ORD-003",
+"file": "plan/v1/orders/V1-ORD-003-void-and-complimentary.md"
+},
+{
+"task": "V1-ORD-004",
+"file": "plan/v1/orders/V1-ORD-004-idempotent-submit-hash-alignment.md"
+},
+{
+"task": "V1-RMD-009",
+"file": "plan/v1/remediation/V1-RMD-009-sql-persistence-concurrency-and-invariants.md"
+},
+{
+"task": "V1-RMD-013",
+"file": "plan/v1/remediation/V1-RMD-013-table-management-production-api.md"
+},
+{
+"task": "V1-RMD-015",
+"file": "plan/v1/remediation/V1-RMD-015-kitchen-operations-production-api.md"
+}
+]
+},
+{
+"id": "B068",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-017",
+"file": "plan/v1/remediation/V1-RMD-017-table-workspace-ui.md"
+},
+{
+"task": "V1-RMD-019",
+"file": "plan/v1/remediation/V1-RMD-019-kitchen-operations-workspace-ui.md"
+},
+{
+"task": "V1-RMD-022",
+"file": "plan/v1/remediation/V1-RMD-022-table-card-keyboard-semantics.md"
+},
+{
+"task": "V1-RMD-026",
+"file": "plan/v1/remediation/V1-RMD-026-floor-plan-persistence-and-api.md"
+},
+{
+"task": "V1-RMD-038",
+"file": "plan/v1/remediation/V1-RMD-038-waiter-pwa-production-route-and-pwa-assets.md"
+},
+{
+"task": "V1-RMD-039",
+"file": "plan/v1/remediation/V1-RMD-039-table-floor-plan-integration-and-reservations.md"
+},
+{
+"task": "V1-RMD-042",
+"file": "plan/v1/remediation/V1-RMD-042-shell-freshness-accessibility-and-wcag.md"
+},
+{
+"task": "V1-RMD-050",
+"file": "plan/v1/remediation/V1-RMD-050-order-endpoint-and-dualscreen-unification.md"
+},
+{
+"task": "V1-RMD-053",
+"file": "plan/v1/remediation/V1-RMD-053-order-management-store-compilation-alignment.md"
+}
+]
+},
+{
+"id": "B069",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-060",
+"file": "plan/v1/remediation/V1-RMD-060-waiter-pwa-offline-queue-error-handling.md"
+},
+{
+"task": "V1-RMD-062",
+"file": "plan/v1/remediation/V1-RMD-062-kitchen-ticket-auto-ready-promotion.md"
+},
+{
+"task": "V1-RMD-064",
+"file": "plan/v1/remediation/V1-RMD-064-order-items-orphan-deletion.md"
+},
+{
+"task": "V1-RMD-065",
+"file": "plan/v1/remediation/V1-RMD-065-kitchen-ticket-idempotency.md"
+},
+{
+"task": "V1-RMD-069",
+"file": "plan/v1/remediation/V1-RMD-069-kitchen-workspace-turkish-remediation-and-health-relocation.md"
+},
+{
+"task": "V1-RMD-071",
+"file": "plan/v1/remediation/V1-RMD-071-floor-plan-table-time-escalation.md"
+},
+{
+"task": "V1-RMD-074",
+"file": "plan/v1/remediation/V1-RMD-074-kitchen-ticket-target-prep-time-contract.md"
+},
+{
+"task": "V1-RMD-075",
+"file": "plan/v1/remediation/V1-RMD-075-posterminal-kitchen-and-system-health-workspace.md"
+},
+{
+"task": "V1-RMD-082",
+"file": "plan/v1/remediation/V1-RMD-082-kitchen-ticket-special-instruction-visibility.md"
+}
+]
+},
+{
+"id": "B070",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-089",
+"file": "plan/v1/remediation/V1-RMD-089-orders-scale-index-migration.md"
+},
+{
+"task": "V1-RMD-090",
+"file": "plan/v1/remediation/V1-RMD-090-seating-tolerates-stale-table-version.md"
+},
+{
+"task": "V1-RMD-092",
+"file": "plan/v1/remediation/V1-RMD-092-device-browser-test-plan-and-vanilla-client-a11y-smoke.md"
+},
+{
+"task": "V1-RMD-107",
+"file": "plan/v1/remediation/V1-RMD-107-containerized-test-execution-and-draft-item-idempotency.md"
+},
+{
+"task": "V1-RMD-108",
+"file": "plan/v1/remediation/V1-RMD-108-order-item-row-version-churn-and-lock-sweep.md"
+},
+{
+"task": "V1-RMD-113",
+"file": "plan/v1/remediation/V1-RMD-113-submit-draft-kitchen-dispatch-and-idempotency.md"
+},
+{
+"task": "V1-RMD-120",
+"file": "plan/v1/remediation/V1-RMD-120-dualscreen-order-writes-through-order-aggregate.md"
+},
+{
+"task": "V1-RMD-123",
+"file": "plan/v1/remediation/V1-RMD-123-table-draft-submission-idempotency.md"
+},
+{
+"task": "V1-RMD-124",
+"file": "plan/v1/remediation/V1-RMD-124-goods-receipt-atomicity.md"
+}
+]
+},
+{
+"id": "B071",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-140",
+"file": "plan/v1/remediation/V1-RMD-140-qr-relay-origin-scope-hardening.md"
+},
+{
+"task": "V1-RMD-141",
+"file": "plan/v1/remediation/V1-RMD-141-nfc-customer-page-relay-reachability.md"
+},
+{
+"task": "V1-RMD-142",
+"file": "plan/v1/remediation/V1-RMD-142-nfc-qr-lan-origin-reachability.md"
+},
+{
+"task": "V1-RMD-143",
+"file": "plan/v1/remediation/V1-RMD-143-order-accept-real-stock-consumption.md"
+},
+{
+"task": "V1-RMD-145",
+"file": "plan/v1/remediation/V1-RMD-145-pwa-manifest-and-touch-compliance.md"
+},
+{
+"task": "V1-RMD-146",
+"file": "plan/v1/remediation/V1-RMD-146-order-item-dto-lossy-projection.md"
+},
+{
+"task": "V1-RMD-147",
+"file": "plan/v1/remediation/V1-RMD-147-order-line-modifiers-dropped.md"
+},
+{
+"task": "V1-RMD-149",
+"file": "plan/v1/remediation/V1-RMD-149-pending-qr-order-invisible-to-waiter.md"
+},
+{
+"task": "V1-RMD-150",
+"file": "plan/v1/remediation/V1-RMD-150-modifier-quantity-and-kitchen-visibility.md"
+}
+]
+},
+{
+"id": "B072",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-154",
+"file": "plan/v1/remediation/V1-RMD-154-void-restores-stock-and-respects-the-kitchen.md"
+},
+{
+"task": "V1-RMD-162",
+"file": "plan/v1/remediation/V1-RMD-162-api-input-bounds-and-error-mapping.md"
+},
+{
+"task": "V1-RMD-166",
+"file": "plan/v1/remediation/V1-RMD-166-waiter-toast-cap-and-sent-badge-contradiction.md"
+},
+{
+"task": "V1-RMD-169",
+"file": "plan/v1/remediation/V1-RMD-169-table-occupancy-and-service-worker-freshness.md"
+},
+{
+"task": "V1-RMD-170",
+"file": "plan/v1/remediation/V1-RMD-170-push-hang-and-draft-persistence.md"
+},
+{
+"task": "V1-RMD-171",
+"file": "plan/v1/remediation/V1-RMD-171-reachable-failed-orders-list.md"
+},
+{
+"task": "V1-RMD-177",
+"file": "plan/v1/remediation/V1-RMD-177-comp-and-transfer-server-clients.md"
+},
+{
+"task": "V1-RMD-181",
+"file": "plan/v1/remediation/V1-RMD-181-reassign-serving-user-row-version.md"
+},
+{
+"task": "V1-RMD-182",
+"file": "plan/v1/remediation/V1-RMD-182-firecourse-open-check-guard.md"
+}
+]
+},
+{
+"id": "B073",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-183",
+"file": "plan/v1/remediation/V1-RMD-183-offline-queue-json-parse-guard.md"
+},
+{
+"task": "V1-RMD-187",
+"file": "plan/v1/remediation/V1-RMD-187-invalidoperationexception-not-logged.md"
+},
+{
+"task": "V1-RMD-188",
+"file": "plan/v1/remediation/V1-RMD-188-undo-toast-wrong-table-changed-message.md"
+},
+{
+"task": "V1-RMD-195",
+"file": "plan/v1/remediation/V1-RMD-195-markdown-lint-gate-never-reached.md"
+},
+{
+"task": "V1-RMD-201",
+"file": "plan/v1/remediation/V1-RMD-201-targeted-order-ready-notification-by-serving-waiter.md"
+},
+{
+"task": "V1-RMD-202",
+"file": "plan/v1/remediation/V1-RMD-202-pending-qr-order-routed-to-most-suitable-waiter.md"
+},
+{
+"task": "V1-RMD-203",
+"file": "plan/v1/remediation/V1-RMD-203-targeted-notification-reachability-fallback.md"
+},
+{
+"task": "V1-RMD-204",
+"file": "plan/v1/remediation/V1-RMD-204-table-open-waiter-assignment-backend.md"
+},
+{
+"task": "V1-RMD-206",
+"file": "plan/v1/remediation/V1-RMD-206-waiter-app-static-test-suite-rewrite.md"
+}
+]
+},
+{
+"id": "B074",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-207",
+"file": "plan/v1/remediation/V1-RMD-207-assigned-waiter-validation.md"
+},
+{
+"task": "V1-RMD-208",
+"file": "plan/v1/remediation/V1-RMD-208-suggested-waiter-zone-awareness.md"
+},
+{
+"task": "V1-RMD-209",
+"file": "plan/v1/remediation/V1-RMD-209-waiter-notification-dispatch-consolidation.md"
+},
+{
+"task": "V1-RMD-213",
+"file": "plan/v1/waiter-pwa/V1-RMD-213-fix-send-round-drops-items-added-mid-send.md"
+},
+{
+"task": "V1-RMD-214",
+"file": "plan/v1/kitchen-display/V1-RMD-214-fix-broken-conflict-detection.md"
+},
+{
+"task": "V1-RMD-215",
+"file": "plan/v1/remediation/V1-RMD-215-close-module-boundary-blind-spot.md"
+},
+{
+"task": "V1-RMD-217",
+"file": "plan/v1/waiter-pwa/V1-RMD-217-block-served-with-held-course.md"
+},
+{
+"task": "V1-RMD-218",
+"file": "plan/v1/kitchen-display/V1-RMD-218-fix-table-merged-cancel-button.md"
+},
+{
+"task": "V1-RMD-219",
+"file": "plan/v1/kitchen-display/V1-RMD-219-kitchen-chef-can-read-categories.md"
+}
+]
+},
+{
+"id": "B075",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-220",
+"file": "plan/v1/kitchen-display/V1-RMD-220-persist-and-surface-is-held.md"
+},
+{
+"task": "V1-RMD-221",
+"file": "plan/v1/waiter-pwa/V1-RMD-221-fix-misleading-fire-course-error.md"
+},
+{
+"task": "V1-RMD-222",
+"file": "plan/v1/kitchen-display/V1-RMD-222-guard-manual-preparing-transition.md"
+},
+{
+"task": "V1-RMD-224",
+"file": "plan/v1/kitchen-display/V1-RMD-224-add-completed-timing-index.md"
+},
+{
+"task": "V1-RMD-225",
+"file": "plan/v1/kitchen-display/V1-RMD-225-render-backup-health-panel.md"
+},
+{
+"task": "V1-RMD-226",
+"file": "plan/v1/remediation/V1-RMD-226-fix-presence-tracker-toctou.md"
+},
+{
+"task": "V1-RMD-231",
+"file": "plan/v1/remediation/V1-RMD-231-complimentary-invariant-hardening.md"
+},
+{
+"task": "V1-RMD-239",
+"file": "plan/v1/remediation/V1-RMD-239-goods-receipt-unit-conversion.md"
+},
+{
+"task": "V1-RMD-240",
+"file": "plan/v1/remediation/V1-RMD-240-relay-settings-shared-di-dependency-doc.md"
+}
+]
+},
+{
+"id": "B076",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-254",
+"file": "plan/v1/remediation/V1-RMD-254-waiter-table-card-non-occupied-amount-label.md"
+},
+{
+"task": "V1-RMD-259",
+"file": "plan/v1/remediation/V1-RMD-259-table-status-unknown-fallback-turkish.md"
+},
+{
+"task": "V1-RMD-260",
+"file": "plan/v1/remediation/V1-RMD-260-waiterpwa-pin-401-and-stacked-overlay-inert-e2e.md"
+},
+{
+"task": "V1-RMD-262",
+"file": "plan/v1/remediation/V1-RMD-262-guest-order-line-note-server-cap.md"
+},
+{
+"task": "V1-RMD-263",
+"file": "plan/v1/remediation/V1-RMD-263-kiosk-lock-survives-page-reload.md"
+},
+{
+"task": "V1-RMD-285",
+"file": "plan/v1/remediation/V1-RMD-285-waiter-live-connection-resilience.md"
+},
+{
+"task": "V1-RMD-293",
+"file": "plan/v1/remediation/V1-RMD-293-kitchen-print-failure-visibility.md"
+},
+{
+"task": "V1-RMD-313",
+"file": "plan/v1/remediation/V1-RMD-313-qr-reject-kitchen-cancel-atomic.md"
+},
+{
+"task": "V1-RMD-320",
+"file": "plan/v1/remediation/V1-RMD-320-rebuild-balances-preserves-reservations.md"
+}
+]
+},
+{
+"id": "B077",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-327",
+"file": "plan/v1/remediation/V1-RMD-327-qr-relay-docs-vs-reality.md"
+},
+{
+"task": "V1-RMD-330",
+"file": "plan/v1/remediation/V1-RMD-330-waiter-offline-flake-root-cause.md"
+},
+{
+"task": "V1-RMD-340",
+"file": "plan/v1/remediation/V1-RMD-340-pin-pad-double-tap-guard.md"
+},
+{
+"task": "V1-RMD-344",
+"file": "plan/v1/remediation/V1-RMD-344-production-unit-converter-and-lock-order.md"
+},
+{
+"task": "V1-RMD-357",
+"file": "plan/v1/remediation/V1-RMD-357-nfc-accept-stock-lock-investigated.md"
+},
+{
+"task": "V1-RMD-367",
+"file": "plan/v1/remediation/V1-RMD-367-posterminal-tables-error-class-fix.md"
+},
+{
+"task": "V1-RMD-402",
+"file": "plan/v1/remediation/V1-RMD-402-waiter-grant-on-unassigned-check.md"
+},
+{
+"task": "V1-RMD-439",
+"file": "plan/v1/remediation/V1-RMD-439-nfc-concurrent-first-submission-order-number-race.md"
+},
+{
+"task": "V1-RMD-460",
+"file": "plan/v1/remediation/V1-RMD-460-trendyol-go-product-mapping-screen.md"
+}
+]
+},
+{
+"id": "B078",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-462",
+"file": "plan/v1/remediation/V1-RMD-462-online-menu-unmapped-codes-screen.md"
+},
+{
+"task": "V1-RMD-463",
+"file": "plan/v1/remediation/V1-RMD-463-online-order-reconciliation-scheduled-scan.md"
+},
+{
+"task": "V1-RMD-464",
+"file": "plan/v1/remediation/V1-RMD-464-online-order-not-handed-over-case.md"
+},
+{
+"task": "V1-RMD-465",
+"file": "plan/v1/remediation/V1-RMD-465-business-day-count-excludes-online-orders.md"
+},
+{
+"task": "V1-RMD-466",
+"file": "plan/v1/remediation/V1-RMD-466-management-channel-report-screen.md"
+},
+{
+"task": "V1-RMD-484",
+"file": "plan/v1/remediation/V1-RMD-484-nfc-order-modifier-selection.md"
+},
+{
+"task": "V1-RMD-485",
+"file": "plan/v1/remediation/V1-RMD-485-qr-order-modifier-selection.md"
+},
+{
+"task": "V1-RMD-494",
+"file": "plan/v1/remediation/V1-RMD-494-host-test-baseline-repair.md"
+},
+{
+"task": "V1-RMD-502",
+"file": "plan/v1/remediation/V1-RMD-502-table-zone-edit-and-delete-ui.md"
+}
+]
+},
+{
+"id": "B079",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-580",
+"file": "plan/v1/remediation/V1-RMD-580-trendyol-go-doc-conformance.md"
+},
+{
+"task": "V1-RMD-581",
+"file": "plan/v1/remediation/V1-RMD-581-kitchen-printer-encoding-and-status.md"
+},
+{
+"task": "V1-RMD-587",
+"file": "plan/v1/remediation/V1-RMD-587-monitoring-tables-retention.md"
+},
+{
+"task": "V1-RMD-662",
+"file": "plan/v1/remediation/V1-RMD-662-connector-key-and-deadletter-watch.md"
+},
+{
+"task": "V1-RMD-665",
+"file": "plan/v1/remediation/V1-RMD-665-kitchen-item-event-atomicity.md"
+},
+{
+"task": "V1-RMD-674",
+"file": "plan/v1/remediation/V1-RMD-674-waiter-discount-limit-and-delegator-check.md"
+},
+{
+"task": "V1-RMD-678",
+"file": "plan/v1/remediation/V1-RMD-678-pending-rounds-belong-to-their-waiter.md"
+},
+{
+"task": "V1-RMD-682",
+"file": "plan/v1/remediation/V1-RMD-682-table-limit-counts-open-tables.md"
+},
+{
+"task": "V1-RMD-687",
+"file": "plan/v1/remediation/V1-RMD-687-settings-history-immutable-migration.md"
+}
+]
+},
+{
+"id": "B080",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-710",
+"file": "plan/v1/remediation/V1-RMD-710-table-merge-unmerge-integrity.md"
+},
+{
+"task": "V1-RMD-711",
+"file": "plan/v1/remediation/V1-RMD-711-table-event-and-transfer-safety.md"
+},
+{
+"task": "V1-RMD-712",
+"file": "plan/v1/remediation/V1-RMD-712-table-reservation-and-server-leftovers.md"
+},
+{
+"task": "V1-RMD-713",
+"file": "plan/v1/remediation/V1-RMD-713-table-screens-reliability-and-ux.md"
+},
+{
+"task": "V1-RMD-714",
+"file": "plan/v1/remediation/V1-RMD-714-table-db-constraints-docs-and-tests.md"
+},
+{
+"task": "V1-RMD-715",
+"file": "plan/v1/remediation/V1-RMD-715-table-doc-drift-and-boundary-fixes.md"
+},
+{
+"task": "V1-RMD-716",
+"file": "plan/v1/remediation/V1-RMD-716-table-pointer-idempotency-and-leftovers.md"
+},
+{
+"task": "V1-RMD-717",
+"file": "plan/v1/remediation/V1-RMD-717-table-idempotency-and-event-dedupe.md"
+},
+{
+"task": "V1-RMD-718",
+"file": "plan/v1/remediation/V1-RMD-718-waiter-offline-queue-and-failed-rounds.md"
+}
+]
+},
+{
+"id": "B081",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-RMD-720",
+"file": "plan/v1/remediation/V1-RMD-720-orders-test-gaps-and-tabledraft-migration-link.md"
+},
+{
+"task": "V1-RMD-721",
+"file": "plan/v1/remediation/V1-RMD-721-nfc-order-lifecycle-and-errors.md"
+},
+{
+"task": "V1-RMD-723",
+"file": "plan/v1/remediation/V1-RMD-723-orders-backend-resilience-leftovers.md"
+},
+{
+"task": "V1-RMD-724",
+"file": "plan/v1/remediation/V1-RMD-724-orders-doc-and-migration-drift.md"
+},
+{
+"task": "V1-RMD-725",
+"file": "plan/v1/remediation/V1-RMD-725-orders-low-severity-leftovers.md"
+},
+{
+"task": "V1-SET-002",
+"file": "plan/v1/settings/V1-SET-002-kitchen-live-sync-toggle.md"
+},
+{
+"task": "V1-SET-003",
+"file": "plan/v1/settings/V1-SET-003-reservation-station-toggle.md"
+},
+{
+"task": "V1-SET-004",
+"file": "plan/v1/settings/V1-SET-004-garson-feature-toggles.md"
+},
+{
+"task": "V1-SET-005",
+"file": "plan/v1/settings/V1-SET-005-kitchen-dense-mode-threshold.md"
+}
+]
+},
+{
+"id": "B082",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-SET-006",
+"file": "plan/v1/settings/V1-SET-006-waiter-max-active-tables-threshold.md"
+},
+{
+"task": "V1-TBL-001",
+"file": "plan/v1/table-management/V1-TBL-001-table-lifecycle.md"
+},
+{
+"task": "V1-TBL-002",
+"file": "plan/v1/table-management/V1-TBL-002-table-transfer.md"
+},
+{
+"task": "V1-TBL-003",
+"file": "plan/v1/table-management/V1-TBL-003-table-merge.md"
+},
+{
+"task": "V1-TBL-004",
+"file": "plan/v1/table-management/V1-TBL-004-table-reservation-record.md"
+},
+{
+"task": "V1-TBL-005",
+"file": "plan/v1/table-management/V1-TBL-005-current-pointer-projection.md"
+},
+{
+"task": "V1-TBL-006",
+"file": "plan/v1/table-management/V1-TBL-006-table-lifecycle-reacceptance.md"
+},
+{
+"task": "V1-TBL-009",
+"file": "plan/v1/table-management/V1-TBL-009-recently-vacated-hint.md"
+},
+{
+"task": "V1-TBL-010",
+"file": "plan/v1/table-management/V1-TBL-010-cleaning-label-fix.md"
+}
+]
+},
+{
+"id": "B083",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-WTR-002",
+"file": "plan/v1/waiter-pwa/V1-WTR-002-table-order-entry.md"
+},
+{
+"task": "V1-WTR-003",
+"file": "plan/v1/waiter-pwa/V1-WTR-003-order-status.md"
+},
+{
+"task": "V1-WTR-004",
+"file": "plan/v1/waiter-pwa/V1-WTR-004-offline-queue-dispatch-acknowledgment.md"
+},
+{
+"task": "V1-WTR-005",
+"file": "plan/v1/waiter-pwa/V1-WTR-005-browser-e2e-runner-reliability.md"
+},
+{
+"task": "V1-WTR-006",
+"file": "plan/v1/waiter-pwa/V1-WTR-006-waiter-pwa-mobile-frontend.md"
+},
+{
+"task": "V1-WTR-008",
+"file": "plan/v1/waiter-pwa/V1-WTR-008-waiter-pwa-real-api-and-reliable-queue.md"
+},
+{
+"task": "V1-WTR-010",
+"file": "plan/v1/waiter-pwa/V1-WTR-010-waiter-screen-phase-1-rewrite.md"
+},
+{
+"task": "V1-WTR-011",
+"file": "plan/v1/waiter-pwa/V1-WTR-011-web-push-and-kiosk-lock.md"
+},
+{
+"task": "V1-WTR-013",
+"file": "plan/v1/waiter-pwa/V1-WTR-013-serving-handoff-note.md"
+}
+]
+},
+{
+"id": "B084",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-WTR-015",
+"file": "plan/v1/waiter-pwa/V1-WTR-015-party-size.md"
+},
+{
+"task": "V1-WTR-017",
+"file": "plan/v1/waiter-pwa/V1-WTR-017-prep-time-delay-warning.md"
+},
+{
+"task": "V1-WTR-019",
+"file": "plan/v1/waiter-pwa/V1-WTR-019-table-age-indicator.md"
+},
+{
+"task": "V1-WTR-021",
+"file": "plan/v1/waiter-pwa/V1-WTR-021-shift-summary.md"
+},
+{
+"task": "V1-WTR-022",
+"file": "plan/v1/waiter-pwa/V1-WTR-022-seat-item-assignment.md"
+},
+{
+"task": "V1-WTR-023",
+"file": "plan/v1/waiter-pwa/V1-WTR-023-independent-review-fixes.md"
+},
+{
+"task": "V1-WTR-024",
+"file": "plan/v1/waiter-pwa/V1-WTR-024-toctou-advisory-locks.md"
+},
+{
+"task": "V1-WTR-025",
+"file": "plan/v1/waiter-pwa/V1-WTR-025-course-management.md"
+},
+{
+"task": "V1-WTR-027",
+"file": "plan/v1/waiter-pwa/V1-WTR-027-stock-consumption-deadlock-retry.md"
+}
+]
+},
+{
+"id": "B085",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-WTR-028",
+"file": "plan/v1/waiter-pwa/V1-WTR-028-stock-consumption-deadlock-root-cause.md"
+},
+{
+"task": "V1-WTR-029",
+"file": "plan/v1/waiter-pwa/V1-WTR-029-remove-redundant-delay-check.md"
+},
+{
+"task": "V1-WTR-030",
+"file": "plan/v1/waiter-pwa/V1-WTR-030-e2e-full-suite-flake-root-cause.md"
+},
+{
+"task": "V1-WTR-031",
+"file": "plan/v1/waiter-pwa/V1-WTR-031-refactor-step1-order-dto-assembler.md"
+},
+{
+"task": "V1-WTR-032",
+"file": "plan/v1/waiter-pwa/V1-WTR-032-refactor-step2-shift-summary-store.md"
+},
+{
+"task": "V1-WTR-034",
+"file": "plan/v1/waiter-pwa/V1-WTR-034-refactor-step4-table-draft-service.md"
+},
+{
+"task": "V1-WTR-035",
+"file": "plan/v1/waiter-pwa/V1-WTR-035-refactor-step5-order-submission-coordinator.md"
+},
+{
+"task": "V1-WTR-036",
+"file": "plan/v1/waiter-pwa/V1-WTR-036-refactor-step6-7-order-read-store.md"
+},
+{
+"task": "V1-WTR-037",
+"file": "plan/v1/waiter-pwa/V1-WTR-037-js-refactor-step1-util-module.md"
+}
+]
+},
+{
+"id": "B086",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-WTR-038",
+"file": "plan/v1/waiter-pwa/V1-WTR-038-js-refactor-step2-state-module.md"
+},
+{
+"task": "V1-WTR-040",
+"file": "plan/v1/waiter-pwa/V1-WTR-040-js-refactor-step4-toast-module.md"
+},
+{
+"task": "V1-WTR-041",
+"file": "plan/v1/waiter-pwa/V1-WTR-041-js-refactor-step5-options-sheet-module.md"
+},
+{
+"task": "V1-WTR-042",
+"file": "plan/v1/waiter-pwa/V1-WTR-042-js-refactor-step6-kiosk-lock-module.md"
+},
+{
+"task": "V1-WTR-043",
+"file": "plan/v1/waiter-pwa/V1-WTR-043-js-refactor-step7-tables-screen-module.md"
+},
+{
+"task": "V1-WTR-044",
+"file": "plan/v1/waiter-pwa/V1-WTR-044-js-refactor-step8-party-size-module.md"
+},
+{
+"task": "V1-WTR-046",
+"file": "plan/v1/waiter-pwa/V1-WTR-046-js-refactor-step10-menu-product-sheet-modules.md"
+},
+{
+"task": "V1-WTR-047",
+"file": "plan/v1/waiter-pwa/V1-WTR-047-js-refactor-step11-void-comp-help-request-modules.md"
+},
+{
+"task": "V1-WTR-048",
+"file": "plan/v1/waiter-pwa/V1-WTR-048-js-refactor-step12-opentable-transfer-modules.md"
+}
+]
+},
+{
+"id": "B087",
+"pri": 3,
+"tasks": [
+{
+"task": "V1-WTR-049",
+"file": "plan/v1/waiter-pwa/V1-WTR-049-js-refactor-step13-pending-orders-module.md"
+},
+{
+"task": "V1-WTR-050",
+"file": "plan/v1/waiter-pwa/V1-WTR-050-js-refactor-step14-failed-orders-module.md"
+},
+{
+"task": "V1-WTR-051",
+"file": "plan/v1/waiter-pwa/V1-WTR-051-js-refactor-step15-push-module.md"
+},
+{
+"task": "V1-WTR-052",
+"file": "plan/v1/waiter-pwa/V1-WTR-052-js-refactor-step16-profile-module.md"
+},
+{
+"task": "V1-WTR-053",
+"file": "plan/v1/waiter-pwa/V1-WTR-053-js-refactor-step17-offline-queue-module.md"
+},
+{
+"task": "V1-WTR-054",
+"file": "plan/v1/waiter-pwa/V1-WTR-054-remaining-sellable-count-in-table-draft-catalog.md"
+},
+{
+"task": "V1-WTR-055",
+"file": "plan/v1/waiter-pwa/V1-WTR-055-menu-remaining-count-badge.md"
+},
+{
+"task": "V1-WTR-056",
+"file": "plan/v1/waiter-pwa/V1-WTR-056-shared-stock-badge-helper.md"
+},
+{
+"task": "V11-INV-001",
+"file": "plan/v1.1/inventory/V11-INV-001-immutable-stock-ledger.md"
+}
+]
+},
+{
+"id": "B088",
+"pri": 3,
+"tasks": [
+{
+"task": "V11-INV-007",
+"file": "plan/v1.1/inventory/V11-INV-007-reservation-balance-projection.md"
+},
+{
+"task": "V11-INV-009",
+"file": "plan/v1.1/inventory/V11-INV-009-stockitem-reorder-point.md"
+},
+{
+"task": "V11-PUR-001",
+"file": "plan/v1.1/purchasing/V11-PUR-001-purchase-order-and-receipt.md"
+},
+{
+"task": "V11-RCP-001",
+"file": "plan/v1.1/units-recipes/V11-RCP-001-immutable-recipe-versions.md"
+},
+{
+"task": "V11-RCP-004",
+"file": "plan/v1.1/units-recipes/V11-RCP-004-theoretical-consumption-recording.md"
+},
+{
+"task": "V11-RSV-001",
+"file": "plan/v1.1/portion-reservation/V11-RSV-001-reservation-lifecycle.md"
+},
+{
+"task": "V11-RSV-002",
+"file": "plan/v1.1/portion-reservation/V11-RSV-002-last-portion-concurrency.md"
+},
+{
+"task": "V11-RSV-003",
+"file": "plan/v1.1/portion-reservation/V11-RSV-003-cancellation-and-waste.md"
+},
+{
+"task": "V12-CWB-002",
+"file": "plan/v1.2/customer-web/V12-CWB-002-qr-order-entry.md"
+}
+]
+},
+{
+"id": "B089",
+"pri": 3,
+"tasks": [
+{
+"task": "V12-GOV-001",
+"file": "plan/v1.2/governance/V12-GOV-001-admit-nfc-channel-and-clarify-entry-gate.md"
+},
+{
+"task": "V12-GOV-002",
+"file": "plan/v1.2/governance/V12-GOV-002-admit-qr-channel-ahead-of-v14-exit.md"
+},
+{
+"task": "V12-GOV-006",
+"file": "plan/v1.2/governance/V12-GOV-006-direct-online-platform-integration.md"
+},
+{
+"task": "V12-GOV-007",
+"file": "plan/v1.2/governance/V12-GOV-007-trendyol-go-dependency-waiver.md"
+},
+{
+"task": "V12-GOV-008",
+"file": "plan/v1.2/governance/V12-GOV-008-provider-neutral-intake-gap.md"
+},
+{
+"task": "V12-GOV-009",
+"file": "plan/v1.2/governance/V12-GOV-009-single-online-food-screen.md"
+},
+{
+"task": "V12-MAP-001",
+"file": "plan/v1.2/channel-mapping/V12-MAP-001-product-mapping.md"
+},
+{
+"task": "V12-MAP-002",
+"file": "plan/v1.2/channel-mapping/V12-MAP-002-status-mapping.md"
+},
+{
+"task": "V12-NFC-001",
+"file": "plan/v1.2/nfc-ordering/V12-NFC-001-self-check-in-and-trusted-order-intake.md"
+}
+]
+},
+{
+"id": "B090",
+"pri": 3,
+"tasks": [
+{
+"task": "V12-NFC-002",
+"file": "plan/v1.2/nfc-ordering/V12-NFC-002-age-restricted-item-confirmation.md"
+},
+{
+"task": "V12-NFC-003",
+"file": "plan/v1.2/nfc-ordering/V12-NFC-003-customer-menu-and-order-page.md"
+},
+{
+"task": "V12-ONL-002",
+"file": "plan/v1.2/online-ordering/V12-ONL-002-external-order-normalization.md"
+},
+{
+"task": "V12-ONL-003",
+"file": "plan/v1.2/online-ordering/V12-ONL-003-status-and-cancellation-sync.md"
+},
+{
+"task": "V12-ONL-004",
+"file": "plan/v1.2/online-ordering/V12-ONL-004-channel-catalog-publishing.md"
+},
+{
+"task": "V12-ONL-005",
+"file": "plan/v1.2/online-ordering/V12-ONL-005-channel-availability-publishing.md"
+},
+{
+"task": "V12-ONL-006",
+"file": "plan/v1.2/online-ordering/V12-ONL-006-online-order-provider.md"
+},
+{
+"task": "V12-ONL-007",
+"file": "plan/v1.2/online-ordering/V12-ONL-007-online-provider-adapter-contract.md"
+},
+{
+"task": "V12-ONL-008",
+"file": "plan/v1.2/online-ordering/V12-ONL-008-provider-neutral-inbox-and-mapping.md"
+}
+]
+},
+{
+"id": "B091",
+"pri": 3,
+"tasks": [
+{
+"task": "V12-ONL-009",
+"file": "plan/v1.2/online-ordering/V12-ONL-009-provider-order-polling.md"
+},
+{
+"task": "V12-ONL-010",
+"file": "plan/v1.2/online-ordering/V12-ONL-010-provider-neutral-intake.md"
+},
+{
+"task": "V12-ONL-011",
+"file": "plan/v1.2/online-ordering/V12-ONL-011-platform-store-status.md"
+},
+{
+"task": "V12-OUI-001",
+"file": "plan/v1.2/online-operations-ui/V12-OUI-001-online-order-operations.md"
+},
+{
+"task": "V12-OUI-002",
+"file": "plan/v1.2/online-operations-ui/V12-OUI-002-provider-label-and-credentials.md"
+},
+{
+"task": "V12-OUI-003",
+"file": "plan/v1.2/online-operations-ui/V12-OUI-003-online-platform-credentials.md"
+},
+{
+"task": "V12-OUI-004",
+"file": "plan/v1.2/online-operations-ui/V12-OUI-004-online-food-hub.md"
+},
+{
+"task": "V12-OUI-005",
+"file": "plan/v1.2/online-operations-ui/V12-OUI-005-online-menu-tab.md"
+},
+{
+"task": "V12-OUI-006",
+"file": "plan/v1.2/online-operations-ui/V12-OUI-006-online-problems-tab.md"
+}
+]
+},
+{
+"id": "B092",
+"pri": 3,
+"tasks": [
+{
+"task": "V12-QRO-001",
+"file": "plan/v1.2/qr-ordering/V12-QRO-001-pending-qr-order.md"
+},
+{
+"task": "V12-QRO-002",
+"file": "plan/v1.2/qr-ordering/V12-QRO-002-pending-table-policy.md"
+},
+{
+"task": "V12-QRO-003",
+"file": "plan/v1.2/qr-ordering/V12-QRO-003-confirmation-and-reservation.md"
+},
+{
+"task": "V12-QRO-004",
+"file": "plan/v1.2/qr-ordering/V12-QRO-004-multi-guest-qr-ordering.md"
+},
+{
+"task": "V12-QRT-001",
+"file": "plan/v1.2/qr-transport/V12-QRT-001-public-relay-transport.md"
+},
+{
+"task": "V12-QRT-002",
+"file": "plan/v1.2/qr-transport/V12-QRT-002-relay-provider-and-onboarding-model.md"
+},
+{
+"task": "V12-QRT-004",
+"file": "plan/v1.2/qr-transport/V12-QRT-004-relay-setup-guide.md"
+},
+{
+"task": "V12-REC-001",
+"file": "plan/v1.2/reconciliation/V12-REC-001-online-order-reconciliation.md"
+},
+{
+"task": "V12-RMD-001",
+"file": "plan/v1.2/qr-transport/V12-RMD-001-relay-connector-state-label-exhaustiveness.md"
+}
+]
+},
+{
+"id": "B093",
+"pri": 3,
+"tasks": [
+{
+"task": "V12-RMD-002",
+"file": "plan/v1.2/customer-web/V12-RMD-002-order-entry-note-length-and-reload-resume.md"
+},
+{
+"task": "V12-RMD-004",
+"file": "plan/v1.2/online-ordering/V12-RMD-004-online-intake-correctness.md"
+},
+{
+"task": "V12-RMD-005",
+"file": "plan/v1.2/online-ordering/V12-RMD-005-online-publishing-correctness.md"
+},
+{
+"task": "V12-RMD-006",
+"file": "plan/v1.2/online-ordering/V12-RMD-006-online-reconciliation-and-ui-correctness.md"
+},
+{
+"task": "V12-RMD-008",
+"file": "plan/v1.2/online-ordering/V12-RMD-008-online-status-sync-correctness.md"
+},
+{
+"task": "V12-RMD-009",
+"file": "plan/v1.2/online-ordering/V12-RMD-009-availability-case-per-divergence.md"
+},
+{
+"task": "V12-RMD-010",
+"file": "plan/v1.2/online-operations-ui/V12-RMD-010-online-problems-endpoint-ownership.md"
+},
+{
+"task": "V12-RPT-001",
+"file": "plan/v1.2/reporting/V12-RPT-001-channel-reports.md"
+},
+{
+"task": "V12-STK-001",
+"file": "plan/v1.2/shared-stock/V12-STK-001-cross-channel-last-portion.md"
+}
+]
+},
+{
+"id": "B094",
+"pri": 3,
+"tasks": [
+{
+"task": "V12-TGO-002",
+"file": "plan/v1.2/trendyol-go/V12-TGO-002-order-intake.md"
+},
+{
+"task": "V12-TGO-003",
+"file": "plan/v1.2/trendyol-go/V12-TGO-003-outbound-status.md"
+},
+{
+"task": "V12-TGO-004",
+"file": "plan/v1.2/trendyol-go/V12-TGO-004-menu-availability-and-price.md"
+},
+{
+"task": "V12-TGO-005",
+"file": "plan/v1.2/trendyol-go/V12-TGO-005-uber-eats-transition-model.md"
+},
+{
+"task": "V14-CST-001",
+"file": "plan/v1.4/customer-data/V14-CST-001-customer-pii-schema.md"
+},
+{
+"task": "V0-DAT-002",
+"file": "plan/v0/data-architecture/V0-DAT-002-canonical-value-catalog.md"
+},
+{
+"task": "V0-DOM-010",
+"file": "plan/v0/domain-contracts/V0-DOM-010-inventory-cost-basis.md"
+},
+{
+"task": "V1-CAT-001",
+"file": "plan/v1/catalog/V1-CAT-001-product-catalog.md"
+},
+{
+"task": "V1-CAT-002",
+"file": "plan/v1/catalog/V1-CAT-002-effective-pricing.md"
+}
+]
+},
+{
+"id": "B095",
+"pri": 4,
+"tasks": [
+{
+"task": "V1-CAT-004",
+"file": "plan/v1/catalog/V1-CAT-004-catalog-baseline-reacceptance.md"
+},
+{
+"task": "V1-GOV-006",
+"file": "plan/v1/governance/V1-GOV-006-remediation-surface-custody.md"
+},
+{
+"task": "V1-GOV-007",
+"file": "plan/v1/governance/V1-GOV-007-migration-manifest-custody.md"
+},
+{
+"task": "V1-GOV-009",
+"file": "plan/v1/governance/V1-GOV-009-production-experience-realignment.md"
+},
+{
+"task": "V1-GOV-011",
+"file": "plan/v1/governance/V1-GOV-011-production-experience-custody-correction.md"
+},
+{
+"task": "V1-RMD-005",
+"file": "plan/v1/remediation/V1-RMD-005-dual-screen-pos-topology.md"
+},
+{
+"task": "V1-RMD-014",
+"file": "plan/v1/remediation/V1-RMD-014-catalog-management-production-api.md"
+},
+{
+"task": "V1-RMD-016",
+"file": "plan/v1/remediation/V1-RMD-016-production-shell-and-design-system.md"
+},
+{
+"task": "V1-RMD-018",
+"file": "plan/v1/remediation/V1-RMD-018-menu-catalog-workspace-ui.md"
+}
+]
+},
+{
+"id": "B096",
+"pri": 4,
+"tasks": [
+{
+"task": "V1-RMD-020",
+"file": "plan/v1/remediation/V1-RMD-020-production-experience-composition-and-e2e.md"
+},
+{
+"task": "V1-RMD-023",
+"file": "plan/v1/remediation/V1-RMD-023-production-landmark-and-aria-semantics.md"
+},
+{
+"task": "V1-RMD-024",
+"file": "plan/v1/remediation/V1-RMD-024-production-shell-zoom-reflow.md"
+},
+{
+"task": "V1-RMD-025",
+"file": "plan/v1/remediation/V1-RMD-025-production-shell-zoom-reflow-recovery.md"
+},
+{
+"task": "V1-RMD-030",
+"file": "plan/v1/remediation/V1-RMD-030-menu-management-desktop-quality.md"
+},
+{
+"task": "V1-RMD-055",
+"file": "plan/v1/remediation/V1-RMD-055-client-catalog-and-complimentary-alignment.md"
+},
+{
+"task": "V1-RMD-059",
+"file": "plan/v1/remediation/V1-RMD-059-catalog-price-current-price-synchronization.md"
+},
+{
+"task": "V1-RMD-063",
+"file": "plan/v1/remediation/V1-RMD-063-catalog-price-schema-alignment.md"
+},
+{
+"task": "V1-RMD-070",
+"file": "plan/v1/remediation/V1-RMD-070-catalog-workspace-turkish-string-remediation.md"
+}
+]
+},
+{
+"id": "B097",
+"pri": 4,
+"tasks": [
+{
+"task": "V1-RMD-076",
+"file": "plan/v1/remediation/V1-RMD-076-catalog-product-availability-suspension.md"
+},
+{
+"task": "V1-RMD-148",
+"file": "plan/v1/remediation/V1-RMD-148-catalog-modifier-groups-invisible.md"
+},
+{
+"task": "V1-RMD-152",
+"file": "plan/v1/remediation/V1-RMD-152-modifier-stock-consumption.md"
+},
+{
+"task": "V1-RMD-186",
+"file": "plan/v1/remediation/V1-RMD-186-inventory-comment-turkish-leak.md"
+},
+{
+"task": "V1-RMD-243",
+"file": "plan/v1/remediation/V1-RMD-243-critical-stock-report-cross-location-false-alarm.md"
+},
+{
+"task": "V1-RMD-247",
+"file": "plan/v1/remediation/V1-RMD-247-recipe-cost-snapshot-http-surface.md"
+},
+{
+"task": "V1-RMD-256",
+"file": "plan/v1/remediation/V1-RMD-256-posterminal-real-logo-asset.md"
+},
+{
+"task": "V1-RMD-275",
+"file": "plan/v1/remediation/V1-RMD-275-recipe-management-http-surface.md"
+},
+{
+"task": "V1-RMD-318",
+"file": "plan/v1/remediation/V1-RMD-318-held-course-void-restores-stock.md"
+}
+]
+},
+{
+"id": "B098",
+"pri": 4,
+"tasks": [
+{
+"task": "V1-RMD-319",
+"file": "plan/v1/remediation/V1-RMD-319-unit-conversions-never-applied.md"
+},
+{
+"task": "V1-RMD-333",
+"file": "plan/v1/remediation/V1-RMD-333-recipe-cost-snapshot-stock-unit-mapping-mandatory.md"
+},
+{
+"task": "V1-RMD-395",
+"file": "plan/v1/remediation/V1-RMD-395-production-experience-registers-unit-converter.md"
+},
+{
+"task": "V1-RMD-419",
+"file": "plan/v1/remediation/V1-RMD-419-production-batch-unit-matches-yield.md"
+},
+{
+"task": "V1-RMD-420",
+"file": "plan/v1/remediation/V1-RMD-420-variance-report-accounts-for-production.md"
+},
+{
+"task": "V1-RMD-422",
+"file": "plan/v1/remediation/V1-RMD-422-inventory-adjustment-idempotency.md"
+},
+{
+"task": "V1-RMD-423",
+"file": "plan/v1/remediation/V1-RMD-423-stock-cost-local-date-and-leftover-notes.md"
+},
+{
+"task": "V1-RMD-424",
+"file": "plan/v1/remediation/V1-RMD-424-void-stock-restore-atomic.md"
+},
+{
+"task": "V1-RMD-437",
+"file": "plan/v1/remediation/V1-RMD-437-catalog-stops-offering-untracked-stock-mode.md"
+}
+]
+},
+{
+"id": "B099",
+"pri": 4,
+"tasks": [
+{
+"task": "V1-RMD-438",
+"file": "plan/v1/remediation/V1-RMD-438-catalog-list-and-detail-english-leaks.md"
+},
+{
+"task": "V1-RMD-446",
+"file": "plan/v1/remediation/V1-RMD-446-management-stock-section.md"
+},
+{
+"task": "V1-RMD-447",
+"file": "plan/v1/remediation/V1-RMD-447-management-purchasing-production-section.md"
+},
+{
+"task": "V1-RMD-448",
+"file": "plan/v1/remediation/V1-RMD-448-management-menus-recipe-cost-section.md"
+},
+{
+"task": "V1-RMD-500",
+"file": "plan/v1/remediation/V1-RMD-500-recipe-management-ui.md"
+},
+{
+"task": "V1-RMD-501",
+"file": "plan/v1/remediation/V1-RMD-501-stock-mapping-and-waste-ui.md"
+},
+{
+"task": "V1-RMD-505",
+"file": "plan/v1/remediation/V1-RMD-505-production-batch-detail-ui.md"
+},
+{
+"task": "V1-RMD-523",
+"file": "plan/v1/remediation/V1-RMD-523-partial-stock-return-primitive.md"
+},
+{
+"task": "V1-RMD-660",
+"file": "plan/v1/remediation/V1-RMD-660-unit-converter-correctness.md"
+}
+]
+},
+{
+"id": "B100",
+"pri": 4,
+"tasks": [
+{
+"task": "V1-RMD-693",
+"file": "plan/v1/remediation/V1-RMD-693-error-catalog-and-envelope.md"
+},
+{
+"task": "V1-RMD-704",
+"file": "plan/v1/remediation/V1-RMD-704-catalog-screen-reliability.md"
+},
+{
+"task": "V11-INV-002",
+"file": "plan/v1.1/inventory/V11-INV-002-stock-balance-projection.md"
+},
+{
+"task": "V11-INV-003",
+"file": "plan/v1.1/inventory/V11-INV-003-stock-reversal.md"
+},
+{
+"task": "V11-INV-004",
+"file": "plan/v1.1/inventory/V11-INV-004-stock-master-and-locations.md"
+},
+{
+"task": "V11-INV-005",
+"file": "plan/v1.1/inventory/V11-INV-005-manual-adjustments.md"
+},
+{
+"task": "V11-INV-006",
+"file": "plan/v1.1/inventory/V11-INV-006-waste-recording.md"
+},
+{
+"task": "V11-INV-008",
+"file": "plan/v1.1/inventory/V11-INV-008-physical-counts.md"
+},
+{
+"task": "V11-MNU-001",
+"file": "plan/v1.1/daily-menu/V11-MNU-001-daily-menu-lifecycle.md"
+}
+]
+},
+{
+"id": "B101",
+"pri": 4,
+"tasks": [
+{
+"task": "V11-MNU-002",
+"file": "plan/v1.1/daily-menu/V11-MNU-002-menu-counter-projection.md"
+},
+{
+"task": "V11-MNU-003",
+"file": "plan/v1.1/daily-menu/V11-MNU-003-static-menu.md"
+},
+{
+"task": "V11-PRD-001",
+"file": "plan/v1.1/production/V11-PRD-001-production-batch-lifecycle.md"
+},
+{
+"task": "V11-PRD-002",
+"file": "plan/v1.1/production/V11-PRD-002-production-stock-effects.md"
+},
+{
+"task": "V11-PUR-002",
+"file": "plan/v1.1/purchasing/V11-PUR-002-supplier-master.md"
+},
+{
+"task": "V11-RCP-002",
+"file": "plan/v1.1/units-recipes/V11-RCP-002-recipe-cost-snapshots.md"
+},
+{
+"task": "V11-RPT-001",
+"file": "plan/v1.1/reporting/V11-RPT-001-menu-inventory-reports.md"
+},
+{
+"task": "V11-RPT-002",
+"file": "plan/v1.1/reporting/V11-RPT-002-low-stock-report-and-alert.md"
+},
+{
+"task": "V11-UNT-001",
+"file": "plan/v1.1/units-recipes/V11-UNT-001-dimension-safe-units.md"
+}
+]
+},
+{
+"id": "B102",
+"pri": 4,
+"tasks": [
+{
+"task": "V12-RMD-003",
+"file": "plan/v1.2/shared-stock/V12-RMD-003-cross-channel-arbiter-hardening.md"
+},
+{
+"task": "V15-SUP-001",
+"file": "plan/v1.5/support/V15-SUP-001-diagnostic-bundle.md"
+},
+{
+"task": "V0-BKP-001",
+"file": "plan/v0/backup-recovery/V0-BKP-001-backup-restore-proof.md"
+},
+{
+"task": "V0-BKP-002",
+"file": "plan/v0/backup-recovery/V0-BKP-002-rpo-rto-targets.md"
+},
+{
+"task": "V0-DOM-008",
+"file": "plan/v0/domain-contracts/V0-DOM-008-reporting-metric-contract.md"
+},
+{
+"task": "V0-GOV-036",
+"file": "plan/v0/governance/V0-GOV-036-decision-gate-reconciliation.md"
+},
+{
+"task": "V1-ALT-001",
+"file": "plan/v1/alerts/V1-ALT-001-alert-foundation.md"
+},
+{
+"task": "V1-CDP-001",
+"file": "plan/v1/customer-display/V1-CDP-001-screensaver-image-storage-and-api.md"
+},
+{
+"task": "V1-CDP-003",
+"file": "plan/v1/customer-display/V1-CDP-003-screensaver-upload-management-ui.md"
+}
+]
+},
+{
+"id": "B103",
+"pri": 5,
+"tasks": [
+{
+"task": "V1-CDP-004",
+"file": "plan/v1/customer-display/V1-CDP-004-screensaver-video-support.md"
+},
+{
+"task": "V1-OBS-001",
+"file": "plan/v1/operations/V1-OBS-001-observability-foundation.md"
+},
+{
+"task": "V1-OPS-002",
+"file": "plan/v1/operations/V1-OPS-002-backup-health-foundation.md"
+},
+{
+"task": "V1-REC-001",
+"file": "plan/v1/reconciliation/V1-REC-001-case-foundation.md"
+},
+{
+"task": "V1-REM-001",
+"file": "plan/v1/remediation/V1-REM-001-remediation-evidence-reconciliation.md"
+},
+{
+"task": "V1-RMD-085",
+"file": "plan/v1/remediation/V1-RMD-085-reporting-business-day-close-transactional-integrity.md"
+},
+{
+"task": "V1-RMD-086",
+"file": "plan/v1/remediation/V1-RMD-086-postgresql-backup-restore-mechanism-and-runbook.md"
+},
+{
+"task": "V1-RMD-091",
+"file": "plan/v1/remediation/V1-RMD-091-operational-data-housekeeping-sweep.md"
+},
+{
+"task": "V1-RMD-095",
+"file": "plan/v1/remediation/V1-RMD-095-wal-archiving-point-in-time-recovery.md"
+}
+]
+},
+{
+"id": "B104",
+"pri": 5,
+"tasks": [
+{
+"task": "V1-RMD-184",
+"file": "plan/v1/remediation/V1-RMD-184-confirmation-void-settings-migration-link.md"
+},
+{
+"task": "V1-RMD-185",
+"file": "plan/v1/remediation/V1-RMD-185-live-send-429-reconciliation.md"
+},
+{
+"task": "V1-RMD-246",
+"file": "plan/v1/remediation/V1-RMD-246-settings-management-http-surface.md"
+},
+{
+"task": "V1-RMD-249",
+"file": "plan/v1/remediation/V1-RMD-249-eod-business-day-http-surface.md"
+},
+{
+"task": "V1-RMD-250",
+"file": "plan/v1/remediation/V1-RMD-250-reconciliation-case-http-surface.md"
+},
+{
+"task": "V1-RMD-251",
+"file": "plan/v1/remediation/V1-RMD-251-observability-alert-http-surface.md"
+},
+{
+"task": "V1-RMD-270",
+"file": "plan/v1/remediation/V1-RMD-270-offsite-backup-job-and-rpo-report.md"
+},
+{
+"task": "V1-RMD-295",
+"file": "plan/v1/remediation/V1-RMD-295-offline-reconciliation-client-decision.md"
+},
+{
+"task": "V1-RMD-312",
+"file": "plan/v1/remediation/V1-RMD-312-reconciliation-case-dedup-race.md"
+}
+]
+},
+{
+"id": "B105",
+"pri": 5,
+"tasks": [
+{
+"task": "V1-RMD-323",
+"file": "plan/v1/remediation/V1-RMD-323-reconciliation-case-dedup-includes-resolved.md"
+},
+{
+"task": "V1-RMD-326",
+"file": "plan/v1/remediation/V1-RMD-326-real-database-health-probe.md"
+},
+{
+"task": "V1-RMD-353",
+"file": "plan/v1/remediation/V1-RMD-353-relay-connector-status-reporter-async.md"
+},
+{
+"task": "V1-RMD-404",
+"file": "plan/v1/remediation/V1-RMD-404-offline-reconciliation-server-truth.md"
+},
+{
+"task": "V1-RMD-418",
+"file": "plan/v1/remediation/V1-RMD-418-variance-report-skips-voided-consumption.md"
+},
+{
+"task": "V1-RMD-421",
+"file": "plan/v1/remediation/V1-RMD-421-end-of-day-totals-derived-server-side.md"
+},
+{
+"task": "V1-RMD-427",
+"file": "plan/v1/remediation/V1-RMD-427-offline-reconcile-fk-not-all-unknown-budget.md"
+},
+{
+"task": "V1-RMD-451",
+"file": "plan/v1/remediation/V1-RMD-451-management-settings-history-section.md"
+},
+{
+"task": "V1-RMD-468",
+"file": "plan/v1/remediation/V1-RMD-468-tax-inclusive-host-and-reporting.md"
+}
+]
+},
+{
+"id": "B106",
+"pri": 5,
+"tasks": [
+{
+"task": "V1-RMD-487",
+"file": "plan/v1/remediation/V1-RMD-487-product-margin-report.md"
+},
+{
+"task": "V1-RMD-488",
+"file": "plan/v1/remediation/V1-RMD-488-product-margin-report-screen.md"
+},
+{
+"task": "V1-RMD-504",
+"file": "plan/v1/remediation/V1-RMD-504-reconciliation-case-history-and-notes-ui.md"
+},
+{
+"task": "V1-RMD-533",
+"file": "plan/v1/remediation/V1-RMD-533-error-event-core.md"
+},
+{
+"task": "V1-RMD-534",
+"file": "plan/v1/remediation/V1-RMD-534-server-detectors.md"
+},
+{
+"task": "V1-RMD-535",
+"file": "plan/v1/remediation/V1-RMD-535-domain-detectors.md"
+},
+{
+"task": "V1-RMD-536",
+"file": "plan/v1/remediation/V1-RMD-536-smart-severity-and-self-watch.md"
+},
+{
+"task": "V1-RMD-537",
+"file": "plan/v1/remediation/V1-RMD-537-browser-error-reporting.md"
+},
+{
+"task": "V1-RMD-538",
+"file": "plan/v1/remediation/V1-RMD-538-telegram-notification.md"
+}
+]
+},
+{
+"id": "B107",
+"pri": 5,
+"tasks": [
+{
+"task": "V1-RMD-539",
+"file": "plan/v1/remediation/V1-RMD-539-error-screen.md"
+},
+{
+"task": "V1-RMD-541",
+"file": "plan/v1/remediation/V1-RMD-541-ui-interaction-telemetry.md"
+},
+{
+"task": "V1-RMD-542",
+"file": "plan/v1/remediation/V1-RMD-542-trace-correlation.md"
+},
+{
+"task": "V1-RMD-543",
+"file": "plan/v1/remediation/V1-RMD-543-performance-metrics.md"
+},
+{
+"task": "V1-RMD-544",
+"file": "plan/v1/remediation/V1-RMD-544-performance-budgets.md"
+},
+{
+"task": "V1-RMD-545",
+"file": "plan/v1/remediation/V1-RMD-545-synthetic-canary.md"
+},
+{
+"task": "V1-RMD-546",
+"file": "plan/v1/remediation/V1-RMD-546-postgres-deep-monitoring.md"
+},
+{
+"task": "V1-RMD-547",
+"file": "plan/v1/remediation/V1-RMD-547-resource-monitoring.md"
+},
+{
+"task": "V1-RMD-548",
+"file": "plan/v1/remediation/V1-RMD-548-user-journey-screen.md"
+}
+]
+},
+{
+"id": "B108",
+"pri": 5,
+"tasks": [
+{
+"task": "V1-RMD-551",
+"file": "plan/v1/remediation/V1-RMD-551-monitoring-wiring.md"
+},
+{
+"task": "V1-RMD-552",
+"file": "plan/v1/remediation/V1-RMD-552-outage-channel-and-watchdog.md"
+},
+{
+"task": "V1-RMD-555",
+"file": "plan/v1/remediation/V1-RMD-555-health-snapshot-wiring.md"
+},
+{
+"task": "V1-RMD-558",
+"file": "plan/v1/remediation/V1-RMD-558-server-detectors-part-two.md"
+},
+{
+"task": "V1-RMD-560",
+"file": "plan/v1/remediation/V1-RMD-560-server-detectors-end-to-end.md"
+},
+{
+"task": "V1-RMD-561",
+"file": "plan/v1/remediation/V1-RMD-561-notification-delivery-wiring.md"
+},
+{
+"task": "V1-RMD-563",
+"file": "plan/v1/remediation/V1-RMD-563-insight-runner.md"
+},
+{
+"task": "V1-RMD-564",
+"file": "plan/v1/remediation/V1-RMD-564-analysis-runner.md"
+},
+{
+"task": "V1-RMD-566",
+"file": "plan/v1/remediation/V1-RMD-566-remaining-server-detector-items.md"
+}
+]
+},
+{
+"id": "B109",
+"pri": 5,
+"tasks": [
+{
+"task": "V1-RMD-570",
+"file": "plan/v1/remediation/V1-RMD-570-performance-budget-management.md"
+},
+{
+"task": "V1-RMD-571",
+"file": "plan/v1/remediation/V1-RMD-571-monitoring-switch-and-storm-test.md"
+},
+{
+"task": "V1-RMD-585",
+"file": "plan/v1/remediation/V1-RMD-585-outage-watchdog-container.md"
+},
+{
+"task": "V1-RMD-671",
+"file": "plan/v1/remediation/V1-RMD-671-offline-reconciliation-chain.md"
+},
+{
+"task": "V1-RMD-676",
+"file": "plan/v1/remediation/V1-RMD-676-offline-reconciliation-regressions.md"
+},
+{
+"task": "V1-RMD-683",
+"file": "plan/v1/remediation/V1-RMD-683-settings-value-validation.md"
+},
+{
+"task": "V1-RMD-684",
+"file": "plan/v1/remediation/V1-RMD-684-settings-edit-screen-and-names.md"
+},
+{
+"task": "V1-RMD-686",
+"file": "plan/v1/remediation/V1-RMD-686-settings-history-cache-tests-docs.md"
+},
+{
+"task": "V1-RMD-697",
+"file": "plan/v1/remediation/V1-RMD-697-backup-restore-and-deploy-fixes.md"
+}
+]
+},
+{
+"id": "B110",
+"pri": 5,
+"tasks": [
+{
+"task": "V1-RPT-001",
+"file": "plan/v1/reporting/V1-RPT-001-operational-report-foundation.md"
+},
+{
+"task": "V1-SET-001",
+"file": "plan/v1/settings/V1-SET-001-typed-settings.md"
+},
+{
+"task": "V1-SET-009",
+"file": "plan/v1/settings/V1-SET-009-customerweb-branding-consumption.md"
+},
+{
+"task": "V11-RPT-003",
+"file": "plan/v1.1/reporting/V11-RPT-003-actual-vs-theoretical-report.md"
+},
+{
+"task": "V12-REC-002",
+"file": "plan/v1.2/reconciliation/V12-REC-002-provider-aware-reconciliation.md"
+},
+{
+"task": "V15-BKP-001",
+"file": "plan/v1.5/backup-recovery/V15-BKP-001-encrypted-offsite-backup.md"
+},
+{
+"task": "V15-BKP-002",
+"file": "plan/v1.5/backup-recovery/V15-BKP-002-restore-automation.md"
+},
+{
+"task": "V15-OBS-001",
+"file": "plan/v1.5/observability/V15-OBS-001-structured-logging.md"
+},
+{
+"task": "V0-DAT-001",
+"file": "plan/v0/data-architecture/V0-DAT-001-migration-dependency-graph.md"
+}
+]
+},
+{
+"id": "B111",
+"pri": 6,
+"tasks": [
+{
+"task": "V0-GOV-014",
+"file": "plan/v0/governance/V0-GOV-014-messaging-retry-backoff.md"
+},
+{
+"task": "V0-GOV-047",
+"file": "plan/v0/governance/V0-GOV-047-build-provenance.md"
+},
+{
+"task": "V1-FND-001",
+"file": "plan/v1/foundation/V1-FND-001-module-skeleton.md"
+},
+{
+"task": "V1-FND-005",
+"file": "plan/v1/foundation/V1-FND-005-transaction-execution-boundary.md"
+},
+{
+"task": "V1-FND-006",
+"file": "plan/v1/foundation/V1-FND-006-transaction-outbox-integration.md"
+},
+{
+"task": "V1-FND-010",
+"file": "plan/v1/foundation/V1-FND-010-shared-integration-test-fixtures.md"
+},
+{
+"task": "V1-FND-011",
+"file": "plan/v1/foundation/V1-FND-011-transaction-outbox-atomicity.md"
+},
+{
+"task": "V1-FND-014",
+"file": "plan/v1/foundation/V1-FND-014-retry-sql-identifier-hardening.md"
+},
+{
+"task": "V1-FND-015",
+"file": "plan/v1/foundation/V1-FND-015-inbox-idempotency-contract.md"
+}
+]
+},
+{
+"id": "B112",
+"pri": 6,
+"tasks": [
+{
+"task": "V1-FND-019",
+"file": "plan/v1/foundation/V1-FND-019-message-lease-fencing.md"
+},
+{
+"task": "V1-FND-023",
+"file": "plan/v1/foundation/V1-FND-023-solution-test-discovery.md"
+},
+{
+"task": "V1-RMD-003",
+"file": "plan/v1/remediation/V1-RMD-003-web-prototype-responsive-ui.md"
+},
+{
+"task": "V1-RMD-004",
+"file": "plan/v1/remediation/V1-RMD-004-mock-runtime-contract-alignment.md"
+},
+{
+"task": "V1-RMD-010",
+"file": "plan/v1/remediation/V1-RMD-010-pos-terminal-ui-responsive-and-a11y.md"
+},
+{
+"task": "V1-RMD-031",
+"file": "plan/v1/remediation/V1-RMD-031-complete-containerized-release.md"
+},
+{
+"task": "V1-RMD-036",
+"file": "plan/v1/remediation/V1-RMD-036-solution-manifest-and-repo-hygiene.md"
+},
+{
+"task": "V1-RMD-043",
+"file": "plan/v1/remediation/V1-RMD-043-clean-build-test-migration-provenance.md"
+},
+{
+"task": "V1-RMD-044",
+"file": "plan/v1/remediation/V1-RMD-044-posterminal-compile-and-floor-plan-freshness.md"
+}
+]
+},
+{
+"id": "B113",
+"pri": 6,
+"tasks": [
+{
+"task": "V1-RMD-067",
+"file": "plan/v1/remediation/V1-RMD-067-build-provenance-and-docker-hygiene.md"
+},
+{
+"task": "V1-RMD-068",
+"file": "plan/v1/remediation/V1-RMD-068-ui-style-guide-and-turkish-terminology.md"
+},
+{
+"task": "V1-RMD-155",
+"file": "plan/v1/remediation/V1-RMD-155-sent-item-void-ui-and-round-idempotency.md"
+},
+{
+"task": "V1-RMD-164",
+"file": "plan/v1/remediation/V1-RMD-164-frontend-high-quantity-correction-lost.md"
+},
+{
+"task": "V1-RMD-165",
+"file": "plan/v1/remediation/V1-RMD-165-posterminal-raw-error-message-leak.md"
+},
+{
+"task": "V1-RMD-176",
+"file": "plan/v1/remediation/V1-RMD-176-frontend-low-cleanup.md"
+},
+{
+"task": "V1-RMD-296",
+"file": "plan/v1/remediation/V1-RMD-296-decision-management-area-ui.md"
+},
+{
+"task": "V1-RMD-337",
+"file": "plan/v1/remediation/V1-RMD-337-dotnet-vulnerability-scan-actually-fails-the-build.md"
+},
+{
+"task": "V1-RMD-350",
+"file": "plan/v1/remediation/V1-RMD-350-localstorage-setitem-error-handling.md"
+}
+]
+},
+{
+"id": "B114",
+"pri": 6,
+"tasks": [
+{
+"task": "V1-RMD-432",
+"file": "plan/v1/remediation/V1-RMD-432-posterminal-lint-accessibility.md"
+},
+{
+"task": "V1-RMD-445",
+"file": "plan/v1/remediation/V1-RMD-445-management-area-shell-and-closing.md"
+},
+{
+"task": "V1-RMD-449",
+"file": "plan/v1/remediation/V1-RMD-449-management-staff-roles-section.md"
+},
+{
+"task": "V1-RMD-499",
+"file": "plan/v1/remediation/V1-RMD-499-ui-error-text-leaks.md"
+},
+{
+"task": "V1-RMD-503",
+"file": "plan/v1/remediation/V1-RMD-503-supplier-edit-ui.md"
+},
+{
+"task": "V1-RMD-565",
+"file": "plan/v1/remediation/V1-RMD-565-error-screen-ui.md"
+},
+{
+"task": "V1-RMD-567",
+"file": "plan/v1/remediation/V1-RMD-567-button-telemetry-keys.md"
+},
+{
+"task": "V1-RMD-574",
+"file": "plan/v1/remediation/V1-RMD-574-posterminal-lint-gate.md"
+},
+{
+"task": "V1-RMD-579",
+"file": "plan/v1/remediation/V1-RMD-579-performance-budget-screen.md"
+}
+]
+},
+{
+"id": "B115",
+"pri": 6,
+"tasks": [
+{
+"task": "V1-RMD-591",
+"file": "plan/v1/remediation/V1-RMD-591-posterminal-test-timeout.md"
+},
+{
+"task": "V1-RMD-699",
+"file": "plan/v1/remediation/V1-RMD-699-client-accessibility-and-doc-deviations.md"
+},
+{
+"task": "V1-RMD-702",
+"file": "plan/v1/remediation/V1-RMD-702-product-requires-tax-profile.md"
+},
+{
+"task": "V1-RMD-735",
+"file": "plan/v1/remediation/V1-RMD-735-posterminal-bolme-ekrani.md"
+},
+{
+"task": "V0-ARC-001",
+"file": "plan/v0/platform-architecture/V0-ARC-001-module-dependency-rules.md"
+},
+{
+"task": "V0-ARC-002",
+"file": "plan/v0/platform-architecture/V0-ARC-002-local-first-sync-contract.md"
+},
+{
+"task": "V0-ARC-003",
+"file": "plan/v0/platform-architecture/V0-ARC-003-idempotency-inbox-outbox.md"
+},
+{
+"task": "V0-ARC-004",
+"file": "plan/v0/platform-architecture/V0-ARC-004-api-contract-standard.md"
+},
+{
+"task": "V0-ARC-006",
+"file": "plan/v0/platform-architecture/V0-ARC-006-notification-delivery-matrix.md"
+}
+]
+},
+{
+"id": "B116",
+"pri": 7,
+"tasks": [
+{
+"task": "V0-ARC-007",
+"file": "plan/v0/platform-architecture/V0-ARC-007-deployment-compatibility-matrix.md"
+},
+{
+"task": "V0-ARC-008",
+"file": "plan/v0/platform-architecture/V0-ARC-008-release-evidence-contract.md"
+},
+{
+"task": "V0-CMP-001",
+"file": "plan/v0/compliance/V0-CMP-001-gib-eadisyon-scope.md"
+},
+{
+"task": "V0-CMP-002",
+"file": "plan/v0/compliance/V0-CMP-002-money-tax-business-date.md"
+},
+{
+"task": "V0-CMP-004",
+"file": "plan/v0/compliance/V0-CMP-004-restaurant-fees-and-tips.md"
+},
+{
+"task": "V0-CMP-005",
+"file": "plan/v0/compliance/V0-CMP-005-accessibility-target.md"
+},
+{
+"task": "V0-DAT-003",
+"file": "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md"
+},
+{
+"task": "V0-DAT-004",
+"file": "plan/v0/data-architecture/V0-DAT-004-projection-ownership.md"
+},
+{
+"task": "V0-DAT-005",
+"file": "plan/v0/data-architecture/V0-DAT-005-single-branch-key-strategy.md"
+}
+]
+},
+{
+"id": "B117",
+"pri": 7,
+"tasks": [
+{
+"task": "V0-DAT-006",
+"file": "plan/v0/data-architecture/V0-DAT-006-migration-rehearsal-profile.md"
+},
+{
+"task": "V0-DAT-007",
+"file": "plan/v0/data-architecture/V0-DAT-007-postgresql-extension-ownership.md"
+},
+{
+"task": "V0-DOC-001",
+"file": "plan/v0/document-baseline/V0-DOC-001-correct-master-specification.md"
+},
+{
+"task": "V0-DOM-001",
+"file": "plan/v0/domain-contracts/V0-DOM-001-lifecycle-transition-contracts.md"
+},
+{
+"task": "V0-DOM-006",
+"file": "plan/v0/domain-contracts/V0-DOM-006-void-complimentary-discount-policy.md"
+},
+{
+"task": "V0-DOM-009",
+"file": "plan/v0/domain-contracts/V0-DOM-009-receipt-variance-policy.md"
+},
+{
+"task": "V0-DOM-011",
+"file": "plan/v0/domain-contracts/V0-DOM-011-printer-routing-precedence.md"
+},
+{
+"task": "V0-GOV-001",
+"file": "plan/v0/governance/V0-GOV-001-task-scope-fail-closed.md"
+},
+{
+"task": "V0-GOV-002",
+"file": "plan/v0/governance/V0-GOV-002-strict-scope-test-fixtures.md"
+}
+]
+},
+{
+"id": "B118",
+"pri": 7,
+"tasks": [
+{
+"task": "V0-GOV-003",
+"file": "plan/v0/governance/V0-GOV-003-remediation-execution-control.md"
+},
+{
+"task": "V0-GOV-008",
+"file": "plan/v0/governance/V0-GOV-008-pdf-coverage-regeneration.md"
+},
+{
+"task": "V0-GOV-010",
+"file": "plan/v0/governance/V0-GOV-010-task-scope-root-normalization.md"
+},
+{
+"task": "V0-GOV-015",
+"file": "plan/v0/governance/V0-GOV-015-atomic-migration-history.md"
+},
+{
+"task": "V0-GOV-022",
+"file": "plan/v0/governance/V0-GOV-022-blocker-transition-scope.md"
+},
+{
+"task": "V0-GOV-024",
+"file": "plan/v0/governance/V0-GOV-024-blocker-transition-enforcement.md"
+},
+{
+"task": "V0-GOV-028",
+"file": "plan/v0/governance/V0-GOV-028-candidate-code-remediation-control.md"
+},
+{
+"task": "V0-GOV-031",
+"file": "plan/v0/governance/V0-GOV-031-c42-entry-gate-approval.md"
+},
+{
+"task": "V0-GOV-032",
+"file": "plan/v0/governance/V0-GOV-032-deferral-entry-gate-recognition.md"
+}
+]
+},
+{
+"id": "B119",
+"pri": 7,
+"tasks": [
+{
+"task": "V0-GOV-035",
+"file": "plan/v0/governance/V0-GOV-035-remediation-admission-control.md"
+},
+{
+"task": "V0-GOV-039",
+"file": "plan/v0/governance/V0-GOV-039-closure-evidence-envelope.md"
+},
+{
+"task": "V0-GOV-040",
+"file": "plan/v0/governance/V0-GOV-040-project-manifest-consistency.md"
+},
+{
+"task": "V0-GOV-043",
+"file": "plan/v0/governance/V0-GOV-043-dotnet-format-remediation.md"
+},
+{
+"task": "V0-GOV-046",
+"file": "plan/v0/governance/V0-GOV-046-manifest-semantic-separation.md"
+},
+{
+"task": "V0-GOV-049",
+"file": "plan/v0/governance/V0-GOV-049-reaccept-closure-evidence-protocol.md"
+},
+{
+"task": "V0-GOV-052",
+"file": "plan/v0/governance/V0-GOV-052-final-evidence-tree-binding.md"
+},
+{
+"task": "V0-GOV-054",
+"file": "plan/v0/governance/V0-GOV-054-c54-application-admission-recognition.md"
+},
+{
+"task": "V0-GOV-055",
+"file": "plan/v0/governance/V0-GOV-055-interrupted-remediation-closure.md"
+}
+]
+},
+{
+"id": "B120",
+"pri": 7,
+"tasks": [
+{
+"task": "V0-GOV-056",
+"file": "plan/v0/governance/V0-GOV-056-task-scope-parity-regression.md"
+},
+{
+"task": "V0-GOV-057",
+"file": "plan/v0/governance/V0-GOV-057-v3-admission-hardening.md"
+},
+{
+"task": "V0-GOV-058",
+"file": "plan/v0/governance/V0-GOV-058-dynamic-route-parity.md"
+},
+{
+"task": "V0-GOV-059",
+"file": "plan/v0/governance/V0-GOV-059-v3-reentry-parent-alignment.md"
+},
+{
+"task": "V0-GOV-061",
+"file": "plan/v0/governance/V0-GOV-061-v3-closure-fixed-final-verification.md"
+},
+{
+"task": "V0-REV-001",
+"file": "plan/v0/revalidation/V0-REV-001-dat001-decision-revalidation.md"
+},
+{
+"task": "V0-REV-002",
+"file": "plan/v0/revalidation/V0-REV-002-dat002-decision-revalidation.md"
+},
+{
+"task": "V0-REV-003",
+"file": "plan/v0/revalidation/V0-REV-003-dat003-decision-revalidation.md"
+},
+{
+"task": "V0-REV-004",
+"file": "plan/v0/revalidation/V0-REV-004-dat004-decision-revalidation.md"
+}
+]
+},
+{
+"id": "B121",
+"pri": 7,
+"tasks": [
+{
+"task": "V0-REV-005",
+"file": "plan/v0/revalidation/V0-REV-005-dat005-decision-revalidation.md"
+},
+{
+"task": "V0-REV-006",
+"file": "plan/v0/revalidation/V0-REV-006-dat006-decision-revalidation.md"
+},
+{
+"task": "V0-REV-007",
+"file": "plan/v0/revalidation/V0-REV-007-doc001-decision-revalidation.md"
+},
+{
+"task": "V0-REV-008",
+"file": "plan/v0/revalidation/V0-REV-008-dom001-decision-revalidation.md"
+},
+{
+"task": "V0-REV-009",
+"file": "plan/v0/revalidation/V0-REV-009-dom002-decision-revalidation.md"
+},
+{
+"task": "V0-REV-010",
+"file": "plan/v0/revalidation/V0-REV-010-dom003-decision-revalidation.md"
+},
+{
+"task": "V0-REV-011",
+"file": "plan/v0/revalidation/V0-REV-011-dom004-decision-revalidation.md"
+},
+{
+"task": "V0-REV-012",
+"file": "plan/v0/revalidation/V0-REV-012-dom005-decision-revalidation.md"
+},
+{
+"task": "V0-REV-013",
+"file": "plan/v0/revalidation/V0-REV-013-dom006-decision-revalidation.md"
+}
+]
+},
+{
+"id": "B122",
+"pri": 7,
+"tasks": [
+{
+"task": "V0-REV-014",
+"file": "plan/v0/revalidation/V0-REV-014-dom007-decision-revalidation.md"
+},
+{
+"task": "V0-REV-015",
+"file": "plan/v0/revalidation/V0-REV-015-dom008-decision-revalidation.md"
+},
+{
+"task": "V0-REV-016",
+"file": "plan/v0/revalidation/V0-REV-016-dom009-decision-revalidation.md"
+},
+{
+"task": "V0-REV-017",
+"file": "plan/v0/revalidation/V0-REV-017-dom010-decision-revalidation.md"
+},
+{
+"task": "V0-REV-018",
+"file": "plan/v0/revalidation/V0-REV-018-dom011-decision-revalidation.md"
+},
+{
+"task": "V0-REV-019",
+"file": "plan/v0/revalidation/V0-REV-019-lic001-decision-revalidation.md"
+},
+{
+"task": "V0-REV-020",
+"file": "plan/v0/revalidation/V0-REV-020-arc001-decision-revalidation.md"
+},
+{
+"task": "V0-REV-021",
+"file": "plan/v0/revalidation/V0-REV-021-arc002-decision-revalidation.md"
+},
+{
+"task": "V0-REV-022",
+"file": "plan/v0/revalidation/V0-REV-022-arc003-decision-revalidation.md"
+}
+]
+},
+{
+"id": "B123",
+"pri": 7,
+"tasks": [
+{
+"task": "V0-REV-023",
+"file": "plan/v0/revalidation/V0-REV-023-arc004-decision-revalidation.md"
+},
+{
+"task": "V0-REV-024",
+"file": "plan/v0/revalidation/V0-REV-024-arc005-decision-revalidation.md"
+},
+{
+"task": "V0-REV-025",
+"file": "plan/v0/revalidation/V0-REV-025-arc006-decision-revalidation.md"
+},
+{
+"task": "V0-REV-026",
+"file": "plan/v0/revalidation/V0-REV-026-arc007-decision-revalidation.md"
+},
+{
+"task": "V0-REV-027",
+"file": "plan/v0/revalidation/V0-REV-027-arc008-decision-revalidation.md"
+},
+{
+"task": "V0-REV-028",
+"file": "plan/v0/revalidation/V0-REV-028-arc009-decision-revalidation.md"
+},
+{
+"task": "V0-REV-029",
+"file": "plan/v0/revalidation/V0-REV-029-cmp002-decision-revalidation.md"
+},
+{
+"task": "V0-REV-030",
+"file": "plan/v0/revalidation/V0-REV-030-cmp005-decision-revalidation.md"
+},
+{
+"task": "V1-CDP-002",
+"file": "plan/v1/customer-display/V1-CDP-002-idle-screen-custom-screensaver.md"
+}
+]
+},
+{
+"id": "B124",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-FND-003",
+"file": "plan/v1/foundation/V1-FND-003-agent-task-scope-enforcement.md"
+},
+{
+"task": "V1-FND-004",
+"file": "plan/v1/foundation/V1-FND-004-host-migration-composition.md"
+},
+{
+"task": "V1-FND-012",
+"file": "plan/v1/foundation/V1-FND-012-runtime-migration-manifest.md"
+},
+{
+"task": "V1-FND-013",
+"file": "plan/v1/foundation/V1-FND-013-host-composition-constructability.md"
+},
+{
+"task": "V1-FND-017",
+"file": "plan/v1/foundation/V1-FND-017-host-data-source-bootstrap.md"
+},
+{
+"task": "V1-FND-018",
+"file": "plan/v1/foundation/V1-FND-018-atomic-idempotency-execution.md"
+},
+{
+"task": "V1-FND-021",
+"file": "plan/v1/foundation/V1-FND-021-postgresql-extension-integration.md"
+},
+{
+"task": "V1-FND-024",
+"file": "plan/v1/foundation/V1-FND-024-host-module-reachability.md"
+},
+{
+"task": "V1-FND-025",
+"file": "plan/v1/foundation/V1-FND-025-host-fail-closed-bootstrap.md"
+}
+]
+},
+{
+"id": "B125",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-GOV-020",
+"file": "plan/v1/governance/V1-GOV-020-first-run-provisioning-custody.md"
+},
+{
+"task": "V1-GOV-021",
+"file": "plan/v1/governance/V1-GOV-021-release-acceptance-dependency-correction.md"
+},
+{
+"task": "V1-GOV-028",
+"file": "plan/v1/governance/V1-GOV-028-master-custody-reopen-and-remediation-wave-3.md"
+},
+{
+"task": "V1-GOV-034",
+"file": "plan/v1/governance/V1-GOV-034-master-custody-reopen-and-remediation-wave-6.md"
+},
+{
+"task": "V1-RMD-028",
+"file": "plan/v1/remediation/V1-RMD-028-desktop-floor-plan-workspace.md"
+},
+{
+"task": "V1-RMD-033",
+"file": "plan/v1/remediation/V1-RMD-033-first-run-manager-provisioning.md"
+},
+{
+"task": "V1-RMD-079",
+"file": "plan/v1/remediation/V1-RMD-079-deployment-https-and-pwa-offline-field-readiness.md"
+},
+{
+"task": "V1-RMD-084",
+"file": "plan/v1/remediation/V1-RMD-084-f-section-module-domain-review.md"
+},
+{
+"task": "V1-RMD-087",
+"file": "plan/v1/remediation/V1-RMD-087-v1-go-live-load-baseline-and-harness.md"
+}
+]
+},
+{
+"id": "B126",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-088",
+"file": "plan/v1/remediation/V1-RMD-088-deployment-infrastructure-performance-tuning.md"
+},
+{
+"task": "V1-RMD-093",
+"file": "plan/v1/remediation/V1-RMD-093-v1-critical-path-write-load-test.md"
+},
+{
+"task": "V1-RMD-096",
+"file": "plan/v1/remediation/V1-RMD-096-host-terminated-https.md"
+},
+{
+"task": "V1-RMD-114",
+"file": "plan/v1/remediation/V1-RMD-114-touch-targets-heatmap-language-leaks-and-error-message-safety.md"
+},
+{
+"task": "V1-RMD-156",
+"file": "plan/v1/remediation/V1-RMD-156-database-integrity-constraints.md"
+},
+{
+"task": "V1-RMD-159",
+"file": "plan/v1/remediation/V1-RMD-159-architecture-boundaries-remainder.md"
+},
+{
+"task": "V1-RMD-160",
+"file": "plan/v1/remediation/V1-RMD-160-api-endpoints-remainder-part1.md"
+},
+{
+"task": "V1-RMD-161",
+"file": "plan/v1/remediation/V1-RMD-161-modifier-selection-rules.md"
+},
+{
+"task": "V1-RMD-163",
+"file": "plan/v1/remediation/V1-RMD-163-rate-limiting-cursor-idempotency-header.md"
+}
+]
+},
+{
+"id": "B127",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-167",
+"file": "plan/v1/remediation/V1-RMD-167-independent-review-followups.md"
+},
+{
+"task": "V1-RMD-168",
+"file": "plan/v1/remediation/V1-RMD-168-canvoid-server-derived.md"
+},
+{
+"task": "V1-RMD-173",
+"file": "plan/v1/remediation/V1-RMD-173-focus-trap-inert-and-escape.md"
+},
+{
+"task": "V1-RMD-174",
+"file": "plan/v1/remediation/V1-RMD-174-added-animation-on-live-node.md"
+},
+{
+"task": "V1-RMD-178",
+"file": "plan/v1/remediation/V1-RMD-178-independent-review-of-168-177.md"
+},
+{
+"task": "V1-RMD-180",
+"file": "plan/v1/remediation/V1-RMD-180-lock-to-login-handoff-inert.md"
+},
+{
+"task": "V1-RMD-192",
+"file": "plan/v1/remediation/V1-RMD-192-web-container-zombie-process-leak.md"
+},
+{
+"task": "V1-RMD-193",
+"file": "plan/v1/remediation/V1-RMD-193-cloudflared-autoupdate-bypasses-pin.md"
+},
+{
+"task": "V1-RMD-196",
+"file": "plan/v1/remediation/V1-RMD-196-coverage-step-silent-failure-diagnostics.md"
+}
+]
+},
+{
+"id": "B128",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-197",
+"file": "plan/v1/remediation/V1-RMD-197-coverage-step-per-project-collection.md"
+},
+{
+"task": "V1-RMD-233",
+"file": "plan/v1/remediation/V1-RMD-233-remaining-count-multi-mapping-coverage.md"
+},
+{
+"task": "V1-RMD-234",
+"file": "plan/v1/remediation/V1-RMD-234-screensaver-brand-badge-contrast.md"
+},
+{
+"task": "V1-RMD-235",
+"file": "plan/v1/remediation/V1-RMD-235-screensaver-endpoint-hardening.md"
+},
+{
+"task": "V1-RMD-245",
+"file": "plan/v1/remediation/V1-RMD-245-stale-manifest-and-module-count-test-literals.md"
+},
+{
+"task": "V1-RMD-257",
+"file": "plan/v1/remediation/V1-RMD-257-business-accent-default-matches-brand-navy.md"
+},
+{
+"task": "V1-RMD-267",
+"file": "plan/v1/remediation/V1-RMD-267-diagnostic-bundle-endpoint.md"
+},
+{
+"task": "V1-RMD-268",
+"file": "plan/v1/remediation/V1-RMD-268-maintenance-jobs-and-retention-sweep.md"
+},
+{
+"task": "V1-RMD-271",
+"file": "plan/v1/remediation/V1-RMD-271-restore-drill-job-and-custom-dump-restore.md"
+}
+]
+},
+{
+"id": "B129",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-274",
+"file": "plan/v1/remediation/V1-RMD-274-waste-recording-http-surface.md"
+},
+{
+"task": "V1-RMD-278",
+"file": "plan/v1/remediation/V1-RMD-278-decision-unwired-parallel-services.md"
+},
+{
+"task": "V1-RMD-288",
+"file": "plan/v1/remediation/V1-RMD-288-outbox-dead-letter-visibility.md"
+},
+{
+"task": "V1-RMD-289",
+"file": "plan/v1/remediation/V1-RMD-289-help-request-scoped-delivery.md"
+},
+{
+"task": "V1-RMD-310",
+"file": "plan/v1/remediation/V1-RMD-310-atomic-portion-cancellation.md"
+},
+{
+"task": "V1-RMD-317",
+"file": "plan/v1/remediation/V1-RMD-317-held-course-ticket-never-ready.md"
+},
+{
+"task": "V1-RMD-322",
+"file": "plan/v1/remediation/V1-RMD-322-task-scope-enforce-on-push.md"
+},
+{
+"task": "V1-RMD-324",
+"file": "plan/v1/remediation/V1-RMD-324-relay-connector-status-staleness.md"
+},
+{
+"task": "V1-RMD-334",
+"file": "plan/v1/remediation/V1-RMD-334-relay-tunnel-cleanup-on-reprovision.md"
+}
+]
+},
+{
+"id": "B130",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-336",
+"file": "plan/v1/remediation/V1-RMD-336-github-actions-sha-pinning.md"
+},
+{
+"task": "V1-RMD-339",
+"file": "plan/v1/remediation/V1-RMD-339-physical-print-recovery-reprint-execution-wired.md"
+},
+{
+"task": "V1-RMD-341",
+"file": "plan/v1/remediation/V1-RMD-341-nav-hide-vs-in-module-lock-investigated.md"
+},
+{
+"task": "V1-RMD-345",
+"file": "plan/v1/remediation/V1-RMD-345-customerweb-error-region-aria-alert.md"
+},
+{
+"task": "V1-RMD-351",
+"file": "plan/v1/remediation/V1-RMD-351-maintenance-job-loop-resilience.md"
+},
+{
+"task": "V1-RMD-354",
+"file": "plan/v1/remediation/V1-RMD-354-cloudflared-graceful-shutdown.md"
+},
+{
+"task": "V1-RMD-359",
+"file": "plan/v1/remediation/V1-RMD-359-manual-card-decided-consistency-constraint-fix.md"
+},
+{
+"task": "V1-RMD-394",
+"file": "plan/v1/remediation/V1-RMD-394-ci-gate-restore.md"
+},
+{
+"task": "V1-RMD-396",
+"file": "plan/v1/remediation/V1-RMD-396-composition-test-factory-registered-consumers.md"
+}
+]
+},
+{
+"id": "B131",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-405",
+"file": "plan/v1/remediation/V1-RMD-405-staff-deactivation.md"
+},
+{
+"task": "V1-RMD-407",
+"file": "plan/v1/remediation/V1-RMD-407-delegation-creation-endpoint.md"
+},
+{
+"task": "V1-RMD-410",
+"file": "plan/v1/remediation/V1-RMD-410-discount-cannot-undercut-collected.md"
+},
+{
+"task": "V1-RMD-413",
+"file": "plan/v1/remediation/V1-RMD-413-split-design-adjusted-payable.md"
+},
+{
+"task": "V1-RMD-414",
+"file": "plan/v1/remediation/V1-RMD-414-recall-money-check-atomic.md"
+},
+{
+"task": "V1-RMD-426",
+"file": "plan/v1/remediation/V1-RMD-426-english-error-messages-turkish.md"
+},
+{
+"task": "V1-RMD-428",
+"file": "plan/v1/remediation/V1-RMD-428-ci-scope-step-untrusted-text-via-env.md"
+},
+{
+"task": "V1-RMD-430",
+"file": "plan/v1/remediation/V1-RMD-430-mutating-endpoint-idempotency-test.md"
+},
+{
+"task": "V1-RMD-431",
+"file": "plan/v1/remediation/V1-RMD-431-shared-api-error-handler.md"
+}
+]
+},
+{
+"id": "B132",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-433",
+"file": "plan/v1/remediation/V1-RMD-433-evidence-file-rule-alignment.md"
+},
+{
+"task": "V1-RMD-434",
+"file": "plan/v1/remediation/V1-RMD-434-renumber-master-layer-quality-tasks.md"
+},
+{
+"task": "V1-RMD-436",
+"file": "plan/v1/remediation/V1-RMD-436-account-charge-refused-without-credit-limit.md"
+},
+{
+"task": "V1-RMD-441",
+"file": "plan/v1/remediation/V1-RMD-441-start-v14-account-receipt-chain.md"
+},
+{
+"task": "V1-RMD-454",
+"file": "plan/v1/remediation/V1-RMD-454-task-scope-push-task-ids.md"
+},
+{
+"task": "V1-RMD-456",
+"file": "plan/v1/remediation/V1-RMD-456-role-user-listing-endpoints.md"
+},
+{
+"task": "V1-RMD-458",
+"file": "plan/v1/remediation/V1-RMD-458-stale-test-lazy-route-wait.md"
+},
+{
+"task": "V1-RMD-459",
+"file": "plan/v1/remediation/V1-RMD-459-management-shared-client-helpers.md"
+},
+{
+"task": "V1-RMD-477",
+"file": "plan/v1/remediation/V1-RMD-477-publish-products-with-optional-modifiers.md"
+}
+]
+},
+{
+"id": "B133",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-478",
+"file": "plan/v1/remediation/V1-RMD-478-seller-profile-idempotency-key.md"
+},
+{
+"task": "V1-RMD-486",
+"file": "plan/v1/remediation/V1-RMD-486-modifier-theoretical-consumption.md"
+},
+{
+"task": "V1-RMD-532",
+"file": "plan/v1/remediation/V1-RMD-532-test-image-pg-client-18.md"
+},
+{
+"task": "V1-RMD-540",
+"file": "plan/v1/remediation/V1-RMD-540-error-system-docker-proof.md"
+},
+{
+"task": "V1-RMD-550",
+"file": "plan/v1/remediation/V1-RMD-550-monitoring-decision-record.md"
+},
+{
+"task": "V1-RMD-556",
+"file": "plan/v1/remediation/V1-RMD-556-monitoring-load-proof.md"
+},
+{
+"task": "V1-RMD-557",
+"file": "plan/v1/remediation/V1-RMD-557-telegram-live-verification.md"
+},
+{
+"task": "V1-RMD-568",
+"file": "plan/v1/remediation/V1-RMD-568-interaction-trace-link.md"
+},
+{
+"task": "V1-RMD-569",
+"file": "plan/v1/remediation/V1-RMD-569-server-detector-heartbeats.md"
+}
+]
+},
+{
+"id": "B134",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-573",
+"file": "plan/v1/remediation/V1-RMD-573-dockerfile-apk-pin-refresh.md"
+},
+{
+"task": "V1-RMD-575",
+"file": "plan/v1/remediation/V1-RMD-575-observe-handled-5xx.md"
+},
+{
+"task": "V1-RMD-576",
+"file": "plan/v1/remediation/V1-RMD-576-api-image-tzdata.md"
+},
+{
+"task": "V1-RMD-577",
+"file": "plan/v1/remediation/V1-RMD-577-error-category-labels.md"
+},
+{
+"task": "V1-RMD-578",
+"file": "plan/v1/remediation/V1-RMD-578-timeline-explain-and-exception-route.md"
+},
+{
+"task": "V1-RMD-584",
+"file": "plan/v1/remediation/V1-RMD-584-research-notes.md"
+},
+{
+"task": "V1-RMD-586",
+"file": "plan/v1/remediation/V1-RMD-586-health-snapshot-staleness.md"
+},
+{
+"task": "V1-RMD-589",
+"file": "plan/v1/remediation/V1-RMD-589-printer-setup-and-profile.md"
+},
+{
+"task": "V1-RMD-590",
+"file": "plan/v1/remediation/V1-RMD-590-migration-manifest-and-printer-route-test.md"
+}
+]
+},
+{
+"id": "B135",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-592",
+"file": "plan/v1/remediation/V1-RMD-592-docker-end-to-end-proof.md"
+},
+{
+"task": "V1-RMD-593",
+"file": "plan/v1/remediation/V1-RMD-593-printer-form-field-messages.md"
+},
+{
+"task": "V1-RMD-594",
+"file": "plan/v1/remediation/V1-RMD-594-qa-programme-runbook.md"
+},
+{
+"task": "V1-RMD-659",
+"file": "plan/v1/remediation/V1-RMD-659-host-orchestration-edge-coverage.md"
+},
+{
+"task": "V1-RMD-661",
+"file": "plan/v1/remediation/V1-RMD-661-outbox-resilience.md"
+},
+{
+"task": "V1-RMD-663",
+"file": "plan/v1/remediation/V1-RMD-663-envelope-hardening-and-boundary-coverage.md"
+},
+{
+"task": "V1-RMD-667",
+"file": "plan/v1/remediation/V1-RMD-667-pin-lock-chain.md"
+},
+{
+"task": "V1-RMD-669",
+"file": "plan/v1/remediation/V1-RMD-669-decision-and-staff-screens.md"
+},
+{
+"task": "V1-RMD-670",
+"file": "plan/v1/remediation/V1-RMD-670-grant-amount-and-approver-rules.md"
+}
+]
+},
+{
+"id": "B136",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-679",
+"file": "plan/v1/remediation/V1-RMD-679-decision-screen-names.md"
+},
+{
+"task": "V1-RMD-680",
+"file": "plan/v1/remediation/V1-RMD-680-composition-test-denial-sink-decorator.md"
+},
+{
+"task": "V1-RMD-681",
+"file": "plan/v1/remediation/V1-RMD-681-server-end-to-end-client-error-test.md"
+},
+{
+"task": "V1-RMD-685",
+"file": "plan/v1/remediation/V1-RMD-685-business-logo-hardening.md"
+},
+{
+"task": "V1-RMD-688",
+"file": "plan/v1/remediation/V1-RMD-688-tunnel-route-isolation.md"
+},
+{
+"task": "V1-RMD-690",
+"file": "plan/v1/remediation/V1-RMD-690-customer-display-resilience-and-tests.md"
+},
+{
+"task": "V1-RMD-691",
+"file": "plan/v1/remediation/V1-RMD-691-push-notification-hardening.md"
+},
+{
+"task": "V1-RMD-695",
+"file": "plan/v1/remediation/V1-RMD-695-module-boundaries-and-composition.md"
+},
+{
+"task": "V1-RMD-698",
+"file": "plan/v1/remediation/V1-RMD-698-migration-line-endings-and-indexes.md"
+}
+]
+},
+{
+"id": "B137",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-700",
+"file": "plan/v1/remediation/V1-RMD-700-database-role-and-tls.md"
+},
+{
+"task": "V1-RMD-701",
+"file": "plan/v1/remediation/V1-RMD-701-terminal-binding.md"
+},
+{
+"task": "V1-RMD-703",
+"file": "plan/v1/remediation/V1-RMD-703-price-change-and-schedule.md"
+},
+{
+"task": "V1-RMD-705",
+"file": "plan/v1/remediation/V1-RMD-705-modifier-group-assignment-screen.md"
+},
+{
+"task": "V1-RMD-709",
+"file": "plan/v1/remediation/V1-RMD-709-product-details-edit.md"
+},
+{
+"task": "V1-RMD-728",
+"file": "plan/v1/remediation/V1-RMD-728-odeme-testi-ve-masa-onarimi.md"
+},
+{
+"task": "V1-RMD-729",
+"file": "plan/v1/remediation/V1-RMD-729-indirim-bahsis-sunucu.md"
+},
+{
+"task": "V1-RMD-730",
+"file": "plan/v1/remediation/V1-RMD-730-kdv-fis-ve-bolme-dogrulugu.md"
+},
+{
+"task": "V1-RMD-731",
+"file": "plan/v1/remediation/V1-RMD-731-ikram-degistirici-check.md"
+}
+]
+},
+{
+"id": "B138",
+"pri": 7,
+"tasks": [
+{
+"task": "V1-RMD-733",
+"file": "plan/v1/remediation/V1-RMD-733-hata-sozlesmesi-ve-oran-siniri.md"
+},
+{
+"task": "V11-GOV-001",
+"file": "plan/v1.1/governance/V11-GOV-001-migration-collision-fix-record.md"
+},
+{
+"task": "V11-GOV-002",
+"file": "plan/v1.1/governance/V11-GOV-002-module-registration-reopen-record.md"
+},
+{
+"task": "V11-GOV-003",
+"file": "plan/v1.1/governance/V11-GOV-003-module-registration-reseal-and-gate-closure.md"
+},
+{
+"task": "V11-RMD-001",
+"file": "plan/v1.1/remediation/V11-RMD-001-migration-id-collision-and-live-composition-wiring.md"
+},
+{
+"task": "V13-GOV-004",
+"file": "plan/v1.3/governance/V13-GOV-004-card-tip-out-of-scope-decision.md"
+},
+{
+"task": "V14-GOV-002",
+"file": "plan/v1.4/customer-data/V14-GOV-002-lift-v14-entry-gate-waiver.md"
+},
+{
+"task": "V14-RMD-001",
+"file": "plan/v1.4/customer-data/V14-RMD-001-anonymized-at-test-precision.md"
+},
+{
+"task": "V15-GOV-001",
+"file": "plan/v1.5/governance/V15-GOV-001-lift-gate-v15-entry-waiver.md"
+}
+]
+},
+{
+"id": "B139",
+"pri": 7,
+"tasks": [
+{
+"task": "V15-PER-001",
+"file": "plan/v1.5/performance/V15-PER-001-critical-load-tests.md"
+}
+]
+}
+]
