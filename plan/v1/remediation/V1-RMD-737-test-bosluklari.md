@@ -1,7 +1,7 @@
 # V1-RMD-737 - Billing test boşlukları (603 B005, B006, B037)
 
 - Task ID: V1-RMD-737
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
