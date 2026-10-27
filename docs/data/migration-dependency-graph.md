@@ -71,7 +71,6 @@ Layer 3 (FK to Layer 1-2):
   │ bills                       │
   │ bill_items                  │
   │ payments                    │
-  │ payment_allocations         │
   │ fiscal_documents            │
   │ kitchen_tickets             │
   │ kitchen_ticket_items        │
@@ -95,8 +94,16 @@ Layer 4 (FK to Layer 1-3):
   │ production_batches          │
   │ portion_reservations        │
   │ refund_ledger_entries       │
+  │ bill_allocations            │
+  │ bill_adjustments            │
+  │ payment_allocations         │
   └─────────────────────────────┘
 ```
+
+> Billing additions: `bill_allocations` (migration 020) and `bill_adjustments` (021) reference `bills` and
+> `bill_items`; `payment_allocations` (123) references `payments` and `bills`. Migration 032 adds composite
+> `(bill_id, bill_item_id)` FKs to `bill_allocations` and `bill_adjustments`. Migration 180 adds no table: it adds
+> `bills.cancellation_reason`, `bills.cancelled_by` and `bill_items.superseded_at`.
 
 ## 2. Migration Strategy
 

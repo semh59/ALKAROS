@@ -122,6 +122,11 @@ Deterministic semantics:
 
 ## Example contract 2 — `POST /api/v1/bills/{billId}/payments`
 
+> Illustrative shape of the standard. The live tender flow is
+> `POST /api/v1/terminals/{terminalId}/billing/bills/{billId}/tenders`; idempotency travels in the request body
+> (`IdempotencyKey`), not in a header, and a key reused for a different tender answers
+> `409 TENDER_IDEMPOTENCY_KEY_REUSED` (the billing split flow answers `IDEMPOTENCY_KEY_REUSED`).
+
 Request:
 
 ```http

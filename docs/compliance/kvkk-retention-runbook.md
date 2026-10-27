@@ -89,6 +89,14 @@ The reason (and optional note) of a void or complimentary item is stored in
 note, which is the exposure. Scrubbing it is a
 production change tracked separately, not done by documentation.
 
+The same applies to these free-text columns in the billing and refund schemas; the retention job does not
+scrub them either, because no code under `src/Modules/Privacy` references them:
+
+- `billing.bill_items.notes`
+- `billing.bill_adjustments.notes`
+- `billing.bills.cancellation_reason`
+- `payments.refund_requests.reason` and `decision_note`
+
 ## What it never touches (legal retention)
 
 Per the `V0-CMP-003` disposal column, these are **retain (legal)** and are out

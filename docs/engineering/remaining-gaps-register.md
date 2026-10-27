@@ -19,7 +19,7 @@ düşmesi ve yazıcı/mutfak hata yolları elle okundu. Hiçbir bulgu ağı ger�
 | Yardım çağrısı `Clients.All` ile herkese yayınlanıyor | kodda okundu | `V1-RMD-289` |
 | Cashier ve WaiterPwa E2E paketleri CI'da yok | doğrulandı (iş akışı dosyası) | `V1-RMD-290` |
 | PosTerminal ve statik Kasa sayfalarında oturum düşmesi tutarsız işleniyor | kodda okundu | `V1-RMD-291` |
-| İndirim, bahşiş, düzeltme, özel hesap uç noktalarının istemcisi yok | betikle doğrulandı | `V1-RMD-292` |
+| İndirim ve bahşiş istemcisi var (Cashier `split-payment.js` submitDiscount/submitTip). Bölme tasarımı (`split-design`) uç noktalarının Cashier istemcisi yok | kodda yeniden okundu | `V1-RMD-292` |
 | Yazdırma işleri ve denetim uç noktalarının istemcisi yok, yazıcı hatası personele görünmüyor | betikle doğrulandı | `V1-RMD-293` |
 | Ödeme, nakit tahsilat ve indirimden sonra müşteri ekranına `SnapshotChanged` gitmiyor gibi | kodda okundu, yerelde doğrulanmadı | `V1-RMD-294` |
 | Çevrimdışı yetki mutabakatı uç noktasının istemcisi yok | betikle doğrulandı | `V1-RMD-295` |
@@ -40,10 +40,10 @@ Bu maddeler önceki oturumun derlemesinden alındı ve bu geçişte yeniden doğ
 | Saklama süpürmesi üreticileri | Çalıştırıcı var, kayıt üreten veri görevleri yok (V14 bağımlı) |
 | WAL gönderimi ve RPO | Şifreli dış yedek var; sürekli arşiv yok |
 | Ödeme ile mali belge bağlantısı | `Paid` olan hesabın mali belgeye bağlanması |
-| `PartiallyPaid` hesap durumu | Kısmi ödeme bugün ayrı bir durum değil |
+| `PartiallyPaid` hesap durumu | Kısmi ödeme ayrı bir durum olarak yazılmıyor: `PartiallyPaid` `Bill.cs` ve DB CHECK'inde tanımlı, ama hiçbir kod ona geçmiyor |
 | Bekleme süresi uyarısı | Kasada uzun süre bekleyen hesap için |
 | Geri çağırmada birleştirme | Geri çağrılan hesap yeni taslakla birleşemiyor |
-| Kalem bazlı bölme | Tutar bazlı bölme var |
+| Kalem bazlı bölme | Sunucuda var (`PUT .../split-design/items` → `SaveItemsAsync`, `SplitEngine.CreateItemSplit`); Cashier istemcisinde `split-design` çağrısı yok. Tutar bazlı bölme de var |
 | PosTerminal Masalar ekranında ham GUID | Kullanıcıya görünen Türkçe ad yerine kimlik |
 | `IEftTenderHandler` kullanılmıyor | Kasıtlı mı bilinmiyor |
 | NFC eşzamanlılık testi kararsız | Bilinen kararsızlık |
