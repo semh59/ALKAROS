@@ -1,8 +1,8 @@
 # V1-RMD-729 - İndirim ve bahşiş sunucu sertleştirme (603 B006, B008–B011, B014, B024)
 
 - Task ID: V1-RMD-729
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
 
