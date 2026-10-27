@@ -1,8 +1,8 @@
 # V1-RMD-728 - Kırmızı ödeme testi ve masa onarımı (603 B003, B038, N1, N2)
 
 - Task ID: V1-RMD-728
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
 
