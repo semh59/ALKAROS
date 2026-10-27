@@ -1,0 +1,11 @@
+M1-tender-key-cleared-on-5xx KILLED restored=true
+M2-bootstrap-any-failure-to-login KILLED restored=true
+M3-no-timeout KILLED restored=true
+M4-last-share-not-remainder KILLED restored=true
+M5-no-next-share-after-tender KILLED restored=true
+M6-no-manager-wording KILLED restored=true
+M7-cash-session-no-loaderror KILLED restored=true
+M8-accounts-bootstrap-500-to-login KILLED restored=true
+M9-focus-ring-removed KILLED restored=true
+M10-cash-time-device-zone KILLED restored=true
+DONE

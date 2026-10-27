@@ -87,6 +87,8 @@
     return 'İstek tamamlanamadı.';
   }
 
+  var TIME_FORMAT = { hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Istanbul' };
+
   function api(path, options) {
     options = options || {};
     return fetch(path, {
@@ -94,6 +96,7 @@
       credentials: 'include',
       headers: options.body ? { 'Content-Type': 'application/json' } : undefined,
       body: options.body ? JSON.stringify(options.body) : undefined,
+      signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
     }).then(function (response) {
       // V1-RMD-291: one place catches a dropped session, from ANY call, not
       // just the bootstrap check - before this a 401 from a mid-use action
@@ -146,7 +149,12 @@
     state.terminalId = savedTerminalId();
     api('/api/v1/auth/session/current').then(function (result) {
       if (!result.ok) {
-        state.phase = 'login';
+        if (result.status === 401 || result.status === 403) {
+          state.phase = 'login';
+        } else {
+          state.error = describeHttpFailure(result.status, result.body);
+          state.phase = 'loadError';
+        }
         render();
         return;
       }
@@ -158,7 +166,8 @@
       state.displayName = result.body.displayName;
       loadActiveSession();
     }).catch(function () {
-      state.phase = 'login';
+      state.error = 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.';
+      state.phase = 'loadError';
       render();
     });
   }
@@ -262,7 +271,7 @@
       state.busy = false;
       // Any real server response (success or a definitive rejection) means this key has already been
       // consumed/decided - only a network failure (the catch below) keeps it for a retry.
-      state.cashMovementIdempotencyKey = null;
+      if (result.status < 500) state.cashMovementIdempotencyKey = null;
       if (!result.ok) {
         state.error = describeHttpFailure(result.status, result.body);
         render();
@@ -492,7 +501,7 @@
       '<div class="cs-stat"><div class="cs-stat-label">Açılış Tutarı</div>' +
       '<div class="cs-stat-value">' + formatMoney(s.openingBalance) + '</div></div>' +
       '<div class="cs-stat"><div class="cs-stat-label">Açılış Saati</div>' +
-      '<div class="cs-stat-value">' + new Date(s.openedAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) + '</div></div>' +
+      '<div class="cs-stat-value">' + new Date(s.openedAt).toLocaleTimeString('tr-TR', TIME_FORMAT) + '</div></div>' +
       '</div>' +
       '<div class="cs-divider"></div>' +
       '<div class="cs-row">' +
@@ -708,8 +717,8 @@
       '<p class="cs-subtitle">Vardiya özeti kaydedildi. Bu oturum artık salt-okunur.</p></div>' +
       '<div style="text-align:left;width:100%">' +
       '<div class="cs-summary-row"><span>Açılış · Kapanış</span><span class="value">' +
-      new Date(s.openedAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) + ' – ' +
-      (s.closedAt ? new Date(s.closedAt).toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' }) : '—') +
+      new Date(s.openedAt).toLocaleTimeString('tr-TR', TIME_FORMAT) + ' – ' +
+      (s.closedAt ? new Date(s.closedAt).toLocaleTimeString('tr-TR', TIME_FORMAT) : '—') +
       '</span></div>' +
       '<div class="cs-divider"></div>' +
       '<div class="cs-summary-row"><span>Sayılan</span><span class="value">' + formatMoney(state.lastCountedAmount) + '</span></div>' +
@@ -736,6 +745,16 @@
   // the SAME screen (leave focus exactly where the cashier put it).
   var lastFocusedPhase = null;
 
+  function renderLoadError() {
+    app.innerHTML =
+      '<div class="sp-card sp-center-text">' +
+      '<h1 class="sp-title">Kasa Bilgisi Okunamadı</h1>' +
+      '<div class="sp-alert sp-alert-danger" role="alert"><div class="sp-alert-body">' + escapeHtml(state.error) + '</div></div>' +
+      '<button class="sp-btn sp-btn-primary" type="button" id="cs-reload">Tekrar dene</button>' +
+      '</div>';
+    document.getElementById('cs-reload').addEventListener('click', function () { window.location.reload(); });
+  }
+
   function render() {
     if (state.phase === 'checking') {
       app.innerHTML = '<div class="cs-loading">Oturum kontrol ediliyor…</div>';
@@ -744,6 +763,7 @@
     app.setAttribute('aria-busy', state.busy ? 'true' : 'false');
     switch (state.phase) {
       case 'login': renderLogin(); break;
+      case 'loadError': renderLoadError(); break;
       case 'noSession': renderNoSession(); break;
       case 'conflict': renderConflict(); break;
       case 'open': renderOpen(); break;

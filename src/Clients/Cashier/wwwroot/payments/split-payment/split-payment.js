@@ -24,6 +24,7 @@
     cashSessionOpen: false,
     selectedMethod: 'Cash',
     splitCount: 2,
+    splitLeft: 0,
     amountDraft: '0.00',
     noteDraft: '',
     resolveReason: '',
@@ -129,6 +130,7 @@
       credentials: 'include',
       headers: options.body ? Object.assign({ 'Content-Type': 'application/json' }, options.headers) : undefined,
       body: options.body ? JSON.stringify(options.body) : undefined,
+      signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
     }).then(function (response) {
       // V1-RMD-291: one place catches a dropped session, from ANY call, not
       // just the bootstrap check - before this a 401 from a mid-use action
@@ -185,11 +187,23 @@
   // person's action anywhere else in the system can change what this screen should show with no
   // action from whoever is looking at it.
   var pendingConfirmationPollTimer = null;
+  // The poll redraws the whole page; put the caret back so a cashier typing a note is not thrown out of the field.
+  function renderKeepingFocus() {
+    var active = document.activeElement;
+    var id = active && app.contains(active) ? active.id : '';
+    var start = id && typeof active.selectionStart === 'number' ? active.selectionStart : null;
+    var end = id && typeof active.selectionEnd === 'number' ? active.selectionEnd : null;
+    render();
+    var again = id ? document.getElementById(id) : null;
+    if (!again) return;
+    again.focus();
+    if (start !== null && again.setSelectionRange) again.setSelectionRange(start, end);
+  }
   function ensurePendingConfirmationPoll() {
     var pending = state.summary && state.summary.unsettledPayment && state.summary.unsettledPayment.pendingConfirmation;
     if (pending && !pendingConfirmationPollTimer) {
       pendingConfirmationPollTimer = window.setInterval(function () {
-        refreshSummary().then(render);
+        refreshSummary().then(renderKeepingFocus);
       }, 5000);
     } else if (!pending && pendingConfirmationPollTimer) {
       window.clearInterval(pendingConfirmationPollTimer);
@@ -208,7 +222,12 @@
     }
     api('/api/v1/auth/session/current').then(function (result) {
       if (!result.ok) {
-        state.phase = 'login';
+        if (result.status === 401 || result.status === 403) {
+          state.phase = 'login';
+        } else {
+          state.error = describeHttpFailure(result.status, result.body);
+          state.phase = 'loadError';
+        }
         render();
         return;
       }
@@ -216,7 +235,8 @@
       state.userId = result.body.userId || null;
       loadEverything();
     }).catch(function () {
-      state.phase = 'login';
+      state.error = 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.';
+      state.phase = 'loadError';
       render();
     });
   }
@@ -313,10 +333,15 @@
     });
   }
 
+  function nextShare() {
+    if (!(state.splitLeft > 1)) return remainingAmount();
+    return Math.round((remainingAmount() / state.splitLeft) * 100) / 100;
+  }
+
   function submitEqualSplit() {
     var count = Math.max(2, Math.round(Number(state.splitCount) || 2));
-    var perLine = Math.round((remainingAmount() / count) * 100) / 100;
-    state.amountDraft = perLine.toFixed(2);
+    state.splitLeft = count;
+    state.amountDraft = nextShare().toFixed(2);
     // V1-RMD-314: a recalculated split amount is a genuinely different tender attempt.
     state.tenderIdempotencyKey = null;
     render();
@@ -447,7 +472,7 @@
       state.discountBusy = false;
       // V1-RMD-314: any real server response (success OR a definitive rejection) means this key has
       // already been consumed/decided - only a network failure (the catch below) keeps it for a retry.
-      state.discountIdempotencyKey = null;
+      if (result.status < 500) state.discountIdempotencyKey = null;
       if (!result.ok) {
         var code = result.body && result.body.error && result.body.error.code;
         state.discountError = code === 'GRANT_DENIED'
@@ -500,7 +525,7 @@
       state.tipBusy = false;
       // V1-RMD-314: any real server response means this key has already been consumed/decided - only a
       // network failure (the catch below) keeps it for a retry.
-      state.tipIdempotencyKey = null;
+      if (result.status < 500) state.tipIdempotencyKey = null;
       if (!result.ok) {
         // FORBIDDEN and FEATURE_DISABLED already carry a correct Turkish message from the server
         // (BillingSplitExceptionFilter's own Map) - no client-side override needed here, unlike discount's
@@ -621,7 +646,7 @@
       state.busy = false;
       // V1-RMD-314: any real server response (success OR a definitive rejection) means this key has
       // already been consumed/decided - only a network failure (the catch below) keeps it for a retry.
-      state.tenderIdempotencyKey = null;
+      if (result.status < 500) state.tenderIdempotencyKey = null;
       if (!result.ok) {
         state.error = describeHttpFailure(result.status, result.body);
         // A concurrently-created unresolved Payment (e.g. another tab, or
@@ -650,6 +675,7 @@
       state.tenderedDraft = '';
       state.noteDraft = '';
       state.eftConfirmed = false;
+      if (state.splitLeft > 0) state.splitLeft -= 1;
       if (result.body.outcome === 'RequiresReconciliation') {
         // Bilinmeyen durum kilidi: bu satır onaylanana kadar bu sekmede
         // hesaba yeni bir tahsilat eklenemez - mükerrer tahsilat riskini
@@ -658,7 +684,10 @@
         state.locked = true;
         return refreshSummary().then(render);
       }
-      return refreshSummary().then(render);
+      return refreshSummary().then(function () {
+        state.amountDraft = nextShare().toFixed(2);
+        render();
+      });
     }).catch(function () {
       state.busy = false;
       setError('Sunucuya ulaşılamadı. Tahsilat gerçekleşmiş olabilir; hesabı yenileyip kontrol edin.');
@@ -1380,7 +1409,7 @@
   }
 
   function receiptHtml(receipt) {
-    var opened = receipt.openedAt ? new Date(receipt.openedAt).toLocaleString('tr-TR') : '';
+    var opened = receipt.openedAt ? new Date(receipt.openedAt).toLocaleString('tr-TR', { timeZone: 'Europe/Istanbul' }) : '';
     return (
       '<h1>Bilgi Fişi</h1>' +
       '<p class="sp-receipt-note">Bu belge mali fiş değildir.</p>' +
@@ -1483,8 +1512,9 @@
       (state.locked
         ? '<div class="sp-alert sp-alert-warning" role="alert"><span class="sp-alert-icon">!</span>' +
           '<div><div class="sp-alert-title">Manuel mutabakat gerekiyor</div>' +
-          '<div class="sp-alert-body">Son kart tahsilatı otomatik onaylanamadı. Bu hesaba yeni bir tahsilat ' +
-          'eklemeden önce mutabakat tamamlanmalı.</div></div></div>' +
+          '<div class="sp-alert-body">Son kart tahsilatı otomatik onaylanamadı. ' +
+          'Terminal ekranında onay görmediyseniz tahsil edilmiş sayılmaz; bu hesaba yeni bir tahsilat ' +
+          'eklemeden önce mutabakat tamamlanmalı. Mutabakatı yalnızca müdür tamamlayabilir; müdüre yönlendirin.</div></div></div>' +
           renderResolution()
         : '') +
       renderChangeDue() +

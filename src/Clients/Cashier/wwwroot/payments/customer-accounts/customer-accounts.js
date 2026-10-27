@@ -88,6 +88,7 @@
       credentials: 'include',
       headers: options.body ? { 'Content-Type': 'application/json' } : undefined,
       body: options.body ? JSON.stringify(options.body) : undefined,
+      signal: typeof AbortSignal !== 'undefined' && AbortSignal.timeout ? AbortSignal.timeout(15000) : undefined,
     }).then(function (response) {
       if (response.status === 204) return { ok: true, status: response.status, body: null };
       return response.json().catch(function () { return null; }).then(function (body) {
@@ -110,7 +111,16 @@
 
   function bootstrap() {
     api('/api/v1/auth/session/current').then(function (result) {
-      if (!result.ok) { state.phase = 'login'; render(); return; }
+      if (!result.ok) {
+        if (result.status === 401 || result.status === 403) {
+          state.phase = 'login';
+        } else {
+          state.error = describeHttpFailure(result.status, result.body);
+          state.phase = 'loadError';
+        }
+        render();
+        return;
+      }
       state.terminalId = result.body.terminalId;
       return Promise.all([
         api(base() + '/cash-sessions/active'),
@@ -120,12 +130,22 @@
         state.phase = 'ready';
         render();
       });
-    }).catch(function () { state.phase = 'login'; render(); });
+    }).catch(function () {
+      state.error = 'Sunucuya ulaşılamadı. Bağlantınızı kontrol edip yeniden deneyin.';
+      state.phase = 'loadError';
+      render();
+    });
   }
+
+  // A slower answer to an older search or an older customer must not overwrite what the cashier asked for last.
+  var customersSeq = 0;
+  var statementSeq = 0;
 
   function loadCustomers() {
     var query = state.search.trim() ? '?search=' + encodeURIComponent(state.search.trim()) : '';
+    var seq = ++customersSeq;
     return api(base() + '/customers' + query).then(function (result) {
+      if (seq !== customersSeq) return;
       if (!result.ok) { fail(result); return; }
       state.customers = result.body;
       render();
@@ -140,7 +160,9 @@
     state.receiptKey = null;
     state.error = null;
     state.notice = notice || null;
+    var seq = ++statementSeq;
     return api(base() + '/customers/' + customerId + '/statement').then(function (result) {
+      if (seq !== statementSeq) return;
       if (!result.ok) { fail(result); return; }
       state.statement = result.body;
       state.limitDraft = String(result.body.customer.creditLimit);
@@ -193,7 +215,7 @@
       body: { CustomerId: state.selectedId, Amount: amount, IdempotencyKey: state.receiptKey },
     }).then(function (result) {
       state.busy = false;
-      state.receiptKey = null;
+      if (result.status < 500) state.receiptKey = null;
       if (!result.ok) { fail(result); return; }
       var receipt = result.body;
       return Promise.all([loadCustomers(), openCustomer(state.selectedId)]).then(function () {
@@ -394,10 +416,21 @@
     });
   }
 
+  function renderLoadError() {
+    app.innerHTML =
+      '<div class="sp-card sp-center-text">' +
+      '<h1 class="sp-title">Cari Hesaplar Okunamadı</h1>' +
+      '<div class="sp-alert sp-alert-danger" role="alert"><div class="sp-alert-body">' + escapeHtml(state.error) + '</div></div>' +
+      '<button class="sp-btn sp-btn-primary" type="button" id="ca-reload">Tekrar dene</button>' +
+      '</div>';
+    document.getElementById('ca-reload').addEventListener('click', function () { window.location.reload(); });
+  }
+
   function render() {
     app.setAttribute('aria-busy', state.busy ? 'true' : 'false');
     if (state.phase === 'checking') { app.innerHTML = '<div class="sp-loading">Cari hesaplar yükleniyor…</div>'; return; }
     if (state.phase === 'login') { renderLogin(); return; }
+    if (state.phase === 'loadError') { renderLoadError(); return; }
     renderReady();
   }
 

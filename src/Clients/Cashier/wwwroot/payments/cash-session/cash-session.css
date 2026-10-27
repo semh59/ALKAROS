@@ -120,7 +120,7 @@ body {
   padding: 0;
   min-width: 0;
 }
-.cs-amount-field input:focus { outline: none; }
+.cs-amount-field:focus-within { outline: 3px solid var(--color-brand); outline-offset: 2px; }
 .cs-amount-suffix { font-size: 18px; font-weight: 700; color: var(--color-text-muted); }
 
 .cs-btn {
