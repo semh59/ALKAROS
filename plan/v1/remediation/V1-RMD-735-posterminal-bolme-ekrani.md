@@ -33,6 +33,7 @@ V1-RMD-603 B034, B035: BillSplitWorkspace 409 sonrası kurtarma, boş hücre, bo
 
 ## Out of scope
 
+- Bilgi fişi uç noktası (`DualScreenApplication.Receipt.cs`) ve KDV dökümü V1-RMD-730 kapsamındadır; bu görev ona dokunmaz.
 - Ürün kararı gerektiren kalemler (PO soruları) sorulmadan değiştirilmez.
 - Bu görevin başlığında adı geçmeyen bulguların düzeltmesi.
 

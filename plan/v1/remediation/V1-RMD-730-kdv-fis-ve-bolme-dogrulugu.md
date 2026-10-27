@@ -24,6 +24,8 @@ V1-RMD-603 B012, B013, B025: indirim KDV'si karışık oranda tek ağırlıklı 
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/**
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/Cashier/wwwroot/payments/split-payment/**
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Clients/StaticApps/**
+- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/DualScreen/DualScreenApplication.Receipt.cs
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs
 - `database/migrations/V1/V1-RMD-730/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): database/MigrationComposition/**
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Composition/Migrations/MigrationManifest.cs
