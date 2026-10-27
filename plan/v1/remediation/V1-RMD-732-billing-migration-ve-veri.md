@@ -1,8 +1,8 @@
 # V1-RMD-732 - Billing migration ve veri bütünlüğü (603 B021, B022, B031)
 
 - Task ID: V1-RMD-732
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
 - Work type: implementation
 - Surface state: Planned
 
