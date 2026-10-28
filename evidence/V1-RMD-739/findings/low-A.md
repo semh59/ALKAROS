@@ -1,0 +1,242 @@
+# Düşük bulgular A (B001-B070)
+Toplam: 240
+- B001 | V0-DOM-002 | [Düşük] md güncel değil: "order_item_id global unique" ve "(bill_id, order_item_id) unique" deniyor; HEAD'de tekillik `WHERE superseded_at IS NULL` kısmi indeks (database/migrations/V1/V1-RMD-506/180-bill-cancellation.up.sql:12-14), bileşik unique `(bill_id, bill_item_id)` (V1-BIL-004/032-billing-co
+- B001 | V0-DOM-003 | payment_reversals append-only, amount>0, idempotency unique, trigger üst sınır (database/migrations/V1/V1-RMD-507/182-payment-reversals.up.sql:3-40). Not (Düşük): trigger sınırı `approved_amount`, md `payment.amount` diyor; kart uyarısı, bulgu değil.
+- B002 | V0-GOV-064 | [Düşük] evidence/V0-GOV-064/ yok (Owned surface'ta listeli); kabul komut çıktıları kanıtsız. AUDIT_REPORT.md sonradan yenilenmiş, "değişmedi" maddesi artık denetlenemez.
+- B002 | V1-BIL-002 | [Düşük] Eşit bölmede tutar kalıntısı son kişiye yığılıyor (SplitEngine.cs:50-53; en çok n-1 kuruş), vergi ise dağıtılıyor. Yasal sorun değil.
+- B002 | V1-BIL-004 | [Düşük] evidence/V1-BIL-004/verification.txt elle yazılmış özet; çıkış kodu yok, kabuldeki ManifestTests projesi adı (ALKAROS.Host.MigrationComposition.Manifest.Tests) yerine "ALKAROS.Host.Tests" yazılmış, UP/DOWN çalıştırma günlüğü yok. Manifest girdisi order.json:279 mevcut.
+- B002 | V1-BIL-004 | [Düşük] composite FK'lar ON DELETE CASCADE: kalem silinince denetimli indirim satırı da siliniyor (032 up:21,33).
+- B002 | V1-BIL-005 | [Düşük] Md bugünkü koda uymuyor: "SubjectServingUserId: null / own-check yok" (md "Bilinen sınır") oysa kod order.ServingUserId geçiriyor (:688) ve testler own-check'i doğruluyor (HttpTests.cs:266,287); "7/7" testi bugün 21. evidence/V1-BIL-005/ yok.
+- B002 | V1-CSH-001 | [Düşük] ValidateCanStartCount cashierUserId'yi kullanmıyor (CSH-INV-02 sahiplik burada denetlenmiyor). Doc §7 "persistence V1.3'te" ifadesi eski (SessionLifecycle/TransactionLedger/TenderHandler mevcut); kod yorumları "section 5" diyor, durum makinesi §3.
+- B002 | V1-CUI-002 | [Düşük] Sayfa yenilenirse pendingDispatch kaybolur, yeni id ile ikinci sipariş açılabilir (idempotency yalnız bellekte).
+- B003 | V1-CUI-004 | [Düşük] Testler yalnız dize varlığı (`"parkCurrentTicket" in app_code`, test_cashier_frontend.py:48-86): park/recall davranışı doğrulanmıyor; davranışı E2E 20-parked-ticket-recall-confirm kapatıyor.
+- B003 | V1-CUI-006 | [Düşük] md "TableRoute `canManage={false}`" der; kod `canManage reservationOnly` (ReservationStation.tsx son satırlar) - md bugünkü koda uymuyor.
+- B003 | V1-CUI-006 | [Düşük] Giriş hatasında ham `reason.message` ekrana basılıyor (ReservationStation.tsx login catch) - UI_STYLE_GUIDE'a göre Türkçe sözlükten geçmeli (sunucu Türkçe mesaj döndüğü sürece pratik risk düşük).
+- B003 | V1-CUI-007 | [Düşük] `docs/engineering/kasa-faz0-redesign-requirements.md` §7: 008/009 hâlâ "(Planned)"; ikisi Done. Karar (Approver Semih, 2026-09-16, reddedilen alternatif §6) eksiksiz; evidence/V1-CUI-007 yok (kod değişikliği yok, kabul belge içeriği). G: İŞ KURALI (PO) + TEKNİK, tutarlı.
+- B003 | V1-CUI-008 | [Düşük] Faz 0 token geçişi uygulanmış (cashier-app.css:10-33; eski --bg-/--text- token yok) ama md "ham hex taşındı" derken `.skip-link` hâlâ `#142b35`/`#ff7d49` (cashier-app.css:752-753) ve `#f4f8fb/#ffffff` sabitleri var; palet dışı.
+- B003 | V1-CUI-010 | [Düşük] Test yalnız dize varlığı (test_cashier_remaining_count.py: `"renderStockBadge(prod.remainingCount)" in app_js`); davranış (null=rozet yok, <5 is-low) sınanmıyor.
+- B003 | V1-CUI-011 | [Düşük] md "4 senaryo" der; tests/E2E/Cashier bugün 30 spec içeriyor (kapsam büyümüş) - md/README güncel değil.
+- B004 | V1-GOV-017 | [Düşük] V1-GOV-019 kabulü "V1-GOV-017/018 Blocked kayıtları değişmeden kalır" diyor; HEAD'de ikisi de Status: Done ve blocker bölümü yok (V1-GOV-017-...md:4) - md'ler arası çelişki. Karar docs/product/V1_DESKTOP_POS_AND_CONTAINER_RELEASE_DECISION_2026-08-28.md var; RMD-026..032 hepsi Done. evidence/
+- B004 | V1-GOV-018 | [Düşük] Aynı çelişki (Done vs GOV-019'un Blocked iddiası); kanıt klasörü yok. Owned surface devri sonradan GOV-019 ile yeniden yapılmış (historical yol adları farklı), yani 018 tek başına çalışmamış; md bunu belirtmiyor.
+- B004 | V1-GOV-038 | RMD-068..073 ve GOV-039 Done. [Düşük] evidence/V1-GOV-038 yok (governance, kanıt yok yazıldı).
+- B004 | V1-GOV-040 | [Düşük] Hedef/kapsam RMD-078 (alan bazlı masa birleştirme) planlıyor; RMD-078 NotApplicable (PO:2026-08-31 kararı, tablo şemasında serbest metin yok) - GOV-040 md'si bayat. evidence/V1-GOV-040 yok.
+- B005 | V1-IAM-003 | [Düşük] ReconnectAsync'in src altında üretim çağıranı yok (grep: yalnız servis/arayüz); izin listesinde de yok. Reconnect işlem listesi sınırsız (PostgresDeviceSessionRepository.cs unnest, üst sınır yok) - çağıran bağlanınca sınır konmalı.
+- B005 | V1-IAM-024 | H [Düşük]: md "PhaseBMax 049" ve test sayıları diyor; bugün PhaseBMax=209 (MigrationManifest.cs:40). Tarihsel sayılar, kod doğru.
+- B005 | V1-ORD-005 | H [Düşük]: md'deki inline catch/IsManagerAuthorized anlatımı V1-RMD-105/127 sonrası değişti; DualScreenStore kaydı vb. doğru.
+- B005 | V1-RMD-001 | H [Düşük]: md Owned surface'te silinmiş yolları sahip gösteriyor; plan-audit geçiyor, ama okuyan yanıltılır.
+- B006 | V1-RMD-002 | Not (Düşük): ticket insert hatasında sipariş rollback'ini doğrudan sınayan test bulunamadı (iki desenle arandı). F: evidence/V1-RMD-002/verification.txt çıkış kodlu, 1007 test, tarihsel.
+- B006 | V1-RMD-035 | [Düşük] Kabul "iptal edilen eşzamanlı istek sonrası idempotency" - IdempotencyKeyStore V1-RMD-134 ile silindi (commit 6b54f9ae, ölü kütüphane); md ve evidence/V1-RMD-035/verification.md bunu hâlâ iddia ediyor (H).
+- B006 | V1-RMD-035 | [Düşük] DualScreenStore indirim matematiği artık Order aggregate'ine taşındı (DualScreenStore.cs:358-400); md/evidence'ın "net_amount = round(...)" ifadesi güncel değil (H).
+- B006 | V1-RMD-040 | [Düşük] F: evidence/V1-RMD-040/verification.md 11 satır anlatı, çıkış kodu/test sayısı yok; kapanış commit'i (9dc409c4) yalnız md durum satırını değiştirdi. İş başka commit/görevlerde (050/052).
+- B008 | V1-RMD-100 | Salt doküman: table-reservation-policy.md:24,57-85 Amendment + Superseded note, V1-TBL-004:34-35 uzlaştırılmış. G: İŞ KURALI (Semih 2026-09-03/04, alıntı md'de). Not (Düşük): policy:24 ve :64 hâlâ `pos.cashier.mutate` diyor (kod adı tables.reserve); :79-83 notuyla açıklanmış.
+- B008 | V1-RMD-116 | Not (Düşük): acceptance'taki "13 ihlal" consistency-audit sonucu o günün durumu; bugün doğrulanmadı.
+- B009 | V1-RMD-131 | [Düşük] H: md "MenuManagerEndpointFilter Türkçe mesaj" diyor; mesajlar artık ApiErrorCatalog.cs:162 alanında.
+- B009 | V1-RMD-133 | [Düşük] ProductionBatchService.CompleteBatchAsync HTTP'den ve Host'tan çağrılmıyor (src/tests dışı çağıran yok), md "ayrı karar" diyor ama bunu izleyen görev yok - ölü/çift yol borcu açık.
+- B009 | V1-RMD-133 | [Düşük] /complete uç noktası InProgress ön kontrolünü transaction dışında yapıyor (ProductionManagementEndpoints.cs:~125); aynı partiye ikinci istek servisin idempotent WasAlreadyExecuted yoluna hiç ulaşmaz, 409 INVALID_TRANSITION döner (servis tarafı FOR UPDATE ile güvenli, çifte stok düşümü yok: P
+- B009 | V1-RMD-133 | [Düşük] Aynı stok kalemi reçetede iki satırsa yeterlilik kontrolü satır başına, kümülatif değil (ProductionStockEffectService.cs:229-262).
+- B009 | V1-RMD-135 | [Düşük] H: md SQL'i "status IN Draft/Active" diye anlatıyor, bugünkü sorgu merge/sent-check de içeriyor.
+- B009 | V1-RMD-144 | [Düşük] H: md "modifier stok tüketmiyor" diyor; kod artık ConsumeModifiersAsync çağırıyor (OrderStockConsumptionService.cs:196). C: kalem başına DB sorgusu döngüde (:149-153), kalem sayısıyla sınırlı.
+- B009 | V1-RMD-157 | [Düşük] C: ON CONFLICT yalnız table_id; aynı table_number 'KASA-1' başka id ile varsa unique ihlali (nadir). D: kasa JS için ayrı test paketi md'de yok demiş; cashier-app.test.js var ama release çağrısı kapsamı doğrulanmadı.
+- B009 | V1-RMD-191 | [Düşük] C: mevcut canlı veride yetim kullanıcı kimliği varsa ALTER başarısız olur; önkontrol/NOT VALID yok (yeni kurulumda sorun değil).
+- B010 | V1-RMD-212 | [Düşük] Md In scope 3 "yük 0 ise yalnız isim" der; kod 0 için de "(0 masa)" yazar (cashier-app.js:496-497, typeof load === 'number').
+- B010 | V1-RMD-212 | [Düşük] Sunucu testi yalnız ActiveLoad==0 doğrular (OrderManagementTableDraftHttpTests.cs:2013); sıfırdan büyük sayım hiçbir testte yok, LEFT JOIN/FILTER mutasyona açık.
+- B010 | V1-RMD-227 | [Düşük] Test yalnız kaynak metni arar (test_cashier_catalog_field_mapping.py); davranışsal fiyat/kategori testi yok. F: evidence/V1-RMD-227 yok, görev ID'li commit yok; md'deki 6/6 doğrulanamadı.
+- B010 | V1-RMD-228 | [Düşük] H: md "orderItem.NetAmount + DiscountAmount" der, kod GrossAmount + DiscountAmount (BillItem.cs:168-170).
+- B010 | V1-RMD-237 | Audit olayı artık ayrı çağrı değil, indirim ile aynı işlemde yazılır (BillingSplitStore.cs:170-189, commit öncesi); başarısız audit indirimi geri alır (test BillingSplitHttpTests ~699). Md "ApplyDiscountAsync döndükten sonra" der: [Düşük] H bayat. Void/comp kapsam dışı (md'de açık).
+- B011 | V1-RMD-241 | [Düşük] Replay karşılaştırması Notes alanını katmıyor (CashSession.cs:286) - yalnız tutar/yön.
+- B011 | V1-RMD-253 | [Düşük] Hata toast'ı 6 sn'de kendiliğinden kapanıyor (cashier-app.js:270); "Sipariş iletilmiş olabilir" gibi kritik mesaj kaçırılabilir; md "foundations §5.3" yalnız başarıyı onaylıyor, hata için karar doğrulanamadı (PO kararı gerekebilir).
+- B011 | V1-RMD-277 | [Düşük] RotateAsync create+revoke tek işlemde değil (SessionRotationService.cs:45-46); arada hata iki geçerli oturum bırakır.
+- B011 | V1-RMD-277 | [Düşük] md "aynı 12 saatlik ömür" diyor; kod kalan ömürle sınırlıyor (:41-44) - md güncel değil.
+- B012 | V1-RMD-279 | [Düşük] md güncel değil: `GET awaiting-payment` artık tableId de döner ve sorgu 281/287 ile genişledi; karar özü geçerli.
+- B012 | V1-RMD-280 | [Düşük] md güncel değil: "10 saniyede bir yenilenir" deniyor; HEAD'de yedek sorgu 60 sn (PendingChecksWorkspace.tsx:12), olay güdümlü (V1-RMD-287).
+- B012 | V1-RMD-286 | [Düşük] md güncel değil: "açık çağrıları listeleyen uç nokta yok, yeniden okuma yapılamaz" deniyor; HEAD'de yeniden okuma var (Cashier.help-alerts.test.tsx:270-291, V1-RMD-289 zinciri).
+- B012 | V1-RMD-287 | Not (Düşük): olay Clients.All ile orderId/tableId yayınlıyor (md kapsam notu, V1-RMD-289 hedefli teslim zinciri); PII yok.
+- B012 | V1-RMD-290 | [Düşük] md: "Cashier 33, WaiterPwa 43" sayıları eski (Cashier 36+ spec dosyası var).
+- B012 | V1-RMD-292 | [Düşük] md güncel değil ve kendi içinde çelişkili: "Kritik bulgu: PayableAmount güncellenmiyor, indirim/bahşiş tahsil edilemez, ekran bilgi amaçlı" yazıyor; V1-RMD-298 (Done) tavanı düzeltti, UI de gerçek tavanı gösteriyor (split-payment.js:328-331), E2E artık "düzeltilmiş tutar tahsil edilir" doğru
+- B013 | V1-RMD-314 | [Düşük] Test yalnız tender yolunu kapsıyor; indirim/bahşiş/kasa hareketi retry testi yok.
+- B013 | V1-RMD-347 | QnbCredentialSettingsEndpoints.cs:46-48,143 env override + varsayılan test URL; test TestConnectionUsesTheEnvironmentOverrideUrlWhenOneIsSet var. [Düşük] ALKAROS_QNB_USER_SERVICE_URL yalnız plan md'lerinde belgeli, deploy/ops dokümanında yok.
+- B014 | V1-RMD-360 | [Düşük] Aktif sepet localStorage'dan eski fiyatla geri yüklenir; sunucu fiyatı yeniden hesaplıyor (md: 713 modifiers), risk düşük.
+- B014 | V1-RMD-364 | [Düşük] Test dosyası md'nin Owned surface'ındaki kapsamı aşıp "KDV dahil fiyat" testi de içeriyor (ayrı görevden); izlenebilirlik notu.
+- B014 | V1-RMD-366 | [Düşük] workspace.tsx:291,553 hâlâ yalnız ApiError (billing dışı, kapsam dışı); aynı sınıf hata başka yerde sürüyor olabilir.
+- B014 | V1-RMD-376 | [Düşük] Tam eşleşme `toLowerCase()` (:1013) vs arama `toLocaleLowerCase('tr-TR')` tutarsız; İ/ı içeren SKU'da farklı davranabilir.
+- B015 | V1-RMD-378 | [Düşük] setInterval içinde uçuştaki istek koruması yok (refreshSummary yavaşsa çakışır); G: TEKNİK, zararsız.
+- B015 | V1-RMD-388 | [Düşük] WaiterPwa aynı sessiz düşüş sınıfı için görev açılmamış (md "Semih'e bırakıldı").
+- B015 | V1-RMD-392 | [Düşük] İlk başarıdan sonra kalıcı hata (oturum bitti/masa kapandı) hiç gösterilmiyor; müşteri sonsuza dek bayat toplamı "canlı" sanır (bill.js:222-225) - bayatlık uyarısı yok.
+- B015 | V1-RMD-400 | [Düşük] G/H: cash-session-design.md §6 mutabakatı Supervisor/Accountant/Admin'e veriyor; kod `cash.session.override`'a bağlı ve bu izin yalnız supervisor/manager rollerinde (129-cash-session-override-permission.up.sql:12) - Accountant mutabakat yapamaz. PO: muhasebeci mutabakat yapabilmeli mi?
+- B015 | V1-RMD-415 | [Düşük] H: md "DualScreenApplication.cs'te 409 eşlemesi" diyor, bugün eşleme ApiErrorCatalog.cs:603'te (sonradan taşınmış); md bayat. Replay'de TenderedAmount karşılaştırılmıyor (para üstü aynı döner), etkisi yok.
+- B016 | V1-RMD-442 | [Düşük] Adisyon kapanışı ödeme commit'inden sonra (TryCloseBill) - kapanış düşerse closed=false döner, borç yazılmış kalır; yeniden deneme replay ile güvenli. Kabul edilebilir.
+- B016 | V1-RMD-455 | [Düşük] typecheck.log'da çıkış kodu satırı yok (yalnız PowerShell sarmalayıcı metni); README "exit 0" diyor ama log kanıtlamıyor. lint.log uyarılı (hata değil).
+- B017 | V1-RMD-467 | [Düşük] BillItem.TaxIncludedIn (BillItem.cs:140) OrderMath ile aynı formülün kopyası (modül sınırı nedeniyle); iki yerde ayrışma riski. G: PO 2026-09-30 TEKNİK/İŞ KURALI, kodla uyumlu.
+- B017 | V1-RMD-469 | [Düşük] "Ara toplam" etiketi duruyor (Cashier.tsx:773, CustomerDisplay.tsx:360, bill.html:40); md "Toplam ve İçindeki KDV" diyordu, indirimli satırda ara toplam anlamlı olduğundan kabul edilebilir. typecheck.log'da exit satırı yok (yalnız PowerShell stderr sarmalayıcısı, TS hatası 0).
+- B017 | V1-RMD-470 | [Düşük] Plan "oran başına satır, InvoiceTaxCalculator" ve "alıcı bilgisi eksik" işareti diyordu; kod kalem başına satır ve her zaman FinalConsumer (README "Plandan sapma" bunu açıkça yazıyor, dürüst).
+- B017 | V1-RMD-471 | [Düşük] PUT'ta kullanılmayan X-Idempotency-Key parametresi (:64). TCKN/VKN sağlama toplamı doğrulanmıyor (yalnız hane sayısı; plan da yalnız bunu istiyor). README'deki "mutation-run.log" dosyası yok (yalnız mutation-run-email.log).
+- B017 | V1-RMD-472 | [Düşük] Platform web adresleri sabit (OnlineOrderInvoiceDrafting.cs:24-25); README "muhasebeci doğrulamalı" diyor: doğrulanamadı.
+- B017 | V1-RMD-473 | [Düşük] Faturasız liste 200 satırla sınırlı, kesildiğini söylemiyor.
+- B017 | V1-RMD-475 | [Düşük] Vaka bir saatlik tarama sonrası açılır; iş akışı bu görevin dışında. G: 7 günlük yasal süre doğrulanamadı (bkz. 470).
+- B017 | V1-RMD-476 | [Düşük] İlk okuma hata verirse taban ikinci okumada kurulur, arada düşen sipariş sessiz kalır (useNewOrderChime.ts:19-28).
+- B017 | V1-RMD-479 | [Düşük] Eşzamanlı iki isteğin yarışı kapanmıyor (README açıkça yazıyor, yalnız denetim izi, para etkisi yok).
+- B019 | V1-RMD-511 | [Düşük] Aynı NOT(EXISTS...) bloğu 3 yerde kopya (ShiftSummaryStore.cs:55,95; Reader:46) - tek yerde değişiklik unutulursa raporlar ayrışır.
+- B019 | V1-RMD-511 | [Düşük] IBusinessDayTotalsReader özet yorumu (Reader.cs:22-24) iade edilmiş sipariş dışlamasını anlatmıyor.
+- B019 | V1-RMD-514 | [Düşük] Liste iki istemcide (JS + strings.ts) kopya; sapma testle korunmuyor.
+- B019 | V1-RMD-515 | [Düşük] Plan "tutardan küçükse uyarı ve düğme pasif"; kodda düğme pasif olmuyor, yalnız önizleme uyarısı (split-payment.js:1394-1405) ve tıklamada ret (629-632); submit-tender disabled koşulu 1592 alınan parayı içermiyor. Testler tıklamayı doğruluyor (split-payment-change.test.js:103-112), pasif dur
+- B021 | V1-RMD-553 | [Düşük] Test sentetik DOM kullanıyor, gerçek sayfa HTML'i yüklenmiyor (telemetry-reporting.test.js:69-73); gerçek kimliklerle uyum elle doğrulandı, regresyonu yakalamaz.
+- B021 | V1-RMD-582 | B: İstemci üretimde hiçbir yerden çağrılmıyor (yalnız test); plan Out of scope ve V0-QNB-001 Blocked ile uyumlu, izin listesinde kaydı yok (allowlist grep boş) - [Düşük].
+- B021 | V1-RMD-582 | [Düşük] `ToDictionary` (QnbEArsivClient.cs:70) yinelenen `entry` anahtarında ArgumentException atar; QnbApiException'a çevrilmiyor.
+- B021 | V1-RMD-603 | [Düşük] Dilimin ~%40'ı derin okunmadı (backend, performans); kalan risk raporda kabul edilmiş.
+- B021 | V1-RMD-689 | C: Masa başına advisory lock + işlem içinde cooldown (Store.cs:55-70); sorgu LIMIT 100 ve 24 saat sınırlı. Sınır: 24 saatten eski yanıtlanmamış çağrı listeden düşer ([Düşük], tasarım; V1-RMD-692 saklama kapsamı).
+- B021 | V1-RMD-689 | [Düşük] WaiterPwa Playwright koşulmadı (README'de açık); `HelpRequestRecipientTracker` süreç içi sayaç, çoklu Host örneğinde yanlış sayabilir.
+- B021 | V1-RMD-694 | F: [Düşük] mutations.log'da R4 SURVIVED ve sonradan yeniden öldürülmedi; R4 mutate.mjs'te yok (betik sonradan düzenlenmiş). README yarış dalında mutasyon kanıtı olmadığını itiraf ediyor.
+- B021 | V1-RMD-707 | [Düşük] "I" (noktasız büyük) ile yazılmış ürünler tr-TR kuralıyla "ı" olur; İngilizce klavyeyle "isparta" araması "Isparta"yı bulmaz.
+- B021 | V1-RMD-732 | [Düşük] Başlıktaki "kalem silme CASCADE" yapılmadı (README açık, ürün kararı kapsamı) ve 180 down'ın çakışan bill_number'da çökmesi "kabul edilen risk" diye bırakıldı; kabulü PO değil görev sahibi vermiş.
+- B021 | V1-RMD-732 | [Düşük] CHECK/FK `NOT VALID` kalıyor, mevcut satırlar hiç doğrulanmıyor (migration 209 yorumunda bilinçli).
+- B022 | V1-RMD-734 | [Düşük] AbortSignal.timeout yoksa zaman aşımsız fetch (cash-session.js:99, customer-accounts.js:91, split-payment.js:134) - eski tarayıcıda B032 korunmaz.
+- B022 | V1-RMD-734 | [Düşük] .cs-denom-count min-height 44px (cash-session.css:241) - 48 px altı.
+- B022 | V1-RMD-737 | [Düşük] H08, H18 öldürülemedi/test yazılmadı. 24/24 mutant KILLED, host 106/106 günlükleri var.
+- B022 | V1-TBL-008 | [Düşük] docs/domain/table-reservation-policy.md:24 hâlâ kaldırılmış `pos.cashier.mutate` iznini yazıyor (satır 79 "Superseded note" var ama tablo satırı bayat).
+- B022 | V1-WTR-016 | Rozet/Güncelle düğmesi waiter-app.js:318,562. [Düşük] Otomatik test yok (md kabul ediyor); fiyat sunucuda kataloğdan geldiği için para riski yok.
+- B024 | V13-CSH-002 | [Düşük] "Append-only" yalnız uygulamada (update yolu yok); tabloda UPDATE/DELETE engelleyen tetikleyici yok (migration 124/130).
+- B024 | V13-CSH-004 | [Düşük] F: closure-evidence plan-audit "1 hata" ile kapanmış (ön-mevcut diye not edilmiş) ve "RequireCashierAsync" diyor, kod RequireCashDrawerAsync (sonradan sıkılaştırılmış, RMD-400); evidence "9 test" der, bugün 24. H: md uç nokta listesi (expected-cash/cash-movements ekleri var) güncel; auth cüm
+- B024 | V13-GOV-005 | [Düşük] Owned surface'taki evidence/V13-GOV-005/** yok (kanıt: yalnız doküman).
+- B024 | V13-GOV-008 | [Düşük] Owned surface/kanıt evidence/V13-GOV-008/** yok; "113/113, 896 dosya/2001 kenar" sayıları kanıtsız (yalnız md'de).
+- B024 | V13-GOV-008 | [Düşük] H: Goal/başlık "8 görev" der ama GATES.md tablosunda 4 tüketici (PAY-003/004, REC-001, RPT-001), 12 çift (plan/GATES.md V13_PAYMENT_ORCHESTRATION tablo); PAY-005, PUI-001/004, TBL-001 tabloda yok.
+- B025 | V13-PUI-002 | [Düşük] Tolerans 50,00 TL koda gömülü (CashSessionPolicy.cs:95), işletme ayarı değil. G: İŞ KURALI, PO onayı doğrulanamadı.
+- B025 | V13-PUI-004 | [Düşük] EFT onayı yalnız istemcide; sunucuya bayrak gitmiyor (src/*.cs içinde eftConfirm yok). PO tasarımı bu; doğrudan istek onaysız EFT kaydeder.
+- B025 | V13-REC-001 | [Düşük] FailureReason = ham ex.Message yönetim yanıtına dönüyor (PaymentReconciliationScanner.cs:84-88).
+- B025 | V13-REC-001 | [Düşük] D: testte ">= 1" zayıf assert (PaymentReconciliationScannerTests.cs:56); 100 TL şiddet eşiği testlenmemiş.
+- B025 | V13-RMD-002 | [Düşük] refreshSummary hata dönerse sessizce çıkıyor, bayat kilit/özet kalır (:352).
+- B025 | V13-RPT-001 | [Düşük] GROUP BY'a LIMIT 20000 anlamsız.
+- B025 | V13-TBL-001 | [Düşük] UnsettledStatuses'te "Initiated" yok (PaymentAwareTableTopologyPolicy.cs:60); Initiated'ın tek başına commit edildiği yol bulunamadı -> teorik.
+- B025 | V14-ACC-001 | [Düşük] Aynı anahtarla farklı tutar/not gelirse sessizce eski satır dönüyor (PostgresAccountTransactionLedger.cs:75-95). Tabloyu boşaltma komutu satır tetikleyicisiyle engellenmiyor.
+- B025 | V14-ACC-002 | [Düşük] H: md'deki migration sayıları (161/162) bugünkü PhaseBMax ile karşılaştırılmadı.
+- B026 | V14-ACC-003 | [Düşük] H: md "AlwaysApproveCreditPolicy yer tutucu" ve "HTTP endpoint eklenmiyor" ve "7/7" bugün yanlış: üretim politikası CreditTermsCreditPolicy (BillCharges/CustomerAccountsBillChargesModule.cs:30), uç nokta var (Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs:155).
+- B026 | V14-ACC-005 | [Düşük] H: kabul metni "bir Approved Payment" der, uygulama kararı payments.payments satırı YAZMAZ (ciro mükerrer sayılmasın); md kendi içinde çelişik, karar doğru (G: TEKNİK, kodla uyumlu).
+- B026 | V14-ACC-009 | [Düşük] Evidence yalnız exception'da; V14-ACC-007'nin tek vakaya bağlayacağı kalıcı kayıt yok.
+- B026 | V14-INV-001 | [Düşük] SelectAllAsync 500 müşteriden sonrasını sessizce keser (:17,149); çağıran kesildiğini bilemez.
+- B026 | V14-INV-002 | [Düşük] B: IInvoiceGenerationService/IInvoiceTraceabilityService üretimde çağrılmıyor, izin listesinde de yok; consistency_audit yine "clean" (çalıştırıldı). Zincir V14-UI-002/QNB-002 bekliyor.
+- B026 | V14-INV-003 | [Düşük] "Seçilen her kaynak temsil edilir" Charge dışı (Payment/Adjustment) kaynaklar için karşılanmıyor; README'de belgeli.
+- B026 | V14-QNB-007 | [Düşük] LogoutAsync hatası, başarılı wsLogin'den sonra "bağlanılamadı" döner (Endpoints.cs:146-153). ALKAROS_QNB_USER_SERVICE_URL http:// kabul eder (parola düz gider; yalnız dağıtımcı ayarı).
+- B027 | V0-ARC-005 | [Düşük] evidence/V0-ARC-005/completion-evidence.txt tek satır, komut/çıkış kodu içermiyor (karar görevi, kabul md'ye bağlı).
+- B027 | V0-CMP-003 | [Düşük] "Affected Tasks" V13-CST-001 diyor, md Handoff V14-CST-001 (kvkk-data-inventory.md:35; görev md:Handoff); iki ID de plan/'de dosya olarak yok. Rol "Finance"/modül "Infrastructure/Operations" bugünkü rol/modül adlarıyla eşleşmiyor.
+- B027 | V0-GOV-007 | İki ölü fonksiyon (parse_coverage_owner_ranges, compressed_numbers) araçta yok (grep 0). Kanıt py_compile/vulture/validate exit 0. [Düşük] verification.md çıktı metni yok, yalnız çıkış kodu.
+- B027 | V0-GOV-009 | verification.md: 322 md, verify-manifest/validate exit 0. Anlık görüntü; sonraki GOV-011/012 yeniledi. [Düşük] komut çıktısı (hash) kayıtlı değil.
+- B027 | V0-GOV-013 | [Düşük] Test sınıfı tek byte nonce/tag/ciphertext değişimini bu dosyada denemiyor (AES-GCM garantisi, başka dosyada olabilir); 71 idempotency testi bu görevin kapsamı dışı.
+- B029 | V0-GOV-062 | verification.md (plan validate 0/0, testler çıkış 0); GATES/araç/TRACEABILITY C65 mevcut. [Düşük] md "V0-GOV-041/042 defer edilmez" diyor, V0-GOV-063 (C66) sonradan tersine çevirdi; tarihsel, kayıtlı.
+- B029 | V0-GOV-065 | [Düşük] MEVZUAT (VUK 509 IV.12 3 koşul) kaynağı evidence/v0/compliance/V0-CMP-001/gib-applicability-matrix.md; doğrulanamadı: mali müşavir/avukat gerekir. Görev md bunu V20-CMP-001'e bırakıyor (doğru). GATES.md:43 ve C99 kaydı mevcut, V0-CMP-001 deferred kümesinden çıkarılmış.
+- B029 | V0-SEC-001 | [Düşük] Matris ASVS 4.0 numaralı; docs/security/asvs-5-chapter-map.md ile düzeltilmiş (giderilmiş). Sahip ID V13-HUG-001 plan/'de dosya olarak yok (Hugin->Token pivotu).
+- B029 | V0-SEC-001 | [Düşük] evidence/V0-SEC-001/completion-evidence.txt tek satır, çıkış kodu yok.
+- B029 | V1-FND-009 | evidence/V1-FND-009: force-push.txt, rewritten-commits, boundary-audit-final (kayıtlı 8 istisna). [Düşük] md "25 commit" diyor, force-push.txt "27 commit" yazıyor; tarihsel sayı kayması, etkisiz.
+- B030 | V1-GOV-001 | [Düşük] Owned surface bölümü yalnız devir notu içeriyor, yol yok (plan/v1/governance/V1-GOV-001...md); kanıt evidence/v1/gate-v1-exit-closure.md var (86 Done/4 NA; bugün README 359 görev - tarihsel, H notu).
+- B030 | V1-GOV-008 | [Düşük] task_scope exit 1 ("kirli baseline") kayıtlı (evidence/V1-GOV-008/validation-results.md) - Done kapısı exit 0 gerektirir; RMD-009'a devredilen DualScreenApplication.cs sahipliği sonra GOV-010 ile RMD-020'ye geçti (evidence/V1-GOV-010/final-validation.md) - GOV-008 md'si bunu belirtmiyor (H).
+- B031 | V1-GOV-016 | [Düşük] evidence/V1-GOV-016 yalnız tek verification.md; "rerun after this evidence" ifadesi son komut çıktısı içermiyor (audit report/manifest/lint sonucu yok).
+- B031 | V1-GOV-023 | acceptance_evidence.md: validate 0/0 (442 md, 420 görev), verify-manifest 0, validate-coverage 0. kitchen-operations RMD-034'e devri sonradan RMD-069'a taşınmış (RMD-034 md'de kayıtlı). [Düşük] "145 V1 görevi" sayısı tarihsel; bugün GATES.md:377 hâlâ 145 diyor ama V1 matrisi 167 (GOV-027 kanıtı) - m
+- B031 | V1-GOV-025 | [Düşük] verification.md §6: "220 passed, 2 skipped" ile "2 failures environment-only (dotnet msbuild PATH)" aynı bölümde; passed/skipped/failed sayısı uyuşmuyor, test çıkış kodu yok. Çıkış-kapısı mühürü (GATE-V1-EXIT) çok sayıda sonraki dalgada yeniden açıldı (GATES.md:36), mühür tarihsel.
+- B031 | V1-GOV-025 | [Düşük] md `Surface state: Planned` iken Status Done.
+- B032 | V1-GOV-036 | [Düşük] "193 görev, 187 Done" sayıları tarihsel; bugün geçersiz.
+- B034 | V1-GOV-058 | [Düşük] Temizlik otomatik zamanlanmıyor, operatör cron'una bağlı (docs/operations/data-housekeeping.md:64) - kurulum listesinde cron kurulumu doğrulanmalı.
+- B035 | V1-GOV-061 | Reseal kanıtı gerçek: evidence/V1-GOV-061/reseal.md + dotnet-full-suite.log (Failed 0) + pytest-architecture.log (208 passed). Karar sınıfı TEKNİK. [Düşük] sayımlar (234 görev) tarihsel; GATES.md:36 bugün sonraki dalgaları anlatıyor.
+- B035 | V1-GOV-063 | reseal.md + dotnet-full-suite.log (Failed 0) + pytest log mevcut; yük sonucu (p95 45.9 ms, deadlock 0) evidence/V1-RMD-093 ile atıflı. [Düşük] 1M sipariş sayıları bu kartta doğrulanamadı (yalnız RMD-093 kanıtına dayanıyor).
+- B035 | V1-GOV-065 | [Düşük] Ham dotnet/pytest günlüğü yok (yalnız özet tablo); "45 test projects" ile GOV-063/067'deki "46" tutarsız (evidence/V1-GOV-065/result.md).
+- B035 | V1-GOV-066 | [Düşük] Rakip RPO/RTO araştırması (Toast, Square vb.) doğrulanamadı: dış kaynak gerekir; hedefler iş kuralı (Semih onayı). [Düşük] "11 -> 9" bugün GATES.md bloğunda 8 satır (sonraki görevler, tarihsel).
+- B035 | V1-GOV-067 | result.md: 1094 passed, 208 arch, validate 0/0, compose geçerli, manifest 0; PITR kanıtları evidence/V1-RMD-095'te. [Düşük] ham test günlüğü yok.
+- B035 | V1-GOV-069 | [Düşük] DualScreen test sayısı "27 passed" (result.md) vs "26/0" (aynı belge, RMD-096 kanıtı) tutarsız. Aynı Superseded notu eksikliği (RMD-098).
+- B036 | V1-GOV-070 | [Düşük] md'deki "görev matrisi 244 -> 246" tarihsel anlık görüntü; bugün README 359 görev diyor (plan/v1/README.md:14).
+- B036 | V1-GOV-074 | [Düşük] "276 Done / 282 görev" tarihsel sayı, bugün geçersiz.
+- B036 | V1-GOV-076 | Bağımlılıklar Done; runtime-configuration testinin yerelde koşulamadığı açıkça yazılı (CI otorite). [Düşük] Surface state: Existing, diğer GOV md'lerinde Planned - tutarsız ama zararsız.
+- B036 | V1-GOV-078 | [Düşük] H: 070/072/074/078 sayaç ifadeleri "o gün" etiketi taşımıyor.
+- B037 | V1-GOV-080 | [Düşük] Kabul "audit/manifest/build temiz, 292 görev/287 Done" iddiası için evidence/V1-GOV-080/ yok; yalnız md beyanı. Tarihsel mühür, bugünkü sayı (359) farklı - dalga anı sayısı olduğu için hata değil.
+- B038 | V1-GOV-089 | [Düşük] Owned surface GOV-090'ı da yazıyor ama kabul yalnız GATES/README satırı; 34. dalga özet hücre GATES.md:36 ve README:138-151'de var. Kanıt klasörü yok.
+- B039 | V1-GOV-098 | [Düşük] Kabul "319 görev, 314 Done" der; README:14 bugün 359/354 (sonraki dalgalar sayıyı büyüttü, md güncel değil; tarihsel anlık görüntü olarak not düşülmeli).
+- B039 | V1-GOV-098 | [Düşük] 79/79 test + migration 054 up/down iddiası için evidence/ günlüğü yok (F: kanıtsız); 054 dosyaları mevcut.
+- B041 | V1-GOV-123 | [Düşük] Tüm dalga kayıtları tarihsel; sayılar (80 proje, 13 ihlal) bugünkü HEAD ile eşleşmez.
+- B042 | V1-GOV-124 | [Düşük] "80 test projesi" bugün 191 Tests.csproj; tarihsel, güncellik notu yok.
+- B042 | V1-IAM-001 | [Düşük] LockedOut ayrı sonuç: 5 yanlışla kullanıcı adı varlığı sızar (user enumeration); TEKNİK karar, IAM-005 sözleşmesinde (kilitli yol 0 PBKDF2) bilinçli.
+- B042 | V1-IAM-005 | [Düşük] Bozuk saklı hash'li aktif kullanıcıda Verify iş yapmadan false döner (PasswordHasher.cs TryParse) -> "tam 1 PBKDF2" sözleşmesinden sapar; veri bozulması gerektirir, pratik risk düşük.
+- B042 | V1-IAM-005 | H: [Düşük] Sözleşme md'si "yakınsama için IUserStore uzantısı yazılamaz" diyor (login-timing-contract.md "Work factor yakınsama"); TryUpgradePasswordHashAsync artık var (PostgresUserStore.cs son metot, AuthenticationService.cs:93-98). Md bayat.
+- B042 | V1-IAM-009 | [Düşük] Üst sınır (2M) round-trip ve "maximum üstü Verify reddi" yalnız IAM-005 Theory'sinde (2000001) örtük; mutasyonla (> yerine >=) maximum sınırı kırılsa fark edilmez.
+- B043 | V1-IAM-012 | [Düşük] Hedef "bounded" ama CHECK yalnız expires_at > created_at (013-device-session-lifetime.up.sql:3); üst sınır DB'de yok (yalnız DefaultLifetime 30 gün, DeviceSessionToken servis tarafı). Canlı şemada kısıt var (tmp/qa/V1-RMD-597/.../schema-after.sql:228).
+- B043 | V1-IAM-014 | [Düşük] Kabul "üç ardışık çalıştırma, temiz aday SHA" ister; evidence/V1-IAM-014 tek koşu (92/92) gösteriyor, aday SHA ve üç koşu yok; verdict metni elle yazılmış.
+- B043 | V1-IAM-015 | PostgresDeviceSessionRepository.cs:136-185 tek transaction + SELECT ... FOR UPDATE, revoked/expired erken çıkış; yarış testi gerçek kilitle (DeviceSessionServiceTests.cs:213-245). [Düşük] evidence/V1-IAM-015/verification.txt "conditional SQL RETURNING" diyor, kod FOR UPDATE kullanıyor; exit code sat
+- B044 | V1-IAM-025 | [Düşük] md "Handoff V1-GOV-072" ve test sayıları dalga anı; bugünkü sayı doğrulanmadı (H).
+- B044 | V1-KIT-008 | [Düşük] "Plana aykırı" kuralı = aktif her ürünün 86'lanması; her normal 86 bir grant satırı üretir (gürültü; md bunu kabul edilmiş ilk kural olarak yazmış, PO onayı kanıtsız).
+- B044 | V1-KIT-008 | [Düşük] HTTP seviyesinde 409 testi yok (md dürüstçe belirtmiş); eşlemeyi yalnız catch bloğu taşıyor.
+- B045 | V1-KIT-009 | [Düşük] evidence/V1-KIT-009 yok: "kanıt yok"; 28/15 test sayıları doğrulanamaz. Kod, uç nokta (KitchenOperationsEndpoints.cs:197), kitchen.advance izni, rollback testi (KitchenOperationsHttpTests.cs:343) var. Karar sınıfı: İŞ KURALI (10 sn, ticket düşürülmez) - kodla uyumlu.
+- B045 | V1-RMD-007 | Kanıtlar gerçek (build_provenance 34/34 Exit 0, manifest, coverage, gitleaks). [Düşük] md'deki "554 md" sayısı tarihsel, bugün eşleşmez.
+- B045 | V1-RMD-011 | Sahip yüzey src/Clients/WebPrototype commit 8861f682 ile silindi (wave25 F-9); görev tarihsel. [Düşük] md sahip yüzeyi HEAD'de yok.
+- B046 | V1-RMD-046 | [Düşük] H: md'deki "OrderManagementStore.cs" ifadesi güncel değil (refaktörle bölündü); historical, kapalı görev.
+- B046 | V1-RMD-094 | [Düşük] H: md'deki uygulama ayrıntısı (tek transaction, sütun maskeleri) bugünkü kodla (versiyonlu politika + workflow) farklı.
+- B047 | V1-RMD-098 | H: [Düşük] md "dört aşama" diyor, Dockerfile'da ek test (:33) ve connector (:138) aşamaları var; Caddyfile'da sonradan nfc vhost'ları (:113-134); "41 migration" bugün eski.
+- B047 | V1-RMD-112 | [Düşük] Migration 074 inbox_messages claim indeksi (074.up.sql:10) fiilen ölü bir tabloya: InboxStore V1-RMD-134'te ölü yüzey diye silindi, src'de inbox_messages sorgusu yok (RetryPolicy.cs:15-26). md'deki "InboxStore.cs claim sorgusu" bugün yok; indeks/tablo borç.
+- B047 | V1-RMD-115 | H: [Düşük] md DualScreenApplication Map() switch'ine case eklendi diyor; bugün DualScreenApplication'da BadHttpRequestException yok, hata zarfı ortak ApiExceptionHandler'a taşınmış (V1-RMD-431, DualScreenApplication.cs:151).
+- B048 | V1-RMD-119 | [Düşük] Insert ile recompute aynı işlemde değil (CatalogManagementStore.cs:259) - eşzamanlı iki ekleme arası kısa bayat pencere; 60 sn işi kapatıyor.
+- B048 | V1-RMD-122 | [Düşük] md "13 ihlal" beyanı dalga anı; bugünkü sayı doğrulanmadı (H).
+- B048 | V1-RMD-125 | [Düşük] Repo yorumu "ck_stock_balances_on_hand_non_negative CHECK" diyor (PostgresStockBalanceRepository.cs:274) ama gerçekte AFTER trigger (087, ERRCODE 23514) var - yorum yanlış.
+- B048 | V1-RMD-125 | [Düşük] Waste için eşzamanlı iki azaltma / atomik geri alma testi doğrudan yok (WasteRecordingDatabaseTests yalnız yaşam döngüsü + idempotency).
+- B048 | V1-RMD-130 | [Düşük] Kapsam dışı notu: öğe bazlı yazıcı yönlendirme hâlâ Host'a bağlı değil (md "Out of scope" ile tutarlı, hâlâ geçerli mi doğrulanmadı).
+- B049 | V1-RMD-134 | [Düşük] idempotency_keys ve inbox_messages tabloları şemada duruyor (database/migrations/V1/V1-FND-002/*) - bilinçli, md'de açık yazılı; ayrı karar bekliyor.
+- B049 | V1-RMD-138 | [Düşük] "5. hızlı çökmeden sonra tek Error log" denmiş, kod her çökmede (>=5) logluyor (satır 194-195).
+- B049 | V1-RMD-138 | [Düşük] Kısmi kurulum hatasında (tünel oluştu, DNS/yapılandırma düştü) yetim tünel temizlenmiyor (RelayProvisioningService.cs:104-125).
+- B049 | V1-RMD-139 | [Düşük] Suspense fallback={null} (App.tsx:44-110): chunk inerken boş ekran; yükleniyor durumu yok.
+- B049 | V1-RMD-139 | [Düşük] consistency_audit.py:93 dinamik import satırını role-noun kuralından bütünüyle muaf tutuyor; aynı satırdaki İngilizce metin kaçabilir.
+- B049 | V1-RMD-151 | [Düşük] 4 haneli PIN, DB sızarsa çevrimdışı kırılır (10^4 deneme); md'de kabul edilmiş. PO sorusu: İstemci tarafı kilit yeterli mi, yoksa sunucuda "kilitli oturum" durumu mu isteniyor?
+- B049 | V1-RMD-153 | [Düşük] XSS düzeltmesi için repoda otomatik test yok (kanıt elle tarayıcı denemesi, evidence/ yok); Cashier'da eşi test'li (cashier-app.test.js:149).
+- B049 | V1-RMD-158 | [Düşük] NFC concurrent testi taban çizgide de flake (md'de açık yazılı).
+- B050 | V1-RMD-175 | [Düşük] Md güncelliği: applyUser artık waiter-app.js'de değil, js/auth.js:28 içinde (md waiter-app.js diyor).
+- B050 | V1-RMD-244 | [Düşük] md güncelliği: md "endpoint başarı yolunda AppendAsync, AggregateType=OrderItem" diyor; HEAD'de OrderManagementEndpoints.cs içinde AppendAsync yok, audit satırı kalem yazımıyla aynı işlemde ve aggregate "Order" (OrderManagementVoidHttpTests.cs:62, CompHttpTests.cs:83; yalnız void-sent OrderI
+- B050 | V1-RMD-244 | [Düşük] Kanıt: Owned surface evidence/V1-RMD-244/** klasörü yok.
+- B052 | V1-RMD-369 | [Düşük] "authorization" rotasının hata sınıfı boşluğu ertelendi ve hiçbir göreve bağlanmadı (workspace.tsx:553 yalnız ApiError; client.ts:3 AuthorizationDecisionApiError var) - sunucu mesajı yerine jenerik "Yetki verisi alınamadı." gösterilir; md ertelemeyi "ele alınacak" diyor ama takip görevi yok.
+- B053 | V1-RMD-371 | [Düşük] Test ham CSS'e regex ile bakıyor (OnlineOperationsWorkspace.test.tsx:137); kuralın içeriğini değil varlığını doğrular (md'de kabul edilmiş yöntem sınırı).
+- B053 | V1-RMD-381 | [Düşük] Kat planı düzenleme modunda poll'un taslağı bozmadığı yalnız yorumla iddia edilmiş; testi görülmedi.
+- B055 | V1-RMD-406 | [Düşük] Unlock yolunun ömrü için test yok; yeni test yalnız girişi ölçer (DualScreenHostTests.cs:636-666). Üç ifade kodda DefaultLifetime'a bağlı (DualScreenApplication.Endpoints.cs:95,111,222). Kanıt: tests.log 78/78, kırmızı 12,0004 sa gerçek.
+- B056 | V1-RMD-481 | [Düşük] evidence README `--operator` zorunluluğunu (V1-RMD-645 sonrası, Program.cs:501) anmıyor - md eskimiş.
+- B056 | V1-RMD-482 | [Düşük] Hiç çalışmayan imha olay üretmez (runbook:179 bunu kendisi söylüyor); "uyarı yolu" yalnız sıfırdan farklı çıkış kodu + elle kontrol. Plan kabulünü aşmıyor.
+- B056 | V1-RMD-549 | [Düşük] "Mevcut ObservabilityRedactionHook yeniden kullanılır" yerine yeni Regex'ler yazıldı (TelemetryPrivacyGuard.cs:17-22); onaylı saklama kataloğuna telemetri sınıfı eklendiği kodda bulunamadı (Privacy altında telemetri yok; Grep iki desen).
+- B056 | V1-RMD-549 | [Düşük] `HourlySummaryDays` (TelemetryRetention.cs:12) hiçbir yerde kullanılmıyor, saatlik özet tablosu yok (ölü sabit).
+- B056 | V1-RMD-554 | [Düşük] Giriş sayacı global, terminal etiketi yalnız son denemenin (evidence README'de "bilinçli" yazılı); MonitoringEnabled kapalıysa dedektör hiç kaydolmuyor (DualScreenApplication.cs:231-234).
+- B056 | V1-RMD-559 | [Düşük] evidence/V1-RMD-559/ altında test-runs.log yok; README'deki test sayıları (7/15/6/4/7/5) bağımsız doğrulanamadı. Bilinçli açık bırakılan 534/538/552/555 maddeleri README'de dürüstçe listeli.
+- B056 | V1-RMD-583 | [Düşük] HTTP Security satırı V4.3 GraphQL/V4.4 WebSocket ve V3.1 kesimlerini anmıyor; "Malicious Controls" eşlenmedi (belgede açıkça yazılı).
+- B056 | V1-RMD-595 | [Düşük] agents/README "76 mutant, 38 yaşadı" ile README "34 yaşayan mutant" tutarsız.
+- B057 | V1-RMD-598 | [Düşük] README 24 kök neden diyor, findings.json'da 18 kayıt var (evidence/V1-RMD-598/findings.json) - sayı uyuşmuyor, 682-686 haritası tam. Semih senaryosu "SAĞLANMIYOR" diye dürüst yazılmış.
+- B057 | V1-RMD-600 | [Düşük] findings.json 16 kayıt, README 27 kök diyor; test PG'de 2 geçici veritabanı silinmemiş (alkaros_verify_catalog_a/_b).
+- B057 | V1-RMD-645 | [Düşük] Toptan boşaltma koruması sonradan elle açılan bölümlere otomatik gelmiyor (194 up.sql:3-4); runbook'ta adım olarak belgeli. 2020-2060 bölümleri 173'te önceden oluşuyor, bugün hepsi korunuyor.
+- B058 | V1-RMD-651 | [Düşük] PurgeAsync etkilenen satır sayısına bakmıyor (PostgresRetentionSubjectStore.cs:211-213): eşzamanlı koşuda satır zaten silinmişse yine `RetentionSubjectPurged` yazılır, yapılmamış imha için ikinci iz oluşur.
+- B058 | V1-RMD-651 | [Düşük] H: DeletionQueueProcessor.cs:12-16 özet yorumu "denetim imhadan sonra yazılır, imha hata verirse yazılmaz" diyor; kod artık aynı işlemde yazıyor (iddia eskimiş).
+- B058 | V1-RMD-653 | [Düşük] Denetim satırı her çağrıda rastgele aggregate_id ve rastgele correlation_id ile yazılıyor (PerformanceBudgetEndpoints.cs:123-124); bütçeye göre sorgulanamaz. Kaldırmada önceki değer `existing` bulunmasına rağmen yazılmıyor, `p95Ms=0` yazılıyor (:108): önceki bütçe izden kayboluyor. Ayrıca ne
+- B058 | V1-RMD-654 | [Düşük] H: görev md'si "mutfak ve hesap adımları ayrı işlemlerle" diyor; kod bugün hepsini tek işlemde yapıyor (SentItemVoidStore.cs:23-24, :136-151) ve `order-item.void-sent` da aynı işlemde (:350-). Md eski.
+- B058 | V1-RMD-656 | [Düşük] README "serbest metin yoktur" diyor; ItemExceptionHandler.cs:355 `reason` parametresi yazıyor (ReasonCode kataloğundan geliyor, doğrulandı ama garanti test yok).
+- B059 | V1-RMD-666 | [Düşük] evidence/V1-RMD-666/README.md kod konumları eskimiş (ApiErrorCatalog.cs:563/580 artık 586/603; OrderManagementEndpoints.cs:1154 artık 1221; NfcOrderingEndpoints.cs:186 artık 198).
+- B059 | V1-RMD-675 | [Düşük] SuspiciousLoginAuditingAuthenticationService.cs:5-12 sınıf özeti hâlâ "kilitli hesaba yapılan denemeyi denetler" diyor; davranış kaldırıldı. Yazım hatası sessiz yutuluyor (log yok).
+- B059 | V1-RMD-677 | [Düşük] ölü alanlar: SetPolicyRequestV1.IdempotencyKey (:325) ve DELETE'teki `X-Idempotency-Key` parametresi (:223) hiç kullanılmıyor. Eşzamanlılık satır sürümüyle korunuyor, o yüzden işlev kaybı yok.
+- B060 | V1-RMD-692 | [Düşük] Denetim olayı değişiklikten sonra ayrı yazılıyor (DualScreenApplication.CustomerAccounts.cs:92-105): olay yazımı düşerse değişiklik kalıyor, iz yok. Göç 200 FK adlarının varsayılan olduğunu varsayıyor (DROP IF EXISTS sessiz atlar).
+- B060 | V1-RMD-696 | [Düşük] Md güncelliği: Goal B035/B036/B077/B088 kapanıyor diyor, bu görevde yapılmadı (devir 700/701). Tarama bağlantı başına sıralı DB sorgusu (HubSessionRegistry.cs AbortRevokedAsync), 30 sn'de N sorgu; restoran ölçeğinde kabul edilebilir. B117 izin kipi Windows'ta doğrulanamadı.
+- B060 | V1-RMD-706 | [Düşük] Test yalnız products.create/availability ucunu doğruluyor (CatalogManagementHttpTests.cs:650-657); fiyat ve KDV uçları ayrı test edilmemiş, süzgeç genel olduğu için kabul. Yazma denetimden önce commit (belgelenmiş sınır); önceki durum (before) kaydedilmiyor, yalnız sonuç.
+- B060 | V1-RMD-722 | [Düşük] Yanıt, işlem tamamlandıktan sonra ayrı komutla saklanıyor (OrderCommandReplayStore.cs ExecuteAsync): iş ile saklama arası çökmede yeniden deneme yine çakışma verir; istek başına 2 bağlantı (oturum danışma kilidi + iş) havuz baskısı.
+- B060 | V1-SEC-004 | [Düşük] Redact kalıp tabanlı (password=, URL); parola değeriyle birebir maskeleme yok. Kanıt "Host 65/65" bugünkü 250 testle uyuşmaz (tarihsel).
+- B061 | V1-WTR-009 | [Düşük] Md eski: "bağlı her cihaza düz yayın / atama modeli yok / test 1/1" diyor; kod ServingUserId'ye göre kullanıcı grubu + push + fallback (KitchenOperationsStore.cs:305-327, WaiterOrderStatusHub.cs GroupName). evidence/V1-WTR-009 yok. Davranış testi (hub grup/presence) var.
+- B062 | V11-RCP-003 | [Düşük] Notes 255'ten uzun gönderilince PG 22001 `PostgresException` dalına düşüp 503 DATABASE_UNAVAILABLE dönüyor (RecipeCatalogMappingEndpoints.cs Map(), ProductRecipeMapping.cs:28-33 uzunluk doğrulaması yok) - istemci hatası 503 görünür.
+- B062 | V11-RCP-003 | [Düşük] productId'nin katalogda var olduğu doğrulanmıyor (migration 115 bilinçli FK yok, uç nokta da bakmıyor) - olmayan ürüne eşleme yazılabilir, AvT raporunda yetim satır.
+- B062 | V11-RMD-002 | [Düşük] Production hâlâ inventory.stock_balances üzerinde ham `SELECT ... FOR UPDATE` kilidi alıyor (ProductionStockEffectService.cs:231-236); plan "4 ham yazma değişti" diyor, okuma+kilit kaldı (yazma değil ama şema sınırında kilit).
+- B062 | V12-QRS-003 | [Düşük] Süresi dolan/iptal oturum satırları silinmiyor; ValidateAsync her geçerli istekte TouchActivity ile DB yazıyor.
+- B063 | V14-CST-002 | [Düşük] Aynı müşteri için çoklu talep engeli yok (160 migration, yalnız normal indeks). md "NoKnownBlockingReferencesGuard" artık yok (gerçek guard OutstandingBalanceRetentionGuard.cs) - H.
+- B063 | V14-GOV-001 | [Düşük] "Approved by Semih" ifadesi: Semih tercih belirtmemiş, varsayılan uygulanmış (md Onay bölümü) - onay zayıf kayıt. Derleme/test günlüğü klasörde yok (F). Gate artık açık değil, Goal metni tarihsel (H).
+- B063 | V15-KVK-001 | [Düşük] PlanAsync/SelectAsync sınırsız aday listesi (limit yok).
+- B063 | V15-KVK-002 | [Düşük] Engelli iş her çalıştırmada yeni olay satırı ekliyor (sınırsız büyüme). Açık: audit_events 10 yıl imhası V1-RMD-481 (planlı).
+- B063 | V15-SEC-001 | [Düşük] Eşzamanlılık kilidi yalnız süreç içi (FileSecretRotationStore.cs PathLocks); api ve diğer konteyner aynı dizini paylaşırsa yarış açık.
+- B064 | V15-SEC-003 | [Düşük] H: md "2026-09-23 not" (hiçbir yere bağlı değil) bayat; RetentionSweepMaintenanceJob (src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs, V1-RMD-268) zamanlıyor.
+- B064 | V0-DOM-005 | [Düşük] H: Invariants bölümü "no time-based expiry" diyor, ana tablo/ek karar manuel `expires_at` süresine izin veriyor (docs/domain/table-reservation-policy.md Invariants vs Expiry).
+- B064 | V1-KDS-001 | [Düşük] evidence/V1-KDS-001 yok: 145 test / tsc iddiası kanıtsız (md metni dışında).
+- B065 | V1-KDS-008 | [Düşük] H: md "bugün Held yok, fiilen etkilemez" iddiası bayat (yukarıdaki isHeld).
+- B065 | V1-KDS-009 | [Düşük] Rapor aralığı "bugün" UTC gece yarısı (Workspace.tsx:220); TR'de 03:00'te başlar, 00:00-03:00 yerel bilet önceki güne düşer. Ortalama+medyan yan yana, `reports.view` kapılı, hata durumu var.
+- B067 | V1-KIT-014 | [Düşük] Pencere ve saatlik gruplama created_at'e göre (PostgresKitchenTicketRepository.cs:362; KitchenOperationsStore.cs:644-648), md "aralıkta Ready'e ulaşan bilet / saat" diyor (KIT-014 md In scope 4); 10:55 açılıp 11:05 hazır olan bilet 10:00 saatine yazılır, pencere öncesi açılıp içinde biten bi
+- B067 | V1-ORD-004 | [Düşük] md owned surface ItemExceptions/** diyor, hedef kod SubmitOrder; sahiplik V1-RMD-002'ye devredilmiş, md'de açıkça düzeltilmemiş.
+- B067 | V1-RMD-009 | [Düşük] OutOfService/Cleaning masa reddi için ayrı test yok (yalnız Reserved, DualScreenStoreTests.cs:418).
+- B067 | V1-RMD-015 | [Düşük] md/evidence "onay yeniden basımı başlatmaz, ayrı işçi yapar" diyor; bugün onay yazıcıya gönderiyor (test HttpTests.cs:450 "ApprovalActuallyReprintsIt", :524 yazıcı yoksa Unknown'a dönüş). Otomatik değil, onaylı; md güncel değil. evidence 4 test diyor (eski).
+- B068 | V1-RMD-017 | [Düşük] Manuel Salon/S-09 senaryosu kanıtta "owned by integrated shell" diye ertelenmiş; tarayıcı kanıtı yok.
+- B068 | V1-RMD-038 | [Düşük] verification.md çıkış kodu/komut içermiyor; yalnız anlatım.
+- B068 | V1-RMD-039 | [Düşük] Kanıt komut/exit kodu içermiyor.
+- B068 | V1-RMD-042 | [Düşük] waiter-app.css'te 44px literal yok (dokunma minimumu sonra V1-RMD-145'te kapandı); kanıt komutsuz.
+- B069 | V1-RMD-060 | [Düşük] md waiter-app.js diyor; mantık js/offline-queue.js'e taşınmış (H). Kanıt dosyası düz metin, çıkış kodu yok (F).
+- B069 | V1-RMD-064 | [Düşük] Owned surface src/Host/Experience/Orders/OrderManagementStore.cs HEAD'de yok (TableDraft/TableDraftService.cs'e bölünmüş, commit 615f203b); md eskimiş (H). Kanıt yok (F).
+- B069 | V1-RMD-065 | [Düşük] TransitionTo aynı-durum idempotency'sini doğrudan sınayan test bulunamadı (KitchenTicketTests.cs'te Idempot/SameState yok). Kanıt yok.
+- B069 | V1-RMD-071 | [Düşük] Uyarı yalnız renkle (metin/ikon yok) ve Date.now() zamanlayıcısız; renk körlüğü için zayıf (E).
+- B069 | V1-RMD-074 | [Düşük] md Deliverables "target_prep_minutes sütunu" diyor, Goal/Out of scope kalıcı sütun yok diyor, kod kalıcı değil (H iç çelişki). Kanıt yok.
+- B069 | V1-RMD-075 | [Düşük] Üst bar sağlık noktası (:450) yalnız span, /system-health rotasına bağlı değil (amaç: rotaya bağlanır).
