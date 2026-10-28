@@ -1,7 +1,7 @@
 # V1-RMD-742 - Bakiye yeniden kurma önce siliyor, büyük defterde hata veriyor (739 bulgusu V11-INV-002)
 
 - Task ID: V1-RMD-742
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYCYNP4vpjxAZb7pmk
 - Work type: implementation
 - Surface state: Planned
