@@ -28,3 +28,6 @@ Sonraki: Yüksek+YENİDEN AÇ bulguların bağımsız doğrulaması (qa-bulgu-do
 - 45 Yüksek bulgu bağımsız doğrulandı (findings/verdict-1.md, verdict-2.md): 37 doğrulandı, 7 kısmen, 0 çürütüldü, 1 doğrulanamadı.
 - UI iki bakış: kullanıcı gözü (ui/akis-uzmani, pazar-uzmani, eksik-avcisi), tasarımcı gözü (ui/gorsel-tutarlilik, erisilebilirlik-dokunma, durum-ve-hata, turkce-metin). Tamamı kod okuması.
 - Sonraki: düzeltme planı (findings/fix-plan.md), PO soruları (findings/po-questions.md), md güncelleme, Aşama 5.
+
+## 2026-10-28 durum
+Devir dokümanı: DEVIR.md (düzeltme görevleri V1-RMD-740..749 bitti, kalan iş kategorileri, tuzaklar, bekleyen kararlar). Sonraki adım DEVIR.md bölüm 3.
