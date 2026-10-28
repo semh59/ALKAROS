@@ -437,6 +437,41 @@ public sealed class RoleManagementGuardTests : IClassFixture<AuthorizationTestDa
     }
 
     [Fact]
+    public async Task TwoManagersRevokingEachOtherConcurrentlyLeaveOneManager()
+    {
+        for (var attempt = 0; attempt < 10; attempt++)
+        {
+            await _database.ExecuteAsync("UPDATE identity.users SET active = false;");
+            var a = await _database.InsertUserAsync("race_a_" + Guid.NewGuid().ToString("N")[..8]);
+            var b = await _database.InsertUserAsync("race_b_" + Guid.NewGuid().ToString("N")[..8]);
+            var roleA = await _database.SeedRoleWithPermissionAsync("race_ra_" + Guid.NewGuid().ToString("N")[..8], a, PermissionCodes.RolesManage);
+            var roleB = await _database.SeedRoleWithPermissionAsync("race_rb_" + Guid.NewGuid().ToString("N")[..8], b, PermissionCodes.RolesManage);
+
+            var results = await Task.WhenAll(
+                Attempt(() => _service.RevokeUserAsync(a, b, roleB)),
+                Attempt(() => _service.RevokeUserAsync(b, a, roleA)));
+
+            results.Should().Contain(true, "one of the two removals must be refused");
+            var stillManagers = (await _roles.GetPermissionCodesForUserAsync(a)).Contains(PermissionCodes.RolesManage)
+                || (await _roles.GetPermissionCodesForUserAsync(b)).Contains(PermissionCodes.RolesManage);
+            stillManagers.Should().BeTrue("the system must keep at least one role manager");
+        }
+    }
+
+    private static async Task<bool> Attempt(Func<Task> action)
+    {
+        try
+        {
+            await action();
+            return false;
+        }
+        catch (Exception ex) when (ex is LastRoleManagerException or AuthorizationDeniedException)
+        {
+            return true;
+        }
+    }
+
+    [Fact]
     public async Task NewUserNamesAreStoredWithoutSurroundingSpaces()
     {
         var (manager, _) = await OnlyRoleManagerAsync();

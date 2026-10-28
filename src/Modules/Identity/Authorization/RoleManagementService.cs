@@ -91,7 +91,11 @@ public sealed class RoleManagementService : IRoleManagementService
         if (permission is not null)
         {
             if (permission.Code == PermissionCodes.RolesManage)
-                await EnsureAnotherRoleManagerRemainsAsync(roleId, null, cancellationToken);
+            {
+                if (!await _roleRepository.TryRevokePermissionKeepingHolderAsync(PermissionCodes.RolesManage, roleId, permission.Id, cancellationToken))
+                    throw new LastRoleManagerException();
+                return;
+            }
 
             await _roleRepository.RevokePermissionAsync(roleId, permission.Id, cancellationToken);
         }
@@ -108,8 +112,8 @@ public sealed class RoleManagementService : IRoleManagementService
     {
         await _authorization.AuthorizeAsync(actorUserId, PermissionCodes.RolesManage, cancellationToken);
 
-        await EnsureAnotherRoleManagerRemainsAsync(roleId, userId, cancellationToken);
-        await _roleRepository.RevokeUserAsync(userId, roleId, cancellationToken);
+        if (!await _roleRepository.TryRevokeUserKeepingHolderAsync(PermissionCodes.RolesManage, userId, roleId, cancellationToken))
+            throw new LastRoleManagerException();
     }
 
     public async Task<Guid> CreateUserAsync(
@@ -133,15 +137,6 @@ public sealed class RoleManagementService : IRoleManagementService
 
         var passwordHash = new PasswordHasher().Hash(password);
         return await _roleRepository.CreateUserAsync(username, passwordHash, displayName, cancellationToken);
-    }
-
-    // Role management itself is the permission that repairs everything else, so the last active holder stays. When nobody
-    // holds it already (a fresh install before provisioning) there is nothing left to protect.
-    private async Task EnsureAnotherRoleManagerRemainsAsync(Guid roleId, Guid? userId, CancellationToken cancellationToken)
-    {
-        var remaining = await _roleRepository.CountActiveHoldersAsync(PermissionCodes.RolesManage, roleId, userId, cancellationToken);
-        if (remaining == 0 && await _roleRepository.CountActiveHoldersAsync(PermissionCodes.RolesManage, null, null, cancellationToken) > 0)
-            throw new LastRoleManagerException();
     }
 
     public async Task<IReadOnlyList<RoleListing>> ListRolesAsync(Guid actorUserId, CancellationToken cancellationToken = default)

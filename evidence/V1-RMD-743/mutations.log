@@ -1,0 +1,4 @@
+M1 lock disabled run 1: exit=1 (non-zero = killed)
+M1 lock disabled run 2: exit=1 (non-zero = killed)
+M1 lock disabled run 3: exit=1 (non-zero = killed)
+restored identical

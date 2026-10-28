@@ -247,10 +247,72 @@ public sealed class PostgresRoleRepository : IRoleRepository
         return (true, reader.GetBoolean(0));
     }
 
-    public async Task<int> CountActiveHoldersAsync(
-        string permissionCode, Guid? ignoredRoleId, Guid? ignoredUserId, CancellationToken cancellationToken = default)
+    public Task<bool> TryRevokeUserKeepingHolderAsync(
+        string guardPermissionCode, Guid userId, Guid roleId, CancellationToken cancellationToken = default)
+        => RevokeKeepingHolderAsync(
+            guardPermissionCode, roleId, userId,
+            $"DELETE FROM {UserRoles} WHERE user_id = @user_id AND role_id = @role_id;",
+            command =>
+            {
+                command.Parameters.AddWithValue("user_id", userId);
+                command.Parameters.AddWithValue("role_id", roleId);
+            },
+            cancellationToken);
+
+    public Task<bool> TryRevokePermissionKeepingHolderAsync(
+        string guardPermissionCode, Guid roleId, Guid permissionId, CancellationToken cancellationToken = default)
+        => RevokeKeepingHolderAsync(
+            guardPermissionCode, roleId, null,
+            $"DELETE FROM {RolePermissions} WHERE role_id = @role_id AND permission_id = @permission_id;",
+            command =>
+            {
+                command.Parameters.AddWithValue("role_id", roleId);
+                command.Parameters.AddWithValue("permission_id", permissionId);
+            },
+            cancellationToken);
+
+    private async Task<bool> RevokeKeepingHolderAsync(
+        string guardPermissionCode, Guid roleId, Guid? userId, string deleteSql, Action<NpgsqlCommand> bindDelete, CancellationToken cancellationToken)
     {
-        await using var command = _dataSource.CreateCommand(
+        await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
+        await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
+
+        await using (var lockCommand = new NpgsqlCommand("SELECT pg_advisory_xact_lock(hashtext(@key));", connection, transaction))
+        {
+            lockCommand.Parameters.AddWithValue("key", "identity.last-holder:" + guardPermissionCode);
+            await lockCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        var remaining = await CountAsync(connection, transaction, guardPermissionCode, roleId, userId, cancellationToken);
+        if (remaining == 0 && await CountAsync(connection, transaction, guardPermissionCode, null, null, cancellationToken) > 0)
+            return false;
+
+        await using (var deleteCommand = new NpgsqlCommand(deleteSql, connection, transaction))
+        {
+            bindDelete(deleteCommand);
+            await deleteCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
+        await transaction.CommitAsync(cancellationToken);
+        return true;
+    }
+
+    private static async Task<int> CountAsync(
+        NpgsqlConnection connection, NpgsqlTransaction transaction, string permissionCode, Guid? ignoredRoleId, Guid? ignoredUserId, CancellationToken cancellationToken)
+    {
+        await using var command = new NpgsqlCommand(CountActiveHoldersSql, connection, transaction);
+        BindCountParameters(command, permissionCode, ignoredRoleId, ignoredUserId);
+        return (int)(long)(await command.ExecuteScalarAsync(cancellationToken))!;
+    }
+
+    private static void BindCountParameters(NpgsqlCommand command, string permissionCode, Guid? ignoredRoleId, Guid? ignoredUserId)
+    {
+        command.Parameters.AddWithValue("code", permissionCode);
+        command.Parameters.AddWithValue("role_id", NpgsqlTypes.NpgsqlDbType.Uuid, (object?)ignoredRoleId ?? DBNull.Value);
+        command.Parameters.AddWithValue("user_id", NpgsqlTypes.NpgsqlDbType.Uuid, (object?)ignoredUserId ?? DBNull.Value);
+    }
+
+    private const string CountActiveHoldersSql =
             $"""
             SELECT count(DISTINCT u.user_id)
             FROM identity.users u
@@ -259,12 +321,7 @@ public sealed class PostgresRoleRepository : IRoleRepository
             JOIN {PermissionTable} p ON p.permission_id = rp.permission_id
             WHERE u.active AND p.code = @code
               AND (@role_id::uuid IS NULL OR NOT (ur.role_id = @role_id AND (@user_id::uuid IS NULL OR ur.user_id = @user_id)));
-            """);
-        command.Parameters.AddWithValue("code", permissionCode);
-        command.Parameters.AddWithValue("role_id", NpgsqlTypes.NpgsqlDbType.Uuid, (object?)ignoredRoleId ?? DBNull.Value);
-        command.Parameters.AddWithValue("user_id", NpgsqlTypes.NpgsqlDbType.Uuid, (object?)ignoredUserId ?? DBNull.Value);
-        return (int)(long)(await command.ExecuteScalarAsync(cancellationToken))!;
-    }
+            """;
 
     public async Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken = default)
     {

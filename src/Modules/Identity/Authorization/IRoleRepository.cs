@@ -35,13 +35,19 @@ public interface IRoleRepository
 
     Task<(bool Exists, bool Active)> GetUserStateAsync(Guid userId, CancellationToken cancellationToken = default);
 
+
+
     /// <summary>
-    /// Active users who hold <paramref name="permissionCode"/> through some role, not counting what
-    /// <paramref name="ignoredRoleId"/> grants: to every user, or only to <paramref name="ignoredUserId"/> when given
-    /// (that one user-role assignment). The check behind "the last holder cannot be removed".
+    /// Removes one user-role assignment unless that would leave no active holder of <paramref name="guardPermissionCode"/>
+    /// (while some holder exists now). The count and the delete run in one transaction under an advisory lock, so two
+    /// concurrent removals cannot both pass the check. False when refused as the last holder.
     /// </summary>
-    Task<int> CountActiveHoldersAsync(
-        string permissionCode, Guid? ignoredRoleId, Guid? ignoredUserId, CancellationToken cancellationToken = default);
+    Task<bool> TryRevokeUserKeepingHolderAsync(
+        string guardPermissionCode, Guid userId, Guid roleId, CancellationToken cancellationToken = default);
+
+    /// <summary>Same guard as <see cref="TryRevokeUserKeepingHolderAsync"/> for removing a permission from a role.</summary>
+    Task<bool> TryRevokePermissionKeepingHolderAsync(
+        string guardPermissionCode, Guid roleId, Guid permissionId, CancellationToken cancellationToken = default);
 
     /// <summary>True when a user with this exact username already exists.</summary>
     Task<bool> UsernameExistsAsync(string username, CancellationToken cancellationToken = default);
