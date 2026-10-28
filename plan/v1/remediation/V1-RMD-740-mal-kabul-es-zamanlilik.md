@@ -1,7 +1,7 @@
 # V1-RMD-740 - Mal kabulde eşzamanlı çift stok artışı (739 bulgusu V11-PUR-001, V11-RMD-002)
 
 - Task ID: V1-RMD-740
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYCYNP4vpjxAZb7pmk
 - Work type: implementation
 - Surface state: Planned
