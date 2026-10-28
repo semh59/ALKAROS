@@ -1,7 +1,7 @@
 # V1-RMD-744 - İndirim ve bahşiş tekrarı durum kontrolünden sonra bakılıyor (739 bulgusu V1-RMD-729)
 
 - Task ID: V1-RMD-744
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYCYNP4vpjxAZb7pmk
 - Work type: implementation
 - Surface state: Planned
