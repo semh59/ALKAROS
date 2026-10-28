@@ -1,0 +1,3 @@
+Mutation: BillClosureSweeper candidate query ORDER BY b.updated_at DESC reverted to ORDER BY b.updated_at (ascending).
+Result: APaidBillThatFailedToCloseIsStillClosedWhenMoreThanAFullBatchOfPartlyPaidBillsIsOlder fails (Expected: 1, Actual: 0); see red.log.
+Source restored afterwards; 'git diff -- src' shows the DESC ordering in place and green.log (56/56) was produced from the restored source.

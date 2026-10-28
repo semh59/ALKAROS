@@ -49,6 +49,8 @@ public sealed class BillClosureSweeper : BackgroundService
     /// <summary>Closes what can be closed and returns how many bills it closed.</summary>
     public async Task<int> SweepOnceAsync(TimeSpan gracePeriod, CancellationToken cancellationToken)
     {
+        // Newest first: a partly paid bill that stays open never changes, so oldest-first would let a full batch of them
+        // starve every bill that became closable later.
         var candidates = new List<Guid>();
         await using (var command = _dataSource.CreateCommand(
             $"""
@@ -58,7 +60,7 @@ public sealed class BillClosureSweeper : BackgroundService
               AND EXISTS (
                   SELECT 1 FROM payments.payment_allocations a
                   WHERE a.bill_id = b.bill_id AND a.allocated_at < now() - @grace)
-            ORDER BY b.updated_at
+            ORDER BY b.updated_at DESC
             LIMIT {BatchSize};
             """))
         {

@@ -677,6 +677,39 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APaidBillThatFailedToCloseIsStillClosedWhenMoreThanAFullBatchOfPartlyPaidBillsIsOlder()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd750-sweep");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        for (var i = 0; i < 201; i++)
+        {
+            if (i % 100 == 0)
+            {
+                // The terminal-write limit is per terminal; a fresh terminal keeps the seeding below it.
+                terminalId = Guid.NewGuid();
+                cookie = await _database.SeedCashierSessionAsync(terminalId, $"rmd750-sweep-{i}");
+            }
+
+            var partlyPaid = await _database.SeedBillAsync(payable: 100m);
+            var tender = await PostAsync(client, TendersPath(terminalId, partlyPaid), cookie, new { Method = "Eft", Amount = 40m, IdempotencyKey = $"rmd750-p{i}" });
+            Assert.True(tender.IsSuccessStatusCode, $"Seeding tender {i} failed with {(int)tender.StatusCode}.");
+        }
+
+        var paidBill = await _database.SeedBillAsync(payable: 100m);
+        var paidTender = await PostAsync(client, TendersPath(terminalId, paidBill), cookie, new { Method = "Eft", Amount = 100m, IdempotencyKey = "rmd750-paid" });
+        Assert.True(paidTender.IsSuccessStatusCode, $"Paying tender failed with {(int)paidTender.StatusCode}.");
+        await _database.UncloseBillAsync(paidBill);
+        var sweeper = app.Services.GetServices<IHostedService>().OfType<BillClosureSweeper>().Single();
+
+        var closed = await sweeper.SweepOnceAsync(TimeSpan.Zero, CancellationToken.None);
+
+        Assert.Equal(1, closed);
+        Assert.Equal("Paid", await _database.BillStatusAsync(paidBill));
+    }
+
+    [Fact]
     public async Task ABillWhoseOnlyPaymentIsAnUnresolvedCardAttemptStaysOpen()
     {
         var terminalId = Guid.NewGuid();

@@ -1,7 +1,7 @@
 # V1-RMD-750 - Hesap kapatma süpürücüsü kapanamayan hesaplarda tıkanıyor (kod incelemesi bulgusu)
 
 - Task ID: V1-RMD-750
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYCYNP4vpjxAZb7pmk
 - Work type: implementation
 - Surface state: Planned
