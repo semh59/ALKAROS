@@ -1,8 +1,8 @@
 # V1-RMD-746 - Aynı kaynak veya hata için iki eşzamanlı ilk uyarı iki aktif kayıt açıyor (739 bulgusu V1-ALT-001)
 
 - Task ID: V1-RMD-746
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYYCYNP4vpjxAZb7pmk
 - Work type: implementation
 - Surface state: Planned
 
