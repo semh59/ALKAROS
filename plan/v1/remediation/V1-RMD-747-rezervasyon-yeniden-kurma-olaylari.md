@@ -1,8 +1,8 @@
 # V1-RMD-747 - Rezervasyon bakiyesi yeniden kurulunca uygulanmış olay kayıtları siliniyor ve geri yazılmıyor (739 bulgusu V11-INV-007)
 
 - Task ID: V1-RMD-747
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYYCYNP4vpjxAZb7pmk
 - Work type: implementation
 - Surface state: Planned
 
