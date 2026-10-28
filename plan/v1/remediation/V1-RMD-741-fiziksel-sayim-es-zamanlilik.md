@@ -1,7 +1,7 @@
 # V1-RMD-741 - Fiziksel sayımda eşzamanlı hareket bakiyeyi bozuyor (739 bulgusu V11-INV-008)
 
 - Task ID: V1-RMD-741
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYCYNP4vpjxAZb7pmk
 - Work type: implementation
 - Surface state: Planned
