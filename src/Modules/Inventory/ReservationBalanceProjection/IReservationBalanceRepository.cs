@@ -21,6 +21,6 @@ public interface IReservationBalanceRepository
         => ApplyReservationTerminalAtomicAsync(reservation, terminalStatus, ct);
     Task SetExactReservedBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal reservedQuantity, CancellationToken ct = default);
     Task<IReadOnlyDictionary<(Guid StockItemId, Guid StockLocationId), decimal>> AggregateActiveReservationsAsync(CancellationToken ct = default);
-    Task ResetAppliedEventsAsync(CancellationToken ct = default);
-    Task RecordAppliedEventsForRebuildAsync(IReadOnlyList<ReservationAppliedEvent> events, CancellationToken ct = default);
+    /// <summary>Replaces the applied-event log with one derived from portion_reservations (a Reserved event for every reservation, a Terminal event for each finished one), in one transaction, so replays stay idempotent after a rebuild.</summary>
+    Task RebuildAppliedEventsFromReservationsAsync(CancellationToken ct = default);
 }

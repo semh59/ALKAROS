@@ -286,8 +286,7 @@ public sealed class FakeReservationBalanceRepository : IReservationBalanceReposi
     public Task SetExactReservedBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal reservedQuantity, CancellationToken ct = default) => Task.CompletedTask;
     public Task<IReadOnlyDictionary<(Guid StockItemId, Guid StockLocationId), decimal>> AggregateActiveReservationsAsync(CancellationToken ct = default) =>
         Task.FromResult<IReadOnlyDictionary<(Guid StockItemId, Guid StockLocationId), decimal>>(new Dictionary<(Guid, Guid), decimal>());
-    public Task ResetAppliedEventsAsync(CancellationToken ct = default) { _applied.Clear(); return Task.CompletedTask; }
-    public Task RecordAppliedEventsForRebuildAsync(IReadOnlyList<ReservationAppliedEvent> events, CancellationToken ct = default) => Task.CompletedTask;
+    public Task RebuildAppliedEventsFromReservationsAsync(CancellationToken ct = default) { _applied.Clear(); return Task.CompletedTask; }
 }
 
 public sealed class PortionReservationCancellationEffectsDomainTests

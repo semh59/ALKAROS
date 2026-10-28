@@ -320,52 +320,30 @@ public sealed class PostgresReservationBalanceRepository : IReservationBalanceRe
         return dict;
     }
 
-    public async Task ResetAppliedEventsAsync(CancellationToken ct = default)
+    public async Task RebuildAppliedEventsFromReservationsAsync(CancellationToken ct = default)
     {
-        const string sql = "DELETE FROM inventory.reservation_balance_applied_events;";
-        await using var cmd = _dataSource.CreateCommand(sql);
-        await cmd.ExecuteNonQueryAsync(ct);
-    }
-
-    public async Task RecordAppliedEventsForRebuildAsync(IReadOnlyList<ReservationAppliedEvent> events, CancellationToken ct = default)
-    {
-        ArgumentNullException.ThrowIfNull(events);
-        if (events.Count == 0) return;
-
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
         await using var tx = await conn.BeginTransactionAsync(ct);
 
-        try
-        {
-            const string sql = @"
-                INSERT INTO inventory.reservation_balance_applied_events (
-                    id, reservation_id, event_type, terminal_status, stock_item_id, stock_location_id, quantity, applied_at
-                ) VALUES (
-                    $1, $2, $3, $4, $5, $6, $7, $8
-                )
-                ON CONFLICT (reservation_id, event_type) DO NOTHING;";
+        const string sql = @"
+            DELETE FROM inventory.reservation_balance_applied_events;
 
-            foreach (var ev in events)
-            {
-                await using var cmd = new NpgsqlCommand(sql, conn, tx);
-                cmd.Parameters.AddWithValue(ev.Id);
-                cmd.Parameters.AddWithValue(ev.ReservationId);
-                cmd.Parameters.AddWithValue(ev.EventType);
-                cmd.Parameters.AddWithValue((object?)ev.TerminalStatus ?? DBNull.Value);
-                cmd.Parameters.AddWithValue(ev.StockItemId);
-                cmd.Parameters.AddWithValue(ev.StockLocationId);
-                cmd.Parameters.AddWithValue(ev.Quantity);
-                cmd.Parameters.AddWithValue(ev.AppliedAt);
-                await cmd.ExecuteNonQueryAsync(ct);
-            }
+            INSERT INTO inventory.reservation_balance_applied_events (
+                id, reservation_id, event_type, terminal_status, stock_item_id, stock_location_id, quantity, applied_at
+            )
+            SELECT gen_random_uuid(), id, 'Reserved', NULL, stock_item_id, stock_location_id, quantity, NOW()
+            FROM inventory.portion_reservations;
 
-            await tx.CommitAsync(ct);
-        }
-        catch
-        {
-            await tx.RollbackAsync(ct);
-            throw;
-        }
+            INSERT INTO inventory.reservation_balance_applied_events (
+                id, reservation_id, event_type, terminal_status, stock_item_id, stock_location_id, quantity, applied_at
+            )
+            SELECT gen_random_uuid(), id, 'Terminal', status, stock_item_id, stock_location_id, quantity, NOW()
+            FROM inventory.portion_reservations
+            WHERE status <> 'Reserved';";
+
+        await using var cmd = new NpgsqlCommand(sql, conn, tx);
+        await cmd.ExecuteNonQueryAsync(ct);
+        await tx.CommitAsync(ct);
     }
 
     private static StockBalance MapRow(NpgsqlDataReader reader)

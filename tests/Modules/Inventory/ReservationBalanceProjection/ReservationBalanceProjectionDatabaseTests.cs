@@ -224,6 +224,34 @@ public sealed class ReservationBalanceProjectionDatabaseTests : IClassFixture<Re
     }
 
     [Fact]
+    public async Task ReplayingATerminalTransitionAfterARebuildIsStillIdempotent()
+    {
+        var loc = await _masterService.CreateLocationAsync(
+            "LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Replay Prep", StockLocationType.Kitchen);
+        var item = await _masterService.CreateStockItemAsync(
+            "SKU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Replay Portion", StockItemType.RawMaterial, "portion");
+        await _stockBalanceRepo.ApplyOnHandDeltaAsync(item.Id, loc.Id, 20m);
+
+        var staffId = Guid.NewGuid();
+        var rsv = (await _lifecycleService.CreateReservationAsync(new CreateReservationCommand(
+            OrderId: Guid.NewGuid(), OrderItemId: Guid.NewGuid(), StockItemId: item.Id, StockLocationId: loc.Id,
+            Quantity: 5m, UnitCode: "portion", CreatedBy: staffId))).Reservation;
+        await _projector.ApplyReservationCreatedAsync(rsv);
+        var released = await _lifecycleService.ReleaseReservationAsync(
+            new TransitionReservationCommand(rsv.Id, PortionReservationStatus.Released, staffId, "Cancelled"));
+        (await _projector.ApplyReservationTransitionAsync(released.Reservation, PortionReservationStatus.Reserved))
+            .IsIdempotentReplay.Should().BeFalse();
+
+        await _projector.RebuildReservationBalancesAsync();
+
+        var replay = await _projector.ApplyReservationTransitionAsync(released.Reservation, PortionReservationStatus.Reserved);
+        replay.IsIdempotentReplay.Should().BeTrue();
+        var balance = await _stockBalanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id);
+        balance!.ReservedQuantity.Should().Be(0m);
+        balance.AvailableQuantity.Should().Be(20m);
+    }
+
+    [Fact]
     public async Task RebuildProjectionFromLedgerAndReservationsReconstructsIdenticalBalances()
     {
         var locCode = "LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();

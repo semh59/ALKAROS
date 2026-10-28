@@ -1,0 +1,3 @@
+M1 no Terminal events: exit=1 (non-zero = killed)
+   Expected replay.IsIdempotentReplay to be true, but found False.
+restored identical

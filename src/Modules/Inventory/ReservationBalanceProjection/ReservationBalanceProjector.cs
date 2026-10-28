@@ -80,8 +80,8 @@ public sealed class ReservationBalanceProjector : IReservationBalanceProjector
         // 2. Fetch all existing stock balances
         var balances = await _balanceRepo.GetAllBalancesAsync(ct);
 
-        // 3. Reset applied projection events to prepare clean state
-        await _balanceRepo.ResetAppliedEventsAsync(ct);
+        // 3. Rebuild the applied-event log from the reservations so finished reservations stay replay-safe
+        await _balanceRepo.RebuildAppliedEventsFromReservationsAsync(ct);
 
         // 4. Update all balance records with exact reserved quantity
         var processedKeys = new HashSet<(Guid Item, Guid Location)>();

@@ -1,0 +1,11 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Recipes -> D:\PROJECT\ALKAROS\src\Modules\Recipes\bin\Debug\net8.0\ALKAROS.Recipes.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+D:\PROJECT\ALKAROS\tests\Modules\Inventory\ReservationBalanceProjection\ReservationBalanceProjectionDomainTests.cs(170,17): error CS0111: 'FakeReservationBalanceRepository' türü aynı parametre türleriyle 'SetExactReservedBalanceAsync' adlı bir üyeyi zaten tanımlıyor [D:\PROJECT\ALKAROS\tests\Modules\Inventory\ReservationBalanceProjection\ALKAROS.Inventory.ReservationBalanceProjection.Tests.csproj]
+D:\PROJECT\ALKAROS\tests\Modules\Inventory\ReservationBalanceProjection\ReservationBalanceProjectionDomainTests.cs(195,89): error CS0111: 'FakeReservationBalanceRepository' türü aynı parametre türleriyle 'AggregateActiveReservationsAsync' adlı bir üyeyi zaten tanımlıyor [D:\PROJECT\ALKAROS\tests\Modules\Inventory\ReservationBalanceProjection\ALKAROS.Inventory.ReservationBalanceProjection.Tests.csproj]

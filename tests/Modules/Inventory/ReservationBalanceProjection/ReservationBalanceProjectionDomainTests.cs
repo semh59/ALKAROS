@@ -158,23 +158,11 @@ public sealed class FakeReservationBalanceRepository : IReservationBalanceReposi
         }
     }
 
-    public Task ResetAppliedEventsAsync(CancellationToken ct = default)
+    public Task RebuildAppliedEventsFromReservationsAsync(CancellationToken ct = default)
     {
         lock (_lock)
         {
             _appliedEvents.Clear();
-            return Task.CompletedTask;
-        }
-    }
-
-    public Task RecordAppliedEventsForRebuildAsync(IReadOnlyList<ReservationAppliedEvent> events, CancellationToken ct = default)
-    {
-        lock (_lock)
-        {
-            foreach (var ev in events)
-            {
-                _appliedEvents.Add((ev.ReservationId, ev.EventType));
-            }
             return Task.CompletedTask;
         }
     }
