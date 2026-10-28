@@ -148,10 +148,28 @@ public sealed partial class DualScreenStore
         command.Parameters.AddWithValue("token_hash", DualScreenToken.Hash(rawToken));
         command.Parameters.Add("lifetime", NpgsqlDbType.Interval).Value = DisplaySessionLifetime;
         command.Parameters.Add("refresh", NpgsqlDbType.Interval).Value = DisplaySessionRefreshInterval;
-        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-        if (!await reader.ReadAsync(cancellationToken))
+        await using (var reader = await command.ExecuteReaderAsync(cancellationToken))
+        {
+            if (await reader.ReadAsync(cancellationToken))
+                return new DisplayPrincipal(reader.GetGuid(1), reader.GetGuid(2), reader.GetGuid(0), reader.GetFieldValue<DateTimeOffset>(3));
+        }
+
+        // A concurrent request may have refreshed the row while this statement waited on it: the UPDATE then no longer
+        // matches and the SELECT arm saw the stale snapshot. A new statement sees the committed row.
+        await using var recheck = _dataSource.CreateCommand(
+            """
+            SELECT session_id, display_id, terminal_id, expires_at
+            FROM customer_display.display_sessions
+            WHERE token_hash = @token_hash
+              AND revoked_at IS NULL
+              AND expires_at > now();
+            """);
+        recheck.Parameters.AddWithValue("token_hash", DualScreenToken.Hash(rawToken));
+        await using var recheckReader = await recheck.ExecuteReaderAsync(cancellationToken);
+        if (!await recheckReader.ReadAsync(cancellationToken))
             return null;
-        return new DisplayPrincipal(reader.GetGuid(1), reader.GetGuid(2), reader.GetGuid(0), reader.GetFieldValue<DateTimeOffset>(3));
+        return new DisplayPrincipal(
+            recheckReader.GetGuid(1), recheckReader.GetGuid(2), recheckReader.GetGuid(0), recheckReader.GetFieldValue<DateTimeOffset>(3));
     }
 
     public static int ParseCatalogLimit(string? value)

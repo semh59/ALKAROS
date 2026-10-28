@@ -1274,6 +1274,39 @@ public sealed class DualScreenAuthorizationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ADisplayRequestWaitingOnAConcurrentSessionRefreshIsStillAuthenticated()
+    {
+        var terminalId = Guid.NewGuid();
+        await SeedUserAsync(Guid.NewGuid());
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var cashier = await LoginCashierAsync(client, terminalId, "198.51.100.60");
+        var (displayId, displayCookie) = await PairDisplayAsync(client, terminalId, cashier, "198.51.100.60");
+        await ExecuteAsync(
+            "UPDATE customer_display.display_sessions SET expires_at = now() + interval '1 hour', last_seen_at = now() - interval '5 minutes' WHERE terminal_id = @id;",
+            ("id", terminalId));
+
+        // A concurrent request refreshes the session and holds the row until it commits.
+        await using var other = await _dataSource!.OpenConnectionAsync();
+        await using var transaction = await other.BeginTransactionAsync();
+        await using (var refresh = new NpgsqlCommand(
+            "UPDATE customer_display.display_sessions SET last_seen_at = now(), expires_at = now() + interval '12 hours' WHERE terminal_id = @id;",
+            other, transaction))
+        {
+            refresh.Parameters.AddWithValue("id", terminalId);
+            await refresh.ExecuteNonQueryAsync();
+        }
+
+        using var request = CreateForwardedRequest(HttpMethod.Get, $"/api/v1/customer-displays/{displayId:D}/snapshot", "198.51.100.61", displayCookie);
+        var pending = client.SendAsync(request);
+        await Task.Delay(1500);
+        await transaction.CommitAsync();
+
+        using var response = await pending;
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+    }
+
+    [Fact]
     public async Task TheActiveOrderRouteNeedsTheCashierSessionBoundToThatTerminal()
     {
         var terminalId = Guid.NewGuid();

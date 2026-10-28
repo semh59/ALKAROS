@@ -1,0 +1,4 @@
+M1 recheck query disabled: exit=1 (non-zero = killed)
+Expected: OK
+Actual:   Unauthorized
+restored identical
