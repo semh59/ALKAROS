@@ -19,3 +19,7 @@ Pilot: Payments dilimi (V1-RMD-604) tamam: 15 tamam, 17 düzeltilmeli, 1 yeniden
 - Kart yöntemi: CARD_METHOD.md; gruplar batches.json (139 grup, her biri 9 görev; pilot 33 görev hariç).
 - Biten gruplar: B001-B126 (B127 çalışıyor). Sonraki B128.
 - Sonraki: B022'den itibaren aynı yöntemle devam; sonra %15 bağımsız kontrol, düzeltme görevleri, md güncelleme, Aşama 5.
+
+## Aşama 2 TAMAM (2026-10-28)
+139 grup, 1243 görev + pilot 33 = 1276. Karar sayıları (kartlardan, 1232 başlık ayrıştırıldı): TAMAM 907, DÜZELTİLMELİ 319, YENİDEN AÇ 6 (pilotta ayrıca 17 düzeltilmeli, 1 yeniden aç). Bulgular: Yüksek 45, Orta 300, Düşük 497 (`findings/register.md`, `decisions.json`).
+Sonraki: Yüksek+YENİDEN AÇ bulguların bağımsız doğrulaması (qa-bulgu-dogrulayici), UI iki bakış (kullanıcı/tasarımcı), düzeltme görevleri, md güncelleme, Aşama 5.
