@@ -19,7 +19,7 @@ BillClosureSweeper her dakika ödemesi grace süresini aşmış, Paid/Cancelled 
 - `plan/v1/remediation/V1-RMD-750-hesap-kapatma-sweeper-tikanmasi.md`
 - `evidence/V1-RMD-750/**`
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillClosureSweeper.cs
-- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/**
+- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/PaymentTender/**
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
 
 ## In scope
