@@ -23,3 +23,8 @@ Pilot: Payments dilimi (V1-RMD-604) tamam: 15 tamam, 17 düzeltilmeli, 1 yeniden
 ## Aşama 2 TAMAM (2026-10-28)
 139 grup, 1243 görev + pilot 33 = 1276. Karar sayıları (kartlardan, 1232 başlık ayrıştırıldı): TAMAM 907, DÜZELTİLMELİ 319, YENİDEN AÇ 6 (pilotta ayrıca 17 düzeltilmeli, 1 yeniden aç). Bulgular: Yüksek 45, Orta 300, Düşük 497 (`findings/register.md`, `decisions.json`).
 Sonraki: Yüksek+YENİDEN AÇ bulguların bağımsız doğrulaması (qa-bulgu-dogrulayici), UI iki bakış (kullanıcı/tasarımcı), düzeltme görevleri, md güncelleme, Aşama 5.
+
+## Yüksek bulgu doğrulaması ve UI incelemesi (2026-10-28)
+- 45 Yüksek bulgu bağımsız doğrulandı (findings/verdict-1.md, verdict-2.md): 37 doğrulandı, 7 kısmen, 0 çürütüldü, 1 doğrulanamadı.
+- UI iki bakış: kullanıcı gözü (ui/akis-uzmani, pazar-uzmani, eksik-avcisi), tasarımcı gözü (ui/gorsel-tutarlilik, erisilebilirlik-dokunma, durum-ve-hata, turkce-metin). Tamamı kod okuması.
+- Sonraki: düzeltme planı (findings/fix-plan.md), PO soruları (findings/po-questions.md), md güncelleme, Aşama 5.
