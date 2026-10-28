@@ -22,6 +22,7 @@ güncellemesi kuyruğa alındığı için toplu istek sonucu izlenir. Sağlayıc
   - src/Modules/OnlineOrdering/Credentials/ (V12-OUI-003) — mağaza kimliği alanı.
   - src/Clients/PosTerminal/src/features/online-platform-credentials/ (V12-OUI-003) — alan etiketi.
   - tests/Host/Experience/OnlineOrdering/ — testler.
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Modules/OnlineOrdering/Providers/TrendyolGo/Menu/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

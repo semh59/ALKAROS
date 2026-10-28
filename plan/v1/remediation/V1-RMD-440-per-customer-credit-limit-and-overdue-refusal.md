@@ -51,6 +51,7 @@ Bu görev:
   yalnız migration 164
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tools/consistency-audit/unreachable_services_allowlist.json (V1-RMD-272
   sahipliğinde) — yalnız kaldırılan politikanın satırı
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Modules/CustomerAccounts/BillCharges/CreditTermsCreditPolicyTests.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

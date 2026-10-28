@@ -20,6 +20,7 @@
 - `tests/Clients/Cashier/InventoryPurchasing/ALKAROS.Cashier.InventoryPurchasing.Tests.csproj`, `tests/Clients/Cashier/InventoryPurchasing/packages.lock.json`
 - Kapsam genişletme onayı (2026-09-06 kullanıcı talimatı): bu task'ın yeni test projesinin `ALKAROS.slnx` ve `build/project-manifest.json` içine kaydı.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/Cashier/InventoryPurchasing/**, tests/Clients/Cashier/InventoryPurchasing/**, tests/Clients/Cashier/InventoryPurchasing/ALKAROS.Cashier.InventoryPurchasing.Tests.csproj, tests/Clients/Cashier/InventoryPurchasing/packages.lock.json yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

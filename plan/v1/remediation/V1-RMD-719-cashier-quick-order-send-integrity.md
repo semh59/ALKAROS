@@ -27,6 +27,7 @@ V1-RMD-602 bulguları B002, B011 ve B027 kapanır. Kasa hızlı sipariş gönder
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Billing/** - yalnız yeni test
 - `src/Clients/PosTerminal/src/routes/Cashier.sale-refresh.test.tsx`
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Modules/Billing/Bills/Bill.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

@@ -30,6 +30,7 @@ interleaving'iyle bağımsız doğrulamak.
 - `tests/BuildingBlocks/Idempotency/Fixtures/StoreTestDatabase.cs`
 - `tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj`
 - `evidence/V1-FND-019/**`
+- V1-RMD-739 doğrulama notu (2026-10-28): src/BuildingBlocks/Messaging/InboxStore.cs, src/BuildingBlocks/Messaging/InboxMessage.cs, tests/BuildingBlocks/Idempotency/InboxStoreTests.cs, tests/BuildingBlocks/Idempotency/OutboxStoreTests.cs, tests/BuildingBlocks/Idempotency/InboxRedeliveryContractTests.cs, tests/BuildingBlocks/Idempotency/RetryPolicyTests.cs, tests/BuildingBlocks/Idempotency/Fixtures/StoreTestDatabase.cs, tests/BuildingBlocks/Idempotency/ALKAROS.Idempotency.Tests.csproj yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

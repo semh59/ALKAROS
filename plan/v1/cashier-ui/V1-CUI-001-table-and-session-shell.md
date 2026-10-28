@@ -22,6 +22,7 @@ Türkçe cashier shell, authenticated session ve concurrency-aware Table status 
 - C71 (2026-08-19) konsolidasyonu: src/Clients/WebPrototype/** yüzeyi V1-WTR-004'e devredildi; bu historical task closed
   kalır.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/Cashier/TableShell/**, tests/Clients/Cashier/TableShell/**, src/Clients/WebPrototype/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

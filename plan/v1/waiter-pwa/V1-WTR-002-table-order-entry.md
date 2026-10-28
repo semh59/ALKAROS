@@ -18,6 +18,7 @@ Waiter permission kapsamında Table seçimi, Product/modifier/note girişi ve id
 
 - `src/Clients/WaiterPwa/OrderEntry/**`, `tests/Clients/WaiterPwa/OrderEntry/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/WaiterPwa/OrderEntry/**, tests/Clients/WaiterPwa/OrderEntry/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

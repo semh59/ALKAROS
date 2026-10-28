@@ -18,6 +18,7 @@ Open Order/Bill, kitchen progress ve failed/Unknown PrintJob durumlarını izinl
 
 - `src/Clients/Cashier/OperationsStatus/**`, `tests/Clients/Cashier/OperationsStatus/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/Cashier/OperationsStatus/**, tests/Clients/Cashier/OperationsStatus/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

@@ -38,6 +38,7 @@ yürütülür; V1-IAM-008 kendi kod sahibi olarak kalır ve bu görevin yüzeyin
   V1-IAM-015'e devredildi; bu historical task closed kalır.
 - PO:2026-08-24 production dual-screen kararıyla src/Host/Program.cs V1-RMD-006'ya devredildi; bu historical task
   closed kalır.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/BuildingBlocks/Transactions/TransactionContext.cs, src/BuildingBlocks/Transactions/TransactionScope.cs, src/BuildingBlocks/TransactionOutboxIntegration/TransactionOutbox.cs, src/BuildingBlocks/TransactionOutboxIntegration/TransactionOutboxResource.cs, tests/BuildingBlocks/Transactions/Execution/TransactionExecutionTests.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

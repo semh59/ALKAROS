@@ -21,6 +21,7 @@
 - PO:2026-08-29 kararıyla src/Host/Experience/Orders/OrderManagementEndpoints.cs, src/Host/DualScreen/DualScreenApplication.cs ve src/Host/Experience/Orders/OrderManagementStore.cs yüzeyleri V1-RMD-054'e devredildi; bu historical task closed kalır.
 - PO:2026-08-31 kararıyla src/Host/DualScreen/DualScreenStore.cs yüzeyi V1-RMD-077'ye devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-050/**`
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Host/Experience/Orders/OrderManagementStore.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

@@ -25,6 +25,7 @@ alan webhook alıcısı ile sipariş listesini çeken adaptörü yazmak. Sağlay
   - src/Modules/OnlineOrdering/Credentials/ (V12-OUI-003) — webhook anahtarı, entegratör adı ve işlemi yapan e-posta alanları.
   - src/Clients/PosTerminal/src/features/online-platform-credentials/ (V12-OUI-003) — yeni alanların Türkçe etiketleri.
   - src/Modules/OnlineOrdering/Yemeksepeti/ProductMapping/ (V12-MAP-001) — eşleme servisinin platform parametresi.
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Modules/OnlineOrdering/Providers/TrendyolGo/OrderIntake/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

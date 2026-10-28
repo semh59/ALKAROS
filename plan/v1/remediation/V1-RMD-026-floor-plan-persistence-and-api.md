@@ -28,6 +28,7 @@ sözleşmelerini açmak.
 - `tests/Modules/Tables/TableLifecycle/FloorPlan*.cs`
 - `tests/Host/Experience/Tables/FloorPlan*.cs`
 - `evidence/V1-RMD-026/**`
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Modules/Tables/TableLifecycle/FloorPlan*.cs, tests/Host/Experience/Tables/FloorPlan*.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## Dependencies
 

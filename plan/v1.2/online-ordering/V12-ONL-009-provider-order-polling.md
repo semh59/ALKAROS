@@ -31,6 +31,7 @@ aynı gelen kutusuna yazan zamanlanmış servis kurulur.
   - src/Modules/Reconciliation/OnlineOrders/ (V12-REC-001) — çekme hatası kaynak çifti (In scope 3).
   - tests/Modules/Reconciliation/OnlineOrders/ — kaynak çifti testleri ve fikstür bağlantısı.
   - tests/Host/Experience/Reconciliation/ — kayıtlı kaynak çifti sayısı.
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Modules/OnlineOrdering/Polling/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

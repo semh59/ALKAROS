@@ -21,6 +21,7 @@ belirlenmis exponential backoff kuraliyla kalici olarak hesaplamak.
   devredilmiştir (C42); bu görev artık bu path'leri yazamaz.
 - `tests/BuildingBlocks/Idempotency/RetryScheduleIntegrationTests.cs`
 - `evidence/V0-GOV-014/**`
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/BuildingBlocks/Idempotency/RetryScheduleIntegrationTests.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

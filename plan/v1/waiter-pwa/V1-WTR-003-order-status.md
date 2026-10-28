@@ -19,6 +19,7 @@ Server-authoritative Order ve KitchenTicketItem progress durumunu reconnect-safe
 
 - `src/Clients/WaiterPwa/OrderStatus/**`, `tests/Clients/WaiterPwa/OrderStatus/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/WaiterPwa/OrderStatus/**, tests/Clients/WaiterPwa/OrderStatus/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

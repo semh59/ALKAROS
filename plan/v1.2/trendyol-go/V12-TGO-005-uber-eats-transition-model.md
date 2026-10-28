@@ -25,6 +25,7 @@ geliyor. Adaptör iki modeli de kaldırır. Sağlayıcı davranışı yalnız he
   - src/Host/Experience/OnlineOrdering/ (V12-OUI-001) — not uç noktasının arama bilgisini taşıması.
   - src/Clients/PosTerminal/src/features/online-operations/ (V12-OUI-001) — arama bilgisinin Türkçe gösterimi.
   - tests/Host/Experience/OnlineOrdering/ — testler.
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Modules/OnlineOrdering/Providers/TrendyolGo/ yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

@@ -22,6 +22,7 @@ kimliklerine kapatmak.
 - `tests/BuildingBlocks/Idempotency/RetrySqlIdentifierTests.cs`
 - `evidence/V1-FND-014/**`
 - C52 fenced message-finalization surface is transferred to V1-FND-019; this historical task remains closed.
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/BuildingBlocks/Idempotency/RetrySqlIdentifierTests.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

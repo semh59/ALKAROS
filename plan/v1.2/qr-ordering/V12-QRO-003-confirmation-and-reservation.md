@@ -42,6 +42,7 @@ Bekleyen bir QR order'yi onaylayın veya reddedin ve bölümleri yalnızca başa
     — artık erişilebilir olan 14 satır silindi (V12-STK-001'in iki satırı ve V1-RMD-278'in
     bilinçli olarak bağlamadığı rezervasyon ailesi). V1-RMD-278'in çift düşüm gerekçesi
     V12-STK-001'in tüketim guard'ıyla kapandı: hold, tüketimde Consumed olur.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Modules/QrOrdering/Confirmation/**, tests/Modules/QrOrdering/Confirmation/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

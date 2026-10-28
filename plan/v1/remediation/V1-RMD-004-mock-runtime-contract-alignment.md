@@ -19,6 +19,7 @@ bir mock runtime'a dönüştürmek.
 PO:2026-08-24 tam production denetimi correction custody kararıyla mevcut yedi `src/Clients/WebPrototype` dosyasının
 yazma yetkisi exact path'lerle V1-RMD-011'e devredildi; bu tarihsel görev `Done` kalır ve devir yeni yazma yetkisi
 üretmez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/WebPrototype yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

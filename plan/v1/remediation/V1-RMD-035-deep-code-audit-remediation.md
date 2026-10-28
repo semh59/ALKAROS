@@ -27,6 +27,7 @@ Statik kod denetiminde tespit edilen 7 kritik kusuru (DualScreen indirimli ürü
 - `tests/Modules/Audit/EventStore/AuditTests.cs`
 - `tests/BuildingBlocks/Idempotency/IdempotencyKeyStoreTests.cs`
 - `evidence/V1-RMD-035/**`
+- V1-RMD-739 doğrulama notu (2026-10-28): src/BuildingBlocks/Idempotency/IdempotencyKeyStore.cs, tests/BuildingBlocks/Idempotency/IdempotencyKeyStoreTests.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

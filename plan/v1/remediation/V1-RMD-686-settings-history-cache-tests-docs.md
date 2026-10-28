@@ -30,6 +30,7 @@ V1-RMD-598 bulguları R9, R10, R11, R14, R17 ve kalan test kalitesi bulguları k
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Modules/Settings/QrOrderExpiry/ALKAROS.Settings.QrOrderExpiry.Tests.csproj - yalnız yeni dosya
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-685-business-logo-hardening.md - yalnız Handoff satırı
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Modules/Settings/GarsonFeatureToggles/GarsonFeatureTogglesTests.cs, tests/Modules/Settings/GarsonFeatureToggles/ALKAROS.Settings.GarsonFeatureToggles.Tests.csproj, tests/Modules/Settings/QrOrderExpiry/QrOrderExpirySettingTests.cs, tests/Modules/Settings/QrOrderExpiry/ALKAROS.Settings.QrOrderExpiry.Tests.csproj yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

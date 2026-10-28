@@ -44,6 +44,7 @@ uygulamak.
   sahipliğinde kayıtlı güncelleme) üzerinde bu task'ın migration pozisyon kaydı. Runtime `order.json` ve manifest
   testi sahipliği V1-FND-012 remediation görevindedir.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/BuildingBlocks/Idempotency/IdempotencyKey.cs, src/BuildingBlocks/Idempotency/IdempotencyKeyConflictException.cs, src/BuildingBlocks/Idempotency/IdempotencyOutcome.cs, src/BuildingBlocks/Idempotency/IdempotencyStatus.cs, src/BuildingBlocks/Idempotency/RequestHash.cs, src/BuildingBlocks/Messaging/InboxEnvelope.cs, src/BuildingBlocks/Messaging/InboxStatus.cs, tests/BuildingBlocks/Idempotency/EnvelopeValidationTests.cs, tests/BuildingBlocks/Idempotency/IdempotencyKeyTests.cs, tests/BuildingBlocks/Idempotency/RequestHashTests.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

@@ -24,6 +24,7 @@ Bağımsız taramanın bulduğu arayüz sızıntılarını kapatmak: sunucu hata
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx ve src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx — yalnız rota hatası ve yedekleme hata satırı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/strings.ts — yalnız yeni Türkçe metinler
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/PosTerminal/src/userMessage.ts, src/Clients/PosTerminal/src/userMessage.test.ts yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

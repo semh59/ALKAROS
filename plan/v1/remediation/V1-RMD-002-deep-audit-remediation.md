@@ -69,6 +69,7 @@ transaction içinde projekte etmek.
   V1-RMD-006'ya devredildi; bu historical task closed kalır.
 - PO:2026-08-28 operational split kararıyla BillingModule.cs V1-RMD-027'ye devredildi; bu historical task closed
   kalır.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/WaiterPwa/SessionQueue/**, tests/Clients/WaiterPwa/SessionQueue/**, src/Clients/WebPrototype yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

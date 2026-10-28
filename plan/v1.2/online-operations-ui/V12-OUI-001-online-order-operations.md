@@ -44,6 +44,7 @@ operasyonel kuyruk verin.
   reddedilir ve sipariş değişmez. Her eylemden sonra liste sunucudan yeniden okunur, yani ekran her zaman kalıcı
   sonucu gösterir. Yetki `orders.create`'tir. Sağlayıcı çağrısı V12-ONL-003'ün doğrulanmamış taslağıdır
   (V0-YSP-001 `Blocked`, `V12-GOV-004`).
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Apps/BackOffice/OnlineOperations/**, tests/Apps/BackOffice/OnlineOperations/**, src/Apps/BackOffice yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

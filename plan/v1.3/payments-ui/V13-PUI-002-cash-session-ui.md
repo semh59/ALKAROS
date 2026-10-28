@@ -37,6 +37,7 @@ Aktif terminal/kasiyer için açma, sayma, kapatma ve fark teyit akışını uyg
   tolerans-aşımı uç noktaları için 3 yeni test eklenir, mevcut hiçbir test
   değişmez.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/Cashier/Payments/CashSession/ yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

@@ -37,6 +37,7 @@ V1-RMD-598 bulguları R2, R3 ve R12a-g kapanır. Müdür, ayar geçmişi ekranı
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Settings/SettingsManagementHttpTests.cs - yalnız yeni test
 - Sınırlı ek (paylaşılan, geri-tik olmadan): plan/v1/remediation/V1-RMD-683-settings-value-validation.md - yalnız Handoff satırı
 - Bu görev, başka bir görevin owned surface alanını yukarıdaki sınırlı ekler dışında değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/PosTerminal/src/features/management-settings-history/SettingEditor.test.tsx yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

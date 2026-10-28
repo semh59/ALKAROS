@@ -21,6 +21,7 @@ dokunma hedefi standartlarını pekiştirmek.
 - `src/Clients/WebPrototype/tests/mock-runtime.test.js`
 - `src/Clients/WebPrototype/tests/ui.accessibility.test.js`
 - `evidence/V1-RMD-011/**`
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/WebPrototype/index.html, src/Clients/WebPrototype/app.js, src/Clients/WebPrototype/styles.css, src/Clients/WebPrototype/mock-runtime.js, src/Clients/WebPrototype/tests/app.security.test.js, src/Clients/WebPrototype/tests/mock-runtime.test.js, src/Clients/WebPrototype/tests/ui.accessibility.test.js yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

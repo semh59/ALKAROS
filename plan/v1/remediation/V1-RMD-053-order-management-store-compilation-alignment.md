@@ -19,6 +19,7 @@
 - `plan/v1/remediation/V1-RMD-053-order-management-store-compilation-alignment.md`
 - PO:2026-08-29 kararıyla src/Host/Experience/Orders/OrderManagementStore.cs yüzeyi V1-RMD-054'e devredildi; bu historical task closed kalır.
 - `evidence/V1-RMD-053/**`
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Host/Experience/Orders/OrderManagementStore.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

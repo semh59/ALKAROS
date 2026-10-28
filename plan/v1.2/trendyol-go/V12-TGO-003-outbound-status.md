@@ -29,6 +29,7 @@ teslim edildi. Sağlayıcı davranışı yalnız herkese açık Uber Eats Trendy
   - tests/Modules/Reconciliation/OnlineOrders/ — testler.
   - tests/Host/Experience/OnlineOrdering/ — testler.
   - tests/Host/Experience/Reconciliation/ — testler.
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Modules/OnlineOrdering/Providers/TrendyolGo/StatusSync/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

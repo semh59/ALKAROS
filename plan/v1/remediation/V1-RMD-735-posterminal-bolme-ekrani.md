@@ -26,6 +26,7 @@ V1-RMD-603 B034, B035: BillSplitWorkspace 409 sonrası kurtarma, boş hücre, bo
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/**
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/**
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/PosTerminal/src/features/billing-split/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

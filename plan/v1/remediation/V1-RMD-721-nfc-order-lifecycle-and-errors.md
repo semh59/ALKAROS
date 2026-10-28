@@ -28,6 +28,7 @@ V1-RMD-602 bulguları B005, B006, B007, B018, B019, B020, B021 ve B026 kapanır.
 - Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/MigrationComposition/DualScreen/AccessHardeningTests.cs - yalnız nfc-order hız sınırı testi
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/src/routes/NfcOrder.test.tsx - yalnız onay bekleme ve kimlik sıfırlama testi
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Host/Experience/Orders/PendingOrderConfirmationStore.cs, src/Host/Experience/Orders/QrOrderExpiryHostedService.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

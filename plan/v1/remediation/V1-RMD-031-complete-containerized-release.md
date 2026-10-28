@@ -29,6 +29,7 @@ sürümü sunmak.
 - `evidence/V1-RMD-031/**`
 - PO:2026-08-28 `RMD032-F001` kararıyla `DualScreenApplication.cs` ve `App.tsx` runtime kitchen station contract
   remediation custody'si V1-RMD-034'e devredildi; external blocker ve historical release kaydı değişmeden kalır.
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Clients/PosTerminal/Experience/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## Dependencies
 

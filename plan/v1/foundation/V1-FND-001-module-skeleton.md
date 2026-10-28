@@ -29,6 +29,7 @@ oluşturmak.
 - C72 (2026-08-24): Host project ve architecture package lock remediasyon sahipliği V1-RMD-002'ye devredildi.
 - `src/BuildingBlocks/**/ALKAROS.*.csproj`, `src/**/packages.lock.json`, `tests/**/packages.lock.json`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Integration/**/ALKAROS.*.Tests.csproj yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

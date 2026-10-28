@@ -23,6 +23,7 @@ V1-RMD-603 B027, B039: api-contract-standard Örnek 2, void-complimentary-discou
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Billing/BillingModule.cs
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Modules/Billing/PaymentClosure/BillPaymentClosureModule.cs
 - Bu görev, başka bir görevin owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Modules/Billing/BillingModule.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

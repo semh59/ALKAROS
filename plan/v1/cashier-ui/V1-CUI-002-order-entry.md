@@ -18,6 +18,7 @@ Product/modifier seçimi, note, Draft düzenleme ve idempotent submit akışın�
 
 - `src/Clients/Cashier/OrderEntry/**`, `tests/Clients/Cashier/OrderEntry/**`
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/Cashier/OrderEntry/**, tests/Clients/Cashier/OrderEntry/** yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

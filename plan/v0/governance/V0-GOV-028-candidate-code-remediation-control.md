@@ -28,6 +28,7 @@ fail-closed remediation görevleriyle düzeltilmesini sağlamak.
 - `plan/VALIDATION_CONTRACT.md`
 - `plan/TRACEABILITY.md`
 - `evidence/V0-GOV-028/**`
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/Architecture/TaskScope/test_task_scope_remediation_exceptions.py yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

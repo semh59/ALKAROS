@@ -23,6 +23,7 @@ sahipliğini doğrulamak; doğrulanmayan yardımcıyı kabul edilmiş foundation
 - `tests/BuildingBlocks/TestHelpers/Fixtures/SimulatedFailures.cs`
 - `evidence/V1-FND-010/**`
 - Bu görev, fixture tüketicilerinin production testlerini veya başka bir task'ın owned surface alanını değiştiremez.
+- V1-RMD-739 doğrulama notu (2026-10-28): tests/BuildingBlocks/TestHelpers/Fixtures/RecordingResource.cs, tests/BuildingBlocks/TestHelpers/Fixtures/SimulatedFailures.cs yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 

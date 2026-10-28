@@ -25,6 +25,7 @@ PosTerminal istemcisine, bugünkü `tsc --noEmit` tip denetimine ek olarak ESLin
   yapılandırma bu dosyadadır
 - Sınırlı ek (paylaşılan, geri-tik olmadan): src/Clients/PosTerminal/pnpm-workspace.yaml — yalnız Oxlint sürümünün
   yayın yaşı ayarı gerekirse
+- V1-RMD-739 doğrulama notu (2026-10-28): src/Clients/PosTerminal/eslint.config.js yolları HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır.
 
 ## In scope
 
