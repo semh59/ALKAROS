@@ -33,7 +33,7 @@
 
 ## Dependencies
 
-- V1-RMD-739
+- V1-RMD-737
 
 ## Acceptance evidence
 
