@@ -1,8 +1,8 @@
 # V1-RMD-743 - Son yönetici koruması eşzamanlı çağrıda aşılıyor (739 bulguları V1-IAM-008, V1-RMD-668)
 
 - Task ID: V1-RMD-743
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYYCYNP4vpjxAZb7pmk
 - Work type: implementation
 - Surface state: Planned
 
