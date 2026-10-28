@@ -91,10 +91,6 @@ public sealed class BillingSplitStore
         // Read only after the lock: a status or payable changed by a request that held it first must be seen.
         var bill = await _bills.GetByIdAsync(billId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
-        // Found by an independent audit (2026-09-06): nothing stopped a discount from being applied to a
-        // Paid/PartiallyPaid/Cancelled bill; same mutable-state set SplitDesign enforces.
-        if (!IsDiscountable(bill.Status))
-            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
 
         var existingAdjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
 
@@ -115,6 +111,12 @@ public sealed class BillingSplitStore
             await lockTransaction.CommitAsync(cancellationToken);
             return (replay, AdjustmentCalculator.Calculate(bill, existingAdjustments));
         }
+
+        // A replay of an already-applied request is answered before the state check: the bill may have been paid since
+        // the first attempt succeeded, and a retry must still learn that it was applied (audit 2026-09-06: nothing
+        // else may be applied to a Paid/PartiallyPaid/Cancelled bill).
+        if (!IsDiscountable(bill.Status))
+            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
 
         // A bill's items can carry different tax rates; the discount is split net/tax in the bill's own
         // proportion (its unrounded weighted-average rate), not an arbitrary single item's rate.
@@ -246,7 +248,12 @@ public sealed class BillingSplitStore
         ValidateDiscountRequest(request);
         var bill = await _bills.GetByIdAsync(billId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
-        if (!IsDiscountable(bill.Status))
+        if (IsDiscountable(bill.Status))
+            return;
+
+        // A retry of a discount that was already applied is answered by ApplyDiscountAsync, even after the bill was paid.
+        var existing = await _adjustments!.GetByBillIdAsync(billId, cancellationToken);
+        if (!existing.Any(a => string.Equals(a.IdempotencyKey, request.IdempotencyKey, StringComparison.Ordinal)))
             throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
     }
 
@@ -322,8 +329,6 @@ public sealed class BillingSplitStore
 
         var bill = await _bills.GetByIdAsync(billId, cancellationToken)
             ?? throw new BillingSplitNotFoundException($"Bill {billId} was not found.");
-        if (!IsDiscountable(bill.Status))
-            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
 
         var existingAdjustments = await _adjustments.GetByBillIdAsync(billId, cancellationToken);
 
@@ -337,6 +342,12 @@ public sealed class BillingSplitStore
             await lockTransaction.CommitAsync(cancellationToken);
             return (replay, AdjustmentCalculator.Calculate(bill, existingAdjustments));
         }
+
+        // A replay of an already-applied request is answered before the state check: the bill may have been paid since
+        // the first attempt succeeded, and a retry must still learn that it was applied (audit 2026-09-06: nothing
+        // else may be applied to a Paid/PartiallyPaid/Cancelled bill).
+        if (!IsDiscountable(bill.Status))
+            throw new BillDiscountUnsupportedBillStateException(billId, bill.Status.ToString());
 
         // A fixed code, not free text - matches how DiscountReasonCatalog's
         // codes work: the server stores a code, a future client translates

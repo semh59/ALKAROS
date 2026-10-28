@@ -752,6 +752,58 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ReplayingADiscountAfterTheBillWasPaidReturnsTheOriginalResultButANewKeyIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "supervisor", "bills.discount");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount";
+        var body = new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer");
+
+        using var first = await client.SendAsync(JsonRequest(HttpMethod.Post, path, cookie, body));
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        var firstResult = await first.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>();
+        await _database.SetBillStatusAsync(seeded.BillId, "Paid");
+
+        using var replay = await client.SendAsync(JsonRequest(HttpMethod.Post, path, cookie, body));
+        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        Assert.Equal(firstResult!.AdjustmentId, (await replay.Content.ReadFromJsonAsync<ApplyBillDiscountResultV1>())!.AdjustmentId);
+
+        var fresh = new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "Percentage", 10m, "PromotionalOffer");
+        using var refused = await client.SendAsync(JsonRequest(HttpMethod.Post, path, cookie, fresh));
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
+    public async Task ReplayingATipAfterTheBillWasPaidReturnsTheOriginalResultButANewKeyIsRefused()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(terminalId, "cashier", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/tip";
+        var body = new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 25m);
+
+        using var first = await client.SendAsync(JsonRequest(HttpMethod.Post, path, cookie, body));
+        Assert.Equal(HttpStatusCode.OK, first.StatusCode);
+        var firstResult = await first.Content.ReadFromJsonAsync<ApplyBillTipResultV1>();
+        await _database.SetBillStatusAsync(seeded.BillId, "Paid");
+
+        using var replay = await client.SendAsync(JsonRequest(HttpMethod.Post, path, cookie, body));
+        Assert.Equal(HttpStatusCode.OK, replay.StatusCode);
+        Assert.Equal(firstResult!.AdjustmentId, (await replay.Content.ReadFromJsonAsync<ApplyBillTipResultV1>())!.AdjustmentId);
+
+        using var refused = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, path, cookie, new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 25m)));
+        Assert.Equal(HttpStatusCode.Conflict, refused.StatusCode);
+        Assert.Equal(1L, await _database.BillAdjustmentCountAsync(seeded.BillId));
+    }
+
+    [Fact]
     public async Task RetryingATipWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment()
     {
         var terminalId = Guid.NewGuid();
