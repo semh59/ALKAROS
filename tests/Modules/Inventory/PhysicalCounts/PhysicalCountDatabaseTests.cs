@@ -105,6 +105,55 @@ public sealed class PhysicalCountDatabaseTests : IClassFixture<PhysicalCountTest
     }
 
     [Fact]
+    public async Task AMovementBetweenReadingAndApplyingRollsTheCountBack()
+    {
+        var (loc, item) = await SeedItemAsync("Şeker");
+        await _balanceRepo.ApplyOnHandDeltaAsync(item.Id, loc.Id, 10m);
+
+        var racing = RacingBalanceRepository.Create(_balanceRepo, () =>
+            _balanceRepo.ApplyOnHandDeltaAsync(item.Id, loc.Id, -3m));
+        var service = new PhysicalCountService(
+            new PostgresInventoryTransactionRunner(_db.DataSource), _itemRepo, _locationRepo, racing, _movementRepo, _countRepo);
+
+        var act = async () => await service.RecordPhysicalCountAsync(
+            new PhysicalCountRequest(item.Id, loc.Id, 8m, Guid.NewGuid(), null));
+
+        await act.Should().ThrowAsync<PhysicalCountBalanceGuardFailedException>();
+        (await _balanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id))!.OnHandQuantity.Should().Be(7m);
+        (await _movementRepo.GetByStockItemAsync(item.Id)).Should().BeEmpty();
+    }
+
+    public class RacingBalanceRepository : System.Reflection.DispatchProxy
+    {
+        private IStockBalanceRepository _inner = null!;
+        private Func<Task> _afterRead = null!;
+
+        public static IStockBalanceRepository Create(IStockBalanceRepository inner, Func<Task> afterRead)
+        {
+            var proxy = Create<IStockBalanceRepository, RacingBalanceRepository>();
+            var racing = (RacingBalanceRepository)(object)proxy;
+            racing._inner = inner;
+            racing._afterRead = afterRead;
+            return proxy;
+        }
+
+        protected override object? Invoke(System.Reflection.MethodInfo? targetMethod, object?[]? args)
+        {
+            var result = targetMethod!.Invoke(_inner, args);
+            return targetMethod.Name == nameof(IStockBalanceRepository.GetByItemAndLocationAsync)
+                ? Race((Task<StockBalance?>)result!)
+                : result;
+        }
+
+        private async Task<StockBalance?> Race(Task<StockBalance?> read)
+        {
+            var balance = await read;
+            await _afterRead();
+            return balance;
+        }
+    }
+
+    [Fact]
     public async Task ACountMatchingTheCurrentBalanceRecordsNoMovementButStillPersistsTheCount()
     {
         var (loc, item) = await SeedItemAsync("Şeker");

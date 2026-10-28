@@ -12,10 +12,9 @@ namespace ALKAROS.Inventory.PhysicalCounts;
 /// rather than duplicating it, but is its own service: a physical count
 /// records the ABSOLUTE quantity someone counted, not a relative delta a
 /// caller supplies — the delta against the current balance is computed
-/// here. Like a real stock take, this assumes no other movement happens
-/// mid-count (the delta is computed against a balance read before the
-/// transaction, same as <c>InventoryAdjustmentService</c>'s own fast
-/// pre-check) — a genuine concurrent write mid-count is out of scope.
+/// here against a balance read before the transaction, so the resulting
+/// on-hand is verified inside the transaction and a concurrent movement
+/// mid-count rolls the count back instead of leaving a wrong balance.
 /// </summary>
 public sealed class PhysicalCountService : IPhysicalCountService
 {
@@ -99,6 +98,12 @@ public sealed class PhysicalCountService : IPhysicalCountService
                 {
                     throw new PhysicalCountBalanceGuardFailedException(
                         $"Applying physical count for stock item '{item.Name}' would have driven on-hand negative under a concurrent write.");
+                }
+
+                if (applied.OnHandQuantity != request.CountedQuantity)
+                {
+                    throw new PhysicalCountBalanceGuardFailedException(
+                        $"Another movement changed stock item '{item.Name}' while it was being counted; count again.");
                 }
 
                 resultingMovementId = movement.Id;
