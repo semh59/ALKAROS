@@ -1,8 +1,8 @@
 # V1-RMD-748 - Stok hareketi iptali bakiyeyi eksiye çekince ham veritabanı hatası fırlatıyor (739 bulgusu V11-INV-003)
 
 - Task ID: V1-RMD-748
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_019vXeYYCYNP4vpjxAZb7pmk
 - Work type: implementation
 - Surface state: Planned
 
