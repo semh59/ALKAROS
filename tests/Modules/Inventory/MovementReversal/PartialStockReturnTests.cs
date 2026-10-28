@@ -150,6 +150,28 @@ public sealed class PartialStockReturnTests : IClassFixture<MovementReversalTest
             .Should().NotContain(m => m.MovementType == StockMovementType.Return);
     }
 
+    [Fact]
+    public async Task ReversingAReceiptThatWouldDriveStockNegativeIsRefusedWithATypedException()
+    {
+        var location = await NewLocationAsync();
+        var item = await NewItemAsync("Flour");
+        var receipt = await _recorder.RecordMovementAsync(
+            item.Id, location.Id, StockMovementType.PurchaseReceipt, 10m, "kg", StockMovementSourceType.PurchaseOrder);
+        await _projector.ApplyMovementAsync(receipt);
+        await ConsumeAsync(item.Id, location.Id, 8m, Guid.NewGuid());
+
+        await using (var connection = await _db.DataSource.OpenConnectionAsync())
+        await using (var transaction = await connection.BeginTransactionAsync())
+        {
+            var act = () => _service.ReverseMovementAsync(
+                new StockMovementReversalRequest(receipt.Id, "Receipt entered by mistake"), connection, transaction);
+            await act.Should().ThrowAsync<ReversalWouldMakeStockNegativeException>();
+        }
+
+        (await _balances.GetByItemAndLocationAsync(item.Id, location.Id))!.OnHandQuantity.Should().Be(2m);
+        (await _movements.HasReversalAsync(receipt.Id)).Should().BeFalse();
+    }
+
     private async Task<IReadOnlyList<StockMovement>> ReturnAsync(Guid orderItemId, decimal returned, decimal previously, decimal total)
     {
         await using var connection = await _db.DataSource.OpenConnectionAsync();

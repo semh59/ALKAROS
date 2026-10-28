@@ -13,6 +13,11 @@ public sealed class ReversalNotEligibleException : StockMovementReversalExceptio
     public ReversalNotEligibleException(string message) : base(message) { }
 }
 
+public sealed class ReversalWouldMakeStockNegativeException : StockMovementReversalException
+{
+    public ReversalWouldMakeStockNegativeException(string message) : base(message) { }
+}
+
 public sealed class InvalidReversalReasonException : StockMovementReversalException
 {
     public InvalidReversalReasonException(string message) : base(message) { }

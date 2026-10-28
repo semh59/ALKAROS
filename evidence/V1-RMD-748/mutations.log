@@ -1,0 +1,4 @@
+M1 unguarded apply restored: exit=1 (non-zero = killed)
+[xUnit.net 00:00:00.95]     ALKAROS.Inventory.MovementReversal.Tests.PartialStockReturnTests.ReversingAReceiptThatWouldDriveStockNegativeIsRefusedWithATypedException [FAIL]
+  Başarısız ALKAROS.Inventory.MovementReversal.Tests.PartialStockReturnTests.ReversingAReceiptThatWouldDriveStockNegativeIsRefusedWithATypedException [203 ms]
+restored identical

@@ -72,8 +72,10 @@ public sealed class StockMovementReversalService : IStockMovementReversalService
             throw new DuplicateReversalException($"Stock movement '{original.Id}' has already been reversed.");
         }
 
-        var restoredBalance = await _balanceRepo.ApplyOnHandDeltaAsync(
-            reversal.StockItemId, reversal.StockLocationId, reversal.Effect.OnHandDelta, connection, transaction, ct);
+        var restoredBalance = await _balanceRepo.TryApplyGuardedOnHandDeltaAsync(
+            reversal.StockItemId, reversal.StockLocationId, reversal.Effect.OnHandDelta, connection, transaction, ct)
+            ?? throw new ReversalWouldMakeStockNegativeException(
+                $"Reversing stock movement '{original.Id}' would drive the on-hand balance negative.");
         return new StockMovementReversalResult(reversal, original, restoredBalance);
     }
 
