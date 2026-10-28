@@ -1,7 +1,7 @@
 # V1-RMD-745 - Müşteri ekranı kayan oturumu eşzamanlı iki istekte yanlış 401 veriyor (739 bulgusu V1-RMD-690)
 
 - Task ID: V1-RMD-745
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_019vXeYYCYNP4vpjxAZb7pmk
 - Work type: implementation
 - Surface state: Planned
