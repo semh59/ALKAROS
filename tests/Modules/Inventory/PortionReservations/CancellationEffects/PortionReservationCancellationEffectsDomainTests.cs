@@ -132,6 +132,9 @@ public sealed class FakeStockMovementRepository : IStockMovementRepository
         Task.FromResult<IReadOnlyList<StockMovement>>(_movements.Where(m => m.StockLocationId == stockLocationId).ToList());
     public Task<IReadOnlyList<StockMovement>> GetBySourceAsync(string sourceType, Guid sourceReferenceId, CancellationToken ct = default) =>
         Task.FromResult<IReadOnlyList<StockMovement>>(_movements.Where(m => m.SourceType == sourceType && m.SourceReferenceId == sourceReferenceId).ToList());
+    public Task<IReadOnlyList<LedgerBalanceSum>> GetLedgerBalanceSumsAsync(CancellationToken ct = default)
+        => throw new NotSupportedException();
+
     public Task<bool> HasReversalAsync(Guid stockMovementId, CancellationToken ct = default) =>
         Task.FromResult(_movements.Any(m => m.MovementType == StockMovementType.Reversal && m.SourceReferenceId == stockMovementId));
 }

@@ -151,6 +151,54 @@ public sealed class StockBalanceDatabaseTests : IClassFixture<StockBalanceTestDb
     }
 
     [Fact]
+    public async Task RebuildSucceedsForALocationWithMoreMovementsThanTheUnpagedCap()
+    {
+        var loc = await _masterService.CreateLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Big Store", StockLocationType.Warehouse);
+        var item = await _masterService.CreateStockItemAsync("SKU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Rice", StockItemType.RawMaterial, "kg");
+
+        await using (var cmd = _db.DataSource.CreateCommand(@"
+            INSERT INTO inventory.stock_movements (
+                stock_movement_id, stock_item_id, stock_location_id, movement_type, direction,
+                quantity, unit_code, source_type, source_reference_id, reason, created_by, created_at)
+            SELECT gen_random_uuid(), $1, $2, 'PurchaseReceipt', 'In', 1, 'kg', 'PurchaseOrder', gen_random_uuid(), NULL, NULL, NOW()
+            FROM generate_series(1, 5100);"))
+        {
+            cmd.Parameters.AddWithValue(item.Id);
+            cmd.Parameters.AddWithValue(loc.Id);
+            await cmd.ExecuteNonQueryAsync();
+        }
+
+        var report = await _projector.RebuildAllBalancesAsync();
+
+        report.TotalMovementsProcessed.Should().BeGreaterThanOrEqualTo(5100);
+        (await _balanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id))!.OnHandQuantity.Should().Be(5100m);
+    }
+
+    [Fact]
+    public async Task RebuildKeepsExistingBalancesWhenTheLedgerCannotBeRead()
+    {
+        var loc = await _masterService.CreateLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Keep Store", StockLocationType.Warehouse);
+        var item = await _masterService.CreateStockItemAsync("SKU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Salt", StockItemType.RawMaterial, "kg");
+        await _balanceRepo.SetExactBalanceAsync(item.Id, loc.Id, 42m);
+
+        var failing = FailingLedger.Create();
+        var projector = new StockBalanceProjector(_balanceRepo, failing, _locationRepo);
+
+        var act = async () => await projector.RebuildAllBalancesAsync();
+
+        await act.Should().ThrowAsync<InvalidOperationException>();
+        (await _balanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id))!.OnHandQuantity.Should().Be(42m);
+    }
+
+    public class FailingLedger : System.Reflection.DispatchProxy
+    {
+        public static IStockMovementRepository Create() => Create<IStockMovementRepository, FailingLedger>();
+
+        protected override object? Invoke(System.Reflection.MethodInfo? targetMethod, object?[]? args)
+            => throw new InvalidOperationException("Ledger cannot be read.");
+    }
+
+    [Fact]
     public async Task FullLedgerRebuildFromDatabaseMovementsReconcilesAccurately()
     {
         var locCode = "LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant();

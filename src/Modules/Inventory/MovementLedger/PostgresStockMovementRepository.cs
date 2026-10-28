@@ -5,6 +5,7 @@ namespace ALKAROS.Inventory.MovementLedger;
 public sealed class PostgresStockMovementRepository : IStockMovementRepository
 {
     private const int MaxUnpagedRows = 5000;
+    private const int MaxBalancePairs = 100_000;
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -129,6 +130,33 @@ public sealed class PostgresStockMovementRepository : IStockMovementRepository
         {
             throw new InvalidOperationException(
                 $"GetByLocationAsync returned more than {MaxUnpagedRows} rows; narrow the filter or paginate.");
+        }
+
+        return list;
+    }
+
+    public async Task<IReadOnlyList<LedgerBalanceSum>> GetLedgerBalanceSumsAsync(CancellationToken ct = default)
+    {
+        string sql = $@"
+            SELECT stock_item_id, stock_location_id,
+                   SUM(CASE direction WHEN 'In' THEN quantity WHEN 'Out' THEN -quantity ELSE 0 END),
+                   COUNT(*)
+            FROM inventory.stock_movements
+            GROUP BY stock_item_id, stock_location_id
+            LIMIT {MaxBalancePairs + 1};";
+
+        await using var cmd = _dataSource.CreateCommand(sql);
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+        var list = new List<LedgerBalanceSum>();
+        while (await reader.ReadAsync(ct))
+        {
+            list.Add(new LedgerBalanceSum(reader.GetGuid(0), reader.GetGuid(1), reader.GetDecimal(2), (int)reader.GetInt64(3)));
+        }
+
+        if (list.Count > MaxBalancePairs)
+        {
+            throw new InvalidOperationException(
+                $"GetLedgerBalanceSumsAsync returned more than {MaxBalancePairs} item/location pairs.");
         }
 
         return list;

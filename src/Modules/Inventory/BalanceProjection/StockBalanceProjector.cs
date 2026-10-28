@@ -46,37 +46,16 @@ public sealed class StockBalanceProjector : IStockBalanceProjector
         // double-sell risk. Restored at the end of this method, not the caller's problem to remember.
         var reservedBefore = await _balanceRepo.GetAllReservedQuantitiesAsync(ct);
 
-        // 1. Reset all projected balances to guarantee no ghost or orphaned balances
+        // 1. Aggregate the ledger BEFORE touching the balances table: a failure here must leave the
+        // existing balances intact, and the database-side SUM has no unpaged-row cap.
+        var sums = await _movementRepo.GetLedgerBalanceSumsAsync(ct);
+
+        // 2. Reset all projected balances to guarantee no ghost or orphaned balances, then write the sums
         await _balanceRepo.ResetAllBalancesAsync(ct);
-
-        // 2. Iterate across all locations and replay their ledger movements
-        var locations = await _locationRepo.GetAllAsync(activeOnly: false, ct);
-        var totalMovements = 0;
-        var totalBalancesUpdated = 0;
-
-        foreach (var loc in locations)
-        {
-            var movements = await _movementRepo.GetByLocationAsync(loc.Id, ct);
-            if (movements.Count == 0)
-                continue;
-
-            totalMovements += movements.Count;
-
-            // Group movements by StockItemId and sum OnHandDelta
-            var itemSums = movements
-                .GroupBy(m => m.StockItemId)
-                .Select(g => new
-                {
-                    StockItemId = g.Key,
-                    OnHand = g.Sum(m => m.Effect.OnHandDelta)
-                });
-
-            foreach (var item in itemSums)
-            {
-                await _balanceRepo.SetExactBalanceAsync(item.StockItemId, loc.Id, item.OnHand, ct);
-                totalBalancesUpdated++;
-            }
-        }
+        foreach (var sum in sums)
+            await _balanceRepo.SetExactBalanceAsync(sum.StockItemId, sum.StockLocationId, sum.OnHandQuantity, ct);
+        var totalMovements = sums.Sum(x => x.MovementCount);
+        var totalBalancesUpdated = sums.Count;
 
         // 3. Restore every reservation captured in step 0 - whether or not the pair was touched by the
         // on-hand rebuild above (a reservation can exist for an item/location with no net movement

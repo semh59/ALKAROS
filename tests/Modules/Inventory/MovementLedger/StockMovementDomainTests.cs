@@ -258,6 +258,9 @@ public sealed class StockMovementDomainTests
             => Task.FromResult<IReadOnlyList<StockMovement>>(
                 _movements.Where(m => string.Equals(m.SourceType, sourceType, StringComparison.OrdinalIgnoreCase) && m.SourceReferenceId == sourceReferenceId).ToList());
 
+        public Task<IReadOnlyList<LedgerBalanceSum>> GetLedgerBalanceSumsAsync(CancellationToken ct = default)
+            => throw new NotSupportedException();
+
         public Task<bool> HasReversalAsync(Guid stockMovementId, CancellationToken ct = default)
             => Task.FromResult(_movements.Any(m => m.MovementType == StockMovementType.Reversal && m.SourceReferenceId == stockMovementId));
     }

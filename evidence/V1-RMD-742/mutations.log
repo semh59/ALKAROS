@@ -1,0 +1,4 @@
+M1 reset before aggregate: exit=1 (non-zero = killed)
+restored identical
+M2 wrong Out sign: exit=1 (non-zero = killed)
+restored identical

@@ -305,6 +305,12 @@ public sealed class StockBalanceDomainTests
             => Task.FromResult<IReadOnlyList<StockMovement>>(
                 _movements.Where(m => string.Equals(m.SourceType, sourceType, StringComparison.OrdinalIgnoreCase) && m.SourceReferenceId == sourceReferenceId).ToList());
 
+        public Task<IReadOnlyList<LedgerBalanceSum>> GetLedgerBalanceSumsAsync(CancellationToken ct = default)
+            => Task.FromResult<IReadOnlyList<LedgerBalanceSum>>(_movements
+                .GroupBy(m => (m.StockItemId, m.StockLocationId))
+                .Select(g => new LedgerBalanceSum(g.Key.StockItemId, g.Key.StockLocationId, g.Sum(m => m.Effect.OnHandDelta), g.Count()))
+                .ToList());
+
         public Task<bool> HasReversalAsync(Guid stockMovementId, CancellationToken ct = default)
             => Task.FromResult(_movements.Any(m => m.MovementType == StockMovementType.Reversal && m.SourceReferenceId == stockMovementId));
     }
