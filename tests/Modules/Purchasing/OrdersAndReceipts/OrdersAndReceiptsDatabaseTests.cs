@@ -396,6 +396,73 @@ WHERE source_reference_id = $1;";
     }
 
     [Fact]
+    public async Task StaleReceivedQuantityIsRejectedWhenLockingOrderLines()
+    {
+        var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();
+        var po = await _service.CreatePurchaseOrderAsync(new CreatePOCommand(
+            OrderNumber: "PO-" + Guid.NewGuid().ToString("N")[..8],
+            SupplierId: supplierId,
+            DestinationLocationId: locationId,
+            Lines: new[] { new CreatePOLineDto(itemId, 100m, "kg", 20m) }));
+        await _service.SubmitPurchaseOrderAsync(po.Id);
+        await _service.ReceiveGoodsAsync(new ReceiveGoodsCommand(
+            ReceiptNumber: "GR-" + Guid.NewGuid().ToString("N")[..8],
+            OrderId: po.Id,
+            ReceivedBy: "Clerk",
+            DeliveredItems: new[] { new ReceiveLineItemDto(po.Lines[0].Id, DeliveredQuantity: 40m, VarianceReason: "Part 1") }));
+
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var tx = await conn.BeginTransactionAsync();
+        var stale = new Dictionary<Guid, decimal> { [po.Lines[0].Id] = 0m };
+        var act = async () => await _poRepo.LockLinesAndAssertReceivedAsync(po.Id, stale, conn, tx);
+        await act.Should().ThrowAsync<PurchaseOrderStatusException>();
+        await tx.RollbackAsync();
+
+        await using var conn2 = await _db.DataSource.OpenConnectionAsync();
+        await using var tx2 = await conn2.BeginTransactionAsync();
+        var fresh = new Dictionary<Guid, decimal> { [po.Lines[0].Id] = 40m };
+        await _poRepo.LockLinesAndAssertReceivedAsync(po.Id, fresh, conn2, tx2);
+        await tx2.RollbackAsync();
+    }
+
+    [Fact]
+    public async Task ConcurrentReceiptsOfSameOrderPostStockOnce()
+    {
+        var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();
+        var po = await _service.CreatePurchaseOrderAsync(new CreatePOCommand(
+            OrderNumber: "PO-" + Guid.NewGuid().ToString("N")[..8],
+            SupplierId: supplierId,
+            DestinationLocationId: locationId,
+            Lines: new[] { new CreatePOLineDto(itemId, 100m, "kg", 20m) }));
+        await _service.SubmitPurchaseOrderAsync(po.Id);
+
+        var attempts = Enumerable.Range(0, 8).Select(i => Task.Run(async () =>
+        {
+            try
+            {
+                return await _service.ReceiveGoodsAsync(new ReceiveGoodsCommand(
+                    ReceiptNumber: $"GR-C{i}-" + Guid.NewGuid().ToString("N")[..8],
+                    OrderId: po.Id,
+                    ReceivedBy: "Clerk",
+                    DeliveredItems: new[] { new ReceiveLineItemDto(po.Lines[0].Id, DeliveredQuantity: 100m) }));
+            }
+            catch (Exception)
+            {
+                return null;
+            }
+        })).ToArray();
+        var results = await Task.WhenAll(attempts);
+        var succeeded = results.Where(r => r is not null).Select(r => r!.Id).ToArray();
+
+        succeeded.Should().HaveCount(1);
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var cmd = new NpgsqlCommand(
+            "SELECT COALESCE(SUM(quantity), 0) FROM inventory.stock_movements WHERE stock_item_id = $1;", conn);
+        cmd.Parameters.AddWithValue(itemId);
+        ((decimal)(await cmd.ExecuteScalarAsync())!).Should().Be(100m);
+    }
+
+    [Fact]
     public async Task DuplicateReceiptNumberThrowsDuplicateGoodsReceiptException()
     {
         var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();

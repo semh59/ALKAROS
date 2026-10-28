@@ -25,6 +25,12 @@ public interface IPurchaseOrderRepository
     /// or the stock movement posted after both — never did).
     /// </summary>
     Task UpdateAsync(PurchaseOrder order, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default);
+
+    /// <summary>
+    /// Locks the order's lines and fails when another receipt changed any received quantity
+    /// since the order was read, so two concurrent receipts cannot both post stock.
+    /// </summary>
+    Task LockLinesAndAssertReceivedAsync(Guid orderId, IReadOnlyDictionary<Guid, decimal> expectedReceived, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default);
 }
 
 public sealed class PostgresPurchaseOrderRepository : IPurchaseOrderRepository
@@ -241,6 +247,33 @@ WHERE line_id = $1;";
             lineCmd.Parameters.AddWithValue(line.ReceivedQuantity);
             lineCmd.Parameters.AddWithValue(line.Status.ToString());
             await lineCmd.ExecuteNonQueryAsync(ct);
+        }
+    }
+
+    public async Task LockLinesAndAssertReceivedAsync(Guid orderId, IReadOnlyDictionary<Guid, decimal> expectedReceived, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+    {
+        ArgumentNullException.ThrowIfNull(expectedReceived);
+        ArgumentNullException.ThrowIfNull(connection);
+        ArgumentNullException.ThrowIfNull(transaction);
+
+        const string sql = @"
+SELECT line_id, received_quantity
+FROM purchasing.purchase_order_lines
+WHERE order_id = $1
+ORDER BY line_id
+FOR UPDATE;";
+
+        await using var cmd = new NpgsqlCommand(sql, connection, transaction);
+        cmd.Parameters.AddWithValue(orderId);
+        await using var reader = await cmd.ExecuteReaderAsync(ct);
+        while (await reader.ReadAsync(ct))
+        {
+            var lineId = reader.GetGuid(0);
+            if (expectedReceived.TryGetValue(lineId, out var expected) && reader.GetDecimal(1) != expected)
+            {
+                throw new PurchaseOrderStatusException(
+                    $"Purchase order '{orderId}' was changed by another goods receipt; reload it and receive again.");
+            }
         }
     }
 

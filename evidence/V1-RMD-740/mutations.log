@@ -1,0 +1,7 @@
+M1 remove lock call: exit=1 (non-zero = killed)
+
+Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 290 ms - ALKAROS.Purchasing.OrdersAndReceipts.Tests.dll (net8.0)
+restored identical
+1
+M2 neutralise compare: exit=1 (non-zero = killed)
+restored identical

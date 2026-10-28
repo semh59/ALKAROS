@@ -161,6 +161,7 @@ public sealed class PurchasingService : IPurchasingService
             throw new DuplicateGoodsReceiptException(command.ReceiptNumber);
         }
 
+        var receivedBefore = order.Lines.ToDictionary(l => l.Id, l => l.ReceivedQuantity);
         var receiptId = Guid.NewGuid();
         var receivedAt = DateTimeOffset.UtcNow;
         var receipt = new GoodsReceipt(
@@ -253,6 +254,9 @@ public sealed class PurchasingService : IPurchasingService
         // now share this one connection/transaction.
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
         await using var tx = await conn.BeginTransactionAsync(ct);
+
+        // 0. Lock the order lines and refuse when a concurrent receipt already changed them.
+        await _poRepo.LockLinesAndAssertReceivedAsync(order.Id, receivedBefore, conn, tx, ct);
 
         // 1. Save goods receipt
         await _grRepo.SaveAsync(receipt, conn, tx, ct);
