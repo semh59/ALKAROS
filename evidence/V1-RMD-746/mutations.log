@@ -1,0 +1,3 @@
+M1 advisory lock disabled: exit=1 (non-zero = killed)
+   Expected results.Count(r => r.IsNewAlert) to be 1, but found 6.
+restored identical

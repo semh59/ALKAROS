@@ -177,6 +177,22 @@ public sealed class PostgresAlertRepository : IAlertRepository
         await using var connection = await _dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(IsolationLevel.ReadCommitted, cancellationToken);
 
+        // FOR UPDATE below locks nothing when no active alert exists yet, so two first raises would both open one;
+        // serialize them per deduplication identity.
+        var dedupLockKey = !string.IsNullOrWhiteSpace(request.DeduplicationKey)
+            ? "alert-dedup:" + request.DeduplicationKey
+            : !string.IsNullOrWhiteSpace(request.SourceReferenceType) && request.SourceReferenceId.HasValue
+                ? $"alert-source:{request.AlertType}:{request.SourceReferenceType}:{request.SourceReferenceId.Value:N}"
+                : null;
+        if (dedupLockKey is not null)
+        {
+            await using var lockCommand = connection.CreateCommand();
+            lockCommand.Transaction = transaction;
+            lockCommand.CommandText = "SELECT pg_advisory_xact_lock(hashtext(@key));";
+            AddParameter(lockCommand, "key", dedupLockKey);
+            await lockCommand.ExecuteNonQueryAsync(cancellationToken);
+        }
+
         // 1. Check for Active Existing Alert for Deduplication
         AlertRecord? existingActiveAlert = null;
 

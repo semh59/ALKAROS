@@ -76,6 +76,26 @@ public sealed class PostgresAlertRepositoryTests : IClassFixture<AlertTestDataba
     }
 
     [Fact]
+    public async Task ConcurrentFirstRaisesOfTheSameAlertOpenOnlyOneActiveAlert()
+    {
+        var terminalId = Guid.NewGuid();
+        var request = new RaiseAlertRequest(
+            AlertType: "PosSyncTimeout",
+            Severity: AlertSeverity.Warning,
+            Title: "POS Sync Lagging",
+            Message: "Local sync queue exceeded 50 items",
+            DeduplicationKey: $"POS-SYNC-RACE-{terminalId}",
+            SourceReferenceType: "Device",
+            SourceReferenceId: terminalId,
+            ActorId: _userId);
+
+        var results = await Task.WhenAll(Enumerable.Range(0, 8).Select(_ => Task.Run(() => _service.RaiseAlertAsync(request))));
+
+        results.Count(r => r.IsNewAlert).Should().Be(1);
+        (await _service.GetBySourceReferenceAsync("Device", terminalId)).Should().HaveCount(1);
+    }
+
+    [Fact]
     public async Task RepeatedIdenticalAlertDeduplicatesIntoSingleActiveAlert()
     {
         var terminalId = Guid.NewGuid();
