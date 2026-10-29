@@ -1,0 +1,79 @@
+  Geri y�klenecek projeler belirleniyor...
+  D:\project\ALKAROS\src\Modules\Cash\ALKAROS.Cash.csproj geri y�klendi (236 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Production\ALKAROS.Production.csproj geri y�klendi (234 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Security\ALKAROS.Security.csproj geri y�klendi (235 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Purchasing\ALKAROS.Purchasing.csproj geri y�klendi (234 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Settings\ALKAROS.Settings.csproj geri y�klendi (228 ms i�inde).
+  D:\project\ALKAROS\src\Modules\OnlineOrdering\ALKAROS.OnlineOrdering.csproj geri y�klendi (235 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Payments\TenderComposition\ALKAROS.Payments.TenderComposition.csproj geri y�klendi (183 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Operations\ALKAROS.Operations.csproj geri y�klendi (236 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Privacy\RetentionExecution\ALKAROS.Privacy.RetentionExecution.csproj geri y�klendi (233 ms i�inde).
+  D:\project\ALKAROS\src\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj geri y�klendi (3 ms i�inde).
+  D:\project\ALKAROS\src\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj geri y�klendi (2 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Observability\ALKAROS.Observability.csproj geri y�klendi (6 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Reporting\ALKAROS.Reporting.csproj geri y�klendi (233 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Kitchen\ALKAROS.Kitchen.csproj geri y�klendi (5 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Billing\PaymentClosure\ALKAROS.Billing.PaymentClosure.csproj geri y�klendi (236 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Privacy\Anonymization\ALKAROS.Privacy.Anonymization.csproj geri y�klendi (180 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Payments\ALKAROS.Payments.csproj geri y�klendi (6 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Menu\ALKAROS.Menu.csproj geri y�klendi (8 ms i�inde).
+  D:\project\ALKAROS\src\BuildingBlocks\Measurements\ALKAROS.Measurements.csproj geri y�klendi (2 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Reconciliation\ALKAROS.Reconciliation.csproj geri y�klendi (12 ms i�inde).
+  D:\project\ALKAROS\src\Modules\QrOrdering\ALKAROS.QrOrdering.csproj geri y�klendi (6 ms i�inde).
+  D:\project\ALKAROS\src\Modules\CustomerData\ALKAROS.CustomerData.csproj geri y�klendi (7 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Catalog\ALKAROS.Catalog.csproj geri y�klendi (3 ms i�inde).
+  D:\project\ALKAROS\src\Modules\CustomerAccounts\ALKAROS.CustomerAccounts.csproj geri y�klendi (11 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Audit\ALKAROS.Audit.csproj geri y�klendi (2 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Identity\ALKAROS.Identity.csproj geri y�klendi (4 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Recipes\ALKAROS.Recipes.csproj geri y�klendi (3 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Support\ALKAROS.Support.csproj geri y�klendi (32 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Invoicing\ALKAROS.Invoicing.csproj geri y�klendi (5 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Inventory\ALKAROS.Inventory.csproj geri y�klendi (30 ms i�inde).
+  D:\project\ALKAROS\src\Integrations\QrRelay\ALKAROS.QrRelay.csproj geri y�klendi (106 ms i�inde).
+  D:\project\ALKAROS\src\Host\ALKAROS.Host.csproj geri y�klendi (110 ms i�inde).
+  D:\project\ALKAROS\tests\Host\Experience\Billing\ALKAROS.Host.Experience.Billing.Tests.csproj geri y�klendi (183 ms i�inde).
+  Geri y�kleme i�in 39 proje i�inden 6 tanesi g�ncel.
+  ALKAROS.IntegrationContracts -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Secrets\debug\ALKAROS.Secrets.dll
+  ALKAROS.Measurements -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Measurements\debug\ALKAROS.Measurements.dll
+  ALKAROS.SensitiveData -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.SensitiveData\debug\ALKAROS.SensitiveData.dll
+  ALKAROS.Messaging -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Privacy.RetentionExecution\debug\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Observability -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Observability\debug\ALKAROS.Observability.dll
+  ALKAROS.Settings -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Settings\debug\ALKAROS.Settings.dll
+  ALKAROS.Reconciliation -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Reconciliation\debug\ALKAROS.Reconciliation.dll
+  ALKAROS.Recipes -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Recipes\debug\ALKAROS.Recipes.dll
+  ALKAROS.Reporting -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Reporting\debug\ALKAROS.Reporting.dll
+  ALKAROS.Identity -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Identity\debug\ALKAROS.Identity.dll
+  ALKAROS.Inventory -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Inventory\debug\ALKAROS.Inventory.dll
+  ALKAROS.Audit -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Audit\debug\ALKAROS.Audit.dll
+  ALKAROS.Catalog -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Catalog\debug\ALKAROS.Catalog.dll
+  ALKAROS.Menu -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Menu\debug\ALKAROS.Menu.dll
+  ALKAROS.Tables -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Tables\debug\ALKAROS.Tables.dll
+  ALKAROS.Privacy.Anonymization -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Privacy.Anonymization\debug\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.Orders -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Orders\debug\ALKAROS.Orders.dll
+  ALKAROS.Production -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Production\debug\ALKAROS.Production.dll
+  ALKAROS.Purchasing -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Purchasing\debug\ALKAROS.Purchasing.dll
+  ALKAROS.OnlineOrdering -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.OnlineOrdering\debug\ALKAROS.OnlineOrdering.dll
+  ALKAROS.Kitchen -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Kitchen\debug\ALKAROS.Kitchen.dll
+  ALKAROS.CustomerData -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.CustomerData\debug\ALKAROS.CustomerData.dll
+  ALKAROS.Support -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Support\debug\ALKAROS.Support.dll
+  ALKAROS.Security -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Security\debug\ALKAROS.Security.dll
+  ALKAROS.Billing -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Billing\debug\ALKAROS.Billing.dll
+  ALKAROS.QrOrdering -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.QrOrdering\debug\ALKAROS.QrOrdering.dll
+  ALKAROS.Operations -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Operations\debug\ALKAROS.Operations.dll
+  ALKAROS.Invoicing -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Invoicing\debug\ALKAROS.Invoicing.dll
+  ALKAROS.Payments -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Payments\debug\ALKAROS.Payments.dll
+  ALKAROS.QrRelay -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.QrRelay\debug\ALKAROS.QrRelay.dll
+  ALKAROS.Billing.PaymentClosure -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Billing.PaymentClosure\debug\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Cash -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Cash\debug\ALKAROS.Cash.dll
+  ALKAROS.Payments.TenderComposition -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Payments.TenderComposition\debug\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.CustomerAccounts -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.CustomerAccounts\debug\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Host -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Host\debug\ALKAROS.Host.dll
+  ALKAROS.Host.Experience.Billing.Tests -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Host.Experience.Billing.Tests\debug\ALKAROS.Host.Experience.Billing.Tests.dll
+D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Host.Experience.Billing.Tests\debug\ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Sonuç Dosyası: D:\project\ALKAROS\evidence\V1-RMD-755\host-billing-results\full.trx
+
+Başarılı!  - Başarısız:     0, Başarılı:   112, Atlanan:     0, Toplam:   112, Süre: 7 m 55 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)

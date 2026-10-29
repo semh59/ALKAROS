@@ -1,0 +1,105 @@
+{
+  "task_id": "V1-RMD-755",
+  "review_type": "independent-read-only-final-provenance-governance",
+  "repository": "D:/project/ALKAROS",
+  "head_observed": "4eca31daab3c5e065d7e31d9a237665c75ce71d5",
+  "verdict": "PENDING",
+  "provenance_checks_verdict": "PASS",
+  "repository_writes_by_this_review": false,
+  "dotnet_runs_by_this_review": 0,
+  "only_output": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-final-provenance-review.json",
+  "findings": [
+    {
+      "id": "PROV-01",
+      "verdict": "PASS",
+      "finding_tr": "Tam koruma snapshotı önceki bağımsız governance denetiminin gerçek scratch preflight kaydıyla dosya ve index bazında birebir aynı. 8793 tracked/nonignored-untracked kayıt, 8530 mode/blob/stage index satırı var. Yalnız dirty dosya envanteriyle sınırlı değil.",
+      "evidence": ["evidence/V1-RMD-755/full-preflight-preservation.json", "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-governance-audit.json", "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-governance-audit-probe.py:15-30"],
+      "baseline_utc": "2026-10-29T20:19:29.578405+00:00",
+      "independent_artifact_sha256": "cdf72cb51d9f260290abb7c7290b0a26a32343ff484ac8ca39dee3b392c89b20",
+      "qualification_tr": "Bu tam snapshot Domain/Postgres değişikliklerini zaten içeriyor; bütün tamirlerden önce alınmış diye sunulamaz. Daha erken preflight.json dirty snapshotı ve gerçek git HEAD kaynakları bu iki dosyanın başlangıç içeriğini yeniden kuruyor. Önceki denetimin postflight passed:false sonucu gizlenmiyor: iki concurrent değişiklik 755 exact allowlist içindeki 753 planı ve Host testinde. Bunlar kapsam ihlali değil. Ignored build/cache ve .git internals tam envanter iddiasına dahil değil. Önceki oturum kimliği yalnız dosyalardan kriptografik olarak doğrulanamaz; burada artifact eşitliği ve koruma bağımsız yeniden hesaplandı."
+    },
+    {
+      "id": "PROV-02",
+      "verdict": "PASS",
+      "finding_tr": "8784 görev dışı baseline yolu yeniden hash edildi; eklenen/silinen yollar da güncel git ls-files birleşimiyle kontrol edildi. Görev dışı delta sıfır. 739/751 dosyaları, onların tüm eski evidence dosyaları ve BillingSplitHttpTests.cs.partial korundu. Index ve boş staged binary diff hashleri başlangıçla aynı.",
+      "outside_changes": [],
+      "index_entries_sha256": "a8472ba97a21981034547453940f02aca8412c670126c1e3d6171a1f21c35752",
+      "staged_diff_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "current_git_governed_count_last_observed": 11870,
+      "qualification_tr": "Concurrent yeni dosyalar yalnız evidence/V1-RMD-755 altında gözlendi; sayaç bu nedenle artabiliyor. Sonradan staging yapılırsa index korunmuş iddiası yerine sadece izinli index delta kanıtı yeniden üretilmeli."
+    },
+    {
+      "id": "GOV-01",
+      "verdict": "PASS",
+      "finding_tr": "Güncel task_scope parser nested backticksiz Sınırlı ek yollarını exact çıkarıyor. 753 iki test yolu; 755 üç test yolu ve foreign 753 plan yolu. Foreign plan 755 allowlistinden geçer; aktif görev metadata sınırlaması yalnız 755 dosyasına uygulanır. 753 Status: Blocked ve unlockable Blocker var; normalize edilmiş tarihsel gövde HEAD ile aynı.",
+      "evidence": ["tools/task-scope/task_scope_tool.py:343-374", "tools/task-scope/task_scope_tool.py:927-980", "tools/task-scope/task_scope_tool.py:1338-1355", "plan/v1/remediation/V1-RMD-755-bolme-testleri-gercek-kapanis.md:13-27", "plan/v1/remediation/V1-RMD-753-split-engine-host-billing-test-gaps.md:48-50"],
+      "qualification_tr": "Parser statik AST-regex yeniden üretimiyle kontrol edildi; repository Python çalıştırılmadı. 753 tek başına aktif task kabul edilirse Done->Blocked geçişi legal executable transition değildir; 755 içindeki açık foreign shared-path yetkisiyle karıştırılmamalı."
+    },
+    {
+      "id": "RUN-01",
+      "verdict": "PASS",
+      "finding_tr": "Runtime dosyaları artık dolu: SplitDesign 40/40, Host Billing 112/112; ikisi exit 0. Gerçek TRX counter ve result kayıtları JSON ile aynı; log SHA256 doğrulandı. Sekiz yeni Domain case, iki discounted Equal/Custom case, unchanged-payable-and-tax item case ve 754 tax-change 409 regresyonu Passed. İki açık build kaydı exit 0, 0 hata/0 uyarı; log hashleri doğru.",
+      "domain_test_name": "AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull",
+      "host_test_names": ["ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: False)", "ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: True)", "AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged", "ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409"],
+      "trx_sha256": {"splitdesign-results/full.trx": "bb44969288275fecf7ca1cc60ee6100941747d1d67b26ee76264bf071b5f421d", "host-billing-results/full.trx": "4d8c5e7de168051417cdb0116fe05aa6298b22494f2330532021161f5da4aabc"},
+      "qualification_tr": "Bu inceleme testleri yeniden çalıştırmadı; var olan gerçek build/TRX/log artifactlarını doğruladı. Önce gözlenen full-host pending verifier kaydı sonradan all_passed:true olarak tamamlandı. Test kaynağı değişirse bu koşular otomatik güncel sayılmaz."
+    },
+    {
+      "id": "MUT-01",
+      "verdict": "PASS",
+      "finding_tr": "Dokuz ayrı mutant, dokuz ayrı mutated source hash ve dokuz ayrı TRX var. Her mutant exit 1 ile yeni testlerde assertion/domain davranış hatası verdi; build/setup kırılması değil. Baseline/restored Domain 8/8 ve Host 3/3 exit 0. Before ve mutated hashlerin hepsi kaynak üzerinde yalnız bellekte aynı method-local replacement yapılarak yeniden üretildi.",
+      "isolated_cwd": "D:/project/ALKAROS/evidence/V1-RMD-755/isolated",
+      "copy_manifest_entries": 3024,
+      "root_source_manifest_differences": [],
+      "isolated_restored_manifest_differences": [],
+      "evidence": ["evidence/V1-RMD-755/guard-mutation-results.json", "evidence/V1-RMD-755/isolated-copy-manifest.json", "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-mutations.py:51-65"],
+      "qualification_tr": "Canlı root production dosyaları baseline/HEAD ile aynı; helper yalnız sandbox kaynağına yazıyor. Snapshotlar arası geçici yazma yokluğunu tek başına hash ispatlamaz; izolasyon iddiası helper kodu, cwd, artifacts path ve restore hashleriyle destekleniyor."
+    },
+    {
+      "id": "GOV-02",
+      "verdict": "PENDING",
+      "finding_tr": "Henüz gerçek nonempty 755 committed range yok: IP_BASE == HEAD, rev-list count 0, git diff IP_BASE...HEAD boş. Pending-delta temizliği ve index korunumu doğrulandı; bunlar postcommit resmi scope sonucunun yerine geçmez. 755 InProgress kalmalı.",
+      "evidence": ["plan/v1/remediation/V1-RMD-755-bolme-testleri-gercek-kapanis.md:46-47", "tools/task-scope/task_scope_tool.py:1254-1257", "evidence/V1-RMD-755/RESULT.md:13-18"],
+      "required_workflow": [
+        "Commit öncesi full baseline -> current worktree ve complete index delta doğrula; staged, unstaged, untracked, deleted, rename iki ucu ve zaten dirty dosyaların hashlerini kapsa. Yalnız exact 755 yollarını stage et; foreign 753 planının yalnız yetkili metadata/Blocker delta içermesini ayrıca doğrula.",
+        "Sözleşmedeki precommit CLI koşulunu çalıştır; IP_BASE...HEAD boşken exit 0 olsa bile pending edits doğrulanmış diye sunma. Raw default worktree bütün eski 739/751/.partial dirtini içerir; bu çıktı baseline kirliliğiyle ayrıştırılır, ilgisiz dosyalar temizlenmez/stashlenmez ve kapsam ihlali diye yanlış atanmaz.",
+        "Yetkili task-local commit sonrasında git merge-base --is-ancestor IP_BASE HEAD; git rev-list --count IP_BASE..HEAD pozitif olmalı; git diff --name-status --find-renames IP_BASE...HEAD nonempty olmalı.",
+        "Ardından python -B tools/task-scope/task_scope_tool.py --task-id V1-RMD-755 --diff-base 4eca31daab3c5e065d7e31d9a237665c75ce71d5 --format json gerçek exit 0 ve artifact üretmeli. Sonra kalan pending delta ve index tekrar kontrol edilmeli.",
+        "İki bağımsız son review artık bulgusuz olmadan Done yok. Done metadata geçişini InProgress tabanına karşı diff mode doğrular; bu inceleme gelecekteki commit veya review için PASS vermiyor."
+      ]
+    },
+    {
+      "id": "REVIEW-01",
+      "verdict": "PENDING",
+      "finding_tr": "Ayrı code review scratch artifactı changes_requested: Domain teori içindeki Count ve toplam assertion tekrarları. Bu inceleme işlevsel kusur diye yeniden sınıflandırmıyor; ancak 755'in iki bulgusuz bağımsız final review kapısı henüz sağlanmış değil. Yetkili düzeltme yapılırsa final source hash, build/suite/mutant ve review kanıtı güncellenmeli.",
+      "evidence": ["C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-final-code-review.json:2-7", "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs:175-177"]
+    }
+  ],
+  "static_sha256": {
+    "tools/task-scope/task_scope_tool.py": "3e0be079e301c4294dc1962e0b58eefd7a1b669c21013acb8df04c2d1c8edea3",
+    "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs": "c00f2213db82ef5c99754b381c2ee18813f807768aea7560317bed19e8b383d8",
+    "tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs": "73b3301970341c0ea43933a98febbb389f0584169dd258c729591002ff467223",
+    "tests/Host/Experience/Billing/BillingSplitHttpTests.cs": "5eb9646d9fa305cf10eda2427d25f8a3cde2e2d38ddef509309bb25997f9d841",
+    "src/Modules/Billing/SplitDesign/SplitEngine.cs": "dbf57baa3000c671462cd3cf608482674bbaf3df0bc4c82d87a3e50536275c1b",
+    "src/Host/Experience/Billing/BillingSplitStore.cs": "1ed3a898ea41d83d1d7286aaee5ad4222166871e4b8c9deb4ac006c802b54952"
+  },
+  "commands": [
+    {"command": "pwd && git rev-parse HEAD && git status --short && git diff --name-only", "exit_code": 0},
+    {"command": "git diff -- tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs tests/Host/Experience/Billing/BillingSplitHttpTests.cs plan/v1/remediation/V1-RMD-753-split-engine-host-billing-test-gaps.md && git log -4 --oneline", "exit_code": 0},
+    {"command": "git rev-list --count 4eca31daab3c5e065d7e31d9a237665c75ce71d5..HEAD", "exit_code": 0, "stdout": "0"},
+    {"command": "git diff --name-status --find-renames 4eca31daab3c5e065d7e31d9a237665c75ce71d5...HEAD", "exit_code": 0, "stdout": ""},
+    {"command": "git diff --cached --name-status", "exit_code": 0, "stdout": ""},
+    {"command": "git ls-files --cached --others --exclude-standard -z", "exit_code": 0, "invocation": "read-only Python subprocess; all returned paths hashed and compared"},
+    {"command": "git ls-files --stage -z", "exit_code": 0, "invocation": "read-only Python subprocess; complete index SHA256 compared"},
+    {"command": "git diff --cached --binary --full-index --no-ext-diff --no-textconv", "exit_code": 0, "invocation": "read-only Python subprocess; staged binary diff SHA256 compared"},
+    {"command": "python -c <read-only stdlib diagnostic>", "exit_code": 0, "operations": ["JSON structural equality of full baseline vs earlier independent reviewer preflight", "All baseline and current Git-governed paths SHA256 comparison including added/deleted paths", "ET.parse of 15 actual TRX files; log hashes and JSON counters comparison", "3024-entry root and restored sandbox copy-manifest comparison", "Nine method-local mutant hashes reconstructed entirely in memory", "AST-read shared-path regex static reproduction; foreign task historical body comparison", "Build and gate log SHA256 validation; actual git revision range and index output"], "note": "Exact inline Python source and output retained in tool transcript; no repository code imported or executed, no helper script written."}
+  ],
+  "limitations": [
+    "Only named review surfaces and their directly relevant evidence examined; no repository-wide correctness claim.",
+    "No dotnet, tests, repository scripts, scope CLI, git staging or commits run by this review.",
+    "Recorded plan/consistency/whitespace commands have matching log hashes and recorded exit 0; this review did not rerun them.",
+    "No wait/poll loop used; runtime artifacts were complete when independently read. Concurrent authorized evidence writes can continue after this observation.",
+    "RETRACTIONS.md accurately disclaims fake packet02 acceptance and four-runs-as-four-mutants claim. No packet02 acceptance granted or modified here.",
+    "Full independent baseline does not inventory ignored artifacts or prove absence of every transient write; exact authorized generated evidence is separately checked through manifest and artifact paths."
+  ]
+}

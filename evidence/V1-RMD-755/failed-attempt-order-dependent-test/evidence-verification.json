@@ -1,0 +1,496 @@
+{
+  "checks": [
+    {
+      "name": "nine_killed_mutants",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "no_root_source_mutation",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-baseline-domain-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-baseline-domain-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-baseline-domain-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-baseline-domain-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-baseline-host-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-baseline-host-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-baseline-host-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-baseline-host-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-payable-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-payable-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-payable-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-payable-behavior-not-setup",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-payable-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-payable-before-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-payable-mutated-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-tax-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-tax-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-tax-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-tax-behavior-not-setup",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-tax-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-tax-before-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-tax-mutated-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-payable-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-payable-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-payable-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-payable-behavior-not-setup",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-payable-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-payable-before-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-payable-mutated-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-tax-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-tax-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-tax-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-tax-behavior-not-setup",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-tax-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-tax-before-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-tax-mutated-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-null-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-null-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-null-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-null-behavior-not-setup",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-null-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-null-before-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-amount-null-mutated-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-null-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-null-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-null-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-null-behavior-not-setup",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-null-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-null-before-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-null-mutated-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-equal-handoff-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-equal-handoff-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-equal-handoff-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-equal-handoff-behavior-not-setup",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-equal-handoff-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-equal-handoff-before-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-equal-handoff-mutated-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-handoff-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-handoff-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-handoff-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-handoff-behavior-not-setup",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-handoff-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-handoff-before-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-custom-handoff-mutated-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-item-unchanged-totals-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-item-unchanged-totals-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-item-unchanged-totals-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-item-unchanged-totals-behavior-not-setup",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-item-unchanged-totals-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-item-unchanged-totals-before-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "mutant-item-unchanged-totals-mutated-hash-shape",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-restored-domain-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-restored-domain-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-restored-domain-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-restored-domain-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-restored-host-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-restored-host-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-restored-host-tests-executed",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "isolated-restored-host-trx",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "splitdesign-full-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "splitdesign-full-exit",
+      "passed": false,
+      "details": null
+    },
+    {
+      "name": "eight-new-domain-cases-executed",
+      "passed": true,
+      "details": [
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "name": "host-billing-full-log-hash",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "host-billing-full-exit",
+      "passed": true,
+      "details": null
+    },
+    {
+      "name": "new-host-cases-executed",
+      "passed": true,
+      "details": [
+        {
+          "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: False)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: True)",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged",
+          "outcome": "Passed"
+        },
+        {
+          "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409",
+          "outcome": "Passed"
+        }
+      ]
+    },
+    {
+      "name": "full-host-not-pending",
+      "passed": true,
+      "details": null
+    }
+  ],
+  "all_passed": false,
+  "utc": "2026-10-29T20:41:30.021003+00:00"
+}

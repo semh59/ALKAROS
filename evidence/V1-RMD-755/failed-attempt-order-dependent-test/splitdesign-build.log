@@ -1,0 +1,14 @@
+  ALKAROS.ModuleComposition -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.Tables -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Tables\debug\ALKAROS.Tables.dll
+  ALKAROS.TestHelpers -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.TestHelpers\debug\ALKAROS.TestHelpers.dll
+  ALKAROS.Orders -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Orders\debug\ALKAROS.Orders.dll
+  ALKAROS.Billing -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Billing\debug\ALKAROS.Billing.dll
+  ALKAROS.Billing.SplitDesign.Tests -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll
+
+Oluşturma başarılı oldu.
+    0 Uyarı
+    0 Hata
+
+Geçen Süre 00:00:02.15

@@ -1,0 +1,76 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="fc7aa321-17fc-4370-9624-bb45773430b2" name="semih@SEMH59 2026-10-29 23:37:16" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-29T23:37:16.3053607+03:00" queuing="2026-10-29T23:37:16.3053609+03:00" start="2026-10-29T23:37:15.1221297+03:00" finish="2026-10-29T23:37:16.3123307+03:00" />
+  <TestSettings name="default" id="c3be65ba-85af-4088-861d-bdf119a94a42">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-29_23_37_16" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="ccb4f325-1b2a-4b28-b5ac-7b08933d19ae" testId="7f6a3242-552a-945b-bb66-4010a6c96856" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)" computerName="SEMH59" duration="00:00:00.0000425" startTime="2026-10-29T23:37:16.1830474+03:00" endTime="2026-10-29T23:37:16.1830475+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ccb4f325-1b2a-4b28-b5ac-7b08933d19ae" />
+    <UnitTestResult executionId="1988eb6b-9552-4ead-bbd7-593dda6c201e" testId="d6338e60-a905-42ef-bdee-0acfb36343d0" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)" computerName="SEMH59" duration="00:00:00.0000614" startTime="2026-10-29T23:37:16.1827579+03:00" endTime="2026-10-29T23:37:16.1827580+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1988eb6b-9552-4ead-bbd7-593dda6c201e" />
+    <UnitTestResult executionId="b139f84a-98d3-4e0b-9d4f-cf302f3cef14" testId="2c653f20-1393-50f1-5c4c-62b04e8d9e55" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)" computerName="SEMH59" duration="00:00:00.0000714" startTime="2026-10-29T23:37:16.1828647+03:00" endTime="2026-10-29T23:37:16.1828648+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b139f84a-98d3-4e0b-9d4f-cf302f3cef14" />
+    <UnitTestResult executionId="86c20d4c-d201-4f72-95fc-88d0f713dde8" testId="8688c526-a06c-c891-6157-dea6884bc053" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)" computerName="SEMH59" duration="00:00:00.0000831" startTime="2026-10-29T23:37:16.1825488+03:00" endTime="2026-10-29T23:37:16.1825489+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86c20d4c-d201-4f72-95fc-88d0f713dde8" />
+    <UnitTestResult executionId="ca9b9827-bea8-4632-98b9-508d43e66de4" testId="fe03e296-c83c-32af-6870-d0bbe18489af" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)" computerName="SEMH59" duration="00:00:00.0033490" startTime="2026-10-29T23:37:16.1826567+03:00" endTime="2026-10-29T23:37:16.1826568+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca9b9827-bea8-4632-98b9-508d43e66de4" />
+    <UnitTestResult executionId="a08a1d2e-11d7-4362-b5ae-487703156a47" testId="982eac3d-b568-ede2-b2f1-cacecf9b5254" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)" computerName="SEMH59" duration="00:00:00.0000707" startTime="2026-10-29T23:37:16.1829681+03:00" endTime="2026-10-29T23:37:16.1829682+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a08a1d2e-11d7-4362-b5ae-487703156a47" />
+    <UnitTestResult executionId="3853bb2c-e434-4cda-861c-927f76c62325" testId="75a73bd4-6bd4-cdbd-c880-f42643d19b13" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)" computerName="SEMH59" duration="00:00:00.0005957" startTime="2026-10-29T23:37:16.1821990+03:00" endTime="2026-10-29T23:37:16.1821990+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3853bb2c-e434-4cda-861c-927f76c62325" />
+    <UnitTestResult executionId="fb7489ea-9458-49df-b718-33af83d0b379" testId="38e410a8-e4ad-09b9-aef2-ff09a24e6c1d" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)" computerName="SEMH59" duration="00:00:00.0428003" startTime="2026-10-29T23:37:16.1792442+03:00" endTime="2026-10-29T23:37:16.1792644+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fb7489ea-9458-49df-b718-33af83d0b379" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="75a73bd4-6bd4-cdbd-c880-f42643d19b13">
+      <Execution id="3853bb2c-e434-4cda-861c-927f76c62325" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="38e410a8-e4ad-09b9-aef2-ff09a24e6c1d">
+      <Execution id="fb7489ea-9458-49df-b718-33af83d0b379" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="7f6a3242-552a-945b-bb66-4010a6c96856">
+      <Execution id="ccb4f325-1b2a-4b28-b5ac-7b08933d19ae" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="982eac3d-b568-ede2-b2f1-cacecf9b5254">
+      <Execution id="a08a1d2e-11d7-4362-b5ae-487703156a47" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="2c653f20-1393-50f1-5c4c-62b04e8d9e55">
+      <Execution id="b139f84a-98d3-4e0b-9d4f-cf302f3cef14" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="8688c526-a06c-c891-6157-dea6884bc053">
+      <Execution id="86c20d4c-d201-4f72-95fc-88d0f713dde8" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="d6338e60-a905-42ef-bdee-0acfb36343d0">
+      <Execution id="1988eb6b-9552-4ead-bbd7-593dda6c201e" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="fe03e296-c83c-32af-6870-d0bbe18489af">
+      <Execution id="ca9b9827-bea8-4632-98b9-508d43e66de4" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="7f6a3242-552a-945b-bb66-4010a6c96856" executionId="ccb4f325-1b2a-4b28-b5ac-7b08933d19ae" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d6338e60-a905-42ef-bdee-0acfb36343d0" executionId="1988eb6b-9552-4ead-bbd7-593dda6c201e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2c653f20-1393-50f1-5c4c-62b04e8d9e55" executionId="b139f84a-98d3-4e0b-9d4f-cf302f3cef14" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8688c526-a06c-c891-6157-dea6884bc053" executionId="86c20d4c-d201-4f72-95fc-88d0f713dde8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe03e296-c83c-32af-6870-d0bbe18489af" executionId="ca9b9827-bea8-4632-98b9-508d43e66de4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="982eac3d-b568-ede2-b2f1-cacecf9b5254" executionId="a08a1d2e-11d7-4362-b5ae-487703156a47" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="75a73bd4-6bd4-cdbd-c880-f42643d19b13" executionId="3853bb2c-e434-4cda-861c-927f76c62325" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="38e410a8-e4ad-09b9-aef2-ff09a24e6c1d" executionId="fb7489ea-9458-49df-b718-33af83d0b379" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="8" executed="8" passed="8" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.28]   Discovering: ALKAROS.Billing.SplitDesign.Tests&#xD;
+[xUnit.net 00:00:00.34]   Discovered:  ALKAROS.Billing.SplitDesign.Tests&#xD;
+[xUnit.net 00:00:00.35]   Starting:    ALKAROS.Billing.SplitDesign.Tests&#xD;
+[xUnit.net 00:00:00.47]   Finished:    ALKAROS.Billing.SplitDesign.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

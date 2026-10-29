@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e19249cd-5518-4e7f-9d85-a10defa135d3" name="semih@SEMH59 2026-10-29 23:35:08" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-29T23:35:08.2155993+03:00" queuing="2026-10-29T23:35:08.2155996+03:00" start="2026-10-29T23:35:06.7915645+03:00" finish="2026-10-29T23:35:08.2284015+03:00" />
+  <TestSettings name="default" id="535afccb-bf05-443f-8367-89d10731212a">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-29_23_35_08" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="27e8f5ff-452d-47a8-96b2-b93f24a57bc6" testId="8688c526-a06c-c891-6157-dea6884bc053" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)" computerName="SEMH59" duration="00:00:00.0002773" startTime="2026-10-29T23:35:07.9970557+03:00" endTime="2026-10-29T23:35:07.9970561+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="27e8f5ff-452d-47a8-96b2-b93f24a57bc6">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Sum of custom split amounts (110) does not match Bill payable amount (100).</Message>
+          <StackTrace>   at ALKAROS.Billing.SplitDesign.SplitEngine.CreateCustomSplit(Bill bill, IReadOnlyList`1 targets, Nullable`1 createdBy, AdjustedBillSummary adjustment) in D:\project\ALKAROS\evidence\V1-RMD-755\isolated\src\Modules\Billing\SplitDesign\SplitEngine.cs:line 288&#xD;
+   at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.&lt;&gt;c__DisplayClass3_0.&lt;AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull&gt;g__Split|0(Decimal total) in D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs:line 166&#xD;
+   at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(Boolean custom, Boolean noAdjustment, Decimal payable, Decimal tax) in D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs:line 173&#xD;
+   at InvokeStub_SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="b5de6742-509f-4cb5-bd80-5fae9f4e5a03" testId="38e410a8-e4ad-09b9-aef2-ff09a24e6c1d" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)" computerName="SEMH59" duration="00:00:00.0320960" startTime="2026-10-29T23:35:07.9893374+03:00" endTime="2026-10-29T23:35:07.9893731+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5de6742-509f-4cb5-bd80-5fae9f4e5a03">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Sum of custom split amounts (80) does not match Bill payable amount (100).</Message>
+          <StackTrace>   at ALKAROS.Billing.SplitDesign.SplitEngine.CreateCustomSplit(Bill bill, IReadOnlyList`1 targets, Nullable`1 createdBy, AdjustedBillSummary adjustment) in D:\project\ALKAROS\evidence\V1-RMD-755\isolated\src\Modules\Billing\SplitDesign\SplitEngine.cs:line 288&#xD;
+   at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.&lt;&gt;c__DisplayClass3_0.&lt;AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull&gt;g__Split|0(Decimal total) in D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs:line 166&#xD;
+   at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(Boolean custom, Boolean noAdjustment, Decimal payable, Decimal tax) in D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs:line 173&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="f113f223-b3f5-4858-9a7a-372af1a4f69a" testId="2c653f20-1393-50f1-5c4c-62b04e8d9e55" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)" computerName="SEMH59" duration="00:00:00.0001539" startTime="2026-10-29T23:35:08.0350072+03:00" endTime="2026-10-29T23:35:08.0350074+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f113f223-b3f5-4858-9a7a-372af1a4f69a" />
+    <UnitTestResult executionId="0056b9c3-8a43-4775-8237-25150e8765c8" testId="7f6a3242-552a-945b-bb66-4010a6c96856" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)" computerName="SEMH59" duration="00:00:00.0002150" startTime="2026-10-29T23:35:08.0351491+03:00" endTime="2026-10-29T23:35:08.0351492+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0056b9c3-8a43-4775-8237-25150e8765c8" />
+    <UnitTestResult executionId="10616c4f-3b45-4aa2-8e5c-d7562df5ff5f" testId="d6338e60-a905-42ef-bdee-0acfb36343d0" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)" computerName="SEMH59" duration="00:00:00.0003767" startTime="2026-10-29T23:35:08.0349242+03:00" endTime="2026-10-29T23:35:08.0349244+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="10616c4f-3b45-4aa2-8e5c-d7562df5ff5f" />
+    <UnitTestResult executionId="3ff03231-c09b-4a9e-97ce-a74d69b084a0" testId="982eac3d-b568-ede2-b2f1-cacecf9b5254" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)" computerName="SEMH59" duration="00:00:00.0000904" startTime="2026-10-29T23:35:08.0350731+03:00" endTime="2026-10-29T23:35:08.0350732+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3ff03231-c09b-4a9e-97ce-a74d69b084a0" />
+    <UnitTestResult executionId="cc00e7d2-8320-432d-8cda-53f3804b4778" testId="fe03e296-c83c-32af-6870-d0bbe18489af" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)" computerName="SEMH59" duration="00:00:00.0493494" startTime="2026-10-29T23:35:08.0345964+03:00" endTime="2026-10-29T23:35:08.0345969+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cc00e7d2-8320-432d-8cda-53f3804b4778" />
+    <UnitTestResult executionId="4b3fdbc4-f34b-46da-b33b-9c5410878640" testId="75a73bd4-6bd4-cdbd-c880-f42643d19b13" testName="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)" computerName="SEMH59" duration="00:00:00.0008519" startTime="2026-10-29T23:35:07.9956422+03:00" endTime="2026-10-29T23:35:07.9956423+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4b3fdbc4-f34b-46da-b33b-9c5410878640">
+      <Output>
+        <ErrorInfo>
+          <Message>System.InvalidOperationException : Sum of custom split amounts (120) does not match Bill payable amount (100).</Message>
+          <StackTrace>   at ALKAROS.Billing.SplitDesign.SplitEngine.CreateCustomSplit(Bill bill, IReadOnlyList`1 targets, Nullable`1 createdBy, AdjustedBillSummary adjustment) in D:\project\ALKAROS\evidence\V1-RMD-755\isolated\src\Modules\Billing\SplitDesign\SplitEngine.cs:line 288&#xD;
+   at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.&lt;&gt;c__DisplayClass3_0.&lt;AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull&gt;g__Split|0(Decimal total) in D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs:line 166&#xD;
+   at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(Boolean custom, Boolean noAdjustment, Decimal payable, Decimal tax) in D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs:line 173&#xD;
+   at InvokeStub_SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(Object, Span`1)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="75a73bd4-6bd4-cdbd-c880-f42643d19b13">
+      <Execution id="4b3fdbc4-f34b-46da-b33b-9c5410878640" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="38e410a8-e4ad-09b9-aef2-ff09a24e6c1d">
+      <Execution id="b5de6742-509f-4cb5-bd80-5fae9f4e5a03" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="7f6a3242-552a-945b-bb66-4010a6c96856">
+      <Execution id="0056b9c3-8a43-4775-8237-25150e8765c8" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="982eac3d-b568-ede2-b2f1-cacecf9b5254">
+      <Execution id="3ff03231-c09b-4a9e-97ce-a74d69b084a0" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="2c653f20-1393-50f1-5c4c-62b04e8d9e55">
+      <Execution id="f113f223-b3f5-4858-9a7a-372af1a4f69a" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="8688c526-a06c-c891-6157-dea6884bc053">
+      <Execution id="27e8f5ff-452d-47a8-96b2-b93f24a57bc6" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="d6338e60-a905-42ef-bdee-0acfb36343d0">
+      <Execution id="10616c4f-3b45-4aa2-8e5c-d7562df5ff5f" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)" storage="d:\project\alkaros\evidence\v1-rmd-755\isolated\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="fe03e296-c83c-32af-6870-d0bbe18489af">
+      <Execution id="cc00e7d2-8320-432d-8cda-53f3804b4778" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\isolated\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests" name="AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="8688c526-a06c-c891-6157-dea6884bc053" executionId="27e8f5ff-452d-47a8-96b2-b93f24a57bc6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="38e410a8-e4ad-09b9-aef2-ff09a24e6c1d" executionId="b5de6742-509f-4cb5-bd80-5fae9f4e5a03" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2c653f20-1393-50f1-5c4c-62b04e8d9e55" executionId="f113f223-b3f5-4858-9a7a-372af1a4f69a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f6a3242-552a-945b-bb66-4010a6c96856" executionId="0056b9c3-8a43-4775-8237-25150e8765c8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d6338e60-a905-42ef-bdee-0acfb36343d0" executionId="10616c4f-3b45-4aa2-8e5c-d7562df5ff5f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="982eac3d-b568-ede2-b2f1-cacecf9b5254" executionId="3ff03231-c09b-4a9e-97ce-a74d69b084a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe03e296-c83c-32af-6870-d0bbe18489af" executionId="cc00e7d2-8320-432d-8cda-53f3804b4778" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="75a73bd4-6bd4-cdbd-c880-f42643d19b13" executionId="4b3fdbc4-f34b-46da-b33b-9c5410878640" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="8" executed="8" passed="5" failed="3" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.32]   Discovering: ALKAROS.Billing.SplitDesign.Tests&#xD;
+[xUnit.net 00:00:00.43]   Discovered:  ALKAROS.Billing.SplitDesign.Tests&#xD;
+[xUnit.net 00:00:00.44]   Starting:    ALKAROS.Billing.SplitDesign.Tests&#xD;
+[xUnit.net 00:00:00.56]       System.InvalidOperationException : Sum of custom split amounts (80) does not match Bill payable amount (100).&#xD;
+[xUnit.net 00:00:00.56]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.56]         D:\project\ALKAROS\evidence\V1-RMD-755\isolated\src\Modules\Billing\SplitDesign\SplitEngine.cs(288,0): at ALKAROS.Billing.SplitDesign.SplitEngine.CreateCustomSplit(Bill bill, IReadOnlyList`1 targets, Nullable`1 createdBy, AdjustedBillSummary adjustment)&#xD;
+[xUnit.net 00:00:00.56]         D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs(166,0): at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.&lt;&gt;c__DisplayClass3_0.&lt;AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull&gt;g__Split|0(Decimal total)&#xD;
+[xUnit.net 00:00:00.56]         D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs(173,0): at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(Boolean custom, Boolean noAdjustment, Decimal payable, Decimal tax)&#xD;
+[xUnit.net 00:00:00.56]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.56]            at System.Reflection.MethodBaseInvoker.InvokeDirectByRefWithFewArgs(Object obj, Span`1 copyOfArgs, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.57]       System.InvalidOperationException : Sum of custom split amounts (120) does not match Bill payable amount (100).&#xD;
+[xUnit.net 00:00:00.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.57]         D:\project\ALKAROS\evidence\V1-RMD-755\isolated\src\Modules\Billing\SplitDesign\SplitEngine.cs(288,0): at ALKAROS.Billing.SplitDesign.SplitEngine.CreateCustomSplit(Bill bill, IReadOnlyList`1 targets, Nullable`1 createdBy, AdjustedBillSummary adjustment)&#xD;
+[xUnit.net 00:00:00.57]         D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs(166,0): at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.&lt;&gt;c__DisplayClass3_0.&lt;AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull&gt;g__Split|0(Decimal total)&#xD;
+[xUnit.net 00:00:00.57]         D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs(173,0): at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(Boolean custom, Boolean noAdjustment, Decimal payable, Decimal tax)&#xD;
+[xUnit.net 00:00:00.57]            at InvokeStub_SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.57]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.57]       System.InvalidOperationException : Sum of custom split amounts (110) does not match Bill payable amount (100).&#xD;
+[xUnit.net 00:00:00.57]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.57]         D:\project\ALKAROS\evidence\V1-RMD-755\isolated\src\Modules\Billing\SplitDesign\SplitEngine.cs(288,0): at ALKAROS.Billing.SplitDesign.SplitEngine.CreateCustomSplit(Bill bill, IReadOnlyList`1 targets, Nullable`1 createdBy, AdjustedBillSummary adjustment)&#xD;
+[xUnit.net 00:00:00.57]         D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs(166,0): at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.&lt;&gt;c__DisplayClass3_0.&lt;AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull&gt;g__Split|0(Decimal total)&#xD;
+[xUnit.net 00:00:00.57]         D:\project\ALKAROS\evidence\V1-RMD-755\isolated\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs(173,0): at ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(Boolean custom, Boolean noAdjustment, Decimal payable, Decimal tax)&#xD;
+[xUnit.net 00:00:00.57]            at InvokeStub_SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(Object, Span`1)&#xD;
+[xUnit.net 00:00:00.57]            at System.Reflection.MethodBaseInvoker.InvokeWithFewArgs(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture)&#xD;
+[xUnit.net 00:00:00.62]   Finished:    ALKAROS.Billing.SplitDesign.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-29T23:35:07.9855782+03:00">
+        <Text>[xUnit.net 00:00:00.56]     ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-29T23:35:07.9953990+03:00">
+        <Text>[xUnit.net 00:00:00.57]     ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09) [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-29T23:35:07.9967239+03:00">
+        <Text>[xUnit.net 00:00:00.57]     ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10) [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

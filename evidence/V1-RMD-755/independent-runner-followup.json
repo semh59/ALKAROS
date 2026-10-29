@@ -1,0 +1,125 @@
+{
+  "task_id": "V1-RMD-755",
+  "repository": "D:/project/ALKAROS",
+  "head": "4eca31daab3c5e065d7e31d9a237665c75ce71d5",
+  "review_type": "independent_read_only_runner_followup",
+  "observed_utc": "2026-10-29T20:51:37.802364+00:00",
+  "prior_review": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-final-v2-review.json",
+  "verdict": "PASS_RUNNER_ONLY_RUNTIME_PENDING",
+  "runner_passed": true,
+  "task_acceptance_passed": null,
+  "findings": [],
+  "closed_findings": [
+    {
+      "id": "755-v2-runner-exit-propagation",
+      "status": "closed",
+      "evidence": [
+        "755-build-final.py:4-11",
+        "755-gates.py:4-18",
+        "755-final-v2.py:15-22,28-40"
+      ],
+      "reason_tr": "Build helper iki sabit build sonucunun her birinde exit 0 ve 0 Warning(s)/Uyarı ile 0 Error(s)/Hata özetlerini zorunlu tutuyor; eksik özet de exit 1. Gate helper dört gate exit değerinin tamamını ve 754 method identical koşulunu zorunlu tutuyor. Final runner bu helper returncode değerlerini allcodes içine alıyor; runtime/mutation runner_codes, üç helper sonucu ve 20 başarılı tekrar birlikte sağlanmadan exit 0 üretmiyor. Eksik dosya, bozuk JSON/TRX veya subprocess hatası yakalanıp başarıya çevrilmiyor. İncelenen runner zincirinde başka kabul boşluğu bulunmadı."
+    }
+  ],
+  "checks": [
+    {
+      "name": "actual_helper_decision_subprocess_replay",
+      "passed": true,
+      "cases": 9,
+      "positive_exit_zero": 3,
+      "negative_exit_one": 6,
+      "tier": "Gerçek script AST kararları + açık fixture; gerçek başarısız build/gate çalıştırması değil.",
+      "method_tr": "755-runner-exit-tests.py satır 1-21 bellekte yürütüldü; satır 22 evidence yazımı yürütülmedi. Gerçek build/gate scriptlerinden çıkarılan karar kodu ayrı Python subprocess içinde çalıştı.",
+      "details_tr": "clean, failed-build, warning, error, missing-summary, english-clean, clean gate, failed-gate ve changed-regression: 9/9. evidence/V1-RMD-755/runner-exit-tests.json ile aynı sonuç."
+    },
+    {
+      "name": "actual_top_level_decision_subprocess_replay",
+      "passed": true,
+      "cases": 8,
+      "positive_exit_zero": 1,
+      "negative_exit_one": 7,
+      "tier": "755-final-v2.py satır 38-40 gerçek AST kararı; açık fixture, gerçek runtime değil.",
+      "details_tr": "Temiz koşul exit 0; iki runner'ın her biri, üç helper'ın her biri nonzero olduğunda, tekrar sayısı 19 olduğunda veya tekrar valid=false olduğunda exit 1 ve all_passed=false."
+    },
+    {
+      "name": "compile_only",
+      "passed": true,
+      "details_tr": "755-build-final.py, 755-gates.py, 755-final-v2.py compile(..., 'exec') geçti; scriptler doğrudan çalıştırılmadı."
+    },
+    {
+      "name": "test_sources_unchanged_since_final_v2_review",
+      "passed": true,
+      "matched": 3,
+      "expected": 3
+    },
+    {
+      "name": "scratch_evidence_runner_copies_identical",
+      "passed": true,
+      "matched": 7,
+      "expected": 7
+    },
+    {
+      "name": "existing_build_gate_log_hashes",
+      "passed": true,
+      "matched": 6,
+      "expected": 6,
+      "details_tr": "Mevcut iki build ve dört gate log SHA-256 değerleri JSON kayıtlarıyla eşleşiyor. Gate UTC 20:41-20:42; mevcut build/gate kayıtları yeni final zincir tamamlanma kanıtı sayılmadı."
+    }
+  ],
+  "runtime_snapshot": {
+    "verdict": "PARTIAL_NOT_ACCEPTED",
+    "details_tr": "Beklemeden okunan mevcut execution-results.json yalnız SplitDesign satırını içeriyor: exit 0, TRX ve JSON 40/40, log hash eşleşiyor. Mutation raporu tamamlanmış: 9 mutant öldürülmüş, baseline/restored domain 8/8 ve host 3/3, root_source_changes boş. Host tam süit final satırı ve order-regression-results.json henüz yok. evidence-verification.json UTC 20:44:30, all_passed=false, splitdesign-full-exit başarısızlığı eski negatif doğrulamaya ait; güncel tam kabul sonucu değil. Final runner exit 0 veya 20/20 tekrar başarısı iddia edilmiyor. Çalışan process durumu sorgulanmadı.",
+    "splitdesign_full_exit_code": 0,
+    "splitdesign_full_executed": 40,
+    "splitdesign_full_passed": 40,
+    "completed_mutants": 9,
+    "host_full_current_result_available": false,
+    "order_regression_results_available": false,
+    "remaining_acceptance_tr": "Parent güncel Host tam süit, final build/gates/verifier ve 20 tekrar ile final process exit sonucunu tamamlandıktan sonra doğrulamalı."
+  },
+  "file_hashes": [
+    {
+      "path": "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs",
+      "sha256": "e08ce3d22fe7973374f2ed9f2da5cdad9662799eee377b8d44711a2ad67e74c2",
+      "matches_final_v2_review": true
+    },
+    {
+      "path": "tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs",
+      "sha256": "9610349deee0c5967fcc230372cfda1745207aba66c2dea95a1f992c32cf5363",
+      "matches_final_v2_review": true
+    },
+    {
+      "path": "tests/Host/Experience/Billing/BillingSplitHttpTests.cs",
+      "sha256": "5eb9646d9fa305cf10eda2427d25f8a3cde2e2d38ddef509309bb25997f9d841",
+      "matches_final_v2_review": true
+    }
+  ],
+  "scratch_and_evidence_identical_hashes": {
+    "755-final-v2.py": "fbb9867124a899ac8c2a5e9d5d91694f004daee949ad659e194d9208646c9e42",
+    "755-verify-evidence.py": "a15c9c84cd652abcf4059e0e4e531f95284b956f4e7f86ca7d3916a0abca800f",
+    "755-runtime.py": "06883372b0d881216be222cfb8c7bb8498b952d5175cbb5bc5ee6150ef2bb7bd",
+    "755-mutations.py": "3269c773c23795bbb39d31a6c5793afc4cf7f632fada078678521b520af34ae8",
+    "755-build-final.py": "a9cd2b0e2723357f1b9b996baf265efb32977ff5221f7ccbbae37c51f36f3a6d",
+    "755-gates.py": "a90f5c199c1c89c870d5d77aea0710d8f13ac54f799217e9816a07e0c711e909",
+    "755-runner-exit-tests.py": "ce582d9978218eebc98c7759facc371b55dd6c669519097b0a2dff86d0a4b5cb"
+  },
+  "evidence_snapshot_hashes": {
+    "runner-exit-tests.json": "a37853243d4c384d94dfa3da1589cf0675e95cdd256b04cd328ebd9f1f823f26",
+    "execution-results.json": "ff09e761bbe551bd64c403396e0dd638c9e0519f2b34456bc66337967ca1b472",
+    "guard-mutation-results.json": "7eb24f9df8bdf58a97904e23436dedf807184fd96f0d2f8a89b96527c07c9ec9",
+    "build-results.json": "4edb92b0653aa50241f1d6d9e8b109852e1fe5448dd6a3d5c94cb1ce45487e05",
+    "gate-results.json": "2b93658ef3317ab5d043b470707263cef55a9dfc9267b434056e4e9428a27f9c",
+    "evidence-verification.json": "236e5792a8430d108be9c979ce23eef7207802c2965676fc6c97f490ec14e10e",
+    "754-regression-preservation.json": "13cf01822be305400b116b4902089d6b981f30898232b282d5965acc316290c4",
+    "isolated-copy-manifest.json": "14311644b41664f40da6faa0c7079aa2484511b867df8b23e037e486bbf8f027"
+  },
+  "execution_limits": {
+    "repository_written": false,
+    "dotnet_run": false,
+    "build_or_dotnet_tests_run": false,
+    "waited_for_runtime": false,
+    "runtime_process_polled": false,
+    "only_created_file": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-runner-followup.json"
+  },
+  "summary_tr": "Önceki tek runner bulgusu kapandı; yeni bulgu 0. Helper karar probe 9/9, final karar probe 8/8. Test hash 3/3 değişmemiş; scratch/evidence runner hash 7/7 eş. Runner incelemesi PASS; gerçek görev kabulü runtime tamamlanma kanıtını bekliyor."
+}

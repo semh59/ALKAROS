@@ -1,0 +1,117 @@
+{
+  "task_id": "V1-RMD-755",
+  "repository": "D:/project/ALKAROS",
+  "head": "4eca31daab3c5e065d7e31d9a237665c75ce71d5",
+  "review_type": "independent_read_only_followup",
+  "prior_review": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-code-followup.json",
+  "verdict": "CHANGES_REQUESTED_RUNNER_ONLY",
+  "passed": false,
+  "scoped_test_source_verdict": "PASS",
+  "verifier_negative_verdict": "PASS",
+  "runtime_verdict": "NOT_ASSESSED_CURRENT_RERUN",
+  "findings": [
+    {
+      "id": "755-v2-runner-exit-propagation",
+      "severity": "P2",
+      "file": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-final-v2.py",
+      "lines": [20, 21, 38, 40],
+      "related_sources": [
+        "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-gates.py:4-7,16-17",
+        "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-build-final.py:4-8"
+      ],
+      "issue_tr": "Final runner yalnız helper process returncode değerlerini topluyor. 755-gates.py ve 755-build-final.py iç komutların nonzero exit değerlerini JSON'a yazıyor fakat kendi process exit kodunu başarısız yapmıyor. Bu nedenle scope/plan/consistency/whitespace veya build hatası JSON içinde kayıtlıyken runner all_passed=true ve exit 0 üretebilir. Düzeltilen evidence verifier build-results.json veya gate-results.json okumadığından bu boşluğu kapatmıyor.",
+      "reproduction": {
+        "tier": "read-only Python AST decision probe; explicit negative fixture, not a real failed build/gate execution",
+        "method": "Gerçek 755-final-v2.py dosyasındaki satır 38-40 AST bölümü bellekte çalıştırıldı. rows=20 valid repetition, runner_codes=[0,0], allcodes=[0,0,0] verildi. İç gate/build hataları fixture olarak ayrıca [0,1,0,0] ve [1,0] ile belirtildi; son karar bunları okumuyor.",
+        "observed_output": "{\"order_repeats\": 20, \"all_passed\": true}",
+        "observed_system_exit": 0
+      },
+      "smallest_fix_tr": "755-gates.py sonunda bütün gate exit_code değerleri 0 ve proof.identical true değilse exit 1; 755-build-final.py sonunda bütün build exit_code değerleri 0 ve zorunlu 0 warning/0 error koşulu doğrulanmıyorsa exit 1 üret. Alternatif: final runner JSON sonuçlarını açıkça doğrulasın. Helper negatif çıkış davranışını repo yazmadan kanıtla. Mevcut çalışan rerun sonucu tamamlanmadan yeşil sayılmamalı."
+    }
+  ],
+  "checks": [
+    {
+      "name": "minimal_postgres_followup_delta",
+      "passed": true,
+      "details_tr": "Önceki review hash'ine göre yalnız satır 275 ve 281'de beklenen ve gerçek Id projection'larına .Order() eklenmiş. İki değişikliği bellekte geri çevirince önceki byte SHA-256 birebir elde edildi: 73b3301970341c0ea43933a98febbb389f0584169dd258c729591002ff467223. Host ve domain dosyaları önceki review ile byte-identical."
+    },
+    {
+      "name": "membership_count_multiplicity_and_rejection_preserved",
+      "passed": true,
+      "source": "tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs:270-288",
+      "details_tr": "Assert.Equal sıralanmış tam IEnumerable<Guid> dizilerini karşılaştırıyor; Distinct/ToHashSet/Contains'a dönüştürülmemiş. Eleman, adet ve tekrar sayısı korunuyor; yalnız anlamsız repository sırası kaldırılıyor. İki Assert.ThrowsAsync<SplitDesignConcurrencyException>, expected bill sürümleri, boş stale allocation listesi, persisted AllocationVersion listesi, replacement ve post-conflict kimlik denetimi değişmemiş. Python multiset semantik probe: ters sıra kabul; eksik eleman, fazla eleman, başka elemanın yerine duplicate ve ek duplicate reddedildi. Bu probe .NET runtime testi değildir."
+    },
+    {
+      "name": "repository_order_explains_real_failure",
+      "passed": true,
+      "source": "src/Modules/Billing/SplitDesign/PostgresSplitDesignRepository.cs:34-41,107-123,534-556",
+      "details_tr": "Repository ORDER BY created_at ASC, bill_allocation_id ASC kullanıyor; insertion/engine sıra sözleşmesi yok. Aynı created_at DB hassasiyetine düştüğünde Guid tie-break sıralaması input sırasından farklı olabilir. İki tarafı aynı Guid comparer ile sıralamak SQL UUID sırasını taklit etmek zorunda değildir. Üretim değişikliği gerekmiyor."
+    },
+    {
+      "name": "all_related_comparisons_inspected",
+      "passed": true,
+      "source": "tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs:1-471",
+      "details_tr": "Dosyanın tamamı okundu. Id sequence equality noktaları 275,281,339-340 artık iki tarafı sıralıyor. 374-378 SetEquals zaten sıra bağımsız; diğer persisted kontroller Count, First/Single, Empty ve scalar toplamları kullanıyor. İlgili sırasız Id kıyaslaması kalmamış. ConcurrentFirstWritersCannotBothCommit içindeki tek başarı/tek ret ve kazanan tasarım membership assertion'ları değişmemiş."
+    },
+    {
+      "name": "exact_source_diff_allowed_by_755",
+      "passed": true,
+      "source": "plan/v1/remediation/V1-RMD-755-bolme-testleri-gercek-kapanis.md:16-18,25,29-33",
+      "details_tr": "Postgres dosyası açık Owned surface; In scope satır 25 tahsis kimliği karşılaştırma sırasının eleman/adet korunarak düzeltilmesine açık izin veriyor. HEAD'e göre bu dosyanın bütün diff'i 275,281 ve önceki seat testi 339-340 sıralama düzeltmeleri. git diff HEAD --name-only -- src database build boş; scoped whitespace diff --check exit 0. Bu kontrol görev geneli baseline-aware scope gate yerine geçmez; başlangıçta ilgisiz mevcut 739/751 değişiklikleri ve .partial dosyası görüldü, dokunulmadı."
+    },
+    {
+      "name": "real_failed_39_of_40_artifact_preserved",
+      "passed": true,
+      "source": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/splitdesign-results/full.trx",
+      "details_tr": "Arşiv execution-results.json ve TRX: SplitDesign exit 1, executed 40, passed 39, failed 1. Tek başarısız test OperationalReplaceRejectsStaleAllocationSetWithoutPartialMutation; log satır 275, aynı iki Guid ters sırada. Host arşivi exit 0, 112/112. Bunlar önceki başarısız denemeye ait; yeni rerun sonucu değildir."
+    },
+    {
+      "name": "actual_scratch_verifier_fails_closed_against_retained_negative",
+      "passed": true,
+      "source": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-verify-evidence.py:36-39",
+      "method": "Gerçek script AST'sinde yalnız out path arşive yönlendirildi ve tek write_text Expr'i Pass ile değiştirildi; böylece repo/evidence yazılmadı. Bütün check ve SystemExit mantığı aynen çalıştırıldı.",
+      "observed_stdout": "{\"checks\": 88, \"all_passed\": false, \"failed\": [\"splitdesign-full-exit\"]}",
+      "observed_exit_code": 1
+    },
+    {
+      "name": "runner_archive_rerun_and_repetition_design",
+      "passed": true,
+      "source": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-final-v2.py:4-37",
+      "details_tr": "Arşiv exist_ok=False ile mevcut delili ezmiyor; root evidence dosyaları ve *-results klasörleri fresh run öncesi kopyalanıyor. Negatif verifier exit 1 zorunlu. Full runtime ile izole mutation runner ayrı artifact yollarında yürütülüyor; ikisi bitmeden final build başlamıyor. Full runtime komutlarında --no-build yok; isolated baseline/mutant/restored komutları build ediyor. Son 20 repetition current artifact path'te final build sonrası --no-build kullanıyor; iki ilgili test filter'ı için her iterasyonda process exit 0, executed=2, passed=2 ve toplam 20 iteration zorunlu. Çalışan run beklenmedi/poll edilmedi; başarı sayısı bu review'da iddia edilmiyor. Helper exit propagation bulgusu ayrıca açık."
+    }
+  ],
+  "file_hashes": [
+    {
+      "path": "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs",
+      "sha256": "e08ce3d22fe7973374f2ed9f2da5cdad9662799eee377b8d44711a2ad67e74c2",
+      "unchanged_since_prior_review": true
+    },
+    {
+      "path": "tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs",
+      "sha256": "9610349deee0c5967fcc230372cfda1745207aba66c2dea95a1f992c32cf5363",
+      "unchanged_since_prior_review": false
+    },
+    {
+      "path": "tests/Host/Experience/Billing/BillingSplitHttpTests.cs",
+      "sha256": "5eb9646d9fa305cf10eda2427d25f8a3cde2e2d38ddef509309bb25997f9d841",
+      "unchanged_since_prior_review": true
+    }
+  ],
+  "scratch_script_hashes": {
+    "755-final-v2.py": "fbb9867124a899ac8c2a5e9d5d91694f004daee949ad659e194d9208646c9e42",
+    "755-verify-evidence.py": "a15c9c84cd652abcf4059e0e4e531f95284b956f4e7f86ca7d3916a0abca800f",
+    "755-runtime.py": "06883372b0d881216be222cfb8c7bb8498b952d5175cbb5bc5ee6150ef2bb7bd",
+    "755-mutations.py": "3269c773c23795bbb39d31a6c5793afc4cf7f632fada078678521b520af34ae8",
+    "755-build-final.py": "45e8ef14a79849b47097f60e472df8debfdb15bc3a268051767e6a33417dc2a6",
+    "755-gates.py": "be1a371603de1d161a96a2faddc61655d19f3029802ea38b2f05fc32a04f3e95"
+  },
+  "execution_limits": {
+    "repository_modified": false,
+    "dotnet_run": false,
+    "tests_run": false,
+    "current_rerun_waited_or_polled": false,
+    "only_created_file": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-final-v2-review.json",
+    "current_final_runtime_acceptance": "Pending parent verification; not assessed by this review."
+  },
+  "summary_tr": "Test kaynakları scoped PASS: iki yeni .Order() düzeltmesi en küçük doğru değişiklik, membership/adet/multiplicity ve concurrency retleri korunmuş. Gerçek arşivlenmiş 39/40 negatifte scratch verifier exit 1 bağımsız doğrulandı. Tek açık bulgu: final runner build/gate helper iç nonzero sonuçlarını fail-closed taşımıyor. Yeni runtime sonucu beklenmedi/poll edilmedi."
+}

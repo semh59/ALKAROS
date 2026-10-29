@@ -1,0 +1,1253 @@
+{
+  "utc": "2026-10-29T20:57:05.832232+00:00",
+  "outside": [],
+  "paths": [
+    {
+      "path": "evidence/V1-RMD-755/754-regression-preservation.json",
+      "blob_sha256": "13cf01822be305400b116b4902089d6b981f30898232b282d5965acc316290c4",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-build-final.py",
+      "blob_sha256": "a9cd2b0e2723357f1b9b996baf265efb32977ff5221f7ccbbae37c51f36f3a6d",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-close-delta.py",
+      "blob_sha256": "27687c5904a0650f5dccae4cee094de2af0ab41ba2da7ccf25e9b79d0d4a545e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-final-rerun.py",
+      "blob_sha256": "46aeff8fd440e1385a23efcb9443f59e4ba0ed874c6d3c7a2be10cacd3c72b9f",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-final-v2.py",
+      "blob_sha256": "fbb9867124a899ac8c2a5e9d5d91694f004daee949ad659e194d9208646c9e42",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-gates.py",
+      "blob_sha256": "a90f5c199c1c89c870d5d77aea0710d8f13ac54f799217e9816a07e0c711e909",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-mutations.py",
+      "blob_sha256": "3269c773c23795bbb39d31a6c5793afc4cf7f632fada078678521b520af34ae8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-mutations.py.runner.log",
+      "blob_sha256": "ed45e3ef53db5b1926e4777b8e7f31392a3283074509ab74c94de56cabde0359",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-plan-start.log",
+      "blob_sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-postcommit.py",
+      "blob_sha256": "baf85de233713a06cef7fff5e58a3ea37cc1134cfd63556bc26e0d181a253c2c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-preflight.py",
+      "blob_sha256": "b013e3c0bcfbebe6d26f4e7120f19d23e953674470fa10e149f8cf0cfeaeeef2",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-runner-exit-tests.py",
+      "blob_sha256": "ce582d9978218eebc98c7759facc371b55dd6c669519097b0a2dff86d0a4b5cb",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-runtime.py",
+      "blob_sha256": "06883372b0d881216be222cfb8c7bb8498b952d5175cbb5bc5ee6150ef2bb7bd",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-runtime.py.runner.log",
+      "blob_sha256": "6ab5f655433f8a26aee044a28c0fed186d581c8f5e4efa006a2022d2c49be1f7",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-stage-verify.py",
+      "blob_sha256": "5165068970e041cc75e6afa4baee15b1e935fba908ba7b35f669954b894a0b4c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-verify-evidence.py",
+      "blob_sha256": "a15c9c84cd652abcf4059e0e4e531f95284b956f4e7f86ca7d3916a0abca800f",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/RESULT.md",
+      "blob_sha256": "b972c15b92f06365e9ae6d152009da82d4b62e6fd34827ec95579f827fb554a9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/RETRACTIONS.md",
+      "blob_sha256": "c92f25b927e3a7985eb7b4fa210f8be541f147a83a05891513794691979befed",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/754-regression-preservation.json",
+      "blob_sha256": "13cf01822be305400b116b4902089d6b981f30898232b282d5965acc316290c4",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-gates.py",
+      "blob_sha256": "be1a371603de1d161a96a2faddc61655d19f3029802ea38b2f05fc32a04f3e95",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-mutations.py",
+      "blob_sha256": "3269c773c23795bbb39d31a6c5793afc4cf7f632fada078678521b520af34ae8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-plan-start.log",
+      "blob_sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-preflight.py",
+      "blob_sha256": "b013e3c0bcfbebe6d26f4e7120f19d23e953674470fa10e149f8cf0cfeaeeef2",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-runtime.py",
+      "blob_sha256": "06883372b0d881216be222cfb8c7bb8498b952d5175cbb5bc5ee6150ef2bb7bd",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-verify-evidence.py",
+      "blob_sha256": "5807133ea96ce13fcdd0bd0d889cc42aa2a005158bec2d3237a55bb7b3ed6234",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/RESULT.md",
+      "blob_sha256": "d9ab0b6c9d4d280b742f294ab9f698b26db091fde207064731e6d2b75f757544",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/RETRACTIONS.md",
+      "blob_sha256": "c92f25b927e3a7985eb7b4fa210f8be541f147a83a05891513794691979befed",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/build-before-fix.log",
+      "blob_sha256": "83094447b4b577df0c4f019d13bfaa3823e040b37362b23bdb4f28cca7486382",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/build-results.json",
+      "blob_sha256": "1e9ba2e3b03f59e6838170f8dd2d7ffaa26f5339dc587a36e9f67883b5ebe1cc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/consistency.log",
+      "blob_sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/evidence-verification.json",
+      "blob_sha256": "fa9b8a06c57c513dd6795733ac32836731a0e305b7eb684a96a3653c0cc00aab",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/execution-results.json",
+      "blob_sha256": "af8635c99de082d33166c6361ccd13d665bb14be6eb03c1443aa1ec291afb0d1",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/foundation-proof-intake.json",
+      "blob_sha256": "3c4816d887a245ad92e5526015edaa5efe1852c97b0483c74bb135c9d54e7f70",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/full-preflight-preservation.json",
+      "blob_sha256": "a34f09d7cc789f16cc6f8d4ae637cbb2619e6bce756914c7a611010d1d53c351",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/gate-results.json",
+      "blob_sha256": "63f69e8a3d5dce3a6684577f64f8fb2207b8f4f20f3c09178ceaaaa4cf74a998",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/guard-mutation-results.json",
+      "blob_sha256": "a900c419d6aa796f410f79cadc93a0e1ec073a776e2570ffbd77c4935ad9b4b1",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/host-billing-build.log",
+      "blob_sha256": "7775ce4592f6343cc7eb68f4ee9ab793400c971434c1a9c7326f97b43020d26c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/host-billing-full.log",
+      "blob_sha256": "d4b0565c4c3f95668fbe2091d120bd60471609a6ebc3c3cebe1cb4710670ee07",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/host-billing-results/full.trx",
+      "blob_sha256": "4d8c5e7de168051417cdb0116fe05aa6298b22494f2330532021161f5da4aabc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/independent-intake-755-test-audit.json",
+      "blob_sha256": "da2f2fe0e816161ed7bf16f9ded6741fb0936d496052ad2b6093747101a529f9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/independent-intake-packet02-real-audit.json",
+      "blob_sha256": "9a8321acd4da0f425a96c5073dcb99e8fdc63274e1fc88c1f716d1897f39225e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-baseline-domain-results/run.trx",
+      "blob_sha256": "20fe86b17c96f7e162448d788a4339a20989ebca29396bfa667f0154b66e005a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-baseline-domain.log",
+      "blob_sha256": "2df7f369573795959e7108924621f01509cdf9dd0a6d23ae3854720044df66d0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-baseline-host-results/run.trx",
+      "blob_sha256": "2a4c65a0bac4d65ffd29f76a4e858e65d2247f8f664165ac618746eca3cf66aa",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-baseline-host.log",
+      "blob_sha256": "14f39bb1d244308b77937625db7ba1ccdc1a8cfcae8a8c4185dfcbdc523eb316",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-copy-manifest.json",
+      "blob_sha256": "428f10f398503398ef0ed06ca7f063d0165465ae60a81c8f00d95878bad2ad1b",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-restored-domain-results/run.trx",
+      "blob_sha256": "008d8ffc522c76b03704c6ae7fe89b8bf299e4d4680cf3cc8be159c35f485a9a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-restored-domain.log",
+      "blob_sha256": "7c03c69505c3cffdf000a8acbc7796952c59e7070558176d95e7b642884fbfdc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-restored-host-results/run.trx",
+      "blob_sha256": "4a7a045232dfe505a68553d676a30bd2ad2870bfb0b7e64918764fb8e75c49f7",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-restored-host.log",
+      "blob_sha256": "d0cd04dbaea6da0212c80993f52d438cd75eed3ed1681acb2603958ec4874e87",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-null-results/run.trx",
+      "blob_sha256": "67008c088cd3fd3f4371d4de255ee9d4c2898cea74baa4315a9e442b98082000",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-null.log",
+      "blob_sha256": "d869feda1fd4d24e3f3cf5cc5cd40f96a5b63eed41bcef47bbfefe25703114b5",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-payable-results/run.trx",
+      "blob_sha256": "11917518b620721935b8835567d9c2ae8b01bd1e637c37a049407b5c1372a025",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-payable.log",
+      "blob_sha256": "cf4706395118068338baa9bb0a573fe97d0aeab4936c62230c5a0ea22e01c21a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-tax-results/run.trx",
+      "blob_sha256": "c9b7241aed9fdb7fd539b4230d8ab622dcdf6ebd2472f405631f97706e87d7ce",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-tax.log",
+      "blob_sha256": "72c4dd9298e006c9b0e57db866b234d925281505432d4ccba1b7bedf367fdee0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-handoff-results/run.trx",
+      "blob_sha256": "4502add72c61cbc58ce1c756dba7df85f775ec5081c49240e18696845ed3a6ca",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-handoff.log",
+      "blob_sha256": "57a9a2a9e064bf79568f5e5f86702db41de4930a194e3edca89d03c36f87a9dc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-null-results/run.trx",
+      "blob_sha256": "ee9020b9b91be21f5870a5e475da4a401e090fde941b5df44289924e563ba0ce",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-null.log",
+      "blob_sha256": "dae9ba8e9e3e4e0c55914cb86034db7fccff462e292bb4b7166d9bc3910bbfd9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-payable-results/run.trx",
+      "blob_sha256": "bffb75bc7df174dfcfcc445d655f4b56cf6c5ca6b448f66bffeb5b5619ea3548",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-payable.log",
+      "blob_sha256": "ec47e60f8cc47bb64ab461efb27a22891d4b4f6d61fef343d7edb04fa90cb9e7",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-tax-results/run.trx",
+      "blob_sha256": "95858aecfdcf72b4c7dafd5c7e188a387854126ae029f89a5e300e2806aa5f11",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-tax.log",
+      "blob_sha256": "25afe342ba40897ac16bb1e9c2d20e791bc14c770c949f4a5fc9c21fc8f490c8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-equal-handoff-results/run.trx",
+      "blob_sha256": "298c3d356cb38757018280b839e301e68cd791f7144281fb939057930b6067e1",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-equal-handoff.log",
+      "blob_sha256": "ac18b4583b80ee1f5694e3264841fed69f7c1adf0c4abea05b180c61735c5c48",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-item-unchanged-totals-results/run.trx",
+      "blob_sha256": "2b98df711fce74ba86663b6a9b833171f433f5e110ee777af8e325fb45763918",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-item-unchanged-totals.log",
+      "blob_sha256": "0925ffea79689b56eca0e2ff88f3f36321b234f4dac3572fff4ee07794324beb",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/plan.log",
+      "blob_sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/preflight.json",
+      "blob_sha256": "080aa11536604287f6daccf1b6de184525306a1d09aa00dcf933a8dd9ae5f7ca",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/preservation-proof.json",
+      "blob_sha256": "703a34eb00882658c628a2d079354c9b082c1cbbf52a98fabf5b353a0a2042ed",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/scope-pending-delta.log",
+      "blob_sha256": "97b6def492146ff4a24d58cb75aae41dcc51d8a1e3541f806a3140480458c6b6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/splitdesign-build.log",
+      "blob_sha256": "9ff89754ce1ed8374a8f8c3a1035c1316a396219e996dca8a033ce9e2106f31f",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/splitdesign-full.log",
+      "blob_sha256": "a1da74dfe0d9c741260af47f4fc914391d0f48bdeae74fa7c84ace605f0271f6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/splitdesign-results/full.trx",
+      "blob_sha256": "bb44969288275fecf7ca1cc60ee6100941747d1d67b26ee76264bf071b5f421d",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/whitespace.log",
+      "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/build-before-fix.log",
+      "blob_sha256": "83094447b4b577df0c4f019d13bfaa3823e040b37362b23bdb4f28cca7486382",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/build-results.json",
+      "blob_sha256": "20530ec876ae394910c954529f04794eed4a35daa4baec0d74e9b2b158668c12",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/closing-delta-proof.json",
+      "blob_sha256": "32fcb202c9d4e9a647f7ed30d8762b756e660c0daacfe49f89bfb9c49600ea4e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/consistency.log",
+      "blob_sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/evidence-verification.json",
+      "blob_sha256": "265d1eca50e2b61dcfa103a8235e07188d484506ff64071371c177408ab772b2",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/execution-results.json",
+      "blob_sha256": "5746bca03080273473d7c8fb5dc5888876fcd2cd47ed45b8e6adf7b723917b56",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/754-regression-preservation.json",
+      "blob_sha256": "13cf01822be305400b116b4902089d6b981f30898232b282d5965acc316290c4",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-build-final.py",
+      "blob_sha256": "45e8ef14a79849b47097f60e472df8debfdb15bc3a268051767e6a33417dc2a6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-close-delta.py",
+      "blob_sha256": "27687c5904a0650f5dccae4cee094de2af0ab41ba2da7ccf25e9b79d0d4a545e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-final-rerun.py",
+      "blob_sha256": "46aeff8fd440e1385a23efcb9443f59e4ba0ed874c6d3c7a2be10cacd3c72b9f",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-gates.py",
+      "blob_sha256": "be1a371603de1d161a96a2faddc61655d19f3029802ea38b2f05fc32a04f3e95",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-mutations.py",
+      "blob_sha256": "3269c773c23795bbb39d31a6c5793afc4cf7f632fada078678521b520af34ae8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-mutations.py.runner.log",
+      "blob_sha256": "a29d805119fc2cc2d700a98a2e3d22bfc9b707f4330dfd4967c3a0acae68efd1",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-plan-start.log",
+      "blob_sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-preflight.py",
+      "blob_sha256": "b013e3c0bcfbebe6d26f4e7120f19d23e953674470fa10e149f8cf0cfeaeeef2",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-runtime.py",
+      "blob_sha256": "06883372b0d881216be222cfb8c7bb8498b952d5175cbb5bc5ee6150ef2bb7bd",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-runtime.py.runner.log",
+      "blob_sha256": "d242e4fd9128e18fbf4be2756810144452a54329a86be16a0ba0c8e0c33ea989",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-stage-verify.py",
+      "blob_sha256": "65020a97c93b9238e312ce350d2dfbc91c90e1410f26e5b451e0011dd0f87777",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/755-verify-evidence.py",
+      "blob_sha256": "5807133ea96ce13fcdd0bd0d889cc42aa2a005158bec2d3237a55bb7b3ed6234",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/RESULT.md",
+      "blob_sha256": "d9ab0b6c9d4d280b742f294ab9f698b26db091fde207064731e6d2b75f757544",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/RETRACTIONS.md",
+      "blob_sha256": "c92f25b927e3a7985eb7b4fa210f8be541f147a83a05891513794691979befed",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/build-before-fix.log",
+      "blob_sha256": "83094447b4b577df0c4f019d13bfaa3823e040b37362b23bdb4f28cca7486382",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/build-results.json",
+      "blob_sha256": "4edb92b0653aa50241f1d6d9e8b109852e1fe5448dd6a3d5c94cb1ce45487e05",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/closing-delta-proof.json",
+      "blob_sha256": "2795844c87b744524c6c7f479fa955389dfa60a1123fa359bc7da3fbc4ded741",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/consistency.log",
+      "blob_sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/evidence-verification.json",
+      "blob_sha256": "0a4bdb229adc1a9e9d8c31b0b39e8e8c6ab81a29c12a9e3f9783631cd7f2026c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/execution-results.json",
+      "blob_sha256": "1439605d35d47a25cf9293105be69c1be7705e9dee77a300335a2d084b59c40f",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/foundation-proof-intake.json",
+      "blob_sha256": "3c4816d887a245ad92e5526015edaa5efe1852c97b0483c74bb135c9d54e7f70",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/full-preflight-preservation.json",
+      "blob_sha256": "a34f09d7cc789f16cc6f8d4ae637cbb2619e6bce756914c7a611010d1d53c351",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/gate-results.json",
+      "blob_sha256": "2b93658ef3317ab5d043b470707263cef55a9dfc9267b434056e4e9428a27f9c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/guard-mutation-results.json",
+      "blob_sha256": "bd33a74018414749ab768a045007bc3feffe9001e653807c88908a9cf8b2d74a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/host-billing-build.log",
+      "blob_sha256": "e1e04476ae10c0f4affbd9bf22efc388cbcc99a86c8efa5e1ffb5f58712eb27c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/host-billing-full.log",
+      "blob_sha256": "c273412b6f2be5418a40af7237560dbbeba8012fe889aaed0935a92d297d5bb0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/host-billing-results/full.trx",
+      "blob_sha256": "371d590d9de832cdd5a49997f298fd21b80022ac1dccbfe5db9e52343a6a7b99",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/independent-code-followup.json",
+      "blob_sha256": "c2fca99c51d27b58713fe3de516d3131097940b0f9dc5384e8f2bde1bcb616d6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/independent-intake-755-test-audit.json",
+      "blob_sha256": "da2f2fe0e816161ed7bf16f9ded6741fb0936d496052ad2b6093747101a529f9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/independent-intake-packet02-real-audit.json",
+      "blob_sha256": "9a8321acd4da0f425a96c5073dcb99e8fdc63274e1fc88c1f716d1897f39225e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/isolated-baseline-domain-results/run.trx",
+      "blob_sha256": "251641333c80df0ca162cc838596717f2c027403b5691f02f5cf7a9080899326",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/isolated-baseline-domain.log",
+      "blob_sha256": "eadeefde98572ced80301577169ca9d9a2a632ead9d163bcd5b26f6ad4413e3e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/isolated-baseline-host-results/run.trx",
+      "blob_sha256": "1157e070f2b35c3e166fdacb2e29957144e3a25b9392085e01af51841cd0aaaf",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/isolated-baseline-host.log",
+      "blob_sha256": "fe92488c81789339143d3f95664e8766673645a0052a123db5d79703643e3228",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/isolated-copy-manifest.json",
+      "blob_sha256": "21d8016dde10da5a6f70119a76bae222ba17c36abab615198993d0ed457d6d43",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/isolated-restored-domain-results/run.trx",
+      "blob_sha256": "ac76e97970ca7f75abcf37467bd52bc50f8963f4fb05b031b6e215dedf9930cd",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/isolated-restored-domain.log",
+      "blob_sha256": "ec843b2c9904f195e6aa31b3e6ec55dd1553edea555ab25bf665d246517af498",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/isolated-restored-host-results/run.trx",
+      "blob_sha256": "cc9614a794561e685e2a805b46d837d5bb17e8c7c54019cd3ddcc514a525c231",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/isolated-restored-host.log",
+      "blob_sha256": "ad14c13e0d1037265d418c4e71fb886d4730d105b1ad1a84cb48db53351db6b1",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-amount-null-results/run.trx",
+      "blob_sha256": "3bbda9ad59c89a3d1597b35f56728393b7b4391138f2ba6cdb7cab1481bc3015",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-amount-null.log",
+      "blob_sha256": "b9f271e6024546123c86bc3357a0d592646f46dfa2a86ac9edad2ed26c4c4beb",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-amount-payable-results/run.trx",
+      "blob_sha256": "820ec8d08165f962534bcaf52fcfcf5e4ac48b652f9bc593647d4e0d6bb8b14e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-amount-payable.log",
+      "blob_sha256": "8a5db82480aea4ad6439e2d15e442112e05efdc246d836aedd25be31132935c4",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-amount-tax-results/run.trx",
+      "blob_sha256": "7b2e4fbb60d47247f6e32bf1c7d891901a3738be9271a9d4ac0e4604859c492d",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-amount-tax.log",
+      "blob_sha256": "02881dbb2a75b5e1eb24dee09ba78181588c6047d016495ddf81db096a6b59b3",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-custom-handoff-results/run.trx",
+      "blob_sha256": "3259728ec87f35638a65fc335b65084ad671130d8d658a595e0aa56c470aa7c6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-custom-handoff.log",
+      "blob_sha256": "d3b289b1cc38d0feb7da35ae328df477974679b2aad1e0de535cc30a1a5486b8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-custom-null-results/run.trx",
+      "blob_sha256": "c4fdca33660838c99568f729e264dd3af47d468e7db0d8fbf1e560ecb7101989",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-custom-null.log",
+      "blob_sha256": "307912f30363f5d6997e5c1bfc6ae6e8a5b04219f2df357be38f796c29ef50e4",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-custom-payable-results/run.trx",
+      "blob_sha256": "b90ad8c29df2dd33f9a7f127961b75c86d803b47e2c9721b75130aaa632e3606",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-custom-payable.log",
+      "blob_sha256": "08d601120de98650d6b9f2ce3afdfdc4342f06a4eaa74d1748375472a08f43b3",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-custom-tax-results/run.trx",
+      "blob_sha256": "cc19da16020d644c92bbbe511bfa79144f257cc749a351c2e563f37e2d6b7da8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-custom-tax.log",
+      "blob_sha256": "d116cbc1771339422766f17cadd3363590553b91a3884ea6df863fc670927761",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-equal-handoff-results/run.trx",
+      "blob_sha256": "3647a68e0c72387586e52573913891346df4056739b8cba951c6b88adf2bf6b5",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-equal-handoff.log",
+      "blob_sha256": "e9470fb0dcacbe22ada85e354e5466af0e4996bab9e7ae7cdf0ea9fe362e9f3c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-item-unchanged-totals-results/run.trx",
+      "blob_sha256": "a79239af40e2f01ddb423bd77ba6225f5f9a4ae6b4f469916b3206e19b788f5d",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/mutant-item-unchanged-totals.log",
+      "blob_sha256": "18f62ccb58a9dc907270cf6af62ddb9f6ff9ae5b6578000368e154968c39c430",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/plan.log",
+      "blob_sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/precommit-committed-range.log",
+      "blob_sha256": "823269f006476a9036db1e26f6b842433cf70b61accbe0204e0588361bf40577",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/preflight.json",
+      "blob_sha256": "080aa11536604287f6daccf1b6de184525306a1d09aa00dcf933a8dd9ae5f7ca",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/preservation-proof.json",
+      "blob_sha256": "703a34eb00882658c628a2d079354c9b082c1cbbf52a98fabf5b353a0a2042ed",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/review-before-cleanup-755-final-code-review.json",
+      "blob_sha256": "b8a4a4f687e1ff293e170c8284817ec8cab980941151b8dc2a7537bc180ca454",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/review-before-cleanup-755-final-provenance-review.json",
+      "blob_sha256": "722070304eb697a9405a74100325cf2e449bc669a75296487a56e342eddbd915",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/scope-pending-delta.log",
+      "blob_sha256": "1203413cd4d2194fbd4e22158818d424de7b96500d1634092bdc4b2301c591f3",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/splitdesign-build.log",
+      "blob_sha256": "ce4d9dc929ae943d14597470d4d041416a559eecfc337489242dee3f2fe57279",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/splitdesign-full.log",
+      "blob_sha256": "c1a6c0fc89bbb31c18ebcacee7285e547d81474719942597eb2977afeb700279",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/splitdesign-results/full.trx",
+      "blob_sha256": "c8c2ca2ef306727b6bed904a0b7b3ccc7089a679a3e282b0cf7c7867c8281777",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/staged-scope-proof.json",
+      "blob_sha256": "e6504314e378ab15e91876f52a3495a394eb1e9f62e79dc66b24f4fb4bc771ce",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/failed-attempt-order-dependent-test/whitespace.log",
+      "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/final-source-hashes.json",
+      "blob_sha256": "626872f36a49bbffcbb2a4a70f240da4c53fbf368966f9509e3b82a67def8b05",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/foundation-proof-intake.json",
+      "blob_sha256": "3c4816d887a245ad92e5526015edaa5efe1852c97b0483c74bb135c9d54e7f70",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/full-preflight-preservation.json",
+      "blob_sha256": "a34f09d7cc789f16cc6f8d4ae637cbb2619e6bce756914c7a611010d1d53c351",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/gate-results.json",
+      "blob_sha256": "58591a46d559af9257ea73c610bd7927343807f2ca00229ae4f584180d7c290c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/guard-mutation-results.json",
+      "blob_sha256": "7eb24f9df8bdf58a97904e23436dedf807184fd96f0d2f8a89b96527c07c9ec9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/host-billing-build.log",
+      "blob_sha256": "50ec21d32fa0d3a73d8e82e16235e9af5a52105a221ae9efce91e4639375a3d3",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/host-billing-full.log",
+      "blob_sha256": "79c301de5522b5dcb0e858e55aacac75adbe5da1cb86a2a26bc0e3d245500e15",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/host-billing-results/full.trx",
+      "blob_sha256": "4eada6f8a7f04674934ed53d233ab111fd3daa5133de7a108bc000e36d17f2a2",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/independent-code-followup.json",
+      "blob_sha256": "c2fca99c51d27b58713fe3de516d3131097940b0f9dc5384e8f2bde1bcb616d6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/independent-intake-755-test-audit.json",
+      "blob_sha256": "da2f2fe0e816161ed7bf16f9ded6741fb0936d496052ad2b6093747101a529f9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/independent-intake-packet02-real-audit.json",
+      "blob_sha256": "9a8321acd4da0f425a96c5073dcb99e8fdc63274e1fc88c1f716d1897f39225e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/independent-runner-followup.json",
+      "blob_sha256": "304acf8840cd57348bca4df593ba74d57b2d8eaf9f9dc62bd81f7ec3b70a429a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/independent-v2-source-review.json",
+      "blob_sha256": "d85a955449b9976eed0c3726a4bf61badfbee886b76e5697f4adedaebc1482fb",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-baseline-domain-results/run.trx",
+      "blob_sha256": "c0c8c015db31d236e7a14b6666d21c391a8be72a24b08a5f3fcea8e9af835f97",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-baseline-domain.log",
+      "blob_sha256": "ee4110ac6f18ffb9569389893e342aaf78fe7bb4ddb44e80b4d92c6c151673e6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-baseline-host-results/run.trx",
+      "blob_sha256": "cc577269e4e22a0c2bd0ed338a1daca43dfe3d0e0077d55fc4c03a8d308e4fbe",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-baseline-host.log",
+      "blob_sha256": "fee3d8aa3e71801921fa95a32a176030d24e04d41778fb7814c281608396c5d6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-copy-manifest.json",
+      "blob_sha256": "14311644b41664f40da6faa0c7079aa2484511b867df8b23e037e486bbf8f027",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-restored-domain-results/run.trx",
+      "blob_sha256": "7cf400c3289ad2f32b08a7864ebd343bbe72ed4261368095566a93dd60775a3b",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-restored-domain.log",
+      "blob_sha256": "4a2b5f561342e3777d62ca1f31a6d156d3bae9b79c482b02f55054992afe8d7c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-restored-host-results/run.trx",
+      "blob_sha256": "6a3d85b63ddcdd90d006f295c099ba46301c7b1e7df4319dc4be59ce481fa021",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-restored-host.log",
+      "blob_sha256": "6cfb2ca7ca5c43f83e0813366a025042669f2aa35d7b592b43f4f0bd39408a37",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-null-results/run.trx",
+      "blob_sha256": "462fcd9adeb273e2c986465d712f20124161a126b510fbecbe223fdd930ea53c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-null.log",
+      "blob_sha256": "b8ee7731c016785a0e571ae41a7003f0686ce05ae4b4568c22f58c0f0ad04b43",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-payable-results/run.trx",
+      "blob_sha256": "bf5229aa7b78f1ba27fe301aa082f935eb2d0d2e0407359db5c077276ef4f569",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-payable.log",
+      "blob_sha256": "535ca973ac4fbd0729b5f5066955ac7614e1a0a996ce4a7ab7e342d01f01b703",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-tax-results/run.trx",
+      "blob_sha256": "4fd723a8deaeb4ec0f1eb26d523c19d6c8750940556dc3021d97a8577c6a1300",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-tax.log",
+      "blob_sha256": "64d0cb8218ddcde9bbff36ea39d0ad1f19bc288b971b92fc00b3dfddcc1e017a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-handoff-results/run.trx",
+      "blob_sha256": "3de78f5b2fc57f07ab2958ce15126aa10d58c93042fabdc08ecbb8cc40044e14",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-handoff.log",
+      "blob_sha256": "6cdc1e03c966c12a497f2e0f4ef757c3c3f920aca063e9893cec1335bb745608",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-null-results/run.trx",
+      "blob_sha256": "474bf0137980a29b0bf2088465bd2d0566d5aaa6cd9e8fc00680de04afee2ca1",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-null.log",
+      "blob_sha256": "c7585b2902250f07cdc73f391c1c9211c9ce8a837588f3a5a48fa8df5879b131",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-payable-results/run.trx",
+      "blob_sha256": "39f7e81f15bc60a5fec1af8a86e7327ae9b177c3d5be088496ea9645eba8ce6b",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-payable.log",
+      "blob_sha256": "3671cc9da5c71cd093b7da8a9fb31dbce1ba648fe1d0bc619853c1f35de5f24e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-tax-results/run.trx",
+      "blob_sha256": "2ea5305306e2cd7778afdd6fedd1852bd2b8a96b875eb29c0bcdbd4a1e1b3fbe",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-tax.log",
+      "blob_sha256": "74b364e963084c17c5cedd992c89a2be01aaeac0554d5bce31ad80b61a28778b",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-equal-handoff-results/run.trx",
+      "blob_sha256": "cc5c0ab162e8632047970add63085ac3ba9fce6beac997131e9fe1824ada78f8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-equal-handoff.log",
+      "blob_sha256": "58e4c3577b9e061e213a5e2315dcdf5e281b6af3227d71644e1e5932cfcec0f6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-item-unchanged-totals-results/run.trx",
+      "blob_sha256": "13c341dcfb33b98e3102a90b08f78ba715edaedf9b7df615546a26ed5df7a36f",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-item-unchanged-totals.log",
+      "blob_sha256": "5c2cfd9e2b71cea26a2c85ba6626a3463ed2527b84f7c519d90a10701529ae6c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results.json",
+      "blob_sha256": "c96d4c69026809ad5cd9a5965b665ba62280c6cb9fa17e03bffb15f48d9de2bc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/1/run.log",
+      "blob_sha256": "e0fb375e4b15b8c5f6c4fd8dd18499c8ac2233a9c6b41ffde5c7ebeb3e3e74e7",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/1/run.trx",
+      "blob_sha256": "92c9d7856d47ca89bec000ee3d4fb8821c1616c75e09f084b204db78b01846b6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/10/run.log",
+      "blob_sha256": "d7835c9bcb5a14627cd08dac8c095ba7575cfe9ea17d53045e7f7872cb57808c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/10/run.trx",
+      "blob_sha256": "716b6657b479429c068be4bd5bd0809aae792e4c4d805b56b91e182177f5ba6c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/11/run.log",
+      "blob_sha256": "c526a5bd7086c55a5599f8a71267936c4f32e1dc7d8471eb113511d49a93eea9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/11/run.trx",
+      "blob_sha256": "685a80896968509ba5a3e40ad4b46a5b99a59d7319cdec21b8608413c211056f",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/12/run.log",
+      "blob_sha256": "6028791169ff9fdf5fed2e8a219e451dd7bc1cdda6b93e60748a0dc398ef5bf9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/12/run.trx",
+      "blob_sha256": "744d95c91274b0e53f887794de2c6877beadceb5bc14a0f4435c2fe83a1e9aa0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/13/run.log",
+      "blob_sha256": "606829f8aca7138c908d6a0cdf7d2bf75ff3e05a8b13447baed7bb56082f89c8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/13/run.trx",
+      "blob_sha256": "569b78d8c4d7023317e55f608625dc2846a7d2ff23eee3c71164aa09715f2d4a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/14/run.log",
+      "blob_sha256": "7f10a09f4b1e2bb90a0718b171e8a4d355f2840adf1961377cce9d0e14a09f03",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/14/run.trx",
+      "blob_sha256": "0854320e7599485e2b2581e5825ff07368280131effbc74d3a1113308efd5886",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/15/run.log",
+      "blob_sha256": "4d34e35fc971a16211fb38c29f22155a740d73876e2f90b44955ba81c0e4e993",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/15/run.trx",
+      "blob_sha256": "d68dbb122c4be95769fc011d8436fac2d39247955b6778e5b7e9d031318f6282",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/16/run.log",
+      "blob_sha256": "8fcf21788bfe0368f1878de218d0a8c5e5655d251b1b850f1bcd2c7d4919f390",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/16/run.trx",
+      "blob_sha256": "95f206814417a0516fcdff0ae7b554b4e14aae778b98134d44b5dbe012098a1e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/17/run.log",
+      "blob_sha256": "9c3ef821917d55193cbb384d943e9531979d0227e208fced81a284f0831b25f4",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/17/run.trx",
+      "blob_sha256": "b7614e9c59a2c3ead8283b306093714c0b07a992524ffa41f8bb891226796be5",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/18/run.log",
+      "blob_sha256": "76f022981401a78e0229cb4fac5174521df61dd82df2fafbd7498ad1abbd2b8e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/18/run.trx",
+      "blob_sha256": "b012dc0dd7c3cbbac4602abaa95479d27c28f28083dc5840d46330af094d620d",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/19/run.log",
+      "blob_sha256": "4c6719c3579b92408134b8d2555f58dcf9c673e17ff8de715355a82bfc6c5678",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/19/run.trx",
+      "blob_sha256": "226ce043ce1db1f79a354ba107c43ea588e94ee8f8ef39df4dc4a1fdb4f57e2e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/2/run.log",
+      "blob_sha256": "c0c9fb7b5c415f9eb248ce84e48c4e3c10f9a6d9d1a7652b1635077f2493502a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/2/run.trx",
+      "blob_sha256": "a529f933d5fc42ae82330249e4d6f3bfe42f8209ae897448c589d644cdd56fff",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/20/run.log",
+      "blob_sha256": "d23398be544b3e0308e6a42b4b3f6057d3287a25531624a108733bf89dbddb36",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/20/run.trx",
+      "blob_sha256": "fc75a35a38d4a3ea3dab174d074f08a353e757a20cb5c58e9824519178f9d8e2",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/3/run.log",
+      "blob_sha256": "cd0a968a192c3e488baf5b31ae7c80ae0182d5a0a02593bd717940015d30a7ec",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/3/run.trx",
+      "blob_sha256": "8754140bd73f7f1d4e0946acd8aabbe11e26c57fd6e61baf2005093bbb941e16",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/4/run.log",
+      "blob_sha256": "8e128f19a4c6f78b15cdbddd34cca49cde8861828a801ec8c9c11f25446ee279",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/4/run.trx",
+      "blob_sha256": "4e17fc27a06aefcb0a846973072248a0952709384e80ee0fee6e09e5e83473db",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/5/run.log",
+      "blob_sha256": "99ef5bb78d0f916a828e7162abec594b35686f4be8fceffd1dd52e32542c960d",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/5/run.trx",
+      "blob_sha256": "ebea52dbb125810a1c1481cd20248cb1218114dae7d226196adb6e7e3d4a5da2",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/6/run.log",
+      "blob_sha256": "58c0dd646d7d3862fdafaba40e1694200c018398eb67f8c2a3b66f3e00ff0d6b",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/6/run.trx",
+      "blob_sha256": "f8853a4cd4036cd9ad4482bad0c1f557620a9f5db716e3de3f62830f7fd6e5c9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/7/run.log",
+      "blob_sha256": "14e901141f33e06dcee230744347bafba2aaf83bb5d6238bbfac39f5404ba52d",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/7/run.trx",
+      "blob_sha256": "d66294f7fdb8bbc8dbfbf4e6ce9c77db806b8e73f2dc2a1250f176b6b6b9a256",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/8/run.log",
+      "blob_sha256": "d3d4b1e462ef2acf0628c8271d37dcc961886a835b4227c0253bbafef0afd29c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/8/run.trx",
+      "blob_sha256": "622a2ae25ffe573d46ad0dec316ef878a3eb3ba20e6c0aa0d8828d859cd503d7",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/9/run.log",
+      "blob_sha256": "a91fb49306eddb5bb71f3e01b24deac21b5948798c81f696e18509b998bd1a3f",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/order-regression-results/9/run.trx",
+      "blob_sha256": "469691f291ac29782d7b68aaec5be9f2f7017b8df4dc51947dc6a147c7f37051",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/plan.log",
+      "blob_sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/precommit-committed-range.log",
+      "blob_sha256": "823269f006476a9036db1e26f6b842433cf70b61accbe0204e0588361bf40577",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/preflight.json",
+      "blob_sha256": "080aa11536604287f6daccf1b6de184525306a1d09aa00dcf933a8dd9ae5f7ca",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/preservation-proof.json",
+      "blob_sha256": "703a34eb00882658c628a2d079354c9b082c1cbbf52a98fabf5b353a0a2042ed",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/review-before-cleanup-755-final-code-review.json",
+      "blob_sha256": "b8a4a4f687e1ff293e170c8284817ec8cab980941151b8dc2a7537bc180ca454",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/review-before-cleanup-755-final-provenance-review.json",
+      "blob_sha256": "722070304eb697a9405a74100325cf2e449bc669a75296487a56e342eddbd915",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/runner-exit-tests.json",
+      "blob_sha256": "a37853243d4c384d94dfa3da1589cf0675e95cdd256b04cd328ebd9f1f823f26",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/scope-pending-delta.log",
+      "blob_sha256": "692907ccf8aa9b8da70cb30f78a2999836322db53a421551b8ea337d2f019f96",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/splitdesign-build.log",
+      "blob_sha256": "62f5de9510952ef3e2cef189a1f2908d39ccb1444545d9d57772ff3221596a9c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/splitdesign-full.log",
+      "blob_sha256": "afed85a8d916af4d6fcf0f32b79bd093340b02b671e680a098da6db23a687fcc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/splitdesign-results/full.trx",
+      "blob_sha256": "d0977ce3f2db45401cad20b7fed7ff047d41458e4ce8185b049e5c0c10dd7d86",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/whitespace.log",
+      "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-753-split-engine-host-billing-test-gaps.md",
+      "blob_sha256": "a76bb2cb7111f183bbda6405f2dacdd38721b9ec63856fd829253ca4e32c3196",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "tests/Host/Experience/Billing/BillingSplitHttpTests.cs",
+      "blob_sha256": "5eb9646d9fa305cf10eda2427d25f8a3cde2e2d38ddef509309bb25997f9d841",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs",
+      "blob_sha256": "9610349deee0c5967fcc230372cfda1745207aba66c2dea95a1f992c32cf5363",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs",
+      "blob_sha256": "e08ce3d22fe7973374f2ed9f2da5cdad9662799eee377b8d44711a2ad67e74c2",
+      "worktree_matches_index": true
+    }
+  ],
+  "task753_contract_preserved": true,
+  "valid": true
+}

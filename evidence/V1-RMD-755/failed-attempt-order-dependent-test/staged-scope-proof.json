@@ -1,0 +1,628 @@
+{
+  "utc": "2026-10-29T20:34:25.153208+00:00",
+  "outside": [],
+  "paths": [
+    {
+      "path": "evidence/V1-RMD-755/754-regression-preservation.json",
+      "blob_sha256": "13cf01822be305400b116b4902089d6b981f30898232b282d5965acc316290c4",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-gates.py",
+      "blob_sha256": "be1a371603de1d161a96a2faddc61655d19f3029802ea38b2f05fc32a04f3e95",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-mutations.py",
+      "blob_sha256": "3269c773c23795bbb39d31a6c5793afc4cf7f632fada078678521b520af34ae8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-mutations.py.runner.log",
+      "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_matches_index": false
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-plan-start.log",
+      "blob_sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-preflight.py",
+      "blob_sha256": "b013e3c0bcfbebe6d26f4e7120f19d23e953674470fa10e149f8cf0cfeaeeef2",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-runtime.py",
+      "blob_sha256": "06883372b0d881216be222cfb8c7bb8498b952d5175cbb5bc5ee6150ef2bb7bd",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-runtime.py.runner.log",
+      "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_matches_index": false
+    },
+    {
+      "path": "evidence/V1-RMD-755/755-verify-evidence.py",
+      "blob_sha256": "5807133ea96ce13fcdd0bd0d889cc42aa2a005158bec2d3237a55bb7b3ed6234",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/RESULT.md",
+      "blob_sha256": "d9ab0b6c9d4d280b742f294ab9f698b26db091fde207064731e6d2b75f757544",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/RETRACTIONS.md",
+      "blob_sha256": "c92f25b927e3a7985eb7b4fa210f8be541f147a83a05891513794691979befed",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/754-regression-preservation.json",
+      "blob_sha256": "13cf01822be305400b116b4902089d6b981f30898232b282d5965acc316290c4",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-gates.py",
+      "blob_sha256": "be1a371603de1d161a96a2faddc61655d19f3029802ea38b2f05fc32a04f3e95",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-mutations.py",
+      "blob_sha256": "3269c773c23795bbb39d31a6c5793afc4cf7f632fada078678521b520af34ae8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-plan-start.log",
+      "blob_sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-preflight.py",
+      "blob_sha256": "b013e3c0bcfbebe6d26f4e7120f19d23e953674470fa10e149f8cf0cfeaeeef2",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-runtime.py",
+      "blob_sha256": "06883372b0d881216be222cfb8c7bb8498b952d5175cbb5bc5ee6150ef2bb7bd",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/755-verify-evidence.py",
+      "blob_sha256": "5807133ea96ce13fcdd0bd0d889cc42aa2a005158bec2d3237a55bb7b3ed6234",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/RESULT.md",
+      "blob_sha256": "d9ab0b6c9d4d280b742f294ab9f698b26db091fde207064731e6d2b75f757544",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/RETRACTIONS.md",
+      "blob_sha256": "c92f25b927e3a7985eb7b4fa210f8be541f147a83a05891513794691979befed",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/build-before-fix.log",
+      "blob_sha256": "83094447b4b577df0c4f019d13bfaa3823e040b37362b23bdb4f28cca7486382",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/build-results.json",
+      "blob_sha256": "1e9ba2e3b03f59e6838170f8dd2d7ffaa26f5339dc587a36e9f67883b5ebe1cc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/consistency.log",
+      "blob_sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/evidence-verification.json",
+      "blob_sha256": "fa9b8a06c57c513dd6795733ac32836731a0e305b7eb684a96a3653c0cc00aab",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/execution-results.json",
+      "blob_sha256": "af8635c99de082d33166c6361ccd13d665bb14be6eb03c1443aa1ec291afb0d1",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/foundation-proof-intake.json",
+      "blob_sha256": "3c4816d887a245ad92e5526015edaa5efe1852c97b0483c74bb135c9d54e7f70",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/full-preflight-preservation.json",
+      "blob_sha256": "a34f09d7cc789f16cc6f8d4ae637cbb2619e6bce756914c7a611010d1d53c351",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/gate-results.json",
+      "blob_sha256": "63f69e8a3d5dce3a6684577f64f8fb2207b8f4f20f3c09178ceaaaa4cf74a998",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/guard-mutation-results.json",
+      "blob_sha256": "a900c419d6aa796f410f79cadc93a0e1ec073a776e2570ffbd77c4935ad9b4b1",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/host-billing-build.log",
+      "blob_sha256": "7775ce4592f6343cc7eb68f4ee9ab793400c971434c1a9c7326f97b43020d26c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/host-billing-full.log",
+      "blob_sha256": "d4b0565c4c3f95668fbe2091d120bd60471609a6ebc3c3cebe1cb4710670ee07",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/host-billing-results/full.trx",
+      "blob_sha256": "4d8c5e7de168051417cdb0116fe05aa6298b22494f2330532021161f5da4aabc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/independent-intake-755-test-audit.json",
+      "blob_sha256": "da2f2fe0e816161ed7bf16f9ded6741fb0936d496052ad2b6093747101a529f9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/independent-intake-packet02-real-audit.json",
+      "blob_sha256": "9a8321acd4da0f425a96c5073dcb99e8fdc63274e1fc88c1f716d1897f39225e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-baseline-domain-results/run.trx",
+      "blob_sha256": "20fe86b17c96f7e162448d788a4339a20989ebca29396bfa667f0154b66e005a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-baseline-domain.log",
+      "blob_sha256": "2df7f369573795959e7108924621f01509cdf9dd0a6d23ae3854720044df66d0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-baseline-host-results/run.trx",
+      "blob_sha256": "2a4c65a0bac4d65ffd29f76a4e858e65d2247f8f664165ac618746eca3cf66aa",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-baseline-host.log",
+      "blob_sha256": "14f39bb1d244308b77937625db7ba1ccdc1a8cfcae8a8c4185dfcbdc523eb316",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-copy-manifest.json",
+      "blob_sha256": "428f10f398503398ef0ed06ca7f063d0165465ae60a81c8f00d95878bad2ad1b",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-restored-domain-results/run.trx",
+      "blob_sha256": "008d8ffc522c76b03704c6ae7fe89b8bf299e4d4680cf3cc8be159c35f485a9a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-restored-domain.log",
+      "blob_sha256": "7c03c69505c3cffdf000a8acbc7796952c59e7070558176d95e7b642884fbfdc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-restored-host-results/run.trx",
+      "blob_sha256": "4a7a045232dfe505a68553d676a30bd2ad2870bfb0b7e64918764fb8e75c49f7",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-restored-host.log",
+      "blob_sha256": "d0cd04dbaea6da0212c80993f52d438cd75eed3ed1681acb2603958ec4874e87",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-null-results/run.trx",
+      "blob_sha256": "67008c088cd3fd3f4371d4de255ee9d4c2898cea74baa4315a9e442b98082000",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-null.log",
+      "blob_sha256": "d869feda1fd4d24e3f3cf5cc5cd40f96a5b63eed41bcef47bbfefe25703114b5",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-payable-results/run.trx",
+      "blob_sha256": "11917518b620721935b8835567d9c2ae8b01bd1e637c37a049407b5c1372a025",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-payable.log",
+      "blob_sha256": "cf4706395118068338baa9bb0a573fe97d0aeab4936c62230c5a0ea22e01c21a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-tax-results/run.trx",
+      "blob_sha256": "c9b7241aed9fdb7fd539b4230d8ab622dcdf6ebd2472f405631f97706e87d7ce",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-amount-tax.log",
+      "blob_sha256": "72c4dd9298e006c9b0e57db866b234d925281505432d4ccba1b7bedf367fdee0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-handoff-results/run.trx",
+      "blob_sha256": "4502add72c61cbc58ce1c756dba7df85f775ec5081c49240e18696845ed3a6ca",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-handoff.log",
+      "blob_sha256": "57a9a2a9e064bf79568f5e5f86702db41de4930a194e3edca89d03c36f87a9dc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-null-results/run.trx",
+      "blob_sha256": "ee9020b9b91be21f5870a5e475da4a401e090fde941b5df44289924e563ba0ce",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-null.log",
+      "blob_sha256": "dae9ba8e9e3e4e0c55914cb86034db7fccff462e292bb4b7166d9bc3910bbfd9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-payable-results/run.trx",
+      "blob_sha256": "bffb75bc7df174dfcfcc445d655f4b56cf6c5ca6b448f66bffeb5b5619ea3548",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-payable.log",
+      "blob_sha256": "ec47e60f8cc47bb64ab461efb27a22891d4b4f6d61fef343d7edb04fa90cb9e7",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-tax-results/run.trx",
+      "blob_sha256": "95858aecfdcf72b4c7dafd5c7e188a387854126ae029f89a5e300e2806aa5f11",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-custom-tax.log",
+      "blob_sha256": "25afe342ba40897ac16bb1e9c2d20e791bc14c770c949f4a5fc9c21fc8f490c8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-equal-handoff-results/run.trx",
+      "blob_sha256": "298c3d356cb38757018280b839e301e68cd791f7144281fb939057930b6067e1",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-equal-handoff.log",
+      "blob_sha256": "ac18b4583b80ee1f5694e3264841fed69f7c1adf0c4abea05b180c61735c5c48",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-item-unchanged-totals-results/run.trx",
+      "blob_sha256": "2b98df711fce74ba86663b6a9b833171f433f5e110ee777af8e325fb45763918",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/mutant-item-unchanged-totals.log",
+      "blob_sha256": "0925ffea79689b56eca0e2ff88f3f36321b234f4dac3572fff4ee07794324beb",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/plan.log",
+      "blob_sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/preflight.json",
+      "blob_sha256": "080aa11536604287f6daccf1b6de184525306a1d09aa00dcf933a8dd9ae5f7ca",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/preservation-proof.json",
+      "blob_sha256": "703a34eb00882658c628a2d079354c9b082c1cbbf52a98fabf5b353a0a2042ed",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/scope-pending-delta.log",
+      "blob_sha256": "97b6def492146ff4a24d58cb75aae41dcc51d8a1e3541f806a3140480458c6b6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/splitdesign-build.log",
+      "blob_sha256": "9ff89754ce1ed8374a8f8c3a1035c1316a396219e996dca8a033ce9e2106f31f",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/splitdesign-full.log",
+      "blob_sha256": "a1da74dfe0d9c741260af47f4fc914391d0f48bdeae74fa7c84ace605f0271f6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/splitdesign-results/full.trx",
+      "blob_sha256": "bb44969288275fecf7ca1cc60ee6100941747d1d67b26ee76264bf071b5f421d",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/before-assertion-cleanup/whitespace.log",
+      "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/build-before-fix.log",
+      "blob_sha256": "83094447b4b577df0c4f019d13bfaa3823e040b37362b23bdb4f28cca7486382",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/build-results.json",
+      "blob_sha256": "1e9ba2e3b03f59e6838170f8dd2d7ffaa26f5339dc587a36e9f67883b5ebe1cc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/consistency.log",
+      "blob_sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/evidence-verification.json",
+      "blob_sha256": "fa9b8a06c57c513dd6795733ac32836731a0e305b7eb684a96a3653c0cc00aab",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/execution-results.json",
+      "blob_sha256": "3f785101e0a098377c54957bdd8dd7ad3583e276ae934a4e3103020ac1494ca5",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/foundation-proof-intake.json",
+      "blob_sha256": "3c4816d887a245ad92e5526015edaa5efe1852c97b0483c74bb135c9d54e7f70",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/full-preflight-preservation.json",
+      "blob_sha256": "a34f09d7cc789f16cc6f8d4ae637cbb2619e6bce756914c7a611010d1d53c351",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/gate-results.json",
+      "blob_sha256": "63f69e8a3d5dce3a6684577f64f8fb2207b8f4f20f3c09178ceaaaa4cf74a998",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/guard-mutation-results.json",
+      "blob_sha256": "30a57092f8435ea53742d7fb27a130d1309f5722aa567be5d07616545fdd6e68",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/host-billing-build.log",
+      "blob_sha256": "7775ce4592f6343cc7eb68f4ee9ab793400c971434c1a9c7326f97b43020d26c",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/host-billing-full.log",
+      "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_matches_index": false
+    },
+    {
+      "path": "evidence/V1-RMD-755/host-billing-results/full.trx",
+      "blob_sha256": "4d8c5e7de168051417cdb0116fe05aa6298b22494f2330532021161f5da4aabc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/independent-intake-755-test-audit.json",
+      "blob_sha256": "da2f2fe0e816161ed7bf16f9ded6741fb0936d496052ad2b6093747101a529f9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/independent-intake-packet02-real-audit.json",
+      "blob_sha256": "9a8321acd4da0f425a96c5073dcb99e8fdc63274e1fc88c1f716d1897f39225e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-baseline-domain-results/run.trx",
+      "blob_sha256": "251641333c80df0ca162cc838596717f2c027403b5691f02f5cf7a9080899326",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-baseline-domain.log",
+      "blob_sha256": "eadeefde98572ced80301577169ca9d9a2a632ead9d163bcd5b26f6ad4413e3e",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-baseline-host-results/run.trx",
+      "blob_sha256": "2a4c65a0bac4d65ffd29f76a4e858e65d2247f8f664165ac618746eca3cf66aa",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-baseline-host.log",
+      "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_matches_index": false
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-copy-manifest.json",
+      "blob_sha256": "21d8016dde10da5a6f70119a76bae222ba17c36abab615198993d0ed457d6d43",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-restored-domain-results/run.trx",
+      "blob_sha256": "008d8ffc522c76b03704c6ae7fe89b8bf299e4d4680cf3cc8be159c35f485a9a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-restored-domain.log",
+      "blob_sha256": "7c03c69505c3cffdf000a8acbc7796952c59e7070558176d95e7b642884fbfdc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-restored-host-results/run.trx",
+      "blob_sha256": "4a7a045232dfe505a68553d676a30bd2ad2870bfb0b7e64918764fb8e75c49f7",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/isolated-restored-host.log",
+      "blob_sha256": "d0cd04dbaea6da0212c80993f52d438cd75eed3ed1681acb2603958ec4874e87",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-null-results/run.trx",
+      "blob_sha256": "67008c088cd3fd3f4371d4de255ee9d4c2898cea74baa4315a9e442b98082000",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-null.log",
+      "blob_sha256": "d869feda1fd4d24e3f3cf5cc5cd40f96a5b63eed41bcef47bbfefe25703114b5",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-payable-results/run.trx",
+      "blob_sha256": "11917518b620721935b8835567d9c2ae8b01bd1e637c37a049407b5c1372a025",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-payable.log",
+      "blob_sha256": "cf4706395118068338baa9bb0a573fe97d0aeab4936c62230c5a0ea22e01c21a",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-tax-results/run.trx",
+      "blob_sha256": "c9b7241aed9fdb7fd539b4230d8ab622dcdf6ebd2472f405631f97706e87d7ce",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-amount-tax.log",
+      "blob_sha256": "72c4dd9298e006c9b0e57db866b234d925281505432d4ccba1b7bedf367fdee0",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-handoff-results/run.trx",
+      "blob_sha256": "4502add72c61cbc58ce1c756dba7df85f775ec5081c49240e18696845ed3a6ca",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-handoff.log",
+      "blob_sha256": "57a9a2a9e064bf79568f5e5f86702db41de4930a194e3edca89d03c36f87a9dc",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-null-results/run.trx",
+      "blob_sha256": "ee9020b9b91be21f5870a5e475da4a401e090fde941b5df44289924e563ba0ce",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-null.log",
+      "blob_sha256": "dae9ba8e9e3e4e0c55914cb86034db7fccff462e292bb4b7166d9bc3910bbfd9",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-payable-results/run.trx",
+      "blob_sha256": "bffb75bc7df174dfcfcc445d655f4b56cf6c5ca6b448f66bffeb5b5619ea3548",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-payable.log",
+      "blob_sha256": "ec47e60f8cc47bb64ab461efb27a22891d4b4f6d61fef343d7edb04fa90cb9e7",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-tax-results/run.trx",
+      "blob_sha256": "95858aecfdcf72b4c7dafd5c7e188a387854126ae029f89a5e300e2806aa5f11",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-custom-tax.log",
+      "blob_sha256": "25afe342ba40897ac16bb1e9c2d20e791bc14c770c949f4a5fc9c21fc8f490c8",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-equal-handoff-results/run.trx",
+      "blob_sha256": "298c3d356cb38757018280b839e301e68cd791f7144281fb939057930b6067e1",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-equal-handoff.log",
+      "blob_sha256": "ac18b4583b80ee1f5694e3264841fed69f7c1adf0c4abea05b180c61735c5c48",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-item-unchanged-totals-results/run.trx",
+      "blob_sha256": "2b98df711fce74ba86663b6a9b833171f433f5e110ee777af8e325fb45763918",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/mutant-item-unchanged-totals.log",
+      "blob_sha256": "0925ffea79689b56eca0e2ff88f3f36321b234f4dac3572fff4ee07794324beb",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/plan.log",
+      "blob_sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/preflight.json",
+      "blob_sha256": "080aa11536604287f6daccf1b6de184525306a1d09aa00dcf933a8dd9ae5f7ca",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/preservation-proof.json",
+      "blob_sha256": "703a34eb00882658c628a2d079354c9b082c1cbbf52a98fabf5b353a0a2042ed",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/review-before-cleanup-755-final-code-review.json",
+      "blob_sha256": "b8a4a4f687e1ff293e170c8284817ec8cab980941151b8dc2a7537bc180ca454",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/review-before-cleanup-755-final-provenance-review.json",
+      "blob_sha256": "722070304eb697a9405a74100325cf2e449bc669a75296487a56e342eddbd915",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/scope-pending-delta.log",
+      "blob_sha256": "97b6def492146ff4a24d58cb75aae41dcc51d8a1e3541f806a3140480458c6b6",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/splitdesign-build.log",
+      "blob_sha256": "9ff89754ce1ed8374a8f8c3a1035c1316a396219e996dca8a033ce9e2106f31f",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/splitdesign-full.log",
+      "blob_sha256": "c1a6c0fc89bbb31c18ebcacee7285e547d81474719942597eb2977afeb700279",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/splitdesign-results/full.trx",
+      "blob_sha256": "c8c2ca2ef306727b6bed904a0b7b3ccc7089a679a3e282b0cf7c7867c8281777",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "evidence/V1-RMD-755/whitespace.log",
+      "blob_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-753-split-engine-host-billing-test-gaps.md",
+      "blob_sha256": "a76bb2cb7111f183bbda6405f2dacdd38721b9ec63856fd829253ca4e32c3196",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "tests/Host/Experience/Billing/BillingSplitHttpTests.cs",
+      "blob_sha256": "5eb9646d9fa305cf10eda2427d25f8a3cde2e2d38ddef509309bb25997f9d841",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs",
+      "blob_sha256": "73b3301970341c0ea43933a98febbb389f0584169dd258c729591002ff467223",
+      "worktree_matches_index": true
+    },
+    {
+      "path": "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs",
+      "blob_sha256": "e08ce3d22fe7973374f2ed9f2da5cdad9662799eee377b8d44711a2ad67e74c2",
+      "worktree_matches_index": true
+    }
+  ],
+  "task753_contract_preserved": true,
+  "valid": false
+}

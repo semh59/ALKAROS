@@ -1,0 +1,164 @@
+{
+  "task": "V1-RMD-755 successor design / V1-RMD-753 read-only audit",
+  "repository": "D:/project/ALKAROS",
+  "head": "505d8a4f0bd81bb82860c12c932c1e2b5000e4c3",
+  "audited_commit": "5586c1f3d6d67d11a11ed74b88c6bc2d5f942b8e",
+  "evidence_tier": "Static source and read-only git inspection only",
+  "tests_executed": false,
+  "build_executed": false,
+  "repository_files_written": [],
+  "only_output": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-test-audit.json",
+  "scope": {
+    "read": ["AGENTS.md", "plan/TASK_STANDARD.md", "plan/v1/remediation/V1-RMD-753-split-engine-host-billing-test-gaps.md", "plan/v1/remediation/V1-RMD-754-kalem-bolme-vergi-uyumsuzlugu.md", "Both changed test files and directly related engine, calculator, factory, store, contract, endpoint, order/bill constructors and schema sources"],
+    "not_done": ["No test, build, database, mutation, application or plan-validation command run", "No task state changed", "No repository code or plan edited", "No existing user change modified"],
+    "initial_git_status": [" M plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md", " M plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md", "?? evidence/V1-RMD-739/classification/", "?? evidence/V1-RMD-751/", "?? evidence/V1-RMD-753/evidence/V1-RMD-753/host-billing-final.trx", "?? tests/Host/Experience/Billing/BillingSplitHttpTests.cs.partial"]
+  },
+  "source_checks": {
+    "both_test_files_byte_equal_to_5586c1f3": true,
+    "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs": {"sha256": "f972feca2c5adbc6984f81501b1f5f585238c3832cbc7c2e39a400ba2f280e05", "fact_attribute_count_in_this_file_only": 24},
+    "tests/Host/Experience/Billing/BillingSplitHttpTests.cs": {"sha256": "c2ebb397de823873d903888a31bd42616ddca3e07442c4c1484733267a853760", "fact_attribute_count_in_this_file_only": 46},
+    "counts_are_not_test_discovery_or_execution": true,
+    "historical_754_method": {
+      "name": "ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409",
+      "location": "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:601-645",
+      "equals_6b371c9a_after_newline_normalization": true,
+      "sha256_lf_block_including_fact_and_trailing_newline": "541c1f81156946b34d3e4fe9b536aaf908425f9a2e5e5126a24235919f1824e5",
+      "instruction": "755 must preserve this existing method exactly; do not rewrite historical 754 regression. Current commit converted surrounding host file from LF to CRLF, so normalized historical equality is not whole-file byte equality. Preserve current method bytes in successor diff."
+    }
+  },
+  "findings": [
+    {
+      "id": "755-A01",
+      "severity": "blocking",
+      "status": "confirmed by static signature resolution; compiler not invoked",
+      "locations": ["tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs:170-173", "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs:210-216"],
+      "mechanism": "Both new positive tests pass AdjustedBillSummary as positional argument 3. Argument 3 is Guid? createdBy, not adjustment. No matching overload exists in SplitEngine.cs. These are two compile-invalid callsites (expected CS1503; no diagnostic execution claimed).",
+      "definitions": ["src/Modules/Billing/SplitDesign/SplitEngine.cs:79-83", "src/Modules/Billing/SplitDesign/SplitEngine.cs:246-250"],
+      "smallest_fix": "Change the third supplied argument to adjustment: adjustment in both calls. Do not alter production signatures or add overloads."
+    },
+    {
+      "id": "755-A02",
+      "severity": "high",
+      "status": "confirmed invalid fixture / latent failure by source; not executed",
+      "locations": ["tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs:225-248"],
+      "mechanism": "The null test exists; null coverage is not absent in source. At lines 242 and 243, positional null binds createdBy, leaving adjustment at default null. Each call has one target, but amount and custom both require at least two. Amount throws first; custom call and all four assertions are unreachable. Naming it a passing fallback test is unsupported.",
+      "definitions": ["src/Modules/Billing/SplitDesign/SplitEngine.cs:88-89", "src/Modules/Billing/SplitDesign/SplitEngine.cs:255-256"],
+      "smallest_fix": "Use two positive targets totaling original payable for each engine, with two custom owner references; pass adjustment: null explicitly. Name new/repaired test with Adjusted if using successor's Adjusted acceptance filter."
+    },
+    {
+      "id": "755-A03",
+      "severity": "high",
+      "locations": ["tests/Host/Experience/Billing/BillingSplitHttpTests.cs:721-779", "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:601-645", "src/Host/Experience/Billing/BillingSplitStore.cs:545-548", "plan/v1/remediation/V1-RMD-753-split-engine-host-billing-test-gaps.md:15,28-29,51"],
+      "mechanism": "753 added a second tip 10 + discount 10 on taxable bill rejection, semantically duplicating historical 754 test. Both prove payable unchanged but tax reduced => 409. Added test does not satisfy required zero-net item-split SUCCESS and is weaker: unlike historical test, it omits allocation-emptiness assertion. It also lacks required ZeroNetAdjustment test-name pattern.",
+      "smallest_fix": "Replace only 753-added ATipAndAnEqualDiscountCancelPayableButLowerTaxStillRefusesItemSplit with a zero-tax bill, real HTTP tip + matching fixed discount, then successful full-quantity item split. Leave 754 test at 601-645 unchanged."
+    },
+    {
+      "id": "755-A04",
+      "severity": "medium",
+      "locations": ["tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs:159-168,197-206", "plan/v1/remediation/V1-RMD-753-split-engine-host-billing-test-gaps.md:28"],
+      "mechanism": "New amount/custom supplied summaries cover discount only. TotalFees and TotalTips are always zero. No fee-only, tip-only or mixed adjustment engine case closes requested combinations. Existing null test is invalid, not a functioning fallback check.",
+      "smallest_fix": "Reuse existing two positive test methods as theories for discount, fee, tip and mixed rows; repair one null fact for both engines. Build summaries with verified BillAdjustment factories + AdjustmentCalculator.Calculate, assert independent expected monetary constants. Domain service fee coverage only, no HTTP service fee API."
+    },
+    {
+      "id": "755-A05",
+      "severity": "medium",
+      "locations": ["tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs:146-158", "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs:184-196", "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs:227-239", "src/Modules/Billing/BillFoundation/BillItem.cs:66-100"],
+      "mechanism": "New domain snapshots override gross/net/tax so constructor accepts them, but tax-inclusive UnitPrice=90.91 does not reconcile with declared gross=100 for qty1 or qty2. Custom fixture qty2 * 90.91=181.82 while supplied gross is 100. This is not itself a constructor exception; it is inconsistent fixture pricing that masks realistic calculator inputs.",
+      "smallest_fix": "For all new domain rows use qty2, unitPrice50, taxRate10 with no persisted amount overrides: gross100, tax9.09, net90.91. Custom targets qty1+qty1 then consume full item coherently. Do not clean up unrelated historical fixtures."
+    },
+    {
+      "id": "755-A06",
+      "severity": "low",
+      "locations": ["tests/Host/Experience/Billing/BillingSplitHttpTests.cs:647-656", "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:728-741", "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:1685-1693,1883-1925"],
+      "mechanism": "753 inserted tests between existing V1-RMD-237 audit XML summary and ApplyingADiscountWritesARealAuditEvent; summary now incorrectly annotates split test. bills.tip permission in duplicate fixture is unneeded: actual tip endpoint uses bills.split; third ApplyBillTipRequestV1 argument is Notes, so VOLUNTARY_TIP is not a reason code. SeededBill new gross fields have exactly one new-construction site, updated with all seven arguments, so no observed record-constructor arity error. Fixture correctly seeds first qty2 gross200 + second qty1 gross50. Copying duplicate's item quantities 1+1 into success would total150, not250.",
+      "smallest_fix": "Restore XML summary adjacent to original audit test without rewriting its body. Success uses bills.discount and bills.split only, full first qty2 and second qty1, existing gross fields retained and used for assertions. No fixture record expansion needed."
+    },
+    {
+      "id": "755-A07",
+      "severity": "medium",
+      "locations": ["tests/Host/Experience/Billing/BillingSplitHttpTests.cs:656-720"],
+      "mechanism": "Combined discounted equal/custom positive test uses valid request contracts, current versions for replacement, and legal custom item partial quantity; custom amount need not equal referenced item's price. Existing assertions verify 225 amount and allocations against design.TaxTotal but do not independently pin expected adjusted tax. GET and engine both falling back to raw tax could agree incorrectly. No compile defect identified in this added HTTP test.",
+      "smallest_fix": "Keep combined test; add independent expected tax20.46 checks on discounted design/equal/custom, Mode and allocation count checks, and GET readback after final custom save to prove persisted design. Existing seed tax22.73, fixed discount tax2.27 =>20.46. No requirement to split test into separate methods."
+    }
+  ],
+  "verified_signatures": [
+    {"at": "src/Modules/Billing/SplitDesign/SplitEngine.cs:79-83", "signature": "CreateAmountSplit(Bill bill, IReadOnlyList<(string OwnerReference, decimal Amount)> targets, Guid? createdBy = null, AdjustedBillSummary? adjustment = null)"},
+    {"at": "src/Modules/Billing/SplitDesign/SplitEngine.cs:246-250", "signature": "CreateCustomSplit(Bill bill, IReadOnlyList<CustomSplitTarget> targets, Guid? createdBy = null, AdjustedBillSummary? adjustment = null)"},
+    {"at": "src/Modules/Billing/SplitDesign/OperationalSplitDesign.cs:20-24", "signature": "CustomSplitTarget(string OwnerReference, decimal Amount, Guid? BillItemId = null, decimal? Quantity = null)"},
+    {"at": "src/Modules/Billing/Adjustments/AdjustmentCalculator.cs:14-16", "signature": "Calculate(Bill bill, IReadOnlyList<BillAdjustment> adjustments)"},
+    {"at": "src/Modules/Billing/Adjustments/BillAdjustment.cs:178-188", "signature": "CreateDiscountAmount(Guid id, Guid billId, decimal discountAmount, decimal taxRate, string reason, Guid authorizedBy, Guid? billItemId = null, string? notes = null, Guid? createdBy = null, string? idempotencyKey = null)"},
+    {"at": "src/Modules/Billing/Adjustments/BillAdjustment.cs:230-239", "signature": "CreateServiceFee(Guid id, Guid billId, decimal amount, decimal taxRate, string reason, Guid authorizedBy, bool isKuver = false, string? notes = null, Guid? createdBy = null)"},
+    {"at": "src/Modules/Billing/Adjustments/BillAdjustment.cs:272-280", "signature": "CreateTip(Guid id, Guid billId, decimal amount, string reason, Guid authorizedBy, string? notes = null, Guid? createdBy = null, string? idempotencyKey = null)"},
+    {"at": "src/Host/Experience/Billing/BillingSplitContracts.cs:107-112", "signature": "ApplyBillDiscountRequestV1(string IdempotencyKey, string CalculationType, decimal Value, string ReasonCode, string? Notes = null)"},
+    {"at": "src/Host/Experience/Billing/BillingSplitContracts.cs:133-136", "signature": "ApplyBillTipRequestV1(string IdempotencyKey, decimal Amount, string? Notes = null)"},
+    {"at": "src/Host/Experience/Billing/BillingSplitContracts.cs:9-12", "signature": "SaveEqualSplitRequest(long? ExpectedBillRowVersion, IReadOnlyList<AllocationVersionRequest> ExpectedAllocations, IReadOnlyList<SplitOwnerRequest> Owners)"},
+    {"at": "src/Host/Experience/Billing/BillingSplitContracts.cs:21-29", "signature": "ItemSplitTargetRequest(SplitOwnerRequest Owner, Guid BillItemId, decimal Quantity); SaveItemSplitRequest(long? ExpectedBillRowVersion, IReadOnlyList<AllocationVersionRequest> ExpectedAllocations, IReadOnlyList<ItemSplitTargetRequest> Targets)"},
+    {"at": "src/Host/Experience/Billing/BillingSplitContracts.cs:31-40", "signature": "CustomSplitTargetRequest(SplitOwnerRequest Owner, decimal Amount, Guid? BillItemId, decimal? Quantity); SaveCustomSplitRequest(long? ExpectedBillRowVersion, IReadOnlyList<AllocationVersionRequest> ExpectedAllocations, IReadOnlyList<CustomSplitTargetRequest> Targets)"}
+  ],
+  "successor_design": {
+    "id": "V1-RMD-755",
+    "goal": "753 test teslimatını derlenebilir, gerçek fixture ile tüm istenen dalları kapsayan ve yeni kaynaklardan doğrulanan testlerle düzelt; 754 politikasını ve tarihsel regresyonunu koru.",
+    "recommended_work_type": "validation",
+    "dependencies": ["V1-RMD-753", "V1-RMD-754"],
+    "proposed_owned_surface": ["tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs (limited shared addition/repair)", "tests/Host/Experience/Billing/BillingSplitHttpTests.cs (limited shared addition/repair)", "evidence/V1-RMD-755/**"],
+    "forbidden": ["Production edits", "Project/solution/build edits", "Historical 754 method edits", "753/754 historical plan edits", "Service-fee HTTP route or fabricated fee request", "Editing or consuming untracked .partial as accepted source", "Repository-wide formatting/newline churn"],
+    "domain_matrix": {
+      "base_fixture": "new BillItem(id: Guid.NewGuid(), billId: billId, orderItemId: Guid.NewGuid(), productId: Guid.NewGuid(), productNameSnapshot: \"Test Item\", quantity: 2m, unitPrice: 50m, taxRate: 10m), then new Bill(billId, uniqueNumber, [item]); no persisted amount overrides",
+      "base_expected": {"payable": 100.00, "tax": 9.09, "net": 90.91},
+      "implementation_shape": "Convert existing AmountSplitUsesTheAdjustedPayableAndTaxWhenAnAdjustmentIsSupplied and CustomSplitUsesTheAdjustedPayableAndTaxWhenAnAdjustmentIsSupplied into four-row theories. Keep/fix combined null fact (rename AmountAndCustomSplitWithoutAdjustedSummaryFallBackToBillTotals if matching Adjusted filter). No new production abstractions.",
+      "rows": [
+        {"case": "discount", "discount": 20, "fee": 0, "tip": 0, "adjusted_payable": 80, "adjusted_tax": 7.27, "targets": [50,30]},
+        {"case": "fee", "discount": 0, "fee": 10, "tip": 0, "adjusted_payable": 110, "adjusted_tax": 10.00, "targets": [70,40]},
+        {"case": "tip", "discount": 0, "fee": 0, "tip": 5, "adjusted_payable": 105, "adjusted_tax": 9.09, "targets": [60,45]},
+        {"case": "mixed", "discount": 20, "fee": 10, "tip": 5, "adjusted_payable": 95, "adjusted_tax": 8.18, "targets": [55,40]},
+        {"case": "null", "summary": null, "adjusted_payable": 100, "adjusted_tax": 9.09, "targets": [60,40]}
+      ],
+      "summary_construction": "For each nonzero adjustment only: BillAdjustment.CreateDiscountAmount(Guid.NewGuid(), bill.Id, discount, 10m, \"PromotionalOffer\", actor); BillAdjustment.CreateServiceFee(Guid.NewGuid(), bill.Id, fee, 10m, \"Domain fee fixture\", actor); BillAdjustment.CreateTip(Guid.NewGuid(), bill.Id, tip, \"Voluntary tip\", actor). Compute AdjustmentCalculator.Calculate(bill, adjustments). Never call positive-only factory with zero amount.",
+      "invocations": "For each supplied row invoke each engine with adjustment: summary. Amount targets two nonblank owners. Custom targets two unique OperationalOwnerReference.Format(SplitMode.Custom, AllocationOwnerKind.Person, Guid.NewGuid()) with item.Id and quantity1 each. Null row: both calls explicitly adjustment: null and same valid two-target shapes.",
+      "assertions": ["Independent expected summary payable/tax constants and TotalDiscounts/TotalFees/TotalTips", "Exactly two allocations and expected target amounts", "Allocation sums exactly row payable and tax", "Base bill remains payable100/tax9.09", "Custom item IDs and allocated quantities1+1"],
+      "planned_case_count": "8 theory cases + 1 null fact = 9 test cases exercising 10 engine invocations, not executed or discovered by this audit"
+    },
+    "host_discounted": {
+      "retain_and_strengthen": "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:656-720",
+      "expected": {"original_payable": 250, "original_tax": 22.73, "discount": 25, "discount_tax": 2.27, "adjusted_payable": 225, "adjusted_tax": 20.46, "equal_amounts": [112.50,112.50], "custom_amounts": [110,115]},
+      "extra_assertions": ["design.TaxTotal ==20.46", "equalSaved mode EqualByPerson; two allocations; tax total20.46", "customSaved mode Custom; two allocations; tax total20.46", "GET current split design after custom save: same IDs/amounts/taxes/versions as saved; persisted payable225/tax20.46"]
+    },
+    "host_zero_net_success": {
+      "replace_only": "ATipAndAnEqualDiscountCancelPayableButLowerTaxStillRefusesItemSplit at tests/Host/Experience/Billing/BillingSplitHttpTests.cs:721-779",
+      "name": "ZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged",
+      "smallest_fixture_change": "Change only test helper signature SeedBillAsync() at line1883 to SeedBillAsync(decimal taxRate = 10m), pass taxRate instead of 10m in both OrderItem constructor calls at1913-1914. New success uses await _database.SeedBillAsync(taxRate: 0m); all existing callers, including historical754, remain on10% unchanged. Retain existing SeededBill gross fields and return construction.",
+      "zero_tax_support_verified": ["src/Modules/Orders/OrderAggregate/OrderItem.cs:13-20,55-56,100-103 accepts zero and computes tax-inclusive amounts", "src/Modules/Billing/BillFoundation/BillItem.cs:147-184 copies order quantity, price, zero tax and monetary snapshots", "src/Modules/Billing/BillFoundation/Bill.cs:163-164 gives effective tax rate0 for zero-tax bill", "src/Host/Experience/Billing/BillingSplitStore.cs:121-135 uses bill.EffectiveTaxRatePercent for HTTP discount", "src/Modules/Billing/Adjustments/BillAdjustment.cs:193-195 discount tax zero at rate0;272-302 tip tax zero", "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql:19 permits order tax_rate >=0; database/migrations/V1/V1-BIL-001/019-billing.up.sql:34-56 has numeric bill tax_rate, no positive-only requirement"],
+      "paths": {
+        "bill": "/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}",
+        "split": "/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/split-design"
+      },
+      "steps": [
+        "SeedSessionWithPermissionsAsync(terminalId, \"supervisor\", \"bills.discount\", \"bills.split\"); seed zero-tax bill through real order/bill repositories, StartAsync and real HttpClient (127.0.0.1 Kestrel).",
+        "GET split path with cashier cookie: require200; baseline payable250, tax0, first qty2/gross200, second qty1/gross50; no allocations.",
+        "POST bill path + /tip, JSON new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 10m); require200; summary payable260, TotalTips10.",
+        "POST bill path + /discount, JSON new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), \"FixedAmount\", 10m, \"PromotionalOffer\"); require200, Status Applied, TotalDiscounts10, TotalTips10, TotalFees0, payable250.",
+        "GET split path again: require200; both adjusted payable250 == baseline and adjusted tax0 == baseline; item sums also250/0; bill version newer than baseline. Assert two adjustment rows persisted (BillAdjustmentCountAsync==2 or authenticated adjustments GET with two exact Tip/DiscountAmount rows), preventing empty-adjustment lookalike.",
+        "PUT split path + /items using JsonRequest and explicit200 check, new SaveItemSplitRequest(design.BillRowVersion, [], [new ItemSplitTargetRequest(new SplitOwnerRequest(\"Seat\", seeded.SeatId), seeded.FirstItemId, 2m), new ItemSplitTargetRequest(new SplitOwnerRequest(\"Person\", personId), seeded.SecondItemId, 1m)]). Use fresh post-adjustment row version, never seeded.BillRowVersion.",
+        "Assert returned mode ByItem, exactly2 allocations, owner/item/quantity identities, amounts200 and50, tax0 each, sums250/0; allocation IDs equal database IDs; GET split path again confirms persisted same allocation IDs and fields. Keep one stable personId for request/assertions."
+      ],
+      "guard_distinction": "Historical754 protects payable equal / tax different =>409. New755 protects payable equal / tax equal WITH two persisted nonzero adjustments =>200. Existing ASplitDesignOnADiscountedBillUsesTheDiscountedPayable at541-598 protects payable different =>409. No new tax-allocation policy required.",
+      "no_service_fee_http": "Verified BillingSplitApplication.cs:243-271 exposes voluntary tip; BillAdjustment.cs:219-228 explicitly forbids wiring service-fee factory to HTTP. Domain fee matrix only."
+    },
+    "future_acceptance_not_run": [
+      "Preflight repository/task/gates/OWNERSHIP and exact allowlist before any755 source writes; separate authorized plan creation/approval from implementation. Do not expand753 or754 scope.",
+      "Build both actual test projects without --no-build, capture real exit codes and warnings/errors under evidence/V1-RMD-755. A source compile failure invalidates any cached DLL result.",
+      "Run focused domain filter FullyQualifiedName~Adjusted and assert TRX contains both four-row theories plus repaired null fact; exact count/names required, not total green alone.",
+      "Run focused HTTP filter FullyQualifiedName~ADiscountedBillAcceptsEqualSplitAndCustomSplitWithAdjustedTotals|FullyQualifiedName~ZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged|FullyQualifiedName~ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409 with real PostgreSQL; assert all intended names present in fresh TRX.",
+      "Run full tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj and tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj from final sources (do not use stale --no-build evidence); capture commands, real exit codes, TRX, source/assembly hashes and source HEAD.",
+      "Mutation evidence only within755-owned test surface or isolated scratch probes: test-local supplied summary changes expected payable/tax; null targets perturbed to wrong sums; HTTP item quantity changed2->1; expected response/aggregate constants perturbed. Clearly distinguish assertion-sensitivity probes from production branch mutants. Removing production754 guard exceeds test-only allowlist unless separately authorized; do not mutate production under755.",
+      "Plan audit, consistency and task-scope checks use repository-verified scripts/arguments (not guessed). Compare final write set against baseline; historical754 method bytes unchanged; no untracked.partial or unrelated files included.",
+      "Manual scenario: create zero-tax250 bill; record voluntary10 tip, fixed10 discount; item split whole first2 + second1 =>250/tax0 succeeds. Same operations on10%-tax fixture must retain409 historical regression."
+    ]
+  },
+  "final_git_snapshot": {
+    "same_test_sources": "Both inspected test files remain absent from git status/diff.",
+    "new_external_changes_since_initial_snapshot": [" M plan/v1/remediation/V1-RMD-753-split-engine-host-billing-test-gaps.md", "?? evidence/V1-RMD-755/"],
+    "provenance": "Observed concurrently at final read-only git status; this audit wrote neither path. Initial 753 plan references describe source read earlier in this audit; re-read plan before successor execution."
+  },
+  "conclusion_tr": "753 Done kanıtı yeni kaynakların doğruluğunu göstermiyor: iki derlenemeyen çağrı, geçersiz null testi, eksik fee/tip matrisi ve başarı yerine754 ret testinin tekrarı var. 755 yalnız iki test dosyasında küçük onarımla kapanabilir; üretim değişikliği gerekmez. Build/test çalıştırılmadı."
+}

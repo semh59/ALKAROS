@@ -1,0 +1,49 @@
+[
+  {
+    "name": "plan",
+    "command": [
+      "python",
+      "-B",
+      "tools/plan-audit/plan_audit_tool.py",
+      "validate"
+    ],
+    "exit_code": 0,
+    "sha256": "16cd3333664a08318d41cea4d6ef2ddb75ee29b82b924d7393f88494b92a3669",
+    "utc": "2026-10-29T20:41:37.878006+00:00"
+  },
+  {
+    "name": "consistency",
+    "command": [
+      "python",
+      "-B",
+      "tools/consistency-audit/consistency_audit.py"
+    ],
+    "exit_code": 0,
+    "sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+    "utc": "2026-10-29T20:41:41.897137+00:00"
+  },
+  {
+    "name": "whitespace",
+    "command": [
+      "git",
+      "-c",
+      "core.whitespace=cr-at-eol",
+      "diff",
+      "--check"
+    ],
+    "exit_code": 0,
+    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "utc": "2026-10-29T20:41:42.068403+00:00"
+  },
+  {
+    "name": "scope-pending-delta",
+    "command": [
+      "python",
+      "-B",
+      "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-preflight.py"
+    ],
+    "exit_code": 0,
+    "sha256": "1203413cd4d2194fbd4e22158818d424de7b96500d1634092bdc4b2301c591f3",
+    "utc": "2026-10-29T20:42:04.964701+00:00"
+  }
+]

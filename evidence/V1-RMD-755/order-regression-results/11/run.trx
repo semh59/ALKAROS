@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="d44e1a5a-f456-434f-a089-65304f7c6533" name="semih@SEMH59 2026-10-29 23:55:06" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-29T23:55:06.2016979+03:00" queuing="2026-10-29T23:55:06.2016985+03:00" start="2026-10-29T23:55:04.8952861+03:00" finish="2026-10-29T23:55:06.2112519+03:00" />
+  <TestSettings name="default" id="fdd6aac1-f0f2-4456-9a6d-1f5cdb70bd9c">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-29_23_55_06" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c48e9a6f-3b43-40c3-becc-d2ace6786bb2" testId="2b832814-254c-8279-02aa-f0ea6853d52f" testName="ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.OperationalReplaceValidatesSeatAgainstBillTable" computerName="SEMH59" duration="00:00:00.2212486" startTime="2026-10-29T23:55:06.0109872+03:00" endTime="2026-10-29T23:55:06.0110094+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c48e9a6f-3b43-40c3-becc-d2ace6786bb2" />
+    <UnitTestResult executionId="33b1cd4e-c512-4023-853f-74fcdc649e58" testId="18318720-f36c-0f47-9e43-dd869d7f0264" testName="ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.OperationalReplaceRejectsStaleAllocationSetWithoutPartialMutation" computerName="SEMH59" duration="00:00:00.0281535" startTime="2026-10-29T23:55:06.0403999+03:00" endTime="2026-10-29T23:55:06.0404002+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="33b1cd4e-c512-4023-853f-74fcdc649e58" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.OperationalReplaceValidatesSeatAgainstBillTable" storage="d:\project\alkaros\evidence\v1-rmd-755\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="2b832814-254c-8279-02aa-f0ea6853d52f">
+      <Execution id="c48e9a6f-3b43-40c3-becc-d2ace6786bb2" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests" name="OperationalReplaceValidatesSeatAgainstBillTable" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.OperationalReplaceRejectsStaleAllocationSetWithoutPartialMutation" storage="d:\project\alkaros\evidence\v1-rmd-755\artifacts\bin\alkaros.billing.splitdesign.tests\debug\alkaros.billing.splitdesign.tests.dll" id="18318720-f36c-0f47-9e43-dd869d7f0264">
+      <Execution id="33b1cd4e-c512-4023-853f-74fcdc649e58" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Billing.SplitDesign.Tests\debug\ALKAROS.Billing.SplitDesign.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests" name="OperationalReplaceRejectsStaleAllocationSetWithoutPartialMutation" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2b832814-254c-8279-02aa-f0ea6853d52f" executionId="c48e9a6f-3b43-40c3-becc-d2ace6786bb2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="18318720-f36c-0f47-9e43-dd869d7f0264" executionId="33b1cd4e-c512-4023-853f-74fcdc649e58" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="2" executed="2" passed="2" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.07]   Discovering: ALKAROS.Billing.SplitDesign.Tests&#xD;
+[xUnit.net 00:00:00.12]   Discovered:  ALKAROS.Billing.SplitDesign.Tests&#xD;
+[xUnit.net 00:00:00.13]   Starting:    ALKAROS.Billing.SplitDesign.Tests&#xD;
+[xUnit.net 00:00:00.75]   Finished:    ALKAROS.Billing.SplitDesign.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

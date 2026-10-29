@@ -140,112 +140,45 @@ public sealed class SplitDesignDomainTests
         Assert.NotEqual(bill.PayableAmount, allocations.Sum(a => a.AllocatedAmount));
     }
 
-    [Fact]
-    public void AmountSplitUsesTheAdjustedPayableAndTaxWhenAnAdjustmentIsSupplied()
+    [Theory]
+    [InlineData(false, false, 80, 7.27)]
+    [InlineData(true, false, 80, 7.27)]
+    [InlineData(false, false, 120, 9.09)]
+    [InlineData(true, false, 120, 9.09)]
+    [InlineData(false, false, 110, 10)]
+    [InlineData(true, false, 110, 10)]
+    [InlineData(false, true, 100, 9.09)]
+    [InlineData(true, true, 100, 9.09)]
+    public void AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(
+        bool custom, bool noAdjustment, decimal payable, decimal tax)
     {
         var item = new BillItem(
-            id: Guid.NewGuid(),
-            billId: Guid.NewGuid(),
-            orderItemId: Guid.NewGuid(),
-            productId: Guid.NewGuid(),
-            productNameSnapshot: "Test Item",
-            quantity: 1,
-            unitPrice: 90.91m,
-            taxRate: 10m,
-            taxAmount: 9.09m,
-            netAmount: 90.91m,
-            grossAmount: 100.00m);
-        var bill = new Bill(item.BillId, "BILL-AMT-ADJ", new[] { item });
-        var adjustment = new AdjustedBillSummary(
-            BillId: bill.Id,
-            OriginalSubtotal: bill.Subtotal,
-            OriginalPayableAmount: bill.PayableAmount,
-            TotalDiscounts: 20m,
-            TotalFees: 0m,
-            TotalTips: 0m,
-            AdjustedDiscountTotal: 20m,
-            AdjustedTaxTotal: 7.27m,
-            AdjustedPayableAmount: 80.00m);
+            Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid(), "Item", 1, 100m, 10m);
+        var bill = new Bill(item.BillId, "BILL-ADJUSTED", [item]);
+        var adjustment = noAdjustment ? null : new AdjustedBillSummary(
+            bill.Id, bill.Subtotal, bill.PayableAmount,
+            TotalDiscounts: payable < 100m ? 100m - payable : 0m,
+            TotalFees: tax > bill.TaxTotal ? payable - 100m : 0m,
+            TotalTips: payable > 100m && tax == bill.TaxTotal ? payable - 100m : 0m,
+            AdjustedDiscountTotal: payable < 100m ? 100m - payable : 0m,
+            AdjustedTaxTotal: tax, AdjustedPayableAmount: payable);
+        var actor = Guid.NewGuid();
+        IReadOnlyList<BillAllocation> Split(decimal total) => custom
+            ? SplitEngine.CreateCustomSplit(bill,
+                [new CustomSplitTarget("A", 30m), new CustomSplitTarget("B", total - 30m)],
+                createdBy: actor, adjustment: adjustment)
+            : SplitEngine.CreateAmountSplit(bill, [("A", 30m), ("B", total - 30m)],
+                createdBy: actor, adjustment: adjustment);
 
-        var allocations = SplitEngine.CreateAmountSplit(
-            bill,
-            [("Guest 1", 40.00m), ("Guest 2", 40.00m)],
-            adjustment);
+        var allocations = Split(payable);
 
-        Assert.Equal(2, allocations.Count);
-        Assert.Equal(80.00m, allocations.Sum(a => a.AllocatedAmount));
-        Assert.Equal(7.27m, allocations.Sum(a => a.TaxAmount));
-        Assert.NotEqual(bill.PayableAmount, allocations.Sum(a => a.AllocatedAmount));
-    }
-
-    [Fact]
-    public void CustomSplitUsesTheAdjustedPayableAndTaxWhenAnAdjustmentIsSupplied()
-    {
-        var item = new BillItem(
-            id: Guid.NewGuid(),
-            billId: Guid.NewGuid(),
-            orderItemId: Guid.NewGuid(),
-            productId: Guid.NewGuid(),
-            productNameSnapshot: "Test Item",
-            quantity: 2,
-            unitPrice: 90.91m,
-            taxRate: 10m,
-            taxAmount: 9.09m,
-            netAmount: 90.91m,
-            grossAmount: 100.00m);
-        var bill = new Bill(item.BillId, "BILL-CUS-ADJ", new[] { item });
-        var adjustment = new AdjustedBillSummary(
-            BillId: bill.Id,
-            OriginalSubtotal: bill.Subtotal,
-            OriginalPayableAmount: bill.PayableAmount,
-            TotalDiscounts: 20m,
-            TotalFees: 0m,
-            TotalTips: 0m,
-            AdjustedDiscountTotal: 20m,
-            AdjustedTaxTotal: 7.27m,
-            AdjustedPayableAmount: 80.00m);
-        var firstOwner = OperationalOwnerReference.Format(SplitMode.Custom, AllocationOwnerKind.Person, Guid.NewGuid());
-        var secondOwner = OperationalOwnerReference.Format(SplitMode.Custom, AllocationOwnerKind.Person, Guid.NewGuid());
-
-        var allocations = SplitEngine.CreateCustomSplit(
-            bill,
-            [
-                new CustomSplitTarget(firstOwner, 50.00m, item.Id, 1.0m),
-                new CustomSplitTarget(secondOwner, 30.00m, item.Id, 1.0m),
-            ],
-            adjustment);
-
-        Assert.Equal(2, allocations.Count);
-        Assert.Equal(80.00m, allocations.Sum(a => a.AllocatedAmount));
-        Assert.Equal(7.27m, allocations.Sum(a => a.TaxAmount));
-        Assert.NotEqual(bill.PayableAmount, allocations.Sum(a => a.AllocatedAmount));
-    }
-
-    [Fact]
-    public void AmountAndCustomSplitNullAdjustmentFallsBackToBillTotals()
-    {
-        var item = new BillItem(
-            id: Guid.NewGuid(),
-            billId: Guid.NewGuid(),
-            orderItemId: Guid.NewGuid(),
-            productId: Guid.NewGuid(),
-            productNameSnapshot: "Test Item",
-            quantity: 1,
-            unitPrice: 90.91m,
-            taxRate: 10m,
-            taxAmount: 9.09m,
-            netAmount: 90.91m,
-            grossAmount: 100.00m);
-        var bill = new Bill(item.BillId, "BILL-NULL-ADJ", new[] { item });
-        var firstOwner = OperationalOwnerReference.Format(SplitMode.Custom, AllocationOwnerKind.Person, Guid.NewGuid());
-
-        var amount = SplitEngine.CreateAmountSplit(bill, [("Guest 1", 100.00m)], null);
-        var custom = SplitEngine.CreateCustomSplit(bill, [new CustomSplitTarget(firstOwner, 100.00m, item.Id, 1.0m)], null);
-
-        Assert.Equal(bill.PayableAmount, amount.Sum(a => a.AllocatedAmount));
-        Assert.Equal(bill.TaxTotal, amount.Sum(a => a.TaxAmount));
-        Assert.Equal(bill.PayableAmount, custom.Sum(a => a.AllocatedAmount));
-        Assert.Equal(bill.TaxTotal, custom.Sum(a => a.TaxAmount));
+        Assert.Equal(new[] { 30m, payable - 30m }, allocations.Select(allocation => allocation.AllocatedAmount));
+        Assert.Equal(tax, allocations.Sum(allocation => allocation.TaxAmount));
+        Assert.All(allocations, allocation => Assert.True(allocation.TaxAmount <= allocation.AllocatedAmount));
+        Assert.Equal(100m, bill.PayableAmount);
+        Assert.Equal(9.09m, bill.TaxTotal);
+        if (!noAdjustment)
+            Assert.Throws<InvalidOperationException>(() => Split(bill.PayableAmount));
     }
 
     [Fact]

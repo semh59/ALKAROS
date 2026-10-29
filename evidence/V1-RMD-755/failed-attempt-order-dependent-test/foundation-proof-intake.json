@@ -1,0 +1,387 @@
+[
+  {
+    "task": "V1-FND-001",
+    "artifacts": [
+      {
+        "path": "evidence\\V1-FND-001\\build-output.txt",
+        "sha256": "fed4ae6e3b0831ef9de3266b62e9704039328e15c6656da433c65053ae5f864f",
+        "result_lines": [
+          "Oluşturma başarılı oldu.",
+          "    0 Uyarı",
+          "    0 Hata",
+          "EXIT:0  "
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\candidate-remediation-2026-08-03.md",
+        "sha256": "0e2c3211b539facc94a98b2ad7cad5d922d9e1a15e6068641daa5f77c87ad77e",
+        "result_lines": [
+          "| Command | Exit code | Result |",
+          "| Direct Roslyn compilation of `IModule.cs`, `ModuleContext.cs`, and `ModuleCompositionRoot.cs` against .NET 8 reference assemblies | 0 | Passed; the changed production source compiles. |",
+          "| `git diff --check` | 0 | Passed. |",
+          "- `GATE-V0-EXIT`, `V0-ARC-001`, and `V0-ARC-009` are not `Done`."
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\closure-report.md",
+        "sha256": "f56a5345d07b40930525f6c3c4780e6038b904645648e3ac1201241a137d1955",
+        "result_lines": [
+          "- `dotnet build ALKAROS.sln` — EXIT:0, 0 warnings, 0 errors (25 projects)",
+          "- `dotnet test ALKAROS.sln` — EXIT:0, 4/4 tests passed",
+          "1. ModuleCompositionShouldNotDependOnAnyModule — passed",
+          "2. ModuleCompositionRootShouldComposeInTopologicalOrder — passed",
+          "3. ModuleCompositionRootShouldRejectUnknownDependency — passed",
+          "4. ModuleCompositionRootShouldDetectCyclicDependencies — passed",
+          "- Clean restore/build/test on exact solution graph: passed"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\defect-1-closure.md",
+        "sha256": "d8740495adb345610707da88173a561363a429a2be446bb8cc847379d24ceea1",
+        "result_lines": [
+          "Başarılı!  - Başarısız:     0, Başarılı:    60, Atlanan:     0, Toplam:    60, Süre: 14 s - ALKAROS.Host.Tests.dll (net8.0)",
+          "Oluşturma başarılı oldu.",
+          "    0 Uyarı",
+          "    0 Hata",
+          "EXIT=0"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\preflight-sdk-check.txt",
+        "sha256": "f8cd6a1c8fa27bca6a14233d46ced4ab441574571ca2a569bd53e3ed1ca3a17f",
+        "result_lines": [
+          "Exit code: 0 (command ran, but reports no SDK)"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\retrospective-audit-v2.md",
+        "sha256": "0ed73b98f7a196a563e1f9d0219141ecd4ca394b2b781f64c617851a50278d3f",
+        "result_lines": [
+          "Gate closure record (`evidence/v0/gate-v0-exit-closure.md`) 38/42 Done, 3 blocked diyor. Ama görev dosyalarına göre **6",
+          "→ Oluşturma başarılı oldu. 0 Uyarı 0 Hata",
+          "→ Başarılı! Başarısız: 0, Başarılı: 4, Atlanan: 0, Toplam: 4"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\retrospective-audit.md",
+        "sha256": "8afec645c09555c5f57fc942f251cd6b9dfb5b8628a67b25b7f5ed46526e0546",
+        "result_lines": [
+          "### GATE-V0-EXIT: Kapalı ✅",
+          "- `dotnet build` — 0 hata, 0 uyarı (25 project)",
+          "- GATE-V0-EXIT kapalı, GATE-V1-ENTRY açık",
+          "`evidence/v0/gate-v0-exit-closure.md` V0-ARC-001'i **Done** olarak listeliyor. Docs dosyası güncellenmemiş. Bu bir",
+          "### Build: 0 hata, 0 uyarı ✅"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\sdk-upgrade.txt",
+        "sha256": "ef179226248907417a52cd0274a69d5a3557fdc4d0cc94396adbd3d7be192349",
+        "result_lines": [
+          "    0 Hata",
+          "exit: 0",
+          "Architecture: 4/4 passed; Host migration composition: 46/46 passed; total 50/50, exit 0",
+          "psql after restore: exit=2 (password authentication enforced)"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\solution-scope-update.txt",
+        "sha256": "f985d92a3671ba80d85e67db86379997931c342f523609a32741da4d34970a4e",
+        "result_lines": [
+          "exit: 0",
+          "exit: 0",
+          "exit: 1"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\task-scope-note.md",
+        "sha256": "36fc94a6817b5e9348001d66aa690fa23e4ba4ba086b4d0d685947200f1b1c9e",
+        "result_lines": [
+          "  - Host migration composition tests: 46/46 passed, exit 0",
+          "  - Architecture boundary tests: 4/4 passed, exit 0",
+          "  - `dotnet build ALKAROS.slnx`: exit 1, MSB4068 - the slnx format requires the"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\test-output.txt",
+        "sha256": "424803d50437c715ed50f6ab8554374c2d6d0fb452f49dc282661700236eae5d",
+        "result_lines": [
+          "  Başarılı ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldComposeInTopologicalOrder [17 ms]",
+          "  Başarılı ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldRejectUnknownDependency [< 1 ms]",
+          "  Başarılı ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldDetectCyclicDependencies [< 1 ms]",
+          "Test Çalıştırması Başarılı.",
+          "Oluşturma başarılı oldu.",
+          "    0 Uyarı",
+          "    0 Hata",
+          "EXIT:0  "
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-001\\verification.md",
+        "sha256": "8f46cb93818dfdb76cb22876565e068c1e2adb53a03c1138c013a349495c960f",
+        "result_lines": [
+          "exit=0",
+          "### Temiz build (0 uyarı, 0 hata)",
+          "Oluşturma başarılı oldu. 0 Uyarı, 0 Hata.",
+          "exit=0",
+          "exit=0",
+          "- [x] Clean restore/build/test exact solution graph üzerinde exit code 0",
+          "full Release solution test run completed with exit code 0. The newly registered",
+          "projects were executed and passed: Composition 1/1, Catalog 6/6, Tables 5/5,"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "V1-FND-010",
+    "artifacts": [
+      {
+        "path": "evidence\\V1-FND-010\\provenance.txt",
+        "sha256": "499e2123d8cca4e400c84a9e6488fbd2d4c29eed78bb51d49729a91834652b4b",
+        "result_lines": [
+          "  ALKAROS_TEST_PG_PORT=5433 + ALKAROS_TEST_PG_PASSWORD) exit 0:"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-010\\verification.md",
+        "sha256": "566daee4cdb3eb3ae7a04fb94e56b726dae5d401b8162e272044133afef11584",
+        "result_lines": [
+          "  -> `OK: All changes within scope for V1-FND-010`, exit 0.",
+          "- `dotnet test ALKAROS.slnx --no-build -v q` -> exit 0, 279/279 (transcript:",
+          "- `py tools/plan-audit/plan_audit_tool.py validate` -> 0, exit 0.",
+          "- `py tools/plan-audit/plan_audit_tool.py validate-coverage` -> 0, exit 0.",
+          "- `verify-manifest` -> Manifest errors: 0, exit 0.",
+          "- Handoff: GATE-V1-EXIT."
+        ]
+      }
+    ]
+  },
+  {
+    "task": "V1-FND-003",
+    "artifacts": [
+      {
+        "path": "evidence\\V1-FND-003\\changed-paths.txt",
+        "sha256": "668ee1c28d075feaa768cecea7726797430a8fc47e522ae9b70a5cbf933ef739",
+        "result_lines": [
+          "- `python tools/task-scope/task_scope_tool.py --task-id V1-FND-003 --format json` — exit 0",
+          "- `python -m pytest tests/Architecture/TaskScope -q` — 39 passed"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-003\\test-results.md",
+        "sha256": "ea49e72915441ffffb2cc35ff84fdcaff4e108d1d94056fb4ca712cfd78da86b",
+        "result_lines": [
+          "- Exit code: 0",
+          "- Passed: 39"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-003\\verification.md",
+        "sha256": "aca4d2b32b15b1ed63532309992c2a057a59fa553b58062e8cfe334c9bf7f8fa",
+        "result_lines": [
+          "| `docs/engineering/task-scope-contract.md` | Mevcut, 128 satır — input/output/exit code/allowlist/normalization/fail-closed/V0 devir/recovery immutability |",
+          "80 passed (65.72s) — transcript `test-fullsuite.txt` (tüm TaskScope testleri yeşil).",
+          "9/9 passed (7.09s):",
+          "V1-FND-003`, exit 0",
+          "windows-latest runner, pwsh. Local ve CI aynı exit code/fixture contract'ı (contract.md'de belgeli).",
+          "Geçer: exit 0 (tam çözüm — V0 kapanış koşusu, 279/279)."
+        ]
+      }
+    ]
+  },
+  {
+    "task": "V1-FND-004",
+    "artifacts": [
+      {
+        "path": "evidence\\V1-FND-004\\build-host.txt",
+        "sha256": "d709b12116ce7ec1f4817cd2e353b01cf09e00f4ac1d3feab733450d5f6eb826",
+        "result_lines": [
+          "    0 Hata",
+          "exit: 0"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-004\\build-tests.txt",
+        "sha256": "a3416f51466aa96f9131de17266bf5d1c629d6695e0321c86394f3c03c896e61",
+        "result_lines": [
+          "    0 Hata",
+          "exit: 0"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-004\\test-run.txt",
+        "sha256": "822a8c90d8a081a2be7a97380d00ca309df430f158928edc84abb16fcc4af7b8",
+        "result_lines": [
+          "exit: 0"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-004\\verification.md",
+        "sha256": "f8756bfcedea618231ed091edf94047f3e510120372b392465cc924e2eb1370b",
+        "result_lines": [
+          "62/62 passed (14 s) — tüm Host testleri yeşil.",
+          "  her iki durumda da non-zero exit.",
+          "V1-FND-004`, exit 0."
+        ]
+      }
+    ]
+  },
+  {
+    "task": "V1-FND-005",
+    "artifacts": [
+      {
+        "path": "evidence\\V1-FND-005\\build-tests.txt",
+        "sha256": "39a46aff6ebfd410fe3732d839603ee14bfd3efff69c300429183ed28da96bfc",
+        "result_lines": [
+          "Oluşturma başarılı oldu.",
+          "    0 Uyarı",
+          "    0 Hata",
+          "exit: 0",
+          "Oluşturma başarılı oldu.",
+          "    0 Uyarı",
+          "    0 Hata",
+          "exit: 0"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-005\\defect-5-closure.md",
+        "sha256": "038ecbf493479d5644fc9d449aedb1f2ac3e26312024fdad4bdadfbaa33ffe8c",
+        "result_lines": [
+          "Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 1 s - ALKAROS.TransactionOutboxIntegration.Tests.dll (net8.0)",
+          "Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25, Süre: 380 ms - ALKAROS.Transactions.Tests.dll (net8.0)",
+          "Build: 0 Uyarı, 0 Hata, EXIT=0."
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-005\\findings-fix.txt",
+        "sha256": "af091fe8ae1f6d908d665f4755ef0c6111af86b8ea00784ec62a8d35f0e6c0ec",
+        "result_lines": [
+          "    0 errors / 0 warnings (247 MD, 228 task, 18 gate, 837 edge)  EXIT: 0",
+          "    valid: true, findings: []                             EXIT: 0",
+          "    0 Uyarı / 0 Hata                                     EXIT: 0",
+          "    Başarılı: 25, Başarısız: 0                            EXIT: 0",
+          "    Başarılı: 4, Başarısız: 0                             EXIT: 0",
+          "geçti; tam çözüm 75/75 (Architecture 4 + Host 46 + Transactions 25), EXIT 0.",
+          "- Bulgu 2: `generate-audit-report` + `generate-manifest` çalıştırıldı; `verify-manifest` 0 hata",
+          "- Gerekli test yüzeyi düzeltmesi: `ProgramMainProducesTheDocumentedExitCodes` `Program.Main`'e"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-005\\task-scope.txt",
+        "sha256": "f6401b577531901af024a2e1740c202f2c2afabc083dadffde2a9674840175c8",
+        "result_lines": [
+          "exit: 0"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-005\\test-run.txt",
+        "sha256": "3301c18c1347ef51745f73fea16086a0c0ce29bf92975cea7985200c4cd4e899",
+        "result_lines": [
+          "Başarılı!  - Başarısız:     0, Başarılı:    25, Atlanan:     0, Toplam:    25",
+          "exit: 0",
+          "ALKAROS.Architecture.Tests:    Başarılı!  - Başarısız: 0, Başarılı:   4, Atlanan: 0, Toplam:   4",
+          "ALKAROS.Transactions.Tests:    Başarılı!  - Başarısız: 0, Başarılı:  25, Atlanan: 0, Toplam:  25",
+          "ALKAROS.Host.Tests:            Başarılı!  - Başarısız: 0, Başarılı:  46, Atlanan: 0, Toplam:  46",
+          "exit: 0"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-005\\verification.md",
+        "sha256": "de1688776429dfc9f84900fcbc8efe8bd2880d323e550b0f55eafe2d45679359",
+        "result_lines": [
+          "25/25 passed (89 ms) — tüm Transactions testleri yeşil.",
+          "V1-FND-005`, exit 0."
+        ]
+      }
+    ]
+  },
+  {
+    "task": "V1-SEC-001",
+    "artifacts": [
+      {
+        "path": "evidence\\V1-SEC-001\\build-solution.txt",
+        "sha256": "f9843f8fc6301f31139136f4f197dbd410130a8fbd24311503e6d3280accb194",
+        "result_lines": [
+          "    0 Hata"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "V1-SEC-002",
+    "artifacts": [
+      {
+        "path": "evidence\\V1-SEC-002\\build-solution.txt",
+        "sha256": "20f7c2f536fbd0a95e2bedc71cbee75a0be9324cca00821f3ad2be0a89394719",
+        "result_lines": [
+          "    0 Hata"
+        ]
+      },
+      {
+        "path": "evidence\\V1-SEC-002\\restore-locked.txt",
+        "sha256": "b839f18d5b002fa0c6606ba53efe22463b8df5f5e13cb4749a2239bc9e9bd17b",
+        "result_lines": [
+          "    0 Hata"
+        ]
+      }
+    ]
+  },
+  {
+    "task": "V1-FND-002",
+    "artifacts": [
+      {
+        "path": "evidence\\V1-FND-002\\completion-evidence.txt",
+        "sha256": "cd6516d3097c9f8cfe5c9fef0130cb92a0ff45a9d33e5429c46c33baab2862e2",
+        "result_lines": [
+          "- ALKAROS.Architecture.Tests: 4/4 passed",
+          "- ALKAROS.Host.Tests: 46/46 passed",
+          "- ALKAROS.Transactions.Tests: 25/25 passed",
+          "- ALKAROS.Secrets.Tests: 21/21 passed",
+          "- ALKAROS.SensitiveData.Tests: 20/20 passed",
+          "- ALKAROS.Idempotency.Tests: 58/58 passed (30 unit + 28 integration, real PG18 via StoreTestDatabase fixture, ran twice consecutively with identical green results)",
+          "Total: 174/174 passed",
+          "Exit code: 0"
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-002\\defect-3-closure.md",
+        "sha256": "6abd35eb4299c6afdc83e7cb865ddcd1fae015b7c43b201b370d75f9e2145424",
+        "result_lines": [
+          "Başarılı!  - Başarısız:     0, Başarılı:    69, Atlanan:     0, Toplam:    69, Süre: 2 s - ALKAROS.Idempotency.Tests.dll (net8.0)",
+          "Build: 0 Uyarı, 0 Hata, EXIT=0."
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-002\\defect-4-closure.md",
+        "sha256": "41866168d0f2173cc054c1a0eea8a237e18b1a85a36960cdadfbee8d3f6b3f02",
+        "result_lines": [
+          "Başarılı!  - Başarısız:     0, Başarılı:    60, Atlanan:     0, Toplam:    60, Süre: 13 s - ALKAROS.Host.Tests.dll (net8.0)",
+          "Build: 0 Uyarı, 0 Hata, EXIT=0."
+        ]
+      },
+      {
+        "path": "evidence\\V1-FND-002\\defect-6-closure.md",
+        "sha256": "f9cd7bde9bdd5f4a967e61d58bf6d86c0006c1c1ce5d67a5e6461202bc334daa",
+        "result_lines": [
+          "Başarılı!  - Başarısız:     0, Başarılı:    69, Atlanan:     0, Toplam:    69, Süre: 2 s - ALKAROS.Idempotency.Tests.dll (net8.0)",
+          "Başarılı!  - Başarısız:     0, Başarılı:    12, Atlanan:     0, Toplam:    12, Süre: 1 s - ALKAROS.TransactionOutboxIntegration.Tests.dll (net8.0)",
+          "Build: 0 Uyarı, 0 Hata, EXIT=0."
+        ]
+      }
+    ]
+  },
+  {
+    "task": "V1-FND-006",
+    "artifacts": [
+      {
+        "path": "evidence\\V1-FND-006\\completion-evidence.txt",
+        "sha256": "2fc6359c1f3b225e9ae88f41a22b599ca02cccdb5079f2fa7ba7d2387d2b8032",
+        "result_lines": [
+          "Result (first run): 9 passed, 0 failed",
+          "Result (second run): 9 passed, 0 failed",
+          "Result: 0 hata, 0 uyar",
+          "  Total: 183 passed, 0 failed"
+        ]
+      }
+    ]
+  }
+]

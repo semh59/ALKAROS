@@ -1,0 +1,686 @@
+[
+  {
+    "name": "splitdesign",
+    "command": [
+      "C:/Users/semih/.dotnet/dotnet.exe",
+      "test",
+      "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+      "-c",
+      "Debug",
+      "--artifacts-path",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\artifacts",
+      "--results-directory",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\splitdesign-results",
+      "--logger",
+      "trx;LogFileName=full.trx"
+    ],
+    "exit_code": 1,
+    "log_sha256": "c1a6c0fc89bbb31c18ebcacee7285e547d81474719942597eb2977afeb700279",
+    "counters": {
+      "total": "40",
+      "executed": "40",
+      "passed": "39",
+      "failed": "1",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    },
+    "tests": [
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.SplitDesignRoundTripPersistsAndLoadsAllFields",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.DeleteSplitDesignRemovesAllAllocationsForBill",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.OperationalReplaceRejectsStaleAllocationSetWithoutPartialMutation",
+        "outcome": "Failed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountSplitRejectsNonPositiveOrEmptyTargetAmounts",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitRejectsOverAllocation",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.CustomSplitIsLosslessAndRejectsCumulativeQuantityOverflow",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitRejectsInvalidPersonCountOrZeroPayable",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.CheckConstraintsEnforced",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.BillAllocationConstructorValidatesAllInvariants",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.ForeignKeyConstraintsEnforced",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.PartiallyAllocatedItemSplitRemainderBalancesTheLastTarget",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitRejectsComplimentaryZeroAmountItem",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.AllOwnerTypesAndFractionalQuantitiesPersistAccurately",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitAppliesCustomLabelsWhenProvided",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitDistributesPayableAmountAndTaxesLosslesslyWithRemainder",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.CascadeDeleteOnBillDeletesAllocations",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.SaveSplitDesignReplacesPreviousAllocationsAtomically",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignDownSqlTests.DownSqlDropsAllocationsTableAndUpRecreatesCleanly",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitWithSubKurusAmountThrowsInformativeException",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountSplitValidatesTotalSumMatchesBillPayable",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.TaxSharesAddUpToTheBillTaxAndNeverExceedTheirAmount",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitWithFractionalQuantitiesDistributesLosslessly",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitWithLargeNumbersAndPrimeDivisorWorksLosslessly",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitRejectsNonExistentBillItem",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.OperationalOwnerReferenceRoundTripsStableSeatAndPersonIds",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.OperationalReplaceValidatesSeatAgainstBillTable",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitDistributesGrossAndTaxAcrossOwnersLosslessly",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.PostgresSplitDesignTests.ConcurrentFirstWritersCannotBothCommit",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitUsesTheAdjustedPayableAndTaxWhenAnAdjustmentIsSupplied",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ItemSplitRejectsNonPositiveOrInvalidTarget",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.ACustomSplitThatFallsShortOfThePayableIsRefusedJustLikeOneThatOvershoots",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.EqualSplitSharesTheTaxInWholeKurusWithoutOverloadingTheLastPerson",
+        "outcome": "Passed"
+      }
+    ]
+  },
+  {
+    "name": "host-billing",
+    "command": [
+      "C:/Users/semih/.dotnet/dotnet.exe",
+      "test",
+      "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+      "-c",
+      "Debug",
+      "--artifacts-path",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\artifacts",
+      "--results-directory",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\host-billing-results",
+      "--logger",
+      "trx;LogFileName=full.trx"
+    ],
+    "exit_code": 0,
+    "log_sha256": "c273412b6f2be5418a40af7237560dbbeba8012fe889aaed0935a92d297d5bb0",
+    "counters": {
+      "total": "112",
+      "executed": "112",
+      "passed": "112",
+      "failed": "0",
+      "error": "0",
+      "timeout": "0",
+      "aborted": "0",
+      "inconclusive": "0",
+      "passedButRunAborted": "0",
+      "notRunnable": "0",
+      "notExecuted": "0",
+      "disconnected": "0",
+      "warning": "0",
+      "completed": "0",
+      "inProgress": "0",
+      "pending": "0"
+    },
+    "tests": [
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: \"Unknown\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefusesAnItemRefundThatIsInvalidOrMoreThanThePaymentHolds",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ConcurrentBillCreationForTheSameOrderHasOneWinnerAndNoDuplicateBill",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatTakesThePayableToZeroClosesTheBill",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnItemRefundWithinTheAllowanceIsCompletedByTheCashierAndDrawsFromIt",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACancelledBillAfterARefundNoLongerCountsTheRefundedPaymentAsMoney",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.APaymentThatIsNoLongerApprovedCannotBeRequested",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.RetryingADiscountWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRequestAndTheApprovalAreAudited",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.CashApprovalWithoutAnOpenSessionIsRefusedAndNothingMoves",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ADeadlockOrALockTimeoutAsksTheCashierToRetryInsteadOfShowingADatabaseFault(sqlState: \"40P01\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.EndpointsEnforceSessionPermissionAndAtomicConcurrency",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.EveryBillingEndpointCarriesTheTerminalRateLimitOfItsKind",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OnlyAnOpenSessionOfTheRequesterSpendsTheAllowance",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: \"PartiallyRefunded\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OnlyOneOpenRequestPerPaymentAndOnlyThePaymentOfThatBill",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipOnASettledBillIsRefusedAndRecordsNothing",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARejectedItemRequestFreesTheUnitsAndTheRemainingUnitsAreCapped",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.AnyOtherDatabaseFaultStaysADatabaseUnavailableAnswer",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheListFiltersByBillAndPagesBackwards",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AllModesPersistRejectOverflowSurviveRestartAndClear",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatLeavesExactlyWhatWasAlreadyCollectedIsAllowed",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnItemRefundPaysBackOnlyTheChosenUnitsAndTheBillStaysOpen",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARejectedRequestLeavesThePaymentAloneAndAllowsANewRequest",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ABillWithMoneyOnItIsRefusedAndStaysOpen",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleThatHoldsBillsSplitRecordsATipDirectly",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.TheShippedCashierRoleHoldsTheCancelPermission",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACardItemRefundPutsStockBackWhenTheSlipIsRecorded",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaymentStillInFlightKeepsTheBillFromBeingCancelled(status: \"Unknown\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountAndATipEachWriteOneAuditRecordAndARetryWritesNone",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ACancelledBillNoLongerCountsItsOrderItemsAsBilled",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ReplayingATipAfterTheBillWasPaidReturnsTheOriginalResultButANewKeyIsRefused",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARequestWithoutAnIdempotencyKeyIsRefused",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OnlyAManagerGrantsTheAllowanceNotToThemselvesNotBelowWhatIsUsedAndNotWithoutASession",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AMissingReasonIsRefusedBeforeAnythingChanges(reason: \"   \")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.CancellingARecreatedBillRecordsTheReasonFreesTheOrderAndAuditsIt",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ValidationAndLookupFailuresNameTheirCauseInTurkish",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACashierWithoutTheApprovePermissionCannotDecide",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACardRefundWithinTheAllowanceReservesItAndTheCashierRecordsTheSlip",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: \"Pending\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.MalformedJsonBodyReturns400WithoutReachingTheEndpointFilter",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundDecisionWhoseAuditRecordCannotBeWrittenIsNotKept",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatWouldUndercutWhatWasAlreadyCollectedIsRefused",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleWithoutBillsDiscountAndNoPolicyOrDelegationEscalatesToPending",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.AnOrderBilledAgainAndPaidAfterARefundStillCounts",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheChosenUnitsGoBackToStockInTheCompletingTransactionAndTheOthersDoNot",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARetriedRequestWithTheSameKeyReturnsTheStoredRefundAndPaysOutOnce",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitRegistrationTests.RegistrationPublishesVersionedDesignOnlyRoutes",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.NoBillingEndpointAnswersWithoutASessionOrWithASessionOfAnotherTerminal",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceMayBeClearedToZeroOrSetToTheMaximumButNotBeyond",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundIsNotDecidedByTheSamePersonWhoAskedForIt",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaymentStillInFlightKeepsTheBillFromBeingCancelled(status: \"ReconciliationRequired\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ADeadlockOrALockTimeoutAsksTheCashierToRetryInsteadOfShowingADatabaseFault(sqlState: \"55P03\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOrTipRefusesASplitSavedAgainstTheOlderBillVersion",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundWithinTheShiftAllowanceIsCompletedByTheCashierAndDrawsFromTheAllowance",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ApprovedCashRefundPaysOutOfTheCashiersSessionRefundsThePaymentAndCancelsTheBill",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AGrantApprovedDiscountRecordsWhoApprovedItAndWhichGrant",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheBillStaysOpenUntilEveryPaymentOnItIsRefunded",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOrTipWithoutAKeyOrAboveTheLimitsIsRefusedAndWritesNothing",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheItemRefundIsScaledByTheBillDiscountAndLeavesTipsAndFeesAlone",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ACancellationWhoseAuditRecordCannotBeWrittenIsNotKept",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ConcurrentDiscountsOnTheSameBillDoNotExceedThePayableAmount",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AMissingReasonIsRefusedBeforeAnythingChanges(reason: \"\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARefusedDiscountRequestAnswersInTurkishInTheCommonEnvelope",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARequesterCannotRejectTheirOwnRequestEither",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillStateIsReadOnlyAfterTheLockSoAWaitingDiscountOrTipSeesAPaidBill",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipIsRefusedWhenTheDeploymentTurnedTheVoluntaryTipOff",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: \"ReconciliationRequired\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitErrorMappingTests.ACancelledRequestIsNotAServerFault",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountRequestForAMissingBillOrABadValueOpensNoGrant",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaymentStillInFlightKeepsTheBillFromBeingCancelled(status: \"Pending\")",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.ARefundedOrderIsOutOfTheWaitersSalesTheTipPoolAndTheWaiterCount",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AMissingReasonIsRefusedBeforeAnythingChanges(reason: null)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.APaymentWithNothingLeftToRefundCannotBeRequestedAgain",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AWaiterWhoseOnlyOrderTodayWasCancelledDoesNotDiluteTheTipPool",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyWithoutAnOpenSession",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.APaymentChargedToACustomerAccountIsNotRefundedHere",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.APercentageDiscountRequestIsRaisedForTheCurrencyItWouldTakeOff",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaidBillIsRefusedWithThePaymentMessage",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AllocationsSavedTogetherComeBackInAStableOrder",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOnAPaidBillIsRejected",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheShippedRolesSplitAskingFromDeciding",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OpenRequestsReserveUnitsAcrossPaymentsAndTheRestCanBeRefundedWhole",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AFixedAmountDiscountRequestKeepsItsOwnAmount",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: False)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.WithoutAnAllowanceTheRequestWaitsForTheManagerAsBefore",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.RecallCancellationAlsoLetsTheOrderBeBilledAgain",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ApplyingADiscountWritesARealAuditEvent",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ADecidedRequestCannotBeApprovedAgain",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ARoleWithoutTheCancelPermissionIsRefused",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheSameKeyWithAnotherBodyOrKindIsAConflictAndTheSameBodyReplays",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ABillWhoseOnlyPaymentWasRefundedInFullCanBeCancelledButAPartialRefundStillBlocks",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: True)",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.AnOrderWhoseBillIsStillOpenAfterOnePaymentWasRefundedStillCounts",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ASplitDesignOnADiscountedBillUsesTheDiscountedPayable",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.RetryingATipWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountAndATipWhoseAuditRecordCannotBeWrittenAreNotKept",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundBeyondTheRemainingAllowanceGoesToTheManagerAndSpendsNothing",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountExceedingThePayableAmountIsRejectedAndNotPersisted",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AFailedTablePointerWriteIsLoggedAndTheBillIsStillCreated",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ReplayingADiscountAfterTheBillWasPaidReturnsTheOriginalResultButANewKeyIsRefused",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AReasonLongerThanFiveHundredCharactersIsRefused",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AVoluntaryTipTodayAppearsInTheServingWaitersShiftSummary",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AnInvalidDiscountReasonCodeIsRejected",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ManualRefundWaitsForTheSlipNumberThenRefundsAndCancelsTheBill",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.SuccessiveRestoringRefundsOfOneItemReturnEachShareOnce",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleThatHoldsBillsDiscountAppliesDirectly",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ABillCanBeOpenedAgainForTheSameOrderAfterItIsCancelled",
+        "outcome": "Passed"
+      },
+      {
+        "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleWithoutBillsSplitIsRejectedFromRecordingATip",
+        "outcome": "Passed"
+      }
+    ]
+  }
+]

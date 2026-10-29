@@ -1,0 +1,774 @@
+{
+  "results": [
+    {
+      "name": "isolated-baseline-domain",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated-baseline-domain-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 0,
+      "log_sha256": "eadeefde98572ced80301577169ca9d9a2a632ead9d163bcd5b26f6ad4413e3e",
+      "counters": {
+        "total": "8",
+        "executed": "8",
+        "passed": "8",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [],
+      "test_names": [
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)"
+      ]
+    },
+    {
+      "name": "isolated-baseline-host",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated-baseline-host-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits|FullyQualifiedName~AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 0,
+      "log_sha256": "fe92488c81789339143d3f95664e8766673645a0052a123db5d79703643e3228",
+      "counters": {
+        "total": "3",
+        "executed": "3",
+        "passed": "3",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [],
+      "test_names": [
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: True)",
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: False)",
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged"
+      ]
+    },
+    {
+      "name": "mutant-amount-payable",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\mutant-amount-payable-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 1,
+      "log_sha256": "8a5db82480aea4ad6439e2d15e442112e05efdc246d836aedd25be31132935c4",
+      "counters": {
+        "total": "8",
+        "executed": "8",
+        "passed": "5",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+          "message": "System.InvalidOperationException : Sum of split amounts (110) does not match Bill payable amount (100)."
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+          "message": "System.InvalidOperationException : Sum of split amounts (80) does not match Bill payable amount (100)."
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+          "message": "System.InvalidOperationException : Sum of split amounts (120) does not match Bill payable amount (100)."
+        }
+      ],
+      "test_names": [
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)"
+      ],
+      "mutant_source": "src/Modules/Billing/SplitDesign/SplitEngine.cs",
+      "before_sha256": "dbf57baa3000c671462cd3cf608482674bbaf3df0bc4c82d87a3e50536275c1b",
+      "mutated_sha256": "439a31eb7cc7faf579ce051afc6eda89e047411878482e56a9dcfedfdc8f4a6d",
+      "replacement": {
+        "old": "var totalPayable = adjustment?.AdjustedPayableAmount ?? bill.PayableAmount;",
+        "new": "var totalPayable = bill.PayableAmount;"
+      },
+      "killed": true
+    },
+    {
+      "name": "mutant-amount-tax",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\mutant-amount-tax-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 1,
+      "log_sha256": "02881dbb2a75b5e1eb24dee09ba78181588c6047d016495ddf81db096a6b59b3",
+      "counters": {
+        "total": "8",
+        "executed": "8",
+        "passed": "6",
+        "failed": "2",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+          "message": "Assert.Equal() Failure: Values differ\r\nExpected: 7,27\r\nActual:   9,09"
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+          "message": "Assert.Equal() Failure: Values differ\r\nExpected: 10\r\nActual:   9,09"
+        }
+      ],
+      "test_names": [
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)"
+      ],
+      "mutant_source": "src/Modules/Billing/SplitDesign/SplitEngine.cs",
+      "before_sha256": "dbf57baa3000c671462cd3cf608482674bbaf3df0bc4c82d87a3e50536275c1b",
+      "mutated_sha256": "2eb3f6461b8f42c852a95df16a9dab191fd5825cf8e0c0c52530a7c4c1065044",
+      "replacement": {
+        "old": "var totalTax = adjustment?.AdjustedTaxTotal ?? bill.TaxTotal;",
+        "new": "var totalTax = bill.TaxTotal;"
+      },
+      "killed": true
+    },
+    {
+      "name": "mutant-custom-payable",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\mutant-custom-payable-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 1,
+      "log_sha256": "08d601120de98650d6b9f2ce3afdfdc4342f06a4eaa74d1748375472a08f43b3",
+      "counters": {
+        "total": "8",
+        "executed": "8",
+        "passed": "5",
+        "failed": "3",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+          "message": "System.InvalidOperationException : Sum of custom split amounts (110) does not match Bill payable amount (100)."
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)",
+          "message": "System.InvalidOperationException : Sum of custom split amounts (80) does not match Bill payable amount (100)."
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)",
+          "message": "System.InvalidOperationException : Sum of custom split amounts (120) does not match Bill payable amount (100)."
+        }
+      ],
+      "test_names": [
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)"
+      ],
+      "mutant_source": "src/Modules/Billing/SplitDesign/SplitEngine.cs",
+      "before_sha256": "dbf57baa3000c671462cd3cf608482674bbaf3df0bc4c82d87a3e50536275c1b",
+      "mutated_sha256": "5c96e046881e4948c0c521cd4fe6e566f730778a8226b1df765ac8b08f599a29",
+      "replacement": {
+        "old": "var totalPayable = adjustment?.AdjustedPayableAmount ?? bill.PayableAmount;",
+        "new": "var totalPayable = bill.PayableAmount;"
+      },
+      "killed": true
+    },
+    {
+      "name": "mutant-custom-tax",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\mutant-custom-tax-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 1,
+      "log_sha256": "d116cbc1771339422766f17cadd3363590553b91a3884ea6df863fc670927761",
+      "counters": {
+        "total": "8",
+        "executed": "8",
+        "passed": "6",
+        "failed": "2",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+          "message": "Assert.Equal() Failure: Values differ\r\nExpected: 10\r\nActual:   9,09"
+        },
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)",
+          "message": "Assert.Equal() Failure: Values differ\r\nExpected: 7,27\r\nActual:   9,09"
+        }
+      ],
+      "test_names": [
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)"
+      ],
+      "mutant_source": "src/Modules/Billing/SplitDesign/SplitEngine.cs",
+      "before_sha256": "dbf57baa3000c671462cd3cf608482674bbaf3df0bc4c82d87a3e50536275c1b",
+      "mutated_sha256": "433c1c37831367ebe4aebdf992c6528cd0c2e7b838f927cf16c3d1f1ac704cd7",
+      "replacement": {
+        "old": "var totalTax = adjustment?.AdjustedTaxTotal ?? bill.TaxTotal;",
+        "new": "var totalTax = bill.TaxTotal;"
+      },
+      "killed": true
+    },
+    {
+      "name": "mutant-amount-null",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\mutant-amount-null-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 1,
+      "log_sha256": "b9f271e6024546123c86bc3357a0d592646f46dfa2a86ac9edad2ed26c4c4beb",
+      "counters": {
+        "total": "8",
+        "executed": "8",
+        "passed": "7",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)",
+          "message": "System.InvalidOperationException : Sum of split amounts (100) does not match Bill payable amount (0)."
+        }
+      ],
+      "test_names": [
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)"
+      ],
+      "mutant_source": "src/Modules/Billing/SplitDesign/SplitEngine.cs",
+      "before_sha256": "dbf57baa3000c671462cd3cf608482674bbaf3df0bc4c82d87a3e50536275c1b",
+      "mutated_sha256": "0d64005098b3711d43c60f2269380bbd518db393f657167296e3f2afcf0df2b4",
+      "replacement": {
+        "old": "adjustment?.AdjustedPayableAmount ?? bill.PayableAmount",
+        "new": "adjustment?.AdjustedPayableAmount ?? 0m"
+      },
+      "killed": true
+    },
+    {
+      "name": "mutant-custom-null",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\mutant-custom-null-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 1,
+      "log_sha256": "307912f30363f5d6997e5c1bfc6ae6e8a5b04219f2df357be38f796c29ef50e4",
+      "counters": {
+        "total": "8",
+        "executed": "8",
+        "passed": "7",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+          "message": "System.InvalidOperationException : Sum of custom split amounts (100) does not match Bill payable amount (0)."
+        }
+      ],
+      "test_names": [
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)"
+      ],
+      "mutant_source": "src/Modules/Billing/SplitDesign/SplitEngine.cs",
+      "before_sha256": "dbf57baa3000c671462cd3cf608482674bbaf3df0bc4c82d87a3e50536275c1b",
+      "mutated_sha256": "cab8c7b72996c56c0849c375f82556b67ece0e91906c1a2b4cb888eb10b2021f",
+      "replacement": {
+        "old": "adjustment?.AdjustedPayableAmount ?? bill.PayableAmount",
+        "new": "adjustment?.AdjustedPayableAmount ?? 0m"
+      },
+      "killed": true
+    },
+    {
+      "name": "mutant-equal-handoff",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\mutant-equal-handoff-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits|FullyQualifiedName~AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 1,
+      "log_sha256": "e9470fb0dcacbe22ada85e354e5466af0e4996bab9e7ae7cdf0ea9fe362e9f3c",
+      "counters": {
+        "total": "3",
+        "executed": "3",
+        "passed": "2",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: False)",
+          "message": "{\"error\":{\"code\":\"VALIDATION_FAILED\",\"message\":\"Hesap bölme isteği doğrulanamadı.\",\"status\":400,\"traceId\":\"0HNPLVGUMQM84:00000004\",\"conflict\":null}}"
+        }
+      ],
+      "test_names": [
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged",
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: False)",
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: True)"
+      ],
+      "mutant_source": "src/Host/Experience/Billing/BillingSplitStore.cs",
+      "before_sha256": "1ed3a898ea41d83d1d7286aaee5ad4222166871e4b8c9deb4ac006c802b54952",
+      "mutated_sha256": "924faedb2a2c7cac61f58459004c8d8d5629da45cbaa1f33666209dfd8f66541",
+      "replacement": {
+        "old": "owners.Count, owners, actorId, adjustment);",
+        "new": "owners.Count, owners, actorId, null);"
+      },
+      "killed": true
+    },
+    {
+      "name": "mutant-custom-handoff",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\mutant-custom-handoff-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits|FullyQualifiedName~AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 1,
+      "log_sha256": "d3b289b1cc38d0feb7da35ae328df477974679b2aad1e0de535cc30a1a5486b8",
+      "counters": {
+        "total": "3",
+        "executed": "3",
+        "passed": "2",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: True)",
+          "message": "{\"error\":{\"code\":\"VALIDATION_FAILED\",\"message\":\"Hesap bölme isteği doğrulanamadı.\",\"status\":400,\"traceId\":\"0HNPLVH7P3LT4:00000004\",\"conflict\":null}}"
+        }
+      ],
+      "test_names": [
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: True)",
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: False)",
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged"
+      ],
+      "mutant_source": "src/Host/Experience/Billing/BillingSplitStore.cs",
+      "before_sha256": "1ed3a898ea41d83d1d7286aaee5ad4222166871e4b8c9deb4ac006c802b54952",
+      "mutated_sha256": "19d54c10374a1b9c1219955002afb69d2484d074f039834013731357514bced1",
+      "replacement": {
+        "old": "            adjustment);",
+        "new": "            null);"
+      },
+      "killed": true
+    },
+    {
+      "name": "mutant-item-unchanged-totals",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\mutant-item-unchanged-totals-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits|FullyQualifiedName~AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 1,
+      "log_sha256": "18f62ccb58a9dc907270cf6af62ddb9f6ff9ae5b6578000368e154968c39c430",
+      "counters": {
+        "total": "3",
+        "executed": "3",
+        "passed": "2",
+        "failed": "1",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [
+        {
+          "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged",
+          "message": "{\"error\":{\"code\":\"ITEM_SPLIT_ON_ADJUSTED_BILL\",\"message\":\"İndirim veya ek ücret uygulanmış hesap ürün bazında bölünemez; tutar, kişi ya da serbest bölme kullanın.\",\"status\":409,\"traceId\":\"0HNPLVHH246HO:00000004\",\"conflict\":null}}"
+        }
+      ],
+      "test_names": [
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: False)",
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged",
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: True)"
+      ],
+      "mutant_source": "src/Host/Experience/Billing/BillingSplitStore.cs",
+      "before_sha256": "1ed3a898ea41d83d1d7286aaee5ad4222166871e4b8c9deb4ac006c802b54952",
+      "mutated_sha256": "390261ad6c1e2feeef380274facc6224375365d3b7e8506ce57d790c482d3365",
+      "replacement": {
+        "old": "adjustment.AdjustedPayableAmount != bill.PayableAmount || adjustment.AdjustedTaxTotal != bill.TaxTotal",
+        "new": "true"
+      },
+      "killed": true
+    },
+    {
+      "name": "isolated-restored-domain",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated-restored-domain-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 0,
+      "log_sha256": "ec843b2c9904f195e6aa31b3e6ec55dd1553edea555ab25bf665d246517af498",
+      "counters": {
+        "total": "8",
+        "executed": "8",
+        "passed": "8",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [],
+      "test_names": [
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: True, payable: 100, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 110, tax: 10)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 80, tax: 7,27)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: False, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 120, tax: 9,09)",
+        "ALKAROS.Billing.SplitDesign.Tests.SplitDesignDomainTests.AmountAndCustomSplitsUseAdjustedTotalsOrOriginalTotalsWhenNull(custom: True, noAdjustment: False, payable: 80, tax: 7,27)"
+      ]
+    },
+    {
+      "name": "isolated-restored-host",
+      "command": [
+        "C:/Users/semih/.dotnet/dotnet.exe",
+        "test",
+        "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated\\artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated-restored-host-results",
+        "--logger",
+        "trx;LogFileName=run.trx",
+        "--filter",
+        "FullyQualifiedName~ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits|FullyQualifiedName~AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged"
+      ],
+      "cwd": "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\isolated",
+      "exit_code": 0,
+      "log_sha256": "ad14c13e0d1037265d418c4e71fb886d4730d105b1ad1a84cb48db53351db6b1",
+      "counters": {
+        "total": "3",
+        "executed": "3",
+        "passed": "3",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "failures": [],
+      "test_names": [
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged",
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: True)",
+        "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(custom: False)"
+      ]
+    }
+  ],
+  "production_mutated": false,
+  "root_source_changes": [],
+  "killed_mutants": 9,
+  "completed_utc": "2026-10-29T20:37:52.034637+00:00"
+}

@@ -1,0 +1,69 @@
+{
+  "tier": "Explicit decision fixtures; not actual failed builds/gates",
+  "cases": [
+    {
+      "script": "755-build-final.py",
+      "case": "clean",
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "script": "755-build-final.py",
+      "case": "failed-build",
+      "exit_code": 1,
+      "expected": 1,
+      "passed": true
+    },
+    {
+      "script": "755-build-final.py",
+      "case": "warning",
+      "exit_code": 1,
+      "expected": 1,
+      "passed": true
+    },
+    {
+      "script": "755-build-final.py",
+      "case": "error",
+      "exit_code": 1,
+      "expected": 1,
+      "passed": true
+    },
+    {
+      "script": "755-build-final.py",
+      "case": "missing-summary",
+      "exit_code": 1,
+      "expected": 1,
+      "passed": true
+    },
+    {
+      "script": "755-build-final.py",
+      "case": "english-clean",
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "script": "755-gates.py",
+      "case": "clean",
+      "exit_code": 0,
+      "expected": 0,
+      "passed": true
+    },
+    {
+      "script": "755-gates.py",
+      "case": "failed-gate",
+      "exit_code": 1,
+      "expected": 1,
+      "passed": true
+    },
+    {
+      "script": "755-gates.py",
+      "case": "changed-regression",
+      "exit_code": 1,
+      "expected": 1,
+      "passed": true
+    }
+  ],
+  "all_passed": true
+}

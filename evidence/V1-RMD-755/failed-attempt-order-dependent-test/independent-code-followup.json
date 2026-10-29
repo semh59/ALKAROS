@@ -1,0 +1,83 @@
+{
+  "task_id": "V1-RMD-755",
+  "repository": "D:/project/ALKAROS",
+  "verdict": "PASS",
+  "passed": true,
+  "review_type": "read_only_source_followup",
+  "prior_review": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-final-code-review.json",
+  "findings": [],
+  "resolved_findings": [
+    {
+      "file": "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs",
+      "prior_issue": "Yeni teoride tam iki-değer dizi karşılaştırmasıyla yinelenen adet ve toplam assertion'ları.",
+      "removed_lines": [
+        "        Assert.Equal(2, allocations.Count);",
+        "        Assert.Equal(payable, allocations.Sum(allocation => allocation.AllocatedAmount));"
+      ],
+      "remaining_assertion_line": 175,
+      "remaining_assertion": "        Assert.Equal(new[] { 30m, payable - 30m }, allocations.Select(allocation => allocation.AllocatedAmount));",
+      "status": "resolved"
+    }
+  ],
+  "checks": [
+    {
+      "name": "before_cleanup_domain_source_reconstruction_matches_archived_manifest",
+      "passed": true,
+      "method": "HEAD domain dosyasındaki eski üç test bölümü, 755-edit-tests.py AST içindeki ilk new string literal ile bellekte değiştirildi; hiçbir script çalıştırılmadı, repo yazılmadı.",
+      "manifest": "evidence/V1-RMD-755/before-assertion-cleanup/isolated-copy-manifest.json",
+      "reconstructed_sha256": "c00f2213db82ef5c99754b381c2ee18813f807768aea7560317bed19e8b383d8",
+      "manifest_sha256": "c00f2213db82ef5c99754b381c2ee18813f807768aea7560317bed19e8b383d8"
+    },
+    {
+      "name": "current_domain_source_equals_reviewed_source_minus_exactly_two_reported_assertions",
+      "passed": true,
+      "details": "Tüm dosya karşılaştırması eşit: yalnız bildirilen iki satır kaldırılmış. Sekiz InlineData, named adjustment çağrıları, null dalı, vergi korunum/sınır kontrolleri, özgün Bill toplamları ve ham hedef reddi değişmemiş. Tam dizi karşılaştırması adet, sıra, değer ve toplam koşullarını koruyor."
+    },
+    {
+      "name": "host_and_postgres_tests_unchanged_since_prior_review",
+      "passed": true,
+      "details": "Her iki mevcut dosyanın byte SHA-256 değeri assertion temizliği öncesi manifest ile eşit. Equal/Custom kayıt-yeniden okuma ve tutar/vergi değişmeyen kalem bölme testleri değişmemiş."
+    },
+    {
+      "name": "754_regression_method_unchanged_from_HEAD",
+      "passed": true,
+      "file": "tests/Host/Experience/Billing/BillingSplitHttpTests.cs",
+      "method_name": "ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409",
+      "comparison": "[Fact] başlangıcından metodun eşleşen kapanış süslü parantezine kadar; CRLF/LF normalize edildi.",
+      "baseline_method_sha256": "cf461786dd02fcd2a6658091a0c89708cdfec16071cb10ac1dd52d21f3f0da49",
+      "current_method_sha256": "cf461786dd02fcd2a6658091a0c89708cdfec16071cb10ac1dd52d21f3f0da49",
+      "details": "409, ITEM_SPLIT_ON_ADJUSTED_BILL ve tahsislerin boş kalması assertion'ları korunuyor."
+    },
+    {
+      "name": "no_new_source_issue_in_followup_delta",
+      "passed": true,
+      "details": "İki redundant assertion kaldırılması dışında davranış/test değişikliği yok; yeni bulgu yok."
+    }
+  ],
+  "file_hashes": [
+    {
+      "path": "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs",
+      "sha256": "e08ce3d22fe7973374f2ed9f2da5cdad9662799eee377b8d44711a2ad67e74c2",
+      "before_cleanup_sha256": "c00f2213db82ef5c99754b381c2ee18813f807768aea7560317bed19e8b383d8"
+    },
+    {
+      "path": "tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs",
+      "sha256": "73b3301970341c0ea43933a98febbb389f0584169dd258c729591002ff467223",
+      "before_cleanup_sha256": "73b3301970341c0ea43933a98febbb389f0584169dd258c729591002ff467223"
+    },
+    {
+      "path": "tests/Host/Experience/Billing/BillingSplitHttpTests.cs",
+      "sha256": "5eb9646d9fa305cf10eda2427d25f8a3cde2e2d38ddef509309bb25997f9d841",
+      "before_cleanup_sha256": "5eb9646d9fa305cf10eda2427d25f8a3cde2e2d38ddef509309bb25997f9d841"
+    }
+  ],
+  "execution_limits": {
+    "dotnet_run": false,
+    "tests_run": false,
+    "final_rerun_waited_or_polled": false,
+    "repository_modified": false,
+    "only_created_file": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/755-code-followup.json",
+    "runtime_verdict": "Not assessed: final rerun belongs to parent; this PASS covers source follow-up only."
+  },
+  "summary_tr": "PASS: önceki tek bulgu giderildi. Yalnız iki redundant assertion kaldırılmış; diğer davranış testleri ve 754 regresyonu değişmemiş, yeni bulgu yok. Final rerun beklenmedi/poll edilmedi; dotnet çalıştırılmadı."
+}

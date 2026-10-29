@@ -1,0 +1,18 @@
+  ALKAROS.ModuleComposition -> D:\project\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\project\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Messaging -> D:\project\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.TestHelpers -> D:\project\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Tables -> D:\project\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.Orders -> D:\project\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Billing -> D:\project\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+D:\project\ALKAROS\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs(173,13): error CS1503: 3 bağımsız değişkeni: 'ALKAROS.Billing.Adjustments.AdjustedBillSummary' öğesinden 'System.Guid?' öğesine dönüştürülemiyor [D:\project\ALKAROS\tests\Modules\Billing\SplitDesign\ALKAROS.Billing.SplitDesign.Tests.csproj]
+D:\project\ALKAROS\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs(216,13): error CS1503: 3 bağımsız değişkeni: 'ALKAROS.Billing.Adjustments.AdjustedBillSummary' öğesinden 'System.Guid?' öğesine dönüştürülemiyor [D:\project\ALKAROS\tests\Modules\Billing\SplitDesign\ALKAROS.Billing.SplitDesign.Tests.csproj]
+
+Oluşturma BAŞARISIZ OLDU.
+
+D:\project\ALKAROS\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs(173,13): error CS1503: 3 bağımsız değişkeni: 'ALKAROS.Billing.Adjustments.AdjustedBillSummary' öğesinden 'System.Guid?' öğesine dönüştürülemiyor [D:\project\ALKAROS\tests\Modules\Billing\SplitDesign\ALKAROS.Billing.SplitDesign.Tests.csproj]
+D:\project\ALKAROS\tests\Modules\Billing\SplitDesign\SplitDesignDomainTests.cs(216,13): error CS1503: 3 bağımsız değişkeni: 'ALKAROS.Billing.Adjustments.AdjustedBillSummary' öğesinden 'System.Guid?' öğesine dönüştürülemiyor [D:\project\ALKAROS\tests\Modules\Billing\SplitDesign\ALKAROS.Billing.SplitDesign.Tests.csproj]
+    0 Uyarı
+    2 Hata
+
+Geçen Süre 00:00:15.94

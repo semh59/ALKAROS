@@ -644,16 +644,10 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Empty(await _database.AllocationIdsAsync(seeded.BillId));
     }
 
-    /// <summary>
-    /// V1-RMD-237: IAuditEventStore existed since V1-OPS-001 with zero real
-    /// callers anywhere in the codebase — a discounted bill left no audit
-    /// trail at all despite the read-side endpoints
-    /// (KitchenOperationsEndpoints' /audit/aggregate, /audit/correlation)
-    /// already existing and being correctly permission-gated. This is the
-    /// first real write.
-    /// </summary>
-[Fact]
-    public async Task ADiscountedBillAcceptsEqualSplitAndCustomSplitWithAdjustedTotals()
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task ADiscountedBillPersistsAdjustedTotalsForEqualAndCustomSplits(bool custom)
     {
         var terminalId = Guid.NewGuid();
         var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
@@ -662,7 +656,12 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         await using var app = await StartAsync();
         using var client = CreateClient(app);
         var path = Path(terminalId, seeded.BillId);
-
+        BillSplitDesignDto original;
+        using (var get = await client.SendAsync(Request(HttpMethod.Get, path, cookie)))
+        {
+            Assert.Equal(HttpStatusCode.OK, get.StatusCode);
+            original = (await get.Content.ReadFromJsonAsync<BillSplitDesignDto>())!;
+        }
         using (var discount = await client.SendAsync(JsonRequest(
             HttpMethod.Post,
             $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
@@ -676,108 +675,74 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
             Assert.Equal(HttpStatusCode.OK, get.StatusCode);
             design = (await get.Content.ReadFromJsonAsync<BillSplitDesignDto>())!;
         }
-        Assert.Equal(225m, design.PayableAmount);
-
-        // Equal split on discounted bill
-        var equalSaved = await PutAsync<BillSplitDesignDto>(
-            client,
-            path + "/equal",
-            cookie,
-            new SaveEqualSplitRequest(
-                design.BillRowVersion,
-                [],
-                [
-                    new SplitOwnerRequest("Seat", seeded.SeatId),
-                    new SplitOwnerRequest("Person", Guid.NewGuid()),
-                ]));
-        Assert.Equal(225m, equalSaved.PayableAmount);
-        Assert.Equal(225m, equalSaved.Allocations.Sum(a => a.Amount));
-        Assert.Equal(design.TaxTotal, equalSaved.Allocations.Sum(a => a.TaxAmount));
-
-        // Custom split on discounted bill
-        var customSaved = await PutAsync<BillSplitDesignDto>(
-            client,
-            path + "/custom",
-            cookie,
-            new SaveCustomSplitRequest(
-                equalSaved.BillRowVersion,
-                equalSaved.Allocations.Select(a => new AllocationVersionRequest(a.AllocationId, a.RowVersion)).ToList(),
-                [
-                    new CustomSplitTargetRequest(
-                        new SplitOwnerRequest("Seat", seeded.SeatId),
-                        110m,
-                        seeded.FirstItemId,
-                        1m),
-                    new CustomSplitTargetRequest(
-                        new SplitOwnerRequest("Person", Guid.NewGuid()),
-                        115m,
-                        seeded.SecondItemId,
-                        1m),
-                ]));
-        Assert.Equal(225m, customSaved.PayableAmount);
-        Assert.Equal(225m, customSaved.Allocations.Sum(a => a.Amount));
-        Assert.Equal(design.TaxTotal, customSaved.Allocations.Sum(a => a.TaxAmount));
+        Assert.Equal(original.PayableAmount - 25m, design.PayableAmount);
+        Assert.Equal(original.TaxTotal - 2.27m, design.TaxTotal);
+        var owners = new[] { new SplitOwnerRequest("Seat", seeded.SeatId), new SplitOwnerRequest("Person", Guid.NewGuid()) };
+        object request = custom
+            ? new SaveCustomSplitRequest(design.BillRowVersion, [],
+                [new CustomSplitTargetRequest(owners[0], 100m, null, null),
+                 new CustomSplitTargetRequest(owners[1], design.PayableAmount - 100m, null, null)])
+            : new SaveEqualSplitRequest(design.BillRowVersion, [], owners);
+        var saved = await PutAsync<BillSplitDesignDto>(client, path + (custom ? "/custom" : "/equal"), cookie, request);
+        Assert.Equal(custom ? "Custom" : "EqualByPerson", saved.Mode);
+        Assert.Equal(design.PayableAmount, saved.PayableAmount);
+        Assert.Equal(design.TaxTotal, saved.TaxTotal);
+        Assert.Equal(design.PayableAmount, saved.Allocations.Sum(allocation => allocation.Amount));
+        Assert.Equal(design.TaxTotal, saved.Allocations.Sum(allocation => allocation.TaxAmount));
+        using var reload = await client.SendAsync(Request(HttpMethod.Get, path, cookie));
+        Assert.Equal(HttpStatusCode.OK, reload.StatusCode);
+        var persisted = (await reload.Content.ReadFromJsonAsync<BillSplitDesignDto>())!;
+        Assert.Equal(saved.PayableAmount, persisted.PayableAmount);
+        Assert.Equal(saved.TaxTotal, persisted.TaxTotal);
+        Assert.Equal(saved.Allocations.OrderBy(allocation => allocation.AllocationId),
+            persisted.Allocations.OrderBy(allocation => allocation.AllocationId));
     }
+
     [Fact]
-    public async Task ATipAndAnEqualDiscountCancelPayableButLowerTaxStillRefusesItemSplit()
+    public async Task AZeroNetAdjustmentAllowsItemSplitWhenPayableAndTaxAreUnchanged()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync(taxRate: 0m);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = Path(terminalId, seeded.BillId);
+        var billPath = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}";
+        using (var tip = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, billPath + "/tip", cookie, new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 10m))))
+            Assert.Equal(HttpStatusCode.OK, tip.StatusCode);
+        using (var discount = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, billPath + "/discount", cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "FixedAmount", 10m, "PromotionalOffer"))))
+            Assert.Equal(HttpStatusCode.OK, discount.StatusCode);
+        BillSplitDesignDto design;
+        using (var get = await client.SendAsync(Request(HttpMethod.Get, path, cookie)))
         {
-            // A tip (no tax) + equal fixed discount (has tax) cancel the payable change,
-            // but the adjusted tax is lower. The item split guard checks both payable and tax,
-            // so it correctly refuses with 409 ITEM_SPLIT_ON_ADJUSTED_BILL.
-            var terminalId = Guid.NewGuid();
-            var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
-                terminalId, "supervisor", "bills.discount", "bills.split", "bills.tip");
-            var seeded = await _database.SeedBillAsync();
-            await using var app = await StartAsync();
-            using var client = CreateClient(app);
-            var path = Path(terminalId, seeded.BillId);
-
-            // Apply a tip that raises payable
-            var tipAmount = 10m;
-            using (var tip = await client.SendAsync(JsonRequest(
-                HttpMethod.Post,
-                $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/tip",
-                cookie,
-                new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), tipAmount, "VOLUNTARY_TIP"))))
-                Assert.Equal(HttpStatusCode.OK, tip.StatusCode);
-
-            // Now apply a discount that cancels the tip
-            using (var discount = await client.SendAsync(JsonRequest(
-                HttpMethod.Post,
-                $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}/discount",
-                cookie,
-                new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "FixedAmount", tipAmount, "PromotionalOffer"))))
-                Assert.Equal(HttpStatusCode.OK, discount.StatusCode);
-
-            BillSplitDesignDto design;
-            using (var get = await client.SendAsync(Request(HttpMethod.Get, path, cookie)))
-            {
-                Assert.Equal(HttpStatusCode.OK, get.StatusCode);
-                design = (await get.Content.ReadFromJsonAsync<BillSplitDesignDto>())!;
-            }
-            // Net adjustment is zero: payable equals original bill payable
-            Assert.Equal(seeded.FirstItemGrossAmount + seeded.SecondItemGrossAmount, design.PayableAmount);
-            // But tax is lowered
-            Assert.True(design.TaxTotal < design.Items.Sum(item => item.TaxAmount));
-
-            // Item split must be refused (tax changed)
-            using var itemResponse = await client.SendAsync(JsonRequest(
-                HttpMethod.Put,
-                path + "/items",
-                cookie,
-                new SaveItemSplitRequest(
-                    design.BillRowVersion,
-                    [],
-                    [
-                        new ItemSplitTargetRequest(new SplitOwnerRequest("Seat", seeded.SeatId), seeded.FirstItemId, 1m),
-                        new ItemSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), seeded.SecondItemId, 1m),
-                    ])));
-            Assert.Equal(HttpStatusCode.Conflict, itemResponse.StatusCode);
-            Assert.Equal(
-                "ITEM_SPLIT_ON_ADJUSTED_BILL",
-                (await itemResponse.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!.Error.Code);
+            Assert.Equal(HttpStatusCode.OK, get.StatusCode);
+            design = (await get.Content.ReadFromJsonAsync<BillSplitDesignDto>())!;
         }
+        Assert.Equal(design.Items.Sum(item => item.GrossAmount), design.PayableAmount);
+        Assert.Equal(0m, design.TaxTotal);
+        var owners = new[] { new SplitOwnerRequest("Seat", seeded.SeatId), new SplitOwnerRequest("Person", Guid.NewGuid()) };
+        var saved = await PutAsync<BillSplitDesignDto>(client, path + "/items", cookie,
+            new SaveItemSplitRequest(design.BillRowVersion, [],
+                design.Items.Select((item, index) => new ItemSplitTargetRequest(owners[index], item.BillItemId, item.Quantity)).ToList()));
+        Assert.Equal("ByItem", saved.Mode);
+        Assert.Equal(design.PayableAmount, saved.Allocations.Sum(allocation => allocation.Amount));
+        Assert.Equal(design.TaxTotal, saved.Allocations.Sum(allocation => allocation.TaxAmount));
+        Assert.Equal(saved.Allocations.Select(allocation => allocation.AllocationId).Order(),
+            (await _database.AllocationIdsAsync(seeded.BillId)).Order());
+    }
 
+    /// <summary>
+    /// V1-RMD-237: IAuditEventStore existed since V1-OPS-001 with zero real
+    /// callers anywhere in the codebase — a discounted bill left no audit
+    /// trail at all despite the read-side endpoints
+    /// (KitchenOperationsEndpoints' /audit/aggregate, /audit/correlation)
+    /// already existing and being correctly permission-gated. This is the
+    /// first real write.
+    /// </summary>
     [Fact]
     public async Task ApplyingADiscountWritesARealAuditEvent()
     {
@@ -1688,9 +1653,7 @@ internal sealed record SeededBill(
     long BillRowVersion,
     Guid SeatId,
     Guid FirstItemId,
-    Guid SecondItemId,
-    decimal FirstItemGrossAmount,
-    decimal SecondItemGrossAmount);
+    Guid SecondItemId);
 
 internal sealed class BillingSplitTestDatabase
 {
@@ -1880,7 +1843,7 @@ internal sealed class BillingSplitTestDatabase
             VALUES (gen_random_uuid(), 'garson.voluntary_tip_enabled', 'false', 'Boolean', 'Global', 'waiter');
             """);
 
-    public async Task<SeededBill> SeedBillAsync()
+    public async Task<SeededBill> SeedBillAsync(decimal taxRate = 10m)
     {
         var zoneId = Guid.NewGuid();
         var tableId = Guid.NewGuid();
@@ -1910,8 +1873,8 @@ internal sealed class BillingSplitTestDatabase
             ("second_sku", "SKU-" + secondProductId.ToString("N")[..8]));
 
         var orderId = Guid.NewGuid();
-        var firstOrderItem = new OrderItem(Guid.NewGuid(), orderId, firstProductId, "Main course", 2m, 100m, 10m);
-        var secondOrderItem = new OrderItem(Guid.NewGuid(), orderId, secondProductId, "Drink", 1m, 50m, 10m);
+        var firstOrderItem = new OrderItem(Guid.NewGuid(), orderId, firstProductId, "Main course", 2m, 100m, taxRate);
+        var secondOrderItem = new OrderItem(Guid.NewGuid(), orderId, secondProductId, "Drink", 1m, 50m, taxRate);
         var order = new Order(
             orderId,
             OrderSource.Cashier,
@@ -1921,8 +1884,8 @@ internal sealed class BillingSplitTestDatabase
         await new PostgresOrderRepository(DataSource).AddAsync(order);
 
         var bill = Bill.FromOrder(Guid.NewGuid(), "BIL-" + orderId.ToString("N"), order);
-                await new PostgresBillRepository(DataSource).AddAsync(bill);
-                return new SeededBill(bill.Id, bill.RowVersion, seatId, bill.Items[0].Id, bill.Items[1].Id, bill.Items[0].GrossAmount, bill.Items[1].GrossAmount);
+        await new PostgresBillRepository(DataSource).AddAsync(bill);
+        return new SeededBill(bill.Id, bill.RowVersion, seatId, bill.Items[0].Id, bill.Items[1].Id);
     }
 
     public async Task<Guid> SeedOrderWithoutBillAsync()

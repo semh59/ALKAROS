@@ -1,0 +1,45 @@
+  ALKAROS.IntegrationContracts -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Secrets\debug\ALKAROS.Secrets.dll
+  ALKAROS.Measurements -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Measurements\debug\ALKAROS.Measurements.dll
+  ALKAROS.Identity -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Identity\debug\ALKAROS.Identity.dll
+  ALKAROS.Settings -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Settings\debug\ALKAROS.Settings.dll
+  ALKAROS.Audit -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Audit\debug\ALKAROS.Audit.dll
+  ALKAROS.Reconciliation -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Reconciliation\debug\ALKAROS.Reconciliation.dll
+  ALKAROS.Reporting -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Reporting\debug\ALKAROS.Reporting.dll
+  ALKAROS.Observability -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Observability\debug\ALKAROS.Observability.dll
+  ALKAROS.Inventory -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Inventory\debug\ALKAROS.Inventory.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Privacy.RetentionExecution\debug\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Messaging -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.Catalog -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Catalog\debug\ALKAROS.Catalog.dll
+  ALKAROS.Recipes -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Recipes\debug\ALKAROS.Recipes.dll
+  ALKAROS.Support -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Support\debug\ALKAROS.Support.dll
+  ALKAROS.Production -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Production\debug\ALKAROS.Production.dll
+  ALKAROS.Privacy.Anonymization -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Privacy.Anonymization\debug\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.Tables -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Tables\debug\ALKAROS.Tables.dll
+  ALKAROS.Purchasing -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Purchasing\debug\ALKAROS.Purchasing.dll
+  ALKAROS.Menu -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Menu\debug\ALKAROS.Menu.dll
+  ALKAROS.SensitiveData -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.SensitiveData\debug\ALKAROS.SensitiveData.dll
+  ALKAROS.Orders -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Orders\debug\ALKAROS.Orders.dll
+  ALKAROS.OnlineOrdering -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.OnlineOrdering\debug\ALKAROS.OnlineOrdering.dll
+  ALKAROS.Billing -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Billing\debug\ALKAROS.Billing.dll
+  ALKAROS.QrOrdering -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.QrOrdering\debug\ALKAROS.QrOrdering.dll
+  ALKAROS.Kitchen -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Kitchen\debug\ALKAROS.Kitchen.dll
+  ALKAROS.CustomerData -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.CustomerData\debug\ALKAROS.CustomerData.dll
+  ALKAROS.Payments -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Payments\debug\ALKAROS.Payments.dll
+  ALKAROS.Security -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Security\debug\ALKAROS.Security.dll
+  ALKAROS.QrRelay -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.QrRelay\debug\ALKAROS.QrRelay.dll
+  ALKAROS.Billing.PaymentClosure -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Billing.PaymentClosure\debug\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Cash -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Cash\debug\ALKAROS.Cash.dll
+  ALKAROS.Invoicing -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Invoicing\debug\ALKAROS.Invoicing.dll
+  ALKAROS.Operations -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Operations\debug\ALKAROS.Operations.dll
+  ALKAROS.CustomerAccounts -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.CustomerAccounts\debug\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Payments.TenderComposition -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Payments.TenderComposition\debug\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.Host -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Host\debug\ALKAROS.Host.dll
+  ALKAROS.Host.Experience.Billing.Tests -> D:\project\ALKAROS\evidence\V1-RMD-755\artifacts\bin\ALKAROS.Host.Experience.Billing.Tests\debug\ALKAROS.Host.Experience.Billing.Tests.dll
+
+Oluşturma başarılı oldu.
+    0 Uyarı
+    0 Hata
+
+Geçen Süre 00:00:06.77

@@ -272,13 +272,13 @@ public sealed class PostgresSplitDesignTests : IClassFixture<SplitDesignTestData
         var saved = await _splitRepo.ReplaceOperationalSplitDesignAsync(bill.Id, bill.RowVersion, [], initial);
         Assert.Equal(bill.RowVersion + 1, saved.BillRowVersion);
         var persisted = await _splitRepo.GetAllocationsByBillIdAsync(bill.Id);
-        Assert.Equal(initial.Select(allocation => allocation.Id), persisted.Select(allocation => allocation.Id));
+        Assert.Equal(initial.Select(allocation => allocation.Id).Order(), persisted.Select(allocation => allocation.Id).Order());
 
         var replacement = SplitEngine.CreateEqualSplit(bill, owners.Length, owners);
         await Assert.ThrowsAsync<SplitDesignConcurrencyException>(() =>
             _splitRepo.ReplaceOperationalSplitDesignAsync(bill.Id, saved.BillRowVersion, [], replacement));
         var afterConflict = await _splitRepo.GetAllocationsByBillIdAsync(bill.Id);
-        Assert.Equal(initial.Select(allocation => allocation.Id), afterConflict.Select(allocation => allocation.Id));
+        Assert.Equal(initial.Select(allocation => allocation.Id).Order(), afterConflict.Select(allocation => allocation.Id).Order());
 
         await Assert.ThrowsAsync<SplitDesignConcurrencyException>(() =>
             _splitRepo.ReplaceOperationalSplitDesignAsync(
@@ -336,8 +336,8 @@ public sealed class PostgresSplitDesignTests : IClassFixture<SplitDesignTestData
         var invalid = SplitEngine.CreateEqualSplit(bill, 2, invalidOwners);
         await Assert.ThrowsAsync<InvalidOperationException>(() =>
             _splitRepo.ReplaceOperationalSplitDesignAsync(bill.Id, saved.BillRowVersion, expected, invalid));
-        Assert.Equal(valid.Select(allocation => allocation.Id),
-            (await _splitRepo.GetAllocationsByBillIdAsync(bill.Id)).Select(allocation => allocation.Id));
+        Assert.Equal(valid.Select(allocation => allocation.Id).Order(),
+            (await _splitRepo.GetAllocationsByBillIdAsync(bill.Id)).Select(allocation => allocation.Id).Order());
     }
 
     [Fact]

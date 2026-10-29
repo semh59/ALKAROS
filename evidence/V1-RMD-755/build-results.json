@@ -1,0 +1,50 @@
+[
+  {
+    "name": "splitdesign",
+    "command": [
+      "C:\\Users\\semih\\.dotnet\\dotnet.exe",
+      "build",
+      "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "--artifacts-path",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\artifacts"
+    ],
+    "exit_code": 0,
+    "sha256": "62f5de9510952ef3e2cef189a1f2908d39ccb1444545d9d57772ff3221596a9c",
+    "summary": [
+      "  ALKAROS.Billing.SplitDesign.Tests -> D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\artifacts\\bin\\ALKAROS.Billing.SplitDesign.Tests\\debug\\ALKAROS.Billing.SplitDesign.Tests.dll",
+      "",
+      "Oluşturma başarılı oldu.",
+      "    0 Uyarı",
+      "    0 Hata",
+      "",
+      "Geçen Süre 00:00:02.09"
+    ]
+  },
+  {
+    "name": "host-billing",
+    "command": [
+      "C:\\Users\\semih\\.dotnet\\dotnet.exe",
+      "build",
+      "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+      "-c",
+      "Debug",
+      "--no-restore",
+      "--artifacts-path",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\artifacts"
+    ],
+    "exit_code": 0,
+    "sha256": "50ec21d32fa0d3a73d8e82e16235e9af5a52105a221ae9efce91e4639375a3d3",
+    "summary": [
+      "  ALKAROS.Host.Experience.Billing.Tests -> D:\\project\\ALKAROS\\evidence\\V1-RMD-755\\artifacts\\bin\\ALKAROS.Host.Experience.Billing.Tests\\debug\\ALKAROS.Host.Experience.Billing.Tests.dll",
+      "",
+      "Oluşturma başarılı oldu.",
+      "    0 Uyarı",
+      "    0 Hata",
+      "",
+      "Geçen Süre 00:00:06.69"
+    ]
+  }
+]
