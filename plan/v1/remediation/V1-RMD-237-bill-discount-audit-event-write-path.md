@@ -6,6 +6,13 @@
 - Work type: implementation
 - Surface state: Existing
 
+### Güncellik notu (V1-RMD-751 / F0388)
+
+Aşağıdaki görev metni tarihsel kapsam ve kabul sözleşmesini korur; endpoint dönüşünden sonra ayrı audit çağrısı anlatımı güncel akış değildir.
+`src/Host/Experience/Billing/BillingSplitApplication.cs` içindeki `MapBillingSplitApi` discount işleyicisi audit bağımlılığını `src/Host/Experience/Billing/BillingSplitStore.cs` içindeki `ApplyDiscountAsync` metoduna iletir.
+Yeni indirimde `AddAsync` ve `bill.discount.applied` için `AppendAsync` yazımları aynı connection/transaction ile `CommitAsync` öncesinde yapılır; eşleşen replay yeni audit yazmadan döner.
+`void`/`comp` bu tarihsel görevin kapsamı dışındadır. Bu not üretim değişikliği veya yeni test başarısı iddiası değildir.
+
 ## Goal
 
 `V1-OPS-001`'in kendi Goal'ı ("V1 critical command'ları için immutable
