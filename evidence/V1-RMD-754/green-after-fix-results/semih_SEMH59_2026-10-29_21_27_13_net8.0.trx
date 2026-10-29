@@ -1,0 +1,222 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3f570dc3-e82a-404c-b952-790da05804e4" name="semih@SEMH59 2026-10-29 21:27:13" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-29T21:27:13.4429003+03:00" queuing="2026-10-29T21:27:13.4429005+03:00" start="2026-10-29T21:27:08.6790456+03:00" finish="2026-10-29T21:27:13.4497141+03:00" />
+  <TestSettings name="default" id="844f13fd-eb33-4f1d-bc33-0b74a11b25eb">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-29_21_27_13" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="99d686b4-e1a4-4d06-af90-7d773cd5f4e3" testId="706821c0-6370-a3cf-a619-fb696bb62db4" testName="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409" computerName="SEMH59" duration="00:00:00.9132519" startTime="2026-10-29T21:27:13.3423659+03:00" endTime="2026-10-29T21:27:13.3423858+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="99d686b4-e1a4-4d06-af90-7d773cd5f4e3" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409" storage="d:\project\alkaros\evidence\v1-rmd-754\artifacts\bin\alkaros.host.experience.billing.tests\debug\alkaros.host.experience.billing.tests.dll" id="706821c0-6370-a3cf-a619-fb696bb62db4">
+      <Execution id="99d686b4-e1a4-4d06-af90-7d773cd5f4e3" />
+      <TestMethod codeBase="D:\project\ALKAROS\evidence\V1-RMD-754\artifacts\bin\ALKAROS.Host.Experience.Billing.Tests\debug\ALKAROS.Host.Experience.Billing.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests" name="ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="706821c0-6370-a3cf-a619-fb696bb62db4" executionId="99d686b4-e1a4-4d06-af90-7d773cd5f4e3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="1" executed="1" passed="1" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.20]   Discovering: ALKAROS.Host.Experience.Billing.Tests&#xD;
+[xUnit.net 00:00:00.25]   Discovered:  ALKAROS.Host.Experience.Billing.Tests&#xD;
+[xUnit.net 00:00:00.26]   Starting:    ALKAROS.Host.Experience.Billing.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:58265&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\project\ALKAROS\evidence\V1-RMD-754\artifacts\bin\ALKAROS.Host.Experience.Billing.Tests\debug&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58265/api/v1/terminals/dbecf4e6-6bae-4a0a-b2ca-a69713921fe4/billing/bills/62824703-9cd0-4e4d-8129-c1aee2a2acea/tip - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyBillTipResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/tip'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58265/api/v1/terminals/dbecf4e6-6bae-4a0a-b2ca-a69713921fe4/billing/bills/62824703-9cd0-4e4d-8129-c1aee2a2acea/tip - 200 - application/json;+charset=utf-8 344.8080ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:58265/api/v1/terminals/dbecf4e6-6bae-4a0a-b2ca-a69713921fe4/billing/bills/62824703-9cd0-4e4d-8129-c1aee2a2acea/discount - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ApplyBillDiscountResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/discount'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:58265/api/v1/terminals/dbecf4e6-6bae-4a0a-b2ca-a69713921fe4/billing/bills/62824703-9cd0-4e4d-8129-c1aee2a2acea/discount - 200 - application/json;+charset=utf-8 38.7772ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:58265/api/v1/terminals/dbecf4e6-6bae-4a0a-b2ca-a69713921fe4/billing/bills/62824703-9cd0-4e4d-8129-c1aee2a2acea/split-design - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'BillSplitDesignDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:58265/api/v1/terminals/dbecf4e6-6bae-4a0a-b2ca-a69713921fe4/billing/bills/62824703-9cd0-4e4d-8129-c1aee2a2acea/split-design - 200 - application/json;+charset=utf-8 21.9835ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 PUT http://127.0.0.1:58265/api/v1/terminals/dbecf4e6-6bae-4a0a-b2ca-a69713921fe4/billing/bills/62824703-9cd0-4e4d-8129-c1aee2a2acea/split-design/items - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/items'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'BillingSplitErrorEnvelope' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: PUT /api/v1/terminals/{terminalId:guid}/billing/bills/{billId:guid}/split-design/items'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 PUT http://127.0.0.1:58265/api/v1/terminals/dbecf4e6-6bae-4a0a-b2ca-a69713921fe4/billing/bills/62824703-9cd0-4e4d-8129-c1aee2a2acea/split-design/items - 409 - application/json;+charset=utf-8 26.3191ms&#xD;
+fail: Microsoft.Extensions.Hosting.Internal.Host[9]&#xD;
+      BackgroundService failed&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 644&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.AllocationIdsAsync(Guid billId) in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1879&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Threading.Tasks.Task`1.TrySetResult(TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.MoveNext()&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder.SetResult()&#xD;
+         at Npgsql.Internal.NpgsqlReadBuffer.&lt;Ensure&gt;g__EnsureLong|55_0(NpgsqlReadBuffer buffer, Int32 count, Boolean async, Boolean readingNotifications)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Net.Sockets.SocketAsyncEventArgs.&lt;&gt;c.&lt;.cctor&gt;b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)&#xD;
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()&#xD;
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()&#xD;
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.Experience.Billing.BillClosureSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\project\ALKAROS\src\Host\Experience\Billing\BillClosureSweeper.cs:line 96&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+crit: Microsoft.Extensions.Hosting.Internal.Host[10]&#xD;
+      The HostOptions.BackgroundServiceExceptionBehavior is configured to StopHost. A BackgroundService has thrown an unhandled exception, and the IHost instance is stopping. To avoid this behavior, configure this to Ignore; however the BackgroundService will not be restarted.&#xD;
+      System.OperationCanceledException: The operation was canceled.&#xD;
+         at System.Threading.PeriodicTimer.State.Signal(Boolean stopping, CancellationToken cancellationToken)&#xD;
+         at System.Threading.CancellationTokenSource.Invoke(Delegate d, Object state, CancellationTokenSource source)&#xD;
+         at System.Threading.CancellationTokenSource.ExecuteCallbackHandlers(Boolean throwOnFirstException)&#xD;
+         at Microsoft.Extensions.DependencyInjection.ServiceLookup.ServiceProviderEngineScope.DisposeAsync()&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.&lt;DisposeAsync&gt;g__DisposeAsync|21_0(Object o)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at System.Runtime.CompilerServices.AsyncMethodBuilderCore.Start[TStateMachine](TStateMachine&amp; stateMachine)&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.DisposeAsync()&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 644&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.AllocationIdsAsync(Guid billId) in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1879&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at Npgsql.NpgsqlDataSourceCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at System.Threading.Tasks.AwaitTaskContinuation.RunOrScheduleAction(IAsyncStateMachineBox box, Boolean allowInlining)&#xD;
+         at System.Threading.Tasks.Task.RunContinuations(Object continuationObject)&#xD;
+         at System.Threading.Tasks.Task`1.TrySetResult(TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetExistingTaskResult(Task`1 task, TResult result)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.SetResult(TResult result)&#xD;
+         at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext(Thread threadPoolThread)&#xD;
+         at System.Runtime.CompilerServices.AsyncTaskMethodBuilder`1.AsyncStateMachineBox`1.MoveNext()&#xD;
+         at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.MoveNext()&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder.SetResult()&#xD;
+         at Npgsql.Internal.NpgsqlReadBuffer.&lt;Ensure&gt;g__EnsureLong|55_0(NpgsqlReadBuffer buffer, Int32 count, Boolean async, Boolean readingNotifications)&#xD;
+         at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.ExecutionContextCallback(Object s)&#xD;
+         at System.Threading.ExecutionContext.RunInternal(ExecutionContext executionContext, ContextCallback callback, Object state)&#xD;
+         at System.Net.Sockets.SocketAsyncEventArgs.&lt;&gt;c.&lt;.cctor&gt;b__173_0(UInt32 errorCode, UInt32 numBytes, NativeOverlapped* nativeOverlapped)&#xD;
+         at System.Threading.ThreadPoolTypedWorkItemQueue`2.System.Threading.IThreadPoolWorkItem.Execute()&#xD;
+         at System.Threading.ThreadPoolWorkQueue.Dispatch()&#xD;
+         at System.Threading.PortableThreadPool.WorkerThread.WorkerThreadStart()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at System.Threading.PeriodicTimer.State.System.Threading.Tasks.Sources.IValueTaskSource&lt;System.Boolean&gt;.GetResult(Int16 token)&#xD;
+         at ALKAROS.Host.Experience.Billing.BillClosureSweeper.ExecuteAsync(CancellationToken stoppingToken) in D:\project\ALKAROS\src\Host\Experience\Billing\BillClosureSweeper.cs:line 96&#xD;
+         at Microsoft.Extensions.Hosting.Internal.Host.TryExecuteBackgroundServiceAsync(BackgroundService backgroundService)&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application is shutting down...&#xD;
+[xUnit.net 00:00:04.20]   Finished:    ALKAROS.Host.Experience.Billing.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

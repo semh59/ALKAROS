@@ -598,6 +598,52 @@ public sealed class BillingSplitHttpTests : IAsyncLifetime
         Assert.Equal(saved.Allocations.Select(allocation => allocation.AllocationId).Order(), (await _database.AllocationIdsAsync(seeded.BillId)).Order());
     }
 
+    [Fact]
+    public async Task ATipAndAnEqualDiscountThatKeepThePayableButLowerTheTaxRefuseAnItemSplitWith409()
+    {
+        // The tip carries no tax and the discount does, so the payable is unchanged while the adjusted tax is lower.
+        // An item split sums the items' own tax, which no longer equals what is owed: refused up front, not as a 400.
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedSessionWithPermissionsAsync(
+            terminalId, "supervisor", "bills.discount", "bills.split");
+        var seeded = await _database.SeedBillAsync();
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var path = Path(terminalId, seeded.BillId);
+        var billPath = $"/api/v1/terminals/{terminalId:D}/billing/bills/{seeded.BillId:D}";
+
+        using (var tip = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, billPath + "/tip", cookie, new ApplyBillTipRequestV1(Guid.NewGuid().ToString(), 10m))))
+            Assert.Equal(HttpStatusCode.OK, tip.StatusCode);
+        using (var discount = await client.SendAsync(JsonRequest(
+            HttpMethod.Post, billPath + "/discount", cookie,
+            new ApplyBillDiscountRequestV1(Guid.NewGuid().ToString(), "FixedAmount", 10m, "PromotionalOffer"))))
+            Assert.Equal(HttpStatusCode.OK, discount.StatusCode);
+
+        BillSplitDesignDto design;
+        using (var get = await client.SendAsync(Request(HttpMethod.Get, path, cookie)))
+            design = (await get.Content.ReadFromJsonAsync<BillSplitDesignDto>())!;
+        Assert.Equal(250m, design.PayableAmount);
+        Assert.True(design.TaxTotal < design.Items.Sum(item => item.TaxAmount));
+
+        using var items = await client.SendAsync(JsonRequest(
+            HttpMethod.Put,
+            path + "/items",
+            cookie,
+            new SaveItemSplitRequest(
+                design.BillRowVersion,
+                [],
+                [
+                    new ItemSplitTargetRequest(new SplitOwnerRequest("Seat", seeded.SeatId), seeded.FirstItemId, 1m),
+                    new ItemSplitTargetRequest(new SplitOwnerRequest("Person", Guid.NewGuid()), seeded.SecondItemId, 1m),
+                ])));
+        Assert.Equal(HttpStatusCode.Conflict, items.StatusCode);
+        Assert.Equal(
+            "ITEM_SPLIT_ON_ADJUSTED_BILL",
+            (await items.Content.ReadFromJsonAsync<BillingSplitErrorEnvelope>())!.Error.Code);
+        Assert.Empty(await _database.AllocationIdsAsync(seeded.BillId));
+    }
+
     /// <summary>
     /// V1-RMD-237: IAuditEventStore existed since V1-OPS-001 with zero real
     /// callers anywhere in the codebase — a discounted bill left no audit

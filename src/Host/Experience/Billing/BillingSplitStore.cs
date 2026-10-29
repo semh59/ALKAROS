@@ -543,7 +543,8 @@ public sealed class BillingSplitStore
         // fee/tip-adjusted) bill no longer add up to what is owed. Spreading an adjustment over items is a product
         // decision not taken yet, so such a bill is split by amount, person or custom split instead.
         var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);
-        if (adjustment is not null && adjustment.AdjustedPayableAmount != bill.PayableAmount)
+        if (adjustment is not null
+            && (adjustment.AdjustedPayableAmount != bill.PayableAmount || adjustment.AdjustedTaxTotal != bill.TaxTotal))
             throw new SplitItemsOnAdjustedBillException(billId);
         var allocations = SplitEngine.CreateItemSplit(
             bill,

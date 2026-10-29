@@ -1,0 +1,38 @@
+[
+  {
+    "name": "red-before-fix",
+    "exit_code": 1,
+    "sha256": "b9fb5d28dd9bc4ff6ef212cd9e98d327a6c5bd6afa5a493c0243788d1c095c33",
+    "summary": [
+      "Expected: Conflict",
+      "Actual:   BadRequest",
+      "Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)"
+    ]
+  },
+  {
+    "name": "green-after-fix",
+    "exit_code": 0,
+    "sha256": "845bad850b22470742796b27e2a6424e3ab2fccf985e3caacb99c2107166c191",
+    "summary": [
+      "Başarılı!  - Başarısız:     0, Başarılı:     1, Atlanan:     0, Toplam:     1, Süre: 913 ms - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)"
+    ]
+  },
+  {
+    "name": "mutation-tax-condition-removed",
+    "exit_code": 1,
+    "sha256": "1e6a5eeb84e65ee393d9c2e2e6f32ff30441862a3c4e2325059e8abb1b698487",
+    "summary": [
+      "Expected: Conflict",
+      "Actual:   BadRequest",
+      "Başarısız! - Başarısız:     1, Başarılı:     0, Atlanan:     0, Toplam:     1, Süre: 1 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)"
+    ]
+  },
+  {
+    "name": "full-suite",
+    "exit_code": 0,
+    "sha256": "5cb121398ee84e4db883b30b77ae3cd999ae63acc5f0d42fd796c117392a0eb6",
+    "summary": [
+      "Başarılı!  - Başarısız:     0, Başarılı:   109, Atlanan:     0, Toplam:   109, Süre: 5 m 5 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)"
+    ]
+  }
+]
