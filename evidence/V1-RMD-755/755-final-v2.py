@@ -16,10 +16,25 @@ runner_codes=[]
 for n,p in zip(commands,procs):
     code=p.wait();runner_codes.append(code);print(json.dumps({'script':n,'exit_code':code}),flush=True)
 for h in handles:h.close()
+# Read helper JSON results to ensure inner failures are caught even if subprocess exit was 0.
 allcodes=[]
-for name in ['755-build-final.py','755-verify-evidence.py','755-gates.py']:
+for name,results_file in [('755-build-final.py',out/'build-results.json'),('755-verify-evidence.py',None),('755-gates.py',out/'gate-results.json')]:
     p=subprocess.run([sys.executable,'-B',str(scratch/name)],cwd=root);allcodes.append(p.returncode)
     print(json.dumps({'script':name,'exit_code':p.returncode}),flush=True)
+    if results_file and results_file.exists():
+        data=json.loads(results_file.read_text(encoding='utf-8'))
+        if name=='755-build-final.py':
+            import re
+            for row in data:
+                if row['exit_code']!=0 or not re.search(r'^\s*0 (?:Warning\(s\)|Uyarı)\s*$', '\n'.join(row['summary']), re.M) or not re.search(r'^\s*0 (?:Error\(s\)|Hata)\s*$', '\n'.join(row['summary']), re.M):
+                    allcodes.append(1);break
+        elif name=='755-gates.py':
+            for row in data:
+                if row['exit_code']!=0:
+                    allcodes.append(1);break
+            # Also check regression preservation if present in same file
+            if 'regression_preserved' in data and not data['regression_preserved']:
+                allcodes.append(1)
 # Repeated actual DB regression after rebuilding current sources, never stale assembly.
 conf=json.loads(subprocess.check_output(['docker','inspect','alkaros-test-pg'],text=True))[0];settings=dict(s.split('=',1) for s in conf['Config']['Env'] if '=' in s)
 dotnet='C:/Users/semih/.dotnet/dotnet.exe';env=os.environ.copy();env['PATH']=str(Path(dotnet).parent)+os.pathsep+env['PATH'];env['DOTNET_ROOT']=str(Path(dotnet).parent)
