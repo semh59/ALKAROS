@@ -1,0 +1,50 @@
+{
+  "guard_sha256": "d917d8fd1155c752326972fadadc6358244f97deda6d26242f9514c3c7be2b44",
+  "green": [
+    0,
+    "{\"result\": \"PASS\", \"checks\": [\"current-note\", \"historical-contract-preserved\", \"engine-adjustment-null-path\", \"engine-tax-null-path\", \"store-handoff\", \"item-split-guard\", \"endpoint-409-mapping\"], \"tier\": \"Document acceptance and source-shape guard only; independent semantic review and runtime tests required\"}"
+  ],
+  "original_document": [
+    1,
+    "{\"result\": \"FAIL\", \"error\": \"Current-flow note missing or altered\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}"
+  ],
+  "mutations": [
+    {
+      "file": "src/Host/Experience/Billing/BillingSplitStore.cs",
+      "removed": "var adjustment = await LoadAdjustmentAsync(bill, cancellationToken);\n        var",
+      "exit_code": 1,
+      "output": "{\"result\": \"FAIL\", \"error\": \"SaveCustomAsync does not load the adjustment\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}",
+      "killed": true
+    },
+    {
+      "file": "src/Host/Experience/Billing/BillingSplitStore.cs",
+      "removed": "            actorId,\n            adjustment);\n        return await ReplaceAsync(",
+      "exit_code": 1,
+      "output": "{\"result\": \"FAIL\", \"error\": \"SaveAmountsAsync does not pass the adjustment to CreateAmountSplit\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}",
+      "killed": true
+    },
+    {
+      "file": "src/Host/Experience/Billing/BillingSplitStore.cs",
+      "removed": "if (adjustment is not null && adjustment.AdjustedPayableAmount != bill.PayableAm",
+      "exit_code": 1,
+      "output": "{\"result\": \"FAIL\", \"error\": \"SaveItemsAsync guard missing or after the item split\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}",
+      "killed": true
+    },
+    {
+      "file": "src/Modules/Billing/SplitDesign/SplitEngine.cs",
+      "removed": "var totalTax = adjustment?.AdjustedTaxTotal ?? bill.TaxTotal;",
+      "exit_code": 1,
+      "output": "{\"result\": \"FAIL\", \"error\": \"CreateEqualSplit adjusted/null total path missing: var totalTax = adjustment?.AdjustedTaxTotal ?? bill.TaxTotal;\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}",
+      "killed": true
+    },
+    {
+      "file": "src/Host/Experience/Billing/BillingSplitApplication.cs",
+      "removed": "SplitItemsOnAdjustedBillException => (409, \"ITEM_SPLIT_ON_ADJUSTED_BILL\",",
+      "exit_code": 1,
+      "output": "{\"result\": \"FAIL\", \"error\": \"Item split rejection is not mapped to 409 ITEM_SPLIT_ON_ADJUSTED_BILL\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}",
+      "killed": true
+    }
+  ],
+  "all_mutants_killed": true,
+  "src_status_after_restore": ""
+}

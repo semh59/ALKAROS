@@ -1,0 +1,32 @@
+{
+  "failed_attempt": {
+    "command": "dotnet test tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj --no-build --filter FullyQualifiedName~BillingSplit (no ALKAROS_TEST_PG_* environment)",
+    "exit_code": 1,
+    "trx": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\failed-attempt-no-db-env\\billing-split-tests.trx",
+    "trx_sha256": "2c1f51814d175faf6d87aab3093e9cbed010db4b15afc70a04a2433049a4e878",
+    "counters": "<Counters total=\"47\" executed=\"47\" passed=\"5\" failed=\"42\" error=\"0\" timeout=\"0\" aborted=\"0\" inconclusive=\"0\" passedButRunAborted=\"0\" notRunnable=\"0\" notExecuted=\"0\" disconnected=\"0\" warning=\"0\" completed=\"0\" inProgress=\"0\" pending=\"0\" />",
+    "cause": "Fixture defaulted to 127.0.0.1:5432; test PostgreSQL listens on 55432. Environment error, not a product defect. Superseded by host-billing-tests (108/108, exit 0)."
+  },
+  "review_b_findings_resolution": {
+    "guard_slice_and_handoff": "Fixed: exact method bodies, adjustment argument regex, tax line, guard-before-split order, 409 mapping. 5/5 mutants killed (guard-mutation-results.json).",
+    "failed_attempt_unrecorded": "Fixed: moved from accidental nested path and recorded here."
+  },
+  "new_test_gap_defects_outside_scope": [
+    {
+      "id": "F0908-TG1",
+      "gap": "SplitEngine.CreateAmountSplit and CreateCustomSplit have no test passing an AdjustedBillSummary; only CreateEqualSplit does.",
+      "evidence": "tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs:122-133"
+    },
+    {
+      "id": "F0908-TG2",
+      "gap": "No Host HTTP test saves an equal or custom split on a discounted bill and asserts discounted totals; only amounts and item rejection are covered.",
+      "evidence": "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:541-598, 1150-1163"
+    },
+    {
+      "id": "F0908-TG3",
+      "gap": "No test for an adjustment netting to the original payable, where item split must still be allowed.",
+      "evidence": "src/Host/Experience/Billing/BillingSplitStore.cs:546"
+    }
+  ],
+  "scope_decision": "V1-RMD-752 forbids application test changes (task Out of scope). Acceptance item 3: new test defects get separate ownership and keep packet 02 open."
+}

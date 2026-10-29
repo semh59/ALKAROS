@@ -1,0 +1,1 @@
+{"result": "PASS", "checks": ["current-note", "historical-contract-preserved", "engine-adjustment-null-path", "engine-tax-null-path", "store-handoff", "item-split-guard", "endpoint-409-mapping"], "tier": "Document acceptance and source-shape guard only; independent semantic review and runtime tests required"}

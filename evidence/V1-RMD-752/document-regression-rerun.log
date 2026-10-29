@@ -1,0 +1,1 @@
+{"result": "FAIL", "error": "Current-flow note missing or altered", "tier": "Document acceptance and source-shape guard only; not runtime proof"}

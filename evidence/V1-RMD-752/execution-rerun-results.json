@@ -1,0 +1,76 @@
+{
+  "reason": "First plan run failed SECTION_ORDER on a level-2 note heading; note changed to level 3 and guard pinned to baseline commit 114b8da4. Runtime suites (SplitDesign 32/32, Host Billing 108/108) ran before the heading-only change; no source file changed.",
+  "results": [
+    {
+      "name": "document-green-rerun",
+      "command": [
+        "python",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\verify_document.py"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\document-green-rerun.log",
+      "sha256": "5828ceaef3c8e7331e0b6cfb4e8d8365f64843b1487b3ffd9ea4334234eb10fe",
+      "summary": [
+        "{\"result\": \"PASS\", \"checks\": [\"current-note\", \"historical-contract-preserved\", \"engine-adjustment-null-path\", \"engine-tax-null-path\", \"store-handoff\", \"item-split-guard\", \"endpoint-409-mapping\"], \"tier\": \"Document acceptance and source-shape guard only; independent semantic review and runtime tests required\"}"
+      ]
+    },
+    {
+      "name": "document-regression-rerun",
+      "command": [
+        "python",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\verify_document.py",
+        "--document",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\original-document.md"
+      ],
+      "exit_code": 1,
+      "expected_exit": 1,
+      "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\document-regression-rerun.log",
+      "sha256": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff",
+      "summary": [
+        "{\"result\": \"FAIL\", \"error\": \"Current-flow note missing or altered\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}"
+      ]
+    },
+    {
+      "name": "plan-rerun",
+      "command": [
+        "python",
+        "-B",
+        "tools/plan-audit/plan_audit_tool.py",
+        "validate"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\plan-rerun.log",
+      "sha256": "acebbbb8470edcbcc4f8cd1ff8fe8f06b3a692a5eb292ffb1497b6da80c119c1",
+      "summary": [
+        "Validation errors: 0",
+        "Validation warnings: 0"
+      ]
+    },
+    {
+      "name": "consistency-rerun",
+      "command": [
+        "python",
+        "-B",
+        "tools/consistency-audit/consistency_audit.py"
+      ],
+      "exit_code": 0,
+      "expected_exit": 0,
+      "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\consistency-rerun.log",
+      "sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+      "summary": []
+    }
+  ],
+  "hashes": {
+    "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md": "70bc39a83e19f375c4addba377c12631718bf93ea234d24ef412d07d1fbde75c",
+    "evidence/V1-RMD-752/verify_document.py": "d917d8fd1155c752326972fadadc6358244f97deda6d26242f9514c3c7be2b44",
+    "evidence/V1-RMD-752/original-document.md": "e865a9cad3e51c20845f16d99d332c0dcd15b6048290258b08c16c6398e44805",
+    "src/Modules/Billing/SplitDesign/SplitEngine.cs": "dbf57baa3000c671462cd3cf608482674bbaf3df0bc4c82d87a3e50536275c1b",
+    "src/Host/Experience/Billing/BillingSplitStore.cs": "b82a637d28432edd54d37195f5d38950a90c92a68c5d79aa294ac76c3b5db3d4",
+    "src/Host/Experience/Billing/BillingSplitApplication.cs": "4f7805200d087fa41c9a0e693913ab6000277a3b48193fb5af51665a502bc2de"
+  },
+  "all_expected": true
+}

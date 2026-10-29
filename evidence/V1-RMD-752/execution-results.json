@@ -1,0 +1,105 @@
+[
+  {
+    "name": "document-green",
+    "command": [
+      "python",
+      "-B",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\verify_document.py"
+    ],
+    "exit_code": 0,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\document-green.log",
+    "sha256": "1034e792563c1db7c5fa7397a5494cb300406ea7f957f8ce40ee2ad1a540e610",
+    "summary": [
+      "{\"result\": \"PASS\", \"checks\": [\"current-note\", \"historical-contract-preserved\", \"engine-adjustment-null-path\", \"store-handoff\", \"endpoint-split-guard\"], \"tier\": \"Document acceptance and source-shape guard only; independent semantic review and runtime tests required\"}"
+    ]
+  },
+  {
+    "name": "document-regression",
+    "command": [
+      "python",
+      "-B",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\verify_document.py",
+      "--document",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\original-document.md"
+    ],
+    "exit_code": 1,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\document-regression.log",
+    "sha256": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff",
+    "summary": [
+      "{\"result\": \"FAIL\", \"error\": \"Current-flow note missing or altered\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}"
+    ]
+  },
+  {
+    "name": "plan",
+    "command": [
+      "python",
+      "-B",
+      "tools/plan-audit/plan_audit_tool.py",
+      "validate"
+    ],
+    "exit_code": 1,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\plan.log",
+    "sha256": "8d431f5fa5837c75857db024eba97742ea2d5894f5db6712b1754f952c3e7839",
+    "summary": [
+      "Validation errors: 1",
+      "SECTION_ORDER V1-RMD-103: ['Güncellik notu (V1-RMD-752 / F0908)', 'Goal', 'Owned surface', 'In scope', 'Dependencies', 'Acceptance evidence', 'Handoff']",
+      "Validation warnings: 0"
+    ]
+  },
+  {
+    "name": "consistency",
+    "command": [
+      "python",
+      "-B",
+      "tools/consistency-audit/consistency_audit.py"
+    ],
+    "exit_code": 0,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\consistency.log",
+    "sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+    "summary": []
+  },
+  {
+    "name": "splitdesign-tests",
+    "command": [
+      "C:\\Users\\semih\\.dotnet\\dotnet.exe",
+      "test",
+      "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj",
+      "-c",
+      "Debug",
+      "--artifacts-path",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\artifacts",
+      "--results-directory",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\splitdesign-results",
+      "--logger",
+      "trx"
+    ],
+    "exit_code": 0,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\splitdesign-tests.log",
+    "sha256": "d2b0d7d385e5719dc032afcd36c61d0a60154e61ad470d5bc8d5fa216310618a",
+    "summary": [
+      "Başarılı!  - Başarısız:     0, Başarılı:    32, Atlanan:     0, Toplam:    32, Süre: 1 s - ALKAROS.Billing.SplitDesign.Tests.dll (net8.0)"
+    ]
+  },
+  {
+    "name": "host-billing-tests",
+    "command": [
+      "C:\\Users\\semih\\.dotnet\\dotnet.exe",
+      "test",
+      "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+      "-c",
+      "Debug",
+      "--artifacts-path",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\artifacts",
+      "--results-directory",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\host-billing-results",
+      "--logger",
+      "trx"
+    ],
+    "exit_code": 0,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-752\\host-billing-tests.log",
+    "sha256": "77b8f572f9410bff842069e3a465cc1da6d7af09a3da1d5edf12617fc6666d71",
+    "summary": [
+      "Başarılı!  - Başarısız:     0, Başarılı:   108, Atlanan:     0, Toplam:   108, Süre: 5 m 5 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)"
+    ]
+  }
+]
