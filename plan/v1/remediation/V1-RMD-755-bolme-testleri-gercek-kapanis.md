@@ -1,7 +1,7 @@
 # V1-RMD-755 - Hesap bölme testlerinin gerçek derlemesini ve kapanış kanıtını tamamla
 
 - Task ID: V1-RMD-755
-- Status: InProgress
+- Status: Done
 - Assignee: hermes-session-20261028_015834_6948d340
 - Work type: validation
 - Surface state: Existing
