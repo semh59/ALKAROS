@@ -1,7 +1,7 @@
 # V1-RMD-753 - SplitEngine ve Host Billing eksik test kapsamını kapat (F0908 test boşlukları)
 
 - Task ID: V1-RMD-753
-- Status: Blocked
+- Status: Done
 - Assignee: hermes-session-20261028_015834_6948d340
 - Work type: test
 - Surface state: Existing
