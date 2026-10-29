@@ -45,10 +45,6 @@ Yeni bir politika veya dağıtım mantığı eklenmez; sadece mevcut davranışl
 - V1-RMD-298
 - V1-RMD-413
 
-## Blocker
-
-- Yeni Host testi ItemSplitAllowedOnAdjustedBillWhenNetAdjustmentIsZero gerçek üretim kusuru buldu (F0908-PD1, evidence/V1-RMD-753/production-defect-found.md). Düzeltme V1-RMD-754'te; 753 test değişiklikleri git stash'te bekler, Görev ancak V1-RMD-754 Done olduktan sonra açılır.
-
 ## Acceptance evidence
 
 1. `tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj` — 0 exit, TRX evidence, yeni testler isimleri `*Adjusted*` içermeli.
