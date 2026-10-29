@@ -1,8 +1,8 @@
 # V1-RMD-754 - Düzeltilmiş vergisi değişen hesapta kalem bölmeyi açık 409 ile reddet
 
 - Task ID: V1-RMD-754
-- Status: Planned
-- Assignee: TBD
+- Status: InProgress
+- Assignee: hermes-session-20261028_015834_6948d340
 - Work type: remediation
 - Surface state: Existing
 
