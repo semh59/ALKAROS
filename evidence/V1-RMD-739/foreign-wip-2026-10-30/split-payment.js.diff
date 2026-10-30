@@ -1,0 +1,73 @@
+diff --git a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+index 3fdd8ab2..2e357b96 100644
+--- a/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
++++ b/src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js
+@@ -65,11 +65,14 @@
+     tipBusy: false,
+     tipError: null,
+     // V1-RMD-314 (finding K3): same retry-reuses-the-same-key fix as tenderIdempotencyKey above, for the
+-    // discount/tip apply requests.
++    // discount/tip apply requests. V1-RMD-756: each key is bound to the body it was minted for, so an edited
++    // form after a network failure gets a new key instead of replaying the first attempt's server record.
+     discountIdempotencyKey: null,
++    discountRequestSignature: null,
+     refundRequestKey: null,
+     refundRequestSignature: null,
+     tipIdempotencyKey: null,
++    tipRequestSignature: null,
+     // V1-RMD-443: "Hesaba yaz" - the customer whose receivable account this bill (or part of it) is written to.
+     customerSearch: '',
+     customers: null,
+@@ -483,18 +486,19 @@
+     state.discountError = null;
+     state.discountNotice = null;
+     render();
+-    // V1-RMD-314: reuse the in-flight key across a retry - see tenderIdempotencyKey's own doc comment.
+-    if (!state.discountIdempotencyKey) state.discountIdempotencyKey = crypto.randomUUID();
+-    api(billBase() + '/discount', {
+-      method: 'POST',
+-      body: {
+-        IdempotencyKey: state.discountIdempotencyKey,
+-        CalculationType: state.discountCalcType,
+-        Value: value,
+-        ReasonCode: state.discountReason,
+-        Notes: state.discountNoteDraft || null,
+-      },
+-    }).then(function (result) {
++    var discountBody = {
++      CalculationType: state.discountCalcType,
++      Value: value,
++      ReasonCode: state.discountReason,
++      Notes: state.discountNoteDraft || null,
++    };
++    var discountSignature = JSON.stringify(discountBody);
++    if (!state.discountIdempotencyKey || state.discountRequestSignature !== discountSignature) {
++      state.discountIdempotencyKey = crypto.randomUUID();
++      state.discountRequestSignature = discountSignature;
++    }
++    discountBody.IdempotencyKey = state.discountIdempotencyKey;
++    api(billBase() + '/discount', { method: 'POST', body: discountBody }).then(function (result) {
+       state.discountBusy = false;
+       // V1-RMD-314: any real server response (success OR a definitive rejection) means this key has
+       // already been consumed/decided - only a network failure (the catch below) keeps it for a retry.
+@@ -542,12 +546,14 @@
+     state.tipBusy = true;
+     state.tipError = null;
+     render();
+-    // V1-RMD-314: reuse the in-flight key across a retry - see tenderIdempotencyKey's own doc comment.
+-    if (!state.tipIdempotencyKey) state.tipIdempotencyKey = crypto.randomUUID();
+-    api(billBase() + '/tip', {
+-      method: 'POST',
+-      body: { IdempotencyKey: state.tipIdempotencyKey, Amount: amount, Notes: state.tipNoteDraft || null },
+-    }).then(function (result) {
++    var tipBody = { Amount: amount, Notes: state.tipNoteDraft || null };
++    var tipSignature = JSON.stringify(tipBody);
++    if (!state.tipIdempotencyKey || state.tipRequestSignature !== tipSignature) {
++      state.tipIdempotencyKey = crypto.randomUUID();
++      state.tipRequestSignature = tipSignature;
++    }
++    tipBody.IdempotencyKey = state.tipIdempotencyKey;
++    api(billBase() + '/tip', { method: 'POST', body: tipBody }).then(function (result) {
+       state.tipBusy = false;
+       // V1-RMD-314: any real server response means this key has already been consumed/decided - only a
+       // network failure (the catch below) keeps it for a retry.
