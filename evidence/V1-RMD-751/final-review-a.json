@@ -1,0 +1,280 @@
+{
+  "task_id": "V1-RMD-751",
+  "review": "independent post-fix audit A",
+  "verdict": "PASS",
+  "verdict_scope": "Yalnız F0388 belge düzeltmesi, tarihçe koruması ve güncel kodla semantik uyum. Görev kapanışı veya tüm kabul kapıları için PASS değildir.",
+  "task_closure_authorized": false,
+  "utc": "2026-10-29T15:48:12.658042+00:00",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "reviewed_revision": "### Güncellik notu; önceki ## sürümü ve eski hashler bu raporun PASS kapsamı dışındadır.",
+  "findings": [
+    {
+      "id": "A-01",
+      "severity": "info",
+      "verdict": "PASS",
+      "subject": "F0388 güncellik kusuru giderilmiş",
+      "detail": "Not, endpoint-sonrası ayrı audit anlatımını açıkça tarihsel kılar. Endpoint auditEvents ve TraceIdentifier bağımlılıklarını store metoduna geçirir; sonrasında ayrı AppendAsync yoktur. DI gerçek PostgresAuditEventStore kaydeder.",
+      "evidence": [
+        "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:9-14",
+        "src/Host/Experience/Billing/BillingSplitApplication.cs:92-95",
+        "src/Host/Experience/Billing/BillingSplitApplication.cs:158-241",
+        "evidence/V1-RMD-739/findings/low-A.md:45"
+      ]
+    },
+    {
+      "id": "A-02",
+      "severity": "info",
+      "verdict": "PASS",
+      "subject": "Transaction iddiası gerçek writer zinciriyle uyumlu",
+      "detail": "ApplyDiscountAsync connection/lockTransaction açar; AddAsync, row-version UPDATE ve AppendAsync aynı connection/lockTransaction alır; yeni indirim commit çağrısı audit await sonrasındadır. Adjustment overload NpgsqlCommand içine verilen transaction geçirir. PostgresAuditEventStore transaction overload InsertAsync üzerinden AuditEventWriter.WriteAsync çağırır; writer cmd.Transaction atayıp gerçek INSERT await eder. Writer kendi commit veya ayrı connection açmaz. Bu statik akış doğrulamasıdır.",
+      "evidence": [
+        "src/Host/Experience/Billing/BillingSplitStore.cs:82-89",
+        "src/Host/Experience/Billing/BillingSplitStore.cs:166-194",
+        "src/Modules/Billing/Adjustments/PostgresBillAdjustmentRepository.cs:89-121",
+        "src/Modules/Audit/EventStore/PostgresAuditEventStore.cs:35-42",
+        "src/Modules/Audit/EventStore/PostgresAuditEventStore.cs:60-62",
+        "src/Modules/Audit/EventStore/AuditEventWriter.cs:15-66",
+        "src/Modules/Audit/EventStore/IAuditEventStore.cs:8-14"
+      ]
+    },
+    {
+      "id": "A-03",
+      "severity": "info",
+      "verdict": "PASS",
+      "subject": "Replay ve void/comp kapsam sınırı doğru",
+      "detail": "IdempotencyKey eşleşmesinde SameDiscount body karşılaştırması yapılır; uyumsuz gövde exception, uyumlu gövde commit+return yoludur ve yeni adjustment/audit yazımına ulaşmaz. Not yalnız eşleşen replay der; eski snapshot özeti geri döner gibi yanlış iddia taşımaz. void/comp kapsam dışı ifadesi tarihsel V1-RMD-237 göreviyle sınırlıdır; bu komutların bugünkü sistemde auditsiz olduğu iddia edilmez. Pending/Refused endpoint yolları store ApplyDiscountAsync çağrısına ulaşmaz.",
+      "evidence": [
+        "src/Host/Experience/Billing/BillingSplitStore.cs:95-119",
+        "src/Host/Experience/Billing/BillingSplitStore.cs:260-266",
+        "src/Host/Experience/Billing/BillingSplitApplication.cs:207-225",
+        "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:14",
+        "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:54-61"
+      ]
+    },
+    {
+      "id": "A-04",
+      "severity": "info",
+      "verdict": "PASS",
+      "subject": "Tüm tarihsel metin byte düzeyinde korunmuş",
+      "detail": "Yalnız yeni 778-byte not çıkarıldığında kalan 3244 byte, original-document.md ve git HEAD eski hedef blobuyla birebir eşittir. Başlık, metadata, Goal, Owned surface, In scope, Out of scope, Dependencies, Acceptance evidence ve Handoff dahil tüm eski gövde korunmuştur.",
+      "checks": {
+        "historical_bytes_preserved_vs_original": true,
+        "historical_text_preserved_vs_original": true,
+        "original_bytes_equal_head": true,
+        "original_text_equal_head": true,
+        "target_minus_note_bytes_equal_head": true,
+        "target_minus_note_text_equal_head": true,
+        "original_bytes": 3244,
+        "target_bytes": 4022,
+        "note_bytes": 778,
+        "original_sha256": "c3284e99ba6a827c1f1c0cb0c26230276391a45ae8e6fab2bda662c90eebb16e",
+        "target_minus_note_sha256": "c3284e99ba6a827c1f1c0cb0c26230276391a45ae8e6fab2bda662c90eebb16e",
+        "head_document_sha256": "c3284e99ba6a827c1f1c0cb0c26230276391a45ae8e6fab2bda662c90eebb16e",
+        "red_exit_expected_1": true,
+        "green_exit_expected_0": true
+      }
+    },
+    {
+      "id": "A-05",
+      "severity": "info",
+      "verdict": "PASS",
+      "subject": "Güncel guard bağımsız tekrar: eski exit1, düzelmiş exit0",
+      "detail": "verify_document.py tam NOTE ve original.replace eşitliğini, source-shape sırasını ve endpoint handoffunu denetler. Güncel ### sürümünden yeniden çalıştırıldı. Eski belge Current-flow note missing or altered hatasıyla exit1; güncel hedef exit0.",
+      "evidence": [
+        "evidence/V1-RMD-751/verify_document.py:9-35"
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "exit_code": 0,
+      "stdout": "8c03e79bdc5263f5a5a26a524693403012d871d2\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "show",
+        "HEAD:plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md"
+      ],
+      "exit_code": 0,
+      "stdout": "# V1-RMD-237 - Wire a real audit event into the bill discount application path\n\n- Task ID: V1-RMD-237\n- Status: Done\n- Assignee: Claude Sonnet 5\n- Work type: implementation\n- Surface state: Existing\n\n## Goal\n\n`V1-OPS-001`'in kendi Goal'ı (\"V1 critical command'ları için immutable\naudit event üretmek\") ve In scope'u (\"temel V1 komut entegrasyonu\") hiçbir\nzaman teslim edilmedi: `IAuditEventStore.AppendAsync`/`AppendBatchAsync`\ntüm `src/` ağacında SIFIR kez çağrılıyor (bağımsız bir denetim ajanının,\n2026-09-18, tüm proje kod denetimi, bulgusu). Okuma tarafı gerçek ve doğru\nyetkilendirilmiş (`KitchenOperationsEndpoints.cs`'nin `/audit/aggregate`,\n`/audit/correlation` uçları, V1-RMD-116'nın kendi yorumuyla \"void/comp/\ndiscount decisions included\" diye açıkça belirtiyor) — ama sorguladığı\ntablo hiçbir zaman doldurulmuyor. Bu görev, üç eskalasyon-sınıfı komuttan\n(`bills.discount`/`bills.void`/`bills.comp`) İLKİNİ (discount) gerçek bir\naudit event üreten uca bağlar; diğer ikisi kasıtlı olarak Out of scope\n(ayrı dosya/modül, ayrı görev — Bölme testi).\n\n## Owned surface\n\n- `evidence/V1-RMD-237/**`\n- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillingSplitApplication.cs\n  (birikimli olarak birçok görevin sahipliğinde) — yalnız `/discount`\n  endpoint'inin başarı yolu, `BillingSplitStore.ApplyDiscountAsync`\n  döndükten sonra gerçek bir `IAuditEventStore.AppendAsync` çağrısı\n  ekler; `AddBillingSplitExperience`'a `IAuditEventStore` DI kaydı\n  eklenir; başka hiçbir endpoint/davranış değişmez.\n- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/BillingSplitHttpTests.cs\n  (V1-RMD-040 sahipliğinde kalır) — yeni bir test eklenir, mevcut testler\n  değişmez.\n\n## In scope\n\n- Başarıyla uygulanan bir indirim (`BillingSplitStore.ApplyDiscountAsync`\n  başarıyla döndüğünde), `AggregateType=\"Bill\"`, `AggregateId=billId`,\n  `ActorId=principal.UserId`, `Reason=request.ReasonCode`,\n  `CorrelationId=context.TraceIdentifier`, önce/sonra `payableAmount`\n  içeren gerçek bir `AuditEvent` yazar.\n- Bu event artık `GET .../audit/aggregate/Bill/{billId}` ve\n  `GET .../audit/correlation/{correlationId}` ile gerçekten sorgulanabilir.\n\n## Out of scope\n\n- `bills.void`/`bills.comp` (ayrı dosya — `OrderManagementEndpoints.cs`,\n  ayrı görev), kasa/ödeme/rol değişikliği gibi diğer hassas komutlar.\n- Grant-request (`Pending`/`Refused`) yollarının audit'lenmesi — yalnız\n  fiilen UYGULANAN (Applied) bir indirim audit'lenir; reddedilen/bekleyen\n  talepler zaten `IDenialEventSink`/`identity.authorization_grants`\n  tablosunda kayıtlı.\n\n## Dependencies\n\n- V1-OPS-001\n\n## Acceptance evidence\n\n- Gerçek Postgres + gerçek Host'a karşı HTTP testi: bir indirim\n  uygulandıktan sonra `GET .../audit/aggregate/Bill/{billId}` gerçek,\n  doğru alanlı bir `AuditEvent` döner (önceden boş dönüyordu).\n- `dotnet build ALKAROS.slnx -c Debug` → 0 uyarı, 0 hata.\n- `dotnet test` (Billing HTTP testleri) → yeşil.\n- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı.\n- `python tools/consistency-audit/consistency_audit.py` → temiz.\n\n## Handoff\n\n- None\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "evidence/V1-RMD-751/verify_document.py",
+        "--document",
+        "evidence/V1-RMD-751/original-document.md"
+      ],
+      "exit_code": 1,
+      "stdout": "{\"result\": \"FAIL\", \"error\": \"Current-flow note missing or altered\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "evidence/V1-RMD-751/verify_document.py"
+      ],
+      "exit_code": 0,
+      "stdout": "{\"result\": \"PASS\", \"checks\": [\"current-note\", \"historical-contract-preserved\", \"transaction-write-order\", \"endpoint-handoff\"], \"tier\": \"Document acceptance and source-shape guard only; independent semantic review and runtime tests required\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "status",
+        "--short"
+      ],
+      "exit_code": 0,
+      "stdout": " M plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md\n M plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md\n?? evidence/V1-RMD-739/classification/\n?? evidence/V1-RMD-751/\n?? plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md\n?? plan/v1/remediation/V1-RMD-752-bolme-tutari-belge-guncelligi.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--name-only"
+      ],
+      "exit_code": 0,
+      "stdout": "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md\nplan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "python",
+        "-B",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-a-probe.py"
+      ],
+      "exit_code": 0,
+      "result": "Byte/hash comparison and updated guard executions completed; full output in 751-review-a-facts.json."
+    }
+  ],
+  "checked_hashes": {
+    "AGENTS.md": {
+      "sha256": "5916f57a73ca9c6e1610e60b0eeca52280b68328d93d793d5266bb0475a1d845",
+      "bytes": 5919
+    },
+    "plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md": {
+      "sha256": "37c4d22a50734fb086d431037f8d0a786a35407ff76d0ed23edcd7080756e238",
+      "bytes": 2931
+    },
+    "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md": {
+      "sha256": "61c9ee1469a13d006df1f4a3a424edb7e8ad878ff3683cc5c3535484159813a2",
+      "bytes": 4022
+    },
+    "evidence/V1-RMD-751/original-document.md": {
+      "sha256": "c3284e99ba6a827c1f1c0cb0c26230276391a45ae8e6fab2bda662c90eebb16e",
+      "bytes": 3244
+    },
+    "evidence/V1-RMD-751/verify_document.py": {
+      "sha256": "79262366a0f02d292a758fb13048acbccbc1bd13bfab8c194ecdb8e86da4d20b",
+      "bytes": 3413
+    },
+    "src/Host/Experience/Billing/BillingSplitApplication.cs": {
+      "sha256": "4f7805200d087fa41c9a0e693913ab6000277a3b48193fb5af51665a502bc2de",
+      "bytes": 34477
+    },
+    "src/Host/Experience/Billing/BillingSplitStore.cs": {
+      "sha256": "b82a637d28432edd54d37195f5d38950a90c92a68c5d79aa294ac76c3b5db3d4",
+      "bytes": 42197
+    },
+    "src/Modules/Billing/Adjustments/IBillAdjustmentRepository.cs": {
+      "sha256": "cc376e43564bc0d62727d3410426e2b133c4c533b9e13e1ce257faeb4f3b1d13",
+      "bytes": 1614
+    },
+    "src/Modules/Billing/Adjustments/PostgresBillAdjustmentRepository.cs": {
+      "sha256": "0d747ff2d3d2935a370fa8ccbd226d2e4510747ab5c61102b80be319c947bebb",
+      "bytes": 8595
+    },
+    "src/Modules/Audit/EventStore/IAuditEventStore.cs": {
+      "sha256": "e0ff64d92c2955ed95eb491799c44bc8e763b9ea67d759b2c31ab50001a4b7a8",
+      "bytes": 1107
+    },
+    "src/Modules/Audit/EventStore/PostgresAuditEventStore.cs": {
+      "sha256": "764c320afb77fec38d02d8e0875a6bce530d5a63f5fc3d134d4b1b6d7554cf86",
+      "bytes": 6813
+    },
+    "src/Modules/Audit/EventStore/AuditEventWriter.cs": {
+      "sha256": "9ac2bd3e5aa0c4d87415368698e665a5b370b0ce3e4b0d777e466bfbb853d41b",
+      "bytes": 3221
+    },
+    "tests/Host/Experience/Billing/BillingSplitHttpTests.cs": {
+      "sha256": "df068d7e88277741f2ffc6a7a5eed70a0a5164b71e08eee431a26d81a31fa48c",
+      "bytes": 101519
+    },
+    "tests/Modules/Audit/EventStore/AuditTests.cs": {
+      "sha256": "e1497af0a34ef422c827d1b5e00aaf9c02d431e5dd8662c1e6be503ca95f7ccf",
+      "bytes": 24499
+    },
+    "evidence/V1-RMD-739/findings/low-A.md": {
+      "sha256": "63e9b1772d6951d513df4100a5cb6be7ea39e537509527b2237ab518019ca600",
+      "bytes": 48613
+    },
+    "evidence/V1-RMD-751/execution-results.json": {
+      "sha256": "00418fff8b56f74aa2823442741184c39e3561befb46bad6cabb87ec45161831",
+      "bytes": 4190,
+      "note": "Parent-owned mutable runtime evidence snapshot; not independently rerun."
+    },
+    "evidence/V1-RMD-751/host-billing.log": {
+      "sha256": "2b3d09d0ab9ff748b39ff0386b303c6504f87a149438e05f1d59b34c8973cc5b",
+      "bytes": 114937,
+      "note": "Parent-owned mutable runtime evidence snapshot; not independently rerun."
+    },
+    "evidence/V1-RMD-751/audit-eventstore.log": {
+      "sha256": "3852b06cd4801c00e66518096d568b4259351a928c3aeaf59c891773bd871bb0",
+      "bytes": 1806,
+      "note": "Parent-owned mutable runtime evidence snapshot; not independently rerun."
+    }
+  },
+  "hash_stability_at_report_write": {
+    "changed_paths": [],
+    "stable": true
+  },
+  "runtime_evidence_observed_not_rerun": {
+    "source": "evidence/V1-RMD-751/execution-results.json and suite logs",
+    "host_billing": {
+      "exit_code": 1,
+      "passed": 5,
+      "failed": 103,
+      "total": 108,
+      "error": "System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.",
+      "source_lines": "evidence/V1-RMD-751/host-billing.log:48-54",
+      "interpretation": "Scratch artifacts yolu nedeniyle test fixture kurulumu kırıldı. Discount atomicity/replay için runtime başarı kanıtı değildir. Ebeveynin repo içi evidence artifacts yolundan tekrar koşu sonucu bu raporda beklenmedi veya varsayılmadı."
+    },
+    "audit_eventstore": {
+      "exit_code": 0,
+      "passed": 106,
+      "failed": 0,
+      "skipped": 0,
+      "total": 106,
+      "source_lines": "evidence/V1-RMD-751/audit-eventstore.log:12-14",
+      "interpretation": "Gerçek parent run logu ve execution-results kaydı incelendi; bu altajan uygulama testlerini çalıştırmadı. Audit suite başarısı Host Billing başarısı yerine geçmez."
+    }
+  },
+  "limitations": [
+    "Görev InProgress kalır. Belge semantiği PASS, fakat Host Billing kabul kapısı bu anlık kanıtta açık; kapanış verilmedi.",
+    "Guard davranışsal test değildir: writer overload implementasyonlarını incelemez; replay bloğunun gerçekten audit öncesi return ettiğini control-flow analiziyle kanıtlamaz; read_text newline normalizasyonu byte farklarını gizleyebilir. Bu denetimde writer/replay elle izlendi ve byte eşitliği ayrı probe ile doğrulandı.",
+    "Guard original-document.md dosyasına güveniyor; baseline değiştirilirse tek başına tarihçe korumasını garanti etmez. Bu denetimde original ayrıca git HEAD blobuyla byte karşılaştırıldı.",
+    "Plan validator ilk ## sürümünde SECTION_ORDER nedeniyle exit1 vermiş. ### düzeltmesi kaynaktan doğrulandı; yeni plan/consistency/task-scope veya build komutları bu altajanda çalıştırılmadı. Ebeveynin son kayıtları ayrıca gerekir.",
+    "Host Billing test kaynaklarında atomicity rollback (699-717), single-audit replay (720-751), Paid replay (755-777) kontrolleri bulundu ve okundu; bu test kaynaklarının varlığı test başarısı değildir.",
+    "Audit test kaynağında transaction rollback/commit ve sanitization testi AuditTests.cs:207-233 okundu. Suite sonucu tüm uygulama veya gerçek cihaz doğrulaması değildir.",
+    "Repo dosyaları yazılmadı; yalnız izinli scratch helper/facts/report dosyaları oluşturuldu. Parent eşzamanlı değişiklikleri bu incelemeye ait değildir.",
+    "V1-RMD-739 programı, F0388 canonical ledger kapanışı ve V1-RMD-752 kapsam dışıdır."
+  ],
+  "files_created_by_reviewer": [
+    "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-a-probe.py",
+    "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-a-facts.json",
+    "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-a-report.py",
+    "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-final-review-a.json"
+  ],
+  "repository_files_modified_by_reviewer": []
+}

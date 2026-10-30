@@ -1,0 +1,34 @@
+{
+  "reviews": [
+    {
+      "review": "a",
+      "source_hash_checks": 14,
+      "mismatches": [],
+      "saved": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\final-review-a.json",
+      "sha256": "5eeefca2572dd4b676c841c7a26c3e2fddf069708b07a30840a83bd0df5ab22c",
+      "verdict": "PASS"
+    },
+    {
+      "review": "b",
+      "source_hash_checks": 14,
+      "mismatches": [],
+      "saved": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\final-review-b.json",
+      "sha256": "4c238cb79a805accf418847643dcee208c8f06dd4c2666c1449f3a3e01e34723",
+      "verdict": {
+        "document_semantics": "PASS",
+        "historical_contract": "PASS",
+        "document_negative_discrimination": "PASS",
+        "scope": "PASS",
+        "runtime_acceptance": "AÇIK: ilk Host Billing koşusu başarısız; bağımsız denetçi suite başlatmadı ve tekrar koşusunu beklemedi.",
+        "task_closure": "VERİLMEDİ; Done onayı değildir."
+      }
+    }
+  ],
+  "scope_delta": {
+    "result": "PASS",
+    "unexpected": [],
+    "new_path_count": 24,
+    "baseline_preserved": true
+  },
+  "closure": "pending runtime completion and task-scope gate"
+}

@@ -1,0 +1,61 @@
+{
+  "verdict": "PASS",
+  "review_type": "independent-readonly-documentation-plan-gate",
+  "repository": "D:/project/ALKAROS",
+  "scope": ["V1-RMD-751", "V1-RMD-752", "F0388", "F0908"],
+  "summary": "İki yeni görev kabul edilmiş iki açık belge kusuruna karşılık geliyor. Üretim kusuru veya yeni ürün politikası türetilmiyor. Exact paylaşılan belge yolları bildiriliyor; eski görevlerin yüzey/dependency/kabul sözleşmeleri korunuyor; 752, 751'e bağımlı olduğundan yürütme seri. Bu PASS yalnız planın dar belge düzeltmesi için uygunluğudur; başlatma, düzeltme, test başarısı, bulgu kapanışı veya sonraki pakete geçiş onayı değildir.",
+  "findings": [],
+  "required_changes": [],
+  "exact_evidence": [
+    {
+      "paths": ["AGENTS.md:18-28", "AGENTS.md:44-53", "plan/TASK_STANDARD.md:174-188", "plan/OWNERSHIP.md:23-25,35-53"],
+      "assessment": "Yazma allowlist'i exact olmalı; paylaşılan başka görev dosyası Sınırlı ek ile önceden bildirilebilir. Aktif görev metni yürütme sırasında genişletilemez. Kabul sonrası belge düzeltmesi için yeni görev kimliği açılması ownership sözleşmesinin açık mekanizmasıdır; sırf görünüm için yeni ID gerekmiyor. Burada iki ID iki ayrı gerçek belge kusuruna bağlıdır."
+    },
+    {
+      "paths": ["plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md:3-17", "plan/v1/remediation/V1-RMD-752-bolme-tutari-belge-guncelligi.md:3-17", "tools/task-scope/task_scope_tool.py:50-63,343-383"],
+      "assessment": "Her ikisi documentation/Planned/Unassigned. 751 yalnız V1-RMD-237-bill-discount-audit-event-write-path.md; 752 yalnız V1-RMD-103-older-audit-remaining-high-medium-findings.md için geri-tiksiz, exact Sınırlı ek bildiriyor. Parser bu marker altında slash içeren çıplak depo yollarını shared_surface olarak topluyor. Parent wildcard, üretim veya test yazma yetkisi yok. Bu parser kaynak okumasıdır, çalıştırılmış scope validator sonucu değildir."
+    },
+    {
+      "paths": ["evidence/V1-RMD-739/classification/wave1/adjudication/INDEX.json:3-15", "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/ledger.json:8-28,59-70,81-101,136-147,159-165", "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/postwrite-review.json:3-17"],
+      "assessment": "Kabul kaynağı yalnız packet01/F0388/F0908 için statik sınıflama kabul ediyor. İki kayıt documentation/BD/open; runtime_verified, finding_closed, repair_authorized false. Önceki postwrite PASS sınıflama kabulü, düzeltme veya yürütme izni değil. Yeni planlar belge hedefini bu sınırda tutuyor; eski not-defect taslakları doğru sayılmıyor."
+    },
+    {
+      "paths": ["evidence/V1-RMD-739/findings/low-A.md:45", "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:27-43", "src/Host/Experience/Billing/BillingSplitApplication.cs:158-166,223-240", "src/Host/Experience/Billing/BillingSplitStore.cs:82-112,166-194", "src/Modules/Billing/Adjustments/PostgresBillAdjustmentRepository.cs:89-121", "src/Modules/Audit/EventStore/PostgresAuditEventStore.cs:35-42,60-62", "src/Modules/Audit/EventStore/AuditEventWriter.cs:31-43"],
+      "assessment": "F0388 gerçekten eski görev md'sindeki dönüş-sonrası ayrı audit anlatımını hedefliyor. Güncel endpoint auditEvents'i store'a geçiriyor. Store adjustment ve audit çağrılarına aynı connection/lockTransaction değerlerini veriyor; audit çağrısı 192'deki committen önce. INSERT uygulamaları bu transaction'ı kullanıyor. Replay 107-112'de yeni INSERT/audit olmadan dönüyor. 751:21-23,38 bu mekanizmayı doğru ve dar açıklatıyor."
+    },
+    {
+      "paths": ["plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:24-35,47-58,60-72", "plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md:11,21-30,38,41"],
+      "assessment": "751 eski Owned surface, Dependencies ve Acceptance evidence sözleşmesinin yeniden yazılmasını yasaklıyor, eski kapsamı tarihçe olarak koruyor. Void/comp eski görevde açıkça kapsam dışı; yeni not bunu genişletmiyor. Tarihsel ayrı endpoint tasarımı güncel açıklama diye sunulmayacak, fakat eski yetki/kabul kaydı silinmeyecek."
+    },
+    {
+      "paths": ["evidence/V1-RMD-739/findings/low-C.md:13", "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md:108-116", "src/Modules/Billing/SplitDesign/SplitEngine.cs:20-33,79-106,134-137,246-289", "src/Host/Experience/Billing/BillingSplitStore.cs:497-592", "plan/v1/remediation/V1-RMD-752-bolme-tutari-belge-guncelligi.md:11,21-30,39,44"],
+      "assessment": "F0908 gerçek görev md'sinin bugün/hâlâ iddiasıdır, uygulamada yeni bir arıza iddiası değil. Equal/amount/custom adjustment varsa düzeltilmiş payable/tax, null ise Bill tutarlarını seçiyor. Host üç yola adjustment iletiyor. Item engine adjustment almıyor; Host yalnız adjusted payable özgün payable'dan farklıysa item split'i reddediyor. 752 bu koşulları ve politika sınırını koruyor; tüm bölme türleri veya ödeme akışı doğru genellemesi yapmıyor."
+    },
+    {
+      "paths": ["plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md:23-83,108-116,161-196", "plan/v1/remediation/V1-RMD-752-bolme-tutari-belge-guncelligi.md:23,28-30,39,42"],
+      "assessment": "103'ün tarihsel geniş kod/migration yüzeyi, dependency'si ve tarihli test/kabul kaydı yeni göreve aktarılmıyor veya yeniden yazılmıyor. Güncellik notu ekleme ile eski sözleşmeyi değiştirmeme birlikte uygulanabilir; uygulayıcı eski bölümlere yeni test sayıları yazamaz."
+    },
+    {
+      "paths": ["plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md:23-24,38-43", "plan/v1/remediation/V1-RMD-752-bolme-tutari-belge-guncelligi.md:24,39-44", "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:610-638,699-751,1528-1546", "tests/Modules/Audit/EventStore/ALKAROS.Audit.EventStore.Tests.csproj:24-32", "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj:17-19"],
+      "assessment": "751 için Host Billing'in gerçek PostgreSQL fixture'ı, gerçek audit yazımı, audit başarısızlığında adjustment kalmaması ve replay audit sayısı kontrolleri ilgili test kapsamıdır. Audit EventStore süiti gerçek writer ve partition migration kaynağını içerir. 751 ile 752 belge guard'ı için red/green/eski metinle yeniden red ister; üretim mutantı veya üretim kodu yazımı gerektirmez. Gelecek guard ve günlükler ilgili evidence allowlist'inde tutulabilir. Test kaynaklarının okunması başarı kanıtı sayılmadı."
+    },
+    {
+      "paths": ["tests/Modules/Billing/SplitDesign/SplitDesignDomainTests.cs:100-140,234-270,551-587", "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:541-598", "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj:18-36", "plan/v1/remediation/V1-RMD-752-bolme-tutari-belge-guncelligi.md:24,39-44"],
+      "assessment": "752 için SplitDesign ve Host Billing doğru ilgili süitlerdir. Okunan kaynakta equal-adjusted payable/tax testi ve Host discounted amount split/item rejection testi bulunuyor; amount/custom null-default kontrolleri de mevcut. Bu süit adları tek başına bütün adjustment dallarının derin runtime kapsamını veya tüm ödeme doğruluğunu kanıtlamaz. Plan belge/kod eşlemesini ayrıca ister ve tam uygulama doğruluğu iddiasını dışlar. Uygulama/test kusuru çıkarsa ayrı sahiplik ve paketin açık tutulması açıkça zorunludur."
+    },
+    {
+      "paths": ["plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md:32-47", "plan/v1/remediation/V1-RMD-752-bolme-tutari-belge-guncelligi.md:32-48", "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:3-7,56-58", "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md:3-7,161-163", "plan/TASK_STANDARD.md:57-66,95-119,157-167", "AGENTS.md:75-89"],
+      "assessment": "751 eski 237'ye, 752 hem 751'e hem eski 103'e bağımlı. Eski iki görev Done metadata'sı taşıyor; 751 henüz Planned olduğu için 752 şimdi başlayamaz. 751 Handoff 752, 752 Handoff 739: bu bir sonraki paketi otomatik açan gate değildir. İki bağımsız inceleme, gerçek build/ilgili süit, belge guard, plan/consistency/scope exit kodları ve mevcut kullanıcı değişikliklerinin korunması kabul koşullarıdır. Genel preflight, gerçek assignee, kanıt hashleri ve kapsam commit kuralları ayrıca bağlayıcıdır."
+    }
+  ],
+  "limitations": [
+    "Repository dosyası değiştirilmedi; görev başlatılmadı, Status/Assignee veya Done güncellenmedi. Yalnız bu scratch raporu yazıldı.",
+    "Kullanıcı kısıtı nedeniyle repository kodu, test, build, migration, plan/consistency/task-scope validator çalıştırılmadı; komut sonucu veya yeni runtime PASS iddiası yok.",
+    "Git komutu çalıştırılmadı; HEAD/clean-tree/diff veya eski ledger hashlerinin güncel eşitliği bu turda doğrulanmadı. Kanıtlar okunan çalışma ağacı metinlerinin satırlarına aittir.",
+    "Doğrudan ilgili eski görevler, iki yeni plan, accepted ledger/index, özgün iddialar, ilgili üretim yolları ve test kaynakları okundu. Bütün transitive dependency/gate kanıtı incelenmedi; yürütme preflight'ı ayrıca zorunludur.",
+    "SplitEngine bütünü okundu; BillingSplitStore yalnız ilgili ApplyDiscountAsync ve Save*/LoadAdjustmentAsync aralıklarında incelendi. Tüm Billing/Audit/ödeme sistemi denetimi değildir.",
+    "Equal/amount/custom adjustment=true/null için tam davranış matrisi çalıştırılmadı. Okunan mevcut süitlerdeki kaynak varlığı bütün dalların runtime kanıtı değildir; ileride günlükler yalnız gerçekten çalışmış vakaları kapsar. Gerekli yeni üretim/test değişikliği bu documentation görevlerine gizlenemez.",
+    "Plan PASS bulguları kapatmaz: accepted ledger hâlâ iki open belge kaydı ve sıfır runtime doğrulaması içeriyor. Sonraki paket ancak kullanıcının istediği gerçek düzeltme, bağımsız kontroller ve derin gerçek test kapısı tamamlandıktan sonra ele alınabilir; task ID, task Done veya eski sınıflama PASS tek başına bu izni sağlamaz.",
+    "İki yeni görev yürütülürse guard betiği ve sonuçları evidence altında yeniden üretilebilir tutulmalı; eski görevlerin Owned surface/Dependencies/Acceptance evidence blokları ve tarihsel durumları korunmalı, güncellik notu açıkça tarihçe ile güncel mekanizmayı ayırmalıdır. Bunlar gelecek kabul koşullarıdır, bu incelemede gerçekleşmiş sonuçlar değildir."
+  ]
+}

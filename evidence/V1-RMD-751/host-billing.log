@@ -1,0 +1,911 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.IntegrationContracts -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.IntegrationContracts\debug\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Secrets -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Secrets\debug\ALKAROS.Secrets.dll
+  ALKAROS.ModuleComposition -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.ModuleComposition\debug\ALKAROS.ModuleComposition.dll
+  ALKAROS.Messaging -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Messaging\debug\ALKAROS.Messaging.dll
+  ALKAROS.SensitiveData -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.SensitiveData\debug\ALKAROS.SensitiveData.dll
+  ALKAROS.Measurements -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Measurements\debug\ALKAROS.Measurements.dll
+  ALKAROS.Identity -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Identity\debug\ALKAROS.Identity.dll
+  ALKAROS.Observability -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Observability\debug\ALKAROS.Observability.dll
+  ALKAROS.Reconciliation -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Reconciliation\debug\ALKAROS.Reconciliation.dll
+  ALKAROS.Tables -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Tables\debug\ALKAROS.Tables.dll
+  ALKAROS.Settings -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Settings\debug\ALKAROS.Settings.dll
+  ALKAROS.Reporting -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Reporting\debug\ALKAROS.Reporting.dll
+  ALKAROS.Privacy.RetentionExecution -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Privacy.RetentionExecution\debug\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Menu -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Menu\debug\ALKAROS.Menu.dll
+  ALKAROS.Audit -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Audit\debug\ALKAROS.Audit.dll
+  ALKAROS.Recipes -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Recipes\debug\ALKAROS.Recipes.dll
+  ALKAROS.Inventory -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Inventory\debug\ALKAROS.Inventory.dll
+  ALKAROS.Catalog -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Catalog\debug\ALKAROS.Catalog.dll
+  ALKAROS.Orders -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Orders\debug\ALKAROS.Orders.dll
+  ALKAROS.Kitchen -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Kitchen\debug\ALKAROS.Kitchen.dll
+  ALKAROS.QrOrdering -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.QrOrdering\debug\ALKAROS.QrOrdering.dll
+  ALKAROS.Production -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Production\debug\ALKAROS.Production.dll
+  ALKAROS.Purchasing -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Purchasing\debug\ALKAROS.Purchasing.dll
+  ALKAROS.CustomerData -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.CustomerData\debug\ALKAROS.CustomerData.dll
+  ALKAROS.Support -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Support\debug\ALKAROS.Support.dll
+  ALKAROS.QrRelay -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.QrRelay\debug\ALKAROS.QrRelay.dll
+  ALKAROS.OnlineOrdering -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.OnlineOrdering\debug\ALKAROS.OnlineOrdering.dll
+  ALKAROS.Billing -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Billing\debug\ALKAROS.Billing.dll
+  ALKAROS.Security -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Security\debug\ALKAROS.Security.dll
+  ALKAROS.Invoicing -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Invoicing\debug\ALKAROS.Invoicing.dll
+  ALKAROS.Operations -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Operations\debug\ALKAROS.Operations.dll
+  ALKAROS.Privacy.Anonymization -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Privacy.Anonymization\debug\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.Payments -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Payments\debug\ALKAROS.Payments.dll
+  ALKAROS.Billing.PaymentClosure -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Billing.PaymentClosure\debug\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Cash -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Cash\debug\ALKAROS.Cash.dll
+  ALKAROS.Payments.TenderComposition -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Payments.TenderComposition\debug\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.CustomerAccounts -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.CustomerAccounts\debug\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Host -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Host\debug\ALKAROS.Host.dll
+  ALKAROS.Host.Experience.Billing.Tests -> C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Host.Experience.Billing.Tests\debug\ALKAROS.Host.Experience.Billing.Tests.dll
+C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\751-build-artifacts\bin\ALKAROS.Host.Experience.Billing.Tests\debug\ALKAROS.Host.Experience.Billing.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:03.06]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.CancellingARecreatedBillRecordsTheReasonFreesTheOrderAndAuditsIt [FAIL]
+[xUnit.net 00:00:03.43]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AMissingReasonIsRefusedBeforeAnythingChanges(reason: "") [FAIL]
+[xUnit.net 00:00:03.89]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AMissingReasonIsRefusedBeforeAnythingChanges(reason: "   ") [FAIL]
+[xUnit.net 00:00:04.20]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AMissingReasonIsRefusedBeforeAnythingChanges(reason: null) [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.CancellingARecreatedBillRecordsTheReasonFreesTheOrderAndAuditsIt [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AMissingReasonIsRefusedBeforeAnythingChanges(reason: "") [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AMissingReasonIsRefusedBeforeAnythingChanges(reason: "   ") [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AMissingReasonIsRefusedBeforeAnythingChanges(reason: null) [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+[xUnit.net 00:00:04.51]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ABillCanBeOpenedAgainForTheSameOrderAfterItIsCancelled [FAIL]
+[xUnit.net 00:00:04.86]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.TheShippedCashierRoleHoldsTheCancelPermission [FAIL]
+[xUnit.net 00:00:05.26]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ACancellationWhoseAuditRecordCannotBeWrittenIsNotKept [FAIL]
+[xUnit.net 00:00:05.71]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AReasonLongerThanFiveHundredCharactersIsRefused [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ABillCanBeOpenedAgainForTheSameOrderAfterItIsCancelled [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.TheShippedCashierRoleHoldsTheCancelPermission [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ACancellationWhoseAuditRecordCannotBeWrittenIsNotKept [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.AReasonLongerThanFiveHundredCharactersIsRefused [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+[xUnit.net 00:00:06.00]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ARoleWithoutTheCancelPermissionIsRefused [FAIL]
+[xUnit.net 00:00:06.27]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaymentStillInFlightKeepsTheBillFromBeingCancelled(status: "Pending") [FAIL]
+[xUnit.net 00:00:06.53]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaymentStillInFlightKeepsTheBillFromBeingCancelled(status: "ReconciliationRequired") [FAIL]
+[xUnit.net 00:00:06.79]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaymentStillInFlightKeepsTheBillFromBeingCancelled(status: "Unknown") [FAIL]
+[xUnit.net 00:00:07.06]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ABillWithMoneyOnItIsRefusedAndStaysOpen [FAIL]
+[xUnit.net 00:00:07.30]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.RecallCancellationAlsoLetsTheOrderBeBilledAgain [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ARoleWithoutTheCancelPermissionIsRefused [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaymentStillInFlightKeepsTheBillFromBeingCancelled(status: "Pending") [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaymentStillInFlightKeepsTheBillFromBeingCancelled(status: "ReconciliationRequired") [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaymentStillInFlightKeepsTheBillFromBeingCancelled(status: "Unknown") [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ABillWithMoneyOnItIsRefusedAndStaysOpen [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.RecallCancellationAlsoLetsTheOrderBeBilledAgain [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+[xUnit.net 00:00:07.51]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaidBillIsRefusedWithThePaymentMessage [FAIL]
+[xUnit.net 00:00:07.78]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ABillWhoseOnlyPaymentWasRefundedInFullCanBeCancelledButAPartialRefundStillBlocks [FAIL]
+[xUnit.net 00:00:08.12]     ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ACancelledBillNoLongerCountsItsOrderItemsAsBilled [FAIL]
+[xUnit.net 00:00:08.37]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AFixedAmountDiscountRequestKeepsItsOwnAmount [FAIL]
+[xUnit.net 00:00:08.51]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AFailedTablePointerWriteIsLoggedAndTheBillIsStillCreated [FAIL]
+[xUnit.net 00:00:08.71]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleThatHoldsBillsDiscountAppliesDirectly [FAIL]
+[xUnit.net 00:00:08.88]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ValidationAndLookupFailuresNameTheirCauseInTurkish [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.APaidBillIsRefusedWithThePaymentMessage [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ABillWhoseOnlyPaymentWasRefundedInFullCanBeCancelledButAPartialRefundStillBlocks [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillCancellationHttpTests.ACancelledBillNoLongerCountsItsOrderItemsAsBilled [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AFixedAmountDiscountRequestKeepsItsOwnAmount [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AFailedTablePointerWriteIsLoggedAndTheBillIsStillCreated [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleThatHoldsBillsDiscountAppliesDirectly [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ValidationAndLookupFailuresNameTheirCauseInTurkish [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+[xUnit.net 00:00:09.01]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.NoBillingEndpointAnswersWithoutASessionOrWithASessionOfAnotherTerminal [FAIL]
+[xUnit.net 00:00:09.22]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.RetryingADiscountWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment [FAIL]
+[xUnit.net 00:00:09.34]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ConcurrentBillCreationForTheSameOrderHasOneWinnerAndNoDuplicateBill [FAIL]
+[xUnit.net 00:00:09.57]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.EveryBillingEndpointCarriesTheTerminalRateLimitOfItsKind [FAIL]
+[xUnit.net 00:00:09.77]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOnAPaidBillIsRejected [FAIL]
+[xUnit.net 00:00:09.90]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleWithoutBillsSplitIsRejectedFromRecordingATip [FAIL]
+[xUnit.net 00:00:10.02]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ReplayingATipAfterTheBillWasPaidReturnsTheOriginalResultButANewKeyIsRefused [FAIL]
+[xUnit.net 00:00:10.28]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ApplyingADiscountWritesARealAuditEvent [FAIL]
+[xUnit.net 00:00:10.40]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ConcurrentDiscountsOnTheSameBillDoNotExceedThePayableAmount [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.NoBillingEndpointAnswersWithoutASessionOrWithASessionOfAnotherTerminal [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.RetryingADiscountWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ConcurrentBillCreationForTheSameOrderHasOneWinnerAndNoDuplicateBill [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.EveryBillingEndpointCarriesTheTerminalRateLimitOfItsKind [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOnAPaidBillIsRejected [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleWithoutBillsSplitIsRejectedFromRecordingATip [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ReplayingATipAfterTheBillWasPaidReturnsTheOriginalResultButANewKeyIsRefused [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ApplyingADiscountWritesARealAuditEvent [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ConcurrentDiscountsOnTheSameBillDoNotExceedThePayableAmount [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+[xUnit.net 00:00:10.51]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatWouldUndercutWhatWasAlreadyCollectedIsRefused [FAIL]
+[xUnit.net 00:00:10.71]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOrTipRefusesASplitSavedAgainstTheOlderBillVersion [FAIL]
+[xUnit.net 00:00:10.87]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.RetryingATipWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment [FAIL]
+[xUnit.net 00:00:10.99]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillStateIsReadOnlyAfterTheLockSoAWaitingDiscountOrTipSeesAPaidBill [FAIL]
+[xUnit.net 00:00:11.19]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ASplitDesignOnADiscountedBillUsesTheDiscountedPayable [FAIL]
+[xUnit.net 00:00:11.41]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipOnASettledBillIsRefusedAndRecordsNothing [FAIL]
+[xUnit.net 00:00:11.54]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipIsRefusedWhenTheDeploymentTurnedTheVoluntaryTipOff [FAIL]
+[xUnit.net 00:00:11.66]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatTakesThePayableToZeroClosesTheBill [FAIL]
+[xUnit.net 00:00:11.85]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AllocationsSavedTogetherComeBackInAStableOrder [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatWouldUndercutWhatWasAlreadyCollectedIsRefused [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOrTipRefusesASplitSavedAgainstTheOlderBillVersion [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.RetryingATipWithTheSameIdempotencyKeyDoesNotDuplicateTheAdjustment [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheBillStateIsReadOnlyAfterTheLockSoAWaitingDiscountOrTipSeesAPaidBill [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ASplitDesignOnADiscountedBillUsesTheDiscountedPayable [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipOnASettledBillIsRefusedAndRecordsNothing [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ATipIsRefusedWhenTheDeploymentTurnedTheVoluntaryTipOff [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatTakesThePayableToZeroClosesTheBill [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AllocationsSavedTogetherComeBackInAStableOrder [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+[xUnit.net 00:00:12.01]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleWithoutBillsDiscountAndNoPolicyOrDelegationEscalatesToPending [FAIL]
+[xUnit.net 00:00:12.12]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AGrantApprovedDiscountRecordsWhoApprovedItAndWhichGrant [FAIL]
+[xUnit.net 00:00:12.23]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AnInvalidDiscountReasonCodeIsRejected [FAIL]
+[xUnit.net 00:00:12.34]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountAndATipEachWriteOneAuditRecordAndARetryWritesNone [FAIL]
+[xUnit.net 00:00:12.48]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleThatHoldsBillsSplitRecordsATipDirectly [FAIL]
+[xUnit.net 00:00:12.61]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AWaiterWhoseOnlyOrderTodayWasCancelledDoesNotDiluteTheTipPool [FAIL]
+[xUnit.net 00:00:12.74]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountExceedingThePayableAmountIsRejectedAndNotPersisted [FAIL]
+[xUnit.net 00:00:12.94]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AVoluntaryTipTodayAppearsInTheServingWaitersShiftSummary [FAIL]
+[xUnit.net 00:00:13.12]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.MalformedJsonBodyReturns400WithoutReachingTheEndpointFilter [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleWithoutBillsDiscountAndNoPolicyOrDelegationEscalatesToPending [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AGrantApprovedDiscountRecordsWhoApprovedItAndWhichGrant [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AnInvalidDiscountReasonCodeIsRejected [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountAndATipEachWriteOneAuditRecordAndARetryWritesNone [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARoleThatHoldsBillsSplitRecordsATipDirectly [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AWaiterWhoseOnlyOrderTodayWasCancelledDoesNotDiluteTheTipPool [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountExceedingThePayableAmountIsRejectedAndNotPersisted [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AVoluntaryTipTodayAppearsInTheServingWaitersShiftSummary [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.MalformedJsonBodyReturns400WithoutReachingTheEndpointFilter [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+[xUnit.net 00:00:13.29]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountRequestForAMissingBillOrABadValueOpensNoGrant [FAIL]
+[xUnit.net 00:00:13.42]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied [FAIL]
+[xUnit.net 00:00:13.62]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.APercentageDiscountRequestIsRaisedForTheCurrencyItWouldTakeOff [FAIL]
+[xUnit.net 00:00:13.76]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountAndATipWhoseAuditRecordCannotBeWrittenAreNotKept [FAIL]
+[xUnit.net 00:00:14.03]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.EndpointsEnforceSessionPermissionAndAtomicConcurrency [FAIL]
+[xUnit.net 00:00:14.21]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AllModesPersistRejectOverflowSurviveRestartAndClear [FAIL]
+[xUnit.net 00:00:14.36]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOrTipWithoutAKeyOrAboveTheLimitsIsRefusedAndWritesNothing [FAIL]
+[xUnit.net 00:00:14.47]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatLeavesExactlyWhatWasAlreadyCollectedIsAllowed [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountRequestForAMissingBillOrABadValueOpensNoGrant [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ResendingAnApprovedIdempotencyKeyWithATamperedAmountIsRejectedNotApplied [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.APercentageDiscountRequestIsRaisedForTheCurrencyItWouldTakeOff [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountAndATipWhoseAuditRecordCannotBeWrittenAreNotKept [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.EndpointsEnforceSessionPermissionAndAtomicConcurrency [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.AllModesPersistRejectOverflowSurviveRestartAndClear [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountOrTipWithoutAKeyOrAboveTheLimitsIsRefusedAndWritesNothing [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountThatLeavesExactlyWhatWasAlreadyCollectedIsAllowed [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+[xUnit.net 00:00:14.65]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheSameKeyWithAnotherBodyOrKindIsAConflictAndTheSameBodyReplays [FAIL]
+[xUnit.net 00:00:14.75]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARefusedDiscountRequestAnswersInTurkishInTheCommonEnvelope [FAIL]
+[xUnit.net 00:00:14.90]     ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ReplayingADiscountAfterTheBillWasPaidReturnsTheOriginalResultButANewKeyIsRefused [FAIL]
+[xUnit.net 00:00:15.02]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.APaymentThatIsNoLongerApprovedCannotBeRequested [FAIL]
+[xUnit.net 00:00:15.23]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheItemRefundIsScaledByTheBillDiscountAndLeavesTipsAndFeesAlone [FAIL]
+[xUnit.net 00:00:15.37]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OpenRequestsReserveUnitsAcrossPaymentsAndTheRestCanBeRefundedWhole [FAIL]
+[xUnit.net 00:00:15.48]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACancelledBillAfterARefundNoLongerCountsTheRefundedPaymentAsMoney [FAIL]
+[xUnit.net 00:00:15.59]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyWithoutAnOpenSession [FAIL]
+[xUnit.net 00:00:15.70]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundBeyondTheRemainingAllowanceGoesToTheManagerAndSpendsNothing [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.TheSameKeyWithAnotherBodyOrKindIsAConflictAndTheSameBodyReplays [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ARefusedDiscountRequestAnswersInTurkishInTheCommonEnvelope [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ReplayingADiscountAfterTheBillWasPaidReturnsTheOriginalResultButANewKeyIsRefused [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.APaymentThatIsNoLongerApprovedCannotBeRequested [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheItemRefundIsScaledByTheBillDiscountAndLeavesTipsAndFeesAlone [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OpenRequestsReserveUnitsAcrossPaymentsAndTheRestCanBeRefundedWhole [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACancelledBillAfterARefundNoLongerCountsTheRefundedPaymentAsMoney [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceReadsEmptyWithoutAnOpenSession [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundBeyondTheRemainingAllowanceGoesToTheManagerAndSpendsNothing [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+[xUnit.net 00:00:15.87]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.APaymentWithNothingLeftToRefundCannotBeRequestedAgain [FAIL]
+[xUnit.net 00:00:15.99]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACashierWithoutTheApprovePermissionCannotDecide [FAIL]
+[xUnit.net 00:00:16.10]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheBillStaysOpenUntilEveryPaymentOnItIsRefunded [FAIL]
+[xUnit.net 00:00:16.21]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARejectedRequestLeavesThePaymentAloneAndAllowsANewRequest [FAIL]
+[xUnit.net 00:00:16.36]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.SuccessiveRestoringRefundsOfOneItemReturnEachShareOnce [FAIL]
+[xUnit.net 00:00:16.49]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OnlyAnOpenSessionOfTheRequesterSpendsTheAllowance [FAIL]
+[xUnit.net 00:00:16.68]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OnlyOneOpenRequestPerPaymentAndOnlyThePaymentOfThatBill [FAIL]
+[xUnit.net 00:00:16.79]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ApprovedCashRefundPaysOutOfTheCashiersSessionRefundsThePaymentAndCancelsTheBill [FAIL]
+[xUnit.net 00:00:16.93]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.APaymentChargedToACustomerAccountIsNotRefundedHere [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.APaymentWithNothingLeftToRefundCannotBeRequestedAgain [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACashierWithoutTheApprovePermissionCannotDecide [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheBillStaysOpenUntilEveryPaymentOnItIsRefunded [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARejectedRequestLeavesThePaymentAloneAndAllowsANewRequest [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.SuccessiveRestoringRefundsOfOneItemReturnEachShareOnce [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OnlyAnOpenSessionOfTheRequesterSpendsTheAllowance [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OnlyOneOpenRequestPerPaymentAndOnlyThePaymentOfThatBill [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ApprovedCashRefundPaysOutOfTheCashiersSessionRefundsThePaymentAndCancelsTheBill [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.APaymentChargedToACustomerAccountIsNotRefundedHere [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+[xUnit.net 00:00:17.06]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARequesterCannotRejectTheirOwnRequestEither [FAIL]
+[xUnit.net 00:00:17.17]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRequestAndTheApprovalAreAudited [FAIL]
+[xUnit.net 00:00:17.32]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.WithoutAnAllowanceTheRequestWaitsForTheManagerAsBefore [FAIL]
+[xUnit.net 00:00:17.44]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: "ReconciliationRequired") [FAIL]
+[xUnit.net 00:00:17.55]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: "PartiallyRefunded") [FAIL]
+[xUnit.net 00:00:17.67]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: "Pending") [FAIL]
+[xUnit.net 00:00:17.82]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: "Unknown") [FAIL]
+[xUnit.net 00:00:17.92]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheShippedRolesSplitAskingFromDeciding [FAIL]
+[xUnit.net 00:00:18.03]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceMayBeClearedToZeroOrSetToTheMaximumButNotBeyond [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARequesterCannotRejectTheirOwnRequestEither [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheRequestAndTheApprovalAreAudited [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.WithoutAnAllowanceTheRequestWaitsForTheManagerAsBefore [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: "ReconciliationRequired") [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: "PartiallyRefunded") [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: "Pending") [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefundingOnePaymentDoesNotCancelTheBillWhileAnotherIsStillOpen(siblingStatus: "Unknown") [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheShippedRolesSplitAskingFromDeciding [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheAllowanceMayBeClearedToZeroOrSetToTheMaximumButNotBeyond [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+[xUnit.net 00:00:18.14]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundDecisionWhoseAuditRecordCannotBeWrittenIsNotKept [FAIL]
+[xUnit.net 00:00:18.35]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnItemRefundWithinTheAllowanceIsCompletedByTheCashierAndDrawsFromIt [FAIL]
+[xUnit.net 00:00:18.55]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARetriedRequestWithTheSameKeyReturnsTheStoredRefundAndPaysOutOnce [FAIL]
+[xUnit.net 00:00:18.75]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARejectedItemRequestFreesTheUnitsAndTheRemainingUnitsAreCapped [FAIL]
+[xUnit.net 00:00:18.94]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheListFiltersByBillAndPagesBackwards [FAIL]
+[xUnit.net 00:00:19.11]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.CashApprovalWithoutAnOpenSessionIsRefusedAndNothingMoves [FAIL]
+[xUnit.net 00:00:19.21]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnItemRefundPaysBackOnlyTheChosenUnitsAndTheBillStaysOpen [FAIL]
+[xUnit.net 00:00:19.32]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundIsNotDecidedByTheSamePersonWhoAskedForIt [FAIL]
+[xUnit.net 00:00:19.46]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefusesAnItemRefundThatIsInvalidOrMoreThanThePaymentHolds [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundDecisionWhoseAuditRecordCannotBeWrittenIsNotKept [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnItemRefundWithinTheAllowanceIsCompletedByTheCashierAndDrawsFromIt [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARetriedRequestWithTheSameKeyReturnsTheStoredRefundAndPaysOutOnce [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARejectedItemRequestFreesTheUnitsAndTheRemainingUnitsAreCapped [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheListFiltersByBillAndPagesBackwards [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.CashApprovalWithoutAnOpenSessionIsRefusedAndNothingMoves [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.AnItemRefundPaysBackOnlyTheChosenUnitsAndTheBillStaysOpen [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundIsNotDecidedByTheSamePersonWhoAskedForIt [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.RefusesAnItemRefundThatIsInvalidOrMoreThanThePaymentHolds [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+[xUnit.net 00:00:19.64]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACardItemRefundPutsStockBackWhenTheSlipIsRecorded [FAIL]
+[xUnit.net 00:00:19.84]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARequestWithoutAnIdempotencyKeyIsRefused [FAIL]
+[xUnit.net 00:00:19.96]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ADecidedRequestCannotBeApprovedAgain [FAIL]
+[xUnit.net 00:00:20.12]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACardRefundWithinTheAllowanceReservesItAndTheCashierRecordsTheSlip [FAIL]
+[xUnit.net 00:00:20.23]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundWithinTheShiftAllowanceIsCompletedByTheCashierAndDrawsFromTheAllowance [FAIL]
+[xUnit.net 00:00:20.36]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheChosenUnitsGoBackToStockInTheCompletingTransactionAndTheOthersDoNot [FAIL]
+[xUnit.net 00:00:20.49]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OnlyAManagerGrantsTheAllowanceNotToThemselvesNotBelowWhatIsUsedAndNotWithoutASession [FAIL]
+[xUnit.net 00:00:20.65]     ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ManualRefundWaitsForTheSlipNumberThenRefundsAndCancelsTheBill [FAIL]
+[xUnit.net 00:00:20.77]     ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.AnOrderWhoseBillIsStillOpenAfterOnePaymentWasRefundedStillCounts [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACardItemRefundPutsStockBackWhenTheSlipIsRecorded [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARequestWithoutAnIdempotencyKeyIsRefused [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ADecidedRequestCannotBeApprovedAgain [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ACardRefundWithinTheAllowanceReservesItAndTheCashierRecordsTheSlip [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundWithinTheShiftAllowanceIsCompletedByTheCashierAndDrawsFromTheAllowance [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheChosenUnitsGoBackToStockInTheCompletingTransactionAndTheOthersDoNot [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OnlyAManagerGrantsTheAllowanceNotToThemselvesNotBelowWhatIsUsedAndNotWithoutASession [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ManualRefundWaitsForTheSlipNumberThenRefundsAndCancelsTheBill [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+   at ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\PaymentRefundHttpTests.cs:line 28
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.AnOrderWhoseBillIsStillOpenAfterOnePaymentWasRefundedStillCounts [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+[xUnit.net 00:00:20.88]     ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.AnOrderBilledAgainAndPaidAfterARefundStillCounts [FAIL]
+[xUnit.net 00:00:20.99]     ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.ARefundedOrderIsOutOfTheWaitersSalesTheTipPoolAndTheWaiterCount [FAIL]
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.AnOrderBilledAgainAndPaidAfterARefundStillCounts [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+  Başarısız ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.ARefundedOrderIsOutOfTheWaitersSalesTheTipPoolAndTheWaiterCount [1 ms]
+  Hata İletisi:
+   System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory.
+  Yığın İzleme:
+     at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.FindRepositoryRoot() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1957
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.ApplyMigrationsAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1924
+   at ALKAROS.Host.Experience.Billing.Tests.BillingSplitTestDatabase.InitializeAsync() in D:\project\ALKAROS\tests\Host\Experience\Billing\BillingSplitHttpTests.cs:line 1546
+Sonuç Dosyası: D:\project\ALKAROS\evidence\V1-RMD-751\host-billing-results\semih_SEMH59_2026-10-29_18_44_13_net8.0.trx
+
+Başarısız! - Başarısız:   103, Başarılı:     5, Atlanan:     0, Toplam:   108, Süre: 19 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)

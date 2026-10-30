@@ -1,7 +1,7 @@
 # V1-RMD-751 - İndirim audit işlem sınırı belgesini güncelle
 
 - Task ID: V1-RMD-751
-- Status: InProgress
+- Status: Done
 - Assignee: hermes-session-20261028_015834_6948d340
 - Work type: documentation
 - Surface state: Existing

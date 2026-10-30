@@ -1,0 +1,78 @@
+[
+  {
+    "name": "document-final-green",
+    "command": [
+      "python",
+      "-B",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py"
+    ],
+    "exit_code": 0,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\document-final-green.log",
+    "sha256": "a294f7acb64e01673e44be8b7b826b387b187bc0f5c29e42ed5ab95cfa22df8d",
+    "summary": []
+  },
+  {
+    "name": "document-final-regression",
+    "command": [
+      "python",
+      "-B",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+      "--document",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\original-document.md"
+    ],
+    "exit_code": 1,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\document-final-regression.log",
+    "sha256": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff",
+    "summary": []
+  },
+  {
+    "name": "plan-rerun",
+    "command": [
+      "python",
+      "-B",
+      "tools/plan-audit/plan_audit_tool.py",
+      "validate"
+    ],
+    "exit_code": 0,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\plan-rerun.log",
+    "sha256": "acebbbb8470edcbcc4f8cd1ff8fe8f06b3a692a5eb292ffb1497b6da80c119c1",
+    "summary": [
+      "Validation errors: 0",
+      "Validation warnings: 0"
+    ]
+  },
+  {
+    "name": "consistency-rerun",
+    "command": [
+      "python",
+      "-B",
+      "tools/consistency-audit/consistency_audit.py"
+    ],
+    "exit_code": 0,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\consistency-rerun.log",
+    "sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+    "summary": []
+  },
+  {
+    "name": "host-billing-rerun",
+    "command": [
+      "C:\\Users\\semih\\.dotnet\\dotnet.exe",
+      "test",
+      "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+      "-c",
+      "Debug",
+      "--artifacts-path",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\artifacts",
+      "--results-directory",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\host-billing-rerun-results",
+      "--logger",
+      "trx"
+    ],
+    "exit_code": 0,
+    "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\host-billing-rerun.log",
+    "sha256": "fef3c3151d2973f53904c5ae246b4edc4e87995e21adb00055a73526ab988874",
+    "summary": [
+      "Başarılı!  - Başarısız:     0, Başarılı:   108, Atlanan:     0, Toplam:   108, Süre: 6 m 21 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)"
+    ]
+  }
+]

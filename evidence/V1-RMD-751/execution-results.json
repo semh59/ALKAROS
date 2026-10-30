@@ -1,0 +1,100 @@
+[
+  {
+    "name": "document-regression",
+    "command": [
+      "python",
+      "-B",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+      "--document",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\original-document.md"
+    ],
+    "exit_code": 1,
+    "log": "evidence/V1-RMD-751/document-regression.log",
+    "sha256": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff",
+    "summary": []
+  },
+  {
+    "name": "host-billing",
+    "command": [
+      "C:\\Users\\semih\\.dotnet\\dotnet.exe",
+      "test",
+      "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+      "-c",
+      "Debug",
+      "--artifacts-path",
+      "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-build-artifacts",
+      "--results-directory",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\host-billing-results",
+      "--logger",
+      "trx"
+    ],
+    "exit_code": 1,
+    "log": "evidence/V1-RMD-751/host-billing.log",
+    "sha256": "2b3d09d0ab9ff748b39ff0386b303c6504f87a149438e05f1d59b34c8973cc5b",
+    "summary": [
+      "  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ARefundWithinTheShiftAllowanceIsCompletedByTheCashierAndDrawsFromTheAllowance [1 ms]",
+      "  Hata İletisi:",
+      "  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.TheChosenUnitsGoBackToStockInTheCompletingTransactionAndTheOthersDoNot [1 ms]",
+      "  Hata İletisi:",
+      "  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.OnlyAManagerGrantsTheAllowanceNotToThemselvesNotBelowWhatIsUsedAndNotWithoutASession [1 ms]",
+      "  Hata İletisi:",
+      "  Başarısız ALKAROS.Host.Experience.Billing.Tests.PaymentRefundHttpTests.ManualRefundWaitsForTheSlipNumberThenRefundsAndCancelsTheBill [1 ms]",
+      "  Hata İletisi:",
+      "  Başarısız ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.AnOrderWhoseBillIsStillOpenAfterOnePaymentWasRefundedStillCounts [1 ms]",
+      "  Hata İletisi:",
+      "  Başarısız ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.AnOrderBilledAgainAndPaidAfterARefundStillCounts [1 ms]",
+      "  Hata İletisi:",
+      "  Başarısız ALKAROS.Host.Experience.Billing.Tests.ShiftSummaryRefundTests.ARefundedOrderIsOutOfTheWaitersSalesTheTipPoolAndTheWaiterCount [1 ms]",
+      "  Hata İletisi:",
+      "Başarısız! - Başarısız:   103, Başarılı:     5, Atlanan:     0, Toplam:   108, Süre: 19 s - ALKAROS.Host.Experience.Billing.Tests.dll (net8.0)"
+    ]
+  },
+  {
+    "name": "audit-eventstore",
+    "command": [
+      "C:\\Users\\semih\\.dotnet\\dotnet.exe",
+      "test",
+      "tests/Modules/Audit/EventStore/ALKAROS.Audit.EventStore.Tests.csproj",
+      "-c",
+      "Debug",
+      "--artifacts-path",
+      "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-build-artifacts",
+      "--results-directory",
+      "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\audit-eventstore-results",
+      "--logger",
+      "trx"
+    ],
+    "exit_code": 0,
+    "log": "evidence/V1-RMD-751/audit-eventstore.log",
+    "sha256": "3852b06cd4801c00e66518096d568b4259351a928c3aeaf59c891773bd871bb0",
+    "summary": [
+      "Toplam 1 test dosyası belirtilen desenle eşleşti.",
+      "Başarılı!  - Başarısız:     0, Başarılı:   106, Atlanan:     0, Toplam:   106, Süre: 2 s - ALKAROS.Audit.EventStore.Tests.dll (net8.0)"
+    ]
+  },
+  {
+    "name": "plan",
+    "command": [
+      "python",
+      "-B",
+      "tools/plan-audit/plan_audit_tool.py",
+      "validate"
+    ],
+    "exit_code": 1,
+    "log": "evidence/V1-RMD-751/plan.log",
+    "sha256": "79f756fda677501691ea48cd1303500cc18a8ad6a47731252fe7ff3cdcb016ce",
+    "summary": []
+  },
+  {
+    "name": "consistency",
+    "command": [
+      "python",
+      "-B",
+      "tools/consistency-audit/consistency_audit.py"
+    ],
+    "exit_code": 0,
+    "log": "evidence/V1-RMD-751/consistency.log",
+    "sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+    "summary": []
+  }
+]

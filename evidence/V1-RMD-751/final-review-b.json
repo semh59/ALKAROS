@@ -1,0 +1,1693 @@
+{
+  "verdict": {
+    "document_semantics": "PASS",
+    "historical_contract": "PASS",
+    "document_negative_discrimination": "PASS",
+    "scope": "PASS",
+    "runtime_acceptance": "AÇIK: ilk Host Billing koşusu başarısız; bağımsız denetçi suite başlatmadı ve tekrar koşusunu beklemedi.",
+    "task_closure": "VERİLMEDİ; Done onayı değildir."
+  },
+  "generated_at_utc": "2026-10-29T15:49:03.682828+00:00",
+  "findings": [
+    {
+      "id": "B-751-01",
+      "kind": "doğrulanmış belge uyumu",
+      "status": "kusur yok",
+      "evidence": [
+        "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:9-14",
+        "src/Host/Experience/Billing/BillingSplitApplication.cs:158-241",
+        "src/Host/Experience/Billing/BillingSplitStore.cs:82-113,170-194",
+        "src/Modules/Billing/Adjustments/PostgresBillAdjustmentRepository.cs:89-121",
+        "src/Modules/Audit/EventStore/PostgresAuditEventStore.cs:35-42",
+        "src/Modules/Audit/EventStore/AuditEventWriter.cs:31-43,66"
+      ],
+      "detail": "Endpoint auditEvents ve TraceIdentifier değerlerini store metoduna geçiriyor. Yeni indirim AddAsync, row-version UPDATE ve audit INSERT aynı connection/lockTransaction ile son CommitAsync öncesinde. Not yalnız yazımlar için bu iddiayı kuruyor; tüm okumalar aynı transaction içinde demiyor. Bill GetByIdAsync ile adjustment GetByBillIdAsync ayrı connection açar (PostgresBillRepository.cs:22-29; PostgresBillAdjustmentRepository.cs:25-45). Dolayısıyla okuma snapshot/isolation garantisi çıkartılamaz."
+    },
+    {
+      "id": "B-751-02",
+      "kind": "doğrulanmış replay akışı",
+      "status": "statik uyum",
+      "evidence": [
+        "src/Host/Experience/Billing/BillingSplitStore.cs:105-113,260-266",
+        "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:698-752"
+      ],
+      "detail": "Aynı key + SameDiscount eşleşmesinde commit ve return, AddAsync/AppendAsync öncesinde. Uyuşmayan payload exception üretir. ADiscountAndATipEachWriteOneAuditRecordAndARetryWritesNone iki HTTP denemesi sonrası gerçek SQL ile discount audit sayısını 1 doğrular; rollback testi başarısız audit sonrası adjustment sayısının 0 olduğunu doğrular. İlk mevcut koşuda fixture kurulumu kırıldığı için bu testlerin davranışı çalışmış sayılmaz."
+    },
+    {
+      "id": "B-751-03",
+      "kind": "tarihçe ve kapsam",
+      "status": "PASS",
+      "detail": "Yeni ### güncellik notu tam bir kez çıkarılınca belge original-document.md ve git HEAD metni ile birebir eşit (satır-sonu normalizasyonu). Goal, Owned surface, In/Out of scope, Dependencies, Acceptance evidence, Handoff korunmuş. void/comp yalnız tarihsel kapsam dışı diye belirtiliyor; güncel uygulamada hiç audit yoktur gibi geniş iddia yok."
+    },
+    {
+      "id": "B-751-04",
+      "kind": "guard değerlendirmesi",
+      "status": "belge negatifleri PASS; semantik guard değil",
+      "evidence": [
+        "evidence/V1-RMD-751/verify_document.py:19-35,45-47"
+      ],
+      "detail": "Guard koşulsuz/self-fulfilling green değil: güncel belge exit 0; bağımsız 9 bozuk/eski/tarihçe/konum kopyası exit 1. Sabit NOTE ve byte-equivalent tarihçe karşılaştırması belge kabulünü korur. Ancak kaynak sırası substring denetimi kontrol akışını ve eventName değerini kanıtlamaz: scratch kaynak kopyasında replay return silinince de eventName yanlış yapılınca da exit 0 verdi. Bu beklenen statik-tier sınırı açıkça raporlanmış; sonuç replay/atomicity runtime başarısı yerine kullanılamaz.",
+      "remediation": "Semantik kabul için gerçek Host Billing davranış testlerinin başarı kanıtı gerekir; guard PASS tek başına yeterli değil."
+    },
+    {
+      "id": "B-751-05",
+      "kind": "açık kabul engeli",
+      "status": "AÇIK",
+      "evidence": [
+        "evidence/V1-RMD-751/host-billing.log:48-54",
+        "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:1922-1957"
+      ],
+      "detail": "İlk Host Billing exit 1: 108 toplam, 5 başarılı, 103 başarısız. AppContext.BaseDirectory scratch artifacts altında; FindRepositoryRoot yalnız üst dizinleri tarıyor, migration manifestini bulamıyor. Odak audit/replay/rollback testleri DirectoryNotFoundException ile fixture aşamasında başarısız. Üretim kusuru kanıtı da davranış PASS da değil. Ebeveynin evidence içi artifacts tekrar koşusu bu incelemede beklenmedi."
+    },
+    {
+      "id": "B-751-06",
+      "kind": "mevcut alt-katman kanıtı",
+      "status": "mevcut log ve TRX incelendi",
+      "evidence": [
+        "evidence/V1-RMD-751/audit-eventstore.log:12-14",
+        "tests/Modules/Audit/EventStore/AuditTests.cs:206-233"
+      ],
+      "detail": "Audit EventStore mevcut koşu exit 0, 106/106 başarılı. Transaction testi gerçek PostgreSQL üzerinde rollback sonrası yokluk, commit öncesi dış bağlantıya görünmezlik ve commit sonrası sanitize edilmiş kayıt varlığını doğrular. Host indirim endpoint zincirinin çalıştığını tek başına kanıtlamaz."
+    },
+    {
+      "id": "B-751-07",
+      "kind": "plan başlık düzeltmesi",
+      "status": "güncel sürüm incelendi",
+      "detail": "## başlığıyla ilk SECTION_ORDER hatası korunmuş eski logda. Güncel belge ve NOTE ### seviyesinde. Mevcut plan-rerun.log 0 hata/0 uyarı, execution-rerun-results.json exit 0; consistency-rerun clean/exit 0. Bağımsız denetçi validator suites başlatmadı."
+    }
+  ],
+  "checked_hashes": {
+    "AGENTS.md": "5916f57a73ca9c6e1610e60b0eeca52280b68328d93d793d5266bb0475a1d845",
+    "evidence/V1-RMD-751/audit-eventstore.log": "3852b06cd4801c00e66518096d568b4259351a928c3aeaf59c891773bd871bb0",
+    "evidence/V1-RMD-751/consistency-rerun.log": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+    "evidence/V1-RMD-751/consistency.log": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+    "evidence/V1-RMD-751/document-final-green.log": "a294f7acb64e01673e44be8b7b826b387b187bc0f5c29e42ed5ab95cfa22df8d",
+    "evidence/V1-RMD-751/document-final-regression.log": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff",
+    "evidence/V1-RMD-751/document-green.log": "a294f7acb64e01673e44be8b7b826b387b187bc0f5c29e42ed5ab95cfa22df8d",
+    "evidence/V1-RMD-751/document-red.log": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff",
+    "evidence/V1-RMD-751/document-regression.log": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff",
+    "evidence/V1-RMD-751/execution-rerun-results.json": "a8e21fb7f8d7326d37d21e7fbe8e029d7bfa91f7c98c093cde67a4886f74538d",
+    "evidence/V1-RMD-751/execution-results.json": "00418fff8b56f74aa2823442741184c39e3561befb46bad6cabb87ec45161831",
+    "evidence/V1-RMD-751/host-billing-rerun.log": "e5eee23a56ae32c96007c80ce185b2c447cd0a9ec41910750d2034f6e8ba05e8",
+    "evidence/V1-RMD-751/host-billing.log": "2b3d09d0ab9ff748b39ff0386b303c6504f87a149438e05f1d59b34c8973cc5b",
+    "evidence/V1-RMD-751/original-document.md": "c3284e99ba6a827c1f1c0cb0c26230276391a45ae8e6fab2bda662c90eebb16e",
+    "evidence/V1-RMD-751/plan-rerun.log": "acebbbb8470edcbcc4f8cd1ff8fe8f06b3a692a5eb292ffb1497b6da80c119c1",
+    "evidence/V1-RMD-751/plan-review-a.json": "a05646ce607f282e6f56f608a4a363aab99ba65a1b8127f2034e96ad71d9fa6b",
+    "evidence/V1-RMD-751/plan-review-b.json": "f92e883c0040b284f088c7f87f7406a42e158f1974694459535cf6fe3052c3bf",
+    "evidence/V1-RMD-751/plan.log": "79f756fda677501691ea48cd1303500cc18a8ad6a47731252fe7ff3cdcb016ce",
+    "evidence/V1-RMD-751/preflight.json": "a360be42dcf4bfd6342efe617be62e04f1cc9f2ce1c332103e56407d60fcca78",
+    "evidence/V1-RMD-751/verify_document.py": "79262366a0f02d292a758fb13048acbccbc1bd13bfab8c194ecdb8e86da4d20b",
+    "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md": "61c9ee1469a13d006df1f4a3a424edb7e8ad878ff3683cc5c3535484159813a2",
+    "plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md": "37c4d22a50734fb086d431037f8d0a786a35407ff76d0ed23edcd7080756e238",
+    "src/Host/Experience/Billing/BillingSplitApplication.cs": "4f7805200d087fa41c9a0e693913ab6000277a3b48193fb5af51665a502bc2de",
+    "src/Host/Experience/Billing/BillingSplitStore.cs": "b82a637d28432edd54d37195f5d38950a90c92a68c5d79aa294ac76c3b5db3d4",
+    "src/Modules/Audit/EventStore/AuditEventWriter.cs": "9ac2bd3e5aa0c4d87415368698e665a5b370b0ce3e4b0d777e466bfbb853d41b",
+    "src/Modules/Audit/EventStore/PostgresAuditEventStore.cs": "764c320afb77fec38d02d8e0875a6bce530d5a63f5fc3d134d4b1b6d7554cf86",
+    "src/Modules/Billing/Adjustments/PostgresBillAdjustmentRepository.cs": "0d747ff2d3d2935a370fa8ccbd226d2e4510747ab5c61102b80be319c947bebb",
+    "src/Modules/Billing/BillFoundation/PostgresBillRepository.cs": "dc79d43657ccba23f44f989e1022b64a4c473f08627a1e405c91f2070527f574",
+    "tests/Host/Experience/Billing/BillCancellationHttpTests.cs": "6f1261f12529bd187fabd90302b0d2bd590a46289b49f935c7979e3f17a806bb",
+    "tests/Host/Experience/Billing/BillingSplitHttpTests.cs": "df068d7e88277741f2ffc6a7a5eed70a0a5164b71e08eee431a26d81a31fa48c",
+    "tests/Modules/Audit/EventStore/AuditTests.cs": "e1497af0a34ef422c827d1b5e00aaf9c02d431e5dd8662c1e6be503ca95f7ccf"
+  },
+  "commands": [
+    {
+      "command": [
+        "git",
+        "rev-parse",
+        "HEAD"
+      ],
+      "actual_exit_code": 0,
+      "stdout": "8c03e79bdc5263f5a5a26a524693403012d871d2\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "show",
+        "HEAD:plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md"
+      ],
+      "actual_exit_code": 0,
+      "stdout": "# V1-RMD-237 - Wire a real audit event into the bill discount application path\n\n- Task ID: V1-RMD-237\n- Status: Done\n- Assignee: Claude Sonnet 5\n- Work type: implementation\n- Surface state: Existing\n\n## Goal\n\n`V1-OPS-001`'in kendi Goal'ı (\"V1 critical command'ları için immutable\naudit event üretmek\") ve In scope'u (\"temel V1 komut entegrasyonu\") hiçbir\nzaman teslim edilmedi: `IAuditEventStore.AppendAsync`/`AppendBatchAsync`\ntüm `src/` ağacında SIFIR kez çağrılıyor (bağımsız bir denetim ajanının,\n2026-09-18, tüm proje kod denetimi, bulgusu). Okuma tarafı gerçek ve doğru\nyetkilendirilmiş (`KitchenOperationsEndpoints.cs`'nin `/audit/aggregate`,\n`/audit/correlation` uçları, V1-RMD-116'nın kendi yorumuyla \"void/comp/\ndiscount decisions included\" diye açıkça belirtiyor) — ama sorguladığı\ntablo hiçbir zaman doldurulmuyor. Bu görev, üç eskalasyon-sınıfı komuttan\n(`bills.discount`/`bills.void`/`bills.comp`) İLKİNİ (discount) gerçek bir\naudit event üreten uca bağlar; diğer ikisi kasıtlı olarak Out of scope\n(ayrı dosya/modül, ayrı görev — Bölme testi).\n\n## Owned surface\n\n- `evidence/V1-RMD-237/**`\n- Sınırlı ek (paylaşılan, geri-tik olmadan): src/Host/Experience/Billing/BillingSplitApplication.cs\n  (birikimli olarak birçok görevin sahipliğinde) — yalnız `/discount`\n  endpoint'inin başarı yolu, `BillingSplitStore.ApplyDiscountAsync`\n  döndükten sonra gerçek bir `IAuditEventStore.AppendAsync` çağrısı\n  ekler; `AddBillingSplitExperience`'a `IAuditEventStore` DI kaydı\n  eklenir; başka hiçbir endpoint/davranış değişmez.\n- Sınırlı ek (paylaşılan, geri-tik olmadan): tests/Host/Experience/Billing/BillingSplitHttpTests.cs\n  (V1-RMD-040 sahipliğinde kalır) — yeni bir test eklenir, mevcut testler\n  değişmez.\n\n## In scope\n\n- Başarıyla uygulanan bir indirim (`BillingSplitStore.ApplyDiscountAsync`\n  başarıyla döndüğünde), `AggregateType=\"Bill\"`, `AggregateId=billId`,\n  `ActorId=principal.UserId`, `Reason=request.ReasonCode`,\n  `CorrelationId=context.TraceIdentifier`, önce/sonra `payableAmount`\n  içeren gerçek bir `AuditEvent` yazar.\n- Bu event artık `GET .../audit/aggregate/Bill/{billId}` ve\n  `GET .../audit/correlation/{correlationId}` ile gerçekten sorgulanabilir.\n\n## Out of scope\n\n- `bills.void`/`bills.comp` (ayrı dosya — `OrderManagementEndpoints.cs`,\n  ayrı görev), kasa/ödeme/rol değişikliği gibi diğer hassas komutlar.\n- Grant-request (`Pending`/`Refused`) yollarının audit'lenmesi — yalnız\n  fiilen UYGULANAN (Applied) bir indirim audit'lenir; reddedilen/bekleyen\n  talepler zaten `IDenialEventSink`/`identity.authorization_grants`\n  tablosunda kayıtlı.\n\n## Dependencies\n\n- V1-OPS-001\n\n## Acceptance evidence\n\n- Gerçek Postgres + gerçek Host'a karşı HTTP testi: bir indirim\n  uygulandıktan sonra `GET .../audit/aggregate/Bill/{billId}` gerçek,\n  doğru alanlı bir `AuditEvent` döner (önceden boş dönüyordu).\n- `dotnet build ALKAROS.slnx -c Debug` → 0 uyarı, 0 hata.\n- `dotnet test` (Billing HTTP testleri) → yeşil.\n- `python tools/plan-audit/plan_audit_tool.py validate` → 0 hata, 0 uyarı.\n- `python tools/consistency-audit/consistency_audit.py` → temiz.\n\n## Handoff\n\n- None\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py"
+      ],
+      "actual_exit_code": 0,
+      "stdout": "{\"result\": \"PASS\", \"checks\": [\"current-note\", \"historical-contract-preserved\", \"transaction-write-order\", \"endpoint-handoff\"], \"tier\": \"Document acceptance and source-shape guard only; independent semantic review and runtime tests required\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-final-negative-old-document.md"
+      ],
+      "actual_exit_code": 1,
+      "stdout": "{\"result\": \"FAIL\", \"error\": \"Current-flow note missing or altered\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-final-negative-wrong-transaction.md"
+      ],
+      "actual_exit_code": 1,
+      "stdout": "{\"result\": \"FAIL\", \"error\": \"Current-flow note missing or altered\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-final-negative-wrong-replay.md"
+      ],
+      "actual_exit_code": 1,
+      "stdout": "{\"result\": \"FAIL\", \"error\": \"Current-flow note missing or altered\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-final-negative-history-dependency.md"
+      ],
+      "actual_exit_code": 1,
+      "stdout": "{\"result\": \"FAIL\", \"error\": \"Historical contract changed or note inserted at wrong location\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-final-negative-history-void-comp.md"
+      ],
+      "actual_exit_code": 1,
+      "stdout": "{\"result\": \"FAIL\", \"error\": \"Historical contract changed or note inserted at wrong location\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-final-negative-wrong-void-comp-note.md"
+      ],
+      "actual_exit_code": 1,
+      "stdout": "{\"result\": \"FAIL\", \"error\": \"Current-flow note missing or altered\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-final-negative-duplicate-note.md"
+      ],
+      "actual_exit_code": 1,
+      "stdout": "{\"result\": \"FAIL\", \"error\": \"Current-flow note missing or altered\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-final-negative-misplaced-note.md"
+      ],
+      "actual_exit_code": 1,
+      "stdout": "{\"result\": \"FAIL\", \"error\": \"Historical contract changed or note inserted at wrong location\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-final-negative-old-heading.md"
+      ],
+      "actual_exit_code": 1,
+      "stdout": "{\"result\": \"FAIL\", \"error\": \"Current-flow note missing or altered\", \"tier\": \"Document acceptance and source-shape guard only; not runtime proof\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-guard-sandbox\\evidence\\V1-RMD-751\\verify_document.py"
+      ],
+      "actual_exit_code": 0,
+      "stdout": "{\"result\": \"PASS\", \"checks\": [\"current-note\", \"historical-contract-preserved\", \"transaction-write-order\", \"endpoint-handoff\"], \"tier\": \"Document acceptance and source-shape guard only; independent semantic review and runtime tests required\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\installs\\684547ac9b30471d\\environments\\9153071d1ebd4af3b31abc0bcc0ad446\\venv\\Scripts\\python.exe",
+        "-B",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-review-b-guard-sandbox\\evidence\\V1-RMD-751\\verify_document.py"
+      ],
+      "actual_exit_code": 0,
+      "stdout": "{\"result\": \"PASS\", \"checks\": [\"current-note\", \"historical-contract-preserved\", \"transaction-write-order\", \"endpoint-handoff\"], \"tier\": \"Document acceptance and source-shape guard only; independent semantic review and runtime tests required\"}\r\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "-c",
+        "core.quotePath=false",
+        "status",
+        "--porcelain=v1",
+        "-z",
+        "--untracked-files=all"
+      ],
+      "actual_exit_code": 0,
+      "stdout": {
+        "path_count": 247,
+        "entries_recorded_in": "scope.current_changes"
+      },
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--name-status"
+      ],
+      "actual_exit_code": 0,
+      "stdout": "M\tplan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md\nM\tplan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md\n",
+      "stderr": ""
+    },
+    {
+      "command": [
+        "git",
+        "diff",
+        "--cached",
+        "--name-status"
+      ],
+      "actual_exit_code": 0,
+      "stdout": "",
+      "stderr": ""
+    }
+  ],
+  "negative_cases": [
+    {
+      "case": "old-document",
+      "actual_exit_code": 1,
+      "sha256": "0bb08fc3089a73268ba65822789dee55b62b3ff5a812974d92a26e93ed517ce1"
+    },
+    {
+      "case": "wrong-transaction",
+      "actual_exit_code": 1,
+      "sha256": "1a8d79374c78f2caff68bd8f6d6dc3227bc4fe76d0f64165cacbeb1ebdc675ba"
+    },
+    {
+      "case": "wrong-replay",
+      "actual_exit_code": 1,
+      "sha256": "e89f6b2193d49172af2d5570a32ec67f8d0dc0f6266187c1502c7fead1bcdbce"
+    },
+    {
+      "case": "history-dependency",
+      "actual_exit_code": 1,
+      "sha256": "31d5dce83d4a7693b1babfc63c3d33a46ee7a32b71ec8c8b8c01830e41e49b71"
+    },
+    {
+      "case": "history-void-comp",
+      "actual_exit_code": 1,
+      "sha256": "b29b9ddde284a1d348d7aaf821f1828a5693241b631800b93fa3020530ae5254"
+    },
+    {
+      "case": "wrong-void-comp-note",
+      "actual_exit_code": 1,
+      "sha256": "f3798ae65ed324a6f22e47ccfc49ea0a32f662edcef864bff00bd472b3056dd7"
+    },
+    {
+      "case": "duplicate-note",
+      "actual_exit_code": 1,
+      "sha256": "6bc9e69beaba1cd4e1d4d4c236b81a799a30b25fb21721e411593c24951ad12e"
+    },
+    {
+      "case": "misplaced-note",
+      "actual_exit_code": 1,
+      "sha256": "f5ebeeb9adc794540a2a5add396860e13eabb7431d9d7f467e1c9d7fd882b74b"
+    },
+    {
+      "case": "old-heading",
+      "actual_exit_code": 1,
+      "sha256": "0d9179bec5f3a04d1154130df868f20953fe4e0051551a29fb40978d7cabc102"
+    }
+  ],
+  "scratch_source_mutation_probes": [
+    {
+      "case": "replay-return-removed",
+      "actual_exit_code": 0,
+      "mutated_source_sha256": "1eee6217c5089410c42fcf1b5d8b5eeef46d66a7dc1235fc9c739cce94cd3e73",
+      "meaning": "Salt kaynak-biçimi guard semantik mutasyonu yakalamıyor; üretim kodu değiştirilmedi, derleme/test yapılmadı."
+    },
+    {
+      "case": "audit-event-name-wrong",
+      "actual_exit_code": 0,
+      "mutated_source_sha256": "4fdedfdaf0eaa6285dffd2b430ecc0a3b56f4a61f257895ff7f4e118afa2cac4",
+      "meaning": "Salt kaynak-biçimi guard semantik mutasyonu yakalamıyor; üretim kodu değiştirilmedi, derleme/test yapılmadı."
+    }
+  ],
+  "scope": {
+    "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+    "preflight_head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+    "baseline_count": 225,
+    "current_count": 247,
+    "baseline_changed": [
+      {
+        "path": "plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md",
+        "before": {
+          "state": "??",
+          "sha256": "c5d3f3068240c425cba2ddd63fd1677924c3363ba6ba12c1a0c85d311edceef3"
+        },
+        "after": {
+          "state": "??",
+          "sha256": "37c4d22a50734fb086d431037f8d0a786a35407ff76d0ed23edcd7080756e238"
+        },
+        "disk_sha256": "37c4d22a50734fb086d431037f8d0a786a35407ff76d0ed23edcd7080756e238"
+      }
+    ],
+    "new_paths": {
+      "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md": {
+        "state": " M",
+        "sha256": "61c9ee1469a13d006df1f4a3a424edb7e8ad878ff3683cc5c3535484159813a2"
+      },
+      "evidence/V1-RMD-751/audit-eventstore-results/semih_SEMH59_2026-10-29_18_44_42_net8.0.trx": {
+        "state": "??",
+        "sha256": "cdab3a41dea28601575ff9e794bc48b8f198c963494d1b521237b8c6f672dae9"
+      },
+      "evidence/V1-RMD-751/audit-eventstore.log": {
+        "state": "??",
+        "sha256": "3852b06cd4801c00e66518096d568b4259351a928c3aeaf59c891773bd871bb0"
+      },
+      "evidence/V1-RMD-751/consistency-rerun.log": {
+        "state": "??",
+        "sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0"
+      },
+      "evidence/V1-RMD-751/consistency.log": {
+        "state": "??",
+        "sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0"
+      },
+      "evidence/V1-RMD-751/document-final-green.log": {
+        "state": "??",
+        "sha256": "a294f7acb64e01673e44be8b7b826b387b187bc0f5c29e42ed5ab95cfa22df8d"
+      },
+      "evidence/V1-RMD-751/document-final-regression.log": {
+        "state": "??",
+        "sha256": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff"
+      },
+      "evidence/V1-RMD-751/document-green.log": {
+        "state": "??",
+        "sha256": "a294f7acb64e01673e44be8b7b826b387b187bc0f5c29e42ed5ab95cfa22df8d"
+      },
+      "evidence/V1-RMD-751/document-red.log": {
+        "state": "??",
+        "sha256": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff"
+      },
+      "evidence/V1-RMD-751/document-regression.log": {
+        "state": "??",
+        "sha256": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff"
+      },
+      "evidence/V1-RMD-751/execution-rerun-results.json": {
+        "state": "??",
+        "sha256": "a8e21fb7f8d7326d37d21e7fbe8e029d7bfa91f7c98c093cde67a4886f74538d"
+      },
+      "evidence/V1-RMD-751/execution-results.json": {
+        "state": "??",
+        "sha256": "00418fff8b56f74aa2823442741184c39e3561befb46bad6cabb87ec45161831"
+      },
+      "evidence/V1-RMD-751/host-billing-rerun.log": {
+        "state": "??",
+        "sha256": "e5eee23a56ae32c96007c80ce185b2c447cd0a9ec41910750d2034f6e8ba05e8"
+      },
+      "evidence/V1-RMD-751/host-billing-results/semih_SEMH59_2026-10-29_18_44_13_net8.0.trx": {
+        "state": "??",
+        "sha256": "220c2136685130575babf277ad14ce0f87b04e4234b325855a3a27b3b6ba2174"
+      },
+      "evidence/V1-RMD-751/host-billing.log": {
+        "state": "??",
+        "sha256": "2b3d09d0ab9ff748b39ff0386b303c6504f87a149438e05f1d59b34c8973cc5b"
+      },
+      "evidence/V1-RMD-751/original-document.md": {
+        "state": "??",
+        "sha256": "c3284e99ba6a827c1f1c0cb0c26230276391a45ae8e6fab2bda662c90eebb16e"
+      },
+      "evidence/V1-RMD-751/plan-rerun.log": {
+        "state": "??",
+        "sha256": "acebbbb8470edcbcc4f8cd1ff8fe8f06b3a692a5eb292ffb1497b6da80c119c1"
+      },
+      "evidence/V1-RMD-751/plan-review-a.json": {
+        "state": "??",
+        "sha256": "a05646ce607f282e6f56f608a4a363aab99ba65a1b8127f2034e96ad71d9fa6b"
+      },
+      "evidence/V1-RMD-751/plan-review-b.json": {
+        "state": "??",
+        "sha256": "f92e883c0040b284f088c7f87f7406a42e158f1974694459535cf6fe3052c3bf"
+      },
+      "evidence/V1-RMD-751/plan.log": {
+        "state": "??",
+        "sha256": "79f756fda677501691ea48cd1303500cc18a8ad6a47731252fe7ff3cdcb016ce"
+      },
+      "evidence/V1-RMD-751/preflight.json": {
+        "state": "??",
+        "sha256": "a360be42dcf4bfd6342efe617be62e04f1cc9f2ce1c332103e56407d60fcca78"
+      },
+      "evidence/V1-RMD-751/verify_document.py": {
+        "state": "??",
+        "sha256": "79262366a0f02d292a758fb13048acbccbc1bd13bfab8c194ecdb8e86da4d20b"
+      }
+    },
+    "unexpected_changes": [],
+    "current_changes": {
+      "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md": {
+        "state": " M",
+        "sha256": "61c9ee1469a13d006df1f4a3a424edb7e8ad878ff3683cc5c3535484159813a2"
+      },
+      "plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md": {
+        "state": " M",
+        "sha256": "39e99be30c0b013bfc8d2cffe7ab815c2fcbdd880526a37ff3067b1661ae2f25"
+      },
+      "evidence/V1-RMD-739/classification/ANA_KAYITLAR.json": {
+        "state": "??",
+        "sha256": "309c6b36e83a837280899a032400afb923ee3c7e6e18880cd4daa68f9eea39f0"
+      },
+      "evidence/V1-RMD-739/classification/BAGIMSIZ_SON_KONTROL.json": {
+        "state": "??",
+        "sha256": "869704e7830ab3ab0927110917bd9961187ff4f0c5434a6b93f62ac3d894600b"
+      },
+      "evidence/V1-RMD-739/classification/BAYAT_BELGE_ADAYLARI.json": {
+        "state": "??",
+        "sha256": "ce441c3cce2d107faa8527c0694c6baea4d9ef61353e82e3c2ffab4332737bd4"
+      },
+      "evidence/V1-RMD-739/classification/DUZELTME_PAKETLERI.json": {
+        "state": "??",
+        "sha256": "6aa3b950b2d84e59e3fe3e4b1894024366fb6337ac9f07ce6c8d670b322ca99a"
+      },
+      "evidence/V1-RMD-739/classification/EK_KAYITLAR.json": {
+        "state": "??",
+        "sha256": "957f38cb1565de7cfd4f31f30806ac003100d4d4c59775438f38fcd97c92c412"
+      },
+      "evidence/V1-RMD-739/classification/KANIT_ENVANTERI.json": {
+        "state": "??",
+        "sha256": "ca557e7252eab09321f8bea4b7dc24f6ec67553585d5b8462b1882d588db77f6"
+      },
+      "evidence/V1-RMD-739/classification/KAPANIS_ESLESMESI.json": {
+        "state": "??",
+        "sha256": "6c50d63246efa66f22939e1b18ef97b94f2158da94d9cbfcbad6b3db1c0ac620"
+      },
+      "evidence/V1-RMD-739/classification/KOK_NEDEN_BAGLARI.json": {
+        "state": "??",
+        "sha256": "11c21a946da862e6299dc609dc47850b667994b40f8ed37711a0c61e26b32f0b"
+      },
+      "evidence/V1-RMD-739/classification/OZET.md": {
+        "state": "??",
+        "sha256": "7d840a812bf9bc3abe3eea0bc93b4bedf3525359ea4ca1700a34196e714ca9a8"
+      },
+      "evidence/V1-RMD-739/classification/PAKETLER.md": {
+        "state": "??",
+        "sha256": "63f13640052fd4023808e252792eeef298bb840642e9afc0c337c61697328935"
+      },
+      "evidence/V1-RMD-739/classification/POLITIKA.md": {
+        "state": "??",
+        "sha256": "656f3c0daaf93dd7b1f2e283fcd9af018a478e8cc022b951b6e8cbeb7841f233"
+      },
+      "evidence/V1-RMD-739/classification/SAYIM.json": {
+        "state": "??",
+        "sha256": "647c52e080453e9af191da42f46444c1070aa7952dca309383858e1139433788"
+      },
+      "evidence/V1-RMD-739/classification/SINIFLAMA_DUZELTMELERI.json": {
+        "state": "??",
+        "sha256": "ce50b171fafff2d84740e68e88558b8ee9c7674d7acd98ba1d2060ef43f0ebae"
+      },
+      "evidence/V1-RMD-739/classification/TARAMA_ADAYLARI.json": {
+        "state": "??",
+        "sha256": "41eaaa2316576471e1906eef16d6cdb153b028ffb444002aa92d7d072b515a4a"
+      },
+      "evidence/V1-RMD-739/classification/TUM_KAYITLAR.csv": {
+        "state": "??",
+        "sha256": "aec324d78ac14e2f272ed483c9409ef27b6d5bc946fa68798e233bfe2aedca52"
+      },
+      "evidence/V1-RMD-739/classification/final-audit-1.log": {
+        "state": "??",
+        "sha256": "d260f1db32c8e8a173b12740ce7e5191a9533a020dff5b1775dc3705b5ae4595"
+      },
+      "evidence/V1-RMD-739/classification/final-audit-2.log": {
+        "state": "??",
+        "sha256": "3988fcb26bc88be10c601e0da769c0833532d93749bc186b2b11f12b004e4f5c"
+      },
+      "evidence/V1-RMD-739/classification/final-audit-3.log": {
+        "state": "??",
+        "sha256": "75caf01e8c4fc8bf8899ec73004d28a522f31035e78bb64011ea8fe086b1b951"
+      },
+      "evidence/V1-RMD-739/classification/final-audit-4.log": {
+        "state": "??",
+        "sha256": "5b760f86caf9feb872a7c497dcf69f3fdb50229ad97b6d62013d3ce221f810f3"
+      },
+      "evidence/V1-RMD-739/classification/initial-audit-1.log": {
+        "state": "??",
+        "sha256": "7e3da3886d397211cb2c68ae508b22cfd105542ade581e5236c88f6157d704c5"
+      },
+      "evidence/V1-RMD-739/classification/initial-audit-2.log": {
+        "state": "??",
+        "sha256": "f11c4b793e99a88c1b32d478947ba12fa5f0d56294fb359835e1bf4859ad41ee"
+      },
+      "evidence/V1-RMD-739/classification/initial-audit-3.log": {
+        "state": "??",
+        "sha256": "c1bb0e0809328d78118d68e6f1d23923514d9c81cabc43ea58137629bc96aa1e"
+      },
+      "evidence/V1-RMD-739/classification/validate.py": {
+        "state": "??",
+        "sha256": "82d2f6336f9697529c278efc4ff104a0516a7965de6153619f81f75ff5a54cdd"
+      },
+      "evidence/V1-RMD-739/classification/wave1/ATOMIK_KAYITLAR.json": {
+        "state": "??",
+        "sha256": "405593a88f2d37018b13a5d6b0711caa839bea413304bd0ecda15de231c3534b"
+      },
+      "evidence/V1-RMD-739/classification/wave1/BELGE_BAGIMSIZ_INCELEME_V3.json": {
+        "state": "??",
+        "sha256": "65cf8a4352d4ee83b86ad167d7c7c2e09c59823588e1330c972a6b605e398e2b"
+      },
+      "evidence/V1-RMD-739/classification/wave1/BELGE_DUZELTMELERI_V3.md": {
+        "state": "??",
+        "sha256": "9ad6c64dbd7c44c49bd64660d1fc87e83e6387a55d01976c23d53e56d08b1aaa"
+      },
+      "evidence/V1-RMD-739/classification/wave1/DALGA_SAYIM.json": {
+        "state": "??",
+        "sha256": "bf74adf004e32a514af7c8caf4a8c7397f0186aaf8bdc0bc513bb16d1d2bc1bb"
+      },
+      "evidence/V1-RMD-739/classification/wave1/DURUM.md": {
+        "state": "??",
+        "sha256": "82f97f00964ab6282cec4677221aea811c8cc7f80fa20cc805cba7728d7b9067"
+      },
+      "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json": {
+        "state": "??",
+        "sha256": "e9e18122c5786de78b2a2b6c3df6a934f1f12d3d8621b47ca564b3de9d1cbca4"
+      },
+      "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.md": {
+        "state": "??",
+        "sha256": "3a7a3b011646af05e3005e27043b5ddda4b142b2d6b7dc2d0464ddb20608d569"
+      },
+      "evidence/V1-RMD-739/classification/wave1/GYZ017_BELGE_DUZELTMESI_V3.md": {
+        "state": "??",
+        "sha256": "ad206ec2b96858914ed7da5679da47e29f7e11c7e43cc4804793a4979ee9eecb"
+      },
+      "evidence/V1-RMD-739/classification/wave1/IDENTITY_TASLAK.json": {
+        "state": "??",
+        "sha256": "c12a32372b6cc4f95507a15fec435bea973d13a84af3c2df34b1e3b4a1519665"
+      },
+      "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json": {
+        "state": "??",
+        "sha256": "80d186c8787827e2d650243b93b02b12b9b8bd3a89e377a94583053ee88aaa4f"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KAPSAM_ACIKLARI_V2.json": {
+        "state": "??",
+        "sha256": "611c574f835450d8710c0b2a83e1e00ae2c28c2bd334c84f6c839b3f785adec7"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KAPSAM_DURUM_V2.md": {
+        "state": "??",
+        "sha256": "bb69014e2bf474c7b1c4acf05233e0e5d25ba56bc92d6b3ea33b5b0f3923a5ff"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KAPSAM_DURUM_V3.md": {
+        "state": "??",
+        "sha256": "9a6337148c0773081b45b5d248b652a2e796712d2db59bac2ecc9ef52ac8bd12"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KAPSAM_KONTROLLER_V2.json": {
+        "state": "??",
+        "sha256": "a6bfb0f8f106967483e97b3a11065cc2bc1f2dcda6cc1748f04484f032b8b426"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KAPSAM_SONUC_V2.json": {
+        "state": "??",
+        "sha256": "6902d02e9d97bca9ddcca2122821b30693a2717ec72c28c06feafa9e8e08ab0c"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KAPSAM_SONUC_V2.md": {
+        "state": "??",
+        "sha256": "a8988eecc4b8fc05f0b0f1d85fe2749a301d2b621263433a7d6e13d91aad5f4d"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KAPSAM_SONUC_V3.json": {
+        "state": "??",
+        "sha256": "79ea0340250bcc62f9952c89986cc1d92cca55559e532c6046bdddc9de51f184"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KAPSAM_SONUC_V3.md": {
+        "state": "??",
+        "sha256": "43fc3b4db40d943066229d81ebbf24e0ba3d95b8815bed8286df828557910892"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KAPSAM_TEMEL_V2.json": {
+        "state": "??",
+        "sha256": "8c2b889f999c62ce837e6225faab57c6c106465462462df68b673439d7ac6dfa"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KESIN_YUZEY_V2.json": {
+        "state": "??",
+        "sha256": "4bf890800152b9283eae3224e3335c985a627b460d080d6a9cd513f89bd53d73"
+      },
+      "evidence/V1-RMD-739/classification/wave1/KESIN_YUZEY_V3.json": {
+        "state": "??",
+        "sha256": "f7857bf68a1f9d57006a899774f97a1e6bf46c5e359c27ac2ac1ecc72a40abf2"
+      },
+      "evidence/V1-RMD-739/classification/wave1/ODEME_MIMARI_INCELEME_V3.json": {
+        "state": "??",
+        "sha256": "1963da9fc77f435561fe53e6a813021e6713353f192686edb0d4af3d4782fca0"
+      },
+      "evidence/V1-RMD-739/classification/wave1/PAYMENTS_TASLAK.json": {
+        "state": "??",
+        "sha256": "57440b936f18c1df675bc755340cc3dd4dc9107bfdb7ce58b41af513e6803347"
+      },
+      "evidence/V1-RMD-739/classification/wave1/STK031_BELGE_DUZELTMESI_V3.md": {
+        "state": "??",
+        "sha256": "137095fd447b07b97a1115295ada22c800e59af913b048ef1dff2dcbce6d2daf"
+      },
+      "evidence/V1-RMD-739/classification/wave1/STK032_BELGE_DUZELTMESI_V3.md": {
+        "state": "??",
+        "sha256": "a32dfb85f5ac54a237a74afc83a1d42edd60f130ea3bf2ce81efde850e619376"
+      },
+      "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json": {
+        "state": "??",
+        "sha256": "493f092b9b6af1d9f3dce56faa68e89e738f59ff741ed89c9a2f5a0124c35c21"
+      },
+      "evidence/V1-RMD-739/classification/wave1/STOK_KAPSAM_INCELEME_V2.json": {
+        "state": "??",
+        "sha256": "29af489891cdef2a1e5892504398896a88df3479d576d23f519ddfd4993d0bc8"
+      },
+      "evidence/V1-RMD-739/classification/wave1/UYGUNLUK_INCELEME_V3.json": {
+        "state": "??",
+        "sha256": "a5fde7afb06bb0db385f2442013b8ab6fde1a4298dea5aec33d2bfb353fad763"
+      },
+      "evidence/V1-RMD-739/classification/wave1/YAZMA_CAKISMALARI.json": {
+        "state": "??",
+        "sha256": "c7dedb3c7f6fe141a70d6a68ac0ea4d379a704235df94c2babf2de736b61a8df"
+      },
+      "evidence/V1-RMD-739/classification/wave1/YAZMA_CAKISMALARI_V2.json": {
+        "state": "??",
+        "sha256": "0ed88f0e93878abb6b557cb72be0744b18e7876c2980042bc21736cc3a62fc20"
+      },
+      "evidence/V1-RMD-739/classification/wave1/YAZMA_CAKISMALARI_V3.json": {
+        "state": "??",
+        "sha256": "97cc779fc70b6b04a460a0c780281983c00991935eb481b9933164baa865f49c"
+      },
+      "evidence/V1-RMD-739/classification/wave1/YETKI_ODEME_BAGIMSIZ_INCELEME.json": {
+        "state": "??",
+        "sha256": "dc59c88cf786552198e32032670dbd288907b09f75fd363bbdb3a1fc39b80cd5"
+      },
+      "evidence/V1-RMD-739/classification/wave1/YETKI_ODEME_KAPSAM_INCELEME_V2.json": {
+        "state": "??",
+        "sha256": "0dd88601267e3b8f198f6ced670aefa245647582edcc11a532598d678791bb09"
+      },
+      "evidence/V1-RMD-739/classification/wave1/adjudication/INDEX.json": {
+        "state": "??",
+        "sha256": "09ed20088aec8355180251526ab60b4940bfedc8930e81667ce60c67e0bdd2ce"
+      },
+      "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/739-correction-review-F0388.json": {
+        "state": "??",
+        "sha256": "bf016165ec8063a88ce5401e823ad8d03c437f61deeca6287292a604b88bcc68"
+      },
+      "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/739-correction-review-F0908.json": {
+        "state": "??",
+        "sha256": "1cf1b89038e55f06651808e1d85185f259ff8d1d7dbc6c9ccf238f3cb9eed12e"
+      },
+      "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/acceptance.json": {
+        "state": "??",
+        "sha256": "9a1985a911298f6499094468e07d92fd294c08e5950e1f78d3ad693b0405ba05"
+      },
+      "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/ledger.json": {
+        "state": "??",
+        "sha256": "9d80bbc37e21379748558c34f192a0e13e1bf1f45e71ae6c7e863d8ea6d22291"
+      },
+      "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/manifest.json": {
+        "state": "??",
+        "sha256": "ea6767b631b8284f04244cc795b58897358de1951c28dc9981095f815f0431c7"
+      },
+      "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/postwrite-review.json": {
+        "state": "??",
+        "sha256": "d3244214769af6d9017608c6e9dc919cc01568f107e090750230f7d5c1976bee"
+      },
+      "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/preflight.json": {
+        "state": "??",
+        "sha256": "07e4c2e94e1e58ca17dfc03e144ea9b209ecb8b4cdd280d8488e30649be6bbd5"
+      },
+      "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/validation.json": {
+        "state": "??",
+        "sha256": "60d9ae9ccd2c5392bc4be092914148879898618e2da434a6478c674d0b3e5f86"
+      },
+      "evidence/V1-RMD-739/classification/wave1/belge-dogrulama-v3.log": {
+        "state": "??",
+        "sha256": "a958e95f86ca71b15ed12daf7a237adefc18ed02eb708b944acccff488c496e2"
+      },
+      "evidence/V1-RMD-739/classification/wave1/belge-dogrulama-v3b.log": {
+        "state": "??",
+        "sha256": "4145021f60231a72f734709fa088f42d73d9b5d852fddf8e42d2b6ff972cf2d2"
+      },
+      "evidence/V1-RMD-739/classification/wave1/document_corrections_v3.py": {
+        "state": "??",
+        "sha256": "5fa44461c29c2d6609c8b973db853b1e51bb728d9388504236b2d24f7e748b06"
+      },
+      "evidence/V1-RMD-739/classification/wave1/join.log": {
+        "state": "??",
+        "sha256": "bf74adf004e32a514af7c8caf4a8c7397f0186aaf8bdc0bc513bb16d1d2bc1bb"
+      },
+      "evidence/V1-RMD-739/classification/wave1/ledger-validation.log": {
+        "state": "??",
+        "sha256": "ed3ea9ee5b64d1b1bb996bdefd91849866fe5e77ff2efd6333e151170ae58852"
+      },
+      "evidence/V1-RMD-739/classification/wave1/payments-validation.log": {
+        "state": "??",
+        "sha256": "5c948d0b6b0640fefbad05b92025301fcc8d2b0ad29f44a8eb459f8b355cb2ff"
+      },
+      "evidence/V1-RMD-739/classification/wave1/probe-run-output.log": {
+        "state": "??",
+        "sha256": "abe077ab0f9dd4ada8408e5414c147e883002674d2b74a27cc6657b95a5c0480"
+      },
+      "evidence/V1-RMD-739/classification/wave1/probe_sweeper_selection.py": {
+        "state": "??",
+        "sha256": "c6382e6b35069a202f6e9685b0f7f9630769b55fde9cd734cb2c9a669e47877f"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/BATCH_03_PARTIAL.json": {
+        "state": "??",
+        "sha256": "9ee5ad594f371f3c3bc25fc28168b6c457f5711d2707c481c019d52c86febb42"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/BATCH_04_PARTIAL.json": {
+        "state": "??",
+        "sha256": "76027e65a10ee873c86bd2b9a508b4fffd88c1bb85d98788d9e936105efbe32f"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/BATCH_09_PARTIAL.json": {
+        "state": "??",
+        "sha256": "8d89c4585cf317aacaa6cb9b483b307230092a390a2a5cc33257c4bf200cd14c"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/DURUM.md": {
+        "state": "??",
+        "sha256": "2e26f499ccee47fbc185c6a0ecccc5e6e56e289d505780bea9dbc02290cac5c2"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/F0388.json": {
+        "state": "??",
+        "sha256": "93d94c1b508ab731dfe412bdbffef6b1268c1e5755dd0b9b19dfb691e776495a"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/F0908.json": {
+        "state": "??",
+        "sha256": "2d577371496d2ab142d9a72f032d0d438a1f5ea1c27b9e1c0afdc9c3638cd4ce"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/FIRST_TWO_VALIDATION.json": {
+        "state": "??",
+        "sha256": "2b87c02a671878b374a7945c0568bbc8d033d30c004b2d0a735e46554dc22214"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0005.json": {
+        "state": "??",
+        "sha256": "88fe98f4075e59b8e286eefdda5ee6f6bf240415c8e07c146d9ba87b1673de64"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0006.json": {
+        "state": "??",
+        "sha256": "12e08eaa8e26ea88672c9dae723a1889e266c28e92977f276cabb61ac7d7128b"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0018.json": {
+        "state": "??",
+        "sha256": "46e59f4e08b12f89b92f17fcdc2b7511224fbc3e2e5c9691cc68258f4514dd94"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0023.json": {
+        "state": "??",
+        "sha256": "53c0f3000e79319fac2ac485b2d6971cffc1bebe148ea19b0fc4bf788d1acc83"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0053.json": {
+        "state": "??",
+        "sha256": "d5a75d68c23e468cf6d801f17f21f9aa76b455f7295879b8634532af7622fc34"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0091.json": {
+        "state": "??",
+        "sha256": "25f8df7e556fec437cca51bddcee196693f63870e0da14e9bb335fe10455299d"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0134.json": {
+        "state": "??",
+        "sha256": "56e4467695d68342553aa6e9b65050059b16a08d854f0704ace7542aadc6009a"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0153.json": {
+        "state": "??",
+        "sha256": "38ab3af4f6936091f2fc37c698642dc35fd6f3181476aab549c7a0e534720b7f"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0172.json": {
+        "state": "??",
+        "sha256": "8f52d7f8ea0cb2ec421eae5f102cf087772bac15323f8a5865edf652860bfa4d"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0180.json": {
+        "state": "??",
+        "sha256": "f428c73a0bc92aeacba245349e7fc788b3e29e5f42e985103f87d1da3be33024"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0205.json": {
+        "state": "??",
+        "sha256": "82e159036312f83e48123361ce7536e53dc2bb634f2f74b4139ce3fe607ca2d9"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0240.json": {
+        "state": "??",
+        "sha256": "78eaf16d82a6921da5e6b7f395f3635adc25630dd54e8212b3c7274684f88fdf"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0260.json": {
+        "state": "??",
+        "sha256": "3d3bced527ca58e68b0c59e11bb6afa115e5e4f5ecdf6b2d148aa822ca26cb03"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0358.json": {
+        "state": "??",
+        "sha256": "7c5892c94aaa55d4b7841072d73fa4f69f0c9ac1a7f0fa08362fb4f69f6bf4c6"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0373.json": {
+        "state": "??",
+        "sha256": "ec72c4c312811fe4f49846143e5a7b680cd333993546bac0bae6f54587b31e61"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0378.json": {
+        "state": "??",
+        "sha256": "6845b30485d5ab58bb728a3226235ab1474f46415c40b3bab480ea2198f38dc1"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0379.json": {
+        "state": "??",
+        "sha256": "1f78a5ed94912570ad2159b0379d3722ea60ff010b159577b2b0455bfd5f0b70"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0396.json": {
+        "state": "??",
+        "sha256": "f8f5497900521fbaf6c614c46b6a23709255bc8ee95b887a6255e512df5815a7"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0408.json": {
+        "state": "??",
+        "sha256": "2285b777fa45fb1656f7b9b15417ba8bd9590f2cdc06b2b800bc9db31f46bc8e"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0415.json": {
+        "state": "??",
+        "sha256": "8148852e0ac36b24629ff838a65459c1646db1ebc454d76614e7239b9b2d98b1"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0468.json": {
+        "state": "??",
+        "sha256": "80d66e1be6e8d15a0557150c858e0aea66b0032f36cff1ceb53923885e255e86"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0503.json": {
+        "state": "??",
+        "sha256": "ddaaccafd01f6b351a8cd4af834db17e4081f9d8ee3f56c574202e23fb4c0a1e"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0517.json": {
+        "state": "??",
+        "sha256": "67d3558247d312cd16d4c6fa97251eca3df2e5398ae78aea820447b424c716c0"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0535.json": {
+        "state": "??",
+        "sha256": "8186006be2a2c6041265da8079db7429323b5b52442dcfd3cdc10a00d782ae26"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0561.json": {
+        "state": "??",
+        "sha256": "a43229f7c892df06a56c5ec3cf66908faf2cfe3fc2321f2ba15f3010951b1779"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0577.json": {
+        "state": "??",
+        "sha256": "71b7270c06b962535153eae91871f955d9aa7ba20a1f8692bac3bc0656d7d2be"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0579.json": {
+        "state": "??",
+        "sha256": "624c4ca1c92e482632be34215e2c04f490e6541d2bd9abc2bb1a3e3986ce62c5"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0601.json": {
+        "state": "??",
+        "sha256": "80f0d5cfd7ec0a27332ce81b64479976c411ddedd047f783733eae84a357e1e0"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0636.json": {
+        "state": "??",
+        "sha256": "a21f36b2fa4a8a5a8b0f6fe10da748844288c696603b35af2fd3a9131c76f66e"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0637.json": {
+        "state": "??",
+        "sha256": "b11d2b2f00710b975a2ed22ab7956008fe4100635ecbd2170dd2d98f17da8a7f"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0691.json": {
+        "state": "??",
+        "sha256": "f8c17890c1d43329c199e579002e63ca3e76fd5f09a647b16622179aae83167c"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0696.json": {
+        "state": "??",
+        "sha256": "8c624ec7244a8d32cceafde1d72c56dc3c8a0fe1e3377125ffe53e5b6f297941"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0720.json": {
+        "state": "??",
+        "sha256": "8f9be5d03af0b7733393b6869409eac4840a9d854dd5b61fb7e0105f197d5430"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0741.json": {
+        "state": "??",
+        "sha256": "3bc93f513efb8d64aa155a9e60cbbb7413728b71776bae9774568993e0d2fabd"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0757.json": {
+        "state": "??",
+        "sha256": "66157574b990f83b35e1a1fddfe63f51955cb3b8df3546de1893df1af1ba9f94"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0760.json": {
+        "state": "??",
+        "sha256": "1e3c944a2622f16c4351f0c7c654ec3cee6016057bea12da36a2b892d1d92ddf"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0768.json": {
+        "state": "??",
+        "sha256": "ee7b6c15019517a97a5c64e0a98e309f8cf0399fc752c018282cfcb5cfe9f458"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0788.json": {
+        "state": "??",
+        "sha256": "4b07dc66e39a701a819ffa3d03ef9c74d062c6b0ba1b1df81a0f0401667ff8fb"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0789.json": {
+        "state": "??",
+        "sha256": "30318cc85adebb9ee5249a7f258b2464b5a84a778c53ca4da6402c831ee05453"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0836.json": {
+        "state": "??",
+        "sha256": "82d6ed5b179f02d2eb31b1c801810589d73ee042d4444f70293e820ca3c0cc8c"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0837.json": {
+        "state": "??",
+        "sha256": "c031bbe3a7923a7ef09d59081452cc7e7d9dfbc3b927c7c30ac2f2900e47a7a4"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0903.json": {
+        "state": "??",
+        "sha256": "5f659b2798d8987b999cffa5c748ea00dbde15dd9350cf94661fe3740fe4095b"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0911.json": {
+        "state": "??",
+        "sha256": "e35f77c5b07d1dea272b4bd4013c63fab01242417d6ea8cd28c0582b7d7d05b5"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0912.json": {
+        "state": "??",
+        "sha256": "a68d31cf6308d95946f665ef018cc77d52b2bc0d024f2e2ea5596c2fe2223e5d"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0978.json": {
+        "state": "??",
+        "sha256": "4923ab0288bf78314e0427353b335531d428e4f429f1dfb6d011461c964bc8f6"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F0988.json": {
+        "state": "??",
+        "sha256": "8d6377cf0d4d4dc98003ccde5acd3e96ff03fb773ccedce26be2d3dee051fdc2"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_F1006.json": {
+        "state": "??",
+        "sha256": "e93e296ba47b59642dabac3669af5ad90db7d97066c2411bc9ffb3a707308664"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PL0019.json": {
+        "state": "??",
+        "sha256": "0c65d667f8c2470d62527f91a7e17b96c2facc3384a267968e6d416f61af3402"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PL0020.json": {
+        "state": "??",
+        "sha256": "d6d28cfba6914bb7fd55f8391172b5c50bacf6fec4057100c271bf2a57645023"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PL0021.json": {
+        "state": "??",
+        "sha256": "b6fa1805856f216d3813372167a6b168ab64c730c53590ab44b9667f466e7395"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PL0022.json": {
+        "state": "??",
+        "sha256": "041de5b35bb417f79bc7d24ffdd93debfaeadbff9aae3966ad4519705ecb9d2a"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PL0023.json": {
+        "state": "??",
+        "sha256": "46d3b1d88b6c244fab6ad16420afa219d84f124bd108b64643026d61017ad59e"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PL0030.json": {
+        "state": "??",
+        "sha256": "1849c398cbd511729f24bea3171d9937f62af6cd0b0cdd131f7c536d25378640"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PL0031.json": {
+        "state": "??",
+        "sha256": "9f1f1f5dd25395146bff10462dd988788286f56ba9056575007bd10c91202b39"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PL0032.json": {
+        "state": "??",
+        "sha256": "6984d448c45eb4dbae84863fbd004151161b9cf7b9a2b72ebbab51b87fb54f3b"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PL0033.json": {
+        "state": "??",
+        "sha256": "ab1dfbf1d87a6e83ff7097b0e28d9381b6a62fefde5e89f0b872e0881df85115"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PL0034.json": {
+        "state": "??",
+        "sha256": "53d6b014426ab54b299d96522075dca0fbdbb6b7825e43114f60f02895d5397c"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PO0002.json": {
+        "state": "??",
+        "sha256": "c847d1e3ca1db93ac5d9df685940a7eb2975e1edc8bf4a09a0aba9f930bf885c"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PO0024.json": {
+        "state": "??",
+        "sha256": "d406efa1cb244f89f6ebb30ed450f95e30a3c23ef25994d956dffb4d3e06a628"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PO0036.json": {
+        "state": "??",
+        "sha256": "2278f46de1b1482c1aef73639c2472efcae0937ed907bc528ae8d84b0257d715"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_PO0050.json": {
+        "state": "??",
+        "sha256": "894131a6dc9ae712fa1b65de9a4f0c4a0374529829c9af522bafc9d8b850692d"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0005.json": {
+        "state": "??",
+        "sha256": "b285015d12fe2efb51c4f8bf8791c1e792c5842c73a9663575ee87e18a16f4fb"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0032.json": {
+        "state": "??",
+        "sha256": "e00137eff3325212f025d29ba94206ec63fc0973c8f5f99896442283488b02c9"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0034.json": {
+        "state": "??",
+        "sha256": "37f31eef08e2175eab5d65529168fe81c26a39a9881aaa1d447dbd37598deb9f"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0057.json": {
+        "state": "??",
+        "sha256": "dc321d037836334efc36d05de63695cd23f7eff9453cb5746a84a43c290e9870"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0075.json": {
+        "state": "??",
+        "sha256": "84436f0ece268dfb935381e972da51a6e45ae11e98a2c1117239ff1f736bb119"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0078.json": {
+        "state": "??",
+        "sha256": "5728d6bce7f9951b75acf3c0ee49ba7bcc942fdd39fb0eb1ec1d49bb4bc402bb"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0084.json": {
+        "state": "??",
+        "sha256": "caa917778ad4e4492f7f66eb097bd9f6c8be6bcd3171ab82f774a127383ce8b6"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0085.json": {
+        "state": "??",
+        "sha256": "02f8d85b20178313f3cfa5b4315d9dd8888fb6a318daa1ebf1bd26a7af9e66b0"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0125.json": {
+        "state": "??",
+        "sha256": "14547631d104f30c40e36fbc1460039dfed98ef26e2c3aed5cbe4019691b0cde"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0128.json": {
+        "state": "??",
+        "sha256": "6aeaec9ee338b75356693aeaa20b2a1fb14b6c246c88a2143067b6988423372d"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0135.json": {
+        "state": "??",
+        "sha256": "cccdfd46af9d509983dbdb33fb0f7391b732bbc4cb3634fc4a863186b87531ec"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0163.json": {
+        "state": "??",
+        "sha256": "7b5db13b3d8fe62a3f6a87af9f436deaa7a02293cb448c3b16dfdd88835818b2"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0166.json": {
+        "state": "??",
+        "sha256": "86be2d97949a5e807272ee53400e5aaa47ccc220bdffb1b2847bb90ceb334c88"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0167.json": {
+        "state": "??",
+        "sha256": "b0f4570e8e91e83896d1109e68d51942d49b88dd6fcaa45cfd81d956ba3593c4"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0168.json": {
+        "state": "??",
+        "sha256": "5afac8e6f7efdae1a7b1cfd815eedca0c99b3be92b7a425fa4c3da99347a8fda"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0169.json": {
+        "state": "??",
+        "sha256": "2a4883032323e20b37b315457767052b223ad417d12870b1eedd0c4f3752cd6b"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0170.json": {
+        "state": "??",
+        "sha256": "4bc5bd31199f62990caf406feb8b0258ebf590b7699a9aadb30763514c8c05d2"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0174.json": {
+        "state": "??",
+        "sha256": "849d7e593ec82d228a85bd8cea8a5ee0a686e728cabaf688dda029e17c849ef0"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0175.json": {
+        "state": "??",
+        "sha256": "f34c8e1f28d1c6057caa9c461990e512f27fc8402694fe583d7b0ca68a180a98"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0178.json": {
+        "state": "??",
+        "sha256": "dabdde3b68599824322ca1226cadbcb73d88c59fc6d165780f26af0bfc32a237"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0187.json": {
+        "state": "??",
+        "sha256": "86d3a303dd84cbbeed419a9594756d49edc6e0e9b6f3977c6444b1c7a16826e7"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0188.json": {
+        "state": "??",
+        "sha256": "02fc1f3111f9e1dba4bfbae383b5ec886f1ff79e3045a63f9b79beafed2ea9fb"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_UI0189.json": {
+        "state": "??",
+        "sha256": "866d8c1f783190857621f7b1d61848767d6d0d73ae9b58400d1ecdd3164b5bbb"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_W2-04-001.json": {
+        "state": "??",
+        "sha256": "70435a75adc277bdba89f28749c0dda535b3468c7dc26a64f2337636e5d74d0b"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_W2-04-002.json": {
+        "state": "??",
+        "sha256": "bd57b8e6077bd4002ed89b12f521a1152a17f0507b2c71d08c712d9ea4d18c31"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_W2-04-005.json": {
+        "state": "??",
+        "sha256": "c8d84382d21a63a8c830c314deb7a64089bb5184e808897690d3fe7cb6e56ca0"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_W2-04-006.json": {
+        "state": "??",
+        "sha256": "bb654754af7e4dc45d633f242e841cad4cb1824f53e7db25e27e85a61d4299b7"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/NEXT_W2-04-013.json": {
+        "state": "??",
+        "sha256": "34bc74f1bb398e08e3050303e60ea5bf63c11afaf0f9a67269192f5b41396e47"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/PARTIAL_IMPORT_VALIDATION.json": {
+        "state": "??",
+        "sha256": "0ab96a2125ccb7374264d041fe654a86f1048c56efecca78ac424f595982f69f"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/PREFLIGHT.json": {
+        "state": "??",
+        "sha256": "8ea1477d6de96a004da89b5e859be8e07d071b771154afbadfc45d577c256d90"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_35_VALIDATION.json": {
+        "state": "??",
+        "sha256": "4e4b64794a9e9624b51cc345fcd3d02da2f6c439f4bcb81834da8db07b084fc3"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0003.json": {
+        "state": "??",
+        "sha256": "c3078dc75574f40d94044308c72e63b79a552947d9cca2cb61974794b0c391cb"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0023.json": {
+        "state": "??",
+        "sha256": "dc0536fd9b760778bfde0d08d27d9ff0cb1579104d265da64b6fda2597869836"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0048.json": {
+        "state": "??",
+        "sha256": "fdf01db957f682230bf5d14b5e73cb18116d695e209b0491a58fcc8c4c7b7f94"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0049.json": {
+        "state": "??",
+        "sha256": "06141a36a6c1564a2b6fda1168afec104dfd6778d7167b06f24ffbc3d09bc502"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0078.json": {
+        "state": "??",
+        "sha256": "a5869c4c045d16ec321ebe826c4d2e6a1e8aab41c067c1acf71ab5e830abd757"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0079.json": {
+        "state": "??",
+        "sha256": "25d5dcd1ea5db1dca32fd24efc4f51a579cdc5440e1a13fb0b58c1f1d1a1fbf4"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0099.json": {
+        "state": "??",
+        "sha256": "3fd1488416404daa24cec6c3262818cc3aa1a3df05e43b82b66b66dceb436cde"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0162.json": {
+        "state": "??",
+        "sha256": "db491785e5b295e88739256d96719cab9767aea619c71788b2523513d3b9b882"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0167.json": {
+        "state": "??",
+        "sha256": "d119141a7364df162f42a653f745bde67f6bc19220a99bb286eda3d64ea1820f"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0170.json": {
+        "state": "??",
+        "sha256": "e7cecfde80219818b3a35a9375522eb08cda9c7eff2107f0cc5627d4b4729e7e"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0210.json": {
+        "state": "??",
+        "sha256": "3151080fe7a265889808af4dd6c844a37a4dd0cff1ea105850dac5b7c22c74a7"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0341.json": {
+        "state": "??",
+        "sha256": "3d5f93c8e9c67e0ba23e42d601865ce18e43d608b2c664130ace313e71396400"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0350.json": {
+        "state": "??",
+        "sha256": "b0f0211cf0c9e5f2053e72409c04f6f807394b7fca039e1dfb3182a5a5846cda"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0351.json": {
+        "state": "??",
+        "sha256": "55da0f925e2148c2c53453c08bef7843e6f9ffa3a770fcf6b3e097c2ad0c7390"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0354.json": {
+        "state": "??",
+        "sha256": "5f6384010160cf6060c9c6c131475a9736fb6c47cfadf5ee4c3a58f19dbbc6cd"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0377.json": {
+        "state": "??",
+        "sha256": "1e60f0374b45919fb372c5dd386c393c749d34461c8d0ec3e036954ce8a75de8"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0406.json": {
+        "state": "??",
+        "sha256": "44f83034f7eca1ba4a6b3a1b3b76a9536c98c5718db05f061a94f0f4af8c3f07"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0419.json": {
+        "state": "??",
+        "sha256": "6621c1c73550b19afd06190ddcf99bc6f0ca93addedb80f0c0425a0e1f15fe27"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0503.json": {
+        "state": "??",
+        "sha256": "1a48fd185e71804b8356d36c0e610c35705aa8bee141b729cb422be3c6a2558c"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0601.json": {
+        "state": "??",
+        "sha256": "f17ab75d5cc718ce1067b6cdc7fa66f8a52365339f12e743af198aa0780bcc6e"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0626.json": {
+        "state": "??",
+        "sha256": "3050a67b62202002c6aca582098c644bc545b8e6d7dd87b48408b34695a82d01"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0914.json": {
+        "state": "??",
+        "sha256": "f609136a87e1bce4c0b29bb02ce3feb8288e92e607365c0ea8b1638d9726984a"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0925.json": {
+        "state": "??",
+        "sha256": "65459e20867656d9d652d71a146260e33b053544110a61223c3d37e607fd40f7"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_F0987.json": {
+        "state": "??",
+        "sha256": "e0d2f32fda37ca9d5f6ec94fda4d3ca7a3ce7fee14b38332a2b8b17378fb5eea"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_PL0028.json": {
+        "state": "??",
+        "sha256": "1746104052ae83cab8a22b0bec163c97efbcc5513a7688070730ebe6df08e629"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_PL0029.json": {
+        "state": "??",
+        "sha256": "0eb6b10fa2b267fe32a4315ca5dc48a0f9bba7e22833d61d5d67bdade8988eb1"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_PO0058.json": {
+        "state": "??",
+        "sha256": "bcc61308bdf55329bca389af78e38a895def4fa30cdcf4dc26fd096872ad0c82"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_PO0059.json": {
+        "state": "??",
+        "sha256": "476c72e92563db32272882a5a5829ad2cdb9f262f27531e7629145407257d2c0"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_UI0084.json": {
+        "state": "??",
+        "sha256": "9ff69a40e1d69a156c7d518de9905b96a39f1ec6718efb85404d5e74e61c181c"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_UI0085.json": {
+        "state": "??",
+        "sha256": "0d31926705d7b2f50b7d24dc1f067bb89ed05dde349ffb14c29935a9cec0bb5e"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_UI0141.json": {
+        "state": "??",
+        "sha256": "4034c19e07a0ef1e556b87d20dc0087f27d2e5aa7a27877d19b3d0e45c7dcfd2"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_UI0142.json": {
+        "state": "??",
+        "sha256": "b55bd0364decfa0f6e1006281fc6c12a55feb48782cda01fb36d9f3b612b2681"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_UI0143.json": {
+        "state": "??",
+        "sha256": "c7c12b1851a3a2d8f2b414ac1e0b93f4c56a9a2842d8ea49542d48c8d868079e"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_UI0151.json": {
+        "state": "??",
+        "sha256": "f3bc8259c7bc6d260c808ab280211c3cf84bc34888a63a3dd8b5d1816d5e636b"
+      },
+      "evidence/V1-RMD-739/classification/wave1/recovery/RECOVERY_UI0154.json": {
+        "state": "??",
+        "sha256": "ba10d14d9c80f57b2ac23687179b783b73016c5b889ccb7461bc702c7dcafcaf"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-preflight-20261029.json": {
+        "state": "??",
+        "sha256": "b6bac103b06bbcd5ccf7ca2e9c2a385b0885c96d3b6edaecdd19c045ea66f946"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-consistency.log": {
+        "state": "??",
+        "sha256": "959257ea19be47530129ef305bacee69d35fd28a10955457d140a3df45e4bb43"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-final-scope-validator.log": {
+        "state": "??",
+        "sha256": "e8f5a66a633bb7f6be9d803463befcbc709b07b74193d673a20388d7365dfdbd"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-final-scope.log": {
+        "state": "??",
+        "sha256": "f15aad73aac0c8665f79a621be9946382bff7a7135873a15966a1c99de7246d3"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-ledger.log": {
+        "state": "??",
+        "sha256": "f5772bd3dd07eed9a5138366e9d00a1e9a1048288b6b511e05e77136ca82eceb"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-plan.log": {
+        "state": "??",
+        "sha256": "e10fa550d4aa3c6eaef2cfa460b08d670a892a6324649603081700fe643ad3d2"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-postmerge-consistency.log": {
+        "state": "??",
+        "sha256": "959257ea19be47530129ef305bacee69d35fd28a10955457d140a3df45e4bb43"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-postmerge-ledger.log": {
+        "state": "??",
+        "sha256": "0bcf9430c3c1d422953ff90a8c34d20845b59e1cde0404c8c8bfd8b98a5d3c98"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-postmerge-plan.log": {
+        "state": "??",
+        "sha256": "e10fa550d4aa3c6eaef2cfa460b08d670a892a6324649603081700fe643ad3d2"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-postmerge-write-scope.log": {
+        "state": "??",
+        "sha256": "709df62a1225792b0246fbc0e408af9bb25c7dfda8cea4a8b370996936681b78"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-scope.log": {
+        "state": "??",
+        "sha256": "f15aad73aac0c8665f79a621be9946382bff7a7135873a15966a1c99de7246d3"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-validator-checks.json": {
+        "state": "??",
+        "sha256": "33874515a3b59ce6f65cc2797cb3b71cfe96dbddd2c5a3d2aecfbaed55bd382e"
+      },
+      "evidence/V1-RMD-739/classification/wave1/scope-v2-write-check.json": {
+        "state": "??",
+        "sha256": "918d18b0373bebf3313e906b5c7881ab69b78cf557ad7c4dedb7c7384b1ea5e0"
+      },
+      "evidence/V1-RMD-739/classification/wave1/sweeper-selection-probe.log": {
+        "state": "??",
+        "sha256": "7f712645a5c2e955711446974b22bef3355e9f8a87e5c454d07bbfc0afeedfac"
+      },
+      "evidence/V1-RMD-739/classification/wave1/validate_scope_v2.py": {
+        "state": "??",
+        "sha256": "aa8efbce0a6dea6e651f2e59174cfa05afa84af9a021a20e1fba3852e3e9462a"
+      },
+      "evidence/V1-RMD-751/audit-eventstore-results/semih_SEMH59_2026-10-29_18_44_42_net8.0.trx": {
+        "state": "??",
+        "sha256": "cdab3a41dea28601575ff9e794bc48b8f198c963494d1b521237b8c6f672dae9"
+      },
+      "evidence/V1-RMD-751/audit-eventstore.log": {
+        "state": "??",
+        "sha256": "3852b06cd4801c00e66518096d568b4259351a928c3aeaf59c891773bd871bb0"
+      },
+      "evidence/V1-RMD-751/consistency-rerun.log": {
+        "state": "??",
+        "sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0"
+      },
+      "evidence/V1-RMD-751/consistency.log": {
+        "state": "??",
+        "sha256": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0"
+      },
+      "evidence/V1-RMD-751/document-final-green.log": {
+        "state": "??",
+        "sha256": "a294f7acb64e01673e44be8b7b826b387b187bc0f5c29e42ed5ab95cfa22df8d"
+      },
+      "evidence/V1-RMD-751/document-final-regression.log": {
+        "state": "??",
+        "sha256": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff"
+      },
+      "evidence/V1-RMD-751/document-green.log": {
+        "state": "??",
+        "sha256": "a294f7acb64e01673e44be8b7b826b387b187bc0f5c29e42ed5ab95cfa22df8d"
+      },
+      "evidence/V1-RMD-751/document-red.log": {
+        "state": "??",
+        "sha256": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff"
+      },
+      "evidence/V1-RMD-751/document-regression.log": {
+        "state": "??",
+        "sha256": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff"
+      },
+      "evidence/V1-RMD-751/execution-rerun-results.json": {
+        "state": "??",
+        "sha256": "a8e21fb7f8d7326d37d21e7fbe8e029d7bfa91f7c98c093cde67a4886f74538d"
+      },
+      "evidence/V1-RMD-751/execution-results.json": {
+        "state": "??",
+        "sha256": "00418fff8b56f74aa2823442741184c39e3561befb46bad6cabb87ec45161831"
+      },
+      "evidence/V1-RMD-751/host-billing-rerun.log": {
+        "state": "??",
+        "sha256": "e5eee23a56ae32c96007c80ce185b2c447cd0a9ec41910750d2034f6e8ba05e8"
+      },
+      "evidence/V1-RMD-751/host-billing-results/semih_SEMH59_2026-10-29_18_44_13_net8.0.trx": {
+        "state": "??",
+        "sha256": "220c2136685130575babf277ad14ce0f87b04e4234b325855a3a27b3b6ba2174"
+      },
+      "evidence/V1-RMD-751/host-billing.log": {
+        "state": "??",
+        "sha256": "2b3d09d0ab9ff748b39ff0386b303c6504f87a149438e05f1d59b34c8973cc5b"
+      },
+      "evidence/V1-RMD-751/original-document.md": {
+        "state": "??",
+        "sha256": "c3284e99ba6a827c1f1c0cb0c26230276391a45ae8e6fab2bda662c90eebb16e"
+      },
+      "evidence/V1-RMD-751/plan-rerun.log": {
+        "state": "??",
+        "sha256": "acebbbb8470edcbcc4f8cd1ff8fe8f06b3a692a5eb292ffb1497b6da80c119c1"
+      },
+      "evidence/V1-RMD-751/plan-review-a.json": {
+        "state": "??",
+        "sha256": "a05646ce607f282e6f56f608a4a363aab99ba65a1b8127f2034e96ad71d9fa6b"
+      },
+      "evidence/V1-RMD-751/plan-review-b.json": {
+        "state": "??",
+        "sha256": "f92e883c0040b284f088c7f87f7406a42e158f1974694459535cf6fe3052c3bf"
+      },
+      "evidence/V1-RMD-751/plan.log": {
+        "state": "??",
+        "sha256": "79f756fda677501691ea48cd1303500cc18a8ad6a47731252fe7ff3cdcb016ce"
+      },
+      "evidence/V1-RMD-751/preflight.json": {
+        "state": "??",
+        "sha256": "a360be42dcf4bfd6342efe617be62e04f1cc9f2ce1c332103e56407d60fcca78"
+      },
+      "evidence/V1-RMD-751/verify_document.py": {
+        "state": "??",
+        "sha256": "79262366a0f02d292a758fb13048acbccbc1bd13bfab8c194ecdb8e86da4d20b"
+      },
+      "plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md": {
+        "state": "??",
+        "sha256": "37c4d22a50734fb086d431037f8d0a786a35407ff76d0ed23edcd7080756e238"
+      },
+      "plan/v1/remediation/V1-RMD-752-bolme-tutari-belge-guncelligi.md": {
+        "state": "??",
+        "sha256": "5a8ca53e33bf2de3eaffe715c19f7df109a8ba9f54a6d89ad04aee3948612f10"
+      }
+    },
+    "note": "225 baseline kaydının görev dosyası dışındaki hash/state değerleri korunmuş; staged diff ayrıca kontrol edildi. Üretim/test kaynaklarında repository değişikliği yok. Ignored build artifact tam envanteri kapsam dışı; git status snapshot ignored dosyaları içermez."
+  },
+  "existing_test_evidence": [
+    {
+      "path": "evidence/V1-RMD-751/host-billing-results/semih_SEMH59_2026-10-29_18_44_13_net8.0.trx",
+      "counters": {
+        "total": "108",
+        "executed": "108",
+        "passed": "5",
+        "failed": "103",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "focused_results": [
+        {
+          "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountAndATipEachWriteOneAuditRecordAndARetryWritesNone",
+          "outcome": "Failed",
+          "message": "System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory."
+        },
+        {
+          "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ADiscountAndATipWhoseAuditRecordCannotBeWrittenAreNotKept",
+          "outcome": "Failed",
+          "message": "System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory."
+        },
+        {
+          "name": "ALKAROS.Host.Experience.Billing.Tests.BillingSplitHttpTests.ApplyingADiscountWritesARealAuditEvent",
+          "outcome": "Failed",
+          "message": "System.IO.DirectoryNotFoundException : Repository root was not found from the test output directory."
+        }
+      ],
+      "sha256": "220c2136685130575babf277ad14ce0f87b04e4234b325855a3a27b3b6ba2174"
+    },
+    {
+      "path": "evidence/V1-RMD-751/audit-eventstore-results/semih_SEMH59_2026-10-29_18_44_42_net8.0.trx",
+      "counters": {
+        "total": "106",
+        "executed": "106",
+        "passed": "106",
+        "failed": "0",
+        "error": "0",
+        "timeout": "0",
+        "aborted": "0",
+        "inconclusive": "0",
+        "passedButRunAborted": "0",
+        "notRunnable": "0",
+        "notExecuted": "0",
+        "disconnected": "0",
+        "warning": "0",
+        "completed": "0",
+        "inProgress": "0",
+        "pending": "0"
+      },
+      "focused_results": [
+        {
+          "name": "ALKAROS.Audit.EventStore.Tests.PostgresAuditEventStoreIntegrationTests.AppendInATransactionIsSanitizedAndFollowsTheTransactionOutcome",
+          "outcome": "Passed",
+          "message": ""
+        }
+      ],
+      "sha256": "cdab3a41dea28601575ff9e794bc48b8f198c963494d1b521237b8c6f672dae9"
+    }
+  ],
+  "existing_command_ledgers": [
+    {
+      "ledger": "execution-results.json",
+      "name": "document-regression",
+      "command": [
+        "python",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\original-document.md"
+      ],
+      "recorded_exit_code": 1,
+      "log": "evidence/V1-RMD-751/document-regression.log",
+      "log_sha256_recorded": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff",
+      "log_sha256_actual": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff"
+    },
+    {
+      "ledger": "execution-results.json",
+      "name": "host-billing",
+      "command": [
+        "C:\\Users\\semih\\.dotnet\\dotnet.exe",
+        "test",
+        "tests/Host/Experience/Billing/ALKAROS.Host.Experience.Billing.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-build-artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\host-billing-results",
+        "--logger",
+        "trx"
+      ],
+      "recorded_exit_code": 1,
+      "log": "evidence/V1-RMD-751/host-billing.log",
+      "log_sha256_recorded": "2b3d09d0ab9ff748b39ff0386b303c6504f87a149438e05f1d59b34c8973cc5b",
+      "log_sha256_actual": "2b3d09d0ab9ff748b39ff0386b303c6504f87a149438e05f1d59b34c8973cc5b"
+    },
+    {
+      "ledger": "execution-results.json",
+      "name": "audit-eventstore",
+      "command": [
+        "C:\\Users\\semih\\.dotnet\\dotnet.exe",
+        "test",
+        "tests/Modules/Audit/EventStore/ALKAROS.Audit.EventStore.Tests.csproj",
+        "-c",
+        "Debug",
+        "--artifacts-path",
+        "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\751-build-artifacts",
+        "--results-directory",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\audit-eventstore-results",
+        "--logger",
+        "trx"
+      ],
+      "recorded_exit_code": 0,
+      "log": "evidence/V1-RMD-751/audit-eventstore.log",
+      "log_sha256_recorded": "3852b06cd4801c00e66518096d568b4259351a928c3aeaf59c891773bd871bb0",
+      "log_sha256_actual": "3852b06cd4801c00e66518096d568b4259351a928c3aeaf59c891773bd871bb0"
+    },
+    {
+      "ledger": "execution-results.json",
+      "name": "plan",
+      "command": [
+        "python",
+        "-B",
+        "tools/plan-audit/plan_audit_tool.py",
+        "validate"
+      ],
+      "recorded_exit_code": 1,
+      "log": "evidence/V1-RMD-751/plan.log",
+      "log_sha256_recorded": "79f756fda677501691ea48cd1303500cc18a8ad6a47731252fe7ff3cdcb016ce",
+      "log_sha256_actual": "79f756fda677501691ea48cd1303500cc18a8ad6a47731252fe7ff3cdcb016ce"
+    },
+    {
+      "ledger": "execution-results.json",
+      "name": "consistency",
+      "command": [
+        "python",
+        "-B",
+        "tools/consistency-audit/consistency_audit.py"
+      ],
+      "recorded_exit_code": 0,
+      "log": "evidence/V1-RMD-751/consistency.log",
+      "log_sha256_recorded": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+      "log_sha256_actual": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0"
+    },
+    {
+      "ledger": "execution-rerun-results.json",
+      "name": "document-final-green",
+      "command": [
+        "python",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py"
+      ],
+      "recorded_exit_code": 0,
+      "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\document-final-green.log",
+      "log_sha256_recorded": "a294f7acb64e01673e44be8b7b826b387b187bc0f5c29e42ed5ab95cfa22df8d",
+      "log_sha256_actual": "a294f7acb64e01673e44be8b7b826b387b187bc0f5c29e42ed5ab95cfa22df8d"
+    },
+    {
+      "ledger": "execution-rerun-results.json",
+      "name": "document-final-regression",
+      "command": [
+        "python",
+        "-B",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\verify_document.py",
+        "--document",
+        "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\original-document.md"
+      ],
+      "recorded_exit_code": 1,
+      "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\document-final-regression.log",
+      "log_sha256_recorded": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff",
+      "log_sha256_actual": "a1799eb2aca37e6d06eb848247ed4838d7ba0c9e29dfb6034f38e17dd8aea9ff"
+    },
+    {
+      "ledger": "execution-rerun-results.json",
+      "name": "plan-rerun",
+      "command": [
+        "python",
+        "-B",
+        "tools/plan-audit/plan_audit_tool.py",
+        "validate"
+      ],
+      "recorded_exit_code": 0,
+      "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\plan-rerun.log",
+      "log_sha256_recorded": "acebbbb8470edcbcc4f8cd1ff8fe8f06b3a692a5eb292ffb1497b6da80c119c1",
+      "log_sha256_actual": "acebbbb8470edcbcc4f8cd1ff8fe8f06b3a692a5eb292ffb1497b6da80c119c1"
+    },
+    {
+      "ledger": "execution-rerun-results.json",
+      "name": "consistency-rerun",
+      "command": [
+        "python",
+        "-B",
+        "tools/consistency-audit/consistency_audit.py"
+      ],
+      "recorded_exit_code": 0,
+      "log": "D:\\project\\ALKAROS\\evidence\\V1-RMD-751\\consistency-rerun.log",
+      "log_sha256_recorded": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0",
+      "log_sha256_actual": "aba76b1b97ed5e77929bf6e60bfd9393bcf10cbda90e56c2f6779e5cc12233b0"
+    }
+  ],
+  "limits": [
+    "Yalnız belge/kod uyumu bağımsız denetimi; görev durumuna dokunulmadı, Done veya closure onayı verilmedi.",
+    "Repository yazılmadı; yardımcı Python, negatif Markdown ve yalıtılmış guard kaynak kopyaları yalnız yetkili scratch altında.",
+    "Hiçbir dotnet test/build, plan/consistency suite veya production executable başlatılmadı. Sadece read-only git ve izinli belge guard çalıştırıldı.",
+    "Kaynak okuması doğrudan discount call chain, transaction overloadları, audit writer ve ilgili test/fixture bölümleriyle sınırlı; repository-wide denetim iddiası yok.",
+    "Mevcut runtime log/TRX ve ledger sonuçları başkasının gerçek koşusundan okunmuştur; bağımsız yeniden çalıştırma değildir. Host Billing tekrar koşusu veya yeni build sonucu yoksa beklenmeden açık bırakılır.",
+    "İlk scratch helper başlık değişiminden sonra ## substringini ### içinde eşledi; tarihçe false sonucu ve eksik konum kopyası üretti. Bu denetçi hatası düzeltilmiş yeni helper ile tam NOTE kullanılarak yeniden doğrulandı; ilk helper sonucu verdict için kullanılmadı.",
+    "Notun doğruluğu ile guard statik sınırlılığı ayrı değerlendirildi; regex/source-shape PASS concurrency/snapshot/atomicity kanıtına yükseltilmedi."
+  ]
+}

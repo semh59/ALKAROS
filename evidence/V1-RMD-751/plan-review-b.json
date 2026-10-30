@@ -1,0 +1,123 @@
+{
+  "review_id": "751-plan-review-b",
+  "review_type": "ikinci bağımsız, salt-okunur plan ve belge/kaynak uyumu denetimi",
+  "verdict": {
+    "decision": "uygun; belge yamaları henüz uygulanmadı, kapanış onayı değil",
+    "summary": "F0388 ve F0908 iki ayrı belge güncelliği kusuru. V1-RMD-751 ve V1-RMD-752 bunları ayrı görevlerde, tarihsel sözleşmeleri değiştirmeden giderme sınırını doğru kuruyor. Ayrı güncellik notları mevcut kaynağı açıklamak için yeterli; yeni üretim düzeltmesi veya uçtan uca doğruluk iddiası gerekmiyor.",
+    "blocking_plan_findings": [],
+    "task_separation": "V1-RMD-751 yalnız V1-RMD-237 audit işlem sınırı anlatımını; V1-RMD-752 yalnız V1-RMD-103 koşullu split tutarı anlatımını günceller. V1-RMD-752'nin V1-RMD-751 bağımlılığı teslim sırasıdır, kusurların tek kusur olduğu anlamına gelmez."
+  },
+  "findings": [
+    {
+      "id": "F0388",
+      "documentation_verdict": "doğrulandı; V1-RMD-237 Owned surface ve In scope içindeki dönüş-sonrası anlatımı güncel kaynakla uyuşmuyor",
+      "application_verdict": "mevcut kodda indirim ve audit yazımları aynı connection/transaction üzerinde commit öncesinde; yeni üretim kusuru çıkarılmadı",
+      "observed_flow": "BillingSplitApplication.MapBillingSplitApi /discount işleyicisi auditEvents ve context.TraceIdentifier değerlerini BillingSplitStore.ApplyDiscountAsync'e geçirir. Store connection açar, lockTransaction başlatır; yeni indirim için _adjustments.AddAsync ve auditEvents.AppendAsync aynı connection ve lockTransaction değerlerini alır. CommitAsync ikisinden sonradır. Replay aynı anahtar ve SameDiscount eşleşmesinde audit yazımına gelmeden döner; farklı içerik IdempotencyKeyReusedException üretir.",
+      "boundary": "Bu not discount içindir. Eski görevin void/comp kapsam dışı kararı korunur; void/comp'un bugün audit üretmediği veya ürettiği çıkarılmaz. Tüm okumaların aynı transaction'da olduğu söylenmez: _bills.GetByIdAsync ve _adjustments.GetByBillIdAsync çağrıları ayrıca okunmuştur, ortak işlem iddiası yalnız ilgili yazımlara aittir.",
+      "remediation": "Goal öncesine ayrı Güncellik notu ekle; alttaki metnin tarihsel olduğunu açıkça belirt. Goal, In scope, Owned surface, Dependencies ve Acceptance evidence metinlerine dokunma."
+    },
+    {
+      "id": "F0908",
+      "documentation_verdict": "doğrulandı; V1-RMD-103 In scope/B1 kapsam dışı paragrafındaki bugün/hâlâ ifadesi güncel koşullu desteği açıklamıyor",
+      "application_verdict": "CreateEqualSplit, CreateAmountSplit ve CreateCustomSplit adjustment verildiğinde düzeltilmiş tutar/vergi kullanıyor; null dalı özgün Bill tutarlarını koruyor; yeni üretim kusuru çıkarılmadı",
+      "observed_flow": "BillingSplitStore.SaveEqualAsync, SaveAmountsAsync ve SaveCustomAsync LoadAdjustmentAsync sonucunu ilgili SplitEngine çağrısına geçirir. LoadAdjustmentAsync repository yoksa null, varsa AdjustmentCalculator.Calculate sonucu döndürür. CreateItemSplit adjustment parametresi almaz. SaveItemsAsync yalnız adjustment != null ve AdjustedPayableAmount != Bill.PayableAmount koşulunda SplitItemsOnAdjustedBillException üretir; işleyici bunu 409 ITEM_SPLIT_ON_ADJUSTED_BILL olarak eşler.",
+      "boundary": "Herhangi bir adjustment kaydı varsa kalem bölme reddedilir genellemesi yanlış olur; gerçek guard payable farkına bakar. CustomSplitTarget üzerinde kalem/quantity alanları bulunması, kalem bazlı indirim dağıtım politikasının tanımlandığını kanıtlamaz. Tüm ödeme akışının doğruluğu çıkarılmaz.",
+      "remediation": "Goal öncesine ayrı Güncellik notu ekle; alttaki bugün/hâlâ anlatımını görev tarihindeki durum olarak etiketle. Tarihsel B1 kapsam kararı ve kabul sözleşmesi korunur."
+    }
+  ],
+  "onerilen_en_kisa_turkce_notlar": [
+    {
+      "task": "V1-RMD-751",
+      "target_path": "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md",
+      "insertion_anchor": "Metadata bloğundan sonra, ## Goal başlığından önce; mevcut bölüm gövdeleri değiştirilmez.",
+      "text": "## Güncellik notu (V1-RMD-751 / F0388)\n\nAşağıdaki kapsam ve kabul sözleşmesi tarihçedir; dönüş-sonrası audit anlatımı güncel akış değildir. `src/Host/Experience/Billing/BillingSplitApplication.cs` içindeki `MapBillingSplitApi` discount işleyicisi audit bağımlılığını `src/Host/Experience/Billing/BillingSplitStore.cs` içindeki `ApplyDiscountAsync` metoduna iletir. Metot indirim `AddAsync` ve `bill.discount.applied` audit `AppendAsync` yazımlarını aynı connection/transaction ile `CommitAsync` öncesinde yapar; eşleşen replay yeni audit yazmadan döner. `void`/`comp` bu görevin kapsamı dışındadır. Bu not yeni üretim değişikliği veya test başarısı iddiası değildir."
+    },
+    {
+      "task": "V1-RMD-752",
+      "target_path": "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md",
+      "insertion_anchor": "Metadata bloğundan sonra, ## Goal başlığından önce; mevcut bölüm gövdeleri değiştirilmez.",
+      "text": "## Güncellik notu (V1-RMD-752 / F0908)\n\nAşağıdaki kapsam ve kabul sözleşmesi tarihçedir; B1 altındaki bugün/hâlâ anlatımı görev tarihindeki durumu belirtir. `src/Modules/Billing/SplitDesign/SplitEngine.cs` içindeki `CreateEqualSplit`, `CreateAmountSplit` ve `CreateCustomSplit`, `adjustment` verilince `AdjustedPayableAmount`/`AdjustedTaxTotal`, null iken `Bill.PayableAmount`/`Bill.TaxTotal` kullanır. `src/Host/Experience/Billing/BillingSplitStore.cs` içindeki `SaveEqualAsync`, `SaveAmountsAsync` ve `SaveCustomAsync`, `LoadAdjustmentAsync` sonucunu engine'e taşır; `SaveItemsAsync`, adjustment mevcut ve `AdjustedPayableAmount != Bill.PayableAmount` ise kalem bölmeyi reddeder. Bu not kalem bazlı indirim dağıtım politikası, yeni üretim değişikliği veya tüm ödeme akışının doğruluğu iddiası değildir."
+    }
+  ],
+  "exact_evidence": [
+    {
+      "path": "AGENTS.md",
+      "anchor": "Tek görev sınırı; Yazılabilir yüzey; Kapsam dışına çıkma yasağı; Kapanış kapısı",
+      "observation": "Okuma yazma yetkisi vermez; tarihsel kapsam genişletilemez. Bu incelemede repo yazılmadı, görev başlatılmadı veya Done yapılmadı."
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-751-indirim-audit-belge-guncelligi.md",
+      "anchor": "Goal; Owned surface; In scope; Out of scope; Dependencies; Acceptance evidence",
+      "observation": "F0388 belge kusuru; eski görevde sınırlı ek; store transaction ve replay açıklaması; tarihsel sözleşme ve üretim/test yüzeyini değiştirme yasağı; kırmızı/yeşil/yeniden kırmızı belge denetimi ve gerçek süitler kapanış şartı. Status Planned, Assignee Unassigned."
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-752-bolme-tutari-belge-guncelligi.md",
+      "anchor": "Goal; Owned surface; In scope; Out of scope; Dependencies; Acceptance evidence",
+      "observation": "F0908 ayrı belge kusuru; equal/amount/custom/null ve SaveItemsAsync sınırı açık; yeni dağıtım politikası yasak; V1-RMD-751 ve V1-RMD-103 bağımlılıkları mevcut. Status Planned, Assignee Unassigned."
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md",
+      "anchor": "Owned surface / BillingSplitApplication.cs sınırlı ek; In scope / başarıyla uygulanan indirim; Out of scope",
+      "observation": "Eski sözleşme ApplyDiscountAsync döndükten sonra endpoint'te AppendAsync eklenmesini anlatır; void/comp açıkça kapsam dışıdır. Bu metin silinmeden ayrı notla tarihsel etiketlenebilir."
+    },
+    {
+      "path": "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md",
+      "anchor": "In scope / Kapsam dışı bırakılan (B1'in bir parçası, ayrı bir tasarım kararı gerektirir)",
+      "observation": "Bugün indirim uygulanabilir ve görülebilir, ama SplitEngine hesaplamaları hâlâ Bill.PayableAmount'ın kendisini kullanıyor, düzeltilmiş tutarı değil ifadesi mevcut. Goal/Owned surface/Dependencies/Acceptance tarihçesini değiştirmeyen üst not bu güncellik sorununu ayırır."
+    },
+    {
+      "path": "src/Host/Experience/Billing/BillingSplitApplication.cs",
+      "anchor": "AddBillingSplitExperience; MapBillingSplitApi / billsGroup.MapPost(\"/{billId:guid}/discount\"); BillingSplitExceptionFilter.Map",
+      "observation": "IAuditEventStore -> PostgresAuditEventStore DI kaydı var. Discount işleyicisi auditEvents değerini store.ApplyDiscountAsync'e geçirir; sonrasında ayrı AppendAsync çağırmaz. SplitItemsOnAdjustedBillException -> 409 ITEM_SPLIT_ON_ADJUSTED_BILL."
+    },
+    {
+      "path": "src/Host/Experience/Billing/BillingSplitStore.cs",
+      "anchor": "ApplyDiscountAsync / BeginTransactionAsync; replay; _adjustments.AddAsync; auditEvents.AppendAsync; CommitAsync",
+      "observation": "Replay dalı commit edip return eder; yeni yazım dalında adjustment AddAsync(adjustment, connection, lockTransaction, ...) ve audit AppendAsync(..., connection, lockTransaction, ...) aynı transaction üzerindedir; commit her ikisinden sonra gelir. Eski AddAsync kendi connection'ında commit eder kaynak yorumu güncel çağrıyla uyuşmaz; hüküm yorumdan değil gerçek çağrılardan çıkarıldı. Bu yorum için repo değişikliği önerilmedi."
+    },
+    {
+      "path": "src/Modules/Billing/Adjustments/PostgresBillAdjustmentRepository.cs",
+      "anchor": "AddAsync(BillAdjustment, NpgsqlConnection, NpgsqlTransaction, CancellationToken); BuildInsertCommand",
+      "observation": "Verilen connection/transaction BuildInsertCommand üzerinden billing.bill_adjustments INSERT komutuna aktarılır."
+    },
+    {
+      "path": "src/Modules/Audit/EventStore/PostgresAuditEventStore.cs",
+      "anchor": "AppendAsync(AuditEvent, NpgsqlConnection, NpgsqlTransaction, CancellationToken); InsertAsync",
+      "observation": "Caller connection/transaction InsertAsync -> AuditEventWriter.WriteAsync zincirine aktarılır; bu overload yeni connection veya commit açmaz."
+    },
+    {
+      "path": "src/Modules/Audit/EventStore/AuditEventWriter.cs",
+      "anchor": "WriteAsync / cmd.Transaction = transaction; INSERT INTO audit.audit_events",
+      "observation": "Audit INSERT komutu caller connection ve transaction değerlerini kullanır."
+    },
+    {
+      "path": "src/Modules/Audit/EventStore/IAuditEventStore.cs",
+      "anchor": "AppendAsync(AuditEvent, NpgsqlConnection, NpgsqlTransaction, CancellationToken)",
+      "observation": "Transaction'a katılamayan implementasyon için varsayılan davranış NotSupportedException; bağımsız connection'a sessiz düşüş değil."
+    },
+    {
+      "path": "src/Modules/Billing/SplitDesign/SplitEngine.cs",
+      "anchor": "CreateEqualSplit; CreateAmountSplit; CreateCustomSplit; CreateItemSplit",
+      "observation": "Üç tutar/person/custom metodunda totalPayable = adjustment?.AdjustedPayableAmount ?? bill.PayableAmount ve totalTax = adjustment?.AdjustedTaxTotal ?? bill.TaxTotal. Item metodu adjustment almaz, Bill kalemlerinin GrossAmount/TaxAmount değerlerini kullanır."
+    },
+    {
+      "path": "src/Host/Experience/Billing/BillingSplitStore.cs",
+      "anchor": "SaveEqualAsync; SaveAmountsAsync; SaveCustomAsync; SaveItemsAsync; LoadAdjustmentAsync",
+      "observation": "İlk üç Save metodu yüklenen adjustment'ı engine'e taşır. LoadAdjustmentAsync repository yoksa null döndürür, varsa hesaplar. SaveItemsAsync guard ifadesi adjustment is not null && adjustment.AdjustedPayableAmount != bill.PayableAmount."
+    },
+    {
+      "path": "evidence/V1-RMD-739/classification/ANA_KAYITLAR.json",
+      "anchor": "id=F0388; id=F0908",
+      "observation": "Özgün iddialar uygulamanın bozuk olduğunu değil, V1-RMD-237 dönüş-sonrası audit ve V1-RMD-103 Bill.PayableAmount anlatımlarının bayat olduğunu belirtir. Kaynak kimlikleri sırasıyla findings/low-A.md:45 ve findings/low-C.md:13. Hüküm bu kayıtların önceki sınıflamasından değil doğrudan belge/kod karşılaştırmasından çıkarıldı."
+    }
+  ],
+  "limitations": [
+    "Yalnız statik belge ve kaynak incelemesi. Repo kodu, test, build, plan/consistency/scope denetimi veya negatif belge denetimi çalıştırılmadı; kullanıcı bu çalıştırmaları yasakladı.",
+    "PostgreSQL bağlantısı kurulmadı; audit hatasında rollback dahil runtime davranış için yeni test başarısı iddiası yok.",
+    "Önerilen notlar uygulanmadı. F0388/F0908 kapatılmadı; yeni görevler başlatılmadı veya Done yapılmadı.",
+    "Planların istediği kırmızı/yeşil/yeniden kırmızı belge denetimleri, gerçek süitler, build ve iki bağımsız son-yama denetimi ileride ayrı yürütülmeli. Bu inceleme yalnız plan ve öneri değerlendirmesidir, son yamanın denetimi değildir.",
+    "Belge kabul denetimi güncel notu ve tarihsel bölüm korunmasını birlikte doğrulamalı; sırf eski cümle dosyada bulundu diye kırılmamalı, sırf symbol adları bulundu diye geçmemeli. Scratch eski-metin negatif kontrolü yalnız yeni notu kaldırmalı/bozmalı; tarihsel bölümleri yeniden yazmamalı.",
+    "Git HEAD/status/hash kaydı alınmadı. Kanıtlar okunan çalışma ağacı dosyalarına aittir; satır numarası yerine path ve symbol ankrajları kullanıldı.",
+    "Repo dosyası oluşturulmadı veya değiştirilmedi. Tek çıktı kullanıcı tarafından yetkilendirilmiş scratch/751-plan-review-b.json dosyasıdır."
+  ]
+}

@@ -1,0 +1,1132 @@
+{
+  "task_id": "V1-RMD-751",
+  "valid": false,
+  "metadata_errors": [],
+  "findings": [
+    {
+      "path": "evidence/v1-rmd-739/classification/ana_kayitlar.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/bagimsiz_son_kontrol.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/bayat_belge_adaylari.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/duzeltme_paketleri.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/ek_kayitlar.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/final-audit-1.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/final-audit-2.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/final-audit-3.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/final-audit-4.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/initial-audit-1.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/initial-audit-2.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/initial-audit-3.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/kanit_envanteri.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/kapanis_eslesmesi.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/kok_neden_baglari.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/ozet.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/paketler.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/politika.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/sayim.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/siniflama_duzeltmeleri.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/tarama_adaylari.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/tum_kayitlar.csv",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/validate.py",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/adjudication/index.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/adjudication/packet01/739-correction-review-f0388.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/adjudication/packet01/739-correction-review-f0908.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/adjudication/packet01/acceptance.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/adjudication/packet01/ledger.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/adjudication/packet01/manifest.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/adjudication/packet01/postwrite-review.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/adjudication/packet01/preflight.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/adjudication/packet01/validation.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/atomik_kayitlar.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/belge-dogrulama-v3.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/belge-dogrulama-v3b.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/belge_bagimsiz_inceleme_v3.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/belge_duzeltmeleri_v3.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/dalga_sayim.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/document_corrections_v3.py",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/durum.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/gorev_adaylari.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/gorev_adaylari.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/gyz017_belge_duzeltmesi_v3.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/identity_taslak.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/inventory_taslak.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/join.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kapsam_aciklari_v2.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kapsam_durum_v2.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kapsam_durum_v3.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kapsam_kontroller_v2.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kapsam_sonuc_v2.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kapsam_sonuc_v2.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kapsam_sonuc_v3.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kapsam_sonuc_v3.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kapsam_temel_v2.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kesin_yuzey_v2.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/kesin_yuzey_v3.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/ledger-validation.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/odeme_mimari_inceleme_v3.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/payments-validation.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/payments_taslak.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/probe-run-output.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/probe_sweeper_selection.py",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/batch_03_partial.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/batch_04_partial.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/batch_09_partial.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/durum.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/f0388.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/f0908.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/first_two_validation.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0005.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0006.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0018.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0023.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0053.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0091.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0134.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0153.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0172.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0180.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0205.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0240.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0260.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0358.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0373.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0378.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0379.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0396.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0408.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0415.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0468.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0503.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0517.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0535.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0561.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0577.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0579.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0601.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0636.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0637.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0691.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0696.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0720.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0741.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0757.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0760.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0768.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0788.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0789.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0836.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0837.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0903.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0911.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0912.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0978.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f0988.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_f1006.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_pl0019.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_pl0020.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_pl0021.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_pl0022.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_pl0023.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_pl0030.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_pl0031.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_pl0032.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_pl0033.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_pl0034.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_po0002.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_po0024.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_po0036.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_po0050.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0005.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0032.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0034.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0057.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0075.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0078.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0084.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0085.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0125.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0128.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0135.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0163.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0166.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0167.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0168.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0169.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0170.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0174.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0175.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0178.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0187.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0188.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_ui0189.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_w2-04-001.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_w2-04-002.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_w2-04-005.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_w2-04-006.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/next_w2-04-013.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/partial_import_validation.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/preflight.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_35_validation.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0003.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0023.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0048.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0049.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0078.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0079.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0099.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0162.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0167.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0170.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0210.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0341.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0350.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0351.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0354.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0377.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0406.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0419.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0503.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0601.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0626.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0914.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0925.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_f0987.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_pl0028.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_pl0029.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_po0058.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_po0059.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_ui0084.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_ui0085.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_ui0141.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_ui0142.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_ui0143.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_ui0151.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/recovery/recovery_ui0154.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-preflight-20261029.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-consistency.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-final-scope-validator.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-final-scope.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-ledger.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-plan.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-postmerge-consistency.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-postmerge-ledger.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-postmerge-plan.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-postmerge-write-scope.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-scope.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-validator-checks.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/scope-v2-write-check.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/stk031_belge_duzeltmesi_v3.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/stk032_belge_duzeltmesi_v3.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/stok_bagimsiz_inceleme.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/stok_kapsam_inceleme_v2.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/sweeper-selection-probe.log",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/uygunluk_inceleme_v3.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/validate_scope_v2.py",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/yazma_cakismalari.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/yazma_cakismalari_v2.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/yazma_cakismalari_v3.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/yetki_odeme_bagimsiz_inceleme.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/classification/wave1/yetki_odeme_kapsam_inceleme_v2.json",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "plan/v1/remediation/v1-rmd-739-bitmis-gorev-dogrulama-programi.md",
+      "change_type": "modified",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "plan/v1/remediation/v1-rmd-751-indirim-audit-belge-guncelligi.md",
+      "change_type": "untracked",
+      "reason": "task Markdown has no committed baseline"
+    },
+    {
+      "path": "plan/v1/remediation/v1-rmd-752-bolme-tutari-belge-guncelligi.md",
+      "change_type": "untracked",
+      "reason": "path not in task allowlist"
+    }
+  ]
+}
