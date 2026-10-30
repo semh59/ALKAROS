@@ -1,7 +1,7 @@
 # V1-RMD-760 - Son 3 günün plan ve kanıt tutarsızlıklarını düzelt
 
 - Task ID: V1-RMD-760
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: documentation
 - Surface state: Existing
