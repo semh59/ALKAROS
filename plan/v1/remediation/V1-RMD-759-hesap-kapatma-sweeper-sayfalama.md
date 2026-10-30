@@ -1,7 +1,7 @@
 # V1-RMD-759 - Hesap kapatma sweeper'ı tüm adayları sayfalayarak tarar
 
 - Task ID: V1-RMD-759
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: remediation
 - Surface state: Existing

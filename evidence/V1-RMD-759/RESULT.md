@@ -15,3 +15,7 @@ Düzeltme: adaylar `bill_id` anahtar sayfalamasıyla (sayfa başına 200) bitene
 ## Sınırlar
 - İkinci test kırmızıyı eski kodda kanıtlamaz (eski kodda konum `updated_at`'e bağlı); yalnız sayfalama mutantını öldürdüğü gösterildi.
 - Tarama artık tüm açık ve ödemeli hesapları gezer; çok büyük aday sayısında tarama süresi uzar, aralık ve süre sınırı bu görevde değişmedi.
+
+## İnceleme
+- Kod incelemesi ve test incelemesi, engelleyici bulgu yok. Orta not: tarama artık sınırsız; `payment_allocations(bill_id)` indeksi doğrulanmadı.
+- Mutantın tam diff'i kaydedilmedi; tarifi: `if (candidates.Count == 0)` koşuluna `|| after != Guid.Empty` eklemek.
