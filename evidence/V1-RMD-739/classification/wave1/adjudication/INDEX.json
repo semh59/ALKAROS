@@ -1,0 +1,21 @@
+{
+  "task_id": "V1-RMD-739",
+  "authority": "Listed decisions override recovery and worker drafts for the same source_id; other sources remain unaccepted by this index",
+  "review_tier": "Static classification only; no runtime verification or finding closure",
+  "packets": [
+    {
+      "id": "packet01",
+      "ledger": "packet01/ledger.json",
+      "source_ids": ["F0388", "F0908"]
+    },
+    {
+      "id": "packet02",
+      "ledger": "packet02/ledger.json",
+      "source_ids": ["F0944", "F0945"]
+    }
+  ],
+  "accepted_source_ids": ["F0388", "F0908"],
+  "closed_findings": 0,
+  "write_authorization": false,
+  "legacy_drafts_preserved": true
+}
