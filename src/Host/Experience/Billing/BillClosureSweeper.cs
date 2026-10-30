@@ -49,45 +49,53 @@ public sealed class BillClosureSweeper : BackgroundService
     /// <summary>Closes what can be closed and returns how many bills it closed.</summary>
     public async Task<int> SweepOnceAsync(TimeSpan gracePeriod, CancellationToken cancellationToken)
     {
-        // Newest first: a partly paid bill that stays open never changes, so oldest-first would let a full batch of them
-        // starve every bill that became closable later.
-        var candidates = new List<Guid>();
-        await using (var command = _dataSource.CreateCommand(
-            $"""
-            SELECT b.bill_id
-            FROM billing.bills b
-            WHERE b.status NOT IN ('Paid', 'Cancelled')
-              AND EXISTS (
-                  SELECT 1 FROM payments.payment_allocations a
-                  WHERE a.bill_id = b.bill_id AND a.allocated_at < now() - @grace)
-            ORDER BY b.updated_at DESC
-            LIMIT {BatchSize};
-            """))
-        {
-            command.Parameters.AddWithValue("grace", gracePeriod);
-            await using var reader = await command.ExecuteReaderAsync(cancellationToken);
-            while (await reader.ReadAsync(cancellationToken))
-                candidates.Add(reader.GetGuid(0));
-        }
-
+        // Pages through every candidate by id: a partly paid bill that stays open never changes, so any fixed
+        // order with a single batch would let a full batch of them starve the bills behind it.
         var closed = 0;
-        foreach (var billId in candidates)
+        var after = Guid.Empty;
+        while (true)
         {
-            try
+            var candidates = new List<Guid>();
+            await using (var command = _dataSource.CreateCommand(
+                $"""
+                SELECT b.bill_id
+                FROM billing.bills b
+                WHERE b.status NOT IN ('Paid', 'Cancelled')
+                  AND b.bill_id > @after
+                  AND EXISTS (
+                      SELECT 1 FROM payments.payment_allocations a
+                      WHERE a.bill_id = b.bill_id AND a.allocated_at < now() - @grace)
+                ORDER BY b.bill_id
+                LIMIT {BatchSize};
+                """))
             {
-                var result = await _closure.TryCloseAsync(billId, cancellationToken);
-                if (result.Outcome != BillClosureOutcome.Closed)
-                    continue;
-                closed++;
-                await _orderSettlement.CompleteForPaidBillAsync(billId, cancellationToken);
+                command.Parameters.AddWithValue("grace", gracePeriod);
+                command.Parameters.AddWithValue("after", after);
+                await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+                while (await reader.ReadAsync(cancellationToken))
+                    candidates.Add(reader.GetGuid(0));
             }
-            catch (Exception exception) when (exception is not OperationCanceledException)
+
+            if (candidates.Count == 0)
+                return closed;
+            after = candidates[^1];
+
+            foreach (var billId in candidates)
             {
-                LogSweepCloseFailed(_logger, billId, exception);
+                try
+                {
+                    var result = await _closure.TryCloseAsync(billId, cancellationToken);
+                    if (result.Outcome != BillClosureOutcome.Closed)
+                        continue;
+                    closed++;
+                    await _orderSettlement.CompleteForPaidBillAsync(billId, cancellationToken);
+                }
+                catch (Exception exception) when (exception is not OperationCanceledException)
+                {
+                    LogSweepCloseFailed(_logger, billId, exception);
+                }
             }
         }
-
-        return closed;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)

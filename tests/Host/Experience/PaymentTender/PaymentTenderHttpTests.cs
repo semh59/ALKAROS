@@ -710,6 +710,75 @@ public sealed class PaymentTenderHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task APaidBillThatFailedToCloseIsStillClosedWhenMoreThanAFullBatchOfPartlyPaidBillsIsNewer()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd759-sweep");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var paidBill = await _database.SeedBillAsync(payable: 100m);
+        var paidTender = await PostAsync(client, TendersPath(terminalId, paidBill), cookie, new { Method = "Eft", Amount = 100m, IdempotencyKey = "rmd759-paid" });
+        Assert.True(paidTender.IsSuccessStatusCode, $"Paying tender failed with {(int)paidTender.StatusCode}.");
+        await _database.UncloseBillAsync(paidBill);
+        for (var i = 0; i < 201; i++)
+        {
+            if (i % 100 == 0)
+            {
+                terminalId = Guid.NewGuid();
+                cookie = await _database.SeedCashierSessionAsync(terminalId, $"rmd759-sweep-{i}");
+            }
+
+            var partlyPaid = await _database.SeedBillAsync(payable: 100m);
+            var tender = await PostAsync(client, TendersPath(terminalId, partlyPaid), cookie, new { Method = "Eft", Amount = 40m, IdempotencyKey = $"rmd759-p{i}" });
+            Assert.True(tender.IsSuccessStatusCode, $"Seeding tender {i} failed with {(int)tender.StatusCode}.");
+        }
+
+        var sweeper = app.Services.GetServices<IHostedService>().OfType<BillClosureSweeper>().Single();
+
+        var closed = await sweeper.SweepOnceAsync(TimeSpan.Zero, CancellationToken.None);
+
+        Assert.Equal(1, closed);
+        Assert.Equal("Paid", await _database.BillStatusAsync(paidBill));
+    }
+
+    [Fact]
+    public async Task APaidBillThatFailedToCloseIsClosedEvenWhenItsIdSortsBehindAFullBatchOfPartlyPaidBills()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "rmd759-page");
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+        var seeded = new List<Guid>();
+        for (var i = 0; i < 202; i++)
+        {
+            if (i % 100 == 0)
+            {
+                terminalId = Guid.NewGuid();
+                cookie = await _database.SeedCashierSessionAsync(terminalId, $"rmd759-page-{i}");
+            }
+
+            var billId = await _database.SeedBillAsync(payable: 100m);
+            seeded.Add(billId);
+            var tender = await PostAsync(client, TendersPath(terminalId, billId), cookie, new { Method = "Eft", Amount = 40m, IdempotencyKey = $"rmd759-q{i}" });
+            Assert.True(tender.IsSuccessStatusCode, $"Seeding tender {i} failed with {(int)tender.StatusCode}.");
+        }
+
+        // The bill with the greatest id (by the database's own uuid order) is on the second page of a 200-row batch.
+        await using var lastId = _database.DataSource.CreateCommand("SELECT bill_id FROM billing.bills WHERE bill_id = ANY(@ids) ORDER BY bill_id DESC LIMIT 1;");
+        lastId.Parameters.AddWithValue("ids", seeded.ToArray());
+        var lastBill = (Guid)(await lastId.ExecuteScalarAsync())!;
+        var rest = await PostAsync(client, TendersPath(terminalId, lastBill), cookie, new { Method = "Eft", Amount = 60m, IdempotencyKey = "rmd759-rest" });
+        Assert.True(rest.IsSuccessStatusCode, $"Paying tender failed with {(int)rest.StatusCode}.");
+        await _database.UncloseBillAsync(lastBill);
+        var sweeper = app.Services.GetServices<IHostedService>().OfType<BillClosureSweeper>().Single();
+
+        var closed = await sweeper.SweepOnceAsync(TimeSpan.Zero, CancellationToken.None);
+
+        Assert.Equal(1, closed);
+        Assert.Equal("Paid", await _database.BillStatusAsync(lastBill));
+    }
+
+    [Fact]
     public async Task ABillWhoseOnlyPaymentIsAnUnresolvedCardAttemptStaysOpen()
     {
         var terminalId = Guid.NewGuid();
