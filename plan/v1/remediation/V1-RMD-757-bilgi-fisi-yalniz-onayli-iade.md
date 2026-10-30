@@ -1,7 +1,7 @@
 # V1-RMD-757 - Bilgi fişi yalnız onaylanmış iadeyi "İade edildi" diye basar
 
 - Task ID: V1-RMD-757
-- Status: Planned
+- Status: InProgress
 - Assignee: hermes-session-20261028_015834_6948d340
 - Work type: remediation
 - Surface state: Existing
