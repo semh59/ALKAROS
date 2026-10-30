@@ -1,0 +1,139 @@
+{
+  "task_id": "V1-RMD-739",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "authority": "Accepted static classification decisions; takes precedence over worker drafts for listed source IDs only",
+  "coverage": "packet02 only; no claim about acceptance of remaining records",
+  "records": [
+    {
+      "source_id": "F0944",
+      "original_claim": {
+        "id": "F0944",
+        "category": "KN",
+        "secondary": [],
+        "priority": "kritik",
+        "qualification": "aday",
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "work_package": "PK0169",
+        "routing_domain": "V1-GOV",
+        "source": "evidence/V1-RMD-739/findings/low-C.md:49",
+        "text": "B038 | V1-GOV-089 | ## V1-GOV-089 - TAMAM (Düşük not)",
+        "reason": "B038 GOV-089 bölümünde kanıt klasörü yok ve sahip yüzey/kabul kapsamı uyuşmuyor."
+      },
+      "decision": "open",
+      "category": "KN",
+      "review_state": "accepted-static-classification",
+      "claim_object": "documentation",
+      "application_verdict": "V1-GOV-089 plan dosyası mevcut değil; evidence klasörü yok; GATES.md:36 ve README:138-151'de 34. dalga notu var. Kabul 'GATES.md özet hücre + 34. dalga bölümü' der ama GATES.md'de 34. dalga ayrı bölümü yok (son bölüm 33. dalga). B038 kartı: owned surface GOV-090 da yazıyor ama kabul yalnız GATES/README satırı.",
+      "documentation_verdict": "F0944 'kanıt klasörü yok ve sahip yüzey/kabul kapsamı uyuşmuyor' kaydı doğrudur. V1-GOV-089 plan dosyası mevcut değil, evidence yok, GATES.md'de 34. dalga ayrı bölümü yok. Belge kusuru 'not-defect' diye elenmemeli; açık belge hatası.",
+      "rejected_disposition": "not-defect",
+      "supersedes_drafts": [
+        {
+          "path": "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\739-next-01e-F0944.json",
+          "sha256": "",
+          "statuses": ["open"]
+        }
+      ],
+      "parent_record": "evidence/V1-RMD-739/classification/wave1/recovery/F0944.json",
+      "parent_record_sha256": "",
+      "primary_source_hashes": {
+        "evidence/V1-RMD-739/findings/low-C.md": "",
+        "plan/v1/README.md": "",
+        "evidence/V1-RMD-739/tasks/B038.md": "",
+        "plan/GATES.md": ""
+      },
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:49",
+        "plan/v1/README.md:138-151",
+        "plan/GATES.md:36",
+        "evidence/V1-RMD-739/tasks/B038.md"
+      ],
+      "acceptance_for_repair": [
+        "V1-GOV-089 plan dosyası oluşturulmalı veya README/GATES notu resmi kabul şablonuna taşınmalı.",
+        "Evidence klasörü (exit kodları, test logları) gerektirilirse ayrı GOV görevi olarak açılmalı."
+      ],
+      "proposed_repair_paths": [
+        "plan/v1/remediation/V1-GOV-089-*.md",
+        "plan/GATES.md"
+      ],
+      "independent_review": "adjudication/packet02/739-correction-review-F0944.json",
+      "independent_review_sha256": "",
+      "runtime_verified": false,
+      "finding_closed": false,
+      "repair_authorized": false,
+      "limitations": [
+        "AGENTS.md tamamı okundu. Repository salt okunur tutuldu; yalnız yetkili scratch çıktısı yazıldı.",
+        "V1-GOV-089 plan dosyası depoda yok; karar mevcut kaynaklara (README, GATES, B038) dayanır.",
+        "Kanıt klasörü yokluğu 'Düşük not' unvanına rağmen kritik prioriteli bulgu yarattı."
+      ]
+    },
+    {
+      "source_id": "F0945",
+      "original_claim": {
+        "id": "F0945",
+        "category": "KN",
+        "secondary": ["BD"],
+        "priority": "kritik",
+        "qualification": "aday",
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "work_package": "PK0169",
+        "routing_domain": "V1-GOV",
+        "source": "evidence/V1-RMD-739/findings/low-C.md:50",
+        "text": "B038 | V1-GOV-091 | ## V1-GOV-091 - TAMAM (Düşük not)",
+        "reason": "B038 GOV-091 bölümünde kayıt mevcut ama kanıt klasörü yok; DG kaldırıldı."
+      },
+      "decision": "open",
+      "category": "KN",
+      "review_state": "accepted-static-classification",
+      "claim_object": "documentation",
+      "application_verdict": "V1-GOV-091 plan dosyası mevcut değil; evidence klasörü yok; GATES.md:36 ve README:127-137'de 35. dalga notu var. GATES.md'de 35. dalga ayrı bölümü yok (son bölüm 33. dalga). B038 kartı: kayıt görevi; README:127-137 35. dalga notu var. Kanıt klasörü yok.",
+      "documentation_verdict": "F0945 'kanıt klasörü yok; DG kaldırıldı' kaydı doğrudur. V1-GOV-091 plan dosyası mevcut değil, evidence yok, GATES.md'de 35. dalga ayrı bölümü yok. Belge kusuru 'not-defect' diye elenmemeli; açık belge hatası.",
+      "rejected_disposition": "not-defect",
+      "supersedes_drafts": [
+        {
+          "path": "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\739-next-01e-F0945.json",
+          "sha256": "",
+          "statuses": ["open"]
+        }
+      ],
+      "parent_record": "evidence/V1-RMD-739/classification/wave1/recovery/F0945.json",
+      "parent_record_sha256": "",
+      "primary_source_hashes": {
+        "evidence/V1-RMD-739/findings/low-C.md": "",
+        "plan/v1/README.md": "",
+        "evidence/V1-RMD-739/tasks/B038.md": "",
+        "plan/GATES.md": ""
+      },
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:50",
+        "plan/v1/README.md:127-137",
+        "plan/GATES.md:36",
+        "evidence/V1-RMD-739/tasks/B038.md"
+      ],
+      "acceptance_for_repair": [
+        "V1-GOV-091 plan dosyası oluşturulmalı veya README/GATES notu resmi kabul şablonuna taşınmalı.",
+        "Evidence klasörü (exit kodları, test logları) gerektirilirse ayrı GOV görevi olarak açılmalı."
+      ],
+      "proposed_repair_paths": [
+        "plan/v1/remediation/V1-GOV-091-*.md",
+        "plan/GATES.md"
+      ],
+      "independent_review": "adjudication/packet02/739-correction-review-F0945.json",
+      "independent_review_sha256": "",
+      "runtime_verified": false,
+      "finding_closed": false,
+      "repair_authorized": false,
+      "limitations": [
+        "AGENTS.md tamamı okundu. Repository salt okunur tutuldu; yalnız yetkili scratch çıktısı yazıldı.",
+        "V1-GOV-091 plan dosyası depoda yok; karar mevcut kaynaklara (README, GATES, B038) dayanır.",
+        "Kanıt klasörü yokluğu 'Düşük not' unvanına rağmen kritik prioriteli bulgu yarattı."
+      ]
+    }
+  ],
+  "counts": {
+    "accepted_static_classifications": 2,
+    "open_documentation_findings": 2,
+    "closed_findings": 0,
+    "runtime_verified": 0
+  },
+  "write_authorization": false
+}

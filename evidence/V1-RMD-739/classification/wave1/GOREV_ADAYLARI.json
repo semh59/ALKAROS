@@ -1,0 +1,2271 @@
+[
+  {
+    "id": "PAY-G01",
+    "title": "Paid ile mali nihai kapanışın karar ve uygulama sınırı",
+    "source_groups": [
+      "PAY-G01"
+    ],
+    "defects": [
+      "PAY-001"
+    ],
+    "parents": [
+      "F0088",
+      "PO0015",
+      "PO0016"
+    ],
+    "existing_surface": [
+      "src/Modules/Billing/PaymentClosure/BillClosureService.cs",
+      "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs",
+      "tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "PAY-001"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "V13-FSC-002 kararını ve Paid tanımını açık onay/kaynakla belirle.",
+      "Seçilen sözleşme için ödeme başarılı ve mali kapı eksik/başarısız durumunu ayrı doğrula."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "PAY-G02",
+    "title": "Ödeme sonrası masa boşalmasında status_changed_at güncellenmiyor",
+    "source_groups": [
+      "PAY-G02"
+    ],
+    "defects": [
+      "PAY-002"
+    ],
+    "parents": [
+      "F0203"
+    ],
+    "existing_surface": [
+      "src/Host/Experience/Orders/OrderSettlementService.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Ödemeyle Occupied→Available değişince zaman ilerler; zaten Available iken sahte değişim zamanı üretilmez.",
+      "Merge katılımcısı serbest kalışında aynı zaman invariantı korunur.",
+      "Kaynak karttaki transfer/merge/rezervasyon/unmerge dalları ayrı alt kusurlara bölünmeden F0203 kapanmaz."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "PAY-G03",
+    "title": "Kart çekilmedi çözümü bekleyen manuel onayı terminal duruma taşımıyor",
+    "source_groups": [
+      "PAY-G03"
+    ],
+    "defects": [
+      "PAY-003"
+    ],
+    "parents": [
+      "PL0007"
+    ],
+    "existing_surface": [
+      "src/Modules/Payments/CardSettlement/CardSettlementModule.cs",
+      "src/Modules/Payments/ManualResolution/IManualCardConfirmationRepository.cs",
+      "src/Modules/Payments/ManualResolution/ManualPaymentResolutionService.cs",
+      "src/Modules/Payments/ManualResolution/PostgresManualCardConfirmationRepository.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Pending claim + kart çekilmedi çözümü: ödeme ve claim terminal durumları tutarlı; slip yeniden kullanım kuralı sınanır.",
+      "Onayla/çözüm yarışında tek terminal sonuç; audit başarısızsa her ikisi rollback.",
+      "Kaybolan yanıt/replay ve farklı aktör durumları sözleşmeye uygun."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "PAY-G04",
+    "title": "Ödeme ile sipariş tamamlama aktörü kayboluyor",
+    "source_groups": [
+      "PAY-G04"
+    ],
+    "defects": [
+      "PAY-004"
+    ],
+    "parents": [
+      "PL0008"
+    ],
+    "existing_surface": [
+      "src/Host/DualScreen/DualScreenApplication.Payments.cs",
+      "src/Host/Experience/Orders/OrderSettlementService.cs",
+      "src/Modules/Orders/OrderAggregate/Order.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [
+      "PAY-G02"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "İnsan ödeme yolunda geçmiş gerçek aktör içerir.",
+      "Sweeper için kanıtlı sistem kimliği sözleşmesi belirlenir; rastgele veya hayali kullanıcı üretilmez.",
+      "Sipariş zaten tamam ise fazladan history/audit oluşmaz."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "PAY-G05",
+    "title": "Kapanış ile eşzamanlı kart girişimi aynı hesap kilidine bağlı değil",
+    "source_groups": [
+      "PAY-G05"
+    ],
+    "defects": [
+      "PAY-005"
+    ],
+    "parents": [
+      "PL0009",
+      "PL0010"
+    ],
+    "existing_surface": [
+      "src/Modules/Billing/PaymentClosure/BillClosureService.cs",
+      "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs",
+      "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+      "tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [
+      "PAY-G01"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [
+      "PAY-005"
+    ],
+    "state": "verification-required",
+    "acceptance": [
+      "Gerçek PG mandallarıyla projection okuması sonrası yeni unresolved kartı araya sok; Paid+unresolved invariantını ölç.",
+      "Kapanış/kart, iptal/tahsilat, bahşiş/kapanış yarışlarını ayrı parametrik matrise bağla.",
+      "Audit/DB hatası ve iptal kilidi bırakır; mutasyon kilit/snapshot korumasını kaldırınca test kırılır."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "PAY-G06",
+    "title": "İade fiş tekillik kapsamı belirlenmemiş ve korunmuyor",
+    "source_groups": [
+      "PAY-G06"
+    ],
+    "defects": [
+      "PAY-006"
+    ],
+    "parents": [
+      "PL0011",
+      "PL0014"
+    ],
+    "existing_surface": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs",
+      "src/Modules/Payments/PaymentAggregate/PostgresRefundRequestRepository.cs",
+      "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "PAY-006"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Önce slip benzersizlik alanını mevcut mali/provider kararıyla doğrula.",
+      "Aynı normalleştirilmiş anahtarlı paralel iki tamamlamadan yalnız izinli olanı commit eder.",
+      "Farklı terminal/sağlayıcı aynı numara karar gereği mümkünse yanlış red olmaz.",
+      "Migration gerekiyorsa yeni migration/manifest exact surface ayrı görev, mevcut migration değiştirilmez."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "PAY-G07",
+    "title": "Manuel iade tamamlamada isteyen/tamamlayan ayrımı belirsiz",
+    "source_groups": [
+      "PAY-G07"
+    ],
+    "defects": [
+      "PAY-007"
+    ],
+    "parents": [
+      "PL0012",
+      "PL0014"
+    ],
+    "existing_surface": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs",
+      "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [
+      "PAY-G06"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "PAY-007"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Manual/allowance/manager yolları için isteyen-onaylayan-tamamlayan matrisi onaylanır.",
+      "Seçilen yasaklı aynı kişi kombinasyonu mutasyonla kırmızı/yeşil kanıtlanır.",
+      "401/403, audit rollback ve tekrarlanan tamamlama tek yan etki sağlar."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "PAY-G08",
+    "title": "Tamamlanmayan manuel iadede kullanılan allowance yaşam döngüsü belirsiz",
+    "source_groups": [
+      "PAY-G08"
+    ],
+    "defects": [
+      "PAY-008"
+    ],
+    "parents": [
+      "PL0013",
+      "PL0014"
+    ],
+    "existing_surface": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs",
+      "src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs",
+      "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [
+      "PAY-G07"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "PAY-008"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Requested/bütçesiz red, allowance+manual bekleme, tamamlanma, vazgeçme ve oturum kapanışı matrisi ayrı ölçülür.",
+      "Rezervasyon mu tüketim mi kuralı onaylanır; ters hareketler negatif bütçe veya çift serbest bırakma yaratmaz.",
+      "Kayıp yanıt/replay ve işlem arası hata/rollback bütçeyi doğru tutar."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "PAY-G09",
+    "title": "Tahsis satırı olmayan sıfır ödenecek hesabın yeniden kapanışı seçilmiyor",
+    "source_groups": [
+      "PAY-G09",
+      "PAY-G12"
+    ],
+    "defects": [
+      "PAY-009",
+      "PAY-012"
+    ],
+    "parents": [
+      "PL0015"
+    ],
+    "existing_surface": [
+      "src/Host/Experience/Billing/BillClosureSweeper.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Önce sıfır ödenecek tahsissiz hesabın projeksiyonda PaymentSatisfied/Closed olduğunu doğrula.",
+      "%100 indirim sonrası ilk kapanışı hata ile düşür; tahsis yokken sweep hesabı kapatır.",
+      "Ödenmemiş pozitif bakiyeli hesap kapanmaz; Cancelled etkilenmez.",
+      "Grace ve pahalı aday seçimi sınırı korunur; gereksiz tarama ölçülür.",
+      "Ters fixture: eski fully-paid açık hesap ardından 201 daha yeni partial; sweep tur(lar)ında eski hesap sonunda kapanır.",
+      "Eşit updated_at ve200/201 sınırı deterministik, cursor/progress restart sonrası kayıp yaratmaz.",
+      "Sonsuz sürekli yeni trafik altında bounded progress kanıtı; yalnız ASC↔DESC değişimi yeterli kabul edilmez."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules",
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Aynı token biçimlendirme veya aynı hassas veri değişmezliği invariantının kod+test+kanıtı tek teslimdir; tarihsel kanıt başka klasördeyse yeni görev yalnız kendi kanıtını üretir."
+  },
+  {
+    "id": "PAY-G10",
+    "title": "Paid kaydı sonrası sipariş tamamlama hatası yeniden seçilmiyor",
+    "source_groups": [
+      "PAY-G10"
+    ],
+    "defects": [
+      "PAY-010"
+    ],
+    "parents": [
+      "PL0016"
+    ],
+    "existing_surface": [
+      "src/Host/Experience/Billing/BillClosureSweeper.cs",
+      "src/Host/Experience/Orders/OrderSettlementService.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [
+      "PAY-G04",
+      "PAY-G09"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Önce bill Paid olsun, sonra order Save/audit/DB fail enjekte et; ikinci tur order tamamlanır ve masa doğru serbest kalır.",
+      "Replay aynı history/merge serbest bırakma işlemini ikilemez.",
+      "Bir order tamamlanamaması diğer adayları durdurmaz; cancellation ve tekrar başlatma çalışır."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "PAY-G11",
+    "title": "Approved tutar ile requested tutar üst sınırı sözleşmesi belirsiz",
+    "source_groups": [
+      "PAY-G11"
+    ],
+    "defects": [
+      "PAY-011"
+    ],
+    "parents": [
+      "PL0017"
+    ],
+    "existing_surface": [
+      "src/Modules/Payments/PaymentAggregate/Payment.cs",
+      "tests/Modules/Payments/PaymentAggregate/PaymentDomainTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "PAY-011"
+    ],
+    "verification_defects": [
+      "PAY-011"
+    ],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Domain talep/onay kuralı ve provider capture contract kaynağı okunur.",
+      "requested<tendered, partial approval, approved>requested varyasyonları gerçek invariantı sınar; para üstü ayrı korunur.",
+      "Kural belli değilse yeni guard ve hayali provider davranışı yok."
+    ],
+    "evidence_tiers": [
+      "real PostgreSQL + Host integration; unit only for pure money rules"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-457-DOC",
+    "title": "İşlem bazlı izin sözlüğü",
+    "source_groups": [
+      "RG-457-DOC"
+    ],
+    "defects": [
+      "GYZ-025"
+    ],
+    "parents": [
+      "F0972"
+    ],
+    "existing_surface": [
+      "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/StaffSection.tsx",
+      "src/Host/Experience/Roles/RoleManagementEndpoints.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "tests/Host/Experience/Roles/RoleManagementHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Role permission assignment ile permission katalog oluşturmayı ayıran işlem->izin tablosu; kullanıcı listeleme UsersManage, role mutation RolesManage açık yazılır.",
+      "RolesManage-only, UsersManage-only, her ikisi ve neither oturumlarında UI/HTTP kontratı ayrı doğrulanır; kayıttaki wording actual bugı gizliyorsa yeni atomik child olarak açılır, UIye üç kontrol varsayılarak eklenmez."
+    ],
+    "evidence_tiers": [
+      "Belge/statik; mevcut frontend mock ve HTTP test source incelemesi, fresh/browser pass yok"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-663-DOC",
+    "title": "663 -> 664 scope devir tutarlılığı",
+    "source_groups": [
+      "RG-663-DOC"
+    ],
+    "defects": [
+      "GYZ-018"
+    ],
+    "parents": [
+      "F0336"
+    ],
+    "existing_surface": [
+      "evidence/V1-RMD-663/README.md",
+      "plan/v1/remediation/V1-RMD-663-envelope-hardening-and-boundary-coverage.md",
+      "plan/v1/remediation/V1-RMD-664-typed-envelope-failures.md",
+      "tests/BuildingBlocks/Security/SensitiveData/Encryption/EnvelopeHardeningTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "663te tarihsel ilk kapsam korunup 664 transferi Goal/Owned surface/kabulde tutarlı nitelendirilir; 664 kanıtı 663e kopyalanıp yeni sonuç sayılmaz.",
+      "B019 ve her SensitiveData testinin tek gerçek uygulama sahibine izlenebilir bağı; Messaging ve boundary teslimi ayrı kalır."
+    ],
+    "evidence_tiers": [
+      "Belge/statik trace; production değişikliği yok"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-ANON-BOUNDARY",
+    "title": "Anonimleştirme SQL sahiplik kararı",
+    "source_groups": [
+      "RG-ANON-BOUNDARY"
+    ],
+    "defects": [
+      "GYZ-011"
+    ],
+    "parents": [
+      "F0176"
+    ],
+    "existing_surface": [
+      "docs/architecture/module-dependency-rules.md",
+      "plan/v1.5/kvkk/V15-KVK-002-cross-store-anonymization.md",
+      "src/Host/Program.cs",
+      "src/Modules/Privacy/Anonymization/AnonymizationModels.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs",
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [
+      "RG-SUPPLIER-ELIGIBILITY"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "GYZ-011"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Yetkili mimari karar açıkça SQL-plan istisnasını kabul eder veya sahibi modül kontratlarına geçişi seçer; geçmiş scope ihlali geriye dönük silinmez.",
+      "Sırf SQL metnini başka klasöre taşıma/allowlist genişletme kabul değil; seçilen kontrat için canlı 5 sınıf, checkpoint/audit/rollback ve architecture negatif testleri aynı invariantı korur."
+    ],
+    "evidence_tiers": [
+      "Karar/ownership belgesi + statik trace; yeni production kontratı henüz authorize edilmedi"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-AUDIT-REFERENCE",
+    "title": "Audit-disposal bağlantı durumu",
+    "source_groups": [
+      "RG-AUDIT-REFERENCE"
+    ],
+    "defects": [
+      "GYZ-017"
+    ],
+    "parents": [
+      "F0565"
+    ],
+    "existing_surface": [
+      "evidence/V15-KVK-002/README.md",
+      "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Tarihsel planned ifadesine güncel Done/kanıt bağı ekle; scope yalnız audit.audit_events.",
+      "privacy.anonymization_events kusuru açık kalır; RMD-481 tarihsel logları yeni runtime testi olarak sunulmaz."
+    ],
+    "evidence_tiers": [
+      "Belge/statik; RMD481 geçmiş çalışma yeni test değildir"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-BLOCKED-EVENTS",
+    "title": "Değişmeyen engel olaylarının tekilliği",
+    "source_groups": [
+      "RG-BLOCKED-EVENTS"
+    ],
+    "defects": [
+      "GYZ-016"
+    ],
+    "parents": [
+      "F0565"
+    ],
+    "existing_surface": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs::RepeatedUnchangedBlockDoesNotAppendDuplicateTransitions"
+    ],
+    "source_dependencies": [
+      "RG-ANON-BOUNDARY"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Aynı balance ile 100 retry: seçilen kayıtlı transition/attempt politikasına göre event hacmi sınırlı; aynı Blocked transition tekilleşir.",
+      "Engel nedeni değişmesi, release->resume, gerçek failed step->retry ve completed olayları korunur; iki worker duplicate blocked transition üretmez."
+    ],
+    "evidence_tiers": [
+      "Güncel statik + gelecekte PostgreSQL transition/idempotency testleri"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-CREDENTIAL-DELETE",
+    "title": "Credential event-trigger delete kararı",
+    "source_groups": [
+      "RG-CREDENTIAL-DELETE"
+    ],
+    "defects": [
+      "GYZ-013"
+    ],
+    "parents": [
+      "F0178"
+    ],
+    "existing_surface": [
+      "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
+      "plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md",
+      "src/Host/Program.cs",
+      "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs",
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+      "tests/Modules/Security/DataProtectionRetention/DeletionQueueProcessorTests.cs",
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Security/DataProtectionRetention/CredentialLifecycleDeletionTests.cs"
+    ],
+    "source_dependencies": [
+      "RG-RETENTION-INTEGRATION"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "GYZ-013"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Authoritative employment-end olayı ve approved due zamanı ile yalnız uygun credential kuyruklanır, sonra gerçek authoritative kayıt silinir; tekrar no-op.",
+      "Aktif/yeni/held credential, retain verisi ve mali referanslar korunur. nullu sıfır gün yaparak tüm credentialı silme kabul değil.",
+      "Mevcut misleading test adı actual skip davranışını anlatır; event-trigger testine mekanizma testini ikame etmez."
+    ],
+    "evidence_tiers": [
+      "Decision-blocked; hayat döngüsü kaynağı yok, runtime sonucu yok; seçilecek exact identity writer yüzeyi karar sonrası eklenir"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-CUSTOMER-ELIGIBILITY",
+    "title": "Müşteri scrub öncesi tüm uygunluk predicatei",
+    "source_groups": [
+      "RG-CUSTOMER-ELIGIBILITY"
+    ],
+    "defects": [
+      "GYZ-008",
+      "GYZ-009"
+    ],
+    "parents": [
+      "F0175"
+    ],
+    "existing_surface": [
+      "src/Host/Program.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs::QueuedCustomerWithNewActivityOrPendingRequestRemainsUntouched"
+    ],
+    "source_dependencies": [
+      "RG-HOLD"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Önce eski müşteri kuyruğa; sonra sıfır-net güncel hareket ve ayrı güncel fatura; apply profili/requests değiştirmez, kalem Pending.",
+      "Vade sınırı kullanılan policy_version/as-of ile açık tanımlı; uygun eski müşteri temizlenir. Aynı account lock ile hareket yarışını ve fatura üreticisinin katılımını gerçek PG ile kanıtla.",
+      "Queue -> Pending request insert -> apply: profile envelope ve request status/version değişmez, checkpoint yok.",
+      "RetentionBlocked/uygun request kombinasyonları mevcut sözleşmeye göre ayrı; Pending çıkınca resume idempotent; request insert/write yarışında ortak serialization kanıtı."
+    ],
+    "evidence_tiers": [
+      "Güncel statik + gelecekte gerçek Host/PG entegrasyon; ilgili üreticilerin exact write yüzeyi karar sonrası tamamlanmalı"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-DEVICE-DELETE",
+    "title": "Cihaz lifecycle delete kararı",
+    "source_groups": [
+      "RG-DEVICE-DELETE"
+    ],
+    "defects": [
+      "GYZ-014"
+    ],
+    "parents": [
+      "F0178"
+    ],
+    "existing_surface": [
+      "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
+      "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs",
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+      "tests/Modules/Security/DataProtectionRetention/DeletionQueueProcessorTests.cs",
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Security/DataProtectionRetention/DeviceLifecycleDeletionTests.cs"
+    ],
+    "source_dependencies": [
+      "RG-CREDENTIAL-DELETE"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "GYZ-014"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Onaylı cihaz kimliği+decommission state/event olmadan otomatik delete eklenmez.",
+      "Karar sonrası gerçek decommission akışı queue -> purge yapar; aktif/başka cihaz/held kayıt değişmez; yinelenen event idempotent."
+    ],
+    "evidence_tiers": [
+      "Decision-blocked; authoritative device lifecycle yok, production yeni dosya adı uydurulmadı; ortak store yüzeyi nedeniyle seri"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-HOLD",
+    "title": "Legal hold-write atomik sınırı",
+    "source_groups": [
+      "RG-HOLD"
+    ],
+    "defects": [
+      "GYZ-007"
+    ],
+    "parents": [
+      "F0019"
+    ],
+    "existing_surface": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/IRetentionExecutionService.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+      "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs",
+      "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs::ConcurrentHoldAndStepHaveOneCommitOrder",
+      "NEW test: tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs::HoldCommittedAfterListingPreventsTheNextDestructiveStep"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "İki gerçek PG bağlantısı ve deterministik bariyerle: liste alındı -> hold commit -> ilk write: tüm alan byte-for-byte aynı, checkpoint/StepDone yok, work Pending.",
+      "İlk adım commit -> hold commit -> ikinci adım: sonraki alan dokunulmaz, önce tamamlanan adım kaydı korunur; hold release sonrası güvenli resume.",
+      "Hold ve write tam çakışmada her iki commit sırası kanıtlanır; yalnız application check değil ortak lock/transaction protokolü. Hata/cancellation write+checkpoint+event rollback."
+    ],
+    "evidence_tiers": [
+      "Güncel statik + gelecekte gerçek PostgreSQL deterministic concurrency; fresh run yok"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-IAM008-DOC",
+    "title": "Authorization linearization policy kararı",
+    "source_groups": [
+      "RG-INFLIGHT-DECISION",
+      "RG-IAM008-DOC"
+    ],
+    "defects": [
+      "GYZ-019",
+      "GYZ-023"
+    ],
+    "parents": [
+      "F0130",
+      "F0957"
+    ],
+    "existing_surface": [
+      "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md",
+      "plan/v1/remediation/V1-RMD-743-son-yonetici-es-zamanlilik.md",
+      "src/Modules/Identity/Authorization/AuthorizationService.cs",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Yetkili karar command-startı kabul ederse IAM008 atomiklik kabulü ile yorum tutarlı açıkça düzeltilir; reddederse authorization+mutation transaction/conditional write olarak uygulanır.",
+      "Gerçek bariyer: allow kararı tamamlanır, actor revocation commit olur, mutation serbest bırakılır; seçilen sonuç ve side effects kesin assert edilir.",
+      "Tarihsel implementasyon ve doğrulama rolü seçilen policyye göre tutarlı adlandırılır; eski kapanış tarihi ve proof zayıflığı korunur.",
+      "Plan-audit ve scope kontrolü gerçek exit koduyla; belge düzenlemesi runtime authorization fix sayılmaz."
+    ],
+    "evidence_tiers": [
+      "Decision-blocked; statik execution path, canlı fail/success sonucu yok",
+      "Belge/plan-audit; runtime değil"
+    ],
+    "merge_reason": "Aynı token biçimlendirme veya aynı hassas veri değişmezliği invariantının kod+test+kanıtı tek teslimdir; tarihsel kanıt başka klasördeyse yeni görev yalnız kendi kanıtını üretir."
+  },
+  {
+    "id": "RG-IMMUTABLE",
+    "title": "Değişmez hassas payload/envelope sınırı ve gerçek regresyon kanıtı",
+    "source_groups": [
+      "RG-PAYLOAD",
+      "RG-ENVELOPE",
+      "RG-IMMUTABILITY-EVIDENCE"
+    ],
+    "defects": [
+      "GYZ-003",
+      "GYZ-004",
+      "GYZ-005",
+      "GYZ-006"
+    ],
+    "parents": [
+      "F0015",
+      "F0016"
+    ],
+    "existing_surface": [
+      "evidence/V1-SEC-005/immutable_data_classification_verification.txt",
+      "plan/v1/security-foundation/V1-SEC-005-immutable-data-classification.md",
+      "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs",
+      "tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs",
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/EnvelopeProtectionTests.cs",
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs::EnvelopeClassificationCannotAcquireMutableAliasesAfterConstructionOrRestore",
+      "NEW test: tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs::PayloadAliasesAndMutableCastsCannotChangeFieldsOrClassification"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Kurucu girdisini sonradan değiştirme çıktıyı değiştirmez.",
+      "Returned Fields üzerinde desteklenen mutable arayüz/cast ile set/add/remove/clear etkisiz veya açık ret; redaction/serialization snapshot tutarlı.",
+      "Pii/Payment sentinel için Dictionary ve IDictionary mutasyon denemeleri sonrası maske kalır; Public özgün alan görünür.",
+      "Eksik sınıflandırma kurucuda reddedilir, kategori silme/clear ve tekrar redaction ham veri üretmez.",
+      "Ctor input alias, returned dictionary mutable arayüzleri, persistence restore ve desteklenen with/init yolu immutable snapshot sağlar.",
+      "AAD üzerinde metadata değişmiş zarf hâlâ typed failure verir; doğru şifreli eski zarf round-trip açılır; immutable düzeltme persistence uyumluluğunu bozmaz.",
+      "a9ebe9a2 stat/diff çıktısı ile tarihsel hükmü correction notunda ayır.",
+      "RG-PAYLOAD ve RG-ENVELOPE için yeni SHA, cast/alias/init red-green ve immutable temsil kaldırılınca kırılan mutant çıktısı; kaynak restore hashleri."
+    ],
+    "evidence_tiers": [
+      "Güncel statik; gelecekte .NET unit + mutation",
+      "Güncel statik; gelecekte gerçek crypto unit round-trip, decrypt bypass iddiası yok",
+      "git show gerçek çıktı + yeni unit/mutation transcript gerekli"
+    ],
+    "merge_reason": "Aynı token biçimlendirme veya aynı hassas veri değişmezliği invariantının kod+test+kanıtı tek teslimdir; tarihsel kanıt başka klasördeyse yeni görev yalnız kendi kanıtını üretir."
+  },
+  {
+    "id": "RG-INFLIGHT-EVIDENCE",
+    "title": "IAM008 kanıt tamlığı",
+    "source_groups": [
+      "RG-INFLIGHT-EVIDENCE"
+    ],
+    "defects": [
+      "GYZ-022"
+    ],
+    "parents": [
+      "F0957"
+    ],
+    "existing_surface": [
+      "evidence/V1-IAM-008/authorization_linearization_verification.txt",
+      "evidence/V1-IAM-008/test_output.txt",
+      "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [
+      "RG-INFLIGHT-TEST"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Seçilen policy ve RG-INFLIGHT-TESTe özgü raw command/exit0/SHA/ortam/commit-order sonuçları kaydedilir; eski özet tarihsel kalır.",
+      "Format ve Authorization suite çıktıları ayrı scope ile; 20 tarihsel test sayısı current count veya atomiklik kanıtı sayılmaz."
+    ],
+    "evidence_tiers": [
+      "Belge + gelecekte fresh PG transcript"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-INFLIGHT-TEST",
+    "title": "Gerçek revocation-before-write interleaving testi",
+    "source_groups": [
+      "RG-INFLIGHT-TEST"
+    ],
+    "defects": [
+      "GYZ-020"
+    ],
+    "parents": [
+      "F0130"
+    ],
+    "existing_surface": [
+      "src/Modules/Identity/Authorization/IAuthorizationService.cs",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs::RevocationCommitBetweenAuthorizationAndMutationFollowsApprovedLinearization"
+    ],
+    "source_dependencies": [
+      "RG-IAM008-DOC"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Authorization sonrası kontrollü bariyer, ayrı bağlantıda revocation commit, sonra repo write release; commit sırası kanıtı ve row postcondition.",
+      "İzin yok başlangıçta hiç write yok; command-start kararı seçilmişse önce-authorized write kabulü ve sonrası komutun denialı ayrı test; scheduler timingine dayalı Task.Delay tek başına yok."
+    ],
+    "evidence_tiers": [
+      "Gelecekte gerçek PostgreSQL deterministic concurrency; mevcut test source-only inceleme"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-LAST-MANAGER",
+    "title": "Tarihsel last-holder fix teyidi",
+    "source_groups": [
+      "RG-LAST-MANAGER"
+    ],
+    "defects": [
+      "GYZ-021"
+    ],
+    "parents": [
+      "F0131",
+      "F0159"
+    ],
+    "existing_surface": [
+      "src/Modules/Identity/Authorization/IRoleRepository.cs",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs::ConcurrentPermissionAndUserRevocationsKeepAnActiveHolder"
+    ],
+    "source_dependencies": [
+      "RG-INFLIGHT-TEST"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "historical-regression-only",
+    "acceptance": [
+      "Fresh gerçek PGde two-user mutual revoke, same-role ve mixed user/permission revoke yarışında en az bir aktif holder kalır.",
+      "Yetkisiz actor ve unrelated permission, inactive ikinci holder, multiple-role surviving holder, cancellation/rollback yolları. Kilit çıkarılınca test kırılmalı; geçmiş 3 mutant bu oturum sonucu değildir."
+    ],
+    "evidence_tiers": [
+      "historical real-PG green248/mutant3; current static fix teyidi, fresh runtime yok"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-RETENTION-INTEGRATION",
+    "title": "Gerçek provider payload lifecycle entegrasyonu",
+    "source_groups": [
+      "RG-RETENTION-INTEGRATION"
+    ],
+    "defects": [
+      "GYZ-012"
+    ],
+    "parents": [
+      "F0020",
+      "F0325"
+    ],
+    "existing_surface": [
+      "database/migrations/V15/V15-SEC-003/137-retention-subjects.up.sql",
+      "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs",
+      "src/Modules/OnlineOrdering/Providers/Inbox/ProviderInbox.cs",
+      "src/Modules/Security/DataProtectionRetention/AuthorizedReEncryptionService.cs",
+      "src/Modules/Security/DataProtectionRetention/DeletionQueueProcessor.cs",
+      "src/Modules/Security/DataProtectionRetention/IRetentionSubjectStore.cs",
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+      "src/Modules/Security/SecurityModule.cs",
+      "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs",
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Host/Experience/SecurityAdministration/ProviderPayloadRetentionLifecycleTests.cs"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Gerçek provider ingest ile retention kaydı oluşur; doğrudan test InsertAsync/seeding kullanılmaz. Duplicate delivery tek lifecycle record; write/registration yarım başarısında rollback.",
+      "Zamanı ilerlet/sweep -> authoritative ProviderInbox.OpenPayload artık ham body döndüremez; retention kaydı ve ana tablo çelişmez. Held/fresh payload okunabilir kalır, retry idempotent, audit/logda sentinel plaintext yok.",
+      "Existing business retention (CustomerProfile vb.) ile çift imha ve çakışan süre yaratılmaz; re-encryption gerçek okuyucunun aynı authoritative kaydını günceller."
+    ],
+    "evidence_tiers": [
+      "Statik producer/caller trace + gelecekte gerçek Host/PG; storage kararı bekler, exact surface mevcut minimumdur, eski migration salt okunur referanstır"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-SCHEDULER-DOC",
+    "title": "Retention erişilebilirlik güncellik notu",
+    "source_groups": [
+      "RG-SCHEDULER-DOC"
+    ],
+    "defects": [
+      "GYZ-015"
+    ],
+    "parents": [
+      "F0567"
+    ],
+    "existing_surface": [
+      "plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md",
+      "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs",
+      "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs",
+      "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Tarihsel 2026-09-23 notu korunur, güncel V1-RMD-268 wiring ile sweep/deletion erişimi ve hâlâ eksik producer/re-encryption ayrılır.",
+      "Manual run 401/403 ve held/fresh/expired/idempotent mevcut test kapsamı açıkça yazılır; test çalıştırılmadıysa yeni geçti denmez."
+    ],
+    "evidence_tiers": [
+      "Belge/statik; yeni runtime sonuç iddiası yok"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-SELF-REVOKE",
+    "title": "Self-revoke sözleşme kararı ve doğrulama",
+    "source_groups": [
+      "RG-SELF-REVOKE"
+    ],
+    "defects": [
+      "GYZ-024"
+    ],
+    "parents": [
+      "F0972"
+    ],
+    "existing_surface": [
+      "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "tests/Host/Experience/Roles/RoleManagementHttpTests.cs",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx::SelfRevocationHonorsConfirmationAndLastManagerRefusal"
+    ],
+    "source_dependencies": [
+      "RG-LAST-MANAGER"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [
+      "GYZ-024"
+    ],
+    "state": "verification-required",
+    "acceptance": [
+      "Yetkili karar self-revokeyi kabul/ret olarak kaydeder; kabulde confirmation cancel hiçbir istek göndermez, last-manager 409 veri değiştirmez.",
+      "Başka aktif yönetici varken onaylanan self-revoke sonrası yeni komut denialı ve UI capability yenilenmesi ayrıca doğrulanır; client-only engel security fix sayılmaz."
+    ],
+    "evidence_tiers": [
+      "Decision-blocked; UI jsdom + gelecekte gerçek HTTP/PG, browser davranışı henüz koşulmadı"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-02",
+    "title": "Mal kabul kayıtlı satır-yarışı kapanışı",
+    "source_groups": [
+      "RG-STK-01",
+      "RG-STK-02"
+    ],
+    "defects": [
+      "STK-001",
+      "STK-002"
+    ],
+    "parents": [
+      "F0017",
+      "F0026"
+    ],
+    "existing_surface": [
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs::CancelledOrderCannotBeReceivedFromAStaleSnapshot",
+      "NEW test: tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs::StaleCancellationCannotEraseCommittedReceivedQuantity"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Mevcut ConcurrentReceiptsOfSameOrderPostStockOnce ve StaleReceivedQuantityIsRejectedWhenLockingOrderLines yeniden çalıştırılır; yalnız beklenen PurchaseOrderStatusException kabul edilir; received_quantity, fiş sayısı, ledger toplamı ve on_hand birlikte doğrulanır.",
+      "İki bağlantı ve barrier ile cancel-commit→receipt-write ve receipt-commit→stale-cancel-write sıraları kurulur; biri tipli conflict alır; PO status/miktar, receipt, ledger ve balance tek tutarlı sonucu verir."
+    ],
+    "evidence_tiers": [
+      "historical PostgreSQL logs read: 26 passed exit=0, 2 recorded killed mutations; current source present; no rerun",
+      "static-source; required real PostgreSQL integration + focused mutation; not run"
+    ],
+    "merge_reason": "Aynı token biçimlendirme veya aynı hassas veri değişmezliği invariantının kod+test+kanıtı tek teslimdir; tarihsel kanıt başka klasördeyse yeni görev yalnız kendi kanıtını üretir."
+  },
+  {
+    "id": "RG-STK-03",
+    "title": "Receipt duplicate repository koruması teyidi",
+    "source_groups": [
+      "RG-STK-03"
+    ],
+    "defects": [
+      "STK-003"
+    ],
+    "parents": [
+      "F0026"
+    ],
+    "existing_surface": [
+      "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs",
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs::ConcurrentReceiptNumbersReturnTypedDuplicateWithoutPartialWrites"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "historical-regression-only",
+    "acceptance": [
+      "Farklı PO üstünde aynı ReceiptNumber yarışı; bir kayıt, beklenen DuplicateGoodsReceiptException, kaybedenin PO/ledger/balance etkisi yok. Exact constraint discriminasyonu için farklı unique failure ayrı negatif kontrol edilir; bugünkü header catch bütün23505leri çevirir."
+    ],
+    "evidence_tiers": [
+      "current callee source confirms protection; focused race runtime not run; no historical test log matched"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-04",
+    "title": "Mal kabul politika teyidi",
+    "source_groups": [
+      "RG-STK-04"
+    ],
+    "defects": [
+      "STK-004"
+    ],
+    "parents": [
+      "F0026"
+    ],
+    "existing_surface": [
+      "plan/v1.1/purchasing/V11-PUR-001-purchase-order-and-receipt.md",
+      "src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs",
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "STK-004"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Semih %5 eşiği ve purchasing.manage→onay yetkisi ilişkisini tarihli karar olarak teyit eder; onaylı/onaysız/sınır toleransı testleri seçilen kurala bağlanır."
+    ],
+    "evidence_tiers": [
+      "decision evidence absent in inspected card; source only"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-05",
+    "title": "742 dar kapanış teyidi",
+    "source_groups": [
+      "RG-STK-05"
+    ],
+    "defects": [
+      "STK-005"
+    ],
+    "parents": [
+      "F0030"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "historical-regression-only",
+    "acceptance": [
+      "5100 hareket rebuild ve ledger-read-failure mevcut testleri yeniden çalıştırılır; negatif Out işareti ve okuma-önce sırası mutasyonları kırılır."
+    ],
+    "evidence_tiers": [
+      "historical PostgreSQL logs:16 passed exit=0,2 killed mutations; no rerun"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-06",
+    "title": "Full stock rebuild yazım/hata/iptal atomikliği",
+    "source_groups": [
+      "RG-STK-06",
+      "RG-STK-37"
+    ],
+    "defects": [
+      "STK-006",
+      "STK-007"
+    ],
+    "parents": [
+      "F0030"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs::RebuildCannotLoseAConcurrentLedgerOrReservationCommit",
+      "NEW test: tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs::RebuildRollsBackAfterResetWriteFailureAndCancellation"
+    ],
+    "source_dependencies": [
+      "RG-STK-05",
+      "RG-STK-08"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Reset sonrası, ikinci on-hand yazımında ve reserved restore sırasında gerçek transaction içinde hata/ct cancel enjekte edilir; bütün balance satırları ve reserved/available önceki snapshot ile eşit kalır.",
+      "SUM sonrası purchase/consumption commit ve reserved snapshot sonrası create/terminal commit barrier ile zorlanır; rebuild + writer sonrası SQL ledger SUM ve active reservation SUM ile tüm alanlar eşleşir; yeni item/location satırı da kapsanır."
+    ],
+    "evidence_tiers": [
+      "static-source; required real PostgreSQL integration + focused mutation; not run",
+      "static-source; required real PostgreSQL integration + focused mutation; not run"
+    ],
+    "merge_reason": "Aynı token biçimlendirme veya aynı hassas veri değişmezliği invariantının kod+test+kanıtı tek teslimdir; tarihsel kanıt başka klasördeyse yeni görev yalnız kendi kanıtını üretir."
+  },
+  {
+    "id": "RG-STK-07",
+    "title": "Item/location replay SQL aggregate",
+    "source_groups": [
+      "RG-STK-07"
+    ],
+    "defects": [
+      "STK-008"
+    ],
+    "parents": [
+      "F0030"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs::ItemReplayIgnoresOtherItemsAndHasNoLocationRowCap"
+    ],
+    "source_dependencies": [
+      "RG-STK-08"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Aynı konumda 5100 hareket ve başka item hedefi; doğrudan item/location aggregate sonucu doğru; diğer konum hareketleri karışmaz; In/Out/Reversal ve boş ledger doğrulanır."
+    ],
+    "evidence_tiers": [
+      "static-source; required real PostgreSQL integration + focused mutation; not run"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-08",
+    "title": "Full stock rebuild erişilebilirlik kararı",
+    "source_groups": [
+      "RG-STK-08"
+    ],
+    "defects": [
+      "STK-009"
+    ],
+    "parents": [
+      "F0227"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/BalanceProjection/IStockBalanceProjector.cs",
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/InventoryModule.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "STK-009"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Semih bakım gereksinimini seçer: gerçek yetkili operasyon akışı exact path ile ayrı planlanır veya unused method/interface/test-only feature kaldırma etkisi kaydedilir; yeni hayali endpoint kurulmaz."
+    ],
+    "evidence_tiers": [
+      "static caller search; decision-gated integration/removal, not a code-duplication merge"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-09",
+    "title": "747 terminal replay dar kapanış teyidi",
+    "source_groups": [
+      "RG-STK-09"
+    ],
+    "defects": [
+      "STK-011"
+    ],
+    "parents": [
+      "F0025",
+      "F0212"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "historical-regression-only",
+    "acceptance": [
+      "Mevcut ReplayingATerminalTransitionAfterARebuildIsStillIdempotent yeniden koşulur; Released/Consumed/Waste ve aynı pair üstünde başka Reserved varken replay başka rezervasyonu azaltmaz; terminal olay üretimi kaldırılınca test kırılır."
+    ],
+    "evidence_tiers": [
+      "historical PostgreSQL logs:14 passed exit=0,1 killed mutation; current source/test read; no rerun"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-10",
+    "title": "Reservation event+balance rebuild yazım atomikliği",
+    "source_groups": [
+      "RG-STK-10",
+      "RG-STK-38"
+    ],
+    "defects": [
+      "STK-012",
+      "STK-013"
+    ],
+    "parents": [
+      "F0211"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs::ConcurrentTerminalCannotLeaveStaleReservedAfterRebuild",
+      "NEW test: tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs::RebuildRollsBackEventsAndBalancesTogether"
+    ],
+    "source_dependencies": [
+      "RG-STK-06",
+      "RG-STK-09",
+      "RG-STK-33"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Event rebuild sonrası ve ikinci balance yazımında failure/cancel; event seti ve tüm reserved/available önceki duruma tamamen döner; retry sonunda drift yoktur.",
+      "Aggregate sonrası terminal ve create commit interleaving; rebuild sonunda active reservation SUM=reserved, available=on_hand-reserved; event replay hiçbir ikinci etki üretmez."
+    ],
+    "evidence_tiers": [
+      "static-source; required real PostgreSQL integration + focused mutation; not run",
+      "static-source; required real PostgreSQL integration + focused mutation; not run"
+    ],
+    "merge_reason": "Aynı token biçimlendirme veya aynı hassas veri değişmezliği invariantının kod+test+kanıtı tek teslimdir; tarihsel kanıt başka klasördeyse yeni görev yalnız kendi kanıtını üretir."
+  },
+  {
+    "id": "RG-STK-11",
+    "title": "Reservation raporunda COUNT ve SUM ayrımı",
+    "source_groups": [
+      "RG-STK-11"
+    ],
+    "defects": [
+      "STK-014"
+    ],
+    "parents": [
+      "F0211"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceModels.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs::RebuildReportsReservationCountNotTruncatedQuantity"
+    ],
+    "source_dependencies": [
+      "RG-STK-10"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Aynı pairde 3×0.5 Reserved ve bir terminal kaydı: TotalActiveReservations=3, reserved=1.5; miktar toplamı int sınırını aşsa da kayıt sayısı overflowa bağlanmaz."
+    ],
+    "evidence_tiers": [
+      "static-source; required real PostgreSQL integration + focused mutation; not run"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-12",
+    "title": "Tx’sız reversal atomikliği",
+    "source_groups": [
+      "RG-STK-12"
+    ],
+    "defects": [
+      "STK-015"
+    ],
+    "parents": [
+      "F0228"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs::ReversalBalanceFailureCannotLeaveAnAppliedLedgerEntry"
+    ],
+    "source_dependencies": [
+      "RG-STK-35"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Overload tutulursa gerçek Postgres ledger append sonrası balance failure/cancel: ne reversal ne delta kalır; tekrar tek etki; kaldırılırsa bütün callers tx overloada taşınır ve kullanılmayan dependency kalmaz."
+    ],
+    "evidence_tiers": [
+      "static source and caller trace; retain/remove decision + PostgreSQL failure injection required"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-13",
+    "title": "748 işlemli reversal kapanış teyidi",
+    "source_groups": [
+      "RG-STK-13"
+    ],
+    "defects": [
+      "STK-017"
+    ],
+    "parents": [
+      "F0229"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+      "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "historical-regression-only",
+    "acceptance": [
+      "Mevcut tipli ret testi tekrar koşulur; caller transaction rollback açıkça doğrulanır; guard kaldırma mutasyonu kırılır."
+    ],
+    "evidence_tiers": [
+      "historical PostgreSQL logs:23 passed exit=0,1 killed mutation; no rerun"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-14",
+    "title": "Manual adjustment authorization sınırı",
+    "source_groups": [
+      "RG-STK-14"
+    ],
+    "defects": [
+      "STK-018"
+    ],
+    "parents": [
+      "F0230"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/InventoryModule.cs",
+      "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+      "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs",
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs::NonemptyUnauthorizedActorCannotAdjustStock"
+    ],
+    "source_dependencies": [
+      "RG-STK-34"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Seçilen gerçek güven sınırında nonempty fakat izinsiz actor reddedilir ve hiçbir kayıt oluşmaz; yetkili actor tek ledger+balance etkisi verir; istemciden AuthorizedBy güvenilir kimlik sayılmaz."
+    ],
+    "evidence_tiers": [
+      "static acceptance/caller gap; integration/removal decision required before exact new Host surface"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-15",
+    "title": "Waste idempotency payload bütünlüğü",
+    "source_groups": [
+      "RG-STK-15"
+    ],
+    "defects": [
+      "STK-020"
+    ],
+    "parents": [
+      "F0231"
+    ],
+    "existing_surface": [
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+      "src/Modules/Inventory/WasteRecording/PostgresWasteRecordRepository.cs",
+      "src/Modules/Inventory/WasteRecording/WasteModels.cs",
+      "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Host/Experience/Inventory/StockMasterHttpTests.cs::WasteKeyReuseWithDifferentPayloadReturnsConflict",
+      "NEW test: tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs::SameWasteKeyWithDifferentPayloadIsRejectedBeforeAndAfterARace"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Aynı key+aynı yük replay; farklı item/location/quantity/unit/source/sourceReference ve onaylı payload alanları conflict. Erken hit ve concurrent unique-race recovery aynı karşılaştırmayı kullanır; caller tx ve HTTP 409/Türkçe mesaj; ikinci ledger/balance etkisi yok."
+    ],
+    "evidence_tiers": [
+      "static-source; required real PostgreSQL integration + focused mutation; not run"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-16",
+    "title": "Waste reversal invariantının bütün girişlerde korunması",
+    "source_groups": [
+      "RG-STK-16"
+    ],
+    "defects": [
+      "STK-021"
+    ],
+    "parents": [
+      "F0232"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/MovementLedger/StockMovement.cs",
+      "src/Modules/Inventory/MovementLedger/StockMovementService.cs",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs::PreparedWasteCannotRestoreSellableStock"
+    ],
+    "source_dependencies": [
+      "RG-STK-12"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Hazırlanmış/PortionReservation waste için CanReverse=false ve tüm kullanılan reversal girişlerinde tipli ret; ledger ve on_hand/reserved/available değişmez. Yanlış girilmiş genel spoilage fire düzeltmesi isteniyorsa Semih onaylı ayrı düzeltme politikası gerekir; otomatik yeniden satış yok."
+    ],
+    "evidence_tiers": [
+      "static-source; required real PostgreSQL integration + focused mutation; not run"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-17",
+    "title": "Waste çift azaltma concurrency coverage",
+    "source_groups": [
+      "RG-STK-17",
+      "RG-STK-36"
+    ],
+    "defects": [
+      "STK-022",
+      "STK-023"
+    ],
+    "parents": [
+      "F0516"
+    ],
+    "existing_surface": [
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs::ConcurrentWasteDecreasesCannotOverspendStock",
+      "NEW test: tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs::StandaloneWasteFailureAndCancellationRollBackEveryWrite"
+    ],
+    "source_dependencies": [
+      "RG-STK-15"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "10 stok, iki farklı-key 7 miktar; stale precheck barrier ile ikisini geçir; tam bir başarı+bir InsufficientStockForWasteException, son stok3, tek waste+tek hareket. Guard WHERE kaldırma mutasyonu testi kırar.",
+      "Ledger append sonrası, waste insert sonrası, guarded apply öncesi ve commit ct iptalinde exception enjekte et; üçünün toplamları eski durumda; sonra retry bir kez başarılı. Caller rollback mevcut testi de yeniden koş."
+    ],
+    "evidence_tiers": [
+      "static test inventory; existing caller-tx coverage read; focused new real PostgreSQL tests + mutations not run",
+      "static test inventory; existing caller-tx coverage read; focused new real PostgreSQL tests + mutations not run"
+    ],
+    "merge_reason": "Aynı token biçimlendirme veya aynı hassas veri değişmezliği invariantının kod+test+kanıtı tek teslimdir; tarihsel kanıt başka klasördeyse yeni görev yalnız kendi kanıtını üretir."
+  },
+  {
+    "id": "RG-STK-19",
+    "title": "741 nonzero delta dar kapanış teyidi",
+    "source_groups": [
+      "RG-STK-18",
+      "RG-STK-19"
+    ],
+    "defects": [
+      "STK-024",
+      "STK-025"
+    ],
+    "parents": [
+      "F0031"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs::ConcurrentMovementRejectsAMatchingZeroDeltaCount"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Mevcut nonzero yarış testi ve guard removal mutasyonu yeniden çalıştırılır; count row da rollback sonrası yok assertions eklenir.",
+      "Mevcut RacingBalanceRepository ile initial10, counted10, araya−3 koy; PhysicalCountBalanceGuardFailedException/HTTP409, count row yok, balance7 korunur. Bir başka tx hareketini count commitine kadar serialize eden doğru çözümde postcondition eşdeğer kanıtlanır."
+    ],
+    "evidence_tiers": [
+      "historical PostgreSQL logs:11 passed exit=0,1 killed mutation; no rerun",
+      "static-source; required real PostgreSQL integration + focused mutation; not run"
+    ],
+    "merge_reason": "Aynı token biçimlendirme veya aynı hassas veri değişmezliği invariantının kod+test+kanıtı tek teslimdir; tarihsel kanıt başka klasördeyse yeni görev yalnız kendi kanıtını üretir."
+  },
+  {
+    "id": "RG-STK-20",
+    "title": "Physical count retry kimliği",
+    "source_groups": [
+      "RG-STK-20"
+    ],
+    "defects": [
+      "STK-026"
+    ],
+    "parents": [
+      "F0699"
+    ],
+    "existing_surface": [
+      "database/MigrationComposition/order.json",
+      "src/Clients/PosTerminal/src/features/management-stock/stockApi.ts",
+      "src/Host/Experience/Inventory/StockMasterContracts.cs",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+      "src/Modules/Inventory/PhysicalCounts/IPhysicalCountRepository.cs",
+      "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs",
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+      "src/Modules/Inventory/PhysicalCounts/PostgresPhysicalCountRepository.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs::RetryAfterASaleDoesNotCreateAnotherCountOrRestoreSoldStock"
+    ],
+    "source_dependencies": [
+      "RG-STK-19"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Kalıcı count/request identity ile aynı payload retry aynı countId döner; count sonrası satış−3 ardından retry stok artırmaz. Aynı key farklı item/location/count/notes için açık conflict politikası; farklı key yeni gerçek sayım kabul edilir. DB migration gerekiyorsa yeni exact migration adı ve composition yüzeyi plan onayı olmadan eklenmez."
+    ],
+    "evidence_tiers": [
+      "static-source; required real PostgreSQL integration + focused mutation; not run"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-21",
+    "title": "Ledger reason dil iddiası teyidi",
+    "source_groups": [
+      "RG-STK-21"
+    ],
+    "defects": [
+      "STK-027"
+    ],
+    "parents": [
+      "F0699"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [
+      "STK-027"
+    ],
+    "state": "verification-required",
+    "acceptance": [
+      "Ledger reasonı gösteren gerçek UI/API consumer bulunur; kullanıcıya ham English veriyorsa o sinkte test planlanır; sink yoksa aday explicit non-finding olarak sonuçlandırılır."
+    ],
+    "evidence_tiers": [
+      "needs verification; English literal proven, user-visible leak not proven"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-22",
+    "title": "INV-008 ilk kapanış kanıt teyidi",
+    "source_groups": [
+      "RG-STK-22"
+    ],
+    "defects": [
+      "STK-028"
+    ],
+    "parents": [
+      "F0031"
+    ],
+    "existing_surface": [
+      "plan/v1.1/inventory/V11-INV-008-physical-counts.md",
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "INV-008 tarihsel commit/artifact bulunur ve acceptance bazında eşlenir; yoksa kanıtsız olduğu kayda geçer, 741 sayıları ilk kapanış kanıtı diye kullanılmaz."
+    ],
+    "evidence_tiers": [
+      "historical evidence reconciliation only; original directory claim not independently enumerated"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-23",
+    "title": "Stock balance uniqueness belgesi",
+    "source_groups": [
+      "RG-STK-23"
+    ],
+    "defects": [
+      "STK-029"
+    ],
+    "parents": [
+      "F0295"
+    ],
+    "existing_surface": [
+      "docs/data/nullable-unique-policy.md",
+      "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Karar metni exact kolon/NOT NULL/UNIQUE ile eşlenir; central-stock nullable ihtiyacı varsa ayrı Semih kararı olmadan mevcut şema değiştirilmez."
+    ],
+    "evidence_tiers": [
+      "static document/schema mismatch; no runtime defect claimed"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-24",
+    "title": "Printer route uniqueness belgesi",
+    "source_groups": [
+      "RG-STK-24"
+    ],
+    "defects": [
+      "STK-030"
+    ],
+    "parents": [
+      "F0295"
+    ],
+    "existing_surface": [
+      "docs/data/nullable-unique-policy.md",
+      "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [
+      "RG-STK-23"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Belgedeki printer_routes satırı ve partial-index invariantı route_level/is_active koşullarını doğru yansıtır; sırf belgeye uydurmak için eski migration yeniden yazılmaz."
+    ],
+    "evidence_tiers": [
+      "static document/schema mismatch; shared document writes serialized"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-25",
+    "title": "Ledger migration kanıt yolu düzeltmesi",
+    "source_groups": [
+      "RG-STK-25"
+    ],
+    "defects": [
+      "STK-031"
+    ],
+    "parents": [
+      "F0641",
+      "F1005"
+    ],
+    "existing_surface": [
+      "evidence/V11-INV-001/closure-evidence.txt",
+      "plan/v1.1/inventory/V11-INV-001-immutable-stock-ledger.md"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "057→060 yol eşleme notu tarihli provenance ile eklenir; eski logları yeni çalıştırılmış gibi değiştirme; up/down gerçek dosyalara resolve olur."
+    ],
+    "evidence_tiers": [
+      "static provenance mismatch; historical exit codes observed, not rerun"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-26",
+    "title": "Balance migration kanıt yolu düzeltmesi",
+    "source_groups": [
+      "RG-STK-26"
+    ],
+    "defects": [
+      "STK-032"
+    ],
+    "parents": [
+      "F0697"
+    ],
+    "existing_surface": [
+      "evidence/V11-INV-002/closure-evidence.txt",
+      "plan/v1.1/inventory/V11-INV-002-stock-balance-projection.md"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "058→061 güncel yol notu tüm up/down/write-set/test atıflarını kapsar; eski komut sonuçları tarihsel tutulur."
+    ],
+    "evidence_tiers": [
+      "static provenance mismatch only"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-27",
+    "title": "Ledger-only unused orchestration kaldırma planı",
+    "source_groups": [
+      "RG-STK-27"
+    ],
+    "defects": [
+      "STK-033"
+    ],
+    "parents": [
+      "F1005"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/InventoryModule.cs",
+      "src/Modules/Inventory/MovementLedger/IStockMovementService.cs",
+      "src/Modules/Inventory/MovementLedger/StockMovementService.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+      "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [
+      "RG-STK-16"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Üretimde gerçek caller yokluğu method-level doğrulanır; kullanılmayan service/interface/DI kaldırma planı test fixture recorderlarını repository seeding ile değiştirir; yaşayan repository/domain/immutability/reversal test gücü düşmez."
+    ],
+    "evidence_tiers": [
+      "static source reachability; exact transitive test consumers require inventory before approved removal surface"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-28",
+    "title": "Inactive mapping karar teyidi",
+    "source_groups": [
+      "RG-STK-28"
+    ],
+    "defects": [
+      "STK-034"
+    ],
+    "parents": [
+      "F0698"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+      "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "STK-034"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Semih pasif item mapping politikası seçer; yasaksa inactive target ile mapping yazılmadığı HTTP409+DB testle, serbestse hareket ret kuralı ile açıkça ayrıştırılır."
+    ],
+    "evidence_tiers": [
+      "static missing check; business violation decision-blocked"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-29",
+    "title": "Product mapping FK tarihsel düzeltme teyidi",
+    "source_groups": [
+      "RG-STK-29"
+    ],
+    "defects": [
+      "STK-035"
+    ],
+    "parents": [
+      "F0698"
+    ],
+    "existing_surface": [
+      "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Host/Experience/Inventory/StockMasterHttpTests.cs::MappingAnUnknownProductIsRejectedByTheProductionForeignKey"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "historical-regression-only",
+    "acceptance": [
+      "Tam production migration zinciri üstünde bilinmeyen product mapping reddedilir; FK kaldırma mutasyonu assertionı kırar; stock-master-only059 fixture bu güvenceyi test ediyor diye gösterilmez."
+    ],
+    "evidence_tiers": [
+      "current schema/static historical fix; no matching focused runtime closure log read"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-30",
+    "title": "Master duplicate yarışının sözleşme teyidi",
+    "source_groups": [
+      "RG-STK-30"
+    ],
+    "defects": [
+      "STK-036"
+    ],
+    "parents": [
+      "F0698"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+      "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Host/Experience/Inventory/StockMasterHttpTests.cs::ConcurrentDuplicateStockCodesReturnConflictNotServerError"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [
+      "STK-036"
+    ],
+    "state": "verification-required",
+    "acceptance": [
+      "Parallel same code create HTTP testinde tam bir create ve kalanlar409; mapping upsert yeniden gönderimde OK. Servis typed exception contractı gerekip gerekmediği belgelenir; gerekirse yalnız exact unique constraint çevrilir."
+    ],
+    "evidence_tiers": [
+      "raw service exception confirmed; user-visible defect not proven; needs verification"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-32",
+    "title": "Production raw-read kaynak iddiası teyidi",
+    "source_groups": [
+      "RG-STK-31",
+      "RG-STK-32"
+    ],
+    "defects": [
+      "STK-037",
+      "STK-038"
+    ],
+    "parents": [
+      "F0560"
+    ],
+    "existing_surface": [
+      "docs/architecture/module-dependency-rules.md",
+      "src/Modules/Production/StockEffects/ProductionStockEffectService.cs",
+      "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs",
+      "tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs::ProductionAndSaleAcquireAdvisoryAndBalanceRowLocksInTheSameOrder"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Mimari sahiplik kuralı read vs write ayrımıyla değerlendirilir; sadece raw SELECT var diye gereksiz abstraction eklenmez; lock-order testi ayrı tutulur.",
+      "İki gerçek bağlantıda sale advisory locku tutarken production row-lock barrierına gelir; sale row write başlatılır, production advisory bekler. Mevcut kod40P01/timeout ile kırılır; ortak advisory→row düzeni sonrası ikisi tutarlı sıralı sonuçla tamamlanır; stock/ledger toplamı doğru."
+    ],
+    "evidence_tiers": [
+      "explicit non-finding candidate retained using needs-verification status; current decision permits read",
+      "static proven opposite lock order; PostgreSQL two-session reproduction required, not run"
+    ],
+    "merge_reason": "Aynı token biçimlendirme veya aynı hassas veri değişmezliği invariantının kod+test+kanıtı tek teslimdir; tarihsel kanıt başka klasördeyse yeni görev yalnız kendi kanıtını üretir."
+  },
+  {
+    "id": "RG-STK-33",
+    "title": "Reservation bakım erişilebilirlik kararı",
+    "source_groups": [
+      "RG-STK-33"
+    ],
+    "defects": [
+      "STK-010"
+    ],
+    "parents": [
+      "F0211"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/InventoryModule.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceProjector.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "STK-010"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Rebuild/drift tutulma kararı gerçek operatör senaryosuna bağlanır; test ve DI kayıtları caller sayılmaz; seçilen yol yetki/hata/iptal ile kanıtlanır."
+    ],
+    "evidence_tiers": [
+      "static caller search; decision-gated integration/removal, not a code-duplication merge"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-34",
+    "title": "Manual adjustment erişilebilirlik kararı",
+    "source_groups": [
+      "RG-STK-34"
+    ],
+    "defects": [
+      "STK-019"
+    ],
+    "parents": [
+      "F0230"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/InventoryModule.cs",
+      "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+      "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs",
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "STK-019"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Kullanıcı gerçek ihtiyacı onaylar; integration seçilirse tam yeni giriş/contract/test yolları ayrıca planlanır, removal seçilirse yaşayan physical-count/waste davranışları korunur."
+    ],
+    "evidence_tiers": [
+      "static acceptance/caller gap; integration/removal decision required before exact new Host surface"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-STK-35",
+    "title": "Tx’sız reversal kullanılmayan overload kararı",
+    "source_groups": [
+      "RG-STK-35"
+    ],
+    "defects": [
+      "STK-016"
+    ],
+    "parents": [
+      "F0228"
+    ],
+    "existing_surface": [
+      "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+    ],
+    "proposed_test_cases": [],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [
+      "STK-016"
+    ],
+    "verification_defects": [],
+    "state": "decision-blocked",
+    "acceptance": [
+      "Semih retain+gerçek caller gereksinimi veya remove seçer; gereksiz overload kalmaz; tx yolunun ledger/balance rollback testleri korunur."
+    ],
+    "evidence_tiers": [
+      "static source and caller trace; retain/remove decision + PostgreSQL failure injection required"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-SUPPLIER-ELIGIBILITY",
+    "title": "Tedarikçi scrub uygunluğu",
+    "source_groups": [
+      "RG-SUPPLIER-ELIGIBILITY"
+    ],
+    "defects": [
+      "GYZ-010"
+    ],
+    "parents": [
+      "F0175"
+    ],
+    "existing_surface": [
+      "src/Host/Program.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs::QueuedSupplierWithNewOrderInvoiceOrReceiptIsNotScrubbed"
+    ],
+    "source_dependencies": [
+      "RG-CUSTOMER-ELIGIBILITY"
+    ],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Eski supplier queue sonrası yeni purchase order, invoice ve receipt ayrı ayrı eklenince alanlar değişmez.",
+      "Yeni faaliyet ve scrub yarışında commit sırası tutarlı; eski/uygun supplierde tax ID ve ledger korunur."
+    ],
+    "evidence_tiers": [
+      "Güncel statik + gelecekte gerçek Host/PG; Program/wf overlap nedeniyle seri"
+    ],
+    "merge_reason": "Tek kaynak grubu; reviewer doğrulamasına bağlı."
+  },
+  {
+    "id": "RG-TOKEN",
+    "title": "Token biçimlendirme sınırı",
+    "source_groups": [
+      "RG-TOKEN",
+      "RG-TOKEN-EVIDENCE"
+    ],
+    "defects": [
+      "GYZ-001",
+      "GYZ-002"
+    ],
+    "parents": [
+      "F0002",
+      "F0055"
+    ],
+    "existing_surface": [
+      "evidence/V1-IAM-013/issued_token_redaction_verification.txt",
+      "plan/v1/identity-authorization/V1-IAM-013-issued-token-redaction.md",
+      "src/Modules/Identity/Authentication/LoginResult.cs",
+      "src/Modules/Identity/Authentication/SessionTokenIssuer.cs",
+      "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs"
+    ],
+    "proposed_test_cases": [
+      "NEW test: tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs::IssuedTokenAndLoginSuccessFormattingNeverExposeBearer"
+    ],
+    "source_dependencies": [],
+    "dependency_state": "Kaynak önerisi; davranış/kapsam denetiminde zorunlu dependency ile sıralama tavsiyesi ayrılacak.",
+    "decision_defects": [],
+    "verification_defects": [],
+    "state": "scope-review-required",
+    "acceptance": [
+      "Sentinel token ile doğrudan ToString, string interpolation, object.ToString ve LoginSuccess.ToString içinde sentinel yok; mask var.",
+      "Exception/assertion mesajı nesne biçimlendirmesinden üretildiğinde sentinel yok. Token property ve hash/expiry davranışı değişmez; normal login başarılı kalır.",
+      "Eski kanıt silinmeden tarihsel/UNPROVEN düzeltme notu ekle; yeni SHA ve sentinel-red/green ham transcript iliştir.",
+      "Yeni raporu RG-TOKEN kabul matrisine satır bazlı bağla; tüm auth test sayısını sentinel kanıtı sayma."
+    ],
+    "evidence_tiers": [
+      "Güncel statik kaynak; gelecekte gerçek .NET unit red/green + mutant",
+      "Belge/git + yeni focused runtime transcript gerekli"
+    ],
+    "merge_reason": "Aynı token biçimlendirme veya aynı hassas veri değişmezliği invariantının kod+test+kanıtı tek teslimdir; tarihsel kanıt başka klasördeyse yeni görev yalnız kendi kanıtını üretir."
+  }
+]

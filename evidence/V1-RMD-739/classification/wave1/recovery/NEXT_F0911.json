@@ -1,0 +1,20 @@
+{
+  "source_id": "F0911",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "IsManagerApproved client flag labeled as ApprovedBy manager name; API already admin-only",
+      "status": "not-defect",
+      "invariant": "Purchase order approval must come from a user with purchasing.manage permission, not merely a client-supplied boolean flag.",
+      "mechanism": "PurchasingManagementEndpoints.cs:217-218 reads request.IsManagerApproved from the request body and sets ApprovedBy to actorName when true. The endpoint is protected by ProductionManagerEndpointFilter (or equivalent) requiring purchasing.manage permission. The client flag is redundant because the authorization gate already restricts the endpoint to managers. The flag does not grant additional authority; it only records that the manager chose to mark it as approved in the payload.",
+      "source_evidence": "PurchasingManagementEndpoints.cs:217-218; IPurchasingService.cs:39,190; PurchasingManagementContracts.cs:60; low-C.md:16",
+      "acceptance": "No code change needed; the finding is explicitly marked 'Not (Düşük, bulgu değil)' in the source. The endpoint authorization already enforces manager-only access.",
+      "id": "W2-N-F0911-01",
+      "parents": [
+        "F0911"
+      ]
+    }
+  ],
+  "limitations": "Read-only analysis. Verified that purchasing.manage permission is required on the endpoint. The IsManagerApproved flag is a payload field, not an authorization bypass.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

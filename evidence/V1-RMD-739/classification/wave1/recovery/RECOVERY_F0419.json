@@ -1,0 +1,36 @@
+{
+  "source_id": "F0419",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "İlk sorgu hatasından sonra gelen sipariş ilk başarılı tabana katılıp sessiz kalıyor",
+      "status": "open",
+      "invariant": "Yeni sipariş uyarısında başlangıçta zaten bekleyen siparişler ile izleme başladıktan sonra gelen siparişler ayrılmalı; ilk bağlantı hatası yeni siparişi kalıcı olarak sessiz tabana katmamalı.",
+      "mechanism": "known null başlıyor. İlk loadOnlineOperations hatası catch içinde tüketiliyor ve known null kalıyor. Sonraki başarılı okumada yeni sipariş bulunsa bile ses koşulu known !== null olduğundan çalışmıyor; ardından kimlik known içine yazılıyor. Aynı sipariş sonraki sorgularda da artık yeni sayılmıyor. Bu statik sonuç kaynak iddiasını doğruluyor. İlk başarılı okumanın sessiz taban kabul edilmesi kod ve kartta açıkça tasarlanmış; kusur bu kuralın hata aralığında gerçekten yeni gelen siparişi de kapsaması. API modelinde createdAt var, mevcut kanca kullanmıyor; bu bilgi tek başına saat senkronizasyonu çözümünü kanıtlamaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:76",
+        "evidence/V1-RMD-739/tasks/B017.md:33-35",
+        "src/Clients/PosTerminal/src/features/online-operations/useNewOrderChime.ts:8-28",
+        "src/Clients/PosTerminal/src/features/online-operations/onlineOperationsApi.ts:5-18,54-79",
+        "src/Clients/PosTerminal/src/features/online-operations/useNewOrderChime.test.tsx:39-50,64-76",
+        "src/Clients/PosTerminal/src/routes/Cashier.tsx:69 (kanca çağrısı arama eşleşmesi)",
+        "plan/v1/remediation/V1-RMD-476-online-order-chime-and-tab-permissions.md:15-18,31-39"
+      ],
+      "acceptance": [
+        "İzleme başlamadan önce bekleyen siparişler sessiz kalmalı; ilk sorgunun hata vermesi bu kuralı bozmamalı.",
+        "İlk sorgu hata verdikten sonra oluşturulan ve ilk başarılı yeniden okumada görülen sipariş için bir kez uyarı tetiklenmeli; değişmeyen sonraki okumalar tekrar ses üretmemeli.",
+        "Bu ilk-sorgu-hatası dizisi, mevcut başarı-hata-başarı testinden ayrı davranış testiyle doğrulanmalı."
+      ],
+      "id": "W2-R-F0419-01",
+      "parents": [
+        "F0419"
+      ]
+    }
+  ],
+  "limitations": [
+    "Kod/test çalıştırılmadı; ses ve autoplay davranışı tarayıcıda denenmedi.",
+    "Mevcut test hata senaryosu ilk başarılı tabandan sonraki hatayı kapsıyor; ilk sorgu hatasına ilişkin çalıştırılmış kanıt sunulmuyor.",
+    "Başlangıç tabanı gereksinimi eski görevde açık; önerilen ayrım bunun güvenilir uygulanması içindir, tüm mevcut siparişlere ses çalınması istenmiyor."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

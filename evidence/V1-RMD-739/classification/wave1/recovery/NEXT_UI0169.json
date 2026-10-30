@@ -1,0 +1,24 @@
+{
+  "source_id": "UI0169",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "WaiterPWA bill sheet lacks discount (indirim) application functionality",
+      "status": "open",
+      "invariant": "Waiter must be able to apply line-level or bill-level discounts before sending to cashier, with role-based authorization",
+      "mechanism": "WaiterPWA bill.js renderDraftLine (lines 238-284) and renderSentLine (lines 286-348) show no discount UI; items render price, quantity, modifiers, notes, void/comp buttons — no discount field or button; Cashier split-payment.js:918-931 has tip buttons but discount mechanism not confirmed in waiter context; server would need discount eligibility in AllowedCommands or item-level canDiscount",
+      "source_evidence": [
+        "src/Clients/WaiterPwa/wwwroot/js/sheets/bill.js:238-348",
+        "src/Clients/WaiterPwa/wwwroot/index.html:132-177",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:15"
+      ],
+      "acceptance": "WaiterPWA bill sheet adds discount button/field for eligible items/bills, gated by server AllowedCommands or role policy, sending discount request to server",
+      "id": "W2-N-UI0169-01",
+      "parents": [
+        "UI0169"
+      ]
+    }
+  ],
+  "limitations": "Static review only; server discount API and role gating not examined; Cashier discount mechanism not verified",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

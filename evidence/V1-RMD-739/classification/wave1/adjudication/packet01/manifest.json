@@ -1,0 +1,12 @@
+{
+  "files": {
+    "ledger.json": "9d80bbc37e21379748558c34f192a0e13e1bf1f45e71ae6c7e863d8ea6d22291",
+    "preflight.json": "07e4c2e94e1e58ca17dfc03e144ea9b209ecb8b4cdd280d8488e30649be6bbd5",
+    "739-correction-review-F0388.json": "bf016165ec8063a88ce5401e823ad8d03c437f61deeca6287292a604b88bcc68",
+    "739-correction-review-F0908.json": "1cf1b89038e55f06651808e1d85185f259ff8d1d7dbc6c9ccf238f3cb9eed12e"
+  },
+  "external_inputs": {
+    "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\739-correction-review-F0388.json": "bf016165ec8063a88ce5401e823ad8d03c437f61deeca6287292a604b88bcc68",
+    "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\739-correction-review-F0908.json": "1cf1b89038e55f06651808e1d85185f259ff8d1d7dbc6c9ccf238f3cb9eed12e"
+  }
+}

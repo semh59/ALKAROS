@@ -1,0 +1,20 @@
+{
+  "source_id": "PO0036",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "orders.create yetkisiyle herkes (garson dahil) not+telefon görebilir - 'yetkili personel' PO kararı karşılanıyor mu?",
+      "status": "decision-blocked",
+      "invariant": "orders.create olan herkesin telefon ve nota erişmesi 'yetkili personel' ifadesini karşılıyor mu belirsiz; garson dahil erişimin KVKK/yetki kapsamı netleştirilmeli",
+      "mechanism": "OrderManagementEndpoints.cs accept/reject endpoints orders.create ile korundu (line 872, 890); sipariş detayı (notes, phone) bu endpointlerden dönüyor mu? Kodda explicit note/phone field authorization yok; PO kararı 'yetkili personel' olarak kayıtlı ama kodda orders.create yeterli",
+      "source_evidence": "src/Host/Experience/Orders/OrderManagementEndpoints.cs:861-895; evidence/V1-RMD-739/findings/po-questions.md:24 (tasks\\B063)",
+      "acceptance": "PO karar verilmeli: orders.create yetkisi 'yetkili personel' tanımına uygun mu? Değilse ayrı permission (örn. orders.view-sensitive) eklenmeli; garson rolünden notes/phone erişimi kısıtlanmalı mı?",
+      "id": "W2-N-PO0036-01",
+      "parents": [
+        "PO0036"
+      ]
+    }
+  ],
+  "limitations": "Static report classification; güncel runtime doğrulaması yapılmamış. Sipariş detay DTO'sunda hangi field'ların döndüğü (notes, customer phone) endpoint kodunda görüldüğü kadar net değil; AcceptAsync/RejectAsync store implementasyonu okunmadı. KVKK uyumluluğu hukuk/PO onayı bekliyor.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

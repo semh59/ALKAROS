@@ -1,0 +1,20 @@
+{
+  "source_id": "UI0034",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Her çağrıda yeni randomUUID - idempotency key yok",
+      "status": "open",
+      "invariant": "8 sn zaman aşımında yeniden denemede yeni anahtar üretilir; atık ikilenebilir, stok servisi doğrulanamadı",
+      "mechanism": "http.ts:23-24: crypto.randomUUID() her POST'ta yeni; idempotentPosts=true olsa bile her çağrı yeni key. stockApi.ts:44 recordWaste idempotencyKey: crypto.randomUUID(); purchase-invoices/api.ts:21 approve/fetch-qnb, management-staff-roles/api.ts:53 setPolicy aynı pattern",
+      "source_evidence": "src/Clients/PosTerminal/src/features/management/http.ts:23-24; src/Clients/PosTerminal/src/features/management-stock/stockApi.ts:44; src/Clients/PosTerminal/src/features/management-purchase-invoices/api.ts:20-32; src/Clients/PosTerminal/src/features/management-staff-roles/api.ts:51-54",
+      "acceptance": "Retry durumunda aynı idempotency key kullanılmalı (client-side retry state tutarak) veya server tarafında atık/stok işlemleri idempotent hale getirilmeli",
+      "id": "W2-N-UI0034-01",
+      "parents": [
+        "UI0034"
+      ]
+    }
+  ],
+  "limitations": "Static report classification; güncel runtime doğrulaması yapılmamış. 8sn timeout sonrası gerçek retry senaryosu test edilmedi. Stok servisi sunucu tarafında idempotent mi doğrulanamadı.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

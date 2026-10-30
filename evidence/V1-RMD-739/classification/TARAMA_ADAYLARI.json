@@ -1,0 +1,3656 @@
+[
+  {
+    "id": "SC0001",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:1",
+    "text": "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:40: var createdAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0002",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:2",
+    "text": "src/Clients/Cashier/wwwroot/telemetry/telemetry.js:45: return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0003",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:3",
+    "text": "src/Clients/Cashier/wwwroot/telemetry/telemetry.js:54: var now = options.now || function () { return Date.now(); };",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0004",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:4",
+    "text": "src/Clients/PosTerminal/src/features/interaction-telemetry/installInteractionTelemetry.ts:38: if (!open || open.traceId || Date.now() > open.until) return;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0005",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:5",
+    "text": "src/Clients/PosTerminal/src/features/interaction-telemetry/installInteractionTelemetry.ts:61: const wall = Date.now();",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0006",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:6",
+    "text": "src/Clients/PosTerminal/src/features/interaction-telemetry/interactionRecorder.ts:35: const now = options.now ?? (() => Date.now());",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0007",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:7",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:164: const [now, setNow] = useState(() => Date.now());",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0008",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:8",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:179: const timer = setInterval(() => setNow(Date.now()), 1_000);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0009",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:9",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/models.ts:325: export function isHealthSnapshotStale(capturedAt: string, now: number = Date.now()): boolean {",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0010",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:10",
+    "text": "src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx:172: const elapsedMinutes = Math.max(0, Math.floor((Date.now() - Date.parse(occupiedSince)) / 60_000));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0011",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:11",
+    "text": "src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx:187: const minutesSinceChange = Math.max(0, Math.floor((Date.now() - started) / 60_000));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0012",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:12",
+    "text": "src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:46: return Math.max(0, Math.floor((Date.now() - started) / 60_000));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0013",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:13",
+    "text": "src/Clients/PosTerminal/src/routes/Cashier.tsx:270: addHelpAlerts([{ id: payload.helpRequestId ?? `${payload.tableId}-${Date.now()}`, tableNumber: payload.tableNumber,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0014",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:14",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:61: setFreshness(afterSnapshot(snapshot, Date.now()));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0015",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:15",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:67: setFreshness((previous) => afterFailure(previous, Date.now()));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0016",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:16",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:118: const expiresIn = Math.max(0, new Date(pairing.expiresAt).getTime() - Date.now());",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0017",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:17",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:162: const remaining = Math.max(0, 10_000 - (Date.now() - freshness.lastSuccessAt));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0018",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:18",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:164: () => setFreshness((previous) => afterFailure(previous, Date.now())),",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0019",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:19",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:171: const markOffline = () => setFreshness((previous) => afterFailure(previous, Date.now()));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0020",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:20",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:244: <small>Kod {Math.max(1, Math.round((new Date(pairing.expiresAt).getTime() - Date.now()) / 60_000))} dakika sonra otomatik olarak yenilenir.</small>",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0021",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:21",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:25: // the real timestamp is server-authoritative (DateTimeOffset.UtcNow at",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0022",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:22",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:177: export function sortQueueByPriority(queue, now = Date.now()) {",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0023",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:23",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/screens/tables.js:105: return Math.max(0, Math.floor((Date.now() - opened) / 60000));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0024",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:24",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/state.js:332: export function offlineAuthorityFor(permissionCode, amount, now = Date.now()) {",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0025",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:25",
+    "text": "src/Clients/WaiterPwa/wwwroot/telemetry/telemetry.js:45: return 'e' + Date.now().toString(36) + Math.random().toString(36).slice(2, 10);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0026",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:26",
+    "text": "src/Clients/WaiterPwa/wwwroot/telemetry/telemetry.js:54: var now = options.now || function () { return Date.now(); };",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0027",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:27",
+    "text": "src/Clients/WaiterPwa/wwwroot/vendor/signalr.min.js:1: var t,e;t=self,e=()=>(()=>{var t={d:(e,s)=>{for(var i in s)t.o(s,i)&&!t.o(e,i)&&Object.defineProperty(e,i,{enumerable:!0,get:s[i]})}};t.g=function(){if(\"object\"",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0028",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:28",
+    "text": "src/Clients/WaiterPwa/wwwroot/waiter-app.js:280: catalogLoadedAt = Date.now();",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0029",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:29",
+    "text": "src/Clients/WaiterPwa/wwwroot/waiter-app.js:314: if (Date.now() - catalogLoadedAt < CATALOG_REFRESH_INTERVAL_MS) return;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0030",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:30",
+    "text": "src/Host/DualScreen/DualScreenApplication.Endpoints.cs:71: request.Username.Trim(), request.Password, DateTimeOffset.UtcNow, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0031",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:31",
+    "text": "src/Host/DualScreen/DualScreenApplication.Endpoints.cs:92: AppendCookie(context, terminalKeyCookie, newTerminalKey, DateTimeOffset.UtcNow.Add(TerminalKeyLifetime));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0032",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:32",
+    "text": "src/Host/DualScreen/DualScreenApplication.Endpoints.cs:213: principal.UserId, request.Pin, DateTimeOffset.UtcNow, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0033",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:33",
+    "text": "src/Host/DualScreen/DualScreenApplication.Endpoints.cs:267: principal.UserId, request.CurrentPassword, request.Pin, DateTimeOffset.UtcNow, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0034",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:34",
+    "text": "src/Host/DualScreen/DualScreenApplication.Endpoints.cs:492: principal.UserId, DateTimeOffset.UtcNow, \"Cashier submitted order\"), cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0035",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:35",
+    "text": "src/Host/DualScreen/DualScreenStore.Display.cs:315: DateTimeOffset.UtcNow, message);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0036",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:36",
+    "text": "src/Host/DualScreen/DualScreenStore.Orders.cs:152: var orderNumber = OrderNumber(DateTimeOffset.UtcNow, orderId);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0037",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:37",
+    "text": "src/Host/DualScreen/DualScreenStore.Screensaver.cs:30: command.Parameters.AddWithValue(\"updated_at\", DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0038",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:38",
+    "text": "src/Host/DualScreen/DualScreenStore.cs:521: DateTimeOffset.UtcNow, \"Sıradaki işlem bekleniyor.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0039",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:39",
+    "text": "src/Host/DualScreen/DualScreenTls.cs:94: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0040",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:40",
+    "text": "src/Host/DualScreen/DualScreenTls.cs:110: if (cached.NotAfter.ToUniversalTime() > DateTime.UtcNow.AddDays(RenewWhenWithinDays))",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0041",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:41",
+    "text": "src/Host/Experience/Authorization/AuthorizationDecisionStore.cs:35: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0042",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:42",
+    "text": "src/Host/Experience/Billing/BillCancellation.cs:37: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0043",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:43",
+    "text": "src/Host/Experience/Billing/PaymentRefunds.cs:188: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0044",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:44",
+    "text": "src/Host/Experience/Billing/PaymentRefunds.cs:355: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0045",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:45",
+    "text": "src/Host/Experience/Billing/PaymentRefunds.cs:395: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0046",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:46",
+    "text": "src/Host/Experience/Billing/PaymentRefunds.cs:421: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0047",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:47",
+    "text": "src/Host/Experience/Catalog/CatalogManagementStore.cs:250: request.ProductId, price.CurrencyCode, DateTimeOffset.UtcNow, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0048",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:48",
+    "text": "src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:376: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0049",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:49",
+    "text": "src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:486: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0050",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:50",
+    "text": "src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:738: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0051",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:51",
+    "text": "src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:145: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0052",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:52",
+    "text": "src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:298: SubmittedAt: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0053",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:53",
+    "text": "src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:336: order.Id, order.TableId, tableNumber, order.Items.Count, order.Total, DateTimeOffset.UtcNow),",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0054",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:54",
+    "text": "src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:370: OrderState.Accepted, reason: \"NFC güvenilir kanal - onay gerekmez.\", changedAt: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0055",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:55",
+    "text": "src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:426: var next = order.TransitionTo(target, reason: reason, changedAt: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0056",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:56",
+    "text": "src/Host/Experience/OnlineOrdering/OnlineMenuEndpoints.cs:141: var mapping = await mappings.MapIfUnownedAsync(sku, productId, DateTimeOffset.UtcNow, userId, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0057",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:57",
+    "text": "src/Host/Experience/OnlineOrdering/OnlineMenuEndpoints.cs:163: return await mappings.CloseOpenMappingAsync(productId, DateTimeOffset.UtcNow, userId, cancellationToken)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0058",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:58",
+    "text": "src/Host/Experience/OnlineOrdering/YemeksepetiOrderIntakeService.cs:199: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0059",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:59",
+    "text": "src/Host/Experience/OnlineOrdering/YemeksepetiOrderIntakeService.cs:347: externalOrderId, OnlineOutboundStatus.Cancelled, OnlineCancellationReason.ItemUnavailable, items, DateTimeOffset.UtcNow),",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0060",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:60",
+    "text": "src/Host/Experience/OnlineOrdering/YemeksepetiStatusSyncService.cs:170: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0061",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:61",
+    "text": "src/Host/Experience/OnlineOrdering/YemeksepetiStatusSyncService.cs:221: externalOrderId, OnlineOutboundStatus.Cancelled, reason, LineReferences(order), DateTimeOffset.UtcNow),",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0062",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:62",
+    "text": "src/Host/Experience/OnlineOrdering/YemeksepetiStatusSyncService.cs:262: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0063",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:63",
+    "text": "src/Host/Experience/Orders/CashierHandoffStore.cs:135: await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0064",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:64",
+    "text": "src/Host/Experience/Orders/CashierHandoffStore.cs:174: await bills.CancelActiveBillsForOrderAsync(orderId, DateTimeOffset.UtcNow, connection, transaction, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0065",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:65",
+    "text": "src/Host/Experience/Orders/OrderManagementEndpoints.cs:703: var startOfUtcDay = new DateTimeOffset(DateTime.UtcNow.Date, TimeSpan.Zero);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0066",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:66",
+    "text": "src/Host/Experience/Orders/OrderSubmissionCoordinator.cs:62: actorId, DateTimeOffset.UtcNow, \"Masa siparişi mutfağa gönderildi.\"),",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0067",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:67",
+    "text": "src/Host/Experience/Orders/PendingOrderConfirmation/PendingOrderConfirmationStore.cs:107: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0068",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:68",
+    "text": "src/Host/Experience/Orders/PendingOrderConfirmation/PendingOrderConfirmationStore.cs:169: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0069",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:69",
+    "text": "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:113: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0070",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:70",
+    "text": "src/Host/Experience/Orders/ShiftSummaryStore.cs:43: var startOfUtcDay = new DateTimeOffset(DateTimeOffset.UtcNow.UtcDateTime.Date, TimeSpan.Zero);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0071",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:71",
+    "text": "src/Host/Experience/Orders/SuggestedWaiterResolver.cs:126: command.Parameters.Add(\"now\", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0072",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:72",
+    "text": "src/Host/Experience/Orders/TableDraft/TableDraftService.cs:114: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0073",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:73",
+    "text": "src/Host/Experience/Reporting/EndOfDayEndpoints.cs:65: var day = await reports.OpenBusinessDayAsync(request.BusinessDate, DateTimeOffset.UtcNow, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0074",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:74",
+    "text": "src/Host/Experience/Reporting/EndOfDayEndpoints.cs:82: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0075",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:75",
+    "text": "src/Host/Experience/Reporting/EndOfDayEndpoints.cs:122: CancellationsCount, DiscountsAppliedAmount, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0076",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:76",
+    "text": "src/Host/Experience/Reporting/EndOfDayEndpoints.cs:129: => new(Guid.NewGuid(), businessDate, StationName, TotalPrintJobs, FailedPrintJobs, RecoveredPrintJobs, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0077",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:77",
+    "text": "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs:28: .RunSweepAsync(DateTimeOffset.UtcNow, correlationId, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0078",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:78",
+    "text": "src/Host/Experience/SecurityAdministration/SecretRotationAdministration.cs:66: var record = SecretRotationRecord.Initialize(name, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0079",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:79",
+    "text": "src/Host/Experience/SecurityAdministration/SecretRotationAdministration.cs:88: var rotated = record.Rotate(DateTimeOffset.UtcNow, TimeSpan.FromHours(request.OverlapHours));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0080",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:80",
+    "text": "src/Host/Experience/SecurityAdministration/SecretRotationAdministration.cs:106: var revoked = record.Revoke(request.Version, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0081",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:81",
+    "text": "src/Host/Experience/SecurityAdministration/SecretRotationAdministration.cs:124: var rolledBack = record.Rollback(request.Version, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0082",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:82",
+    "text": "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs:93: user.UserId, user.DisplayName, user.Active, (user.LockedUntil ?? DateTimeOffset.MinValue) > DateTimeOffset.UtcNow",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0083",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:83",
+    "text": "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs:94: || (user.PinLockedUntil ?? DateTimeOffset.MinValue) > DateTimeOffset.UtcNow));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0084",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:84",
+    "text": "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs:223: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0085",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:85",
+    "text": "src/Host/Experience/Tables/ReservationExpiryHostedService.cs:47: var expired = await repository.ExpireDueAsync(DateTimeOffset.UtcNow, stoppingToken).ConfigureAwait(false);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0086",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:86",
+    "text": "src/Host/Experience/WebPush/WebPushSender.cs:162: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0087",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:87",
+    "text": "src/Host/Observability/AnalysisRunner/AnalysisRunner.cs:24: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0088",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:88",
+    "text": "src/Host/Observability/BrowserErrors/BrowserErrors.cs:34: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0089",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:89",
+    "text": "src/Host/Observability/CrashChannel/CrashChannel.cs:90: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0090",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:90",
+    "text": "src/Host/Observability/CrashChannel/CrashChannel.cs:182: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0091",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:91",
+    "text": "src/Host/Observability/InteractionTelemetry/InteractionTelemetry.cs:37: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0092",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:92",
+    "text": "src/Host/Observability/OfflineQueueReport/SlowQueryPlanner.cs:42: _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0093",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:93",
+    "text": "src/Host/Observability/SecurityDetectors/SecurityDetectors.cs:20: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0094",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:94",
+    "text": "src/Host/Observability/ServerDetectors/ServerDetectors.cs:232: await RunOnceAsync(DateTimeOffset.UtcNow, stoppingToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0095",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:95",
+    "text": "src/Host/Observability/ServerDetectorsDeep/ServerDetectorsDeep.cs:224: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0096",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:96",
+    "text": "src/Host/Observability/ServerDetectorsDeep/ServerDetectorsDeep.cs:225: private readonly DateTimeOffset _startedAt = (clock ?? (() => DateTimeOffset.UtcNow))();",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0097",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:97",
+    "text": "src/Host/Observability/TraceCorrelation/TraceCorrelation.cs:133: var startedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0098",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:98",
+    "text": "src/Host/Outbox/OutboxDispatcherHostedService.cs:110: if (DateTimeOffset.UtcNow < _nextPurge)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0099",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:99",
+    "text": "src/Host/Outbox/OutboxDispatcherHostedService.cs:112: _nextPurge = DateTimeOffset.UtcNow + PurgeInterval;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0100",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:100",
+    "text": "src/Host/Program.cs:297: var started = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0101",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:101",
+    "text": "src/Host/Program.cs:334: var seconds = (DateTimeOffset.UtcNow - started).TotalSeconds;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0102",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:102",
+    "text": "src/Host/Program.cs:391: var asOf = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0103",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:103",
+    "text": "src/Host/Program.cs:543: var now = asOf ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0104",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:104",
+    "text": "src/Integrations/QrRelay/LocalConnector/RelayConnectorStatusPublisher.cs:93: command.Parameters.Add(\"updated_at\", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0105",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:105",
+    "text": "src/Integrations/QrRelay/LocalConnector/RelayConnectorSupervisor.cs:164: ? DateTimeOffset.UtcNow - startedAt",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0106",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:106",
+    "text": "src/Integrations/QrRelay/LocalConnector/RelayConnectorSupervisor.cs:211: SetStatus(CurrentStatus with { State = RelayConnectorState.Running, LastStartedAt = DateTimeOffset.UtcNow });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0107",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:107",
+    "text": "src/Integrations/QrRelay/PublicGateway/PostgresRelayConnectorStatusReporter.cs:32: : this(dataSource, () => DateTimeOffset.UtcNow)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0108",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:108",
+    "text": "src/Integrations/QrRelay/PublicGateway/PostgresRelayProviderConfigStore.cs:37: command.Parameters.Add(\"updated_at\", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0109",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:109",
+    "text": "src/Integrations/QrRelay/PublicGateway/PostgresRelayTunnelStore.cs:57: command.Parameters.Add(\"updated_at\", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0110",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:110",
+    "text": "src/Modules/Audit/EventStore/AuditEvent.cs:37: OccurredAt = occurredAt?.ToUniversalTime() ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0111",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:111",
+    "text": "src/Modules/Billing/Adjustments/BillAdjustment.cs:77: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0112",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:112",
+    "text": "src/Modules/Billing/BillFoundation/Bill.cs:63: OpenedAt = openedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0113",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:113",
+    "text": "src/Modules/Billing/BillFoundation/Bill.cs:68: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0114",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:114",
+    "text": "src/Modules/Billing/BillFoundation/Bill.cs:205: var at = changedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0115",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:115",
+    "text": "src/Modules/Billing/BillFoundation/Bill.cs:325: openedAt: openedAt ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0116",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:116",
+    "text": "src/Modules/Billing/BillFoundation/Bill.cs:336: RowVersion, CreatedAt, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0117",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:117",
+    "text": "src/Modules/Billing/BillFoundation/Bill.cs:358: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0118",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:118",
+    "text": "src/Modules/Billing/BillFoundation/BillItem.cs:63: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0119",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:119",
+    "text": "src/Modules/Billing/BillFoundation/BillItem.cs:220: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0120",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:120",
+    "text": "src/Modules/Billing/BillFoundation/BillSourceOperations.cs:53: openedAt: openedAt ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0121",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:121",
+    "text": "src/Modules/Billing/BillFoundation/BillSourceOperations.cs:111: openedAt: openedAt ?? DateTimeOffset.UtcNow));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0122",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:122",
+    "text": "src/Modules/Billing/SplitDesign/BillAllocation.cs:49: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0123",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:123",
+    "text": "src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:35: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0124",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:124",
+    "text": "src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:97: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0125",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:125",
+    "text": "src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:120: command.CashSessionId, command.CountedAmount, command.CountedBy, command.Notes, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0126",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:126",
+    "text": "src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:135: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0127",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:127",
+    "text": "src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:169: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0128",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:128",
+    "text": "src/Modules/Cash/SessionLifecycle/PostgresCashSessionRepository.cs:164: command.Parameters.AddWithValue(\"updated_at\", DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0129",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:129",
+    "text": "src/Modules/Cash/SessionLifecycle/PostgresCashSessionRepository.cs:202: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0130",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:130",
+    "text": "src/Modules/Cash/TransactionLedger/CashTransaction.cs:72: OccurredAt = occurredAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0131",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:131",
+    "text": "src/Modules/CustomerAccounts/AccountReceipts/PostgresAccountReceiptService.cs:73: idempotencyKey, issuedBy, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0132",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:132",
+    "text": "src/Modules/CustomerAccounts/BalanceProjection/PostgresAccountBalanceProjection.cs:47: var updatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0133",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:133",
+    "text": "src/Modules/CustomerAccounts/BalanceProjection/PostgresBalanceSnapshotStore.cs:23: var createdAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0134",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:134",
+    "text": "src/Modules/CustomerAccounts/BillCharges/AccountChargeHandler.cs:135: occurredAt: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0135",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:135",
+    "text": "src/Modules/CustomerAccounts/CashReceipts/CashAccountReceiptHandler.cs:79: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0136",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:136",
+    "text": "src/Modules/CustomerAccounts/CreditTerms/CreditTermsCreditPolicy.cs:44: var overdue = await OverdueAmountAsync(customerId, DateTimeOffset.UtcNow.AddDays(-termDays), cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0137",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:137",
+    "text": "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:46: var requestedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0138",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:138",
+    "text": "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:140: var anonymizedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0139",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:139",
+    "text": "src/Modules/CustomerData/Profiles/PostgresCustomerProfileStore.cs:66: command.Parameters.Add(\"created_at\", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0140",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:140",
+    "text": "src/Modules/Identity/Authorization/AuthorizationService.cs:50: new DenialEvent(userId, permissionCode, reason, DateTimeOffset.UtcNow),",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0141",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:141",
+    "text": "src/Modules/Identity/Authorization/Behavioural/BehaviouralTighteningService.cs:12: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0142",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:142",
+    "text": "src/Modules/Identity/Authorization/Grants/AuthorizationGrantService.cs:37: /// UTC clock; defaults to <see cref=\"DateTimeOffset.UtcNow\"/>. Injected so the",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0143",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:143",
+    "text": "src/Modules/Identity/Authorization/Grants/AuthorizationGrantService.cs:51: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0144",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:144",
+    "text": "src/Modules/Identity/Authorization/Offline/OfflineAuthorityBudgetService.cs:12: /// UTC clock; defaults to <see cref=\"DateTimeOffset.UtcNow\"/>. Injected so the",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0145",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:145",
+    "text": "src/Modules/Identity/Authorization/Offline/OfflineAuthorityBudgetService.cs:22: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0146",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:146",
+    "text": "src/Modules/Identity/Authorization/Offline/OfflineGrantReconciler.cs:37: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0147",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:147",
+    "text": "src/Modules/Identity/Authorization/PersonalBudgets/PersonalCompBudgetEscalationResolver.cs:36: _nowUtc = nowUtc ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0148",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:148",
+    "text": "src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:23: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0149",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:149",
+    "text": "src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:46: => _repository.RevokeAsync(sessionId, DateTimeOffset.UtcNow, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0150",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:150",
+    "text": "src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:52: return _repository.RevokeForDeviceAsync(userId, deviceId, DateTimeOffset.UtcNow, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0151",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:151",
+    "text": "src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:56: => _repository.RevokeAllForUserAsync(userId, DateTimeOffset.UtcNow, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0152",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:152",
+    "text": "src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:79: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0153",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:153",
+    "text": "src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:123: if (session.ExpiresAt <= DateTimeOffset.UtcNow)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0154",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:154",
+    "text": "src/Modules/Identity/DeviceSessions/DeviceSessionService.cs:130: await _repository.UpdateLastSeenAsync(session.SessionId, DateTimeOffset.UtcNow, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0155",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:155",
+    "text": "src/Modules/Inventory/BalanceProjection/StockBalance.cs:30: UpdatedAt = updatedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0156",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:156",
+    "text": "src/Modules/Inventory/BalanceProjection/StockBalance.cs:55: updatedAt: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0157",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:157",
+    "text": "src/Modules/Inventory/BalanceProjection/StockBalance.cs:63: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0158",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:158",
+    "text": "src/Modules/Inventory/BalanceProjection/StockBalance.cs:70: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0159",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:159",
+    "text": "src/Modules/Inventory/CrossChannelReservation/PostgresCrossChannelPortionArbiter.cs:135: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0160",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:160",
+    "text": "src/Modules/Inventory/ModifierStock/ModifierStockMapping.cs:36: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0161",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:161",
+    "text": "src/Modules/Inventory/MovementLedger/StockMovement.cs:80: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0162",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:162",
+    "text": "src/Modules/Inventory/MovementLedger/StockMovement.cs:151: createdAt: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0163",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:163",
+    "text": "src/Modules/Inventory/MovementLedger/StockMovement.cs:180: createdAt: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0164",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:164",
+    "text": "src/Modules/Inventory/PhysicalCounts/StockPhysicalCount.cs:43: CountedAt = countedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0165",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:165",
+    "text": "src/Modules/Inventory/PortionReservations/Concurrency/PostgresPortionReservationArbitratorRepository.cs:113: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0166",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:166",
+    "text": "src/Modules/Inventory/PortionReservations/Lifecycle/PortionReservationModels.cs:118: reservedAt: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0167",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:167",
+    "text": "src/Modules/Inventory/PortionReservations/Lifecycle/PortionReservationModels.cs:143: TransitionedAt = at ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0168",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:168",
+    "text": "src/Modules/Inventory/StockMaster/ProductStockMapping.cs:26: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0169",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:169",
+    "text": "src/Modules/Inventory/StockMaster/StockItem.cs:39: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0170",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:170",
+    "text": "src/Modules/Inventory/StockMaster/StockItem.cs:79: createdAt: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0171",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:171",
+    "text": "src/Modules/Inventory/StockMaster/StockLocation.cs:28: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0172",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:172",
+    "text": "src/Modules/Inventory/StockMaster/StockLocation.cs:52: createdAt: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0173",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:173",
+    "text": "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:157: recordedAt: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0174",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:174",
+    "text": "src/Modules/Invoicing/Qnb/CredentialRegistration/PostgresQnbCredentialStore.cs:64: command.Parameters.Add(\"updated_at\", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0175",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:175",
+    "text": "src/Modules/Kitchen/OrderItemStateSync/KitchenOrderItemStateSyncPublisher.cs:48: item.TicketId, orderId, item.OrderItemId, item.Status.ToString(), DateTimeOffset.UtcNow)));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0176",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:176",
+    "text": "src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintDelivery.cs:83: var now = timestamp ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0177",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:177",
+    "text": "src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:79: var printed = delivery.MarkPrinted(DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0178",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:178",
+    "text": "src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:92: var unknown = delivery.MarkUnknown(crashReason, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0179",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:179",
+    "text": "src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:106: var approved = delivery.ApproveReprint(operatorId, reason, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0180",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:180",
+    "text": "src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:120: var rejected = delivery.RejectReprint(operatorId, reason, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0181",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:181",
+    "text": "src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:152: var claimed = delivery.BeginApprovedReprint(DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0182",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:182",
+    "text": "src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:163: var uncertain = claimed.MarkReprintUnknown(ex.Message, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0183",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:183",
+    "text": "src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:168: var reprinted = claimed.MarkReprinted(DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0184",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:184",
+    "text": "src/Modules/Kitchen/PrintQueue/EscPosTicketFormatter.cs:36: var ts = printTimestamp ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0185",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:185",
+    "text": "src/Modules/Kitchen/PrintQueue/KitchenPrinterSimulator.cs:20: new(true, null, bytes, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0186",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:186",
+    "text": "src/Modules/Kitchen/PrintQueue/KitchenPrinterSimulator.cs:23: new(false, error, 0, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0187",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:187",
+    "text": "src/Modules/Kitchen/PrintQueue/PostgresPrintQueueRepository.cs:262: cmd.Parameters.AddWithValue(\"updated_at\", (object?)job.UpdatedAt ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0188",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:188",
+    "text": "src/Modules/Kitchen/PrintQueue/PrintJob.cs:56: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0189",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:189",
+    "text": "src/Modules/Kitchen/PrintQueue/PrintJob.cs:86: var at = timestamp ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0190",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:190",
+    "text": "src/Modules/Kitchen/PrintQueue/PrintQueueService.cs:71: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0191",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:191",
+    "text": "src/Modules/Kitchen/PrintQueue/PrintQueueService.cs:77: var inFlight = job.MarkPrinting(workerId, DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0192",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:192",
+    "text": "src/Modules/Kitchen/PrintQueue/PrintQueueService.cs:106: var executionTimestamp = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0193",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:193",
+    "text": "src/Modules/Kitchen/PrintQueue/PrintQueueService.cs:133: return _repository.RecoverExpiredLeasesAsync(DateTimeOffset.UtcNow, ct);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0194",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:194",
+    "text": "src/Modules/Kitchen/Routing/Printer.cs:36: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0195",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:195",
+    "text": "src/Modules/Kitchen/Routing/Printer.cs:63: updatedAt: timestamp ?? DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0196",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:196",
+    "text": "src/Modules/Kitchen/Routing/PrinterRoute.cs:36: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0197",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:197",
+    "text": "src/Modules/Kitchen/Routing/PrinterRoute.cs:96: updatedAt: timestamp ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0198",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:198",
+    "text": "src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:55: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0199",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:199",
+    "text": "src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:154: var at = timestamp ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0200",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:200",
+    "text": "src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:214: var at = timestamp ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0201",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:201",
+    "text": "src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:314: updatedAt: timestamp ?? DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0202",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:202",
+    "text": "src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:353: var at = timestamp ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0203",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:203",
+    "text": "src/Modules/Kitchen/TicketLifecycle/KitchenTicketItem.cs:53: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0204",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:204",
+    "text": "src/Modules/Kitchen/TicketLifecycle/KitchenTicketItem.cs:138: var now = timestamp ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0205",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:205",
+    "text": "src/Modules/Kitchen/TicketLifecycle/KitchenTicketItem.cs:196: var at = timestamp ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0206",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:206",
+    "text": "src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs:276: cmd.Parameters.AddWithValue(\"updated_at\", (object?)ticket.UpdatedAt ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0207",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:207",
+    "text": "src/Modules/Kitchen/TicketLifecycle/PostgresKitchenTicketRepository.cs:341: itemCmd.Parameters.AddWithValue(\"updated_at\", (object?)item.UpdatedAt ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0208",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:208",
+    "text": "src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs:69: evtCmd.Parameters.AddWithValue(evt.OccurredAt ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0209",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:209",
+    "text": "src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs:151: evtCmd.Parameters.AddWithValue(evt.OccurredAt ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0210",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:210",
+    "text": "src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs:234: evtCmd.Parameters.AddWithValue(evt.OccurredAt ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0211",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:211",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenu.cs:45: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0212",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:212",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenu.cs:66: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0213",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:213",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenu.cs:81: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0214",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:214",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenuItem.cs:83: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0215",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:215",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenuItem.cs:110: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0216",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:216",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenuItem.cs:119: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0217",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:217",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenuItem.cs:125: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0218",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:218",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenuService.cs:55: menu.Open(command.OpenedAt ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0219",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:219",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenuService.cs:73: menu.Close(command.ClosedBy, command.ClosedAt ?? DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0220",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:220",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenuService.cs:157: ChangedAt: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0221",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:221",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenuService.cs:191: ChangedAt: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0222",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:222",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/DailyMenuService.cs:222: ChangedAt: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0223",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:223",
+    "text": "src/Modules/Menu/DailyMenuLifecycle/IBusinessDateProvider.cs:21: var utc = utcNow ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0224",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:224",
+    "text": "src/Modules/Menu/StaticMenu/Menu.cs:37: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0225",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:225",
+    "text": "src/Modules/Menu/StaticMenu/Menu.cs:48: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0226",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:226",
+    "text": "src/Modules/Menu/StaticMenu/Menu.cs:54: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0227",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:227",
+    "text": "src/Modules/Menu/StaticMenu/Menu.cs:60: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0228",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:228",
+    "text": "src/Modules/Menu/StaticMenu/MenuItem.cs:42: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0229",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:229",
+    "text": "src/Modules/Menu/StaticMenu/MenuItem.cs:52: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0230",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:230",
+    "text": "src/Modules/Menu/StaticMenu/MenuItem.cs:58: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0231",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:231",
+    "text": "src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:176: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0232",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:232",
+    "text": "src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:344: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0233",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:233",
+    "text": "src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:414: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0234",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:234",
+    "text": "src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:478: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0235",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:235",
+    "text": "src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:542: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0236",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:236",
+    "text": "src/Modules/Observability/ErrorAnalysis/ErrorAnalysis.cs:97: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0237",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:237",
+    "text": "src/Modules/Observability/ErrorEvents/ErrorEventWriter.cs:51: _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0238",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:238",
+    "text": "src/Modules/Observability/ErrorNotifications/ErrorNotifications.cs:55: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0239",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:239",
+    "text": "src/Modules/Observability/ErrorNotifications/ErrorNotifications.cs:91: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0240",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:240",
+    "text": "src/Modules/Observability/Foundation/PostgresHealthCheckRepository.cs:44: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0241",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:241",
+    "text": "src/Modules/Observability/PerformanceBudgets/PerformanceBudgets.cs:23: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0242",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:242",
+    "text": "src/Modules/Observability/PerformanceBudgets/PerformanceBudgets.cs:54: private readonly Func<DateTimeOffset> _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0243",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:243",
+    "text": "src/Modules/Observability/PerformanceMetrics/PerformanceMetrics.cs:94: _clock = clock ?? (() => DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0244",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:244",
+    "text": "src/Modules/OnlineOrdering/Credentials/PostgresOnlinePlatformCredentialStore.cs:103: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0245",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:245",
+    "text": "src/Modules/OnlineOrdering/Providers/TrendyolGo/OrderIntake/TrendyolGoOnlineOrderProvider.cs:149: new TrendyolGoStatusUpdateRequested(Guid.NewGuid(), externalOrderId, TrendyolGoPackageAction.Picked, null, DateTimeOffset.UtcNow),",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0246",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:246",
+    "text": "src/Modules/Operations/BackupHealth/BackupHealthService.cs:83: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0247",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:247",
+    "text": "src/Modules/Operations/BackupHealth/PostgresBackupHealthRepository.cs:83: var startedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0248",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:248",
+    "text": "src/Modules/Operations/BackupHealth/PostgresBackupHealthRepository.cs:230: var capturedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0249",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:249",
+    "text": "src/Modules/Operations/OffsiteBackup/OffsiteBackupUploadService.cs:74: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0250",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:250",
+    "text": "src/Modules/Operations/RestoreVerification/RestoreVerificationOrchestrator.cs:49: var startedAtUtc = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0251",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:251",
+    "text": "src/Modules/Orders/Integration/QrOrderSubmittedConsumer.cs:78: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0252",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:252",
+    "text": "src/Modules/Orders/Integration/QrOrderSubmittedConsumer.cs:167: SubmittedAt: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0253",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:253",
+    "text": "src/Modules/Orders/Integration/QrOrderSubmittedConsumer.cs:221: var next = order.TransitionTo(target, reason: reason, changedAt: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0254",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:254",
+    "text": "src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs:73: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0255",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:255",
+    "text": "src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs:200: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0256",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:256",
+    "text": "src/Modules/Orders/ItemExceptions/ItemExceptionHandler.cs:366: cmd.Parameters.AddWithValue(\"occurred_at\", DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0257",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:257",
+    "text": "src/Modules/Orders/OrderAggregate/Order.cs:84: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0258",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:258",
+    "text": "src/Modules/Orders/OrderAggregate/Order.cs:268: var at = changedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0259",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:259",
+    "text": "src/Modules/Orders/OrderAggregate/Order.cs:563: var at = changedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0260",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:260",
+    "text": "src/Modules/Orders/OrderAggregate/OrderItem.cs:90: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0261",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:261",
+    "text": "src/Modules/Orders/OrderAggregate/OrderItem.cs:269: updatedAt: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0262",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:262",
+    "text": "src/Modules/Orders/OrderAggregate/OrderStatusHistoryEntry.cs:26: ChangedAt = changedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0263",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:263",
+    "text": "src/Modules/Orders/OrderAggregate/PostgresOrderRepository.cs:587: -- round from one DateTimeOffset.UtcNow), so `created_at` alone",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0264",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:264",
+    "text": "src/Modules/Orders/SubmitOrder/SubmitOrderHandler.cs:220: submitted.SubmittedAt ?? DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0265",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:265",
+    "text": "src/Modules/Orders/SubmitOrder/SubmitOrderRequestHash.cs:15: /// <c>DateTimeOffset.UtcNow</c> fresh on every call, so a legitimate",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0266",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:266",
+    "text": "src/Modules/Payments/Allocations/Persistence/PaymentAllocation.cs:43: AllocatedAt = allocatedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0267",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:267",
+    "text": "src/Modules/Payments/Allocations/RefundIntents/RefundIntent.cs:69: RequestedAt = requestedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0268",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:268",
+    "text": "src/Modules/Payments/Allocations/RefundIntents/RefundIntent.cs:101: RefundIntentStatus.Rejected, RequestedBy, RequestedAt, at ?? DateTimeOffset.UtcNow, reason, RowVersion);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0269",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:269",
+    "text": "src/Modules/Payments/CardSettlement/CardSettlementAttempt.cs:57: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0270",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:270",
+    "text": "src/Modules/Payments/ManualResolution/ManualCardConfirmationService.cs:83: ManualCardConfirmationStatus.Pending, requesterUserId, DateTimeOffset.UtcNow, trimmedNote,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0271",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:271",
+    "text": "src/Modules/Payments/ManualResolution/ManualCardConfirmationService.cs:154: var decidedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0272",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:272",
+    "text": "src/Modules/Payments/ManualResolution/ManualCardConfirmationService.cs:188: var decidedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0273",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:273",
+    "text": "src/Modules/Payments/PaymentAggregate/Payment.cs:97: var at = updatedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0274",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:274",
+    "text": "src/Modules/Payments/PaymentAggregate/Payment.cs:168: var when = at ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0275",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:275",
+    "text": "src/Modules/Payments/PaymentAggregate/Payment.cs:193: var when = at ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0276",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:276",
+    "text": "src/Modules/Payments/PaymentAggregate/Payment.cs:220: var when = at ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0277",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:277",
+    "text": "src/Modules/Payments/PaymentAggregate/Payment.cs:237: var when = at ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0278",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:278",
+    "text": "src/Modules/Payments/PaymentAggregate/Payment.cs:253: var when = at ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0279",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:279",
+    "text": "src/Modules/Payments/PaymentAggregate/Payment.cs:275: var when = at ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0280",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:280",
+    "text": "src/Modules/Payments/PaymentAggregate/Payment.cs:291: var when = at ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0281",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:281",
+    "text": "src/Modules/Payments/PaymentAggregate/PaymentStatusHistoryEntry.cs:26: ChangedAt = changedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0282",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:282",
+    "text": "src/Modules/Payments/PaymentAggregate/PostgresPaymentReversalRepository.cs:70: var when = at ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0283",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:283",
+    "text": "src/Modules/Payments/Token/TerminalCredential/PostgresTokenTerminalCredentialStore.cs:75: command.Parameters.Add(\"updated_at\", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0284",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:284",
+    "text": "src/Modules/Production/BatchLifecycle/ProductionBatch.cs:115: var now = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0285",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:285",
+    "text": "src/Modules/Production/BatchLifecycle/ProductionBatch.cs:189: var now = startedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0286",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:286",
+    "text": "src/Modules/Production/BatchLifecycle/ProductionBatch.cs:208: var now = completedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0287",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:287",
+    "text": "src/Modules/Production/BatchLifecycle/ProductionBatch.cs:223: var now = cancelledAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0288",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:288",
+    "text": "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:56: var now = command.ExecutedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0289",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:289",
+    "text": "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:165: var receivedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0290",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:290",
+    "text": "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:98: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0291",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:291",
+    "text": "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:187: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0292",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:292",
+    "text": "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:211: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0293",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:293",
+    "text": "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:226: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0294",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:294",
+    "text": "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:241: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0295",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:295",
+    "text": "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:256: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0296",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:296",
+    "text": "src/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceService.cs:55: supplier?.Id, parsed.Currency, source, PurchaseInvoiceStatuses.Draft, importedBy, DateTimeOffset.UtcNow, lines,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0297",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:297",
+    "text": "src/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceService.cs:170: sourceReferenceId: receiptId, reason: receipt.ReceiptNumber, createdBy: null, createdAt: DateTimeOffset.UtcNow),",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0298",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:298",
+    "text": "src/Modules/Purchasing/Suppliers/Supplier.cs:52: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0299",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:299",
+    "text": "src/Modules/Purchasing/Suppliers/Supplier.cs:78: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0300",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:300",
+    "text": "src/Modules/Purchasing/Suppliers/Supplier.cs:84: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0301",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:301",
+    "text": "src/Modules/Purchasing/Suppliers/Supplier.cs:90: UpdatedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0302",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:302",
+    "text": "src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs:52: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0303",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:303",
+    "text": "src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs:76: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0304",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:304",
+    "text": "src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs:88: _repository.RevokeAsync(sessionId, DateTimeOffset.UtcNow, reason, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0305",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:305",
+    "text": "src/Modules/QrOrdering/PendingOrders/QrPendingOrderStore.cs:108: var submittedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0306",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:306",
+    "text": "src/Modules/QrOrdering/RelayCredential/PostgresRelayCredentialStore.cs:52: command.Parameters.Add(\"updated_at\", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0307",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:307",
+    "text": "src/Modules/QrOrdering/RelaySecurity/RelayRequestValidator.cs:56: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0308",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:308",
+    "text": "src/Modules/QrOrdering/TokenLifecycle/TableTokenService.cs:41: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0309",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:309",
+    "text": "src/Modules/QrOrdering/TokenLifecycle/TableTokenService.cs:68: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0310",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:310",
+    "text": "src/Modules/QrOrdering/TokenLifecycle/TableTokenService.cs:84: await _repository.RevokeAsync(existing.TokenId, DateTimeOffset.UtcNow, reason, cancellationToken);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0311",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:311",
+    "text": "src/Modules/QrOrdering/TokenLifecycle/TableTokenService.cs:103: if (token.IsExpired(DateTimeOffset.UtcNow))",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0312",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:312",
+    "text": "src/Modules/Recipes/CatalogMapping/ProductRecipeMapping.cs:32: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0313",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:313",
+    "text": "src/Modules/Recipes/CostSnapshots/RecipeCostSnapshotModels.cs:97: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0314",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:314",
+    "text": "src/Modules/Recipes/CostSnapshots/RecipeCostSnapshotModels.cs:152: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0315",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:315",
+    "text": "src/Modules/Recipes/TheoreticalConsumption/TheoreticalConsumptionRecord.cs:80: RecordedAt = recordedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0316",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:316",
+    "text": "src/Modules/Recipes/Units/UnitConversion.cs:31: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0317",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:317",
+    "text": "src/Modules/Recipes/Versioning/Recipe.cs:44: createdAt: createdAt ?? DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0318",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:318",
+    "text": "src/Modules/Recipes/Versioning/RecipeIngredientItem.cs:42: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0319",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:319",
+    "text": "src/Modules/Recipes/Versioning/RecipeIngredientItem.cs:86: createdAt: DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0320",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:320",
+    "text": "src/Modules/Recipes/Versioning/RecipeLifecycleService.cs:143: await _versionRepo.ActivateVersionAsync(recipeId, versionNumber, activatedAt ?? DateTimeOffset.UtcNow, ct);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0321",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:321",
+    "text": "src/Modules/Recipes/Versioning/RecipeVersion.cs:58: CreatedAt = createdAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0322",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:322",
+    "text": "src/Modules/Recipes/Versioning/RecipeVersion.cs:106: createdAt: createdAt ?? DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0323",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:323",
+    "text": "src/Modules/Recipes/Versioning/RecipeVersion.cs:243: EffectiveTo = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0324",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:324",
+    "text": "src/Modules/Recipes/Versioning/RecipeVersion.cs:272: createdAt: createdAt ?? DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0325",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:325",
+    "text": "src/Modules/Reconciliation/CaseFoundation/PostgresReconciliationRepository.cs:130: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0326",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:326",
+    "text": "src/Modules/Reconciliation/CaseFoundation/PostgresReconciliationRepository.cs:225: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0327",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:327",
+    "text": "src/Modules/Reconciliation/CaseFoundation/PostgresReconciliationRepository.cs:480: AddParameter(cmd, \"at\", DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0328",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:328",
+    "text": "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs:136: command.Parameters.Add(\"disposed_at\", NpgsqlDbType.TimestampTz).Value = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0329",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:329",
+    "text": "src/Modules/Security/IdentityHardening/AccountRecoveryService.cs:46: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0330",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:330",
+    "text": "src/Modules/Security/IdentityHardening/AccountRecoveryService.cs:73: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0331",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:331",
+    "text": "src/Modules/Security/IdentityHardening/AccountRecoveryService.cs:118: DateTimeOffset.UtcNow,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0332",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:332",
+    "text": "src/Modules/Security/IdentityHardening/SessionRotationService.cs:41: var remaining = current.ExpiresAt - DateTimeOffset.UtcNow - TimeSpan.FromSeconds(1);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0333",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:333",
+    "text": "src/Modules/Settings/BusinessIdentity/BusinessLogoStore.cs:61: AddParameter(command, \"updated_at\", DateTimeOffset.UtcNow);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0334",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:334",
+    "text": "src/Modules/Settings/TypedSettings/PostgresSettingsRepository.cs:169: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0335",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:335",
+    "text": "src/Modules/Settings/TypedSettings/PostgresSettingsRepository.cs:250: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0336",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:336",
+    "text": "src/Modules/Settings/TypedSettings/PostgresSettingsRepository.cs:379: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0337",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:337",
+    "text": "src/Modules/Tables/CurrentPointers/PostgresTablePointerProjector.cs:94: var now = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0338",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:338",
+    "text": "src/Modules/Tables/CurrentPointers/PostgresTablePointerProjector.cs:262: var startedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0339",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:339",
+    "text": "src/Modules/Tables/CurrentPointers/PostgresTablePointerProjector.cs:293: var completedAt = DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0340",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:340",
+    "text": "src/Modules/Tables/Reservations/PostgresTableReservationRepository.cs:177: var now = request.ReservedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0341",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:341",
+    "text": "src/Modules/Tables/Reservations/PostgresTableReservationRepository.cs:342: var now = request.ClaimedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0342",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:342",
+    "text": "src/Modules/Tables/Reservations/PostgresTableReservationRepository.cs:501: var now = request.CancelledAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0343",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:343",
+    "text": "src/Modules/Tables/Reservations/PostgresTableReservationRepository.cs:657: var now = request.ExpiredAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0344",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:344",
+    "text": "src/Modules/Tables/TableMerge/PostgresTableMergeRepository.Merge.cs:20: var now = request.MergedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0345",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:345",
+    "text": "src/Modules/Tables/TableMerge/PostgresTableMergeRepository.Unmerge.cs:20: var now = request.UnmergedAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0346",
+    "category": "VD",
+    "source": "evidence/V1-RMD-739/scans/datetime-now.txt:346",
+    "text": "src/Modules/Tables/TableTransfer/PostgresTableTransferRepository.cs:137: var now = request.TransferredAt ?? DateTimeOffset.UtcNow;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0347",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:1",
+    "text": "src/Host/Experience/KitchenOperations/KitchenPrintDispatchHostedService.cs:141: foreach (var candidate in candidates)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0348",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:2",
+    "text": "src/Host/Experience/Orders/CashierHandoffStore.cs:209: foreach (var billId in billIds.Where(lockedBillIds.Add))",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0349",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:3",
+    "text": "src/Modules/Billing/BillFoundation/PostgresBillRepository.cs:280: foreach (var p in parameters)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0350",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:4",
+    "text": "src/Modules/Kitchen/TicketLifecycle/KitchenOrderSubmissionDispatcher.cs:88: foreach (var station in stations)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0351",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:5",
+    "text": "src/Modules/Observability/PerformanceMetrics/PerformanceMetrics.cs:150: foreach (var minute in _rowsPerMinute.Keys.Where(minute => minute < current - 5))",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0352",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:6",
+    "text": "src/Modules/OnlineOrdering/Polling/OnlineOrderPoller.cs:168: foreach (var value in values)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0353",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:7",
+    "text": "src/Modules/OnlineOrdering/StoreStatus/OnlineStoreStatusService.cs:109: foreach (var (provider, channel) in _channels)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0354",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:8",
+    "text": "src/Modules/OnlineOrdering/StoreStatus/OnlineStoreStatusService.cs:224: foreach (var provider in expired)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0355",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:9",
+    "text": "src/Modules/OnlineOrdering/StoreStatus/OnlineStoreStatusService.cs:290: foreach (var value in values)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0356",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:10",
+    "text": "src/Modules/Orders/OrderAggregate/PostgresOrderRepository.cs:123: foreach (var row in order.History)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0357",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:11",
+    "text": "src/Modules/Payments/PaymentAggregate/PostgresPaymentRepository.cs:78: foreach (var row in payment.History)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0358",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:12",
+    "text": "src/Modules/Payments/PaymentAggregate/PostgresRefundRequestRepository.cs:278: foreach (var (name, type, value) in parameters)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0359",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:13",
+    "text": "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs:264: foreach (var dataClass in Classes)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0360",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/db-call-in-loop.txt:14",
+    "text": "src/Modules/Tables/PaymentTopology/PaymentAwareTableTopologyPolicy.cs:166: foreach (var billId in billIds.Distinct().OrderBy(id => id))",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0361",
+    "category": "BK",
+    "source": "evidence/V1-RMD-739/scans/inmemory-or-fake-in-production.txt:1",
+    "text": "src/BuildingBlocks/Security/Secrets/InMemorySecretProvider.cs:9: public sealed class InMemorySecretProvider : ISecretProvider",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0362",
+    "category": "BK",
+    "source": "evidence/V1-RMD-739/scans/inmemory-or-fake-in-production.txt:2",
+    "text": "src/Modules/Identity/Authentication/AuthenticationService.cs:65: _verify(password, PasswordHasher.DummyHash);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0363",
+    "category": "BK",
+    "source": "evidence/V1-RMD-739/scans/inmemory-or-fake-in-production.txt:3",
+    "text": "src/Modules/Identity/Authentication/PasswordHasher.cs:26: public const string DummyPassword = \"alkaros-dummy-user-verify\";",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0364",
+    "category": "BK",
+    "source": "evidence/V1-RMD-739/scans/inmemory-or-fake-in-production.txt:4",
+    "text": "src/Modules/Identity/Authentication/PasswordHasher.cs:29: /// A valid 600k-iteration encoded hash of <see cref=\"DummyPassword\"/>,",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0365",
+    "category": "BK",
+    "source": "evidence/V1-RMD-739/scans/inmemory-or-fake-in-production.txt:5",
+    "text": "src/Modules/Identity/Authentication/PasswordHasher.cs:33: public const string DummyHash =",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0366",
+    "category": "BK",
+    "source": "evidence/V1-RMD-739/scans/inmemory-or-fake-in-production.txt:6",
+    "text": "src/Modules/Security/IdentityHardening/InMemorySuspiciousLoginAuditSink.cs:11: public sealed class InMemorySuspiciousLoginAuditSink : ISuspiciousLoginAuditSink",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0367",
+    "category": "BK",
+    "source": "evidence/V1-RMD-739/scans/inmemory-or-fake-in-production.txt:7",
+    "text": "src/Modules/Security/SecretRotation/InMemorySecretRotationStore.cs:11: public sealed class InMemorySecretRotationStore : ISecretRotationStore",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0368",
+    "category": "BK",
+    "source": "evidence/V1-RMD-739/scans/inmemory-or-fake-in-production.txt:8",
+    "text": "src/Modules/Security/SecurityModule.cs:33: // InMemorySuspiciousLoginAuditSink is a real, order-preserving",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0369",
+    "category": "BK",
+    "source": "evidence/V1-RMD-739/scans/inmemory-or-fake-in-production.txt:9",
+    "text": "src/Modules/Security/SecurityModule.cs:36: context.RegisterSingleton<ISuspiciousLoginAuditSink, InMemorySuspiciousLoginAuditSink>();",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0370",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:1",
+    "text": "src/Clients/Cashier/wwwroot/cashier-app.js:732: showToast(failure.message, 'error');",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0371",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:2",
+    "text": "src/Clients/Cashier/wwwroot/cashier-app.js:756: showToast(failure.message, 'error');",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0372",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:3",
+    "text": "src/Clients/Cashier/wwwroot/cashier-app.js:808: return { code: error && error.code, message: (error && error.message) || describeHttpFailure(response.status) };",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0373",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:4",
+    "text": "src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js:80: if (body && body.error && body.error.message) return body.error.message;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0374",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:5",
+    "text": "src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js:362: state.error = result.body.error.message;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0375",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:6",
+    "text": "src/Clients/Cashier/wwwroot/payments/customer-accounts/customer-accounts.js:75: if (body && body.error && body.error.message) return body.error.message;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0376",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:7",
+    "text": "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js:117: if (body && body.error && body.error.message) return body.error.message;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0377",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:8",
+    "text": "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js:450: state.error = result.status === 403 && !(result.body && result.body.error && result.body.error.message)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0378",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:9",
+    "text": "src/Clients/PosTerminal/src/api.ts:135: body?.error?.message ?? \"İşlem tamamlanamadı.\",",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0379",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:10",
+    "text": "src/Clients/PosTerminal/src/api.ts:297: errorBody?.error?.message ?? \"İşlem tamamlanamadı.\",",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0380",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:11",
+    "text": "src/Clients/PosTerminal/src/api.ts:454: errorBody?.error?.message ?? \"İşlem tamamlanamadı.\",",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0381",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:12",
+    "text": "src/Clients/PosTerminal/src/features/authorization-decisions/AuthorizationDecisionsWorkspace.tsx:57: setActionError(reason instanceof Error && reason.message ? reason.message : text.actionFailed);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0382",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:13",
+    "text": "src/Clients/PosTerminal/src/features/authorization-decisions/client.ts:55: body?.error?.message ?? \"Yetki işlemi tamamlanamadı.\",",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0383",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:14",
+    "text": "src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx:109: const message = reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : \"Dağıtım kaydedilemedi.\";",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0384",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:15",
+    "text": "src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx:128: } catch (reason) { setFeedback({ tone: \"error\", message: reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : \"Dağıtım sıfırl",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0385",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:16",
+    "text": "src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx:134: {feedback && <div className={`bill-split__feedback bill-split__feedback--${feedback.tone}`} role={feedback.tone === \"success\" ? \"status\" : \"alert\"}>{feedback.me",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0386",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:17",
+    "text": "src/Clients/PosTerminal/src/features/billing/billingApi.ts:53: throw new BillingSplitApiError(response.status, payload?.error?.code ?? \"REQUEST_FAILED\", payload?.error?.message ?? \"Hesap dağıtımı kaydedilemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0387",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:18",
+    "text": "src/Clients/PosTerminal/src/features/billing/billingApi.ts:101: throw new BillingSplitApiError(response.status, payload?.error?.code ?? \"REQUEST_FAILED\", payload?.error?.message ?? \"Adisyon oluşturulamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0388",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:19",
+    "text": "src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:120: const message = reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : \"Ürün güncellenemedi.\";",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0389",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:20",
+    "text": "src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:140: const message = reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : \"Kayıt oluşturulamadı.\";",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0390",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:21",
+    "text": "src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:159: setFeedback({ tone: \"error\", message: reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : \"Modifikatör grubu atanamadı.\" });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0391",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:22",
+    "text": "src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:175: setFeedback({ tone: \"error\", message: reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : \"Kullanılabilirlik güncellenemedi.\" });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0392",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:23",
+    "text": "src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:204: setFeedback({ tone: \"error\", message: reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : \"Hazırlama süresi güncellenemedi.\" });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0393",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:24",
+    "text": "src/Clients/PosTerminal/src/features/catalog/CatalogWorkspace.tsx:218: {feedback && <div className={`catalog-workspace__feedback catalog-workspace__feedback--${feedback.tone}`} role={feedback.tone === \"success\" ? \"status\" : \"alert\"",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0394",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:25",
+    "text": "src/Clients/PosTerminal/src/features/catalog/catalogApi.ts:37: throw new CatalogApiError(response.status, body?.error?.code ?? \"REQUEST_FAILED\", body?.error?.message ?? \"Katalog işlemi tamamlanamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0395",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:26",
+    "text": "src/Clients/PosTerminal/src/features/invoice-settings/SellerProfileCard.tsx:20: .catch((reason: unknown) => { if (current) setProblem(reason instanceof SellerProfileApiError ? reason.message : t.loadFailed); })",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0396",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:27",
+    "text": "src/Clients/PosTerminal/src/features/invoice-settings/SellerProfileCard.tsx:37: setProblem(reason instanceof SellerProfileApiError ? reason.message : t.saveFailed);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0397",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:28",
+    "text": "src/Clients/PosTerminal/src/features/invoice-settings/sellerProfileApi.ts:27: const message = response.status === 401 ? \"Oturum sona erdi.\" : response.status === 403 ? \"Bu işlem için yetkiniz yok.\" : payload?.error?.message ?? fallback;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0398",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:29",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:97: // fire - it tested error.message against an English regex, but the",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0399",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:30",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:282: setFeedback({ tone: isConflict(error) ? \"conflict\" : \"error\", message: isConflict(error) ? \"Mutfak verisi değişti. Güncel kartı alın; işlem tekrarlanmadı.\" : er",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0400",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:31",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:297: setFeedback({ tone: isConflict(error) ? \"conflict\" : \"error\", message: isConflict(error) ? \"Geri alma penceresi kapandı veya kart değişti. Güncel kartı alın.\" :",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0401",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:32",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:386: setFeedback({ tone: isConflict(error) ? \"conflict\" : \"error\", message: isConflict(error) ? \"Ürün başka bir işlemle değişti; tekrar deneyin.\" : error instanceof ",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0402",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:33",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:421: setFeedback({ tone: isConflict(error) ? \"conflict\" : \"error\", message: isConflict(error) ? \"Kayıt değişti; listeyi yenileyin.\" : error instanceof KitchenOperati",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0403",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:34",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:461: {feedback && <div className={`kitchen-workspace__feedback kitchen-workspace__feedback--${feedback.tone}`} role={feedback.tone === \"success\" ? \"status\" : \"alert\"",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0404",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:35",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:903: setRouteFeedback({ tone: \"error\", message: error instanceof KitchenOperationsApiError ? error.message : \"Rota kaydedilemedi.\" });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0405",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:36",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:913: {printerFeedback && !printerForm && <p className={`kitchen-route-form__feedback kitchen-route-form__feedback--${printerFeedback.tone}`}>{printerFeedback.message",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0406",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:37",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:917: {printerFeedback && <p className={`kitchen-route-form__feedback kitchen-route-form__feedback--${printerFeedback.tone}`}>{printerFeedback.message}</p>}",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0407",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:38",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:951: {routeFeedback && <p className={`kitchen-route-form__feedback kitchen-route-form__feedback--${routeFeedback.tone}`}>{routeFeedback.message}</p>}",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0408",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:39",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts:68: body?.error?.message ?? \"Mutfak yapılandırması alınamadı.\",",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0409",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:40",
+    "text": "src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts:99: throw new KitchenOperationsApiError(response.status, body?.error?.code ?? \"REQUEST_FAILED\", body?.error?.message ?? \"Mutfak işlemi tamamlanamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0410",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:41",
+    "text": "src/Clients/PosTerminal/src/features/management-closing/ClosingSection.tsx:34: {panel.state === \"error\" && <StateMessage tone=\"error\" title={t.loadFailed} actions={<Button data-telemetry-id=\"b.management-closing.closingsection.1\" variant=\"",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0411",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:42",
+    "text": "src/Clients/PosTerminal/src/features/management-menus-recipe-cost/RecipeCostSection.tsx:56: {query.versionId && snapshot.state === \"error\" && <p role=\"alert\">{snapshot.message}</p>}",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0412",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:43",
+    "text": "src/Clients/PosTerminal/src/features/management-security-system/DiagnosticBacklogPanels.tsx:33: setNotice({ tone: \"error\", text: reason instanceof ManagementApiError ? reason.message : t.diagnostic.failed });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0413",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:44",
+    "text": "src/Clients/PosTerminal/src/features/management-security-system/DiagnosticBacklogPanels.tsx:75: setNotice({ tone: \"error\", text: reason instanceof ManagementApiError ? reason.message : t.backlog.failed });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0414",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:45",
+    "text": "src/Clients/PosTerminal/src/features/management-security-system/MaintenanceBackupPanels.tsx:24: setNotice({ tone: \"error\", text: reason instanceof ManagementApiError ? reason.message : t.maintenance.failed });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0415",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:46",
+    "text": "src/Clients/PosTerminal/src/features/management-security-system/RecoveryPanel.tsx:25: setNotice({ tone: \"error\", text: reason instanceof ManagementApiError ? reason.message : t.failed });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0416",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:47",
+    "text": "src/Clients/PosTerminal/src/features/management-security-system/SystemSection.tsx:40: setNotice({ tone: \"error\", text: failure instanceof ManagementApiError ? failure.message : t.actionFailed });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0417",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:48",
+    "text": "src/Clients/PosTerminal/src/features/management-security-system/SystemSection.tsx:53: <span>{alert.message}</span>",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0418",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:49",
+    "text": "src/Clients/PosTerminal/src/features/management-security-system/TerminalsPanel.tsx:25: setNotice({ tone: \"error\", text: reason instanceof ManagementApiError ? reason.message : t.failed });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0419",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:50",
+    "text": "src/Clients/PosTerminal/src/features/management-settings-history/SettingEditor.tsx:44: setProblem(failure instanceof ManagementApiError ? failure.message : t.saveFailed);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0420",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:51",
+    "text": "src/Clients/PosTerminal/src/features/management-staff-roles/StaffSection.tsx:33: setNotice({ tone: \"error\", text: reason instanceof ManagementApiError ? reason.message : t.actionFailed });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0421",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:52",
+    "text": "src/Clients/PosTerminal/src/features/management-stock/StockSection.tsx:32: {panel.state === \"error\" && <StateMessage tone=\"error\" title={t.loadFailed} actions={<Button data-telemetry-id=\"b.management-stock.stocksection.1\" variant=\"seco",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0422",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:53",
+    "text": "src/Clients/PosTerminal/src/features/management/http.ts:33: throw new ManagementApiError(response.status, body?.error?.code ?? \"REQUEST_FAILED\", body?.error?.message ?? fallbackByStatus(response.status));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0423",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:54",
+    "text": "src/Clients/PosTerminal/src/features/management/panel.tsx:7: export const errorText = (reason: unknown, fallback: string) => (reason instanceof ManagementApiError ? reason.message : fallback);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0424",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:55",
+    "text": "src/Clients/PosTerminal/src/features/management/panel.tsx:33: {panel.state === \"error\" && <StateMessage tone=\"error\" title={failed} actions={<Button data-telemetry-id=\"b.management.panel.1\" variant=\"secondary\" onClick={onR",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0425",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:56",
+    "text": "src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.tsx:87: setError(reason instanceof OnlineHubApiError ? reason.message : \"Platform durumu okunamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0426",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:57",
+    "text": "src/Clients/PosTerminal/src/features/online-menu/OnlineMenuTab.tsx:22: const failure = (error: unknown, fallback: string) => (error instanceof OnlineMenuApiError ? error.message : fallback);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0427",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:58",
+    "text": "src/Clients/PosTerminal/src/features/online-menu/onlineMenuApi.ts:93: const message = response.status === 401 ? \"Oturum sona erdi.\" : response.status === 403 ? \"Bu işlem için yetkiniz yok.\" : payload?.error?.message ?? fallback;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0428",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:59",
+    "text": "src/Clients/PosTerminal/src/features/online-operations/OnlineOperationsWorkspace.tsx:75: setLoadError(reason instanceof OnlineOperationsApiError ? reason.message : \"Online siparişler okunamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0429",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:60",
+    "text": "src/Clients/PosTerminal/src/features/online-operations/OnlineOperationsWorkspace.tsx:114: setActionError(reason instanceof OnlineOperationsApiError ? reason.message : \"İşlem tamamlanamadı. Tekrar deneyin.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0430",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:61",
+    "text": "src/Clients/PosTerminal/src/features/online-operations/OnlineOperationsWorkspace.tsx:134: setActionError(reason instanceof OnlineOperationsApiError ? reason.message : \"Müşteri notu açılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0431",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:62",
+    "text": "src/Clients/PosTerminal/src/features/online-operations/onlineOperationsApi.ts:64: const message = response.status === 401 ? \"Oturum sona erdi.\" : response.status === 403 ? \"Bu işlem için yetkiniz yok.\" : payload?.error?.message ?? fallback;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0432",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:63",
+    "text": "src/Clients/PosTerminal/src/features/online-platform-credentials/OnlinePlatformCredentialsWorkspace.tsx:18: return error.field ? `${fieldLabel(error.field)}: ${error.message}` : error.message;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0433",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:64",
+    "text": "src/Clients/PosTerminal/src/features/online-platform-credentials/onlinePlatformCredentialsApi.ts:64: const message = response.status === 401 ? \"Oturum sona erdi.\" : response.status === 403 ? \"Bu işlem için yetkiniz yok.\" : payload?.error?.message ?? fallback;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0434",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:65",
+    "text": "src/Clients/PosTerminal/src/features/online-problems/OnlineProblemsTab.tsx:18: const failure = (error: unknown, fallback: string) => (error instanceof OnlineProblemsApiError ? error.message : fallback);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0435",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:66",
+    "text": "src/Clients/PosTerminal/src/features/online-problems/onlineProblemsApi.ts:60: const message = response.status === 401 ? \"Oturum sona erdi.\" : response.status === 403 ? \"Bu işlem için yetkiniz yok.\" : payload?.error?.message ?? fallback;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0436",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:67",
+    "text": "src/Clients/PosTerminal/src/features/online-store-status/OnlineStoreStatusPanel.tsx:34: setLoadError(error instanceof OnlineStoreStatusApiError ? error.message : \"Restoran durumu okunamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0437",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:68",
+    "text": "src/Clients/PosTerminal/src/features/online-store-status/OnlineStoreStatusPanel.tsx:51: setActionError(error instanceof OnlineStoreStatusApiError ? error.message : \"Restoran durumu değiştirilemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0438",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:69",
+    "text": "src/Clients/PosTerminal/src/features/online-store-status/onlineStoreStatusApi.ts:63: const message = response.status === 401 ? \"Oturum sona erdi.\" : response.status === 403 ? \"Bu işlem için yetkiniz yok.\" : payload?.error?.message ?? fallback;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0439",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:70",
+    "text": "src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:51: setError(reason instanceof PendingChecksApiError ? reason.message : \"Bekleyen hesaplar okunamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0440",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:71",
+    "text": "src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:109: setError(reason instanceof PendingChecksApiError || reason instanceof BillingSplitApiError ? reason.message : \"Hesap açılamadı. Tekrar deneyin.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0441",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:72",
+    "text": "src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:122: setError(reason instanceof PendingChecksApiError ? reason.message : \"Hesap masaya geri gönderilemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0442",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:73",
+    "text": "src/Clients/PosTerminal/src/features/pending-checks/pendingChecksApi.ts:63: throw new PendingChecksApiError(response.status, payload?.error?.message ?? \"Hesap masaya geri gönderilemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0443",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:74",
+    "text": "src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx:248: ? `Plan kaydedildi. ${result.warnings.map((warning) => warning.message).join(\" \")}`",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0444",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:75",
+    "text": "src/Clients/PosTerminal/src/features/tables/FloorPlanWorkspace.tsx:252: const message = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : \"Salon planı kaydedilemedi.\";",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0445",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:76",
+    "text": "src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:103: ? reason.message",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0446",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:77",
+    "text": "src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:389: {feedback && <div className={`table-workspace__feedback table-workspace__feedback--${feedback.tone}`} role={feedback.tone === \"error\" || feedback.tone === \"conf",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0447",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:78",
+    "text": "src/Clients/PosTerminal/src/features/tables/tableApi.ts:61: throw new TableManagementApiError(response.status, body?.error?.code ?? \"REQUEST_FAILED\", body?.error?.message ?? \"İşlem tamamlanamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0448",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:79",
+    "text": "src/Clients/PosTerminal/src/routes/BusinessIdentitySettings.tsx:93: setError(reason instanceof ApiError ? reason.message : \"Mevcut ayarlar okunamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0449",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:80",
+    "text": "src/Clients/PosTerminal/src/routes/BusinessIdentitySettings.tsx:108: if (reason instanceof ApiError && reason.status !== 401) setError(reason.message);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0450",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:81",
+    "text": "src/Clients/PosTerminal/src/routes/BusinessIdentitySettings.tsx:121: setError(reason instanceof ApiError ? reason.message : fallback);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0451",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:82",
+    "text": "src/Clients/PosTerminal/src/routes/BusinessIdentitySettings.tsx:142: setError(reason instanceof ApiError ? reason.message : \"Giriş yapılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0452",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:83",
+    "text": "src/Clients/PosTerminal/src/routes/Cashier.tsx:121: setError(reason instanceof ApiError ? reason.message : \"Çağrı onaylanamadı. Tekrar deneyin.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0453",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:84",
+    "text": "src/Clients/PosTerminal/src/routes/Cashier.tsx:330: setError(reason instanceof ApiError ? reason.message : \"Ekran yetkisi kaldırılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0454",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:85",
+    "text": "src/Clients/PosTerminal/src/routes/Cashier.tsx:380: // reason.message for ANY Error, not just ApiError — a raw network",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0455",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:86",
+    "text": "src/Clients/PosTerminal/src/routes/Cashier.tsx:385: setError(reason instanceof ApiError ? reason.message : \"İşlem tamamlanamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0456",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:87",
+    "text": "src/Clients/PosTerminal/src/routes/Cashier.tsx:407: setError(reason instanceof ApiError ? reason.message : \"Giriş yapılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0457",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:88",
+    "text": "src/Clients/PosTerminal/src/routes/Cashier.tsx:430: setError(reason instanceof ApiError ? reason.message : \"Oturum kapatılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0458",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:89",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:45: setPairingError(reason instanceof ApiError ? reason.message : \"Eşleştirme başlatılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0459",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:90",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:71: setPairingError(reason instanceof ApiError ? reason.message : \"Ekran bilgisi alınamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0460",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:91",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:109: setPairingError(reason.message);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0461",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:92",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:282: description={snapshot.message || \"Siparişiniz tamamlandı. Afiyet olsun.\"}",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0462",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:93",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:366: <div className=\"display-message\"><span>✓</span><p>{snapshot.message}</p></div>",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0463",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:94",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplayScreensaverSettings.tsx:80: setError(reason instanceof ApiError ? reason.message : \"Giriş yapılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0464",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:95",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplayScreensaverSettings.tsx:137: setError(reason instanceof ApiError ? reason.message : \"Yüklenemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0465",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:96",
+    "text": "src/Clients/PosTerminal/src/routes/CustomerDisplayScreensaverSettings.tsx:154: setError(reason instanceof ApiError ? reason.message : \"Kaldırılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0466",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:97",
+    "text": "src/Clients/PosTerminal/src/routes/NfcOrder.tsx:118: setMessage(reason instanceof ApiError ? reason.message : \"Menü yüklenemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0467",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:98",
+    "text": "src/Clients/PosTerminal/src/routes/NfcOrder.tsx:238: setMessage(reason.message);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0468",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:99",
+    "text": "src/Clients/PosTerminal/src/routes/NfcOrder.tsx:249: setMessage(reason instanceof ApiError ? reason.message : \"Sipariş gönderilemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0469",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:100",
+    "text": "src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx:51: setError(reason instanceof ApiError ? reason.message : \"Durum alınamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0470",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:101",
+    "text": "src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx:88: setError(reason instanceof ApiError ? reason.message : \"Giriş yapılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0471",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:102",
+    "text": "src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx:110: setError(reason instanceof ApiError ? reason.message : \"Kaydedilemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0472",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:103",
+    "text": "src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx:123: setTestResult({ success: false, message: reason instanceof ApiError ? reason.message : \"Bağlantı denenemedi.\" });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0473",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:104",
+    "text": "src/Clients/PosTerminal/src/routes/QnbCredentialSettings.tsx:234: {testResult.message}",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0474",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:105",
+    "text": "src/Clients/PosTerminal/src/routes/RelaySettings.tsx:63: setError(reason instanceof ApiError ? reason.message : \"Durum alınamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0475",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:106",
+    "text": "src/Clients/PosTerminal/src/routes/RelaySettings.tsx:100: setError(reason instanceof ApiError ? reason.message : \"Giriş yapılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0476",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:107",
+    "text": "src/Clients/PosTerminal/src/routes/RelaySettings.tsx:126: setError(reason instanceof ApiError ? reason.message : \"Kaydedilemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0477",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:108",
+    "text": "src/Clients/PosTerminal/src/routes/RelaySettings.tsx:143: setProvisionError(reason instanceof ApiError ? reason.message : \"Bağlantı etkinleştirilemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0478",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:109",
+    "text": "src/Clients/PosTerminal/src/routes/ReservationStation.tsx:62: setError(reason instanceof ApiError ? reason.message : \"Giriş yapılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0479",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:110",
+    "text": "src/Clients/PosTerminal/src/routes/SecurityAdministration.tsx:63: setError(reason instanceof ApiError ? reason.message : \"Giriş yapılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0480",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:111",
+    "text": "src/Clients/PosTerminal/src/routes/TokenTerminalSettings.tsx:57: setError(reason instanceof ApiError ? reason.message : \"Durum alınamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0481",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:112",
+    "text": "src/Clients/PosTerminal/src/routes/TokenTerminalSettings.tsx:94: setError(reason instanceof ApiError ? reason.message : \"Giriş yapılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0482",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:113",
+    "text": "src/Clients/PosTerminal/src/routes/TokenTerminalSettings.tsx:139: setError(reason instanceof ApiError ? reason.message : \"Kaydedilemedi.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0483",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:114",
+    "text": "src/Clients/PosTerminal/src/routes/workspace.tsx:224: const failure = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : \"Masa verisi alınamadı.\";",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0484",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:115",
+    "text": "src/Clients/PosTerminal/src/routes/workspace.tsx:273: const msg = reason instanceof ApiError || reason instanceof TableManagementApiError ? reason.message : \"Kat planı kaydedilemedi.\";",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0485",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:116",
+    "text": "src/Clients/PosTerminal/src/routes/workspace.tsx:291: setOrderError(reason instanceof ApiError ? reason.message : \"Masa siparişi açılamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0486",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:117",
+    "text": "src/Clients/PosTerminal/src/routes/workspace.tsx:394: setErrorMessage(reason instanceof ApiError || reason instanceof BillingSplitApiError ? reason.message : \"Hesap bölme verisi alınamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0487",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:118",
+    "text": "src/Clients/PosTerminal/src/routes/workspace.tsx:487: setErrorMessage(reason instanceof ApiError || reason instanceof CatalogApiError ? reason.message : \"Katalog verisi alınamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0488",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:119",
+    "text": "src/Clients/PosTerminal/src/routes/workspace.tsx:525: setErrorMessage(reason instanceof ApiError || reason instanceof KitchenOperationsApiError ? reason.message : \"Sağlık verisi alınamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0489",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:120",
+    "text": "src/Clients/PosTerminal/src/routes/workspace.tsx:553: setErrorMessage(reason instanceof ApiError ? reason.message : \"Yetki verisi alınamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0490",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:121",
+    "text": "src/Clients/PosTerminal/src/routes/workspace.tsx:607: setErrorMessage(reason instanceof ApiError || reason instanceof KitchenOperationsApiError ? reason.message : \"Mutfak verisi alınamadı.\");",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0491",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:122",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/api.js:54: // The server's own error.message is already Turkish everywhere this",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0492",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:123",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/api.js:56: message: (data && data.error && data.error.message) || describeHttpFailure(response.status)",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0493",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:124",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/kiosk-lock.js:121: toast(result.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0494",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:125",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:262: state.failedOrders.push(Object.assign({}, payload, { rejectedAt: new Date().toISOString(), error: result.message }));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0495",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:126",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:263: console.error('Order rejected by server:', payload.id, result.status, result.message);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0496",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:127",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:346: toast(result.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0497",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:128",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:409: toast(`Çevrimdışı işlemler uzlaştırılamadı: ${result.message}`, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0498",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:129",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/push.js:125: if (!key.ok) { if (announce) toast(key.message, { warning: true }); return false; }",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0499",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:130",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/push.js:159: if (announce) toast(saved.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0500",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:131",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/bill.js:52: if (!result.ok) { toast(result.message, { warning: true }); return; }",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0501",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:132",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/help-request.js:53: toast(result.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0502",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:133",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/pending-orders.js:82: if (!detail.ok) { toast(detail.message, { warning: true }); return; }",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0503",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:134",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/pending-orders.js:89: if (!result.ok) { toast(result.message, { warning: true }); return; }",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0504",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:135",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/pending-orders.js:139: toast(result.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0505",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:136",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/pending-orders.js:172: toast(result.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0506",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:137",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/profile.js:68: <span>${escapeHtml(result.message || 'Vardiya özeti alınamadı.')}</span>",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0507",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:138",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/transfer.js:57: toast(result.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0508",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:139",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/transfer.js:87: if (!result.ok) { closeOptions(); toast(result.message, { warning: true }); return; }",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0509",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:140",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/transfer.js:136: toast(result.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0510",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:141",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/void-comp.js:21: toast(authority.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0511",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:142",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/void-comp.js:88: toast(result.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0512",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:143",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/void-comp.js:164: toast(result.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0513",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:144",
+    "text": "src/Clients/WaiterPwa/wwwroot/js/sheets/void-comp.js:248: toast(result.message, { warning: true });",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0514",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:145",
+    "text": "src/Clients/WaiterPwa/wwwroot/vendor/signalr.min.js:1: var t,e;t=self,e=()=>(()=>{var t={d:(e,s)=>{for(var i in s)t.o(s,i)&&!t.o(e,i)&&Object.defineProperty(e,i,{enumerable:!0,get:s[i]})}};t.g=function(){if(\"object\"",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0515",
+    "category": "UI",
+    "source": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt:146",
+    "text": "src/Clients/WaiterPwa/wwwroot/waiter-app.js:122: : result.message;",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0516",
+    "category": "KN",
+    "source": "evidence/V1-RMD-739/scans/skipped-test.txt:1",
+    "text": "tests/Clients/WaiterPwa/Frontend/test_offline_authorized_void_comp.py:76: pytest.skip(\"node is not installed\")",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0517",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/swallowed-exception.txt:1",
+    "text": "src/Clients/WaiterPwa/wwwroot/vendor/signalr.min.js:1: var t,e;t=self,e=()=>(()=>{var t={d:(e,s)=>{for(var i in s)t.o(s,i)&&!t.o(e,i)&&Object.defineProperty(e,i,{enumerable:!0,get:s[i]})}};t.g=function(){if(\"object\"",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0518",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/unbounded-query.txt:1",
+    "text": "src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs:29: (SELECT cash_session_id FROM changed), (SELECT refund_allowance_used FROM changed);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0519",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/unbounded-query.txt:2",
+    "text": "src/Modules/Observability/PerformanceMetrics/PerformanceMetrics.cs:174: buckets = ARRAY(SELECT a + b FROM unnest(s.buckets, EXCLUDED.buckets) AS u(a, b));",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0520",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/unbounded-query.txt:3",
+    "text": "src/Modules/OnlineOrdering/AvailabilityPublishing/AvailabilityPublicationService.cs:142: OR upserted.desired_quantity <> (SELECT desired_quantity FROM previous);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0521",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/unbounded-query.txt:4",
+    "text": "src/Modules/OnlineOrdering/StoreStatus/OnlineStoreStatusService.cs:174: \"SELECT provider, desired_state, closed_until, close_reason, delivered_at IS NOT NULL, last_error IS NOT NULL FROM online_ordering.platform_store_status;\"))",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  },
+  {
+    "id": "SC0522",
+    "category": "DY",
+    "source": "evidence/V1-RMD-739/scans/unbounded-query.txt:5",
+    "text": "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs:111: SELECT @version, r.data_class, r.years FROM unnest(@classes, @years) AS r (data_class, years);",
+    "qualification": "tarama-eslesmesi-dogrulanmadi"
+  }
+]

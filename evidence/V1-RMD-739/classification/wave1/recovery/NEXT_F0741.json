@@ -1,0 +1,23 @@
+{
+  "source_id": "F0741",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Değiştiren kişi 'Kullanıcı xxxxxxxx' kimlik kısaltması README'de bilinen sınır",
+      "status": "open",
+      "invariant": "V1-RMD-451 SettingsHistorySection.tsx:44 'Düzenle' düğmesi ve SettingEditor.tsx var; evidence/V1-RMD-451/README.md 'bölüm salt okunur, Geçmişi göster dışında düğme yok' diyor - md eski",
+      "mechanism": "low-B.md:157-158: evidence/V1-RMD-451/README.md 'bölüm salt okunur, Geçmişi göster dışında düğme yok' diyor; bugün SettingsHistorySection.tsx:44 'Düzenle' düğmesi ve SettingEditor.tsx var (sonraki görev). Plan md'de de salt okunur ifadesi eskimiş. low-B.md:158 'değiştiren kişi \"Kullanıcı xxxxxxxx\" (kimlik kısaltması) - README'de bilinen sınır olarak yazılı'. Bu F0741 kaydı low-B.md:158'e dayanıyor; kategori UI, kritik öncelik, qualification aday.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:157-158",
+        "evidence/V1-RMD-739/findings/low-B.md:158 (F0741 text)"
+      ],
+      "acceptance": "SettingsHistorySection.tsx ve SettingEditor.tsx üretimde mi ve 'değiştiren kişi' alanı tam kimlik mi gösteriyor (Kullanıcı xxxxxxxx kısaltması mı yoksa tam ID mi) doğrulanmalı; evidence/V1-RMD-451/README.md güncellenmeli",
+      "id": "W2-N-F0741-01",
+      "parents": [
+        "F0741"
+      ]
+    }
+  ],
+  "limitations": "SettingsHistorySection.tsx:44 ve SettingEditor.tsx güncel durumunu, 'değiştiren kişi' alanının tam kimlik gösterip göstermediğini bu oturumda doğrulayamıyorum (repo yazma/kod çalıştırma yok). Sadece low-B.md belge bulgusuna dayanıyor.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

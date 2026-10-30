@@ -1,0 +1,20 @@
+{
+  "source_id": "PL0031",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V13-PAY-002 evidence folder missing",
+      "status": "verification-needed",
+      "invariant": "Every Done task must have an evidence/<Task-ID>/ folder with reproducible acceptance proof (AGENTS.md line 82-83, V1-RMD-433)",
+      "mechanism": "Task V13-PAY-002 is marked Done but no evidence/V13-PAY-002/ directory exists in the repository. The task's Acceptance evidence section lists 23/23 tests passing, PaymentAggregate regression tests, and audit tool passes, but these artifacts were not persisted to the required evidence folder.",
+      "source_evidence": "evidence/V1-RMD-604/README.md:34; plan/v1.3/payments/V13-PAY-002-tender-command-routing.md:77-86",
+      "acceptance": "Create evidence/V13-PAY-002/ with test logs, build output, and audit tool outputs matching the Acceptance evidence claims. Re-run tests if needed to generate fresh artifacts.",
+      "id": "W2-N-PL0031-01",
+      "parents": [
+        "PL0031"
+      ]
+    }
+  ],
+  "limitations": "Task is marked Done with detailed Acceptance evidence in its plan file, but the mandatory evidence folder per AGENTS.md and V1-RMD-433 was never created. No runtime verification possible in this read-only review. The task's own Acceptance evidence claims 23/23 TenderRouting tests, 37/37 PaymentAggregate regression tests, and clean audit tools, but these are unverified without the evidence folder artifacts.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

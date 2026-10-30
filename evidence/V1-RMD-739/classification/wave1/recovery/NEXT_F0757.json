@@ -1,0 +1,20 @@
+{
+  "source_id": "F0757",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "ErrorEvent acknowledge/resolve audit record uses random AggregateId; state update and audit write not in same transaction",
+      "status": "open",
+      "invariant": "Audit record AggregateId must be the error event fingerprint; state change and audit write must be atomic (same transaction)",
+      "mechanism": "In ErrorEventEndpoints.cs:173-202, the ChangeAsync method calls AcknowledgeAsync/ResolveAsync (lines 176-177, 182-183) which execute UPDATE on observability.error_events (lines 111-119, 124-128). Then it calls audit.AppendAsync (lines 196-201) with a NEW random Guid.NewGuid() as AggregateId (line 198) and afterStateJson containing only fingerprint. The UPDATE and audit write are separate operations with no transaction scope linking them. If audit write fails after state change, the error event status is changed but no audit trail exists. Conversely, the AggregateId being random breaks traceability - it should be the fingerprint (the PK of error_events).",
+      "source_evidence": "src/Host/Observability/ErrorEventEndpoints/ErrorEventEndpoints.cs:173-202 (ChangeAsync, AcknowledgeAsync, ResolveAsync, audit.AppendAsync call); evidence/V1-RMD-739/findings/low-B.md:174",
+      "acceptance": "Audit record AggregateId must equal the error event fingerprint. State change (acknowledge/resolve) and audit write must execute in the same database transaction. Add test verifying audit record exists with correct AggregateId after acknowledge/resolve, and that failure of either rolls back both.",
+      "id": "W2-N-F0757-01",
+      "parents": [
+        "F0757"
+      ]
+    }
+  ],
+  "limitations": "The IAuditEventStore.AppendAsync interface does not currently accept an explicit transaction/connection parameter, so achieving atomicity requires either: (a) extending the interface to support ambient transaction/enlistment, or (b) moving the state change and audit write into a shared repository method that owns the transaction. The current tests (ErrorEventEndpointsTests.cs:46-132) only verify status change and HTTP responses, not audit records.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

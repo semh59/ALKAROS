@@ -1,0 +1,952 @@
+{
+  "batch": 3,
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "source_ids": [
+    "F0032",
+    "F0234",
+    "F0701",
+    "F0033",
+    "F0702",
+    "F0704",
+    "F0703",
+    "F0236",
+    "F0706",
+    "PO0047",
+    "PO0048",
+    "F0072",
+    "F0705",
+    "F0712",
+    "F0213",
+    "F0707",
+    "F0558",
+    "F0559",
+    "F0708",
+    "F0029",
+    "F0533",
+    "F0157",
+    "F0548",
+    "F0959",
+    "F0156",
+    "F0958",
+    "F0662",
+    "F0173",
+    "F0562",
+    "F0174",
+    "F0367",
+    "F0369",
+    "F0502",
+    "F0892",
+    "F0971",
+    "F0495",
+    "F0968",
+    "F0132",
+    "F0498",
+    "F0981",
+    "F0983",
+    "F0366",
+    "F0499",
+    "PL0005",
+    "PL0006"
+  ],
+  "defects": [
+    {
+      "id": "W2-03-001",
+      "parents": [
+        "F0032"
+      ],
+      "title": "Menü sayaç projeksiyonu canlı üreticilere bağlı değil",
+      "category": "TE",
+      "status": "open",
+      "invariant": "Production/reservation olayları sayaçları tam bir kez etkiler.",
+      "mechanism": "Kaynak taramasında projector API çağrısı yerine yalnız DI kayıtları bulundu; canlı üreticilere güncelleme kancası bağlanmamış.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:39",
+        "evidence/V1-RMD-739/tasks/B101.md:5",
+        "src/Host/Experience/Menu/MenuManagementEndpoints.cs:45",
+        "src/Modules/Menu/MenuModule.cs:39",
+        "src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs:36"
+      ],
+      "production_paths": [
+        "src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs",
+        "src/Host/Experience/Menu/MenuManagementEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Menu/CounterProjection/DailyMenuCounterProjectionDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Gerçek üretim ve rezervasyon akışı sayaçları günceller; replay çift etki yaratmaz; rebuild canlı değerlerle eşleşir."
+      ],
+      "decision_blocker": null,
+      "notes": "Runtime yürütülmedi."
+    },
+    {
+      "id": "W2-03-002",
+      "parents": [
+        "F0234"
+      ],
+      "title": "Menü iş günü sağlayıcısı yapılandırmaya bağlanmamış",
+      "category": "TE",
+      "status": "open",
+      "invariant": "Yapılandırılmış saat dilimi ve kesim noktası hizmet gününü belirler.",
+      "mechanism": "Host/modül varsayılan constructor kaydediyor; provider kesim noktasını 23:59:59 sentinel değerinden alıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:244",
+        "src/Modules/Menu/DailyMenuLifecycle/IBusinessDateProvider.cs:13",
+        "src/Host/Experience/Menu/MenuManagementEndpoints.cs:40",
+        "src/Modules/Menu/MenuModule.cs:33",
+        "plan/v1.1/daily-menu/V11-MNU-001-daily-menu-lifecycle.md:53"
+      ],
+      "production_paths": [
+        "src/Modules/Menu/DailyMenuLifecycle/IBusinessDateProvider.cs",
+        "src/Host/Experience/Menu/MenuManagementEndpoints.cs",
+        "src/Modules/Menu/MenuModule.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Menu/DailyMenuLifecycle/DailyMenuLifecycleDomainTests.cs"
+      ],
+      "acceptance": [
+        "Gerçek DI sağlayıcısı yapılandırma değiştiğinde kesim öncesi/sonrası doğru iş gününü verir."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-03-003",
+      "parents": [
+        "F0701"
+      ],
+      "title": "Katalogda bulunamayan ürün için İngilizce UI metni",
+      "category": "UI",
+      "status": "open",
+      "invariant": "Kullanıcıya sunulan açıklama Türkçedir.",
+      "mechanism": "Service Unknown Product döndürüyor; contract ProductName olarak taşıyor; MenusSection doğrudan render ediyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:118",
+        "src/Modules/Menu/StaticMenu/StaticMenuService.cs:135",
+        "src/Host/Experience/Menu/MenuManagementContracts.cs:35",
+        "src/Clients/PosTerminal/src/features/management-menus-recipe-cost/MenusSection.tsx:79"
+      ],
+      "production_paths": [
+        "src/Modules/Menu/StaticMenu/StaticMenuService.cs",
+        "src/Clients/PosTerminal/src/features/management-menus-recipe-cost/MenusSection.tsx"
+      ],
+      "test_paths": [
+        "src/Clients/PosTerminal/src/features/management-menus-recipe-cost/MenusSection.test.tsx"
+      ],
+      "acceptance": [
+        "Eksik katalog ürününde Türkçe açıklama görünür."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-03-004",
+      "parents": [
+        "F0033"
+      ],
+      "title": "Rezervasyon-menü bağı olmadan sıfır uzlaşma sayaçları",
+      "category": "VD",
+      "status": "open",
+      "invariant": "Rezervasyon miktarları doğru menü öğesine bağlanır.",
+      "mechanism": "Rebuild/rapor metadata daily_menu_item_id anahtarını okuyor; src taramasında bunu rezervasyona yazan kod bulunmadı. CrossChannel arbiter yalnız channel ve channelOrderReference yazıyor. Test fixture anahtarı kendisi yazıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:40",
+        "src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs:407",
+        "src/Modules/Reporting/MenuInventory/PostgresMenuInventoryReportingService.cs:49",
+        "src/Modules/Inventory/CrossChannelReservation/PostgresCrossChannelPortionArbiter.cs:130",
+        "tests/Modules/Menu/CounterProjection/DailyMenuCounterProjectionDatabaseTests.cs:314"
+      ],
+      "production_paths": [
+        "src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs",
+        "src/Modules/Reporting/MenuInventory/PostgresMenuInventoryReportingService.cs",
+        "src/Modules/Inventory/CrossChannelReservation/PostgresCrossChannelPortionArbiter.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Menu/CounterProjection/DailyMenuCounterProjectionDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Gerçek rezervasyon yazıcısından çıkan kayıt rebuild ve raporda doğru öğe ve miktarla görünür."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-03-005",
+      "parents": [
+        "F0702"
+      ],
+      "title": "Sıralamada yabancı menü kimliği sessiz kabul ediliyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "Sıralama isteğindeki öğeler hedef menüye ait olmalıdır.",
+      "mechanism": "Service liste/menu boşluğunu kontrol ediyor; repository UPDATE etkilenen satır sayısını denetlemiyor; yabancı ID sessiz yok sayılıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:119",
+        "src/Modules/Menu/StaticMenu/StaticMenuService.cs:103",
+        "src/Modules/Menu/StaticMenu/PostgresMenuItemRepository.cs:134",
+        "src/Modules/Menu/StaticMenu/PostgresMenuItemRepository.cs:153"
+      ],
+      "production_paths": [
+        "src/Modules/Menu/StaticMenu/StaticMenuService.cs",
+        "src/Modules/Menu/StaticMenu/PostgresMenuItemRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Menu/StaticMenu/StaticMenuDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Yabancı ID içeren istek reddedilir ve hiçbir sıra değişmez."
+      ],
+      "decision_blocker": null,
+      "notes": "Performans kusuru ölçülmedi."
+    },
+    {
+      "id": "W2-03-006",
+      "parents": [
+        "F0236"
+      ],
+      "title": "Stok etkilerinde kilit altında InProgress önkoşulu yok",
+      "category": "VD",
+      "status": "open",
+      "invariant": "Parti yalnız geçerli durumdan tamamlanır.",
+      "mechanism": "Service FOR UPDATE sonrası yalnız Cancelled reddeder; Planned parti devam edebilir. Host InProgress kontrolü ayrı okuma ve modül dışında.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:246",
+        "evidence/V1-RMD-739/tasks/B101.md:20",
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:73",
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:100",
+        "src/Host/Experience/Production/ProductionManagementEndpoints.cs:151"
+      ],
+      "production_paths": [
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs",
+        "src/Host/Experience/Production/ProductionManagementEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Doğrudan modül çağrısında Planned parti stok/çıktı yazmadan reddedilir; replay idempotent kalır."
+      ],
+      "decision_blocker": null,
+      "notes": "Concurrency test alt iddiası tamamlanmadı; F0704 pending."
+    },
+    {
+      "id": "W2-03-007",
+      "parents": [
+        "PO0047"
+      ],
+      "title": "Satın alma yönetim izninin onay yerine sayılması kararsız",
+      "category": "PO",
+      "status": "decision-blocked",
+      "invariant": "Yönetici onayı onaylanmış yetki kuralına dayanır.",
+      "mechanism": "IsManagerApproved gövdeden alınıyor; ApprovedBy aktör adı; filtre purchasing.manage denetleyip Manager sabit etiketi veriyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/po-questions.md:32",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:217",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:308",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:312"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs"
+      ],
+      "test_paths": [
+        "NEW: tests/Host/Experience/Purchasing/PurchasingApprovalAuthorizationTests.cs"
+      ],
+      "acceptance": [
+        "PO onay yetkisini belirler; izinli ve izinsiz HTTP senaryoları karara uyar."
+      ],
+      "decision_blocker": "po-questions.md:32, B088 (dosyada soru numarası yok): purchasing.manage yönetici onayı vermeye yeterli mi?",
+      "notes": "Soru numarası uydurulmadı; satır ve B088 kullanıldı."
+    },
+    {
+      "id": "W2-03-008",
+      "parents": [
+        "PO0048"
+      ],
+      "title": "Teslim sapması yüzde beş toleransının onayı belirsiz",
+      "category": "PO",
+      "status": "decision-blocked",
+      "invariant": "Sapma toleransı onaylı ürün kuralıdır.",
+      "mechanism": "ReceiptVariancePolicy 0.05 sabiti içeriyor; soru kaydı Semih onayını doğrulanmamış tutuyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/po-questions.md:32",
+        "src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs:17"
+      ],
+      "production_paths": [
+        "src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs"
+      ],
+      "test_paths": [
+        "NEW: tests/Modules/Purchasing/OrdersAndReceipts/ReceiptVarianceDecisionTests.cs"
+      ],
+      "acceptance": [
+        "Oran ve tam sınır davranışı onaylanır; testler bu kararı doğrular."
+      ],
+      "decision_blocker": "po-questions.md:32, B088 (numarasız): yüzde beş tolerans Semih tarafından onaylandı mı?",
+      "notes": ""
+    },
+    {
+      "id": "W2-03-009",
+      "parents": [
+        "F0072"
+      ],
+      "title": "UBL belge indirimi ve masrafı maliyete yansımıyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "İçe alınan stok maliyeti belgenin net maliyetiyle tutarlıdır.",
+      "mechanism": "Parser yalnız satır LineExtensionAmount üzerinden birim maliyet hesaplar; belge AllowanceCharge ve LegalMonetaryTotal okunmuyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:82",
+        "evidence/V1-RMD-739/tasks/B018.md:6",
+        "src/Modules/Purchasing/PurchaseInvoices/UblPurchaseInvoiceParser.cs:52",
+        "src/Modules/Purchasing/PurchaseInvoices/UblPurchaseInvoiceParser.cs:86",
+        "src/Modules/Purchasing/PurchaseInvoices/UblPurchaseInvoiceParser.cs:93"
+      ],
+      "production_paths": [
+        "src/Modules/Purchasing/PurchaseInvoices/UblPurchaseInvoiceParser.cs"
+      ],
+      "test_paths": [
+        "NEW: tests/Modules/Purchasing/PurchaseInvoices/UblDocumentAllowanceTests.cs"
+      ],
+      "acceptance": [
+        "Belge indirimi/masrafı maliyet toplamında uzlaşır veya desteklenmeyen belge sessiz yanlış maliyetle kabul edilmez."
+      ],
+      "decision_blocker": null,
+      "notes": "Muhasebesel dağıtım yöntemi kararı ayrıca incelenmedi."
+    },
+    {
+      "id": "W2-03-010",
+      "parents": [
+        "F0558"
+      ],
+      "title": "Tarif eşleme notunda uzunluk sınırı doğrulanmıyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "İstemci verisi depolama sınırlarına girmeden doğrulanır.",
+      "mechanism": "Notes yalnız Trim yapıyor; migration VARCHAR(255); endpoint doğrudan mapping oluşturuyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:215",
+        "src/Modules/Recipes/CatalogMapping/ProductRecipeMapping.cs:31",
+        "src/Modules/Recipes/CatalogMapping/ProductRecipeMapping.cs:48",
+        "database/migrations/V11/V11-RCP-003/115-product-recipe-mappings.up.sql:13",
+        "src/Host/Experience/Recipes/RecipeCatalogMappingEndpoints.cs:64"
+      ],
+      "production_paths": [
+        "src/Modules/Recipes/CatalogMapping/ProductRecipeMapping.cs",
+        "src/Host/Experience/Recipes/RecipeCatalogMappingEndpoints.cs"
+      ],
+      "test_paths": [
+        "NEW: tests/Host/Experience/Recipes/RecipeMappingNotesValidationTests.cs"
+      ],
+      "acceptance": [
+        "255 karakter kabul; 256 karakter kontrollü istemci hatası ve sıfır yazmayla ret."
+      ],
+      "decision_blocker": null,
+      "notes": "Kesin 503 iddiasının güncel exception zinciri tamamlanmadı; doğrulanmış sonuç olarak kullanılmadı."
+    },
+    {
+      "id": "W2-03-011",
+      "parents": [
+        "F0559"
+      ],
+      "title": "Olmayan katalog ürününe tarif eşlemesi yazılabiliyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "Ürün-tarif eşlemesi mevcut katalog ürününü göstermelidir.",
+      "mechanism": "Endpoint yalnız GUID alıp mapping oluşturuyor; domain boş GUID reddeder; migration catalog.products FK içermiyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:216",
+        "src/Host/Experience/Recipes/RecipeCatalogMappingEndpoints.cs:58",
+        "src/Modules/Recipes/CatalogMapping/ProductRecipeMapping.cs:22",
+        "database/migrations/V11/V11-RCP-003/115-product-recipe-mappings.up.sql:5"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Recipes/RecipeCatalogMappingEndpoints.cs",
+        "src/Modules/Recipes/CatalogMapping/ProductRecipeMapping.cs"
+      ],
+      "test_paths": [
+        "NEW: tests/Host/Experience/Recipes/RecipeMappingProductExistenceTests.cs"
+      ],
+      "acceptance": [
+        "Olmayan productId eşlemesi yazılmadan reddedilir."
+      ],
+      "decision_blocker": null,
+      "notes": "AvT uçtan uca rapor etkisi doğrulanmadı."
+    },
+    {
+      "id": "W2-03-012",
+      "parents": [
+        "F0173"
+      ],
+      "title": "Anonimleştirmede yürütme anı saklama kontrolü yok",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Talep sonrası doğan saklama engeli silme anında yeniden kontrol edilir.",
+      "mechanism": "Request/Reevaluate guard çağırır; ExecuteAsync doğrudan profile.AnonymizeAsync çağırır.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:183",
+        "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:47",
+        "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:119",
+        "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:138"
+      ],
+      "production_paths": [
+        "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/CustomerData/AnonymizationState/CustomerAnonymizationServiceTests.cs"
+      ],
+      "acceptance": [
+        "Pending sonrası bakiye doğarsa ExecuteAsync kişisel veriyi silmez."
+      ],
+      "decision_blocker": null,
+      "notes": "Program içindeki ayrı retention planı geç bakiyeyi kontrol ediyor; bu modül yolunu kapatmıyor."
+    },
+    {
+      "id": "W2-03-013",
+      "parents": [
+        "F0562"
+      ],
+      "title": "Aynı müşteri için yinelenen aktif anonimleştirme talebi",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Aynı müşterinin aktif talep tekrarları tek sürece bağlanır.",
+      "mechanism": "RequestAsync mevcut talep aramadan CreateAsync çağırır; customer_id üzerinde yalnız normal indeks var.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:219",
+        "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:41",
+        "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:52",
+        "database/migrations/V14/V14-CST-002/160-customer-anonymization-requests.up.sql:15"
+      ],
+      "production_paths": [
+        "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs",
+        "database/migrations/V14/V14-CST-002/160-customer-anonymization-requests.up.sql"
+      ],
+      "test_paths": [
+        "tests/Modules/CustomerData/AnonymizationState/CustomerAnonymizationServiceTests.cs"
+      ],
+      "acceptance": [
+        "Eşzamanlı tekrar tek aktif talep üretir veya açık ret alır."
+      ],
+      "decision_blocker": null,
+      "notes": "Ayrı belge eskimesi alt maddesi sonraki atomik kayıtta."
+    },
+    {
+      "id": "W2-03-014",
+      "parents": [
+        "F0562"
+      ],
+      "title": "Anonimleştirme planı eski guard sahibini anlatıyor",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Yaşayan plan güncel guard sahibini doğru belirtir.",
+      "mechanism": "Plan NoKnownBlockingReferencesGuard ve henüz Planned finans modülleri anlatır; mevcut modül kaydı OutstandingBalanceRetentionGuard kullanır.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:219",
+        "plan/v1.4/customer-data/V14-CST-002-customer-anonymization-state.md:49",
+        "src/Modules/CustomerAccounts/BillCharges/CustomerAccountsBillChargesModule.cs:35",
+        "src/Modules/CustomerAccounts/Retention/OutstandingBalanceRetentionGuard.cs:14"
+      ],
+      "production_paths": [
+        "src/Modules/CustomerAccounts/Retention/OutstandingBalanceRetentionGuard.cs"
+      ],
+      "test_paths": [],
+      "acceptance": [
+        "Güncel açıklama gerçek guard sahibine bağlanır; tarihsel transcript ayrı tutulur."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-03-015",
+      "parents": [
+        "F0367"
+      ],
+      "title": "IAM-024 tarihsel test sayıları güncel davranış kusuru değil",
+      "category": "BD",
+      "status": "not-defect",
+      "invariant": "Tarihsel koşu sonuçları güncel suite sayısı sanılmaz.",
+      "mechanism": "PhaseBMax 049 ve test sayıları iki commitin kapanış komutları altında; yaşayan sabitin hâlâ 049 olduğu iddiası yok.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:24",
+        "plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md:81",
+        "plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md:95"
+      ],
+      "production_paths": [],
+      "test_paths": [],
+      "acceptance": [
+        "Tarihsel transcript korunur, güncel test sonucu olarak kullanılmaz."
+      ],
+      "decision_blocker": null,
+      "notes": "Bugünkü PhaseBMax ve test sayısı ölçülmedi."
+    },
+    {
+      "id": "W2-03-016",
+      "parents": [
+        "F0369"
+      ],
+      "title": "Silinmiş sahip yüzeyler için açıklama eklenmiş",
+      "category": "BD",
+      "status": "historical-fixed",
+      "invariant": "Silinmiş yollar güncel sahip yüzey diye açıklamasız gösterilmez.",
+      "mechanism": "V1-RMD-739 doğrulama notu beş yolun HEAD üzerinde bulunmadığını açıkça belirtiyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:26",
+        "plan/v1/remediation/V1-RMD-001-consolidated-remediation.md:41"
+      ],
+      "production_paths": [],
+      "test_paths": [],
+      "acceptance": [
+        "Yolların tarihsel niteliği açık görünür."
+      ],
+      "decision_blocker": null,
+      "notes": "Düzeltme commit kimliği ayrıca bulunmadı; mevcut plan:41 doğrudan okundu. Yol yokluğu bağımsız yeniden taranmadı."
+    },
+    {
+      "id": "W2-03-017",
+      "parents": [
+        "F0502"
+      ],
+      "title": "IAM-025 kapanış sayıları tarihsel transcript",
+      "category": "BD",
+      "status": "not-defect",
+      "invariant": "Tarihsel test sayısı güncel suite büyüklüğü iddiası değildir.",
+      "mechanism": "185/185 vb. yerel Postgres kapanış koşusunu anlatır; handoff IAM-026 ve GOV-072 zincirini verir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:159",
+        "plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md:135",
+        "plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md:164"
+      ],
+      "production_paths": [],
+      "test_paths": [],
+      "acceptance": [
+        "Eski transcript yeni koşu sonucu diye sunulmaz."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-03-018",
+      "parents": [
+        "F0892"
+      ],
+      "title": "Logo değişimi audit ile atomik değil",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Audit başarısızlığında logo değişimi izsiz kalıcılaşmaz.",
+      "mechanism": "store.SaveAsync ardından RecordAsync; DeleteAsync ardından RecordAsync; ortak transaction geçirilmiyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:309",
+        "src/Host/Experience/Settings/BusinessIdentityLogoEndpoints.cs:119",
+        "src/Host/Experience/Settings/BusinessIdentityLogoEndpoints.cs:135"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Settings/BusinessIdentityLogoEndpoints.cs"
+      ],
+      "test_paths": [
+        "NEW: tests/Host/Experience/Settings/BusinessLogoAuditAtomicityTests.cs"
+      ],
+      "acceptance": [
+        "Audit hatasında logo ekleme/silme geri alınır; başarıda tek audit olur."
+      ],
+      "decision_blocker": null,
+      "notes": "Store ve audit alt depolarının tam transaction zinciri okunmadı; bulgu görülen orchestration sınırına dayanır. Branding HTTP test alt iddiası pending_details içinde."
+    },
+    {
+      "id": "W2-03-019",
+      "parents": [
+        "F0971"
+      ],
+      "title": "Müşteri vergi kimliği değişimi audit ile atomik değil",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Audit hatasında müşteri kimliği değişimi izsiz kalıcılaşmaz.",
+      "mechanism": "accounts.UpdateTaxIdentityAsync sonrasında ayrı auditEvents.AppendAsync çağrılır; ortak transaction parametresi yok.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:76",
+        "evidence/V1-RMD-739/tasks/B055.md:20",
+        "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs:88",
+        "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs:94"
+      ],
+      "production_paths": [
+        "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs"
+      ],
+      "test_paths": [
+        "NEW: tests/Host/Experience/CustomerAccounts/TaxIdentityAuditAtomicityTests.cs"
+      ],
+      "acceptance": [
+        "Audit hatası enjekte edilince vergi kimliği eski halinde kalır; başarıda tek audit bulunur."
+      ],
+      "decision_blocker": null,
+      "notes": "Alt depoların tam transaction zinciri ve resmî GİB algoritma kaynağı teyidi tamamlanmadı."
+    },
+    {
+      "id": "W2-03-020",
+      "parents": [
+        "F0968"
+      ],
+      "title": "Yöneten rolün izin sayısıyla seçilmesi kayıtlı karara uygun",
+      "category": "GY",
+      "status": "not-defect",
+      "invariant": "Yöneten rol kayıtlı PO sıralamasına göre seçilir.",
+      "mechanism": "Karar açıkça fewest permissions ve tie smallest role code der; repository count(rp.permission_id), code COLLATE C sıralar. Küme kesişimi farklı politikadır.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:73",
+        "docs/domain/authorization-model.md:108",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:197"
+      ],
+      "production_paths": [
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs"
+      ],
+      "test_paths": [],
+      "acceptance": [
+        "İzin sayısı değiştiğinde seçim kayıtlı sayısal politikayla tutarlı kalır."
+      ],
+      "decision_blocker": null,
+      "notes": "Küme tabanlı en kısıtlayıcı garanti ile aynı değildir; mevcut açık PO kararı yerine farklı kural varsayılmadı."
+    },
+    {
+      "id": "W2-03-021",
+      "parents": [
+        "F0132"
+      ],
+      "title": "Migration testi teslim dosyası yerine SQL kopyası çalıştırıyor",
+      "category": "KN",
+      "status": "open",
+      "invariant": "Migration testi gerçek up/down dosyalarını doğrular.",
+      "mechanism": "İki test kendi literal upSql/downSql stringlerini çalıştırır; teslim migration dosyası bozulsa aynı kopya çalışır.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:142",
+        "tests/Modules/Identity/DeviceSessions/DeviceSessionLifetimeMigrationTests.cs:25",
+        "tests/Modules/Identity/DeviceSessions/DeviceSessionLifetimeMigrationTests.cs:61"
+      ],
+      "production_paths": [],
+      "test_paths": [
+        "tests/Modules/Identity/DeviceSessions/DeviceSessionLifetimeMigrationTests.cs"
+      ],
+      "acceptance": [
+        "Test gerçek 013 up/down dosyalarını okur; dosya mutantı testi kırar."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    }
+  ],
+  "record_map": {
+    "F0032": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-001"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:39; evidence/V1-RMD-739/tasks/B101.md:5; src/Host/Experience/Menu/MenuManagementEndpoints.cs:45; src/Modules/Menu/MenuModule.cs:39; src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs:36"
+    },
+    "F0234": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-002"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:244; src/Modules/Menu/DailyMenuLifecycle/IBusinessDateProvider.cs:13; src/Host/Experience/Menu/MenuManagementEndpoints.cs:40; src/Modules/Menu/MenuModule.cs:33; plan/v1.1/daily-menu/V11-MNU-001-daily-menu-lifecycle.md:53"
+    },
+    "F0701": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-003"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-B.md:118; src/Modules/Menu/StaticMenu/StaticMenuService.cs:135; src/Host/Experience/Menu/MenuManagementContracts.cs:35; src/Clients/PosTerminal/src/features/management-menus-recipe-cost/MenusSection.tsx:79"
+    },
+    "F0033": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-004"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:40; src/Modules/Menu/CounterProjection/PostgresDailyMenuCounterProjector.cs:407; src/Modules/Reporting/MenuInventory/PostgresMenuInventoryReportingService.cs:49; src/Modules/Inventory/CrossChannelReservation/PostgresCrossChannelPortionArbiter.cs:130; tests/Modules/Menu/CounterProjection/DailyMenuCounterProjectionDatabaseTests.cs:314"
+    },
+    "F0702": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-005"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-B.md:119; src/Modules/Menu/StaticMenu/StaticMenuService.cs:103; src/Modules/Menu/StaticMenu/PostgresMenuItemRepository.cs:134; src/Modules/Menu/StaticMenu/PostgresMenuItemRepository.cs:153"
+    },
+    "F0236": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-006"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:246; evidence/V1-RMD-739/tasks/B101.md:20; src/Modules/Production/StockEffects/ProductionStockEffectService.cs:73; src/Modules/Production/StockEffects/ProductionStockEffectService.cs:100; src/Host/Experience/Production/ProductionManagementEndpoints.cs:151"
+    },
+    "PO0047": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-007"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/po-questions.md:32; src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:217; src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:308; src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:312"
+    },
+    "PO0048": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-008"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/po-questions.md:32; src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs:17"
+    },
+    "F0072": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-009"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:82; evidence/V1-RMD-739/tasks/B018.md:6; src/Modules/Purchasing/PurchaseInvoices/UblPurchaseInvoiceParser.cs:52; src/Modules/Purchasing/PurchaseInvoices/UblPurchaseInvoiceParser.cs:86; src/Modules/Purchasing/PurchaseInvoices/UblPurchaseInvoiceParser.cs:93"
+    },
+    "F0558": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-010"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:215; src/Modules/Recipes/CatalogMapping/ProductRecipeMapping.cs:31; src/Modules/Recipes/CatalogMapping/ProductRecipeMapping.cs:48; database/migrations/V11/V11-RCP-003/115-product-recipe-mappings.up.sql:13; src/Host/Experience/Recipes/RecipeCatalogMappingEndpoints.cs:64"
+    },
+    "F0559": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-011"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:216; src/Host/Experience/Recipes/RecipeCatalogMappingEndpoints.cs:58; src/Modules/Recipes/CatalogMapping/ProductRecipeMapping.cs:22; database/migrations/V11/V11-RCP-003/115-product-recipe-mappings.up.sql:5"
+    },
+    "F0173": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-012"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:183; src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:47; src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:119; src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:138"
+    },
+    "F0562": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-013",
+        "W2-03-014"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:219; src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:41; src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs:52; database/migrations/V14/V14-CST-002/160-customer-anonymization-requests.up.sql:15"
+    },
+    "F0367": {
+      "outcome": "not-defect",
+      "defects": [
+        "W2-03-015"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:24; plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md:81; plan/v1/identity-authorization/V1-IAM-024-endpoint-repointing-and-alias-removal.md:95"
+    },
+    "F0369": {
+      "outcome": "historical-fixed",
+      "defects": [
+        "W2-03-016"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:26; plan/v1/remediation/V1-RMD-001-consolidated-remediation.md:41"
+    },
+    "F0502": {
+      "outcome": "not-defect",
+      "defects": [
+        "W2-03-017"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:159; plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md:135; plan/v1/identity-authorization/V1-IAM-025-authorization-wave-hardening-and-requester-wiring.md:164"
+    },
+    "F0892": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-018"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-B.md:309; src/Host/Experience/Settings/BusinessIdentityLogoEndpoints.cs:119; src/Host/Experience/Settings/BusinessIdentityLogoEndpoints.cs:135"
+    },
+    "F0971": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-019"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-C.md:76; evidence/V1-RMD-739/tasks/B055.md:20; src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs:88; src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs:94"
+    },
+    "F0968": {
+      "outcome": "not-defect",
+      "defects": [
+        "W2-03-020"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/low-C.md:73; docs/domain/authorization-model.md:108; src/Modules/Identity/Authorization/PostgresRoleRepository.cs:197"
+    },
+    "F0132": {
+      "outcome": "defect",
+      "defects": [
+        "W2-03-021"
+      ],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:142; tests/Modules/Identity/DeviceSessions/DeviceSessionLifetimeMigrationTests.cs:25; tests/Modules/Identity/DeviceSessions/DeviceSessionLifetimeMigrationTests.cs:61"
+    },
+    "F0704": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0703": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0706": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0705": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0712": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0213": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0707": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0708": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0029": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0533": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0157": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0548": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0959": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0156": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0958": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0662": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0174": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0495": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0498": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0981": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0983": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0366": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "F0499": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "PL0005": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    },
+    "PL0006": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "Özgün source satırı okundu; güncel üretim/test/plan zinciri veya karşı kanıt incelemesi tamamlanmadı. Kusur/kapanış hükmü verilmedi."
+    }
+  },
+  "pending_source_ids": [
+    "F0704",
+    "F0703",
+    "F0706",
+    "F0705",
+    "F0712",
+    "F0213",
+    "F0707",
+    "F0708",
+    "F0029",
+    "F0533",
+    "F0157",
+    "F0548",
+    "F0959",
+    "F0156",
+    "F0958",
+    "F0662",
+    "F0174",
+    "F0495",
+    "F0498",
+    "F0981",
+    "F0983",
+    "F0366",
+    "F0499",
+    "PL0005",
+    "PL0006"
+  ],
+  "pending_details": [
+    {
+      "source_id": "F0236",
+      "claim": "Concurrency testi alt iddiası tamamlanmadı; F0704 bekliyor."
+    },
+    {
+      "source_id": "F0558",
+      "claim": "Kesin 503 exception mapping zinciri tamamlanmadı."
+    },
+    {
+      "source_id": "F0892",
+      "claim": "Branding bayt okumama HTTP test kapsamı ve eski kırmızı/sonraki yeşil log karşılaştırması tamamlanmadı; alt depoların transaction zinciri tamamlanmadı."
+    },
+    {
+      "source_id": "F0971",
+      "claim": "Resmî GİB algoritma belgesi ve alt depo transaction zinciri tamamlanmadı."
+    }
+  ],
+  "limitations": [
+    "Kullanıcının acil kalıcılaştırma talimatıyla kısmi sonuç kaydedildi. pending_source_ids ve pending_details tamamlanmış inceleme değildir.",
+    "Repo kodu/testi/migration çalıştırılmadı; yalnız statik dosya okuma ve arama yapıldı. Runtime/eşzamanlılık/mevzuat doğrulaması yok.",
+    "Kaynak kayıtların hepsinin özgün source satırı okundu. Bazı register satırları zaten kesikti; B101/B088/B018/B095/B058/B063/B055 kartlarında ilgili tam satırlar okundu. Diğer kartlar tamamlanmadı.",
+    "record_map outcome=pending son kullanıcı yönlendirmesinin istediği kısmi çıktı uzantısıdır; bu kayıtlar kusur sayımına dahil değildir.",
+    "Başlangıç write-set snapshot alınmadı; repoya yazma yapılmadı. Yalnız bu scratch çıktı dosyası oluşturuldu.",
+    "Geniş test dizini araması 180 saniyede timeout oldu; tam test kapsamı taraması sayılmaz."
+  ]
+}

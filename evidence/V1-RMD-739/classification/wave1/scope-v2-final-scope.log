@@ -1,0 +1,8 @@
+COMMAND: python -B tools/task-scope/task_scope_tool.py --task-id V1-RMD-739
+EXIT_CODE: 0
+{
+  "task_id": "V1-RMD-739",
+  "valid": true,
+  "metadata_errors": [],
+  "findings": []
+}

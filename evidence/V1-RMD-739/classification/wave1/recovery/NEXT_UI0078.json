@@ -1,0 +1,20 @@
+{
+  "source_id": "UI0078",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Ölü mektup (dead-letter) listeleme ve yeniden kuyruğa alma uç noktaları backend'de var ama PosTerminal UI'sinde erişilemiyor",
+      "status": "open",
+      "invariant": "Backend yeteneği (GET /outbox/dead-letters, POST /outbox/dead-letters/{id}/requeue) istemci yüzeyinde sunulmalı veya ürün kararıyla bilinçli dışlanmalı",
+      "mechanism": "OutboxAdministration.cs:33-61 (GET dead-letters listeleme) ve :63-141 (POST requeue) backend işlevi sağlar; PosTerminal/src içinde dead-letters veya requeue için grep sıfır sonuç (ist grep -r 'dead-letters\\|requeue' src/Clients/PosTerminal/src --include='*.ts' --include='*.tsx' 2>/dev/null | wc -l → 0); eksik-avcisi.md:8 bunu 'Yüksek' olarak işaretler",
+      "source_evidence": "src/Host/Experience/SecurityAdministration/OutboxAdministration.cs:33-61,63-141; evidence/V1-RMD-739/ui/eksik-avcisi.md:8",
+      "acceptance": "PosTerminal'da Security/Outbox alt menüsü veya sayfası eklenip dead-letter listesi ve requeue butonu bağlanır; veya PO kararıyla 'bu istemciye sunulmaz' yazılı karar kaydı plan/ altına konur",
+      "id": "W2-N-UI0078-01",
+      "parents": [
+        "UI0078"
+      ]
+    }
+  ],
+  "limitations": "Sadece statik kod analizi yapıldı; runtime UI erişilebilirlik testi (menü/link var mı) yapılmadı. Backend yeteneğinin doğrulanması için outbox_messages tablosunda status='dead' satırı ile manuel POST requeue denemesi gerekecek.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

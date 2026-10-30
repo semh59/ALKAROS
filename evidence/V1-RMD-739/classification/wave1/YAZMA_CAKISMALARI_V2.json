@@ -1,0 +1,293 @@
+[
+  {
+    "left": "RG-STK-02",
+    "right": "RG-STK-03",
+    "shared_write_paths": [
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-17",
+    "shared_write_paths": [
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-19",
+    "shared_write_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-20",
+    "shared_write_paths": [
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-29",
+    "shared_write_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-30",
+    "shared_write_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-19",
+    "right": "RG-STK-20",
+    "shared_write_paths": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-19",
+    "right": "RG-STK-29",
+    "shared_write_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-19",
+    "right": "RG-STK-30",
+    "shared_write_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-20",
+    "right": "RG-STK-29",
+    "shared_write_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-20",
+    "right": "RG-STK-30",
+    "shared_write_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-23",
+    "right": "RG-STK-24",
+    "shared_write_paths": [
+      "docs/data/nullable-unique-policy.md"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-STK-29",
+    "right": "RG-STK-30",
+    "shared_write_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G02",
+    "right": "PAY-G03",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G02",
+    "right": "PAY-G04",
+    "shared_write_paths": [
+      "src/Host/Experience/Orders/OrderSettlementService.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G02",
+    "right": "PAY-G05",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G02",
+    "right": "PAY-G09",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G02",
+    "right": "PAY-G10",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G03",
+    "right": "PAY-G04",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G03",
+    "right": "PAY-G05",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G03",
+    "right": "PAY-G09",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G03",
+    "right": "PAY-G10",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G04",
+    "right": "PAY-G05",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G04",
+    "right": "PAY-G09",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G04",
+    "right": "PAY-G10",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G05",
+    "right": "PAY-G09",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G05",
+    "right": "PAY-G10",
+    "shared_write_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "PAY-G09",
+    "right": "PAY-G10",
+    "shared_write_paths": [
+      "src/Host/Experience/Billing/BillClosureSweeper.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-BLOCKED-EVENTS",
+    "right": "RG-CUSTOMER-ELIGIBILITY",
+    "shared_write_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-BLOCKED-EVENTS",
+    "right": "RG-HOLD",
+    "shared_write_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-BLOCKED-EVENTS",
+    "right": "RG-SUPPLIER-ELIGIBILITY",
+    "shared_write_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-CUSTOMER-ELIGIBILITY",
+    "right": "RG-HOLD",
+    "shared_write_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-CUSTOMER-ELIGIBILITY",
+    "right": "RG-SUPPLIER-ELIGIBILITY",
+    "shared_write_paths": [
+      "src/Host/Program.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-HOLD",
+    "right": "RG-SUPPLIER-ELIGIBILITY",
+    "shared_write_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  },
+  {
+    "left": "RG-INFLIGHT-TEST",
+    "right": "RG-LAST-MANAGER",
+    "shared_write_paths": [
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "rule": "Paralel uygulama yasak; görev tahsisinden önce seri sıra seçilir."
+  }
+]

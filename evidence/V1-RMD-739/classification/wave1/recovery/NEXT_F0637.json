@@ -1,0 +1,25 @@
+{
+  "source_id": "F0637",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-WTR-053 Kuyruk önceliği/aging/flushQueue için birim testi yok",
+      "status": "open",
+      "invariant": "Kritik offline-queue mantığı (priority, aging, flushQueue) birim testlerle doğrulanmalı; yalnız E2E yeterli değil",
+      "mechanism": "low-B.md:54 'Kuyruk önceliği/aging/flushQueue için birim testi yok; yalnız E2E (md de kısmen kabul ediyor). Kanıt klasörü yok.' V1-WTR-053 plan dosyası (satır 69-126) acceptance evidence kısmında 'npx playwright test 5/5 çalıştırmada 18/18 temiz', 'geçici smoke test yazıldı 1/1 geçti sonra silindi' var. Plan metni (satır 15-17) 'planın kendi metninin \"burada bir hata sessizce sipariş kaybına yol açabilir\" diye açıkça uyardığı' belirtiyor. offline-queue.js kodunda (satır 163-186) roundPriority, sortQueueByPriority, QUEUE_PRIORITY_AGING_MS=2dk aging mantığı var. flushQueue (satır 235-281) kendi içinde retry/backoff/priority sıralama yapıyor. Bu kritik mantık yalnız E2E ile test edilmiş; birim test (Jest/Vitest/node:test) yok. AGENTS.md 'TODO, placeholder, mock-success adapter, boş handler, sessiz catch/pass ve kanıtsız fallback bırakılamaz' ve 'Yeni davranış compile, static analysis ve task acceptance testleriyle doğrulanmadan Done olamaz'.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:54",
+        "plan/v1/waiter-pwa/V1-WTR-053-js-refactor-step17-offline-queue-module.md:69-126",
+        "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:163-186,235-281",
+        "terminal ls evidence/V1-WTR-053/ -> not found"
+      ],
+      "acceptance": "offline-queue.js için roundPriority, sortQueueByPriority, flushQueue (retry/backoff/aging) kapsayan birim test dosyası (tests/.../offline-queue.test.js) olmalı; evidence/V1-WTR-053/ altında test komutu çıktısı, exit code, hash olmalı",
+      "id": "W2-N-F0637-01",
+      "parents": [
+        "F0637"
+      ]
+    }
+  ],
+  "limitations": "Repo yazma/yeni test dosyası oluşturma yok. Plan dosyası 'geçici smoke test yazıldı sonra silindi' diyor - bu kalıcı birim test değil. E2E test (05-load-and-timing.spec.js) yük testi ama birim test seviyesinde priority/aging/branching logic doğrulamaz. Evidence klasörü yok.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

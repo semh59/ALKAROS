@@ -1,0 +1,441 @@
+{
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "groups": [
+    {
+      "id": "RG-CUSTOMER-ELIGIBILITY",
+      "write_paths": [
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+        "src/Host/Program.cs",
+        "src/Modules/CustomerAccounts/TransactionLedger/PostgresAccountTransactionLedger.cs",
+        "src/Modules/CustomerAccounts/BillCharges/AccountChargeHandler.cs",
+        "src/Modules/CustomerAccounts/BalanceProjection/PostgresAccountBalanceProjection.cs",
+        "src/Modules/CustomerData/AnonymizationState/PostgresCustomerAnonymizationRequestStore.cs",
+        "src/Modules/Invoicing/Generation/PostgresInvoiceGenerationService.cs",
+        "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+        "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs",
+        "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs",
+        "tests/Modules/CustomerAccounts/TransactionLedger/PostgresAccountTransactionLedgerTests.cs",
+        "tests/Modules/CustomerAccounts/BillCharges/AccountChargeHandlerTests.cs",
+        "tests/Modules/CustomerAccounts/BalanceProjection/PostgresAccountBalanceProjectionTests.cs",
+        "tests/Modules/CustomerData/AnonymizationState/PostgresCustomerAnonymizationRequestStoreTests.cs",
+        "tests/Modules/Invoicing/Generation/InvoiceGenerationTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+        "src/Modules/Privacy/RetentionExecution/RetentionModels.cs",
+        "src/Modules/Privacy/RetentionExecution/IRetentionExecutionService.cs",
+        "src/Modules/Privacy/Anonymization/AnonymizationModels.cs",
+        "src/Modules/Privacy/Anonymization/IAnonymizationWorkflow.cs",
+        "src/Modules/Privacy/Anonymization/PrivacyAnonymizationModule.cs",
+        "src/Modules/CustomerAccounts/CashReceipts/CashAccountReceiptHandler.cs",
+        "src/Modules/CustomerAccounts/AccountReceipts/PostgresAccountReceiptService.cs",
+        "src/Modules/CustomerAccounts/TransactionLedger/IAccountTransactionLedger.cs",
+        "src/Modules/CustomerAccounts/CreditTerms/CreditTermsCreditPolicy.cs",
+        "src/Modules/CustomerAccounts/CreditTerms/PostgresCustomerCreditTermsStore.cs",
+        "src/Modules/CustomerData/AnonymizationState/ICustomerAnonymizationRequestStore.cs",
+        "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs",
+        "src/Modules/CustomerData/Profiles/PostgresCustomerProfileStore.cs",
+        "src/Modules/CustomerData/Profiles/ICustomerProfileStore.cs",
+        "src/Modules/Invoicing/Generation/IInvoiceGenerationService.cs",
+        "src/Modules/Invoicing/Generation/OrderInvoices/PostgresOrderInvoiceDraftService.cs",
+        "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs",
+        "src/Host/Experience/Billing/PaymentRefunds.cs",
+        "tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj",
+        "tests/Modules/Invoicing/Generation/Fixtures/InvoiceGenerationTestDatabase.cs",
+        "database/migrations/V14/V14-ACC-002/162-account-balance-projection.up.sql",
+        "database/migrations/V14/V14-CST-002/160-customer-anonymization-requests.up.sql",
+        "database/migrations/V15/V15-KVK-001/170-privacy-retention-execution.up.sql"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "RG-HOLD ortak subject/class protokolü tamamlanmadan ready değil. Bugünkü hold INSERT autocommit; destructive step ile ortak kilit yok. Existing workflow bütün sınıflara account-charge-customer kilidi veriyor; bu genel class protokolü kanıtı değil.",
+        "Mevcut dört-path öneri yetersiz: ledger standalone overload, balance rebuild, request Create/Update ve invoice generation ownerları ortak serializationa katılmıyor. Yukarıdaki write_paths yeni integration kapsam önerisi; aktif 739 veya bu rapor yazma yetkisi vermez. Ayrı tek sahipli integration task kimliği ve kesin allowlist onayı gerekiyor; kimlik atanmadı.",
+        "Customer iki destructive adım ayrı transaction: profile scrub commitinden sonra Pending request eklenip ikinci adım durursa ilk PII kaybı geri alınamaz. Yalnız her adımda predicate tekrarı yeterli değil. Customer profile+request değişiklikleri, checkpoint/event ve uygunluk doğrulaması aynı customer kritik mutation birimi olarak kapsamlanmalı; geçmiş yarım checkpoint resume ayrıca korunmalı.",
+        "AccountChargeHandler profil kontrolü customer lock öncesi. Production CreditTermsCreditPolicy anonimleşmiş profilde None/limit0 ile reddediyor; bu dolaylı koruma var, yok sayılmadı. Ancak ICustomerCreditPolicy bu eligibility garantisini vermiyor; lock sonrası mevcut anonymized invariantı doğrudan doğrulanmadan handler tam güvenli ilan edilemez.",
+        "Doğrudan CustomerAnonymizationService.ExecuteAsync -> PostgresCustomerProfileStore.AnonymizeAsync ayrı destructive yol; request status/audit başka transactionda. Bu yol bu iki retention kusurunun sessiz genişlemesi değildir. Ortak destructive protokol bütün anonimleştirme girişlerini kapsayacaksa bu iki exact dosya için ayrıca integration kapsamı ve CustomerAnonymizationServiceTests.cs/PostgresCustomerProfileStore test envanteri gerekir; bu oturum owner primitive okundu, tüm karşılıklı runtime davranışı kanıtlanmadı.",
+        "Şema değişimi şu an zorunlu değil: run.as_of ve immutable policy/rules mevcut. Eğer yeni kalıcı eligibility token, yeni work status veya schema-level trigger seçilirse migrationID/yol atanmadan scope-blocked kalır; eski 160/162/170 değiştirilmez."
+      ],
+      "dependency_edges": [
+        {
+          "group_id": "RG-HOLD",
+          "kind": "hard",
+          "reason": "Hold/place/release ve destructive mutation aynı subject/class serialization protokolünü kullanmalı; customer mevcut account-charge-customer anahtarıyla köprülenmeli."
+        },
+        {
+          "task_id": null,
+          "kind": "new-integration-required",
+          "reason": "Privacy + CustomerAccounts + CustomerData + Invoicing mevcut owner write yollarını tek invariant için seri teslim eden ayrı integration task tahsisi. write_paths kesin aday yüzeyidir; API/migration tasarımı veya onayı değildir."
+        }
+      ],
+      "acceptance_additions": [
+        "İki gerçek PostgreSQL bağlantısı, açık barrier: queue -> current Charge+Payment net0 -> apply. Yeni max(occurred_at) pencereyi yeniler; profil envelope/request status+row_version/checkpoint değişmez, work Pending. Sadece balance<>0 kontrolü mutantı kırılmalı.",
+        "Queue -> yeni invoicing.invoices oluşturma: gerçek PostgresInvoiceGenerationService profile okuması/insert/commit ile scrub her iki sırada yarıştırılır. Invoice önce commit ederse yeni basis applyı durdurur; scrub önce commit ederse mevcut CustomerAnonymized buyer reddi işler. Source-set kilidi tek başına yeterli sayılmaz.",
+        "Queue -> CreateAsync(Pending) ve RetentionBlocked -> UpdateStatusAsync(Pending) ayrı yarışlar. Pending önce commit ederse hiçbir destructive customer alanı/checkpoint değişmez. Scrub kritik bölgesi boyunca sonraki request writer bekler; sonradan gelen yeni isteğin önceki anonimleştirmeyi geriye dönük iptal ettiği iddia edilmez.",
+        "Profil scrub ile requests scrub arasına producer sokan eski iki-transaction düzenini kıran negatif test; atomik customer mutation rollbackinde profile envelope, requests, checkpoint ve StepDone birlikte önceki durumda kalır.",
+        "AccountChargeHandler pre-read -> scrub commit -> lock kazanımı: anonimleşmiş profile yeni charge yazılmaz; dolaylı production credit denial ile açık eligibility invariantı ayrı assert edilir. CashAccountReceiptHandler mevcut lock sonrası active kontrolü regresyonu korunur.",
+        "Standalone ledger.RecordAsync ve caller-owned transaction overload ayrı yarıştırılır; Charge/Payment/Adjustment ve no-op replay kapsanır. RebuildAsync ledger snapshotından önce aynı customer kilidini alır; sıfır ledger/delete dalı dahil concurrent writer bakiyesini ezmez. Balance trigger aynı transactionda kalır.",
+        "Eski run kuyruğu -> yeni policy publish -> resume: work.policy_version + work.run_id -> retention_runs.as_of + retention_rules.retention_years kullanılır; CLI yeni --as-of veya güncel max(policy_version) eski işin anlamını değiştirmez. basis_at < as_of.AddYears(-years) strict sınırı, eşitlik ve leap-day C# AddYears davranışı testlenir.",
+        "Seçim Due ile uygulama eligibility ayrılır: uygulama kendi Pending work itemını NOT EXISTS(work_items) ile elemez. Uygun eski müşteri gerçekten temizlenir. İşaretlenmiş kendi profile/checkpointi resumeı sonsuza dek bloke etmez; önceden tamamlanmış alan diriltilmez.",
+        "Hold placement, request writer, ledger writer, invoice writer ve workflow customer lock sırası birlikte deadlock/rollback/cancel matrisiyle doğrulanır. Sleep-only veya fake-only test gerçek serialization kanıtı sayılmaz."
+      ],
+      "source_evidence": [
+        {
+          "path": "AGENTS.md",
+          "lines": "1-89",
+          "claim": "Repo yazma sınırları; bu oturum salt okuma."
+        },
+        {
+          "path": "plan/TASK_STANDARD.md",
+          "lines": "87-114,169-188",
+          "claim": "Aynı invariant integrationa bölünebilir; kesin scope ayrı onay ister."
+        },
+        {
+          "path": "plan/OWNERSHIP.md",
+          "lines": "9-31,47-53",
+          "claim": "Cross-owner yüzey için ayrı integration gerekir."
+        },
+        {
+          "path": "evidence/V1-RMD-739/classification/wave1/KESIN_YUZEY_V2.json",
+          "lines": "3633-3773",
+          "claim": "Mevcut groupID/GYZ-008/GYZ-009 ve blockerlar korundu."
+        },
+        {
+          "path": "evidence/V1-RMD-739/classification/wave1/YETKI_ODEME_KAPSAM_INCELEME_V2.json",
+          "lines": "1783-1919",
+          "claim": "Önceki kapsam hükmü; fresh runtime kanıtı değildir."
+        },
+        {
+          "path": "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+          "lines": "35-46,70-81",
+          "claim": "created_at/max transaction/max invoice, balance0, no Pending; Due ayrıca no work item."
+        },
+        {
+          "path": "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+          "lines": "22-74,128-165,168-188,232-279",
+          "claim": "Run as_of/policy kalıcı; Pending yalnız subject/due/version verir; cutoff C# AddYears; hold autocommit."
+        },
+        {
+          "path": "src/Modules/Privacy/RetentionExecution/RetentionModels.cs",
+          "lines": "13-19",
+          "claim": "RetentionWorkItem AsOf taşımaz; mevcut policyversion var."
+        },
+        {
+          "path": "database/migrations/V15/V15-KVK-001/170-privacy-retention-execution.up.sql",
+          "lines": "40-70,75-95,134-155",
+          "claim": "Work run_id -> immutable run.as_of; rules mevcut. Trigger hold EXISTS yapar, ortak lock sağlamaz."
+        },
+        {
+          "path": "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+          "lines": "23-27,48-73,113-156,181-210",
+          "claim": "Work metadata Processa düşmüyor; her step ayrı tx; account key; BlockSql yalnız verilen parametreler; completion ayrı tx."
+        },
+        {
+          "path": "src/Host/Program.cs",
+          "lines": "386-456,825-849",
+          "claim": "CLI as-of yalnız enqueue; customer BlockSql sadece bakiye; requests toplu Anonymized; supplier BlockSql null."
+        },
+        {
+          "path": "src/Modules/CustomerAccounts/TransactionLedger/PostgresAccountTransactionLedger.cs",
+          "lines": "21-95",
+          "claim": "Standalone+caller transaction insert ortak lowest write; customer lock yok."
+        },
+        {
+          "path": "src/Modules/CustomerAccounts/BillCharges/AccountChargeHandler.cs",
+          "lines": "61-141",
+          "claim": "Profile pre-read; bill-settlement -> idempotency -> customer lock; ledger aynı tx."
+        },
+        {
+          "path": "src/Modules/CustomerAccounts/CashReceipts/CashAccountReceiptHandler.cs",
+          "lines": "47-114,139-145",
+          "claim": "Idempotency -> customer -> active/session/balance -> ledger; mevcut katılım var."
+        },
+        {
+          "path": "src/Modules/CustomerAccounts/CreditTerms/CreditTermsCreditPolicy.cs",
+          "lines": "36-59",
+          "claim": "Profile absent/anonymized terms None -> limit0 dolaylı denial."
+        },
+        {
+          "path": "src/Modules/CustomerAccounts/CreditTerms/PostgresCustomerCreditTermsStore.cs",
+          "lines": "16-30",
+          "claim": "Terms query NOT p.anonymized."
+        },
+        {
+          "path": "src/Modules/CustomerAccounts/BalanceProjection/PostgresAccountBalanceProjection.cs",
+          "lines": "42-76",
+          "claim": "Rebuild ayrı snapshot/autocommit delete/upsert; serializer yok."
+        },
+        {
+          "path": "database/migrations/V14/V14-ACC-002/162-account-balance-projection.up.sql",
+          "lines": "32-60",
+          "claim": "Ledger AFTER INSERT balance atomik trigger; eski migration read-only."
+        },
+        {
+          "path": "src/Modules/CustomerData/AnonymizationState/PostgresCustomerAnonymizationRequestStore.cs",
+          "lines": "29-58,87-124",
+          "claim": "Create+status update own tx/audit var, customer lock yok; iki producer entry."
+        },
+        {
+          "path": "src/Modules/CustomerData/AnonymizationState/CustomerAnonymizationService.cs",
+          "lines": "41-108,119-158",
+          "claim": "Request/Create ve Reevaluate/Pending; Execute farklı destructive route. Src caller taramasında Host invocation bulunmadı; DI caller kanıtı değildir."
+        },
+        {
+          "path": "src/Modules/CustomerData/Profiles/PostgresCustomerProfileStore.cs",
+          "lines": "106-175",
+          "claim": "Contact update optimistic guard; Anonymize ayrı autocommit primitive."
+        },
+        {
+          "path": "src/Modules/Invoicing/Generation/PostgresInvoiceGenerationService.cs",
+          "lines": "60-122,168-190,297-356",
+          "claim": "Source-set FOR UPDATE; customer lock yok; buyer başka store okuması sonrası insert."
+        },
+        {
+          "path": "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs",
+          "lines": "135-197",
+          "claim": "Canlı charge ve cash receipt producer callerları."
+        },
+        {
+          "path": "src/Modules/CustomerAccounts/AccountReceipts/PostgresAccountReceiptService.cs",
+          "lines": "25-96",
+          "claim": "account_receipts yazarı payment-id lock alır; retention predicate bu tabloyu okumaz, dolayısıyla otomatik yeni eligibility writer sayılmadı."
+        },
+        {
+          "path": "src/Modules/Invoicing/Generation/OrderInvoices/PostgresOrderInvoiceDraftService.cs",
+          "lines": "19-108",
+          "claim": "order_invoices farklı tablo, customer predicate kaynağı değil; yazma yetkisi eklenmedi."
+        },
+        {
+          "path": "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs",
+          "lines": "280-291",
+          "claim": "Tek IAnonymizationPlans fake ScratchPlans; AnonymizationPlan değiştirilirse exact fake consumer burası."
+        },
+        {
+          "path": "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs",
+          "lines": "75-95,113-156",
+          "claim": "Seçim/no duplicate work kanıt tasarımı; apply concurrencyyi sınamaz. Çalıştırılmadı."
+        },
+        {
+          "command": "git grep -n -E 'class .*: (IRetentionExecutionService|IAnonymizationPlans|ICustomerAnonymizationRequestStore|IPurchaseOrderRepository|IGoodsReceiptRepository|IPurchaseInvoiceRepository|IAccountTransactionLedger|ICustomerProfileStore|IInvoiceGenerationService)' -- src tests",
+          "exit_code": 0,
+          "claim": "Tracked src/tests implementerleri: her interface için yalnız mevcut Postgres concrete; IAnonymizationPlans ayrıca Host KvkkAnonymizationPlans ve tek ScratchPlans. Ek fake bulunmadı."
+        }
+      ],
+      "readiness": "scope-blocked",
+      "notes": [
+        "En küçük müşteri serialization kontratı: mevcut SELECT pg_advisory_xact_lock(hashtext(key)::bigint), key=account-charge-customer:{customerId:N}, producerın kendi connection/transactionında, snapshot/eligibility okumasından önce ve commit/rollback sonuna dek. Yeni registry/interface şart değil; standart DB primitive yeterli. Mevcut bill-settlement -> idempotency -> customer sırası tersine çevrilmez; workflow customer kilidinden bill kilidi istemez.",
+        "Producer kapsamı method-level kapatıldı: ledgerın iki overloadı, charge, cash receipt, balance rebuild, request Create ve status Update, invoice Generate. İmza değişmeden mevcut repository/service bodyleri üzerinden katılım mümkün. Cash receipt zaten aynı kilidi ve lock-sonrası active kontrolünü kullanır; production yazma listesine gereksiz eklenmedi, regresyon testine dahildir.",
+        "Policy/as-of teknik okuma eksiği kapandı: workflow ApplyStep içinde class+subject ile Pending work -> retention_runs -> retention_rules exact join yapabilir; mevcut RetentionWorkItem/IRetentionExecutionService/IAnonymizationPlans imzalarını değiştirmek zorunlu değil. Subject taşımanın metadata kaybı mevcut DB provenance ile kapatılabilir. Uygulama transactionında yenilenen basis/balance/Pending kontrolü yapılır; Due sarmalayıcısı kör kopyalanmaz.",
+        "Interface değişmeyen yön için zorunlu fake rewrite yok. AnonymizationPlan veya IAnonymizationPlans değiştirilirse Program.cs ve AnonymizationWorkflowTests.cs içindeki ScratchPlans tek compile tüketicileridir. Yeni model/constructor seçilirse bağımlı fixture kapsamı yeniden sabitlenir; şu an yeni API tasarlanmadı.",
+        "GenerateAsync ve CustomerAnonymizationService için tracked src taramasında gerçek Host çağrısı bulunmadı; DI-only erişilebilirlik sınırı kaydedildi. Bununla kilitsiz repository yolu yok sayılmadı veya hayali endpoint eklenmedi.",
+        "write_paths gelecekte tek sahipli integrationda gereken aday allowlist; aynı dosyalara ayrı eligibility görevlerini paralel başlatma. GroupID ve kaynak kusurlar değişmedi; yeni ürün/mevzuat süresi yok."
+      ]
+    },
+    {
+      "id": "RG-SUPPLIER-ELIGIBILITY",
+      "write_paths": [
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+        "src/Host/Program.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+        "src/Modules/Purchasing/PurchaseInvoices/PostgresPurchaseInvoiceRepository.cs",
+        "src/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceService.cs",
+        "src/Modules/Purchasing/Suppliers/PostgresSupplierRepository.cs",
+        "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+        "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs",
+        "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs",
+        "tests/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceServiceTests.cs",
+        "tests/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceApprovalTests.cs",
+        "tests/Modules/Purchasing/Suppliers/SupplierDatabaseTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+        "src/Modules/Privacy/RetentionExecution/RetentionModels.cs",
+        "src/Modules/Privacy/RetentionExecution/IRetentionExecutionService.cs",
+        "src/Modules/Privacy/Anonymization/AnonymizationModels.cs",
+        "src/Modules/Purchasing/PurchaseInvoices/IPurchaseInvoiceRepository.cs",
+        "src/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceInboxService.cs",
+        "src/Modules/Purchasing/Suppliers/ISupplierRepository.cs",
+        "src/Modules/Purchasing/Suppliers/Supplier.cs",
+        "src/Modules/Purchasing/Suppliers/SupplierService.cs",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs",
+        "src/Host/Experience/Purchasing/PurchaseInvoiceEndpoints.cs",
+        "tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj",
+        "database/migrations/V11/V11-PUR-002/068-suppliers.up.sql",
+        "database/migrations/V11/V11-PUR-001/069-purchase-orders-receipts.up.sql",
+        "database/migrations/V1/V1-RMD-489/175-purchase-invoices.up.sql",
+        "database/migrations/V15/V15-KVK-001/170-privacy-retention-execution.up.sql"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Mevcut supplier BlockSql null; account-charge-customer:{supplierId:N} kilidine hiçbir Purchasing producer katılmıyor. Dört-path eski scope yeterli değil; yukarıdaki kesin production owner yüzeyini kapsayan ayrı integration dependency tahsisi/onayı gerekiyor.",
+        "Supplier ilişki predicatei supplier_id OR tax_number. Yalnız supplier GUID kilidi null SupplierId ile gelen invoice importunu ve supplier tax-number değişimini serialize etmez. Minimum protokol tax lookup membershipini de kapsamalı: exact stored tax değeriyle transaction-scoped tax mutex + ilgili supplier subject kilidi. Yeni anahtar encoding/namespace ve old/new tax kilit sırası RG-HOLD ile tek teknik integration kontratında sabitlenmeden scope-ready değil.",
+        "PO receipt şu an önce order lines FOR UPDATE alıyor; supplier serializationı sonradan repository.Save içine eklemek sıralama/deadlock açısından yeterli değil. ReceiveGoodsAsync supplier kilidini mevcut line kilidinden önce almalı; Save/Update standalone ve caller-owned overloadlar da katılmalı.",
+        "PurchaseInvoiceApprovalService önce TryTransition ile invoice row kilitliyor, sonra receipt insert. Supplier/tax kilidini yalnız InsertReceiptAsync içine eklemek ters sıra bırakır; Approve girişinde supplier/tax -> invoice -> stock sırası gerekir. İade invoice dalı receipt oluşturmaz, aynı dosyada ama ayrı davranış; yeni kural uydurulmaz.",
+        "Supplier master UpdateAsync eski name/phone/emaili snapshot üzerinden yeniden yazabiliyor, tax-number membershipini değiştirebiliyor; workflow yalnız supplier row UPDATE yaptığı için kayıp-scrub/resurrection sınırı var. Master mutation katılımı ve stale snapshot guard yönü integrationda kesinleşmeli; anonimleşmiş supplier otomatik inactive veya silinmiş sayılmaz.",
+        "Supplier scrubdan sonra yeni faaliyetin yasaklanması mevcut kural değil: AssertCanAcceptOrders yalnız Active kontrol eder, scrub Active değiştirmez. Serializationın scrub-önce sonucuna yeni satınalma yasağı eklenmez. Tamamlanmış anon supplierde sonradan faaliyetin retention_work_items tekilliğiyle ilişkisi ayrıca değerlendirilir; yeni lifecycle/requeue şeması bu grupta icat edilmez.",
+        "Mevcut run.as_of/policy join ile schema gereksinimi görülmedi. Tax/subject DB trigger veya kalıcı lifecycle token seçilirse yeni migrationID ve exact up/down/composition/test scope atanmalı; eski 068/069/170/175 salt okunur kalır."
+      ],
+      "dependency_edges": [
+        {
+          "group_id": "RG-HOLD",
+          "kind": "hard",
+          "reason": "Supplier destructive write ve hold aynı canonical class/subject protokolüne bağlanacak; tax-membership lock sırası da bu protokolle uyumlu olacak."
+        },
+        {
+          "group_id": "RG-CUSTOMER-ELIGIBILITY",
+          "kind": "serialize",
+          "reason": "Ortak workflow/Program/retention/Host test dosyaları; supplier kuralı customer kuralıyla birleştirilmedi."
+        },
+        {
+          "task_id": null,
+          "kind": "new-integration-required",
+          "reason": "Purchasing PO+receipt+invoice+supplier master owner write yolları ve Privacy destructive adımı aynı serialization invariantını teslim etmeli. Yeni integration Task ID atanmadı; write_paths öneri olup yetki değildir."
+        },
+        {
+          "group_id": "RG-STK-02",
+          "kind": "serialize",
+          "reason": "IPurchaseOrderRepository.cs/IPurchasingService.cs/OrdersAndReceiptsDatabaseTests.cs ortak; header/line sırası supplier kilidi öncesine ters çevrilmemeli."
+        }
+      ],
+      "acceptance_additions": [
+        "Eski queued supplier -> yeni PO create, PO submit/cancel/update, PO receipt, XML invoice import, QNB inbox import ve invoice-derived receipt ayrı ayrı gerçek owner yoluyla commit -> apply. Predicatein kullandığı updated_at/created_at/received_at güncelse supplier alanları/checkpoint değişmez, work Pending.",
+        "Her producer ile scrub iki commit sırası ve deterministik barrier. Producer önce commit ederse transactiondaki güncel max activity geçerlilik kontrolü scrubı engeller; scrub önce commit ederse producer bekler ve mevcut iş kurallarıyla devam eder. Sonradan faaliyet geldi diye geçmiş scrub geri alınmış sayılmaz.",
+        "SupplierId NULL + mevcut supplierla tax eşleşen invoice, supplierId farklı fakat tax eşleşen invoice ve tax NULL supplier ayrılır. Eski/new tax membership update, invoice lookup -> insert aralığı ve supplier create/import yarışı kapsanır. Yalnız GUID lock veya yalnız nonnull FK fixtureı false green üretmemeli.",
+        "ReceiveGoodsAsync supplier -> PO header/lines -> receipt -> inventory; ApproveAsync tax/supplier -> invoice status -> receipt -> inventory sıraları yarış/deadlock testiyle kanıtlanır. Standalone SaveAsync receipt ve PO standalone Update/Save bypassları ayrı sınanır.",
+        "Invoice approval receipt.ReceivedAt = invoice.IssueDate gece +03:00, UtcNow değildir. Backdated invoice-derived receipt current faaliyetmiş gibi yeni mevzuat/policy kuralı yazılmaz; mevcut max(received_at) semantiği korunur. Yeni import created_at ayrıca yenidir ve ayrı sınanır.",
+        "Supplier stale master update -> scrub yarışı PIIyi fark edilmeden diriltmez; seçilen optimistic/precondition guard tam tarihçeyle doğrulanır. Vergi numarası/ofisi, invoice raw XML/mali kayıtlar ve ledger untouched kalır; active bayrağı politika onayı olmadan değişmez.",
+        "Eski policy/as-of Pending item resume, exact cutoff eşitliği, own work-item exclusion, hold-on/hold-off ve fail/cancel rollback customer ortak kabulüyle aynı provenance kontratına bağlanır. Yeni schema seçilirse ayrı up/down ve full composition kanıtı zorunlu; bu oturum test koşmadı."
+      ],
+      "source_evidence": [
+        {
+          "path": "evidence/V1-RMD-739/classification/wave1/KESIN_YUZEY_V2.json",
+          "lines": "5116-5251",
+          "claim": "Mevcut RG-SUPPLIER-ELIGIBILITY/GYZ-010 ve bağımlılık korunuyor."
+        },
+        {
+          "path": "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+          "lines": "48-58,70-81",
+          "claim": "Supplier basis max PO.updated_at, invoice.created_at ID veya tax, receipt.received_at; own work exclusion uygulamaya kopyalanamaz."
+        },
+        {
+          "path": "src/Host/Program.cs",
+          "lines": "844-849",
+          "claim": "Supplier BlockSql yok; name/phone/email scrub, tax ve active kalır."
+        },
+        {
+          "path": "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+          "lines": "113-156",
+          "claim": "Suppliera da account customer key uygulanıyor; Purchasing counterpart yok."
+        },
+        {
+          "path": "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+          "lines": "82-138,140-177,255-292",
+          "claim": "Create->Save, Submit/Cancel->Update, Receive->LockLines->SaveReceipt->UpdatePO->stock; supplier okumaları tx öncesi."
+        },
+        {
+          "path": "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs",
+          "lines": "10-36,170-278",
+          "claim": "Save own tx; Update iki overload; LockLines FOR UPDATE. Üçü producer protokol katılım noktası."
+        },
+        {
+          "path": "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs",
+          "lines": "155-218",
+          "claim": "Receipt standalone+caller transaction overload; supplier mutex yok."
+        },
+        {
+          "path": "src/Modules/Purchasing/PurchaseInvoices/PostgresPurchaseInvoiceRepository.cs",
+          "lines": "16-82,178-229,251-314",
+          "claim": "Import own tx; status transition caller tx; invoice receipt alternate insert. MapLine invoice row kilitler fakat retention basis kolonlarını değiştirmez."
+        },
+        {
+          "path": "src/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceService.cs",
+          "lines": "35-58,116-175,178-185",
+          "claim": "Tax lookup tx öncesi; null supplier import geçerli. Approval resolved supplier, invoice-first update, tarihli receipt; return dalında receipt yok."
+        },
+        {
+          "path": "src/Modules/Purchasing/PurchaseInvoices/IPurchaseInvoiceRepository.cs",
+          "lines": "5-38",
+          "claim": "Mevcut methodlar Npgsql connection/transaction taşır; yeni interface zorunluluğu kanıtlanmadı."
+        },
+        {
+          "path": "src/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceInboxService.cs",
+          "lines": "60-109",
+          "claim": "QNB download -> aynı ImportAsync -> cursor update; ayrı gizli invoice insert yok."
+        },
+        {
+          "path": "src/Host/Experience/Purchasing/PurchaseInvoiceEndpoints.cs",
+          "lines": "26-34,55-82",
+          "claim": "XML import, approval/reject ve fetch-qnb gerçek Host entrypointleri."
+        },
+        {
+          "path": "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs",
+          "lines": "154-222",
+          "claim": "PO create/submit/cancel/receipt gerçek Host çağrıları."
+        },
+        {
+          "path": "src/Modules/Purchasing/Suppliers/PostgresSupplierRepository.cs",
+          "lines": "63-82,123-213",
+          "claim": "Tax lookup, autocommit create/update/delete; update tax+PIIyi mutlak yazar. Delete public primitive var, SupplierService canlı delete callerı görülmedi."
+        },
+        {
+          "path": "src/Modules/Purchasing/Suppliers/SupplierService.cs",
+          "lines": "18-99",
+          "claim": "Create/update/activate/deactivate bütün master yazımları repository Save/Updatea gider; tax mutation gerçek."
+        },
+        {
+          "path": "src/Modules/Purchasing/Suppliers/Supplier.cs",
+          "lines": "66-99",
+          "claim": "Tax mutable, AssertCanAcceptOrders sadece Active; anonymized marker yasağı yok."
+        },
+        {
+          "path": "database/migrations/V1/V1-RMD-489/175-purchase-invoices.up.sql",
+          "lines": "1-22",
+          "claim": "Nullable supplier FK, zorunlu tax; tax-only relation gerçek schema davranışı."
+        },
+        {
+          "path": "tests/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceServiceTests.cs",
+          "lines": "15-20,46-51",
+          "claim": "Gerçek repository; null supplier kabul fixtureı var, fake repository yok."
+        },
+        {
+          "path": "tests/Modules/Purchasing/PurchaseInvoices/PurchaseInvoiceApprovalTests.cs",
+          "lines": "17-26,43-57,86-95",
+          "claim": "Gerçek repository ve geç supplier kaydı; receipt issue-date semantiği."
+        },
+        {
+          "path": "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs",
+          "lines": "98-109",
+          "claim": "Selection recent invoice/receipt testi mevcut, concurrent destructive apply testi değil; çalıştırılmadı."
+        },
+        {
+          "command": "git grep -n -E 'class .*: (IRetentionExecutionService|IAnonymizationPlans|ICustomerAnonymizationRequestStore|IPurchaseOrderRepository|IGoodsReceiptRepository|IPurchaseInvoiceRepository|IAccountTransactionLedger|ICustomerProfileStore|IInvoiceGenerationService)' -- src tests",
+          "exit_code": 0,
+          "claim": "PO/receipt/purchase invoice concrete fake yok. Public interface imzaları sabit kalırsa zorunlu fake consumer rewrite yok; ortak ScratchPlans exact yolu AnonymizationWorkflowTests.cs."
+        }
+      ],
+      "readiness": "scope-blocked",
+      "notes": [
+        "En küçük supplier ortak serialization kontratı önerisi: tax membership mutex(ler)i -> class+supplier subject mutex/row guard -> PO/invoice row -> PO lines -> inventory mevcut kilitleri; tümü producer/destructive adımın aynı Npgsql transactionında commit/rollback sonuna dek. Tax değişiminde eski/yeni değer kilitleri sabit toplam sırada alınır; supplier mapping yeniden okunup doğrulanır. Key encoding tahsisi RG-HOLD/integration işidir, mevcut kodmuş gibi isim uydurulmadı.",
+        "Tax mutex yalnız supplier eşleştirmesinin phantom/kimlik-değişim sınırı için gerekir; sırf başka tablo kullanan consumerın tümünü değiştirmek gerekmez. İlgili supplier membership sıfırken bile import aynı tax mutexini alır; master create/update aynı tax alanını kullanır. Tax-null supplier yalnız subject kilidi kullanır. Trim dışında yeni casefold/vergi kimliği normalleştirmesi veya mevzuat kuralı türetilmez.",
+        "Salt supplier row FOR UPDATE mevcut FK insertleriyle kısmen çakışabilir; supplier_id NULL/tax-only invoice FK korumasını atlar. Bu yüzden yalnız parent-row FK locking TOCTOU kapanış kanıtı sayılamaz.",
+        "Tam producer yazma yolları tespit edildi: PO Save+Update, PO receipt iki Save overloadı, invoice Insert+InsertReceipt ve bunları doğru sıraya koyacak iki service dosyası; tax membership/master Save+Update(+public Delete primitive) aynı supplier repositoryde. MapLine/Reject invoice.created_atı değiştirmediğinden yeni uygunluk kuralı gibi ele alınmadı; invoice row sırası açısından read evidence olarak kapsandı.",
+        "Policy/as-of taşıma için customerda belirlenen work/run/rule DB join aynı şekilde yeterli; RetentionModels/IRetentionExecutionService/IAnonymizationPlans imzasını genişletmek zorunlu değil. Ortak serializer kanıtı eksik kaldığından teknik envanterin tamamlanması readiness yükseltmedi.",
+        "Yeni integration kimliği atanmadan ve tax->subject->row kilit kontratı gerçek concurrency kabulüyle sabitlenmeden kapsam blocked. Mevcut groupIDler korunur; migration/endpoint/task ID üretilmedi."
+      ]
+    }
+  ],
+  "limitations": [
+    "Yalnız salt-okunur teknik inceleme. Kod/test yazılmadı, test/build/repo script çalıştırılmadı; PostgreSQL yarışı yeniden üretilmedi. Statik tespitler runtime PASS/Done değildir.",
+    "Tek çıktı bu scratch JSON. Repositoryye hiçbir yazma yapılmadı; mevcut plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md değişikliği ve untracked evidence/V1-RMD-739/classification/ dokunulmadan bırakıldı. Başlangıç/son git status --short ve git diff --name-only aynı; HEAD 8c03e79bdc5263f5a5a26a524693403012d871d2.",
+    "AGENTS.md, TASK_STANDARD.md, OWNERSHIP.md, aktif V1-RMD-739 ve doğrudan V1-RMD-737 görev kartı okundu; plan/GATES.md ilgili global/sürüm kısımları 1-150 okundu. Application gate kanıtı yeniden doğrulanmadı; zaten uygulama başlamadı.",
+    "source_evidence satırları bu oturum gösterilen enclosing method/source okumalarıdır; bütün repo veya bütün test içerikleri okunmuş iddiası yok. Test yollarının bazısı gelecekteki acceptance write-setidir, bugünkü davranışın çalıştırılmış kanıtı değildir.",
+    "Fakes taraması hem dosya arama hem tracked git grep ile yapıldı. İncelenen interface setinde yalnız ScratchPlans fake bulundu. İmza/constructor değişirse derleyici kanıtı ve tüketici taraması yeniden gerekir; bu oturum compile yapılmadı.",
+    "Tam kaynak YETKI_ODEME_KAPSAM_INCELEME_V2.json çok uzun olduğundan ilgili customer kısmı ve ilk 2000 satır okundu; supplier/hold exact hükümleri KESIN_YUZEY_V2.json ilgili aralıklarından alındı. Önceki raw evidence değiştirilmedi.",
+    "Kaynakta bulunmayan bazı tahmini dosya adlarına okuma denemesi not_found döndü; gerçek karşılıklar sonradan bulundu: V1-RMD-737-test-bosluklari.md, CreditTermsCreditPolicy.cs ve tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj. Bu eksik adlar write-sete alınmadı.",
+    "İki group eksiksiz raporlandı; scope-blocked nedeni artık genel teknik-okuma eksikliği değil, exact cross-owner integration tahsisi, ortak lock sırasının onayı ve mevcut çok-adımlı destructive transaction sınırının güvenli planlanmasıdır. Yeni ürün/mevzuat kuralı veya migrationID atanmadı."
+  ]
+}

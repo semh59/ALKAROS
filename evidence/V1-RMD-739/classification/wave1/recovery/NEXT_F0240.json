@@ -1,0 +1,20 @@
+{
+  "source_id": "F0240",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Alert deduplication race: two concurrent first RaiseAlert calls both create active alerts",
+      "status": "open",
+      "invariant": "Same source/error = exactly one active alert",
+      "mechanism": "PostgresAlertRepository.cs RaiseAlertAsync uses advisory lock (pg_advisory_xact_lock) at line 189-194, but the lock key is only acquired when DeduplicationKey or SourceReferenceType+Id are provided. When neither is provided (null), no advisory lock is taken. The SELECT ... FOR UPDATE at lines 201-216 / 224-238 locks nothing when no active row exists yet, so two concurrent first callers both see zero rows and both INSERT a new alert. The idx_alerts_dedup_active index at 027-alerts.up.sql:34-37 is a partial non-unique index (WHERE status IN ('Open','Acknowledged','Escalated')), not a UNIQUE constraint, so it does not prevent duplicate inserts.",
+      "source_evidence": "src/Modules/Observability/AlertFoundation/PostgresAlertRepository.cs:180-238; database/migrations/V1/V1-ALT-001/027-alerts.up.sql:34-37; evidence/V1-RMD-739/findings/register.md:250",
+      "acceptance": "Concurrent RaiseAlertAsync calls with same deduplication key (or same alert_type+source_reference) must deduplicate to a single active alert. Add test with parallel Tasks verifying only one alert row created. Advisory lock must be taken for all code paths including null deduplication key (use alert_type+source_reference composite).",
+      "id": "W2-N-F0240-01",
+      "parents": [
+        "F0240"
+      ]
+    }
+  ],
+  "limitations": "The advisory lock is per-transaction (xact_lock), so it serializes within a single DB connection pool but not across separate transactions that don't overlap. The fix requires ensuring the lock is always acquired before the SELECT FOR UPDATE, even when deduplication key is null (fallback to alert_type+source_reference). No existing test covers concurrent first-raise scenario (tests use DisableParallelization).",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

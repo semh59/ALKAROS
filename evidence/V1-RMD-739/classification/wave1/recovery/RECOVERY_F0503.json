@@ -1,0 +1,33 @@
+{
+  "source_id": "F0503",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Her ilk 86 işleminin plan çatışması sayılmasına özgü PO kabulü doğrulanamıyor",
+      "status": "verification-needed",
+      "invariant": "Plan çatışmasının ürün anlamı ve yanlış-pozitif bildirim toleransı izlenebilir ürün kararıyla tanımlanmalıdır.",
+      "mechanism": "Kod wasAvailable değerini doğrudan planConflict yapar; aktif satıştaki her ürünün ilk 86 işleminde Granted/Auto, sıfır tutarlı grant oluşturur. Görev In scope 3 bu davranışı açıkça tanımlar; dolayısıyla kodun görev kuralından saptığı iddiası yoktur. Goal'daki 2026-09-13 Semih kararı mutfaktan 86 işlemini destekler, ancak her ilk 86'nın çatışma sayılması ve yanlış-pozitif toleransı için ayrı onay kaydı göstermez. Gürültünün kabul edilip edilmediği kaynak okumasıyla çözülemez.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:160",
+        "evidence/V1-RMD-739/tasks/B044.md:23-25",
+        "plan/v1/kitchen-printing/V1-KIT-008-availability-suspend-bridge.md:11-28,87-94,100-101",
+        "src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:675-692,702-722,734-760",
+        "evidence/V1-RMD-739/findings/po-questions.md:1-49"
+      ],
+      "acceptance": [
+        "Semih/PO, aktif her ürünün ilk 86 işleminde plan çatışması oluşturulmasını ve beklenen bildirim hacmini açıkça onaylar veya gerçek çatışma koşulunu tanımlar; karar tarihi ve kaynak kaydı iliştirilir.",
+        "Onaylanan kurala göre normal 86, gerçek çatışma ve zaten pasif ürünün tekrar 86 senaryoları ayrılır; oluşan grant/bildirim adetleri doğrulanır."
+      ],
+      "id": "W2-R-F0503-01",
+      "parents": [
+        "F0503"
+      ]
+    }
+  ],
+  "limitations": [
+    "PO teyidi alınmadı; ürün kuralının yanlış olduğu kesinleştirilmedi. Statik mekanizma doğrulandı, iş anlamı açık.",
+    "po-questions.md dosyasının tamamı okundu; bu özel 86 sorusu ve soru numarası yok. Numara uydurulmaması için decision-blocked yerine verification-needed kullanıldı; ürün kararı hâlâ gereklidir.",
+    "Repo yazma, kod/test/build çalıştırma yapılmadı. B044 kartındaki yöneticiye bildirim ve HTTP 409 bulguları bu kaynak kaydının kapsamına eklenmedi."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

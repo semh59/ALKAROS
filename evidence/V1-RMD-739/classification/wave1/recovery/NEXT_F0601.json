@@ -1,0 +1,20 @@
+{
+  "source_id": "F0601",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "KitchenOperationsStore reads catalog.categories via raw SQL bypassing module boundary",
+      "status": "open",
+      "invariant": "Module boundaries: Kitchen module must not directly read Catalog tables; catalog data must be accessed via Catalog module's API/repository",
+      "mechanism": "KitchenOperationsStore.GetCategoriesAsync() at line 348 executes raw SQL \"SELECT category_id, name FROM catalog.categories WHERE active ORDER BY sort_order, name\" directly against the catalog.categories table. This is a cross-module table read without going through the Catalog module's PostgresCategoryRepository (which owns catalog.categories at line 7 of PostgresCategoryRepository.cs). The comment at line 340-343 acknowledges this but claims it's acceptable because 'a category NAME is not a catalog-management decision' - however this rationalization does not restore the module boundary.",
+      "source_evidence": "evidence/V1-RMD-739/findings/low-B.md:18; src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:348; src/Modules/Catalog/ProductCatalog/PostgresCategoryRepository.cs:7",
+      "acceptance": "KitchenOperationsStore.GetCategoriesAsync must be removed or refactored to call a Catalog module query endpoint/repository instead of raw SQL. A test must verify Kitchen module no longer directly queries catalog.categories.",
+      "id": "W2-N-F0601-01",
+      "parents": [
+        "F0601"
+      ]
+    }
+  ],
+  "limitations": "The defect is confirmed by source code inspection. The raw SQL read is present and active in HEAD. No evidence of a Catalog module query API being used instead. The comment rationalizing the boundary violation is part of the defect - it documents the known bypass.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

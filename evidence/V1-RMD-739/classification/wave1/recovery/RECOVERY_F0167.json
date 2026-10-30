@@ -1,0 +1,69 @@
+{
+  "source_id": "F0167",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-WTR-001 dört testlik kanıtı silinen motora ait; canlı kuyruğa kabul eşlemesi yok",
+      "status": "open",
+      "invariant": "Tarihsel motor testleri, bugünkü tarayıcı oturum/kuyruk kabulünü kanıtlamış sayılamaz; eski kanıt korunup güncel uygulama ve testlere açık eşleme yapılmalı.",
+      "mechanism": "closure-evidence.txt SessionQueue .csproj için dört başarılı test ve tarayıcı/iptal kabulü bildiriyor. Üretim SessionQueue dizini yok, git ls-files bu iki yüzey için boş; V1-RMD-104 ve 572732769a8b51e0933d76354be73d26dbb516f3 silmeyi doğruluyor. Güncel davranış offline-queue.js ve state.js'te; Vitest ile kalıcı E2E dosyaları mevcut. WTR-001 kartına 2026-10-28 tarihsel kapalı notu eklenmiş; bu kısmi belge düzeltmesi göz ardı edilmedi. Ancak eski closure-evidence güncel kabul/test eşlemesi veya yerine geçen kanıta bağlanmamış; yalnız tarihsel kapalı notu kalan kanıt boşluğunu kapatmıyor. Canlı kuyruğun hiç testi olmadığı iddiası çürütüldü.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:177",
+        "evidence/V1-RMD-739/tasks/B061.md:15-16",
+        "evidence/V1-WTR-001/closure-evidence.txt:1-13",
+        "plan/v1/waiter-pwa/V1-WTR-001-pwa-session-and-offline-queue.md:18-24",
+        "plan/v1/waiter-pwa/V1-WTR-001-pwa-session-and-offline-queue.md:49-53",
+        "plan/v1/remediation/V1-RMD-104-dead-waiter-offline-queue-engine-removal.md:9-22",
+        "plan/v1/remediation/V1-RMD-104-dead-waiter-offline-queue-engine-removal.md:33-41",
+        "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:115-135",
+        "src/Clients/WaiterPwa/wwwroot/js/state.js:43-50",
+        "tests/Clients/StaticApps/offline-queue.test.js:103-155",
+        "tests/Clients/StaticApps/offline-queue.test.js:200-261",
+        "tests/E2E/WaiterPwa/specs/06-offline-queue.spec.js:52-151"
+      ],
+      "acceptance": [
+        "Eski dört testlik kanıt açıkça silinen SessionQueue motoruna ait tarihsel sonuç olarak işaretlenir; güncel kabulün yerine kullanılmaz.",
+        "WTR-001 kabul maddeleri bugünkü JS uygulaması, Vitest/E2E senaryosu ve gerçek HEAD/komut/exit code içeren kanıta tek tek eşlenir.",
+        "Sayfa yenileme kapsamı ile gerçek tarayıcı kapanıp açılma/device-browser matrix kapsamı ayrı raporlanır."
+      ],
+      "id": "W2-R-F0167-01",
+      "parents": [
+        "F0167"
+      ]
+    },
+    {
+      "title": "İptal edilmiş oturumla kuyruk replay reddinin güncel uçtan uca kanıtı doğrulanamadı",
+      "status": "verification-needed",
+      "invariant": "İptal edilmiş veya süresi dolmuş oturum yeni sunucu siparişi oluşturamamalı; kuyruk kaybolmadan beklemeli ve farklı kullanıcı adına oynatılmamalı.",
+      "mechanism": "Eski kanıt bu güvenlik kabulünü karşıladığını söylüyor fakat silinen motora ait. Bugünkü istemci 401 turunu koruyor, api giriş ekranını açıyor ve sunucu table-draft öncesi oturum/yetki kontrolü yapıyor; dolayısıyla kaynak okuması bir yetki atlatması kanıtlamıyor. Vitest sahip-kullanıcı filtresi ve geçici durum sınıflamasını test ediyor; açılan E2E 06 dosyası bağlantı kesilmesi/422/429/503/yenileme içeriyor, gerçek oturum iptalinden sonra replay denemesi içermiyor. Hedefli tests aramalarında bu kuyruk+iptal senaryosu bulunamadı. Gerçek sunucu oturum iptali ve kalıcı değişiklik kontrolü çalıştırılmadan kabul kapatılamaz.",
+      "source_evidence": [
+        "evidence/V1-WTR-001/closure-evidence.txt:11-13",
+        "plan/v1/waiter-pwa/V1-WTR-001-pwa-session-and-offline-queue.md:49-53",
+        "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:121-129",
+        "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:217-257",
+        "src/Clients/WaiterPwa/wwwroot/js/api.js:39-56",
+        "src/Host/Experience/Orders/OrderManagementEndpoints.cs:245-274",
+        "tests/Clients/StaticApps/offline-queue.test.js:103-110",
+        "tests/Clients/StaticApps/offline-queue.test.js:231-261",
+        "tests/E2E/WaiterPwa/specs/06-offline-queue.spec.js:1-252"
+      ],
+      "acceptance": [
+        "Gerçek oturumla çevrimdışı tur kuyruğa alınır; sunucuda bu oturum iptal edilir; bağlantı ve replay tetiklenir. Yanıt 401 olmalı; sunucuda yeni draft/submit/kitchen ticket oluşmamalı ve kuyruk korunmalı.",
+        "Aynı kullanıcı yeni geçerli oturumla geri geldiğinde tur idempotent tek kez gönderilir; farklı kullanıcı girişinde eski sahibin turu gönderilmez.",
+        "Tarayıcı yeniden başlatma, oturum süresi dolması ve desteklenen device/browser matrix için sonuçlar ayrı kaydedilir; mock durum testi gerçek iptal kanıtı yerine sayılmaz."
+      ],
+      "id": "W2-R-F0167-02",
+      "parents": [
+        "F0167"
+      ]
+    }
+  ],
+  "limitations": [
+    "Salt okunur inceleme; test, uygulama, migration veya tarayıcı çalıştırılmadı.",
+    "git show --no-patch ve git ls-files yalnız tarihsel silme kimliğini ve izlenen kaynakların yokluğunu doğrulamak için çalıştırıldı; exit code 0.",
+    "SessionQueue test dizinindeki derleme artıkları üretim/test kaynağı sayılmadı; *.cs aramasında dosya yok. Bin/obj içeriği incelenmedi.",
+    "Hedefli oturum/kuyruk araması tüm alternatif isimli testleri eksiksiz dışlamaz; bu yüzden replay güvenlik davranışı open kusur değil verification-needed.",
+    "WTR-001 görev dosyası zaten tarihsel not içeriyor; tamamen güncellenmemiş olduğu ileri sürülmedi."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

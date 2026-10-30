@@ -1,0 +1,25 @@
+{
+  "source_id": "F0172",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "\"Oturumdan token kaynağı ve denetim olayları\" kapsamda ama hiçbir denetim olayı yazılmıyor (CustomerSession/ altında audit referansı yok); yalnız neden kodu dönüyor",
+      "status": "open",
+      "invariant": "IssueAsync, ValidateAsync (başarı/başarısızlık), RevokeAsync her çağrıldığında audit_events tablosuna (veya eşdeğer) kayıt yazılmalı: kimin (session/table), ne zaman, ne işlem (issue/validate/revoke), neden kodu, sonuç",
+      "mechanism": "V12-QRS-003.md plan (satır 38) 'In scope' da 'Oturumdan token kaynağı ve denetim olayları' yazıyor. CustomerSessionService.cs'de IssueAsync (45-57), ValidateAsync (64-84), RevokeAsync (87-88) var ama hiçbiri audit yazmıyor. CustomerSession namespace'inde (src/Modules/QrOrdering/CustomerSession/) audit ile ilgili hiçbir dosya/referans yok (grep sonucu). Sadece FailureReason string'leri dönülüyor (NOT_FOUND, REVOKED, EXPIRED, IDLE_EXPIRED). Plan acceptance evidence (V12-QRS-003.md:55-78) testlerde neden kodları doğrulanıyor ama audit event yazımı yok.",
+      "source_evidence": [
+        "plan/v1.2/qr-security/V12-QRS-003-customer-session-lifecycle.md:38",
+        "plan/v1.2/qr-security/V12-QRS-003-customer-session-lifecycle.md:55-78",
+        "src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs:45-88",
+        "evidence/V1-RMD-739/findings/register.md:182"
+      ],
+      "acceptance": "CustomerSessionService her public metot (IssueAsync, ValidateAsync, RevokeAsync) audit event yazar; event en az: session_id, table_id, operation (issue/validate_success/validate_failure/revoke), reason_code, timestamp, actor_type (customer/staff/system) içerir; testler audit event yazılmasını doğrular.",
+      "id": "W2-N-F0172-01",
+      "parents": [
+        "F0172"
+      ]
+    }
+  ],
+  "limitations": "Audit event şeması/tablo ismi repoda tespit edilemedi (CustomerSession modülü altında yok, dış modül olabilir). Plan acceptance evidence'de audit event testi yok. Bu 'eksik implementasyon' kusuru, 'yanlış implementasyon' değil.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

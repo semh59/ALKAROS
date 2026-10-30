@@ -1,0 +1,84 @@
+{
+  "source_id": "F0388",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "verdict": {
+    "result": "belge-kusuru-dogrulandi-not-defect-elemesi-yanlis",
+    "documentation": "F0388 uygulamada audit eksik diyen kayıt değil; V1-RMD-237 görev belgesindeki endpoint/dönüş-sonrası audit anlatımının bayat olduğunu söylüyor. Güncel görev belgesi bu anlatımı hâlâ taşıyor. Belge kusuru not-defect diye elenmemeli.",
+    "application": "Okunan güncel üretim yolunda yeni indirim ve audit aynı connection/transaction içinde, commit öncesinde yazılıyor. Endpoint audit bağımlılığını store'a iletiyor. Bu kayıttan açık üretim kusuru çıkarılmadı; çalışma zamanı başarısı ileri sürülmüyor.",
+    "prior_classification": "739-next-01f-F0388.json:6-11 özgün low-A.md kaydını ters okuyor: low-A.md audit artık atomik diyor, ayrı çağrı iddiasını görev md'sine atfediyor. Önceki not-defect hükmü belge kusurunu uygulama davranışıyla karıştırmış. Aynı eski çıktının transaction başlangıcını 149 göstermesi de yanlış; güncel başlangıç 83, 149 allocation kilidinin komutudur.",
+    "closure": "Bulgu kapatılmadı; sınıflama düzeltmesi için bağımsız statik kaynak görüşü. Görev durumu ve sahiplik değiştirilmedi."
+  },
+  "defects": [
+    {
+      "id": "F0388-BD-1",
+      "category": "BD",
+      "status": "statik-olarak-dogrulandi-kapatilmadi",
+      "title": "V1-RMD-237 belgesi audit yazımını hâlâ endpointte ApplyDiscountAsync dönüşünden sonra tarif ediyor",
+      "mechanism": "Owned surface 27-32 açıkça endpoint başarı yolunda ApplyDiscountAsync döndükten sonra AppendAsync eklenmesini ister. In scope 39-43 başarı dönüşüne bağlı eski anlatımı sürdürür. Güncel endpoint yalnız store'a auditEvents ve correlationId geçirir; store adjustment insert ve audit insert'i aynı işlemde commit eder. Tarihsel kapsam korunabilir, fakat güncel mekanizmaya yönlendirme veya superseded açıklaması bu görev dosyasında bulunmuyor.",
+      "impact": "Görevi güncel akış/sahiplik kaynağı olarak okuyan kişiye yanlış yazma yeri ve işlem sınırı sunuluyor. Uygulamanın atomik olması belge uyuşmazlığını ortadan kaldırmaz.",
+      "evidence_refs": ["E3", "E4", "E5", "E6", "E7"],
+      "scope": "Void/comp ayrı kapsamdır; bu kayıttan onlar için yeni üretim kusuru veya kapanış çıkarılmadı."
+    }
+  ],
+  "exact_evidence": [
+    {
+      "id": "E1",
+      "path": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-w2-batch-01.json:18-29",
+      "observation": "Tam F0388 kaydı okundu: category BD; özgün metin audit artık aynı işlemde, görev md'si dönüş sonrası diyor. Kayıt kimliği ve iddia kaynağıdır; tek başına doğruluk kanıtı sayılmadı."
+    },
+    {
+      "id": "E2",
+      "path": "D:/project/ALKAROS/evidence/V1-RMD-739/findings/low-A.md:45",
+      "observation": "Özgün satır: Audit olayı artık ayrı çağrı değil; Md ApplyDiscountAsync döndükten sonra der; H bayat. B010.md:31-32 de aynı eski inceleme metnidir; bağımsız doğruluk kanıtı sayılmadı."
+    },
+    {
+      "id": "E3",
+      "path": "D:/project/ALKAROS/plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:27-43",
+      "observation": "Gerçek görev belgesinde 29-31: endpoint başarı yolu, BillingSplitStore.ApplyDiscountAsync döndükten sonra gerçek IAuditEventStore.AppendAsync çağrısı ekler. 39-43 başarı dönüşüne bağlı anlatımı taşır. Tam görev dosyası 1-72 okundu."
+    },
+    {
+      "id": "E4",
+      "path": "D:/project/ALKAROS/src/Host/Experience/Billing/BillingSplitApplication.cs:158-241",
+      "observation": "Endpoint auditEvents alır (166), ApplyDiscountAsync'e geçirir (223-225); dönüşten sonra ayrı AppendAsync çağrısı yok. 92-95 varsayılan PostgresAuditEventStore/BillingSplitStore DI kayıtlarını gösterir."
+    },
+    {
+      "id": "E5",
+      "path": "D:/project/ALKAROS/src/Host/Experience/Billing/BillingSplitStore.cs:82-89,105-113,166-195",
+      "observation": "lockTransaction 83'te başlar. 170 adjustment AddAsync, 171 row-version, 172-191 audit AppendAsync aynı connection/lockTransaction ile çağrılır. Commit 192, dönüş 194. Audit hatasını yutan catch bu yöntemde yok. Replay 105-113 yeni audit yazmadan döner."
+    },
+    {
+      "id": "E6",
+      "path": "D:/project/ALKAROS/src/Modules/Billing/Adjustments/PostgresBillAdjustmentRepository.cs:89-121",
+      "observation": "Transaction overload'u BuildInsertCommand'a çağıranın connection/transaction değerlerini geçirir; INSERT NpgsqlCommand aynı transaction'a bağlanır."
+    },
+    {
+      "id": "E7",
+      "path": "D:/project/ALKAROS/src/Modules/Audit/EventStore/PostgresAuditEventStore.cs:35-42,60-62; D:/project/ALKAROS/src/Modules/Audit/EventStore/AuditEventWriter.cs:15-43,66; D:/project/ALKAROS/src/Modules/Audit/EventStore/IAuditEventStore.cs:8-14",
+      "observation": "Audit transaction overload'u WriteAsync'e aynı transaction'ı geçirir; gerçek INSERT komutunun Transaction alanı 32'de atanır, 66'da yürütülür. Desteklemeyen audit store varsayılan overload'da bağımsız yazmak yerine NotSupportedException atar."
+    },
+    {
+      "id": "E8",
+      "path": "D:/project/ALKAROS/tests/Host/Experience/Billing/BillingSplitHttpTests.cs:699-717,720-752",
+      "observation": "Test kaynağı store'a FailingAuditEventStore verir; discount/tip exception ve adjustment count=0 bekler. İkinci test her olaydan bir kayıt ve retry'da ek kayıt yok beklentisini taşır. Yalnız kaynak okundu; testler çalıştırılmadı."
+    },
+    {
+      "id": "E9",
+      "path": "D:/project/ALKAROS/plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:47-54",
+      "observation": "Void/comp ile grant Pending/Refused yolları açıkça kapsam dışında."
+    },
+    {
+      "id": "E10",
+      "path": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-next-01f-F0388.json:6-11",
+      "observation": "Eski not-defect hükmü ve ters çevrilmiş başlık gözlendi. Bu dosya yalnız denetlenen sınıflama hatasının kanıtıdır; üretim veya belge doğruluğunun kanıtı değildir."
+    }
+  ],
+  "unread_sources": [],
+  "limitations": [
+    "AGENTS.md tamamı okundu. Repository salt okunur tutuldu; yalnız yetkili scratch çıktısı yazıldı.",
+    "git rev-parse HEAD çıkış 0: 8c03e79bdc5263f5a5a26a524693403012d871d2; batch head ile aynı. Çalışma ağacı içeriği okundu; clean-tree veya kaynak hash eşitliği iddiası yok.",
+    "Repository kodu, build veya test çalıştırılmadı. Audit arızasında rollback statik işlem sınırı ve test beklentisi olarak destekleniyor; yeni runtime sonucu değildir.",
+    "unread_sources boş olması yalnız kullanıcının bu iki iddia için istediği kaynakların okunmuş olduğunu ifade eder; tüm Billing/Audit deposu veya tüm test fixture'ları okundu anlamına gelmez.",
+    "Eski parent-independent ve next raporları doğruluk kanıtı kabul edilmedi. Sonuç güncel gerçek görev md'si, üretim kaynakları ve açıkça kaynak düzeyinde tutulan test beklentilerine dayanır.",
+    "Bulgu kapatma, Done onayı, severity yükseltme veya repository değişikliği yapılmadı."
+  ]
+}

@@ -1,0 +1,39 @@
+{
+  "source_id": "F0925",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Ödeme kapanış projeksiyonu ortak anlık görüntü olmadan kuruluyor",
+      "status": "open",
+      "invariant": "Bir kapanış projeksiyonundaki adisyon, ödeme durumu, tahsis ve adjustment bilgileri birbiriyle tutarlı olmalı; eşzamanlı tam iade öncesindeki ödeme durumu iade sonrasındaki diğer okumalarla sessizce birleştirilmemeli.",
+      "mechanism": "RebuildAsync adisyonu, ödemeleri, tahsisleri ve adjustment'ları ayrı çağrılarla okuyor. Ödeme deposunun RepeatableRead işlemi yalnız kendi okumasını kapsıyor; tahsis okuması ayrı CreateCommand kullanıyor. Calculator, Approved/PartiallyRefunded kimlik kümesini ilk ödeme listesinden kurup sonraki tahsisleri bununla filtreliyor. Ödeme okumasından sonra tam iade commit olursa dönen projeksiyon eski Approved durumunu sayabilir. Projector yorumunun yalnız daha temkinli sonuç üretildiği iddiası iade için geçerli değil. Ancak bu durumun kalıcı bayat Paid ürettiği bu incelemede kanıtlanmadı: Host tam iade yolu aynı işlemde adisyonu Cancelled yapıp row_version artırıyor ve BillClosureService SaveAsync eski adisyon sürümünü reddediyor. Ortak snapshot eksikliği ile kalıcı yanlış kapanış iddiası eş tutulmadı.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:30 — özgün kaynak",
+        "evidence/V1-RMD-739/tasks/B023.md:32-35 — tam kart",
+        "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs:27-49 — dört bağımsız okuma ve temkinlilik yorumu",
+        "src/Modules/Payments/PaymentAggregate/PostgresPaymentRepository.cs:34-51 — ödeme listesinin kendi RepeatableRead işlemi",
+        "src/Modules/Payments/Allocations/Persistence/PostgresPaymentAllocationRepository.cs:116-140 — ayrı tahsis sorgusu",
+        "src/Modules/Billing/PaymentClosure/BillPaymentClosureCalculator.cs:30-52,57-72 — eski ödeme kimlik kümesiyle tahsis/toplam hesabı",
+        "src/Host/Experience/Billing/PaymentRefunds.cs:409-433,438-453,491-522 — iade ile aynı işlemde iptal ve row_version artışı",
+        "src/Modules/Billing/PaymentClosure/BillClosureService.cs:23-50 — adisyon sürümüyle kayıt ve tekrar hesaplama",
+        "src/Modules/Billing/BillFoundation/PostgresBillRepository.cs:447-488 — eski row_version reddi",
+        "tests/Modules/Billing/PaymentClosure/BillPaymentClosureProjectorTests.cs:38-106 — mevcut yokluk, normal kapanış, Unknown ve değişmeyen veriyle deterministik tekrar testleri"
+      ],
+      "acceptance": [
+        "Gerçek PostgreSQL'de ödeme okumasından hemen sonra tam iade commit eden bariyerli yarış testi kurulmalı; projeksiyon tutarlı bir sürüme dayanmalı veya sürüm değişimini algılayıp yeniden okunmalı.",
+        "Aynı yarış BillClosureService üzerinden sınanmalı; tam iade/iptal sonrasında kalıcı Paid yazılmadığı ve eski row_version'ın yeniden hesaplama ürettiği gösterilmeli.",
+        "Temkinlilik yorumu, tam iade ve ortak snapshot sınırlarını doğru anlatmalı; sabit veride iki eşit sonuç eşzamanlılık kanıtı sayılmamalı."
+      ],
+      "id": "W2-R-F0925-01",
+      "parents": [
+        "F0925"
+      ]
+    }
+  ],
+  "limitations": [
+    "Ortak snapshot bulunmadığı statik olarak doğrulandı; yarış çalıştırılmadı. Kalıcı bayat Paid iddiası verification-needed düzeyinde, doğrulanmış etki olarak sayılmadı.",
+    "Host tam iade yolundaki iptal/row_version koruması görüldü; bütün olası ödeme yazıcıları ve veritabanı tetikleyicileri tüketilmedi.",
+    "Kod/test/migration çalıştırılmadı; test kaynakları yalnız kapsam değerlendirmesi için okundu."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

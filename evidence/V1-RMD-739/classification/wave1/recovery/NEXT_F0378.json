@@ -1,0 +1,20 @@
+{
+  "source_id": "F0378",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "/complete endpoint InProgress pre-check outside transaction",
+      "status": "open",
+      "invariant": "Production batch completion must be atomic: InProgress check and stock effects execution must share a transaction or shared optimistic-concurrency guard.",
+      "mechanism": "ProductionManagementEndpoints.cs:149-154 fetches batch and checks batch.Status != InProgress, throwing InvalidProductionBatchTransitionException BEFORE calling stockEffectService.ExecuteBatchStockEffectsAsync at line 156. The check and the execution are separate await calls with no shared transaction scope. A concurrent second request passes the check (batch still InProgress), both enter ExecuteBatchStockEffectsAsync; the service's own idempotency (WasAlreadyExecuted) catches the second only if consumptions/output rows already exist. If the first request hasn't written them yet, both proceed — double status flip risk without shared optimistic-concurrency check.",
+      "source_evidence": "ProductionManagementEndpoints.cs:149-154,156; low-A.md:35",
+      "acceptance": "InProgress check and ExecuteBatchStockEffectsAsync share a single transaction scope OR a shared row-version/optimistic-concurrency guard that causes the second request to fail with 409 before any stock movement.",
+      "id": "W2-N-F0378-01",
+      "parents": [
+        "F0378"
+      ]
+    }
+  ],
+  "limitations": "Read-only analysis; no test execution. The service-side FOR UPDATE lock (ProductionStockEffectService.cs) mitigates double stock deduction but does not close the pre-check gap at the orchestration layer.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

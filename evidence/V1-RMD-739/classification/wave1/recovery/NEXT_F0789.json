@@ -1,0 +1,22 @@
+{
+  "source_id": "F0789",
+  "head": "F0789 from audit-overrides (BD/aday)",
+  "defects": [
+    {
+      "title": "BD - aday",
+      "status": "historical-fixed",
+      "invariant": "Category: BD, Secondary: none",
+      "mechanism": "low-B.md:206 / tasks/B110.md:26: md V12-ONL-009 yazılmadı diyor, görev Done; sorun ekran dili değil bayat yol/dependency notu.",
+      "source_evidence": [
+        "source-reason: low-B.md:206 / tasks/B110.md:26: md V12-ONL-009 yazılmadı diyor, görev Done; sorun ekran dili değil bayat yol/dependency notu."
+      ],
+      "acceptance": "Historical or informational",
+      "id": "W2-N-F0789-01",
+      "parents": [
+        "F0789"
+      ]
+    }
+  ],
+  "limitations": "Source: audit-overrides. Evidence limited to text search in low-A/B/C.md and task files. No code execution or repo writes performed.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

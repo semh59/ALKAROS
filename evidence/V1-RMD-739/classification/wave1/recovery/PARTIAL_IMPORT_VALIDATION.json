@@ -1,0 +1,54 @@
+{
+  "batches": [
+    {
+      "batch": 3,
+      "source_total": 45,
+      "review_drafts": 20,
+      "pending": 25,
+      "atomic_review_items": 21,
+      "status": {
+        "open": 15,
+        "decision-blocked": 2,
+        "not-defect": 3,
+        "historical-fixed": 1
+      },
+      "structure": "PASS for partial only",
+      "semantic_independent_review": "pending",
+      "sha256": "9ee5ad594f371f3c3bc25fc28168b6c457f5711d2707c481c019d52c86febb42"
+    },
+    {
+      "batch": 4,
+      "source_total": 55,
+      "review_drafts": 26,
+      "pending": 29,
+      "atomic_review_items": 28,
+      "status": {
+        "open": 23,
+        "verification-needed": 2,
+        "not-defect": 2,
+        "historical-fixed": 1
+      },
+      "structure": "PASS for partial only",
+      "semantic_independent_review": "pending",
+      "sha256": "76027e65a10ee873c86bd2b9a508b4fffd88c1bb85d98788d9e936105efbe32f"
+    },
+    {
+      "batch": 9,
+      "source_total": 49,
+      "review_drafts": 24,
+      "pending": 25,
+      "atomic_review_items": 20,
+      "status": {
+        "open": 17,
+        "not-defect": 3
+      },
+      "structure": "PASS for partial only",
+      "semantic_independent_review": "pending",
+      "sha256": "8d89c4585cf317aacaa6cb9b483b307230092a390a2a5cc33257c4bf200cd14c"
+    }
+  ],
+  "draft_sources": 70,
+  "pending_in_these_batches": 79,
+  "atomic_review_items": 69,
+  "not_completion": "These are drafts, not independently reviewed completion; overall previous accepted coverage unchanged."
+}

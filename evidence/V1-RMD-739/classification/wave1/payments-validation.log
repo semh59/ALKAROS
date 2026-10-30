@@ -1,0 +1,4 @@
+COMMAND: python C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-save-wave1.py
+EXIT_CODE: 0
+PASS: 15 source IDs covered, 12 unique defects, 12 unique draft groups, all current paths and cited line ranges exist, source hashes recorded.
+Runtime tests: NOT RUN

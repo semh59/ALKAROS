@@ -1,0 +1,34 @@
+{
+  "source_id": "F0377",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Stoksuz parti tamamlama için çağıransız ikinci servis yolu korunuyor",
+      "status": "open",
+      "invariant": "Üretim partisini tamamlayan üretim sözleşmesi tek, stok etkileriyle tutarlı ve gerçek çağrı zincirinde kullanılan yol olmalı; kullanılmayan ikinci public mutasyon bırakılmamalı.",
+      "mechanism": "ProductionBatchService.CompleteBatchAsync yalnız aggregate durumunu değiştirip repository UpdateAsync çağırıyor; stok hareketi yapmıyor. Gerçek HTTP complete yolu yalnız ExecuteBatchStockEffectsAsync çağırıyor. CompleteBatchAsync repo aramasında tanım, arayüz ve iki modül testi dışında üretim çağıranı vermedi. Eski görev bunu kapsam dışına çıkarıp ayrı karara bırakmış; bu, bugünkü kullanılmayan mutasyonu ortadan kaldırmıyor. Bu bulgu mevcut HTTP yolunda çift stok düşümü iddiası değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:34",
+        "src/Modules/Production/BatchLifecycle/ProductionBatchService.cs:50-60",
+        "src/Host/Experience/Production/ProductionManagementEndpoints.cs:135-170",
+        "plan/v1/remediation/V1-RMD-133-production-management-experience.md:66-77",
+        "plan/v1/remediation/V1-RMD-133-production-management-experience.md:88-93",
+        "Repo genelinde CompleteBatchAsync salt okunur araması: üretim tarafında servis/arayüz tanımı ve açıklamalar; çağrı olarak yalnız ProductionBatchDatabaseTests.cs eşleşmeleri bulundu."
+      ],
+      "acceptance": [
+        "Kullanılmayan CompleteBatchAsync sözleşmesi ve uygulaması kaldırılmalı ya da stok etkilerini atlamayan tek tamamlama yoluna birleştirilmeli.",
+        "İzinli uygulama görevinde public çağrı zinciri ve modül/HTTP testleri, tamamlamanın tek transaction içinde durum ve stok etkilerini tutarlı uyguladığını kanıtlamalı."
+      ],
+      "id": "W2-R-F0377-01",
+      "parents": [
+        "F0377"
+      ]
+    }
+  ],
+  "limitations": [
+    "Yalnız statik kaynak ve kart incelemesi; repo kodu, build veya test çalıştırılmadı.",
+    "Dinamik/reflection çağrılarının yokluğu yürütülerek kanıtlanmadı; ad tabanlı repo araması ve gerçek HTTP çağrı zinciri incelendi.",
+    "Repo değiştirilmedi; başlangıçta V1-RMD-739 görev dosyasında kullanıcı değişikliği ve classification altında untracked dosyalar vardı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

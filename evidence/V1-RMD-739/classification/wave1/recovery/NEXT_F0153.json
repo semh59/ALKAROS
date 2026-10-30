@@ -1,0 +1,20 @@
+{
+  "source_id": "F0153",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Host.Observability test run killed by OOM (exit=1); acceptance criteria 'real exit code for compile and test records' not met; never re-run",
+      "status": "open",
+      "invariant": "All test runs must complete with real exit codes recorded; acceptance criteria must be fully satisfied before task closure",
+      "mechanism": "evidence/V1-RMD-599/README.md line 33 states: 'Host.Observability koşusu bellek yüzünden yarım kaldı, exit=1, log kesik, başarısız test satırı yok: doğrulanamadı (altyapı)'. The task's acceptance criteria 1 requires 'derleme ve test kayıtları gerçek exit code' (compile and test records with real exit codes). Since the Observability test run was killed by memory (OOM) and exited with code 1, the exit code was recorded but the test suite did not complete - so there is no valid 'test record' for Observability. The README explicitly says 'doğrulanamadı' (could not be verified) and 'yeniden koşulmamış' (not re-run). The task V1-RMD-599 was marked done despite this known gap.",
+      "source_evidence": "evidence/V1-RMD-599/README.md:32-33, 41-42; evidence/V1-RMD-739/findings/register.md:163",
+      "acceptance": "Re-run Host.Observability test suite in an environment with sufficient memory (or with memory limits configured) until it completes with exit code 0. Record the full test output and exit code in evidence. Update acceptance evidence to show all test projects (including Observability) have real passing exit codes.",
+      "id": "W2-N-F0153-01",
+      "parents": [
+        "F0153"
+      ]
+    }
+  ],
+  "limitations": "The OOM may be an infrastructure limitation (test runner memory) rather than a code defect. If the test suite genuinely requires more memory than available in the CI/test environment, this needs infrastructure remediation (increase memory, add swap, or split test suite). The task was closed without addressing this, leaving a verification gap for the Observability module tests.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

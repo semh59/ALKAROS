@@ -1,0 +1,29 @@
+{
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "source_records_covered": 54,
+  "atomic_defect_or_review_items": 75,
+  "source_groups": 73,
+  "candidate_groups": 62,
+  "write_conflicts": 119,
+  "defect_statuses": {
+    "historical-fixed": 8,
+    "open": 49,
+    "decision-blocked": 12,
+    "needs-verification": 6
+  },
+  "candidate_statuses": {
+    "decision-blocked": 14,
+    "scope-review-required": 38,
+    "verification-required": 4,
+    "historical-regression-only": 6
+  },
+  "production_changes": false,
+  "implementation_started": false,
+  "limitations": [
+    "Bu54 kaynak dalga1 dilimidir; diğer1322 kaydın davranış ayrıştırması bitmedi.",
+    "open statik kaynakta gösterilen kusur anlamındadır; runtime doğrulaması değildir.",
+    "Her taslak exact task alanı peer review sonrası kesinleşir; Task ID atanmadı.",
+    "Tarihsel düzeltme parentına yeni keşfedilen riskin iliştirilmesi eski kusuru kendiliğinden yeniden açmaz.",
+    "Bağımsız inceleme sonrası sıra bağımlılıkları uygulandı; aynı dosya çakışmaları ayrıca seri yürür. Interface değişen stok gruplarında 11 test fake dosyası görev yazılırken adıyla eklenecek; STK-026 yeni migration adı Task ID ile atanacak."
+  ]
+}

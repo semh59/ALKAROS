@@ -1,0 +1,20 @@
+{
+  "source_id": "F0091",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "CashSessionLifecycleService.CloseSessionAsync — ActualCash'i istek gövdesinden alıyor, kayıtlı sayımla (/counts) karşılaştırmıyor, sayım kaydı şart koşmuyor",
+      "status": "open",
+      "invariant": "Kasa kapanışta (CloseSession) beklenan nakit (ExpectedCash), açılış bakiyesi + nakit hareketleri (In/Out) + tahsilatlar (cash-tender) üzerinden hesaplanmalı; kullanıcının girdiği ActualCash bu hesaplanmış ExpectedCash ile karşılaştırılmalı. Sayım kaydı (RecordCount) kapanışın ön koşulu olmalı (Counting durumunda sayım yapılmış olmalı).",
+      "mechanism": "CashSessionLifecycleService.cs:123-133 — CloseSessionAsync `command.ActualCash` parametresini doğrudan alıyor, `expectedCash` parametresi de çağırandan geliyor. Policy.ValidateCanCloseSession (CashSessionPolicy.cs:90-120) sadece `session.Status` Counting/Closing kontrol ediyor, sayım yapılmış mı (RecordCount çağrılmış mı) kontrol etmiyor. ExpectedCash hesaplaması repository'de (GetExpectedCash veya snapshot alanında) yok; CloseSessionAsync'e parametre olarak geçiriliyor. Test CashSessionHttpTests.cs:122 — `start-count` çağrılmadan `close` yapıyor ve 409 Conflict bekliyor (policy Counting/Closing kontrolü geçiyor çünkü StartCount status'u Counting'e çeviriyor), ama RecordCount çağrılmamış — sayım kaydı olmadan kapanıyor.",
+      "source_evidence": "D:/project/ALKAROS/src/Modules/Cash/SessionLifecycle/CashSessionLifecycleService.cs:123-133; D:/project/ALKAROS/src/Modules/Cash/Contracts/CashSessionPolicy.cs:90-120; D:/project/ALKAROS/tests/Host/Experience/CashSession/CashSessionHttpTests.cs:122",
+      "acceptance": "CloseSessionAsync: (1) ExpectedCash'i snapshot'tan/ledger'dan hesaplayıp (repository metodu eklenmeli) parametre olarak almayı bırakmalı; (2) RecordCount çağrılmış mı kontrolü eklenmeli (snapshot'ta CountedAmount alanı varsa null/0 kontrolü, yoksa ayrı flag/state); (3) Policy.ValidateCanCloseSession sayım yapılmış kontrolü yapmalı. Test: RecordCount çağrılmadan CloseSessionAsync 409/Conflict dönmeli; sayım yapıldıktan sonra ExpectedCash ile ActualCash karşılaştırması gerçekleşmeli.",
+      "id": "W2-N-F0091-01",
+      "parents": [
+        "F0091"
+      ]
+    }
+  ],
+  "limitations": "CashSessionSnapshot tanımı (CountedAmount alanı var mı?) okunmadı — repository'de sayım kaydının nasıl persist edildiği (CashSessionRecord vs Snapshot) doğrulanmadı. CashSessionHttpTests.cs'teki test (line 122) aslında StartCount sonrası Close yapıyor ama RecordCount yok; test 409 bekliyor ama policy Counting durumunu geçtiği için 200 dönebilir (testin kendisi buggy olabilir). Gerçek test çalıştırılmadığı için davranış doğrulanmadı.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

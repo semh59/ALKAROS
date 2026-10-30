@@ -1,0 +1,32 @@
+{
+  "source_id": "UI0032",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "releaseSharedTable hata yok sayılıyor - sadece console.error",
+      "status": "open",
+      "invariant": "KASA-1 serbest bırakılmazsa sonraki müşteri aynı siparişe karışır; operationId `${orderId}:submit` ikinci turda IDEMPOTENCY_KEY_REUSED 409 verir; kasiyere uyarı yok",
+      "mechanism": "cashier-app.js:788-799 releaseSharedTable fonksiyonu response.ok false olduğunda sadece console.error yazıp false döner; çağırılan yer (line 761) dönüş değerini kontrol etmez",
+      "source_evidence": "src/Clients/Cashier/wwwroot/cashier-app.js:788-799; 761",
+      "acceptance": "releaseSharedTable başarısız olduğunda kasiyere toast uyarısı verilmeli ve/veya işlem durdurulmalı; ikinci submit denemesinde 409 yerine net hata mesajı görünecek",
+      "id": "W2-N-UI0032-01",
+      "parents": [
+        "UI0032"
+      ]
+    },
+    {
+      "title": "İkinci tur submit'te IDEMPOTENCY_KEY_REUSED 409 riski",
+      "status": "verification-needed",
+      "invariant": "operationId `${orderId}:submit` (:745) sabit; aynı sipariş ikinci turda gönderilirse 409 dönüp kasiyere uyarı yok",
+      "mechanism": "Line 745: const operationId = `${draft.orderId}:submit`; Line 761 releaseSharedTable hatası yok sayılır; Line 774-775 catch bloğunda generic 'Bağlantı koptu' mesajı",
+      "source_evidence": "src/Clients/Cashier/wwwroot/cashier-app.js:745,761,774-775",
+      "acceptance": "Gerçek ikinci tur çalıştırılarak 409 senaryosu doğrulanmalı; idempotency key stratejisi (round bazlı mi?) netleştirilmeli",
+      "id": "W2-N-UI0032-02",
+      "parents": [
+        "UI0032"
+      ]
+    }
+  ],
+  "limitations": "Static report classification; güncel runtime doğrulaması yapılmamış. 1020 ana kayıtla kimlik eşleştirmesi yapılmamış. Gerçek 409 üretimi test edilmedi.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

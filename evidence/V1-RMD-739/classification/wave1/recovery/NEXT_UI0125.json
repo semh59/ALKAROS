@@ -1,0 +1,23 @@
+{
+  "source_id": "UI0125",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "PosTerminal online-operations.css ve online-menu.css primitives.tsx kullanmıyor; sabit hex renkler",
+      "status": "verification-needed",
+      "invariant": "Tasarım sistemi primitives.tsx üzerinden --ds-* token'ları kullanılmalı; PosTerminal online-operations.css:4-36, online-menu.css:3-18 buton/alan/durum renkleri sabit hex ile tanımlı",
+      "mechanism": "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:7 'PosTerminal online-operations.css:4-36, online-menu.css:3-18: buton/alan/durum renkleri sabit hex; primitives.tsx kullanılmıyor'. UI0125 kaydı gorsel-tutarlilik.md:7'ye dayanıyor; kategori UI, kritik öncelik, qualification belirsiz. Statik rapor sınıflaması; güncel runtime doğrulaması değildir. Gerçek kusur doğrulanırsa kritik; eski önem yalnız tarihçedir. 1020 ana kayıtla kimlik eşleştirmesi yapılmadı; tekrar-adayı, silinmedi.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:7",
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:7 (UI0125 text)"
+      ],
+      "acceptance": "PosTerminal online-operations.css ve online-menu.css primitives.tsx (--ds-* token'ları) kullanacak şekilde refactor edilmiş mi doğrulanmalı; runtime görsel tutarlılık testi (storybook/E2E) eklenmeli",
+      "id": "W2-N-UI0125-01",
+      "parents": [
+        "UI0125"
+      ]
+    }
+  ],
+  "limitations": "PosTerminal CSS dosyalarının güncel içeriği ve primitives.tsx kullanım durumu bu oturumda doğrulanamıyor (repo yazma/kod çalıştırma yok). Sadece gorsel-tutarlilik.md statik raporuna dayanıyor; runtime doğrulaması ve 1020 ana kayıtla eşleştirme eksik.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

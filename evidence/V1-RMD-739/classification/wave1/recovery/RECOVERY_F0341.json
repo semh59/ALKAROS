@@ -1,0 +1,37 @@
+{
+  "source_id": "F0341",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Ödenen adisyonda indirim/bahşiş tekrarının durum denetimine takılması giderilmiş",
+      "status": "historical-fixed",
+      "invariant": "Başarıyla uygulanmış aynı anahtar ve gövdeli indirim/bahşiş, adisyon sonradan ödeme almış olsa da yeni satır yaratmadan önceki adjustment kimliğiyle yanıtlanmalı; yeni anahtar uygun olmayan durumda reddedilmelidir.",
+      "mechanism": "Eski kartta durum denetimi replay aramasından önceydi. Güncel ApplyDiscountAsync replay dalını 105-113'te, durum denetimini 118-119'da; ApplyTipAsync replay dalını 335-344'te, durum denetimini 349-350'de çalıştırıyor. İndirim uç noktasının EnsureDiscountRequestableAsync ön kapısı da uygulanmış anahtarı 254-257'de geçiriyor. Düzeltme commit'i d0c172ff8123768e9a8a16949a86c627d4c4e54e (V1-RMD-744).",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:351 — özgün kesik kayıt",
+        "evidence/V1-RMD-739/tasks/B137.md:28-31 — tam iddia",
+        "src/Host/Experience/Billing/BillingSplitStore.cs:91-119 — kilit sonrası okuma, replay ve durum sırası",
+        "src/Host/Experience/Billing/BillingSplitStore.cs:245-257 — ön kapı replay istisnası",
+        "src/Host/Experience/Billing/BillingSplitStore.cs:330-350 — bahşiş replay ve durum sırası",
+        "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:754-804 — Paid sonrası aynı kimlik/200, yeni anahtar/409, tek satır beklentileri",
+        "evidence/V1-RMD-744/README.md:3-6 — önceki gerçek PostgreSQL koşusu ve negatif mutasyonların açıklaması",
+        "evidence/V1-RMD-744/green.log:41-45 — kayıtlı 108 başarılı, 0 başarısız sonuç"
+      ],
+      "acceptance": [
+        "İndirim ve bahşiş uygulandıktan sonra adisyon Paid yapıldığında aynı gövde/anahtar 200 ve ilk AdjustmentId döndürür; satır sayısı 1 kalır.",
+        "Paid adisyona yeni anahtar 409 döndürür; aynı anahtar farklı gövde idempotency hatası verir.",
+        "Kısmen ödenmiş/diğer uygun olmayan durumlarda da replay dalının durum denetiminden önce kalması korunur."
+      ],
+      "id": "W2-R-F0341-01",
+      "parents": [
+        "F0341"
+      ]
+    }
+  ],
+  "limitations": [
+    "Salt okunur görev nedeniyle test, uygulama veya migration çalıştırılmadı; green.log bu oturumun yeni çalıştırması değil tarihsel kanıttır.",
+    "İncelenen HTTP regresyonları Paid durumunu kapsıyor; diğer durumlar için bu oturumda runtime doğrulama yapılmadı.",
+    "Önceki delegasyon izi tek başına kanıt sayılmadı; ilgili üretim ve test dalları yeniden okundu."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

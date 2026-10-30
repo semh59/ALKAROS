@@ -1,0 +1,39 @@
+{
+  "source_id": "F0210",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Kalıcı 403 alan tur sonraki turların gönderimini süresiz durduruyor",
+      "status": "open",
+      "invariant": "Bir tura özgü kalıcı yetki reddi, aynı kullanıcının gönderilebilir diğer turlarını süresiz engellememeli; reddedilen tur görünür ve kurtarılabilir kalmalı.",
+      "mechanism": "postOrder table-draft veya submit-draft başarısızlığını aynen döndürüyor. isTransientOrderStatus tüm 403 yanıtlarını hata kodundan bağımsız geçici sayıyor; flushQueue bu dalda break ederek failedOrders'a aktarmadan çevrimi bitiriyor. Retry 15 saniyeden başlayıp 5 dakika tavanına çıkıyor; deneme sınırı yok. api yalnız 401 için giriş ekranını açıyor. 401 ve 423 gerçekten geçici olabilir; doğrulanan kusur kalıcı 403'ün ayırt edilmemesi ve kuyruk başı engellemesidir. Yaşlandırma uzun vadede yaşlanmış en eski başarısız turu öne taşıyabilir; her olası tur sıralamasının her çevrimde engellendiği iddia edilmiyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:220",
+        "evidence/V1-RMD-739/tasks/B087.md:16-19",
+        "plan/v1/waiter-pwa/V1-WTR-053-js-refactor-step17-offline-queue-module.md:69-109",
+        "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:70-104",
+        "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:163-185",
+        "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:196-224",
+        "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:235-280",
+        "src/Clients/WaiterPwa/wwwroot/js/api.js:39-56",
+        "src/Host/Experience/Orders/OrderManagementEndpoints.cs:1181-1185",
+        "src/Host/Experience/Orders/OrderManagementEndpoints.cs:1228-1230"
+      ],
+      "acceptance": [
+        "Kalıcı FORBIDDEN/FEATURE_DISABLED yanıtlı ilk tur ile gönderilebilir ikinci tur hazırlanır; ilk tur kaybolmadan hata listesinde görünür, ikinci tur aynı flush çevriminde gönderilir.",
+        "401 oturum yenileme ve 423 kilit kalkması senaryolarında tur korunur; kurtarma sonrası aynı payload.id ve operationId ile tek kez gönderilir.",
+        "Birden çok retry ve iki dakikalık yaşlandırma sonrasında kalıcı 403 sonraki turları süresiz engellemez."
+      ],
+      "id": "W2-R-F0210-01",
+      "parents": [
+        "F0210"
+      ]
+    }
+  ],
+  "limitations": [
+    "Salt okunur statik doğrulama; repo kodu, test veya tarayıcı çalıştırılmadı.",
+    "Host hata eşlemesi gerçek 403 kodlarını gösteriyor; gerçek sağlayıcı/oturum koşullarında uçtan uca tetikleme yapılmadı.",
+    "Önceki task-9.log yalnız okuma indeksi olarak kullanıldı; sonuçlar güncel açılan kaynaklarla doğrulandı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,1046 @@
+[
+  {
+    "left": "PAY-G01",
+    "right": "PAY-G05",
+    "shared_paths": [
+      "src/Modules/Billing/PaymentClosure/BillClosureService.cs",
+      "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs",
+      "tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G02",
+    "right": "PAY-G03",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G02",
+    "right": "PAY-G04",
+    "shared_paths": [
+      "src/Host/Experience/Orders/OrderSettlementService.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G02",
+    "right": "PAY-G05",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G02",
+    "right": "PAY-G09",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G02",
+    "right": "PAY-G10",
+    "shared_paths": [
+      "src/Host/Experience/Orders/OrderSettlementService.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G03",
+    "right": "PAY-G04",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G03",
+    "right": "PAY-G05",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G03",
+    "right": "PAY-G09",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G03",
+    "right": "PAY-G10",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G04",
+    "right": "PAY-G05",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G04",
+    "right": "PAY-G09",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G04",
+    "right": "PAY-G10",
+    "shared_paths": [
+      "src/Host/Experience/Orders/OrderSettlementService.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G05",
+    "right": "PAY-G09",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G05",
+    "right": "PAY-G10",
+    "shared_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G06",
+    "right": "PAY-G07",
+    "shared_paths": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs",
+      "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G06",
+    "right": "PAY-G08",
+    "shared_paths": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs",
+      "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G07",
+    "right": "PAY-G08",
+    "shared_paths": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs",
+      "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "PAY-G09",
+    "right": "PAY-G10",
+    "shared_paths": [
+      "src/Host/Experience/Billing/BillClosureSweeper.cs",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-457-DOC",
+    "right": "RG-IAM008-DOC",
+    "shared_paths": [
+      "src/Modules/Identity/Authorization/RoleManagementService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-457-DOC",
+    "right": "RG-INFLIGHT-TEST",
+    "shared_paths": [
+      "src/Modules/Identity/Authorization/RoleManagementService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-457-DOC",
+    "right": "RG-LAST-MANAGER",
+    "shared_paths": [
+      "src/Modules/Identity/Authorization/RoleManagementService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-457-DOC",
+    "right": "RG-SELF-REVOKE",
+    "shared_paths": [
+      "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "tests/Host/Experience/Roles/RoleManagementHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-ANON-BOUNDARY",
+    "right": "RG-BLOCKED-EVENTS",
+    "shared_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-ANON-BOUNDARY",
+    "right": "RG-CREDENTIAL-DELETE",
+    "shared_paths": [
+      "src/Host/Program.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-ANON-BOUNDARY",
+    "right": "RG-CUSTOMER-ELIGIBILITY",
+    "shared_paths": [
+      "src/Host/Program.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-ANON-BOUNDARY",
+    "right": "RG-HOLD",
+    "shared_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-ANON-BOUNDARY",
+    "right": "RG-STK-32",
+    "shared_paths": [
+      "docs/architecture/module-dependency-rules.md",
+      "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-ANON-BOUNDARY",
+    "right": "RG-SUPPLIER-ELIGIBILITY",
+    "shared_paths": [
+      "src/Host/Program.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-BLOCKED-EVENTS",
+    "right": "RG-CUSTOMER-ELIGIBILITY",
+    "shared_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-BLOCKED-EVENTS",
+    "right": "RG-HOLD",
+    "shared_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-BLOCKED-EVENTS",
+    "right": "RG-SUPPLIER-ELIGIBILITY",
+    "shared_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-CREDENTIAL-DELETE",
+    "right": "RG-CUSTOMER-ELIGIBILITY",
+    "shared_paths": [
+      "src/Host/Program.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-CREDENTIAL-DELETE",
+    "right": "RG-DEVICE-DELETE",
+    "shared_paths": [
+      "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
+      "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs",
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+      "tests/Modules/Security/DataProtectionRetention/DeletionQueueProcessorTests.cs",
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-CREDENTIAL-DELETE",
+    "right": "RG-RETENTION-INTEGRATION",
+    "shared_paths": [
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-CREDENTIAL-DELETE",
+    "right": "RG-SCHEDULER-DOC",
+    "shared_paths": [
+      "plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-CREDENTIAL-DELETE",
+    "right": "RG-SUPPLIER-ELIGIBILITY",
+    "shared_paths": [
+      "src/Host/Program.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-CUSTOMER-ELIGIBILITY",
+    "right": "RG-HOLD",
+    "shared_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-CUSTOMER-ELIGIBILITY",
+    "right": "RG-SUPPLIER-ELIGIBILITY",
+    "shared_paths": [
+      "src/Host/Program.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-DEVICE-DELETE",
+    "right": "RG-RETENTION-INTEGRATION",
+    "shared_paths": [
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-HOLD",
+    "right": "RG-SUPPLIER-ELIGIBILITY",
+    "shared_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-IAM008-DOC",
+    "right": "RG-INFLIGHT-EVIDENCE",
+    "shared_paths": [
+      "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-IAM008-DOC",
+    "right": "RG-INFLIGHT-TEST",
+    "shared_paths": [
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-IAM008-DOC",
+    "right": "RG-LAST-MANAGER",
+    "shared_paths": [
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-IAM008-DOC",
+    "right": "RG-SELF-REVOKE",
+    "shared_paths": [
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-INFLIGHT-EVIDENCE",
+    "right": "RG-INFLIGHT-TEST",
+    "shared_paths": [
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-INFLIGHT-EVIDENCE",
+    "right": "RG-LAST-MANAGER",
+    "shared_paths": [
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-INFLIGHT-EVIDENCE",
+    "right": "RG-SELF-REVOKE",
+    "shared_paths": [
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-INFLIGHT-TEST",
+    "right": "RG-LAST-MANAGER",
+    "shared_paths": [
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-INFLIGHT-TEST",
+    "right": "RG-SELF-REVOKE",
+    "shared_paths": [
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-LAST-MANAGER",
+    "right": "RG-SELF-REVOKE",
+    "shared_paths": [
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-RETENTION-INTEGRATION",
+    "right": "RG-SCHEDULER-DOC",
+    "shared_paths": [
+      "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs",
+      "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-02",
+    "right": "RG-STK-03",
+    "shared_paths": [
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-02",
+    "right": "RG-STK-04",
+    "shared_paths": [
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-03",
+    "right": "RG-STK-04",
+    "shared_paths": [
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-05",
+    "right": "RG-STK-06",
+    "shared_paths": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-05",
+    "right": "RG-STK-07",
+    "shared_paths": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-05",
+    "right": "RG-STK-08",
+    "shared_paths": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-05",
+    "right": "RG-STK-16",
+    "shared_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-05",
+    "right": "RG-STK-27",
+    "shared_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-06",
+    "right": "RG-STK-07",
+    "shared_paths": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-06",
+    "right": "RG-STK-08",
+    "shared_paths": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-06",
+    "right": "RG-STK-16",
+    "shared_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-06",
+    "right": "RG-STK-27",
+    "shared_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-07",
+    "right": "RG-STK-08",
+    "shared_paths": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-07",
+    "right": "RG-STK-16",
+    "shared_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-07",
+    "right": "RG-STK-27",
+    "shared_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-08",
+    "right": "RG-STK-14",
+    "shared_paths": [
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-08",
+    "right": "RG-STK-16",
+    "shared_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-08",
+    "right": "RG-STK-27",
+    "shared_paths": [
+      "src/Modules/Inventory/InventoryModule.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-08",
+    "right": "RG-STK-33",
+    "shared_paths": [
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-08",
+    "right": "RG-STK-34",
+    "shared_paths": [
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-09",
+    "right": "RG-STK-10",
+    "shared_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-09",
+    "right": "RG-STK-11",
+    "shared_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-09",
+    "right": "RG-STK-33",
+    "shared_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-10",
+    "right": "RG-STK-11",
+    "shared_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-10",
+    "right": "RG-STK-33",
+    "shared_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-11",
+    "right": "RG-STK-33",
+    "shared_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-12",
+    "right": "RG-STK-13",
+    "shared_paths": [
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-12",
+    "right": "RG-STK-16",
+    "shared_paths": [
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-12",
+    "right": "RG-STK-27",
+    "shared_paths": [
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-12",
+    "right": "RG-STK-35",
+    "shared_paths": [
+      "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-13",
+    "right": "RG-STK-16",
+    "shared_paths": [
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-13",
+    "right": "RG-STK-27",
+    "shared_paths": [
+      "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-13",
+    "right": "RG-STK-35",
+    "shared_paths": [
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-14",
+    "right": "RG-STK-27",
+    "shared_paths": [
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-14",
+    "right": "RG-STK-33",
+    "shared_paths": [
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-14",
+    "right": "RG-STK-34",
+    "shared_paths": [
+      "src/Modules/Inventory/InventoryModule.cs",
+      "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+      "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs",
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-17",
+    "shared_paths": [
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-19",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-20",
+    "shared_paths": [
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-21",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-28",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-29",
+    "shared_paths": [
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-15",
+    "right": "RG-STK-30",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-16",
+    "right": "RG-STK-27",
+    "shared_paths": [
+      "src/Modules/Inventory/MovementLedger/StockMovementService.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-16",
+    "right": "RG-STK-35",
+    "shared_paths": [
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-19",
+    "right": "RG-STK-20",
+    "shared_paths": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-19",
+    "right": "RG-STK-21",
+    "shared_paths": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-19",
+    "right": "RG-STK-22",
+    "shared_paths": [
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-19",
+    "right": "RG-STK-28",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-19",
+    "right": "RG-STK-29",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-19",
+    "right": "RG-STK-30",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-20",
+    "right": "RG-STK-21",
+    "shared_paths": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-20",
+    "right": "RG-STK-22",
+    "shared_paths": [
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-20",
+    "right": "RG-STK-28",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-20",
+    "right": "RG-STK-29",
+    "shared_paths": [
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-20",
+    "right": "RG-STK-30",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-21",
+    "right": "RG-STK-28",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-21",
+    "right": "RG-STK-29",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-21",
+    "right": "RG-STK-30",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-23",
+    "right": "RG-STK-24",
+    "shared_paths": [
+      "docs/data/nullable-unique-policy.md",
+      "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-27",
+    "right": "RG-STK-33",
+    "shared_paths": [
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-27",
+    "right": "RG-STK-34",
+    "shared_paths": [
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-27",
+    "right": "RG-STK-35",
+    "shared_paths": [
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-28",
+    "right": "RG-STK-29",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-28",
+    "right": "RG-STK-30",
+    "shared_paths": [
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+      "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-29",
+    "right": "RG-STK-30",
+    "shared_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  },
+  {
+    "left": "RG-STK-33",
+    "right": "RG-STK-34",
+    "shared_paths": [
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "rule": "Aynı anda implementation yapılamaz; aynı davranış değilse birleştirilmez."
+  }
+]

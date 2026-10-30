@@ -1,0 +1,35 @@
+{
+  "source_id": "F0601",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Kitchen kategori SQL bağımlılığı mimari kenar denetiminde görünmüyor",
+      "status": "open",
+      "invariant": "Host orkestratörünün gerçek modül veri bağımlılıkları belgelenmeli ve yeni izinsiz bağımlılıklar otomatik kapıda yakalanmalıdır.",
+      "mechanism": "GetCategoriesAsync doğrudan catalog.categories okur. KitchenOperations için belgelenmiş ve testteki izinli modül listesinde Catalog yoktur; test SQL ilişkilerini değil derlenmiş tip bağımlılıklarını denetler. Bu nedenle mevcut SQL bağımlılığı bu kapının kapsamına girmez. Ham SELECT'in tek başına yasak bir çapraz-modül yazma veya yetki açığı olduğu sonucuna varılmadı: görev doğrudan kategori okumasını açıkça ister, mimari kuralın SQL yasağı mutasyonlar içindir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:18",
+        "evidence/V1-RMD-739/tasks/B074.md:34-36",
+        "src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:334-353",
+        "plan/v1/kitchen-display/V1-RMD-219-kitchen-chef-can-read-categories.md:37-49",
+        "docs/architecture/module-dependency-rules.md:176,187-192,206-218",
+        "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:281-282,358-384"
+      ],
+      "acceptance": [
+        "Kategori okuma bağımlılığı onaylı mimari kayıtla temsil edilir; yalnız listeyi genişletmek yerine gerçek SQL/veri bağımlılığını doğrulayan kapı veya Catalog sözleşmesine geçen eşdeğer çözüm bulunur.",
+        "Negatif kontrolde kayıt dışı başka modül ilişkisine SQL okuması eklendiğinde mimari doğrulama başarısız olur; mevcut aktif kategori listesi davranışı ve düşük ayrıcalıklı erişim korunur."
+      ],
+      "id": "W2-R-F0601-01",
+      "parents": [
+        "F0601"
+      ]
+    }
+  ],
+  "limitations": [
+    "Yalnız statik kaynak ve kart doğrulaması yapıldı; repository kodu, test, build veya migration çalıştırılmadı.",
+    "Ham SQL okumasının varlığı doğrulandı; tüm çapraz-modül okumaların yasak olduğu iddiası doğrulanmadı ve bu dosya böyle bir iddia taşımaz.",
+    "Önceki task-4.log yalnız yön bulmak için arandı; karar güncel dosyalar yeniden okunarak verildi.",
+    "Başlangıçta görev planında değiştirilmiş dosya ve evidence/V1-RMD-739/classification altında untracked kullanıcı/diğer oturum çıktıları vardı; bunlara dokunulmadı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

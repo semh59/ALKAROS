@@ -1,0 +1,86 @@
+{
+  "result": "PASS_WITH_LIMITATIONS",
+  "checks": {
+    "validator": {
+      "command": "python evidence/V1-RMD-739/classification/validate.py",
+      "workdir": "D:/PROJECT/ALKAROS",
+      "exit_code": 0,
+      "observed_result": "PASS",
+      "main": 1020,
+      "supplement": 356,
+      "historical_full_closure_matches": 17,
+      "historical_partial_closure_matches": 28
+    },
+    "independent": {
+      "command": "python C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-final-independent-check.py",
+      "exit_code": 0,
+      "corrections": 70,
+      "unique_correction_ids": 70,
+      "compared_fields": [
+        "category",
+        "secondary",
+        "qualification",
+        "reason"
+      ],
+      "correction_json_csv_mismatches": 0,
+      "previous_reviewer_overrides": 49,
+      "previous_reviewer_override_mismatches": 0,
+      "csv_records": 1376,
+      "all_csv_fields_compared": [
+        "id",
+        "category",
+        "secondary",
+        "priority",
+        "qualification",
+        "closure_status",
+        "work_package",
+        "routing_domain",
+        "source",
+        "text",
+        "reason"
+      ],
+      "all_represented_csv_field_mismatches": 0,
+      "complete_closure_source_task_set_equality": true
+    },
+    "targeted_source_text_reason_closure_reads": {
+      "F0396": "low-A.md:53 ve tasks/B012.md:22 okundu. Clients.All yayını; PII yokluğu yetki kanıtı sayılmıyor. GY/PO belirsiz, satır bazlı kapanış teyidi gerekli; anlamsal uyumlu.",
+      "F0981": "low-C.md:86 ve tasks/B061.md:10 okundu. SET-007 docker sapması doğrulama bekliyor; SVG yokluğu kusur yapılmamış. KN/BD belirsiz; kapanış teyidi gerekli; anlamsal uyumlu.",
+      "F0982": "low-C.md:87 ve tasks/B061.md:19 okundu. Silinmiş OrderManagementStore/in-memory belge anlatımı BD aday olarak korunmuş; kapanış teyidi gerekli; anlamsal uyumlu.",
+      "F0989": "low-C.md:94 ve tasks/B063.md:11 okundu. orders.create ile not/telefon erişimi, yetkili personel kararının kapsamı GY/PO belirsiz; kapanış teyidi gerekli; anlamsal uyumlu.",
+      "F1005": "low-C.md:110 kesik metni tasks/B087.md:34-35 ile tamamlandı. Üretime bağlanmamış servis BK aday; BD/TE ikincil. Gerçek eski exit 0 kanıtı yeniden koşulmuş gibi sunulmuyor; 057/060 belge farkı korunmuş. Kapanış teyidi gerekli; anlamsal uyumlu.",
+      "F1012": "low-C.md:117 ve tasks/B112.md:15 okundu. Mock runtime silinmesi ve eski test/hash tarihçesi BD/KN aday; 1aeb7284 tarihsel tam kapanış eşleşmesi bağımsız korunmuş. KAPANIS_ESLESMESI exact source/task çifti uyumlu; commit stat içinde ilgili görev belgesi değişikliği mevcut. Yeni runtime kapanışı sonucu çıkarılmadı."
+    },
+    "counts_and_reports": {
+      "routing_packages_json": 300,
+      "routing_packages_markdown": 300,
+      "routing_packages_summary": 300,
+      "package_markdown_membership_matches_json": true,
+      "package_members_unique": 1376,
+      "main_qualifications": {
+        "aday": 908,
+        "belirsiz": 81,
+        "bilgi": 28,
+        "bulgu-degil": 3
+      },
+      "supplement_qualifications": {
+        "aday": 152,
+        "belirsiz": 183,
+        "bilgi": 19,
+        "bulgu-degil": 2
+      },
+      "qualification_and_category_counters_match_SAYIM": true,
+      "OZET_count_and_qualification_text_matches": true,
+      "package_interpretation": "SAYIM/OZET/PAKETLER uyumlu: 300 kategori/alan yönlendirme paketi; kesin hata, kök neden veya uygulama görevi sayısı değil."
+    },
+    "repository_files_written": false,
+    "git_status_before_after_summary": "Değişmedi: V1-RMD-739 görev Markdown dosyası modified; classification dizini untracked. Bu inceleme yalnız scratch dosyaları oluşturdu."
+  },
+  "findings": [],
+  "limitations": [
+    "Beş dakikalık hedefli final kontrolü; 1376 kaydın tüm semantiği ve bütün üretim kodu yeniden denetlenmedi.",
+    "70 düzeltmenin dört sınıflama alanı ve CSV'deki 11 alan bağımsız programatik karşılaştırıldı; altı seçili kaydın kaynak, tam kart, gerekçe ve kapanış anlamı okundu.",
+    "17 tam/28 kısmi eşleşme tarihsel kayıtlı kanıttır; güncel uygulama testi veya runtime doğrulaması yapılmadı.",
+    "CSV closure_task alanını içermez; exact source/task kapanış eşitliği ana JSON ile kapanış defteri arasında kontrol edildi.",
+    "Denetlenen kapsamda gerçek artık hata saptanmadı; bu, bütün uygulamanın kusursuzluğu veya kesin açık hata toplamı iddiası değildir."
+  ]
+}

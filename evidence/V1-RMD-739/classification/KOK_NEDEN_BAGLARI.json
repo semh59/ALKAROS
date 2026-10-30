@@ -1,0 +1,72 @@
+[
+  {
+    "id": "KR001",
+    "description": "Mal kabul kilitsiz okuma/kayıp güncelleme aynı kök neden kaydı.",
+    "sources": [
+      "findings/register.md:24",
+      "findings/register.md:33"
+    ],
+    "evidence": "findings/verdict-1.md:24; findings/verdict-2.md:12; V1-RMD-740 kapanış eşleşmesi.",
+    "records": [
+      "F0017",
+      "F0026"
+    ]
+  },
+  {
+    "id": "KR002",
+    "description": "Son yönetici kontrol-sonra-yaz yarışı iki görevde aynı kusur.",
+    "sources": [
+      "findings/register.md:141",
+      "findings/register.md:169"
+    ],
+    "evidence": "V1-RMD-743 kapanış eşleşmesi; uçuş halindeki iptal register.md:140 bu kökle kapanmaz.",
+    "records": [
+      "F0131",
+      "F0159"
+    ]
+  },
+  {
+    "id": "KR003",
+    "description": "Yazdırma belirsizlik penceresi: Printing lease reset ve gönderim öncesi InFlight yokluğu bağlı alt kusurlar.",
+    "sources": [
+      "findings/register.md:29",
+      "findings/register.md:30"
+    ],
+    "evidence": "findings/verdict-1.md:35; birlikte ele alınmalı, biri diğerinin yerine sayılmaz.",
+    "records": [
+      "F0022",
+      "F0023"
+    ]
+  },
+  {
+    "id": "KR004",
+    "description": "Günlük menü sayacı bağlantısı ve metadata beslemesi aynı teslimat ailesi; iki ayrı alt koşul.",
+    "sources": [
+      "findings/register.md:39",
+      "findings/register.md:40"
+    ],
+    "evidence": "findings/verdict-2.md:35; sayaçları yalnız bağlamak metadata yokluğunu kapatmaz.",
+    "records": [
+      "F0032",
+      "F0033"
+    ]
+  },
+  {
+    "id": "KR005",
+    "description": "Hızlı satış seçenek/not eksikliği ana bulgu ve iki UI raporunda örtüşüyor.",
+    "sources": [
+      "findings/register.md:11",
+      "ui/akis-uzmani.md:11",
+      "ui/pazar-uzmani.md:4"
+    ],
+    "evidence": "Cashier.tsx/api addItem kaynak atıfları; arayüz kayıtlarındaki not/barkod alt koşulları kaybedilmez.",
+    "records": [
+      "F0004",
+      "UI0008",
+      "UI0009",
+      "UI0010",
+      "UI0149",
+      "UI0150"
+    ]
+  }
+]

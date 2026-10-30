@@ -1,0 +1,30 @@
+{
+  "source_id": "W2-04-005",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Oturum döndürme oluşturma ve iptali atomik değil",
+      "status": "open",
+      "invariant": "Token yenileme başarısız veya eşzamanlı olduğunda eski ve yeni geçerlilik atomik yönetilmeli.",
+      "mechanism": "CreateSessionAsync ve RevokeAsync ayrı çağrılar; ikinci çağrı hata verirse yeni oturum oluşturulmuş ve eski oturum iptal edilmemiş kalabilir. Yorum iki geçerli oturum penceresini açıkça belgeliyor.",
+      "source_evidence": [
+        "D:/project/ALKAROS/src/Modules/Security/IdentityHardening/SessionRotationService.cs:9-49",
+        "D:/project/ALKAROS/src/Modules/Identity/DeviceSessions/PostgresDeviceSessionRepository.cs:23-44",
+        "D:/project/ALKAROS/src/Modules/Identity/DeviceSessions/PostgresDeviceSessionRepository.cs:79-92"
+      ],
+      "acceptance": "İptal hatası ve iki eşzamanlı döndürmede tek geçerli halef veya atomik rollback kanıtlanır.",
+      "id": "W2-N-W2-04-005-01",
+      "parents": [
+        "W2-04-005"
+      ]
+    }
+  ],
+  "limitations": [
+    "Belgelenmiş sınır kapanış sayılmadı; gerçek concurrency testi çalıştırılmadı.",
+    "SessionRotationService.RotateAsync içinde CreateSessionAsync (satır 45) ve RevokeAsync (satır 46) ayrı çağrılar; arada transaction yok.",
+    "PostgresDeviceSessionRepository.CreateAsync ve RevokeAsync her biri kendi command'ı açıyor; tek transaction içinde birleştirilemiyor çünkü IDeviceSessionService bu seam'i sunmuyor (SessionRotationService satır 10).",
+    "Yorum 'two valid sessions rather than zero' diyerek bu davranışı kabul ediyor; ancak iki geçerli oturum eşzamanlı erişim, token çalma veya replay attack riskini artırır.",
+    "RevokeAsync false dönerse (session zaten iptal edilmişse) yeni oturum hâlâ oluşturulmuş olur; caller bunu bilmez."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

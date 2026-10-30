@@ -1,0 +1,8 @@
+COMMAND: C:\Users\semih\AppData\Local\hermes\installs\684547ac9b30471d\environments\9153071d1ebd4af3b31abc0bcc0ad446\venv\Scripts\python.exe tools/task-scope/task_scope_tool.py --task-id V1-RMD-739
+EXIT_CODE: 0
+{
+  "task_id": "V1-RMD-739",
+  "valid": true,
+  "metadata_errors": [],
+  "findings": []
+}

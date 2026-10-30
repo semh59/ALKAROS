@@ -1,0 +1,60 @@
+{
+  "source_id": "F0079",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-RMD-707 Done kabulü eldeki kırmızı pytest kanıtıyla uzlaştırılmamış",
+      "status": "open",
+      "invariant": "İlgili test projeleri yeşil kabulü kırmızı kayıtla kapatılamaz; eski hata iddiası aynı hata kimlikleri ve önceki HEAD kanıtıyla izlenmeli.",
+      "mechanism": "Görev Done ve kabul maddesi ilgili test projelerinin yeşil olması. Görevin tek pytest.log kaydı 6 failed, 24 passed içeriyor: üç offline_authorized_void_comp, üç waiter_pwa_frontend testi. V1-RMD-689 README yalnız son üç testin tarihsel başarısızlığına değiniyor; ilk üç için kaynakta bu açıklama yok. V1-RMD-707 README mevcut değil. Bu, bugünkü altı testin hâlâ kırmızı olduğunun değil, görev kapanış kanıtının kabulü sağlamadığının statik doğrulamasıdır. F0003'teki bayat test mekanizmasından farklı olarak bu kusur görev düzeyinde kanıt uzlaştırması ve eksik yeşil koşudur.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:89",
+        "evidence/V1-RMD-739/tasks/B021.md:33-36",
+        "plan/v1/remediation/V1-RMD-707-cashier-waiter-catalog-search-and-retry.md:3-7",
+        "plan/v1/remediation/V1-RMD-707-cashier-waiter-catalog-search-and-retry.md:42-45",
+        "evidence/V1-RMD-707/logs/pytest.log:1-9",
+        "evidence/V1-RMD-689/README.md:11-15",
+        "evidence/V1-RMD-707/mutate.mjs:10",
+        "evidence/V1-RMD-707/mutations.log:1-8"
+      ],
+      "acceptance": [
+        "İlgili Cashier/Waiter frontend testleri aynı güncel HEAD'de gerçek komut, ortam ve exit code ile çalıştırılıp sıfır başarısızlık verir.",
+        "Tarihsel 6 başarısızlık test kimliği bazında korunur; her biri güncel sonuç ve düzeltme/handoff kanıtına bağlanır. Başka görevin üç eski test notu altı testin tümüne genellenmez.",
+        "Görev README veya eşdeğer kapanış belgesi test kapsamını, ham logları ve sınırlamaları açıklar."
+      ],
+      "id": "W2-R-F0079-01",
+      "parents": [
+        "F0079"
+      ]
+    },
+    {
+      "title": "Kasa JavaScript regresyon koşusunun V1-RMD-707 kapanış kanıtı yok",
+      "status": "open",
+      "invariant": "cashier-app.js değişikliğinin mevcut davranışsal istemci testlerine etkisi aynı aday için doğrulanmalı ve kanıtlanmalı.",
+      "mechanism": "evidence/V1-RMD-707 envanterinde yalnız mutate.mjs, mutations.log ve logs/pytest.log dosyaları var; Vitest transcript'i yok. mutate.mjs yalnız iki kaynak-metni Python dosyasını koşturuyor. StaticApps/package.json gerçek vitest run girişini sağlıyor; bunun bu görevde çalıştırıldığı eldeki kaynakla kanıtlanmıyor. Çalıştırılmadığı kesin tarihsel olay olarak değil, kapanış kanıtı eksiği olarak sınıflandı.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:89",
+        "evidence/V1-RMD-739/tasks/B021.md:36",
+        "plan/v1/remediation/V1-RMD-707-cashier-waiter-catalog-search-and-retry.md:21-25",
+        "plan/v1/remediation/V1-RMD-707-cashier-waiter-catalog-search-and-retry.md:42-45",
+        "evidence/V1-RMD-707/mutate.mjs:4-10",
+        "tests/Clients/StaticApps/package.json:1-11"
+      ],
+      "acceptance": [
+        "StaticApps Vitest kasa istemci koşusu gerçek exit code 0 verir; komut, HEAD, ortam, kapsam ve sonuç sayısı görev kanıtına eklenir.",
+        "Kaynak-metni pytest ve davranışsal Vitest kanıtları ayrı etiketlenir; biri diğerinin yerine sayılmaz."
+      ],
+      "id": "W2-R-F0079-02",
+      "parents": [
+        "F0079"
+      ]
+    }
+  ],
+  "limitations": [
+    "Yeni test veya repo kodu çalıştırılmadı; 6 failed, 24 passed yalnız mevcut tarihsel logun sonucudur.",
+    "read_file pytest.log dosyasını binary algıladı; aynı dosya search_files pattern '.' ile dokuz satır halinde doğrudan okundu. Bir karakter encoding bozulması var; test kimlikleri ve sayılar okunabilir.",
+    "evidence/V1-RMD-707/README.md bulunamadı; görev klasörü dosya envanteri ve içeriği incelendi. Başka görevlerin tüm kanıt arşivi taranmadı.",
+    "F0078 davranışsal test kapsamı kusurları burada tekrarlanmadı; bu kayıtta kırmızı kapanış ve eksik Vitest transcript'i ayrıştırıldı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

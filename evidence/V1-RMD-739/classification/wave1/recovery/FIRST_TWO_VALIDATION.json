@@ -1,0 +1,11 @@
+{
+  "result": "PASS",
+  "new_source_records": 2,
+  "new_review_items": 2,
+  "source_ids": [
+    "F0908",
+    "F0388"
+  ],
+  "tier": "Parent semantic source review + reference/hash validation; independent review pending",
+  "application_tests": 0
+}

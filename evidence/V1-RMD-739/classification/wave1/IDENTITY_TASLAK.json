@@ -1,0 +1,1582 @@
+{
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "source_ids": [
+    "F0002",
+    "F0015",
+    "F0016",
+    "F0019",
+    "F0020",
+    "F0055",
+    "F0130",
+    "F0131",
+    "F0159",
+    "F0175",
+    "F0176",
+    "F0178",
+    "F0325",
+    "F0336",
+    "F0565",
+    "F0567",
+    "F0957",
+    "F0972"
+  ],
+  "defects": [
+    {
+      "id": "GYZ-001",
+      "parents": [
+        "F0002"
+      ],
+      "title": "IssuedSessionToken ve onu taşıyan LoginSuccess varsayılan biçimlendirmede ham token açıyor",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Kimlik sonucu nesnesinin log/assertion/exception amaçlı biçimlendirilmesi ham bearer token içermez.",
+      "mechanism": "IssuedSessionToken positional record; ToString/PrintMembers override yok. AuthenticationService.LoginAsync bu nesneyi üretip LoginSuccess ile döndürüyor. LoginSuccess biçimlendirmesi Session.ToString çağırır. Host giriş yolu UserId/DisplayName kullanıp ayrı device session üretiyor; canlı token loglayan bir sink kanıtlanmadı. Nesne biçimlendirme kusuru gerçektir; mevcut bir üretim log sızıntısı iddiası değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:9",
+        "evidence/V1-RMD-739/tasks/B005.md:13",
+        "src/Modules/Identity/Authentication/SessionTokenIssuer.cs:10",
+        "src/Modules/Identity/Authentication/LoginResult.cs:10",
+        "src/Modules/Identity/Authentication/AuthenticationService.cs:92",
+        "src/Host/DualScreen/DualScreenApplication.Endpoints.cs:70",
+        "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs:10"
+      ],
+      "production_paths": [
+        "src/Modules/Identity/Authentication/SessionTokenIssuer.cs",
+        "src/Modules/Identity/Authentication/LoginResult.cs",
+        "src/Modules/Identity/Authentication/AuthenticationService.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs",
+        "tests/Modules/Identity/Authentication/AuthenticationServiceTests.cs"
+      ],
+      "acceptance": [
+        "Sentinel token ile doğrudan ToString, string interpolation, object.ToString ve LoginSuccess.ToString içinde sentinel yok; mask var.",
+        "Exception/assertion mesajı nesne biçimlendirmesinden üretildiğinde sentinel yok. Token property ve hash/expiry davranışı değişmez; normal login başarılı kalır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-TOKEN"
+    },
+    {
+      "id": "GYZ-002",
+      "parents": [
+        "F0055"
+      ],
+      "title": "IAM-013 VERIFIED hükmü sentinel yeniden üretimiyle desteklenmiyor",
+      "category": "KN",
+      "status": "open",
+      "invariant": "Doğrulama hükmü exact SHA/ortam/komut/exit code ve bulguya özgü pozitif-negatif ham çıktı taşır.",
+      "mechanism": "10 satırlık belge sentinel görünmez diyor; yalnız 53 test özeti var. Bugünkü issuer testleri uzunluk/benzersizlik/ömür test ediyor, biçimlendirme testi yok.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:65",
+        "evidence/V1-RMD-739/tasks/B005.md:13",
+        "evidence/V1-IAM-013/issued_token_redaction_verification.txt:5",
+        "plan/v1/identity-authorization/V1-IAM-013-issued-token-redaction.md:46",
+        "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs:10"
+      ],
+      "production_paths": [
+        "src/Modules/Identity/Authentication/SessionTokenIssuer.cs",
+        "src/Modules/Identity/Authentication/LoginResult.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs"
+      ],
+      "acceptance": [
+        "Eski kanıt silinmeden tarihsel/UNPROVEN düzeltme notu ekle; yeni SHA ve sentinel-red/green ham transcript iliştir.",
+        "Yeni raporu RG-TOKEN kabul matrisine satır bazlı bağla; tüm auth test sayısını sentinel kanıtı sayma."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-TOKEN-EVIDENCE"
+    },
+    {
+      "id": "GYZ-003",
+      "parents": [
+        "F0015"
+      ],
+      "title": "SensitivePayload.Fields dışarıdan mutable downcast ile değiştirilebilir",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Kurucu sonrasında doğrulanmış field snapshot değişmez kalır.",
+      "mechanism": "Kurucu girdi sözlüklerini kopyalıyor (caller alias korunuyor), fakat Fields gerçek Dictionary döndürüyor. ICollection/IDictionary/Dictionary üzerinden field ekleme/silme/set mümkün; unclassified field sonradan eklenebilir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:22",
+        "evidence/V1-RMD-739/tasks/B060.md:39",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs:22",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs:31",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:45"
+      ],
+      "production_paths": [
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs"
+      ],
+      "test_paths": [
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs",
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/EnvelopeProtectionTests.cs"
+      ],
+      "acceptance": [
+        "Kurucu girdisini sonradan değiştirme çıktıyı değiştirmez.",
+        "Returned Fields üzerinde desteklenen mutable arayüz/cast ile set/add/remove/clear etkisiz veya açık ret; redaction/serialization snapshot tutarlı."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-PAYLOAD"
+    },
+    {
+      "id": "GYZ-004",
+      "parents": [
+        "F0015"
+      ],
+      "title": "SensitivePayload.Categories downcast ile Public yapılarak redaction atlanır",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Non-public sınıflandırma public API üzerinden sonradan düşürülemez.",
+      "mechanism": "Categories gerçek Dictionary. Pii -> Public değişince PayloadRedactor.Redact satır 19 aynı ham değeri döndürür. Canlı log çağıranı bulunmadı; public redactor yürütme yolu ve bypass statik olarak açık.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:22",
+        "evidence/V1-RMD-739/tasks/B060.md:39",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs:32",
+        "src/BuildingBlocks/Security/SensitiveData/PayloadRedactor.cs:19",
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs:28"
+      ],
+      "production_paths": [
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs",
+        "src/BuildingBlocks/Security/SensitiveData/PayloadRedactor.cs"
+      ],
+      "test_paths": [
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs"
+      ],
+      "acceptance": [
+        "Pii/Payment sentinel için Dictionary ve IDictionary mutasyon denemeleri sonrası maske kalır; Public özgün alan görünür.",
+        "Eksik sınıflandırma kurucuda reddedilir, kategori silme/clear ve tekrar redaction ham veri üretmez."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-PAYLOAD"
+    },
+    {
+      "id": "GYZ-005",
+      "parents": [
+        "F0015"
+      ],
+      "title": "SensitiveEnvelope metadata snapshotı downcast/init yolunda değişmez değil",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Zarf classification snapshotı ctor, persistence restore ve record copy sonrasında mutable alias açmaz.",
+      "mechanism": "FieldCategories ctor kopyası Dictionary ve public init setter var. Downcast mutation mümkün; with { FieldCategories = mutableDictionary } ctor kopyasını da atlar. Mevcut GCM AAD ve payload-category karşılaştırması kurcalanan metadata ile decrypti engeller; bunu decrypt bypass diye sunmuyoruz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:22",
+        "evidence/V1-RMD-739/tasks/B060.md:39",
+        "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs:14",
+        "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs:28",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:67",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:73",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:82",
+        "tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs:13"
+      ],
+      "production_paths": [
+        "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs"
+      ],
+      "test_paths": [
+        "tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs",
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/EnvelopeProtectionTests.cs"
+      ],
+      "acceptance": [
+        "Ctor input alias, returned dictionary mutable arayüzleri, persistence restore ve desteklenen with/init yolu immutable snapshot sağlar.",
+        "AAD üzerinde metadata değişmiş zarf hâlâ typed failure verir; doğru şifreli eski zarf round-trip açılır; immutable düzeltme persistence uyumluluğunu bozmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-ENVELOPE"
+    },
+    {
+      "id": "GYZ-006",
+      "parents": [
+        "F0016"
+      ],
+      "title": "SEC-005 immutable/mutation-regression kapanış kanıtı teslimatla çelişiyor",
+      "category": "KN",
+      "status": "open",
+      "invariant": "Implementation/mutation kabulü kod diffi ve kusuru öldüren gerçek regresyonla eşleşir.",
+      "mechanism": "git show a9ebe9a2 yalnız 5 evidence/plan dosyası, 27 ekleme/2 silme gösterdi; production/test yok. Verification 7-8 immutable diyor, güncel kaynak mutable. Bu nesnel desteklenmeyen hükümdür; niyet/sahtecilik çıkarımı yapılmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:23",
+        "evidence/V1-RMD-739/tasks/B060.md:39",
+        "evidence/V1-SEC-005/immutable_data_classification_verification.txt:7",
+        "plan/v1/security-foundation/V1-SEC-005-immutable-data-classification.md:40",
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs:28",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs:31",
+        "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs:28"
+      ],
+      "production_paths": [
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs",
+        "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs"
+      ],
+      "test_paths": [
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs",
+        "tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs"
+      ],
+      "acceptance": [
+        "a9ebe9a2 stat/diff çıktısı ile tarihsel hükmü correction notunda ayır.",
+        "RG-PAYLOAD ve RG-ENVELOPE için yeni SHA, cast/alias/init red-green ve immutable temsil kaldırılınca kırılan mutant çıktısı; kaynak restore hashleri."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-IMMUTABILITY-EVIDENCE"
+    },
+    {
+      "id": "GYZ-007",
+      "parents": [
+        "F0019"
+      ],
+      "title": "Pending listesi sonrası legal hold veri yazımından önce atomik uygulanmıyor",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Legal hold commitinden sonra henüz başlamamış yıkıcı store adımı subject verisini değiştirmez; hold-yazma sırası tek ortak eşzamanlılık kuralına bağlanır.",
+      "mechanism": "PendingAsync hold dışlar fakat liste snapshot. ApplyStep account-charge lock ve yalnız plan.BlockSql bakar, legal_holds bakmaz; her adım ayrı commit. Hold ancak CompleteAsync triggerında fark edilip Blocked olur; önceki silmeler geri dönmez. PlaceHoldAsync aynı kilide katılmaz. Sadece ön kontrol eklemek yeni TOCTOU bırakır.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:26",
+        "evidence/V1-RMD-739/tasks/B063.md:33",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs:168",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs:128",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:113",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:133",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:141",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:181",
+        "database/migrations/V15/V15-KVK-001/170-privacy-retention-execution.up.sql:145",
+        "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs:184"
+      ],
+      "production_paths": [
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+        "src/Modules/Privacy/RetentionExecution/IRetentionExecutionService.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs",
+        "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs"
+      ],
+      "acceptance": [
+        "İki gerçek PG bağlantısı ve deterministik bariyerle: liste alındı -> hold commit -> ilk write: tüm alan byte-for-byte aynı, checkpoint/StepDone yok, work Pending.",
+        "İlk adım commit -> hold commit -> ikinci adım: sonraki alan dokunulmaz, önce tamamlanan adım kaydı korunur; hold release sonrası güvenli resume.",
+        "Hold ve write tam çakışmada her iki commit sırası kanıtlanır; yalnız application check değil ortak lock/transaction protokolü. Hata/cancellation write+checkpoint+event rollback."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-HOLD"
+    },
+    {
+      "id": "GYZ-008",
+      "parents": [
+        "F0175"
+      ],
+      "title": "Kuyruktan sonra yeni müşteri hareketi/faturası vadeyi yeniden denetletmiyor",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Müşterinin son hareket/fatura bazlı saklama uygunluğu yıkıcı adımın transactionında geçerlidir.",
+      "mechanism": "RetentionSelection ilk seçimde son hesap hareketi/faturayı dikkate alır; WorkItem bir kez Pending olunca tekrar seçilmez. Host CustomerProfile BlockSql yalnız balance; yeni sıfır-net hareket veya yeni fatura veri silinmesini durdurmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:185",
+        "evidence/V1-RMD-739/tasks/B063.md:33",
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:35",
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:78",
+        "src/Host/Program.cs:826",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:133",
+        "evidence/V15-KVK-001/README.md:30"
+      ],
+      "production_paths": [
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "src/Host/Program.cs"
+      ],
+      "test_paths": [
+        "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+        "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs"
+      ],
+      "acceptance": [
+        "Önce eski müşteri kuyruğa; sonra sıfır-net güncel hareket ve ayrı güncel fatura; apply profili/requests değiştirmez, kalem Pending.",
+        "Vade sınırı kullanılan policy_version/as-of ile açık tanımlı; uygun eski müşteri temizlenir. Aynı account lock ile hareket yarışını ve fatura üreticisinin katılımını gerçek PG ile kanıtla."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-CUSTOMER-ELIGIBILITY",
+      "review_note": "Karar engeli değil: teknik kural görev içinde seçilir; mevcut KVK-001 notu yeniden denetimi istiyor."
+    },
+    {
+      "id": "GYZ-009",
+      "parents": [
+        "F0175"
+      ],
+      "title": "Kuyruktan sonra doğan Pending anonimleştirme talebi korunmuyor",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Pending talep ilk seçimde olduğu gibi uygulama aşamasında da bekletici koşuldur.",
+      "mechanism": "İlk seçim Pending request dışlar; sonradan gelen request için balance-only BlockSql false. İkinci step bütün non-Anonymized requestleri doğrudan Anonymized yapar.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:185",
+        "evidence/V1-RMD-739/tasks/B063.md:33",
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:45",
+        "src/Host/Program.cs:827",
+        "src/Host/Program.cs:836",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:133",
+        "evidence/V15-KVK-001/README.md:31"
+      ],
+      "production_paths": [
+        "src/Host/Program.cs",
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+      ],
+      "test_paths": [
+        "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+      ],
+      "acceptance": [
+        "Queue -> Pending request insert -> apply: profile envelope ve request status/version değişmez, checkpoint yok.",
+        "RetentionBlocked/uygun request kombinasyonları mevcut sözleşmeye göre ayrı; Pending çıkınca resume idempotent; request insert/write yarışında ortak serialization kanıtı."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-CUSTOMER-ELIGIBILITY"
+    },
+    {
+      "id": "GYZ-010",
+      "parents": [
+        "F0175"
+      ],
+      "title": "Tedarikçi kuyruğa girdikten sonraki faaliyet yeniden denetlenmiyor",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Tedarikçinin mevcut seçimdeki son faaliyet uygunluğu scrub transactionında da geçerlidir.",
+      "mechanism": "Tam KVK-001 devir notu müşteri ve tedarikçiyi kapsar. Selection sipariş/fatura/receipt bazını hesaplar, Host Supplier planında BlockSql null. Queued supplier yeni sipariş/fatura/mal kabulünden sonra yine maskelenir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:185",
+        "evidence/V1-RMD-739/tasks/B063.md:33",
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:48",
+        "src/Host/Program.cs:845",
+        "evidence/V15-KVK-001/README.md:30"
+      ],
+      "production_paths": [
+        "src/Host/Program.cs",
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs"
+      ],
+      "test_paths": [
+        "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+        "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs"
+      ],
+      "acceptance": [
+        "Eski supplier queue sonrası yeni purchase order, invoice ve receipt ayrı ayrı eklenince alanlar değişmez.",
+        "Yeni faaliyet ve scrub yarışında commit sırası tutarlı; eski/uygun supplierde tax ID ve ledger korunur."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-SUPPLIER-ELIGIBILITY",
+      "review_note": "Karar engeli değil: teknik kural görev içinde seçilir; mevcut KVK-001 notu yeniden denetimi istiyor."
+    },
+    {
+      "id": "GYZ-011",
+      "parents": [
+        "F0176"
+      ],
+      "title": "Composition root çapraz-şema SQL ve owned-surface sınırı çözülmemiş",
+      "category": "MK",
+      "status": "open",
+      "invariant": "Host yalnız composition yapar; store mutasyonu sahibi modül kontratı ve açık sahiplik üzerinden yürür.",
+      "mechanism": "Program 775-853 SQL planlarını tanımlar; workflow bu metni kendi transactionında çalıştırır. KVK-002 yalnız komut bağlama izni verir. Ancak AnonymizationModels açıkça composition root plan sağlar diyor ve architecture row82 plain SQL akışını belgeliyor. Bu yüzden otomatik olarak güvenlik açığı/işlev kaybı veya tek doğru büyük refactor ilan edilemez; açık mimari/scope çelişkisi var.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:186",
+        "evidence/V1-RMD-739/tasks/B063.md:33",
+        "src/Host/Program.cs:775",
+        "plan/v1.5/kvkk/V15-KVK-002-cross-store-anonymization.md:36",
+        "src/Modules/Privacy/Anonymization/AnonymizationModels.cs:22",
+        "docs/architecture/module-dependency-rules.md:82",
+        "docs/architecture/module-dependency-rules.md:164",
+        "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:387"
+      ],
+      "production_paths": [
+        "src/Host/Program.cs",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "src/Modules/Privacy/Anonymization/AnonymizationModels.cs"
+      ],
+      "test_paths": [
+        "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+        "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs"
+      ],
+      "acceptance": [
+        "Yetkili mimari karar açıkça SQL-plan istisnasını kabul eder veya sahibi modül kontratlarına geçişi seçer; geçmiş scope ihlali geriye dönük silinmez.",
+        "Sırf SQL metnini başka klasöre taşıma/allowlist genişletme kabul değil; seçilen kontrat için canlı 5 sınıf, checkpoint/audit/rollback ve architecture negatif testleri aynı invariantı korur."
+      ],
+      "decision_blocker": "Onaylı exact module-owned kontrat/istisna ve sahiplik gerekir. Karardan önce yeni adapter/interface/project yüzeyi icat edilmez.",
+      "repair_group": "RG-ANON-BOUNDARY",
+      "review_note": "Mimari tablo plain SQL temizliğini onaylıyor; kalan konu KVK-002 kapsam geçmişi. Yeni mimari karar yalnız satır 164 çelişkisi için."
+    },
+    {
+      "id": "GYZ-012",
+      "parents": [
+        "F0020",
+        "F0325"
+      ],
+      "title": "retention_subjects için gerçek veri üretici/consumer bağlantısı yok",
+      "category": "TE",
+      "status": "open",
+      "invariant": "Saklamaya tabi gerçek provider payloadın authoritative bytesı süresi sonunda okunamaz/silinmiş olur; yalnız bağımsız bir kopya silmek yeterli değildir.",
+      "mechanism": "src altında IRetentionSubjectStore tüketenler yalnız sweep/deletion/re-encryption; INSERT yalnız store içinde. SecurityModule DI ve job tetiklemesi mevcut ama producer yok. ProviderInbox.StoreAsync canlı webhook/poller yolunda online_ordering.provider_inbox.payload_envelope yazar; CustomerProfile ayrı kendi store kullanır. 137 random subject id üretir, gerçek kayıt pointerı yok. Rastgele ikinci encrypted copy eklemek gerçek payloadı silmez. F0325 input closure_task=749 V0-REV klasörleriyle ilgili; bu findingin execution pathine dokunmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:27",
+        "evidence/V1-RMD-739/tasks/B064.md:3",
+        "evidence/V1-RMD-739/findings/register.md:335",
+        "evidence/V1-RMD-739/tasks/B128.md:24",
+        "src/Modules/Security/DataProtectionRetention/IRetentionSubjectStore.cs:14",
+        "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs:31",
+        "src/Modules/Security/SecurityModule.cs:47",
+        "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs:27",
+        "src/Modules/OnlineOrdering/Providers/Inbox/ProviderInbox.cs:66",
+        "src/Modules/OnlineOrdering/Providers/Inbox/ProviderInbox.cs:76",
+        "src/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox/YemeksepetiWebhookInbox.cs:106",
+        "src/Modules/OnlineOrdering/Polling/OnlineOrderPoller.cs:98",
+        "plan/v1/remediation/V1-RMD-268-maintenance-jobs-and-retention-sweep.md:29",
+        "evidence/V1-RMD-749/README.md:3"
+      ],
+      "production_paths": [
+        "src/Modules/Security/DataProtectionRetention/IRetentionSubjectStore.cs",
+        "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+        "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+        "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs",
+        "src/Modules/Security/DataProtectionRetention/DeletionQueueProcessor.cs",
+        "src/Modules/Security/DataProtectionRetention/AuthorizedReEncryptionService.cs",
+        "src/Modules/OnlineOrdering/Providers/Inbox/ProviderInbox.cs",
+        "src/Modules/CustomerData/Profiles/PostgresCustomerProfileStore.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs",
+        "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs"
+      ],
+      "acceptance": [
+        "Gerçek provider ingest ile retention kaydı oluşur; doğrudan test InsertAsync/seeding kullanılmaz. Duplicate delivery tek lifecycle record; write/registration yarım başarısında rollback.",
+        "Zamanı ilerlet/sweep -> authoritative ProviderInbox.OpenPayload artık ham body döndüremez; retention kaydı ve ana tablo çelişmez. Held/fresh payload okunabilir kalır, retry idempotent, audit/logda sentinel plaintext yok.",
+        "Existing business retention (CustomerProfile vb.) ile çift imha ve çakışan süre yaratılmaz; re-encryption gerçek okuyucunun aynı authoritative kaydını günceller."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-RETENTION-INTEGRATION",
+      "review_note": "Ürün kararı değil teknik mimari seçimi (otoriter depo/backfill)."
+    },
+    {
+      "id": "GYZ-013",
+      "parents": [
+        "F0178"
+      ],
+      "title": "UserCredentials Delete tetikleyicisi üretim zincirine bağlı değil",
+      "category": "GY",
+      "status": "decision-blocked",
+      "invariant": "User credentials envanterdeki yaşam-döngüsü şartı sağlandığında delete kuyruğuna gerçek olaydan girer.",
+      "mechanism": "null süre kasıtlı: creation-time süpürmesi değil employment end+1 year tetikleyicisi. Sweep nullu atlar; src MarkDisposedAsync tek çağıranı aynı sweep. Test adı queued der ama satır 63-69 atlandığını assert eder. Privacy StaffAccount ayrı anonymize eder; bu Delete kontratına eşit değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:188",
+        "evidence/V1-RMD-739/tasks/B064.md:3",
+        "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs:30",
+        "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs:54",
+        "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs:52",
+        "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md:17",
+        "src/Host/Program.cs:789"
+      ],
+      "production_paths": [
+        "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs",
+        "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+        "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+        "src/Host/Program.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs",
+        "tests/Modules/Security/DataProtectionRetention/DeletionQueueProcessorTests.cs"
+      ],
+      "acceptance": [
+        "Authoritative employment-end olayı ve approved due zamanı ile yalnız uygun credential kuyruklanır, sonra gerçek authoritative kayıt silinir; tekrar no-op.",
+        "Aktif/yeni/held credential, retain verisi ve mali referanslar korunur. nullu sıfır gün yaparak tüm credentialı silme kabul değil.",
+        "Mevcut misleading test adı actual skip davranışını anlatır; event-trigger testine mekanizma testini ikame etmez."
+      ],
+      "decision_blocker": "Employment-end alanı/olayı ile active=false eşdeğerliği ve Privacy StaffAccount anonymize vs envanter Delete çelişkisi yetkili ürün kararı ister; süre mevzuattan tahmin edilmez.",
+      "repair_group": "RG-CREDENTIAL-DELETE"
+    },
+    {
+      "id": "GYZ-014",
+      "parents": [
+        "F0178"
+      ],
+      "title": "DeviceData Delete için decommission kaynağı yok",
+      "category": "GY",
+      "status": "decision-blocked",
+      "invariant": "Device lifecycle sonunda yalnız ilgili cihazın verisi güvenle delete kuyruğuna alınır.",
+      "mechanism": "DeviceData retention null ve sweep skip. Envanter lifecycle diyor; KVK-001 kanıtı gerçek decommission state yokluğunu açık yazmış. DateTime.UnixEpoch bile automatic disposal oluşturmaz; queue tests doğrudan MarkDisposed çağırır.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:188",
+        "evidence/V1-RMD-739/tasks/B064.md:3",
+        "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs:50",
+        "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs:54",
+        "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md:24",
+        "evidence/V15-KVK-001/README.md:28"
+      ],
+      "production_paths": [
+        "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs",
+        "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+        "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs",
+        "tests/Modules/Security/DataProtectionRetention/DeletionQueueProcessorTests.cs"
+      ],
+      "acceptance": [
+        "Onaylı cihaz kimliği+decommission state/event olmadan otomatik delete eklenmez.",
+        "Karar sonrası gerçek decommission akışı queue -> purge yapar; aktif/başka cihaz/held kayıt değişmez; yinelenen event idempotent."
+      ],
+      "decision_blocker": "Cihaz verisinin sahibi ve authoritative lifecycle olayı/alanı yok; yeni device model veya API bu planda icat edilmez.",
+      "repair_group": "RG-DEVICE-DELETE"
+    },
+    {
+      "id": "GYZ-015",
+      "parents": [
+        "F0567"
+      ],
+      "title": "SEC-003 tarihli bağlantısızlık notu bugünkü scheduler ile çelişiyor",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Tarihsel not tarihsel kalır; güncel erişilebilirlik açıkça ayrılır.",
+      "mechanism": "Plan 99-109 hiç HTTP/scheduled job yok diyor; SecurityAdministrationEndpoints job ve hosted service kaydeder. Job sweep+queue çağırır. Re-encryption hâlâ yalnız DI/allowlist durumunda; hepsini bağlı demek de yanlış.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:224",
+        "evidence/V1-RMD-739/tasks/B064.md:3",
+        "plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md:99",
+        "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs:60",
+        "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs:27",
+        "src/Modules/Security/DataProtectionRetention/AuthorizedReEncryptionService.cs:46"
+      ],
+      "production_paths": [
+        "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs",
+        "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs"
+      ],
+      "acceptance": [
+        "Tarihsel 2026-09-23 notu korunur, güncel V1-RMD-268 wiring ile sweep/deletion erişimi ve hâlâ eksik producer/re-encryption ayrılır.",
+        "Manual run 401/403 ve held/fresh/expired/idempotent mevcut test kapsamı açıkça yazılır; test çalıştırılmadıysa yeni geçti denmez."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-SCHEDULER-DOC"
+    },
+    {
+      "id": "GYZ-016",
+      "parents": [
+        "F0565"
+      ],
+      "title": "Değişmeyen Blocked iş her retryda yeni event ve attempts üretiyor",
+      "category": "DY",
+      "status": "open",
+      "invariant": "Değişmeyen engel tekrarları append-only izde kontrolsüz aynı olay çoğalmasına dönüşmez; anlamlı geçiş/deneme kanıtı kaybolmaz.",
+      "mechanism": "Her Pending blocked item OpenJob ile Running+attempts olur, StopAsync yeniden Blocked event append eder. Append-only privacy.anonymization_events için dedup/transition kuralı yok. Bu audit.audit_events değil; RMD-481 bunu temizlemez.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:222",
+        "evidence/V1-RMD-739/tasks/B063.md:33",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:76",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:159",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:175",
+        "database/migrations/V15/V15-KVK-002/172-privacy-anonymization-workflow.up.sql:28",
+        "database/migrations/V15/V15-KVK-002/172-privacy-anonymization-workflow.up.sql:44"
+      ],
+      "production_paths": [
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs"
+      ],
+      "acceptance": [
+        "Aynı balance ile 100 retry: seçilen kayıtlı transition/attempt politikasına göre event hacmi sınırlı; aynı Blocked transition tekilleşir.",
+        "Engel nedeni değişmesi, release->resume, gerçek failed step->retry ve completed olayları korunur; iki worker duplicate blocked transition üretmez."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-BLOCKED-EVENTS",
+      "review_note": "Karar engeli değil: teknik kural görev içinde seçilir; mevcut KVK-001 notu yeniden denetimi istiyor."
+    },
+    {
+      "id": "GYZ-017",
+      "parents": [
+        "F0565"
+      ],
+      "title": "audit-disposal hâlâ planned gösteren kapanış notu bayat",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Bağlantılı görev güncel Done durumu ile tarihsel planned notu karıştırılmaz.",
+      "mechanism": "Kaynak düşük satırı audit_events için RMD-481 planned diyor; aynı KVK-002 README26 bunu sürdürüyor. RMD-481 bugün Done ve yalnız audit.audit_events partitionlarını kapsıyor; privacy event büyümesi bu kapanıştan düşülmez.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:222",
+        "evidence/V1-RMD-739/tasks/B063.md:33",
+        "evidence/V15-KVK-002/README.md:26",
+        "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md:4",
+        "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md:15"
+      ],
+      "production_paths": [
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+      ],
+      "test_paths": [
+        "tests/Host/MigrationComposition/Program/AuditDisposalTests.cs"
+      ],
+      "acceptance": [
+        "Tarihsel planned ifadesine güncel Done/kanıt bağı ekle; scope yalnız audit.audit_events.",
+        "privacy.anonymization_events kusuru açık kalır; RMD-481 tarihsel logları yeni runtime testi olarak sunulmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-AUDIT-REFERENCE"
+    },
+    {
+      "id": "GYZ-018",
+      "parents": [
+        "F0336"
+      ],
+      "title": "RMD-663 planı devredilmiş B019/B011 SensitiveData teslimlerini sahipleniyor",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Görev Goal/Owned surface/kabul iddiası devredilen işin gerçek sahibiyle tutarlıdır.",
+      "mechanism": "663 README6 B019 ve SensitiveData B011in 664e devrini açıklar; 663 plan15/21/22/27/48 hâlâ bunları kendi diff/kabulü sayar. 664 plan15 gerçek devri kaydeder; EnvelopeHardeningTests mevcut. Bu code failure veya 664ün yokluğu değil plan çelişkisidir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:346",
+        "evidence/V1-RMD-739/tasks/B135.md:24",
+        "plan/v1/remediation/V1-RMD-663-envelope-hardening-and-boundary-coverage.md:15",
+        "plan/v1/remediation/V1-RMD-663-envelope-hardening-and-boundary-coverage.md:21",
+        "plan/v1/remediation/V1-RMD-663-envelope-hardening-and-boundary-coverage.md:48",
+        "evidence/V1-RMD-663/README.md:6",
+        "plan/v1/remediation/V1-RMD-664-typed-envelope-failures.md:15",
+        "tests/BuildingBlocks/Security/SensitiveData/Encryption/EnvelopeHardeningTests.cs:17"
+      ],
+      "production_paths": [
+        "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs",
+        "src/BuildingBlocks/Security/SensitiveData/AesGcmEnvelopeCipher.cs"
+      ],
+      "test_paths": [
+        "tests/BuildingBlocks/Security/SensitiveData/Encryption/EnvelopeHardeningTests.cs"
+      ],
+      "acceptance": [
+        "663te tarihsel ilk kapsam korunup 664 transferi Goal/Owned surface/kabulde tutarlı nitelendirilir; 664 kanıtı 663e kopyalanıp yeni sonuç sayılmaz.",
+        "B019 ve her SensitiveData testinin tek gerçek uygulama sahibine izlenebilir bağı; Messaging ve boundary teslimi ayrı kalır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-663-DOC"
+    },
+    {
+      "id": "GYZ-019",
+      "parents": [
+        "F0130"
+      ],
+      "title": "Uçuştaki yetki iptalinin linearization sözleşmesi atomik-write kabulüyle çelişiyor",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Yetki predicatei ve protected mutation seçilmiş ve onaylı linearization noktasına bağlıdır.",
+      "mechanism": "Authorize önce, repo mutation ayrı bağlantı/commit. Actorun izni authorize sonrası kaldırılınca in-flight yazabilir. CODE-008 yorum bunu kabul eder; IAM008 acceptance44 aynı transaction/conditional write ister. RMD743 out-of-scope32 de bu davranışı kabul edilmiş sayar. Son yönetici guard kilidi bunu çözmez.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:140",
+        "evidence/V1-RMD-739/tasks/B042.md:37",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:8",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:76",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:81",
+        "src/Modules/Identity/Authorization/AuthorizationService.cs:23",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:83",
+        "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:44",
+        "plan/v1/remediation/V1-RMD-743-son-yonetici-es-zamanlilik.md:32"
+      ],
+      "production_paths": [
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+        "src/Modules/Identity/Authorization/AuthorizationService.cs",
+        "src/Host/Experience/Roles/RoleManagementEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+      ],
+      "acceptance": [
+        "Yetkili karar command-startı kabul ederse IAM008 atomiklik kabulü ile yorum tutarlı açıkça düzeltilir; reddederse authorization+mutation transaction/conditional write olarak uygulanır.",
+        "Gerçek bariyer: allow kararı tamamlanır, actor revocation commit olur, mutation serbest bırakılır; seçilen sonuç ve side effects kesin assert edilir."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-INFLIGHT-DECISION",
+      "review_note": "Repo command-start kuralını seçmiş (RoleManagementService.cs:8-15, V1-RMD-743 kabul). IAM-008 belge metni buna hizalanır; fail-closed revocation yalnız Semih isterse."
+    },
+    {
+      "id": "GYZ-020",
+      "parents": [
+        "F0130"
+      ],
+      "title": "In-flight test revocation-commit ile protected write penceresini sıkıştırmıyor",
+      "category": "KN",
+      "status": "open",
+      "invariant": "Concurrency kabul testi iddia ettiği interleavingi gerçekten kurar.",
+      "mechanism": "Test330 uncommitted revoke açar; AssignUserAsync354 tamamen bitince revoke356 commit eder. Bu authorize->revoke commit->mutation sıralaması değildir. Diğer235 testi commit-before-startı kanıtlar; ikisi birlikte pencereyi ölçmez.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:140",
+        "evidence/V1-RMD-739/tasks/B042.md:37",
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:235",
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:330",
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:354",
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:356"
+      ],
+      "production_paths": [
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+      ],
+      "acceptance": [
+        "Authorization sonrası kontrollü bariyer, ayrı bağlantıda revocation commit, sonra repo write release; commit sırası kanıtı ve row postcondition.",
+        "İzin yok başlangıçta hiç write yok; command-start kararı seçilmişse önce-authorized write kabulü ve sonrası komutun denialı ayrı test; scheduler timingine dayalı Task.Delay tek başına yok."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-INFLIGHT-TEST"
+    },
+    {
+      "id": "GYZ-021",
+      "parents": [
+        "F0131",
+        "F0159"
+      ],
+      "title": "İki karşılıklı revoke ile son yöneticinin kaybı tarihsel olarak giderilmiş",
+      "category": "EZ",
+      "status": "historical-fixed",
+      "invariant": "Korumalı user-role/role-permission silmeleri en az bir aktif roles.manage holder bırakır.",
+      "mechanism": "743 commit7dbe4d4b ile service iki TryRevoke yolunu çağırıyor; repository tek transaction/advisory xact lock altında sayım+delete yapıyor. Güncel source fixed ile uyumlu. Tarihsel green.log248/248 exit0 ve lock-disabled3x exit1 var; bu oturumda tekrar koşulmadı. Alias F0131/F0159 korunur; in-flight revocation ayrı kalır.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:141",
+        "evidence/V1-RMD-739/tasks/B042.md:37",
+        "evidence/V1-RMD-739/findings/register.md:169",
+        "evidence/V1-RMD-739/tasks/B059.md:23",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:93",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:115",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:274",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:280",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:286",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:296",
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:440",
+        "evidence/V1-RMD-743/green.log:12",
+        "evidence/V1-RMD-743/mutations.log:1"
+      ],
+      "production_paths": [
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+        "src/Modules/Identity/Authorization/IRoleRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+      ],
+      "acceptance": [
+        "Fresh gerçek PGde two-user mutual revoke, same-role ve mixed user/permission revoke yarışında en az bir aktif holder kalır.",
+        "Yetkisiz actor ve unrelated permission, inactive ikinci holder, multiple-role surviving holder, cancellation/rollback yolları. Kilit çıkarılınca test kırılmalı; geçmiş 3 mutant bu oturum sonucu değildir."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-LAST-MANAGER",
+      "review_note": "Yalnız fresh-rerun doğrulaması; üretim yüzeyi yazılmaz."
+    },
+    {
+      "id": "GYZ-022",
+      "parents": [
+        "F0957"
+      ],
+      "title": "IAM-008 kanıtında ham command/SHA/interleaving transcript yok",
+      "category": "KN",
+      "status": "open",
+      "invariant": "Linearization kabulü yeniden üretilebilir ve karardan bağımsız test sırasını gösteren kanıtla kapanır.",
+      "mechanism": "authorization_linearization_verification 9 satır özet, test_output özet; formatter exit0 cümlesi var ama ham transcript ve candidate SHA/ortam/interleaving yok. V1-RMD-743 kanıtı sadece last-manager ve bu eksikliği kapatmıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:62",
+        "evidence/V1-RMD-739/tasks/B042.md:37",
+        "evidence/V1-IAM-008/authorization_linearization_verification.txt:6",
+        "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:40",
+        "evidence/V1-RMD-743/README.md:3"
+      ],
+      "production_paths": [
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+      ],
+      "acceptance": [
+        "Seçilen policy ve RG-INFLIGHT-TESTe özgü raw command/exit0/SHA/ortam/commit-order sonuçları kaydedilir; eski özet tarihsel kalır.",
+        "Format ve Authorization suite çıktıları ayrı scope ile; 20 tarihsel test sayısı current count veya atomiklik kanıtı sayılmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-INFLIGHT-EVIDENCE"
+    },
+    {
+      "id": "GYZ-023",
+      "parents": [
+        "F0957"
+      ],
+      "title": "IAM-008 başlığı doğrulama, work type implementation, teslimi karışık",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Başlık/iş türü/teslim ve yazma yetkisi aynı gerçek işi tarif eder.",
+      "mechanism": "Independently verify başlığına rağmen implementation code/linearization diff ve tests teslimi bekleniyor. Kaynak metadata tutarsızlığı execution kusuru olarak last-managera bağlanmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:62",
+        "evidence/V1-RMD-739/tasks/B042.md:37",
+        "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:1",
+        "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:6",
+        "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:26",
+        "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:40"
+      ],
+      "production_paths": [
+        "src/Modules/Identity/Authorization/RoleManagementService.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+      ],
+      "acceptance": [
+        "Tarihsel implementasyon ve doğrulama rolü seçilen policyye göre tutarlı adlandırılır; eski kapanış tarihi ve proof zayıflığı korunur.",
+        "Plan-audit ve scope kontrolü gerçek exit koduyla; belge düzenlemesi runtime authorization fix sayılmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-IAM008-DOC"
+    },
+    {
+      "id": "GYZ-024",
+      "parents": [
+        "F0972"
+      ],
+      "title": "Kişinin kendi rolünden izin kaldırması bir ürün kararı; otomatik güvenlik açığı değil",
+      "category": "PO",
+      "status": "needs-verification",
+      "invariant": "Self-revocation davranışı açık yetki sözleşmesine ve son-yönetici korumasına uyar.",
+      "mechanism": "UI tüm role revoke işlemlerinde confirmation ister; service actor=target yasağı koymaz. Birden çok manager varken kendi manage iznini kaldırabilir, son manager için TryRevoke guard reddeder. Kaynak kart TAMAM ve README bilinen sınır diyor; self-revoke salt varlığı permission bypass değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:77",
+        "evidence/V1-RMD-739/tasks/B055.md:22",
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx:75",
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx:78",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:84",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:286",
+        "evidence/V1-RMD-457/README.md:18",
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:392"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs"
+      ],
+      "test_paths": [
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx",
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs",
+        "tests/Host/Experience/Roles/RoleManagementHttpTests.cs"
+      ],
+      "acceptance": [
+        "Yetkili karar self-revokeyi kabul/ret olarak kaydeder; kabulde confirmation cancel hiçbir istek göndermez, last-manager 409 veri değiştirmez.",
+        "Başka aktif yönetici varken onaylanan self-revoke sonrası yeni komut denialı ve UI capability yenilenmesi ayrıca doğrulanır; client-only engel security fix sayılmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-SELF-REVOKE",
+      "review_note": "V1-RMD-457 README self-revoke’u bilinen sınır kabul ediyor; kusur sayılmaz, görev açılmaz (ürün kararı tersine dönerse yeniden değerlendir)."
+    },
+    {
+      "id": "GYZ-025",
+      "parents": [
+        "F0972"
+      ],
+      "title": "RMD-457 üç izin anlatımı işlem bazlı gerçek kapılarla uyuşmuyor",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Her işlem için belgelenen izin sunucunun gerçek kontrolüyle aynıdır.",
+      "mechanism": "Role create/grant/revoke ve user-role assignment RolesManage; AddPermission katalog ekleme PermissionsManage (bu UIde yok); user listing/creation UsersManage. Plan17 genel üç izin ifadesi bu ayrımı vermiyor. StaffSection rolleri RolesManage ile açar ama UserRolesPanel listUsers UsersManage ister; kayıttaki üç ayrı izin varsayımı doğrudan doğrulanamaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:77",
+        "evidence/V1-RMD-739/tasks/B055.md:22",
+        "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md:17",
+        "src/Clients/PosTerminal/src/features/management-staff-roles/StaffSection.tsx:101",
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx:98",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:45",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:76",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:106",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:156",
+        "src/Host/Experience/Roles/RoleManagementEndpoints.cs:106"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/management-staff-roles/StaffSection.tsx",
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "src/Host/Experience/Roles/RoleManagementEndpoints.cs"
+      ],
+      "test_paths": [
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx",
+        "tests/Host/Experience/Roles/RoleManagementHttpTests.cs"
+      ],
+      "acceptance": [
+        "Role permission assignment ile permission katalog oluşturmayı ayıran işlem->izin tablosu; kullanıcı listeleme UsersManage, role mutation RolesManage açık yazılır.",
+        "RolesManage-only, UsersManage-only, her ikisi ve neither oturumlarında UI/HTTP kontratı ayrı doğrulanır; kayıttaki wording actual bugı gizliyorsa yeni atomik child olarak açılır, UIye üç kontrol varsayılarak eklenmez."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-457-DOC"
+    }
+  ],
+  "groups": [
+    {
+      "id": "RG-TOKEN",
+      "title": "Token biçimlendirme sınırı",
+      "defects": [
+        "GYZ-001"
+      ],
+      "exact_surface": [
+        "src/Modules/Identity/Authentication/SessionTokenIssuer.cs",
+        "src/Modules/Identity/Authentication/LoginResult.cs",
+        "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs",
+        "NEW test: tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs::IssuedTokenAndLoginSuccessFormattingNeverExposeBearer"
+      ],
+      "dependencies": [],
+      "red_check": "Yeni sentinel formatting testi mevcut recordlarda kırmızı; maskeyi kaldırınca yine kırmızı.",
+      "negative_paths": [
+        "Token property kullanımı ve expiry/hash aynı",
+        "nested LoginSuccess",
+        "exception/interpolation"
+      ],
+      "evidence_tier": "Güncel statik kaynak; gelecekte gerçek .NET unit red/green + mutant"
+    },
+    {
+      "id": "RG-TOKEN-EVIDENCE",
+      "title": "IAM-013 hüküm ve kanıt düzeltmesi",
+      "defects": [
+        "GYZ-002"
+      ],
+      "exact_surface": [
+        "evidence/V1-IAM-013/issued_token_redaction_verification.txt",
+        "plan/v1/identity-authorization/V1-IAM-013-issued-token-redaction.md",
+        "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs"
+      ],
+      "dependencies": [
+        "RG-TOKEN"
+      ],
+      "red_check": "SHA/env/komut/sentinel çıktısı olmayan VERIFIED raporu kabul kapısında reddedilir.",
+      "negative_paths": [
+        "Tarihsel kanıtı silme",
+        "suite pass sentinel proof değildir"
+      ],
+      "evidence_tier": "Belge/git + yeni focused runtime transcript gerekli"
+    },
+    {
+      "id": "RG-PAYLOAD",
+      "title": "Plaintext payload immutable snapshot",
+      "defects": [
+        "GYZ-003",
+        "GYZ-004"
+      ],
+      "exact_surface": [
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs",
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs",
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/EnvelopeProtectionTests.cs",
+        "NEW test: tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs::PayloadAliasesAndMutableCastsCannotChangeFieldsOrClassification"
+      ],
+      "dependencies": [],
+      "red_check": "Mevcut dictionary downcast ile Pii->Public yap, sentinel redactionda görünür; immutable fix sonrası görünmez.",
+      "negative_paths": [
+        "Input alias set/add/remove/clear",
+        "dictionary/IDictionary/ICollection casts",
+        "unclassified field injection",
+        "Public kontrol alanı"
+      ],
+      "evidence_tier": "Güncel statik; gelecekte .NET unit + mutation"
+    },
+    {
+      "id": "RG-ENVELOPE",
+      "title": "Envelope classification immutable snapshot",
+      "defects": [
+        "GYZ-005"
+      ],
+      "exact_surface": [
+        "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs",
+        "tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs",
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/EnvelopeProtectionTests.cs",
+        "NEW test: tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs::EnvelopeClassificationCannotAcquireMutableAliasesAfterConstructionOrRestore"
+      ],
+      "dependencies": [],
+      "red_check": "Ctor/downcast/restore/init sonrası immutable snapshot asserti mevcut kaynakta kırmızı; mutable dictionary geri getirilince kırmızı.",
+      "negative_paths": [
+        "with/init alias",
+        "restore round-trip",
+        "tampered AAD typed denial",
+        "existing ciphertext compatibility"
+      ],
+      "evidence_tier": "Güncel statik; gelecekte gerçek crypto unit round-trip, decrypt bypass iddiası yok"
+    },
+    {
+      "id": "RG-IMMUTABILITY-EVIDENCE",
+      "title": "SEC-005 kanıt düzeltmesi",
+      "defects": [
+        "GYZ-006"
+      ],
+      "exact_surface": [
+        "evidence/V1-SEC-005/immutable_data_classification_verification.txt",
+        "plan/v1/security-foundation/V1-SEC-005-immutable-data-classification.md",
+        "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs",
+        "tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs"
+      ],
+      "dependencies": [
+        "RG-PAYLOAD",
+        "RG-ENVELOPE"
+      ],
+      "red_check": "Mutable temsil sağ kalıyorken immutable VERIFIED hükmü kapıdan geçmez.",
+      "negative_paths": [
+        "Eski commiti kod diffi gibi sunma",
+        "ctor copyyi downcast proof sayma"
+      ],
+      "evidence_tier": "git show gerçek çıktı + yeni unit/mutation transcript gerekli"
+    },
+    {
+      "id": "RG-HOLD",
+      "title": "Legal hold-write atomik sınırı",
+      "defects": [
+        "GYZ-007"
+      ],
+      "exact_surface": [
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+        "src/Modules/Privacy/RetentionExecution/IRetentionExecutionService.cs",
+        "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs",
+        "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs",
+        "NEW test: tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs::HoldCommittedAfterListingPreventsTheNextDestructiveStep",
+        "NEW test: tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs::ConcurrentHoldAndStepHaveOneCommitOrder"
+      ],
+      "dependencies": [],
+      "red_check": "Pending listesi bariyerinde hold commit et; mevcut kod alanı siler. Satır byte snapshot ve checkpoint absence asserti kırmızı.",
+      "negative_paths": [
+        "Hold first/write first",
+        "hold between steps",
+        "release/resume",
+        "SQL error rollback",
+        "cancellation",
+        "independent subjects"
+      ],
+      "evidence_tier": "Güncel statik + gelecekte gerçek PostgreSQL deterministic concurrency; fresh run yok"
+    },
+    {
+      "id": "RG-CUSTOMER-ELIGIBILITY",
+      "title": "Müşteri scrub öncesi tüm uygunluk predicatei",
+      "defects": [
+        "GYZ-008",
+        "GYZ-009"
+      ],
+      "exact_surface": [
+        "src/Host/Program.cs",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+        "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+        "NEW test: tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs::QueuedCustomerWithNewActivityOrPendingRequestRemainsUntouched"
+      ],
+      "dependencies": [
+        "RG-HOLD"
+      ],
+      "red_check": "Queue oluştur, yeni hareket/fatura/Pending talep ayrı ekle; mevcut apply profili sildiği için preservation asserti kırmızı.",
+      "negative_paths": [
+        "zero-net recent activity",
+        "recent invoice",
+        "request insertion race",
+        "balance +/-",
+        "policy/as-of boundary",
+        "release/resume"
+      ],
+      "evidence_tier": "Güncel statik + gelecekte gerçek Host/PG entegrasyon; ilgili üreticilerin exact write yüzeyi karar sonrası tamamlanmalı"
+    },
+    {
+      "id": "RG-SUPPLIER-ELIGIBILITY",
+      "title": "Tedarikçi scrub uygunluğu",
+      "defects": [
+        "GYZ-010"
+      ],
+      "exact_surface": [
+        "src/Host/Program.cs",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+        "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+        "NEW test: tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs::QueuedSupplierWithNewOrderInvoiceOrReceiptIsNotScrubbed"
+      ],
+      "dependencies": [
+        "RG-CUSTOMER-ELIGIBILITY"
+      ],
+      "red_check": "Supplier queue sonrası yeni faaliyet; mevcut null BlockSql ile alan silindiğinden preservation check kırmızı.",
+      "negative_paths": [
+        "purchase order",
+        "purchase invoice",
+        "goods receipt",
+        "writer/scrub race",
+        "tax ID/ledger immutable"
+      ],
+      "evidence_tier": "Güncel statik + gelecekte gerçek Host/PG; Program/wf overlap nedeniyle seri"
+    },
+    {
+      "id": "RG-ANON-BOUNDARY",
+      "title": "Anonimleştirme SQL sahiplik kararı",
+      "defects": [
+        "GYZ-011"
+      ],
+      "exact_surface": [
+        "plan/v1.5/kvkk/V15-KVK-002-cross-store-anonymization.md",
+        "src/Modules/Privacy/Anonymization/AnonymizationModels.cs",
+        "src/Host/Program.cs",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "docs/architecture/module-dependency-rules.md",
+        "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs",
+        "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+      ],
+      "dependencies": [
+        "RG-SUPPLIER-ELIGIBILITY"
+      ],
+      "red_check": "Current scope-only-binding ile gerçek SQL definitionı karşılaştır; karar sonrası seçilen sınır ihlal mutantı architecture kapısını kırmalı.",
+      "negative_paths": [
+        "Salt taşıma/allowlist çözüm sayılmaz",
+        "5 data class behavior",
+        "checkpoint/resume unchanged"
+      ],
+      "evidence_tier": "Karar/ownership belgesi + statik trace; yeni production kontratı henüz authorize edilmedi"
+    },
+    {
+      "id": "RG-RETENTION-INTEGRATION",
+      "title": "Gerçek provider payload lifecycle entegrasyonu",
+      "defects": [
+        "GYZ-012"
+      ],
+      "exact_surface": [
+        "src/Modules/Security/DataProtectionRetention/IRetentionSubjectStore.cs",
+        "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+        "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+        "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs",
+        "src/Modules/Security/DataProtectionRetention/DeletionQueueProcessor.cs",
+        "src/Modules/Security/DataProtectionRetention/AuthorizedReEncryptionService.cs",
+        "src/Modules/OnlineOrdering/Providers/Inbox/ProviderInbox.cs",
+        "src/Modules/Security/SecurityModule.cs",
+        "database/migrations/V15/V15-SEC-003/137-retention-subjects.up.sql",
+        "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs",
+        "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs",
+        "NEW test: tests/Host/Experience/SecurityAdministration/ProviderPayloadRetentionLifecycleTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Gerçek ProviderInbox.StoreAsync ile kayıt al -> retention-sweep -> aynı payloadı açma preservation/disposal postconditionı bugünkü kaynakta kırmızı; seeding yok.",
+      "negative_paths": [
+        "duplicate delivery",
+        "transaction failure",
+        "held/fresh",
+        "retry/re-encryption",
+        "old rows backfill",
+        "authoritative-copy not shadow copy"
+      ],
+      "evidence_tier": "Statik producer/caller trace + gelecekte gerçek Host/PG; storage kararı bekler, exact surface mevcut minimumdur, eski migration salt okunur referanstır"
+    },
+    {
+      "id": "RG-CREDENTIAL-DELETE",
+      "title": "Credential event-trigger delete kararı",
+      "defects": [
+        "GYZ-013"
+      ],
+      "exact_surface": [
+        "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs",
+        "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+        "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+        "src/Host/Program.cs",
+        "plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md",
+        "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
+        "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs",
+        "tests/Modules/Security/DataProtectionRetention/DeletionQueueProcessorTests.cs",
+        "NEW test: tests/Modules/Security/DataProtectionRetention/CredentialLifecycleDeletionTests.cs"
+      ],
+      "dependencies": [
+        "RG-RETENTION-INTEGRATION"
+      ],
+      "red_check": "Onaylı employment-end fixture ile gerçek lifecycle çağrısı kuyruğa üretmeli; bugün source event/çağıran yok, current skip test greeni kapanış değildir.",
+      "negative_paths": [
+        "active user",
+        "employment clock not creation",
+        "held",
+        "delete retry",
+        "legal references"
+      ],
+      "evidence_tier": "Decision-blocked; hayat döngüsü kaynağı yok, runtime sonucu yok; seçilecek exact identity writer yüzeyi karar sonrası eklenir"
+    },
+    {
+      "id": "RG-DEVICE-DELETE",
+      "title": "Cihaz lifecycle delete kararı",
+      "defects": [
+        "GYZ-014"
+      ],
+      "exact_surface": [
+        "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs",
+        "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+        "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+        "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md",
+        "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs",
+        "tests/Modules/Security/DataProtectionRetention/DeletionQueueProcessorTests.cs",
+        "NEW test: tests/Modules/Security/DataProtectionRetention/DeviceLifecycleDeletionTests.cs"
+      ],
+      "dependencies": [
+        "RG-CREDENTIAL-DELETE"
+      ],
+      "red_check": "Decommission source seçilmeden fixtureı uydurma; karar sonrası gerçek lifecycle->queue->purge kontrolü mevcut zincirde başarısız olmalı.",
+      "negative_paths": [
+        "active device",
+        "wrong device",
+        "held",
+        "duplicate event",
+        "restore/retry"
+      ],
+      "evidence_tier": "Decision-blocked; authoritative device lifecycle yok, production yeni dosya adı uydurulmadı; ortak store yüzeyi nedeniyle seri"
+    },
+    {
+      "id": "RG-SCHEDULER-DOC",
+      "title": "Retention erişilebilirlik güncellik notu",
+      "defects": [
+        "GYZ-015"
+      ],
+      "exact_surface": [
+        "plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md",
+        "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs",
+        "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs",
+        "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Current no HTTP/scheduled assertion source binding ile çelişir; sözleşme kontrolü yakalar.",
+      "negative_paths": [
+        "sweep bağlı",
+        "producer yok",
+        "re-encryption hâlâ bağlı değil"
+      ],
+      "evidence_tier": "Belge/statik; yeni runtime sonuç iddiası yok"
+    },
+    {
+      "id": "RG-BLOCKED-EVENTS",
+      "title": "Değişmeyen engel olaylarının tekilliği",
+      "defects": [
+        "GYZ-016"
+      ],
+      "exact_surface": [
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs",
+        "NEW test: tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs::RepeatedUnchangedBlockDoesNotAppendDuplicateTransitions"
+      ],
+      "dependencies": [
+        "RG-ANON-BOUNDARY"
+      ],
+      "red_check": "Aynı engelde ardışık ve eşzamanlı retrydan sonra yeni duplicate Blocked olay sayısı asserti bugünkü kodda kırmızı.",
+      "negative_paths": [
+        "changed blocker",
+        "unblocked resume",
+        "real failed retry",
+        "concurrent workers",
+        "append-only retained"
+      ],
+      "evidence_tier": "Güncel statik + gelecekte PostgreSQL transition/idempotency testleri"
+    },
+    {
+      "id": "RG-AUDIT-REFERENCE",
+      "title": "Audit-disposal bağlantı durumu",
+      "defects": [
+        "GYZ-017"
+      ],
+      "exact_surface": [
+        "evidence/V15-KVK-002/README.md",
+        "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md"
+      ],
+      "dependencies": [],
+      "red_check": "Planned atfı Done göreve karşı yanlış; privacy event tablosunu audit-disposal kapsamına sokan yorum reddedilir.",
+      "negative_paths": [
+        "tarihsel atıf korunur",
+        "privacy growth açık"
+      ],
+      "evidence_tier": "Belge/statik; RMD481 geçmiş çalışma yeni test değildir"
+    },
+    {
+      "id": "RG-663-DOC",
+      "title": "663 -> 664 scope devir tutarlılığı",
+      "defects": [
+        "GYZ-018"
+      ],
+      "exact_surface": [
+        "plan/v1/remediation/V1-RMD-663-envelope-hardening-and-boundary-coverage.md",
+        "plan/v1/remediation/V1-RMD-664-typed-envelope-failures.md",
+        "evidence/V1-RMD-663/README.md",
+        "tests/BuildingBlocks/Security/SensitiveData/Encryption/EnvelopeHardeningTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "663 Goal/Owned surface/kabul ile README transferi eşleşmeden closure trace reddedilir.",
+      "negative_paths": [
+        "eski plan provenance",
+        "664 kanıtını 663 sonucu sayma",
+        "Messaging scope korunur"
+      ],
+      "evidence_tier": "Belge/statik trace; production değişikliği yok"
+    },
+    {
+      "id": "RG-INFLIGHT-DECISION",
+      "title": "Authorization linearization policy kararı",
+      "defects": [
+        "GYZ-019"
+      ],
+      "exact_surface": [
+        "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "plan/v1/remediation/V1-RMD-743-son-yonetici-es-zamanlilik.md",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+        "src/Modules/Identity/Authorization/AuthorizationService.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Acceptance aynı transaction derken ayrı read/write path kalması sözleşme uyuşmazlığı; seçilen policy için bariyer testinin sonucu karar kaydıyla eşleşmeli.",
+      "negative_paths": [
+        "last-manager farklı invariant",
+        "inactive/missing actor",
+        "revoked before start",
+        "revoked after allow"
+      ],
+      "evidence_tier": "Decision-blocked; statik execution path, canlı fail/success sonucu yok"
+    },
+    {
+      "id": "RG-INFLIGHT-TEST",
+      "title": "Gerçek revocation-before-write interleaving testi",
+      "defects": [
+        "GYZ-020"
+      ],
+      "exact_surface": [
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+        "src/Modules/Identity/Authorization/IAuthorizationService.cs",
+        "NEW test: tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs::RevocationCommitBetweenAuthorizationAndMutationFollowsApprovedLinearization"
+      ],
+      "dependencies": [
+        "RG-INFLIGHT-DECISION"
+      ],
+      "red_check": "Bariyer allow sonrası kurulur, revocation commit transcripti write öncesi gelir; bugünkü330 testi bu sıra assertini sağlamaz.",
+      "negative_paths": [
+        "deny-before-start",
+        "allow-then-revoke",
+        "later command denied",
+        "no timing-only test"
+      ],
+      "evidence_tier": "Gelecekte gerçek PostgreSQL deterministic concurrency; mevcut test source-only inceleme"
+    },
+    {
+      "id": "RG-LAST-MANAGER",
+      "title": "Tarihsel last-holder fix teyidi",
+      "defects": [
+        "GYZ-021"
+      ],
+      "exact_surface": [
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+        "src/Modules/Identity/Authorization/IRoleRepository.cs",
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs",
+        "NEW test: tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs::ConcurrentPermissionAndUserRevocationsKeepAnActiveHolder"
+      ],
+      "dependencies": [
+        "RG-INFLIGHT-TEST"
+      ],
+      "red_check": "Kilit-disabled mutantının kırmızı olduğu geçmiş log mevcut; fresh tekrarda user-user, permission-permission ve mixed varyantları da kırmızı olmalı.",
+      "negative_paths": [
+        "inactive holder",
+        "surviving alternative role",
+        "unrelated permission",
+        "no-op missing link",
+        "transaction rollback"
+      ],
+      "evidence_tier": "historical real-PG green248/mutant3; current static fix teyidi, fresh runtime yok"
+    },
+    {
+      "id": "RG-INFLIGHT-EVIDENCE",
+      "title": "IAM008 kanıt tamlığı",
+      "defects": [
+        "GYZ-022"
+      ],
+      "exact_surface": [
+        "evidence/V1-IAM-008/authorization_linearization_verification.txt",
+        "evidence/V1-IAM-008/test_output.txt",
+        "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md",
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+      ],
+      "dependencies": [
+        "RG-INFLIGHT-TEST"
+      ],
+      "red_check": "Komut/SHA/ortam/interleaving içermeyen summaryyi raw evidence yerine koyan kabul reddedilir.",
+      "negative_paths": [
+        "formatter separate",
+        "last-manager closure not in-flight closure"
+      ],
+      "evidence_tier": "Belge + gelecekte fresh PG transcript"
+    },
+    {
+      "id": "RG-IAM008-DOC",
+      "title": "IAM008 görev türü ve başlık",
+      "defects": [
+        "GYZ-023"
+      ],
+      "exact_surface": [
+        "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md"
+      ],
+      "dependencies": [
+        "RG-INFLIGHT-DECISION"
+      ],
+      "red_check": "Başlık/type/deliverable tutarsızlık kontrolü.",
+      "negative_paths": [
+        "retrospective provenance retained",
+        "no silent scope widening"
+      ],
+      "evidence_tier": "Belge/plan-audit; runtime değil"
+    },
+    {
+      "id": "RG-SELF-REVOKE",
+      "title": "Self-revoke sözleşme kararı ve doğrulama",
+      "defects": [
+        "GYZ-024"
+      ],
+      "exact_surface": [
+        "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md",
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx",
+        "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs",
+        "tests/Host/Experience/Roles/RoleManagementHttpTests.cs",
+        "NEW test: src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx::SelfRevocationHonorsConfirmationAndLastManagerRefusal"
+      ],
+      "dependencies": [
+        "RG-LAST-MANAGER"
+      ],
+      "red_check": "Self-revoke yasak olduğu kararla doğrulanmadan mevcut davranış için kırmızı security testi uydurulmaz; karar sonrası allow/deny matrisi ve last-manager negatif yolu.",
+      "negative_paths": [
+        "cancel sends nothing",
+        "last-manager409 unchanged",
+        "other active manager",
+        "subsequent denial"
+      ],
+      "evidence_tier": "Decision-blocked; UI jsdom + gelecekte gerçek HTTP/PG, browser davranışı henüz koşulmadı"
+    },
+    {
+      "id": "RG-457-DOC",
+      "title": "İşlem bazlı izin sözlüğü",
+      "defects": [
+        "GYZ-025"
+      ],
+      "exact_surface": [
+        "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md",
+        "src/Clients/PosTerminal/src/features/management-staff-roles/StaffSection.tsx",
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx",
+        "src/Modules/Identity/Authorization/RoleManagementService.cs",
+        "src/Host/Experience/Roles/RoleManagementEndpoints.cs",
+        "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx",
+        "tests/Host/Experience/Roles/RoleManagementHttpTests.cs"
+      ],
+      "dependencies": [
+        "RG-SELF-REVOKE"
+      ],
+      "red_check": "Plan üç permissionı tek tek doğru işlemle eşleştirmeli; role-assigni PermissionsManage diye yazmak source kontratıyla kırmızı.",
+      "negative_paths": [
+        "role-only",
+        "user-only",
+        "both",
+        "neither",
+        "permission catalog vs role permission"
+      ],
+      "evidence_tier": "Belge/statik; mevcut frontend mock ve HTTP test source incelemesi, fresh/browser pass yok"
+    }
+  ],
+  "limitations": [
+    "Yalnız V1-RMD-739 kanıt/planlama alt işi; repository production/test/plan değişikliği ve yeni Task ID yok. RG kimlikleri taslak repair group, yazma yetkisi değildir.",
+    "18 input kaydının tamamının tam Bnnn Task ID bölümü okundu. Register kesik metni karar kaynağı yapılmadı; alias parent IDler birleştirilirken silinmedi. Input qualification=aday ile buradaki current status ayrıdır.",
+    "Bu oturum hiçbir build/test/migration/uygulama çalıştırmadı. Bulgular kaynak/çağıran/test assertion/kanıt dosyası/git trace düzeyinde. historical-fixed geçmiş düzeltme ve mevcut statik uyumu ifade eder; yeni runtime başarı değildir.",
+    "F0131 ve F0159 aynı last-holder invariant/path/fix aliaslarıdır; F0130 in-flight revocation ayrı invarianttır. 743 yalnız ilkini kapatır. F0020 ve F0325 aynı eksik producer invariantı aliaslarıdır; F0325 metadata closure749 alakasız V0-REV kanıt klasörlerini kapsar.",
+    "F0015 üç bağımsız mutation yüzeyine bölündü: Fields, payload Categories (aynı immutable payload repair), envelope classification (ayrı crypto metadata path). F0016 kanıt eksikliği ayrıca tutuldu. Envelope AAD koruması mevcut: mutable metadata bulgusu başarılı decrypt bypass diye sunulmadı.",
+    "Exact_surface mevcut dosyaları ve açık NEW test method/file adlarını gösterir; ownership grant değildir. Decision-blocked/integration gruplarında karar sonrası yeni migration/contract/writer gerekirse exact allowlist yeniden onaylanmalı; eski migrationlar değiştirilmeyecek, listelenen137 salt-okunur schema referansıdır.",
+    "Yeni mevzuat süresi, lifecycle olayı, provider davranışı ya da onay varsayılmadı. V0 envanteri repo içi kontrat olarak okundu; hukuki doğruluğu haricen teyit edilmedi.",
+    "Girdi kapsamındaki25 atomik kusur/teyit kaydı vardır; bunlar25 yeni doğrulanmış açık üretim hatası değildir. Decision ve document kusurları ile historical closure ayrı sayılmalı.",
+    "Başlangıçta parentın plan739 değişikliği ve evidence739/classification untracked yüzeyi vardı; bunlara dokunulmadı. Bütün yeni dosyalar yetkili scratch altında.",
+    "Ek doğrudan bağlantılı gözlemler: StaffSection shell UsersManage kapısı ve UserRolesPanel listUsers bağı RolesManage-only erişimini ayrıca sınamayı gerektirir; bu18-source diliminde ayrı doğrulanmış izin açığı sayılmadı. Tüm repo kapsamlı audit iddiası yok.",
+    "Known same-file overlaps seri dependencylerle yazıldı; farklı grupların gelecekte paralel uygulaması varsayılamaz. Kanıt ve belge dosyalarının güncellemesi de ayrı planlama/yazma onayı ister."
+  ],
+  "parent_path_validation": {
+    "unresolved_paths": [],
+    "source_hashes": {
+      "src/Modules/Identity/Authentication/SessionTokenIssuer.cs": "b8e63c9f680eb08f62fd3f637995014ee1a887524beee5c14e7890a4f73263ec",
+      "src/Modules/Identity/Authentication/LoginResult.cs": "cb4e62300f4cb746606c6744375aeeb53adfb76968960910cfb64a654512f68d",
+      "src/Modules/Identity/Authentication/AuthenticationService.cs": "e959402c54a4734fd58ebdd6a3fe46608f7e89a7ef7afdabcdce4ef8876596b3",
+      "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs": "71b85873cb1a9bb7cba18050cf3a3cd14a7b14a5077eb0f7c5c3abc8acbec39f",
+      "tests/Modules/Identity/Authentication/AuthenticationServiceTests.cs": "a5348f251ad49021708e80313a0a644a89276019b2cb43ee00840e1a54d458ce",
+      "evidence/V1-RMD-739/findings/register.md": "586741831600943cf78907712067cfd1a4d3eb1a557b2a00965d00fda433bf41",
+      "evidence/V1-RMD-739/tasks/B005.md": "a90497fa52fe28df0ba8aed935adb3b955da689d727695862c35279cef51b105",
+      "src/Host/DualScreen/DualScreenApplication.Endpoints.cs": "e051aff3f99389e52f97338fa6481e71a4f52c19cefb7c59fd9f6ecb42dfd42a",
+      "evidence/V1-IAM-013/issued_token_redaction_verification.txt": "3e37aba6f8158f78fa98855d84f4a49dff4f74ffc024a11dca15c73a0a628d66",
+      "plan/v1/identity-authorization/V1-IAM-013-issued-token-redaction.md": "161c344577f8921b62e564304cfe2db38cf0d9bca34800f181b907e303f0a9a2",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs": "af03d7232a52ea6029eb9f97851350e57552cd4a049e66f74a1a1aff4188d6ed",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs": "3fa69c4f5b19d653e9c85eaf235d24830a73ec3a94b544891b96626e777d3bad",
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs": "5a9916a04c3d899379f7ffa98b80f1029d8743382d7cb6a32f039a43f745d7c4",
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/EnvelopeProtectionTests.cs": "1446811213b0704be47f0f9fbbbda30148990ffd0725066f894b33320b00f2d6",
+      "evidence/V1-RMD-739/tasks/B060.md": "c60bd2d61d39f30733f52dbe2d3f56ae4872f2dd917e54719bef3c97f50db4c1",
+      "src/BuildingBlocks/Security/SensitiveData/PayloadRedactor.cs": "5e8c524f93ecb11e87f3eaefd3e8f2325621826045f4f107343ff7af56fcbaea",
+      "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs": "3de1a0da740fbbebd4293fc4b0de491d8ccdc6e760230c58bd545903d123e20d",
+      "tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs": "f3e8c467f56fcddeecf4b24b08c78a5649b305215dd325f551c21276899eb215",
+      "evidence/V1-SEC-005/immutable_data_classification_verification.txt": "1e2b76fbb485a81d45fd014e61e43911c273aca35b0c6d0fdc048490fe085113",
+      "plan/v1/security-foundation/V1-SEC-005-immutable-data-classification.md": "595a7fd6a08c8d2b46cabad3a4b8c4d5494341fda9552ec62d26de0efafafaa1",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs": "6c152bb63362a605397095b7520098a3322f4949dd46864d94f05a2474dd423c",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs": "c90710dcdfd4154b0b5e14a3dae897c28bdd8cea22f39bd1838c535367634e12",
+      "src/Modules/Privacy/RetentionExecution/IRetentionExecutionService.cs": "e41d71d057424a358786d72fe96db99fa6d89954d27a60ec4659b3be5e191264",
+      "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs": "8f2e19f21751aa3420e6746384c941229d65792deb96671ca89b7967aee0390a",
+      "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs": "f7def71b4bcab1ff863703f9a962688fca23ce74207428a233360a2f96718aa2",
+      "evidence/V1-RMD-739/tasks/B063.md": "d15b1adef18ec04807ce951390e32e0b19e9108c3a20851bd68adc9bc56736d1",
+      "database/migrations/V15/V15-KVK-001/170-privacy-retention-execution.up.sql": "1101fecc5b70b35f42c8a1337d4d42a4f754f6568e4dd0b0a2f6df6be790f1f1",
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs": "006d64da317fc432479853446d17ed50939a027cef785df5e08b79efafb0f9fb",
+      "src/Host/Program.cs": "3427af65908afec257e0d0be22a80d0ea292e9ac74117fbb88f132870d0fedf5",
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs": "0c30ec2934a778ca1e3a98079a752583c1825c1d972abb9c9015975896dea05b",
+      "evidence/V15-KVK-001/README.md": "f9424b9db3b51e1b8437962ac45366a6f0b2ebfa2154aa9c66f26678ecb12ac2",
+      "src/Modules/Privacy/Anonymization/AnonymizationModels.cs": "b250b74b802eca6eb0dce91c3271ffcf5ae6f31bbf09d150bf717802ad40c717",
+      "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs": "bf9c4e029bd7c306fa7477f3335571c39818d7e591424fd0232194a6cb3dce23",
+      "plan/v1.5/kvkk/V15-KVK-002-cross-store-anonymization.md": "47026b29fe899c24452a689de1995e8d3348948cb04f1dde86e327751b95a65e",
+      "docs/architecture/module-dependency-rules.md": "176e8a52cc62955fb465c0a93742a401fec93f98744fd98dda01ac9b7fc0e9e6",
+      "src/Modules/Security/DataProtectionRetention/IRetentionSubjectStore.cs": "36c2586dfa6f0f66fa42b621e20d678bbcffde42b922a6405e539746dfd8a52a",
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs": "cc9474cdcdaad74c3472dec3d322ffd1c9109f0bca4f1843aafd37e8d32ace1c",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs": "ed447327f587d896025585dcefd2cad7926d5055730d09862992ec3997aa8789",
+      "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs": "a860d5db26299041830dd1ae721f701d662f1e084fc328cd6f3b5913a83aeb38",
+      "src/Modules/Security/DataProtectionRetention/DeletionQueueProcessor.cs": "7fea95e4f179444a964512b410a339d61957ae4b33730ce8156b6d60c5d30181",
+      "src/Modules/Security/DataProtectionRetention/AuthorizedReEncryptionService.cs": "ef337e1bb534d06f04d119dd546b894977472dde18bec23eecfea0f4eb443e18",
+      "src/Modules/OnlineOrdering/Providers/Inbox/ProviderInbox.cs": "b076d2092318ba273f779c3eabc67c350aa37f841521403bfca8bc3b878a7c55",
+      "src/Modules/CustomerData/Profiles/PostgresCustomerProfileStore.cs": "6880edc0e70bf444b48a56922fb7414febeb2491a447f8d021e15f151e165c04",
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs": "711f6194133344f0c58e6ffaaff401122bd6325f7fc2fc65b4c803e1494fbc37",
+      "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs": "f3a79ca5d90c292d09825f69fcf392db7118f222eb53ace048286167d15cd007",
+      "evidence/V1-RMD-739/tasks/B064.md": "435af8ed2d85ebf5a919401d0209a132db024911131101cc11af4bd7a805fdd1",
+      "evidence/V1-RMD-739/tasks/B128.md": "268d6a4dfa3c3e27edb4052e7435ca7d7cb40d4a13849f38a725530e298f112d",
+      "src/Modules/Security/SecurityModule.cs": "d74372cae6fb013585e9c34ca02a334c61162dd8e1aa96f3b6ad95745b0e973a",
+      "src/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox/YemeksepetiWebhookInbox.cs": "831d318c3a931c38b61e434f301be53e346fc343de5fdf9eeddc6650f7320fd0",
+      "src/Modules/OnlineOrdering/Polling/OnlineOrderPoller.cs": "1a8f7e3883aa460b7348c11224ec842d51bf1579ba4ede42f04d723b81eeb9ca",
+      "plan/v1/remediation/V1-RMD-268-maintenance-jobs-and-retention-sweep.md": "0d3229f11e7562fede96205604b5fb8e86c5d7f0d97b696032a502cda9600c95",
+      "evidence/V1-RMD-749/README.md": "7e2341e0d4e3c34bc29800d698497476f484e5d848a430e0f1f88c14af52a94c",
+      "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs": "908aaaa4ab9f65455e6392b78dd519c2abf172e28b86ca1f3fe06c62f25ef706",
+      "tests/Modules/Security/DataProtectionRetention/DeletionQueueProcessorTests.cs": "c7684b00b2de0e3bbe87a255b07fc67d3cc45d01a210760c802dad7ef4756e1b",
+      "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md": "31372eff94c00b8aec61a1d681edc3836a9d6567dd89f94d71a8ff727d25f7ea",
+      "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs": "6447e88a48986732cf3298b5d5f5070b20eef6bd8c6d355235c913c93783a284",
+      "evidence/V1-RMD-739/findings/low-A.md": "63e9b1772d6951d513df4100a5cb6be7ea39e537509527b2237ab518019ca600",
+      "plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md": "1ee2493a1957d4ee195ecfa7ea2a15d8e0f2209bc0676f0428acf007c4cb3b84",
+      "database/migrations/V15/V15-KVK-002/172-privacy-anonymization-workflow.up.sql": "71ae81dd386d06182dfb7259eadb9451ebb7a961e1ff6d23984dd5c72b5bde72",
+      "tests/Host/MigrationComposition/Program/AuditDisposalTests.cs": "fd94e157b9ea73e2f3d389a6d16d6e09ffc5a3f2ec38a5ad7b796b9810c7f39a",
+      "evidence/V15-KVK-002/README.md": "18d91b50de2d208c86c751cee23067e75bdd33e61d18fa07aa2cde3a04d9869b",
+      "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md": "46c79b4a274ab6f93fde3ef09d5d87c724c1431a7667b305207879d15de6ba0d",
+      "src/BuildingBlocks/Security/SensitiveData/AesGcmEnvelopeCipher.cs": "bf7544e458bbed5dc180005d33092fef0892eee1c7564d718e29d93d2622a5af",
+      "tests/BuildingBlocks/Security/SensitiveData/Encryption/EnvelopeHardeningTests.cs": "055786e28a35fac1d7953cec8f0522d923afa1de4e8e514856cc37b8f056d919",
+      "evidence/V1-RMD-739/tasks/B135.md": "6ea9aa406396f54f9bd7b8dffc6c1131e06e948a3ce662157b72cdabbffb60d0",
+      "plan/v1/remediation/V1-RMD-663-envelope-hardening-and-boundary-coverage.md": "416c45a8a85711e4690674c0aa555035e56ee7f96c5396f8bc8607c60ac010ce",
+      "evidence/V1-RMD-663/README.md": "969fadcb4140e38501cc1c1552e851353fb173d49a0c763858473a7c44df45b2",
+      "plan/v1/remediation/V1-RMD-664-typed-envelope-failures.md": "771159bc08345f41d036e5c460bb9438eb1915deb01948c114dd4c478d26bb0f",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs": "a07fff53cd2b791c7a288d3e6ca5bd4b94f52d4b5b67658ce909e03d0add312f",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs": "0be178ad8b4adafc43d2d540032440dd31acfa30923aae80eb58a72320814264",
+      "src/Modules/Identity/Authorization/AuthorizationService.cs": "e6dac7a5df386c53667b5f155a7d84b9cb950f816ad4b4a4f1929e2e1b58db39",
+      "src/Host/Experience/Roles/RoleManagementEndpoints.cs": "00d0746c0bb08f72927ff02091aa47deb713b135ac28f4fa80a001763ae6b9d0",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs": "af982ede631572686de5f3061b92b5af7fc49dd7a5e5d57909076b8858d4fcec",
+      "evidence/V1-RMD-739/tasks/B042.md": "aa50bedde69657b6f2de100adf5a6c7d37688254f71bae7f99ad1697cf33c588",
+      "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md": "4feaabe7fa932fd6d4b27222dc0aa3733dca395ef4340d9bbdd7a2a23f4b37f1",
+      "plan/v1/remediation/V1-RMD-743-son-yonetici-es-zamanlilik.md": "634c89c95834dc384fe299b1c79370985f84ee1f527032baf05c083228727490",
+      "src/Modules/Identity/Authorization/IRoleRepository.cs": "3dee15e6f2a972763fbec688045adc4fcb63e476c5d0f82b9c33c48b32408358",
+      "evidence/V1-RMD-739/tasks/B059.md": "eed3904b13de7c20ded7e7427b505fdcde51ac53c5dcdbd94d01967f00109e26",
+      "evidence/V1-RMD-743/green.log": "628fc78273493410b8cb8eb8b01619ea86f2446d074eb8e17a56a220b2adfdce",
+      "evidence/V1-RMD-743/mutations.log": "3e80f86163f3d267f52785d7b88c82f9211951f404275668283e8f3289b23634",
+      "evidence/V1-RMD-739/findings/low-C.md": "a464cd1d0b334c092fc0d427186271b04793e042c104a9d586227bf1f2edb794",
+      "evidence/V1-IAM-008/authorization_linearization_verification.txt": "b21314db9d6858a7688e660769d0f726f283f3fdd2137ac9d7bddf01f8d2cc59",
+      "evidence/V1-RMD-743/README.md": "45a2fdc49a3a426ea346024664f4c23d4ae26b691f62e12b9d55ae69f73a8618",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx": "0fd9bcc4fab3365cf435b30ef5a43e1545a7c41f36040bcb0fd38b8547a9b2d5",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx": "79fbcbe3c877bb20484b0405dee58578aa010c27132c0408c5d2621283e573c8",
+      "tests/Host/Experience/Roles/RoleManagementHttpTests.cs": "f0336e9bdbdad38650c563c382f03ef26df4729fc221f8c242b65c013d369662",
+      "evidence/V1-RMD-739/tasks/B055.md": "d26deeba2e4f2521c70bff7624db46080dbe535115c599119c577599e40f5e81",
+      "evidence/V1-RMD-457/README.md": "3595eb358404922edee92daeaaafc59b6f42bb569c9159b744e6370c0ac118d9",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/StaffSection.tsx": "e42f2e5ef391859009af91cf220161f00330c1097d44d9979af947cd0895edf5",
+      "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md": "5648c0c88eaa89b428a777a83cdf97a3ebc8d30d259a7aa5ab5b4cba524beb0f"
+    },
+    "tier": "static source/line/path validation; runtime tests not rerun"
+  },
+  "independent_review": "Bağımsız statik inceleme tamamlandı; düzeltmeler uygulandı. Runtime testi yok. Task ID atanmadı."
+}

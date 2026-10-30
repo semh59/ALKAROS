@@ -1,0 +1,25 @@
+{
+  "source_id": "UI0187",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Aynı kavram için üç farklı ad: 'Aktif Taslak Fiş' / 'Sepet boş' / 'Adisyona Ekle'; 'fiş' kelimesi kart slip'iyle çakışıyor",
+      "status": "open",
+      "invariant": "UI_STYLE_GUIDE §3: terminoloji tutarlılığı — aynı domain kavramı için tek bir onaylı terim kullanılmalı. DESIGN.md sözlük: sepet=Sepet, ödenecek kayıt=Hesap, kart slipi=Slip.",
+      "mechanism": "Dört noktada üç farklı terim kullanılıyor:\n1. Cashier/index.html:93 — <span class=\"ticket-title\">Aktif Taslak Fiş</span> (boş sipariş başlığı)\n2. Cashier/index.html:120 — grand-total-label: 'TASLAK TUTARI' (toplam etiketi)\n3. Cashier/index.html:166 — modifier modal confirm button: 'Adisyona Ekle' (ürün ekleme eylemi)\n4. Cashier/wwwroot/cashier-app.js:585 — ticket-empty mesajı: 'Soldaki katalogdan ürün seçin.' (ancak başlık 'Aktif Taslak Fiş' kalıyor)\n5. split-payment.js:840 — METHOD_LABELS içinde 'Slip' kelimesi kart fişi (kart slipi) için kullanılıyor: RECEIPT_METHODS.Card = 'Banka kartı' ama slipNo alanı 'fiş numarası' olarak UI'ya gidiyor.\nTerminoloji çakışması: 'Fiş' hem taslak sipariş (adisyón) hem de kart slipi (bankacılık terimi) için kullanılıyor. 'Adisyon' / 'Hesap' / 'Sepet' karışık.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/turkce-metin.md:6",
+        "src/Clients/Cashier/wwwroot/index.html:93,120,166",
+        "src/Clients/Cashier/wwwroot/cashier-app.js:585",
+        "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js:840,1409-1470"
+      ],
+      "acceptance": "Sözlük uygulanır: 'Sepet' (boş/aktif), 'Hesap' (ödenecek kayıt), 'Slip' (kart fişi). Index.html:93 'Aktif Taslak Fiş' → 'Sepet'; :120 'TASLAK TUTARI' → 'SEPET TUTARI'; :166 'Adisyona Ekle' → 'Sepete Ekle'. cashier-app.js:585 mesajı 'Sepetiniz boş' olur. split-payment.js slipNo alanları 'Slip no' / 'Fiş no' olarak kalır; 'fiş' kelimesi sadece kart slipi için kullanılır. Test: tüm dört dosyada arama — 'Taslak Fiş', 'Adisyona Ekle', 'TASLAK TUTARI' hiçbir yerde kalmamalı.",
+      "id": "W2-N-UI0187-01",
+      "parents": [
+        "UI0187"
+      ]
+    }
+  ],
+  "limitations": "PosTerminal/src/routes/Cashier.tsx (satır 717-718 'Aktif Sipariş'/'Yeni satış') ve WaiterPwa ('Adisyon'/'Hesap' karışımı, turkce-metin.md:12) aynı terim sorunu yaşıyor olabilir; bu kayıt sadece Cashier/wwwroot altındaki dört dosyayı kapsar. split-payment.js:840 RECEIPT_METHODS tanımı okundu; receiptHtml() içindeki kullanım (1409-1470) 'Banka kartı (Slip)' olarak göründü, 'fiş' yok — kaynak rapor 'fiş aynı zamanda kart slipi (split-payment.js:840)' diyor ama kodda 'Slip' geçiyor; doğrulama için runtime metin çıkışı gerekir.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

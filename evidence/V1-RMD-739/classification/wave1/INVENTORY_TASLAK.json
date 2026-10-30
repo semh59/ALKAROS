@@ -1,0 +1,2888 @@
+{
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "source_ids": [
+    "F0017",
+    "F0025",
+    "F0026",
+    "F0030",
+    "F0031",
+    "F0211",
+    "F0212",
+    "F0227",
+    "F0228",
+    "F0229",
+    "F0230",
+    "F0231",
+    "F0232",
+    "F0295",
+    "F0516",
+    "F0560",
+    "F0641",
+    "F0697",
+    "F0698",
+    "F0699",
+    "F1005"
+  ],
+  "defects": [
+    {
+      "id": "STK-001",
+      "parents": [
+        "F0017",
+        "F0026"
+      ],
+      "title": "Mal kabul aynı satır yarışının kayıtlı düzeltmesi",
+      "category": "EZ",
+      "status": "historical-fixed",
+      "invariant": "İki bayat kabul aynı açık miktarı iki kez stoklaştıramaz.",
+      "mechanism": "ReceiveGoodsAsync eski miktarları yakalıyor; aynı transaction içinde satırları FOR UPDATE ile kilitleyip güncel received_quantity ile karşılaştırıyor. İkinci bayat kabul yazımlardan önce reddediliyor. F0017 ve F0026 aynı invariant, aynı çağrı yolu, aynı düzeltme; aliaslar korundu. Bu kapanış PO cancel yarışını, fiş no yarışını veya onay politikasını kapsamaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B062.md:16-20",
+        "evidence/V1-RMD-739/tasks/B088.md:13-17",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:164",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:255-292",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs:253-278",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs:399-463",
+        "evidence/V1-RMD-740/green.log:14-15",
+        "evidence/V1-RMD-740/mutations.log:1-7"
+      ],
+      "production_paths": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Mevcut ConcurrentReceiptsOfSameOrderPostStockOnce ve StaleReceivedQuantityIsRejectedWhenLockingOrderLines yeniden çalıştırılır; yalnız beklenen PurchaseOrderStatusException kabul edilir; received_quantity, fiş sayısı, ledger toplamı ve on_hand birlikte doğrulanır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-01",
+      "source_qualification": {
+        "F0017": "aday",
+        "F0026": "aday"
+      },
+      "historical_source_closure": {
+        "F0017": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-740"
+        },
+        "F0026": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-740"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0017",
+          "source": "evidence/V1-RMD-739/findings/register.md:24",
+          "task_ids": [
+            "V11-RMD-002"
+          ]
+        },
+        {
+          "id": "F0026",
+          "source": "evidence/V1-RMD-739/findings/register.md:33",
+          "task_ids": [
+            "V11-PUR-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-002",
+      "parents": [
+        "F0017",
+        "F0026"
+      ],
+      "title": "Mal kabul ile sipariş iptali ortak sürüm/kilit kullanmıyor",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "İptal edilen PO stoklaştıramaz; alınmış mal miktarı eski Cancel snapshot ile sıfırlanamaz.",
+      "mechanism": "740 yalnız receipt-receipt received_quantity değişimini kontrol eder. CancelPurchaseOrderAsync eski PO okur; UpdateAsync header ve bütün satırları mutlak değerle yazar. Cancel önce commit ederse receipt satır miktarı hâlâ aynı olduğundan guard geçer ve Cancelled siparişi yeniden Completed yapabilir. Receipt önce commit ederse bekleyen eski Cancel snapshot received_quantity=0 yazabilir. İki gerçek Host endpoint mevcut; tarihsel çift-kabul kusurundan ayrı kalan execution path.",
+      "source_evidence": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:131-149",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:258-265",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs:218-249",
+        "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:229-256",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:191-222"
+      ],
+      "production_paths": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "İki bağlantı ve barrier ile cancel-commit→receipt-write ve receipt-commit→stale-cancel-write sıraları kurulur; biri tipli conflict alır; PO status/miktar, receipt, ledger ve balance tek tutarlı sonucu verir."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-02",
+      "source_qualification": {
+        "F0017": "aday",
+        "F0026": "aday"
+      },
+      "historical_source_closure": {
+        "F0017": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-740"
+        },
+        "F0026": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-740"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0017",
+          "source": "evidence/V1-RMD-739/findings/register.md:24",
+          "task_ids": [
+            "V11-RMD-002"
+          ]
+        },
+        {
+          "id": "F0026",
+          "source": "evidence/V1-RMD-739/findings/register.md:33",
+          "task_ids": [
+            "V11-PUR-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-003",
+      "parents": [
+        "F0026"
+      ],
+      "title": "ReceiptNumber unique yarışı repositoryde zaten tipli duplicate veriyor",
+      "category": "DY",
+      "status": "historical-fixed",
+      "invariant": "Aynı fiş numarası eşzamanlı geldiğinde beklenen duplicate sonucu tutarlı olmalı, ikinci etki olmamalı.",
+      "mechanism": "B088 ham23505 iddiası güncel source ile doğrulanmadı: IGoodsReceiptRepository.cs SaveAsync header INSERT etrafında23505 yakalayıp DuplicateGoodsReceiptException fırlatıyor. ReceiveGoodsAsync catch içermemesi yeterli kusur kanıtı değil; gerçek callee bunu yapıyor. Aynı POda740 guard önce conflict verebilir; farklı PO aynı ReceiptNumber için repository çevirisi geçerlidir. Yarış testi eksikliği ayrı doğrulama sınırı, production bugı değil.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B088.md:16",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:157-162",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:261-292",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs:465",
+        "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs:165-194"
+      ],
+      "production_paths": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Farklı PO üstünde aynı ReceiptNumber yarışı; bir kayıt, beklenen DuplicateGoodsReceiptException, kaybedenin PO/ledger/balance etkisi yok. Exact constraint discriminasyonu için farklı unique failure ayrı negatif kontrol edilir; bugünkü header catch bütün23505leri çevirir."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-03",
+      "source_qualification": {
+        "F0026": "aday"
+      },
+      "historical_source_closure": {
+        "F0026": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-740"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0026",
+          "source": "evidence/V1-RMD-739/findings/register.md:33",
+          "task_ids": [
+            "V11-PUR-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-004",
+      "parents": [
+        "F0026"
+      ],
+      "title": "Mal kabul toleransı ve yönetici onayı ürün kararı",
+      "category": "VD",
+      "status": "decision-blocked",
+      "invariant": "Fazla alım kabulü açık ve onaylı politika sonucuna dayanmalı.",
+      "mechanism": "Tam kart %5 toleransın ve purchasing.manage sahibinin IsManagerApproved göndermesinin onay kaynağını doğrulayamıyor. Host actorName sunucudan çıkarılıyor; ayrı onay yetkisi gerektiği varsayılamaz. Kod değişikliği değil karar teyidi.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B088.md:17",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:186-191",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:212-219",
+        "plan/v1.1/purchasing/V11-PUR-001-purchase-order-and-receipt.md:49-51"
+      ],
+      "production_paths": [
+        "src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Semih %5 eşiği ve purchasing.manage→onay yetkisi ilişkisini tarihli karar olarak teyit eder; onaylı/onaysız/sınır toleransı testleri seçilen kurala bağlanır."
+      ],
+      "decision_blocker": "Semih: tolerans ve ayrı approver gerekip gerekmediği; bugünkü rolü kusur varsayarak genişletme yok.",
+      "repair_group": "RG-STK-04",
+      "source_qualification": {
+        "F0026": "aday"
+      },
+      "historical_source_closure": {
+        "F0026": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-740"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0026",
+          "source": "evidence/V1-RMD-739/findings/register.md:33",
+          "task_ids": [
+            "V11-PUR-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-005",
+      "parents": [
+        "F0030"
+      ],
+      "title": "Toplu rebuild 5000 hareket ve okuma-hatası kaybının kayıtlı düzeltmesi",
+      "category": "DY",
+      "status": "historical-fixed",
+      "invariant": "Ledger okuma hatası projeksiyonu silmemeli; 5000 hareket sınırı full rebuild yolunu engellememeli.",
+      "mechanism": "SQL SUM artık reset öncesi okunuyor; full rebuild GetByLocationAsync kullanmıyor. 742 sadece bu altkusuru çözdü. Yazma/iptal atomikliği ve canlı yazıcı izolasyonu aşağıda açık; single-item replay hâlâ eski yolu kullanıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:11-14",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:49-56",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:138-163",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:154-190",
+        "evidence/V1-RMD-742/green.log:14-15",
+        "evidence/V1-RMD-742/mutations.log:1-4"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "5100 hareket rebuild ve ledger-read-failure mevcut testleri yeniden çalıştırılır; negatif Out işareti ve okuma-önce sırası mutasyonları kırılır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-05",
+      "source_qualification": {
+        "F0030": "aday"
+      },
+      "historical_source_closure": {
+        "F0030": {
+          "closure_status": "kismi-kalan-kusur-var",
+          "closure_task": "V1-RMD-742"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0030",
+          "source": "evidence/V1-RMD-739/findings/register.md:37",
+          "task_ids": [
+            "V11-INV-002"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-006",
+      "parents": [
+        "F0030"
+      ],
+      "title": "Toplu rebuild reset-sonrası hata ve iptal kısmi kalıcı durum bırakıyor",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Reset, on-hand yazımı ve reserved restorasyonu tek atomik commit/rollback olmalı.",
+      "mechanism": "ResetAllBalancesAsync, her SetExactBalanceAsync ve RestoreReservedQuantityAsync ayrı dataSource komutu. Reset commit sonrası ilk/ara/son yazımda hata veya cancellation tüm eski bakiyeleri geri getirmiyor. 742 testinin yalnız okuma hatası bu pencereyi kapsamaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:12",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:47-64",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:314-395",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:178-190"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceProjector.cs",
+        "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+      ],
+      "acceptance": [
+        "Reset sonrası, ikinci on-hand yazımında ve reserved restore sırasında gerçek transaction içinde hata/ct cancel enjekte edilir; bütün balance satırları ve reserved/available önceki snapshot ile eşit kalır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-06",
+      "source_qualification": {
+        "F0030": "aday"
+      },
+      "historical_source_closure": {
+        "F0030": {
+          "closure_status": "kismi-kalan-kusur-var",
+          "closure_task": "V1-RMD-742"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0030",
+          "source": "evidence/V1-RMD-739/findings/register.md:37",
+          "task_ids": [
+            "V11-INV-002"
+          ]
+        }
+      ],
+      "reachability": "Üretimde çağıran yok (STK-009/STK-010 kararı: kaldır/entegre et). Karar kaldırmaysa bu düzeltmeler gereksiz; sıra: karar → düzeltme."
+    },
+    {
+      "id": "STK-007",
+      "parents": [
+        "F0030"
+      ],
+      "title": "Toplu rebuild snapshot ile canlı hareket/rezervasyon yarışı",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Rebuild tamamlandığında on_hand ledger ile, reserved authoritative lifecycle ile tutarlı olmalı; eşzamanlı commit kaybolmamalı.",
+      "mechanism": "reserved snapshot ve ledger SUM yazımdan önce ayrı okumalardır. SUM sonrası canlı ledger+balance commit işlemi reset/set ile ezilebilir; yeni rezervasyon eski reservedBefore restorasyonuyla kaybolabilir. Sadece bir transaction eklemek yetmez: snapshot ve tüm ilgili canlı yazıcılar arasında ortak DB izolasyonu/lock düzeni gerekir. Row advisory lock tek başına tüm tablo resetini koordine etmez.",
+      "source_evidence": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:47-64",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:182-213",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:342-394",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:64-130",
+        "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:92-126"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "src/Modules/Inventory/CrossChannelReservation/PostgresCrossChannelPortionArbiter.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "SUM sonrası purchase/consumption commit ve reserved snapshot sonrası create/terminal commit barrier ile zorlanır; rebuild + writer sonrası SQL ledger SUM ve active reservation SUM ile tüm alanlar eşleşir; yeni item/location satırı da kapsanır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-37",
+      "source_qualification": {
+        "F0030": "aday"
+      },
+      "historical_source_closure": {
+        "F0030": {
+          "closure_status": "kismi-kalan-kusur-var",
+          "closure_task": "V1-RMD-742"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0030",
+          "source": "evidence/V1-RMD-739/findings/register.md:37",
+          "task_ids": [
+            "V11-INV-002"
+          ]
+        }
+      ],
+      "reachability": "Üretimde çağıran yok (STK-009/STK-010 kararı: kaldır/entegre et). Karar kaldırmaysa bu düzeltmeler gereksiz; sıra: karar → düzeltme."
+    },
+    {
+      "id": "STK-008",
+      "parents": [
+        "F0030"
+      ],
+      "title": "Tek kalem replay tüm konumun 5000 hareket tavanına bağlı",
+      "category": "DY",
+      "status": "open",
+      "invariant": "Bir kalem/konum replay başka kalemlerin hacminden bağımsız doğru ledger toplamı döndürmeli.",
+      "mechanism": "ReplayBalanceForItemAndLocationAsync önce konumdaki tüm hareketleri GetByLocationAsync ile okuyor, sonra item filtresi yapıyor. Aynı konumda hedef kalemin tek satırı olsa bile diğer kalemlerle 5001 satır olunca InvalidOperationException. Üretim çağıranı bulunmadı; gerçek public implementasyon kusuru ve test yolu mevcut; 742 Out of scope açıkça bırakmış.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:12",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:70-78",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:109-135",
+        "plan/v1/remediation/V1-RMD-742-bakiye-yeniden-kurma-guvenligi.md:31-34",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:234-236"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+      ],
+      "acceptance": [
+        "Aynı konumda 5100 hareket ve başka item hedefi; doğrudan item/location aggregate sonucu doğru; diğer konum hareketleri karışmaz; In/Out/Reversal ve boş ledger doğrulanır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-07",
+      "source_qualification": {
+        "F0030": "aday"
+      },
+      "historical_source_closure": {
+        "F0030": {
+          "closure_status": "kismi-kalan-kusur-var",
+          "closure_task": "V1-RMD-742"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0030",
+          "source": "evidence/V1-RMD-739/findings/register.md:37",
+          "task_ids": [
+            "V11-INV-002"
+          ]
+        }
+      ],
+      "reachability": "Üretimde çağıran yok (STK-009/STK-010 kararı: kaldır/entegre et). Karar kaldırmaysa bu düzeltmeler gereksiz; sıra: karar → düzeltme."
+    },
+    {
+      "id": "STK-009",
+      "parents": [
+        "F0227"
+      ],
+      "title": "Full balance rebuild gerçek işletim girişinden erişilemiyor",
+      "category": "TE",
+      "status": "decision-blocked",
+      "invariant": "Bakım için tutulan rebuild ya onaylı gerçek operasyon yolundan çağrılmalı ya kullanılmayan yüzey kaldırılmalı.",
+      "mechanism": "src taraması yalnız interface/definition ve açıklama referanslarını gösterdi; Host endpoint/hosted service çağrısı yok. Registered projector kullanım kanıtı değildir. Rebuild testleri bunu erişilebilir üretim özelliği yapmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:13",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:37",
+        "src/Modules/Inventory/InventoryModule.cs:57-58",
+        "plan/v1/remediation/V1-RMD-742-bakiye-yeniden-kurma-guvenligi.md:33"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceProjector.cs",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/InventoryModule.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Semih bakım gereksinimini seçer: gerçek yetkili operasyon akışı exact path ile ayrı planlanır veya unused method/interface/test-only feature kaldırma etkisi kaydedilir; yeni hayali endpoint kurulmaz."
+      ],
+      "decision_blocker": "Bakım arayüzü/komutu seçimi ve yetki politikası onaysız; removal mı integration mı kararı gerekir.",
+      "repair_group": "RG-STK-08",
+      "source_qualification": {
+        "F0227": "aday"
+      },
+      "historical_source_closure": {
+        "F0227": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0227",
+          "source": "evidence/V1-RMD-739/findings/register.md:237",
+          "task_ids": [
+            "V11-INV-002"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-010",
+      "parents": [
+        "F0211"
+      ],
+      "title": "Reservation rebuild ve drift için üretim çağıranı yok",
+      "category": "TE",
+      "status": "decision-blocked",
+      "invariant": "Reservation bakım özellikleri gerçek ihtiyaca bağlı olmalı; yalnız test tarafından kullanılan servis metodu ölü yol olarak kapatılamaz.",
+      "mechanism": "RebuildReservationBalancesAsync src içinde definition+interface dışında çağrılmıyor. DetectDriftAsync için de gerçek çağrı yolu bu incelemede bulunmadı. 747 replay düzeltmesi operasyon girişini eklemedi.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B088.md:6",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:73",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:115",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceProjector.cs:19-20",
+        "src/Modules/Inventory/InventoryModule.cs:73-74"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceProjector.cs",
+        "src/Modules/Inventory/InventoryModule.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Rebuild/drift tutulma kararı gerçek operatör senaryosuna bağlanır; test ve DI kayıtları caller sayılmaz; seçilen yol yetki/hata/iptal ile kanıtlanır."
+      ],
+      "decision_blocker": "Reservation bakım yolu için aynı retain/integrate/remove ürün kararı; onaysız yeni feature yok.",
+      "repair_group": "RG-STK-33",
+      "source_qualification": {
+        "F0211": "aday"
+      },
+      "historical_source_closure": {
+        "F0211": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0211",
+          "source": "evidence/V1-RMD-739/findings/register.md:221",
+          "task_ids": [
+            "V11-INV-007"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-011",
+      "parents": [
+        "F0025",
+        "F0212"
+      ],
+      "title": "Rebuild sonrası terminal replay kaydının kayıtlı düzeltmesi",
+      "category": "EZ",
+      "status": "historical-fixed",
+      "invariant": "Terminal rezervasyon rebuild sonrası ikinci kez reserved düşürmemeli.",
+      "mechanism": "747 repository tek tx içinde applied_events silip bütün rezervasyonların Reserved ve terminal durumların Terminal kayıtlarını yeniden üretir. Projector bunu çağırıyor; eski kullanılmayan RecordAppliedEventsForRebuildAsync yok. F0212 test eksikliği aynı mutation/required fix invariantının test aliası; mevcut test released replay işlemini kapsıyor, concurrency veya başka aktif rezervasyonlu terminal matrisini değil.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B088.md:5-7",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:83-84",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:323-347",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs:227-251",
+        "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:92-102",
+        "evidence/V1-RMD-747/green.log:14-15",
+        "evidence/V1-RMD-747/mutations.log:1-3"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Mevcut ReplayingATerminalTransitionAfterARebuildIsStillIdempotent yeniden koşulur; Released/Consumed/Waste ve aynı pair üstünde başka Reserved varken replay başka rezervasyonu azaltmaz; terminal olay üretimi kaldırılınca test kırılır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-09",
+      "source_qualification": {
+        "F0025": "aday",
+        "F0212": "aday"
+      },
+      "historical_source_closure": {
+        "F0025": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-747"
+        },
+        "F0212": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-747"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0025",
+          "source": "evidence/V1-RMD-739/findings/register.md:32",
+          "task_ids": [
+            "V11-INV-007"
+          ]
+        },
+        {
+          "id": "F0212",
+          "source": "evidence/V1-RMD-739/findings/register.md:222",
+          "task_ids": [
+            "V11-INV-007"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-012",
+      "parents": [
+        "F0211"
+      ],
+      "title": "Reservation full rebuild kısmi yazımda yarım kalıyor",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "applied_events ile reserved/available projeksiyonu tek atomik rebuild olmalı.",
+      "mechanism": "RebuildAppliedEventsFromReservationsAsync yalnız event log için ayrı tx kullanıyor. Projector daha sonra SetExactReservedBalanceAsync ile bağımsız commitler yapıyor. Olay logu yeni duruma geçip balance satırları yarım yazılırsa retry terminal eventini replay sayar ve gerekli miktar düzeltmesini atlayabilir. 747 event logun kendi DELETE+INSERT atomikliğini düzeltti; bütün rebuild atomikliğini değil.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B088.md:6",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:77-112",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:274-299",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:323-346"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Event rebuild sonrası ve ikinci balance yazımında failure/cancel; event seti ve tüm reserved/available önceki duruma tamamen döner; retry sonunda drift yoktur."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-10",
+      "source_qualification": {
+        "F0211": "aday"
+      },
+      "historical_source_closure": {
+        "F0211": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0211",
+          "source": "evidence/V1-RMD-739/findings/register.md:221",
+          "task_ids": [
+            "V11-INV-007"
+          ]
+        }
+      ],
+      "review_note": "Retry-skip alt iddiası desteklenmiyor; kalıcı zarar STK-013 canlı yarışıyla. Mekanizma buna daraltılacak.",
+      "reachability": "Üretimde çağıran yok (STK-009/STK-010 kararı: kaldır/entegre et). Karar kaldırmaysa bu düzeltmeler gereksiz; sıra: karar → düzeltme."
+    },
+    {
+      "id": "STK-013",
+      "parents": [
+        "F0211"
+      ],
+      "title": "Reservation aggregate ile canlı lifecycle farklı snapshotlara ait",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Reserved toplamı ve applied terminal eventler aynı authoritative snapshotı temsil etmeli.",
+      "mechanism": "Önce AggregateActiveReservationsAsync okunur; sonra GetAllBalancesAsync, ayrı tx event rebuild ve ayrı exact writes gelir. Araya Reserved→Released girerse event log terminali içerirken eski activeSums reservedi geri yükseltebilir; tekrar terminal replay hiçbir şey yapmaz. Yeni reservation da ezilebilir. Bu, eski missing-Terminal kusurundan farklı yarıştır.",
+      "source_evidence": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:77-105",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:302-346",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:217-270",
+        "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:109-126"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "src/Modules/Inventory/PortionReservations/Lifecycle/PostgresPortionReservationRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+      ],
+      "acceptance": [
+        "Aggregate sonrası terminal ve create commit interleaving; rebuild sonunda active reservation SUM=reserved, available=on_hand-reserved; event replay hiçbir ikinci etki üretmez."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-38",
+      "source_qualification": {
+        "F0211": "aday"
+      },
+      "historical_source_closure": {
+        "F0211": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0211",
+          "source": "evidence/V1-RMD-739/findings/register.md:221",
+          "task_ids": [
+            "V11-INV-007"
+          ]
+        }
+      ],
+      "reachability": "Üretimde çağıran yok (STK-009/STK-010 kararı: kaldır/entegre et). Karar kaldırmaysa bu düzeltmeler gereksiz; sıra: karar → düzeltme."
+    },
+    {
+      "id": "STK-014",
+      "parents": [
+        "F0211"
+      ],
+      "title": "Reservation rebuild raporu rezervasyon sayısı yerine miktarı int yapıyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "TotalActiveReservations gerçek aktif kayıt sayısını göstermeli; miktar ve sayı karışmamalı.",
+      "mechanism": "activeSums.Values.Sum() toplam quantity verir, (int) cast kesirleri keser ve çok büyük toplamda overflow üretir; rapor field adı TotalActiveReservations. Aynı pairde üç adet 0.5 rezervasyon için 3 yerine 1 döner. Ayrı rapor invariantı, rebuild tx düzeltmesiyle birleşmez.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B088.md:6",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:110-112",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceModels.cs:26-29",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:302-320"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceModels.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Aynı pairde 3×0.5 Reserved ve bir terminal kaydı: TotalActiveReservations=3, reserved=1.5; miktar toplamı int sınırını aşsa da kayıt sayısı overflowa bağlanmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-11",
+      "source_qualification": {
+        "F0211": "aday"
+      },
+      "historical_source_closure": {
+        "F0211": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0211",
+          "source": "evidence/V1-RMD-739/findings/register.md:221",
+          "task_ids": [
+            "V11-INV-007"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-015",
+      "parents": [
+        "F0228"
+      ],
+      "title": "Tx’sız reversal ledger commit sonrası balance hatasında ayrışıyor",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Reversal ledger ve balance birlikte commit/rollback olmalı.",
+      "mechanism": "AppendAsync(reversal,ct) kendi bağlantısında commit olur; ApplyMovementAsync başka komutla balance yazar. İkinci adım hata/ct cancel alırsa reversal kalıcı, balance eski kalır; retry HasReversal nedeniyle reddedilir. SentItemVoidStore gerçek üretim callerı tx overload kullanır; bu overload yalnız test callersıyla bulunmuştur, onu canlı path diye göstermiyoruz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:17",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:30-53",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:17-23",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:23-34",
+        "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:193-200",
+        "plan/v1/remediation/V1-RMD-748-hareket-iptali-eksi-bakiye.md:32"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+      ],
+      "acceptance": [
+        "Overload tutulursa gerçek Postgres ledger append sonrası balance failure/cancel: ne reversal ne delta kalır; tekrar tek etki; kaldırılırsa bütün callers tx overloada taşınır ve kullanılmayan dependency kalmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-12",
+      "source_qualification": {
+        "F0228": "aday"
+      },
+      "historical_source_closure": {
+        "F0228": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0228",
+          "source": "evidence/V1-RMD-739/findings/register.md:238",
+          "task_ids": [
+            "V11-INV-003"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-016",
+      "parents": [
+        "F0228"
+      ],
+      "title": "Tx’sız reversal overloadun üretim çağıranı yok",
+      "category": "TE",
+      "status": "decision-blocked",
+      "invariant": "Atomik olmayan yalnız-test public orchestration geleceğe hook diye tutulmamalı.",
+      "mechanism": "src caller taramasında tek gerçek StockMovementReversalService reversal callerı SentItemVoidStore ve conn/tx veriyor. Tx’sız overload için otomatik gerçek feature integration varsayılmamalı. Atomiklik kusuru mevcut, kullanımsızlık ayrı kayıt.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:17",
+        "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs:21-32",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:30-60",
+        "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:193-200"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+      ],
+      "acceptance": [
+        "Semih retain+gerçek caller gereksinimi veya remove seçer; gereksiz overload kalmaz; tx yolunun ledger/balance rollback testleri korunur."
+      ],
+      "decision_blocker": "Üretim gereksinimi yoksa removal tercihinin onayı; onaysız endpoint eklenmez.",
+      "repair_group": "RG-STK-35",
+      "source_qualification": {
+        "F0228": "aday"
+      },
+      "historical_source_closure": {
+        "F0228": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0228",
+          "source": "evidence/V1-RMD-739/findings/register.md:238",
+          "task_ids": [
+            "V11-INV-003"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-017",
+      "parents": [
+        "F0229"
+      ],
+      "title": "Tx reversal negatif stok için kayıtlı tipli ret",
+      "category": "DY",
+      "status": "historical-fixed",
+      "invariant": "Negatife götüren reversal ham PG yerine tipli ret verir; caller rollback ile ledger değişmez.",
+      "mechanism": "Tx overload TryApplyGuardedOnHandDeltaAsync ve ReversalWouldMakeStockNegativeException kullanıyor. PartialStockReturnTests 10 receipt−8 consumption sonrası receipt reversalını reddedip bakiye 2 ve reversal yok asserts. Tx’sız yol 748 kapsamında değil.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:18",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:75-79",
+        "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs:154-172",
+        "evidence/V1-RMD-748/green.log:14-15",
+        "evidence/V1-RMD-748/mutations.log:1-4"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalModels.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs"
+      ],
+      "acceptance": [
+        "Mevcut tipli ret testi tekrar koşulur; caller transaction rollback açıkça doğrulanır; guard kaldırma mutasyonu kırılır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-13",
+      "source_qualification": {
+        "F0229": "aday"
+      },
+      "historical_source_closure": {
+        "F0229": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-748"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0229",
+          "source": "evidence/V1-RMD-739/findings/register.md:239",
+          "task_ids": [
+            "V11-INV-003"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-018",
+      "parents": [
+        "F0230"
+      ],
+      "title": "Manual adjustment izin kontrolü yerine yalnız actor GUID doğruluyor",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Yetkisiz ayarlama hiçbir ledger/balance etkisi üretmemeli.",
+      "mechanism": "AdjustInventoryAsync sadece AuthorizedBy!=Guid.Empty ister; permission check yok. Şu an gerçek Host callerı yok, dolayısıyla açık internet yetki atlatma iddiası değil; acceptance sözleşmesinin gerçek izin kontrolü eksik. DI registration authorization değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:25-27",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:58-59",
+        "src/Modules/Inventory/InventoryModule.cs:63",
+        "plan/v1.1/inventory/V11-INV-005-manual-adjustments.md:50-53"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+        "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+        "src/Modules/Inventory/InventoryModule.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Seçilen gerçek güven sınırında nonempty fakat izinsiz actor reddedilir ve hiçbir kayıt oluşmaz; yetkili actor tek ledger+balance etkisi verir; istemciden AuthorizedBy güvenilir kimlik sayılmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-14",
+      "source_qualification": {
+        "F0230": "aday"
+      },
+      "historical_source_closure": {
+        "F0230": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0230",
+          "source": "evidence/V1-RMD-739/findings/register.md:240",
+          "task_ids": [
+            "V11-INV-005"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-019",
+      "parents": [
+        "F0230"
+      ],
+      "title": "Manual adjustment özelliği üretimde çağrılmıyor",
+      "category": "TE",
+      "status": "decision-blocked",
+      "invariant": "Done manual adjustment davranışının gerçek yetkili giriş yolu olmalı veya kullanılmayan özellik kaldırılmalı.",
+      "mechanism": "AdjustInventoryAsync yalnız definition/interface içinde; Host stok endpoints physical-count ve waste sunar, manual adjustment yok. PhysicalCount bağımsız service kullanır; ona alias saymak eksik davranışı gizler.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:26",
+        "src/Modules/Inventory/InventoryModule.cs:63",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:37",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:269-300"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+        "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+        "src/Modules/Inventory/InventoryModule.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Kullanıcı gerçek ihtiyacı onaylar; integration seçilirse tam yeni giriş/contract/test yolları ayrıca planlanır, removal seçilirse yaşayan physical-count/waste davranışları korunur."
+      ],
+      "decision_blocker": "Manual adjustment retained feature mı removal mı; yeni endpoint ve izin kararı bu salt-okuma görevinde alınmaz.",
+      "repair_group": "RG-STK-34",
+      "source_qualification": {
+        "F0230": "aday"
+      },
+      "historical_source_closure": {
+        "F0230": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0230",
+          "source": "evidence/V1-RMD-739/findings/register.md:240",
+          "task_ids": [
+            "V11-INV-005"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-020",
+      "parents": [
+        "F0231"
+      ],
+      "title": "Waste key farklı payloadı sessiz replay sayıyor",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Bir idempotency key tek iş yükünü temsil eder; farklı item/location/quantity/source aynı sonuç diye kabul edilmemeli.",
+      "mechanism": "Hem erken existingRecord dalı hem unique race catch yalnız keye göre döner, payload karşılaştırmaz. Host waste endpoint gerçek caller; reservation cancellation caller-tx yolu da mevcut. ManualAdjustments FindReplay farklı yükü reddeder. Tx içi replay movement ayrı bağlantıdan okunur; uncommitted existingRecord senaryosu ayrıca negative check gerektirir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:30",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:80-90",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:210-223",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:185-205",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:286-300",
+        "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:146-159"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs",
+        "src/Modules/Inventory/WasteRecording/WasteModels.cs",
+        "src/Modules/Inventory/WasteRecording/PostgresWasteRecordRepository.cs",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "acceptance": [
+        "Aynı key+aynı yük replay; farklı item/location/quantity/unit/source/sourceReference ve onaylı payload alanları conflict. Erken hit ve concurrent unique-race recovery aynı karşılaştırmayı kullanır; caller tx ve HTTP 409/Türkçe mesaj; ikinci ledger/balance etkisi yok."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-15",
+      "source_qualification": {
+        "F0231": "aday"
+      },
+      "historical_source_closure": {
+        "F0231": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0231",
+          "source": "evidence/V1-RMD-739/findings/register.md:241",
+          "task_ids": [
+            "V11-INV-006"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-021",
+      "parents": [
+        "F0232"
+      ],
+      "title": "Waste reversal hazırlanmış stoğu yeniden available yapabiliyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "Hazırlanmış ürün fire kaydından sonra stok olarak geri dönmemeli.",
+      "mechanism": "PrepareReversalAsync, CanReverseAsync ve StockMovement.CreateReversal yalnız Reversal türünü reddeder; Waste Out hareketini In yapar. Non-tx reversal ve ledger-only StockMovementService yolu da bunu yapar. Mevcut FullLedgerRebuildFromDatabaseMovementsReconcilesAccurately testi açıkça Waste cancelled ile +5 geri koymayı bekler; kabul maddesiyle çelişen pozitif fixture, eksik testten daha güçlü kanıt. Bugünkü Host void yalnız Consumption filtreler; canlı Waste HTTP reversal ucu iddia edilmiyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:31",
+        "plan/v1.1/inventory/V11-INV-006-waste-recording.md:51-54",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:149-175",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:186-191",
+        "src/Modules/Inventory/MovementLedger/StockMovement.cs:154-180",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs:102-137",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:210-230",
+        "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:184-187"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+        "src/Modules/Inventory/MovementLedger/StockMovement.cs",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Hazırlanmış/PortionReservation waste için CanReverse=false ve tüm kullanılan reversal girişlerinde tipli ret; ledger ve on_hand/reserved/available değişmez. Yanlış girilmiş genel spoilage fire düzeltmesi isteniyorsa Semih onaylı ayrı düzeltme politikası gerekir; otomatik yeniden satış yok."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-16",
+      "source_qualification": {
+        "F0232": "aday"
+      },
+      "historical_source_closure": {
+        "F0232": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0232",
+          "source": "evidence/V1-RMD-739/findings/register.md:242",
+          "task_ids": [
+            "V11-INV-006"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-022",
+      "parents": [
+        "F0516"
+      ],
+      "title": "Waste iki paralel azaltmasının doğrudan service regresyon testi eksik",
+      "category": "KN",
+      "status": "open",
+      "invariant": "Stoku aşan iki farklı-key Waste çağrısı en fazla bir kez stok azaltmalı; kaybeden tüm kayıtlarını geri almalı.",
+      "mechanism": "WasteRecordingDatabaseTests dosyası yalnız iki test: yaşam döngüsü ve sıralı idempotency. Guard+advisory+runner üretimde mevcut, bozuk guard varsayılmıyor. AtomicCompensationTests waste-vs-sale ve caller rollback kapsar ama aynı standalone WasteRecordingService iki azaltma yarışını doğrudan kapsamaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B048.md:13-16",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs:74-185",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:170-208",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:252-301",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs:86-110"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+      ],
+      "acceptance": [
+        "10 stok, iki farklı-key 7 miktar; stale precheck barrier ile ikisini geçir; tam bir başarı+bir InsufficientStockForWasteException, son stok3, tek waste+tek hareket. Guard WHERE kaldırma mutasyonu testi kırar."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-17",
+      "source_qualification": {
+        "F0516": "aday"
+      },
+      "historical_source_closure": {
+        "F0516": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0516",
+          "source": "evidence/V1-RMD-739/findings/low-A.md:173",
+          "task_ids": [
+            "V1-RMD-125"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-023",
+      "parents": [
+        "F0516"
+      ],
+      "title": "Waste standalone hata/iptalde üçlü yazım rollback testi eksik",
+      "category": "KN",
+      "status": "open",
+      "invariant": "Ledger+WasteRecord+balance standalone hata/iptalde birlikte geri alınmalı.",
+      "mechanism": "Runner transaction dispose ile rollback sağlar; mevcut standalone DB suite failure injection yapmaz. CrossChannel ACompensationRolledBackWithItsCallerLeavesTheHoldExactlyAsItWas(true) caller-tx için mevcut olumlu kapsam; bunu yok saymıyoruz. F0516daki doğrudan standalone hata/iptal boşluğu ayrı test gerektirir, üretim atomiklik kusuru diye sayılmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B048.md:16",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:170-201",
+        "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs:14-23",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs:74-185",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs:64-82"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs",
+        "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+      ],
+      "acceptance": [
+        "Ledger append sonrası, waste insert sonrası, guarded apply öncesi ve commit ct iptalinde exception enjekte et; üçünün toplamları eski durumda; sonra retry bir kez başarılı. Caller rollback mevcut testi de yeniden koş."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-36",
+      "source_qualification": {
+        "F0516": "aday"
+      },
+      "historical_source_closure": {
+        "F0516": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0516",
+          "source": "evidence/V1-RMD-739/findings/low-A.md:173",
+          "task_ids": [
+            "V1-RMD-125"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-024",
+      "parents": [
+        "F0031"
+      ],
+      "title": "Physical count delta≠0 yarışının kayıtlı düzeltmesi",
+      "category": "EZ",
+      "status": "historical-fixed",
+      "invariant": "Uygulanan absolute count sayılan değerden farklıysa işlem reddedilip geri alınmalı.",
+      "mechanism": "741 nonzero delta uygulanınca returned OnHandQuantity != CountedQuantity ise tipli exception ekledi. Mevcut AMovementBetweenReadingAndApplyingRollsTheCountBack testi 10→concurrent7 ve counted8 ile ledger rollback doğrular. delta=0 branch kontrolsüz kaldı; tam parent kapanışı değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:35",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:94-107",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:108-123",
+        "evidence/V1-RMD-741/green.log:14-15",
+        "evidence/V1-RMD-741/mutations.log:1-2"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Mevcut nonzero yarış testi ve guard removal mutasyonu yeniden çalıştırılır; count row da rollback sonrası yok assertions eklenir."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-18",
+      "source_qualification": {
+        "F0031": "aday"
+      },
+      "historical_source_closure": {
+        "F0031": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-741"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0031",
+          "source": "evidence/V1-RMD-739/findings/register.md:38",
+          "task_ids": [
+            "V11-INV-008"
+          ]
+        }
+      ],
+      "review_note": "F0031 kapanışı kısmi; STK-024 nonzero düzeltmesi tarihsel, STK-025 delta=0 açık."
+    },
+    {
+      "id": "STK-025",
+      "parents": [
+        "F0031"
+      ],
+      "title": "Physical count delta=0 branch concurrent movementı doğrulamıyor",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Count kaydı gerçek transaction anında doğrulanan bakiye snapshotını temsil etmeli; nonzero ile zero delta aynı concurrency kuralında olmalı.",
+      "mechanism": "Current read10, counted10 → delta0; read sonrası sale−3 commit ederse if(delta!=0) tamamen atlanır. Count previous10/new10 ve başarılı sonuç yazar; gerçek balance7. 741 equality guard yalnız if içinde. Mevcut matching-count testi yarışsız; aynı RacingBalanceRepository ile counted10 yapıldığında açık branch tetiklenir.",
+      "source_evidence": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:65-77",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:103-127",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:108-174",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:269-280"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "acceptance": [
+        "Mevcut RacingBalanceRepository ile initial10, counted10, araya−3 koy; PhysicalCountBalanceGuardFailedException/HTTP409, count row yok, balance7 korunur. Bir başka tx hareketini count commitine kadar serialize eden doğru çözümde postcondition eşdeğer kanıtlanır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-19",
+      "source_qualification": {
+        "F0031": "aday"
+      },
+      "historical_source_closure": {
+        "F0031": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-741"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0031",
+          "source": "evidence/V1-RMD-739/findings/register.md:38",
+          "task_ids": [
+            "V11-INV-008"
+          ]
+        }
+      ],
+      "review_note": "F0031 kapanışı kısmi; STK-024 nonzero düzeltmesi tarihsel, STK-025 delta=0 açık."
+    },
+    {
+      "id": "STK-026",
+      "parents": [
+        "F0699"
+      ],
+      "title": "Physical count retry kalıcı istek kimliği taşımıyor",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Aynı sayım gönderimi retry olduğunda tek audit kaydı/tek effect üretmeli; yeni gerçek sayım ayrı kimlik olmalı.",
+      "mechanism": "PhysicalCountRequest/HTTP request kalıcı key taşımaz; service her çağrıda Guid.NewGuid sayım kimliği üretir. Ağ cevabı kaybolup araya satış girerse aynı counted_quantity retry yeni delta ile satışı geri koyar; satış yoksa bile ikinci count audit satırı üretir. Mevcut eşleşen count testinin bilinçli ikinci sayımı retrydan ayıracak contract yok.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:37",
+        "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs:3-8",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:65-68",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:113-122",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:269-279",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:157-174"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs",
+        "src/Modules/Inventory/PhysicalCounts/IPhysicalCountRepository.cs",
+        "src/Modules/Inventory/PhysicalCounts/PostgresPhysicalCountRepository.cs",
+        "src/Host/Experience/Inventory/StockMasterContracts.cs",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "acceptance": [
+        "Kalıcı count/request identity ile aynı payload retry aynı countId döner; count sonrası satış−3 ardından retry stok artırmaz. Aynı key farklı item/location/count/notes için açık conflict politikası; farklı key yeni gerçek sayım kabul edilir. DB migration gerekiyorsa yeni exact migration adı ve composition yüzeyi plan onayı olmadan eklenmez."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-20",
+      "source_qualification": {
+        "F0699": "aday"
+      },
+      "historical_source_closure": {
+        "F0699": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0699",
+          "source": "evidence/V1-RMD-739/findings/low-B.md:116",
+          "task_ids": [
+            "V11-INV-008"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-027",
+      "parents": [
+        "F0699"
+      ],
+      "title": "Physical count English ledger reason UI sızıntısı olarak henüz kanıtlanmadı",
+      "category": "UI",
+      "status": "needs-verification",
+      "invariant": "Kod/log/domain reason English kalır; kullanıcıya gösterilen mesaj Türkçe olmalı.",
+      "mechanism": "Sabit reason English, fakat AGENTS.md kod/log/exception adlarını English ister. Bu reasonın kullanıcı ekranına taşındığı caller/sink gösterilmedi. Source row korunur; otomatik çeviri production düzeltmesi önerilmez. UI sink bulunursa ayrıca localized display gerekir, ledger audit metnini çevirmek tek başına gerekmez.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:37",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:82-91",
+        "AGENTS.md:57-58"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "acceptance": [
+        "Ledger reasonı gösteren gerçek UI/API consumer bulunur; kullanıcıya ham English veriyorsa o sinkte test planlanır; sink yoksa aday explicit non-finding olarak sonuçlandırılır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-21",
+      "source_qualification": {
+        "F0699": "aday"
+      },
+      "historical_source_closure": {
+        "F0699": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0699",
+          "source": "evidence/V1-RMD-739/findings/low-B.md:116",
+          "task_ids": [
+            "V11-INV-008"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-028",
+      "parents": [
+        "F0031"
+      ],
+      "title": "Physical count ilk görev kapanışının kanıt dizini eksik iddiası",
+      "category": "BD",
+      "status": "open",
+      "invariant": "İlk Done acceptance komutlarının kanıtı tarihsel sonuç ile güncel runtime sonucu ayrılarak doğrulanmalı.",
+      "mechanism": "B100 tam kartı evidence/V11-INV-008 yok diyor. 741 günlükleri var ve okundu ancak bunlar INV-008 ilk acceptance build/manifest/revert-and-confirm kapsamını otomatik kapatmaz. Bu alt-kayıt kaynak parent yüksek F0031 tam kartından türedi; bu oturum test çalıştırmadı.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:36",
+        "plan/v1.1/inventory/V11-INV-008-physical-counts.md:71-79",
+        "evidence/V1-RMD-741/green.log:14-15"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "INV-008 tarihsel commit/artifact bulunur ve acceptance bazında eşlenir; yoksa kanıtsız olduğu kayda geçer, 741 sayıları ilk kapanış kanıtı diye kullanılmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-22",
+      "source_qualification": {
+        "F0031": "aday"
+      },
+      "historical_source_closure": {
+        "F0031": {
+          "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+          "closure_task": "V1-RMD-741"
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0031",
+          "source": "evidence/V1-RMD-739/findings/register.md:38",
+          "task_ids": [
+            "V11-INV-008"
+          ]
+        }
+      ],
+      "review_note": "V11-INV-008 kanıt dizininin yokluğu bağımsız teyit edildi; düzeltme tarihli kanıt-yok kaydıdır, eski log ilk kapanış kanıtı sayılmaz."
+    },
+    {
+      "id": "STK-029",
+      "parents": [
+        "F0295"
+      ],
+      "title": "Nullable uniqueness belgesindeki stock_balances şeması gerçek değil",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Karar belgesi gerçek stock_balances kolonları/nullability/unique kuralını doğru tarif etmeli.",
+      "mechanism": "Belge product_id/location_id ve nullable central stock iddia ediyor; gerçek 061 stock_item_id/stock_location_id NOT NULL ve sıradan UNIQUE. Bu kod null bugı değil belge-kod ayrışması; yalnız yanlış belgeyi düzeltmek gerekiyorsa schema migration yazılmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B116.md:36-38",
+        "docs/data/nullable-unique-policy.md:24-37",
+        "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql:4-13"
+      ],
+      "production_paths": [
+        "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "Karar metni exact kolon/NOT NULL/UNIQUE ile eşlenir; central-stock nullable ihtiyacı varsa ayrı Semih kararı olmadan mevcut şema değiştirilmez."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-23",
+      "source_qualification": {
+        "F0295": "aday"
+      },
+      "historical_source_closure": {
+        "F0295": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0295",
+          "source": "evidence/V1-RMD-739/findings/register.md:305",
+          "task_ids": [
+            "V0-DAT-003"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-030",
+      "parents": [
+        "F0295"
+      ],
+      "title": "Nullable uniqueness printer_routes istisnaları belgede yanlış",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Printer routing specificity ve active-only unique kuralları doğru açıklanmalı.",
+      "mechanism": "Belge nullable composite NULLS NOT DISTINCT iddia eder ve kısmi unique reddeder. 016 route_level payload CHECK ve ayrı active partial UNIQUE indexler kullanıyor; Default ayrıca tek active defaultu korur. F0295 bileşiğinin bağımsız tablo/politika altkusuru; stock_balances runtime fixi değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B116.md:37",
+        "docs/data/nullable-unique-policy.md:29-37",
+        "database/migrations/V1/V1-KIT-002/016-printer-routing.up.sql:17-59"
+      ],
+      "production_paths": [
+        "database/migrations/V1/V1-KIT-002/016-printer-routing.up.sql"
+      ],
+      "test_paths": [],
+      "acceptance": [
+        "Belgedeki printer_routes satırı ve partial-index invariantı route_level/is_active koşullarını doğru yansıtır; sırf belgeye uydurmak için eski migration yeniden yazılmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-24",
+      "source_qualification": {
+        "F0295": "aday"
+      },
+      "historical_source_closure": {
+        "F0295": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0295",
+          "source": "evidence/V1-RMD-739/findings/register.md:305",
+          "task_ids": [
+            "V0-DAT-003"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-031",
+      "parents": [
+        "F0641",
+        "F1005"
+      ],
+      "title": "Ledger kapanış belgesinin 057 migration yolları bayat",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Tarihsel kapanış artifactı güncel yol eşlemesini doğru vermeli; eski koşu değişmeden korunmalı.",
+      "mechanism": "B087 ve iki kaynak alias aynı 057→060 path mapping kusuru. closure-evidence 057 up/down ve write-set diyor; gerçek 060, mevcut StockMovementDatabaseTests de 060 kullanır. Tarihsel exit0 satırları yeniden koşu değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B087.md:33-35",
+        "evidence/V11-INV-001/closure-evidence.txt:20-25",
+        "evidence/V11-INV-001/closure-evidence.txt:60-62",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs:208-213"
+      ],
+      "production_paths": [
+        "database/migrations/V11/V11-INV-001/060-stock-movements.up.sql",
+        "database/migrations/V11/V11-INV-001/060-stock-movements.down.sql"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "057→060 yol eşleme notu tarihli provenance ile eklenir; eski logları yeni çalıştırılmış gibi değiştirme; up/down gerçek dosyalara resolve olur."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-25",
+      "source_qualification": {
+        "F0641": "aday",
+        "F1005": "aday"
+      },
+      "historical_source_closure": {
+        "F0641": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        },
+        "F1005": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0641",
+          "source": "evidence/V1-RMD-739/findings/low-B.md:58",
+          "task_ids": [
+            "V11-INV-001"
+          ]
+        },
+        {
+          "id": "F1005",
+          "source": "evidence/V1-RMD-739/findings/low-C.md:110",
+          "task_ids": [
+            "V11-INV-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-032",
+      "parents": [
+        "F0697"
+      ],
+      "title": "Balance kapanış belgesinin 058 migration yolları bayat",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Balance projection tarihsel artifactı güncel 061 yolu ile izlenebilir olmalı.",
+      "mechanism": "Full B100 kartı düşük H: 058 diyor, repo 061. Bu F0641 ile aynı tür belge işi fakat ayrı artifact/acceptance identity; sırf belge kategorisi aynı diye tek kusur sayılmadı.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:14",
+        "evidence/V11-INV-002/closure-evidence.txt:18-23",
+        "evidence/V11-INV-002/closure-evidence.txt:62-63",
+        "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql:1"
+      ],
+      "production_paths": [
+        "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql",
+        "database/migrations/V11/V11-INV-002/061-stock-balances.down.sql"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+      ],
+      "acceptance": [
+        "058→061 güncel yol notu tüm up/down/write-set/test atıflarını kapsar; eski komut sonuçları tarihsel tutulur."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-26",
+      "source_qualification": {
+        "F0697": "aday"
+      },
+      "historical_source_closure": {
+        "F0697": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0697",
+          "source": "evidence/V1-RMD-739/findings/low-B.md:114",
+          "task_ids": [
+            "V11-INV-002"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-033",
+      "parents": [
+        "F1005"
+      ],
+      "title": "StockMovementService DI kayıtlı fakat üretim callerı yok",
+      "category": "TE",
+      "status": "open",
+      "invariant": "Yalnız-test orchestration ve eski allowlist gerekçesi geleceğe hook/ölü kodu meşrulaştırmamalı.",
+      "mechanism": "B087 bilerek bağlı değil der; güncel InventoryModule IStockMovementService kaydeder. src referansları yalnız interface/implementation/DI; gerçek işler IStockMovementRepository ile atomik orchestration yapar. Ledger repository canlı, tüm MovementLedger modülü ölü değil. Bu kusur 057 belge farkından ayrı. Test consumer envanteri: MovementLedger domain/database, BalanceProjection database, MovementReversal database ve PartialStockReturnTests; grep7 construction refs gösterdi. Başka üretim recorder callerı bulunmadı.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B087.md:34",
+        "src/Modules/Inventory/InventoryModule.cs:54-55",
+        "src/Modules/Inventory/MovementLedger/IStockMovementService.cs:3",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs:25-137",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:273-289"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/MovementLedger/IStockMovementService.cs",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs",
+        "src/Modules/Inventory/InventoryModule.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs"
+      ],
+      "acceptance": [
+        "Üretimde gerçek caller yokluğu method-level doğrulanır; kullanılmayan service/interface/DI kaldırma planı test fixture recorderlarını repository seeding ile değiştirir; yaşayan repository/domain/immutability/reversal test gücü düşmez."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-27",
+      "source_qualification": {
+        "F1005": "aday"
+      },
+      "historical_source_closure": {
+        "F1005": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F1005",
+          "source": "evidence/V1-RMD-739/findings/low-C.md:110",
+          "task_ids": [
+            "V11-INV-001"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-034",
+      "parents": [
+        "F0698"
+      ],
+      "title": "Pasif stok kalemine eşleme kabulü için kural belirsiz",
+      "category": "VD",
+      "status": "decision-blocked",
+      "invariant": "Pasif item yeni hareketi reddetmeli; pasif itema eşleme yapmanın yasak olup olmadığı açık olmalı.",
+      "mechanism": "AssignProductToStockItemAsync item varlığını doğrular fakat EnsureActiveForMovement çağırmaz. Ancak INV-004 acceptance pasif itemın yeni hareketini yasaklar, mapping assignmentı değil. Pasif stok eşlemesi tek başına acceptance violation kanıtlamaz; full kartın iddiası korunur ama ürün kuralı varsayılmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:23",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:111-123",
+        "plan/v1.1/inventory/V11-INV-004-stock-master-and-locations.md:50-53",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:123-131"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "acceptance": [
+        "Semih pasif item mapping politikası seçer; yasaksa inactive target ile mapping yazılmadığı HTTP409+DB testle, serbestse hareket ret kuralı ile açıkça ayrıştırılır."
+      ],
+      "decision_blocker": "Pasif item eşleme yasağı mı yalnız hareket yasağı mı? Plan hareketi yasaklar; ek policy uydurulmaz.",
+      "repair_group": "RG-STK-28",
+      "source_qualification": {
+        "F0698": "aday"
+      },
+      "historical_source_closure": {
+        "F0698": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0698",
+          "source": "evidence/V1-RMD-739/findings/low-B.md:115",
+          "task_ids": [
+            "V11-INV-004"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-035",
+      "parents": [
+        "F0698"
+      ],
+      "title": "Olmayan ürüne mapping güncel tam şemada FK ile engelli",
+      "category": "VD",
+      "status": "historical-fixed",
+      "invariant": "Mapping olmayan catalog producta işaret etmemeli.",
+      "mechanism": "Service product existence okumuyor ama migration097 fk_product_stock_mappings_product ekler; full composition kaydı mevcut. Host SQL23503→REFERENCE_NOT_FOUND 400 eşler. Sadece059+118 uygulayan StockMaster module testinin random product GUID kabulü güncel production FK güvencesini yok saymaya gerekçe değildir. Özel regression assertion henüz bulunmadı; runtime yeniden koşulmadı.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:23",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:118-122",
+        "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql:48-57",
+        "database/MigrationComposition/order.json:832-844",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:405-406",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs:135-142",
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs:13-21",
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs:127-139"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+        "src/Modules/Inventory/StockMaster/PostgresProductStockMappingRepository.cs",
+        "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "acceptance": [
+        "Tam production migration zinciri üstünde bilinmeyen product mapping reddedilir; FK kaldırma mutasyonu assertionı kırar; stock-master-only059 fixture bu güvenceyi test ediyor diye gösterilmez."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-29",
+      "source_qualification": {
+        "F0698": "aday"
+      },
+      "historical_source_closure": {
+        "F0698": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0698",
+          "source": "evidence/V1-RMD-739/findings/low-B.md:115",
+          "task_ids": [
+            "V11-INV-004"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-036",
+      "parents": [
+        "F0698"
+      ],
+      "title": "Master duplicate code yarışında servis tipli hata sözleşmesi teyidi",
+      "category": "DY",
+      "status": "needs-verification",
+      "invariant": "Duplicate item/location code istemciye tutarlı conflict vermeli.",
+      "mechanism": "CreateStockItem/CreateLocation check-then-insert; repo AddAsync SQL23505 çevirmiyor. Host genel UniqueViolation zaten409 DUPLICATE_RESOURCE verir, dolayısıyla HTTP500 iddiası yanlış. Mapping AddOrUpdate ON CONFLICT kullandığı için mapping tekrarını da23505 diye sayamayız. Servis seviyesinde typed DuplicateStockItem/Location garantisi isteniyorsa eksik; mevcut acceptance bunu tam belirtmez.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B100.md:23",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:34-43",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:66-95",
+        "src/Modules/Inventory/StockMaster/PostgresStockItemRepository.cs:17-40",
+        "src/Modules/Inventory/StockMaster/PostgresStockLocationRepository.cs:17-35",
+        "src/Modules/Inventory/StockMaster/PostgresProductStockMappingRepository.cs:20-25",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:392-405"
+      ],
+      "production_paths": [
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+        "src/Modules/Inventory/StockMaster/PostgresStockItemRepository.cs",
+        "src/Modules/Inventory/StockMaster/PostgresStockLocationRepository.cs",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "acceptance": [
+        "Parallel same code create HTTP testinde tam bir create ve kalanlar409; mapping upsert yeniden gönderimde OK. Servis typed exception contractı gerekip gerekmediği belgelenir; gerekirse yalnız exact unique constraint çevrilir."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-30",
+      "source_qualification": {
+        "F0698": "aday"
+      },
+      "historical_source_closure": {
+        "F0698": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0698",
+          "source": "evidence/V1-RMD-739/findings/low-B.md:115",
+          "task_ids": [
+            "V11-INV-004"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-037",
+      "parents": [
+        "F0560"
+      ],
+      "title": "Production raw SELECT FOR UPDATE mimari yasak değil",
+      "category": "MK",
+      "status": "needs-verification",
+      "invariant": "Başka modül şemasına yazım repository contractından olmalı; izinli same-tx okuma yanlış ihlal sayılmamalı.",
+      "mechanism": "ProductionStockEffectService inventory.stock_balances raw read+FOR UPDATE yapar; dört raw write kaldırılmıştır. Architecture belgesi bu sufficiency checkini açıkça izinli sayar; approved Production→Inventory edge var. F0560 read/lockun kaldığını doğru gözler, tek başına mimari defect sonucu çıkarmaz. Ayrı lock-order riski sonraki kayıtta.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B062.md:17-20",
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:228-274",
+        "docs/architecture/module-dependency-rules.md:104-112",
+        "docs/architecture/module-dependency-rules.md:206-217",
+        "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:85-86"
+      ],
+      "production_paths": [
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs",
+        "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs"
+      ],
+      "acceptance": [
+        "Mimari sahiplik kuralı read vs write ayrımıyla değerlendirilir; sadece raw SELECT var diye gereksiz abstraction eklenmez; lock-order testi ayrı tutulur."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-31",
+      "source_qualification": {
+        "F0560": "aday"
+      },
+      "historical_source_closure": {
+        "F0560": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0560",
+          "source": "evidence/V1-RMD-739/findings/low-A.md:217",
+          "task_ids": [
+            "V11-RMD-002"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "STK-038",
+      "parents": [
+        "F0560"
+      ],
+      "title": "Production row lock → advisory, satış advisory → row lock tersliği",
+      "category": "EZ",
+      "status": "open",
+      "invariant": "Ortak balance writers aynı lock acquisition sırasını izlemeli.",
+      "mechanism": "Production önce mevcut balance satırında FOR UPDATE tutar (231-245), sonra ApplyOnHandDeltaAsync içindeki advisory locku alır. Satış LockStockRowsAsync önce aynı row-key advisory lock alır, ardından balance update için row lock ister. Sale advisoryyi aldıktan sonra Production row locku alırsa ikisi karşılıklı bekler. Recipe itemlarının GUID sıralanması bu iki lock türünün tersliğini çözmez; hata logu/runtime gözlemi henüz yok, statik reachable deadlock mekanizması mevcut.",
+      "source_evidence": [
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:226-245",
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:267-274",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:182-213",
+        "src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs:260-273",
+        "src/Host/Experience/Production/ProductionManagementEndpoints.cs:145-165"
+      ],
+      "production_paths": [
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+      ],
+      "acceptance": [
+        "İki gerçek bağlantıda sale advisory locku tutarken production row-lock barrierına gelir; sale row write başlatılır, production advisory bekler. Mevcut kod40P01/timeout ile kırılır; ortak advisory→row düzeni sonrası ikisi tutarlı sıralı sonuçla tamamlanır; stock/ledger toplamı doğru."
+      ],
+      "decision_blocker": null,
+      "repair_group": "RG-STK-32",
+      "source_qualification": {
+        "F0560": "aday"
+      },
+      "historical_source_closure": {
+        "F0560": {
+          "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+          "closure_task": null
+        }
+      },
+      "source_records": [
+        {
+          "id": "F0560",
+          "source": "evidence/V1-RMD-739/findings/low-A.md:217",
+          "task_ids": [
+            "V11-RMD-002"
+          ]
+        }
+      ],
+      "review_note": "Etki 40P01 ile işlem iptali; veri bozulması kanıtlanmadı. Kabulde timeout yok."
+    }
+  ],
+  "groups": [
+    {
+      "id": "RG-STK-01",
+      "title": "Mal kabul kayıtlı satır-yarışı kapanışı",
+      "defects": [
+        "STK-001"
+      ],
+      "exact_surface": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Kilit çağrısı veya karşılaştırma mutasyonu mevcut odak testi kırmalı.",
+      "negative_paths": [
+        "Farklı fiş numaraları; eski received_quantity; kısmi kabul"
+      ],
+      "evidence_tier": "historical PostgreSQL logs read: 26 passed exit=0, 2 recorded killed mutations; current source present; no rerun"
+    },
+    {
+      "id": "RG-STK-02",
+      "title": "PO iptal/kabul ortak concurrency invariantı",
+      "defects": [
+        "STK-002"
+      ],
+      "exact_surface": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs",
+        "NEW test: tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs::CancelledOrderCannotBeReceivedFromAStaleSnapshot",
+        "NEW test: tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs::StaleCancellationCannotEraseCommittedReceivedQuantity"
+      ],
+      "dependencies": [
+        "RG-STK-01"
+      ],
+      "red_check": "Mevcut kodda deterministik iki interleaving yukarıdaki postconditionları bozmalı.",
+      "negative_paths": [
+        "Cancel sonrası receipt; receipt sonrası stale cancel; başarısız işlemin tüm yan etkileri geri alınır"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    },
+    {
+      "id": "RG-STK-03",
+      "title": "Receipt duplicate repository koruması teyidi",
+      "defects": [
+        "STK-003"
+      ],
+      "exact_surface": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs",
+        "NEW test: tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs::ConcurrentReceiptNumbersReturnTypedDuplicateWithoutPartialWrites"
+      ],
+      "dependencies": [],
+      "red_check": "Mevcut23505→DuplicateGoodsReceiptException çevirisi kaldırılınca yarış testi kırılır; bugünkü kaynakta çeviri mevcut.",
+      "negative_paths": [
+        "Diğer unique ihlallerini duplicate receipt diye gizleme; rollback sonrası tekrar okuma"
+      ],
+      "evidence_tier": "current callee source confirms protection; focused race runtime not run; no historical test log matched"
+    },
+    {
+      "id": "RG-STK-04",
+      "title": "Mal kabul politika teyidi",
+      "defects": [
+        "STK-004"
+      ],
+      "exact_surface": [
+        "plan/v1.1/purchasing/V11-PUR-001-purchase-order-and-receipt.md",
+        "src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Önce tarihli karar; kararsız branch için kod yazılmaz.",
+      "negative_paths": [
+        "Tam eşik; üstü; yönetici olmayan; ayrı onay gerekiyorsa kendi kendini onaylama"
+      ],
+      "evidence_tier": "decision evidence absent in inspected card; source only"
+    },
+    {
+      "id": "RG-STK-05",
+      "title": "742 dar kapanış teyidi",
+      "defects": [
+        "STK-005"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Read-before-reset veya Out SUM işareti mutasyonu kırmızı olmalı.",
+      "negative_paths": [
+        "Ledger okuma hatası; 5100 hareket; reserved korunması"
+      ],
+      "evidence_tier": "historical PostgreSQL logs:16 passed exit=0,2 killed mutations; no rerun"
+    },
+    {
+      "id": "RG-STK-06",
+      "title": "Full stock rebuild yazım/hata/iptal atomikliği",
+      "defects": [
+        "STK-006"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs",
+        "NEW test: tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs::RebuildRollsBackAfterResetWriteFailureAndCancellation"
+      ],
+      "dependencies": [
+        "RG-STK-05"
+      ],
+      "red_check": "Reset sonrası hata/iptal ve SUM sonrası canlı yazım deterministik testleri mevcut kodda başarısız olmalı.",
+      "negative_paths": [
+        "Orphan balance temizliği; reservation-only pair; yeni pair insert; dış tx rollback; snapshot okuma hatası; 5001 reserved pair destek/limit kararı açıkça testlenir"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    },
+    {
+      "id": "RG-STK-07",
+      "title": "Item/location replay SQL aggregate",
+      "defects": [
+        "STK-008"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs",
+        "NEW test: tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs::ItemReplayIgnoresOtherItemsAndHasNoLocationRowCap"
+      ],
+      "dependencies": [
+        "RG-STK-37"
+      ],
+      "red_check": "5001 location movement mevcut replay işlemini kırar.",
+      "negative_paths": [
+        "Boş ledger; başka item/location; reversal işareti"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    },
+    {
+      "id": "RG-STK-08",
+      "title": "Full stock rebuild erişilebilirlik kararı",
+      "defects": [
+        "STK-009"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceProjector.cs",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/InventoryModule.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+      ],
+      "dependencies": [
+        "RG-STK-37"
+      ],
+      "red_check": "Karar öncesi source caller audit; integration seçilirse exact yeni giriş yolu ayrıca onaylanır.",
+      "negative_paths": [
+        "Yetkisiz bakım; concurrent maintenance; sadece DI registration ile erişilebilirlik iddiası"
+      ],
+      "evidence_tier": "static caller search; decision-gated integration/removal, not a code-duplication merge"
+    },
+    {
+      "id": "RG-STK-09",
+      "title": "747 terminal replay dar kapanış teyidi",
+      "defects": [
+        "STK-011"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Terminal INSERT mutasyonu replay assertionını kırmalı.",
+      "negative_paths": [
+        "Aynı pair başka aktif rezervasyon; üç terminal durum; creation replay"
+      ],
+      "evidence_tier": "historical PostgreSQL logs:14 passed exit=0,1 killed mutation; current source/test read; no rerun"
+    },
+    {
+      "id": "RG-STK-10",
+      "title": "Reservation event+balance rebuild yazım atomikliği",
+      "defects": [
+        "STK-012"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+        "NEW test: tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs::RebuildRollsBackEventsAndBalancesTogether"
+      ],
+      "dependencies": [
+        "RG-STK-06",
+        "RG-STK-09"
+      ],
+      "red_check": "Aggregate→terminal→event-rebuild→exact-write sırasını barrier ile kur; mevcut kod stale reserved bırakır.",
+      "negative_paths": [
+        "Cancellation; create/terminal; yeni pair; stock rebuild ile eşzamanlılık; 5001 balance satırı cap; eksik balance row"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    },
+    {
+      "id": "RG-STK-11",
+      "title": "Reservation raporunda COUNT ve SUM ayrımı",
+      "defects": [
+        "STK-014"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceModels.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+        "NEW test: tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs::RebuildReportsReservationCountNotTruncatedQuantity"
+      ],
+      "dependencies": [
+        "RG-STK-10"
+      ],
+      "red_check": "3×0.5 reservation mevcut raporda 1 verir.",
+      "negative_paths": [
+        "Aynı pair çok kayıt; farklı pair; terminal; sıfır aktif; yüksek decimal quantity"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    },
+    {
+      "id": "RG-STK-12",
+      "title": "Tx’sız reversal atomikliği",
+      "defects": [
+        "STK-015"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs",
+        "NEW test: tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs::ReversalBalanceFailureCannotLeaveAnAppliedLedgerEntry"
+      ],
+      "dependencies": [
+        "RG-STK-35"
+      ],
+      "red_check": "Ledger append sonrası kontrollü failure; retained path yarım commit bırakmamalı.",
+      "negative_paths": [
+        "Cancellation; duplicate reversal; negatif bakiye; caller tx rollback"
+      ],
+      "evidence_tier": "static source and caller trace; retain/remove decision + PostgreSQL failure injection required"
+    },
+    {
+      "id": "RG-STK-13",
+      "title": "748 işlemli reversal kapanış teyidi",
+      "defects": [
+        "STK-017"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+        "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Unguarded ApplyOnHandDelta mutasyonu tipli exception testini kırmalı.",
+      "negative_paths": [
+        "Boş balance satırı; yetersiz on_hand; caller rollback; double reversal"
+      ],
+      "evidence_tier": "historical PostgreSQL logs:23 passed exit=0,1 killed mutation; no rerun"
+    },
+    {
+      "id": "RG-STK-14",
+      "title": "Manual adjustment authorization sınırı",
+      "defects": [
+        "STK-018"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+        "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+        "src/Modules/Inventory/InventoryModule.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs",
+        "NEW test: tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs::NonemptyUnauthorizedActorCannotAdjustStock"
+      ],
+      "dependencies": [
+        "RG-STK-34"
+      ],
+      "red_check": "AuthorizedBy=random nonempty GUID ile çağrı gerçek authorizationa bağlanmadan yetkisizliği engelleyemez.",
+      "negative_paths": [
+        "Anonymous; staff no permission; forged actor; authorized success; no writes on denial"
+      ],
+      "evidence_tier": "static acceptance/caller gap; integration/removal decision required before exact new Host surface"
+    },
+    {
+      "id": "RG-STK-15",
+      "title": "Waste idempotency payload bütünlüğü",
+      "defects": [
+        "STK-020"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs",
+        "src/Modules/Inventory/WasteRecording/WasteModels.cs",
+        "src/Modules/Inventory/WasteRecording/PostgresWasteRecordRepository.cs",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+        "NEW test: tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs::SameWasteKeyWithDifferentPayloadIsRejectedBeforeAndAfterARace",
+        "NEW test: tests/Host/Experience/Inventory/StockMasterHttpTests.cs::WasteKeyReuseWithDifferentPayloadReturnsConflict"
+      ],
+      "dependencies": [],
+      "red_check": "Aynı key ile miktarı/kalemi değiştir; mevcut kod ilk sonucu replay verir.",
+      "negative_paths": [
+        "Same payload; farklı item/location/quantity/source; unique-race kaybedeni; caller tx rollback; uncommitted same-tx replay"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    },
+    {
+      "id": "RG-STK-16",
+      "title": "Waste reversal invariantının bütün girişlerde korunması",
+      "defects": [
+        "STK-021"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+        "src/Modules/Inventory/MovementLedger/StockMovement.cs",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "NEW test: tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs::PreparedWasteCannotRestoreSellableStock"
+      ],
+      "dependencies": [
+        "RG-STK-12"
+      ],
+      "red_check": "Waste Out hareketini reversal et; mevcut path In ve available artışı üretir; çelişen mevcut fixture de düzeltilmelidir.",
+      "negative_paths": [
+        "Consumption reversal çalışır; Reversal-of-Reversal reddi; prepared waste; genel waste düzeltme kararı"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    },
+    {
+      "id": "RG-STK-17",
+      "title": "Waste çift azaltma concurrency coverage",
+      "defects": [
+        "STK-022"
+      ],
+      "exact_surface": [
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+        "NEW test: tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs::ConcurrentWasteDecreasesCannotOverspendStock"
+      ],
+      "dependencies": [
+        "RG-STK-15"
+      ],
+      "red_check": "Test eklendiğinde mevcut doğru kod yeşil olabilir; RED kanıtı guard kaldırma/tx bölme mutantlarıyla alınır; üretim arızası uydurulmaz.",
+      "negative_paths": [
+        "İki farklı key; aynı key; ct cancel; caller rollback; satışla yarış"
+      ],
+      "evidence_tier": "static test inventory; existing caller-tx coverage read; focused new real PostgreSQL tests + mutations not run"
+    },
+    {
+      "id": "RG-STK-18",
+      "title": "741 nonzero delta dar kapanış teyidi",
+      "defects": [
+        "STK-024"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "OnHandQuantity equality check kaldırılınca yarış testi kırılmalı.",
+      "negative_paths": [
+        "Pozitif/negatif delta; ledger ve count rollback"
+      ],
+      "evidence_tier": "historical PostgreSQL logs:11 passed exit=0,1 killed mutation; no rerun"
+    },
+    {
+      "id": "RG-STK-19",
+      "title": "Absolute count sıfır-delta concurrency",
+      "defects": [
+        "STK-025"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+        "NEW test: tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs::ConcurrentMovementRejectsAMatchingZeroDeltaCount"
+      ],
+      "dependencies": [
+        "RG-STK-18"
+      ],
+      "red_check": "741 testindeki CountedQuantity=10 varyantı mevcut kodda exception atmadan yanlış count kaydı üretir.",
+      "negative_paths": [
+        "Balance yok+count0; zero delta; nonzero delta; conflict rollback count row; HTTP409"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    },
+    {
+      "id": "RG-STK-20",
+      "title": "Physical count retry kimliği",
+      "defects": [
+        "STK-026"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs",
+        "src/Modules/Inventory/PhysicalCounts/IPhysicalCountRepository.cs",
+        "src/Modules/Inventory/PhysicalCounts/PostgresPhysicalCountRepository.cs",
+        "src/Host/Experience/Inventory/StockMasterContracts.cs",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+        "NEW test: tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs::RetryAfterASaleDoesNotCreateAnotherCountOrRestoreSoldStock"
+      ],
+      "dependencies": [
+        "RG-STK-19"
+      ],
+      "red_check": "Count10 commit; sale−3; aynı isteği tekrarla: mevcut kod balance10 ve ikinci count üretir.",
+      "negative_paths": [
+        "Aynı payload retry; farklı payload conflict; farklı key gerçek ikinci sayım; concurrent duplicate; lost HTTP response"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    },
+    {
+      "id": "RG-STK-21",
+      "title": "Ledger reason dil iddiası teyidi",
+      "defects": [
+        "STK-027"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Gerçek kullanıcı sinki olmadan kırmızı UI testi uydurulmaz.",
+      "negative_paths": [
+        "Kod/ledger English ile Türkçe UI ayrımı; reason audit doğruluğu"
+      ],
+      "evidence_tier": "needs verification; English literal proven, user-visible leak not proven"
+    },
+    {
+      "id": "RG-STK-22",
+      "title": "INV-008 ilk kapanış kanıt teyidi",
+      "defects": [
+        "STK-028"
+      ],
+      "exact_surface": [
+        "plan/v1.1/inventory/V11-INV-008-physical-counts.md",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Tarihsel artifact yoksa failure olarak değil missing evidence olarak kaydet.",
+      "negative_paths": [
+        "741 tekrarını ilk acceptance yerine koyma; yeni koşuyu tarihsel koşu diye gösterme"
+      ],
+      "evidence_tier": "historical evidence reconciliation only; original directory claim not independently enumerated"
+    },
+    {
+      "id": "RG-STK-23",
+      "title": "Stock balance uniqueness belgesi",
+      "defects": [
+        "STK-029"
+      ],
+      "exact_surface": [
+        "docs/data/nullable-unique-policy.md",
+        "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md"
+      ],
+      "dependencies": [],
+      "red_check": "Belgede product_id/location_id nullable iddiası source 061 ile uyuşmamalı; düzeltme sonrası exact kolonlar eşleşmeli.",
+      "negative_paths": [
+        "NOT NULL central stock; plain UNIQUE ile nulls not distinct farkı"
+      ],
+      "evidence_tier": "static document/schema mismatch; no runtime defect claimed"
+    },
+    {
+      "id": "RG-STK-24",
+      "title": "Printer route uniqueness belgesi",
+      "defects": [
+        "STK-030"
+      ],
+      "exact_surface": [
+        "docs/data/nullable-unique-policy.md",
+        "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md"
+      ],
+      "dependencies": [
+        "RG-STK-23"
+      ],
+      "red_check": "Active specificity partial index tanımları belgeye karşı karşılaştırılır.",
+      "negative_paths": [
+        "Default; Item; Product; DailySpecial; Category; inactive duplicate"
+      ],
+      "evidence_tier": "static document/schema mismatch; shared document writes serialized"
+    },
+    {
+      "id": "RG-STK-25",
+      "title": "Ledger migration kanıt yolu düzeltmesi",
+      "defects": [
+        "STK-031"
+      ],
+      "exact_surface": [
+        "evidence/V11-INV-001/closure-evidence.txt",
+        "plan/v1.1/inventory/V11-INV-001-immutable-stock-ledger.md"
+      ],
+      "dependencies": [],
+      "red_check": "Eski 057 referansları resolve olmaz; güncel 060 eşleme notu hepsini açıklar.",
+      "negative_paths": [
+        "Up/down; write-set; test fixture; eski exit0 korunması"
+      ],
+      "evidence_tier": "static provenance mismatch; historical exit codes observed, not rerun"
+    },
+    {
+      "id": "RG-STK-26",
+      "title": "Balance migration kanıt yolu düzeltmesi",
+      "defects": [
+        "STK-032"
+      ],
+      "exact_surface": [
+        "evidence/V11-INV-002/closure-evidence.txt",
+        "plan/v1.1/inventory/V11-INV-002-stock-balance-projection.md"
+      ],
+      "dependencies": [],
+      "red_check": "058 refs gerçek dosyaya resolve olmaz; 061 eşleme denetimi geçmeli.",
+      "negative_paths": [
+        "Up/down; write-set; eski test sayıları güncel sonuç değil"
+      ],
+      "evidence_tier": "static provenance mismatch only"
+    },
+    {
+      "id": "RG-STK-27",
+      "title": "Ledger-only unused orchestration kaldırma planı",
+      "defects": [
+        "STK-033"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/MovementLedger/IStockMovementService.cs",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs",
+        "src/Modules/Inventory/InventoryModule.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs"
+      ],
+      "dependencies": [
+        "RG-STK-16"
+      ],
+      "red_check": "Source caller audit ve interface/DI removal sonrası compile; test-only recorder fixture gerçek repository seed ile eşdeğer kalmalı.",
+      "negative_paths": [
+        "Repository canlı kalır; immutability testleri; test coverage silerek temizlik yapılmaz"
+      ],
+      "evidence_tier": "static source reachability; exact transitive test consumers require inventory before approved removal surface"
+    },
+    {
+      "id": "RG-STK-28",
+      "title": "Inactive mapping karar teyidi",
+      "defects": [
+        "STK-034"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Karar olmadan mapping assignment ret testi zorunlu kabul edilemez.",
+      "negative_paths": [
+        "Inactive target; active target; hareket hedefi ret; mevcut mapping read"
+      ],
+      "evidence_tier": "static missing check; business violation decision-blocked"
+    },
+    {
+      "id": "RG-STK-29",
+      "title": "Product mapping FK tarihsel düzeltme teyidi",
+      "defects": [
+        "STK-035"
+      ],
+      "exact_surface": [
+        "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+        "NEW test: tests/Host/Experience/Inventory/StockMasterHttpTests.cs::MappingAnUnknownProductIsRejectedByTheProductionForeignKey"
+      ],
+      "dependencies": [],
+      "red_check": "Full schema altında random productId FK red verir; FK kaldırılınca yeni HTTP assertion kırılmalı.",
+      "negative_paths": [
+        "Geçerli product; silinmiş product; bilinmeyen stock item"
+      ],
+      "evidence_tier": "current schema/static historical fix; no matching focused runtime closure log read"
+    },
+    {
+      "id": "RG-STK-30",
+      "title": "Master duplicate yarışının sözleşme teyidi",
+      "defects": [
+        "STK-036"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+        "NEW test: tests/Host/Experience/Inventory/StockMasterHttpTests.cs::ConcurrentDuplicateStockCodesReturnConflictNotServerError"
+      ],
+      "dependencies": [],
+      "red_check": "Mevcut HTTP general23505 mappingi sebebiyle test yeşil olabilir; önce outcome doğrula, boşuna kod değiştirme.",
+      "negative_paths": [
+        "Duplicate item code; duplicate location code; same mapping upsert; başka unique violation"
+      ],
+      "evidence_tier": "raw service exception confirmed; user-visible defect not proven; needs verification"
+    },
+    {
+      "id": "RG-STK-31",
+      "title": "Production raw-read kaynak iddiası teyidi",
+      "defects": [
+        "STK-037"
+      ],
+      "exact_surface": [
+        "docs/architecture/module-dependency-rules.md",
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs",
+        "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Mevcut karar raw same-tx readi izinli kabul ediyor; mimari ihlal için farklı binding kural kanıtı gerekir.",
+      "negative_paths": [
+        "Read+lock ile raw write ayrımı; approved edge; ownership değiştirmeme"
+      ],
+      "evidence_tier": "explicit non-finding candidate retained using needs-verification status; current decision permits read"
+    },
+    {
+      "id": "RG-STK-32",
+      "title": "Production/satış lock ordering",
+      "defects": [
+        "STK-038"
+      ],
+      "exact_surface": [
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs",
+        "tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs",
+        "NEW test: tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs::ProductionAndSaleAcquireAdvisoryAndBalanceRowLocksInTheSameOrder"
+      ],
+      "dependencies": [],
+      "red_check": "Barrier ile sale advisory→production row→sale row→production advisory döngüsünü gerçek PostgreSQLde üret.",
+      "negative_paths": [
+        "Birden fazla ingredient GUID sırası; missing balance row; sale/waste; timeout değil gerçek deadlock SQLSTATE kaydı; rollback sonrası ledger/balance"
+      ],
+      "evidence_tier": "static proven opposite lock order; PostgreSQL two-session reproduction required, not run"
+    },
+    {
+      "id": "RG-STK-33",
+      "title": "Reservation bakım erişilebilirlik kararı",
+      "defects": [
+        "STK-010"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "src/Modules/Inventory/InventoryModule.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+      ],
+      "dependencies": [
+        "RG-STK-38"
+      ],
+      "red_check": "Rebuild/drift tutulma kararı gerçek operatör senaryosuna bağlanır; test ve DI kayıtları caller sayılmaz; seçilen yol yetki/hata/iptal ile kanıtlanır.",
+      "negative_paths": [
+        "Yetkisiz bakım; concurrent maintenance; sadece DI registration ile erişilebilirlik iddiası"
+      ],
+      "evidence_tier": "static caller search; decision-gated integration/removal, not a code-duplication merge"
+    },
+    {
+      "id": "RG-STK-34",
+      "title": "Manual adjustment erişilebilirlik kararı",
+      "defects": [
+        "STK-019"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+        "src/Modules/Inventory/InventoryModule.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Kullanıcı gerçek ihtiyacı onaylar; integration seçilirse tam yeni giriş/contract/test yolları ayrıca planlanır, removal seçilirse yaşayan physical-count/waste davranışları korunur.",
+      "negative_paths": [
+        "Anonymous; staff no permission; forged actor; authorized success; no writes on denial"
+      ],
+      "evidence_tier": "static acceptance/caller gap; integration/removal decision required before exact new Host surface"
+    },
+    {
+      "id": "RG-STK-35",
+      "title": "Tx’sız reversal kullanılmayan overload kararı",
+      "defects": [
+        "STK-016"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Semih retain+gerçek caller gereksinimi veya remove seçer; gereksiz overload kalmaz; tx yolunun ledger/balance rollback testleri korunur.",
+      "negative_paths": [
+        "Cancellation; duplicate reversal; negatif bakiye; caller tx rollback"
+      ],
+      "evidence_tier": "static source and caller trace; retain/remove decision + PostgreSQL failure injection required"
+    },
+    {
+      "id": "RG-STK-36",
+      "title": "Waste standalone hata/iptal coverage",
+      "defects": [
+        "STK-023"
+      ],
+      "exact_surface": [
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+        "NEW test: tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs::StandaloneWasteFailureAndCancellationRollBackEveryWrite"
+      ],
+      "dependencies": [
+        "RG-STK-15"
+      ],
+      "red_check": "Ledger append sonrası, waste insert sonrası, guarded apply öncesi ve commit ct iptalinde exception enjekte et; üçünün toplamları eski durumda; sonra retry bir kez başarılı. Caller rollback mevcut testi de yeniden koş.",
+      "negative_paths": [
+        "İki farklı key; aynı key; ct cancel; caller rollback; satışla yarış"
+      ],
+      "evidence_tier": "static test inventory; existing caller-tx coverage read; focused new real PostgreSQL tests + mutations not run"
+    },
+    {
+      "id": "RG-STK-37",
+      "title": "Full stock rebuild canlı-yazıcı snapshot izolasyonu",
+      "defects": [
+        "STK-007"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "NEW test: tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs::RebuildCannotLoseAConcurrentLedgerOrReservationCommit"
+      ],
+      "dependencies": [
+        "RG-STK-06"
+      ],
+      "red_check": "SUM sonrası purchase/consumption commit ve reserved snapshot sonrası create/terminal commit barrier ile zorlanır; rebuild + writer sonrası SQL ledger SUM ve active reservation SUM ile tüm alanlar eşleşir; yeni item/location satırı da kapsanır.",
+      "negative_paths": [
+        "Orphan balance temizliği; reservation-only pair; yeni pair insert; dış tx rollback; snapshot okuma hatası; 5001 reserved pair destek/limit kararı açıkça testlenir"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    },
+    {
+      "id": "RG-STK-38",
+      "title": "Reservation rebuild canlı lifecycle snapshot izolasyonu",
+      "defects": [
+        "STK-013"
+      ],
+      "exact_surface": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+        "NEW test: tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs::ConcurrentTerminalCannotLeaveStaleReservedAfterRebuild"
+      ],
+      "dependencies": [
+        "RG-STK-10"
+      ],
+      "red_check": "Aggregate sonrası terminal ve create commit interleaving; rebuild sonunda active reservation SUM=reserved, available=on_hand-reserved; event replay hiçbir ikinci etki üretmez.",
+      "negative_paths": [
+        "Cancellation; create/terminal; yeni pair; stock rebuild ile eşzamanlılık; 5001 balance satırı cap; eksik balance row"
+      ],
+      "evidence_tier": "static-source; required real PostgreSQL integration + focused mutation; not run"
+    }
+  ],
+  "limitations": [
+    "Salt okunur V1-RMD-739 planlama: uygulama/test/plan dosyası değiştirilmedi; yeni Task ID açılmadı. RG-STK-* yalnız taslak repair group, yürütme yetkisi değildir.",
+    "21 kaynak ID JSONdan programatik sayıldı; her kaynak tam Bnnn Task ID bölümüyle okundu. register açıklamalarının 260 karakter kesikleri karar kaynağı yapılmadı; F0017/F0026 ve F0641/F1005 aliasları silinmedi.",
+    "Bu oturum dotnet build/test/mutation/SQL çalıştırmadı. open statik kaynak mekanizması veya doğrudan test boşluğu; historical-fixed yalnız mevcut düzeltme+okunan eski artifact anlamında, güncel runtime yeşil sonucu değil.",
+    "740/741/742/747/748 green ve mutation günlükleri okundu; eski geçişler sadece kendi dar altkusurlarına bağlandı. 742 full rebuild transaction/lock ve item replayi; 741 zero-deltayı; 747 full snapshot atomikliğini kapatmaz.",
+    "needs-verification durumunun bazı kayıtları explicit non-finding/contract qualificationdır (English ledger reason, izinli Production raw read, Host duplicate conflict); bunlar confirmed open production bug toplamına katılmamalı.",
+    "Karar engelli retained/remove/integrate gruplarında onaysız yeni endpoint, command, migration veya yetki ismi önerilmedi. Gerekli yeni production/test-project/composition/migration yüzeyi exact adları onaylanmadan kodlama başlayamaz; exact_surface şu an mevcut yollar ve açık NEW test metot önerileriyle sınırlı.",
+    "Shared dosyalar nedeniyle bağımlılık sırası verilmiştir; aynı invariant+execution path+required fix kanıtı yoksa ayrı kusur tutuldu. Bazı grup içi ayrı kusurlar tek atomik transaction/authorization fixinde zorunlu birlikte çalışır, duplicate finding diye silinmez.",
+    "RG-STK-06 için tabloya yönelik transaction+DB isolation/locking çözümü tasarlanmadan canlı reservation writer kapsamı kesinleşmez; row advisory lockun tüm yazıcıları kapattığı varsayılmadı. Kaynak aliasının başka dosyada kalan yüzeyi varsa parentın sonraki planında exact scope genişletme gerekir.",
+    "Product mappingte097 FK koruması mevcut;059+118 module fixture full schema değildir. Bu nedenle service product read eksikliği güncel production orphan bugı diye sayılmadı.",
+    "Physical count ilk INV-008 evidence-directory eksiklik iddiası bağımsız dizin envanteriyle bu oturum teyit edilmedi;741 logları bunun yerine geçirilmedi.",
+    "Production lock inversion ve PO cancel/receipt yarışı kaynak satırlarından türetilmiş ek atomik altkusurlardır; eski740 kapanışıyla karıştırılmaz. İki-session/barrier runtime kabulü henüz yapılmadı.",
+    "Başlangıç HEAD 8c03e79bdc5263f5a5a26a524693403012d871d2. Başlangıç kullanıcı/parent write-set: modified plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md; untracked evidence/V1-RMD-739/classification/. Bunlara dokunulmadı."
+  ],
+  "parent_path_validation": {
+    "unresolved_paths": [],
+    "source_hashes": {
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs": "5c3d719c4b93ac2f5bf218f970438f12e9f9fcef4214e27b8df64da1476ad69b",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs": "ac085acc3f858917629b38a8ab682888d1f1eb07416dcbc751e193da91a1dd67",
+      "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs": "7807809c43405f766efef1d3d6a91cdd82e946f07a18c8706b3d5960ef0b54de",
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs": "9a4acf943f35574401923723ff9f5c33923e0dd602f6b8203bb7946397c684f4",
+      "evidence/V1-RMD-739/tasks/B062.md": "137398b84fee61b09ce84c90a6f32437d87e22e5d0df33ad4371e40db3cc3611",
+      "evidence/V1-RMD-739/tasks/B088.md": "96e96e8ce9142a6594ac9128c854dcf2408ad813eb756532c190b4ee442916df",
+      "evidence/V1-RMD-740/green.log": "4d4623931fc3a2829751cf9adf61dc6248ab592a9171b70e5c9f7a6bfacfb7a4",
+      "evidence/V1-RMD-740/mutations.log": "82f9f9988cc22ed6fa23d57b71adc6972500eea9e679b1a0b8cbc46575892057",
+      "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs": "29c6c0315d3f91ab83c8ede9d9aa812986d17082744ed5a7596cdb3ce9941d33",
+      "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs": "035709993a30d5f2962f37348b8d485b2dc8338bfface182c3ce98d03248f273",
+      "src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs": "5409ff21cc77c805650d7527f9f2aed4c0faa061895bd0dbccf56eb31d7bd5e2",
+      "plan/v1.1/purchasing/V11-PUR-001-purchase-order-and-receipt.md": "d4af615e11eeeb3d7ed76cd2e7d7c6c43b846b06118905e5ddbef5e7150a042e",
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs": "cc3b976e215ad659ba8a3f0c3b3053c9c4c02f1f78373511a8ee5d7398563552",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs": "12b1004b39438bf27258e7160bc45bcbbdb477e1568609333b11bd20de5575b9",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs": "d30dc3e04451bf688d361cdaea9807ad82cb17290785ae8e05abfd4d840d37cb",
+      "evidence/V1-RMD-739/tasks/B100.md": "9e76c8c8f641482215d491d59ba1b645d9b6221cbaee187574fea85919944bcb",
+      "evidence/V1-RMD-742/green.log": "b58606901b38bb594f7daa1f9b3b1f9b0616cdedea570e32079aacc3b336b623",
+      "evidence/V1-RMD-742/mutations.log": "7fb01214df8c7f55ce6e1b41286e36100e848ec766c9fcef1ea62897eb8c17e6",
+      "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs": "d1f35e3f87b7010f337e929dacbc9a6ba9e5f6dc4467f05106f5fd41d19e4cf9",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs": "d4cb6790190af896785809186183f67031dac38820e63d7e1202e4c9524600eb",
+      "src/Modules/Inventory/BalanceProjection/IStockBalanceProjector.cs": "9cfda2798e23bf1cb5c21aa64ba5d6a55decfc7f5d2c1f463dd2484e44457602",
+      "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs": "317b520ea5566d63a642218556db7f21a5a7a5ceb218e0d33826cd84d9af4875",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs": "163ad282441fe2b2c07f1e9d7dcb3409be177c867d0f3fce436c8d2f3c0d0039",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs": "eb05ae410c127b1448649ff9b7fbf7387f602338bfea26cbf42d7d0a1bbbbf84",
+      "src/Modules/Inventory/CrossChannelReservation/PostgresCrossChannelPortionArbiter.cs": "fc1b958f7b4c4b6bfc02b783f6cbe78fc46f31e9ae8a155b52b72370e6026dfe",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs": "a46af8f6d5e3afbcb972db1800d69a3163645a260e42c6dc4771a01aebd49ccb",
+      "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs": "9727839371ba9d0ab3c8b29e6e20d313d7929cf4e936f9c5dce986013996a8ec",
+      "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs": "3dd4614e9acabe925bd1342a4196e9f7acae0a02cdbdb51ee86639ac202d3e77",
+      "plan/v1/remediation/V1-RMD-742-bakiye-yeniden-kurma-guvenligi.md": "e0d5a781a6b8d5be3cb3003e9d1e93dba09dd097601aa3bc781e9c477f14faca",
+      "src/Modules/Inventory/InventoryModule.cs": "e7eae628ade9264af9aabd6c2caa21fc1854c37e97a9b9f47e3f6c4c81a5c9b1",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs": "bbac14dd2616fec80727c6cece2604d8ba84ac6b45b834c63ad3f929017c7ab8",
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceProjector.cs": "2a89367627949e9a787bdcc65ca7504602ee0f15d594f88dfce61d8abe7a7a36",
+      "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDatabaseTests.cs": "4e4b02ab2b8e9a659c9f097cc22555ebc787e378499c8da5208c7b5b8b4dbe2f",
+      "evidence/V1-RMD-747/green.log": "eb136f2040dcd94543997df77d541ffab048ab775fbe1d51b3b0ebd73331f036",
+      "evidence/V1-RMD-747/mutations.log": "5dc750fffda3e4c4a93f9f356dc9eeeb0e72c8170dc085d5685436891e81aa22",
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs": "3d35332c4f157baeb1060777148dc674e562988ffd15f251c3c0437fe5d2a6d5",
+      "src/Modules/Inventory/PortionReservations/Lifecycle/PostgresPortionReservationRepository.cs": "94a541a99da3c7cda7570ea8e782f4b9e9056ef922af0d002736a40ac1da464b",
+      "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs": "5c0378abc8966859663539c5a88cff71bf9341ce491e9a9ca14d66ee31ab55d6",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceModels.cs": "ae62135776fb694d20dfc3969add55e0af4cdf4b26f04392a100716ec9691849",
+      "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs": "343a947b70dd776300545cba447077f9d1ee57d5af40e26d357cacd5083e0940",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs": "8e1d7e96978381b45937e5b0c95cbeb13dc250b690dbb71927506bc386939384",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs": "57ebcb5f1331805018f1f5b29d1425fc19f925c7441a995ce66ff5c3df9c7420",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs": "d0404c21632a323a34cd7fb4d3d8dc29b96ecbb6dd97734d6feba265bf2044e1",
+      "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs": "ded076e5e0ca197fbe38b11a84b40907148ec1eeeef40bc1dd24ddd39ef8e399",
+      "plan/v1/remediation/V1-RMD-748-hareket-iptali-eksi-bakiye.md": "70b386ed5f1df08cf9a29a6fc7911b287fa77f96f37c4c3555929861f78e84d2",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalModels.cs": "ce6a39ef4ff11e4449ea49e4b0fb11dbefb083737ac264bcfd1c03e2d6c1acbe",
+      "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs": "bae9c06b03c4e7b835c26f7c0a562af579bb09271237ba0f186cdc196c115df4",
+      "evidence/V1-RMD-748/green.log": "5f5180584c1303731014249530ea153c81f6669dc41365bf8151c7dbd075ee46",
+      "evidence/V1-RMD-748/mutations.log": "1a438aa71a29805a30e2e6d60fb6e6f25291608c7f07ac6b3fd1f70ad5db5846",
+      "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs": "62e2e4b4b47edb4aca8b416b5abac4a847d4e3b6ef0627b1201c90a9c2081419",
+      "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs": "1ca4642e0091dcaffbc90a4d6d92f80abda1eaecf458ef82af577e7467e8957e",
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs": "4f176a660650168912b0ea45d8672e915e7bebfdebbf03fc01cc4a0c8e2d3c5a",
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs": "f986ade92b9f9dff74661f793c92741a488a9c037dbf514c759e8201d6f8e9b0",
+      "plan/v1.1/inventory/V11-INV-005-manual-adjustments.md": "d8de2b56796f12e163a5171bc592fb00f80bcbaa118f084d516f7165106f44fd",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs": "aa1056c59ed556f7b32757de755bf2b5b7d71703383f9607ada9cc312023bb9c",
+      "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs": "deb423d709793e4bd947302166dab0f191bade46cf9443db250b12826f87eceb",
+      "src/Modules/Inventory/WasteRecording/WasteModels.cs": "2619744f437067db27db948b4fb3066162d342b09e37d62c4f672f634cedd3b6",
+      "src/Modules/Inventory/WasteRecording/PostgresWasteRecordRepository.cs": "9c5f8d2e33311425b9abad63669f7573d8d42f0784580b242938444786c03657",
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs": "4e887eafa60a966713c90b02fe061c6d2644ca4112b1db8a77517a3e46435495",
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs": "73b959791f31642e32171f533d98d03458ddf1462ef16696b47cff0f13b3f125",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs": "2ab37b97defadee4094d73082a9f32eff1e881d006ca203220f77999ab67273f",
+      "src/Modules/Inventory/MovementLedger/StockMovement.cs": "efa0ad530adff93619bb5bb07d0decdbef067944240c1360741f858388501e60",
+      "src/Modules/Inventory/MovementLedger/StockMovementService.cs": "650d144d7807466c696bc4d501ecc33277ca7fafd8ca2152f143ad32e8f5b751",
+      "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs": "a223fe9bd40e3a7143bc0130ebae9066589613bba4b664d32f181f740a6c42b5",
+      "plan/v1.1/inventory/V11-INV-006-waste-recording.md": "38c4ead06cc5f9a098fcb580efb77e9e607d55acf263858fdb0f084ec5396c6f",
+      "evidence/V1-RMD-739/tasks/B048.md": "d868c2ff80dd02177bbcac1e0c07513a92c69168249c54035696d53605d80a56",
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs": "e08a30dedec391f2231d40609d9b9926bdac9450987b571a7e45a6cef281af90",
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs": "b126e2eada10a524409a58f0edd134c3fcdb0b45c95411bab117ebe119527f2d",
+      "evidence/V1-RMD-741/green.log": "5d81eec8564c90a844275196bb3a9ceb7f3e4eec4be597368621a4de5d9fb158",
+      "evidence/V1-RMD-741/mutations.log": "2aa8ab068bcf45e8464146c2d2d6cc4ec3ad053091b027826e0fe6dcb5c2c114",
+      "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs": "e3ab6763a54e879673abc42b9272695eccca3a2e8ee10c1dfddf6f14e8a090d8",
+      "src/Modules/Inventory/PhysicalCounts/IPhysicalCountRepository.cs": "f9e1e579b9a998d7dd544b585f9f33a9904468e3be7b9a3b07aa7d04bfc16cb7",
+      "src/Modules/Inventory/PhysicalCounts/PostgresPhysicalCountRepository.cs": "42f89fe635eae5c7a2e4ca1b6d4d98446df642f7db4e97b1b28c490217a6b334",
+      "src/Host/Experience/Inventory/StockMasterContracts.cs": "7c650d65cabb806e7f8b8a8f2e8b0080957eb986e76d46b2cf3257a3aa8b1042",
+      "AGENTS.md": "5916f57a73ca9c6e1610e60b0eeca52280b68328d93d793d5266bb0475a1d845",
+      "plan/v1.1/inventory/V11-INV-008-physical-counts.md": "a454e44a86276a1a7025444557c35562efe5552375d449c7f3bf8324abe05ac5",
+      "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql": "2e9369a26a967855956f546b822a9c29fe4bec2bc9c0cdbcd612132d624c9ce0",
+      "evidence/V1-RMD-739/tasks/B116.md": "2dafabccfdf1a3ae231ef1cae436d44843523603b42e3db231880360161198f5",
+      "docs/data/nullable-unique-policy.md": "9c124714394cd6158cd1c3c087e612ff88e8d0711ceaa83499cb210566fe42d8",
+      "database/migrations/V1/V1-KIT-002/016-printer-routing.up.sql": "0cc1510f209c6306a4acba80ebad10a52a9fe51e4ef9f30228847bcfb4000202",
+      "database/migrations/V11/V11-INV-001/060-stock-movements.up.sql": "8c4413f10c14fa864fe28232709e3e02ca64b25ea8951494023ad34374df24c4",
+      "database/migrations/V11/V11-INV-001/060-stock-movements.down.sql": "88a6c2de4c62bff83d562a8e5baa19c43b6f3d68dfb94019b5ee498b21969caa",
+      "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs": "e1b9f21b18bc2650109ca33cbabc0deac43974126ae87e172a5264bc0b5874ca",
+      "evidence/V1-RMD-739/tasks/B087.md": "6ec0cdc0da96cf066abb2cdc4944e8217c2ddd0d11311d6c008ba0696c621334",
+      "evidence/V11-INV-001/closure-evidence.txt": "25a7d52df35a803bb5e84cdf97a47e07466c808e20a7790b4d5ba5743effe75c",
+      "database/migrations/V11/V11-INV-002/061-stock-balances.down.sql": "7633cf8060a1eb07cb9878c12090f65c266b9753dbb3570ccc9abb2c40b3227f",
+      "evidence/V11-INV-002/closure-evidence.txt": "3bba6c6366045ba0265ff6edb13943889cf248e95173cbf09c70d47c37312b3b",
+      "src/Modules/Inventory/MovementLedger/IStockMovementService.cs": "0dbed4bb3e147492cf2765b38162e5621c622af6c4215e901543414fd59b65f4",
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs": "91fe7c79e235358820ea1067a8234961dc9b186b380b8cf03479893187b25b9c",
+      "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs": "3c9f050e96ace98a4e02f227371f5fde28cd018a70ca9306c2b0fcaf6b368630",
+      "plan/v1.1/inventory/V11-INV-004-stock-master-and-locations.md": "16844ef41a9f3318584134810cf587f5d6fbab2221c15aa9ed05e57c9f65908a",
+      "src/Modules/Inventory/StockMaster/PostgresProductStockMappingRepository.cs": "26121f689b8faa5149483c83eae9137662063b4d926c7b60c17b7f2ddac99b11",
+      "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql": "2e83f12fcdbf29facd511a0ff7a6d1be6d612504a6f7eb5274386d42c4f89f98",
+      "database/MigrationComposition/order.json": "b920b53f450a375ed2eef1bf9c70eadb4b206430a1bcfa47df87492e0a153c19",
+      "src/Modules/Inventory/StockMaster/PostgresStockItemRepository.cs": "27a052575d610195aecd3e48db5a2a05d73b5769f15791092d778acc2bee83c8",
+      "src/Modules/Inventory/StockMaster/PostgresStockLocationRepository.cs": "71c19b7f8db6c7edd573179699955d555b2863c56eefd96af81f0ff44d03b8b0",
+      "src/Modules/Production/StockEffects/ProductionStockEffectService.cs": "526d4a1a94b111c93bbae04092feb33d432b6edfaa81119727f7b954d19f1046",
+      "tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs": "c5f97fa9437439e061ed965191a24dd8e3ef9347a2f9dab1fdb4e236db7667e2",
+      "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs": "bf9c4e029bd7c306fa7477f3335571c39818d7e591424fd0232194a6cb3dce23",
+      "docs/architecture/module-dependency-rules.md": "176e8a52cc62955fb465c0a93742a401fec93f98744fd98dda01ac9b7fc0e9e6",
+      "src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs": "76b251e5eb859a82ee575d97209a16e53217e682cc69f0720f79a8ef20758ecc",
+      "src/Host/Experience/Production/ProductionManagementEndpoints.cs": "4d52ab55e176fad420a62d2af955d4d6379340e0021cb5dcdfca54728ab8ff30"
+    },
+    "tier": "static source/line/path validation; runtime tests not rerun"
+  },
+  "review_merge_suggestions": [
+    [
+      "STK-006",
+      "STK-007"
+    ],
+    [
+      "STK-012",
+      "STK-013"
+    ],
+    [
+      "STK-024",
+      "STK-025"
+    ],
+    [
+      "STK-037",
+      "STK-038"
+    ],
+    [
+      "STK-022",
+      "STK-023"
+    ],
+    [
+      "STK-001",
+      "STK-002 regresyon kabulü"
+    ]
+  ],
+  "review_surface_gaps": "25/38 kusurda production/test yolu grup exact_surface’ında yok; 13 fake repository implementasyonu (11 dosya) interface değişiminde yazma yüzeyine eklenecek; STK-026 migration + order.json + stockApi.ts yazma yüzeyine eklenecek.",
+  "independent_review": "Bağımsız statik inceleme tamamlandı; düzeltmeler uygulandı. Runtime testi yok. Task ID atanmadı."
+}

@@ -1,0 +1,166 @@
+{
+  "task_id": "V1-RMD-739",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "authority": "Accepted static classification decisions; takes precedence over worker drafts for listed source IDs only",
+  "coverage": "packet01 only; no claim about acceptance of remaining records",
+  "records": [
+    {
+      "source_id": "F0388",
+      "original_claim": {
+        "id": "F0388",
+        "category": "BD",
+        "secondary": "",
+        "priority": "kritik",
+        "qualification": "aday",
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "work_package": "PK0003",
+        "routing_domain": "Billing",
+        "source": "evidence/V1-RMD-739/findings/low-A.md:45",
+        "text": "- B010 | V1-RMD-237 | Audit olayı artık ayrı çağrı değil, indirim ile aynı işlemde yazılır (BillingSplitStore.cs:170-189, commit öncesi); başarısız audit indirimi geri alır (test BillingSplitHttpTests ~699). Md \"ApplyDiscountAsync döndükten sonra\" der: [Düşük] H bayat. Void/comp kapsam dışı (md'de açık).",
+        "reason": ""
+      },
+      "decision": "open",
+      "category": "BD",
+      "review_state": "accepted-static-classification",
+      "claim_object": "documentation",
+      "application_verdict": "Okunan güncel üretim yolunda yeni indirim ve audit aynı connection/transaction içinde, commit öncesinde yazılıyor. Endpoint audit bağımlılığını store'a iletiyor. Bu kayıttan açık üretim kusuru çıkarılmadı; çalışma zamanı başarısı ileri sürülmüyor.",
+      "documentation_verdict": "F0388 uygulamada audit eksik diyen kayıt değil; V1-RMD-237 görev belgesindeki endpoint/dönüş-sonrası audit anlatımının bayat olduğunu söylüyor. Güncel görev belgesi bu anlatımı hâlâ taşıyor. Belge kusuru not-defect diye elenmemeli.",
+      "rejected_disposition": "not-defect",
+      "supersedes_drafts": [
+        {
+          "path": "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\739-next-01e-F0388.json",
+          "sha256": "9660a461747177a5983545f2c3f4af50488dbca8cfd0302a60ef13ff4ae8bafa",
+          "statuses": [
+            "open"
+          ]
+        },
+        {
+          "path": "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\739-next-01f-F0388.json",
+          "sha256": "61ae111ae5b3f5d502fba833b0defa2b4f03cbeac2ad7f876afcb0ce9e260292",
+          "statuses": [
+            "not-defect"
+          ]
+        }
+      ],
+      "parent_record": "evidence/V1-RMD-739/classification/wave1/recovery/F0388.json",
+      "parent_record_sha256": "93d94c1b508ab731dfe412bdbffef6b1268c1e5755dd0b9b19dfb691e776495a",
+      "primary_source_hashes": {
+        "evidence/V1-RMD-739/findings/low-A.md": "63e9b1772d6951d513df4100a5cb6be7ea39e537509527b2237ab518019ca600",
+        "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md": "c3284e99ba6a827c1f1c0cb0c26230276391a45ae8e6fab2bda662c90eebb16e",
+        "src/Host/Experience/Billing/BillingSplitStore.cs": "b82a637d28432edd54d37195f5d38950a90c92a68c5d79aa294ac76c3b5db3d4",
+        "tests/Host/Experience/Billing/BillingSplitHttpTests.cs": "df068d7e88277741f2ffc6a7a5eed70a0a5164b71e08eee431a26d81a31fa48c"
+      },
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:45",
+        "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:27-32",
+        "src/Host/Experience/Billing/BillingSplitStore.cs:170-194",
+        "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:699-716"
+      ],
+      "acceptance_for_repair": [
+        "Belge atomik store audit çağrısını committen önce olarak açıklar; tarihsel endpoint sonrası tasarımı current diye göstermez.",
+        "Audit failure testi varlığı ile bu turda çalıştırılmış sonuç birbirine karıştırılmaz."
+      ],
+      "proposed_repair_paths": [
+        "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md"
+      ],
+      "independent_review": "adjudication/packet01/739-correction-review-F0388.json",
+      "independent_review_sha256": "bf016165ec8063a88ce5401e823ad8d03c437f61deeca6287292a604b88bcc68",
+      "runtime_verified": false,
+      "finding_closed": false,
+      "repair_authorized": false,
+      "limitations": [
+        "AGENTS.md tamamı okundu. Repository salt okunur tutuldu; yalnız yetkili scratch çıktısı yazıldı.",
+        "git rev-parse HEAD çıkış 0: 8c03e79bdc5263f5a5a26a524693403012d871d2; batch head ile aynı. Çalışma ağacı içeriği okundu; clean-tree veya kaynak hash eşitliği iddiası yok.",
+        "Repository kodu, build veya test çalıştırılmadı. Audit arızasında rollback statik işlem sınırı ve test beklentisi olarak destekleniyor; yeni runtime sonucu değildir.",
+        "unread_sources boş olması yalnız kullanıcının bu iki iddia için istediği kaynakların okunmuş olduğunu ifade eder; tüm Billing/Audit deposu veya tüm test fixture'ları okundu anlamına gelmez.",
+        "Eski parent-independent ve next raporları doğruluk kanıtı kabul edilmedi. Sonuç güncel gerçek görev md'si, üretim kaynakları ve açıkça kaynak düzeyinde tutulan test beklentilerine dayanır.",
+        "Bulgu kapatma, Done onayı, severity yükseltme veya repository değişikliği yapılmadı."
+      ]
+    },
+    {
+      "source_id": "F0908",
+      "original_claim": {
+        "id": "F0908",
+        "category": "BD",
+        "secondary": "",
+        "priority": "kritik",
+        "qualification": "aday",
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "work_package": "PK0002",
+        "routing_domain": "Audit+Billing+Catalog",
+        "source": "evidence/V1-RMD-739/findings/low-C.md:13",
+        "text": "B008 | V1-RMD-103 | H (Düşük): md \"SplitEngine hâlâ Bill.PayableAmount kullanıyor\" eski; SplitEngine.cs:32,99,282 AdjustedPayableAmount kullanıyor.",
+        "reason": "low-C.md:13 / tasks/B008.md:22: md SplitEngine Bill.PayableAmount kullanıyor diyor, kod AdjustedPayableAmount kullanıyor. Kalıcı test/evidence yokluğu gerekçesi bu kayda ait değil."
+      },
+      "decision": "open",
+      "category": "BD",
+      "review_state": "accepted-static-classification",
+      "claim_object": "documentation",
+      "application_verdict": "Equal/amount/custom engine yolları adjustment sağlanınca AdjustedPayableAmount ve AdjustedTaxTotal kullanır; null ise Bill tutarlarına döner. Host bu üç yolda LoadAdjustmentAsync sonucunu geçirir. Kalem bölme farklıdır: engine adjustment almaz; Host düzeltilmiş toplam özgün toplamdan farklıysa reddeder. Bu kayıt açık üretim kusuru kanıtlamıyor; tüm ödeme akışının doğruluğu da onaylanmıyor.",
+      "documentation_verdict": "F0908 düşük bulgu satırının yanlış olduğunu değil, gerçek V1-RMD-103 görev md'sinin SplitEngine hakkındaki bugün/hâlâ anlatımının bayat olduğunu söylüyor. Görev md'si güncel koda yönlendirme olmadan bu anlatımı koruyor. Belge kusuru not-defect diye elenmemeli.",
+      "rejected_disposition": "not-defect",
+      "supersedes_drafts": [
+        {
+          "path": "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\739-next-01e-F0908.json",
+          "sha256": "85039fb0fcf2197e623b02a06de167ccef65cb636948ef288cf83a26dc0aa057",
+          "statuses": [
+            "not-defect"
+          ]
+        },
+        {
+          "path": "C:\\Users\\semih\\AppData\\Local\\hermes\\profiles\\alkaros\\cache\\scratch\\739-next-01f-F0908.json",
+          "sha256": "ed4e00dade4dca05eab87153e37893b6f1677b5df72fdde95e29b8e6a70f3bd7",
+          "statuses": [
+            "not-defect"
+          ]
+        }
+      ],
+      "parent_record": "evidence/V1-RMD-739/classification/wave1/recovery/F0908.json",
+      "parent_record_sha256": "2d577371496d2ab142d9a72f032d0d438a1f5ea1c27b9e1c0afdc9c3638cd4ce",
+      "primary_source_hashes": {
+        "evidence/V1-RMD-739/findings/low-C.md": "a464cd1d0b334c092fc0d427186271b04793e042c104a9d586227bf1f2edb794",
+        "evidence/V1-RMD-739/tasks/B008.md": "9ff3aa7d4988320f67c515b24d89bac76d8963d0efe60d834f81c8d561f82b5e",
+        "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md": "e865a9cad3e51c20845f16d99d332c0dcd15b6048290258b08c16c6398e44805",
+        "src/Modules/Billing/SplitDesign/SplitEngine.cs": "dbf57baa3000c671462cd3cf608482674bbaf3df0bc4c82d87a3e50536275c1b",
+        "src/Host/Experience/Billing/BillingSplitStore.cs": "b82a637d28432edd54d37195f5d38950a90c92a68c5d79aa294ac76c3b5db3d4"
+      },
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:13",
+        "evidence/V1-RMD-739/tasks/B008.md:20-22",
+        "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md:108-116",
+        "src/Modules/Billing/SplitDesign/SplitEngine.cs:20-33",
+        "src/Modules/Billing/SplitDesign/SplitEngine.cs:99-106",
+        "src/Modules/Billing/SplitDesign/SplitEngine.cs:282-289",
+        "src/Host/Experience/Billing/BillingSplitStore.cs:497-530"
+      ],
+      "acceptance_for_repair": [
+        "Eski uygulama kapsamı tarihçe olarak korunur; current davranış adjustment kullanımı ve null durumundaki özgün tutar ayrılarak açıklanır.",
+        "İlgisiz ücret/bahşiş politikası bu belge iddiasından türetilmez."
+      ],
+      "proposed_repair_paths": [
+        "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md"
+      ],
+      "independent_review": "adjudication/packet01/739-correction-review-F0908.json",
+      "independent_review_sha256": "1cf1b89038e55f06651808e1d85185f259ff8d1d7dbc6c9ccf238f3cb9eed12e",
+      "runtime_verified": false,
+      "finding_closed": false,
+      "repair_authorized": false,
+      "limitations": [
+        "AGENTS.md tamamı okundu. Repository salt okunur tutuldu; yalnız yetkili scratch çıktısı yazıldı.",
+        "git rev-parse HEAD çıkış 0: 8c03e79bdc5263f5a5a26a524693403012d871d2; batch head ile aynı. Çalışma ağacı okundu; clean-tree veya kaynak hash eşitliği iddiası yok.",
+        "Repository kodu, build veya test çalıştırılmadı. Statik koşullu entegrasyon gözlemi runtime/ödeme doğrulaması veya test başarısı değildir.",
+        "AdjustmentCalculator iç hesaplamasının ve gerçek ödeme/tahsilat çağrı zincirinin tamamı bu dar belge incelemesinde denetlenmedi.",
+        "unread_sources boş olması yalnız kullanıcının bu iddialar için istediği kaynakların okunduğunu ifade eder; bütün Billing modülü okundu anlamına gelmez.",
+        "Eski parent-independent ve next raporları doğruluk kanıtı kabul edilmedi. Hüküm güncel gerçek görev md'si ve güncel engine/Host bölümlerinin doğrudan karşılaştırmasına dayanır.",
+        "Bulgu kapatma, Done onayı, severity yükseltme veya repository değişikliği yapılmadı."
+      ]
+    }
+  ],
+  "counts": {
+    "accepted_static_classifications": 2,
+    "open_documentation_findings": 2,
+    "closed_findings": 0,
+    "runtime_verified": 0
+  },
+  "write_authorization": false
+}

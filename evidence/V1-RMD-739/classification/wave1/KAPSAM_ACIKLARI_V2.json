@@ -1,0 +1,37 @@
+{
+  "issues": [
+    {
+      "kind": "stale-parent-closure-copy",
+      "defect": "STK-024",
+      "parent": "F0031",
+      "current": "kismi-kalan-kusur-var",
+      "copied": "kayitli-kanitla-tam-kapanis-eslesmesi"
+    },
+    {
+      "kind": "stale-parent-closure-copy",
+      "defect": "STK-025",
+      "parent": "F0031",
+      "current": "kismi-kalan-kusur-var",
+      "copied": "kayitli-kanitla-tam-kapanis-eslesmesi"
+    },
+    {
+      "kind": "stale-parent-closure-copy",
+      "defect": "STK-028",
+      "parent": "F0031",
+      "current": "kismi-kalan-kusur-var",
+      "copied": "kayitli-kanitla-tam-kapanis-eslesmesi"
+    },
+    {
+      "kind": "open-with-untyped-blocker",
+      "defect": "GYZ-011",
+      "blocker": "Onaylı exact module-owned kontrat/istisna ve sahiplik gerekir. Karardan önce yeni adapter/interface/project yüzeyi icat edilmez."
+    },
+    {
+      "kind": "historical-waiver-not-new-approval",
+      "defect": "GYZ-024",
+      "action": "Önceki known-limitation kaydı yeni ürün onayı değildir; kesin bulgu-dışı kapanış/görev dışlama uygulanmaz."
+    }
+  ],
+  "count": 5,
+  "status": "Takip ediliyor; bağımsız exact-surface sonuçları uygulanmadan kapanmaz."
+}

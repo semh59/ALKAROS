@@ -1,0 +1,22 @@
+{
+  "source_id": "F0691",
+  "head": "F0691 from audit-overrides (BD/aday)",
+  "defects": [
+    {
+      "title": "BD - aday",
+      "status": "open",
+      "invariant": "Category: BD, Secondary: EZ",
+      "mechanism": "low-B.md:108: anahtarlı idempotency belgesi somut olarak yanlış; birikimli hedef farkı ile sağlanan mevcut idempotency ayrı tutulmalı. Çağıranın işleminden ayrı GetBySourceAsync okumasının eşzamanlılık güvencesi ayrıca belirsizdir.",
+      "source_evidence": [
+        "source-reason: low-B.md:108: anahtarlı idempotency belgesi somut olarak yanlış; birikimli hedef farkı ile sağlanan mevcut idempotency ayrı tutulmalı. Çağıranın işleminden ayrı GetBySourceAsync okumasının eşzamanlılık güvencesi ayrıca belirsizdir."
+      ],
+      "acceptance": "Needs verification against current codebase",
+      "id": "W2-N-F0691-01",
+      "parents": [
+        "F0691"
+      ]
+    }
+  ],
+  "limitations": "Source: audit-overrides. Evidence limited to text search in low-A/B/C.md and task files. No code execution or repo writes performed.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

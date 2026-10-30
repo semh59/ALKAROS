@@ -1,0 +1,20 @@
+{
+  "source_id": "F0396",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-RMD-287 event broadcasts orderId/tableId via Clients.All; targeted delivery chain (V1-RMD-289) not verified for access scope",
+      "status": "verification-needed",
+      "invariant": "Order/table events must be delivered only to authorized recipients (serving staff for that table/order), not all connected clients.",
+      "mechanism": "low-A.md:53 and WaiterNotificationDispatch.cs:49 show Clients.All broadcast for orderId/tableId events. V1-RMD-289 is cited as the targeted delivery chain replacement. The source note says 'PII yok' but does not prove all recipients are authorized for that order/table. The HelpRequestHub.cs:23-32 documents the same Clients.All pattern and proposes narrowing delivery to explicit recipient groups. Tests in HelpRequestHttpTests.cs:20 and KitchenOperationsStore.NotificationDispatchTests.cs assert on hub.Clients.AllCalls, suggesting the broadcast pattern is still used and tested.",
+      "source_evidence": "low-A.md:53; WaiterNotificationDispatch.cs:49; HelpRequestHub.cs:23-32; HelpRequestExperience.cs:121; HelpRequestHttpTests.cs:20; KitchenOperationsStore.NotificationDispatchTests.cs:33,54,69,83",
+      "acceptance": "V1-RMD-289 targeted delivery chain is fully implemented and verified: events carry recipient identifiers (userIds, role+table assignment) and hub sends only to those connections. No Clients.All broadcast remains for order/table events.",
+      "id": "W2-N-F0396-01",
+      "parents": [
+        "F0396"
+      ]
+    }
+  ],
+  "limitations": "Read-only analysis; cannot run the targeted delivery verification. V1-RMD-289 implementation status unknown — need to check if it replaces Clients.All or coexists. Tests still assert on Clients.AllCalls.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

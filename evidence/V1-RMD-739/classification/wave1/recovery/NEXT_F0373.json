@@ -1,0 +1,20 @@
+{
+  "source_id": "F0373",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-RMD-040 verification evidence lacks exit code/test count",
+      "status": "open",
+      "invariant": "Done task must have verification evidence with concrete command output (exit code, test count) not only narrative",
+      "mechanism": "evidence/V1-RMD-040/verification.md contains 11 lines of narrative text without any test execution output, exit codes, or test counts. The closing commit 9dc409c4 only changed the task status line in the markdown file. Actual work was done in other commits/tasks (V1-RMD-050/052).",
+      "source_evidence": "evidence/V1-RMD-040/verification.md:1-11",
+      "acceptance": "evidence/V1-RMD-040/verification.md must contain actual test run output with exit codes and test counts, or evidence folder must be supplemented with test-run.txt/console log showing concrete verification",
+      "id": "W2-N-F0373-01",
+      "parents": [
+        "F0373"
+      ]
+    }
+  ],
+  "limitations": "Read-only review; no test execution performed. Current verification.md only has narrative; cannot confirm if tests actually pass without running them.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

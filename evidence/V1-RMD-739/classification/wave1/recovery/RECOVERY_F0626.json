@@ -1,0 +1,34 @@
+{
+  "source_id": "F0626",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Gönderilmemiş kalem kaldırmada yönetici gereksinimi karara bağlanmamış",
+      "status": "decision-blocked",
+      "invariant": "Gönderilmemiş kalem kaldırmanın yetki sözleşmesi PO kararıyla açık ve belgelerle tutarlı olmalı.",
+      "mechanism": "Documentation alignment ilk maddesi, gönderilmemiş kalem için yönetici gerekip gerekmediğini açık PO sorusu olarak tutuyor. Güncel /void yolu yalnız OrdersCreate izni istiyor; bunun yanlış olduğu teknik okumayla seçilemez. Soru kaydı: evidence/V1-RMD-739/findings/po-questions.md:30, numaralandırılmamış B081/Documentation alignment maddesi.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:43",
+        "evidence/V1-RMD-739/tasks/B081.md:20-23",
+        "evidence/V1-RMD-739/findings/po-questions.md:30",
+        "docs/domain/void-complimentary-discount-policy.md:162-166",
+        "evidence/V1-RMD-724/README.md:7",
+        "src/Host/Experience/Orders/OrderManagementEndpoints.cs:576-595"
+      ],
+      "acceptance": [
+        "Semih, NotSent kalem kaldırmada orders.create izninin yeterli olup olmadığını açık tarihli kararla belirler.",
+        "Karar doğrultusunda yetki belgesi ve açık PO soru kaydı hizalanır; yönetici şartı seçilirse sunucu yetki yolu ve reddetme/kabul testleri ayrıca uygulanıp kanıtlanır."
+      ],
+      "id": "W2-R-F0626-01",
+      "parents": [
+        "F0626"
+      ]
+    }
+  ],
+  "limitations": [
+    "Salt okunur statik inceleme; test, uygulama ve migration çalıştırılmadı.",
+    "Karar kaydı tüm geçmiş/harici iletişim kanallarında aranmadı; incelenen güncel politika soruyu hâlâ açık tutuyor.",
+    "po-questions.md soruları numaralı değil; gerçek satır ve B081 başlığıyla kimlik verildi."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

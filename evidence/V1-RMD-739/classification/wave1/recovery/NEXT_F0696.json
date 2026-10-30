@@ -1,0 +1,22 @@
+{
+  "source_id": "F0696",
+  "head": "F0696 from audit-overrides (EZ/belirsiz)",
+  "defects": [
+    {
+      "title": "EZ - belirsiz",
+      "status": "decision-blocked",
+      "invariant": "Category: EZ, Secondary: KN",
+      "mechanism": "low-B.md:113: useState aynı tick içinde çift isteği engellemiyor. İdempotent kimlik ikinci kaydı önlese de istemci korumasının ve yarışan yanıtların kabul davranışı doğrulanmadan kaynak kusuru bilgiyle elenmemeli.",
+      "source_evidence": [
+        "source-reason: low-B.md:113: useState aynı tick içinde çift isteği engellemiyor. İdempotent kimlik ikinci kaydı önlese de istemci korumasının ve yarışan yanıtların kabul davranışı doğrulanmadan kaynak kusuru bilgiyle elenmemeli."
+      ],
+      "acceptance": "Historical or informational",
+      "id": "W2-N-F0696-01",
+      "parents": [
+        "F0696"
+      ]
+    }
+  ],
+  "limitations": "Source: audit-overrides. Evidence limited to text search in low-A/B/C.md and task files. No code execution or repo writes performed.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

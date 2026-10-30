@@ -1,0 +1,982 @@
+{
+  "batch": 9,
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "source_ids": [
+    "F1006",
+    "PO0050",
+    "F0027",
+    "F0257",
+    "F0585",
+    "F0656",
+    "UI0069",
+    "UI0070",
+    "UI0071",
+    "UI0072",
+    "UI0073",
+    "UI0074",
+    "F0263",
+    "F0583",
+    "F0653",
+    "F0741",
+    "F0768",
+    "UI0124",
+    "UI0125",
+    "UI0126",
+    "UI0134",
+    "UI0135",
+    "UI0136",
+    "UI0137",
+    "F0181",
+    "F0224",
+    "F0415",
+    "F0760",
+    "F0761",
+    "F0053",
+    "F0358",
+    "F0355",
+    "F0360",
+    "F0634",
+    "F1000",
+    "F0208",
+    "F0439",
+    "F0640",
+    "F0638",
+    "F0168",
+    "F0214",
+    "F0215",
+    "F0169",
+    "F0024",
+    "F0133",
+    "F0204",
+    "F0557",
+    "F0985",
+    "F1002"
+  ],
+  "defects": [
+    {
+      "id": "W2-09-001",
+      "parents": [
+        "F0027"
+      ],
+      "title": "Yaş kısıtlı ürün bayrağının yönetim yazma yolu yok",
+      "category": "TE",
+      "status": "open",
+      "invariant": "Yaş kısıtlı ürün bayrağı katalog yönetiminden tanımlanabilmeli.",
+      "mechanism": "NFC akışı is_age_restricted okuyor; Catalog ve PosTerminal katalog yüzeylerinde alanın yazılması bulunamadı.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:34",
+        "plan/v1.2/nfc-ordering/V12-NFC-002-age-restricted-item-confirmation.md:30",
+        "src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:405",
+        "src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:482"
+      ],
+      "production_paths": [
+        "src/Host/Experience/NfcOrdering/NfcOrderingStore.cs",
+        "plan/v1.2/nfc-ordering/V12-NFC-002-age-restricted-item-confirmation.md"
+      ],
+      "test_paths": [
+        "NEW: tests/Host/Experience/NfcOrdering/AgeRestrictedCatalogManagementTests.cs"
+      ],
+      "acceptance": [
+        "Yetkili yönetici ürünü yaş kısıtlı işaretler; NFC siparişi PendingConfirmation olur; bayrak yeniden okumada korunur."
+      ],
+      "decision_blocker": null,
+      "notes": "Catalog/Host kaynak araması yazma yolu bulmadı; SQL test seedleri bu tur açılmadı. Mevzuat hükmü çıkarılmadı."
+    },
+    {
+      "id": "W2-09-002",
+      "parents": [
+        "F0257"
+      ],
+      "title": "Yakalanan PosTerminal ağ hataları raporlanmıyor",
+      "category": "TE",
+      "status": "open",
+      "invariant": "V1-RMD-537 Goal kapsamındaki ağ hataları sunucuya raporlanmalı.",
+      "mechanism": "Kurulum yalnız error ve unhandledrejection dinliyor; yakalanan fetch hatası için network_error üreticisi yok.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:267",
+        "src/Clients/PosTerminal/src/features/error-reporting/browserErrorReporter.ts:44",
+        "src/Clients/PosTerminal/src/features/error-reporting/browserErrorReporter.ts:48",
+        "plan/v1/remediation/V1-RMD-537-browser-error-reporting.md:15"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/error-reporting/browserErrorReporter.ts",
+        "src/Clients/PosTerminal/src/main.tsx"
+      ],
+      "test_paths": [
+        "src/Clients/PosTerminal/src/features/error-reporting/browserErrorReporter.test.ts"
+      ],
+      "acceptance": [
+        "Yakalanıp Türkçe UI mesajına çevrilen fetch reddi kişisel veri içermeyen tek network_error raporu üretir; dedupe ve oran sınırları korunur."
+      ],
+      "decision_blocker": null,
+      "notes": "render_error türünün çağrılmaması ayrıca görüldü; ayrı render kapsamı gereksinimi doğrulanmadığından ayrı kusur çıkarılmadı."
+    },
+    {
+      "id": "W2-09-003",
+      "parents": [
+        "F0585"
+      ],
+      "title": "Mutfak sağlık noktası hedef rotaya bağlı değil",
+      "category": "TE",
+      "status": "open",
+      "invariant": "V1-RMD-075 üst bar sağlık noktası sistem sağlığı rotasını açmalı.",
+      "mechanism": "Nokta yalnız role=img span; href/onClick yok.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:242",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:450",
+        "plan/v1/remediation/V1-RMD-075-posterminal-kitchen-and-system-health-workspace.md:15"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx"
+      ],
+      "test_paths": [
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx"
+      ],
+      "acceptance": [
+        "Yetkili kullanıcı noktadan /system-health açabilir; klavye ile erişilir; yetkisiz rolde sağlık verisi açılmaz."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-09-004",
+      "parents": [
+        "F0656"
+      ],
+      "title": "Dağıtım varlıkları yok iddiası Dockerfile ile çürütüldü",
+      "category": "TE",
+      "status": "not-defect",
+      "invariant": "Dağıtım varlıklarının teslimi gerçek dağıtım yüzeyinden doğrulanmalı.",
+      "mechanism": "deploy/qr-relay yok; fakat görev kendi sınırlı ekinde deploy/docker/Dockerfile teslimini açıklıyor ve Dockerfile cloudflared indiriyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:73",
+        "plan/v1.2/qr-transport/V12-QRT-001-public-relay-transport.md:30",
+        "deploy/docker/Dockerfile:142",
+        "deploy/docker/Dockerfile:148"
+      ],
+      "production_paths": [
+        "deploy/docker/Dockerfile",
+        "plan/v1.2/qr-transport/V12-QRT-001-public-relay-transport.md"
+      ],
+      "test_paths": [],
+      "acceptance": [
+        "Dağıtım varlığının varlığı doğrulandı; canlı relay çalışması için ayrı yürütme kanıtı gerekir."
+      ],
+      "decision_blocker": null,
+      "notes": "Bu sonuç yalnız varlık-yok iddiasını çürütür; Docker build/canlı bağlantı yapılmadı. Owned surface içinde eski deploy/qr-relay yolunun kalması işlevin yokluğunu kanıtlamaz."
+    },
+    {
+      "id": "W2-09-005",
+      "parents": [
+        "UI0069",
+        "UI0070",
+        "UI0071",
+        "UI0072",
+        "UI0073",
+        "UI0074"
+      ],
+      "title": "Altı bağımsız ayar rotası gezinti menüsüne bağlı değil",
+      "category": "TE",
+      "status": "open",
+      "invariant": "Desteklenen ayar ekranları yetkili kullanıcının gezintisinden erişilebilir olmalı.",
+      "mechanism": "App.tsx standalone /settings/* dalları var; kaynak aramasında bu altı rotaya menü/link üreticisi yok; ortak navigasyon eksikliği.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/eksik-avcisi.md:4",
+        "src/Clients/PosTerminal/src/App.tsx:63",
+        "src/Clients/PosTerminal/src/App.tsx:70",
+        "src/Clients/PosTerminal/src/App.tsx:77",
+        "src/Clients/PosTerminal/src/App.tsx:84",
+        "src/Clients/PosTerminal/src/App.tsx:91",
+        "src/Clients/PosTerminal/src/App.tsx:98",
+        "src/Clients/PosTerminal/src/routes/workspace.tsx:132"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/App.tsx",
+        "src/Clients/PosTerminal/src/routes/workspace.tsx"
+      ],
+      "test_paths": [
+        "NEW: src/Clients/PosTerminal/src/settingsNavigation.test.tsx"
+      ],
+      "acceptance": [
+        "Yetkili kullanıcı relay, token-terminal, qnb-credential, screensaver, business-identity ve security ekranlarına URL yazmadan erişir; yetki kapıları korunur."
+      ],
+      "decision_blocker": null,
+      "notes": "Aynı invariant, eksik navigasyon mekanizması ve ortak ayar navigasyonu düzeltmesi nedeniyle altı parent birleştirildi. Fiş/e-fatura ayrı kapsamı bu tur açılmadı."
+    },
+    {
+      "id": "W2-09-006",
+      "parents": [
+        "F0263"
+      ],
+      "title": "Zaman çizelgesi adım adı ham gösteriliyor",
+      "category": "UI",
+      "status": "open",
+      "invariant": "Teknik kodlar Türkçe sunum haritasından geçmeli.",
+      "mechanism": "step.kind çevriliyor fakat step.name doğrudan td içine yazılıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:273",
+        "src/Clients/PosTerminal/src/features/management-user-journeys/UserJourneysSection.tsx:26",
+        "docs/UI_STYLE_GUIDE.md:15",
+        "src/Host/Observability/JourneyEndpoints/JourneyEndpoints.cs:142"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/management-user-journeys/UserJourneysSection.tsx"
+      ],
+      "test_paths": [
+        "NEW: src/Clients/PosTerminal/src/features/management-user-journeys/JourneyStepLabels.test.tsx"
+      ],
+      "acceptance": [
+        "Bilinen teknik adımlar Türkçe sunulur; bilinmeyen teknik kod nötr Türkçe ifadeye dönüşür."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-09-007",
+      "parents": [
+        "F0263"
+      ],
+      "title": "Personel hareketlerinde ham olay adı gösteriliyor",
+      "category": "UI",
+      "status": "open",
+      "invariant": "Personel olay kodları kullanıcıya Türkçe anlamıyla sunulmalı.",
+      "mechanism": "row.eventName doğrudan çiziliyor; sunucu audit.event_name getiriyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:273",
+        "src/Clients/PosTerminal/src/features/management-user-journeys/UserJourneysSection.tsx:97",
+        "src/Host/Observability/JourneyEndpoints/JourneyEndpoints.cs:117",
+        "docs/UI_STYLE_GUIDE.md:47"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/management-user-journeys/UserJourneysSection.tsx"
+      ],
+      "test_paths": [
+        "NEW: src/Clients/PosTerminal/src/features/management-user-journeys/StaffEventLabels.test.tsx"
+      ],
+      "acceptance": [
+        "Bilinen personel olayları Türkçe, bilinmeyenler nötr Türkçe etiketle çizilir."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-09-008",
+      "parents": [
+        "F0583"
+      ],
+      "title": "Masa süre eskalasyonu renk dışı uyarı sunmuyor",
+      "category": "UI",
+      "status": "open",
+      "invariant": "Süre uyarısı yalnız renkle aktarılmamalı.",
+      "mechanism": "occupancyTone ok/warn/crit yalnız sınıf seçiyor; görünen metin aynı geçen süre sayısı.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:240",
+        "src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:56",
+        "src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:529",
+        "src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:537",
+        "src/Clients/PosTerminal/src/features/tables/tables.css:162"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx",
+        "src/Clients/PosTerminal/src/features/tables/tables.css"
+      ],
+      "test_paths": [
+        "NEW: src/Clients/PosTerminal/src/features/tables/OccupancyEscalationA11y.test.tsx"
+      ],
+      "acceptance": [
+        "20/45 dakika durumları renk olmadan da metin veya anlamlı ikonla anlaşılır."
+      ],
+      "decision_blocker": null,
+      "notes": "Zamanlayıcısız iddiası tam doğru değil: canlı rota routes/workspace.tsx:255 her 8 saniyede load(true) çalıştırıyor. Offline zaman ilerlemesi bu tur doğrulanmadı."
+    },
+    {
+      "id": "W2-09-009",
+      "parents": [
+        "F0653"
+      ],
+      "title": "Platform bağlantı alanında ilk yükleme durumu görünmüyor",
+      "category": "UI",
+      "status": "open",
+      "invariant": "Asenkron durum alanı boşluk yerine yükleniyor durumu sunmalı.",
+      "mechanism": "channels henüz yokken error yoksa ChannelStatus section boş kalıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:70",
+        "src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.tsx:98",
+        "src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.tsx:100"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.tsx"
+      ],
+      "test_paths": [
+        "src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.test.tsx"
+      ],
+      "acceptance": [
+        "Geciken ilk platform yanıtında görünür ve erişilebilir yükleme durumu vardır."
+      ],
+      "decision_blocker": null,
+      "notes": "Ham son hata metni basılmaması kusur sayılmadı; onlineHubApi.ts içinde güvenli Türkçe çekme-hatası durumu mevcut."
+    },
+    {
+      "id": "W2-09-010",
+      "parents": [
+        "UI0124"
+      ],
+      "title": "Online operasyon ve menü renkleri semantik token kullanmıyor",
+      "category": "UI",
+      "status": "open",
+      "invariant": "Durum/etkileşim renkleri ortak tasarım tokenlarıyla yönetilmeli.",
+      "mechanism": "İki CSS dosyası aynı eski sabit hex renklerini buton/alan/yüzeylerde tekrar ediyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:7",
+        "src/Clients/PosTerminal/src/features/online-operations/online-operations.css:4",
+        "src/Clients/PosTerminal/src/features/online-operations/online-operations.css:18",
+        "src/Clients/PosTerminal/src/features/online-menu/online-menu.css:3",
+        "src/Clients/PosTerminal/src/features/online-menu/online-menu.css:9"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/online-operations/online-operations.css",
+        "src/Clients/PosTerminal/src/features/online-menu/online-menu.css"
+      ],
+      "test_paths": [
+        "NEW: src/Clients/PosTerminal/src/onlineColorTokens.test.ts"
+      ],
+      "acceptance": [
+        "Online renk rolleri ortak semantik tokenlara bağlıdır; focus ve durum kontrastı ölçülür."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-09-011",
+      "parents": [
+        "UI0126"
+      ],
+      "title": "Hesap bölme eski bağımsız renk paletini koruyor",
+      "category": "UI",
+      "status": "open",
+      "invariant": "Hesap bölme paleti ortak tasarım renk rolleriyle uyumlu olmalı.",
+      "mechanism": "--bill-* değişkenleri sabit eski hex değerleri tanımlıyor; header ve feedback kendi renklerini kullanıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:8",
+        "src/Clients/PosTerminal/src/features/billing/billing.css:1",
+        "src/Clients/PosTerminal/src/features/billing/billing.css:2",
+        "src/Clients/PosTerminal/src/features/billing/billing.css:10"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/billing/billing.css"
+      ],
+      "test_paths": [
+        "NEW: src/Clients/PosTerminal/src/features/billing/BillingColorTokens.test.ts"
+      ],
+      "acceptance": [
+        "Billing renk rolleri ortak tokenlara geçer; hata ve uyarı semantiği korunur."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-09-012",
+      "parents": [
+        "UI0134"
+      ],
+      "title": "Genel alert renkleri semantik tokenlara bağlı değil",
+      "category": "UI",
+      "status": "open",
+      "invariant": "Alert renkleri ortak durum tokenlarıyla tanımlanmalı.",
+      "mechanism": "error/unauthorized/conflict/information kuralları doğrudan hex içeriyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:14",
+        "src/Clients/PosTerminal/src/styles.css:143",
+        "src/Clients/PosTerminal/src/styles.css:144",
+        "src/Clients/PosTerminal/src/styles.css:145",
+        "src/Clients/PosTerminal/src/styles.css:146"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/styles.css"
+      ],
+      "test_paths": [
+        "NEW: src/Clients/PosTerminal/src/alertColorTokens.test.ts"
+      ],
+      "acceptance": [
+        "Alert önplan, kenarlık ve yüzey renkleri ortak semantik tokenlardan gelir."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-09-013",
+      "parents": [
+        "UI0136"
+      ],
+      "title": "Yerel köşe yarıçapları tasarım ölçeğinden sapıyor",
+      "category": "UI",
+      "status": "open",
+      "invariant": "Standart panel ve kontrol yarıçapları ortak tasarım ölçeğinden gelmeli.",
+      "mechanism": "table-order-bridge 16px; bill-split__modes button .45rem yerel değer kullanıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:14",
+        "src/Clients/PosTerminal/src/styles.css:187",
+        "src/Clients/PosTerminal/src/features/billing/billing.css:14"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/styles.css",
+        "src/Clients/PosTerminal/src/features/billing/billing.css"
+      ],
+      "test_paths": [
+        "NEW: src/Clients/PosTerminal/src/radiusTokens.test.ts"
+      ],
+      "acceptance": [
+        "Standart kontrol/panel yarıçapları tokenlardan gelir; varsa özel biçim açık gerekçeyle ayrılır."
+      ],
+      "decision_blocker": null,
+      "notes": "Pill rozeti sırf 999px olduğu için kusur sayılmadı. Görsel karşılaştırma yapılmadı."
+    },
+    {
+      "id": "W2-09-014",
+      "parents": [
+        "UI0137"
+      ],
+      "title": "Masa sipariş köprüsünün gölgesi yerel tanımlı",
+      "category": "UI",
+      "status": "open",
+      "invariant": "Standart yükselti gölgeleri ortak tasarım ölçeğine bağlı olmalı.",
+      "mechanism": "table-order-bridge box-shadow kendi rgba ve ölçülerini tanımlıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:14",
+        "src/Clients/PosTerminal/src/styles.css:187"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/styles.css"
+      ],
+      "test_paths": [
+        "NEW: src/Clients/PosTerminal/src/shadowTokens.test.ts"
+      ],
+      "acceptance": [
+        "Sipariş köprüsü gölgesi ortak yükselti tokenını kullanır; görsel regresyonla kontrol edilir."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-09-015",
+      "parents": [
+        "F0181"
+      ],
+      "title": "Tüm Gün toplamı kurs bekleyen kalemleri sayıyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "Held kalemler aktif hazırlık toplamını şişirmemeli.",
+      "mechanism": "allDayGroups yalnız Cancelled ve Served eler; isHeld alanı dikkate alınmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:191",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:251",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:256",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/models.ts:47",
+        "src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:130"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx"
+      ],
+      "test_paths": [
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx"
+      ],
+      "acceptance": [
+        "Aynı ürünün held ve aktif kalemlerinde toplam yalnız aktif miktarı içerir; ateşlenince held miktar toplama katılır."
+      ],
+      "decision_blocker": null,
+      "notes": ""
+    },
+    {
+      "id": "W2-09-016",
+      "parents": [
+        "F0224"
+      ],
+      "title": "Ürün tarif eşleme seçimi ilk 100 üründe kesiliyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "Tüm ürünler tarif eşlemesinde seçilebilir olmalı.",
+      "mechanism": "management-recipes listProducts limit=100 ile tek yanıt alıyor; sonraki sayfa veya eksiklik uyarısı yok.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:234",
+        "src/Clients/PosTerminal/src/features/management-recipes/api.ts:43",
+        "src/Clients/PosTerminal/src/features/management-recipes/api.ts:44"
+      ],
+      "production_paths": [
+        "src/Clients/PosTerminal/src/features/management-recipes/api.ts",
+        "src/Clients/PosTerminal/src/features/management-recipes/RecipesSection.tsx"
+      ],
+      "test_paths": [
+        "src/Clients/PosTerminal/src/features/management-recipes/RecipesSection.test.tsx"
+      ],
+      "acceptance": [
+        "101 ve üstü üründe son ürün seçilebilir; sonraki sayfa hatası sessiz kısmi başarı olmaz."
+      ],
+      "decision_blocker": null,
+      "notes": "Aynı desen management-menus-recipe-cost/api.ts:50 içinde de görüldü; parent tarif yönetimi kapsamıyla sınırlandı."
+    },
+    {
+      "id": "W2-09-017",
+      "parents": [
+        "F0761"
+      ],
+      "title": "Tekrarlanan iz kimliği liste ve tahliyeyi bozuyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "İz kayıt kuyruğu ile kimlik sözlüğü tutarlı olmalı.",
+      "mechanism": "Aynı traceId sonraki Complete çağrısında _done değerini ezer fakat _order tekrar enqueue eder; Recent aynı son kaydı tekrarlar; eski kuyruk öğesinin tahliyesi yeni kaydı silebilir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:178",
+        "src/Host/Observability/TraceCorrelation/TraceCorrelation.cs:45",
+        "src/Host/Observability/TraceCorrelation/TraceCorrelation.cs:55",
+        "src/Host/Observability/TraceCorrelation/TraceCorrelation.cs:56",
+        "src/Host/Observability/TraceCorrelation/TraceCorrelation.cs:64"
+      ],
+      "production_paths": [
+        "src/Host/Observability/TraceCorrelation/TraceCorrelation.cs"
+      ],
+      "test_paths": [
+        "NEW: tests/Host/Observability/TraceCorrelation/RepeatedTraceIdBufferTests.cs"
+      ],
+      "acceptance": [
+        "Aynı kimlik tekrarında listede yinelenen kayıt oluşmaz; 200 kayıt tahliyesi yaşayan yeni kaydı yanlış silmez."
+      ],
+      "decision_blocker": null,
+      "notes": "Bellekte 200 kayıt tutmak tek başına kusur sayılmadı; yönetim hata onayının farklı kimliği ayrıca araştırılmadı."
+    },
+    {
+      "id": "W2-09-018",
+      "parents": [
+        "F0133"
+      ],
+      "title": "Silinen şef garson motoru planda hâlâ teslim edilmiş görünüyor",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Done görev teslim açıklaması mevcut veya açıkça devredilmiş yüzeyi göstermeli.",
+      "mechanism": "WaiterPwa/ManagerDecisions dizini yok; V1-IAM-020 Goal hâlâ WaiterManagerDecisionEngine ve kabul kanıtı 6/6 test iddiası taşıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:143",
+        "plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md:19",
+        "plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md:29"
+      ],
+      "production_paths": [
+        "plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md"
+      ],
+      "test_paths": [
+        "NEW: tests/Plan/ManagerDecisionSurfaceReferencesTests.py"
+      ],
+      "acceptance": [
+        "Silinen yüzey için açık superseded/devir kaydı ve güncel canlı yüzey/test referansı vardır."
+      ],
+      "decision_blocker": null,
+      "notes": "ManagerDecisions üretim ve test dizinleri yokluğu kontrol edildi. authorization-model.md:225 bu tur açılmadı; ona satır kanıtı verilmedi."
+    },
+    {
+      "id": "W2-09-019",
+      "parents": [
+        "F0985"
+      ],
+      "title": "v5→v6 kaydı güncel cache sürümü iddiası değil",
+      "category": "BD",
+      "status": "not-defect",
+      "invariant": "Tarihsel değişiklik anlatımı yaşayan sürüm gereksiniminden ayrılmalı.",
+      "mechanism": "V1-WTR-039 metni açık geçmiş zamanla CACHE_NAME v5ten v6ya yükseltildi diyor; sonraki sürümler bunu yanlış yapmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:90",
+        "plan/v1/waiter-pwa/V1-WTR-039-js-refactor-step3-auth-api-modules.md:36"
+      ],
+      "production_paths": [
+        "plan/v1/waiter-pwa/V1-WTR-039-js-refactor-step3-auth-api-modules.md"
+      ],
+      "test_paths": [],
+      "acceptance": [
+        "Tarihsel refactor kaydı güncel cache sabiti olarak yorumlanmaz."
+      ],
+      "decision_blocker": null,
+      "notes": "sw.js güncel sabiti bu tur açılmadı; v21 iddiası doğrulanmış sayılmadı."
+    },
+    {
+      "id": "W2-09-020",
+      "parents": [
+        "F1002"
+      ],
+      "title": "Dokuz fonksiyon ve v3→v4 anlatımı tarihsel çıkarım kaydı",
+      "category": "BD",
+      "status": "not-defect",
+      "invariant": "Sonradan eklenen export ve cache artışı önceki çıkarım kaydını kusura dönüştürmemeli.",
+      "mechanism": "V1-WTR-037 dokuz fonksiyonun bu adımda taşındığını ve cache sürümünün o adımda yükseltildiğini anlatıyor; toplam güncel export sayısını sabitlemiyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:107",
+        "plan/v1/waiter-pwa/V1-WTR-037-js-refactor-step1-util-module.md:29",
+        "plan/v1/waiter-pwa/V1-WTR-037-js-refactor-step1-util-module.md:34",
+        "plan/v1/waiter-pwa/V1-WTR-037-js-refactor-step1-util-module.md:39"
+      ],
+      "production_paths": [
+        "plan/v1/waiter-pwa/V1-WTR-037-js-refactor-step1-util-module.md"
+      ],
+      "test_paths": [],
+      "acceptance": [
+        "Tarihsel modül çıkarımı ile güncel export/cache sürümü ayrı değerlendirilir."
+      ],
+      "decision_blocker": null,
+      "notes": "Güncel util.js export sayısı, index.html ve sw.js bu tur açılmadı."
+    }
+  ],
+  "record_map": {
+    "F0027": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-001"
+      ],
+      "evidence": "plan/v1.2/nfc-ordering/V12-NFC-002-age-restricted-item-confirmation.md:30; src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:405; src/Host/Experience/NfcOrdering/NfcOrderingStore.cs:482"
+    },
+    "F0257": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-002"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/features/error-reporting/browserErrorReporter.ts:44; src/Clients/PosTerminal/src/features/error-reporting/browserErrorReporter.ts:48; plan/v1/remediation/V1-RMD-537-browser-error-reporting.md:15"
+    },
+    "F0585": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-003"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:450; plan/v1/remediation/V1-RMD-075-posterminal-kitchen-and-system-health-workspace.md:15"
+    },
+    "F0656": {
+      "outcome": "not-defect",
+      "defects": [
+        "W2-09-004"
+      ],
+      "evidence": "plan/v1.2/qr-transport/V12-QRT-001-public-relay-transport.md:30; deploy/docker/Dockerfile:142; deploy/docker/Dockerfile:148"
+    },
+    "UI0069": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-005"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/App.tsx:63; src/Clients/PosTerminal/src/App.tsx:70; src/Clients/PosTerminal/src/App.tsx:77; src/Clients/PosTerminal/src/App.tsx:84; src/Clients/PosTerminal/src/App.tsx:91; src/Clients/PosTerminal/src/App.tsx:98; src/Clients/PosTerminal/src/routes/workspace.tsx:132"
+    },
+    "UI0070": {
+      "outcome": "merged",
+      "defects": [
+        "W2-09-005"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/App.tsx:63; src/Clients/PosTerminal/src/App.tsx:70; src/Clients/PosTerminal/src/App.tsx:77; src/Clients/PosTerminal/src/App.tsx:84; src/Clients/PosTerminal/src/App.tsx:91; src/Clients/PosTerminal/src/App.tsx:98; src/Clients/PosTerminal/src/routes/workspace.tsx:132"
+    },
+    "UI0071": {
+      "outcome": "merged",
+      "defects": [
+        "W2-09-005"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/App.tsx:63; src/Clients/PosTerminal/src/App.tsx:70; src/Clients/PosTerminal/src/App.tsx:77; src/Clients/PosTerminal/src/App.tsx:84; src/Clients/PosTerminal/src/App.tsx:91; src/Clients/PosTerminal/src/App.tsx:98; src/Clients/PosTerminal/src/routes/workspace.tsx:132"
+    },
+    "UI0072": {
+      "outcome": "merged",
+      "defects": [
+        "W2-09-005"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/App.tsx:63; src/Clients/PosTerminal/src/App.tsx:70; src/Clients/PosTerminal/src/App.tsx:77; src/Clients/PosTerminal/src/App.tsx:84; src/Clients/PosTerminal/src/App.tsx:91; src/Clients/PosTerminal/src/App.tsx:98; src/Clients/PosTerminal/src/routes/workspace.tsx:132"
+    },
+    "UI0073": {
+      "outcome": "merged",
+      "defects": [
+        "W2-09-005"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/App.tsx:63; src/Clients/PosTerminal/src/App.tsx:70; src/Clients/PosTerminal/src/App.tsx:77; src/Clients/PosTerminal/src/App.tsx:84; src/Clients/PosTerminal/src/App.tsx:91; src/Clients/PosTerminal/src/App.tsx:98; src/Clients/PosTerminal/src/routes/workspace.tsx:132"
+    },
+    "UI0074": {
+      "outcome": "merged",
+      "defects": [
+        "W2-09-005"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/App.tsx:63; src/Clients/PosTerminal/src/App.tsx:70; src/Clients/PosTerminal/src/App.tsx:77; src/Clients/PosTerminal/src/App.tsx:84; src/Clients/PosTerminal/src/App.tsx:91; src/Clients/PosTerminal/src/App.tsx:98; src/Clients/PosTerminal/src/routes/workspace.tsx:132"
+    },
+    "F0263": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-006",
+        "W2-09-007"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/features/management-user-journeys/UserJourneysSection.tsx:26; docs/UI_STYLE_GUIDE.md:15; src/Host/Observability/JourneyEndpoints/JourneyEndpoints.cs:142"
+    },
+    "F0583": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-008"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:56; src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:529; src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:537; src/Clients/PosTerminal/src/features/tables/tables.css:162"
+    },
+    "F0653": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-009"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.tsx:98; src/Clients/PosTerminal/src/features/online-hub/OnlineFoodHub.tsx:100"
+    },
+    "UI0124": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-010"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/features/online-operations/online-operations.css:4; src/Clients/PosTerminal/src/features/online-operations/online-operations.css:18; src/Clients/PosTerminal/src/features/online-menu/online-menu.css:3; src/Clients/PosTerminal/src/features/online-menu/online-menu.css:9"
+    },
+    "UI0126": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-011"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/features/billing/billing.css:1; src/Clients/PosTerminal/src/features/billing/billing.css:2; src/Clients/PosTerminal/src/features/billing/billing.css:10"
+    },
+    "UI0134": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-012"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/styles.css:143; src/Clients/PosTerminal/src/styles.css:144; src/Clients/PosTerminal/src/styles.css:145; src/Clients/PosTerminal/src/styles.css:146"
+    },
+    "UI0136": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-013"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/styles.css:187; src/Clients/PosTerminal/src/features/billing/billing.css:14"
+    },
+    "UI0137": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-014"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/styles.css:187"
+    },
+    "F0181": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-015"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:251; src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:256; src/Clients/PosTerminal/src/features/kitchen-operations/models.ts:47; src/Modules/Kitchen/TicketLifecycle/KitchenTicket.cs:130"
+    },
+    "F0224": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-016"
+      ],
+      "evidence": "src/Clients/PosTerminal/src/features/management-recipes/api.ts:43; src/Clients/PosTerminal/src/features/management-recipes/api.ts:44"
+    },
+    "F0761": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-017"
+      ],
+      "evidence": "src/Host/Observability/TraceCorrelation/TraceCorrelation.cs:45; src/Host/Observability/TraceCorrelation/TraceCorrelation.cs:55; src/Host/Observability/TraceCorrelation/TraceCorrelation.cs:56; src/Host/Observability/TraceCorrelation/TraceCorrelation.cs:64"
+    },
+    "F0133": {
+      "outcome": "defect",
+      "defects": [
+        "W2-09-018"
+      ],
+      "evidence": "plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md:19; plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md:29"
+    },
+    "F0985": {
+      "outcome": "not-defect",
+      "defects": [
+        "W2-09-019"
+      ],
+      "evidence": "plan/v1/waiter-pwa/V1-WTR-039-js-refactor-step3-auth-api-modules.md:36"
+    },
+    "F1002": {
+      "outcome": "not-defect",
+      "defects": [
+        "W2-09-020"
+      ],
+      "evidence": "plan/v1/waiter-pwa/V1-WTR-037-js-refactor-step1-util-module.md:29; plan/v1/waiter-pwa/V1-WTR-037-js-refactor-step1-util-module.md:34; plan/v1/waiter-pwa/V1-WTR-037-js-refactor-step1-util-module.md:39"
+    },
+    "F1006": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-C.md:111",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "PO0050": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/po-questions.md:34",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0741": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-B.md:158",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0768": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-B.md:185",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "UI0125": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:7",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "UI0135": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:14",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0415": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:72",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0760": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-B.md:177",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0053": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:63",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0358": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:15",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0355": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:12",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0360": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:17",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0634": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-B.md:51",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F1000": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-C.md:105",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0208": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:218",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0439": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:96",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0640": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-B.md:57",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0638": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-B.md:55",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0168": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:178",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0214": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:224",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0215": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:225",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0169": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:179",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0024": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:31",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0204": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/register.md:214",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    },
+    "F0557": {
+      "outcome": "pending",
+      "defects": [],
+      "evidence": "evidence/V1-RMD-739/findings/low-A.md:214",
+      "notes": "Özgün bulgu satırı okundu; bugünkü kaynak/plan karşılaştırması tamamlanmadı veya alt iddiaları sonuçlandırılmadı. Açık parent talimatıyla ara çıktı kalıcılaştırıldı; kapandı sayılmaz."
+    }
+  },
+  "pending_source_ids": [
+    "F1006",
+    "PO0050",
+    "F0741",
+    "F0768",
+    "UI0125",
+    "UI0135",
+    "F0415",
+    "F0760",
+    "F0053",
+    "F0358",
+    "F0355",
+    "F0360",
+    "F0634",
+    "F1000",
+    "F0208",
+    "F0439",
+    "F0640",
+    "F0638",
+    "F0168",
+    "F0214",
+    "F0215",
+    "F0169",
+    "F0024",
+    "F0204",
+    "F0557"
+  ],
+  "limitations": [
+    "ARA ÇIKTI: Kullanıcının yeni okuma yapmadan derhal yazma talimatı nedeniyle analiz tamamlanmadı. pending_source_ids ayrı ve açık; bu kayıtların bugünkü kaynak doğrulaması tamamlanmış sayılmaz.",
+    "Bütün özgün source satırları okundu; yalnız source_evidence içindeki kod/plan satırları doğrulama kanıtı olarak kullanıldı.",
+    "Repo içine yazılmadı; kod, test, build, migration, tarayıcı, cihaz, yük veya canlı relay denemesi yapılmadı. Test yolları gelecekteki kabul önerileridir; test başarısı iddia edilmez.",
+    "record_map outcome=pending ara-çıktı uzantısıdır; özgün tam çıktı şemasındaki kapanış outcome değerlerinden değildir. Parent tamamlamalı.",
+    "F0583 canlı rotada 8 saniyelik polling görüldü; offline süre ilerlemesi doğrulanmadı.",
+    "F0415 için header ve yalnız hane doğrulaması okundu; checksum gereksinimi ve mutation-run.log kanıtının tüm alt iddiaları sonuçlandırılmadı.",
+    "F0204 için tarihsel kapanış notu ve silme commit 503dca59 görüldü; closure-evidence içeriği açılmadığından kayıt sonuçlandırılmadı.",
+    "Önceki execute_code denemesinde çıktı yazılmadan NameError: EOF alındı; bu dosya gerçek kalıcı ara çıktıdır."
+  ]
+}

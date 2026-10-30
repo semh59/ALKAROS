@@ -1,0 +1,20 @@
+{
+  "source_id": "PO0024",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Yöneten rol seçimi izin sayısına dayalı - semantik yetki altkümesi doğrulanmamış",
+      "status": "open",
+      "invariant": "İzin sayısı ile en kısıtlayıcı rol seçimi, izin seti değişince sonucu kaydırabilir; 'en kısıtlayıcı = en az izin' PO kararı (docs/domain/authorization-model.md:108-112) ancak semantik yetki altkümesiyle eşdeğerlik doğrulanmamış",
+      "mechanism": "PostgresRoleRepository.cs:187-203 GetGoverningRoleForUserAsync - SQL: ORDER BY count(rp.permission_id), r.code COLLATE \"C\" LIMIT 1; 6 çağıran bağlı; GoverningRoleTests 3 test + HTTP testi; kırmızı kanıt var",
+      "source_evidence": "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:187-203; docs/domain/authorization-model.md:108-112",
+      "acceptance": "Rol izinleri değiştiğinde governing role sonucunun değişip değişmediği test edilmeli; semantik altküme ilişkisi (role A permissions ⊆ role B permissions) ile sayısal kuralın tutarlılığı kanıtlanmalı veya counter-example bulunmalı",
+      "id": "W2-N-PO0024-01",
+      "parents": [
+        "PO0024"
+      ]
+    }
+  ],
+  "limitations": "Static report classification; güncel runtime doğrulaması yapılmamış. 1020 ana kayıtla kimlik eşleştirmesi yapılmamış. Gerçek rol değişikliği senaryolarında governing role kayması test edilmedi.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

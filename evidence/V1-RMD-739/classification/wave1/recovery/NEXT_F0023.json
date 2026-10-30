@@ -1,0 +1,20 @@
+{
+  "source_id": "F0023",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Crash window protection not connected to production: StartInFlightDeliveryAsync only called on PrinterTransmissionUncertainException, no persistent InFlight record before send",
+      "status": "open",
+      "invariant": "Print delivery crash-window protection requires a persistent InFlight record created BEFORE the physical printer transmission attempt, so that crashes between send and ack are recoverable",
+      "mechanism": "In KitchenPrintDispatchHostedService.cs ExecuteDeliveryAsync (lines 225-231), StartInFlightDeliveryAsync is ONLY called inside the catch block for PrinterTransmissionUncertainException - meaning the InFlight record is created AFTER the transmission attempt fails with uncertainty. There is no InFlight record created before transport.SendAsync at line 222. PhysicalPrintRecoveryService.StartInFlightDeliveryAsync (line 67) does create the record, but it's never called proactively before transmission. The crash window (between successful send and ack receipt) has no persistent record, so a Host crash in that window leaves the delivery state unknown with no recovery path.",
+      "source_evidence": "evidence/V1-RMD-739/findings/register.md:30; src/Host/Experience/KitchenOperations/KitchenPrintDispatchHostedService.cs:225-231; src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:59-70",
+      "acceptance": "Refactor ExecuteDeliveryAsync to call StartInFlightDeliveryAsync BEFORE transport.SendAsync, creating a persistent InFlight record with status InFlight. Then on success call ConfirmDeliverySuccessAsync; on PrinterTransmissionUncertainException call ReportCrashWindowUncertaintyAsync on the already-existing delivery. Add a test that simulates a crash between send and ack and verifies the delivery appears in GetPendingUnknownDeliveriesAsync for operator review.",
+      "id": "W2-N-F0023-01",
+      "parents": [
+        "F0023"
+      ]
+    }
+  ],
+  "limitations": "The defect is confirmed by source code inspection. The call sequence in ExecuteDeliveryAsync clearly shows StartInFlightDeliveryAsync only in the catch block. The PhysicalPrintRecoveryService implementation supports pre-transmission InFlight creation (CreateInFlight at line 67) but it's not wired that way in the hosted service. No runtime test was executed - this is static code analysis only per the task constraints.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,3 @@
+COMMAND: C:\Users\semih\AppData\Local\hermes\installs\684547ac9b30471d\environments\9153071d1ebd4af3b31abc0bcc0ad446\venv\Scripts\python.exe tools/consistency-audit/consistency_audit.py
+EXIT_CODE: 0
+consistency-audit: clean

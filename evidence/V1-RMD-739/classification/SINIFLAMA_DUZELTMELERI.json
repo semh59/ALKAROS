@@ -1,0 +1,590 @@
+[
+  {
+    "id": "F0208",
+    "category": "DY",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "belirsiz",
+    "reason": "Kaynak kilit bekleme süresinin sınırsız, havuz baskısının ölçülmemiş olduğunu söylüyor; kabul edilebilir yorumu kusuru kapatmaz. Timeout ve kaynak tüketimi çalışma kanıtıyla doğrulanmalı."
+  },
+  {
+    "id": "F0367",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "belirsiz",
+    "reason": "Tarihsel transcript sayısı ile yaşayan görev belgesindeki güncel iddia ayrılmalı; yanlış sayıyı bilgi gerekçesiyle sessiz kapatma."
+  },
+  {
+    "id": "F0405",
+    "category": "EZ",
+    "secondary": [
+      "DY"
+    ],
+    "qualification": "aday",
+    "reason": "setInterval uçuştaki istek koruması içermiyor; zararsız yorumu davranış kanıtı değil. Çakışan yanıt/sorgu ve iptal testi gerekli."
+  },
+  {
+    "id": "F0426",
+    "category": "BK",
+    "secondary": [
+      "TE"
+    ],
+    "qualification": "aday",
+    "reason": "Üretim çağıranı olmayan istemci somut ölü kod adayı; dış bağımlılık veya eski kapsam notu yeni mutlak ölü kod yasağını kaldırmaz. Ulaşılabilirlik kanıtı gerekli."
+  },
+  {
+    "id": "F0429",
+    "category": "PO",
+    "secondary": [
+      "TE"
+    ],
+    "qualification": "belirsiz",
+    "reason": "24 saatten eski yanıtsız çağrı görünürlüğü kayboluyor; tasarım notu tek başına kabul veya kapanış kanıtı değil. İş kuralı ve bekleyen çağrı davranışı doğrulanmalı."
+  },
+  {
+    "id": "F0446",
+    "category": "PO",
+    "secondary": [
+      "GY"
+    ],
+    "qualification": "belirsiz",
+    "reason": "Doğrudan API isteği istemci EFT onayını atlıyor; mevcut onayın bilgilendirme mi yetkilendirme mi olduğu kayıtla belirlenmeli, bilgi diye dışlanmaz."
+  },
+  {
+    "id": "F0477",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "belirsiz",
+    "reason": "Tarihsel mühür sayısı ile güncel durum iddiası özgün belge üzerinden ayrılmalı; hata olmadığı kanıtlanmadan dışlanmaz."
+  },
+  {
+    "id": "F0486",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "belirsiz",
+    "reason": "Tarihsel mühür sayısı ile güncel durum iddiası özgün belge üzerinden ayrılmalı; hata olmadığı kanıtlanmadan dışlanmaz."
+  },
+  {
+    "id": "F0643",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "belirsiz",
+    "reason": "Hepsi Planned ifadesinin tarihçeyi mi güncel teslimatı mı anlattığı özgün belgeyle doğrulanmalı."
+  },
+  {
+    "id": "F0650",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "aday",
+    "reason": "Testlerin izinli başka yolda bulunması, eski owned-surface belgesinin bayatlığına otomatik muafiyet sağlamaz. Kapanış eşleşmesi ayrıca korunur."
+  },
+  {
+    "id": "F0679",
+    "category": "BK",
+    "secondary": [
+      "TE"
+    ],
+    "qualification": "belirsiz",
+    "reason": "İngilizce exception tek başına kusur değil; HTTP/üretim tüketicisi olmayan yolun ölü kod olup olmadığı ayrıca doğrulanmalı. Gelecek uç için hayali eşleme üretilmez."
+  },
+  {
+    "id": "F0736",
+    "category": "TE",
+    "secondary": [
+      "PO"
+    ],
+    "qualification": "belirsiz",
+    "reason": "Disk/dış servis probu yokluğu tarihsel kapsam dışı notuyla kayıttan elenmez; mevcut kabul ve operasyon gereksinimi doğrulanmalı, yeni özellik varsayılmaz."
+  },
+  {
+    "id": "F0738",
+    "category": "GY",
+    "secondary": [
+      "PO"
+    ],
+    "qualification": "belirsiz",
+    "reason": "Çok rollü kullanıcıda tek rol seçiminin yetki etkisi incelenmeli; planda dışarıda olması kusursuzluk kanıtı değildir."
+  },
+  {
+    "id": "F0861",
+    "category": "DY",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "belirsiz",
+    "reason": "İptalde ReprintInFlight kalması ve lease kurtarma davranışı gerçek testle doğrulanmadan kabul edilebilir yorumu kapanış olamaz."
+  },
+  {
+    "id": "F0869",
+    "category": "GY",
+    "secondary": [
+      "EZ"
+    ],
+    "qualification": "belirsiz",
+    "reason": "Hesabı pasifleştirme ve oturum iptali ayrı işlemler; ara hata ve sonraki erişim reddi somut negatif testle doğrulanmalı. Zarar yok yorumu kanıt değil."
+  },
+  {
+    "id": "F0890",
+    "category": "MK",
+    "secondary": [],
+    "qualification": "belirsiz",
+    "reason": "Hostun başka modül şemasını ham SQL ile okuması mimari sözleşmeyle doğrulanmalı; yaygın olması tek başına izin kanıtı değil."
+  },
+  {
+    "id": "F0968",
+    "category": "GY",
+    "secondary": [
+      "PO"
+    ],
+    "qualification": "belirsiz",
+    "reason": "En az izin sayısı ile küme bazlı en kısıtlayıcı rol aynı garanti değildir; izin değişiminde davranış kural ve testle doğrulanmalı."
+  },
+  {
+    "id": "F0969",
+    "category": "KN",
+    "secondary": [
+      "GY"
+    ],
+    "qualification": "belirsiz",
+    "reason": "Yalnız oturumsuz istek taraması, oturumlu ama yetkisiz erişimi kanıtlamaz. Görev kabulüne göre 401/403 matrisinin kapsamı teyit edilmeli."
+  },
+  {
+    "id": "F0981",
+    "category": "KN",
+    "secondary": [
+      "BD"
+    ],
+    "qualification": "belirsiz",
+    "reason": "Önceki karar gerekçesi yanlış FND-020 kaydına ait. Bu kaynak SET-007 evidence docker kısıtı sapmasını içeriyor; kabul kapsamı doğrulanmalı. SVG yokluğu kusur sayılmaz."
+  },
+  {
+    "id": "F0982",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "Kaynak evidence içindeki OrderManagementStore.cs/in-memory iddiasının bayat olduğunu açıkça belirtiyor; bulgu-değil gerekçesi yanlış kayda ait."
+  },
+  {
+    "id": "F0989",
+    "category": "GY",
+    "secondary": [
+      "PO"
+    ],
+    "qualification": "belirsiz",
+    "reason": "orders.create izniyle not ve telefon görünürlüğünün yetkili personel tanımıyla uyumu doğrulanmalı; önceki cihaz açılışı gerekçesi bu kaynakla ilgisiz."
+  },
+  {
+    "id": "F0396",
+    "category": "GY",
+    "secondary": [
+      "PO"
+    ],
+    "qualification": "belirsiz",
+    "reason": "low-A.md:53 / tasks/B012.md:22: Clients.All ile orderId/tableId yayını belirtiliyor. PII yokluğu ve eski kapsam notu, tüm bağlı alıcıların yetkisini kanıtlamaz; hedefli teslim zinciri ile erişim kapsamı doğrulanmalı."
+  },
+  {
+    "id": "F0691",
+    "category": "BD",
+    "secondary": [
+      "EZ"
+    ],
+    "qualification": "aday",
+    "reason": "low-B.md:108: anahtarlı idempotency belgesi somut olarak yanlış; birikimli hedef farkı ile sağlanan mevcut idempotency ayrı tutulmalı. Çağıranın işleminden ayrı GetBySourceAsync okumasının eşzamanlılık güvencesi ayrıca belirsizdir."
+  },
+  {
+    "id": "F0696",
+    "category": "EZ",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "belirsiz",
+    "reason": "low-B.md:113: useState aynı tick içinde çift isteği engellemiyor. İdempotent kimlik ikinci kaydı önlese de istemci korumasının ve yarışan yanıtların kabul davranışı doğrulanmadan kaynak kusuru bilgiyle elenmemeli."
+  },
+  {
+    "id": "F0788",
+    "category": "KN",
+    "secondary": [
+      "VD"
+    ],
+    "qualification": "aday",
+    "reason": "low-B.md:205 / tasks/B110.md:25: iki platformun aynı numarasının tek kanıtta birleşmemesi kabulü testsiz. Uzun Türkçe ay adı ve alan hizası gerekçesi bu kayda ait değil."
+  },
+  {
+    "id": "F0789",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-B.md:206 / tasks/B110.md:26: md V12-ONL-009 yazılmadı diyor, görev Done; sorun ekran dili değil bayat yol/dependency notu."
+  },
+  {
+    "id": "F0792",
+    "category": "KN",
+    "secondary": [
+      "VD",
+      "TE"
+    ],
+    "qualification": "aday",
+    "reason": "low-B.md:209 / tasks/B110.md:39: count(*) is not null yalnız tablo varlığını doğruluyor, kaynak-hedef satır bütünlüğünü karşılaştırmıyor; deployment/restore sahip yüzeyi de yok. 5000 satırlı istemci exportu gerekçesi bu kayda ait değil."
+  },
+  {
+    "id": "F0793",
+    "category": "DY",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "aday",
+    "reason": "low-B.md:210 / tasks/B110.md:44: önem derecesine bakmayan sampler saniyede 20 üzerindeki Error/Critical olayları düşürüyor; kaynak salt test kanıtı değil gözlemlenebilirlik veri kaybı iddiasıdır."
+  },
+  {
+    "id": "F0794",
+    "category": "KN",
+    "secondary": [
+      "BD"
+    ],
+    "qualification": "aday",
+    "reason": "low-B.md:211 / tasks/B110.md:48: gerçek günlük yok; yaşayan başlıktaki PhaseBMax şu an 201 ifadesi 209 ile çelişiyor. İki unsur birlikte korunmalı."
+  },
+  {
+    "id": "F0795",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-B.md:212 / tasks/B111.md:5: RetryScheduleIntegrationTests yolu Idempotency yerine Messaging altında; bu satır belge sahiplik yolu bayatlığıdır. Aynı görevin eksik koşu kanıtı ayrı F0796 kaydıdır; tarihsel kapanış statüsü değiştirilmez."
+  },
+  {
+    "id": "F0798",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "aday",
+    "reason": "low-B.md:215 / tasks/B111.md:17: silinmiş Primitives teslimatı ve manifest latestFeature ile global.json disable çelişkisi var. Kalıcı test/ham log yokluğu ve md test yok ifadesi bu satırın gerekçesi değildir."
+  },
+  {
+    "id": "F0799",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-B.md:216 / tasks/B112.md:5: silinen InboxStore/InboxMessage ve taşınan Messaging testleri nedeniyle md sahip yüzeyi eski. 80 test tarihsel; bu satır ham log veya blanket istisna iddiası içermiyor. Kayıtlı tam kapanış eşleşmesi ayrıca korunur."
+  },
+  {
+    "id": "F0800",
+    "category": "KN",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-B.md:217 / tasks/B112.md:9: pytest MSBuild özelliğini sınar, VSTest keşfini sınamaz; kabul kanıtı ham transkripttir. Kanıt yalnız özet veya bayat görev kimliği gerekçesi bu kayda ait değil."
+  },
+  {
+    "id": "F0801",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-B.md:218 / tasks/B112.md:26: tests/Clients/PosTerminal/Experience sahip yüzeyi yok; Dockerfile yolu devredilmiş ve compose köke taşınmış. Bu satırın kusuru belge/yol uyumudur; ham log yokluğu başka üst bulgudur."
+  },
+  {
+    "id": "F0802",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "bilgi",
+    "reason": "low-B.md:219 / tasks/B112.md:29-31: 443/421 sayıları açıkça tarihsel plan-audit koşusuna ait; güncel kapanış testi/log yokluğu ya da eski kanıt yolu iddiası bu satırda yok. Tarihli transcript yeniden güncel sayı diye yorumlanmamalı."
+  },
+  {
+    "id": "F0803",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "aday",
+    "reason": "low-B.md:220 / tasks/B112.md:39: getFloorPlan/freshness için App.tsx ve ExperienceRoute/TableRoute yolları eski; backendStatus-freshness ilişkisinin korunması ayrıca doğrulanamamış. Salt kanıt kategorisi somut belge kusurunu gizlememeli."
+  },
+  {
+    "id": "F0804",
+    "category": "TE",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "aday",
+    "reason": "low-B.md:221 / tasks/B113.md:6: manifesti tüketen araç/CI yok ve testler manifest-HEAD eşleşmesini değil yalnız yardımcıları sınar. Eski test adı/evidence uyumsuzluğu gerekçesi bu satırla örtüşmüyor."
+  },
+  {
+    "id": "F0805",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "belirsiz",
+    "reason": "low-B.md:222 / tasks/B113.md:11: Out of scope ve 069/070 atıfları doğrulanmamış. Eski imza/sahte taşıma doğrulaması bu kaynakta yok; belirsiz atıf somut başka kusura dönüştürülmemeli."
+  },
+  {
+    "id": "F0845",
+    "category": "KN",
+    "secondary": [],
+    "qualification": "bilgi",
+    "reason": "low-B.md:262 / tasks/B125.md:37-38: yüzde 86.9 hata 429 olarak belgeli ve yorum doğru; gerçek tarihli baseline/stress günlükleri var. Bu düşük satır tek başına kanıt açığı göstermiyor; kritik yazma yükünün ölçülmemesi ayrı üst bulgudur."
+  },
+  {
+    "id": "F0846",
+    "category": "TE",
+    "secondary": [
+      "VD"
+    ],
+    "qualification": "aday",
+    "reason": "low-B.md:263 / tasks/B126.md:8: seed --clean yalnız orders/tables/products temizliyor; kitchen/bağlama temizliği elle yapılmış. metadata.json/driver ve yarım tarayıcı kanıtı gerekçesi farklı kayda ait."
+  },
+  {
+    "id": "F0847",
+    "category": "KN",
+    "secondary": [
+      "PO"
+    ],
+    "qualification": "belirsiz",
+    "reason": "low-B.md:264 / tasks/B126.md:14-15: evidence yok ve DESIGN.md 20/45 eşiklerinin Semih teyidi doğrulanmamış. Negatif personel E2E akışı bu satırda anlatılmıyor."
+  },
+  {
+    "id": "F0848",
+    "category": "KN",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-B.md:265 / tasks/B126.md:19: evidence/V1-RMD-156 yok, EXPLAIN/scratch DB çıktısı doğrulanamıyor ve kısıt adlarını sınayan test yok. Ana kusur belge değil kanıt/test boşluğudur."
+  },
+  {
+    "id": "F0850",
+    "category": "KN",
+    "secondary": [
+      "DY"
+    ],
+    "qualification": "aday",
+    "reason": "low-B.md:267 / tasks/B126.md:33: yeni rate-limit bağlantıları ve JS imleç davranışı testsiz; imleç döngüsünde sayfa üst sınırı yok. Kaynak belge bayatlığı iddia etmiyor."
+  },
+  {
+    "id": "F0908",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-C.md:13 / tasks/B008.md:22: md SplitEngine Bill.PayableAmount kullanıyor diyor, kod AdjustedPayableAmount kullanıyor. Kalıcı test/evidence yokluğu gerekçesi bu kayda ait değil."
+  },
+  {
+    "id": "F0928",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-C.md:33 tam metin tasks/B030.md:10-11: Owned surface yalnız devir notu içeriyor, exact yol yok; evidence/v1/gate-v1-exit-closure.md mevcut. 79/79 pnpm ve mühür günlüğü gerekçesi farklı kayda ait."
+  },
+  {
+    "id": "F0951",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:56 / tasks/B039.md:28: Done görevlerde Surface state Planned kalmış; bu somut belge tutarsızlığıdır. B039.md:3 ortak kanıt yokluğu ikincil tutulabilir; ana gerekçe yalnız mühür olamaz."
+  },
+  {
+    "id": "F0971",
+    "category": "EZ",
+    "secondary": [
+      "GY",
+      "PO",
+      "KN"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:76 tam metin tasks/B055.md:20: müşteri güncellemesi ile audit ayrı işlemde; ayrıca resmi GİB algoritma kaynağı doğrulanmamış. FK kullanıcısının silinebilirliği bu kartta yer almıyor."
+  },
+  {
+    "id": "F0975",
+    "category": "EZ",
+    "secondary": [
+      "GY",
+      "VD"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:80 / tasks/B058.md:11: önce audit ardından Save başarısızlığı eylemsiz denetim satırı bırakıyor; bilerek kabul edilmiş olması kusuru ortadan kaldırmaz. Dilimlenmiş mutasyon ve FK gerekçesi ilgisiz."
+  },
+  {
+    "id": "F0976",
+    "category": "KN",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-C.md:81 / tasks/B059.md:11: F26 kanıtsız kalıntı olarak kayıtlı; mimari testler yeşil kabulüne rağmen test-runs.log yalnız Audit testlerini gösteriyor. Holdout/post-check gerekçesi bu kayda ait değil."
+  },
+  {
+    "id": "F0977",
+    "category": "MK",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:82 / tasks/B059.md:15: mutasyon owned surface dışında EnvelopeKeyCodec.cs dosyasına dokunmuş; özdeş geri yükleme tarihsel kapsam ihlalini silmez. Çakışan cancel/detay okuma gerekçesi ilgisiz."
+  },
+  {
+    "id": "F0978",
+    "category": "KN",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-C.md:83 / tasks/B059.md:33: tam Host.Tests ve Orders/Billing paketleri yeniden koşulmamış. Başlangıç limiti sorunu sonradan 196 ile çözüldüğü için tarihçedir; create/read 403 gerekçesi bu kayda ait değil."
+  },
+  {
+    "id": "F0979",
+    "category": "GY",
+    "secondary": [],
+    "qualification": "belirsiz",
+    "reason": "low-C.md:84 / tasks/B060.md:27: SecretValue.Value immutable string olduğundan bellekten silinemiyor. Bu yönetilen bellek sınırının güvenlik sözleşmesine etkisi incelenmeli; idempotencyKey doğrulaması/testi gerekçesi ilgisiz."
+  },
+  {
+    "id": "F0980",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-C.md:85 / tasks/B061.md:7: qr-order/qr-public rate-limit adı ve HasLogo hep false anlatımı bayat. Toplu dolaşım matrisi/counts gerekçesi bu kayda ait değil."
+  },
+  {
+    "id": "F0983",
+    "category": "KN",
+    "secondary": [
+      "PO"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:88 / tasks/B061.md:25: evidence klasörü yok; UTC 00:00/TR 03:00 sıfırlama kayıtlı PO kararı olarak ayrı tutulur. Günlük mod ve iptal başlangıç/bitiş logları gerekçesi ilgisiz."
+  },
+  {
+    "id": "F0984",
+    "category": "KN",
+    "secondary": [
+      "TE"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:89 / tasks/B061.md:28: CI bağlantısı yok, görev evidence klasörü yok ve mevcut run1.log/report/test-results takibi doğrulanmamış. 21 PLU ve çift tık koruması gerekçesi başka kayda ait."
+  },
+  {
+    "id": "F0985",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "belirsiz",
+    "reason": "low-C.md:90 / tasks/B062.md:8: v5->v6 anlatımı ile bugünkü v21 arasındaki beklenen sürüm kayması; tarihli değişiklik kaydı mı yaşayan güncel sürüm iddiası mı özgün md ile ayrılmalı. Bu satır kendi başına test boşluğu değil."
+  },
+  {
+    "id": "F0986",
+    "category": "VD",
+    "secondary": [
+      "EZ",
+      "PO"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:91 / tasks/B062.md:40: sys.updated_at yokluğunda (order_id,status) anahtarı sonradan tekrarlanan aynı durumu kalıcı duplicate sayıyor; olay kimliği/doğruluğu kusur adayı. Minify script/QR ham API hatası gerekçesi ilgisiz; gerçek sağlayıcı sözleşmesi ayrıca belirsiz."
+  },
+  {
+    "id": "F0987",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-C.md:92 / tasks/B062.md:46: md Host bağlantısını gelecekte QRO-001 yapacak diyor, bağlantı yapılmış. DecimalContractsPricesTests günlüğü gerekçesi ilgisiz."
+  },
+  {
+    "id": "F1004",
+    "category": "KN",
+    "secondary": [
+      "BD"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:109 / tasks/B087.md:11: push E2E boşluğu açık; yeni restorePush davranışı md'de yok. İki alt unsur da korunmalı."
+  },
+  {
+    "id": "F1005",
+    "category": "BK",
+    "secondary": [
+      "BD",
+      "TE"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:110 tam metin tasks/B087.md:34-35: IStockMovementService/StockMovementService yalnız eski allowlist gerekçesiyle üretime bağlı değil; yeni ölü kod yasağında bu kusur adayı dışlanamaz. Migration 057/060 belge farkı var; gerçek çıkış 0 kanıtı mevcut. 10/10 hedef test çalıştırılmadı gerekçesi bu karta ait değil."
+  },
+  {
+    "id": "F1006",
+    "category": "MK",
+    "secondary": [
+      "BD",
+      "KN"
+    ],
+    "qualification": "belirsiz",
+    "reason": "low-C.md:111 tam metin tasks/B095.md:27: ProductionShell canlı; ProductionShell.tsx sahiplik listesinde yok ve sonraki göreve devri kesin değil. Üç çözünürlük gerçek tarayıcı elle kabulü başka göreve devredilmiş. B087 adlandırılmış test/FND-001 devri gerekçesi ilgisiz; belirsiz sahiplik doğrulanmalı."
+  },
+  {
+    "id": "F1008",
+    "category": "KN",
+    "secondary": [
+      "UI"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:113 / tasks/B096.md:30: evidence klasörü yok; dil testi yalnız varsayılan durumu tarıyor, durum başlıklarını taramıyor. RMD-525 risk devri gerekçesi başka kayda ait."
+  },
+  {
+    "id": "F1009",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-C.md:114 / tasks/B103.md:24: Resolved/Dismissed vakalarda da dedup davranışı getirilmiş ama görev md'si anlatmıyor; bu satır anlatısal koşu kanıtı değil belge kusurudur."
+  },
+  {
+    "id": "F1010",
+    "category": "KN",
+    "secondary": [
+      "BD"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:115 / tasks/B105.md:21 ve plan/v1/remediation/V1-RMD-418-variance-report-skips-voided-consumption.md:55-59: S02 probe değişmez defter satırının sıfırlanmasını beklediğinden başarısız, rapor düzeltmesi ve kırmızı/yeşil kanıt var. Test/probe sözleşme uyumu incelenmeli; Vue toast/DOM gerekçesi ilgisiz."
+  },
+  {
+    "id": "F1011",
+    "category": "BD",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-C.md:116 / tasks/B112.md:12: WebPrototype silinmiş, md'ye silindi/yerine geçen notu eklenmemiş. Tarihsel viewport/Node kanıtı güncel koşu değildir; ikon kontrastı/WS gerekçesi ilgisiz."
+  },
+  {
+    "id": "F1012",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:117 / tasks/B112.md:15: mock runtime silinmiş, md'de silinme notu yok; eski 20 test ve hashler tarihsel. RMD-095 başlangıç hatası gerekçesi bu kayda ait değil. Kayıtlı kapanış statüsü bağımsız korunur."
+  },
+  {
+    "id": "F1013",
+    "category": "KN",
+    "secondary": [
+      "BD"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:118 / tasks/B113.md:18: evidence klasörü yok, eski OrderManagementStore yolu TableDraftService olmuş. Erişilebilirlik/revalidation tarihi gerekçesi farklı kayda ait."
+  },
+  {
+    "id": "F1015",
+    "category": "PO",
+    "secondary": [
+      "KN",
+      "VD"
+    ],
+    "qualification": "belirsiz",
+    "reason": "low-C.md:120 / tasks/B128.md:7: balance yok = sınırsız davranışı testli ve teknik emsalle açıklanmış; iş kuralı olarak PO onayı kanıtsız. Kusur teknik test yokluğu diye değil karar ve stok anlamı belirsizliği diye izlenmeli."
+  },
+  {
+    "id": "F1016",
+    "category": "KN",
+    "secondary": [
+      "UI"
+    ],
+    "qualification": "aday",
+    "reason": "low-C.md:121 / tasks/B128.md:10: styles.css ve CustomerDisplay kullanımı mevcut, görsel doğrulama Semih'e bırakılmış ve kanıtsız. pending-checks-501/live ölü test ve CI ekran görüntüsü gerekçesi farklı kayda ait."
+  },
+  {
+    "id": "F1019",
+    "category": "KN",
+    "secondary": [],
+    "qualification": "aday",
+    "reason": "low-C.md:124 / tasks/B138.md:18: V1+V11 migration taraması mevcut; tam 001-073 zincirinin çalışma günlüğü yok, yalnız md anlatımı var. Atomiklik/status/chart/vitest gerekçesi ilgisiz."
+  }
+]

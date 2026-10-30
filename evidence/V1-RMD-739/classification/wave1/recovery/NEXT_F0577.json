@@ -1,0 +1,24 @@
+{
+  "source_id": "F0577",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-RMD-038 verification.md çıkış kodu/komut içermiyor",
+      "status": "open",
+      "invariant": "Kabul kanıtı (acceptance evidence) gerçek komut, exit code ve hash içermeli (AGENTS.md Kapanış Kapısı, V1-RMD-433)",
+      "mechanism": "V1-RMD-038 evidence/verification.md dosyası (satır 1-11) yalnız anlatım (narrative) içeriyor: 'Created valid PNG icons', 'Updated Dockerfile', 'Service Worker caching verified'. Hiçbir komut (dotnet test, docker build, npx playwright test), exit code (0/1), commit SHA veya hash yok. AGENTS.md madde 82-83: 'evidence/<Task-ID>/** altında komut, exit code, ilgili hash ve sonuç kaydedilir; bu, Done için zorunludur'.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:234",
+        "plan/v1/remediation/V1-RMD-038-waiter-pwa-production-route-and-pwa-assets.md:28-33",
+        "evidence/V1-RMD-038/verification.md:1-11"
+      ],
+      "acceptance": "evidence/V1-RMD-038/ altında gerçek komut çıktısı (exit code, hash, transcript) içeren verification dosyası olmalı",
+      "id": "W2-N-F0577-01",
+      "parents": [
+        "F0577"
+      ]
+    }
+  ],
+  "limitations": "Repo yazma yok; verification.md'nin içeriği statik okundu. Gerçek komut çalıştırılamadığı için kanıt eksikliği doğrulandı ama yeni kanıt üretilmedi.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

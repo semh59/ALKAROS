@@ -1,0 +1,36 @@
+{
+  "source_id": "F0406",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Garsonun etkin oturumu sonlandırıldığında giriş ekranına gerekçesiz dönülüyor",
+      "status": "open",
+      "invariant": "Daha önce giriş yapmış kullanıcı oturumunu kaybedince neden yeniden giriş istendiğini Türkçe ve görünür geri bildirimle anlayabilmeli; ilk anonim açılış oturum sonlandırılması gibi gösterilmemeli.",
+      "mechanism": "Ortak api() yetki kontrolü kaynaklı olmayan 401 yanıtında doğrudan showLogin() çağırıyor. showLogin yalnız katmanları değiştirip odağı taşıyor; önceki aktif oturumu ayırt etmiyor ve açıklama yazmıyor. Giriş HTML'inde yalnız başlangıçta gizli loginError var. Bu nedenle arka plan masa sorgusu 401 alınca açıklamasız giriş katmanı açılabiliyor. Eski kart bu sınıfı kapsam dışına bırakmış; güncel kod boşluğu doğruluyor. İlgili plan aramasında bu dar davranışı kapatan ayrı görev bulunmadı; görev yokluğu bütün planların tam okunmasıyla kanıtlanmış değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:63",
+        "evidence/V1-RMD-739/tasks/B015.md:17-19",
+        "plan/v1/remediation/V1-RMD-388-posterminal-settings-round2-audit.md:21-29,50-55",
+        "src/Clients/WaiterPwa/wwwroot/js/api.js:39-56",
+        "src/Clients/WaiterPwa/wwwroot/js/auth.js:87-121",
+        "src/Clients/WaiterPwa/wwwroot/index.html:206-220 (login/oturum arama eşleşmeleri)",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.js:887-891,899-905"
+      ],
+      "acceptance": [
+        "Giriş yapılmış WaiterPwa oturumu dışarıdan sonlandırılıp sonraki API isteği 401 aldığında yeniden giriş ekranında oturumun sonlandığını açıklayan kalıcı Türkçe uyarı görünmeli.",
+        "İlk anonim sayfa açılışında bu uyarı çıkmamalı; yanlış PIN/şifre kontrolü oturum sonlandırılması sayılmamalı.",
+        "Başarılı yeniden girişte uyarı temizlenmeli; bu üç ayrım davranış testiyle korunmalı."
+      ],
+      "id": "W2-R-F0406-01",
+      "parents": [
+        "F0406"
+      ]
+    }
+  ],
+  "limitations": [
+    "Yalnız statik inceleme yapıldı; tarayıcı, gerçek yönetici sonlandırması ve test çalıştırılmadı.",
+    "Repo yazılmadı; eski task-6.log yalnız geçmiş okuma izi olarak kullanıldı, güncel kanıt kaynak dosyalardan alındı.",
+    "Görev izlenebilirliği için hedefli plan araması yapıldı; tüm plan arşivinin eksiksiz okunduğu iddia edilmiyor."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

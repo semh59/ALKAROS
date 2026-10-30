@@ -1,0 +1,37 @@
+{
+  "source_id": "F0049",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Reddedilen ikram kişisel bütçeyi tüketebiliyor",
+      "status": "open",
+      "invariant": "Kapalı siparişe veya değiştirilemez faturaya reddedilen ikram, uygulanmış ikram gibi kişisel bütçeden düşmemeli.",
+      "mechanism": "Endpoint sipariş/kalemin varlığını okuduktan sonra değiştirilebilirlik denetiminden önce RequestAsync çağırıyor. PersonalBudget çözümü Granted satırı olarak ayrı repository çağrısıyla kaydediliyor ve günlük toplam bu satırları topluyor. Ancak bundan sonra replay action içindeki RequireItemChangeableAsync, Completed/Cancelled/Rejected siparişi veya değiştirilemez faturayı reddediyor. Bu redden önce verilen grant için burada geri alma/iptal yok; başarılı command replay de henüz oluşmamış. Uygun own-check ve limit koşullarındaki garsonun reddedilen ikramı bütçe toplamına girebilir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:59",
+        "evidence/V1-RMD-739/tasks/B002.md:25-28",
+        "src/Host/Experience/Orders/OrderManagementEndpoints.cs:666-708",
+        "src/Host/Experience/Orders/OrderManagementEndpoints.cs:718-745",
+        "src/Host/Experience/Orders/OrderManagementEndpoints.cs:1017-1029",
+        "src/Modules/Identity/Authorization/PersonalBudgets/PersonalCompBudgetEscalationResolver.cs:44-64",
+        "src/Modules/Identity/Authorization/Grants/AuthorizationGrantService.cs:151-185",
+        "src/Modules/Identity/Authorization/Grants/PostgresAuthorizationGrantRepository.cs:147-161",
+        "src/Host/Experience/Orders/OrderCommandReplayStore.cs:40-55"
+      ],
+      "acceptance": [
+        "Kendi siparişindeki limit-altı kalemi ikram etmek isteyen garson için Completed, Cancelled ve Rejected siparişler ile değiştirilemez fatura senaryolarında komut reddedilir ve kişisel bütçe toplamı değişmez.",
+        "Grant ile kalem uygulaması arasındaki hata/eşzamanlı kapanma senaryosu da bütçeyi uygulanmamış ikram için tüketmez; yalnız kontrolün öne taşınması yarış koşulunu kapatmış sayılmaz.",
+        "Başarılı ikram ve aynı idempotency anahtarıyla tekrar toplam bütçeyi yalnız bir kez etkiler; gerçek PostgreSQL HTTP/işlem testiyle kanıtlanır."
+      ],
+      "id": "W2-R-F0049-01",
+      "parents": [
+        "F0049"
+      ]
+    }
+  ],
+  "limitations": [
+    "Kusur güncel kontrol akışı ve kalıcı toplam sorgusuyla statik doğrulandı; runtime yeniden üretim ve test çalıştırılmadı.",
+    "Bu kaynak kapsamındaki tek bütçe-tüketim invariantı incelendi; kartın diğer bulguları bu çıktıya eklenmedi."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

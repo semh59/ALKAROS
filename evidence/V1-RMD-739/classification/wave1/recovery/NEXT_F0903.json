@@ -1,0 +1,20 @@
+{
+  "source_id": "F0903",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "from-order endpoint rejects only Cancelled/Rejected orders; Draft/PendingConfirmation orders allowed",
+      "status": "open",
+      "invariant": "Order state gating for bill creation must match business intent — if target is \"gönderilmiş sipariş\" (submitted order), Draft and PendingConfirmation should also be rejected, not only Cancelled/Rejected",
+      "mechanism": "BillingSplitStore.cs:427-428 only checks for OrderState.Cancelled or OrderState.Rejected. OrderState.Draft, OrderState.Submitted, OrderState.PendingConfirmation are all accepted and create bills. Test at BillingSplitHttpTests.cs:219 only tests Cancelled order rejection. Client billingApi.ts:76,86 and workspace.tsx:346-376 show orderId/billId are dynamic from order context — no fixed bill ID exists to anchor business rule.",
+      "source_evidence": "src/Host/Experience/Billing/BillingSplitStore.cs:427-428; tests/Host/Experience/Billing/BillingSplitHttpTests.cs:211-220; src/Clients/PosTerminal/src/features/billing/billingApi.ts:76,86; src/Clients/PosTerminal/src/features/billing/BillSplitWorkspace.tsx:346-376",
+      "acceptance": "Either: (a) update BillingSplitStore.CreateBillFromOrderAsync to also reject Draft/Submitted/PendingConfirmation with clear business rule documented in task markdown, or (b) PO confirms current behavior is intentional and task markdown is updated to reflect actual accepted states",
+      "id": "W2-N-F0903-01",
+      "parents": [
+        "F0903"
+      ]
+    }
+  ],
+  "limitations": "Read-only review; business intent clarification requires PO decision. Test coverage only validates Cancelled rejection; no test exists for Draft/Submitted/PendingConfirmation paths.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

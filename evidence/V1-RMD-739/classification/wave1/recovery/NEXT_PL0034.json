@@ -1,0 +1,20 @@
+{
+  "source_id": "PL0034",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-RMD-264 evidence folder missing",
+      "status": "verification-needed",
+      "invariant": "Every Done task must have an evidence/<Task-ID>/ folder with reproducible acceptance proof (AGENTS.md line 82-83, V1-RMD-433)",
+      "mechanism": "Task V1-RMD-264 is marked Done but no evidence/V1-RMD-264/ directory exists in the repository. The task's Acceptance evidence section lists 22/22 Host Experience tests, 26/26 Cashier E2E tests, mutation control proof, and audit tool passes, but these artifacts were not persisted to the required evidence folder.",
+      "source_evidence": "evidence/V1-RMD-604/README.md:34; plan/v1/remediation/V1-RMD-264-manual-card-payment-resolution.md:69-77",
+      "acceptance": "Create evidence/V1-RMD-264/ with Host Experience test logs (22/22), Cashier E2E test logs (26/26), mutation control proof, and audit tool outputs matching the Acceptance evidence claims. Re-run tests if needed to generate fresh artifacts.",
+      "id": "W2-N-PL0034-01",
+      "parents": [
+        "PL0034"
+      ]
+    }
+  ],
+  "limitations": "Task is marked Done with detailed Acceptance evidence in its plan file including specific test counts (22/22 Host Experience, 26/26 Cashier E2E), mutation control verification, and clean audit tools, but the mandatory evidence folder per AGENTS.md and V1-RMD-433 was never created. No runtime verification possible in this read-only review.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

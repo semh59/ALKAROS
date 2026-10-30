@@ -1,0 +1,17 @@
+{
+  "result": "PASS",
+  "correction_notes": 3,
+  "links_checked": 3,
+  "tier": "source/document link validation only; not runtime or defect closure",
+  "source_hashes": {
+    "database/migrations/V11/V11-INV-001/060-stock-movements.down.sql": "88a6c2de4c62bff83d562a8e5baa19c43b6f3d68dfb94019b5ee498b21969caa",
+    "database/migrations/V11/V11-INV-001/060-stock-movements.up.sql": "8c4413f10c14fa864fe28232709e3e02ca64b25ea8951494023ad34374df24c4",
+    "database/migrations/V11/V11-INV-002/061-stock-balances.down.sql": "7633cf8060a1eb07cb9878c12090f65c266b9753dbb3570ccc9abb2c40b3227f",
+    "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql": "2e9369a26a967855956f546b822a9c29fe4bec2bc9c0cdbcd612132d624c9ce0",
+    "evidence/V1-RMD-481/README.md": "69090f14e7aaf200cd3c10d7c2acab866ff0cc3b6baf07e7b513b34144fd5a66",
+    "evidence/V11-INV-001/closure-evidence.txt": "25a7d52df35a803bb5e84cdf97a47e07466c808e20a7790b4d5ba5743effe75c",
+    "evidence/V11-INV-002/closure-evidence.txt": "3bba6c6366045ba0265ff6edb13943889cf248e95173cbf09c70d47c37312b3b",
+    "evidence/V15-KVK-002/README.md": "18d91b50de2d208c86c751cee23067e75bdd33e61d18fa07aa2cde3a04d9869b",
+    "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md": "46c79b4a274ab6f93fde3ef09d5d87c724c1431a7667b305207879d15de6ba0d"
+  }
+}

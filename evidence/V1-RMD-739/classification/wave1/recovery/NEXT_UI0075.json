@@ -1,0 +1,20 @@
+{
+  "source_id": "UI0075",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Management link in Cashier.tsx:552 gated only by reports.view; management tabs (settings, security, etc.) have no corresponding permission checks",
+      "status": "open",
+      "invariant": "UI navigation to management screens must be gated by the same permissions that protect the backend endpoints for those screens.",
+      "mechanism": "Cashier.tsx:552 renders the 'Yönetim' (Management) link only when capabilities.includes('reports.view'). The link navigates to '/management'. The management-staff-roles feature (RolesPanels.test.tsx:11-18, models.ts:15-56) shows management tabs require permissions like 'settings.manage', 'security.manage', 'identity.roles.manage', 'identity.users.manage', 'integrations.manage', 'operations.backup', 'reconciliation.manage', 'reports.close-day' — none of which are checked before showing the Management link. A user with only reports.view sees the link but may not have access to any management tab content. eksik-avcisi.md:5 explicitly notes 'ayar ekranları Yönetim sekmelerinde de yok' (settings screens also not in Management tabs).",
+      "source_evidence": "Cashier.tsx:552; eksik-avcisi.md:5; RolesPanels.test.tsx:11-18; models.ts:15-56 (permissions list); models.ts:22 (cash.session.override label)",
+      "acceptance": "Management link visibility matches at least one management-tab permission (e.g., settings.manage OR security.manage OR identity.roles.manage OR identity.users.manage OR integrations.manage OR operations.backup OR reconciliation.manage OR reports.close-day), OR the link is replaced by per-tab navigation each gated by its own permission.",
+      "id": "W2-N-UI0075-01",
+      "parents": [
+        "UI0075"
+      ]
+    }
+  ],
+  "limitations": "Read-only analysis; runtime behavior of the /management route and its child tabs not verified. The UI may perform additional permission checks inside the management page, but the top-level link exposure is already a potential information leak.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

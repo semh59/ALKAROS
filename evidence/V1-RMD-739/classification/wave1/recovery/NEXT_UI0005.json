@@ -1,0 +1,32 @@
+{
+  "source_id": "UI0005",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "İptal edilen kalem ekrandan sessizce siliniyor, 'iptal edildi' uyarısı yok",
+      "status": "open",
+      "invariant": "KitchenOperationsWorkspace.tsx:696 satırında `ticket.items.filter((item) => item.status !== \"Cancelled\")` ile iptal edilen kalemler listeden filtrelenip gizleniyor ancak kullanıcıya 'bu kalem iptal edildi' şeklinde görünür bir bildirim/feedback gösterilmiyor. submitCancel (satır 339-345) başarılı iptalde feedback veriyor ama bu feedback sadece ticket numarasını içeriyor (ör. 'KT-001 iptal edildi'), hangi kalem(ler) iptal edildiğini belirtmiyor. Ayrıca kalem bazlı iptal (item-level cancel) API'si yok - sadece ticket bazlı transitionTicket var (kitchenApi.ts:28,144).",
+      "mechanism": "executeItemTransition (satır 273-286) sadece ilerletme (Queued→Preparing→Ready→Served) ve geri alma için. İptal işlemi submitCancel (satır 318-357) üzerinden ticket bazında yapılıyor. İptal edilen ticket'in kalemleri 696. satırdaki filter ile listeden çıkarılıyor ama kullanıcıya kalem bazında 'X iptal edildi' mesajı çıkmıyor. akis-uzmani.md:7'de 'İptal edilen kalem ekrandan sessizce siliniyor, \"iptal edildi\" uyarısı yok; aşçı hazırlamaya devam edebilir' diye kayıtlı.",
+      "source_evidence": [
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:696",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:318-357",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:273-286",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts:28,144",
+        "evidence/V1-RMD-739/ui/akis-uzmani.md:7"
+      ],
+      "acceptance": "İptal edilen kalem(ler) için kullanıcıya görünür bir bildirim gösterilmeli. En azından submitCancel'in success feedback'inde (satır 340-345) hangi kalemler iptal edildiği listelenmeli. Veya kalem bazlı iptal için ayrı bir API (transitionItem ile 'Cancelled' targetState) ve executeItemTransition benzeri feedback eklenmeli. Bilet düzeyinde değil kalem düzeyinde iptal süzme/doğrulama da eklenmeli (akis-uzmani.md notuna göre).",
+      "id": "W2-N-UI0005-01",
+      "parents": [
+        "UI0005"
+      ]
+    }
+  ],
+  "limitations": [
+    "Ticket bazlı iptal (transitionTicket) zaten var ve çalışıyor - testlerde de kapsanmış (KitchenOperationsWorkspace.test.tsx:238-275)",
+    "Feedback mekanizması (kitchen-workspace__feedback) zaten var ve başarılı/başarısız durumları gösteriyor (CSS satır 12-15)",
+    "Sorun: feedback mesajı ticket numarası veriyor, kalem adı/adı veriyor değil",
+    "Kalem bazlı iptal API'si (transitionItem ile targetState='Cancelled') backend'de olmayabilir - kitchenApi.ts sadece transitionTicket tanımlıyor",
+    "register.md:144'te de V1-KIT-008 bağlamında plan-conflict grant bildirimi eksikliği var - bu ayrı ama ilgili bir bildirim eksikliği"
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

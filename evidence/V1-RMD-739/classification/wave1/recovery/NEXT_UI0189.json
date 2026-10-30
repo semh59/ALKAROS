@@ -1,0 +1,35 @@
+{
+  "source_id": "UI0189",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Terminoloji tutarsızlığı: ticket/bilet, Adisyon/Hesap, Modifikatör/Seçenek",
+      "status": "open",
+      "invariant": "Aynı kavram için birden fazla Türkçe terim kullanılıyor: KitchenOperationsWorkspace.tsx:503 'ticket' (İngilizce) ama :605 'bilet' (Türkçe); billingApi.ts:101 'Adisyon' ama strings.ts:42 'Hesap'; strings.ts:1008 'Modifikatör' ama :930 'Seçenek'; strings.ts hata metinleri (117,118,193,449,477) kullanıcıya ne yapılacağını söylemiyor.",
+      "mechanism": "strings.ts merkezi metin kataloğu olsa da KitchenOperationsWorkspace.tsx içinde satır 503'te 'ticket' (İngilizce sabit dize) kullanılıyor ama satır 605'te ticketStatusLabels/bilet üzerinden 'bilet' geliyor. billingApi.ts 'Adisyon' (satır 101) kullanıyor ama strings.ts:42 'billing: \"Hesap\"'. strings.ts:1008 'modifierGroups: \"Modifikatör grupları\"' ama :930 'kindModifier: \"Seçenek\"'. Hata metinleri (strings.ts:117,118,193,449,477) 'İşlem tamamlanamadı' gibi genel mesajlar - kullanıcıya ne yapması gerektiğini anlatmıyor. turkce-metin.md:10-12 bu kusurları kaydediyor.",
+      "source_evidence": [
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:503",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:605",
+        "src/Clients/PosTerminal/src/features/billing/billingApi.ts:101",
+        "src/Clients/PosTerminal/src/strings.ts:42",
+        "src/Clients/PosTerminal/src/strings.ts:930",
+        "src/Clients/PosTerminal/src/strings.ts:1008",
+        "src/Clients/PosTerminal/src/strings.ts:117,118,193,449,477",
+        "evidence/V1-RMD-739/ui/turkce-metin.md:10-12"
+      ],
+      "acceptance": "Tüm kullanıcı yüzeyünde tek bir terim seti kullanılmalı: 'bilet' (ticket), 'Hesap' (Adisyon/Bill), 'Seçenek' (Modifikatör/Modifier). KitchenOperationsWorkspace.tsx:503 'ticket' → 'bilet' yapılmalı. billingApi.ts 'Adisyon' → 'Hesap' yapılmalı. strings.ts 'Modifikatör' → 'Seçenek' tutarlı hale getirilmeli. Hata metinleri eyleme dönük yapılmalı (ör. 'İşlem tamamlanamadı' → 'İnternet bağlantınızı kontrol edip tekrar deneyin'). Consistency audit (consistency_audit.py) bunu taramalı.",
+      "id": "W2-N-UI0189-01",
+      "parents": [
+        "UI0189"
+      ]
+    }
+  ],
+  "limitations": [
+    "strings.ts zaten merkezi kataloğu ama bazı yerler (KitchenOperationsWorkspace.tsx:503, billingApi.ts:101) doğrudan sabit dize kullanıyor kataloğu kullanmıyor",
+    "Consistency audit tool (tools/consistency-audit/consistency_audit.py) Türkçe/İngilizce karışımını taramıyor - sadece role-noun kuralı var",
+    "KitchenOperationsWorkspace.tsx:605 zaten ticketStatusLabels kullanıyor ('Bekliyor', 'Hazırlanıyor', 'Hazır', 'Servis edildi', 'İptal') - doğru",
+    "Plan dosyalarında (V1-KDS-001, V1-KIT-008) terminoloji karışıklığı yok - sadece kodda",
+    "Testler terminolojiyi doğrulamıyor - sadece davranışı test ediyor"
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

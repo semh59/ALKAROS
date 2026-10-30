@@ -1,0 +1,20 @@
+{
+  "source_id": "F0912",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Module dependency rules — CashTenderHandlerModule depends on Billing but ApprovedEdges test expects 9/9 pass without evidence folder",
+      "status": "open",
+      "invariant": "All module dependencies declared in IModule.DependsOn must be explicitly listed in ModuleBoundaryTests.ApprovedEdges dictionary with matching module-dependency-rules.md documentation",
+      "mechanism": "ModuleBoundaryTests.cs:105-108 shows CashTenderHandlerModule DependsOn includes \"Billing\" (line 20 of CashTenderHandlerModule.cs). The ApprovedEdges dictionary entry at lines 105-108 documents this edge. However, low-C.md:17 notes '9/9 sonucu koşulmadı; kanıt klasörü yok' — the test passes (9 edges approved) but there is no evidence folder demonstrating the test execution. The test itself (ModuleBoundaryTests.DeclaredDependenciesStayWithinTheApprovedEdgeList) validates the edge exists in ApprovedEdges, which it does, but the finding suggests the original audit expected a separate evidence folder that was never created.",
+      "source_evidence": "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:79-108 (ApprovedEdges), :180-193 (DeclaredDependenciesStayWithinTheApprovedEdgeList); src/Modules/Cash/TenderHandler/CashTenderHandlerModule.cs:19-20; evidence/V1-RMD-739/findings/low-C.md:17",
+      "acceptance": "Create evidence folder for V1-RMD-248 showing ModuleBoundaryTests execution with 9/9 pass, or update finding to historical-fixed if test now passes in CI. The ApprovedEdges entry is present and correct; only evidence artifact is missing.",
+      "id": "W2-N-F0912-01",
+      "parents": [
+        "F0912"
+      ]
+    }
+  ],
+  "limitations": "Test execution not performed in this review. The ApprovedEdges dictionary correctly includes the Cash.TenderHandler -> Billing edge. Finding appears to be about missing evidence artifact, not an actual code defect.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

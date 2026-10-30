@@ -1,0 +1,120 @@
+{
+  "head": "05d2fffa4563e7813ebafa337f6e5f5d151be86c",
+  "method": "Bağımsız salt okunur inceleme: özgün kart, HEAD kodu ve kayıtlı test/mutasyon/kapanış günlüklerinin karşılaştırılması. Testler bu sınıflama için yeniden çalıştırılmadı.",
+  "complete": [
+    {
+      "source": "register.md:24",
+      "task": "V1-RMD-740"
+    },
+    {
+      "source": "register.md:33",
+      "task": "V1-RMD-740"
+    },
+    {
+      "source": "register.md:141",
+      "task": "V1-RMD-743"
+    },
+    {
+      "source": "register.md:169",
+      "task": "V1-RMD-743"
+    },
+    {
+      "source": "register.md:351",
+      "task": "V1-RMD-744"
+    },
+    {
+      "source": "register.md:348",
+      "task": "V1-RMD-745"
+    },
+    {
+      "source": "register.md:250",
+      "task": "V1-RMD-746"
+    },
+    {
+      "source": "register.md:32",
+      "task": "V1-RMD-747"
+    },
+    {
+      "source": "register.md:222",
+      "task": "V1-RMD-747"
+    },
+    {
+      "source": "register.md:239",
+      "task": "V1-RMD-748"
+    },
+    {
+      "source": "low-A.md:26",
+      "task": "1aeb7284"
+    },
+    {
+      "source": "low-A.md:164",
+      "task": "1aeb7284"
+    },
+    {
+      "source": "low-B.md:67",
+      "task": "1aeb7284"
+    },
+    {
+      "source": "low-B.md:212",
+      "task": "1aeb7284"
+    },
+    {
+      "source": "low-B.md:216",
+      "task": "1aeb7284"
+    },
+    {
+      "source": "low-C.md:117",
+      "task": "1aeb7284"
+    }
+  ],
+  "partial": [
+    {
+      "source": "register.md:37",
+      "task": "V1-RMD-742",
+      "remaining": "Toplu rebuild transaction/kilit, yazma sırasında hata/iptal ve tek-kalem replay sınırı. tasks/B100.md:12 ve src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:47-75."
+    },
+    {
+      "source": "register.md:51",
+      "task": "V1-RMD-749",
+      "remaining": "Klasör varlığı sağlandı; supplement/hash/kaynak paketi kapsamı ve onay/merkezi karar uyumu ayrıca teyit edilmeli."
+    },
+    {
+      "source": "register.md:38",
+      "task": "V1-RMD-741",
+      "remaining": "delta=0 dalında bakiye transaction/kilit içinde yeniden doğrulanmıyor; src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:66-77 (sayılan=okunan bakiye ise koruma bloğu atlanıyor)."
+    }
+  ],
+  "partial_range": {
+    "file": "register.md",
+    "first_line": 311,
+    "last_line": 336,
+    "task": "V1-RMD-749",
+    "remaining": "Klasör yokluğu giderilmiş; supplement/hash/kaynak paketi kapsamı ve eski kararla ilişki kapanmadı. Görev README onay alıntısı, yeni bağımsız onay değildir."
+  },
+  "not_closed_examples": [
+    {
+      "source": "register.md:140",
+      "reason": "Uçuş halindeki yetki iptali, 743 kapsamı dışında."
+    },
+    {
+      "source": "register.md:221",
+      "reason": "Tüm rezervasyon rebuild transaction/kilit ve rapor kapsamı, 747 ile kapanmadı."
+    },
+    {
+      "source": "register.md:238",
+      "reason": "Transaction'sız reverse overload iki adımlı; 748 yalnız transaction'lı yolu düzeltti."
+    },
+    {
+      "source": "register.md:310",
+      "reason": "Merkezi tarih/karar kaydı çelişkisi, klasör oluşturmakla çözülmedi."
+    }
+  ],
+  "count_interpretation": "17 tam kapanış eşleşmesi, 17 bağımsız kök neden demek değildir. 1020 - 17 - 3 açıkça bulgu-değil = 1000 tam kapanışı bu incelemeyle kanıtlanmamış kayıt; 1000 kesin açık hata olarak sunulamaz.",
+  "reviewer": "sa-0-8c621145",
+  "parent_spot_checks": [
+    "V1-RMD-742/README.md",
+    "tasks/B100.md:12",
+    "StockBalanceProjector.cs:47-75",
+    "V1-RMD-749/README.md:5"
+  ]
+}

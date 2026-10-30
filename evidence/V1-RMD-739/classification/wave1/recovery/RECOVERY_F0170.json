@@ -1,0 +1,40 @@
+{
+  "source_id": "F0170",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Röle nonce kayıtları için üretim temizleme yolu yok",
+      "status": "open",
+      "invariant": "Replay koruması için artık gerekmeyen nonce kayıtları güvenlik penceresi korunarak sınırlı yaşam döngüsüyle temizlenmeli.",
+      "mechanism": "Geçerli token/zaman damgasıyla gelen yeni nonce, /sessions akışında oturum üretiminden önce kalıcı INSERT ile tüketiliyor. Store ve arayüz yalnız TryConsumeAsync sunuyor. Migration used_at indeksini gelecekteki temizlik için eklediğini, işin henüz olmadığını açıkça söylüyor. Güncel Host housekeeping silme listesinde QR nonce yok. Token revoke/rotate de eski token ve nonce satırlarını silmek yerine token durumunu güncelliyor; FK otomatik silme sağlamıyor. Sonuç: benzersiz nonce içeren geçerli istekler tarihsel satırları kalıcı biriktiriyor. Kaynaktaki 'her /sessions çağrısı ekler' genellemesi daraltıldı: geçersiz token/zaman veya tekrar nonce satır eklemez; geçerli nonce tüketildikten sonra session üretimi başarısız olsa bile nonce zaten yazılmıştır.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:180",
+        "evidence/V1-RMD-739/tasks/B062.md:42-44",
+        "src/Host/Experience/QrOrdering/QrOrderingEndpoints.cs:101-120",
+        "src/Modules/QrOrdering/RelaySecurity/RelayRequestValidator.cs:46-64",
+        "src/Modules/QrOrdering/RelaySecurity/PostgresRelayNonceStore.cs:15-27",
+        "src/Modules/QrOrdering/RelaySecurity/IRelayNonceStore.cs:3-10",
+        "database/migrations/V12/V12-QRS-002/081-qr-ordering-relay-request-nonces.up.sql:1-13",
+        "src/Modules/QrOrdering/TokenLifecycle/PostgresTableTokenRepository.cs:57-105",
+        "src/Host/Program.cs:244-254",
+        "src/Host/Program.cs:299-332",
+        "docs/operations/data-housekeeping.md:10-26"
+      ],
+      "acceptance": [
+        "Üretimde çağrılan, sınırlandırılmış partilerle çalışan ve tekrar çalıştırılabilir bir nonce temizleme yolu ile operasyon zamanlaması bulunur.",
+        "Temizlik, eski bir isteğin timestamp'i değiştirilerek aynı nonce ile yeniden kabul edilmesine yol açmaz; güvenli eşik en az tokenın yeniden geçerli olamayacağı yaşam döngüsüyle gerekçelendirilir, yalnız ±2 dakikalık pencereye dayanmaz.",
+        "Gerçek PostgreSQL testinde temizlenebilir eski/süresi dolmuş token nonce satırları silinir; canlı tokenın replay engeli korunur; yarıda kesilme/yeniden çalıştırma güvenli olur ve silinen satır sayısı raporlanır."
+      ],
+      "id": "W2-R-F0170-01",
+      "parents": [
+        "F0170"
+      ]
+    }
+  ],
+  "limitations": [
+    "Salt okunur statik inceleme; büyüme hızı, üretim satır sayısı veya performans etkisi ölçülmedi, test çalıştırılmadı.",
+    "src ve SQL referans aramaları ile mevcut housekeeping kodu/runbook incelendi; harici DBA cron işleri ya da deploy dışı veritabanı görevleri görünmediği için doğrulanmadı.",
+    "D:/project/ALKAROS/scripts dizini yok; bu yoldaki arama sonuç vermedi."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

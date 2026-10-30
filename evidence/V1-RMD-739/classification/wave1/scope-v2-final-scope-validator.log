@@ -1,0 +1,17 @@
+COMMAND: python -B evidence/V1-RMD-739/classification/wave1/validate_scope_v2.py
+EXIT_CODE: 0
+{
+  "result": "PASS",
+  "tier": "planning validation, not application tests",
+  "source_total": 1376,
+  "wave1_sources": 54,
+  "remaining": 1322,
+  "scope_review": "structure-validated; semantic/ownership gaps tracked separately",
+  "readiness_counts": {
+    "scope-reviewed": 21,
+    "historical-regression-only": 6,
+    "decision-blocked": 21,
+    "scope-blocked": 8,
+    "verification-only": 6
+  }
+}

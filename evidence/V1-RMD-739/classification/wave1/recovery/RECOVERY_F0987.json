@@ -1,0 +1,37 @@
+{
+  "source_id": "F0987",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Host bağlamasının başka göreve ait olduğu notu bugünkü bağlamayı inkâr etmiyor",
+      "status": "not-defect",
+      "invariant": "Görev sahiplik sınırı ile sistemin bugünkü entegrasyon durumu birbirine karıştırılmamalı.",
+      "mechanism": "Kaynak, QRS-002 kartındaki 'bu görev Host'a dokunmuyor; bağlama QRO-001 kapsamında' ifadesini bağlamanın bugün varlığı nedeniyle bayat sayıyor. Oysa okunan kart In scope/Out of scope altında bu görevin sahiplik sınırını ve devri tarif ediyor; Host'ta bugün bağlama yoktur demiyor. Rate limiter sabitleri Host politikalarında ve /sessions route'unda gerçekten kullanılıyor. Sonraki görevin entegrasyonu tamamlaması, önceki görevin Host'a yazmama sınırını çürütmez. Güncel handoff bağlantısı eklenmesi okunabilirlik iyileştirmesi olabilir; tek başına doğrulanmış kusur değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:92",
+        "evidence/V1-RMD-739/tasks/B062.md:42-46",
+        "plan/v1.2/qr-security/V12-QRS-002-relay-security-controls.md:22-36",
+        "plan/v1.2/qr-security/V12-QRS-002-relay-security-controls.md:44-54",
+        "plan/v1.2/qr-security/V12-QRS-002-relay-security-controls.md:85-87",
+        "src/Modules/QrOrdering/RelaySecurity/RelayAbusePolicy.cs:3-16",
+        "src/Host/DualScreen/DualScreenApplication.cs:424-437",
+        "src/Host/DualScreen/DualScreenApplication.cs:638-658",
+        "src/Host/Experience/QrOrdering/QrOrderingEndpoints.cs:94-120"
+      ],
+      "acceptance": [
+        "Bu kayıt yalnız eski görevin sahiplik/devir açıklaması nedeniyle açık davranış kusuru olarak sayılmaz.",
+        "Host entegrasyonunun doğruluğu, varsa kendi atomik bulgularıyla ayrı değerlendirilir; burada bağlamanın varlığı gözlenmiş olup tam güvenlik başarısı iddia edilmez."
+      ],
+      "id": "W2-R-F0987-01",
+      "parents": [
+        "F0987"
+      ]
+    }
+  ],
+  "limitations": [
+    "Salt okunur kaynak incelemesi yapıldı; HTTP veya hız sınırı testi çalıştırılmadı.",
+    "Host'a yazan tarihsel commit/görev sahipliği doğrulanmadı; sonuç güncel kartın ifade ettiği kapsam ile bugünkü bağlamanın mantıksal uyumuna dayanıyor.",
+    "Aynı karttaki nonce saklama ve gövde sınırı bulguları bu kayda eklenmedi."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

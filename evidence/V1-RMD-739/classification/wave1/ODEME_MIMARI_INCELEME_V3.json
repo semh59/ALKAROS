@@ -1,0 +1,487 @@
+{
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "groups": [
+    {
+      "id": "PAY-G04",
+      "write_paths": [
+        "src/Host/Experience/Orders/OrderSettlementService.cs",
+        "src/Host/DualScreen/DualScreenApplication.Payments.cs",
+        "src/Host/DualScreen/DualScreenApplication.CashSession.cs",
+        "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs",
+        "src/Host/Experience/Billing/BillingSplitApplication.cs",
+        "src/Host/Experience/SecurityAdministration/OrderBacklogAdministration.cs",
+        "src/Host/Experience/Billing/BillClosureSweeper.cs",
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+        "tests/Host/Experience/PaymentTender/BillClosureLoggingTests.cs",
+        "tests/Host/Experience/Tables/MergeSettlementTests.cs",
+        "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs",
+        "tests/Host/Experience/CashSession/CashSessionHttpTests.cs",
+        "tests/Host/Experience/CustomerAccounts/CustomerAccountsHttpTests.cs",
+        "tests/Host/Experience/Billing/BillingSplitHttpTests.cs"
+      ],
+      "read_only_paths": [
+        "AGENTS.md",
+        "plan/TASK_STANDARD.md",
+        "plan/OWNERSHIP.md",
+        "plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md",
+        "evidence/V1-RMD-739/classification/wave1/KESIN_YUZEY_V2.json",
+        "src/Host/DualScreen/DualScreenApplication.Endpoints.cs",
+        "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs",
+        "src/Modules/Orders/OrderAggregate/Order.cs",
+        "src/Modules/Orders/OrderAggregate/OrderStatusHistoryEntry.cs",
+        "src/Modules/Orders/OrderAggregate/PostgresOrderRepository.cs",
+        "src/Modules/Audit/EventStore/AuditEvent.cs",
+        "src/Modules/Security/DataProtectionRetention/DeletionQueueProcessor.cs",
+        "database/migrations/V1/V1-OPS-001/015-audit-log.up.sql",
+        "database/migrations/V1/V1-ORD-001/011-orders.up.sql",
+        "tests/Host/Experience/SecurityAdministration/SecurityAdministrationTestDatabase.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_edges": [
+        {
+          "group_id": "PAY-G02",
+          "kind": "serialize",
+          "shared_paths": [
+            "src/Host/Experience/Orders/OrderSettlementService.cs",
+            "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+          ],
+          "reason": "Aynı exact yazma dosyası; aktör invariantı diğer düzeltmenin semantik çıktısını gerektirmiyor. Sıra yeni task tahsisinde sabitlenir, hard dependency değildir."
+        },
+        {
+          "group_id": "PAY-G03",
+          "kind": "serialize",
+          "shared_paths": [
+            "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+          ],
+          "reason": "Aynı exact yazma dosyası; aktör invariantı diğer düzeltmenin semantik çıktısını gerektirmiyor. Sıra yeni task tahsisinde sabitlenir, hard dependency değildir."
+        },
+        {
+          "group_id": "PAY-G05",
+          "kind": "serialize",
+          "shared_paths": [
+            "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+          ],
+          "reason": "Aynı exact yazma dosyası; aktör invariantı diğer düzeltmenin semantik çıktısını gerektirmiyor. Sıra yeni task tahsisinde sabitlenir, hard dependency değildir."
+        },
+        {
+          "group_id": "PAY-G09",
+          "kind": "serialize",
+          "shared_paths": [
+            "src/Host/Experience/Billing/BillClosureSweeper.cs",
+            "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+          ],
+          "reason": "Aynı exact yazma dosyası; aktör invariantı diğer düzeltmenin semantik çıktısını gerektirmiyor. Sıra yeni task tahsisinde sabitlenir, hard dependency değildir."
+        },
+        {
+          "group_id": "PAY-G10",
+          "kind": "serialize",
+          "shared_paths": [
+            "src/Host/Experience/Billing/BillClosureSweeper.cs",
+            "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+          ],
+          "reason": "Aynı exact yazma dosyası; aktör invariantı diğer düzeltmenin semantik çıktısını gerektirmiyor. Sıra yeni task tahsisinde sabitlenir, hard dependency değildir."
+        }
+      ],
+      "acceptance_additions": [
+        {
+          "case": "7 production wrapper çağrısı / 3 settlement caller",
+          "test_paths": [
+            "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+            "tests/Host/Experience/CashSession/CashSessionHttpTests.cs",
+            "tests/Host/Experience/CustomerAccounts/CustomerAccountsHttpTests.cs",
+            "tests/Host/Experience/Billing/BillingSplitHttpTests.cs"
+          ],
+          "expected": "EFT, BankCard approved branch, not-charged, manual-card approve, cash, account-charge, zero-payable discount: yeni Completed history ChangedBy authenticated UserId. Approve=onaylayan, discount=istekte bulunan; eski requestedBy/customerId/terminalId/approverId ile değiştirme. BankCard closure branch gerçek provider çağrısı diye sunulmaz."
+        },
+        {
+          "case": "Backfill insan aktörü",
+          "test_paths": [
+            "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs"
+          ],
+          "expected": "ManagerUserId Completed historyye taşınır. Dry-run/no-bill/open-bill/401/403 history yazmaz; mevcut User audit kimliği korunur. İkinci boş batchin mevcut batch-audit davranışı değiştirilmez."
+        },
+        {
+          "case": "System sweep",
+          "test_paths": [
+            "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+          ],
+          "expected": "İnsan tenderını önce çalıştırıp yalnız billi yeniden açmak yeterli değildir: order hâlâ Completed olabilir. Submitted order + covered-open bill fixture kur; SweepOnce→tek Completed history ChangedBy IS NULL. Son ödeme aktörü taklit edilmez; sentetik user/GUID yok. Tekrar history artmaz."
+        },
+        {
+          "case": "Replay/concurrency/no-op",
+          "test_paths": [
+            "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+            "tests/Host/Experience/Tables/MergeSettlementTests.cs"
+          ],
+          "expected": "AlreadyClosed wrapper→henüz tamamlanmamış order bir kez tamamlanır; önceden Completed order yeni history üretmez. Optimistic retry actorü korur; sibling unpaid durumda history yok. Merge/pointer invariantları korunur."
+        },
+        {
+          "case": "Best effort hata/iptal",
+          "test_paths": [
+            "tests/Host/Experience/PaymentTender/BillClosureLoggingTests.cs"
+          ],
+          "expected": "Required actor argümanı üç çağrıda güncellenir. Closure failure=false/log, order completion failure closed=true/log, display failure log; OperationCanceledException yutulmaz."
+        },
+        {
+          "case": "Kapanış kanıtı (gelecek görev; bu oturum çalıştırılmaz)",
+          "test_paths": [],
+          "expected": "dotnet build + ilgili 6 Host test projesi; her komut/exit/hash yeni atanmış taskın kendi evidenceında. Aktörün iletilmesini kaldıran, backfillde null veren, sweepte yanlış human veren mutasyonlar odak testleri kırmalı. Semih senaryosu: oturumla öde→Completed history kullanıcı; yönetici backfill→yönetici; arka plan sweep→NULL."
+        }
+      ],
+      "source_evidence": [
+        {
+          "source": "src/Host/Experience/Orders/OrderSettlementService.cs:37-73",
+          "finding": "CompleteForPaidBillAsync aktör almıyor; CompleteOnPayment() ChangedBy=null üretir; Completed erken dönüşü yeni history yazmaz.",
+          "tier": "static-line-read",
+          "sha256": "e6d7c51a8e58a70ffabf8aa8c0a141a84f25367a82165d316b1cd4eac2b35600"
+        },
+        {
+          "source": "src/Modules/Orders/OrderAggregate/Order.cs:249-294",
+          "finding": "CompleteOnPayment(Guid? changedBy, DateTimeOffset? changedAt) mevcut; history append changedBy taşır. Domain değişikliği gerekmez.",
+          "tier": "static-line-read",
+          "sha256": "e5b336ffb83f11222e7c2db24069d9c555f55e36c5243e80b84b6543776cc081"
+        },
+        {
+          "source": "src/Modules/Orders/OrderAggregate/OrderStatusHistoryEntry.cs:11-35",
+          "finding": "ChangedBy nullable Guid; ActorType alanı yok.",
+          "tier": "static-line-read",
+          "sha256": "68cbd1f216968222d500788e2cbc0cc7209b72eb135131427c3bc54f12bac6ab"
+        },
+        {
+          "source": "src/Modules/Orders/OrderAggregate/PostgresOrderRepository.cs:500-519",
+          "finding": "Nullable ChangedBy SQL NULL olarak saklanır.",
+          "tier": "static-line-read",
+          "sha256": "dfc2568c5948ba65339a1819a98d4ca5a73646b466e6e73e0483ac1950ea100f"
+        },
+        {
+          "source": "database/migrations/V1/V1-ORD-001/011-orders.up.sql:76-85",
+          "finding": "order_status_history.changed_by nullable; actor_type kolonu yok.",
+          "tier": "static-line-read",
+          "sha256": "5d12535f8219d70ecc81f0632f15c0d93083fd1155c4d21b04a532cee046c1f0"
+        },
+        {
+          "source": "src/Host/DualScreen/DualScreenApplication.Payments.cs:85-127",
+          "finding": "Ortak wrapper kapanıştan sonra settlement çağırır; best-effort yanıt/log/display davranışı korunmalı.",
+          "tier": "static-line-read",
+          "sha256": "9b2351fd26d23c9ac46d3e8282d58ebdadc4f18d443325e17c2a60ac26240a6a"
+        },
+        {
+          "source": "src/Host/DualScreen/DualScreenApplication.Payments.cs:225-269",
+          "finding": "not-charged: RequireCashierPermissionAsync(ReconciliationManage) principal.UserId; kapanışı yapan yetkili kişi.",
+          "tier": "static-line-read",
+          "sha256": "9b2351fd26d23c9ac46d3e8282d58ebdadc4f18d443325e17c2a60ac26240a6a"
+        },
+        {
+          "source": "src/Host/DualScreen/DualScreenApplication.Payments.cs:336-375",
+          "finding": "manual card approve: principal.UserId onaylayan; requestedBy ile karıştırılmaz.",
+          "tier": "static-line-read",
+          "sha256": "9b2351fd26d23c9ac46d3e8282d58ebdadc4f18d443325e17c2a60ac26240a6a"
+        },
+        {
+          "source": "src/Host/DualScreen/DualScreenApplication.Payments.cs:429-499,610-613",
+          "finding": "BankCard approved ve generic EFT approved aynı authenticated principal.UserId kaynağı; gerçek provider kanıtı iddiası yok.",
+          "tier": "static-line-read",
+          "sha256": "9b2351fd26d23c9ac46d3e8282d58ebdadc4f18d443325e17c2a60ac26240a6a"
+        },
+        {
+          "source": "src/Host/DualScreen/DualScreenApplication.CashSession.cs:245-271,315-322",
+          "finding": "Cash: cash.drawer + payments.take; principal.UserId mevcut.",
+          "tier": "static-line-read",
+          "sha256": "c330946d4426928ae0c382a39b0cdf17dd0f42f578c1ce2ecb4da35843a61b35"
+        },
+        {
+          "source": "src/Host/Experience/CustomerAccounts/DualScreenApplication.CustomerAccounts.cs:135-170",
+          "finding": "account-charge: payments.take authenticated principal.UserId; request.CustomerId aktör değildir.",
+          "tier": "static-line-read",
+          "sha256": "6d65257c37d2edb858ff1b5e9d179183d385685de2c3dbbddfe25c71b46734bb"
+        },
+        {
+          "source": "src/Host/Experience/Billing/BillingSplitApplication.cs:159-229,517-565",
+          "finding": "Sıfır payable discount: principal.UserId authenticated işlemi yapan; grant approverId ayrı onay bilgisi.",
+          "tier": "static-line-read",
+          "sha256": "4f7805200d087fa41c9a0e693913ab6000277a3b48193fb5af51665a502bc2de"
+        },
+        {
+          "source": "src/Host/Experience/SecurityAdministration/OrderBacklogAdministration.cs:63-150",
+          "finding": "close-settled actorId satır72; mevcut User audit108-110/138-140; settlement121 aktörü düşürür. Dry-run99 yazmaz.",
+          "tier": "static-line-read",
+          "sha256": "56f39cdef545cebdb94a85898d81813e9edd41e98fdacbef7926768e94349893"
+        },
+        {
+          "source": "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs:329-362",
+          "finding": "Manager cookie lookup + security.manage; context.Items actorId güvenilir sunucu kaynağı.",
+          "tier": "static-line-read",
+          "sha256": "6447e88a48986732cf3298b5d5f5070b20eef6bd8c6d355235c913c93783a284"
+        },
+        {
+          "source": "src/Host/DualScreen/DualScreenApplication.Endpoints.cs:585-612",
+          "finding": "Cashier terminal-bound cookie authentication + permission authorization; client body veya terminalId insan kimliği sayılmaz.",
+          "tier": "static-line-read",
+          "sha256": "e051aff3f99389e52f97338fa6481e71a4f52c19cefb7c59fd9f6ecb42dfd42a"
+        },
+        {
+          "source": "src/Host/Experience/Billing/BillClosureSweeper.cs:50-88",
+          "finding": "Gerçek background actor; ödeme kaydındaki son insanı sahiplenmez; null ChangedBy açık geçirilir. Selection/AlreadyClosed retry ayrı PAY-G09/G10.",
+          "tier": "static-line-read",
+          "sha256": "cccf25ca1c16f029f46ea3f91d6fc5ea54f19d283c808c387c9b192a4b9eb60e"
+        },
+        {
+          "source": "src/Modules/Audit/EventStore/AuditEvent.cs:10-37,54-80",
+          "finding": "AuditEvent actorType zorunlu, actorId nullable; User/System ayrımı audit kontratıdır, order history şeması değildir.",
+          "tier": "static-line-read",
+          "sha256": "df44ffe84775f212930b90413a8ec0a231bba43d862b625215bbe26efbb7f98e"
+        },
+        {
+          "source": "src/Modules/Security/DataProtectionRetention/DeletionQueueProcessor.cs:29-46",
+          "finding": "Mevcut System audit actorId vermiyor; sentetik kullanıcı gerekmiyor. Ödeme için yeni audit event üretme zorunluluğu çıkarılamaz.",
+          "tier": "static-line-read",
+          "sha256": "7fea95e4f179444a964512b410a339d61957ae4b33730ce8156b6d60c5d30181"
+        },
+        {
+          "source": "database/migrations/V1/V1-OPS-001/015-audit-log.up.sql:3-16",
+          "finding": "audit.actor_id NULL, actor_type NOT NULL; order historyye actorType ekleme gereği doğmaz.",
+          "tier": "static-line-read",
+          "sha256": "e53300b2263cdf3bea220c5208206dd32844dbbc2cfbe97ef249fd15b23faa4f"
+        },
+        {
+          "source": "tests/Host/Experience/PaymentTender/BillClosureLoggingTests.cs:10-45",
+          "finding": "Wrapper üç doğrudan test çağrısı; required actor parametresi için exact compile yüzeyi.",
+          "tier": "static-line-read",
+          "sha256": "285072a50e231ead218843bb8ce8820894bac5c642d2b91653629da397997e65"
+        },
+        {
+          "source": "tests/Host/Experience/Tables/MergeSettlementTests.cs:60-68",
+          "finding": "Settlement doğrudan test caller; required nullable actor parametresiyle açık null geçmeli.",
+          "tier": "static-line-read",
+          "sha256": "537354a9e863555a29df02843144dcc839d8f6ee91325fd771a2a45f12112707"
+        },
+        {
+          "source": "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs:628-749,1015-1074",
+          "finding": "Tender/sweep/order/table test altyapısı ve DataSource mevcut; user seed aynı dosyada, ek fixture dosyası gerekmez.",
+          "tier": "static-line-read",
+          "sha256": "0bdc53768e707a0e49cb89311abc553b67b87bc1a58ead2a11e9433b3f88fe96"
+        },
+        {
+          "source": "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs:599-658",
+          "finding": "Manager-only, dry-run, gerçek backfill ve tekrar davranışı mevcut; ChangedBy assertion eksik.",
+          "tier": "static-line-read",
+          "sha256": "f3a79ca5d90c292d09825f69fcf392db7118f222eb53ace048286167d15cd007"
+        },
+        {
+          "source": "tests/Host/Experience/SecurityAdministration/SecurityAdministrationTestDatabase.cs:22-29,212-214",
+          "finding": "ManagerUserId mevcut. SystemAuditCountAsync adı yanıltıcı: yalnız event_name/aggregate_id sayar; System actorType kanıtı değildir.",
+          "tier": "static-line-read",
+          "sha256": "94679355f503455464f4e09dc1272d2134214ad7c7ca9ba238776a3923a2e744"
+        },
+        {
+          "source": "tests/Host/Experience/CashSession/CashSessionHttpTests.cs:205-228",
+          "finding": "Gerçek HTTP cash testinde bill Paid doğrulanır; history actor assertion eklenmeli.",
+          "tier": "static-line-read",
+          "sha256": "57dac1a47f38f6f4338d9442f16a06f3996fe4a8ee50afe1798b78c05e8ca0ca"
+        },
+        {
+          "source": "tests/Host/Experience/CustomerAccounts/CustomerAccountsHttpTests.cs:54-74,462-469",
+          "finding": "Account charge HTTP + DB kaynağı mevcut; history actor assertion aynı dosyada eklenebilir.",
+          "tier": "static-line-read",
+          "sha256": "2f689cf9b71e0613f7f432880dc902e6350c08162b2be4eb5cea4f9977b5a831"
+        },
+        {
+          "source": "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:755-778,1607-1620",
+          "finding": "Discount replay altyapısı ve (UserId,Cookie) seed mevcut; zero-payable actor senaryosu burada eklenebilir.",
+          "tier": "static-line-read",
+          "sha256": "df068d7e88277741f2ffc6a7a5eed70a0a5164b71e08eee431a26d81a31fa48c"
+        }
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Yalnız gelecek exact Task ID için kapsam önerisi; V1-RMD-739 production/test yetkisi değildir. 14 mevcut dosya; yeni adapter/interface/migration/audit event yok.",
+        "Seçilen en kısa teknik yön: CompleteForPaidBillAsync(billId, Guid? changedBy, CancellationToken=default), TryCloseBillAsync zincirine zorunlu Guid insan aktörü. Nullable changedBy için default verme; sweeper açık null geçsin, human caller eksikliği compile ile görünür olsun. Domain CompleteOnPayment(changedBy) zaten destekli.",
+        "7 production TryCloseBillAsync callsite + 3 test callsite; settlement 3 production caller + 1 test caller, tracked src/tests statik taramasıyla eşlendi. Declarationlar çağrı sayısına katılmadı.",
+        "History yalnız nullable ChangedBy taşır. System audit kontratının varlığı historyye actorType veya yeni audit ekleme yetkisi değildir; system provenance bu APIde açık null ve gerçek background caller ile ifade edilir. Yeni event adı/kimliği/policy icat edilmedi.",
+        "BillClosureSweeper ve OrderBacklogAdministration artık read-only değil: signature/caller değişimi için future write allowlistine açık eklendi. Fixturelerin çoğu ilgili test dosyalarında; SecurityAdministrationTestDatabase salt okunur.",
+        "scope-reviewed statik kapsam hazır demektir; uygulama, runtime PASS, Done veya eski bulgu kapanışı değildir."
+      ]
+    },
+    {
+      "id": "RG-ANON-BOUNDARY",
+      "write_paths": [
+        "docs/architecture/module-dependency-rules.md"
+      ],
+      "read_only_paths": [
+        "AGENTS.md",
+        "plan/TASK_STANDARD.md",
+        "plan/OWNERSHIP.md",
+        "plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md",
+        "evidence/V1-RMD-739/classification/wave1/KESIN_YUZEY_V2.json",
+        "plan/v1.5/kvkk/V15-KVK-002-cross-store-anonymization.md",
+        "src/Host/Program.cs",
+        "src/Modules/Privacy/Anonymization/AnonymizationModels.cs",
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+        "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs",
+        "tools/consistency-audit/consistency_audit.py",
+        "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+        "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs",
+        "evidence/V1-RMD-739/tasks/B063.md",
+        "evidence/V1-RMD-739/findings/register.md"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_edges": [],
+      "acceptance_additions": [
+        {
+          "case": "Kesin teknik belge hizalaması",
+          "test_paths": [],
+          "expected": "docs/architecture/module-dependency-rules.md row37 ve Host/Experience/Enforcement bölümlerinde mevcut root-supplied SQL-plan sınırı açıklaştırılır: IAnonymizationPlans→Privacy workflow yürütücüsü, izin yalnız bugünkü 5 RetentionClass/store/field action matrisi. Genel owner-contract kuralı kaldırılmaz; yeni raw SQL/adapter/project ref/namespace allowlist açılmaz."
+        },
+        {
+          "case": "Scope tarihçesi",
+          "test_paths": [],
+          "expected": "Aynı mimari belgede V15-KVK-002 Owned surface36-37 command binding ile bugünkü Program.cs SQL kapsamının uyuşmadığı tarihli factual not kalır. Eski Done taskın body/Owned surface genişletilmez; geçmiş ihlal geriye dönük yetkilendirilmez. Eski taska atıf verilir; task gövdesi yeni write path değildir."
+        },
+        {
+          "case": "Gerçek SQL contract matrix",
+          "test_paths": [
+            "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+          ],
+          "expected": "StaffAccount, OrderNotes, ReservationReason, CustomerProfile, Supplier exact table/field/action listesi Program.cs789-850 ile eşleşir. Row kept genellemesi düzeltilir: notifications.push_subscriptions DELETE istisnası zaten mevcut. customer_account balance read-only; ledger/invoice buyer/tax identifiers korunur. Yeni mevzuat/policy seçilmez."
+        },
+        {
+          "case": "Mimari negatif kontrollerin doğru anlamı",
+          "test_paths": [
+            "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs"
+          ],
+          "expected": "DeclaredDependenciesStayWithinTheApprovedEdgeList, ActualAssemblyDependenciesAreDeclaredInDependsOn, HostOrchestrationEdgesStayWithinTheApprovedList, EveryHostAreaIsCoveredByAnApprovedEdgeEntry ve raw-audit pattern negatifleri korunur. 387 comment/403 root exclusion, SQL sahipliği için negatif test diye sunulmaz. Existing Program.cs exemption genişletilmez. Gate blind spotları açık yazılır; SQLyi farklı klasöre taşımak çözüm sayılmaz."
+        },
+        {
+          "case": "Workflow regresyon sınırı",
+          "test_paths": [
+            "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs",
+            "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+          ],
+          "expected": "Gelecek atanmış taskta mevcut testler çalıştırılır: apply/dry-run/replay 5 sınıf; scratch checkpoint+event atomikliği/resume/residue/append-only; legal IDs+ledger+open balance. Scratch coverage canlı beş-sınıf hata kapsamına eşitlenmez; hold/recheck kusurları bu belge grubuyla kapanmaz."
+        },
+        {
+          "case": "Kapanış kanıtı (gelecek görev; bu oturum çalıştırılmaz)",
+          "test_paths": [],
+          "expected": "Belge-only diff exact allowlist, kaynak:line matrisi, dotnet build + ModuleBoundaries + KvkkRetentionTests + AnonymizationWorkflowTests ve consistency audit gerçek exit/hash yeni task evidenceında. Semih senaryosu mevcut kvkk-retention dry-run→apply→retry; yeni endpoint/adaptor yok. Belgede geçen SQL ve test iddiaları gerçek çıktıyla sınırlı tutulur."
+        }
+      ],
+      "source_evidence": [
+        {
+          "source": "docs/architecture/module-dependency-rules.md:19-28,39-42,81-82",
+          "finding": "Genel owner-contract kuralı ve mevcut row37: Privacy.Anonymization yalnız RetentionExecution C# kenarı; diğer store field actions plain SQL olarak zaten betimlenmiş.",
+          "tier": "static-line-read",
+          "sha256": "176e8a52cc62955fb465c0a93742a401fec93f98744fd98dda01ac9b7fc0e9e6"
+        },
+        {
+          "source": "docs/architecture/module-dependency-rules.md:159-168,187-218",
+          "finding": "Host/Experience repository-contract kuralının alanı; compile-edge gate ile literal-SQL scan ayrı. Composition root ayrımını bu bölüm açık söylemiyor.",
+          "tier": "static-line-read",
+          "sha256": "176e8a52cc62955fb465c0a93742a401fec93f98744fd98dda01ac9b7fc0e9e6"
+        },
+        {
+          "source": "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:171-172,180-243",
+          "finding": "Privacy.Anonymization approved edge yalnız Privacy.RetentionExecution; DependsOn ve assembly dependency negatif assertleri SQL string sahipliğini incelemez.",
+          "tier": "static-line-read",
+          "sha256": "bf9c4e029bd7c306fa7477f3335571c39818d7e591424fd0232194a6cb3dce23"
+        },
+        {
+          "source": "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:358-424",
+          "finding": "387 bir test değil composition-root açıklaması; 389-393 root namespace istisnası, 403 namespace exclusion. Host edge kontrolü assembly referansı içindir; SQL planına negatif güvence değildir.",
+          "tier": "static-line-read",
+          "sha256": "bf9c4e029bd7c306fa7477f3335571c39818d7e591424fd0232194a6cb3dce23"
+        },
+        {
+          "source": "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:449-497",
+          "finding": "RawAuditInsertsStayOnTheKnownList yalnız audit.audit_events INSERT kontrolüdür; başka schema write veya dinamik ApplySql tarayıcısı değildir.",
+          "tier": "static-line-read",
+          "sha256": "bf9c4e029bd7c306fa7477f3335571c39818d7e591424fd0232194a6cb3dce23"
+        },
+        {
+          "source": "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:507-539",
+          "finding": "Cyclic ve unknown dependency reddi mevcut; anonimleştirme SQL sahiplik kararı değildir.",
+          "tier": "static-line-read",
+          "sha256": "bf9c4e029bd7c306fa7477f3335571c39818d7e591424fd0232194a6cb3dce23"
+        },
+        {
+          "source": "tools/consistency-audit/consistency_audit.py:231-235,372-388,424-459",
+          "finding": "Program.cs mevcut HOST_EXEMPT_FILES; module kuralı literal target şemasını tarar; workflow ApplySql parametresinin gerçek hedefini görmez. Yeni allowlist genişlemesi gerekmez; Program.cs exemption genel ama önerilen doküman izni yalnız mevcut KVKK planını betimler.",
+          "tier": "static-line-read",
+          "sha256": "50c392a59b035dce5347c91416314a1bf69c6afa9d1f2145969c2a97db052f52"
+        },
+        {
+          "source": "src/Modules/Privacy/Anonymization/AnonymizationModels.cs:9-29",
+          "finding": "ApplySql/ResidueSql/@subject/Parameters gerçek kontrat; rootun başka store field actions sağlaması tasarımın açık parçası.",
+          "tier": "static-line-read",
+          "sha256": "b250b74b802eca6eb0dce91c3271ffcf5ae6f31bbf09d150bf717802ad40c717"
+        },
+        {
+          "source": "src/Host/Program.cs:769-853",
+          "finding": "5 gerçek sınıf: StaffAccount identity.users + notifications.serving_handoff_notes + DELETE notifications.push_subscriptions; OrderNotes orders.orders/order_items; ReservationReason table_mgmt.table_reservations; CustomerProfile customer_data.profiles/anonymization_requests, balance yalnız read; Supplier purchasing.suppliers. Sentinel, mask marker ve WHERE koşulları mevcut.",
+          "tier": "static-line-read",
+          "sha256": "3427af65908afec257e0d0be22a80d0ea292e9ac74117fbb88f132870d0fedf5"
+        },
+        {
+          "source": "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:40-74,107-156,180-240",
+          "finding": "Privacy raw SQLyi yürütür; root yalnız kaynağıdır. Step write/checkpoint/event aynı tx; block tekrar kontrolü ve advisory lock; residue kontrolü ve final completion ayrı. Bu okuma hold/race doğruluğunu kapatmaz.",
+          "tier": "static-line-read",
+          "sha256": "6c152bb63362a605397095b7520098a3322f4949dd46864d94f05a2474dd423c"
+        },
+        {
+          "source": "plan/v1.5/kvkk/V15-KVK-002-cross-store-anonymization.md:18-41,43-68",
+          "finding": "Done eski scope Program.cs için yalnız command binding; bugünkü SQL sahipliğine yetki vermemiş. Eski body genişletilmez; tarihsel scope ihlali gelecekteki belgede açık not olarak kalır.",
+          "tier": "static-line-read",
+          "sha256": "47026b29fe899c24452a689de1995e8d3348948cb04f1dde86e327751b95a65e"
+        },
+        {
+          "source": "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs:44-190,192-258",
+          "finding": "Canlı beş data class dry-run/apply/replay; staff push DELETE mevcut ve testlenmiş; legal IDs/ledger/open balance korunumu assertionları var, bu oturum çalışmadı.",
+          "tier": "static-line-read",
+          "sha256": "0c30ec2934a778ca1e3a98079a752583c1825c1d972abb9c9015975896dea05b"
+        },
+        {
+          "source": "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs:285-297",
+          "finding": "MissingDbUrl/UnknownArgument fail-closed; mimari SQL ownership negative testi değil.",
+          "tier": "static-line-read",
+          "sha256": "0c30ec2934a778ca1e3a98079a752583c1825c1d972abb9c9015975896dea05b"
+        },
+        {
+          "source": "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs:43-60,126-168,170-241,258-290",
+          "finding": "Scratch plan üzerinden checkpoint/event/idempotency/resume/hold/residue/append-only negatif testleri. Canlı beş sınıfın tüm transactional hata yollarının kapsandığı sonucuna varılamaz.",
+          "tier": "static-line-read",
+          "sha256": "8f2e19f21751aa3420e6746384c941229d65792deb96671ca89b7967aee0390a"
+        },
+        {
+          "source": "evidence/V1-RMD-739/tasks/B063.md:33-38",
+          "finding": "GYZ ownership/scope iddiası hold ve recheck bulgularından ayrı tutulur.",
+          "tier": "static-line-read",
+          "sha256": "d15b1adef18ec04807ce951390e32e0b19e9108c3a20851bd68adc9bc56736d1"
+        },
+        {
+          "source": "evidence/V1-RMD-739/findings/register.md:183-186",
+          "finding": "Orijinal kayıt korunur; yeni teknik sınıflama geçmiş finding metnini veya kapanış kanıtını değiştirmez.",
+          "tier": "static-line-read",
+          "sha256": "586741831600943cf78907712067cfd1a4d3eb1a557b2a00965d00fda433bf41"
+        }
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Asgari sonuç mevcut mimari belgenin factual hizalaması; eski plan dosyası write_paths listesinden çıkarıldı. Geçmiş kayıt/kanıt ve Done task gövdesi salt okunur. Yeni dosya gerekmiyor.",
+        "Yeni teknik istisna kararı uydurulmadı: row37, IAnonymizationPlans22-24, Program.cs769-775 ve mevcut root gate exclusion aynı tasarımı zaten açıkça gösteriyor. Yapılacak iş bunların kapsamını tek belgede çelişkisiz anlatmak; genel raw SQL yasağını gevşetmek değil.",
+        "GYZ-011 open/decision_blocker ürün kararı olarak tutulmamalı: teknik belge/scope tutarsızlığı. scope-reviewed yalnız bu dar belge işinin hazırlanmasıdır; security fix veya GYZ-011 bütün-child closure değildir.",
+        "Owner-module adapter/interface geçişi seçilmedi; mevcut kanıt bunu zorunlu kılmıyor. Böyle bir refactor istenirse ayrı exact surface/task gerekir; burada varsayımsal adapter/project dosyası önerilmedi.",
+        "387 satır negatif test değil. Mevcut testler compile-edge ve raw-audit kurallarını test ediyor; arbitrary injected SQL hedefleri için ownership checker yok. Bu boşluğun kapandığı iddia edilemez.",
+        "Readonly Program/workflow testi ortaklığı tek başına serialize/hard dependency üretmez. Hold/recheck/CustomerData workflow düzeltmeleri bağımsız; onların sonuçları yeniden okunmadan güncel belge final olmaz fakat bu scope taslağı production düzeltmelerine semantik hard bağımlı değildir."
+      ]
+    }
+  ],
+  "limitations": [
+    "Yalnız statik okuma ve git inventory/status; production/test/build/audit/mutation komutu çalıştırılmadı, repo yazılmadı. PASS/Done/kusur kapanışı yok.",
+    "Başlangıç git status: modified plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md; untracked evidence/V1-RMD-739/classification/. Bunlar parent/user değişiklikleridir, dokunulmadı.",
+    "write_paths yalnız gelecekte yeni exact Task IDye atanacak önerilerdir. Her görev için gates/dependencies, Sınırlı ek ve evidence path tahsisi uygulama preflightında ayrıca doğrulanır; bu JSON yazma yetkisi vermez.",
+    "PAY System audit kontratı nullable kimliği destekler; bundan order historyde ActorType veya yeni audit event zorunluluğu çıkarılmadı. Ek sistem audit istenirse yeni requirement ve exact surface gerekir.",
+    "Tam depo okumadım; tracked src/tests sembol envanteri + belirtilen ilgili method/range okumaları. Kaynak hashleri bu çalışma ağacına aittir; başka-task eski evidence yeniden yazılmadı.",
+    "Architecture root SQL exemption mevcut davranıştır, doğruluk/güvenlik ispatı değildir. Geçmiş scope ihlali, GYZ legal-hold/recheck ve CustomerData bypass bulguları açıkça ayrı kalır."
+  ]
+}

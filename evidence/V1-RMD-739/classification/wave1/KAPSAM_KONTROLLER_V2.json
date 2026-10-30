@@ -1,0 +1,22 @@
+[
+  {
+    "check": "ledger",
+    "exit_code": 0,
+    "log": "evidence/V1-RMD-739/classification/wave1/scope-v2-ledger.log"
+  },
+  {
+    "check": "plan",
+    "exit_code": 0,
+    "log": "evidence/V1-RMD-739/classification/wave1/scope-v2-plan.log"
+  },
+  {
+    "check": "consistency",
+    "exit_code": 0,
+    "log": "evidence/V1-RMD-739/classification/wave1/scope-v2-consistency.log"
+  },
+  {
+    "check": "scope",
+    "exit_code": 0,
+    "log": "evidence/V1-RMD-739/classification/wave1/scope-v2-scope.log"
+  }
+]

@@ -1,0 +1,305 @@
+{
+  "result": "PASS",
+  "source_records": 35,
+  "atomic_review_items": 44,
+  "status": {
+    "open": 34,
+    "historical-fixed": 1,
+    "verification-needed": 5,
+    "decision-blocked": 2,
+    "not-defect": 2
+  },
+  "records": [
+    {
+      "source_id": "F0048",
+      "items": 2,
+      "status": [
+        "open",
+        "open"
+      ],
+      "input_sha256": "4f221fd9f8776e7089baa27273d351fc4847209d29e418a9eef185df7312f351"
+    },
+    {
+      "source_id": "F0341",
+      "items": 1,
+      "status": [
+        "historical-fixed"
+      ],
+      "input_sha256": "6266dbac984381e24f7447c1cf4ce0aa8ab14fdbbf108ab8392e825cfd89445d"
+    },
+    {
+      "source_id": "F0350",
+      "items": 2,
+      "status": [
+        "open",
+        "open"
+      ],
+      "input_sha256": "3ba76d54ea0385c6fc0e39f3aaa29fc79bd3516506baaa3625f50d02a8d30de5"
+    },
+    {
+      "source_id": "F0351",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "14d29890c469cfc7e8103b019faf001a773b5f68854555d534f258934216a7d5"
+    },
+    {
+      "source_id": "F0925",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "9cbc64f42a900a110c7fb1f0957be57e7bf68249c3aaa66de0a60888903ce699"
+    },
+    {
+      "source_id": "F0099",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "e361f6877964533ad941c1ec62f0bee117310d17755e9af3fdaaea3a134871d9"
+    },
+    {
+      "source_id": "PL0028",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "fbe08d9cf268c18fd8a5f16f4c42ea72acf55fb743a21bea8b8c7e9ba28fcbf6"
+    },
+    {
+      "source_id": "PL0029",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "4a7e08c636eb6cbbbdfdea5b75a69ae334c5a237a7b9584a5baa3b2978a38b4d"
+    },
+    {
+      "source_id": "PO0058",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "65aa846e5a34589326c35e7d554f263cb4fe40c71e4a2c2b2a10c2103c0fbd55"
+    },
+    {
+      "source_id": "PO0059",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "8c4c00d9228dd99414cf76b3aff6248f99e8d97528ccca86ff1e43665f9fbc11"
+    },
+    {
+      "source_id": "F0023",
+      "items": 2,
+      "status": [
+        "open",
+        "open"
+      ],
+      "input_sha256": "8e28f148d2b67700f8b646d65611c3f3f96545054376b2d842cb8e93721c0c90"
+    },
+    {
+      "source_id": "F0503",
+      "items": 1,
+      "status": [
+        "verification-needed"
+      ],
+      "input_sha256": "6b500ac5f32b3f3e9a0a966779e91f485666eb263d1bccd13762f328a1503f27"
+    },
+    {
+      "source_id": "F0601",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "747b8b364386aae6a0fa7d6b9294253720ab0318d7ae653e12a5691cfac3aee0"
+    },
+    {
+      "source_id": "UI0084",
+      "items": 1,
+      "status": [
+        "verification-needed"
+      ],
+      "input_sha256": "762c46901f093ced3bd25ae105bb00c8c9afb5c757bd23ea33ab004e57c224f8"
+    },
+    {
+      "source_id": "UI0085",
+      "items": 1,
+      "status": [
+        "verification-needed"
+      ],
+      "input_sha256": "d18747916b95b9344a1df48bedfc52c9a48ac373aac1e8903b8edd8239746c87"
+    },
+    {
+      "source_id": "F0049",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "2e98b61530bfafcd81c66df14dc730e0ce4720663d37b213ae58ad21199739cd"
+    },
+    {
+      "source_id": "F0162",
+      "items": 2,
+      "status": [
+        "open",
+        "decision-blocked"
+      ],
+      "input_sha256": "dbb6e2757c833b0fe5a5cac07947546c23a322a37d664ea9def3469d74f0cb2c"
+    },
+    {
+      "source_id": "F0170",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "360c387f1af9deffaa5835f84494a196957c239da04ba09032dccc8d81ed8bb7"
+    },
+    {
+      "source_id": "F0626",
+      "items": 1,
+      "status": [
+        "decision-blocked"
+      ],
+      "input_sha256": "d22fb253c02fa062cf92a5f4e04e158d42522c1b684aa2386304c0afc1526a0a"
+    },
+    {
+      "source_id": "F0987",
+      "items": 1,
+      "status": [
+        "not-defect"
+      ],
+      "input_sha256": "a555bc3aab3973d1cdd096a9e4944e971a286020e25670f0f9c6992b37d61789"
+    },
+    {
+      "source_id": "F0354",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "1e66df79f36557c0780cc6deab5f821f14373582cad76b2e4c01e463ac54c1d4"
+    },
+    {
+      "source_id": "F0377",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "e561fb308d5b3fd3d19ac50fe45b408a7a24e0bd186fe00a96aa45b2f5b01ec4"
+    },
+    {
+      "source_id": "F0406",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "59006f9c31607352e1a1e91a01fe92450c0203540bd0ff35e0f623744b8d4fb4"
+    },
+    {
+      "source_id": "F0419",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "3253eb0d5ebe0acb8bd776883638d51ef671c4500d76074b5a7da8d427d2416f"
+    },
+    {
+      "source_id": "F0914",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "dd5ebc4da4f9aa31f0a371490129a55ee254a1a56789bdb639caf3f3e6834f8c"
+    },
+    {
+      "source_id": "UI0141",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "d47a685701341229978608460a610bfeb4d89872cef50491b36f041cc605739c"
+    },
+    {
+      "source_id": "UI0142",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "39ac9ada7e65b434a63f8b9f552d9e317b8d9cf6e4d05d58da20f8887a94b8f1"
+    },
+    {
+      "source_id": "UI0143",
+      "items": 1,
+      "status": [
+        "verification-needed"
+      ],
+      "input_sha256": "6662d5709724d0a3ecbc875009e3e85b2ab04688300cb708b4b59a0076beccc5"
+    },
+    {
+      "source_id": "UI0151",
+      "items": 2,
+      "status": [
+        "open",
+        "not-defect"
+      ],
+      "input_sha256": "6639578c5a13b25e1224eeb354cede2e7659a3ae81291d3d0a97d421c68de07a"
+    },
+    {
+      "source_id": "UI0154",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "fafc5a413e37bb3f68dcb4115d7bc4c8d416b65c7c92d38bb3e5828688d0faa9"
+    },
+    {
+      "source_id": "F0003",
+      "items": 2,
+      "status": [
+        "open",
+        "open"
+      ],
+      "input_sha256": "ec6a169f898413274aedf1313e782da860a33cf77ee423e61c31e9a4a2300151"
+    },
+    {
+      "source_id": "F0078",
+      "items": 2,
+      "status": [
+        "open",
+        "open"
+      ],
+      "input_sha256": "4283a91c184cb0add8ef6dcfe476dd2d16c7dba35ec252cae2377e890264abcc"
+    },
+    {
+      "source_id": "F0079",
+      "items": 2,
+      "status": [
+        "open",
+        "open"
+      ],
+      "input_sha256": "965daf3dfd2cdc761b72e73e7078b02ad39f460fb9335bf827b6bdfa4336ea82"
+    },
+    {
+      "source_id": "F0167",
+      "items": 2,
+      "status": [
+        "open",
+        "verification-needed"
+      ],
+      "input_sha256": "27f1c5f2243871c0d5c742033e08d39ae0c0d1737a2462d295a47ecfb292e9b0"
+    },
+    {
+      "source_id": "F0210",
+      "items": 1,
+      "status": [
+        "open"
+      ],
+      "input_sha256": "87cb3fb6e8cef8487f8a9eb6fb4a8b7121485bc774bb7b1d528217b6dd2ab5e5"
+    }
+  ],
+  "tier": "Structural/ref validation only; no semantic closure",
+  "application_tests_run": 0
+}

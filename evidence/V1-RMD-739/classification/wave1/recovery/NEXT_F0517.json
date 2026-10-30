@@ -1,0 +1,32 @@
+{
+  "source_id": "F0517",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Öğe bazlı yazıcı yönlendirme Host print dispatch'te kullanılmıyor",
+      "status": "verification-needed",
+      "invariant": "KitchenPrinterRouter (src/Modules/Kitchen/Routing/KitchenPrinterRouter.cs:9-135) öğe/ürün/kategori/günlük-özel/varayılan öncelikli yönlendirme mantığını uyguluyor ancak KitchenPrintDispatchHostedService (src/Host/Experience/KitchenOperations/KitchenPrintDispatchHostedService.cs:120-159) sadece istasyon bazlı yazıcıları kullanıyor (BridgeUnprintedTicketsAsync satır 136-156). Per-item routing Host katmanına bağlanmamış.",
+      "mechanism": "KitchenPrinterRouter.ResolveRoute() (satır 9-135) V0-DOM-011/V1-KIT-002 öncelik hiyerarşisini (Item > Product > DailySpecial > Category > Default) tam uyguluyor ve ambiguity reddediyor. Ancak KitchenPrintDispatchHostedService.BridgeUnprintedTicketsAsync() (satır 120-159) ticket.StationId'ye kayıtlı tüm aktif yazıcıları alıp (satır 136-138) her birine aynı payload ile print job kuyruğa ekliyor (satır 151-156). Router hiç çağrılmıyor. low-A.md:174'te 'Out of scope' notu ile tutarlı ama güncel doğrulanmamış deniliyor.",
+      "source_evidence": [
+        "src/Modules/Kitchen/Routing/KitchenPrinterRouter.cs:9-135",
+        "src/Host/Experience/KitchenOperations/KitchenPrintDispatchHostedService.cs:120-159",
+        "src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:432-488",
+        "evidence/V1-RMD-739/findings/low-A.md:174",
+        "docs/domain/printer-routing-precedence.md:27-30"
+      ],
+      "acceptance": "KitchenPrintDispatchHostedService.BridgeUnprintedTicketsAsync içinde KitchenPrinterRouter.ResolveRoute çağrılıp, ticket'in her kalemi için (veya ticket seviyesinde) uygun yazıcı çözümlenmeli. Veya planın 'Out of scope' kararı güncelse, bu kararın güncel olduğuna dair bir decision record veya güncellenmiş plan notu olmalı.",
+      "id": "W2-N-F0517-01",
+      "parents": [
+        "F0517"
+      ]
+    }
+  ],
+  "limitations": [
+    "KitchenPrinterRouter Module katmanında tam implementasyonlu ve testli (RoutingUnitTests.cs:18-395)",
+    "Host katmanında printer route yönetim uçları var (CreateRouteAsync, UpdateRouteAsync, GetRoutesAsync - KitchenOperationsStore.cs:432-488)",
+    "Sadece print dispatch worker (KitchenPrintDispatchHostedService) router'ı kullanmıyor",
+    "Bu bir 'Out of scope' kararı mı yoksa eksik entegrasyon mu netleşmeli",
+    "V1-KIT-002 plan dosyası Status: Done ama Owned surface src/Modules/Kitchen/Routing/** - Host entegrasyonu kapsam dışı bırakılmış olabilir"
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

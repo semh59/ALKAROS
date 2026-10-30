@@ -1,0 +1,24 @@
+{
+  "source_id": "UI0168",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "WaiterPWA bill sheet lacks bill printing (adisyon yazdırma) functionality",
+      "status": "open",
+      "invariant": "Waiter must be able to print a guest-facing bill (adisyon) from the phone before sending to cashier",
+      "mechanism": "WaiterPWA bill sheet (index.html lines 132-177, bill.js lines 1-348) has no print button or print logic; Cashier has split-payment.js:1441,1498 producing 'Bilgi Fişi' via window.print but that is cashier-side, not waiter-side; waiter needs adisyon (pre-payment guest bill) print",
+      "source_evidence": [
+        "src/Clients/WaiterPwa/wwwroot/index.html:132-177",
+        "src/Clients/WaiterPwa/wwwroot/js/sheets/bill.js:1-348",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:14"
+      ],
+      "acceptance": "WaiterPWA bill sheet adds print button generating formatted adisyon for guest (not fiscal), using window.print or server-rendered print layout",
+      "id": "W2-N-UI0168-01",
+      "parents": [
+        "UI0168"
+      ]
+    }
+  ],
+  "limitations": "Static review only; fiscal vs guest bill distinction not verified in server API; print layout/template not examined",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

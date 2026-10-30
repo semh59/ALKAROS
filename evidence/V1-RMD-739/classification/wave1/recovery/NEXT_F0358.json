@@ -1,0 +1,20 @@
+{
+  "source_id": "F0358",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "docs/engineering/kasa-faz0-redesign-requirements.md §7 still shows tasks 008/009 as '(Planned)' — both are Done",
+      "status": "open",
+      "invariant": "Documentation currency — requirement documents must reflect actual completion status; stale 'Planned' markers mislead planning and audit",
+      "mechanism": "low-A.md:15 references V1-CUI-007 — kasa-faz0-redesign-requirements.md §7 lists 008/009 as '(Planned)'; both tasks are Done per finding; decision record (Approver Semih, 2026-09-16, rejected alternative §6) is complete; evidence/V1-CUI-007 missing (no code change, acceptance doc only)",
+      "source_evidence": "D:/project/ALKAROS/evidence/V1-RMD-739/findings/low-A.md:15 (references V1-CUI-007)",
+      "acceptance": "Update kasa-faz0-redesign-requirements.md §7 to mark 008/009 as Done; verify decision record (2026-09-16) linked; create evidence/V1-CUI-007/ with acceptance confirmation",
+      "id": "W2-N-F0358-01",
+      "parents": [
+        "F0358"
+      ]
+    }
+  ],
+  "limitations": "Only finding document (low-A.md) available; actual kasa-faz0-redesign-requirements.md, decision record, and V1-CUI-007 task file not directly inspected. Defect inferred from finding description. Documentation update not verified.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

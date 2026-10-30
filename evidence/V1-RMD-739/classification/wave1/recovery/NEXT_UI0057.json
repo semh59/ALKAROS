@@ -1,0 +1,56 @@
+{
+  "source_id": "UI0057",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "WA bill.js:46-52 kurs ateşlemede kilit/ilerleme yok",
+      "status": "open",
+      "invariant": "Kurs ateşleme işlemi sürerken kilit yok; tekrar tetikleme riski",
+      "mechanism": "bill.js:46-56 fireCourse fonksiyonunda loading state yok; buton disable edilmiyor; api çağrısı sırasında kullanıcı tekrar tıklayabilir",
+      "source_evidence": "src/Clients/WaiterPwa/wwwroot/js/sheets/bill.js:46-56",
+      "acceptance": "fireCourse sırasında buton disabled olmalı veya loading indicator gösterilmeli; başarılı/başarısız sonucunda tekrar etkinleşmeli",
+      "id": "W2-N-UI0057-01",
+      "parents": [
+        "UI0057"
+      ]
+    },
+    {
+      "title": "WA pending-orders.js:86 red gerekçesi sabit 'Garson reddetti'",
+      "status": "open",
+      "invariant": "Red gerekçesi kullanıcıdan alınmıyor; sabit string",
+      "mechanism": "pending-orders.js:86: reason: 'Garson reddetti' hardcoded; UI'da reason input'u yok",
+      "source_evidence": "src/Clients/WaiterPwa/wwwroot/js/sheets/pending-orders.js:84-86",
+      "acceptance": "Reddet butonuna basıldığında gerekçe input alanı açılmalı; boş bırakılamaz validation eklenmeli",
+      "id": "W2-N-UI0057-02",
+      "parents": [
+        "UI0057"
+      ]
+    },
+    {
+      "title": "PT workspace.tsx:104 'Yeniden dene' sayfayı yeniden yüklüyor (durum kaybı)",
+      "status": "open",
+      "invariant": "Offline/reconnect durumunda window.location.reload() çağrılıyor; form verisi, draft, UI state kayboluyor",
+      "mechanism": "workspace.tsx:104 onRefresh: () => window.location.reload(); freshness.stale durumunda bu fonksiyon çağrılıyor",
+      "source_evidence": "src/Clients/PosTerminal/src/routes/workspace.tsx:104,112-116",
+      "acceptance": "Yeniden dene butonu sayfa reload yapmamalı; sadece backendStatus'i tekrar kontrol etmeli veya failed request'i retry etmeli; state korunmalı",
+      "id": "W2-N-UI0057-03",
+      "parents": [
+        "UI0057"
+      ]
+    },
+    {
+      "title": "Arka plan sekmede poll sürüyor (PT dinleyici yok, CA visibilitychange yok, WA yalnız masa poll'u)",
+      "status": "open",
+      "invariant": "Background tab'da gereksiz poll kaynak tüketiyor; visibilitychange listener yok",
+      "mechanism": "waiter-app.js:890: window.setInterval(() => { if (!document.hidden && ...) loadTables(); }, 15000); PT workspace.tsx'te visibility listener yok; cashier-app.js'te de yok",
+      "source_evidence": "src/Clients/WaiterPwa/wwwroot/waiter-app.js:889-891; src/Clients/PosTerminal/src/routes/workspace.tsx:95-117; src/Clients/Cashier/wwwroot/cashier-app.js (visibilitychange araması sonucu yok)",
+      "acceptance": "Her client'ta document.visibilitychange listener eklenmeli; hidden olduğunda poll durdurulmalı, visible olduğunda resume edilmeli",
+      "id": "W2-N-UI0057-04",
+      "parents": [
+        "UI0057"
+      ]
+    }
+  ],
+  "limitations": "Static report classification; güncel runtime doğrulaması yapılmamış. WA bill.js fireCourse aslında loadOrder await ediyor - race condition riski var mı doğrulanmadı. PT workspace.tsx reload yerine ne yapmalı (retry logic?) net değil.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

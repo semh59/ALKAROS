@@ -1,0 +1,267 @@
+{
+  "result": "Kısmen uyumlu. Identity 25/23, Payments 12/12 sayıları ve kaynak hash’leri (0 mismatch) doğrulandı. GYZ-001/003/004/005/007 ve PAY-003/005/009/010/012 mekanizmaları kaynakla doğrulandı. 9 gereksiz/aşırı karar engeli var (GYZ-008/010/011/012/016/019/024, PAY-004/007 kısmi). Aynı dosyada bağımlılıksız paralel çakışma: Identity 9 çift, Payments 25 çift.",
+  "findings": [
+    {
+      "defect_id": "GYZ-001",
+      "issue": "Doğrulandı: positional record, ToString/PrintMembers override yok; LoginSuccess Session taşıyor. Mekanizma/status open uyumlu; canlı log sink iddiası yok, doğru.",
+      "evidence": [
+        "src/Modules/Identity/Authentication/SessionTokenIssuer.cs:10",
+        "src/Modules/Identity/Authentication/LoginResult.cs:10-13",
+        "src/Modules/Identity/Authentication/AuthenticationService.cs:92-93",
+        "grep PrintMembers src: 0"
+      ],
+      "recommendation": "Kabul; acceptance’a record `with` kopyası ve JSON serileştirme davranışının (Token bilinçli çıkış) ayrımını ekle."
+    },
+    {
+      "defect_id": "GYZ-003",
+      "issue": "Doğrulandı: Fields runtime tipi Dictionary; downcast mutasyonu mümkün. production_paths SensitivePayloadProtector.cs içeriyor ama RG-PAYLOAD exact_surface içermiyor.",
+      "evidence": [
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs:11,31",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:45"
+      ],
+      "recommendation": "production_paths ile exact_surface eşitle (Protector değişmeyecekse çıkar)."
+    },
+    {
+      "defect_id": "GYZ-004",
+      "issue": "Doğrulandı: Categories Dictionary; PayloadRedactor.cs:19 kategoriye göre ham değer döndürür. Statik bypass açık; runtime yok.",
+      "evidence": [
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs:32",
+        "src/BuildingBlocks/Security/SensitiveData/PayloadRedactor.cs:17-21"
+      ],
+      "recommendation": "Kabul; GYZ-003 ile aynı dosya/fix, RG-PAYLOAD birleşimi doğru."
+    },
+    {
+      "defect_id": "GYZ-005",
+      "issue": "Doğrulandı: FieldCategories public init + Dictionary kopya; AAD+kategori eşleşme kontrolü decrypt bypassı engeller (taslak bunu doğru sınırlıyor). RG-ENVELOPE exact_surface SensitivePayloadProtector.cs içermiyor, production_paths içeriyor.",
+      "evidence": [
+        "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs:14,28,52",
+        "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:73-84"
+      ],
+      "recommendation": "FromPersistenceBytes STJ init-property yolunu acceptance’ta açık say; production_paths/exact_surface eşitle."
+    },
+    {
+      "defect_id": "GYZ-007",
+      "issue": "Doğrulandı: ApplyStepAsync yalnız account-charge lock + plan.BlockSql; legal_holds kontrolü yok; PlaceHoldAsync kilitsiz insert; hold yalnız CompleteAsync triggerında (170 up.sql:145) yakalanır. Mevcut test (AnonymizationWorkflowTests.cs:184) yalnız completion reddini korur. Status open, blocker null doğru: teknik kural, PO gerekmez.",
+      "evidence": [
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:113-157,181-194",
+        "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs:128-153,168-181",
+        "database/migrations/V15/V15-KVK-001/170-privacy-retention-execution.up.sql:145-147"
+      ],
+      "recommendation": "Kabul; ortak kilit anahtarının (hold+step) tek yerde tanımlanacağını acceptance’a ekle."
+    },
+    {
+      "defect_id": "GYZ-008",
+      "issue": "decision_blocker gereksiz PO/karar: KVK-001 devir notu yeniden denetimi (bakiye, yakın hareket, bekleyen talep) zaten açıkça istiyor; uygunluk predicate’i RetentionSelection.Due içinde mevcut.",
+      "evidence": [
+        "evidence/V15-KVK-001/README.md:30-31",
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:35-46,78"
+      ],
+      "recommendation": "decision_blocker=null; teknik kural: apply transaction’ında aynı Due predicate’ini mevcut policy_version ile yeniden değerlendir."
+    },
+    {
+      "defect_id": "GYZ-010",
+      "issue": "decision_blocker gereksiz: supplier invoice/receipt/order bazı selection’da tanımlı, KVK-001 README tedarikçi için re-check’i istiyor.",
+      "evidence": [
+        "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:48-55",
+        "evidence/V15-KVK-001/README.md:30-31",
+        "src/Host/Program.cs:845"
+      ],
+      "recommendation": "decision_blocker=null; RG-CUSTOMER ile aynı teknik predicate yaklaşımı."
+    },
+    {
+      "defect_id": "GYZ-011",
+      "issue": "decision-blocked aşırı: mimari tablo satır 82 Privacy.Anonymization’ın diğer şemaları plain SQL ile temizlemesini kayıtlı onaylar; AnonymizationModels:22-25 composition-root sağlayıcıyı belgeler. Kalan sorun KVK-002 owned-surface (Program.cs yalnız komut bağlama) tarihsel scope ihlali.",
+      "evidence": [
+        "docs/architecture/module-dependency-rules.md:82",
+        "src/Modules/Privacy/Anonymization/AnonymizationModels.cs:22-25",
+        "plan/v1.5/kvkk/V15-KVK-002-cross-store-anonymization.md:36-37"
+      ],
+      "recommendation": "BD/scope-history olarak open yap; yeni mimari karar gerektiren kısmı yalnız line164 “never raw cross-schema SQL” ile row82 çelişkisi diye daralt."
+    },
+    {
+      "defect_id": "GYZ-012",
+      "issue": "decision_blocker kısmen gereksiz: RMD-268 producer görevlerinin InsertAsync çağırmasını zorunlu sayıyor (mevcut yön). Storage/backfill teknik mimari, PO değil.",
+      "evidence": [
+        "plan/v1/remediation/V1-RMD-268-maintenance-jobs-and-retention-sweep.md:29-33"
+      ],
+      "recommendation": "Blocker’ı teknik mimari karar (authoritative pointer vs owning-store disposal) olarak etiketle, PO bekletme."
+    },
+    {
+      "defect_id": "GYZ-016",
+      "issue": "decision_blocker teknik kontrat (attempts vs transition) ürün kararı değil; status open ile blocker dolu olması tutarsız.",
+      "evidence": [
+        "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:76-94,159-178",
+        "database/migrations/V15/V15-KVK-002/172-privacy-anonymization-workflow.up.sql:28-46"
+      ],
+      "recommendation": "decision_blocker=null; teknik kural görev içinde seçilsin (aynı Blocked transition tekil, attempts sayacı korunur)."
+    },
+    {
+      "defect_id": "GYZ-019",
+      "issue": "decision-blocked gereksiz: repo command-start kuralını açıkça seçmiş ve kabul etmiş (kod yorumu CODE-008, RMD-743 out-of-scope “kabul edilen davranış”, endpoint yorumu). IAM-008:44 “chosen linearization kuralına göre aynı transaction/conditional write” ifadesi command-start ile yorumlanabilir; gerçek çelişki belge ifadesi.",
+      "evidence": [
+        "src/Modules/Identity/Authorization/RoleManagementService.cs:8-15",
+        "plan/v1/remediation/V1-RMD-743-son-yonetici-es-zamanlilik.md:32",
+        "src/Host/Experience/Roles/RoleManagementEndpoints.cs:25",
+        "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:44",
+        "evidence/V1-RMD-739/findings/po-questions.md:13"
+      ],
+      "recommendation": "Kategori BD/KN, status open: IAM-008 acceptance metnini mevcut command-start kararına hizala; Semih kararı yalnız fail-closed revocation-before-write istenirse. RG-INFLIGHT-TEST bu karara göre bloke olmadan ilerleyebilir."
+    },
+    {
+      "defect_id": "GYZ-021",
+      "issue": "historical-fixed kaynakla uyumlu (tek transaction + advisory xact lock + sayım). Ancak RG-LAST-MANAGER NEW test ve exact production surface listeliyor; historical-fixed için repair grubu gereksiz yazım yüzeyi açar.",
+      "evidence": [
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:274-298",
+        "evidence/V1-RMD-743/green.log:12-13",
+        "evidence/V1-RMD-743/mutations.log:1-4"
+      ],
+      "recommendation": "Verification-only (fresh rerun) olarak işaretle; production path’leri exact_surface’tan çıkar, yalnız test/evidence."
+    },
+    {
+      "defect_id": "GYZ-024",
+      "issue": "Mevcut belge onayı var: RMD-457 README bilinen sınır olarak self-revoke’u kabul ediyor; kodda last-manager guard var. Gerçek kusur yok; PO decision-blocked task kuyruğunu şişirir.",
+      "evidence": [
+        "evidence/V1-RMD-457/README.md:18-19",
+        "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:286-288"
+      ],
+      "recommendation": "non-defect/known-limitation olarak ayrı say; görev açma, Semih farklı karar verirse yeniden aç."
+    },
+    {
+      "defect_id": "PAY-003",
+      "issue": "Doğrulandı + ek mekanizma: MarkNotChargedAsync confirmation tablosuna dokunmaz; ApproveAsync sonradan payment Declined olduğu için NotResolvable atar (stuck Pending), RejectAsync payment kontrol etmeden reddedebilir → slip kilidi yalnız manuel reject ile çözülür. DI: ManualPaymentResolutionService’e repo eklemek modül kaydı yüzeyi gerektirebilir.",
+      "evidence": [
+        "src/Modules/Payments/ManualResolution/ManualPaymentResolutionService.cs:26-67",
+        "src/Modules/Payments/ManualResolution/ManualCardConfirmationService.cs:117-125,183-191",
+        "database/migrations/V1/V1-RMD-283/143-manual-card-confirmations.up.sql:26-29",
+        "src/Modules/Payments/CardSettlement/CardSettlementModule.cs:25"
+      ],
+      "recommendation": "Mechanism’e stuck-Pending/approve-NotResolvable ekle; CardSettlementModule.cs (veya DI kaydı) gerekirse exact_surface’a ekle; Host DualScreenApplication.Payments.cs callback dokunulmayacaksa açık yaz."
+    },
+    {
+      "defect_id": "PAY-004",
+      "issue": "Blocker gereksiz: “mevcut audit sözleşmesini oku” teknik okuma işi; status open iken decision_blocker dolu tutarsız.",
+      "evidence": [
+        "src/Host/Experience/Orders/OrderSettlementService.cs:37,63",
+        "src/Modules/Orders/OrderAggregate/Order.cs:256"
+      ],
+      "recommendation": "decision_blocker=null; mevcut actorType System kullanımını görev hazırlığında okuyup exact sözleşmeyi yaz."
+    },
+    {
+      "defect_id": "PAY-005",
+      "issue": "Doğrulandı statik: PaymentClosure altında advisory/bill-settlement kilidi 0 eşleşme; kart orkestratörü aynı ad kilidi alır; calculator Pending/Unknown/ReconciliationRequired’ı blocker yapar, yarış projection→Save penceresinde. needs-verification doğru (runtime yok).",
+      "evidence": [
+        "src/Modules/Billing/PaymentClosure/BillClosureService.cs:23-45",
+        "src/Modules/Billing/PaymentClosure/BillPaymentClosureCalculator.cs:62-65",
+        "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs:64,231-234",
+        "evidence/V1-RMD-604/README.md:22"
+      ],
+      "recommendation": "Kabul; RG-01 ile aynı dosya → seri."
+    },
+    {
+      "defect_id": "PAY-006",
+      "issue": "Kısmi emsal var: manual_card_confirmations global upper(slip_number) unique (Rejected hariç); refund için kapsam yine karar ama emsal not edilmeli.",
+      "evidence": [
+        "database/migrations/V1/V1-RMD-283/143-manual-card-confirmations.up.sql:26-27",
+        "database/migrations/V1/V1-RMD-508/183-refund-requests.up.sql:16,30-32"
+      ],
+      "recommendation": "PO sorusunu “refund slip kart onayı ile aynı global kapsam mı” diye daralt."
+    },
+    {
+      "defect_id": "PAY-007",
+      "issue": "Mevcut onay var (kısmi): migration 185 yorumu/constraint allowance içinde ikinci kişi gerekmediğini açıkça kodlar; Manager modunda decider≠requester DB kuralı. Belirsiz kalan yalnız manager-onaylı manuel iadede completer=requester.",
+      "evidence": [
+        "database/migrations/V1/V1-RMD-520/185-refund-allowance.up.sql:1,13-15",
+        "src/Host/Experience/Billing/PaymentRefunds.cs:390-393,416-434"
+      ],
+      "recommendation": "decision_blocker’ı tek soruya daralt; allowance istisnası karar değil mevcut kural."
+    },
+    {
+      "defect_id": "PAY-008",
+      "issue": "Statik ek gerçek kusur: AwaitingManualRefund durumundan yalnız CompleteManual çıkışı var (reject/iptal yok); allowance harcanmış kalem terminal olmadan takılabilir. Bu PO bağımsız yaşam-döngüsü eksikliği.",
+      "evidence": [
+        "src/Host/Experience/Billing/PaymentRefunds.cs:199-223,390,418",
+        "src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs:44-56"
+      ],
+      "recommendation": "“terminal çıkış yok” kısmını open teknik alt kusur olarak ayır; rezervasyon/iade kuralı PO kalsın."
+    },
+    {
+      "defect_id": "PAY-009",
+      "issue": "Probe doğruladı: tahsissiz kapanabilir hesap seçilmiyor (exit 0). Sınır: fixture closable bayrağı; tahsissiz sıfır-ödenecek hesabın TryClose ile Closed döndüğü kanıtlanmadı.",
+      "evidence": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs:57-64",
+        "scratch probe stdout: REPRODUCED allocation-free"
+      ],
+      "recommendation": "Acceptance’a önce zero-payable projection PaymentSatisfied/Closed teyidi ekle."
+    },
+    {
+      "defect_id": "PAY-010",
+      "issue": "Probe + kaynak doğruladı: Paid filtre dışı; AlreadyClosed continue (79-80), completion hiç yeniden denenmez.",
+      "evidence": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs:59,78-87",
+        "scratch probe stdout: REPRODUCED Paid excluded"
+      ],
+      "recommendation": "Kabul; seçim sorgusu PAY-009/012 ile aynı → seri."
+    },
+    {
+      "defect_id": "PAY-012",
+      "issue": "Probe doğruladı: 201 yeni kapanamaz hesap eski kapanabiliri iki turda dışlar. parents=[] yeni bulgu; RMD-750 Goal ASC anlatıyor, kod DESC (plan metni eski davranış).",
+      "evidence": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs:52-64",
+        "plan/v1/remediation/V1-RMD-750-hesap-kapatma-sweeper-tikanmasi.md:15",
+        "scratch probe stdout: REPRODUCED 201 newer"
+      ],
+      "recommendation": "Ana sayıma ayrı “yeni aday” olarak ekle; PAY-009 ile tek grup."
+    }
+  ],
+  "merge_suggestions": [
+    "PAY-G09+PAY-G12 birleştir (aynı seçim sorgusu); PAY-G10 buna bağımlı seri.",
+    "RG-PAYLOAD ve RG-ENVELOPE EnvelopeProtectionTests.cs paylaşıyor ve bağımlılık yok: birleştir veya ENVELOPE→PAYLOAD bağımlılığı ekle.",
+    "RG-INFLIGHT-DECISION’ı BD belge düzeltmesine çevir; RG-IAM008-DOC ile birleştir (aynı IAM-008 plan md).",
+    "RG-SCHEDULER-DOC ↔ RG-RETENTION-INTEGRATION/RG-CREDENTIAL-DELETE ortak dosyaları sırala.",
+    "PAY-G06/G07/G08 PaymentRefunds.cs+PaymentRefundHttpTests.cs: seri zincir; PAY-G02/G04/G10 OrderSettlementService.cs: seri; PAY-G01/G05 BillClosureService.cs: seri.",
+    "RG-SELF-REVOKE (GYZ-024) görev değil known-limitation; RG-457-DOC bağımlılığını kaldır.",
+    "IDENTITY paralel çakışma: RG-PAYLOAD+RG-ENVELOPE: tests/BuildingBlocks/Security/SensitiveData/Protection/EnvelopeProtectionTests.cs",
+    "IDENTITY paralel çakışma: RG-CUSTOMER-ELIGIBILITY+RG-CREDENTIAL-DELETE: src/Host/Program.cs",
+    "IDENTITY paralel çakışma: RG-SUPPLIER-ELIGIBILITY+RG-CREDENTIAL-DELETE: src/Host/Program.cs",
+    "IDENTITY paralel çakışma: RG-ANON-BOUNDARY+RG-CREDENTIAL-DELETE: src/Host/Program.cs",
+    "IDENTITY paralel çakışma: RG-RETENTION-INTEGRATION+RG-SCHEDULER-DOC: src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs, tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs",
+    "IDENTITY paralel çakışma: RG-CREDENTIAL-DELETE+RG-SCHEDULER-DOC: plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md",
+    "IDENTITY paralel çakışma: RG-LAST-MANAGER+RG-INFLIGHT-EVIDENCE: tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs",
+    "IDENTITY paralel çakışma: RG-INFLIGHT-EVIDENCE+RG-IAM008-DOC: plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md",
+    "IDENTITY paralel çakışma: RG-INFLIGHT-EVIDENCE+RG-SELF-REVOKE: tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G01+PAY-G05: src/Modules/Billing/PaymentClosure/BillClosureService.cs, src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs, tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G02+PAY-G03: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G02+PAY-G04: src/Host/Experience/Orders/OrderSettlementService.cs, tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G02+PAY-G05: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G02+PAY-G09: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G02+PAY-G10: src/Host/Experience/Orders/OrderSettlementService.cs, tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G02+PAY-G12: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G03+PAY-G04: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G03+PAY-G05: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G03+PAY-G09: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G03+PAY-G10: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G03+PAY-G12: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G04+PAY-G05: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G04+PAY-G09: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G04+PAY-G10: src/Host/Experience/Orders/OrderSettlementService.cs, tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G04+PAY-G12: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G05+PAY-G09: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G05+PAY-G10: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G05+PAY-G12: tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G06+PAY-G07: src/Host/Experience/Billing/PaymentRefunds.cs, tests/Host/Experience/Billing/PaymentRefundHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G06+PAY-G08: src/Host/Experience/Billing/PaymentRefunds.cs, tests/Host/Experience/Billing/PaymentRefundHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G07+PAY-G08: src/Host/Experience/Billing/PaymentRefunds.cs, tests/Host/Experience/Billing/PaymentRefundHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G09+PAY-G10: src/Host/Experience/Billing/BillClosureSweeper.cs, tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G09+PAY-G12: src/Host/Experience/Billing/BillClosureSweeper.cs, tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+    "PAYMENTS paralel çakışma: PAY-G10+PAY-G12: src/Host/Experience/Billing/BillClosureSweeper.cs, tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+  ],
+  "probe_exit": 0,
+  "limitations": [
+    "Probe repo dosyası çalıştırılmadı; scratch kopyası (ROOT=D:/project/ALKAROS sabit, SOURCE aynı) python -B ile bir kez koştu; log scratch/sweeper-selection-probe.log ve 739-security-payments-probe-stdout.log. Repo sweeper-selection-probe.log yenilenmedi.",
+    "Probe yalnız seçim SQL’i, TEMP tablo + ROLLBACK; Host/TryClose/OrderSettlement yürütmesi yok.",
+    "Uygulama testi yazılmadı/koşulmadı; tüm diğer bulgular statik kaynak okuması, confirmed runtime değil.",
+    "GYZ-002/006/009/013/014/015/017/018/020/022/023/025 ve PAY-001/002/011 yalnız kaynak satırı/hash düzeyinde kontrol edildi, derin yeniden doğrulama yapılmadı.",
+    "Belgelenmiş “karar” kayıtlarının yetkili PO onayı olup olmadığı (agent yazımı vs Semih) doğrulanamadı.",
+    "8 dk sınırı nedeniyle register/tasks Bnnn kartları yeniden okunmadı."
+  ]
+}

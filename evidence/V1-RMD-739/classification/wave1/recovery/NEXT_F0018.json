@@ -1,0 +1,28 @@
+{
+  "source_id": "F0018",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Oturum, üretildiği table token'a bağlı değil (085 şemasında token_id yok) ve CustomerSessionService.RevokeAsync üretim kodunda hiçbir yerden çağrılmıyor",
+      "status": "open",
+      "invariant": "CustomerSession satırı table token ile birebir ilişkilendirilmeli (token_id FK); RevokeAsync bir production entry point'ten (masa kapatma, staff iptali, müşteri 'oturumu bitir' aksiyonu) çağrılmalı",
+      "mechanism": "1) Migration 085 (085-qr-ordering-customer-sessions.up.sql:5-18) customer_sessions tablosunda table_id FK var ama token_id kolonu/foreign key yok. CustomerSession entity'si (CustomerSession.cs:16-47) TableId tutar ama TokenId yok. IssueAsync (CustomerSessionService.cs:45-57) table token validate edip session basar ama table token'ın TokenId'sini session'a kaydetmez. 2) CustomerSessionService.RevokeAsync (CustomerSessionService.cs:87-88) public ama grep (register.md:13, 25-28) production kodunda hiç çağrılmıyor. QrOrderingEndpoints.cs'de /sessions (issue), /menu, /bill, /orders, /orders/{id} (validate) var ama revoke endpoint'i yok. Masa token'ı iptal/rotasyon edilince (TableTokenService.RevokeAsync/RotateAsync) veya masa kapanınca bağlı session'ların iptali yok.",
+      "source_evidence": [
+        "database/migrations/V12/V12-QRS-003/085-qr-ordering-customer-sessions.up.sql:5-18",
+        "src/Modules/QrOrdering/CustomerSession/CustomerSession.cs:16-47",
+        "src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs:45-57",
+        "src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs:87-88",
+        "src/Host/Experience/QrOrdering/QrOrderingEndpoints.cs:101-260",
+        "evidence/V1-RMD-739/findings/register.md:13",
+        "evidence/V1-RMD-739/findings/register.md:25-28"
+      ],
+      "acceptance": "customer_sessions tablosuna token_id UUID NOT NULL, FK → qr_ordering.table_tokens(token_id) eklenir; IssueAsync table_token.TokenId'yi session'a yazar; RevokeAsync bir production endpoint (örn. POST /api/v1/qr/sessions/{sessionId}/revoke veya masa kapanma/token rotasyonu event handler) ile çağrılır; TableTokenService.RevokeAsync/RotateAsync sonrası bağlı session'lar iptal edilir.",
+      "id": "W2-N-F0018-01",
+      "parents": [
+        "F0018"
+      ]
+    }
+  ],
+  "limitations": "Plan V12-QRS-003.md 'In scope' da 'table bağlama' ve 'iptal' var ama acceptance evidence token_id FK ve RevokeAsync production çağrısını kanıtlamıyor. TableTokenService.RevokeAsync/RotateAsync (TableTokenService.cs:75-85) mevcut ama CustomerSession tarafına propagation yok. Bu iki kusur (token_id FK eksikliği + RevokeAsync çağrısız) bağımsız ama ilişkili.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

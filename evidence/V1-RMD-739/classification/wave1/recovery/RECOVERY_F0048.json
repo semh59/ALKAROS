@@ -1,0 +1,56 @@
+{
+  "source_id": "F0048",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Adjustment composite FK için çapraz adisyon negatif testi ve 032 fixture'ı yok",
+      "status": "open",
+      "invariant": "Mevcut başka adisyona ait gerçek kalemle adjustment bağlama girişimi, özellikle composite FK nedeniyle reddedildiğini kanıtlayan regresyonla korunmalıdır.",
+      "mechanism": "ForeignKeyConstraintsEnforced rastgele bilinmeyen BillId/BillItemId ile yalnız 23503 bekliyor; tek kolon FK da aynı sonucu verir. Adjustments test projesinin Fixtures/sql kopya listesinde 032 yok; fixture yalnız kopyalanmış *.up.sql dosyalarını çalıştırıyor. Dolayısıyla yalnız yeni çapraz adisyon girdisi değil, 032'yi içeren şema kurulumu da gerekli. Üretim 032 SQL'i composite FK içeriyor; üretim FK yokluğu değil test açığıdır.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:58 — özgün kesik kaynak",
+        "evidence/V1-RMD-739/tasks/B002.md:20-21 — tam iddia",
+        "tests/Modules/Billing/Adjustments/PostgresAdjustmentsTests.cs:146-160 — yalnız bilinmeyen kimlikler ve genel SqlState",
+        "tests/Modules/Billing/Adjustments/ALKAROS.Billing.Adjustments.Tests.csproj:24-36 — 032 içermeyen migration listesi",
+        "tests/Modules/Billing/Adjustments/Fixtures/AdjustmentsTestDatabase.cs:16-22 — kopyalanmış SQL'leri çalıştıran fixture",
+        "database/migrations/V1/V1-BIL-004/032-billing-composite-integrity.up.sql:40-44 — mevcut composite adjustment FK"
+      ],
+      "acceptance": [
+        "İki gerçek adisyon ve bunlara ait iki gerçek kalem oluştur; A adisyonuna B kalemiyle adjustment yazımı 23503 ve fk_bill_adjustments_item nedeniyle reddedilsin.",
+        "A adisyonuna A kalemiyle adjustment başarılı olsun; bill_item_id null olan adisyon düzeyi adjustment geçerli kalsın.",
+        "Test şeması 032'yi uygulamalı; FK yalnız bill_item_id'ye indirildiğinde çapraz adisyon testi kırmızı olmalı."
+      ],
+      "id": "W2-R-F0048-01",
+      "parents": [
+        "F0048"
+      ]
+    },
+    {
+      "title": "Split allocation composite FK için çapraz adisyon negatif testi ve 032 fixture'ı yok",
+      "status": "open",
+      "invariant": "Split allocation mevcut başka adisyonun kalemine bağlanamamalı ve bu garanti tek kolon FK'ya dönüşü yakalayan testle korunmalıdır.",
+      "mechanism": "SplitDesign ForeignKeyConstraintsEnforced yalnız rastgele bilinmeyen kimlikleri deniyor. SplitDesign test projesinde de 032 kopyalanmıyor; fixture çıktı dizinindeki *.up.sql listesini uyguluyor. Ödeme tahsisi CrossBill testleri farklı payments.payment_allocations invariant'ıdır; billing.bill_allocations composite FK'sına kanıt değildir. Bu kusur adjustment regresyonundan ayrı tablo/fixture ve test düzeltmesi gerektirir.",
+      "source_evidence": [
+        "tests/Modules/Billing/SplitDesign/PostgresSplitDesignTests.cs:177-205 — bilinmeyen kimliklerle 23503 beklentisi",
+        "tests/Modules/Billing/SplitDesign/ALKAROS.Billing.SplitDesign.Tests.csproj:24-37 — 032 içermeyen migration listesi",
+        "tests/Modules/Billing/SplitDesign/Fixtures/SplitDesignTestDatabase.cs:16-22 — kopyalanmış SQL'leri çalıştıran fixture",
+        "database/migrations/V1/V1-BIL-004/032-billing-composite-integrity.up.sql:24-28 — mevcut composite allocation FK"
+      ],
+      "acceptance": [
+        "İki gerçek adisyon/kalem üzerinden A adisyonuna B kalemiyle billing.bill_allocations yazımı 23503 ve fk_bill_allocations_item nedeniyle reddedilsin; aynı adisyon kalemi kabul edilsin.",
+        "032 uygulanmış fixture kullanılmalı; composite FK tek kolon FK'ya indirildiğinde negatif test kırmızı olmalı.",
+        "Reddedilen split değiştirme işlemi önceki allocation kümesini kısmen silmemeli."
+      ],
+      "id": "W2-R-F0048-02",
+      "parents": [
+        "F0048"
+      ]
+    }
+  ],
+  "limitations": [
+    "İki ilgili Postgres test dosyası ve fixture/proje dosyaları tamamen okundu; tests ağacında composite FK adı, 032 ve çapraz adisyon ifadeleri arandı. Dinamik adlandırılmış bütün olası testlerin yokluğu iddia edilmedi.",
+    "Test/migration çalıştırılmadı; mevcut çıktı dizinindeki stale SQL dosyaları incelenmedi. Temiz kaynak checkout'unda proje listelerinin 032'yi taşımadığı doğrulandı.",
+    "Bu kayıt test kapsamı açığıdır; üretimde composite FK'nın yanlış olduğu sonucu çıkarılmadı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

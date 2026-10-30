@@ -1,0 +1,187 @@
+{
+  "result": {
+    "scope": "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json salt-okunur statik denetimi; HEAD 8c03e79bdc5263f5a5a26a524693403012d871d2; runtime/test koşulmadı; repo yazılmadı.",
+    "counts_programmatic": {
+      "defects": 38,
+      "groups": 38,
+      "source_ids": 21,
+      "status": {"open": 21, "historical-fixed": 7, "decision-blocked": 6, "needs-verification": 4},
+      "defect_to_group_mismatch": 0,
+      "unresolved_source_evidence_paths": 0,
+      "defects_with_production_or_test_path_absent_from_group_exact_surface": 25
+    },
+    "key_claim_verdicts": {
+      "STK-002": "Statik olarak doğrulandı (her iki interleaving). Eski 740 kapanışı yanlış reopen edilmemiş; ayrı kalan yol. Surface/dependency düzeltmesi gerekli.",
+      "STK-025": "Statik olarak doğrulandı. Ancak STK-024/025 F0031 closure_status 'tam kapanış' ile çelişiyor; 'kismi-kalan-kusur-var' olmalı.",
+      "STK-038": "Lock-order tersliği statik olarak doğrulandı; sonuç kalıcı kilitlenme değil PostgreSQL 40P01 ile bir tx'in iptali (veri bozulması değil, işlem başarısızlığı). 'open' statik kesinlikte kabul edilebilir, runtime tekrar üretimi yok.",
+      "merge": "STK-006+007 ve STK-012+013 ayrı defect kimliği korunarak tek görev; STK-014 ayrı invariant; STK-024+025 tek görev; STK-037+038 tek görev önerilir."
+    }
+  },
+  "findings": [
+    {
+      "defect_id": "STK-002",
+      "issue": "İddia doğru: (A) Cancel önce commit ederse receipt'in LockLinesAndAssertReceivedAsync yalnız received_quantity karşılaştırır, status kontrolü yok; receipt UpdateAsync header status'u Completed/PartiallyReceived ile ezer ve stok iptal PO'ya işlenir. (B) Receipt önce commit ederse stale Cancel (Status=Submitted snapshot, Cancel() guard'ı geçer) tx'siz UpdateAsync ile header=Cancelled ve satırları received_quantity=0/eski line status ile mutlak yazar; ledger/balance artışı kalır. İki Host endpoint de canlı.",
+      "evidence": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:131-138 (Cancel: tx'siz GetById + UpdateAsync)",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:144-150,255-265 (status yalnız tx dışı snapshot'ta kontrol)",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs:202-251 (mutlak SET status/received_quantity, WHERE yalnız id)",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs:253-278 (FOR UPDATE yalnız lines, yalnız received_quantity karşılaştırması)",
+        "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:229-242",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:191-223",
+        "src/Host/Composition/Errors/ApiErrorCatalog.cs:338-339 (PurchaseOrderStatusException→409 zaten var)",
+        "plan/v1/remediation/V1-RMD-740-mal-kabul-es-zamanlilik.md In scope yalnız receipt-receipt; F0017 register.md:24 kök nedeni 'mutlak değer, sürüm/WHERE yok' → STK-002 aynı parent altında kalan yol, 740 yanlış reopen değil"
+      ],
+      "recommendation": "Status 'open' korunabilir (statik, iki gerçek endpoint). RG-STK-02 exact_surface'a production_paths'teki PurchaseOrderModels.cs eklenmeli veya production_paths'ten çıkarılmalı; Host endpoint değişikliği gerekmiyor (409 eşlemesi mevcut) → Host'u production_paths'ten çıkar veya yalnız HTTP testi gerekiyorsa tests/Host/... ekle. Migration yok: purchase_orders'ta row_version yok (V11-PUR-001 migration grep boş); çözüm Cancel'ı tx içinde header FOR UPDATE + status yeniden doğrulama, receipt'te de header FOR UPDATE + status kontrolü olacak şekilde tasarlanmalı; version kolonu seçilirse exact migration yolu planda adlandırılmalı. RG-STK-01 bağımlılığı gerçek blocker değil; STK-001 regresyonu RG-02 acceptance içinde yeniden koşulsun. Kardeş aday (doğrulanmadı, open'a yükseltme): Submit+Cancel Draft üstünde aynı mutlak-yazma lost-update; ayrı needs-verification olarak not edilebilir."
+    },
+    {
+      "defect_id": "STK-024",
+      "issue": "historical_source_closure F0031 'kayitli-kanitla-tam-kapanis-eslesmesi' iken mechanism metni 'delta=0 branch kontrolsüz kaldı; tam parent kapanışı değildir' diyor ve STK-025 aynı parent altında open. F0030 için kullanılan 'kismi-kalan-kusur-var' sınıfı burada da geçerli. Ayrıca acceptance 'count row rollback sonrası yok' assertion'ı mevcut testte yok (yalnız balance=7 ve movements boş).",
+      "evidence": [
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:107-124",
+        "evidence/V1-RMD-739/findings/register.md:38 (F0031: 'sayılan değer yerine yanlış bakiye oluşur, sessizce')",
+        "plan/v1/remediation/V1-RMD-741-fiziksel-sayim-es-zamanlilik.md In scope: 'Uygulanan bakiye ile sayılan miktar uyuşmazlığı' (yalnız uygulanan dal)"
+      ],
+      "recommendation": "STK-024 ve STK-025 için F0031 closure_status → 'kismi-kalan-kusur-var' (closure_task V1-RMD-741 korunur). 741 nonzero düzeltmesi reopen edilmez; count-row assertion eksiği production kusuru değil coverage notu olarak RG-STK-19 testine taşınmalı."
+    },
+    {
+      "defect_id": "STK-025",
+      "issue": "İddia doğru: currentOnHand tx dışında okunur; delta==0 ise if bloğu tümüyle atlanır, ne lock ne guard; count previous=10/counted=10 ve result NewOnHand=10 döner, gerçek balance 7. Mevcut RacingBalanceRepository counted=10 ile bu dalı tetikler. HTTP 409 eşlemesi mevcut.",
+      "evidence": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:65-77,103-127",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:126-154 (proxy her GetByItemAndLocationAsync çağrısında afterRead çalıştırır)",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:404"
+      ],
+      "recommendation": "Status 'open' korunur. Exact surface uyumsuz: production_paths IStockBalanceRepository/PostgresStockBalanceRepository içeriyor, RG-STK-19 exact_surface içermiyor. Arayüze tx'li okuma eklenirse IStockBalanceRepository'yi implement eden 5 test fake'i de surface'e girmeli: tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs, tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs, tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs, tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs, tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs. Arayüz değişmeden mevcut AcquireOnHandLockAsync + TryApplyGuardedOnHandDeltaAsync ile çözülürse yalnız PhysicalCountService+test yeterli; hangi tasarımın seçildiği surface'i belirler, plan bunu açıkça seçmeli. Test tasarım notu: fix GetByItemAndLocationAsync'i tx içinde tekrar çağırırsa proxy yarışı ikinci kez enjekte eder (−3 iki kez); test barrier'ı tek-seferlik yapılmalı."
+    },
+    {
+      "defect_id": "STK-038",
+      "issue": "Mekanizma doğru: Production SELECT ... FOR UPDATE ile balance satır kilidini alır (advisory yok), sonra ApplyOnHandDeltaAsync içinde advisory alır; satış LockStockRowsAsync ile önce advisory, sonra TryApplyGuarded upsert ile satır kilidi ister → AB-BA döngüsü. Sonuç PostgreSQL deadlock detector'ün bir tx'i 40P01 ile iptal etmesi; kalıcı bekleme veya yarım commit yok. Ek gözlem: Production apply döngüsü sıralı listeyi değil plannedConsumptions (recipe sırası) kullanır. Production endpoint'te retry yok; satış tarafında V1-WTR-027 retry'ı kodda yorumla anılıyor, bu denetimde izlenmedi.",
+      "evidence": [
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:226-262 (sıralı FOR UPDATE)",
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:267-274 (plannedConsumptions sırasıyla ApplyOnHandDeltaAsync)",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:171-186,203-214,252-266 (advisory→upsert)",
+        "src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs:140,170-174,260-275",
+        "src/Host/Experience/Production/ProductionManagementEndpoints.cs:145-160 (canlı caller, retry yok)",
+        "src/Host/Experience/Orders/PendingOrderConfirmation/PendingOrderConfirmationStore.cs:119 (ikinci canlı LockStockRowsAsync caller)"
+      ],
+      "recommendation": "Status 'open' statik kesinlikte kalabilir; mechanism metnine 'etki: 40P01 ile işlem iptali, veri tutarlılığı korunur; runtime reproduksiyon yok' eklenmeli, acceptance'taki 'timeout' ifadesi yerine yalnız 40P01 SQLSTATE beklenmeli. Minimal fix Production-only: FOR UPDATE öncesi sıralı AcquireOnHandLockAsync (zaten public interface üyesi) → production_paths'teki PostgresStockBalanceRepository.cs ve OrderStockConsumptionService.cs okuma bağımlılığıdır, yazma surface'i değil; production_paths'ten çıkarılmalı veya 'read-only' işaretlenmeli. AtomicCompensationTests test_path'i de RG-STK-32 exact_surface'ta yok; kullanılmayacaksa test_paths'ten çıkar."
+    },
+    {
+      "defect_id": "STK-037",
+      "issue": "STK-038 ile aynı satırlar (ProductionStockEffectService.cs:231-236). STK-038'in muhtemel fix'i raw FOR UPDATE'i advisory-önce düzenine çeker veya kaldırır; F0560 gözlemi aynı değişiklikle cevaplanır.",
+      "evidence": [
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:228-262",
+        "evidence/V1-RMD-739/findings/low-A.md:217"
+      ],
+      "recommendation": "needs-verification/non-finding sınıfı korunur; RG-STK-31 ayrı görev yerine RG-STK-32 görevinin non-finding kaydı olarak birleştirilsin (aynı dosya, aynı satırlar, paralel çalışamaz)."
+    },
+    {
+      "defect_id": "STK-006",
+      "issue": "Mekanizma doğru (Reset/SetExact/Restore her biri _dataSource.CreateCommand autocommit). Ancak taslak üretim callerı olmadığını (STK-009) bu kayıtta belirtmiyor; canlı risk değil latent kusur. RG-STK-08 (erişilebilirlik kararı) RG-STK-37'ye bağımlı: önce fix sonra kaldır/tut kararı sırası ters — karar removal çıkarsa 06/07/08 işleri boşa gider. Reversal (RG-12→RG-35) ve manual adjustment (RG-14→RG-34) gruplarında karar-önce sırası doğru kullanılmış; tutarsız.",
+      "evidence": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:37-68",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:314-395",
+        "grep src: RebuildAllBalancesAsync yalnız IStockBalanceProjector.cs:13, IStockBalanceRepository.cs:53 (doc), StockBalanceProjector.cs:37"
+      ],
+      "recommendation": "Status 'open' kalsın fakat 'reachable: false (no production caller)' notu eklensin. Bağımlılık sırası tersine çevrilsin: RG-STK-08 kararı → RG-STK-06/37/07. Exact surface eksikleri: production_paths'teki IStockBalanceProjector.cs ve PostgresInventoryTransactionRunner.cs RG-STK-06'da yok; IStockBalanceRepository/IStockMovementRepository imzası değişirse 5 FakeStockBalanceRepository + 6 FakeStockMovementRepository (StockBalanceDomainTests, ManualAdjustmentDomainTests, StockMovementDomainTests, StockMovementReversalDomainTests, PortionReservationCancellationEffectsDomainTests, WasteRecordingDomainTests) surface'e girmeli."
+    },
+    {
+      "defect_id": "STK-007",
+      "issue": "Mekanizma doğru (reservedBefore ve SUM ayrı okumalar; canlı ApplyOnHandDelta/reservation create araya girebilir). STK-006 ile aynı method/dosya ve fix tasarımı (tek tx + tablo düzeyi lock) birbirine bağlı; ayrı paralel görev olamaz. production_paths'teki PostgresReservationBalanceRepository.cs, PostgresCrossChannelPortionArbiter.cs ve ReservationBalanceProjectionDatabaseTests.cs RG-STK-37 exact_surface'ta yok. Latent (caller yok).",
+      "evidence": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:47-64",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:64-137"
+      ],
+      "recommendation": "Ayrı defect kimliği korunsun (atomiklik ≠ izolasyon), görev olarak STK-006 ile birleştirilsin; iki ayrı RED test (failure-injection ve barrier interleaving). Canlı yazıcılar yalnız okunacaksa production_paths'ten çıkarılsın; tablo lock canlı yazıcı değişikliği gerektirmiyorsa arbiter dosyası surface değildir."
+    },
+    {
+      "defect_id": "STK-008",
+      "issue": "Mekanizma doğru (GetByLocationAsync 5000 cap, sonra item filtresi). ReplayBalanceForItemAndLocationAsync src'de yalnız interface+implementasyon; çağıranlar yalnız testler (StockBalanceDatabaseTests:235, StockBalanceDomainTests:130, ManualAdjustmentDatabaseTests:123,157). RG-STK-37 bağımlılığı yalnız dosya paylaşımından.",
+      "evidence": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:70-79",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:109-135",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs:123,157"
+      ],
+      "recommendation": "Status 'open' latent; RG-STK-08 erişilebilirlik kararına bağlanmalı (removal seçilirse test consumer'lar dahil kaldırılır). Exact surface'a ManualAdjustmentDatabaseTests.cs ve IStockMovementRepository fake'leri (imza değişirse) eklenmeli."
+    },
+    {
+      "defect_id": "STK-012",
+      "issue": "Atomiklik ihlali doğru (event rebuild ayrı commit, SetExactReservedBalanceAsync her biri autocommit). Fakat 'retry terminal eventini replay sayar ve gerekli düzeltmeyi atlayabilir' alt-iddiası rebuild'in kendi retry'ı için desteklenmiyor: retry activeSums'tan tüm satırları yeniden yazar ve iyileşir. Kalıcı zarar ancak STK-013 tipi canlı lifecycle interleaving ile oluşur. Latent (caller yok, STK-010).",
+      "evidence": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:73-113",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:274-300,323-347"
+      ],
+      "recommendation": "Status 'open' kalsın; mechanism'den retry alt-iddiası çıkarılsın veya 'kısmi projeksiyon bir sonraki tam rebuild'e kadar görünür' diye daraltılsın. RG-STK-33 kararı önce gelmeli (şu an RG-33→RG-38 bağımlılığı ters). IReservationBalanceRepository değişirse FakeReservationBalanceRepository içeren tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDomainTests.cs ve tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs surface'e girmeli."
+    },
+    {
+      "defect_id": "STK-013",
+      "issue": "Mekanizma doğru: aggregate→terminal commit (event+decrement)→event rebuild (Terminal içerir)→stale activeSums ile SetExact; reserved fazla kalır, terminal replay no-op. Yeni create aynı şekilde ezilebilir. STK-012 ile aynı method, aynı fix (tek tx + reservation/stock_balances lock). production_paths'teki PostgresPortionReservationRepository.cs ve AtomicCompensationTests.cs RG-STK-38 surface'ta yok.",
+      "evidence": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:77-108",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:139-215,302-347"
+      ],
+      "recommendation": "Ayrı defect kimliği korunsun, STK-012 ile tek görev. Stock rebuild (STK-006/007) da reserved_quantity yazdığı için iki rebuild ortak lock kararı paylaşır; RG-10→RG-06 bağımlılığı doğru ama lock tasarımı tek plan kararında belirtilmeli."
+    },
+    {
+      "defect_id": "STK-014",
+      "issue": "Doğru: (int)activeSums.Values.Sum() miktar toplamı, sayı değil. Ek nüans: decimal→int explicit cast int sınırını aşınca OverflowException fırlatır (wrap değil) ve bu tüm SetExact yazımları commit edildikten sonra olur; caller hata görür ama veri yazılmıştır.",
+      "evidence": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:110-112",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceModels.cs:26-29"
+      ],
+      "recommendation": "Farklı invariant (rapor sayımı) → ayrı defect ve ayrı task kalsın; aynı surface nedeniyle 12/13 görevinden sonra seri. Mechanism 'overflow' ifadesi 'OverflowException yazımlardan sonra' olarak netleştirilsin. COUNT için repository imzası değişirse 2 FakeReservationBalanceRepository dosyası surface'e eklensin."
+    },
+    {
+      "defect_id": "STK-026",
+      "issue": "Mekanizma doğru (Guid.NewGuid her çağrıda, request key yok). Exact surface'ta gerekli migration yolu ve istemci yok: kalıcı key için stock_physical_counts'a kolon+unique index migration'ı ve key üreten istemci gerekir.",
+      "evidence": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:68",
+        "src/Clients/PosTerminal/src/features/management-stock/stockApi.ts (physical-count istemcisi)"
+      ],
+      "recommendation": "Status 'open'; plan aşamasında exact yeni migration adı (V1-RMD-<id>/<n>-...up/down.sql), database/MigrationComposition/order.json girişi ve src/Clients/PosTerminal/src/features/management-stock/stockApi.ts (+ilgili UI testi) surface'e eklenmeden kodlama başlamamalı. RG-STK-19 ile aynı service/test dosyası → seri."
+    },
+    {
+      "defect_id": "STK-028",
+      "issue": "Taslak dizin yokluğunu bağımsız doğrulanmamış diyor; bu denetimde doğrulandı: evidence/V11-INV-008 dizini yok ve V1-RMD-739 dışındaki evidence/** altında 'V11-INV-008' referansı bulunmadı.",
+      "evidence": [
+        "ls evidence/V11-INV-008 → No such file or directory",
+        "grep -rl V11-INV-008 evidence (V1-RMD-739 hariç) → boş"
+      ],
+      "recommendation": "Kanıt-eksikliği olgusu artık doğrulandı; status 'open' (BD, evidence-missing) yapılabilir, ancak düzeltme yalnız tarihli 'kanıt yok' kaydıdır; 741 logları ilk kapanış kanıtı yerine konmaz, geçmiş koşu üretilmez."
+    },
+    {
+      "defect_id": "STK-022/STK-023",
+      "issue": "Production path'leri (WasteRecordingService, PostgresStockBalanceRepository, Runner, AtomicCompensationTests) production_paths/test_paths'te var ama exact_surface yalnız WasteRecordingDatabaseTests.cs. Test-only görev için doğru; listeler tutarsız.",
+      "evidence": ["evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json RG-STK-17, RG-STK-36"],
+      "recommendation": "production_paths 'read-only reference' olarak ayrılsın veya kaldırılsın; RG-17 ve RG-36 aynı test dosyası/aynı coverage hedefi (standalone waste tx) → tek test görevi olarak birleştirilebilir, RED kanıtı mutant ile."
+    },
+    {
+      "defect_id": "GENERAL",
+      "issue": "25/38 defect'te production_paths/test_paths ile grubun exact_surface'ı uyuşmuyor (programatik kontrol). Ayrıca interface imzası değişecek gruplarda (RG-06/07/37/19 IStockBalanceRepository-IStockMovementRepository; RG-10/11/38 IReservationBalanceRepository) test fake implementer dosyaları hiçbir surface'te yok; compile kırılır ve scope dışına çıkma gerekir.",
+      "evidence": [
+        "IStockBalanceRepository fakes: StockBalanceDomainTests.cs:175, ManualAdjustmentDomainTests.cs:345, StockMovementReversalDomainTests.cs:378, PortionReservationCancellationEffectsDomainTests.cs:142, WasteRecordingDomainTests.cs:456",
+        "IStockMovementRepository fakes: StockBalanceDomainTests.cs:279, ManualAdjustmentDomainTests.cs:239, StockMovementDomainTests.cs:232, StockMovementReversalDomainTests.cs:272, PortionReservationCancellationEffectsDomainTests.cs:117, WasteRecordingDomainTests.cs:348",
+        "IReservationBalanceRepository fakes: ReservationBalanceProjectionDomainTests.cs:8, PortionReservationCancellationEffectsDomainTests.cs:235"
+      ],
+      "recommendation": "Her görev için 'write surface' ve 'read-only reference' ayrı listelensin; interface değişikliği öngörülen her grupta fake implementer dosyaları açıkça write surface'e eklensin ya da tasarım interface'i değiştirmeyecek şekilde sabitlensin."
+    }
+  ],
+  "merge_suggestions": [
+    {"merge": ["STK-006", "STK-007"], "groups": ["RG-STK-06", "RG-STK-37"], "reason": "Aynı method (RebuildAllBalancesAsync), aynı dosyalar, birbirine bağlı fix (tek tx + tablo düzeyi lock). Defect kimlikleri ve iki RED test ayrı kalır; tek görev.", "precondition": "RG-STK-08 erişilebilirlik kararı önce."},
+    {"merge": ["STK-012", "STK-013"], "groups": ["RG-STK-10", "RG-STK-38"], "reason": "Aynı method (RebuildReservationBalancesAsync), aynı repository, aynı fix. Ayrı defect, tek görev.", "precondition": "RG-STK-33 kararı önce; stock rebuild ile ortak lock kararı."},
+    {"keep_separate": ["STK-014"], "reason": "Farklı invariant (COUNT vs SUM) ve fix; aynı surface nedeniyle 12/13 görevinden sonra seri."},
+    {"merge": ["STK-024", "STK-025"], "groups": ["RG-STK-18", "RG-STK-19"], "reason": "Aynı invariant (count tx anındaki bakiyeyi temsil etmeli), aynı path, tx içi kilitli doğrulama her iki dalı birden kapatır; STK-024 historical-fixed regresyon olarak kalır."},
+    {"merge": ["STK-037", "STK-038"], "groups": ["RG-STK-31", "RG-STK-32"], "reason": "Aynı satırlar (ProductionStockEffectService.cs:231-245); STK-037 non-finding kaydı olarak aynı görevde kapanır."},
+    {"merge": ["STK-001", "STK-002"], "groups": ["RG-STK-01", "RG-STK-02"], "reason": "RG-01 yalnız regresyon tekrarıdır; ayrı görev değil RG-02 acceptance'ına dahil edilsin."},
+    {"merge": ["STK-022", "STK-023"], "groups": ["RG-STK-17", "RG-STK-36"], "reason": "Aynı test dosyası, aynı standalone waste tx coverage hedefi; tek test görevi (production değişikliği yok)."},
+    {"merge": ["STK-008", "STK-009"], "groups": ["RG-STK-07", "RG-STK-08"], "type": "decision-coupling", "reason": "Replay methodunun da üretim callerı yok; removal/integration kararı ile birlikte ele alınmalı (kod birleşmesi değil sıra)."},
+    {"serialization_note": "Paralel çalışamaz (paylaşılan write surface): {RG-01,02,03,04} OrdersAndReceiptsDatabaseTests; {RG-05,06,07,08,37,16,27} StockBalanceDatabaseTests/Projector; {RG-09,10,11,33,38} reservation projector/repo; {RG-12,13,16,35,27} reversal; {RG-18,19,20,21,22} physical count; {RG-15,19,20,21,28,29,30} StockMasterHttpTests; {RG-08,14,27,33,34} InventoryModule.cs; {RG-23,24} nullable-unique-policy.md; {RG-31,32} ProductionStockEffectService."}
+  ],
+  "limitations": [
+    "Bounded ~8 dk statik okuma: STK-002, 006, 007, 008, 012, 013, 014, 024, 025, 037, 038 ilgili production/test dosyaları satır düzeyinde okundu; diğer 27 kaydın mekanizması yeniden doğrulanmadı, yalnız programatik şema/yol/surface kontrolünden geçti.",
+    "Hiç dotnet build/test/SQL/mutation koşulmadı; 'statik doğrulandı' runtime kanıtı değildir. STK-038 deadlock'un 40P01 olarak tezahürü PostgreSQL davranışına dayanan çıkarımdır, reproduksiyon yok.",
+    "SubmitOrderHandler V1-WTR-027 retry kapsamı ve ApiErrorCatalog'un 40P01 eşlemesi izlenmedi; Production endpoint'in kullanıcıya döneceği HTTP kodu doğrulanmadı.",
+    "Submit+Cancel lost-update kardeş adayı yalnız gözlem; doğrulanmadı, open'a yükseltilmedi.",
+    "Repo'ya yazılmadı; yalnız bu scratch dosyası ve geçici kontrol scripti (scratch/v739chk.py) oluşturuldu."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "source_id": "F0636",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-WTR-049 Kanıt klasörü yok; E2E/audit çıktıları yalnız md metninde",
+      "status": "open",
+      "invariant": "Done görevi için evidence/<Task-ID>/ altında komut çıktısı, exit code, hash ve transcript olmalı (AGENTS.md Kapanış Kapısı)",
+      "mechanism": "low-B.md:53 'Kanıt klasörü yok; E2E/audit çıktıları yalnız md metninde'. V1-WTR-049 plan dosyası (satır 56-81) acceptance evidence kısmında 'npx playwright test 18/18 temiz', 'node --check', 'python tools/consistency-audit...', 'python tools/plan-audit...' komutları listelenmiş ama evidence/V1-WTR-049/ klasörü yok (terminal ls çıktısı: 'not found'). Plan dosyası içindeki kanıtlar sadece markdown metni, gerçek komut transcript'i/çıkış dosyası/ hash yok.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:53",
+        "plan/v1/waiter-pwa/V1-WTR-049-js-refactor-step13-pending-orders-module.md:56-81",
+        "terminal ls evidence/V1-WTR-049/ -> not found"
+      ],
+      "acceptance": "evidence/V1-WTR-049/ altında npx playwright test, node --check, python audit komutlarının gerçek stdout/stderr, exit code, commit hash içeren dosyalar olmalı",
+      "id": "W2-N-F0636-01",
+      "parents": [
+        "F0636"
+      ]
+    }
+  ],
+  "limitations": "Repo yazma yok; evidence klasörü oluşturulamadı. Plan dosyası acceptance evidence kısmında komutlar listelenmiş ama evidence/ altında gerçek çıktı dosyası yok. Sadece md metni var.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

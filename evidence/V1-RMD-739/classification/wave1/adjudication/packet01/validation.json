@@ -1,0 +1,25 @@
+{
+  "result": "PASS",
+  "exit_code": 0,
+  "tier": "Artifact integrity, reference existence, source hashes, negative fixtures, scope preservation; not semantic or runtime proof",
+  "accepted_static_records": 2,
+  "negative_fixtures_rejected": [
+    "wrong_identity",
+    "false_runtime",
+    "false_closure",
+    "bad_line",
+    "bad_hash"
+  ],
+  "pre_existing_paths_preserved_except_authorized_status_document": true,
+  "new_paths_allowlisted": [
+    "evidence/V1-RMD-739/classification/wave1/adjudication/INDEX.json",
+    "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/739-correction-review-F0388.json",
+    "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/739-correction-review-F0908.json",
+    "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/ledger.json",
+    "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/manifest.json",
+    "evidence/V1-RMD-739/classification/wave1/adjudication/packet01/preflight.json"
+  ],
+  "independent_postwrite_review": "pending",
+  "application_tests_run": false,
+  "closed_findings": 0
+}

@@ -1,0 +1,31 @@
+{
+  "source_id": "F0134",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Plan-conflict grant yazılıyor ama yöneticiye gösteren yüzey yok",
+      "status": "open",
+      "invariant": "Plana aykırı bir 86-lama olduğunda authorization_grants'a Granted/Auto + Amount 0 ile bir kayıt düşülüyor (KitchenOperationsStore.cs:734-760), ancak bu kayıtları yönetici/şef garson'un göreceği bir UI yüzeyi mevcut değil",
+      "mechanism": "RaisePlanConflictGrantAsync metodu (KitchenOperationsStore.cs:734-760) her plana-aykırı suspend'te yeni bir AuthorizationGrant satırı yazar. Grant Status=Granted, Path=Auto, Amount=0, ReasonCode='kitchen.availability.suspend.plan-conflict'. Test (KitchenOperationsHttpTests.cs:940) grant'ın yazıldığını doğruluyor. Ancak KitchenOperationsWorkspace.tsx'te (veya başka bir yönetici yüzeyinde) reason_code='plan-conflict' olan grant'ları listeleyen, filtreleyen veya bildiren hiçbir kod yok. Register.md:144 ve low-A.md:174'te de bu eksiklik kayıtlı.",
+      "source_evidence": [
+        "src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:734-760",
+        "src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:746-759",
+        "tests/Host/Experience/KitchenOperations/KitchenOperationsHttpTests.cs:940",
+        "evidence/V1-RMD-739/findings/register.md:144",
+        "evidence/V1-RMD-739/findings/low-A.md:174"
+      ],
+      "acceptance": "Yönetici/şef garson rolüne sahip bir oturumda, reason_code='kitchen.availability.suspend.plan-conflict' olan grant'ları görebileceği bir ekran/panel/bildirim yüzeyi mevcut olmalı. En azından KitchenOperationsWorkspace.tsx'in sağ rayında (PrinterPanel, HealthPanel, UnknownPanel yanına) bir 'Plan Çakışmaları' paneli veya mevcut HealthPanel içine entegre bir liste olmalı.",
+      "id": "W2-N-F0134-01",
+      "parents": [
+        "F0134"
+      ]
+    }
+  ],
+  "limitations": [
+    "Kabul testleri (KitchenOperationsHttpTests.cs) grant yazılmasını doğruluyor ama okuma yüzeyini test etmiyor",
+    "V1-KIT-008 plan dosyası (In scope) 'nöbetteki yöneticiye bildirim' hedefliyor ama Acceptance evidence'de sadece yazma testleri var (18/18 yeşil), okuma yüzeyi testleri yok",
+    "Frontend tarafında (KitchenOperationsWorkspace.tsx) plan-conflict grant'larını sorgulayan/çeken bir API çağrısı (GET /kitchen-operations/plan-conflicts veya benzeri) yok",
+    "AuthorizationGrants için okuma ucu (IAuthorizationGrantRepository.GetByReasonCodeAsync veya benzeri) Host'ta tanımlı değil - sadece InsertAsync var"
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

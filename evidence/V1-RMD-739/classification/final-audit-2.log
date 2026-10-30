@@ -1,0 +1,9 @@
+COMMAND: C:\Users\semih\AppData\Local\hermes\installs\684547ac9b30471d\environments\9153071d1ebd4af3b31abc0bcc0ad446\venv\Scripts\python.exe tools/plan-audit/plan_audit_tool.py validate
+EXIT_CODE: 0
+Markdown files: 1433
+Task files: 1410
+Registered gates: 18
+Registered EXT sources: 23
+Dependency edges: 2558
+Validation errors: 0
+Validation warnings: 0

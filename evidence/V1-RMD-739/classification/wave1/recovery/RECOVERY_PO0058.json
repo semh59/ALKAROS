@@ -1,0 +1,32 @@
+{
+  "source_id": "PO0058",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-FND-005 teslimat kartı silinmiş transaction çerçevesini güncel sanıyor",
+      "status": "open",
+      "invariant": "Done teslimat belgesi, bilinçli kaldırılmış production yüzeyini halen mevcut teslimat olarak sunmamalı; kaldırma kararı ve yerine kullanılan yaklaşım izlenebilir olmalı.",
+      "mechanism": "V1-FND-005 Done ve Existing durumunda; deliverable hâlâ src/BuildingBlocks/Transactions/**, hedef ve kabul hâlâ ortak yürütme primitive'lerini anlatıyor. Kartta superseded/kaldırıldı notu veya V1-RMD-134 bağlantısı yok. V1-RMD-134 ise kullanıcı kararıyla üç ölü projeyi sildiğini ve doğrudan NpgsqlConnection/NpgsqlTransaction yaklaşımını açıkça kaydediyor. BuildingBlocks altında Transactions adlı dosya bulunmadı. Bu belge kusurudur; ortak framework'ü yeniden yazma gereği çıkarılmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/po-questions.md:38",
+        "evidence/V1-RMD-739/tasks/B111.md:19-21",
+        "plan/v1/foundation/V1-FND-005-transaction-execution-boundary.md:3-7,16-28,42-58",
+        "plan/v1/remediation/V1-RMD-134-buildingblocks-dead-foundation-cleanup.md:11-24,45-52,75-79"
+      ],
+      "acceptance": [
+        "Yetkili ayrı plan düzeltmesinde V1-FND-005 kartı kaldırılmış teslimatı ve V1-RMD-134 kararını açıkça belirtir; Done geçmişi bugünkü yüzey mevcudiyetiyle karıştırılmaz.",
+        "Güncel transaction yaklaşımının sahipliği ve kabul kanıtlarına giden kesin bağlantılar verilir; silinmiş framework için yeni production kod gereksinimi türetilmez."
+      ],
+      "id": "W2-R-PO0058-01",
+      "parents": [
+        "PO0058"
+      ]
+    }
+  ],
+  "limitations": [
+    "Salt okunur belge ve kaynak kontrolü; test çalıştırılmadı.",
+    "Silme commit'i 6b54f9ae bu oturumda git geçmişinden doğrulanmadı; doğrulama güncel V1-RMD-134 kartı ve mevcut dosya aramasına dayanıyor.",
+    "Bağımlı handoff sözleşmelerinin ayrıntılı doğrulaması ayrı PO0059 kaydına bırakıldı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

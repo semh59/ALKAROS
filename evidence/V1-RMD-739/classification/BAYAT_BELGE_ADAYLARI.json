@@ -1,0 +1,422 @@
+[
+  {
+    "id": "ST0001",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:3",
+    "text": "plan/v1.1/remediation/V11-RMD-002-module-registration-and-inventory-schema-boundary.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0002",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:4",
+    "text": "plan/v1.3/payments-ui/V13-PUI-001-split-payment-ui.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0003",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:5",
+    "text": "plan/v1.3/payments-ui/V13-PUI-004-eft-payment-ui.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0004",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:6",
+    "text": "plan/v1/identity-authorization/V1-IAM-020-manager-decision-surface.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0005",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:7",
+    "text": "plan/v1/kitchen-printing/V1-KIT-007-ticket-implicit-accept-on-prepare.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0006",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:8",
+    "text": "plan/v1/orders/V1-ORD-006-check-detaches-from-table.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0007",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:9",
+    "text": "plan/v1/remediation/V1-RMD-054-production-composition-and-order-billing-routing.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0008",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:10",
+    "text": "plan/v1/remediation/V1-RMD-064-order-items-orphan-deletion.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0009",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:11",
+    "text": "plan/v1/remediation/V1-RMD-083-waiter-and-cashier-order-line-note-entry.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0010",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:12",
+    "text": "plan/v1/remediation/V1-RMD-097-deep-analysis-wave-24-25-surface-custody.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0011",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:13",
+    "text": "plan/v1/remediation/V1-RMD-105-low-dead-code-and-misleading-layer-cleanup.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0012",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:14",
+    "text": "plan/v1/remediation/V1-RMD-106-wave34-independent-audit-critical-and-high-fixes.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0013",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:15",
+    "text": "plan/v1/remediation/V1-RMD-111-waiter-table-serving-ownership-and-transfer.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0014",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:16",
+    "text": "plan/v1/remediation/V1-RMD-113-submit-draft-kitchen-dispatch-and-idempotency.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0015",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:17",
+    "text": "plan/v1/remediation/V1-RMD-128-order-item-availability-check.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0016",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:18",
+    "text": "plan/v1/remediation/V1-RMD-131-menu-management-experience.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0017",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:19",
+    "text": "plan/v1/remediation/V1-RMD-132-purchasing-management-experience.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0018",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:20",
+    "text": "plan/v1/remediation/V1-RMD-133-production-management-experience.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0019",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:21",
+    "text": "plan/v1/remediation/V1-RMD-134-buildingblocks-dead-foundation-cleanup.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0020",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:22",
+    "text": "plan/v1/remediation/V1-RMD-135-waiterpwa-table-amount-and-dead-cashier-engines.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0021",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:23",
+    "text": "plan/v1/remediation/V1-RMD-143-order-accept-real-stock-consumption.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0022",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:24",
+    "text": "plan/v1/remediation/V1-RMD-146-order-item-dto-lossy-projection.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0023",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:25",
+    "text": "plan/v1/remediation/V1-RMD-147-order-line-modifiers-dropped.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0024",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:26",
+    "text": "plan/v1/remediation/V1-RMD-149-pending-qr-order-invisible-to-waiter.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0025",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:27",
+    "text": "plan/v1/remediation/V1-RMD-150-modifier-quantity-and-kitchen-visibility.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0026",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:28",
+    "text": "plan/v1/remediation/V1-RMD-156-database-integrity-constraints.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0027",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:29",
+    "text": "plan/v1/remediation/V1-RMD-159-architecture-boundaries-remainder.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0028",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:30",
+    "text": "plan/v1/remediation/V1-RMD-161-modifier-selection-rules.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0029",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:31",
+    "text": "plan/v1/remediation/V1-RMD-162-api-input-bounds-and-error-mapping.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0030",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:32",
+    "text": "plan/v1/remediation/V1-RMD-164-frontend-high-quantity-correction-lost.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0031",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:33",
+    "text": "plan/v1/remediation/V1-RMD-167-independent-review-followups.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0032",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:34",
+    "text": "plan/v1/remediation/V1-RMD-168-canvoid-server-derived.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0033",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:35",
+    "text": "plan/v1/remediation/V1-RMD-177-comp-and-transfer-server-clients.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0034",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:36",
+    "text": "plan/v1/remediation/V1-RMD-247-recipe-cost-snapshot-http-surface.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0035",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:37",
+    "text": "plan/v1/remediation/V1-RMD-292-cashier-discount-tip-adjustment-ui.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0036",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:38",
+    "text": "plan/v1/waiter-pwa/V1-WTR-017-prep-time-delay-warning.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0037",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:39",
+    "text": "plan/v1/waiter-pwa/V1-WTR-031-refactor-step1-order-dto-assembler.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0038",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:40",
+    "text": "plan/v1/waiter-pwa/V1-WTR-032-refactor-step2-shift-summary-store.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0039",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:41",
+    "text": "plan/v1/waiter-pwa/V1-WTR-033-refactor-step3-cashier-handoff-store.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0040",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:42",
+    "text": "plan/v1/waiter-pwa/V1-WTR-034-refactor-step4-table-draft-service.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0041",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:43",
+    "text": "plan/v1/waiter-pwa/V1-WTR-035-refactor-step5-order-submission-coordinator.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  },
+  {
+    "id": "ST0042",
+    "category": "BD",
+    "secondary": [
+      "KN"
+    ],
+    "source": "evidence/V1-RMD-739/findings/stale-md-noevidence.md:44",
+    "text": "plan/v1/waiter-pwa/V1-WTR-036-refactor-step6-7-order-read-store.md",
+    "qualification": "tarihsel-envanter-guncel-teyit-gerekli"
+  }
+]

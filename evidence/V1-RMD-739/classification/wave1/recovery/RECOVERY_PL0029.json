@@ -1,0 +1,36 @@
+{
+  "source_id": "PL0029",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V13-PUI-001 için kalıcı kabul kanıtı klasörü eksik",
+      "status": "open",
+      "invariant": "Done ödeme ekranı görevinin gerçek build/test çıktılarına ve kapsamı açık kabul kanıtlarına görev bazlı evidence dizininden erişilebilmeli.",
+      "mechanism": "V13-PUI-001 Done; owned surface evidence/V13-PUI-001/** yolunu açıkça içeriyor. Kart 10/10 HTTP ve build/audit başarıları anlatıyor; ancak pathlib.Path.exists ile evidence/V13-PUI-001 dizininin halen bulunmadığı doğrulandı. Güncel split-payment.js ve PaymentTenderHttpTests.cs mevcut, okunan testte onaylı EFT özeti ve yetkisiz yazım reddi assert'leri var. Test kaynağı ve eski kart sayıları gerçek güncel koşum kanıtı değildir. Bu kusur kalıcı kanıt teslimiyle sınırlıdır; kartın diğer davranış/kapsam notları bu source_id altında yeniden sınıflandırılmadı.",
+      "source_evidence": [
+        "evidence/V1-RMD-604/README.md:33-34",
+        "plan/v1.3/payments-ui/V13-PUI-001-split-payment-ui.md:3-7,28-33,63-97",
+        "plan/TASK_STANDARD.md:155-166",
+        "AGENTS.md:73-83",
+        "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js:1-49",
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs:21-30,49-89",
+        "Salt okunur pathlib.Path.exists kontrolü: evidence/V13-PUI-001 = false; terminal exit code 0"
+      ],
+      "acceptance": [
+        "Yetkili ayrı çalışmada güncel build ve ilgili HTTP/UI kontrolleri gerçek komut/exit code ile çalıştırılıp evidence/V13-PUI-001/ altında kaynak sürümü/hash ile saklanır.",
+        "Eski 10/10 anlatısı güncel sayım yerine kullanılmaz; backend, browser/E2E ve gerçek kiosk/erişilebilirlik kanıtı ayrı kapsamlarla raporlanır, çalıştırılmayan gate açık bırakılır."
+      ],
+      "id": "W2-R-PL0029-01",
+      "parents": [
+        "PL0029"
+      ]
+    }
+  ],
+  "limitations": [
+    "Repo kodu, test veya build çalıştırılmadı; mevcut süitin başarı sayısı ve derlenebilirliği bilinmiyor.",
+    "JS yalnız ilk 90 satır, HTTP test yalnız ilk 105 satır okundu; ekranın tam işlevsel denetimi yapılmadı.",
+    "Başka görevlerin kanıt klasörleri veya alternatif tarihsel çıktılar tüketilmedi; yalnız standart görev dizininin yokluğu doğrulandı.",
+    "PL0028 başka görevin bağımsız kanıt teslimidir; düzeltme artifaktları farklı olduğu için ayrı tutuldu."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

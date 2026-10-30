@@ -1,0 +1,36 @@
+{
+  "source_id": "UI0143",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "WaiterPwa özel gölgelerinin görsel kusur oluşturduğu doğrulanmamış",
+      "status": "verification-needed",
+      "invariant": "Aynı yüzey rolü istemciler arasında tutarlı yükselti dili taşımalı; farklı rollerin farklı gölge kullanması tek başına kusur kanıtı değildir.",
+      "mechanism": "WaiterPwa üç yerel gölge tanımlıyor; sheet ve toast bu tokenları tüketiyor. PosTerminal yalnız --ds-shadow-raised sunuyor. Fakat okunan foundations.md ve DESIGN.md tek gölge kullanma zorunluluğu veya dock/sheet/toast rol eşlemesi koymuyor. Bu nedenle sayısal farkı doğrudan açık görsel kusura yükseltmek kanıtsız olur. Ayrıca --shadow-dock için src genelinde tanım dışında tüketim bulunmadı; üç etkin gölge varmış gibi raporlanamaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:17 — özgün özel gölge gözlemi",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.css:54-62 — üç yerel token",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.css:814-819 — sheet tüketimi",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.css:1235-1241 — toast tüketimi",
+        "src/Clients/PosTerminal/src/design-system/tokens.css:73-76 — raised gölgesi ve yarıçaplar",
+        "docs/design/foundations.md:1-201 — tamamı okundu; zorunlu gölge ölçeği tanımlamıyor",
+        "DESIGN.md:24-100 — tasarım tokenları; gölge standardı tanımlamıyor"
+      ],
+      "acceptance": [
+        "Aynı yüzey rolleri için geçerli ortak gölge sözleşmesi/rol eşlemesi bulunmalı; mevcut farklı roller otomatik olarak tek değere indirgenmemeli.",
+        "WaiterPwa sheet ve toast ile karşılık gelen diğer istemci yüzeyleri aynı viewport/yüzey koşullarında gerçek ekran görüntüsü ve computed-style ile karşılaştırılmalı; sözleşmeyle somut çelişki varsa open, yoksa not-defect olarak sonuçlandırılmalı.",
+        "Dock tokenının kullanılmadığı gözlemi etkin gölge sayısından ayrı tutulmalı; kaldırma gereksinimi görsel tutarsızlığın kanıtı sayılmamalı."
+      ],
+      "id": "W2-R-UI0143-01",
+      "parents": [
+        "UI0143"
+      ]
+    }
+  ],
+  "limitations": [
+    "Görsel örnek, çalışan tarayıcı veya tasarımcı karşılaştırması yok; repo/test çalıştırılmadı.",
+    "Tasarım sözleşmesinin tamamı repository çapında kanıtlanmadı; gölgeyle ilgili Markdown aramasında özgün rapor dışında eşleşme bulunmadı, DESIGN.md ve foundations.md doğrudan okundu.",
+    "PO kararı gerektirdiği kanıtlanmadı; decision-blocked atanmadı. Eski sınıflandırmadaki ortak gölge standardı iddiası doğrulanmış kural kabul edilmedi."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

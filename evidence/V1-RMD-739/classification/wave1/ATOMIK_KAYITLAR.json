@@ -1,0 +1,3222 @@
+[
+  {
+    "id": "STK-001",
+    "parents": [
+      "F0017",
+      "F0026"
+    ],
+    "title": "Mal kabul aynı satır yarışının kayıtlı düzeltmesi",
+    "category": "EZ",
+    "status": "historical-fixed",
+    "invariant": "İki bayat kabul aynı açık miktarı iki kez stoklaştıramaz.",
+    "mechanism": "ReceiveGoodsAsync eski miktarları yakalıyor; aynı transaction içinde satırları FOR UPDATE ile kilitleyip güncel received_quantity ile karşılaştırıyor. İkinci bayat kabul yazımlardan önce reddediliyor. F0017 ve F0026 aynı invariant, aynı çağrı yolu, aynı düzeltme; aliaslar korundu. Bu kapanış PO cancel yarışını, fiş no yarışını veya onay politikasını kapsamaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B062.md:16-20",
+      "evidence/V1-RMD-739/tasks/B088.md:13-17",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:164",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:255-292",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs:253-278",
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs:399-463",
+      "evidence/V1-RMD-740/green.log:14-15",
+      "evidence/V1-RMD-740/mutations.log:1-7"
+    ],
+    "production_paths": [
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs",
+      "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Mevcut ConcurrentReceiptsOfSameOrderPostStockOnce ve StaleReceivedQuantityIsRejectedWhenLockingOrderLines yeniden çalıştırılır; yalnız beklenen PurchaseOrderStatusException kabul edilir; received_quantity, fiş sayısı, ledger toplamı ve on_hand birlikte doğrulanır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-01",
+    "source_qualification": {
+      "F0017": "aday",
+      "F0026": "aday"
+    },
+    "historical_source_closure": {
+      "F0017": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-740"
+      },
+      "F0026": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-740"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0017",
+        "source": "evidence/V1-RMD-739/findings/register.md:24",
+        "task_ids": [
+          "V11-RMD-002"
+        ]
+      },
+      {
+        "id": "F0026",
+        "source": "evidence/V1-RMD-739/findings/register.md:33",
+        "task_ids": [
+          "V11-PUR-001"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-002",
+    "parents": [
+      "F0017",
+      "F0026"
+    ],
+    "title": "Mal kabul ile sipariş iptali ortak sürüm/kilit kullanmıyor",
+    "category": "EZ",
+    "status": "open",
+    "invariant": "İptal edilen PO stoklaştıramaz; alınmış mal miktarı eski Cancel snapshot ile sıfırlanamaz.",
+    "mechanism": "740 yalnız receipt-receipt received_quantity değişimini kontrol eder. CancelPurchaseOrderAsync eski PO okur; UpdateAsync header ve bütün satırları mutlak değerle yazar. Cancel önce commit ederse receipt satır miktarı hâlâ aynı olduğundan guard geçer ve Cancelled siparişi yeniden Completed yapabilir. Receipt önce commit ederse bekleyen eski Cancel snapshot received_quantity=0 yazabilir. İki gerçek Host endpoint mevcut; tarihsel çift-kabul kusurundan ayrı kalan execution path.",
+    "source_evidence": [
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:131-149",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:258-265",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs:218-249",
+      "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:229-256",
+      "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:191-222"
+    ],
+    "production_paths": [
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs",
+      "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs",
+      "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "İki bağlantı ve barrier ile cancel-commit→receipt-write ve receipt-commit→stale-cancel-write sıraları kurulur; biri tipli conflict alır; PO status/miktar, receipt, ledger ve balance tek tutarlı sonucu verir."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-02",
+    "source_qualification": {
+      "F0017": "aday",
+      "F0026": "aday"
+    },
+    "historical_source_closure": {
+      "F0017": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-740"
+      },
+      "F0026": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-740"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0017",
+        "source": "evidence/V1-RMD-739/findings/register.md:24",
+        "task_ids": [
+          "V11-RMD-002"
+        ]
+      },
+      {
+        "id": "F0026",
+        "source": "evidence/V1-RMD-739/findings/register.md:33",
+        "task_ids": [
+          "V11-PUR-001"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-003",
+    "parents": [
+      "F0026"
+    ],
+    "title": "ReceiptNumber unique yarışı repositoryde zaten tipli duplicate veriyor",
+    "category": "DY",
+    "status": "historical-fixed",
+    "invariant": "Aynı fiş numarası eşzamanlı geldiğinde beklenen duplicate sonucu tutarlı olmalı, ikinci etki olmamalı.",
+    "mechanism": "B088 ham23505 iddiası güncel source ile doğrulanmadı: IGoodsReceiptRepository.cs SaveAsync header INSERT etrafında23505 yakalayıp DuplicateGoodsReceiptException fırlatıyor. ReceiveGoodsAsync catch içermemesi yeterli kusur kanıtı değil; gerçek callee bunu yapıyor. Aynı POda740 guard önce conflict verebilir; farklı PO aynı ReceiptNumber için repository çevirisi geçerlidir. Yarış testi eksikliği ayrı doğrulama sınırı, production bugı değil.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B088.md:16",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:157-162",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:261-292",
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs:465",
+      "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs:165-194"
+    ],
+    "production_paths": [
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+      "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Farklı PO üstünde aynı ReceiptNumber yarışı; bir kayıt, beklenen DuplicateGoodsReceiptException, kaybedenin PO/ledger/balance etkisi yok. Exact constraint discriminasyonu için farklı unique failure ayrı negatif kontrol edilir; bugünkü header catch bütün23505leri çevirir."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-03",
+    "source_qualification": {
+      "F0026": "aday"
+    },
+    "historical_source_closure": {
+      "F0026": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-740"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0026",
+        "source": "evidence/V1-RMD-739/findings/register.md:33",
+        "task_ids": [
+          "V11-PUR-001"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-004",
+    "parents": [
+      "F0026"
+    ],
+    "title": "Mal kabul toleransı ve yönetici onayı ürün kararı",
+    "category": "VD",
+    "status": "decision-blocked",
+    "invariant": "Fazla alım kabulü açık ve onaylı politika sonucuna dayanmalı.",
+    "mechanism": "Tam kart %5 toleransın ve purchasing.manage sahibinin IsManagerApproved göndermesinin onay kaynağını doğrulayamıyor. Host actorName sunucudan çıkarılıyor; ayrı onay yetkisi gerektiği varsayılamaz. Kod değişikliği değil karar teyidi.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B088.md:17",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:186-191",
+      "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:212-219",
+      "plan/v1.1/purchasing/V11-PUR-001-purchase-order-and-receipt.md:49-51"
+    ],
+    "production_paths": [
+      "src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs",
+      "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Semih %5 eşiği ve purchasing.manage→onay yetkisi ilişkisini tarihli karar olarak teyit eder; onaylı/onaysız/sınır toleransı testleri seçilen kurala bağlanır."
+    ],
+    "decision_blocker": "Semih: tolerans ve ayrı approver gerekip gerekmediği; bugünkü rolü kusur varsayarak genişletme yok.",
+    "repair_group": "RG-STK-04",
+    "source_qualification": {
+      "F0026": "aday"
+    },
+    "historical_source_closure": {
+      "F0026": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-740"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0026",
+        "source": "evidence/V1-RMD-739/findings/register.md:33",
+        "task_ids": [
+          "V11-PUR-001"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-005",
+    "parents": [
+      "F0030"
+    ],
+    "title": "Toplu rebuild 5000 hareket ve okuma-hatası kaybının kayıtlı düzeltmesi",
+    "category": "DY",
+    "status": "historical-fixed",
+    "invariant": "Ledger okuma hatası projeksiyonu silmemeli; 5000 hareket sınırı full rebuild yolunu engellememeli.",
+    "mechanism": "SQL SUM artık reset öncesi okunuyor; full rebuild GetByLocationAsync kullanmıyor. 742 sadece bu altkusuru çözdü. Yazma/iptal atomikliği ve canlı yazıcı izolasyonu aşağıda açık; single-item replay hâlâ eski yolu kullanıyor.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:11-14",
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:49-56",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:138-163",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:154-190",
+      "evidence/V1-RMD-742/green.log:14-15",
+      "evidence/V1-RMD-742/mutations.log:1-4"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "5100 hareket rebuild ve ledger-read-failure mevcut testleri yeniden çalıştırılır; negatif Out işareti ve okuma-önce sırası mutasyonları kırılır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-05",
+    "source_qualification": {
+      "F0030": "aday"
+    },
+    "historical_source_closure": {
+      "F0030": {
+        "closure_status": "kismi-kalan-kusur-var",
+        "closure_task": "V1-RMD-742"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0030",
+        "source": "evidence/V1-RMD-739/findings/register.md:37",
+        "task_ids": [
+          "V11-INV-002"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-006",
+    "parents": [
+      "F0030"
+    ],
+    "title": "Toplu rebuild reset-sonrası hata ve iptal kısmi kalıcı durum bırakıyor",
+    "category": "EZ",
+    "status": "open",
+    "invariant": "Reset, on-hand yazımı ve reserved restorasyonu tek atomik commit/rollback olmalı.",
+    "mechanism": "ResetAllBalancesAsync, her SetExactBalanceAsync ve RestoreReservedQuantityAsync ayrı dataSource komutu. Reset commit sonrası ilk/ara/son yazımda hata veya cancellation tüm eski bakiyeleri geri getirmiyor. 742 testinin yalnız okuma hatası bu pencereyi kapsamaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:12",
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:47-64",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:314-395",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:178-190"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+      "src/Modules/Inventory/BalanceProjection/IStockBalanceProjector.cs",
+      "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+    ],
+    "acceptance": [
+      "Reset sonrası, ikinci on-hand yazımında ve reserved restore sırasında gerçek transaction içinde hata/ct cancel enjekte edilir; bütün balance satırları ve reserved/available önceki snapshot ile eşit kalır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-06",
+    "source_qualification": {
+      "F0030": "aday"
+    },
+    "historical_source_closure": {
+      "F0030": {
+        "closure_status": "kismi-kalan-kusur-var",
+        "closure_task": "V1-RMD-742"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0030",
+        "source": "evidence/V1-RMD-739/findings/register.md:37",
+        "task_ids": [
+          "V11-INV-002"
+        ]
+      }
+    ],
+    "reachability": "Üretimde çağıran yok (STK-009/STK-010 kararı: kaldır/entegre et). Karar kaldırmaysa bu düzeltmeler gereksiz; sıra: karar → düzeltme."
+  },
+  {
+    "id": "STK-007",
+    "parents": [
+      "F0030"
+    ],
+    "title": "Toplu rebuild snapshot ile canlı hareket/rezervasyon yarışı",
+    "category": "EZ",
+    "status": "open",
+    "invariant": "Rebuild tamamlandığında on_hand ledger ile, reserved authoritative lifecycle ile tutarlı olmalı; eşzamanlı commit kaybolmamalı.",
+    "mechanism": "reserved snapshot ve ledger SUM yazımdan önce ayrı okumalardır. SUM sonrası canlı ledger+balance commit işlemi reset/set ile ezilebilir; yeni rezervasyon eski reservedBefore restorasyonuyla kaybolabilir. Sadece bir transaction eklemek yetmez: snapshot ve tüm ilgili canlı yazıcılar arasında ortak DB izolasyonu/lock düzeni gerekir. Row advisory lock tek başına tüm tablo resetini koordine etmez.",
+    "source_evidence": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:47-64",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:182-213",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:342-394",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:64-130",
+      "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:92-126"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+      "src/Modules/Inventory/CrossChannelReservation/PostgresCrossChannelPortionArbiter.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "SUM sonrası purchase/consumption commit ve reserved snapshot sonrası create/terminal commit barrier ile zorlanır; rebuild + writer sonrası SQL ledger SUM ve active reservation SUM ile tüm alanlar eşleşir; yeni item/location satırı da kapsanır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-37",
+    "source_qualification": {
+      "F0030": "aday"
+    },
+    "historical_source_closure": {
+      "F0030": {
+        "closure_status": "kismi-kalan-kusur-var",
+        "closure_task": "V1-RMD-742"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0030",
+        "source": "evidence/V1-RMD-739/findings/register.md:37",
+        "task_ids": [
+          "V11-INV-002"
+        ]
+      }
+    ],
+    "reachability": "Üretimde çağıran yok (STK-009/STK-010 kararı: kaldır/entegre et). Karar kaldırmaysa bu düzeltmeler gereksiz; sıra: karar → düzeltme."
+  },
+  {
+    "id": "STK-008",
+    "parents": [
+      "F0030"
+    ],
+    "title": "Tek kalem replay tüm konumun 5000 hareket tavanına bağlı",
+    "category": "DY",
+    "status": "open",
+    "invariant": "Bir kalem/konum replay başka kalemlerin hacminden bağımsız doğru ledger toplamı döndürmeli.",
+    "mechanism": "ReplayBalanceForItemAndLocationAsync önce konumdaki tüm hareketleri GetByLocationAsync ile okuyor, sonra item filtresi yapıyor. Aynı konumda hedef kalemin tek satırı olsa bile diğer kalemlerle 5001 satır olunca InvalidOperationException. Üretim çağıranı bulunmadı; gerçek public implementasyon kusuru ve test yolu mevcut; 742 Out of scope açıkça bırakmış.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:12",
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:70-78",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:109-135",
+      "plan/v1/remediation/V1-RMD-742-bakiye-yeniden-kurma-guvenligi.md:31-34",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:234-236"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+    ],
+    "acceptance": [
+      "Aynı konumda 5100 hareket ve başka item hedefi; doğrudan item/location aggregate sonucu doğru; diğer konum hareketleri karışmaz; In/Out/Reversal ve boş ledger doğrulanır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-07",
+    "source_qualification": {
+      "F0030": "aday"
+    },
+    "historical_source_closure": {
+      "F0030": {
+        "closure_status": "kismi-kalan-kusur-var",
+        "closure_task": "V1-RMD-742"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0030",
+        "source": "evidence/V1-RMD-739/findings/register.md:37",
+        "task_ids": [
+          "V11-INV-002"
+        ]
+      }
+    ],
+    "reachability": "Üretimde çağıran yok (STK-009/STK-010 kararı: kaldır/entegre et). Karar kaldırmaysa bu düzeltmeler gereksiz; sıra: karar → düzeltme."
+  },
+  {
+    "id": "STK-009",
+    "parents": [
+      "F0227"
+    ],
+    "title": "Full balance rebuild gerçek işletim girişinden erişilemiyor",
+    "category": "TE",
+    "status": "decision-blocked",
+    "invariant": "Bakım için tutulan rebuild ya onaylı gerçek operasyon yolundan çağrılmalı ya kullanılmayan yüzey kaldırılmalı.",
+    "mechanism": "src taraması yalnız interface/definition ve açıklama referanslarını gösterdi; Host endpoint/hosted service çağrısı yok. Registered projector kullanım kanıtı değildir. Rebuild testleri bunu erişilebilir üretim özelliği yapmaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:13",
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:37",
+      "src/Modules/Inventory/InventoryModule.cs:57-58",
+      "plan/v1/remediation/V1-RMD-742-bakiye-yeniden-kurma-guvenligi.md:33"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/BalanceProjection/IStockBalanceProjector.cs",
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Semih bakım gereksinimini seçer: gerçek yetkili operasyon akışı exact path ile ayrı planlanır veya unused method/interface/test-only feature kaldırma etkisi kaydedilir; yeni hayali endpoint kurulmaz."
+    ],
+    "decision_blocker": "Bakım arayüzü/komutu seçimi ve yetki politikası onaysız; removal mı integration mı kararı gerekir.",
+    "repair_group": "RG-STK-08",
+    "source_qualification": {
+      "F0227": "aday"
+    },
+    "historical_source_closure": {
+      "F0227": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0227",
+        "source": "evidence/V1-RMD-739/findings/register.md:237",
+        "task_ids": [
+          "V11-INV-002"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-010",
+    "parents": [
+      "F0211"
+    ],
+    "title": "Reservation rebuild ve drift için üretim çağıranı yok",
+    "category": "TE",
+    "status": "decision-blocked",
+    "invariant": "Reservation bakım özellikleri gerçek ihtiyaca bağlı olmalı; yalnız test tarafından kullanılan servis metodu ölü yol olarak kapatılamaz.",
+    "mechanism": "RebuildReservationBalancesAsync src içinde definition+interface dışında çağrılmıyor. DetectDriftAsync için de gerçek çağrı yolu bu incelemede bulunmadı. 747 replay düzeltmesi operasyon girişini eklemedi.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B088.md:6",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:73",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:115",
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceProjector.cs:19-20",
+      "src/Modules/Inventory/InventoryModule.cs:73-74"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceProjector.cs",
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Rebuild/drift tutulma kararı gerçek operatör senaryosuna bağlanır; test ve DI kayıtları caller sayılmaz; seçilen yol yetki/hata/iptal ile kanıtlanır."
+    ],
+    "decision_blocker": "Reservation bakım yolu için aynı retain/integrate/remove ürün kararı; onaysız yeni feature yok.",
+    "repair_group": "RG-STK-33",
+    "source_qualification": {
+      "F0211": "aday"
+    },
+    "historical_source_closure": {
+      "F0211": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0211",
+        "source": "evidence/V1-RMD-739/findings/register.md:221",
+        "task_ids": [
+          "V11-INV-007"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-011",
+    "parents": [
+      "F0025",
+      "F0212"
+    ],
+    "title": "Rebuild sonrası terminal replay kaydının kayıtlı düzeltmesi",
+    "category": "EZ",
+    "status": "historical-fixed",
+    "invariant": "Terminal rezervasyon rebuild sonrası ikinci kez reserved düşürmemeli.",
+    "mechanism": "747 repository tek tx içinde applied_events silip bütün rezervasyonların Reserved ve terminal durumların Terminal kayıtlarını yeniden üretir. Projector bunu çağırıyor; eski kullanılmayan RecordAppliedEventsForRebuildAsync yok. F0212 test eksikliği aynı mutation/required fix invariantının test aliası; mevcut test released replay işlemini kapsıyor, concurrency veya başka aktif rezervasyonlu terminal matrisini değil.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B088.md:5-7",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:83-84",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:323-347",
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs:227-251",
+      "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:92-102",
+      "evidence/V1-RMD-747/green.log:14-15",
+      "evidence/V1-RMD-747/mutations.log:1-3"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+      "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Mevcut ReplayingATerminalTransitionAfterARebuildIsStillIdempotent yeniden koşulur; Released/Consumed/Waste ve aynı pair üstünde başka Reserved varken replay başka rezervasyonu azaltmaz; terminal olay üretimi kaldırılınca test kırılır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-09",
+    "source_qualification": {
+      "F0025": "aday",
+      "F0212": "aday"
+    },
+    "historical_source_closure": {
+      "F0025": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-747"
+      },
+      "F0212": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-747"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0025",
+        "source": "evidence/V1-RMD-739/findings/register.md:32",
+        "task_ids": [
+          "V11-INV-007"
+        ]
+      },
+      {
+        "id": "F0212",
+        "source": "evidence/V1-RMD-739/findings/register.md:222",
+        "task_ids": [
+          "V11-INV-007"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-012",
+    "parents": [
+      "F0211"
+    ],
+    "title": "Reservation full rebuild kısmi yazımda yarım kalıyor",
+    "category": "EZ",
+    "status": "open",
+    "invariant": "applied_events ile reserved/available projeksiyonu tek atomik rebuild olmalı.",
+    "mechanism": "RebuildAppliedEventsFromReservationsAsync yalnız event log için ayrı tx kullanıyor. Projector daha sonra SetExactReservedBalanceAsync ile bağımsız commitler yapıyor. Olay logu yeni duruma geçip balance satırları yarım yazılırsa retry terminal eventini replay sayar ve gerekli miktar düzeltmesini atlayabilir. 747 event logun kendi DELETE+INSERT atomikliğini düzeltti; bütün rebuild atomikliğini değil.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B088.md:6",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:77-112",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:274-299",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:323-346"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Event rebuild sonrası ve ikinci balance yazımında failure/cancel; event seti ve tüm reserved/available önceki duruma tamamen döner; retry sonunda drift yoktur."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-10",
+    "source_qualification": {
+      "F0211": "aday"
+    },
+    "historical_source_closure": {
+      "F0211": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0211",
+        "source": "evidence/V1-RMD-739/findings/register.md:221",
+        "task_ids": [
+          "V11-INV-007"
+        ]
+      }
+    ],
+    "review_note": "Retry-skip alt iddiası desteklenmiyor; kalıcı zarar STK-013 canlı yarışıyla. Mekanizma buna daraltılacak.",
+    "reachability": "Üretimde çağıran yok (STK-009/STK-010 kararı: kaldır/entegre et). Karar kaldırmaysa bu düzeltmeler gereksiz; sıra: karar → düzeltme."
+  },
+  {
+    "id": "STK-013",
+    "parents": [
+      "F0211"
+    ],
+    "title": "Reservation aggregate ile canlı lifecycle farklı snapshotlara ait",
+    "category": "EZ",
+    "status": "open",
+    "invariant": "Reserved toplamı ve applied terminal eventler aynı authoritative snapshotı temsil etmeli.",
+    "mechanism": "Önce AggregateActiveReservationsAsync okunur; sonra GetAllBalancesAsync, ayrı tx event rebuild ve ayrı exact writes gelir. Araya Reserved→Released girerse event log terminali içerirken eski activeSums reservedi geri yükseltebilir; tekrar terminal replay hiçbir şey yapmaz. Yeni reservation da ezilebilir. Bu, eski missing-Terminal kusurundan farklı yarıştır.",
+    "source_evidence": [
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:77-105",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:302-346",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:217-270",
+      "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:109-126"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+      "src/Modules/Inventory/PortionReservations/Lifecycle/PostgresPortionReservationRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+      "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+    ],
+    "acceptance": [
+      "Aggregate sonrası terminal ve create commit interleaving; rebuild sonunda active reservation SUM=reserved, available=on_hand-reserved; event replay hiçbir ikinci etki üretmez."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-38",
+    "source_qualification": {
+      "F0211": "aday"
+    },
+    "historical_source_closure": {
+      "F0211": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0211",
+        "source": "evidence/V1-RMD-739/findings/register.md:221",
+        "task_ids": [
+          "V11-INV-007"
+        ]
+      }
+    ],
+    "reachability": "Üretimde çağıran yok (STK-009/STK-010 kararı: kaldır/entegre et). Karar kaldırmaysa bu düzeltmeler gereksiz; sıra: karar → düzeltme."
+  },
+  {
+    "id": "STK-014",
+    "parents": [
+      "F0211"
+    ],
+    "title": "Reservation rebuild raporu rezervasyon sayısı yerine miktarı int yapıyor",
+    "category": "VD",
+    "status": "open",
+    "invariant": "TotalActiveReservations gerçek aktif kayıt sayısını göstermeli; miktar ve sayı karışmamalı.",
+    "mechanism": "activeSums.Values.Sum() toplam quantity verir, (int) cast kesirleri keser ve çok büyük toplamda overflow üretir; rapor field adı TotalActiveReservations. Aynı pairde üç adet 0.5 rezervasyon için 3 yerine 1 döner. Ayrı rapor invariantı, rebuild tx düzeltmesiyle birleşmez.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B088.md:6",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:110-112",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceModels.cs:26-29",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:302-320"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceModels.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Aynı pairde 3×0.5 Reserved ve bir terminal kaydı: TotalActiveReservations=3, reserved=1.5; miktar toplamı int sınırını aşsa da kayıt sayısı overflowa bağlanmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-11",
+    "source_qualification": {
+      "F0211": "aday"
+    },
+    "historical_source_closure": {
+      "F0211": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0211",
+        "source": "evidence/V1-RMD-739/findings/register.md:221",
+        "task_ids": [
+          "V11-INV-007"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-015",
+    "parents": [
+      "F0228"
+    ],
+    "title": "Tx’sız reversal ledger commit sonrası balance hatasında ayrışıyor",
+    "category": "EZ",
+    "status": "open",
+    "invariant": "Reversal ledger ve balance birlikte commit/rollback olmalı.",
+    "mechanism": "AppendAsync(reversal,ct) kendi bağlantısında commit olur; ApplyMovementAsync başka komutla balance yazar. İkinci adım hata/ct cancel alırsa reversal kalıcı, balance eski kalır; retry HasReversal nedeniyle reddedilir. SentItemVoidStore gerçek üretim callerı tx overload kullanır; bu overload yalnız test callersıyla bulunmuştur, onu canlı path diye göstermiyoruz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:17",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:30-53",
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:17-23",
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:23-34",
+      "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:193-200",
+      "plan/v1/remediation/V1-RMD-748-hareket-iptali-eksi-bakiye.md:32"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+    ],
+    "acceptance": [
+      "Overload tutulursa gerçek Postgres ledger append sonrası balance failure/cancel: ne reversal ne delta kalır; tekrar tek etki; kaldırılırsa bütün callers tx overloada taşınır ve kullanılmayan dependency kalmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-12",
+    "source_qualification": {
+      "F0228": "aday"
+    },
+    "historical_source_closure": {
+      "F0228": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0228",
+        "source": "evidence/V1-RMD-739/findings/register.md:238",
+        "task_ids": [
+          "V11-INV-003"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-016",
+    "parents": [
+      "F0228"
+    ],
+    "title": "Tx’sız reversal overloadun üretim çağıranı yok",
+    "category": "TE",
+    "status": "decision-blocked",
+    "invariant": "Atomik olmayan yalnız-test public orchestration geleceğe hook diye tutulmamalı.",
+    "mechanism": "src caller taramasında tek gerçek StockMovementReversalService reversal callerı SentItemVoidStore ve conn/tx veriyor. Tx’sız overload için otomatik gerçek feature integration varsayılmamalı. Atomiklik kusuru mevcut, kullanımsızlık ayrı kayıt.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:17",
+      "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs:21-32",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:30-60",
+      "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:193-200"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+    ],
+    "acceptance": [
+      "Semih retain+gerçek caller gereksinimi veya remove seçer; gereksiz overload kalmaz; tx yolunun ledger/balance rollback testleri korunur."
+    ],
+    "decision_blocker": "Üretim gereksinimi yoksa removal tercihinin onayı; onaysız endpoint eklenmez.",
+    "repair_group": "RG-STK-35",
+    "source_qualification": {
+      "F0228": "aday"
+    },
+    "historical_source_closure": {
+      "F0228": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0228",
+        "source": "evidence/V1-RMD-739/findings/register.md:238",
+        "task_ids": [
+          "V11-INV-003"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-017",
+    "parents": [
+      "F0229"
+    ],
+    "title": "Tx reversal negatif stok için kayıtlı tipli ret",
+    "category": "DY",
+    "status": "historical-fixed",
+    "invariant": "Negatife götüren reversal ham PG yerine tipli ret verir; caller rollback ile ledger değişmez.",
+    "mechanism": "Tx overload TryApplyGuardedOnHandDeltaAsync ve ReversalWouldMakeStockNegativeException kullanıyor. PartialStockReturnTests 10 receipt−8 consumption sonrası receipt reversalını reddedip bakiye 2 ve reversal yok asserts. Tx’sız yol 748 kapsamında değil.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:18",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:75-79",
+      "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs:154-172",
+      "evidence/V1-RMD-748/green.log:14-15",
+      "evidence/V1-RMD-748/mutations.log:1-4"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalModels.cs",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+      "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs"
+    ],
+    "acceptance": [
+      "Mevcut tipli ret testi tekrar koşulur; caller transaction rollback açıkça doğrulanır; guard kaldırma mutasyonu kırılır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-13",
+    "source_qualification": {
+      "F0229": "aday"
+    },
+    "historical_source_closure": {
+      "F0229": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-748"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0229",
+        "source": "evidence/V1-RMD-739/findings/register.md:239",
+        "task_ids": [
+          "V11-INV-003"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-018",
+    "parents": [
+      "F0230"
+    ],
+    "title": "Manual adjustment izin kontrolü yerine yalnız actor GUID doğruluyor",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Yetkisiz ayarlama hiçbir ledger/balance etkisi üretmemeli.",
+    "mechanism": "AdjustInventoryAsync sadece AuthorizedBy!=Guid.Empty ister; permission check yok. Şu an gerçek Host callerı yok, dolayısıyla açık internet yetki atlatma iddiası değil; acceptance sözleşmesinin gerçek izin kontrolü eksik. DI registration authorization değildir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:25-27",
+      "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:58-59",
+      "src/Modules/Inventory/InventoryModule.cs:63",
+      "plan/v1.1/inventory/V11-INV-005-manual-adjustments.md:50-53"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+      "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs",
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Seçilen gerçek güven sınırında nonempty fakat izinsiz actor reddedilir ve hiçbir kayıt oluşmaz; yetkili actor tek ledger+balance etkisi verir; istemciden AuthorizedBy güvenilir kimlik sayılmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-14",
+    "source_qualification": {
+      "F0230": "aday"
+    },
+    "historical_source_closure": {
+      "F0230": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0230",
+        "source": "evidence/V1-RMD-739/findings/register.md:240",
+        "task_ids": [
+          "V11-INV-005"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-019",
+    "parents": [
+      "F0230"
+    ],
+    "title": "Manual adjustment özelliği üretimde çağrılmıyor",
+    "category": "TE",
+    "status": "decision-blocked",
+    "invariant": "Done manual adjustment davranışının gerçek yetkili giriş yolu olmalı veya kullanılmayan özellik kaldırılmalı.",
+    "mechanism": "AdjustInventoryAsync yalnız definition/interface içinde; Host stok endpoints physical-count ve waste sunar, manual adjustment yok. PhysicalCount bağımsız service kullanır; ona alias saymak eksik davranışı gizler.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:26",
+      "src/Modules/Inventory/InventoryModule.cs:63",
+      "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:37",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs:269-300"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+      "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Kullanıcı gerçek ihtiyacı onaylar; integration seçilirse tam yeni giriş/contract/test yolları ayrıca planlanır, removal seçilirse yaşayan physical-count/waste davranışları korunur."
+    ],
+    "decision_blocker": "Manual adjustment retained feature mı removal mı; yeni endpoint ve izin kararı bu salt-okuma görevinde alınmaz.",
+    "repair_group": "RG-STK-34",
+    "source_qualification": {
+      "F0230": "aday"
+    },
+    "historical_source_closure": {
+      "F0230": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0230",
+        "source": "evidence/V1-RMD-739/findings/register.md:240",
+        "task_ids": [
+          "V11-INV-005"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-020",
+    "parents": [
+      "F0231"
+    ],
+    "title": "Waste key farklı payloadı sessiz replay sayıyor",
+    "category": "EZ",
+    "status": "open",
+    "invariant": "Bir idempotency key tek iş yükünü temsil eder; farklı item/location/quantity/source aynı sonuç diye kabul edilmemeli.",
+    "mechanism": "Hem erken existingRecord dalı hem unique race catch yalnız keye göre döner, payload karşılaştırmaz. Host waste endpoint gerçek caller; reservation cancellation caller-tx yolu da mevcut. ManualAdjustments FindReplay farklı yükü reddeder. Tx içi replay movement ayrı bağlantıdan okunur; uncommitted existingRecord senaryosu ayrıca negative check gerektirir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:30",
+      "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:80-90",
+      "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:210-223",
+      "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:185-205",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs:286-300",
+      "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:146-159"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs",
+      "src/Modules/Inventory/WasteRecording/WasteModels.cs",
+      "src/Modules/Inventory/WasteRecording/PostgresWasteRecordRepository.cs",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "acceptance": [
+      "Aynı key+aynı yük replay; farklı item/location/quantity/unit/source/sourceReference ve onaylı payload alanları conflict. Erken hit ve concurrent unique-race recovery aynı karşılaştırmayı kullanır; caller tx ve HTTP 409/Türkçe mesaj; ikinci ledger/balance etkisi yok."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-15",
+    "source_qualification": {
+      "F0231": "aday"
+    },
+    "historical_source_closure": {
+      "F0231": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0231",
+        "source": "evidence/V1-RMD-739/findings/register.md:241",
+        "task_ids": [
+          "V11-INV-006"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-021",
+    "parents": [
+      "F0232"
+    ],
+    "title": "Waste reversal hazırlanmış stoğu yeniden available yapabiliyor",
+    "category": "VD",
+    "status": "open",
+    "invariant": "Hazırlanmış ürün fire kaydından sonra stok olarak geri dönmemeli.",
+    "mechanism": "PrepareReversalAsync, CanReverseAsync ve StockMovement.CreateReversal yalnız Reversal türünü reddeder; Waste Out hareketini In yapar. Non-tx reversal ve ledger-only StockMovementService yolu da bunu yapar. Mevcut FullLedgerRebuildFromDatabaseMovementsReconcilesAccurately testi açıkça Waste cancelled ile +5 geri koymayı bekler; kabul maddesiyle çelişen pozitif fixture, eksik testten daha güçlü kanıt. Bugünkü Host void yalnız Consumption filtreler; canlı Waste HTTP reversal ucu iddia edilmiyor.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:31",
+      "plan/v1.1/inventory/V11-INV-006-waste-recording.md:51-54",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:149-175",
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:186-191",
+      "src/Modules/Inventory/MovementLedger/StockMovement.cs:154-180",
+      "src/Modules/Inventory/MovementLedger/StockMovementService.cs:102-137",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:210-230",
+      "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:184-187"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+      "src/Modules/Inventory/MovementLedger/StockMovement.cs",
+      "src/Modules/Inventory/MovementLedger/StockMovementService.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Hazırlanmış/PortionReservation waste için CanReverse=false ve tüm kullanılan reversal girişlerinde tipli ret; ledger ve on_hand/reserved/available değişmez. Yanlış girilmiş genel spoilage fire düzeltmesi isteniyorsa Semih onaylı ayrı düzeltme politikası gerekir; otomatik yeniden satış yok."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-16",
+    "source_qualification": {
+      "F0232": "aday"
+    },
+    "historical_source_closure": {
+      "F0232": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0232",
+        "source": "evidence/V1-RMD-739/findings/register.md:242",
+        "task_ids": [
+          "V11-INV-006"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-022",
+    "parents": [
+      "F0516"
+    ],
+    "title": "Waste iki paralel azaltmasının doğrudan service regresyon testi eksik",
+    "category": "KN",
+    "status": "open",
+    "invariant": "Stoku aşan iki farklı-key Waste çağrısı en fazla bir kez stok azaltmalı; kaybeden tüm kayıtlarını geri almalı.",
+    "mechanism": "WasteRecordingDatabaseTests dosyası yalnız iki test: yaşam döngüsü ve sıralı idempotency. Guard+advisory+runner üretimde mevcut, bozuk guard varsayılmıyor. AtomicCompensationTests waste-vs-sale ve caller rollback kapsar ama aynı standalone WasteRecordingService iki azaltma yarışını doğrudan kapsamaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B048.md:13-16",
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs:74-185",
+      "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:170-208",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:252-301",
+      "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs:86-110"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+      "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+      "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+    ],
+    "acceptance": [
+      "10 stok, iki farklı-key 7 miktar; stale precheck barrier ile ikisini geçir; tam bir başarı+bir InsufficientStockForWasteException, son stok3, tek waste+tek hareket. Guard WHERE kaldırma mutasyonu testi kırar."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-17",
+    "source_qualification": {
+      "F0516": "aday"
+    },
+    "historical_source_closure": {
+      "F0516": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0516",
+        "source": "evidence/V1-RMD-739/findings/low-A.md:173",
+        "task_ids": [
+          "V1-RMD-125"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-023",
+    "parents": [
+      "F0516"
+    ],
+    "title": "Waste standalone hata/iptalde üçlü yazım rollback testi eksik",
+    "category": "KN",
+    "status": "open",
+    "invariant": "Ledger+WasteRecord+balance standalone hata/iptalde birlikte geri alınmalı.",
+    "mechanism": "Runner transaction dispose ile rollback sağlar; mevcut standalone DB suite failure injection yapmaz. CrossChannel ACompensationRolledBackWithItsCallerLeavesTheHoldExactlyAsItWas(true) caller-tx için mevcut olumlu kapsam; bunu yok saymıyoruz. F0516daki doğrudan standalone hata/iptal boşluğu ayrı test gerektirir, üretim atomiklik kusuru diye sayılmaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B048.md:16",
+      "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:170-201",
+      "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs:14-23",
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs:74-185",
+      "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs:64-82"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs",
+      "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+      "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+    ],
+    "acceptance": [
+      "Ledger append sonrası, waste insert sonrası, guarded apply öncesi ve commit ct iptalinde exception enjekte et; üçünün toplamları eski durumda; sonra retry bir kez başarılı. Caller rollback mevcut testi de yeniden koş."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-36",
+    "source_qualification": {
+      "F0516": "aday"
+    },
+    "historical_source_closure": {
+      "F0516": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0516",
+        "source": "evidence/V1-RMD-739/findings/low-A.md:173",
+        "task_ids": [
+          "V1-RMD-125"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-024",
+    "parents": [
+      "F0031"
+    ],
+    "title": "Physical count delta≠0 yarışının kayıtlı düzeltmesi",
+    "category": "EZ",
+    "status": "historical-fixed",
+    "invariant": "Uygulanan absolute count sayılan değerden farklıysa işlem reddedilip geri alınmalı.",
+    "mechanism": "741 nonzero delta uygulanınca returned OnHandQuantity != CountedQuantity ise tipli exception ekledi. Mevcut AMovementBetweenReadingAndApplyingRollsTheCountBack testi 10→concurrent7 ve counted8 ile ledger rollback doğrular. delta=0 branch kontrolsüz kaldı; tam parent kapanışı değildir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:35",
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:94-107",
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:108-123",
+      "evidence/V1-RMD-741/green.log:14-15",
+      "evidence/V1-RMD-741/mutations.log:1-2"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Mevcut nonzero yarış testi ve guard removal mutasyonu yeniden çalıştırılır; count row da rollback sonrası yok assertions eklenir."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-18",
+    "source_qualification": {
+      "F0031": "aday"
+    },
+    "historical_source_closure": {
+      "F0031": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-741"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0031",
+        "source": "evidence/V1-RMD-739/findings/register.md:38",
+        "task_ids": [
+          "V11-INV-008"
+        ]
+      }
+    ],
+    "review_note": "F0031 kapanışı kısmi; STK-024 nonzero düzeltmesi tarihsel, STK-025 delta=0 açık."
+  },
+  {
+    "id": "STK-025",
+    "parents": [
+      "F0031"
+    ],
+    "title": "Physical count delta=0 branch concurrent movementı doğrulamıyor",
+    "category": "EZ",
+    "status": "open",
+    "invariant": "Count kaydı gerçek transaction anında doğrulanan bakiye snapshotını temsil etmeli; nonzero ile zero delta aynı concurrency kuralında olmalı.",
+    "mechanism": "Current read10, counted10 → delta0; read sonrası sale−3 commit ederse if(delta!=0) tamamen atlanır. Count previous10/new10 ve başarılı sonuç yazar; gerçek balance7. 741 equality guard yalnız if içinde. Mevcut matching-count testi yarışsız; aynı RacingBalanceRepository ile counted10 yapıldığında açık branch tetiklenir.",
+    "source_evidence": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:65-77",
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:103-127",
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:108-174",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs:269-280"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+      "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "acceptance": [
+      "Mevcut RacingBalanceRepository ile initial10, counted10, araya−3 koy; PhysicalCountBalanceGuardFailedException/HTTP409, count row yok, balance7 korunur. Bir başka tx hareketini count commitine kadar serialize eden doğru çözümde postcondition eşdeğer kanıtlanır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-19",
+    "source_qualification": {
+      "F0031": "aday"
+    },
+    "historical_source_closure": {
+      "F0031": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-741"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0031",
+        "source": "evidence/V1-RMD-739/findings/register.md:38",
+        "task_ids": [
+          "V11-INV-008"
+        ]
+      }
+    ],
+    "review_note": "F0031 kapanışı kısmi; STK-024 nonzero düzeltmesi tarihsel, STK-025 delta=0 açık."
+  },
+  {
+    "id": "STK-026",
+    "parents": [
+      "F0699"
+    ],
+    "title": "Physical count retry kalıcı istek kimliği taşımıyor",
+    "category": "EZ",
+    "status": "open",
+    "invariant": "Aynı sayım gönderimi retry olduğunda tek audit kaydı/tek effect üretmeli; yeni gerçek sayım ayrı kimlik olmalı.",
+    "mechanism": "PhysicalCountRequest/HTTP request kalıcı key taşımaz; service her çağrıda Guid.NewGuid sayım kimliği üretir. Ağ cevabı kaybolup araya satış girerse aynı counted_quantity retry yeni delta ile satışı geri koyar; satış yoksa bile ikinci count audit satırı üretir. Mevcut eşleşen count testinin bilinçli ikinci sayımı retrydan ayıracak contract yok.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:37",
+      "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs:3-8",
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:65-68",
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:113-122",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs:269-279",
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:157-174"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+      "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs",
+      "src/Modules/Inventory/PhysicalCounts/IPhysicalCountRepository.cs",
+      "src/Modules/Inventory/PhysicalCounts/PostgresPhysicalCountRepository.cs",
+      "src/Host/Experience/Inventory/StockMasterContracts.cs",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "acceptance": [
+      "Kalıcı count/request identity ile aynı payload retry aynı countId döner; count sonrası satış−3 ardından retry stok artırmaz. Aynı key farklı item/location/count/notes için açık conflict politikası; farklı key yeni gerçek sayım kabul edilir. DB migration gerekiyorsa yeni exact migration adı ve composition yüzeyi plan onayı olmadan eklenmez."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-20",
+    "source_qualification": {
+      "F0699": "aday"
+    },
+    "historical_source_closure": {
+      "F0699": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0699",
+        "source": "evidence/V1-RMD-739/findings/low-B.md:116",
+        "task_ids": [
+          "V11-INV-008"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-027",
+    "parents": [
+      "F0699"
+    ],
+    "title": "Physical count English ledger reason UI sızıntısı olarak henüz kanıtlanmadı",
+    "category": "UI",
+    "status": "needs-verification",
+    "invariant": "Kod/log/domain reason English kalır; kullanıcıya gösterilen mesaj Türkçe olmalı.",
+    "mechanism": "Sabit reason English, fakat AGENTS.md kod/log/exception adlarını English ister. Bu reasonın kullanıcı ekranına taşındığı caller/sink gösterilmedi. Source row korunur; otomatik çeviri production düzeltmesi önerilmez. UI sink bulunursa ayrıca localized display gerekir, ledger audit metnini çevirmek tek başına gerekmez.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:37",
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:82-91",
+      "AGENTS.md:57-58"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "acceptance": [
+      "Ledger reasonı gösteren gerçek UI/API consumer bulunur; kullanıcıya ham English veriyorsa o sinkte test planlanır; sink yoksa aday explicit non-finding olarak sonuçlandırılır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-21",
+    "source_qualification": {
+      "F0699": "aday"
+    },
+    "historical_source_closure": {
+      "F0699": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0699",
+        "source": "evidence/V1-RMD-739/findings/low-B.md:116",
+        "task_ids": [
+          "V11-INV-008"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-028",
+    "parents": [
+      "F0031"
+    ],
+    "title": "Physical count ilk görev kapanışının kanıt dizini eksik iddiası",
+    "category": "BD",
+    "status": "open",
+    "invariant": "İlk Done acceptance komutlarının kanıtı tarihsel sonuç ile güncel runtime sonucu ayrılarak doğrulanmalı.",
+    "mechanism": "B100 tam kartı evidence/V11-INV-008 yok diyor. 741 günlükleri var ve okundu ancak bunlar INV-008 ilk acceptance build/manifest/revert-and-confirm kapsamını otomatik kapatmaz. Bu alt-kayıt kaynak parent yüksek F0031 tam kartından türedi; bu oturum test çalıştırmadı.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:36",
+      "plan/v1.1/inventory/V11-INV-008-physical-counts.md:71-79",
+      "evidence/V1-RMD-741/green.log:14-15"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "INV-008 tarihsel commit/artifact bulunur ve acceptance bazında eşlenir; yoksa kanıtsız olduğu kayda geçer, 741 sayıları ilk kapanış kanıtı diye kullanılmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-22",
+    "source_qualification": {
+      "F0031": "aday"
+    },
+    "historical_source_closure": {
+      "F0031": {
+        "closure_status": "kayitli-kanitla-tam-kapanis-eslesmesi",
+        "closure_task": "V1-RMD-741"
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0031",
+        "source": "evidence/V1-RMD-739/findings/register.md:38",
+        "task_ids": [
+          "V11-INV-008"
+        ]
+      }
+    ],
+    "review_note": "V11-INV-008 kanıt dizininin yokluğu bağımsız teyit edildi; düzeltme tarihli kanıt-yok kaydıdır, eski log ilk kapanış kanıtı sayılmaz."
+  },
+  {
+    "id": "STK-029",
+    "parents": [
+      "F0295"
+    ],
+    "title": "Nullable uniqueness belgesindeki stock_balances şeması gerçek değil",
+    "category": "BD",
+    "status": "open",
+    "invariant": "Karar belgesi gerçek stock_balances kolonları/nullability/unique kuralını doğru tarif etmeli.",
+    "mechanism": "Belge product_id/location_id ve nullable central stock iddia ediyor; gerçek 061 stock_item_id/stock_location_id NOT NULL ve sıradan UNIQUE. Bu kod null bugı değil belge-kod ayrışması; yalnız yanlış belgeyi düzeltmek gerekiyorsa schema migration yazılmaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B116.md:36-38",
+      "docs/data/nullable-unique-policy.md:24-37",
+      "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql:4-13"
+    ],
+    "production_paths": [
+      "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "Karar metni exact kolon/NOT NULL/UNIQUE ile eşlenir; central-stock nullable ihtiyacı varsa ayrı Semih kararı olmadan mevcut şema değiştirilmez."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-23",
+    "source_qualification": {
+      "F0295": "aday"
+    },
+    "historical_source_closure": {
+      "F0295": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0295",
+        "source": "evidence/V1-RMD-739/findings/register.md:305",
+        "task_ids": [
+          "V0-DAT-003"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-030",
+    "parents": [
+      "F0295"
+    ],
+    "title": "Nullable uniqueness printer_routes istisnaları belgede yanlış",
+    "category": "BD",
+    "status": "open",
+    "invariant": "Printer routing specificity ve active-only unique kuralları doğru açıklanmalı.",
+    "mechanism": "Belge nullable composite NULLS NOT DISTINCT iddia eder ve kısmi unique reddeder. 016 route_level payload CHECK ve ayrı active partial UNIQUE indexler kullanıyor; Default ayrıca tek active defaultu korur. F0295 bileşiğinin bağımsız tablo/politika altkusuru; stock_balances runtime fixi değildir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B116.md:37",
+      "docs/data/nullable-unique-policy.md:29-37",
+      "database/migrations/V1/V1-KIT-002/016-printer-routing.up.sql:17-59"
+    ],
+    "production_paths": [
+      "database/migrations/V1/V1-KIT-002/016-printer-routing.up.sql"
+    ],
+    "test_paths": [],
+    "acceptance": [
+      "Belgedeki printer_routes satırı ve partial-index invariantı route_level/is_active koşullarını doğru yansıtır; sırf belgeye uydurmak için eski migration yeniden yazılmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-24",
+    "source_qualification": {
+      "F0295": "aday"
+    },
+    "historical_source_closure": {
+      "F0295": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0295",
+        "source": "evidence/V1-RMD-739/findings/register.md:305",
+        "task_ids": [
+          "V0-DAT-003"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-031",
+    "parents": [
+      "F0641",
+      "F1005"
+    ],
+    "title": "Ledger kapanış belgesinin 057 migration yolları bayat",
+    "category": "BD",
+    "status": "open",
+    "invariant": "Tarihsel kapanış artifactı güncel yol eşlemesini doğru vermeli; eski koşu değişmeden korunmalı.",
+    "mechanism": "B087 ve iki kaynak alias aynı 057→060 path mapping kusuru. closure-evidence 057 up/down ve write-set diyor; gerçek 060, mevcut StockMovementDatabaseTests de 060 kullanır. Tarihsel exit0 satırları yeniden koşu değildir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B087.md:33-35",
+      "evidence/V11-INV-001/closure-evidence.txt:20-25",
+      "evidence/V11-INV-001/closure-evidence.txt:60-62",
+      "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs:208-213"
+    ],
+    "production_paths": [
+      "database/migrations/V11/V11-INV-001/060-stock-movements.up.sql",
+      "database/migrations/V11/V11-INV-001/060-stock-movements.down.sql"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "057→060 yol eşleme notu tarihli provenance ile eklenir; eski logları yeni çalıştırılmış gibi değiştirme; up/down gerçek dosyalara resolve olur."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-25",
+    "source_qualification": {
+      "F0641": "aday",
+      "F1005": "aday"
+    },
+    "historical_source_closure": {
+      "F0641": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      },
+      "F1005": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0641",
+        "source": "evidence/V1-RMD-739/findings/low-B.md:58",
+        "task_ids": [
+          "V11-INV-001"
+        ]
+      },
+      {
+        "id": "F1005",
+        "source": "evidence/V1-RMD-739/findings/low-C.md:110",
+        "task_ids": [
+          "V11-INV-001"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-032",
+    "parents": [
+      "F0697"
+    ],
+    "title": "Balance kapanış belgesinin 058 migration yolları bayat",
+    "category": "BD",
+    "status": "open",
+    "invariant": "Balance projection tarihsel artifactı güncel 061 yolu ile izlenebilir olmalı.",
+    "mechanism": "Full B100 kartı düşük H: 058 diyor, repo 061. Bu F0641 ile aynı tür belge işi fakat ayrı artifact/acceptance identity; sırf belge kategorisi aynı diye tek kusur sayılmadı.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:14",
+      "evidence/V11-INV-002/closure-evidence.txt:18-23",
+      "evidence/V11-INV-002/closure-evidence.txt:62-63",
+      "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql:1"
+    ],
+    "production_paths": [
+      "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql",
+      "database/migrations/V11/V11-INV-002/061-stock-balances.down.sql"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+    ],
+    "acceptance": [
+      "058→061 güncel yol notu tüm up/down/write-set/test atıflarını kapsar; eski komut sonuçları tarihsel tutulur."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-26",
+    "source_qualification": {
+      "F0697": "aday"
+    },
+    "historical_source_closure": {
+      "F0697": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0697",
+        "source": "evidence/V1-RMD-739/findings/low-B.md:114",
+        "task_ids": [
+          "V11-INV-002"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-033",
+    "parents": [
+      "F1005"
+    ],
+    "title": "StockMovementService DI kayıtlı fakat üretim callerı yok",
+    "category": "TE",
+    "status": "open",
+    "invariant": "Yalnız-test orchestration ve eski allowlist gerekçesi geleceğe hook/ölü kodu meşrulaştırmamalı.",
+    "mechanism": "B087 bilerek bağlı değil der; güncel InventoryModule IStockMovementService kaydeder. src referansları yalnız interface/implementation/DI; gerçek işler IStockMovementRepository ile atomik orchestration yapar. Ledger repository canlı, tüm MovementLedger modülü ölü değil. Bu kusur 057 belge farkından ayrı. Test consumer envanteri: MovementLedger domain/database, BalanceProjection database, MovementReversal database ve PartialStockReturnTests; grep7 construction refs gösterdi. Başka üretim recorder callerı bulunmadı.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B087.md:34",
+      "src/Modules/Inventory/InventoryModule.cs:54-55",
+      "src/Modules/Inventory/MovementLedger/IStockMovementService.cs:3",
+      "src/Modules/Inventory/MovementLedger/StockMovementService.cs:25-137",
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:273-289"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/MovementLedger/IStockMovementService.cs",
+      "src/Modules/Inventory/MovementLedger/StockMovementService.cs",
+      "src/Modules/Inventory/InventoryModule.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+      "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs",
+      "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+      "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs"
+    ],
+    "acceptance": [
+      "Üretimde gerçek caller yokluğu method-level doğrulanır; kullanılmayan service/interface/DI kaldırma planı test fixture recorderlarını repository seeding ile değiştirir; yaşayan repository/domain/immutability/reversal test gücü düşmez."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-27",
+    "source_qualification": {
+      "F1005": "aday"
+    },
+    "historical_source_closure": {
+      "F1005": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F1005",
+        "source": "evidence/V1-RMD-739/findings/low-C.md:110",
+        "task_ids": [
+          "V11-INV-001"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-034",
+    "parents": [
+      "F0698"
+    ],
+    "title": "Pasif stok kalemine eşleme kabulü için kural belirsiz",
+    "category": "VD",
+    "status": "decision-blocked",
+    "invariant": "Pasif item yeni hareketi reddetmeli; pasif itema eşleme yapmanın yasak olup olmadığı açık olmalı.",
+    "mechanism": "AssignProductToStockItemAsync item varlığını doğrular fakat EnsureActiveForMovement çağırmaz. Ancak INV-004 acceptance pasif itemın yeni hareketini yasaklar, mapping assignmentı değil. Pasif stok eşlemesi tek başına acceptance violation kanıtlamaz; full kartın iddiası korunur ama ürün kuralı varsayılmaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:23",
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs:111-123",
+      "plan/v1.1/inventory/V11-INV-004-stock-master-and-locations.md:50-53",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs:123-131"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "acceptance": [
+      "Semih pasif item mapping politikası seçer; yasaksa inactive target ile mapping yazılmadığı HTTP409+DB testle, serbestse hareket ret kuralı ile açıkça ayrıştırılır."
+    ],
+    "decision_blocker": "Pasif item eşleme yasağı mı yalnız hareket yasağı mı? Plan hareketi yasaklar; ek policy uydurulmaz.",
+    "repair_group": "RG-STK-28",
+    "source_qualification": {
+      "F0698": "aday"
+    },
+    "historical_source_closure": {
+      "F0698": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0698",
+        "source": "evidence/V1-RMD-739/findings/low-B.md:115",
+        "task_ids": [
+          "V11-INV-004"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-035",
+    "parents": [
+      "F0698"
+    ],
+    "title": "Olmayan ürüne mapping güncel tam şemada FK ile engelli",
+    "category": "VD",
+    "status": "historical-fixed",
+    "invariant": "Mapping olmayan catalog producta işaret etmemeli.",
+    "mechanism": "Service product existence okumuyor ama migration097 fk_product_stock_mappings_product ekler; full composition kaydı mevcut. Host SQL23503→REFERENCE_NOT_FOUND 400 eşler. Sadece059+118 uygulayan StockMaster module testinin random product GUID kabulü güncel production FK güvencesini yok saymaya gerekçe değildir. Özel regression assertion henüz bulunmadı; runtime yeniden koşulmadı.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:23",
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs:118-122",
+      "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql:48-57",
+      "database/MigrationComposition/order.json:832-844",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs:405-406",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs:135-142",
+      "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs:13-21",
+      "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs:127-139"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+      "src/Modules/Inventory/StockMaster/PostgresProductStockMappingRepository.cs",
+      "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "acceptance": [
+      "Tam production migration zinciri üstünde bilinmeyen product mapping reddedilir; FK kaldırma mutasyonu assertionı kırar; stock-master-only059 fixture bu güvenceyi test ediyor diye gösterilmez."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-29",
+    "source_qualification": {
+      "F0698": "aday"
+    },
+    "historical_source_closure": {
+      "F0698": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0698",
+        "source": "evidence/V1-RMD-739/findings/low-B.md:115",
+        "task_ids": [
+          "V11-INV-004"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-036",
+    "parents": [
+      "F0698"
+    ],
+    "title": "Master duplicate code yarışında servis tipli hata sözleşmesi teyidi",
+    "category": "DY",
+    "status": "needs-verification",
+    "invariant": "Duplicate item/location code istemciye tutarlı conflict vermeli.",
+    "mechanism": "CreateStockItem/CreateLocation check-then-insert; repo AddAsync SQL23505 çevirmiyor. Host genel UniqueViolation zaten409 DUPLICATE_RESOURCE verir, dolayısıyla HTTP500 iddiası yanlış. Mapping AddOrUpdate ON CONFLICT kullandığı için mapping tekrarını da23505 diye sayamayız. Servis seviyesinde typed DuplicateStockItem/Location garantisi isteniyorsa eksik; mevcut acceptance bunu tam belirtmez.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B100.md:23",
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs:34-43",
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs:66-95",
+      "src/Modules/Inventory/StockMaster/PostgresStockItemRepository.cs:17-40",
+      "src/Modules/Inventory/StockMaster/PostgresStockLocationRepository.cs:17-35",
+      "src/Modules/Inventory/StockMaster/PostgresProductStockMappingRepository.cs:20-25",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs:392-405"
+    ],
+    "production_paths": [
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+      "src/Modules/Inventory/StockMaster/PostgresStockItemRepository.cs",
+      "src/Modules/Inventory/StockMaster/PostgresStockLocationRepository.cs",
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs",
+      "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+    ],
+    "acceptance": [
+      "Parallel same code create HTTP testinde tam bir create ve kalanlar409; mapping upsert yeniden gönderimde OK. Servis typed exception contractı gerekip gerekmediği belgelenir; gerekirse yalnız exact unique constraint çevrilir."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-30",
+    "source_qualification": {
+      "F0698": "aday"
+    },
+    "historical_source_closure": {
+      "F0698": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0698",
+        "source": "evidence/V1-RMD-739/findings/low-B.md:115",
+        "task_ids": [
+          "V11-INV-004"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-037",
+    "parents": [
+      "F0560"
+    ],
+    "title": "Production raw SELECT FOR UPDATE mimari yasak değil",
+    "category": "MK",
+    "status": "needs-verification",
+    "invariant": "Başka modül şemasına yazım repository contractından olmalı; izinli same-tx okuma yanlış ihlal sayılmamalı.",
+    "mechanism": "ProductionStockEffectService inventory.stock_balances raw read+FOR UPDATE yapar; dört raw write kaldırılmıştır. Architecture belgesi bu sufficiency checkini açıkça izinli sayar; approved Production→Inventory edge var. F0560 read/lockun kaldığını doğru gözler, tek başına mimari defect sonucu çıkarmaz. Ayrı lock-order riski sonraki kayıtta.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/tasks/B062.md:17-20",
+      "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:228-274",
+      "docs/architecture/module-dependency-rules.md:104-112",
+      "docs/architecture/module-dependency-rules.md:206-217",
+      "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:85-86"
+    ],
+    "production_paths": [
+      "src/Modules/Production/StockEffects/ProductionStockEffectService.cs",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs",
+      "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs"
+    ],
+    "acceptance": [
+      "Mimari sahiplik kuralı read vs write ayrımıyla değerlendirilir; sadece raw SELECT var diye gereksiz abstraction eklenmez; lock-order testi ayrı tutulur."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-31",
+    "source_qualification": {
+      "F0560": "aday"
+    },
+    "historical_source_closure": {
+      "F0560": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0560",
+        "source": "evidence/V1-RMD-739/findings/low-A.md:217",
+        "task_ids": [
+          "V11-RMD-002"
+        ]
+      }
+    ]
+  },
+  {
+    "id": "STK-038",
+    "parents": [
+      "F0560"
+    ],
+    "title": "Production row lock → advisory, satış advisory → row lock tersliği",
+    "category": "EZ",
+    "status": "open",
+    "invariant": "Ortak balance writers aynı lock acquisition sırasını izlemeli.",
+    "mechanism": "Production önce mevcut balance satırında FOR UPDATE tutar (231-245), sonra ApplyOnHandDeltaAsync içindeki advisory locku alır. Satış LockStockRowsAsync önce aynı row-key advisory lock alır, ardından balance update için row lock ister. Sale advisoryyi aldıktan sonra Production row locku alırsa ikisi karşılıklı bekler. Recipe itemlarının GUID sıralanması bu iki lock türünün tersliğini çözmez; hata logu/runtime gözlemi henüz yok, statik reachable deadlock mekanizması mevcut.",
+    "source_evidence": [
+      "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:226-245",
+      "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:267-274",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:182-213",
+      "src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs:260-273",
+      "src/Host/Experience/Production/ProductionManagementEndpoints.cs:145-165"
+    ],
+    "production_paths": [
+      "src/Modules/Production/StockEffects/ProductionStockEffectService.cs",
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+      "src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs",
+      "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+    ],
+    "acceptance": [
+      "İki gerçek bağlantıda sale advisory locku tutarken production row-lock barrierına gelir; sale row write başlatılır, production advisory bekler. Mevcut kod40P01/timeout ile kırılır; ortak advisory→row düzeni sonrası ikisi tutarlı sıralı sonuçla tamamlanır; stock/ledger toplamı doğru."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-STK-32",
+    "source_qualification": {
+      "F0560": "aday"
+    },
+    "historical_source_closure": {
+      "F0560": {
+        "closure_status": "satir-bazli-kapanis-teyidi-gerekli",
+        "closure_task": null
+      }
+    },
+    "source_records": [
+      {
+        "id": "F0560",
+        "source": "evidence/V1-RMD-739/findings/low-A.md:217",
+        "task_ids": [
+          "V11-RMD-002"
+        ]
+      }
+    ],
+    "review_note": "Etki 40P01 ile işlem iptali; veri bozulması kanıtlanmadı. Kabulde timeout yok."
+  },
+  {
+    "id": "GYZ-001",
+    "parents": [
+      "F0002"
+    ],
+    "title": "IssuedSessionToken ve onu taşıyan LoginSuccess varsayılan biçimlendirmede ham token açıyor",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Kimlik sonucu nesnesinin log/assertion/exception amaçlı biçimlendirilmesi ham bearer token içermez.",
+    "mechanism": "IssuedSessionToken positional record; ToString/PrintMembers override yok. AuthenticationService.LoginAsync bu nesneyi üretip LoginSuccess ile döndürüyor. LoginSuccess biçimlendirmesi Session.ToString çağırır. Host giriş yolu UserId/DisplayName kullanıp ayrı device session üretiyor; canlı token loglayan bir sink kanıtlanmadı. Nesne biçimlendirme kusuru gerçektir; mevcut bir üretim log sızıntısı iddiası değildir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:9",
+      "evidence/V1-RMD-739/tasks/B005.md:13",
+      "src/Modules/Identity/Authentication/SessionTokenIssuer.cs:10",
+      "src/Modules/Identity/Authentication/LoginResult.cs:10",
+      "src/Modules/Identity/Authentication/AuthenticationService.cs:92",
+      "src/Host/DualScreen/DualScreenApplication.Endpoints.cs:70",
+      "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs:10"
+    ],
+    "production_paths": [
+      "src/Modules/Identity/Authentication/SessionTokenIssuer.cs",
+      "src/Modules/Identity/Authentication/LoginResult.cs",
+      "src/Modules/Identity/Authentication/AuthenticationService.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs",
+      "tests/Modules/Identity/Authentication/AuthenticationServiceTests.cs"
+    ],
+    "acceptance": [
+      "Sentinel token ile doğrudan ToString, string interpolation, object.ToString ve LoginSuccess.ToString içinde sentinel yok; mask var.",
+      "Exception/assertion mesajı nesne biçimlendirmesinden üretildiğinde sentinel yok. Token property ve hash/expiry davranışı değişmez; normal login başarılı kalır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-TOKEN"
+  },
+  {
+    "id": "GYZ-002",
+    "parents": [
+      "F0055"
+    ],
+    "title": "IAM-013 VERIFIED hükmü sentinel yeniden üretimiyle desteklenmiyor",
+    "category": "KN",
+    "status": "open",
+    "invariant": "Doğrulama hükmü exact SHA/ortam/komut/exit code ve bulguya özgü pozitif-negatif ham çıktı taşır.",
+    "mechanism": "10 satırlık belge sentinel görünmez diyor; yalnız 53 test özeti var. Bugünkü issuer testleri uzunluk/benzersizlik/ömür test ediyor, biçimlendirme testi yok.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:65",
+      "evidence/V1-RMD-739/tasks/B005.md:13",
+      "evidence/V1-IAM-013/issued_token_redaction_verification.txt:5",
+      "plan/v1/identity-authorization/V1-IAM-013-issued-token-redaction.md:46",
+      "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs:10"
+    ],
+    "production_paths": [
+      "src/Modules/Identity/Authentication/SessionTokenIssuer.cs",
+      "src/Modules/Identity/Authentication/LoginResult.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Identity/Authentication/SessionTokenIssuerTests.cs"
+    ],
+    "acceptance": [
+      "Eski kanıt silinmeden tarihsel/UNPROVEN düzeltme notu ekle; yeni SHA ve sentinel-red/green ham transcript iliştir.",
+      "Yeni raporu RG-TOKEN kabul matrisine satır bazlı bağla; tüm auth test sayısını sentinel kanıtı sayma."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-TOKEN-EVIDENCE"
+  },
+  {
+    "id": "GYZ-003",
+    "parents": [
+      "F0015"
+    ],
+    "title": "SensitivePayload.Fields dışarıdan mutable downcast ile değiştirilebilir",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Kurucu sonrasında doğrulanmış field snapshot değişmez kalır.",
+    "mechanism": "Kurucu girdi sözlüklerini kopyalıyor (caller alias korunuyor), fakat Fields gerçek Dictionary döndürüyor. ICollection/IDictionary/Dictionary üzerinden field ekleme/silme/set mümkün; unclassified field sonradan eklenebilir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:22",
+      "evidence/V1-RMD-739/tasks/B060.md:39",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs:22",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs:31",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:45"
+    ],
+    "production_paths": [
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs"
+    ],
+    "test_paths": [
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs",
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/EnvelopeProtectionTests.cs"
+    ],
+    "acceptance": [
+      "Kurucu girdisini sonradan değiştirme çıktıyı değiştirmez.",
+      "Returned Fields üzerinde desteklenen mutable arayüz/cast ile set/add/remove/clear etkisiz veya açık ret; redaction/serialization snapshot tutarlı."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-PAYLOAD"
+  },
+  {
+    "id": "GYZ-004",
+    "parents": [
+      "F0015"
+    ],
+    "title": "SensitivePayload.Categories downcast ile Public yapılarak redaction atlanır",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Non-public sınıflandırma public API üzerinden sonradan düşürülemez.",
+    "mechanism": "Categories gerçek Dictionary. Pii -> Public değişince PayloadRedactor.Redact satır 19 aynı ham değeri döndürür. Canlı log çağıranı bulunmadı; public redactor yürütme yolu ve bypass statik olarak açık.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:22",
+      "evidence/V1-RMD-739/tasks/B060.md:39",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs:32",
+      "src/BuildingBlocks/Security/SensitiveData/PayloadRedactor.cs:19",
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs:28"
+    ],
+    "production_paths": [
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs",
+      "src/BuildingBlocks/Security/SensitiveData/PayloadRedactor.cs"
+    ],
+    "test_paths": [
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs"
+    ],
+    "acceptance": [
+      "Pii/Payment sentinel için Dictionary ve IDictionary mutasyon denemeleri sonrası maske kalır; Public özgün alan görünür.",
+      "Eksik sınıflandırma kurucuda reddedilir, kategori silme/clear ve tekrar redaction ham veri üretmez."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-PAYLOAD"
+  },
+  {
+    "id": "GYZ-005",
+    "parents": [
+      "F0015"
+    ],
+    "title": "SensitiveEnvelope metadata snapshotı downcast/init yolunda değişmez değil",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Zarf classification snapshotı ctor, persistence restore ve record copy sonrasında mutable alias açmaz.",
+    "mechanism": "FieldCategories ctor kopyası Dictionary ve public init setter var. Downcast mutation mümkün; with { FieldCategories = mutableDictionary } ctor kopyasını da atlar. Mevcut GCM AAD ve payload-category karşılaştırması kurcalanan metadata ile decrypti engeller; bunu decrypt bypass diye sunmuyoruz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:22",
+      "evidence/V1-RMD-739/tasks/B060.md:39",
+      "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs:14",
+      "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs:28",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:67",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:73",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs:82",
+      "tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs:13"
+    ],
+    "production_paths": [
+      "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayloadProtector.cs"
+    ],
+    "test_paths": [
+      "tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs",
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/EnvelopeProtectionTests.cs"
+    ],
+    "acceptance": [
+      "Ctor input alias, returned dictionary mutable arayüzleri, persistence restore ve desteklenen with/init yolu immutable snapshot sağlar.",
+      "AAD üzerinde metadata değişmiş zarf hâlâ typed failure verir; doğru şifreli eski zarf round-trip açılır; immutable düzeltme persistence uyumluluğunu bozmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-ENVELOPE"
+  },
+  {
+    "id": "GYZ-006",
+    "parents": [
+      "F0016"
+    ],
+    "title": "SEC-005 immutable/mutation-regression kapanış kanıtı teslimatla çelişiyor",
+    "category": "KN",
+    "status": "open",
+    "invariant": "Implementation/mutation kabulü kod diffi ve kusuru öldüren gerçek regresyonla eşleşir.",
+    "mechanism": "git show a9ebe9a2 yalnız 5 evidence/plan dosyası, 27 ekleme/2 silme gösterdi; production/test yok. Verification 7-8 immutable diyor, güncel kaynak mutable. Bu nesnel desteklenmeyen hükümdür; niyet/sahtecilik çıkarımı yapılmaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:23",
+      "evidence/V1-RMD-739/tasks/B060.md:39",
+      "evidence/V1-SEC-005/immutable_data_classification_verification.txt:7",
+      "plan/v1/security-foundation/V1-SEC-005-immutable-data-classification.md:40",
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs:28",
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs:31",
+      "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs:28"
+    ],
+    "production_paths": [
+      "src/BuildingBlocks/Security/SensitiveData/SensitivePayload.cs",
+      "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs"
+    ],
+    "test_paths": [
+      "tests/BuildingBlocks/Security/SensitiveData/Protection/PayloadRedactionTests.cs",
+      "tests/BuildingBlocks/Security/SensitiveData/MetadataIntegrity/EnvelopeMetadataIntegrityTests.cs"
+    ],
+    "acceptance": [
+      "a9ebe9a2 stat/diff çıktısı ile tarihsel hükmü correction notunda ayır.",
+      "RG-PAYLOAD ve RG-ENVELOPE için yeni SHA, cast/alias/init red-green ve immutable temsil kaldırılınca kırılan mutant çıktısı; kaynak restore hashleri."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-IMMUTABILITY-EVIDENCE"
+  },
+  {
+    "id": "GYZ-007",
+    "parents": [
+      "F0019"
+    ],
+    "title": "Pending listesi sonrası legal hold veri yazımından önce atomik uygulanmıyor",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Legal hold commitinden sonra henüz başlamamış yıkıcı store adımı subject verisini değiştirmez; hold-yazma sırası tek ortak eşzamanlılık kuralına bağlanır.",
+    "mechanism": "PendingAsync hold dışlar fakat liste snapshot. ApplyStep account-charge lock ve yalnız plan.BlockSql bakar, legal_holds bakmaz; her adım ayrı commit. Hold ancak CompleteAsync triggerında fark edilip Blocked olur; önceki silmeler geri dönmez. PlaceHoldAsync aynı kilide katılmaz. Sadece ön kontrol eklemek yeni TOCTOU bırakır.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:26",
+      "evidence/V1-RMD-739/tasks/B063.md:33",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs:168",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs:128",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:113",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:133",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:141",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:181",
+      "database/migrations/V15/V15-KVK-001/170-privacy-retention-execution.up.sql:145",
+      "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs:184"
+    ],
+    "production_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+      "src/Modules/Privacy/RetentionExecution/IRetentionExecutionService.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs",
+      "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs"
+    ],
+    "acceptance": [
+      "İki gerçek PG bağlantısı ve deterministik bariyerle: liste alındı -> hold commit -> ilk write: tüm alan byte-for-byte aynı, checkpoint/StepDone yok, work Pending.",
+      "İlk adım commit -> hold commit -> ikinci adım: sonraki alan dokunulmaz, önce tamamlanan adım kaydı korunur; hold release sonrası güvenli resume.",
+      "Hold ve write tam çakışmada her iki commit sırası kanıtlanır; yalnız application check değil ortak lock/transaction protokolü. Hata/cancellation write+checkpoint+event rollback."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-HOLD"
+  },
+  {
+    "id": "GYZ-008",
+    "parents": [
+      "F0175"
+    ],
+    "title": "Kuyruktan sonra yeni müşteri hareketi/faturası vadeyi yeniden denetletmiyor",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Müşterinin son hareket/fatura bazlı saklama uygunluğu yıkıcı adımın transactionında geçerlidir.",
+    "mechanism": "RetentionSelection ilk seçimde son hesap hareketi/faturayı dikkate alır; WorkItem bir kez Pending olunca tekrar seçilmez. Host CustomerProfile BlockSql yalnız balance; yeni sıfır-net hareket veya yeni fatura veri silinmesini durdurmaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:185",
+      "evidence/V1-RMD-739/tasks/B063.md:33",
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:35",
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:78",
+      "src/Host/Program.cs:826",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:133",
+      "evidence/V15-KVK-001/README.md:30"
+    ],
+    "production_paths": [
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Host/Program.cs"
+    ],
+    "test_paths": [
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+      "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs"
+    ],
+    "acceptance": [
+      "Önce eski müşteri kuyruğa; sonra sıfır-net güncel hareket ve ayrı güncel fatura; apply profili/requests değiştirmez, kalem Pending.",
+      "Vade sınırı kullanılan policy_version/as-of ile açık tanımlı; uygun eski müşteri temizlenir. Aynı account lock ile hareket yarışını ve fatura üreticisinin katılımını gerçek PG ile kanıtla."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-CUSTOMER-ELIGIBILITY",
+    "review_note": "Karar engeli değil: teknik kural görev içinde seçilir; mevcut KVK-001 notu yeniden denetimi istiyor."
+  },
+  {
+    "id": "GYZ-009",
+    "parents": [
+      "F0175"
+    ],
+    "title": "Kuyruktan sonra doğan Pending anonimleştirme talebi korunmuyor",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Pending talep ilk seçimde olduğu gibi uygulama aşamasında da bekletici koşuldur.",
+    "mechanism": "İlk seçim Pending request dışlar; sonradan gelen request için balance-only BlockSql false. İkinci step bütün non-Anonymized requestleri doğrudan Anonymized yapar.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:185",
+      "evidence/V1-RMD-739/tasks/B063.md:33",
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:45",
+      "src/Host/Program.cs:827",
+      "src/Host/Program.cs:836",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:133",
+      "evidence/V15-KVK-001/README.md:31"
+    ],
+    "production_paths": [
+      "src/Host/Program.cs",
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+    ],
+    "test_paths": [
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs"
+    ],
+    "acceptance": [
+      "Queue -> Pending request insert -> apply: profile envelope ve request status/version değişmez, checkpoint yok.",
+      "RetentionBlocked/uygun request kombinasyonları mevcut sözleşmeye göre ayrı; Pending çıkınca resume idempotent; request insert/write yarışında ortak serialization kanıtı."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-CUSTOMER-ELIGIBILITY"
+  },
+  {
+    "id": "GYZ-010",
+    "parents": [
+      "F0175"
+    ],
+    "title": "Tedarikçi kuyruğa girdikten sonraki faaliyet yeniden denetlenmiyor",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Tedarikçinin mevcut seçimdeki son faaliyet uygunluğu scrub transactionında da geçerlidir.",
+    "mechanism": "Tam KVK-001 devir notu müşteri ve tedarikçiyi kapsar. Selection sipariş/fatura/receipt bazını hesaplar, Host Supplier planında BlockSql null. Queued supplier yeni sipariş/fatura/mal kabulünden sonra yine maskelenir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:185",
+      "evidence/V1-RMD-739/tasks/B063.md:33",
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:48",
+      "src/Host/Program.cs:845",
+      "evidence/V15-KVK-001/README.md:30"
+    ],
+    "production_paths": [
+      "src/Host/Program.cs",
+      "src/Modules/Privacy/RetentionExecution/RetentionSelection.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs"
+    ],
+    "test_paths": [
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+      "tests/Modules/Privacy/RetentionExecution/RetentionExecutionTests.cs"
+    ],
+    "acceptance": [
+      "Eski supplier queue sonrası yeni purchase order, invoice ve receipt ayrı ayrı eklenince alanlar değişmez.",
+      "Yeni faaliyet ve scrub yarışında commit sırası tutarlı; eski/uygun supplierde tax ID ve ledger korunur."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-SUPPLIER-ELIGIBILITY",
+    "review_note": "Karar engeli değil: teknik kural görev içinde seçilir; mevcut KVK-001 notu yeniden denetimi istiyor."
+  },
+  {
+    "id": "GYZ-011",
+    "parents": [
+      "F0176"
+    ],
+    "title": "Composition root çapraz-şema SQL ve owned-surface sınırı çözülmemiş",
+    "category": "MK",
+    "status": "open",
+    "invariant": "Host yalnız composition yapar; store mutasyonu sahibi modül kontratı ve açık sahiplik üzerinden yürür.",
+    "mechanism": "Program 775-853 SQL planlarını tanımlar; workflow bu metni kendi transactionında çalıştırır. KVK-002 yalnız komut bağlama izni verir. Ancak AnonymizationModels açıkça composition root plan sağlar diyor ve architecture row82 plain SQL akışını belgeliyor. Bu yüzden otomatik olarak güvenlik açığı/işlev kaybı veya tek doğru büyük refactor ilan edilemez; açık mimari/scope çelişkisi var.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:186",
+      "evidence/V1-RMD-739/tasks/B063.md:33",
+      "src/Host/Program.cs:775",
+      "plan/v1.5/kvkk/V15-KVK-002-cross-store-anonymization.md:36",
+      "src/Modules/Privacy/Anonymization/AnonymizationModels.cs:22",
+      "docs/architecture/module-dependency-rules.md:82",
+      "docs/architecture/module-dependency-rules.md:164",
+      "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:387"
+    ],
+    "production_paths": [
+      "src/Host/Program.cs",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs",
+      "src/Modules/Privacy/Anonymization/AnonymizationModels.cs"
+    ],
+    "test_paths": [
+      "tests/Host/MigrationComposition/Program/KvkkRetentionTests.cs",
+      "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs"
+    ],
+    "acceptance": [
+      "Yetkili mimari karar açıkça SQL-plan istisnasını kabul eder veya sahibi modül kontratlarına geçişi seçer; geçmiş scope ihlali geriye dönük silinmez.",
+      "Sırf SQL metnini başka klasöre taşıma/allowlist genişletme kabul değil; seçilen kontrat için canlı 5 sınıf, checkpoint/audit/rollback ve architecture negatif testleri aynı invariantı korur."
+    ],
+    "decision_blocker": "Onaylı exact module-owned kontrat/istisna ve sahiplik gerekir. Karardan önce yeni adapter/interface/project yüzeyi icat edilmez.",
+    "repair_group": "RG-ANON-BOUNDARY",
+    "review_note": "Mimari tablo plain SQL temizliğini onaylıyor; kalan konu KVK-002 kapsam geçmişi. Yeni mimari karar yalnız satır 164 çelişkisi için."
+  },
+  {
+    "id": "GYZ-012",
+    "parents": [
+      "F0020",
+      "F0325"
+    ],
+    "title": "retention_subjects için gerçek veri üretici/consumer bağlantısı yok",
+    "category": "TE",
+    "status": "open",
+    "invariant": "Saklamaya tabi gerçek provider payloadın authoritative bytesı süresi sonunda okunamaz/silinmiş olur; yalnız bağımsız bir kopya silmek yeterli değildir.",
+    "mechanism": "src altında IRetentionSubjectStore tüketenler yalnız sweep/deletion/re-encryption; INSERT yalnız store içinde. SecurityModule DI ve job tetiklemesi mevcut ama producer yok. ProviderInbox.StoreAsync canlı webhook/poller yolunda online_ordering.provider_inbox.payload_envelope yazar; CustomerProfile ayrı kendi store kullanır. 137 random subject id üretir, gerçek kayıt pointerı yok. Rastgele ikinci encrypted copy eklemek gerçek payloadı silmez. F0325 input closure_task=749 V0-REV klasörleriyle ilgili; bu findingin execution pathine dokunmaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:27",
+      "evidence/V1-RMD-739/tasks/B064.md:3",
+      "evidence/V1-RMD-739/findings/register.md:335",
+      "evidence/V1-RMD-739/tasks/B128.md:24",
+      "src/Modules/Security/DataProtectionRetention/IRetentionSubjectStore.cs:14",
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs:31",
+      "src/Modules/Security/SecurityModule.cs:47",
+      "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs:27",
+      "src/Modules/OnlineOrdering/Providers/Inbox/ProviderInbox.cs:66",
+      "src/Modules/OnlineOrdering/Providers/Inbox/ProviderInbox.cs:76",
+      "src/Modules/OnlineOrdering/Yemeksepeti/WebhookInbox/YemeksepetiWebhookInbox.cs:106",
+      "src/Modules/OnlineOrdering/Polling/OnlineOrderPoller.cs:98",
+      "plan/v1/remediation/V1-RMD-268-maintenance-jobs-and-retention-sweep.md:29",
+      "evidence/V1-RMD-749/README.md:3"
+    ],
+    "production_paths": [
+      "src/Modules/Security/DataProtectionRetention/IRetentionSubjectStore.cs",
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+      "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs",
+      "src/Modules/Security/DataProtectionRetention/DeletionQueueProcessor.cs",
+      "src/Modules/Security/DataProtectionRetention/AuthorizedReEncryptionService.cs",
+      "src/Modules/OnlineOrdering/Providers/Inbox/ProviderInbox.cs",
+      "src/Modules/CustomerData/Profiles/PostgresCustomerProfileStore.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs",
+      "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs"
+    ],
+    "acceptance": [
+      "Gerçek provider ingest ile retention kaydı oluşur; doğrudan test InsertAsync/seeding kullanılmaz. Duplicate delivery tek lifecycle record; write/registration yarım başarısında rollback.",
+      "Zamanı ilerlet/sweep -> authoritative ProviderInbox.OpenPayload artık ham body döndüremez; retention kaydı ve ana tablo çelişmez. Held/fresh payload okunabilir kalır, retry idempotent, audit/logda sentinel plaintext yok.",
+      "Existing business retention (CustomerProfile vb.) ile çift imha ve çakışan süre yaratılmaz; re-encryption gerçek okuyucunun aynı authoritative kaydını günceller."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-RETENTION-INTEGRATION",
+    "review_note": "Ürün kararı değil teknik mimari seçimi (otoriter depo/backfill)."
+  },
+  {
+    "id": "GYZ-013",
+    "parents": [
+      "F0178"
+    ],
+    "title": "UserCredentials Delete tetikleyicisi üretim zincirine bağlı değil",
+    "category": "GY",
+    "status": "decision-blocked",
+    "invariant": "User credentials envanterdeki yaşam-döngüsü şartı sağlandığında delete kuyruğuna gerçek olaydan girer.",
+    "mechanism": "null süre kasıtlı: creation-time süpürmesi değil employment end+1 year tetikleyicisi. Sweep nullu atlar; src MarkDisposedAsync tek çağıranı aynı sweep. Test adı queued der ama satır 63-69 atlandığını assert eder. Privacy StaffAccount ayrı anonymize eder; bu Delete kontratına eşit değildir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:188",
+      "evidence/V1-RMD-739/tasks/B064.md:3",
+      "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs:30",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs:54",
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs:52",
+      "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md:17",
+      "src/Host/Program.cs:789"
+    ],
+    "production_paths": [
+      "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs",
+      "src/Host/Program.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs",
+      "tests/Modules/Security/DataProtectionRetention/DeletionQueueProcessorTests.cs"
+    ],
+    "acceptance": [
+      "Authoritative employment-end olayı ve approved due zamanı ile yalnız uygun credential kuyruklanır, sonra gerçek authoritative kayıt silinir; tekrar no-op.",
+      "Aktif/yeni/held credential, retain verisi ve mali referanslar korunur. nullu sıfır gün yaparak tüm credentialı silme kabul değil.",
+      "Mevcut misleading test adı actual skip davranışını anlatır; event-trigger testine mekanizma testini ikame etmez."
+    ],
+    "decision_blocker": "Employment-end alanı/olayı ile active=false eşdeğerliği ve Privacy StaffAccount anonymize vs envanter Delete çelişkisi yetkili ürün kararı ister; süre mevzuattan tahmin edilmez.",
+    "repair_group": "RG-CREDENTIAL-DELETE"
+  },
+  {
+    "id": "GYZ-014",
+    "parents": [
+      "F0178"
+    ],
+    "title": "DeviceData Delete için decommission kaynağı yok",
+    "category": "GY",
+    "status": "decision-blocked",
+    "invariant": "Device lifecycle sonunda yalnız ilgili cihazın verisi güvenle delete kuyruğuna alınır.",
+    "mechanism": "DeviceData retention null ve sweep skip. Envanter lifecycle diyor; KVK-001 kanıtı gerçek decommission state yokluğunu açık yazmış. DateTime.UnixEpoch bile automatic disposal oluşturmaz; queue tests doğrudan MarkDisposed çağırır.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:188",
+      "evidence/V1-RMD-739/tasks/B064.md:3",
+      "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs:50",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs:54",
+      "evidence/v0/compliance/V0-CMP-003/kvkk-data-inventory.md:24",
+      "evidence/V15-KVK-001/README.md:28"
+    ],
+    "production_paths": [
+      "src/Modules/Security/DataProtectionRetention/DisposalMatrix.cs",
+      "src/Modules/Security/DataProtectionRetention/RetentionExecutionService.cs",
+      "src/Modules/Security/DataProtectionRetention/PostgresRetentionSubjectStore.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Security/DataProtectionRetention/RetentionExecutionServiceTests.cs",
+      "tests/Modules/Security/DataProtectionRetention/DeletionQueueProcessorTests.cs"
+    ],
+    "acceptance": [
+      "Onaylı cihaz kimliği+decommission state/event olmadan otomatik delete eklenmez.",
+      "Karar sonrası gerçek decommission akışı queue -> purge yapar; aktif/başka cihaz/held kayıt değişmez; yinelenen event idempotent."
+    ],
+    "decision_blocker": "Cihaz verisinin sahibi ve authoritative lifecycle olayı/alanı yok; yeni device model veya API bu planda icat edilmez.",
+    "repair_group": "RG-DEVICE-DELETE"
+  },
+  {
+    "id": "GYZ-015",
+    "parents": [
+      "F0567"
+    ],
+    "title": "SEC-003 tarihli bağlantısızlık notu bugünkü scheduler ile çelişiyor",
+    "category": "BD",
+    "status": "open",
+    "invariant": "Tarihsel not tarihsel kalır; güncel erişilebilirlik açıkça ayrılır.",
+    "mechanism": "Plan 99-109 hiç HTTP/scheduled job yok diyor; SecurityAdministrationEndpoints job ve hosted service kaydeder. Job sweep+queue çağırır. Re-encryption hâlâ yalnız DI/allowlist durumunda; hepsini bağlı demek de yanlış.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/low-A.md:224",
+      "evidence/V1-RMD-739/tasks/B064.md:3",
+      "plan/v1.5/security/V15-SEC-003-sensitive-payload-protection.md:99",
+      "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs:60",
+      "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs:27",
+      "src/Modules/Security/DataProtectionRetention/AuthorizedReEncryptionService.cs:46"
+    ],
+    "production_paths": [
+      "src/Host/Experience/SecurityAdministration/Maintenance/RetentionSweepMaintenanceJob.cs",
+      "src/Host/Experience/SecurityAdministration/SecurityAdministrationEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/SecurityAdministration/SecurityAdministrationHttpTests.cs"
+    ],
+    "acceptance": [
+      "Tarihsel 2026-09-23 notu korunur, güncel V1-RMD-268 wiring ile sweep/deletion erişimi ve hâlâ eksik producer/re-encryption ayrılır.",
+      "Manual run 401/403 ve held/fresh/expired/idempotent mevcut test kapsamı açıkça yazılır; test çalıştırılmadıysa yeni geçti denmez."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-SCHEDULER-DOC"
+  },
+  {
+    "id": "GYZ-016",
+    "parents": [
+      "F0565"
+    ],
+    "title": "Değişmeyen Blocked iş her retryda yeni event ve attempts üretiyor",
+    "category": "DY",
+    "status": "open",
+    "invariant": "Değişmeyen engel tekrarları append-only izde kontrolsüz aynı olay çoğalmasına dönüşmez; anlamlı geçiş/deneme kanıtı kaybolmaz.",
+    "mechanism": "Her Pending blocked item OpenJob ile Running+attempts olur, StopAsync yeniden Blocked event append eder. Append-only privacy.anonymization_events için dedup/transition kuralı yok. Bu audit.audit_events değil; RMD-481 bunu temizlemez.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/low-A.md:222",
+      "evidence/V1-RMD-739/tasks/B063.md:33",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:76",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:159",
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs:175",
+      "database/migrations/V15/V15-KVK-002/172-privacy-anonymization-workflow.up.sql:28",
+      "database/migrations/V15/V15-KVK-002/172-privacy-anonymization-workflow.up.sql:44"
+    ],
+    "production_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Privacy/Anonymization/AnonymizationWorkflowTests.cs"
+    ],
+    "acceptance": [
+      "Aynı balance ile 100 retry: seçilen kayıtlı transition/attempt politikasına göre event hacmi sınırlı; aynı Blocked transition tekilleşir.",
+      "Engel nedeni değişmesi, release->resume, gerçek failed step->retry ve completed olayları korunur; iki worker duplicate blocked transition üretmez."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-BLOCKED-EVENTS",
+    "review_note": "Karar engeli değil: teknik kural görev içinde seçilir; mevcut KVK-001 notu yeniden denetimi istiyor."
+  },
+  {
+    "id": "GYZ-017",
+    "parents": [
+      "F0565"
+    ],
+    "title": "audit-disposal hâlâ planned gösteren kapanış notu bayat",
+    "category": "BD",
+    "status": "open",
+    "invariant": "Bağlantılı görev güncel Done durumu ile tarihsel planned notu karıştırılmaz.",
+    "mechanism": "Kaynak düşük satırı audit_events için RMD-481 planned diyor; aynı KVK-002 README26 bunu sürdürüyor. RMD-481 bugün Done ve yalnız audit.audit_events partitionlarını kapsıyor; privacy event büyümesi bu kapanıştan düşülmez.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/low-A.md:222",
+      "evidence/V1-RMD-739/tasks/B063.md:33",
+      "evidence/V15-KVK-002/README.md:26",
+      "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md:4",
+      "plan/v1/remediation/V1-RMD-481-audit-log-ten-year-disposal.md:15"
+    ],
+    "production_paths": [
+      "src/Modules/Privacy/Anonymization/PostgresAnonymizationWorkflow.cs"
+    ],
+    "test_paths": [
+      "tests/Host/MigrationComposition/Program/AuditDisposalTests.cs"
+    ],
+    "acceptance": [
+      "Tarihsel planned ifadesine güncel Done/kanıt bağı ekle; scope yalnız audit.audit_events.",
+      "privacy.anonymization_events kusuru açık kalır; RMD-481 tarihsel logları yeni runtime testi olarak sunulmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-AUDIT-REFERENCE"
+  },
+  {
+    "id": "GYZ-018",
+    "parents": [
+      "F0336"
+    ],
+    "title": "RMD-663 planı devredilmiş B019/B011 SensitiveData teslimlerini sahipleniyor",
+    "category": "BD",
+    "status": "open",
+    "invariant": "Görev Goal/Owned surface/kabul iddiası devredilen işin gerçek sahibiyle tutarlıdır.",
+    "mechanism": "663 README6 B019 ve SensitiveData B011in 664e devrini açıklar; 663 plan15/21/22/27/48 hâlâ bunları kendi diff/kabulü sayar. 664 plan15 gerçek devri kaydeder; EnvelopeHardeningTests mevcut. Bu code failure veya 664ün yokluğu değil plan çelişkisidir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:346",
+      "evidence/V1-RMD-739/tasks/B135.md:24",
+      "plan/v1/remediation/V1-RMD-663-envelope-hardening-and-boundary-coverage.md:15",
+      "plan/v1/remediation/V1-RMD-663-envelope-hardening-and-boundary-coverage.md:21",
+      "plan/v1/remediation/V1-RMD-663-envelope-hardening-and-boundary-coverage.md:48",
+      "evidence/V1-RMD-663/README.md:6",
+      "plan/v1/remediation/V1-RMD-664-typed-envelope-failures.md:15",
+      "tests/BuildingBlocks/Security/SensitiveData/Encryption/EnvelopeHardeningTests.cs:17"
+    ],
+    "production_paths": [
+      "src/BuildingBlocks/Security/SensitiveData/SensitiveEnvelope.cs",
+      "src/BuildingBlocks/Security/SensitiveData/AesGcmEnvelopeCipher.cs"
+    ],
+    "test_paths": [
+      "tests/BuildingBlocks/Security/SensitiveData/Encryption/EnvelopeHardeningTests.cs"
+    ],
+    "acceptance": [
+      "663te tarihsel ilk kapsam korunup 664 transferi Goal/Owned surface/kabulde tutarlı nitelendirilir; 664 kanıtı 663e kopyalanıp yeni sonuç sayılmaz.",
+      "B019 ve her SensitiveData testinin tek gerçek uygulama sahibine izlenebilir bağı; Messaging ve boundary teslimi ayrı kalır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-663-DOC"
+  },
+  {
+    "id": "GYZ-019",
+    "parents": [
+      "F0130"
+    ],
+    "title": "Uçuştaki yetki iptalinin linearization sözleşmesi atomik-write kabulüyle çelişiyor",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Yetki predicatei ve protected mutation seçilmiş ve onaylı linearization noktasına bağlıdır.",
+    "mechanism": "Authorize önce, repo mutation ayrı bağlantı/commit. Actorun izni authorize sonrası kaldırılınca in-flight yazabilir. CODE-008 yorum bunu kabul eder; IAM008 acceptance44 aynı transaction/conditional write ister. RMD743 out-of-scope32 de bu davranışı kabul edilmiş sayar. Son yönetici guard kilidi bunu çözmez.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:140",
+      "evidence/V1-RMD-739/tasks/B042.md:37",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs:8",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs:76",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs:81",
+      "src/Modules/Identity/Authorization/AuthorizationService.cs:23",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:83",
+      "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:44",
+      "plan/v1/remediation/V1-RMD-743-son-yonetici-es-zamanlilik.md:32"
+    ],
+    "production_paths": [
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/AuthorizationService.cs",
+      "src/Host/Experience/Roles/RoleManagementEndpoints.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "acceptance": [
+      "Yetkili karar command-startı kabul ederse IAM008 atomiklik kabulü ile yorum tutarlı açıkça düzeltilir; reddederse authorization+mutation transaction/conditional write olarak uygulanır.",
+      "Gerçek bariyer: allow kararı tamamlanır, actor revocation commit olur, mutation serbest bırakılır; seçilen sonuç ve side effects kesin assert edilir."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-INFLIGHT-DECISION",
+    "review_note": "Repo command-start kuralını seçmiş (RoleManagementService.cs:8-15, V1-RMD-743 kabul). IAM-008 belge metni buna hizalanır; fail-closed revocation yalnız Semih isterse."
+  },
+  {
+    "id": "GYZ-020",
+    "parents": [
+      "F0130"
+    ],
+    "title": "In-flight test revocation-commit ile protected write penceresini sıkıştırmıyor",
+    "category": "KN",
+    "status": "open",
+    "invariant": "Concurrency kabul testi iddia ettiği interleavingi gerçekten kurar.",
+    "mechanism": "Test330 uncommitted revoke açar; AssignUserAsync354 tamamen bitince revoke356 commit eder. Bu authorize->revoke commit->mutation sıralaması değildir. Diğer235 testi commit-before-startı kanıtlar; ikisi birlikte pencereyi ölçmez.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:140",
+      "evidence/V1-RMD-739/tasks/B042.md:37",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:235",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:330",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:354",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:356"
+    ],
+    "production_paths": [
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "acceptance": [
+      "Authorization sonrası kontrollü bariyer, ayrı bağlantıda revocation commit, sonra repo write release; commit sırası kanıtı ve row postcondition.",
+      "İzin yok başlangıçta hiç write yok; command-start kararı seçilmişse önce-authorized write kabulü ve sonrası komutun denialı ayrı test; scheduler timingine dayalı Task.Delay tek başına yok."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-INFLIGHT-TEST"
+  },
+  {
+    "id": "GYZ-021",
+    "parents": [
+      "F0131",
+      "F0159"
+    ],
+    "title": "İki karşılıklı revoke ile son yöneticinin kaybı tarihsel olarak giderilmiş",
+    "category": "EZ",
+    "status": "historical-fixed",
+    "invariant": "Korumalı user-role/role-permission silmeleri en az bir aktif roles.manage holder bırakır.",
+    "mechanism": "743 commit7dbe4d4b ile service iki TryRevoke yolunu çağırıyor; repository tek transaction/advisory xact lock altında sayım+delete yapıyor. Güncel source fixed ile uyumlu. Tarihsel green.log248/248 exit0 ve lock-disabled3x exit1 var; bu oturumda tekrar koşulmadı. Alias F0131/F0159 korunur; in-flight revocation ayrı kalır.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/register.md:141",
+      "evidence/V1-RMD-739/tasks/B042.md:37",
+      "evidence/V1-RMD-739/findings/register.md:169",
+      "evidence/V1-RMD-739/tasks/B059.md:23",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs:93",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs:115",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:274",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:280",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:286",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:296",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:440",
+      "evidence/V1-RMD-743/green.log:12",
+      "evidence/V1-RMD-743/mutations.log:1"
+    ],
+    "production_paths": [
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs",
+      "src/Modules/Identity/Authorization/IRoleRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "acceptance": [
+      "Fresh gerçek PGde two-user mutual revoke, same-role ve mixed user/permission revoke yarışında en az bir aktif holder kalır.",
+      "Yetkisiz actor ve unrelated permission, inactive ikinci holder, multiple-role surviving holder, cancellation/rollback yolları. Kilit çıkarılınca test kırılmalı; geçmiş 3 mutant bu oturum sonucu değildir."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-LAST-MANAGER",
+    "review_note": "Yalnız fresh-rerun doğrulaması; üretim yüzeyi yazılmaz."
+  },
+  {
+    "id": "GYZ-022",
+    "parents": [
+      "F0957"
+    ],
+    "title": "IAM-008 kanıtında ham command/SHA/interleaving transcript yok",
+    "category": "KN",
+    "status": "open",
+    "invariant": "Linearization kabulü yeniden üretilebilir ve karardan bağımsız test sırasını gösteren kanıtla kapanır.",
+    "mechanism": "authorization_linearization_verification 9 satır özet, test_output özet; formatter exit0 cümlesi var ama ham transcript ve candidate SHA/ortam/interleaving yok. V1-RMD-743 kanıtı sadece last-manager ve bu eksikliği kapatmıyor.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/low-C.md:62",
+      "evidence/V1-RMD-739/tasks/B042.md:37",
+      "evidence/V1-IAM-008/authorization_linearization_verification.txt:6",
+      "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:40",
+      "evidence/V1-RMD-743/README.md:3"
+    ],
+    "production_paths": [
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "acceptance": [
+      "Seçilen policy ve RG-INFLIGHT-TESTe özgü raw command/exit0/SHA/ortam/commit-order sonuçları kaydedilir; eski özet tarihsel kalır.",
+      "Format ve Authorization suite çıktıları ayrı scope ile; 20 tarihsel test sayısı current count veya atomiklik kanıtı sayılmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-INFLIGHT-EVIDENCE"
+  },
+  {
+    "id": "GYZ-023",
+    "parents": [
+      "F0957"
+    ],
+    "title": "IAM-008 başlığı doğrulama, work type implementation, teslimi karışık",
+    "category": "BD",
+    "status": "open",
+    "invariant": "Başlık/iş türü/teslim ve yazma yetkisi aynı gerçek işi tarif eder.",
+    "mechanism": "Independently verify başlığına rağmen implementation code/linearization diff ve tests teslimi bekleniyor. Kaynak metadata tutarsızlığı execution kusuru olarak last-managera bağlanmaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/low-C.md:62",
+      "evidence/V1-RMD-739/tasks/B042.md:37",
+      "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:1",
+      "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:6",
+      "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:26",
+      "plan/v1/identity-authorization/V1-IAM-008-authorization-linearization.md:40"
+    ],
+    "production_paths": [
+      "src/Modules/Identity/Authorization/RoleManagementService.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs"
+    ],
+    "acceptance": [
+      "Tarihsel implementasyon ve doğrulama rolü seçilen policyye göre tutarlı adlandırılır; eski kapanış tarihi ve proof zayıflığı korunur.",
+      "Plan-audit ve scope kontrolü gerçek exit koduyla; belge düzenlemesi runtime authorization fix sayılmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-IAM008-DOC"
+  },
+  {
+    "id": "GYZ-024",
+    "parents": [
+      "F0972"
+    ],
+    "title": "Kişinin kendi rolünden izin kaldırması bir ürün kararı; otomatik güvenlik açığı değil",
+    "category": "PO",
+    "status": "needs-verification",
+    "invariant": "Self-revocation davranışı açık yetki sözleşmesine ve son-yönetici korumasına uyar.",
+    "mechanism": "UI tüm role revoke işlemlerinde confirmation ister; service actor=target yasağı koymaz. Birden çok manager varken kendi manage iznini kaldırabilir, son manager için TryRevoke guard reddeder. Kaynak kart TAMAM ve README bilinen sınır diyor; self-revoke salt varlığı permission bypass değildir.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/low-C.md:77",
+      "evidence/V1-RMD-739/tasks/B055.md:22",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx:75",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx:78",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs:84",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs:286",
+      "evidence/V1-RMD-457/README.md:18",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs:392"
+    ],
+    "production_paths": [
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "src/Modules/Identity/Authorization/PostgresRoleRepository.cs"
+    ],
+    "test_paths": [
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx",
+      "tests/Modules/Identity/Authorization/RoleManagementServiceTests.cs",
+      "tests/Host/Experience/Roles/RoleManagementHttpTests.cs"
+    ],
+    "acceptance": [
+      "Yetkili karar self-revokeyi kabul/ret olarak kaydeder; kabulde confirmation cancel hiçbir istek göndermez, last-manager 409 veri değiştirmez.",
+      "Başka aktif yönetici varken onaylanan self-revoke sonrası yeni komut denialı ve UI capability yenilenmesi ayrıca doğrulanır; client-only engel security fix sayılmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-SELF-REVOKE",
+    "review_note": "V1-RMD-457 README self-revoke’u bilinen sınır kabul ediyor; kusur sayılmaz, görev açılmaz (ürün kararı tersine dönerse yeniden değerlendir)."
+  },
+  {
+    "id": "GYZ-025",
+    "parents": [
+      "F0972"
+    ],
+    "title": "RMD-457 üç izin anlatımı işlem bazlı gerçek kapılarla uyuşmuyor",
+    "category": "BD",
+    "status": "open",
+    "invariant": "Her işlem için belgelenen izin sunucunun gerçek kontrolüyle aynıdır.",
+    "mechanism": "Role create/grant/revoke ve user-role assignment RolesManage; AddPermission katalog ekleme PermissionsManage (bu UIde yok); user listing/creation UsersManage. Plan17 genel üç izin ifadesi bu ayrımı vermiyor. StaffSection rolleri RolesManage ile açar ama UserRolesPanel listUsers UsersManage ister; kayıttaki üç ayrı izin varsayımı doğrudan doğrulanamaz.",
+    "source_evidence": [
+      "evidence/V1-RMD-739/findings/low-C.md:77",
+      "evidence/V1-RMD-739/tasks/B055.md:22",
+      "plan/v1/remediation/V1-RMD-457-management-roles-permissions-screen.md:17",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/StaffSection.tsx:101",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx:98",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs:45",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs:76",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs:106",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs:156",
+      "src/Host/Experience/Roles/RoleManagementEndpoints.cs:106"
+    ],
+    "production_paths": [
+      "src/Clients/PosTerminal/src/features/management-staff-roles/StaffSection.tsx",
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.tsx",
+      "src/Modules/Identity/Authorization/RoleManagementService.cs",
+      "src/Host/Experience/Roles/RoleManagementEndpoints.cs"
+    ],
+    "test_paths": [
+      "src/Clients/PosTerminal/src/features/management-staff-roles/RolesPanels.test.tsx",
+      "tests/Host/Experience/Roles/RoleManagementHttpTests.cs"
+    ],
+    "acceptance": [
+      "Role permission assignment ile permission katalog oluşturmayı ayıran işlem->izin tablosu; kullanıcı listeleme UsersManage, role mutation RolesManage açık yazılır.",
+      "RolesManage-only, UsersManage-only, her ikisi ve neither oturumlarında UI/HTTP kontratı ayrı doğrulanır; kayıttaki wording actual bugı gizliyorsa yeni atomik child olarak açılır, UIye üç kontrol varsayılarak eklenmez."
+    ],
+    "decision_blocker": null,
+    "repair_group": "RG-457-DOC"
+  },
+  {
+    "id": "PAY-001",
+    "parents": [
+      "F0088",
+      "PO0015",
+      "PO0016"
+    ],
+    "title": "Paid ile mali nihai kapanışın karar ve uygulama sınırı",
+    "category": "PO",
+    "status": "decision-blocked",
+    "invariant": "Mali karar kapısı ile hesap durum sözleşmesi birbiriyle çelişmez.",
+    "mechanism": "BillClosureService projection yeterliyse fiş kararına bakmadan Paid yapar; bunun mali nihai durum mu yoksa operasyonel durum mu olduğu ürün/mevzuat kararıdır.",
+    "source_evidence": [
+      "src/Modules/Billing/PaymentClosure/BillClosureService.cs:33-45",
+      "evidence/V1-RMD-739/findings/register.md:98",
+      "evidence/V1-RMD-739/findings/po-questions.md:12"
+    ],
+    "production_paths": [
+      "src/Modules/Billing/PaymentClosure/BillClosureService.cs",
+      "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs"
+    ],
+    "acceptance": [
+      "V13-FSC-002 kararını ve Paid tanımını açık onay/kaynakla belirle.",
+      "Seçilen sözleşme için ödeme başarılı ve mali kapı eksik/başarısız durumunu ayrı doğrula."
+    ],
+    "decision_blocker": "V13-FSC-002/Paid mali anlamı; teknik varsayım veya yeni mali adapter yazılmaz.",
+    "repair_group": "PAY-G01",
+    "verification_tier": "static-current-HEAD; runtime-not-run"
+  },
+  {
+    "id": "PAY-002",
+    "parents": [
+      "F0203"
+    ],
+    "title": "Ödeme sonrası masa boşalmasında status_changed_at güncellenmiyor",
+    "category": "VD",
+    "status": "open",
+    "invariant": "Masa durum değişimi ile durum zamanı aynı işlemde tutarlı yazılır.",
+    "mechanism": "OrderSettlementService masa durumunu Available yaparken current_status ile row_version yazar, status_changed_at yazmaz. Kaynak transfer/merge/rezervasyon dallarını da içerir; onlar bu dalgada ayrıca incelenmedi.",
+    "source_evidence": [
+      "src/Host/Experience/Orders/OrderSettlementService.cs:128-139",
+      "evidence/V1-RMD-739/findings/register.md:213"
+    ],
+    "production_paths": [
+      "src/Host/Experience/Orders/OrderSettlementService.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "acceptance": [
+      "Ödemeyle Occupied→Available değişince zaman ilerler; zaten Available iken sahte değişim zamanı üretilmez.",
+      "Merge katılımcısı serbest kalışında aynı zaman invariantı korunur.",
+      "Kaynak karttaki transfer/merge/rezervasyon/unmerge dalları ayrı alt kusurlara bölünmeden F0203 kapanmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "PAY-G02",
+    "verification_tier": "static-current-HEAD; runtime-not-run"
+  },
+  {
+    "id": "PAY-003",
+    "parents": [
+      "PL0007"
+    ],
+    "title": "Kart çekilmedi çözümü bekleyen manuel onayı terminal duruma taşımıyor",
+    "category": "VD",
+    "status": "open",
+    "invariant": "Ödeme terminal çözüme geçince ona bağlı bekleyen kart onayı tutarlı sona erer; fiş kilidi sözleşmeye uygun serbest kalır.",
+    "mechanism": "MarkNotChargedAsync yalnız payment Save ve audit callback yazar. Host callback yalnız audit üretir. manuel confirmation Pending kalır; migration143 indeksinde Rejected olmayan slip unique kilidi sürer. Ek: “kart çekilmedi” çözümünden sonra manual_card_confirmation Pending kalır; Approve NotResolvable atar, slip yalnız elle reject ile çözülür.",
+    "source_evidence": [
+      "src/Modules/Payments/ManualResolution/ManualPaymentResolutionService.cs:50-67",
+      "src/Host/DualScreen/DualScreenApplication.Payments.cs:251-266",
+      "src/Modules/Payments/ManualResolution/PostgresManualCardConfirmationRepository.cs:59-78",
+      "database/migrations/V1/V1-RMD-283/143-manual-card-confirmations.up.sql:26-27"
+    ],
+    "production_paths": [
+      "src/Modules/Payments/ManualResolution/ManualPaymentResolutionService.cs",
+      "src/Modules/Payments/ManualResolution/PostgresManualCardConfirmationRepository.cs",
+      "src/Modules/Payments/ManualResolution/IManualCardConfirmationRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "acceptance": [
+      "Pending claim + kart çekilmedi çözümü: ödeme ve claim terminal durumları tutarlı; slip yeniden kullanım kuralı sınanır.",
+      "Onayla/çözüm yarışında tek terminal sonuç; audit başarısızsa her ikisi rollback.",
+      "Kaybolan yanıt/replay ve farklı aktör durumları sözleşmeye uygun."
+    ],
+    "decision_blocker": null,
+    "repair_group": "PAY-G03",
+    "verification_tier": "static-current-HEAD; runtime-not-run"
+  },
+  {
+    "id": "PAY-004",
+    "parents": [
+      "PL0008"
+    ],
+    "title": "Ödeme ile sipariş tamamlama aktörü kayboluyor",
+    "category": "GY",
+    "status": "open",
+    "invariant": "Siparişin ödeme kaynaklı tamamlanma kaydı gerçek ödeme aktörüne veya doğrulanmış sistem aktörüne bağlanır.",
+    "mechanism": "CompleteForPaidBillAsync aktör parametresi almaz; order.CompleteOnPayment() changedBy varsayılan null ile çağrılır.",
+    "source_evidence": [
+      "src/Host/Experience/Orders/OrderSettlementService.cs:37",
+      "src/Host/Experience/Orders/OrderSettlementService.cs:63",
+      "src/Modules/Orders/OrderAggregate/Order.cs:256"
+    ],
+    "production_paths": [
+      "src/Host/Experience/Orders/OrderSettlementService.cs",
+      "src/Modules/Orders/OrderAggregate/Order.cs",
+      "src/Host/DualScreen/DualScreenApplication.Payments.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "acceptance": [
+      "İnsan ödeme yolunda geçmiş gerçek aktör içerir.",
+      "Sweeper için kanıtlı sistem kimliği sözleşmesi belirlenir; rastgele veya hayali kullanıcı üretilmez.",
+      "Sipariş zaten tamam ise fazladan history/audit oluşmaz."
+    ],
+    "decision_blocker": null,
+    "repair_group": "PAY-G04",
+    "verification_tier": "static-current-HEAD; runtime-not-run",
+    "review_note": "Teknik okuma işi, ürün kararı değil."
+  },
+  {
+    "id": "PAY-005",
+    "parents": [
+      "PL0009",
+      "PL0010"
+    ],
+    "title": "Kapanış ile eşzamanlı kart girişimi aynı hesap kilidine bağlı değil",
+    "category": "EZ",
+    "status": "needs-verification",
+    "invariant": "Hesap Paid olurken yeni unresolved ödeme aynı invariant içinde atomik olarak engellenir veya önceki kararı geçersiz kılar.",
+    "mechanism": "BillClosureService bill/projection okumaları ve Save arasında bill-settlement advisory kilidi almaz. CardSettlementOrchestrator aynı adlı kilidi alır. Projection bağımsız repository okumaları yapar; bill row_version tek başına payment değişimini kapsadığı gösterilmedi.",
+    "source_evidence": [
+      "src/Modules/Billing/PaymentClosure/BillClosureService.cs:23-45",
+      "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs:32-49",
+      "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs:64",
+      "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs:231-234"
+    ],
+    "production_paths": [
+      "src/Modules/Billing/PaymentClosure/BillClosureService.cs",
+      "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs",
+      "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+      "tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs"
+    ],
+    "acceptance": [
+      "Gerçek PG mandallarıyla projection okuması sonrası yeni unresolved kartı araya sok; Paid+unresolved invariantını ölç.",
+      "Kapanış/kart, iptal/tahsilat, bahşiş/kapanış yarışlarını ayrı parametrik matrise bağla.",
+      "Audit/DB hatası ve iptal kilidi bırakır; mutasyon kilit/snapshot korumasını kaldırınca test kırılır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "PAY-G05",
+    "verification_tier": "static-current-HEAD; runtime-not-run"
+  },
+  {
+    "id": "PAY-006",
+    "parents": [
+      "PL0011",
+      "PL0014"
+    ],
+    "title": "İade fiş tekillik kapsamı belirlenmemiş ve korunmuyor",
+    "category": "VD",
+    "status": "decision-blocked",
+    "invariant": "Aynı gerçek iade belgesi için tanımlanan kapsamda çifte kayıt oluşmaz.",
+    "mechanism": "refund_requests slip_number nullable text; mevcut migration183 yalnız payment başına açık request tekilliği var. CompleteManualAsync slipi kaydederken duplicate kontrolü yok. Küresel slip tekilliği kendiliğinden doğru sayılmaz; provider/terminal/dönem kapsamı kararı gerekir.",
+    "source_evidence": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs:409-434",
+      "database/migrations/V1/V1-RMD-508/183-refund-requests.up.sql:16-34"
+    ],
+    "production_paths": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs",
+      "src/Modules/Payments/PaymentAggregate/PostgresRefundRequestRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+    ],
+    "acceptance": [
+      "Önce slip benzersizlik alanını mevcut mali/provider kararıyla doğrula.",
+      "Aynı normalleştirilmiş anahtarlı paralel iki tamamlamadan yalnız izinli olanı commit eder.",
+      "Farklı terminal/sağlayıcı aynı numara karar gereği mümkünse yanlış red olmaz.",
+      "Migration gerekiyorsa yeni migration/manifest exact surface ayrı görev, mevcut migration değiştirilmez."
+    ],
+    "decision_blocker": "Slip kapsamı ve gerçek sağlayıcı belge biçimi; yeni migration dosya adı burada atanmadı.",
+    "repair_group": "PAY-G06",
+    "verification_tier": "static-current-HEAD; runtime-not-run",
+    "review_note": "Emsal: manual_card_confirmations global upper(slip_number) unique. Soru: iade slip kapsamı aynı mı."
+  },
+  {
+    "id": "PAY-007",
+    "parents": [
+      "PL0012",
+      "PL0014"
+    ],
+    "title": "Manuel iade tamamlamada isteyen/tamamlayan ayrımı belirsiz",
+    "category": "GY",
+    "status": "decision-blocked",
+    "invariant": "İade isteyen, onaylayan ve tamamlayan rol ayrımı kabul edilen iş kuralına uygun uygulanır.",
+    "mechanism": "RejectAsync requester/decider ayrımı yapar; CompleteManualAsync yalnız durum kontrol eder. Allowance kendi onay akışı bulunduğundan blanket requester!=completer teknik varsayım olamaz.",
+    "source_evidence": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs:390-393",
+      "src/Host/Experience/Billing/PaymentRefunds.cs:416-434",
+      "src/Host/Experience/Billing/PaymentRefunds.cs:207-218"
+    ],
+    "production_paths": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+    ],
+    "acceptance": [
+      "Manual/allowance/manager yolları için isteyen-onaylayan-tamamlayan matrisi onaylanır.",
+      "Seçilen yasaklı aynı kişi kombinasyonu mutasyonla kırmızı/yeşil kanıtlanır.",
+      "401/403, audit rollback ve tekrarlanan tamamlama tek yan etki sağlar."
+    ],
+    "decision_blocker": "PO: manuel para iadesinde görevler ayrılığı, allowance istisnası.",
+    "repair_group": "PAY-G07",
+    "verification_tier": "static-current-HEAD; runtime-not-run",
+    "review_note": "Allowance istisnası migration 185’te kodlu; kalan karar: isteyen=tamamlayan aynı kişi olabilir mi."
+  },
+  {
+    "id": "PAY-008",
+    "parents": [
+      "PL0013",
+      "PL0014"
+    ],
+    "title": "Tamamlanmayan manuel iadede kullanılan allowance yaşam döngüsü belirsiz",
+    "category": "VD",
+    "status": "decision-blocked",
+    "invariant": "Allowance tüketimi başarılı para iadesi veya açık rezervasyonla uzlaşır; terk edilen işlem bütçeyi sessiz kalıcı eksiltmez.",
+    "mechanism": "RequestAsync önce TrySpendAsync yapar; manual ise AwaitingManualRefund kalır. RejectAsync yalnız Requested kabul eder. Cash repository yalnız spend/set sunar, release yolu yok. Rejected kartın allowance harcadığı iddiası bütün yollar için doğrulanmadı; mevcut Requested→Rejected yolu bütçe harcamadan da oluşabilir.",
+    "source_evidence": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs:199-223",
+      "src/Host/Experience/Billing/PaymentRefunds.cs:389-405",
+      "src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs:44-56"
+    ],
+    "production_paths": [
+      "src/Host/Experience/Billing/PaymentRefunds.cs",
+      "src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+    ],
+    "acceptance": [
+      "Requested/bütçesiz red, allowance+manual bekleme, tamamlanma, vazgeçme ve oturum kapanışı matrisi ayrı ölçülür.",
+      "Rezervasyon mu tüketim mi kuralı onaylanır; ters hareketler negatif bütçe veya çift serbest bırakma yaratmaz.",
+      "Kayıp yanıt/replay ve işlem arası hata/rollback bütçeyi doğru tutar."
+    ],
+    "decision_blocker": "PO: bekleyen manuel iade allowance rezervasyonu, vazgeçme/iptal ve kapanış kuralı.",
+    "repair_group": "PAY-G08",
+    "verification_tier": "static-current-HEAD; runtime-not-run",
+    "review_note": "AwaitingManualRefund çıkışı yalnız CompleteManual; allowance harcanmış iade takılabilir — teknik alt kusur ayrı açık, rezervasyon/vazgeçme kuralı PO."
+  },
+  {
+    "id": "PAY-009",
+    "parents": [
+      "PL0015"
+    ],
+    "title": "Tahsis satırı olmayan sıfır ödenecek hesabın yeniden kapanışı seçilmiyor",
+    "category": "TE",
+    "status": "open",
+    "invariant": "Kapanabilir her desteklenen hesap başarısız ilk kapanıştan sonra kurtarma kapsamındadır.",
+    "mechanism": "Sweeper EXISTS payment_allocations filtreler; tam indirim/sıfır ödenecek hesabın tahsisi yoksa aday değildir. DESC sıralama bu filtre açığını değiştirmez.",
+    "source_evidence": [
+      "src/Host/Experience/Billing/BillClosureSweeper.cs:57-64",
+      "evidence/V1-RMD-604/README.md:24"
+    ],
+    "production_paths": [
+      "src/Host/Experience/Billing/BillClosureSweeper.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "acceptance": [
+      "Önce sıfır ödenecek tahsissiz hesabın projeksiyonda PaymentSatisfied/Closed olduğunu doğrula.",
+      "%100 indirim sonrası ilk kapanışı hata ile düşür; tahsis yokken sweep hesabı kapatır.",
+      "Ödenmemiş pozitif bakiyeli hesap kapanmaz; Cancelled etkilenmez.",
+      "Grace ve pahalı aday seçimi sınırı korunur; gereksiz tarama ölçülür."
+    ],
+    "decision_blocker": null,
+    "repair_group": "PAY-G09",
+    "verification_tier": "static-current-HEAD; runtime-not-run",
+    "selection_probe": {
+      "command": "python -B evidence/V1-RMD-739/classification/wave1/probe_sweeper_selection.py",
+      "exit_code": 0,
+      "log": "evidence/V1-RMD-739/classification/wave1/sweeper-selection-probe.log",
+      "tier": "real PostgreSQL with isolated temporary schema; actual production selection SQL extracted from source",
+      "limitation": "Not full Host integration; fixtures mark closability explicitly. Paid-side-effect retry only selection exclusion, not injected OrderSettlement execution."
+    }
+  },
+  {
+    "id": "PAY-010",
+    "parents": [
+      "PL0016"
+    ],
+    "title": "Paid kaydı sonrası sipariş tamamlama hatası yeniden seçilmiyor",
+    "category": "DY",
+    "status": "open",
+    "invariant": "Para kapanışı commit edildikten sonra sipariş/masa tamamlaması başarısızsa yeniden yürütülebilir ve sonunda tutarlı hale gelir.",
+    "mechanism": "Sweep yalnız Paid/Cancelled olmayanları seçer. TryClose sonucu Closed olduktan sonra CompleteForPaidBillAsync hata verirse catch loglar; sonraki tur Paid filtresinden elenir. AlreadyClosed sonucunda da continue eder.",
+    "source_evidence": [
+      "src/Host/Experience/Billing/BillClosureSweeper.cs:59",
+      "src/Host/Experience/Billing/BillClosureSweeper.cs:78-87",
+      "src/Host/Experience/Orders/OrderSettlementService.cs:59-71"
+    ],
+    "production_paths": [
+      "src/Host/Experience/Billing/BillClosureSweeper.cs",
+      "src/Host/Experience/Orders/OrderSettlementService.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "acceptance": [
+      "Önce bill Paid olsun, sonra order Save/audit/DB fail enjekte et; ikinci tur order tamamlanır ve masa doğru serbest kalır.",
+      "Replay aynı history/merge serbest bırakma işlemini ikilemez.",
+      "Bir order tamamlanamaması diğer adayları durdurmaz; cancellation ve tekrar başlatma çalışır."
+    ],
+    "decision_blocker": null,
+    "repair_group": "PAY-G10",
+    "verification_tier": "static-current-HEAD; runtime-not-run",
+    "selection_probe": {
+      "command": "python -B evidence/V1-RMD-739/classification/wave1/probe_sweeper_selection.py",
+      "exit_code": 0,
+      "log": "evidence/V1-RMD-739/classification/wave1/sweeper-selection-probe.log",
+      "tier": "real PostgreSQL with isolated temporary schema; actual production selection SQL extracted from source",
+      "limitation": "Not full Host integration; fixtures mark closability explicitly. Paid-side-effect retry only selection exclusion, not injected OrderSettlement execution."
+    }
+  },
+  {
+    "id": "PAY-011",
+    "parents": [
+      "PL0017"
+    ],
+    "title": "Approved tutar ile requested tutar üst sınırı sözleşmesi belirsiz",
+    "category": "PO",
+    "status": "needs-verification",
+    "invariant": "Talep/tendered/approved/change para invariantı bütün ödeme yöntemlerinde doğrulanmış kuralla tutarlıdır.",
+    "mechanism": "Payment constructor approved<=tendered kontrol eder ama approved<=requested kontrol etmez. Gerçek provider kısmi/fazla onay ve nakit fazla verilen para ayrımı için mevcut domain kararı okunmadan yeni guard yazılmaz.",
+    "source_evidence": [
+      "src/Modules/Payments/PaymentAggregate/Payment.cs:60-81",
+      "evidence/V1-RMD-604/README.md:25"
+    ],
+    "production_paths": [
+      "src/Modules/Payments/PaymentAggregate/Payment.cs"
+    ],
+    "test_paths": [
+      "tests/Modules/Payments/PaymentAggregate/PaymentDomainTests.cs"
+    ],
+    "acceptance": [
+      "Domain talep/onay kuralı ve provider capture contract kaynağı okunur.",
+      "requested<tendered, partial approval, approved>requested varyasyonları gerçek invariantı sınar; para üstü ayrı korunur.",
+      "Kural belli değilse yeni guard ve hayali provider davranışı yok."
+    ],
+    "decision_blocker": "Talep/onay miktarının yöntem bazlı üst sınırı gerçek domain/provider kararı.",
+    "repair_group": "PAY-G11",
+    "verification_tier": "static-current-HEAD; runtime-not-run"
+  },
+  {
+    "id": "PAY-012",
+    "parents": [],
+    "title": "DESC LIMIT seçimi genel adil tarama garantisi vermiyor",
+    "category": "DY",
+    "status": "open",
+    "invariant": "Kapanabilir hiçbir mevcut hesap sabit aday limitinin dışında sonsuza dek aç bırakılmaz.",
+    "mechanism": "V1-RMD-750 testi 201 eski kısmi+1 yeni kapanabilir hesabı sınar. Mevcut ORDER BY updated_at DESC LIMIT200, 201 yeni kapanamayan+1 eski kapanabilir durumda ters yönde starvation olasılığını korur. Çalıştırılmadı, yeni statik aday.",
+    "source_evidence": [
+      "src/Host/Experience/Billing/BillClosureSweeper.cs:57-64",
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs:680-709",
+      "plan/v1/remediation/V1-RMD-750-hesap-kapatma-sweeper-tikanmasi.md:15"
+    ],
+    "production_paths": [
+      "src/Host/Experience/Billing/BillClosureSweeper.cs"
+    ],
+    "test_paths": [
+      "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+    ],
+    "acceptance": [
+      "Ters fixture: eski fully-paid açık hesap ardından 201 daha yeni partial; sweep tur(lar)ında eski hesap sonunda kapanır.",
+      "Eşit updated_at ve200/201 sınırı deterministik, cursor/progress restart sonrası kayıp yaratmaz.",
+      "Sonsuz sürekli yeni trafik altında bounded progress kanıtı; yalnız ASC↔DESC değişimi yeterli kabul edilmez."
+    ],
+    "decision_blocker": null,
+    "repair_group": "PAY-G12",
+    "verification_tier": "real PostgreSQL selection-query reproduction; Host integration pending",
+    "selection_probe": {
+      "command": "python -B evidence/V1-RMD-739/classification/wave1/probe_sweeper_selection.py",
+      "exit_code": 0,
+      "log": "evidence/V1-RMD-739/classification/wave1/sweeper-selection-probe.log",
+      "tier": "real PostgreSQL with isolated temporary schema; actual production selection SQL extracted from source",
+      "limitation": "Not full Host integration; fixtures mark closability explicitly. Paid-side-effect retry only selection exclusion, not injected OrderSettlement execution."
+    }
+  }
+]

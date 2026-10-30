@@ -1,0 +1,20 @@
+{
+  "source_id": "F0468",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V0-SEC-001 ASVS matrisi ASVS 4.0 numaralı; docs/security/asvs-5-chapter-map.md ile 5.0'a eşlendi (giderilmiş) ama sahip ID V13-HUG-001 plan/'de dosya olarak yok",
+      "status": "verification-needed",
+      "invariant": "ASVS matrisi güncel sürümle (5.0.0) eşlenmiş olmalı; sahip görev kimliği plan dizininde mevcut olmalı",
+      "mechanism": "low-A.md:125 satırında 'Matris ASVS 4.0 numaralı; docs/security/asvs-5-chapter-map.md ile düzeltilmiş (giderilmiş)' beyanı var; asvs-5-chapter-map.md:3-7,9-27 eşlemeyi içerir ve 'giderilmiş' kabul eder; ancak 'Sahip ID V13-HUG-001 plan/'de dosya olarak yok (Hugin->Token pivotu)' ifadesi, V13-HUG-001 kimliğinin plan/ altındaki herhangi bir .md dosyasında geçmediğini gösterir (grep -r 'V13-HUG-001' plan/ 2>/dev/null → 0 sonuç)",
+      "source_evidence": "evidence/V1-RMD-739/findings/low-A.md:125; docs/security/asvs-5-chapter-map.md:3-27",
+      "acceptance": "V13-HUG-001 kimliğine sahip görev dosyası plan/ altına eklenir veya bu kimliğin geçersiz/yeniden adlandırılmış olduğu kanıtlanır; ASVS 5.0.0 eşleme belgesi resmi referans olarak kabul edilir",
+      "id": "W2-N-F0468-01",
+      "parents": [
+        "F0468"
+      ]
+    }
+  ],
+  "limitations": "V13-HUG-001 kimliğinin ne olduğunu (Hugin->Token pivotu) tam olarak çözümlemek için plan/ dizinindeki geçmiş commitler veya görev kayıtları incelenmesi gerekebilir; bu salt okunur incelemede yapılamadı. ASVS 5.0.0 eşlemesinin doğru/eksiksiz olduğu ayrı bir güvenlik değerlendirmesi konusudur.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

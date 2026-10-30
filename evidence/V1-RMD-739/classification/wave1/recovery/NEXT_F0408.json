@@ -1,0 +1,20 @@
+{
+  "source_id": "F0408",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "cash-session-design.md §6 grants reconciliation to Accountant; code requires cash.session.override permission assigned only to supervisor/manager roles",
+      "status": "decision-blocked",
+      "invariant": "Documented permission matrix (cash-session-design.md) must match implemented role-permission grants (migration 129-cash-session-override-permission.up.sql).",
+      "mechanism": "cash-session-design.md:109 (line 109 in the markdown table) lists 'ReconcileSession | Supervisor, Accountant, Admin'. The code path for session reconciliation is gated by cash.session.override permission. Migration 129-cash-session-override-permission.up.sql:12 grants this permission ONLY to roles with code IN ('supervisor', 'manager'). Accountant role is not included. The Accountant role cannot perform reconciliation because the authorization check at the endpoint level (CashSessionHttpTests.cs:441,720; CustomerAccountsHttpTests.cs:518) requires cash.session.override.",
+      "source_evidence": "cash-session-design.md:109; 129-cash-session-override-permission.up.sql:12; low-A.md:65; CashSessionHttpTests.cs:441,720; ApplicationPermissions.cs:48",
+      "acceptance": "PO decision: either (a) add Accountant to the role grant in migration 129 (or a follow-up migration) so Accountant holds cash.session.override, or (b) update cash-session-design.md §6 to remove Accountant from ReconcileSession allowed roles. Current state is a documented vs. implemented mismatch.",
+      "id": "W2-N-F0408-01",
+      "parents": [
+        "F0408"
+      ]
+    }
+  ],
+  "limitations": "Read-only analysis. PO decision required. The mismatch is confirmed by comparing the design document's role table (Supervisor, Accountant, Admin) with the migration's actual role grant (supervisor, manager only).",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

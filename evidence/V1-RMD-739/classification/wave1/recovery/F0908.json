@@ -1,0 +1,45 @@
+{
+  "source_id": "F0908",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "id": "W2-01-001",
+      "title": "V1-RMD-103 planında hesap bölme tutarı açıklaması bayat",
+      "category": "BD",
+      "status": "open",
+      "invariant": "Plan güncel davranışı doğru anlatır; tarihsel kapsam ile güncel durum ayrılır.",
+      "mechanism": "Plan 108-116 bugünkü SplitEngine için indirim entegrasyonu yok der; engine adjustment verildiğinde düzeltilmiş tutarı alır, Host SaveEqual/SaveAmounts çağrıları adjustment taşır.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:13",
+        "evidence/V1-RMD-739/tasks/B008.md:20-22",
+        "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md:108-116",
+        "src/Modules/Billing/SplitDesign/SplitEngine.cs:20-33",
+        "src/Modules/Billing/SplitDesign/SplitEngine.cs:99-106",
+        "src/Modules/Billing/SplitDesign/SplitEngine.cs:282-289",
+        "src/Host/Experience/Billing/BillingSplitStore.cs:497-530"
+      ],
+      "production_paths": [],
+      "read_only_paths": [
+        "src/Modules/Billing/SplitDesign/SplitEngine.cs",
+        "src/Host/Experience/Billing/BillingSplitStore.cs"
+      ],
+      "proposed_repair_paths": [
+        "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md"
+      ],
+      "acceptance": [
+        "Eski uygulama kapsamı tarihçe olarak korunur; current davranış adjustment kullanımı ve null durumundaki özgün tutar ayrılarak açıklanır.",
+        "İlgisiz ücret/bahşiş politikası bu belge iddiasından türetilmez."
+      ]
+    }
+  ],
+  "limitations": [
+    "Static source review only; no application execution, no closure, no new task allocation."
+  ],
+  "source_hashes": {
+    "evidence/V1-RMD-739/findings/low-C.md": "a464cd1d0b334c092fc0d427186271b04793e042c104a9d586227bf1f2edb794",
+    "evidence/V1-RMD-739/tasks/B008.md": "9ff3aa7d4988320f67c515b24d89bac76d8963d0efe60d834f81c8d561f82b5e",
+    "plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md": "e865a9cad3e51c20845f16d99d332c0dcd15b6048290258b08c16c6398e44805",
+    "src/Modules/Billing/SplitDesign/SplitEngine.cs": "dbf57baa3000c671462cd3cf608482674bbaf3df0bc4c82d87a3e50536275c1b",
+    "src/Host/Experience/Billing/BillingSplitStore.cs": "b82a637d28432edd54d37195f5d38950a90c92a68c5d79aa294ac76c3b5db3d4"
+  }
+}

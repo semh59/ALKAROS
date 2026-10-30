@@ -1,0 +1,24 @@
+{
+  "source_id": "UI0166",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "WaiterPWA lacks table merge (birleştirme) — only transfer to empty table",
+      "status": "open",
+      "invariant": "Waiter must be able to merge two occupied tables' checks into one, matching PosTerminal capability",
+      "mechanism": "transfer.js openTransferSheet() filters targets to only status==='available' (line 19-20); PosTerminal TableWorkspace.tsx mergeTargets includes both 'Available' and 'Occupied' tables (line 183) and UI offers checkbox list for merge (lines 501-502)",
+      "source_evidence": [
+        "src/Clients/WaiterPwa/wwwroot/js/sheets/transfer.js:19-21",
+        "src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:182-183",
+        "src/Clients/PosTerminal/src/features/tables/TableWorkspace.tsx:501-502"
+      ],
+      "acceptance": "WaiterPWA transfer sheet offers merge action with occupied tables as targets, posts to server merge endpoint, and reflects merged state in bill",
+      "id": "W2-N-UI0166-01",
+      "parents": [
+        "UI0166"
+      ]
+    }
+  ],
+  "limitations": "Only static code review; runtime server merge endpoint behavior not verified; PosTerminal merge uses onAction callback with mergeGroupId — waiter PWA would need equivalent API",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

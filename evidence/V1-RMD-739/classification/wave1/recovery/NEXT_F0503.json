@@ -1,0 +1,20 @@
+{
+  "source_id": "F0503",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "86 grant noise rule (every normal 86 produces a grant row) lacks PO approval evidence",
+      "status": "open",
+      "invariant": "Business rule changes that generate grant rows for every normal 86 must have explicit Product Owner approval documented",
+      "mechanism": "The rule \"Plana aykırı kuralı = aktif her ürünün 86'lanması; her normal 86 bir grant satırı üretir\" is documented in low-A.md as accepted but the reason states \"86 grant gürültüsünün PO onayı kanıtsız\" (PO approval for 86 grant noise is unproven). The finding B044/V1-KIT-008 was marked [Düşük] and accepted in the markdown but no evidence of PO sign-off exists in the source references.",
+      "source_evidence": "evidence/V1-RMD-739/findings/low-A.md:160; evidence/V1-RMD-739/findings/low-A.md:28-29",
+      "acceptance": "Either (a) produce documented PO approval for the 86 grant noise rule with date and approver identity, or (b) reclassify the rule as unverified/blocked until PO approval is obtained. The acceptance evidence must be a traceable decision record, not a markdown claim.",
+      "id": "W2-N-F0503-01",
+      "parents": [
+        "F0503"
+      ]
+    }
+  ],
+  "limitations": "The defect is a process/governance gap: the rule exists in code/markdown as 'accepted' but the PO approval claimed in the markdown cannot be verified from the repository artifacts. No external PO approval artifact was found in evidence/V1-RMD-739 or linked tasks.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

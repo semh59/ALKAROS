@@ -1,0 +1,38 @@
+{
+  "source_id": "F0914",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Geri alma tekrarı sanılan hiç gönderilmemiş hesapta adisyon iptal edilebiliyor",
+      "status": "open",
+      "invariant": "Kasadan geri alma yalnız gerçekten gönderilmiş hesabı veya aynı geri almanın doğrulanmış tekrarını işlemeli; masada bağlı olmak tek başına geri alma geçmişi sayılmamalı.",
+      "mechanism": "currentOrderId == orderId dalı, gönderim/geri alma geçmişini ve sipariş durumunu denetlemeden AlreadyAttached dönüyor. Para yoksa Billing deposuyla aktif adisyonları Cancelled yapıyor ve kalemleri supersede ediyor. table_sent_checks sorgusu ya da tamamlanmış geri almayı ayırt eden kalıcı kanıt kontrolü yok; silme işlemi yalnız mevcut kaydı unutuyor. Bu dal ana akıştaki Submitted/masa kontrolünden ve audit yazımından önce dönüyor. Böylece orders.create yetkili doğrudan istek, hiç kasaya gönderilmemiş masaya bağlı siparişin parasız aktif adisyonunu gerçek tekrar sanarak değiştirebilir. Eski kaynak bunu bulgu-değil saymış; ancak görev sözleşmesi kuyrukta olmayan hesabın reddini ve tekrarın zararsızlığını istiyor. Gerçek yarım geri almayı tamamlama amacı bu ayırt etme eksikliğini çürütmüyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:19",
+        "evidence/V1-RMD-739/tasks/B012.md:11-14",
+        "plan/v1/remediation/V1-RMD-281-recall-check-sent-by-mistake.md:20-28,88-91",
+        "src/Host/Experience/Orders/CashierHandoffStore.cs:81-88,109-157,172-188,218-232",
+        "src/Host/Experience/Orders/OrderManagementEndpoints.cs:382-410",
+        "src/Modules/Billing/BillFoundation/PostgresBillRepository.cs:148-180",
+        "tests/Host/Experience/Orders/TableDraft/CheckLifecycleHttpTests.cs:290-319",
+        "tests/Host/Experience/Tables/TableServerRulesHttpTests.cs:250-277"
+      ],
+      "acceptance": [
+        "Hiç kasaya gönderilmemiş masaya bağlı sipariş ve parasız açık adisyon için recall-from-cashier isteği adisyonu veya kalemlerini değiştirmemeli; kuyruk dışı sözleşmesine uygun sonuç dönmeli.",
+        "Gerçek geri alma tekrarı ve tarihsel yarım geri alma kurtarması, doğrulanabilir geçmişle ayırt edilmeli; gerekli kurtarma davranışı korunmalı.",
+        "Hiç gönderilmeyen hesap, gerçek tekrar ve yarım kalmış geri alma ayrı veritabanı/HTTP senaryolarıyla doğrulanmalı; para bulunan hesap iptal edilmemeli."
+      ],
+      "id": "W2-R-F0914-01",
+      "parents": [
+        "F0914"
+      ]
+    }
+  ],
+  "limitations": [
+    "Statik kontrol akışı ve Billing mutasyonu doğrulandı; doğrudan istek veritabanında çalıştırılmadı.",
+    "Mevcut testlerden gerçek gönderim/geri alma tekrarını kapsayan bölümler okundu; tüm test paketinin eksiksiz tarandığı iddia edilmiyor.",
+    "Eski bulgu-değil sınıflaması bugünkü sözleşme ve mutasyonla uyuşmadığından açık olarak yeniden değerlendirildi; para tahsil edilmiş hesabın bu dalda iptal olduğu iddia edilmiyor.",
+    "Repo ve görev metadata'sı değiştirilmedi."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

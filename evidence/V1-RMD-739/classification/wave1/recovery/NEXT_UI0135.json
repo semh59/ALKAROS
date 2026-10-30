@@ -1,0 +1,44 @@
+{
+  "source_id": "UI0135",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "PosTerminal styles.css alert colors hardcoded (lines 143-146)",
+      "status": "open",
+      "invariant": "Foundations §1.1 — all status colors must use design-system tokens (--ds-color-*) not hardcoded hex",
+      "mechanism": "styles.css:143-146 defines .alert.error/.unauthorized/.conflict/.information with hardcoded hex colors (#8d2731, #efc2c6, etc.) bypassing design-system tokens",
+      "source_evidence": "D:/project/ALKAROS/src/Clients/PosTerminal/src/styles.css:143-146",
+      "acceptance": "Replace hardcoded hex with --ds-color-danger/--ds-color-warning/--ds-color-info tokens; verify no hardcoded status colors remain in styles.css",
+      "id": "W2-N-UI0135-01",
+      "parents": [
+        "UI0135"
+      ]
+    },
+    {
+      "title": "PosTerminal status dots convey state by color only (styles.css:116-121, 169)",
+      "status": "open",
+      "invariant": "WCAG 1.4.1 — color must not be the only visual means of conveying information; status indicators need text/icon accompaniment",
+      "mechanism": ".system-state > span (line 116) and .system-state.online/offline/login-state (lines 117-121) use only background-color changes (green/red/gray) with no text label or icon; .system-state.login-state variants (lines 120-121) also color-only",
+      "source_evidence": "D:/project/ALKAROS/src/Clients/PosTerminal/src/styles.css:116-121,169",
+      "acceptance": "Add visible text label or icon to each status variant; verify screen-reader accessible state announcement",
+      "id": "W2-N-UI0135-02",
+      "parents": [
+        "UI0135"
+      ]
+    },
+    {
+      "title": "PosTerminal border-radius inconsistency: styles.css:187 uses 16px + custom shadow vs billing.css:14,34 using --ds-radius-* tokens",
+      "status": "open",
+      "invariant": "Design-system token contract — all radii must use --ds-radius-* tokens; no ad-hoc pixel values",
+      "mechanism": "styles.css:187 (.table-order-bridge) hardcodes border-radius: 16px and custom box-shadow; billing.css:14 (.bill-split__header) and :34 (.bill-split__editor section) use --ds-radius-md/--ds-radius-sm tokens correctly — divergence confirms token non-adoption in styles.css",
+      "source_evidence": "D:/project/ALKAROS/src/Clients/PosTerminal/src/styles.css:187; D:/project/ALKAROS/src/Clients/PosTerminal/src/features/billing/billing.css:14,34",
+      "acceptance": "Replace hardcoded 16px with --ds-radius-lg (or --ds-radius-md per token scale); replace custom shadow with --ds-shadow-raised; verify primitives.css tokens used throughout",
+      "id": "W2-N-UI0135-03",
+      "parents": [
+        "UI0135"
+      ]
+    }
+  ],
+  "limitations": "Source analysis is static (code reading only); runtime visual verification not performed. No browser screenshot or accessibility tree capture available. Evidence limited to CSS source files at HEAD commit 8c03e79.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

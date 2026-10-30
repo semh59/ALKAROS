@@ -1,0 +1,44 @@
+{
+  "source_id": "F0415",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "PUT endpoint has unused X-Idempotency-Key parameter",
+      "status": "open",
+      "invariant": "API contract — every declared parameter must be consumed or explicitly documented as reserved; unused parameters leak surface and confuse clients",
+      "mechanism": "low-A.md:72 references V1-RMD-471 line :64 — PUT endpoint declares X-Idempotency-Key header parameter but does not read or validate it; parameter is present in OpenAPI/contract but ignored in handler",
+      "source_evidence": "D:/project/ALKAROS/evidence/V1-RMD-739/findings/low-A.md:72 (references V1-RMD-471:64)",
+      "acceptance": "Either implement idempotency key validation for PUT or remove parameter from contract/OpenAPI; verify no unused parameters remain in any endpoint",
+      "id": "W2-N-F0415-01",
+      "parents": [
+        "F0415"
+      ]
+    },
+    {
+      "title": "TCKN/VKN checksum validation missing — only digit count enforced",
+      "status": "open",
+      "invariant": "Turkish tax ID (TCKN 11 digits, VKN 10 digits) requires modulus-10 checksum per official specification; digit-count-only accepts invalid numbers",
+      "mechanism": "low-A.md:72 notes plan only requires digit count; current validation checks length (10/11) but not the official checksum algorithm (TCKN: weighted sum mod 10; VKN: similar)",
+      "source_evidence": "D:/project/ALKAROS/evidence/V1-RMD-739/findings/low-A.md:72",
+      "acceptance": "Implement TCKN (11-digit modulus-10) and VKN (10-digit modulus-10) checksum validation; add test cases for valid/invalid checksums; verify plan acceptance updated",
+      "id": "W2-N-F0415-02",
+      "parents": [
+        "F0415"
+      ]
+    },
+    {
+      "title": "README references missing mutation-run.log file (only mutation-run-email.log exists)",
+      "status": "open",
+      "invariant": "Documentation accuracy — all referenced artifacts must exist at documented paths",
+      "mechanism": "low-A.md:72 states README mentions mutation-run.log but only mutation-run-email.log exists in evidence; file reference is stale",
+      "source_evidence": "D:/project/ALKAROS/evidence/V1-RMD-739/findings/low-A.md:72",
+      "acceptance": "Update README to reference actual file (mutation-run-email.log) or restore missing mutation-run.log with documented content; verify all README file references resolve",
+      "id": "W2-N-F0415-03",
+      "parents": [
+        "F0415"
+      ]
+    }
+  ],
+  "limitations": "Source evidence is finding document (low-A.md) only; actual PUT endpoint code, TCKN/VKN validation code, and README not directly inspected. Defects inferred from finding text. Runtime behavior not verified.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,41 @@
+{
+  "source_id": "F0388",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "id": "W2-01-002",
+      "title": "V1-RMD-237 audit çağrısının işlem sınırı bayat",
+      "category": "BD",
+      "status": "open",
+      "invariant": "İndirim ve denetim kaydının atomik sınırı planda doğru belirtilir.",
+      "mechanism": "Plan 27-32 audit çağrısını ApplyDiscountAsync döndükten sonra endpointte tanımlar. Güncel store audit AppendAsync çağrısını aynı connection/transaction ile committen önce yapar.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:45",
+        "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md:27-32",
+        "src/Host/Experience/Billing/BillingSplitStore.cs:170-194",
+        "tests/Host/Experience/Billing/BillingSplitHttpTests.cs:699-716"
+      ],
+      "production_paths": [],
+      "read_only_paths": [
+        "src/Host/Experience/Billing/BillingSplitStore.cs",
+        "tests/Host/Experience/Billing/BillingSplitHttpTests.cs"
+      ],
+      "proposed_repair_paths": [
+        "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md"
+      ],
+      "acceptance": [
+        "Belge atomik store audit çağrısını committen önce olarak açıklar; tarihsel endpoint sonrası tasarımı current diye göstermez.",
+        "Audit failure testi varlığı ile bu turda çalıştırılmış sonuç birbirine karıştırılmaz."
+      ]
+    }
+  ],
+  "limitations": [
+    "Rollback regression test read, not run. Static source review only; no bug closure."
+  ],
+  "source_hashes": {
+    "evidence/V1-RMD-739/findings/low-A.md": "63e9b1772d6951d513df4100a5cb6be7ea39e537509527b2237ab518019ca600",
+    "plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md": "c3284e99ba6a827c1f1c0cb0c26230276391a45ae8e6fab2bda662c90eebb16e",
+    "src/Host/Experience/Billing/BillingSplitStore.cs": "b82a637d28432edd54d37195f5d38950a90c92a68c5d79aa294ac76c3b5db3d4",
+    "tests/Host/Experience/Billing/BillingSplitHttpTests.cs": "df068d7e88277741f2ffc6a7a5eed70a0a5164b71e08eee431a26d81a31fa48c"
+  }
+}

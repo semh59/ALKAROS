@@ -1,0 +1,142 @@
+{
+  "task_id": "V1-RMD-739",
+  "packet": "packet01",
+  "verdict": "PASS",
+  "scope": "Yalnız F0388 ve F0908 için yazım sonrası bağımsız statik sınıflama denetimi. Paket kabulü kusur kapanışı, belge düzeltmesi, uygulama doğrulaması veya diğer taslakların onayı değildir.",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "summary": {
+    "accepted_static_classifications": 2,
+    "open_documentation_findings": 2,
+    "closed_findings": 0,
+    "runtime_verified": 0,
+    "blocking_review_findings": 0,
+    "hash_comparisons_passed": 23,
+    "hash_comparisons_failed": 0,
+    "repository_writes": 0,
+    "task_marked_done": false,
+    "new_records_processed": 0
+  },
+  "checked_files": [
+    {"path": "D:/project/ALKAROS/AGENTS.md", "read": "1-89; tam"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/adjudication/INDEX.json", "read": "tam; kabul kimlikleri ve ledger yolu karşılaştırıldı", "sha256": "09ed20088aec8355180251526ab60b4940bfedc8930e81667ce60c67e0bdd2ce"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/adjudication/packet01/ledger.json", "read": "tam; iki iddia ve sınıflama ayrı ayrı incelendi", "sha256": "9d80bbc37e21379748558c34f192a0e13e1bf1f45e71ae6c7e863d8ea6d22291"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/adjudication/packet01/manifest.json", "read": "tam; dört paket dosyası ve iki dış girdi hash karşılaştırması"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/adjudication/packet01/validation.json", "read": "tam; yapısal kanıt olarak değerlendirildi", "sha256": "60d9ae9ccd2c5392bc4be092914148879898618e2da434a6478c674d0b3e5f86"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/adjudication/packet01/739-correction-review-F0388.json", "read": "tam; kaynak gözlemleri bağımsız karşılaştırıldı", "sha256": "bf016165ec8063a88ce5401e823ad8d03c437f61deeca6287292a604b88bcc68"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/adjudication/packet01/739-correction-review-F0908.json", "read": "tam; koşullu adjustment ve kalem bölme sınırı bağımsız karşılaştırıldı", "sha256": "1cf1b89038e55f06651808e1d85185f259ff8d1d7dbc6c9ccf238f3cb9eed12e"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/adjudication/packet01/preflight.json", "read": "metadata okundu; baseline_changed_paths tamamı Python ile hash karşılaştırıldı"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/recovery/DURUM.md", "read": "tam; 5-24 öncelik ve tarihçe ayrımı", "sha256": "2e26f499ccee47fbc185c6a0ecccc5e6e56e289d505780bea9dbc02290cac5c2"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/recovery/F0388.json", "read": "tam; parent hash doğrulandı"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/recovery/F0908.json", "read": "tam; parent hash doğrulandı"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/findings/low-A.md", "read": "32-56; özgün iddia 45; bütün dosyanın hash değeri karşılaştırıldı"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/findings/low-C.md", "read": "1-25; özgün iddia 13; bütün dosyanın hash değeri karşılaştırıldı"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/tasks/B008.md", "read": "tam; özellikle 20-22"},
+    {"path": "D:/project/ALKAROS/plan/v1/remediation/V1-RMD-237-bill-discount-audit-event-write-path.md", "read": "1-72; tam"},
+    {"path": "D:/project/ALKAROS/plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md", "read": "1-196; tam"},
+    {"path": "D:/project/ALKAROS/src/Host/Experience/Billing/BillingSplitStore.cs", "read": "1-205,480-604; ApplyDiscountAsync, SaveEqualAsync, SaveAmountsAsync, SaveItemsAsync, SaveCustomAsync, LoadAdjustmentAsync"},
+    {"path": "D:/project/ALKAROS/src/Modules/Billing/SplitDesign/SplitEngine.cs", "read": "1-331; tam"},
+    {"path": "D:/project/ALKAROS/src/Host/Experience/Billing/BillingSplitApplication.cs", "read": "85-104,158-243; DI ve discount endpoint"},
+    {"path": "D:/project/ALKAROS/src/Modules/Billing/Adjustments/PostgresBillAdjustmentRepository.cs", "read": "89-143; transaction overload ve INSERT"},
+    {"path": "D:/project/ALKAROS/src/Modules/Audit/EventStore/PostgresAuditEventStore.cs", "read": "1-90; transaction overload ve writer çağrısı"},
+    {"path": "D:/project/ALKAROS/src/Modules/Audit/EventStore/AuditEventWriter.cs", "read": "1-68; tam"},
+    {"path": "D:/project/ALKAROS/src/Modules/Audit/EventStore/IAuditEventStore.cs", "read": "1-19; tam"},
+    {"path": "D:/project/ALKAROS/tests/Host/Experience/Billing/BillingSplitHttpTests.cs", "read": "695-754; yalnız test kaynağı okundu, çalıştırılmadı"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/POLITIKA.md", "read": "tam; kritik öncelik politikası ve kimlik uzayları"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/DURUM.md", "read": "tam; iki kayıt için rakip kabul hükmü bulunmadı"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/recovery/FIRST_TWO_VALIDATION.json", "read": "tam; önceki bağımsız denetim bekliyor kaydı tarihçe"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/ANA_KAYITLAR.json", "read": "Python ile tam JSON okuma; F0388/F0908 nesneleri ve kaynak metin eşitliği"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/TUM_KAYITLAR.csv", "read": "F0388/F0908 satırları"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/DUZELTME_PAKETLERI.json", "read": "PK0002/PK0003 nesneleri"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/PAKETLER.md", "read": "F0388/F0908 satırları"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/SINIFLAMA_DUZELTMELERI.json", "read": "F0908 düzeltme nesnesi"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/KANIT_ENVANTERI.json", "read": "kimlik ayrımı; LF0388 ve LF0908 farklı görev/kaynaklara ait, bu iki F kaydı değil"},
+    {"path": "D:/project/ALKAROS/evidence/V1-RMD-739/classification/wave1/KAPSAM_TEMEL_V2.json", "read": "iki kimliğin eski remaining_source_ids üyeliği; kabul kararı değil"},
+    {"path": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch", "read": "739* JSON/MD/CSV/LOG/TXT dosyalarında iki kimlik tarandı; repo classification taramasıyla birlikte 40 eşleşen dosya. İlgili kayıt nesneleri incelendi; diğer kayıtlar onaylanmadı.", "relevant_copies": ["739-audit-overrides.json", "739-cat2-part-a.json", "739-cat2-part-a.txt", "739-category-dump-2.txt", "739-category-input-2.json", "739-category-input-3.json", "739-category-reviewed-2.json", "739-category-reviewed-3.json", "739-correction-review-F0388.json", "739-correction-review-F0908.json", "739-delivery-audit-20261029.json", "739-next-01e-F0388.json", "739-next-01e-F0908.json", "739-next-01f-F0388.json", "739-next-01f-F0908.json", "739-packet01-preflight.json", "739-parent-adjudication-20261029.md", "739-parent-independent-F0388.json", "739-parent-independent-F0908.json", "739-recovery-next-01e.json", "739-recovery-next-01f.json", "739-w2-batch-01.json"]}
+  ],
+  "findings": [
+    {
+      "id": "SEM-F0388",
+      "type": "dogrulanan-acik-belge-kusuru",
+      "blocking": false,
+      "assessment": "Yeni ledger doğru nesneyi açık tutuyor: belge kusuru. low-A.md:45 audit eksik demiyor; görev md'sinin dönüş-sonrası anlatımını bayat buluyor. Gerçek V1-RMD-237:27-32 bu anlatımı koruyor; 39-43 de başarı dönüşü üzerinden tarif ediyor. BillingSplitStore.ApplyDiscountAsync:83 transaction açıyor, 170 adjustment INSERT, 172-191 audit INSERT aynı transaction ile çağrılıyor, 192 commit, 194 dönüş. SQL yazıcıları aynı transaction'ı komuta bağlıyor. Endpoint:223-225 audit bağımlılığını store'a geçiriyor; dönüş sonrası ayrı AppendAsync yok. Bu kaynak karşılaştırması not-defect elemesini reddetmek için yeterli; runtime rollback başarısı değildir.",
+      "decision": "open",
+      "claim_object": "documentation"
+    },
+    {
+      "id": "SEM-F0908",
+      "type": "dogrulanan-acik-belge-kusuru",
+      "blocking": false,
+      "assessment": "Yeni ledger doğru nesneyi açık tutuyor: gerçek V1-RMD-103:108-116 içindeki bugün/hâlâ anlatımı. low-C.md:13 ve B008.md:22 bu anlatımın eski olduğunu bildiriyor; açık üretim hesaplama hatası ileri sürmüyor. SplitEngine:32-33,99-100,282-283 adjustment varsa düzeltilmiş payable/tax, null ise Bill tutarlarını seçiyor. Host SaveEqualAsync, SaveAmountsAsync ve SaveCustomAsync LoadAdjustmentAsync sonucunu geçiriyor. CreateItemSplit adjustment almıyor; Host:545-547 değişmiş toplamda kalem bölmeyi reddediyor. Ledger bu iki sınırı koruyor; ödeme akışının tamamı onaylanmıyor.",
+      "decision": "open",
+      "claim_object": "documentation"
+    },
+    {
+      "id": "NO-RUNTIME-CLOSURE-LEAK",
+      "type": "kapsam-kontrolu",
+      "blocking": false,
+      "assessment": "Ledger'da iki kayıt documentation/BD/open; runtime_verified, finding_closed, repair_authorized false. Index closed_findings=0 ve write_authorization=false. application_verdict ve limitations statik gözlem ile runtime sonucu ayrımını açıkça koruyor. Özgün iddianın rollback cümlesi tarihsel alıntı olarak saklanmış; yeni çalıştırılmış sonuç gibi kabul edilmemiş. validation.json kendi tier alanında anlamsal/runtime kanıt olmadığını ve postwrite review beklediğini söylüyor. Test kaynaklarının varlığı başarı yerine kullanılmamış."
+    },
+    {
+      "id": "COPY-PRECEDENCE",
+      "type": "taslak-celiskisi-oncelikle-giderilmis",
+      "blocking": false,
+      "assessment": "Eski çelişkiler fiziksel olarak korunmuş: F0388 next-01e open / next-01f not-defect; F0908 iki next taslağında not-defect. Ayrıca eski category-reviewed-3 F0908 için KN diyor; audit-overrides, SINIFLAMA_DUZELTMELERI, ANA_KAYITLAR ve CSV bunu BD olarak taşıyor. INDEX:3 tüm recovery/worker taslaklarına karşı aynı source_id için öncelik kuruyor; recovery/DURUM:7-11 bunu açıkça bildiriyor. Yeni iki review ve parent recovery kayıtları açık belge kusuruyla uyumlu. Yetki bakımından çözülmemiş rakip güncel kabul hükmü bulunmadı. Eski dosyaların her biri güncellenmiş/silinmiş sayılmıyor. Kritik priority yeni severity yükseltmesi değil; özgün kayıt ve POLITIKA:5 ile aynı. LF0388/LF0908 eşleşmeleri başka kimlik uzayına ait; F kayıtlarıyla birleştirilmedi."
+    },
+    {
+      "id": "INTEGRITY",
+      "type": "bagimsiz-hash-json-kontrolu",
+      "blocking": false,
+      "assessment": "23/23 SHA-256 karşılaştırması eşit: manifest 4, dış review girdileri 2, parent kayıtlar 2, review referansları 2, primary_source_hashes 9, superseded taslaklar 4. İki özgün metin doğrudan source:line ve ANA_KAYITLAR nesnesiyle eşit. Index tek packet01 ledger'ını gösteriyor; ledger kimlik listesi index accepted_source_ids ve packet source_ids ile birebir aynı. Tekrarlı kimlik veya üçüncü kabul kaydı yok. Ledger source_evidence satır aralıkları geçerli. HEAD başlangıç ve bitişte aynı. Bunlar bütünlük kanıtıdır; SEM-F0388/SEM-F0908 hükümleri ayrıca gerçek belge/kod okumasına dayanır."
+    },
+    {
+      "id": "BASELINE-AND-MANIFEST-BOUNDARY",
+      "type": "sinir-notu",
+      "blocking": false,
+      "assessment": "Preflight baseline_changed_paths karşılaştırmasında yalnız recovery/DURUM.md değişmiş; yeni öncelik notunun yetkili değişikliğiyle uyumlu. Diğer baseline hashleri aynı. Manifest INDEX.json ve validation.json için beklenen hash taşımıyor; bu iki dosyanın güncel hashleri rapora ayrıca alındı, manifest tarafından mühürlendikleri ileri sürülmüyor. Başlangıç/bitiş git status ve diff ad listesi aynı; zaten mevcut 739 görev md değişikliği ve untracked classification ağacı korunuyor."
+    }
+  ],
+  "limitations": [
+    "Bu PASS yalnız iki kaydın statik belge sınıflamasına aittir. Tüm taslaklar kabul edilmiş, tüm durum/kimlik çatışmaları çözülmüş veya kusurlar kapanmış değildir.",
+    "Repository uygulama kodu, test, build, migration, validator veya 739-packet01-validate.py çalıştırılmadı. validation.json içindeki eski negative fixture sonuçları bu turda yeniden üretilmedi.",
+    "Kendi iki Python betiği yalnız dosya okur, JSON ayrıştırır, hash/kimlik/satır karşılaştırır ve stdout'a yazar; repo dosyasına yazmaz. Exit 0 anlamsal doğruluk yerine kullanılmadı.",
+    "BillingSplitStore.cs tamamı değil, iddialarla ilgili metotlar okundu. AdjustmentCalculator iç hesaplaması, tüm payment/closure zinciri ve canlı PostgreSQL davranışı denetlenmedi.",
+    "Kopya taraması repository evidence/V1-RMD-739/classification ağacı ve etkin profil scratch kökündeki 739* metin dosyalarıyla sınırlı. Başka profil, başka disk veya bilinmeyen dış kopyalar için evrensel yokluk iddiası yok.",
+    "Eski tarihçe/kuyruk dosyalarının remaining/pending üyeliği bağımsız güncel kabul hükmü sayılmadı; kabul kaynağı INDEX. Hiçbir eski raporun bütün içeriği onaylanmadı.",
+    "Görev metadata'sı, repo dosyaları ve kusur durumları değiştirilmedi. Done yapılmadı; belge onarımı veya yeni görev yazma yetkisi verilmedi.",
+    "Tool altyapısı standart çıktı günlüğünü cache/terminal-output altında otomatik tuttu; denetim raporu yalnız istenen scratch JSON yoluna yazıldı. Yardımcı betikler scratch altında üretildi."
+  ],
+  "commands": [
+    {
+      "command": "git status --short && git diff --name-only && git rev-parse HEAD",
+      "workdir": "D:/project/ALKAROS",
+      "phase": "baslangic",
+      "exit_code": 0,
+      "output": " M plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md\n?? evidence/V1-RMD-739/classification/\nplan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md\n8c03e79bdc5263f5a5a26a524693403012d871d2"
+    },
+    {
+      "command": "python -B C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-packet01-postwrite-check-readonly.py",
+      "workdir": "D:/project/ALKAROS",
+      "exit_code": 0,
+      "output_summary": "hash_check_count=23; errors=[]; index_consistent=true; iki özgün source_line_equal ve canonical_text_equal=true; baseline farkı yalnız recovery/DURUM.md; 40 eşleşen dosya tarandı.",
+      "full_output_path": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/terminal-output/out-1793287194-20536-d940.log"
+    },
+    {
+      "command": "python -B C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-packet01-copy-check-readonly.py",
+      "workdir": "D:/project/ALKAROS",
+      "exit_code": 0,
+      "output_summary": "PK0002/PK0003 BD planlama adayları; LF kimlikleri ayrı; KAPSAM_TEMEL_V2 eski remaining listesi; FIRST_TWO_VALIDATION önceki bağımsız denetim pending kaydı; ALL_CHECKED_JSON_PARSED; INDEX, validation ve DURUM güncel SHA-256 değerleri alındı."
+    },
+    {
+      "command": "git status --short && git diff --name-only && git rev-parse HEAD",
+      "workdir": "D:/project/ALKAROS",
+      "phase": "bitis",
+      "exit_code": 0,
+      "output": " M plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md\n?? evidence/V1-RMD-739/classification/\nplan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md\n8c03e79bdc5263f5a5a26a524693403012d871d2"
+    }
+  ],
+  "created_files": [
+    "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-packet01-postwrite-check-readonly.py",
+    "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-packet01-copy-check-readonly.py",
+    "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-packet01-postwrite-review.json"
+  ]
+}

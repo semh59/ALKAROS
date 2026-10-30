@@ -1,0 +1,64 @@
+{
+  "source_id": "F0078",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Türkçe kasa aramasının regresyon testi ürün filtreleme davranışını çalıştırmıyor",
+      "status": "open",
+      "invariant": "İskender aramasının ve boş sonuç mesajının kabul testi gerçek ürün girdisi, arama olayı ve görünür sonuç üzerinden hata yakalamalı.",
+      "mechanism": "test_cashier_catalog_search.py yalnız kaynak dilimini okuyup toLocaleLowerCase sayısını ve mesaj literalini denetliyor; hiçbir JavaScript çalışmıyor. Filtre mantığı veya event bağlantısı bozukken bu dizeler korunursa test geçebilir. Üretimde query/name/code tr-TR dönüşümü ve boş mesaj mevcut; bu kaynak üretim arama hatası değil, davranışsal regresyon kapsamı eksiğidir. Mutasyon betiği aynı metin testlerini çalıştırdığı için 8 KILLED davranış kanıtı sayılmaz; yine de metin sözleşmesi kontrolü olarak değersiz olduğu ileri sürülmüyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:88",
+        "evidence/V1-RMD-739/tasks/B021.md:33-35",
+        "plan/v1/remediation/V1-RMD-707-cashier-waiter-catalog-search-and-retry.md:13-15",
+        "plan/v1/remediation/V1-RMD-707-cashier-waiter-catalog-search-and-retry.md:42-45",
+        "tests/Clients/Cashier/Frontend/test_cashier_catalog_search.py:7-28",
+        "src/Clients/Cashier/wwwroot/cashier-app.js:550-574",
+        "evidence/V1-RMD-707/mutate.mjs:10-18",
+        "evidence/V1-RMD-707/mutate.mjs:23-33",
+        "evidence/V1-RMD-707/mutations.log:1-8"
+      ],
+      "acceptance": [
+        "Gerçek kasa scripti ve DOM yüklenir; İskender ürünü için iskender girilip ürün görünürlüğü doğrulanır; eşleşmeyen sorguda boş sonuç mesajı doğrulanır.",
+        "Kategori filtresi ve ürün kodu araması da korunur; karşılaştırma veya input-event bağlantısı devre dışı bırakıldığında davranış testi kırmızı olur.",
+        "Kaynak literalini koruyup filtre sonucunu tersleyen mutant davranış testiyle yakalanır; ham exit code ve HEAD kaydedilir."
+      ],
+      "id": "W2-R-F0078-01",
+      "parents": [
+        "F0078"
+      ]
+    },
+    {
+      "title": "Garson katalog yeniden deneme testi tıklama ve ağ kurtarmasını çalıştırmıyor",
+      "status": "open",
+      "invariant": "İlk katalog hatası, yeniden dene tıklaması, başarılı kurtarma ve gerçek boş katalog birbirinden davranışsal testle ayrılmalı.",
+      "mechanism": "test_waiter_catalog_retry.py yalnız catalogFailed atamalarını, mesajları ve closest ifadesini kaynakta arıyor. Üretimde click handler loadCatalog çağırıp yeniden render ediyor; bu çağrı kaldırılıp closest ifadesi bırakılırsa mevcut test bunu denetlemez. Mutant M6 koşul literalini siliyor; böylece KILLED sonucu tıklama davranışından değil metin yokluğundan da üretilebilir. Kasa aramasından farklı olay/başarısızlık sınırı olduğundan ayrı atomik kusur.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:88",
+        "evidence/V1-RMD-739/tasks/B021.md:33-35",
+        "tests/Clients/WaiterPwa/Frontend/test_waiter_catalog_retry.py:6-22",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.js:257-282",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.js:463-466",
+        "src/Clients/WaiterPwa/wwwroot/js/screens/menu.js:23-28",
+        "evidence/V1-RMD-707/mutate.mjs:16-20",
+        "evidence/V1-RMD-707/mutations.log:4-8"
+      ],
+      "acceptance": [
+        "İlk /catalog yanıtı hata olduğunda Menü alınamadı ve Yeniden dene görünür; gerçek düğmeye tıklayınca yeni istek çıkar, başarılı ürünü render eder ve hata kaybolur.",
+        "Başarılı boş katalog Menüde ürün yok gösterir; hata mesajıyla karışmaz.",
+        "closest literalini koruyup loadCatalog çağrısını kaldıran mutant testte başarısız olur."
+      ],
+      "id": "W2-R-F0078-02",
+      "parents": [
+        "F0078"
+      ]
+    }
+  ],
+  "limitations": [
+    "Statik inceleme; test veya mutasyon betiği çalıştırılmadı. mutate.mjs repo yazdığı için yalnız okundu.",
+    "tests/Clients ve tests/E2E içinde hedef mesaj/selector aramaları yapıldı; bulunan iki Python dosyası davranış çalıştırmıyor. Alternatif isimli bütün testlerin eksiksiz tarandığı iddia edilmiyor.",
+    "StaticApps waiter-app.test.js gerçek script yükleme altyapısı mevcut; bu altyapının varlığı hedef senaryoların kapsandığı anlamına gelmez.",
+    "Önce yanlış logs/mutations.log yolu denendi; gerçek evidence/V1-RMD-707/mutations.log ve mutate.mjs açılarak doğrulandı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,1971 @@
+{
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "groups": [
+    {
+      "id": "RG-STK-02",
+      "write_paths": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Mevcut ConcurrentReceiptsOfSameOrderPostStockOnce ve StaleReceivedQuantityIsRejectedWhenLockingOrderLines yeniden çalıştırılır; yalnız beklenen PurchaseOrderStatusException kabul edilir; received_quantity, fiş sayısı, ledger toplamı ve on_hand birlikte doğrulanır.",
+        "İki bağlantı ve barrier ile cancel-commit→receipt-write ve receipt-commit→stale-cancel-write sıraları kurulur; biri tipli conflict alır; PO status/miktar, receipt, ledger ve balance tek tutarlı sonucu verir.",
+        "Cancel/receipt iki commit sırası yanında Submit/Cancel kardeş yarışını ayrı doğrulama notu tut; kanıtlanmadan yeni kusur diye kapatma."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-02",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B062.md:16-20",
+        "evidence/V1-RMD-739/tasks/B088.md:13-17",
+        "evidence/V1-RMD-740/green.log:14-15",
+        "evidence/V1-RMD-740/mutations.log:1-7",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:191-222",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs:1-367 [fresh static read]",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs:200-280 [fresh static read]",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs:218-249",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs:253-278",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:1-296 [fresh static read]",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:131-149",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:164",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:255-292",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:258-265",
+        "src/Modules/Purchasing/OrdersAndReceipts/PurchaseOrderModels.cs:229-256",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs:399-463"
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-01, RG-STK-02; kusurlar: STK-001, STK-002",
+        "IPurchasingService.cs:131-138 Cancel tx dışı snapshot; 255-265 receipt satır kilidi aldıktan sonra mutlak yazar. IPurchaseOrderRepository.cs:218-249 WHERE yalnız kimlik. En kısa yön: repository Update içinde header status/received snapshot guard ve mevcut LockLinesAndAssertReceived içinde header kilidi/status kontrolü; aynı header→line kilit sırası. Migration/row_version ve PurchaseOrderModels değişimi gerekmez.",
+        "IPurchaseOrderRepository declaration+implementasyon aynı dosyada; tracked src/tests taramasında başka concrete fake yok. İmza sabit tutulursa ilave compile yüzeyi yok; transaction içi header+line recheck zorunlu."
+      ]
+    },
+    {
+      "id": "RG-STK-03",
+      "write_paths": [
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Farklı PO üstünde aynı ReceiptNumber yarışı; bir kayıt, beklenen DuplicateGoodsReceiptException, kaybedenin PO/ledger/balance etkisi yok. Exact constraint discriminasyonu için farklı unique failure ayrı negatif kontrol edilir; bugünkü header catch bütün23505leri çevirir."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-03",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B088.md:16",
+        "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs:1-293 [fresh static read]",
+        "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs:165-194",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:1-296 [fresh static read]",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:157-162",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:261-292",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs:465"
+      ],
+      "readiness": "historical-regression-only",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-03; kusurlar: STK-003",
+        "Üretim ve migration yazma yüzeyi boş; mevcut korumayı kaldırıp mutasyon koşmak dahi bu salt-okunur oturumda yapılmadı. Yeni production kusuru bulunursa ayrı plan gerekir.",
+        "IGoodsReceiptRepository.cs:187-194 header 23505 yakalayıp typed duplicate çeviriyor. Constraint discrimination olası yeni kusurdur; historical grubundan repository yazma yetkisi doğmaz."
+      ]
+    },
+    {
+      "id": "RG-STK-04",
+      "write_paths": [],
+      "read_only_paths": [
+        "plan/v1.1/purchasing/V11-PUR-001-purchase-order-and-receipt.md",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs",
+        "src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs",
+        "tests/Modules/Purchasing/OrdersAndReceipts/OrdersAndReceiptsDatabaseTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "%5 ve purchasing.manage onay ilişkisinin tarihli Semih teyidi; mevcut yorum tek başına yeni policy yetkisi değildir."
+      ],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Semih %5 eşiği ve purchasing.manage→onay yetkisi ilişkisini tarihli karar olarak teyit eder; onaylı/onaysız/sınır toleransı testleri seçilen kurala bağlanır."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-04",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B088.md:17",
+        "plan/v1.1/purchasing/V11-PUR-001-purchase-order-and-receipt.md:49-51",
+        "src/Host/Experience/Purchasing/PurchasingManagementEndpoints.cs:212-219",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:186-191",
+        "src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs:1-108 [fresh static read]"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-04; kusurlar: STK-004",
+        "ReceiptVariancePolicy.cs:17 tolerans 0.05; 63-98 sınır ve yönetici dalları gerçek okundu. Karar öncesi policy/test/plan değiştirilmez."
+      ]
+    },
+    {
+      "id": "RG-STK-05",
+      "write_paths": [
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "5100 hareket rebuild ve ledger-read-failure mevcut testleri yeniden çalıştırılır; negatif Out işareti ve okuma-önce sırası mutasyonları kırılır."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-05",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:11-14",
+        "evidence/V1-RMD-742/green.log:14-15",
+        "evidence/V1-RMD-742/mutations.log:1-4",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:1-80 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:49-56",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:100-155 [fresh static read]",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:138-163",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:154-190"
+      ],
+      "readiness": "historical-regression-only",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-05; kusurlar: STK-005",
+        "Üretim ve migration yazma yüzeyi boş; mevcut korumayı kaldırıp mutasyon koşmak dahi bu salt-okunur oturumda yapılmadı. Yeni production kusuru bulunursa ayrı plan gerekir."
+      ]
+    },
+    {
+      "id": "RG-STK-06",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceProjector.cs",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/CrossChannelReservation/PostgresCrossChannelPortionArbiter.cs",
+        "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Önce RG-STK-08: full rebuild ve replay için retain+gerçek kullanıcı girişimi veya removal açık onayı. Caller yokluğu kusuru düşürmez; eski istisna dead-code kapanışı değildir.",
+        "Retain seçilince tek tx/lock düzeni ve exact production+fake write-set ayrı plan onayıyla sabitlenmeli; bu çıktı production yazma izni vermez."
+      ],
+      "dependency_groups": [
+        "RG-STK-08"
+      ],
+      "acceptance_additions": [
+        "Reset sonrası, ikinci on-hand yazımında ve reserved restore sırasında gerçek transaction içinde hata/ct cancel enjekte edilir; bütün balance satırları ve reserved/available önceki snapshot ile eşit kalır.",
+        "SUM sonrası purchase/consumption commit ve reserved snapshot sonrası create/terminal commit barrier ile zorlanır; rebuild + writer sonrası SQL ledger SUM ve active reservation SUM ile tüm alanlar eşleşir; yeni item/location satırı da kapsanır.",
+        "Retain planında advisory→row kullanan canlı writerlarla tablo-lock sırası deadlock üretmemeli; bir transaction tek başına izolasyon kanıtı değildir. Lock modu/sırası ve yeni pair insert testleri exact karar ister."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-06",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:12",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs:1-96 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs:78-96 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:1-409 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:160-215 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:182-213",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:314-395",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:342-394",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:1-80 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:47-64",
+        "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs:1-28 [fresh static read]",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:100-155 [fresh static read]",
+        "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:92-126",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:270-349 [fresh static read]",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:64-130",
+        "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs:1-25 [fresh static read]",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:178-190"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-06, RG-STK-37; kusurlar: STK-006, STK-007",
+        "StockBalanceProjector.cs:47-64 ayrı reserved snapshot, SUM, reset, set, restore; PostgresStockBalanceRepository.cs:333,345,360,388 ayrı CreateCommand. Atomiklik ve concurrent snapshot iki kusur olarak korunur.",
+        "Retain için kısa seçenek: balance repository içinde tek transaction/set-based rebuild + projector delegation; IStockBalanceRepositoryye tek atomic operasyon eklenecekse aşağıdaki 5 fake gerekir. IStockMovementRepository değişimi zorunlu değildir; tüm source dosyalarını otomatik write-sete alma.",
+        "Koşullu IStockBalanceRepository implementerleri: [\"src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs\", \"tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs\", \"tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs\", \"tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs\", \"tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs\", \"tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs\"]",
+        "IStockMovementRepository signature sabit tutulması seçilirse bu arayüzün 6 fake dosyası yazılmaz; yalnız conditional impact/read-only. Yeni atomic balance operasyonu için 5 fake write allowlisti retain planında tek tek eklenir."
+      ]
+    },
+    {
+      "id": "RG-STK-07",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Önce RG-STK-08: full rebuild ve replay için retain+gerçek kullanıcı girişimi veya removal açık onayı. Caller yokluğu kusuru düşürmez; eski istisna dead-code kapanışı değildir.",
+        "Retain seçilince tek tx/lock düzeni ve exact production+fake write-set ayrı plan onayıyla sabitlenmeli; bu çıktı production yazma izni vermez."
+      ],
+      "dependency_groups": [
+        "RG-STK-08"
+      ],
+      "acceptance_additions": [
+        "Aynı konumda 5100 hareket ve başka item hedefi; doğrudan item/location aggregate sonucu doğru; diğer konum hareketleri karışmaz; In/Out/Reversal ve boş ledger doğrulanır."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-07",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:12",
+        "plan/v1/remediation/V1-RMD-742-bakiye-yeniden-kurma-guvenligi.md:31-34",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:1-80 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:70-78",
+        "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs:1-28 [fresh static read]",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:100-155 [fresh static read]",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:109-135",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:234-236"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-07; kusurlar: STK-008",
+        "GetByLocationAsync:109-135 LIMIT5001 ve >5000 throw eder; sessiz truncation değil. Replay yalnız test callers.",
+        "Retain için en kısa doğrudan pair SUM repository metodu seçilirse IStockMovementRepository ve Postgres implementasyonu ile 6 concrete fake yazma yüzeyine girmelidir; mevcut tüm-ledger aggregateyi filtrelemek arayüzü değiştirmez ama tüm pair taraması/limit maliyeti nedeniyle eşdeğer direct-pair çözüm sayılmamalı.",
+        "Koşullu IStockMovementRepository implementerleri: [\"src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs\", \"tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs\", \"tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs\", \"tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs\", \"tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs\", \"tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs\", \"tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs\"]"
+      ]
+    },
+    {
+      "id": "RG-STK-08",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceProjector.cs",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/InventoryModule.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDatabaseTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Semih retain/integration veya removal kararı yok. Yeni Host endpoint/contract/test exact yolları henüz atanmadı."
+      ],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Semih bakım gereksinimini seçer: gerçek yetkili operasyon akışı exact path ile ayrı planlanır veya unused method/interface/test-only feature kaldırma etkisi kaydedilir; yeni hayali endpoint kurulmaz."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-08",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:13",
+        "plan/v1/remediation/V1-RMD-742-bakiye-yeniden-kurma-guvenligi.md:33",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:1-80 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:37",
+        "src/Modules/Inventory/InventoryModule.cs:1-84 [fresh static read]",
+        "src/Modules/Inventory/InventoryModule.cs:57-58"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-08; kusurlar: STK-009",
+        "Karar → RG-STK-06 ve RG-STK-07; kararın düzeltmeye bağımlılığı kaldırıldı. RebuildAllBalancesAsync ve ReplayBalanceForItemAndLocationAsync tracked src içinde yalnız deklarasyon/implementasyon; DI registration caller değildir.",
+        "Removal seçilirse IStockBalanceProjector+StockBalanceProjector methodları ve tüm test callerları exact kapsamlanır; ApplyMovementAsync reversal tarafından kullanıldığı için sınıf/DI toptan silinmez."
+      ]
+    },
+    {
+      "id": "RG-STK-09",
+      "write_paths": [
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDatabaseTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Mevcut ReplayingATerminalTransitionAfterARebuildIsStillIdempotent yeniden koşulur; Released/Consumed/Waste ve aynı pair üstünde başka Reserved varken replay başka rezervasyonu azaltmaz; terminal olay üretimi kaldırılınca test kırılır."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-09",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B088.md:5-7",
+        "evidence/V1-RMD-747/green.log:14-15",
+        "evidence/V1-RMD-747/mutations.log:1-3",
+        "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:92-102",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:270-349 [fresh static read]",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:323-347",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:1-163 [fresh static read]",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:83-84",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs:227-251"
+      ],
+      "readiness": "historical-regression-only",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-09; kusurlar: STK-011",
+        "Üretim ve migration yazma yüzeyi boş; mevcut korumayı kaldırıp mutasyon koşmak dahi bu salt-okunur oturumda yapılmadı. Yeni production kusuru bulunursa ayrı plan gerekir."
+      ]
+    },
+    {
+      "id": "RG-STK-10",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/PortionReservations/Lifecycle/PostgresPortionReservationRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Önce RG-STK-33 erişilebilirlik retain/removal kararı; sonra stock rebuild ile ortak kilit sırası tasarımı exact scope onayı."
+      ],
+      "dependency_groups": [
+        "RG-STK-33",
+        "RG-STK-06"
+      ],
+      "acceptance_additions": [
+        "Event rebuild sonrası ve ikinci balance yazımında failure/cancel; event seti ve tüm reserved/available önceki duruma tamamen döner; retry sonunda drift yoktur.",
+        "Aggregate sonrası terminal ve create commit interleaving; rebuild sonunda active reservation SUM=reserved, available=on_hand-reserved; event replay hiçbir ikinci etki üretmez."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-10",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B088.md:6",
+        "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:109-126",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs:1-26 [fresh static read]",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:217-270",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:270-349 [fresh static read]",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:274-299",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:302-346",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:323-346",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:1-163 [fresh static read]",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:77-105",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:77-112"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-10, RG-STK-38; kusurlar: STK-012, STK-013",
+        "ReservationBalanceProjector.cs:78-112 active SUM→balance list→event rebuild→tek tek autocommit set. PostgresReservationBalanceRepository.cs:323-346 event rebuild kendi txsi; 293 set autocommit. Retry tek başına kaybı kalıcı yapmaz, tam rebuild yeniden düzeltir; lifecycle interleaving ayrı STK-013.",
+        "Retain kısa yön: repositoryye tek atomik rebuild operasyonu; canlı ApplyReservation... imzalarını değiştirmeden event+balance+authoritative snapshot aynı tx. IReservationBalanceRepository değişirse 2 fake dosyası zorunlu; arbiter/lifecycle dosyaları yalnız lock protokolü okunur.",
+        "Koşullu IReservationBalanceRepository implementerleri: [\"src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs\", \"tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs\", \"tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDomainTests.cs\"]"
+      ]
+    },
+    {
+      "id": "RG-STK-11",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceModels.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Rebuild retain kararı ve atomic repository operasyonunun count sözleşmesi bekleniyor."
+      ],
+      "dependency_groups": [
+        "RG-STK-33",
+        "RG-STK-10"
+      ],
+      "acceptance_additions": [
+        "Aynı pairde 3×0.5 Reserved ve bir terminal kaydı: TotalActiveReservations=3, reserved=1.5; miktar toplamı int sınırını aşsa da kayıt sayısı overflowa bağlanmaz."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-11",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B088.md:6",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs:1-26 [fresh static read]",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:270-349 [fresh static read]",
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs:302-320",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceModels.cs:26-29",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:1-163 [fresh static read]",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:110-112"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-11; kusurlar: STK-014",
+        "ReservationBalanceProjector.cs:111-112 SUM(quantity)→int; 3×0.5 sayısı 1 olur; büyük decimal OverflowException yazımlardan sonra çıkar. Rapor COUNT(*) ayrı invariant.",
+        "En kısa yön RG-STK-10 atomik DB operasyonunda COUNT(*)yi aynı snapshotta döndürmek; ilave count future-hook yok. İmza değişirse 2 fake: [\"tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs\", \"tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDomainTests.cs\"]"
+      ]
+    },
+    {
+      "id": "RG-STK-12",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs",
+        "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Önce txsiz overload retain/removal kararı; kullanılmayan yolu onaysız silme veya yeni caller uydurma yok."
+      ],
+      "dependency_groups": [
+        "RG-STK-35"
+      ],
+      "acceptance_additions": [
+        "Overload tutulursa gerçek Postgres ledger append sonrası balance failure/cancel: ne reversal ne delta kalır; tekrar tek etki; kaldırılırsa bütün callers tx overloada taşınır ve kullanılmayan dependency kalmaz."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-12",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:17",
+        "plan/v1/remediation/V1-RMD-748-hareket-iptali-eksi-bakiye.md:32",
+        "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:193-200",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:1-80 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs:23-34",
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs:17-23",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:1-204 [fresh static read]",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:30-53"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-12; kusurlar: STK-015",
+        "StockMovementReversalService.cs:38 autocommit append,46 bağımsız projector apply. Retain halinde mevcut IInventoryTransactionRunner ile tek tx; balance/movement interface değişimi gereksiz. Constructor değişikliği tüm instantiation testlerini exact kapsamalı."
+      ]
+    },
+    {
+      "id": "RG-STK-13",
+      "write_paths": [
+        "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalModels.cs",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Mevcut tipli ret testi tekrar koşulur; caller transaction rollback açıkça doğrulanır; guard kaldırma mutasyonu kırılır."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-13",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:18",
+        "evidence/V1-RMD-748/green.log:14-15",
+        "evidence/V1-RMD-748/mutations.log:1-4",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:1-409 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:160-215 [fresh static read]",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:1-204 [fresh static read]",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:75-79",
+        "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs:154-172"
+      ],
+      "readiness": "historical-regression-only",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-13; kusurlar: STK-017",
+        "Üretim ve migration yazma yüzeyi boş; mevcut korumayı kaldırıp mutasyon koşmak dahi bu salt-okunur oturumda yapılmadı. Yeni production kusuru bulunursa ayrı plan gerekir."
+      ]
+    },
+    {
+      "id": "RG-STK-14",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/InventoryModule.cs",
+        "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Gerçek güven sınırı/caller veya removal kararı yok; nonempty AuthorizedBy permission kanıtı değildir."
+      ],
+      "dependency_groups": [
+        "RG-STK-34"
+      ],
+      "acceptance_additions": [
+        "Seçilen gerçek güven sınırında nonempty fakat izinsiz actor reddedilir ve hiçbir kayıt oluşmaz; yetkili actor tek ledger+balance etkisi verir; istemciden AuthorizedBy güvenilir kimlik sayılmaz."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-14",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:25-27",
+        "plan/v1.1/inventory/V11-INV-005-manual-adjustments.md:50-53",
+        "src/Modules/Inventory/InventoryModule.cs:1-84 [fresh static read]",
+        "src/Modules/Inventory/InventoryModule.cs:63",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:1-215 [fresh static read]",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:58-59"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-14; kusurlar: STK-018",
+        "InventoryAdjustmentService.cs:58 yalnız Guid.Empty reddi; authorization service kullanılmıyor. Karar sonrası gerçek authenticated girişin exact contract/test yüzeyi ayrıca planlanır; InventoryModule kaydı kendi başına güven sınırı değildir."
+      ]
+    },
+    {
+      "id": "RG-STK-15",
+      "write_paths": [
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+        "src/Modules/Inventory/WasteRecording/WasteModels.cs",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Modules/Inventory/WasteRecording/PostgresWasteRecordRepository.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Aynı key+aynı yük replay; farklı item/location/quantity/unit/source/sourceReference ve onaylı payload alanları conflict. Erken hit ve concurrent unique-race recovery aynı karşılaştırmayı kullanır; caller tx ve HTTP 409/Türkçe mesaj; ikinci ledger/balance etkisi yok."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-15",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:30",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:265-315 [fresh static read]",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:286-300",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:375-420 [fresh static read]",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:185-205",
+        "src/Modules/Inventory/PortionReservations/CancellationEffects/PortionCancellationDecisionService.cs:146-159",
+        "src/Modules/Inventory/WasteRecording/WasteModels.cs:1-120 [fresh static read]",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:1-244 [fresh static read]",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:210-223",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:80-90"
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-15; kusurlar: STK-020",
+        "WasteRecordingService.cs:81-90 early replay ve 210-223 unique-race recovery yük karşılaştırmadan mevcut döner. Tek payload equality helper ve typed conflict (WasteModels.cs mevcut exact dosya) + HTTP409 en kısa yön; repository/interface/schema değişikliği gerekmez.",
+        "Equality canonical quantity/unit, source/reference, reason ve metadata alanlarını açık kapsamalı; sunucu ürettiği id/time replay karşılaştırması değildir."
+      ]
+    },
+    {
+      "id": "RG-STK-16",
+      "write_paths": [
+        "src/Modules/Inventory/MovementLedger/StockMovement.cs",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "RecordMovementAsync(Reversal) retained kaldığında original Waste türünü doğrulayacak exact minimal yol henüz seçilmedi; onaylı removal sonrası surviving tüm girişleri tekrar tara."
+      ],
+      "dependency_groups": [
+        "RG-STK-12"
+      ],
+      "acceptance_additions": [
+        "Hazırlanmış/PortionReservation waste için CanReverse=false ve tüm kullanılan reversal girişlerinde tipli ret; ledger ve on_hand/reserved/available değişmez. Yanlış girilmiş genel spoilage fire düzeltmesi isteniyorsa Semih onaylı ayrı düzeltme politikası gerekir; otomatik yeniden satış yok."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-16",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:31",
+        "plan/v1.1/inventory/V11-INV-006-waste-recording.md:51-54",
+        "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:184-187",
+        "src/Modules/Inventory/MovementLedger/StockMovement.cs:1-182 [fresh static read]",
+        "src/Modules/Inventory/MovementLedger/StockMovement.cs:154-180",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs:1-139 [fresh static read]",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs:102-137",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:1-204 [fresh static read]",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:149-175",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:186-191",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs:210-230"
+      ],
+      "readiness": "scope-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-16; kusurlar: STK-021",
+        "StockMovement.CreateReversal:159-166 yalnız reversal-of-reversalı reddeder; CanReverse:186-191 Waste hariç tutmaz. En kısa centralized CreateReversal guard + CanReverse uyumu; StockMovementService yeni katman/arayüz gerekmez.",
+        "Doğrudan RecordMovementAsync(Reversal) yalnız source ID alır ve original okumaz; unused ledger-only servis kaldırma kararı RG-STK-27 ile seri. Bu giriş tutulursa invariant bypass incelemesi tamamlanmadan kapsam hazır sayılmaz."
+      ]
+    },
+    {
+      "id": "RG-STK-17",
+      "write_paths": [
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [
+        "RG-STK-15"
+      ],
+      "acceptance_additions": [
+        "10 stok, iki farklı-key 7 miktar; stale precheck barrier ile ikisini geçir; tam bir başarı+bir InsufficientStockForWasteException, son stok3, tek waste+tek hareket. Guard WHERE kaldırma mutasyonu testi kırar.",
+        "Ledger append sonrası, waste insert sonrası, guarded apply öncesi ve commit ct iptalinde exception enjekte et; üçünün toplamları eski durumda; sonra retry bir kez başarılı. Caller rollback mevcut testi de yeniden koş."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-17",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B048.md:13-16",
+        "evidence/V1-RMD-739/tasks/B048.md:16",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:1-409 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:160-215 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:252-301",
+        "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs:1-25 [fresh static read]",
+        "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs:14-23",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:1-244 [fresh static read]",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:170-201",
+        "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs:170-208",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs:64-82",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs:86-110",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDatabaseTests.cs:74-185"
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-17, RG-STK-36; kusurlar: STK-022, STK-023",
+        "Yalnız test görevi. WasteRecordingService:170-177 ve199 guarded tx mevcut; transaction runner/balance repository/AtomicCompensationTests okuma referansıdır, production yazma izni değildir."
+      ]
+    },
+    {
+      "id": "RG-STK-19",
+      "write_paths": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Mevcut nonzero yarış testi ve guard removal mutasyonu yeniden çalıştırılır; count row da rollback sonrası yok assertions eklenir.",
+        "Mevcut RacingBalanceRepository ile initial10, counted10, araya−3 koy; PhysicalCountBalanceGuardFailedException/HTTP409, count row yok, balance7 korunur. Bir başka tx hareketini count commitine kadar serialize eden doğru çözümde postcondition eşdeğer kanıtlanır.",
+        "Zero-delta no-row pair ve mevcut reservations korunumu; failed count row gerçekten yok; no-op row_version davranışı açık testlenir."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-19",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:35",
+        "evidence/V1-RMD-741/green.log:14-15",
+        "evidence/V1-RMD-741/mutations.log:1-2",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:265-315 [fresh static read]",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:269-280",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:375-420 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs:1-96 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs:78-96 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:1-409 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:160-215 [fresh static read]",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:1-129 [fresh static read]",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:103-127",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:65-77",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:94-107",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:100-155 [fresh static read]",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:108-123",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:108-174"
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-18, RG-STK-19; kusurlar: STK-024, STK-025",
+        "En kısa arayüz-değişimsiz çözüm: mevcut TryApplyGuardedOnHandDeltaAsync delta=0 için de transaction içinde çağrılır ve dönen OnHand sayımla karşılaştırılır; ledger yalnız nonzero dalda kalır. Böylece stale zero count rollback, gerçekten eşit count sıfır ledger. Ek balance repository/fake yüzeyi gerekmez.",
+        "IStockBalanceRepository fake envanteri read-only impact olarak tutuldu; yeni txli read metodu gereksiz. RacingBalanceRepository afterRead tek-seferlik barrier yapılmalı; her readde -3 yeni yarış üretir.",
+        "STK-024 historical regression üretim yazma nedeni değildir; PhysicalCountService yazımı yalnız STK-025 zero-delta kusuruna bağlı. F0031 tüm-parent kapanış değil kısmi."
+      ]
+    },
+    {
+      "id": "RG-STK-20",
+      "write_paths": [
+        "database/MigrationComposition/order.json",
+        "src/Clients/PosTerminal/src/features/management-stock/StockSection.test.tsx",
+        "src/Clients/PosTerminal/src/features/management-stock/StockSection.tsx",
+        "src/Clients/PosTerminal/src/features/management-stock/stockApi.ts",
+        "src/Host/Composition/Migrations/MigrationManifest.cs",
+        "src/Host/Experience/Inventory/StockMasterContracts.cs",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+        "src/Modules/Inventory/PhysicalCounts/Exceptions.cs",
+        "src/Modules/Inventory/PhysicalCounts/IPhysicalCountRepository.cs",
+        "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "src/Modules/Inventory/PhysicalCounts/PostgresPhysicalCountRepository.cs",
+        "src/Modules/Inventory/PhysicalCounts/StockPhysicalCount.cs",
+        "tests/Architecture/ApiConventions/idempotency_allowlist.json",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+        "tests/Host/MigrationComposition/Manifest/ManifestTests.cs",
+        "tests/Modules/Inventory/PhysicalCounts/ALKAROS.Inventory.PhysicalCounts.Tests.csproj",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs",
+        "tests/Modules/Inventory/PhysicalCounts/StockPhysicalCountDomainTests.cs"
+      ],
+      "read_only_paths": [
+        "database/migrations/V11/V11-INV-008/117-stock-physical-counts.down.sql",
+        "database/migrations/V11/V11-INV-008/117-stock-physical-counts.up.sql"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Yeni application Task ID ve global migration pozisyonu yetkili plan sahibince atanmalı; up/down EXACT yolları atanmadan uygulama başlamaz. Yeni numara/ID tahmin edilmedi.",
+        "MigrationManifest.cs PhaseBMax=209; order.json yeni pozisyonu, PhaseBRange ve ManifestTests explicit ID/count/last-table dizileri beraber exact kapsamda. Shared/reserved test csproj SQL fixture link eklemesi için açık Sınırlı ek/onay zorunlu.",
+        "Payload canonicalization/key kapsamı ve lost-response sonrası yeniden açılan formda retry lifecycle/persistence sözleşmesi netleştirilmeli; yalnız her fetchte UUID üretmek çözüm değildir."
+      ],
+      "dependency_groups": [
+        "RG-STK-19"
+      ],
+      "acceptance_additions": [
+        "Kalıcı count/request identity ile aynı payload retry aynı countId döner; count sonrası satış−3 ardından retry stok artırmaz. Aynı key farklı item/location/count/notes için açık conflict politikası; farklı key yeni gerçek sayım kabul edilir. DB migration gerekiyorsa yeni exact migration adı ve composition yüzeyi plan onayı olmadan eklenmez.",
+        "Up/down boş PG ve eski immutable count satırlarıyla upgrade; eski kayıtlar değişmez. Duplicate key concurrent commit tek count+ledger; failure/cancel hiçbir yarım kayıt bırakmaz.",
+        "Gerçek wire testi: response kaybet → satış-3 → aynı key retry; CountId aynı, stok satış sonrası düzeyde. UI mock/client body testi aynı keyi korur; yeni draft farklı key; farklı payload conflict Türkçe409."
+      ],
+      "source_evidence": [
+        "database/migrations/V11/V11-INV-008/117-stock-physical-counts.up.sql:1-35 [fresh static read]",
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-20",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:37",
+        "src/Clients/PosTerminal/src/features/management-stock/StockSection.test.tsx:1-225 [fresh static read]",
+        "src/Clients/PosTerminal/src/features/management-stock/StockSection.tsx:1-295 [fresh static read]",
+        "src/Clients/PosTerminal/src/features/management-stock/stockApi.ts:1-61 [fresh static read]",
+        "src/Host/Composition/Migrations/MigrationManifest.cs:1-147 [fresh static read]",
+        "src/Host/Experience/Inventory/StockMasterContracts.cs:50-70 [fresh static read]",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:265-315 [fresh static read]",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:269-279",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:375-420 [fresh static read]",
+        "src/Modules/Inventory/PhysicalCounts/IPhysicalCountRepository.cs:1-25 [fresh static read]",
+        "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs:1-18 [fresh static read]",
+        "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs:3-8",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:1-129 [fresh static read]",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:113-122",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:65-68",
+        "src/Modules/Inventory/PhysicalCounts/PostgresPhysicalCountRepository.cs:1-77 [fresh static read]",
+        "src/Modules/Inventory/PhysicalCounts/StockPhysicalCount.cs:1-57 [fresh static read]",
+        "tests/Architecture/ApiConventions/idempotency_allowlist.json:165-180 [fresh static read]",
+        "tests/Host/MigrationComposition/Manifest/ManifestTests.cs:70-90 [fresh static read]",
+        "tests/Modules/Inventory/PhysicalCounts/ALKAROS.Inventory.PhysicalCounts.Tests.csproj:1-34 [fresh static read]",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:100-155 [fresh static read]",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:157-174"
+      ],
+      "readiness": "scope-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-20; kusurlar: STK-026",
+        "Kaynak 117 migrationında kalıcı request key yok; Guid.NewGuid count kimliği her çağrıda yenileniyor. Seçilen plan yönü yeni nullable legacy-compatible request key + unique constraint/index; eski 117 SQL dosyaları read-only. Insert/replay/key lock ve payload conflict tek transaction; same key farklı item/location/count/notes ve actor yetki sınırı açık.",
+        "İstemci tam zincir: stockApi.ts:16/42 recordCount imzası+wire → StockSection.tsx:84-103 openAction/submitAction state → StockSection.test.tsx:21 fake ve102 çağrı assertion. Stable key count draftta tutulmalı, ağ hatası aynı draft/key ile retry; payload değişirse yeni logical count. Requester global dosyası değiştirilmez.",
+        "Tracked implementer taraması: IPhysicalCountRepository yalnız PostgresPhysicalCountRepository; IPhysicalCountService yalnız PhysicalCountService. Test concrete fake yok. StockClient concrete fake yalnız StockSection.test.tsx; taramada başka client yok.",
+        "Minimal versioned responsea CountId eklenerek HTTP replay kimliği kanıtlanır; StockPhysicalCount kalıcı key restore; Exceptions.cs typed payload conflict ve endpoint409. Kullanılmayan sonuç abstraction yok.",
+        "idempotency_allowlist.json:172-175 artık yanlış olacak istisna bu exact entry ile kaldırılır; allowlisti genişletme yok.",
+        "Mevcut SQL fixture csproj yalnız eski migration klasörlerini kopyalar; yeni migration distinct task klasöründe ise exact copy/link ve PhysicalCountTestDb apply listesi gerekir. Host test csproj ek yazma gerekmiyor.",
+        "Migration assignment blocker kaldırılınca proposed_new_paths exact up/down çiftini almalı; sıra mevcut max209dan tahmin edilmez. Global migration graph/doc ek yazımı gerekiyorsa sahibi ayrıca scope açmalı; burada uydurulmuş exact yol yok."
+      ]
+    },
+    {
+      "id": "RG-STK-21",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Ledger reasonı gösteren gerçek UI/API consumer bulunur; kullanıcıya ham English veriyorsa o sinkte test planlanır; sink yoksa aday explicit non-finding olarak sonuçlandırılır.",
+        "Reason consumer bütün tracked src içinde method-level izlenip gerçek sink varsa ayrı exact write/test scope; bulunamazsa explicit nonfinding."
+      ],
+      "source_evidence": [
+        "AGENTS.md:57-58",
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-21",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:37",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:1-129 [fresh static read]",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:82-91"
+      ],
+      "readiness": "verification-only",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-21; kusurlar: STK-027",
+        "PhysicalCountService.cs:90 English reason var; StockSection.tsx count sonucu/ledger reason render etmiyor, StockMasterContracts.cs:56-63 reason taşımıyor. Gerçek sink kanıtlanmadı; production string değiştirme izni verilmez."
+      ]
+    },
+    {
+      "id": "RG-STK-22",
+      "write_paths": [],
+      "read_only_paths": [
+        "plan/v1.1/inventory/V11-INV-008-physical-counts.md",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "INV-008 tarihsel commit/artifact bulunur ve acceptance bazında eşlenir; yoksa kanıtsız olduğu kayda geçer, 741 sayıları ilk kapanış kanıtı diye kullanılmaz.",
+        "Eksik evidence için doğrulanabilir tarihli kayıt yalnız gelecekte atanmış task evidenceında oluşturulur; önceki Done gövdesini bu aday örtük yazamaz."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-22",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:36",
+        "evidence/V1-RMD-741/green.log:14-15",
+        "plan/v1.1/inventory/V11-INV-008-physical-counts.md:1-79 [fresh static read]",
+        "plan/v1.1/inventory/V11-INV-008-physical-counts.md:71-79",
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs:1-129 [fresh static read]",
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs:100-155 [fresh static read]"
+      ],
+      "readiness": "verification-only",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-22; kusurlar: STK-028",
+        "evidence/V11-INV-008 dizini bu oturumda da exists=False. Eksik kanıt kaydıdır; 741 sonuçları ilk INV008 kapanışı diye kullanılamaz. Eski task/test salt okunur; ayrı yeni taskın kendi evidence çıktısı dışında yazma önerisi yok."
+      ]
+    },
+    {
+      "id": "RG-STK-23",
+      "write_paths": [
+        "docs/data/nullable-unique-policy.md"
+      ],
+      "read_only_paths": [
+        "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql",
+        "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Karar metni exact kolon/NOT NULL/UNIQUE ile eşlenir; central-stock nullable ihtiyacı varsa ayrı Semih kararı olmadan mevcut şema değiştirilmez."
+      ],
+      "source_evidence": [
+        "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql:1-20 [fresh static read]",
+        "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql:4-13",
+        "docs/data/nullable-unique-policy.md:1-42 [fresh static read]",
+        "docs/data/nullable-unique-policy.md:24-37",
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-23",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B116.md:36-38",
+        "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md:1-50 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:1-409 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:160-215 [fresh static read]"
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-23; kusurlar: STK-029",
+        "061:6-7 iki NOT NULL FK;13 UNIQUE(stock_item_id,stock_location_id). Belge29 product_id/location_id nullable central stock anlatıyor. En kısa belge factual düzeltmesi; eski karar task gövdesi ve SQL read-only, central-stock davranışı icat edilmez."
+      ]
+    },
+    {
+      "id": "RG-STK-24",
+      "write_paths": [
+        "docs/data/nullable-unique-policy.md"
+      ],
+      "read_only_paths": [
+        "database/migrations/V1/V1-KIT-002/016-printer-routing.up.sql",
+        "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [
+        "RG-STK-23"
+      ],
+      "acceptance_additions": [
+        "Belgedeki printer_routes satırı ve partial-index invariantı route_level/is_active koşullarını doğru yansıtır; sırf belgeye uydurmak için eski migration yeniden yazılmaz."
+      ],
+      "source_evidence": [
+        "database/migrations/V1/V1-KIT-002/016-printer-routing.up.sql:1-59 [fresh static read]",
+        "database/migrations/V1/V1-KIT-002/016-printer-routing.up.sql:17-59",
+        "docs/data/nullable-unique-policy.md:1-42 [fresh static read]",
+        "docs/data/nullable-unique-policy.md:29-37",
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-24",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B116.md:37",
+        "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md:1-50 [fresh static read]"
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-24; kusurlar: STK-030",
+        "016:28-34 level payload CHECK;41-59 level+is_active partial unique. Belge30 ve37 istisna anlatımı bu gerçeği kapsamalı; genel NULLS NOT DISTINCT kararını tümden tersine çevirme yok. Aynı doc nedeniyle seri, semantic bağımlılık değil."
+      ]
+    },
+    {
+      "id": "RG-STK-25",
+      "write_paths": [],
+      "read_only_paths": [
+        "database/migrations/V11/V11-INV-001/060-stock-movements.down.sql",
+        "database/migrations/V11/V11-INV-001/060-stock-movements.up.sql",
+        "evidence/V11-INV-001/closure-evidence.txt",
+        "plan/v1.1/inventory/V11-INV-001-immutable-stock-ledger.md",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "057→060 yol eşleme notu tarihli provenance ile eklenir; eski logları yeni çalıştırılmış gibi değiştirme; up/down gerçek dosyalara resolve olur."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-25",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B087.md:33-35",
+        "evidence/V11-INV-001/closure-evidence.txt:1-78 [fresh static read]",
+        "evidence/V11-INV-001/closure-evidence.txt:20-25",
+        "evidence/V11-INV-001/closure-evidence.txt:60-62",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs:208-213"
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-25; kusurlar: STK-031",
+        "En kısa sonuç yeni görevin kendi evidenceında tarihli 057→060 provenance correction notu; eski ham closure logu ve eski task gövdesi read-only kalır. Yeni Task ID atanmadığından proposed_new_paths içine sahte evidence yolu yazılmadı.",
+        "Bu oturumda task/log/migration değiştirme yok; istenen işlem tarihsel koşuları yeniden üretmek değildir."
+      ]
+    },
+    {
+      "id": "RG-STK-26",
+      "write_paths": [],
+      "read_only_paths": [
+        "database/migrations/V11/V11-INV-002/061-stock-balances.down.sql",
+        "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql",
+        "evidence/V11-INV-002/closure-evidence.txt",
+        "plan/v1.1/inventory/V11-INV-002-stock-balance-projection.md",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "058→061 güncel yol notu tüm up/down/write-set/test atıflarını kapsar; eski komut sonuçları tarihsel tutulur."
+      ],
+      "source_evidence": [
+        "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql:1",
+        "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql:1-20 [fresh static read]",
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-26",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:14",
+        "evidence/V11-INV-002/closure-evidence.txt:1-75 [fresh static read]",
+        "evidence/V11-INV-002/closure-evidence.txt:18-23",
+        "evidence/V11-INV-002/closure-evidence.txt:62-63"
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-26; kusurlar: STK-032",
+        "En kısa sonuç yeni görevin kendi evidenceında tarihli 058→061 provenance correction notu; eski ham closure logu ve eski task gövdesi read-only kalır. Yeni Task ID atanmadığından proposed_new_paths içine sahte evidence yolu yazılmadı.",
+        "Bu oturumda task/log/migration değiştirme yok; istenen işlem tarihsel koşuları yeniden üretmek değildir."
+      ]
+    },
+    {
+      "id": "RG-STK-27",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/InventoryModule.cs",
+        "src/Modules/Inventory/MovementLedger/IStockMovementService.cs",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs",
+        "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+        "tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Semih unused service/interface/DI removal veya gerçek retain davranışı kararını açık onaylamalı; kaynak aday başlığı removal izni değildir.",
+        "Removal sonrası service-only validation testlerini hangi yaşayan domain/entrypoint invariantına taşıyacağı acceptance bazında belirlenmeden exact test rewrite tamam sayılmaz."
+      ],
+      "dependency_groups": [
+        "RG-STK-16"
+      ],
+      "acceptance_additions": [
+        "Üretimde gerçek caller yokluğu method-level doğrulanır; kullanılmayan service/interface/DI kaldırma planı test fixture recorderlarını repository seeding ile değiştirir; yaşayan repository/domain/immutability/reversal test gücü düşmez."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-27",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B087.md:34",
+        "src/Modules/Inventory/InventoryModule.cs:1-84 [fresh static read]",
+        "src/Modules/Inventory/InventoryModule.cs:54-55",
+        "src/Modules/Inventory/MovementLedger/IStockMovementService.cs:3",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs:1-139 [fresh static read]",
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs:25-137",
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs:273-289"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-27; kusurlar: STK-033",
+        "Tracked tarama ek tüketici buldu: tests/Host/Experience/Billing/PaymentRefundHttpTests.cs:963; kaynak candidate existing_surface içinde yok. Altı test dosyası bu servisi construct ediyor.",
+        "Onaylı removal exact koşullu production yolları: InventoryModule.cs:55, MovementLedger/IStockMovementService.cs, MovementLedger/StockMovementService.cs. Conditional test consumer listesi: [\"tests/Host/Experience/Billing/PaymentRefundHttpTests.cs\", \"tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs\", \"tests/Modules/Inventory/MovementLedger/StockMovementDatabaseTests.cs\", \"tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs\", \"tests/Modules/Inventory/MovementReversal/PartialStockReturnTests.cs\", \"tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs\"]",
+        "Eski dead-code allowlist/istisnası kapanış değildir; repository ledger/domain/immutability testleri kalmalı, service-only testleri sırf yeşil için silinmemeli."
+      ]
+    },
+    {
+      "id": "RG-STK-28",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Pasif item mapping iş kararı açık teyit bekliyor."
+      ],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Semih pasif item mapping politikası seçer; yasaksa inactive target ile mapping yazılmadığı HTTP409+DB testle, serbestse hareket ret kuralı ile açıkça ayrıştırılır."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-28",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:23",
+        "plan/v1.1/inventory/V11-INV-004-stock-master-and-locations.md:50-53",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:123-131",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:265-315 [fresh static read]",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:375-420 [fresh static read]",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:1-142 [fresh static read]",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:111-123"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-28; kusurlar: STK-034",
+        "StockMasterService.cs:118-122 item varlığı kontrolü var, EnsureActiveForMovement yok. Onaysız guard eklenmez; karar yasak ise yalnız mevcut service+HTTP/DB test minimal yazım."
+      ]
+    },
+    {
+      "id": "RG-STK-29",
+      "write_paths": [
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs"
+      ],
+      "read_only_paths": [
+        "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+        "src/Modules/Inventory/StockMaster/PostgresProductStockMappingRepository.cs",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs",
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Tam production migration zinciri üstünde bilinmeyen product mapping reddedilir; FK kaldırma mutasyonu assertionı kırar; stock-master-only059 fixture bu güvenceyi test ediyor diye gösterilmez."
+      ],
+      "source_evidence": [
+        "database/MigrationComposition/order.json:832-844",
+        "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql:1-87 [fresh static read]",
+        "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql:48-57",
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-29",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:23",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:265-315 [fresh static read]",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:375-420 [fresh static read]",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:405-406",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:1-142 [fresh static read]",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:118-122",
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs:135-142",
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs:127-139",
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs:13-21"
+      ],
+      "readiness": "historical-regression-only",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-29; kusurlar: STK-035",
+        "Üretim ve migration yazma yüzeyi boş; mevcut korumayı kaldırıp mutasyon koşmak dahi bu salt-okunur oturumda yapılmadı. Yeni production kusuru bulunursa ayrı plan gerekir.",
+        "097:55-57 FK mevcut; endpoint:406 ForeignKeyViolation→400. Production/migration salt okunur, fixture full chain ile regression; FK kaldırma normal yazma yetkisi değildir."
+      ]
+    },
+    {
+      "id": "RG-STK-30",
+      "write_paths": [
+        "tests/Host/Experience/Inventory/StockMasterHttpTests.cs",
+        "tests/Modules/Inventory/StockMaster/StockMasterDatabaseTests.cs"
+      ],
+      "read_only_paths": [
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs",
+        "src/Modules/Inventory/StockMaster/PostgresStockItemRepository.cs",
+        "src/Modules/Inventory/StockMaster/PostgresStockLocationRepository.cs",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Parallel same code create HTTP testinde tam bir create ve kalanlar409; mapping upsert yeniden gönderimde OK. Servis typed exception contractı gerekip gerekmediği belgelenir; gerekirse yalnız exact unique constraint çevrilir."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-30",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:23",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:265-315 [fresh static read]",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:375-420 [fresh static read]",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:392-405",
+        "src/Modules/Inventory/StockMaster/PostgresProductStockMappingRepository.cs:20-25",
+        "src/Modules/Inventory/StockMaster/PostgresStockItemRepository.cs:17-40",
+        "src/Modules/Inventory/StockMaster/PostgresStockLocationRepository.cs:17-35",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:1-142 [fresh static read]",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:34-43",
+        "src/Modules/Inventory/StockMaster/StockMasterService.cs:66-95"
+      ],
+      "readiness": "verification-only",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-30; kusurlar: STK-036",
+        "StockMasterService:35/67 precheck→42/94 append yarışa açık ama StockMasterEndpointFilter:405 tüm UniqueViolation409 döndürüyor. Kullanıcıya500 iddiası kanıtlanmadı; production typed catch gereksiz. İlk çalışma yalnız test sözleşmesi; sonucu görülmeden service/repo write grant yok."
+      ]
+    },
+    {
+      "id": "RG-STK-32",
+      "write_paths": [
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs",
+        "tests/Modules/Production/StockEffects/ProductionStockEffectsDatabaseTests.cs"
+      ],
+      "read_only_paths": [
+        "docs/architecture/module-dependency-rules.md",
+        "src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Mimari sahiplik kuralı read vs write ayrımıyla değerlendirilir; sadece raw SELECT var diye gereksiz abstraction eklenmez; lock-order testi ayrı tutulur.",
+        "İki gerçek bağlantıda sale advisory locku tutarken production row-lock barrierına gelir; sale row write başlatılır, production advisory bekler. Mevcut kod40P01 ile kırılır; ortak advisory→row düzeni sonrası ikisi tutarlı sıralı sonuçla tamamlanır; stock/ledger toplamı doğru.",
+        "Fail koşulu gerçek SQLSTATE40P01; timeout tek başına reproduksiyon kabul değil. Aynı/ters recipe sırası, birden fazla ingredient, rollback ve ledger/balance postcondition."
+      ],
+      "source_evidence": [
+        "docs/architecture/module-dependency-rules.md:100-114 [fresh static read]",
+        "docs/architecture/module-dependency-rules.md:104-112",
+        "docs/architecture/module-dependency-rules.md:206-217",
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-32",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B062.md:17-20",
+        "src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs:255-278 [fresh static read]",
+        "src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs:260-273",
+        "src/Host/Experience/Production/ProductionManagementEndpoints.cs:145-165",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs:1-96 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs:78-96 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:1-409 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:160-215 [fresh static read]",
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs:182-213",
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:180-290 [fresh static read]",
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:226-245",
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:228-274",
+        "src/Modules/Production/StockEffects/ProductionStockEffectService.cs:267-274",
+        "tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs:85-86"
+      ],
+      "readiness": "scope-reviewed",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-31, RG-STK-32; kusurlar: STK-037, STK-038",
+        "Minimal production-only: tüm ingredient pairlerini sıralı olarak mevcut AcquireOnHandLockAsync ile FOR UPDATE döngüsünden ÖNCE al; sonra row lock/verify/apply. Her pairde advisory+row almak yerine bütün advisoryleri önce almak recipe ters sırasındaki multi-pair döngüyü engeller. Interface veya satış dosyası değişmez; fake yazma yüzeyi yok.",
+        "STK-037 raw same-tx SELECT/lock mimari nonfinding adayı; docs:104-112 ve207-208 bunu izinli sayıyor. Docs/architecture test yalnız read-only. STK-038 ayrı gerçek lock-order riski; etki 40P01 ile bir tx iptali, kalıcı kilitlenme/veri bozulması iddiası değil."
+      ]
+    },
+    {
+      "id": "RG-STK-33",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/InventoryModule.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceProjector.cs",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/CrossChannelPortionArbiterTests.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/ReservationAwareConsumptionGuardTests.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDatabaseTests.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDatabaseTests.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Semih rebuild/drift gerçek bakım ihtiyacı için retain+giriş veya removal kararı yok."
+      ],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Rebuild/drift tutulma kararı gerçek operatör senaryosuna bağlanır; test ve DI kayıtları caller sayılmaz; seçilen yol yetki/hata/iptal ile kanıtlanır."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-33",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B088.md:6",
+        "src/Modules/Inventory/InventoryModule.cs:1-84 [fresh static read]",
+        "src/Modules/Inventory/InventoryModule.cs:73-74",
+        "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceProjector.cs:19-20",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:1-163 [fresh static read]",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:115",
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs:73"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-33; kusurlar: STK-010",
+        "Düzeltilmiş yön: RG-STK-33 → RG-STK-10 → RG-STK-11; karar RG-STK-38e bağımlı değildir. Runtime lifecycle apply methods yaşayan callerlar tarafından kullanılır; projector/DI toptan silme yok.",
+        "IReservationBalanceProjector değişimi halinde concrete fake/decorator tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs:260-263 zorunlu. DetectDrift test consumers ayrıca read-only listede adıyla kapsandı."
+      ]
+    },
+    {
+      "id": "RG-STK-34",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/InventoryModule.cs",
+        "src/Modules/Inventory/ManualAdjustments/IInventoryAdjustmentService.cs",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDatabaseTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Semih yetkili entrypoint integration veya removal onayı yok; hayali Host yeni yol atanmadı."
+      ],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Kullanıcı gerçek ihtiyacı onaylar; integration seçilirse tam yeni giriş/contract/test yolları ayrıca planlanır, removal seçilirse yaşayan physical-count/waste davranışları korunur."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-34",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:26",
+        "src/Host/Experience/Inventory/StockMasterEndpoints.cs:269-300",
+        "src/Modules/Inventory/InventoryModule.cs:1-84 [fresh static read]",
+        "src/Modules/Inventory/InventoryModule.cs:63",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:1-215 [fresh static read]",
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs:37"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-34; kusurlar: STK-019",
+        "InventoryModule.cs:63 yalnız registration; AdjustInventoryAsync çağrıları tracked src/test taramasıyla ayrılır, registration execution sayılmaz. Eski istisna ölü kodu kapatmaz; onaysız removal yapılamaz."
+      ]
+    },
+    {
+      "id": "RG-STK-35",
+      "write_paths": [],
+      "read_only_paths": [
+        "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDatabaseTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs"
+      ],
+      "proposed_new_paths": [],
+      "scope_blockers": [
+        "Txsiz reversal retain+real caller veya removal Semih onayı yok."
+      ],
+      "dependency_groups": [],
+      "acceptance_additions": [
+        "Semih retain+gerçek caller gereksinimi veya remove seçer; gereksiz overload kalmaz; tx yolunun ledger/balance rollback testleri korunur."
+      ],
+      "source_evidence": [
+        "evidence/V1-RMD-739/classification/wave1/GOREV_ADAYLARI.json#RG-STK-35",
+        "evidence/V1-RMD-739/classification/wave1/INVENTORY_TASLAK.json",
+        "evidence/V1-RMD-739/classification/wave1/STOK_BAGIMSIZ_INCELEME.json",
+        "evidence/V1-RMD-739/tasks/B100.md:17",
+        "src/Host/Experience/Orders/SentItemVoid/SentItemVoidStore.cs:193-200",
+        "src/Modules/Inventory/MovementReversal/IStockMovementReversalService.cs:21-32",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:1-204 [fresh static read]",
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs:30-60"
+      ],
+      "readiness": "decision-blocked",
+      "notes": [
+        "Kapsam önerisidir; uygulama Task ID veya yazma yetkisi vermez.",
+        "Kaynak grupları: RG-STK-35; kusurlar: STK-016",
+        "Yaşayan tx ReverseMovementAsync ve ReturnConsumedShareAsync korunur. Txsiz overload kaldırılırsa ctor balanceProjector dependency kaldırmanın tüm test constructorları etkisi ayrıca exact listelenmeli; karar grubu bunları bugün yazma izni vermez."
+      ]
+    }
+  ],
+  "coverage": {
+    "candidate_count": 32,
+    "candidate_ids": [
+      "RG-STK-02",
+      "RG-STK-03",
+      "RG-STK-04",
+      "RG-STK-05",
+      "RG-STK-06",
+      "RG-STK-07",
+      "RG-STK-08",
+      "RG-STK-09",
+      "RG-STK-10",
+      "RG-STK-11",
+      "RG-STK-12",
+      "RG-STK-13",
+      "RG-STK-14",
+      "RG-STK-15",
+      "RG-STK-16",
+      "RG-STK-17",
+      "RG-STK-19",
+      "RG-STK-20",
+      "RG-STK-21",
+      "RG-STK-22",
+      "RG-STK-23",
+      "RG-STK-24",
+      "RG-STK-25",
+      "RG-STK-26",
+      "RG-STK-27",
+      "RG-STK-28",
+      "RG-STK-29",
+      "RG-STK-30",
+      "RG-STK-32",
+      "RG-STK-33",
+      "RG-STK-34",
+      "RG-STK-35"
+    ],
+    "candidate_input_output_id_set_equal": true,
+    "original_inventory_group_count": 38,
+    "covered_original_group_ids": [
+      "RG-STK-01",
+      "RG-STK-02",
+      "RG-STK-03",
+      "RG-STK-04",
+      "RG-STK-05",
+      "RG-STK-06",
+      "RG-STK-07",
+      "RG-STK-08",
+      "RG-STK-09",
+      "RG-STK-10",
+      "RG-STK-11",
+      "RG-STK-12",
+      "RG-STK-13",
+      "RG-STK-14",
+      "RG-STK-15",
+      "RG-STK-16",
+      "RG-STK-17",
+      "RG-STK-18",
+      "RG-STK-19",
+      "RG-STK-20",
+      "RG-STK-21",
+      "RG-STK-22",
+      "RG-STK-23",
+      "RG-STK-24",
+      "RG-STK-25",
+      "RG-STK-26",
+      "RG-STK-27",
+      "RG-STK-28",
+      "RG-STK-29",
+      "RG-STK-30",
+      "RG-STK-31",
+      "RG-STK-32",
+      "RG-STK-33",
+      "RG-STK-34",
+      "RG-STK-35",
+      "RG-STK-36",
+      "RG-STK-37",
+      "RG-STK-38"
+    ],
+    "original_group_alias_set_equal": true,
+    "atomic_defect_count": 38,
+    "readiness_counts": {
+      "scope-reviewed": 9,
+      "historical-regression-only": 5,
+      "decision-blocked": 13,
+      "scope-blocked": 2,
+      "verification-only": 3
+    },
+    "tracked_src_tests_paths_scanned": 2585,
+    "tracked_text_files_scanned": 2152,
+    "interface_implementers": {
+      "IStockBalanceRepository": [
+        "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs"
+      ],
+      "IStockMovementRepository": [
+        "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs",
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDomainTests.cs",
+        "tests/Modules/Inventory/ManualAdjustments/ManualAdjustmentDomainTests.cs",
+        "tests/Modules/Inventory/MovementLedger/StockMovementDomainTests.cs",
+        "tests/Modules/Inventory/MovementReversal/StockMovementReversalDomainTests.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs",
+        "tests/Modules/Inventory/WasteRecording/WasteRecordingDomainTests.cs"
+      ],
+      "IReservationBalanceRepository": [
+        "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs",
+        "tests/Modules/Inventory/PortionReservations/CancellationEffects/PortionReservationCancellationEffectsDomainTests.cs",
+        "tests/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjectionDomainTests.cs"
+      ],
+      "IPhysicalCountRepository": [
+        "src/Modules/Inventory/PhysicalCounts/PostgresPhysicalCountRepository.cs"
+      ],
+      "IPhysicalCountService": [
+        "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs"
+      ],
+      "IStockMovementReversalService": [
+        "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs"
+      ],
+      "IInventoryAdjustmentService": [
+        "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs"
+      ],
+      "IStockMovementService": [
+        "src/Modules/Inventory/MovementLedger/StockMovementService.cs"
+      ],
+      "IStockBalanceProjector": [
+        "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs"
+      ],
+      "IReservationBalanceProjector": [
+        "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs",
+        "tests/Modules/Inventory/CrossChannelReservation/AtomicCompensationTests.cs"
+      ],
+      "IPurchaseOrderRepository": [
+        "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs"
+      ]
+    },
+    "fresh_read_ranges": {
+      "src/Modules/Inventory/BalanceProjection/StockBalanceProjector.cs": [
+        [
+          1,
+          80
+        ]
+      ],
+      "src/Modules/Inventory/BalanceProjection/IStockBalanceRepository.cs": [
+        [
+          1,
+          96
+        ],
+        [
+          78,
+          96
+        ]
+      ],
+      "src/Modules/Inventory/BalanceProjection/PostgresStockBalanceRepository.cs": [
+        [
+          1,
+          409
+        ],
+        [
+          160,
+          215
+        ]
+      ],
+      "src/Modules/Inventory/ReservationBalanceProjection/ReservationBalanceProjector.cs": [
+        [
+          1,
+          163
+        ]
+      ],
+      "src/Modules/Inventory/ReservationBalanceProjection/IReservationBalanceRepository.cs": [
+        [
+          1,
+          26
+        ]
+      ],
+      "src/Modules/Inventory/PhysicalCounts/PhysicalCountService.cs": [
+        [
+          1,
+          129
+        ]
+      ],
+      "src/Modules/Inventory/PhysicalCounts/IPhysicalCountService.cs": [
+        [
+          1,
+          18
+        ]
+      ],
+      "src/Modules/Inventory/PhysicalCounts/IPhysicalCountRepository.cs": [
+        [
+          1,
+          25
+        ]
+      ],
+      "src/Modules/Inventory/PhysicalCounts/PostgresPhysicalCountRepository.cs": [
+        [
+          1,
+          77
+        ]
+      ],
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchasingService.cs": [
+        [
+          1,
+          296
+        ]
+      ],
+      "src/Modules/Purchasing/OrdersAndReceipts/IPurchaseOrderRepository.cs": [
+        [
+          1,
+          367
+        ],
+        [
+          200,
+          280
+        ]
+      ],
+      "src/Modules/Purchasing/OrdersAndReceipts/IGoodsReceiptRepository.cs": [
+        [
+          1,
+          293
+        ]
+      ],
+      "src/Modules/Purchasing/OrdersAndReceipts/ReceiptVariancePolicy.cs": [
+        [
+          1,
+          108
+        ]
+      ],
+      "src/Clients/PosTerminal/src/features/management-stock/stockApi.ts": [
+        [
+          1,
+          61
+        ]
+      ],
+      "src/Modules/Inventory/PhysicalCounts/StockPhysicalCount.cs": [
+        [
+          1,
+          57
+        ]
+      ],
+      "src/Modules/Inventory/MovementReversal/StockMovementReversalService.cs": [
+        [
+          1,
+          204
+        ]
+      ],
+      "src/Modules/Inventory/ManualAdjustments/InventoryAdjustmentService.cs": [
+        [
+          1,
+          215
+        ]
+      ],
+      "src/Modules/Inventory/WasteRecording/WasteRecordingService.cs": [
+        [
+          1,
+          244
+        ]
+      ],
+      "src/Clients/PosTerminal/src/features/management-stock/StockSection.tsx": [
+        [
+          1,
+          295
+        ]
+      ],
+      "src/Clients/PosTerminal/src/features/management-stock/StockSection.test.tsx": [
+        [
+          1,
+          225
+        ]
+      ],
+      "src/Modules/Production/StockEffects/ProductionStockEffectService.cs": [
+        [
+          180,
+          290
+        ]
+      ],
+      "src/Modules/Inventory/StockMaster/StockMasterService.cs": [
+        [
+          1,
+          142
+        ]
+      ],
+      "src/Modules/Inventory/MovementLedger/StockMovement.cs": [
+        [
+          1,
+          182
+        ]
+      ],
+      "src/Modules/Inventory/MovementLedger/StockMovementService.cs": [
+        [
+          1,
+          139
+        ]
+      ],
+      "src/Modules/Inventory/ReservationBalanceProjection/PostgresReservationBalanceRepository.cs": [
+        [
+          270,
+          349
+        ]
+      ],
+      "src/Host/Experience/Inventory/StockMasterEndpoints.cs": [
+        [
+          265,
+          315
+        ],
+        [
+          375,
+          420
+        ]
+      ],
+      "src/Host/Experience/Inventory/StockMasterContracts.cs": [
+        [
+          50,
+          70
+        ]
+      ],
+      "src/Host/Experience/Orders/OrderStockConsumption/OrderStockConsumptionService.cs": [
+        [
+          255,
+          278
+        ]
+      ],
+      "src/Modules/Inventory/MovementLedger/PostgresStockMovementRepository.cs": [
+        [
+          100,
+          155
+        ]
+      ],
+      "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs": [
+        [
+          100,
+          155
+        ]
+      ],
+      "tests/Architecture/ApiConventions/idempotency_allowlist.json": [
+        [
+          165,
+          180
+        ]
+      ],
+      "database/migrations/V11/V11-INV-008/117-stock-physical-counts.up.sql": [
+        [
+          1,
+          35
+        ]
+      ],
+      "database/migrations/V11/V11-INV-002/061-stock-balances.up.sql": [
+        [
+          1,
+          20
+        ]
+      ],
+      "docs/data/nullable-unique-policy.md": [
+        [
+          1,
+          42
+        ]
+      ],
+      "plan/v0/data-architecture/V0-DAT-003-nullable-unique-policy.md": [
+        [
+          1,
+          50
+        ]
+      ],
+      "evidence/V11-INV-001/closure-evidence.txt": [
+        [
+          1,
+          78
+        ]
+      ],
+      "evidence/V11-INV-002/closure-evidence.txt": [
+        [
+          1,
+          75
+        ]
+      ],
+      "plan/v1.1/inventory/V11-INV-008-physical-counts.md": [
+        [
+          1,
+          79
+        ]
+      ],
+      "src/Modules/Inventory/InventoryModule.cs": [
+        [
+          1,
+          84
+        ]
+      ],
+      "src/Modules/Inventory/Transactions/PostgresInventoryTransactionRunner.cs": [
+        [
+          1,
+          25
+        ]
+      ],
+      "src/Modules/Inventory/WasteRecording/WasteModels.cs": [
+        [
+          1,
+          120
+        ]
+      ],
+      "src/Host/Composition/Migrations/MigrationManifest.cs": [
+        [
+          1,
+          147
+        ]
+      ],
+      "tests/Modules/Inventory/PhysicalCounts/ALKAROS.Inventory.PhysicalCounts.Tests.csproj": [
+        [
+          1,
+          34
+        ]
+      ],
+      "database/migrations/V1/V1-KIT-002/016-printer-routing.up.sql": [
+        [
+          1,
+          59
+        ]
+      ],
+      "src/Modules/Inventory/MovementLedger/IStockMovementRepository.cs": [
+        [
+          1,
+          28
+        ]
+      ],
+      "tests/Host/Experience/Inventory/ALKAROS.Host.Experience.Inventory.Tests.csproj": [
+        [
+          1,
+          23
+        ]
+      ],
+      "tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj": [
+        [
+          1,
+          24
+        ]
+      ],
+      "tests/Host/MigrationComposition/Manifest/ManifestTests.cs": [
+        [
+          70,
+          90
+        ]
+      ],
+      "database/migrations/V1/V1-RMD-156/097-database-integrity-constraints.up.sql": [
+        [
+          1,
+          87
+        ]
+      ],
+      "docs/architecture/module-dependency-rules.md": [
+        [
+          100,
+          114
+        ]
+      ]
+    },
+    "dependency_graph_acyclic": true,
+    "nonexistent_exact_paths": 0,
+    "historical_groups_with_production_write_paths": 0,
+    "tests_executed": 0,
+    "repo_files_written": 0,
+    "count_explanation": "31 değil: GOREV_ADAYLARI içinde 32 consolidated STOK aday; source_groups birleşimi INVENTORY_TASLAK içindeki 38 original RG-STK kimliğine eşit. 38 atomic kusur kimliği korunuyor.",
+    "new_migration_id_or_number_assigned": false,
+    "unique_existing_write_paths": 38,
+    "unique_read_only_paths": 76,
+    "candidate_to_original_group_ids": {
+      "RG-STK-02": [
+        "RG-STK-01",
+        "RG-STK-02"
+      ],
+      "RG-STK-03": [
+        "RG-STK-03"
+      ],
+      "RG-STK-04": [
+        "RG-STK-04"
+      ],
+      "RG-STK-05": [
+        "RG-STK-05"
+      ],
+      "RG-STK-06": [
+        "RG-STK-06",
+        "RG-STK-37"
+      ],
+      "RG-STK-07": [
+        "RG-STK-07"
+      ],
+      "RG-STK-08": [
+        "RG-STK-08"
+      ],
+      "RG-STK-09": [
+        "RG-STK-09"
+      ],
+      "RG-STK-10": [
+        "RG-STK-10",
+        "RG-STK-38"
+      ],
+      "RG-STK-11": [
+        "RG-STK-11"
+      ],
+      "RG-STK-12": [
+        "RG-STK-12"
+      ],
+      "RG-STK-13": [
+        "RG-STK-13"
+      ],
+      "RG-STK-14": [
+        "RG-STK-14"
+      ],
+      "RG-STK-15": [
+        "RG-STK-15"
+      ],
+      "RG-STK-16": [
+        "RG-STK-16"
+      ],
+      "RG-STK-17": [
+        "RG-STK-17",
+        "RG-STK-36"
+      ],
+      "RG-STK-19": [
+        "RG-STK-18",
+        "RG-STK-19"
+      ],
+      "RG-STK-20": [
+        "RG-STK-20"
+      ],
+      "RG-STK-21": [
+        "RG-STK-21"
+      ],
+      "RG-STK-22": [
+        "RG-STK-22"
+      ],
+      "RG-STK-23": [
+        "RG-STK-23"
+      ],
+      "RG-STK-24": [
+        "RG-STK-24"
+      ],
+      "RG-STK-25": [
+        "RG-STK-25"
+      ],
+      "RG-STK-26": [
+        "RG-STK-26"
+      ],
+      "RG-STK-27": [
+        "RG-STK-27"
+      ],
+      "RG-STK-28": [
+        "RG-STK-28"
+      ],
+      "RG-STK-29": [
+        "RG-STK-29"
+      ],
+      "RG-STK-30": [
+        "RG-STK-30"
+      ],
+      "RG-STK-32": [
+        "RG-STK-31",
+        "RG-STK-32"
+      ],
+      "RG-STK-33": [
+        "RG-STK-33"
+      ],
+      "RG-STK-34": [
+        "RG-STK-34"
+      ],
+      "RG-STK-35": [
+        "RG-STK-35"
+      ]
+    },
+    "interface_test_fake_counts": {
+      "IStockBalanceRepository": 5,
+      "IStockMovementRepository": 6,
+      "IReservationBalanceRepository": 2,
+      "IPhysicalCountRepository": 0,
+      "IPhysicalCountService": 0,
+      "IStockMovementReversalService": 0,
+      "IInventoryAdjustmentService": 0,
+      "IStockMovementService": 0,
+      "IStockBalanceProjector": 0,
+      "IReservationBalanceProjector": 1,
+      "IPurchaseOrderRepository": 0
+    },
+    "dynamic_proxy_paths": {
+      "IStockBalanceRepository": [
+        "tests/Modules/Inventory/PhysicalCounts/PhysicalCountDatabaseTests.cs"
+      ],
+      "IStockMovementRepository": [
+        "tests/Modules/Inventory/BalanceProjection/StockBalanceDatabaseTests.cs"
+      ]
+    },
+    "git_status_after_read_only_inspection": [
+      " M plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md",
+      "?? evidence/V1-RMD-739/classification/"
+    ],
+    "git_diff_name_only_after_read_only_inspection": [
+      "plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md"
+    ]
+  },
+  "limitations": [
+    "Salt-okunur statik inceleme; test/build/SQL/mutation/application kodu çalıştırılmadı. Scope-reviewed bug closure veya implementation-ready demek değildir.",
+    "10dk bounded inceleme. Fresh read ledger üretim dosyalarının gerçekten gösterilen aralıklarını kaydeder; bazı büyük çıktılar araç tarafından head/tail kısaltıldı. Okunan kaynaklardan fazlası tam satır incelemesi diye sunulmaz.",
+    "32 consolidated candidate ID kümesi eşit; source_groups alias union 38 original inventory group kümesine ayrıca eşit. Birleştirilmiş original IDler bağımsız ikinci uygulama görevi değildir.",
+    "Dependency yönleri mandatory karar-before-fix olarak düzeltildi; historical regression test dosyası paylaşımı bağımsız business blocker değildir. Aynı write pathli future görevler paralel yürütülmez.",
+    "Decision/scope blocked gruplarda write_paths boş veya koşullu öneri; bu çıktı allowlist/TaskID ataması değil. Yeni dosya ve evidence task kimliği uydurulmadı; proposed_new_paths bu yüzden boş. STK026 exact migration ID/numarası/pathleri atanması açık blocker.",
+    "IStockBalanceRepository 5, IStockMovementRepository6, IReservationBalanceRepository2 concrete test fake dosyası git-tracked src/tests taramasında bulundu. Dynamic DispatchProxy iki dosyada ayrıca görüldü; regex statik graphın yerine geçmez. Envanterdeki okuma yolu otomatik yazma izni değildir.",
+    "STK028 kanıt dizini mevcut değil; tarihsel artifact yokluğu geçmiş testin hiç koşulmadığını ispatlamaz. STK037 rawSQL read explicit nonfinding adayı, STK038 lock-order riskinden ayrı kalır.",
+    "Repo başlangıç kullanıcı değişikliği: plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md modified ve evidence/V1-RMD-739/classification/ untracked; bunlara dokunulmadı."
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "source_id": "F0006",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V12-QRS-001 IssueAsync/RotateAsync/RevokeAsync üretimde HİÇBİR yerden çağrılmıyor; Host'ta masa token'ı üreten uç nokta/ekran yok",
+      "status": "open",
+      "invariant": "TableTokenService.IssueAsync, RotateAsync, RevokeAsync en az bir production entry point'ten (staff masa açma/yenileme/iptal ekranı, API endpoint) çağrılmalı; aksi halde table token lifecycle kodü ölü koddur",
+      "mechanism": "TableTokenService.cs (TokenLifecycle/) IssueAsync (31-56), RotateAsync (59-73), RevokeAsync (76-85) public. Grep sonucu (register.md:13, 67-68): 'IssueAsync/RotateAsync/RevokeAsync üretimde HİÇBİR yerden çağrılmıyor (grep: yalnız ValidateAsync CustomerSessionService.cs:47 ve RelayRequestValidator kullanır; Host'ta masa token'ı üreten uç nokta/ekran yok; V12-CWB-001 md:101 \"ayrı görev\" der, planda bu gör'. QrOrderingEndpoints.cs (101-260) sadece /sessions (table token validate -> customer session issue), /menu, /bill, /orders var. TableTokenService'i çağıran endpoint/ekran yok. V12-QRS-001 plan (plan/v1.2/qr-security/V12-QRS-001-qr-token-lifecycle.md) acceptance evidence'de testler var (21/21) ama production entry point kanıtı yok. V12-CWB-001 (plan'da) 'ayrı görev' diyor ama o görev plan'da bulunamadı/atanmadı.",
+      "source_evidence": [
+        "src/Modules/QrOrdering/TokenLifecycle/TableTokenService.cs:31-85",
+        "src/Host/Experience/QrOrdering/QrOrderingEndpoints.cs:101-260",
+        "plan/v1.2/qr-security/V12-QRS-001-qr-token-lifecycle.md:55-89",
+        "evidence/V1-RMD-739/findings/register.md:13",
+        "evidence/V1-RMD-739/findings/register.md:67-68"
+      ],
+      "acceptance": "Bir production entry point (örn. POS terminal 'Masa Aç' ekranı, admin 'QR Yenile/IPTAL' butonu, POST /api/v1/qr/table-tokens/{tableId}/issue|rotate|revoke endpoint) eklenir ve TableTokenService.IssueAsync/RotateAsync/RevokeAsync çağrılır; end-to-end test (staff aksiyonu -> table token üretilir -> müşteri tarar -> customer session alınır) geçer.",
+      "id": "W2-N-F0006-01",
+      "parents": [
+        "F0006"
+      ]
+    }
+  ],
+  "limitations": "TableTokenService testleri (21/21) geçiyor ama production entry point eksik. Bu 'eksik production wiring' kusuru, 'yanlış implementasyon' değil. V12-CWB-001 planı 'ayrı görev' diyor ama o görev V12-QRS-001 Done olduktan sonra atanmamış/planlanmamış görünüyor. Bu bağımsız bir 'wiring eksikliği' kusuru.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

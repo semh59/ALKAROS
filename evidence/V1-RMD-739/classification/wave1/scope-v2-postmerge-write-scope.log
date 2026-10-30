@@ -1,0 +1,3 @@
+COMMAND: python -B C:\Users\semih\AppData\Local\hermes\profiles\alkaros\cache\scratch\739-scope-write-check-v2.py
+EXIT_CODE: 0
+{"previous_files_unchanged": 40, "new_status_paths_checked": 39, "outside_allowlist": [], "checks": [{"check": "scope-validator", "exit_code": 0}, {"check": "scope", "exit_code": 0}], "review_status": "Independent exact-scope outputs imported and structure-validated; unresolved groups remain open; no application closure claimed."}

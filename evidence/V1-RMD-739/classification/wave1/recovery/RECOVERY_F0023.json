@@ -1,0 +1,57 @@
+{
+  "source_id": "F0023",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "İlk fiziksel baskıda gönderim öncesi kalıcı teslimat kaydı yok",
+      "status": "open",
+      "invariant": "Send/ack aralığında süreç çökünce olası fiziksel baskı Unknown olarak operatöre sunulmalı; otomatik yeniden baskı yapılmamalıdır.",
+      "mechanism": "Worker ExecuteDeliveryAsync önce transport.SendAsync çağırır. PhysicalPrintDelivery yalnız PrinterTransmissionUncertainException catch bloğunda oluşturulur; ani süreç ölümünde catch çalışmaz. Kuyruk Printing durumunu önce kaydeder fakat RecoverExpiredLeasesAsync süresi dolmuş Printing işini Pending yapar; worker bu kurtarmayı her çevrimde çağırır. Dolayısıyla gönderilmiş fakat sonucu kaydedilmemiş iş otomatik tekrar baskıya uygun hâle gelir ve Unknown teslimat satırı yoktur. Yakalanmış belirsiz iletim istisnasının operatör incelemesine yöneltilmesi bu çökme penceresini kapatmaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:30",
+        "evidence/V1-RMD-739/tasks/B066.md:12-15",
+        "plan/v1/kitchen-printing/V1-KIT-004-physical-retry-semantics.md:18-20,47-50",
+        "src/Host/Experience/KitchenOperations/KitchenPrintDispatchHostedService.cs:39-41,76-86,203-233",
+        "src/Modules/Kitchen/PrintQueue/PrintQueueService.cs:75-122,131-134",
+        "src/Modules/Kitchen/PrintQueue/PostgresPrintQueueRepository.cs:275-293",
+        "src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:59-94"
+      ],
+      "acceptance": [
+        "İlk ağ gönderiminden önce kalıcı InFlight teslimat kaydı vardır; bu kayıt/gönderim sınırında süreç durdurulup yeniden başlatılınca iş otomatik yeniden gönderilmez.",
+        "Gönderim ortası, yazıcı çıktısından sonra ve kuyruk başarı kaydından önce süreç ölümünde belirsizlik Unknown/operatör incelemesine gelir; operatör onayı olmadan ikinci fiziksel çıktı oluşmaz.",
+        "Hiç gönderim yapılmamış Leased işin güvenli tekrar denemesi korunur; Printing/olası gönderim bununla aynı kurtarma dalına sokulmaz."
+      ],
+      "id": "W2-R-F0023-01",
+      "parents": [
+        "F0023"
+      ]
+    },
+    {
+      "title": "İlk başarılı baskı fiziksel teslimat başarı kaydına bağlanmıyor",
+      "status": "open",
+      "invariant": "Başlatılan fiziksel teslimatın doğrulanmış başarısı aynı teslimat kimliği üzerinde terminal Printed durumuna ilerlemelidir.",
+      "mechanism": "ExecuteDeliveryAsync başarılı SendAsync sonrasında yalnız true döndürür. Kuyruk kendi print_jobs satırını Succeeded yapar, ancak PhysicalPrintRecoveryService.ConfirmDeliverySuccessAsync üretim gönderim yolunda çağrılmaz; başarılı ilk deneme için PhysicalPrintDelivery de başlatılmaz. Bu, gönderim öncesi kayıt eksikliğinden ayrı olan başarı yaşam döngüsü bağlantısıdır: yalnız InFlight eklemek başarıdaki kaydı tamamlamaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B066.md:13",
+        "src/Host/Experience/KitchenOperations/KitchenPrintDispatchHostedService.cs:191-233",
+        "src/Modules/Kitchen/PrintQueue/PrintQueueService.cs:106-111",
+        "src/Modules/Kitchen/PhysicalPrintRecovery/PhysicalPrintRecoveryService.cs:59-81"
+      ],
+      "acceptance": [
+        "Başarılı ilk transport denemesi aynı önceden kalıcılaştırılmış deliveryId üzerinde Printed kaydı üretir; print job ve teslimat durumu birlikte doğrulanır.",
+        "SendAsync başarısından sonra delivery/queue başarı yazımı başarısız olduğunda yeniden başlatma belirsizlik politikası uygulanır; tamamlanmamış InFlight sessizce kalmaz veya otomatik mükerrer gönderime dönüşmez."
+      ],
+      "id": "W2-R-F0023-02",
+      "parents": [
+        "F0023"
+      ]
+    }
+  ],
+  "limitations": [
+    "Statik mekanizma doğrulandı; süreç öldürme, Postgres, TCP yazıcı, test/build veya migration çalıştırılmadı. Fiziksel mükerrer çıktı deneysel olarak üretilmedi.",
+    "Kuyruk Printing lease kurtarması kök mekanizmayı kanıtlamak için okundu; batch dışındaki F0022/V1-KIT-003 kaydı ayrıca işlenmedi.",
+    "PhysicalPrintRecoveryService içindeki onaylı yeniden baskı yolu gönderim öncesi ReprintInFlight kaydı kullanır; bu koruma ilk baskının ExecuteDeliveryAsync yoluna aktarılmış değildir.",
+    "Repo değişikliği yok; yalnız bu scratch JSON yazıldı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

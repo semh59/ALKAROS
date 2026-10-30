@@ -1,0 +1,20 @@
+{
+  "source_id": "F0978",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-RMD-673 Host.Tests and Orders/Billing packages not fully re-run; seed limits not seeded; PO left contradiction",
+      "status": "historical-fixed",
+      "invariant": "Task Done requires full test suite execution on owned packages with evidence",
+      "mechanism": "low-C.md:83 states 'tam Host.Tests ve Orders/Billing paketleri yeniden koşulmadı (README'de açık). Başlangıç limitleri tohumlanmadı, çelişki PO'ya bırakıldı (sonra 196 ile çözüldü)'. The reason at low-C.md:83 clarifies this was later resolved by V1-RMD-196 ('sonra 196 ile çözüldüğü için tarihçedir; create/read 403 gerekçesi bu kayda ait değil'). This is a historical finding that was subsequently addressed.",
+      "source_evidence": "evidence/V1-RMD-739/findings/low-C.md:83; tasks/B059.md:33",
+      "acceptance": "No action needed — finding is historical-fixed. V1-RMD-196 resolved the seed limits and test re-run. The create/read 403 issue mentioned is unrelated to this record.",
+      "id": "W2-N-F0978-01",
+      "parents": [
+        "F0978"
+      ]
+    }
+  ],
+  "limitations": "Read-only review; V1-RMD-196 resolution not verified by running tests. Based on documented resolution in low-C.md reason field.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

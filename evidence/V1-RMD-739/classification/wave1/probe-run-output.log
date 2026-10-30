@@ -1,0 +1,46 @@
+COMMAND: docker exec -i alkaros-test-pg psql -U postgres -d postgres -X -v ON_ERROR_STOP=1
+SOURCE_SHA256: cccf25ca1c16f029f46ea3f91d6fc5ea54f19d283c808c387c9b192a4b9eb60e
+EVIDENCE_TIER: real PostgreSQL selection-query reproduction using isolated TEMP tables; not Host integration
+EXIT_CODE: 0
+BEGIN
+CREATE TABLE
+CREATE TABLE
+INSERT 0 1
+INSERT 0 201
+INSERT 0 202
+SELECT 200
+DO
+                                            result                                            
+----------------------------------------------------------------------------------------------
+ REPRODUCED: 201 newer unclosable bills exclude older closable bill; selected=200, closable=0
+(1 row)
+
+TRUNCATE TABLE
+INSERT 0 200
+DO
+                                       result                                       
+------------------------------------------------------------------------------------
+ REPRODUCED: unchanged unclosable batch repeats; old closable bill remains excluded
+(1 row)
+
+TRUNCATE TABLE
+INSERT 0 1
+INSERT 0 0
+DO
+                       result                       
+----------------------------------------------------
+ REPRODUCED: allocation-free closable bill excluded
+(1 row)
+
+TRUNCATE TABLE
+INSERT 0 1
+INSERT 0 1
+INSERT 0 0
+DO
+                                   result                                   
+----------------------------------------------------------------------------
+ REPRODUCED: Paid bill excluded regardless of unfinished order side effects
+(1 row)
+
+ROLLBACK
+

@@ -1,0 +1,25 @@
+{
+  "source_id": "UI0188",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Ham JS/sunucu hata metni (reason.message) doğrudan ekrana basılıyor — UI_STYLE_GUIDE §3 ihlali",
+      "status": "open",
+      "invariant": "UI_STYLE_GUIDE §3: hata mesajları kullanıcı dilinde (Türkçe), eyleme dönüştürülebilir ve teknik detay (stack trace, HTTP status, internal code) içermemeli. Sadece ApiError.message (backend'in Türkçe eşleştirdiği) gösterilmeli; generic Error.message (browser 'Failed to fetch' vb.) asla UI'ya gitmemeli.",
+      "mechanism": "Üç noktada ham hata mesajı UI'ya gidiyor:\n1. AuthorizationDecisionsWorkspace.tsx:57 — catch bloğunda `reason instanceof Error && reason.message ? reason.message : text.actionFailed`; ApiError kontrolü yok, herhangi bir Error'ın message'ı (native network hatası dahil) StateMessage tone=\"error\" ile kullanıcıya basılıyor.\n2. NfcOrder.tsx:238 — `setMessage(reason.message);` ApiError kontrolünden sonra (242-248 IDEMPOTENCY_KEY_REUSED) generic catch'te herhangi bir reason'un message'ı (fetch 'Failed to fetch', TypeError, vs.) müşteriye bakan NFC ekranına basılıyor.\n3. CustomerDisplay.tsx:109 — `setPairingError(reason.message);` ApiError olmayan herhangi bir reason (network, timeout, parsing) için ham message eşleştirme hata alanına yazılıyor.\nDiğer dosyalar (Cashier.tsx:380-385, CatalogWorkspace.tsx, BillSplitWorkspace.tsx) ApiError instance kontrolü yapıyor; bu üç dosya yapmıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/turkce-metin.md:9",
+        "src/Clients/PosTerminal/src/features/authorization-decisions/AuthorizationDecisionsWorkspace.tsx:57",
+        "src/Clients/PosTerminal/src/routes/NfcOrder.tsx:238,249",
+        "src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:109"
+      ],
+      "acceptance": "Üç dosyada catch bloğu ApiError instance kontrolüne güncellenir:\n- AuthorizationDecisionsWorkspace.tsx:57 → `reason instanceof ApiError ? reason.message : text.actionFailed` (ApiError import eklenir)\n- NfcOrder.tsx:249 zaten `reason instanceof ApiError ? reason.message : \"Sipariş gönderilemedi.\"` var; 238 satırı da aynı kalıba getirilir.\n- CustomerDisplay.tsx:109 → `reason instanceof ApiError ? reason.message : \"Eşleştirme başarısız.\"`\nTest: network kesiliyken (offline) her üç ekranda 'Failed to fetch' veya 'NetworkError' GÖRÜLMEZ; yerinde Türkçe fallback metni çıkar.",
+      "id": "W2-N-UI0188-01",
+      "parents": [
+        "UI0188"
+      ]
+    }
+  ],
+  "limitations": "Sadece kaynak raporda belirtilen üç dosya (AuthorizationDecisionsWorkspace, NfcOrder, CustomerDisplay) incelendi. search_files çıktısında reason.message geçen 50+ dosya var; tamamı ApiError kontrolü yapıyor mu doğrulanmadı (ör. TableWorkspace.tsx:103 ternery'de reason.message kullanıyor, ApiError kontrolü önceden yapılmış olabilir). Bu kayıt yalnız raporlanan üç kusuru kapsar.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,20 @@
+{
+  "source_id": "PL0023",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Denetim kaydı KVKK dayanağı doğrulanmamış",
+      "status": "decision-blocked",
+      "invariant": "Denetim kaydı KVKK dayanağı mevzuattan otomatik doğrulanabilir olmalı",
+      "mechanism": "Statik rapor sınıflandırması kullanılmış; güncel mevzuat/KVKK kaynağına bağlanıp çalışma anında doğrulama yok. Otomatik kural üretimi için dış kaynak (Semih veya resmi mevzuat/KVKK) erişimi gerekir.",
+      "source_evidence": "evidence/V1-RMD-604/README.md:29",
+      "acceptance": "Denetim kaydı KVKK dayanağı kuralı resmi kaynaktan çekilip kodda enum/şema olarak kodlandığında; test vektörü ile geçtiğinde kapanır",
+      "id": "W2-N-PL0023-01",
+      "parents": [
+        "PL0023"
+      ]
+    }
+  ],
+  "limitations": "1020 ana kayıtla kimlik eşleştirmesi yapılmamış; tekrar adayı. Statik rapor sınıflandırması; runtime doğrulaması değil. Dış kaynak erişimi olmadan karar verilemez. Secondary GY kategorisi.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,12 @@
+{
+  "task": "V1-RMD-739",
+  "root": "D:\\project\\ALKAROS",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "status": "M plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md\n?? evidence/V1-RMD-739/classification/",
+  "diff_names": "plan/v1/remediation/V1-RMD-739-bitmis-gorev-dogrulama-programi.md",
+  "write_allowlist": [
+    "evidence/V1-RMD-739/classification/wave1/**"
+  ],
+  "existing_changes": "Preserved; application code unchanged",
+  "at": "2026-10-29T12:11:34.391271"
+}

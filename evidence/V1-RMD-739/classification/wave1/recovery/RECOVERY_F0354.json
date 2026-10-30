@@ -1,0 +1,40 @@
+{
+  "source_id": "F0354",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Yenileme, belirsiz gönderimin kimliğini kaybediyor; sepet tek başına geri yükleniyor",
+      "status": "open",
+      "invariant": "Sunucu sonucu belirsiz kalan sipariş gönderimi tarayıcı yenilemesinden sonra da aynı gönderim kimliği ve değişmez payload ile uzlaştırılmalı; sepetin korunması gönderim kimliğinin korunması yerine geçmemeli.",
+      "mechanism": "Aktif sepet yalnız ticketItems olarak localStorage'a yazılıyor ve yeniden yükleniyor; pendingDispatch başlangıçta null ve hiçbir depolama yazımına dahil değil. Sonuç kaybolduğunda aynı sayfada retry aynı payload'ı kullanıyor, ancak yenilemeden sonra yeni UUID üretiliyor. Sunucu replay sorgusu table_id + source_reference_id üzerinde; yeni UUID bu korumadan yararlanamıyor. Kaynakta ileri sürülen her durumda ikinci sipariş açılır sonucu doğrulanmış değildir: KASA-1 hâlâ bağlıysa sunucu mevcut siparişi bulabiliyor, ayrıca korunan satır UUID'leri küresel order_item_id birincil anahtarıyla çakışmayı engelleyebiliyor. Bu karşı korumalar belirsiz gönderimi aynı kimlikle güvenilir uzlaştırma sağlamıyor; yeni sipariş hatası veya kurtarma kaybı gibi kesin dış sonuç için gerçek DB/yenileme senaryosu gerekli.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:11",
+        "evidence/V1-RMD-739/tasks/B002.md:38-40",
+        "plan/v1/cashier-ui/V1-CUI-002-order-entry.md:13-15,47-50",
+        "src/Clients/Cashier/wwwroot/cashier-app.js:78-126,691-717,738-778,788-801",
+        "src/Host/Experience/Orders/TableDraft/TableDraftService.cs:78-113,154-173,193-217,219-234",
+        "src/Host/Experience/Orders/OrderDtoAssembler.cs:167-187,205-220",
+        "src/Modules/Orders/OrderAggregate/PostgresOrderRepository.cs:379-398",
+        "database/migrations/V1/V1-ORD-001/011-orders.up.sql:33-55",
+        "tests/Clients/StaticApps/cashier-app.test.js:299-325"
+      ],
+      "acceptance": [
+        "Belirsiz gönderimin payload ve submission kimliği ilk ağ çağrısından önce güvenilir biçimde saklanmalı; yenileme sonrası aynı işlem kimliğiyle replay/uzlaştırma yapılmalı.",
+        "Sunucunun commit ettiği ama yanıtın okunamadığı draft, submit ve KASA-1 bırakma aşamalarında sayfa yenilendikten sonra yeniden deneme tek mantıksal siparişe ve tek mutfak etkisine ulaşmalı.",
+        "KASA-1 bağlı ve ayrılmış durumlar ayrı test edilmeli; korunmuş satır kimlikleri yüzünden çakışma olursa bunun sessiz veri kaybına veya yeniden manuel girişe dönüşmediği kanıtlanmalı.",
+        "Sonucu kesinleşen işlem kalıcı bekleme kaydını temizlemeli; yeni müşterinin sepeti önceki belirsiz payload ile karışmamalı."
+      ],
+      "id": "W2-R-F0354-01",
+      "parents": [
+        "F0354"
+      ]
+    }
+  ],
+  "limitations": [
+    "Yalnız statik inceleme; repo/test/Host/tarayıcı çalıştırılmadı.",
+    "pendingDispatch kalıcılık eksikliği doğrulandı; ikinci sipariş veya çift stok etkisi gerçek DB üzerinde üretilmedi ve kesin sonuç olarak sunulmadı.",
+    "Aynı sayfada retry testlerinin ilgili bölümleri okundu; bunlar yenileme sonrası senaryoyu kanıtlamaz.",
+    "Veritabanı korumaları sebebiyle tarihsel iddianın etkisi daraltıldı; kimlik kaybı için open, gerçek dış etki matrisi için çalıştırma gereksinimi açık bırakıldı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,23 @@
+{
+  "source_id": "PO0050",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Online operasyon uçları statik rapor 'KARŞILANIYOR' notu; runtime doğrulaması yok",
+      "status": "verification-needed",
+      "invariant": "V12-OUI-001 kabulünde NVDA/VoiceOver elle testi V20-UAT-001'e ertelenmiş (PO kararı belgeli) - bu ertelenme ve kalan kabul maddelerinin güncel runtime doğrulaması gerekir",
+      "mechanism": "B091.md:18-19 V12-OUI-001 'KARŞILANIYOR' notuyla kapanıyor; NVDA/VoiceOver elle testi V20-UAT-001'e ertelenmiş (PO kararı belgeli). po-questions.md:34 aynı kaydı 'KARŞILANIYOR notu bilgi. Statik rapor sınıflaması; güncel runtime doğrulaması değildir' olarak sınıflandırıyor. 1020 ana kayıtla kimlik eşleştirmesi yapılmamış; tekrar-adayı, silinmemiş.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B091.md:18-19",
+        "evidence/V1-RMD-739/findings/po-questions.md:34"
+      ],
+      "acceptance": "V20-UAT-001 görevinde NVDA/VoiceOver elle testi tamamlanmış mı ve erişilebilirlik kabul kriterleri karşılanmış mı doğrulanmalı; 1020 ana kayıtla kimlik eşleştirmesi yapılarak tekrar-aday durumu çözümlenmeli",
+      "id": "W2-N-PO0050-01",
+      "parents": [
+        "PO0050"
+      ]
+    }
+  ],
+  "limitations": "V20-UAT-001 görev durumu ve NVDA/VoiceOver test sonuçları bu oturumda doğrulanamıyor; 1020 ana kayıtla eşleştirme de yapılamadı. Sadece belge seviyesinde statik rapor 'KARŞILANIYOR' ile runtime doğrulama eksikliği tespit edildi.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

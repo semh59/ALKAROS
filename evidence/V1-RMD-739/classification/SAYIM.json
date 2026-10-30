@@ -1,0 +1,163 @@
+{
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "main_records": 1020,
+  "supplement_records": 356,
+  "main_categories": {
+    "TE": 84,
+    "GY": 48,
+    "KN": 286,
+    "VD": 85,
+    "DY": 69,
+    "EZ": 52,
+    "PO": 39,
+    "BD": 286,
+    "UI": 30,
+    "BK": 28,
+    "MK": 13
+  },
+  "supplement_categories": {
+    "KN": 68,
+    "UI": 98,
+    "PO": 129,
+    "TE": 19,
+    "DY": 10,
+    "VD": 12,
+    "EZ": 4,
+    "GY": 7,
+    "BD": 9
+  },
+  "main_qualifications": {
+    "aday": 908,
+    "belirsiz": 81,
+    "bilgi": 28,
+    "bulgu-degil": 3
+  },
+  "supplement_qualifications": {
+    "belirsiz": 183,
+    "aday": 152,
+    "bilgi": 19,
+    "bulgu-degil": 2
+  },
+  "main_closure_status": {
+    "satir-bazli-kapanis-teyidi-gerekli": 972,
+    "kayitli-kanitla-tam-kapanis-eslesmesi": 16,
+    "kismi-kalan-kusur-var": 29,
+    "bulgu-degil": 3
+  },
+  "source_records_without_full_closure_evidence": null,
+  "main_category_corrections": 162,
+  "scan_matches": 522,
+  "flagged_ledger_tasks": 974,
+  "stale_document_paths": 42,
+  "unique_open_defect_count": null,
+  "unique_open_defect_count_reason": "Kaynak kayıtları bileşik ve örtüşen iddialar içeriyor; güncel satır bazlı kapanış ve kök neden birleştirmesi tamamlanmadı.",
+  "sources": [
+    {
+      "path": "evidence/V1-RMD-604/README.md",
+      "sha256": "d84869abcded6306151a7faeb2ac7bde9bf15dc41b3212607e85660d6c7d738c"
+    },
+    {
+      "path": "evidence/V1-RMD-737/README.md",
+      "sha256": "837066d5ed41df7e78baf286ccfc9faef75c4f36ad1881afcb3f9e8706d7226e"
+    },
+    {
+      "path": "evidence/V1-RMD-739/findings/class-low.md",
+      "sha256": "25ee26fe0fb62ff7fb2a3cc7c6a6b2a0fa1f8c0f296c8469d337b05b1e8e330d"
+    },
+    {
+      "path": "evidence/V1-RMD-739/findings/class-register.md",
+      "sha256": "2fbf47e54f2ef6ab2eaa4e7da51d50664d10e2b0e0ec63ef9faf591d8ea7e9f9"
+    },
+    {
+      "path": "evidence/V1-RMD-739/findings/low-A.md",
+      "sha256": "63e9b1772d6951d513df4100a5cb6be7ea39e537509527b2237ab518019ca600"
+    },
+    {
+      "path": "evidence/V1-RMD-739/findings/low-B.md",
+      "sha256": "b26f5a7a40a97b6e692aa32f32ee748e6edc49968f6d6bbb67591df2de1b71d2"
+    },
+    {
+      "path": "evidence/V1-RMD-739/findings/low-C.md",
+      "sha256": "a464cd1d0b334c092fc0d427186271b04793e042c104a9d586227bf1f2edb794"
+    },
+    {
+      "path": "evidence/V1-RMD-739/findings/po-questions.md",
+      "sha256": "d53931f62c0a9c67a1159f7a42eed45a4b75a48ac00492adb8cec02d3d49fca2"
+    },
+    {
+      "path": "evidence/V1-RMD-739/findings/register.md",
+      "sha256": "586741831600943cf78907712067cfd1a4d3eb1a557b2a00965d00fda433bf41"
+    },
+    {
+      "path": "evidence/V1-RMD-739/findings/stale-md-noevidence.md",
+      "sha256": "20fb32846afee6b41a65ce2cfb4bc953882d196cb561c7aae8778dfdfa2e3818"
+    },
+    {
+      "path": "evidence/V1-RMD-739/ledger.jsonl",
+      "sha256": "1bb0a7a495dd4d3af13387c3ccedad9204a634a9b77926c77a30be6850ee3337"
+    },
+    {
+      "path": "evidence/V1-RMD-739/scans/datetime-now.txt",
+      "sha256": "5979a8ce23be0f3dd802e3e66bf175448866c7d7993755b78dc91e713be7d511"
+    },
+    {
+      "path": "evidence/V1-RMD-739/scans/db-call-in-loop.txt",
+      "sha256": "2bbc068ec3d704bb4425ee03c4413fc4513b3737f045b36e7e78ed76612d45b1"
+    },
+    {
+      "path": "evidence/V1-RMD-739/scans/inmemory-or-fake-in-production.txt",
+      "sha256": "6ed5fcdcdd1ecd9976ee329e5a9488f80a58ef82faa9f2b10740e3d210ca90cd"
+    },
+    {
+      "path": "evidence/V1-RMD-739/scans/raw-error-message-in-ui.txt",
+      "sha256": "0806f1e41e2ef6f8122a5102084a6fa76e072b018f8133fbc2bf534eec6343c5"
+    },
+    {
+      "path": "evidence/V1-RMD-739/scans/skipped-test.txt",
+      "sha256": "0eec201dafbdaf2eb69549617f16e84a4d6c3289527195df4007337190556ff7"
+    },
+    {
+      "path": "evidence/V1-RMD-739/scans/swallowed-exception.txt",
+      "sha256": "367f95a5d0596d9e650a92df5894a4fcec2b94cc5e9be35fdc6de408a404dd2b"
+    },
+    {
+      "path": "evidence/V1-RMD-739/scans/unbounded-query.txt",
+      "sha256": "30c4bf8fcad31300569b6d3bdbe1688e7dba9c42e8511353d8b8c1b7134e0b03"
+    },
+    {
+      "path": "evidence/V1-RMD-739/ui/akis-uzmani.md",
+      "sha256": "d1b096750cfdb4ffc4a0b4f04063c4939a8e6af3afbe5fbb3b1a1cb4a90c0fe8"
+    },
+    {
+      "path": "evidence/V1-RMD-739/ui/durum-ve-hata.md",
+      "sha256": "f5faf763cf7b11fbc6af0c73ac88f623783ef08ec4a1fa3142c5d0d56608f72c"
+    },
+    {
+      "path": "evidence/V1-RMD-739/ui/eksik-avcisi.md",
+      "sha256": "cc1f8cf944f4a538681b7314c60ee94bdd72f092b879b63d2437a992e0014c48"
+    },
+    {
+      "path": "evidence/V1-RMD-739/ui/erisilebilirlik-dokunma.md",
+      "sha256": "84205d44488cfe45826698ed992441bab8d340e932bdc382f59a12e3bf47b5a7"
+    },
+    {
+      "path": "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md",
+      "sha256": "5db00de529fb757737ac0c988daf41126314962a1aab4b61c79593b5a68d5b89"
+    },
+    {
+      "path": "evidence/V1-RMD-739/ui/pazar-uzmani.md",
+      "sha256": "46a7f39553d5454f1b25233a82f02b497313c3703688b571668c9a19b91909ce"
+    },
+    {
+      "path": "evidence/V1-RMD-739/ui/turkce-metin.md",
+      "sha256": "00b84e2a0e628ed1172f6ee2a2209795b62a7d0a7b01298cd4538996d14cb40d"
+    }
+  ],
+  "source_records_without_full_closure_evidence_reason": "İnceleme nitelikleri ve kapanış statüsü bağımsız; 1000 yalnız 17 eşleşme ve üç açık bulgu-değil notu çıkarılan tarihsel formüldü, kesin açık toplam değil.",
+  "parent_review_corrections": 70,
+  "routing_packages": 300,
+  "root_cause_links": 5,
+  "baseline_head": "05d2fffa4563e7813ebafa337f6e5f5d151be86c",
+  "closure_review_head": "05d2fffa4563e7813ebafa337f6e5f5d151be86c",
+  "head_scope_note": "Sınıflama üretilirken HEAD 8c03e79b oldu. V1-RMD-750 başka oturum commitidir; 17 eski kapanış için yeni test koşulmadı. Kaynak hashleri doğrulandı."
+}

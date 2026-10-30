@@ -1,0 +1,20 @@
+{
+  "source_id": "UI0175",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "CA index.html \"İptal\" düğmesi aslında \"Fişi Temizle\" eylemi yapıyor — metin/eylem uyuşmazlığı",
+      "status": "open",
+      "invariant": "Düğme etiketi, tıklanma sonucu gerçekleşen eylemi doğru tanımlamalıdır (i18n key veya aria-label ile tutarlı olmalı).",
+      "mechanism": "index.html:97'de `<button ... id=\"btnClearTicket\" title=\"Fişi Temizle\">İptal</button>` — görünen metin \"İptal\", title/tooltip \"Fişi Temizle\". cashier-app.js'de bu düğme `clearTicket` fonksiyonunu çağırır (fişi temizler), iptal etmez.",
+      "source_evidence": "D:/project/ALKAROS/src/Clients/Cashier/wwwroot/index.html:97",
+      "acceptance": "Görünen metin \"Fişi Temizle\" (veya eşdeğer net bir etiket) olmalı; \"İptal\" kelimesi yalnız sipariş/ödeme iptali yapan eylemlerde kullanılmalı. aria-label ve title da aynı anlamsal eylemi taşımalı.",
+      "id": "W2-N-UI0175-01",
+      "parents": [
+        "UI0175"
+      ]
+    }
+  ],
+  "limitations": "Sadece statik HTML incelemesi yapıldı; cashier-app.js'te `btnClearTicket` event handler'ın ne çağırdığını doğrulamak için JS dosyası okunmadı. UI0174 ile aynı kökenli bulgu; bağımsız kayıt olarak ayrı değerlendirildi.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

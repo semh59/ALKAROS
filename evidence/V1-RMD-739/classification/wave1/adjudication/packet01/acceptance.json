@@ -1,0 +1,19 @@
+{
+  "task_id": "V1-RMD-739",
+  "packet": "packet01",
+  "result": "PASS",
+  "accepted_source_ids": [
+    "F0388",
+    "F0908"
+  ],
+  "tier": "Independent postwrite review and parent hash verification; static documentation classification only",
+  "ledger_sha256": "9d80bbc37e21379748558c34f192a0e13e1bf1f45e71ae6c7e863d8ea6d22291",
+  "review_path": "postwrite-review.json",
+  "review_sha256": "d3244214769af6d9017608c6e9dc919cc01568f107e090750230f7d5c1976bee",
+  "parent_hash_checks": 19,
+  "closed_findings": 0,
+  "application_tests_run": false,
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "command": "python -B C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-packet01-seal.py",
+  "exit_code": 0
+}

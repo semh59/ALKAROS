@@ -1,0 +1,23 @@
+{
+  "source_id": "F0768",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "'Ana makine kaynakları görünmez sınırı ekranda belirtilir' metni PosTerminal'de yok; Process.GetCurrentProcess() Dispose edilmiyor",
+      "status": "verification-needed",
+      "invariant": "V1-RMD-547 B107 görevi 'Ana makine kaynakları görünmez sınırı ekranda belirtilir' iddiası için PosTerminal'de böyle bir metin yok; README bunu V1-RMD-539'a atıyor ama 539 ekranı 565'e taşındı. Process.GetCurrentProcess() her turda Dispose edilmiyor (ResourceProbes.cs:44)",
+      "mechanism": "low-B.md:185-186: B107 V1-RMD-547 'Ana makine kaynakları görünmez sınırı ekranda belirtilir' - PosTerminal'de böyle bir metin yok; README bunu V1-RMD-539'a atıyor ama 539 ekranı 565'e taşındı. Process.GetCurrentProcess() her turda Dispose edilmiyor (ResourceProbes.cs:44). F0768 kaydı low-B.md:185'e dayanıyor; kategori UI, secondary BD;DY, kritik öncelik, qualification aday. Ana konu ekran/dil; ek konu belge/izlenebilirlik, dayanıklılık/performans.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-B.md:185-186",
+        "evidence/V1-RMD-739/findings/low-B.md:185 (F0768 text)"
+      ],
+      "acceptance": "PosTerminal'de 'ana makine kaynakları görünmez sınırı' metni eklenmiş mi (veya V1-RMD-539/565'e doğru devredilmiş mi) doğrulanmalı; ResourceProbes.cs:44 Process.GetCurrentProcess() Dispose pattern'i düzeltildi mi kontrol edilmeli",
+      "id": "W2-N-F0768-01",
+      "parents": [
+        "F0768"
+      ]
+    }
+  ],
+  "limitations": "PosTerminal güncel UI metinleri ve ResourceProbes.cs:44 Dispose durumu bu oturumda doğrulanamıyor (repo yazma/kod çalıştırma yok). Sadece low-B.md belge bulgusuna dayanıyor.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

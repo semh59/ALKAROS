@@ -1,0 +1,24 @@
+{
+  "source_id": "F0205",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-WTR-003 Done ama Owned Surface HEAD'de yok",
+      "status": "open",
+      "invariant": "Done görevinin owned surface yolları HEAD commit'te mevcut olmalı",
+      "mechanism": "V1-WTR-003 plan dosyası (satır 20) 'src/Clients/WaiterPwa/OrderStatus/**' ve 'tests/Clients/WaiterPwa/OrderStatus/**' owned surface olarak listeler. Register.md:215 kaydında 'HEAD'de yok (bd8d887a)' belirtiliyor. Plan dosyasının kendi notu (satır 22) da 'yollar HEAD'de bulunmaz; bu görev tarihsel olarak kapalı kalır' diyor. evidence/V1-WTR-003/closure-evidence.txt var ama kaynak kod ve test klasörleri silinmiş.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:215",
+        "plan/v1/waiter-pwa/V1-WTR-003-order-status.md:20-22",
+        "evidence/V1-WTR-003/closure-evidence.txt:1-14"
+      ],
+      "acceptance": "HEAD commit'te src/Clients/WaiterPwa/OrderStatus/ ve tests/Clients/WaiterPwa/OrderStatus/ yolları mevcut olmalı veya görev Planned/Blocked'e düşürülmeli",
+      "id": "W2-N-F0205-01",
+      "parents": [
+        "F0205"
+      ]
+    }
+  ],
+  "limitations": "Repo yazma/kod çalıştırma yok; sadece statik kaynak okuma. Evidence klasörü var ama içeriği (closure-evidence.txt) kaynak kodun varlığını kanıtlamıyor - sadece 'testler geçti' diyor. Gerçek dosya sisteminde OrderStatus klasörü yok.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

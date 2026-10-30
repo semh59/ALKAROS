@@ -1,0 +1,144 @@
+{
+  "source_id": "UI0178",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "WaiterPWA lacks meal card (yemek kartı) payment method support",
+      "status": "open",
+      "invariant": "Waiter send-to-cashier flow must support meal card (Multinet/Sodexo/Ticket) as payment method, matching Cashier capability",
+      "mechanism": "WaiterPWA bill.js btnSendToCashier (line 192) sends entire check to cashier with no payment method selection; Cashier split-payment.js:16 (pazar-uzmani.md line 8) lacks meal card payment method; waiter cannot initiate meal card payment — requires cashier-side support first, then waiter UI for payment method selection",
+      "source_evidence": [
+        "src/Clients/WaiterPwa/wwwroot/js/sheets/bill.js:192",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:8",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:25"
+      ],
+      "acceptance": "Cashier adds meal card payment method; WaiterPWA send-to-cashier includes payment method selection (or defaults to cashier choice) with meal card option",
+      "id": "W2-N-UI0178-01",
+      "parents": [
+        "UI0178"
+      ]
+    },
+    {
+      "title": "WaiterPWA lacks mixed payment (karma ödeme etiketi) support",
+      "status": "open",
+      "invariant": "Waiter/cashier flow must support split tender (cash + card + meal card) with clear labeling",
+      "mechanism": "No mixed payment UI in WaiterPWA bill.js or Cashier split-payment.js; pazar-uzmani.md line 25 lists as unmentioned scope",
+      "source_evidence": [
+        "src/Clients/WaiterPwa/wwwroot/js/sheets/bill.js:1-348",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:25"
+      ],
+      "acceptance": "Cashier split-payment supports multiple tender types per transaction with labeled breakdown; WaiterPWA reflects this in send-to-cashier",
+      "id": "W2-N-UI0178-02",
+      "parents": [
+        "UI0178"
+      ]
+    },
+    {
+      "title": "WaiterPWA lacks fiscal receipt (mali fiş) printing flow",
+      "status": "open",
+      "invariant": "Completed payment must trigger fiscal printer (e-Arşiv/yazarkasa) output, not just info receipt",
+      "mechanism": "Cashier split-payment.js:1441,1498 produces 'Bilgi Fişi' via window.print (pazar-uzmani.md line 9) — not fiscal; waiter has no fiscal flow; server fiscal integration not verified in code",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:9",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:25"
+      ],
+      "acceptance": "Cashier payment completion triggers fiscal printer service; waiter sees fiscal receipt status",
+      "id": "W2-N-UI0178-03",
+      "parents": [
+        "UI0178"
+      ]
+    },
+    {
+      "title": "WaiterPWA lacks X/Z report printing",
+      "status": "open",
+      "invariant": "Waiter/cashier must be able to print X (interim) and Z (end-of-day) reports with method breakdown",
+      "mechanism": "Cashier cash-session.js:710-729 lacks X/Z printing (pazar-uzmani.md line 16); WaiterPWA has no reporting UI; pazar-uzmani.md line 25 lists as unmentioned",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:16",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:25"
+      ],
+      "acceptance": "Cashier adds X/Z report generation with payment method breakdown; WaiterPWA may surface report access per role",
+      "id": "W2-N-UI0178-04",
+      "parents": [
+        "UI0178"
+      ]
+    },
+    {
+      "title": "WaiterPWA lacks package address entry (paket adres girişi) for takeaway",
+      "status": "open",
+      "invariant": "Takeaway orders must capture customer name/phone/address before sending to kitchen",
+      "mechanism": "PosTerminal Cashier.tsx:523-567 lacks customer fields for package sale (pazar-uzmani.md line 20); WaiterPWA has no takeaway flow; pazar-uzmani.md line 25 lists as unmentioned",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:20",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:25"
+      ],
+      "acceptance": "PosTerminal package sale captures customer details; WaiterPWA takeaway flow (if added) mirrors this",
+      "id": "W2-N-UI0178-05",
+      "parents": [
+        "UI0178"
+      ]
+    },
+    {
+      "title": "WaiterPWA lacks table merge (garsonda birleştirme) — duplicate of UI0166",
+      "status": "verification-needed",
+      "invariant": "Same as UI0166 — waiter must merge occupied tables",
+      "mechanism": "pazar-uzmani.md line 25 lists 'garsonda birleştirme' as unmentioned; transfer.js only offers transfer to empty tables",
+      "source_evidence": [
+        "src/Clients/WaiterPwa/wwwroot/js/sheets/transfer.js:19-21",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:25"
+      ],
+      "acceptance": "See UI0166 acceptance",
+      "id": "W2-N-UI0178-06",
+      "parents": [
+        "UI0178"
+      ]
+    },
+    {
+      "title": "WaiterPWA lacks loyalty (sadakat) program integration",
+      "status": "open",
+      "invariant": "Waiter must be able to apply/earn loyalty points during ordering or payment",
+      "mechanism": "No loyalty UI in WaiterPWA bill.js, menu.js, or api.js; pazar-uzmani.md line 25 lists as unmentioned",
+      "source_evidence": [
+        "src/Clients/WaiterPwa/wwwroot/js/sheets/bill.js:1-348",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:25"
+      ],
+      "acceptance": "Server loyalty API exposed; WaiterPWA adds loyalty points display/earn/burn in bill and menu",
+      "id": "W2-N-UI0178-07",
+      "parents": [
+        "UI0178"
+      ]
+    },
+    {
+      "title": "WaiterPWA lacks gift/waste distinction (hediye/zayı ayrımı)",
+      "status": "open",
+      "invariant": "Comp (ikram) must be distinguishable from waste (zayı/fire) for accounting",
+      "mechanism": "WaiterPWA bill.js renderSentLine shows canComp button (line 340) but no waste button; state.js item status includes 'Waste' (bill.js line 77) but no UI to mark waste; pazar-uzmani.md line 25 lists as unmentioned",
+      "source_evidence": [
+        "src/Clients/WaiterPwa/wwwroot/js/sheets/bill.js:77,340",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:25"
+      ],
+      "acceptance": "WaiterPWA adds waste button for eligible items (kitchenState NotSent), distinct from comp, with server Waste endpoint",
+      "id": "W2-N-UI0178-08",
+      "parents": [
+        "UI0178"
+      ]
+    },
+    {
+      "title": "WaiterPWA lacks scale (terazi) integration for weighted products",
+      "status": "open",
+      "invariant": "Weighted products (e.g., meat, cheese) must read weight from scale and calculate price",
+      "mechanism": "No scale integration in WaiterPWA product-sheet.js, api.js, or state.js; pazar-uzmani.md line 25 lists as unmentioned",
+      "source_evidence": [
+        "src/Clients/WaiterPwa/wwwroot/js/sheets/product-sheet.js",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:25"
+      ],
+      "acceptance": "WaiterPWA product sheet integrates with scale hardware/API for weighted products, auto-calculates price",
+      "id": "W2-N-UI0178-09",
+      "parents": [
+        "UI0178"
+      ]
+    }
+  ],
+  "limitations": "Multiple distinct defects bundled in one source record; each needs separate task; static review only — server APIs for meal card, fiscal, X/Z, loyalty, scale not examined; PosTerminal gaps (package address, X/Z) also block waiter features",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

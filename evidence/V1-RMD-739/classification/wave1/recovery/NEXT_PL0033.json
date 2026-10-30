@@ -1,0 +1,20 @@
+{
+  "source_id": "PL0033",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-RMD-258 evidence folder missing",
+      "status": "verification-needed",
+      "invariant": "Every Done task must have an evidence/<Task-ID>/ folder with reproducible acceptance proof (AGENTS.md line 82-83, V1-RMD-433)",
+      "mechanism": "Task V1-RMD-258 is marked Done but no evidence/V1-RMD-258/ directory exists in the repository. The task's Acceptance evidence section lists 9 test suites passing (116 tests total), concurrency lock test verification, concurrent over-allocation test with real HTTP requests, and audit tool passes, but these artifacts were not persisted to the required evidence folder.",
+      "source_evidence": "evidence/V1-RMD-604/README.md:34; plan/v1/remediation/V1-RMD-258-faz2-payments-independent-audit-remediation.md:166-192",
+      "acceptance": "Create evidence/V1-RMD-258/ with test logs from all 9 test suites, concurrency test proof, concurrent over-allocation test proof, and audit tool outputs matching the Acceptance evidence claims. Re-run tests if needed to generate fresh artifacts.",
+      "id": "W2-N-PL0033-01",
+      "parents": [
+        "PL0033"
+      ]
+    }
+  ],
+  "limitations": "Task is marked Done with detailed Acceptance evidence in its plan file including specific test counts (8/8 CardSettlement, 11/11 EftTender, 8/8 TenderComposition, 11/11 PaymentTopology, 7/7 Reconciliation, 9/9 Reporting, 14/14 Allocations Persistence, 6/6 Cash TenderHandler, 43/43 PaymentAggregate, 28/28 TenderRouting, 9/9 Architecture, 16/16 PaymentTender HTTP), but the mandatory evidence folder per AGENTS.md and V1-RMD-433 was never created. No runtime verification possible in this read-only review.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

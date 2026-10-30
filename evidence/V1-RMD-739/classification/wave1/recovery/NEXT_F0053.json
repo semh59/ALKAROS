@@ -1,0 +1,20 @@
+{
+  "source_id": "F0053",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-CUI-004 acceptance criteria and verification.md reference removed cashier features (quick banknote payment, change due, complimentary toggle) that V1-CUI-005 deliberately removed",
+      "status": "historical-fixed",
+      "invariant": "Acceptance criteria must reflect current implementation; stale acceptance criteria mislead reviewers and block closure",
+      "mechanism": "register.md:63 — V1-CUI-004 acceptance mentions \"hızlı nakit ödeme ve para üstü\" (quick banknote payment & change due) and verification.md references \"Quick Banknote Payments & Change Due / ikram toggle\"; V1-CUI-005 knowingly removed these features (cashier-app.js lacks them; test_cashier_frontend confirms absence); acceptance/verification not updated after removal",
+      "source_evidence": "D:/project/ALKAROS/evidence/V1-RMD-739/findings/register.md:63",
+      "acceptance": "Update V1-CUI-004 acceptance criteria and verification.md to remove references to deleted features; verify acceptance matches current cashier-app.js implementation",
+      "id": "W2-N-F0053-01",
+      "parents": [
+        "F0053"
+      ]
+    }
+  ],
+  "limitations": "Only finding document (register.md) available; actual V1-CUI-004/005 task markdowns, cashier-app.js, and test_cashier_frontend.py not directly inspected. Historical-fixed status inferred from 'knowingly removed by later task' in finding reason. Current code state not verified.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

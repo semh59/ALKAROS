@@ -1,0 +1,32 @@
+{
+  "source_id": "F0837",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "evidence/V1-CDP-002/ klasörü yok (kanıt yok); V1-CDP-002 plan md'si tarayıcı doğrulamasının yapılmadığını itiraf ediyor",
+      "status": "open",
+      "invariant": "Done statüsündeki görevlerin evidence/ altında kabul kanıtı (test/build çıktıları, manuel doğrulama notları) bulunmalı",
+      "mechanism": "V1-CDP-002 plan md:55-63 kabul kanıtları listeler (typecheck, test 23 dosya/175 test, build) ama evidence/V1-CDP-002/ dizini dosya sisteminde yok (ls evidence/ | grep V1-CDP-002 → sonuç yok). Plan md:63-71 'Dürüstlük notu: bu oturumda gerçek bir tarayıcıda görsel doğrulama YAPILMADI — bu ortamda ekran görüntüsü alabilen bir tarayıcı aracı yok' itiraf eder. B123.md:12 'evidence/V1-CDP-002/ yok (F: kanıt yok); md zaten tarayıcı doğrulamasının yapılmadığını itiraf ediyor' onaylar.",
+      "source_evidence": "plan/v1/customer-display/V1-CDP-002-idle-screen-custom-screensaver.md:55-71; evidence/V1-RMD-739/tasks/B123.md:12",
+      "acceptance": "evidence/V1-CDP-002/ klasörü oluşturulup içine: typecheck/test/build komutlarının çıkış kodları ve çıktıları, 23 dosya/175 test sayısının doğrulanması (hangi test dosyaları), manuel tarayıcı doğrulama senaryosu notları (görsel yükle → Idle'da gör → kaldır → varsayılan kart) kaydedilir",
+      "id": "W2-N-F0837-01",
+      "parents": [
+        "F0837"
+      ]
+    },
+    {
+      "title": "api.ts:262 fetch sonrası response.blob() hatası try-catch dışı; ağ kesilirse reddedilmiş promise, useEffect'te catch yok (unhandled rejection)",
+      "status": "open",
+      "invariant": "Ağ hatalarında (fetch reddedilirse) unhandled promise rejection oluşmamalı; UI düzgün hata yönetimi yapmalı",
+      "mechanism": "api.ts:257-269 fetchIdleScreensaver fonksiyonunda fetch çağrısı try-catch içinde (satır 259-265) ama response.blob() satırı (267) try dışı. Eğer fetch başarılı (response.ok true) ama blob() okuması ağ kesintisiyle reddedilirse (ör. Connection reset), promise reddedilir ve CustomerDisplay.tsx:207 useEffect'te .then() var ama .catch() yok → unhandled rejection. Ekran varsayılana düşmez ama kart eski kalır (stale objectURL). B123.md:13 bunu belirtir.",
+      "source_evidence": "src/Clients/PosTerminal/src/api.ts:257-269; src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx:200-219; evidence/V1-RMD-739/tasks/B123.md:13",
+      "acceptance": "fetchIdleScreensaver'da response.blob() try-catch içine alınır; reddedilirse null dönülür ve useEffect setScreensaver(null) yapar (varsayılan karta düşer); veya blob() başarısız olursa ApiError fırlatıp UI'da hata gösterimi eklenir",
+      "id": "W2-N-F0837-02",
+      "parents": [
+        "F0837"
+      ]
+    }
+  ],
+  "limitations": "Evidence klasörü eksikliği sadece doğrulama artefaktı; kod üretimde ve çalışır durumda. api.ts blob() hatası edge case (fetch 200 döndü ama body okunamadı) — gerçekte nadir ama mogelijk.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

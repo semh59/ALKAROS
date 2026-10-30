@@ -1,0 +1,31 @@
+{
+  "source_id": "F0180",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Bump bar / klavye odak imleci (ArrowDown/Enter/ok tuşu) desteği yok",
+      "status": "open",
+      "invariant": "V1-KDS-001 plan dosyası (In scope §3) 'Dokunma + bump bar odak modeli (klavye/HID ok tuşu + Enter/BUMP eşdeğeri; görünür odak halkası)' hedefler ancak KitchenOperationsWorkspace.tsx içinde keydown/ArrowDown/Enter/Space event handler'ı hiç yok. Sadece .kitchen-step:focus-visible CSS kuralı var (kitchen-operations.css:105).",
+      "mechanism": "KitchenOperationsWorkspace.tsx (tam 967 satır) içinde useEffect'ler sadece polling (8sn), timer (1sn), yeni ticket chime, yoğun mod, performans raporu için. Klavye olaylarını dinleyen useEffect veya onKeyDown handler'ı hiç yok. ItemRow bileşenindeki .kitchen-step butonları sadece mouse click (onClick) ile çalışıyor (satır 745-757). CSS'te sadece :focus-visible outline var (satır 105), bu da Tab ile gezinme sağlar ama Arrow key/Enter/bump bar HID tuşu ile ilerletme yok. Test dosyasında (KitchenOperationsWorkspace.test.tsx) bump bar/klavye testleri yok.",
+      "source_evidence": [
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.tsx:1-967",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/kitchen-operations.css:97-105",
+        "plan/v1/kitchen-display/V1-KDS-001-mutfak-ekrani-faz-1-yeniden-yazim.md:68-70",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/KitchenOperationsWorkspace.test.tsx:1-694"
+      ],
+      "acceptance": "KitchenOperationsWorkspace.tsx içinde bump bar / HID klavye desteği eklenmeli: useEffect ile document.addEventListener('keydown', handler) eklenip ArrowDown/Enter/Space tuşları ile odaklı kalemin bir sonraki aşamaya (is-next) ilerletilmesi sağlanmalı. Görünür odak halkası (:focus-visible zaten var) ile hangi kalemin odaklı olduğu bellilmeli. En az bir test (vitest) bump bar davranışını sınamalı.",
+      "id": "W2-N-F0180-01",
+      "parents": [
+        "F0180"
+      ]
+    }
+  ],
+  "limitations": [
+    "Plan dosyası Status: Done ama In scope'daki bump bar hedefi karşılanmamış",
+    "CSS'te :focus-visible outline zaten var (satır 105) - odak gösterimi yarı-hazır",
+    "ItemRow bileşeninde currentIndex/STAGES mantığı zaten var (satır 723, 739-758) - keyboard handler bağlanabilir",
+    "Test dosyasında 145 test var ama keyboard/bump bar testleri hiç yok",
+    "V1-KDS-001 Acceptance evidence'de 'npx vitest run → Test Files 23 passed (23), Tests 145 passed (145)' deniyor ama keyboard testleri dahil değil"
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

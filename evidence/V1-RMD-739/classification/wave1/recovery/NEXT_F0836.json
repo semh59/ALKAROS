@@ -1,0 +1,20 @@
+{
+  "source_id": "F0836",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "CustomerDisplay.test.tsx içinde screensaver/idle görsel testi yok (grep: sıfır eşleşme)",
+      "status": "open",
+      "invariant": "V1-CDP-002 davranışı (Idle'da ekran koruyucu getirme, 404 sessiz varsayılan, her Idle girişinde yeniden sorgu) testlerle doğrulanmalı",
+      "mechanism": "CustomerDisplay.test.tsx:1-268 dosyası screensaver/idle/fetchIdleScreensaver/IdleScreensaver anahtar kelimeleri için grep sıfır eşleşme verir; testler yalnız pairing, aktif sipariş, completed, hata kurtarma, eşleştirme yenileme, snapshot sıralama, SignalR yeniden bağlanma sınar; Idle durumu (presentation === \"idle\") ve screensaver render yolu (CustomerDisplay.tsx:289-310) hiç test edilmemiş. Plan V1-CDP-002.md:59 '23 dosya / 175 test' sayısı kabul maddesinde yazılı ama bu sayı koşulmadan doğrulanamıyor (hangi dosyalar, hangi testler). B123.md:11 bunu onaylar.",
+      "source_evidence": "src/Clients/PosTerminal/src/routes/CustomerDisplay.test.tsx:1-268; plan/v1/customer-display/V1-CDP-002-idle-screen-custom-screensaver.md:59; evidence/V1-RMD-739/tasks/B123.md:11",
+      "acceptance": "CustomerDisplay.test.tsx'ye Idle/screensaver testleri eklenir: (1) 404 yanıtında varsayılan markalı kart gösterilir, (2) 200 + image blob ile tam ekran görsel render edilir, (3) idleShown false→true geçişinde fetchIdleScreensaver yeniden çağrılır, (4) object-fit: cover ve gizlilik notu/rozet DOM'da var, (5) ConnectionBanner overlay çalışır",
+      "id": "W2-N-F0836-01",
+      "parents": [
+        "F0836"
+      ]
+    }
+  ],
+  "limitations": "Test dosyası var ama screensaver/idle kapsamı yok; mevcut test altyapısı (vitest + jsdom + fetch mock) bu senaryoları sınayacak şekilde genişletilebilir. Tarayıcı doğrulaması (manual) plan md'sinde açıkça 'yapılmadı' olarak kabul edilmiş.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,717 @@
+{
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "source_ids": [
+    "F0088",
+    "F0203",
+    "PO0015",
+    "PO0016",
+    "PL0007",
+    "PL0008",
+    "PL0009",
+    "PL0010",
+    "PL0011",
+    "PL0012",
+    "PL0013",
+    "PL0014",
+    "PL0015",
+    "PL0016",
+    "PL0017"
+  ],
+  "defects": [
+    {
+      "id": "PAY-001",
+      "parents": [
+        "F0088",
+        "PO0015",
+        "PO0016"
+      ],
+      "title": "Paid ile mali nihai kapanışın karar ve uygulama sınırı",
+      "category": "PO",
+      "status": "decision-blocked",
+      "invariant": "Mali karar kapısı ile hesap durum sözleşmesi birbiriyle çelişmez.",
+      "mechanism": "BillClosureService projection yeterliyse fiş kararına bakmadan Paid yapar; bunun mali nihai durum mu yoksa operasyonel durum mu olduğu ürün/mevzuat kararıdır.",
+      "source_evidence": [
+        "src/Modules/Billing/PaymentClosure/BillClosureService.cs:33-45",
+        "evidence/V1-RMD-739/findings/register.md:98",
+        "evidence/V1-RMD-739/findings/po-questions.md:12"
+      ],
+      "production_paths": [
+        "src/Modules/Billing/PaymentClosure/BillClosureService.cs",
+        "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs"
+      ],
+      "acceptance": [
+        "V13-FSC-002 kararını ve Paid tanımını açık onay/kaynakla belirle.",
+        "Seçilen sözleşme için ödeme başarılı ve mali kapı eksik/başarısız durumunu ayrı doğrula."
+      ],
+      "decision_blocker": "V13-FSC-002/Paid mali anlamı; teknik varsayım veya yeni mali adapter yazılmaz.",
+      "repair_group": "PAY-G01",
+      "verification_tier": "static-current-HEAD; runtime-not-run"
+    },
+    {
+      "id": "PAY-002",
+      "parents": [
+        "F0203"
+      ],
+      "title": "Ödeme sonrası masa boşalmasında status_changed_at güncellenmiyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "Masa durum değişimi ile durum zamanı aynı işlemde tutarlı yazılır.",
+      "mechanism": "OrderSettlementService masa durumunu Available yaparken current_status ile row_version yazar, status_changed_at yazmaz. Kaynak transfer/merge/rezervasyon dallarını da içerir; onlar bu dalgada ayrıca incelenmedi.",
+      "source_evidence": [
+        "src/Host/Experience/Orders/OrderSettlementService.cs:128-139",
+        "evidence/V1-RMD-739/findings/register.md:213"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Orders/OrderSettlementService.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "acceptance": [
+        "Ödemeyle Occupied→Available değişince zaman ilerler; zaten Available iken sahte değişim zamanı üretilmez.",
+        "Merge katılımcısı serbest kalışında aynı zaman invariantı korunur.",
+        "Kaynak karttaki transfer/merge/rezervasyon/unmerge dalları ayrı alt kusurlara bölünmeden F0203 kapanmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "PAY-G02",
+      "verification_tier": "static-current-HEAD; runtime-not-run"
+    },
+    {
+      "id": "PAY-003",
+      "parents": [
+        "PL0007"
+      ],
+      "title": "Kart çekilmedi çözümü bekleyen manuel onayı terminal duruma taşımıyor",
+      "category": "VD",
+      "status": "open",
+      "invariant": "Ödeme terminal çözüme geçince ona bağlı bekleyen kart onayı tutarlı sona erer; fiş kilidi sözleşmeye uygun serbest kalır.",
+      "mechanism": "MarkNotChargedAsync yalnız payment Save ve audit callback yazar. Host callback yalnız audit üretir. manuel confirmation Pending kalır; migration143 indeksinde Rejected olmayan slip unique kilidi sürer. Ek: “kart çekilmedi” çözümünden sonra manual_card_confirmation Pending kalır; Approve NotResolvable atar, slip yalnız elle reject ile çözülür.",
+      "source_evidence": [
+        "src/Modules/Payments/ManualResolution/ManualPaymentResolutionService.cs:50-67",
+        "src/Host/DualScreen/DualScreenApplication.Payments.cs:251-266",
+        "src/Modules/Payments/ManualResolution/PostgresManualCardConfirmationRepository.cs:59-78",
+        "database/migrations/V1/V1-RMD-283/143-manual-card-confirmations.up.sql:26-27"
+      ],
+      "production_paths": [
+        "src/Modules/Payments/ManualResolution/ManualPaymentResolutionService.cs",
+        "src/Modules/Payments/ManualResolution/PostgresManualCardConfirmationRepository.cs",
+        "src/Modules/Payments/ManualResolution/IManualCardConfirmationRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "acceptance": [
+        "Pending claim + kart çekilmedi çözümü: ödeme ve claim terminal durumları tutarlı; slip yeniden kullanım kuralı sınanır.",
+        "Onayla/çözüm yarışında tek terminal sonuç; audit başarısızsa her ikisi rollback.",
+        "Kaybolan yanıt/replay ve farklı aktör durumları sözleşmeye uygun."
+      ],
+      "decision_blocker": null,
+      "repair_group": "PAY-G03",
+      "verification_tier": "static-current-HEAD; runtime-not-run"
+    },
+    {
+      "id": "PAY-004",
+      "parents": [
+        "PL0008"
+      ],
+      "title": "Ödeme ile sipariş tamamlama aktörü kayboluyor",
+      "category": "GY",
+      "status": "open",
+      "invariant": "Siparişin ödeme kaynaklı tamamlanma kaydı gerçek ödeme aktörüne veya doğrulanmış sistem aktörüne bağlanır.",
+      "mechanism": "CompleteForPaidBillAsync aktör parametresi almaz; order.CompleteOnPayment() changedBy varsayılan null ile çağrılır.",
+      "source_evidence": [
+        "src/Host/Experience/Orders/OrderSettlementService.cs:37",
+        "src/Host/Experience/Orders/OrderSettlementService.cs:63",
+        "src/Modules/Orders/OrderAggregate/Order.cs:256"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Orders/OrderSettlementService.cs",
+        "src/Modules/Orders/OrderAggregate/Order.cs",
+        "src/Host/DualScreen/DualScreenApplication.Payments.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "acceptance": [
+        "İnsan ödeme yolunda geçmiş gerçek aktör içerir.",
+        "Sweeper için kanıtlı sistem kimliği sözleşmesi belirlenir; rastgele veya hayali kullanıcı üretilmez.",
+        "Sipariş zaten tamam ise fazladan history/audit oluşmaz."
+      ],
+      "decision_blocker": null,
+      "repair_group": "PAY-G04",
+      "verification_tier": "static-current-HEAD; runtime-not-run",
+      "review_note": "Teknik okuma işi, ürün kararı değil."
+    },
+    {
+      "id": "PAY-005",
+      "parents": [
+        "PL0009",
+        "PL0010"
+      ],
+      "title": "Kapanış ile eşzamanlı kart girişimi aynı hesap kilidine bağlı değil",
+      "category": "EZ",
+      "status": "needs-verification",
+      "invariant": "Hesap Paid olurken yeni unresolved ödeme aynı invariant içinde atomik olarak engellenir veya önceki kararı geçersiz kılar.",
+      "mechanism": "BillClosureService bill/projection okumaları ve Save arasında bill-settlement advisory kilidi almaz. CardSettlementOrchestrator aynı adlı kilidi alır. Projection bağımsız repository okumaları yapar; bill row_version tek başına payment değişimini kapsadığı gösterilmedi.",
+      "source_evidence": [
+        "src/Modules/Billing/PaymentClosure/BillClosureService.cs:23-45",
+        "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs:32-49",
+        "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs:64",
+        "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs:231-234"
+      ],
+      "production_paths": [
+        "src/Modules/Billing/PaymentClosure/BillClosureService.cs",
+        "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs",
+        "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+        "tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs"
+      ],
+      "acceptance": [
+        "Gerçek PG mandallarıyla projection okuması sonrası yeni unresolved kartı araya sok; Paid+unresolved invariantını ölç.",
+        "Kapanış/kart, iptal/tahsilat, bahşiş/kapanış yarışlarını ayrı parametrik matrise bağla.",
+        "Audit/DB hatası ve iptal kilidi bırakır; mutasyon kilit/snapshot korumasını kaldırınca test kırılır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "PAY-G05",
+      "verification_tier": "static-current-HEAD; runtime-not-run"
+    },
+    {
+      "id": "PAY-006",
+      "parents": [
+        "PL0011",
+        "PL0014"
+      ],
+      "title": "İade fiş tekillik kapsamı belirlenmemiş ve korunmuyor",
+      "category": "VD",
+      "status": "decision-blocked",
+      "invariant": "Aynı gerçek iade belgesi için tanımlanan kapsamda çifte kayıt oluşmaz.",
+      "mechanism": "refund_requests slip_number nullable text; mevcut migration183 yalnız payment başına açık request tekilliği var. CompleteManualAsync slipi kaydederken duplicate kontrolü yok. Küresel slip tekilliği kendiliğinden doğru sayılmaz; provider/terminal/dönem kapsamı kararı gerekir.",
+      "source_evidence": [
+        "src/Host/Experience/Billing/PaymentRefunds.cs:409-434",
+        "database/migrations/V1/V1-RMD-508/183-refund-requests.up.sql:16-34"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Billing/PaymentRefunds.cs",
+        "src/Modules/Payments/PaymentAggregate/PostgresRefundRequestRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+      ],
+      "acceptance": [
+        "Önce slip benzersizlik alanını mevcut mali/provider kararıyla doğrula.",
+        "Aynı normalleştirilmiş anahtarlı paralel iki tamamlamadan yalnız izinli olanı commit eder.",
+        "Farklı terminal/sağlayıcı aynı numara karar gereği mümkünse yanlış red olmaz.",
+        "Migration gerekiyorsa yeni migration/manifest exact surface ayrı görev, mevcut migration değiştirilmez."
+      ],
+      "decision_blocker": "Slip kapsamı ve gerçek sağlayıcı belge biçimi; yeni migration dosya adı burada atanmadı.",
+      "repair_group": "PAY-G06",
+      "verification_tier": "static-current-HEAD; runtime-not-run",
+      "review_note": "Emsal: manual_card_confirmations global upper(slip_number) unique. Soru: iade slip kapsamı aynı mı."
+    },
+    {
+      "id": "PAY-007",
+      "parents": [
+        "PL0012",
+        "PL0014"
+      ],
+      "title": "Manuel iade tamamlamada isteyen/tamamlayan ayrımı belirsiz",
+      "category": "GY",
+      "status": "decision-blocked",
+      "invariant": "İade isteyen, onaylayan ve tamamlayan rol ayrımı kabul edilen iş kuralına uygun uygulanır.",
+      "mechanism": "RejectAsync requester/decider ayrımı yapar; CompleteManualAsync yalnız durum kontrol eder. Allowance kendi onay akışı bulunduğundan blanket requester!=completer teknik varsayım olamaz.",
+      "source_evidence": [
+        "src/Host/Experience/Billing/PaymentRefunds.cs:390-393",
+        "src/Host/Experience/Billing/PaymentRefunds.cs:416-434",
+        "src/Host/Experience/Billing/PaymentRefunds.cs:207-218"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Billing/PaymentRefunds.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+      ],
+      "acceptance": [
+        "Manual/allowance/manager yolları için isteyen-onaylayan-tamamlayan matrisi onaylanır.",
+        "Seçilen yasaklı aynı kişi kombinasyonu mutasyonla kırmızı/yeşil kanıtlanır.",
+        "401/403, audit rollback ve tekrarlanan tamamlama tek yan etki sağlar."
+      ],
+      "decision_blocker": "PO: manuel para iadesinde görevler ayrılığı, allowance istisnası.",
+      "repair_group": "PAY-G07",
+      "verification_tier": "static-current-HEAD; runtime-not-run",
+      "review_note": "Allowance istisnası migration 185’te kodlu; kalan karar: isteyen=tamamlayan aynı kişi olabilir mi."
+    },
+    {
+      "id": "PAY-008",
+      "parents": [
+        "PL0013",
+        "PL0014"
+      ],
+      "title": "Tamamlanmayan manuel iadede kullanılan allowance yaşam döngüsü belirsiz",
+      "category": "VD",
+      "status": "decision-blocked",
+      "invariant": "Allowance tüketimi başarılı para iadesi veya açık rezervasyonla uzlaşır; terk edilen işlem bütçeyi sessiz kalıcı eksiltmez.",
+      "mechanism": "RequestAsync önce TrySpendAsync yapar; manual ise AwaitingManualRefund kalır. RejectAsync yalnız Requested kabul eder. Cash repository yalnız spend/set sunar, release yolu yok. Rejected kartın allowance harcadığı iddiası bütün yollar için doğrulanmadı; mevcut Requested→Rejected yolu bütçe harcamadan da oluşabilir.",
+      "source_evidence": [
+        "src/Host/Experience/Billing/PaymentRefunds.cs:199-223",
+        "src/Host/Experience/Billing/PaymentRefunds.cs:389-405",
+        "src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs:44-56"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Billing/PaymentRefunds.cs",
+        "src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+      ],
+      "acceptance": [
+        "Requested/bütçesiz red, allowance+manual bekleme, tamamlanma, vazgeçme ve oturum kapanışı matrisi ayrı ölçülür.",
+        "Rezervasyon mu tüketim mi kuralı onaylanır; ters hareketler negatif bütçe veya çift serbest bırakma yaratmaz.",
+        "Kayıp yanıt/replay ve işlem arası hata/rollback bütçeyi doğru tutar."
+      ],
+      "decision_blocker": "PO: bekleyen manuel iade allowance rezervasyonu, vazgeçme/iptal ve kapanış kuralı.",
+      "repair_group": "PAY-G08",
+      "verification_tier": "static-current-HEAD; runtime-not-run",
+      "review_note": "AwaitingManualRefund çıkışı yalnız CompleteManual; allowance harcanmış iade takılabilir — teknik alt kusur ayrı açık, rezervasyon/vazgeçme kuralı PO."
+    },
+    {
+      "id": "PAY-009",
+      "parents": [
+        "PL0015"
+      ],
+      "title": "Tahsis satırı olmayan sıfır ödenecek hesabın yeniden kapanışı seçilmiyor",
+      "category": "TE",
+      "status": "open",
+      "invariant": "Kapanabilir her desteklenen hesap başarısız ilk kapanıştan sonra kurtarma kapsamındadır.",
+      "mechanism": "Sweeper EXISTS payment_allocations filtreler; tam indirim/sıfır ödenecek hesabın tahsisi yoksa aday değildir. DESC sıralama bu filtre açığını değiştirmez.",
+      "source_evidence": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs:57-64",
+        "evidence/V1-RMD-604/README.md:24"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "acceptance": [
+        "Önce sıfır ödenecek tahsissiz hesabın projeksiyonda PaymentSatisfied/Closed olduğunu doğrula.",
+        "%100 indirim sonrası ilk kapanışı hata ile düşür; tahsis yokken sweep hesabı kapatır.",
+        "Ödenmemiş pozitif bakiyeli hesap kapanmaz; Cancelled etkilenmez.",
+        "Grace ve pahalı aday seçimi sınırı korunur; gereksiz tarama ölçülür."
+      ],
+      "decision_blocker": null,
+      "repair_group": "PAY-G09",
+      "verification_tier": "static-current-HEAD; runtime-not-run",
+      "selection_probe": {
+        "command": "python -B evidence/V1-RMD-739/classification/wave1/probe_sweeper_selection.py",
+        "exit_code": 0,
+        "log": "evidence/V1-RMD-739/classification/wave1/sweeper-selection-probe.log",
+        "tier": "real PostgreSQL with isolated temporary schema; actual production selection SQL extracted from source",
+        "limitation": "Not full Host integration; fixtures mark closability explicitly. Paid-side-effect retry only selection exclusion, not injected OrderSettlement execution."
+      }
+    },
+    {
+      "id": "PAY-010",
+      "parents": [
+        "PL0016"
+      ],
+      "title": "Paid kaydı sonrası sipariş tamamlama hatası yeniden seçilmiyor",
+      "category": "DY",
+      "status": "open",
+      "invariant": "Para kapanışı commit edildikten sonra sipariş/masa tamamlaması başarısızsa yeniden yürütülebilir ve sonunda tutarlı hale gelir.",
+      "mechanism": "Sweep yalnız Paid/Cancelled olmayanları seçer. TryClose sonucu Closed olduktan sonra CompleteForPaidBillAsync hata verirse catch loglar; sonraki tur Paid filtresinden elenir. AlreadyClosed sonucunda da continue eder.",
+      "source_evidence": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs:59",
+        "src/Host/Experience/Billing/BillClosureSweeper.cs:78-87",
+        "src/Host/Experience/Orders/OrderSettlementService.cs:59-71"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs",
+        "src/Host/Experience/Orders/OrderSettlementService.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "acceptance": [
+        "Önce bill Paid olsun, sonra order Save/audit/DB fail enjekte et; ikinci tur order tamamlanır ve masa doğru serbest kalır.",
+        "Replay aynı history/merge serbest bırakma işlemini ikilemez.",
+        "Bir order tamamlanamaması diğer adayları durdurmaz; cancellation ve tekrar başlatma çalışır."
+      ],
+      "decision_blocker": null,
+      "repair_group": "PAY-G10",
+      "verification_tier": "static-current-HEAD; runtime-not-run",
+      "selection_probe": {
+        "command": "python -B evidence/V1-RMD-739/classification/wave1/probe_sweeper_selection.py",
+        "exit_code": 0,
+        "log": "evidence/V1-RMD-739/classification/wave1/sweeper-selection-probe.log",
+        "tier": "real PostgreSQL with isolated temporary schema; actual production selection SQL extracted from source",
+        "limitation": "Not full Host integration; fixtures mark closability explicitly. Paid-side-effect retry only selection exclusion, not injected OrderSettlement execution."
+      }
+    },
+    {
+      "id": "PAY-011",
+      "parents": [
+        "PL0017"
+      ],
+      "title": "Approved tutar ile requested tutar üst sınırı sözleşmesi belirsiz",
+      "category": "PO",
+      "status": "needs-verification",
+      "invariant": "Talep/tendered/approved/change para invariantı bütün ödeme yöntemlerinde doğrulanmış kuralla tutarlıdır.",
+      "mechanism": "Payment constructor approved<=tendered kontrol eder ama approved<=requested kontrol etmez. Gerçek provider kısmi/fazla onay ve nakit fazla verilen para ayrımı için mevcut domain kararı okunmadan yeni guard yazılmaz.",
+      "source_evidence": [
+        "src/Modules/Payments/PaymentAggregate/Payment.cs:60-81",
+        "evidence/V1-RMD-604/README.md:25"
+      ],
+      "production_paths": [
+        "src/Modules/Payments/PaymentAggregate/Payment.cs"
+      ],
+      "test_paths": [
+        "tests/Modules/Payments/PaymentAggregate/PaymentDomainTests.cs"
+      ],
+      "acceptance": [
+        "Domain talep/onay kuralı ve provider capture contract kaynağı okunur.",
+        "requested<tendered, partial approval, approved>requested varyasyonları gerçek invariantı sınar; para üstü ayrı korunur.",
+        "Kural belli değilse yeni guard ve hayali provider davranışı yok."
+      ],
+      "decision_blocker": "Talep/onay miktarının yöntem bazlı üst sınırı gerçek domain/provider kararı.",
+      "repair_group": "PAY-G11",
+      "verification_tier": "static-current-HEAD; runtime-not-run"
+    },
+    {
+      "id": "PAY-012",
+      "parents": [],
+      "title": "DESC LIMIT seçimi genel adil tarama garantisi vermiyor",
+      "category": "DY",
+      "status": "open",
+      "invariant": "Kapanabilir hiçbir mevcut hesap sabit aday limitinin dışında sonsuza dek aç bırakılmaz.",
+      "mechanism": "V1-RMD-750 testi 201 eski kısmi+1 yeni kapanabilir hesabı sınar. Mevcut ORDER BY updated_at DESC LIMIT200, 201 yeni kapanamayan+1 eski kapanabilir durumda ters yönde starvation olasılığını korur. Çalıştırılmadı, yeni statik aday.",
+      "source_evidence": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs:57-64",
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs:680-709",
+        "plan/v1/remediation/V1-RMD-750-hesap-kapatma-sweeper-tikanmasi.md:15"
+      ],
+      "production_paths": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs"
+      ],
+      "test_paths": [
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "acceptance": [
+        "Ters fixture: eski fully-paid açık hesap ardından 201 daha yeni partial; sweep tur(lar)ında eski hesap sonunda kapanır.",
+        "Eşit updated_at ve200/201 sınırı deterministik, cursor/progress restart sonrası kayıp yaratmaz.",
+        "Sonsuz sürekli yeni trafik altında bounded progress kanıtı; yalnız ASC↔DESC değişimi yeterli kabul edilmez."
+      ],
+      "decision_blocker": null,
+      "repair_group": "PAY-G12",
+      "verification_tier": "real PostgreSQL selection-query reproduction; Host integration pending",
+      "selection_probe": {
+        "command": "python -B evidence/V1-RMD-739/classification/wave1/probe_sweeper_selection.py",
+        "exit_code": 0,
+        "log": "evidence/V1-RMD-739/classification/wave1/sweeper-selection-probe.log",
+        "tier": "real PostgreSQL with isolated temporary schema; actual production selection SQL extracted from source",
+        "limitation": "Not full Host integration; fixtures mark closability explicitly. Paid-side-effect retry only selection exclusion, not injected OrderSettlement execution."
+      }
+    }
+  ],
+  "groups": [
+    {
+      "id": "PAY-G01",
+      "title": "Paid ile mali nihai kapanışın karar ve uygulama sınırı",
+      "defects": [
+        "PAY-001"
+      ],
+      "exact_surface": [
+        "src/Modules/Billing/PaymentClosure/BillClosureService.cs",
+        "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs",
+        "tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "V13-FSC-002 kararını ve Paid tanımını açık onay/kaynakla belirle.",
+      "negative_paths": [
+        "Seçilen sözleşme için ödeme başarılı ve mali kapı eksik/başarısız durumunu ayrı doğrula."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G02",
+      "title": "Ödeme sonrası masa boşalmasında status_changed_at güncellenmiyor",
+      "defects": [
+        "PAY-002"
+      ],
+      "exact_surface": [
+        "src/Host/Experience/Orders/OrderSettlementService.cs",
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Ödemeyle Occupied→Available değişince zaman ilerler; zaten Available iken sahte değişim zamanı üretilmez.",
+      "negative_paths": [
+        "Merge katılımcısı serbest kalışında aynı zaman invariantı korunur.",
+        "Kaynak karttaki transfer/merge/rezervasyon/unmerge dalları ayrı alt kusurlara bölünmeden F0203 kapanmaz."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G03",
+      "title": "Kart çekilmedi çözümü bekleyen manuel onayı terminal duruma taşımıyor",
+      "defects": [
+        "PAY-003"
+      ],
+      "exact_surface": [
+        "src/Modules/Payments/ManualResolution/IManualCardConfirmationRepository.cs",
+        "src/Modules/Payments/ManualResolution/ManualPaymentResolutionService.cs",
+        "src/Modules/Payments/ManualResolution/PostgresManualCardConfirmationRepository.cs",
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Pending claim + kart çekilmedi çözümü: ödeme ve claim terminal durumları tutarlı; slip yeniden kullanım kuralı sınanır.",
+      "negative_paths": [
+        "Onayla/çözüm yarışında tek terminal sonuç; audit başarısızsa her ikisi rollback.",
+        "Kaybolan yanıt/replay ve farklı aktör durumları sözleşmeye uygun."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G04",
+      "title": "Ödeme ile sipariş tamamlama aktörü kayboluyor",
+      "defects": [
+        "PAY-004"
+      ],
+      "exact_surface": [
+        "src/Host/DualScreen/DualScreenApplication.Payments.cs",
+        "src/Host/Experience/Orders/OrderSettlementService.cs",
+        "src/Modules/Orders/OrderAggregate/Order.cs",
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "İnsan ödeme yolunda geçmiş gerçek aktör içerir.",
+      "negative_paths": [
+        "Sweeper için kanıtlı sistem kimliği sözleşmesi belirlenir; rastgele veya hayali kullanıcı üretilmez.",
+        "Sipariş zaten tamam ise fazladan history/audit oluşmaz."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G05",
+      "title": "Kapanış ile eşzamanlı kart girişimi aynı hesap kilidine bağlı değil",
+      "defects": [
+        "PAY-005"
+      ],
+      "exact_surface": [
+        "src/Modules/Billing/PaymentClosure/BillClosureService.cs",
+        "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs",
+        "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs",
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs",
+        "tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Gerçek PG mandallarıyla projection okuması sonrası yeni unresolved kartı araya sok; Paid+unresolved invariantını ölç.",
+      "negative_paths": [
+        "Kapanış/kart, iptal/tahsilat, bahşiş/kapanış yarışlarını ayrı parametrik matrise bağla.",
+        "Audit/DB hatası ve iptal kilidi bırakır; mutasyon kilit/snapshot korumasını kaldırınca test kırılır."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G06",
+      "title": "İade fiş tekillik kapsamı belirlenmemiş ve korunmuyor",
+      "defects": [
+        "PAY-006"
+      ],
+      "exact_surface": [
+        "src/Host/Experience/Billing/PaymentRefunds.cs",
+        "src/Modules/Payments/PaymentAggregate/PostgresRefundRequestRepository.cs",
+        "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Önce slip benzersizlik alanını mevcut mali/provider kararıyla doğrula.",
+      "negative_paths": [
+        "Aynı normalleştirilmiş anahtarlı paralel iki tamamlamadan yalnız izinli olanı commit eder.",
+        "Farklı terminal/sağlayıcı aynı numara karar gereği mümkünse yanlış red olmaz.",
+        "Migration gerekiyorsa yeni migration/manifest exact surface ayrı görev, mevcut migration değiştirilmez."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G07",
+      "title": "Manuel iade tamamlamada isteyen/tamamlayan ayrımı belirsiz",
+      "defects": [
+        "PAY-007"
+      ],
+      "exact_surface": [
+        "src/Host/Experience/Billing/PaymentRefunds.cs",
+        "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Manual/allowance/manager yolları için isteyen-onaylayan-tamamlayan matrisi onaylanır.",
+      "negative_paths": [
+        "Seçilen yasaklı aynı kişi kombinasyonu mutasyonla kırmızı/yeşil kanıtlanır.",
+        "401/403, audit rollback ve tekrarlanan tamamlama tek yan etki sağlar."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G08",
+      "title": "Tamamlanmayan manuel iadede kullanılan allowance yaşam döngüsü belirsiz",
+      "defects": [
+        "PAY-008"
+      ],
+      "exact_surface": [
+        "src/Host/Experience/Billing/PaymentRefunds.cs",
+        "src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs",
+        "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Requested/bütçesiz red, allowance+manual bekleme, tamamlanma, vazgeçme ve oturum kapanışı matrisi ayrı ölçülür.",
+      "negative_paths": [
+        "Rezervasyon mu tüketim mi kuralı onaylanır; ters hareketler negatif bütçe veya çift serbest bırakma yaratmaz.",
+        "Kayıp yanıt/replay ve işlem arası hata/rollback bütçeyi doğru tutar."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G09",
+      "title": "Tahsis satırı olmayan sıfır ödenecek hesabın yeniden kapanışı seçilmiyor",
+      "defects": [
+        "PAY-009"
+      ],
+      "exact_surface": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs",
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "%100 indirim sonrası ilk kapanışı hata ile düşür; tahsis yokken sweep hesabı kapatır.",
+      "negative_paths": [
+        "Ödenmemiş pozitif bakiyeli hesap kapanmaz; Cancelled etkilenmez.",
+        "Grace ve pahalı aday seçimi sınırı korunur; gereksiz tarama ölçülür."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G10",
+      "title": "Paid kaydı sonrası sipariş tamamlama hatası yeniden seçilmiyor",
+      "defects": [
+        "PAY-010"
+      ],
+      "exact_surface": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs",
+        "src/Host/Experience/Orders/OrderSettlementService.cs",
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Önce bill Paid olsun, sonra order Save/audit/DB fail enjekte et; ikinci tur order tamamlanır ve masa doğru serbest kalır.",
+      "negative_paths": [
+        "Replay aynı history/merge serbest bırakma işlemini ikilemez.",
+        "Bir order tamamlanamaması diğer adayları durdurmaz; cancellation ve tekrar başlatma çalışır."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G11",
+      "title": "Approved tutar ile requested tutar üst sınırı sözleşmesi belirsiz",
+      "defects": [
+        "PAY-011"
+      ],
+      "exact_surface": [
+        "src/Modules/Payments/PaymentAggregate/Payment.cs",
+        "tests/Modules/Payments/PaymentAggregate/PaymentDomainTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Domain talep/onay kuralı ve provider capture contract kaynağı okunur.",
+      "negative_paths": [
+        "requested<tendered, partial approval, approved>requested varyasyonları gerçek invariantı sınar; para üstü ayrı korunur.",
+        "Kural belli değilse yeni guard ve hayali provider davranışı yok."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    },
+    {
+      "id": "PAY-G12",
+      "title": "DESC LIMIT seçimi genel adil tarama garantisi vermiyor",
+      "defects": [
+        "PAY-012"
+      ],
+      "exact_surface": [
+        "src/Host/Experience/Billing/BillClosureSweeper.cs",
+        "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs"
+      ],
+      "dependencies": [],
+      "red_check": "Ters fixture: eski fully-paid açık hesap ardından 201 daha yeni partial; sweep tur(lar)ında eski hesap sonunda kapanır.",
+      "negative_paths": [
+        "Eşit updated_at ve200/201 sınırı deterministik, cursor/progress restart sonrası kayıp yaratmaz.",
+        "Sonsuz sürekli yeni trafik altında bounded progress kanıtı; yalnız ASC↔DESC değişimi yeterli kabul edilmez."
+      ],
+      "evidence_tier": "real PostgreSQL + Host integration; unit only for pure money rules",
+      "unresolved_paths": [],
+      "status": "draft-not-executable-task"
+    }
+  ],
+  "limitations": [
+    "Salt okunur güncel kod okuması; yeni runtime test sonucu yok.",
+    "Dört ürün/provider kararı ve bazı exact surface yolları doğrulanmadan uygulama görevi açılamaz.",
+    "F0203 kartındaki diğer masa değişim dalları bu dalgada kapatılmadı.",
+    "PAY-012 yeni statik gözlemdir, ana1376 kayıt sayısına sessiz eklenmedi.",
+    "V1-RMD-750 sıralama dar testinin geçmiş yeşili genel fairness kanıtı değil.",
+    "PAY-009/PAY-010/PAY-012 seçim filtresi gerçek PostgreSQL temp tablo koşusunda doğrulandı; bütün Host davranışının uçtan uca kanıtı değildir."
+  ],
+  "source_hashes": {
+    "src/Modules/Billing/PaymentClosure/BillClosureService.cs": "442088e2f952c30e61feef027bd98928e806030a030bc7bb5570b9565a36e690",
+    "src/Modules/Billing/PaymentClosure/BillPaymentClosureProjector.cs": "91f84af7a1590510abed249074b2d25702ee114133cf66349a681dd9e7487f3c",
+    "tests/Modules/Billing/PaymentClosure/BillClosureServiceTests.cs": "cddba66cde44e4488ec33439b478264e34f21e2d83bb653cb37918989b9e9a95",
+    "evidence/V1-RMD-739/findings/register.md": "586741831600943cf78907712067cfd1a4d3eb1a557b2a00965d00fda433bf41",
+    "evidence/V1-RMD-739/findings/po-questions.md": "d53931f62c0a9c67a1159f7a42eed45a4b75a48ac00492adb8cec02d3d49fca2",
+    "src/Host/Experience/Orders/OrderSettlementService.cs": "e6d7c51a8e58a70ffabf8aa8c0a141a84f25367a82165d316b1cd4eac2b35600",
+    "tests/Host/Experience/PaymentTender/PaymentTenderHttpTests.cs": "0bdc53768e707a0e49cb89311abc553b67b87bc1a58ead2a11e9433b3f88fe96",
+    "src/Modules/Payments/ManualResolution/ManualPaymentResolutionService.cs": "6f11d3d02ce6e5ab44911b59ecab4f63c3bf4177089550efbaa87efe657d873c",
+    "src/Modules/Payments/ManualResolution/PostgresManualCardConfirmationRepository.cs": "1e21073409772a5091af5dde7c58959edac78b46371c90284966b2bc41149e3f",
+    "src/Modules/Payments/ManualResolution/IManualCardConfirmationRepository.cs": "e16ff0b3fdf797f7ae379a8582a56cb6d81e4d95039ab547e6df4caf1b41daae",
+    "src/Host/DualScreen/DualScreenApplication.Payments.cs": "9b2351fd26d23c9ac46d3e8282d58ebdadc4f18d443325e17c2a60ac26240a6a",
+    "database/migrations/V1/V1-RMD-283/143-manual-card-confirmations.up.sql": "a7e2f4ac83b8fce788477907ddab857b5a9cc1c671c0031b7d5bef9bee4762f5",
+    "src/Modules/Orders/OrderAggregate/Order.cs": "e5b336ffb83f11222e7c2db24069d9c555f55e36c5243e80b84b6543776cc081",
+    "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs": "92960b8cc52c229559ee4fd209da0daafd5dd0c446d0a783ca515062e96245be",
+    "src/Host/Experience/Billing/PaymentRefunds.cs": "12d4ab7d0d1cc31120a067c036922c3227e442f48ebbf1c219da755656224328",
+    "src/Modules/Payments/PaymentAggregate/PostgresRefundRequestRepository.cs": "0532c6b7db4337fbe51ea9beddbdd1aa87c19d59bb4a9e353cdd228afe2cf855",
+    "tests/Host/Experience/Billing/PaymentRefundHttpTests.cs": "6dc8201500e27a632bdad39ad24a7ce50b3d0e5427d24b8cf30ca2399d5feed7",
+    "database/migrations/V1/V1-RMD-508/183-refund-requests.up.sql": "15d8b9704cd8f07f837e884414394a2c2acdffbaf89c77788da00e487acbf9aa",
+    "src/Modules/Cash/SessionLifecycle/PostgresRefundAllowanceRepository.cs": "5dd1eacefee12efdeb973e0abc003274fd83ad32bb6c9ab7b2d24c98571e0a20",
+    "src/Host/Experience/Billing/BillClosureSweeper.cs": "cccf25ca1c16f029f46ea3f91d6fc5ea54f19d283c808c387c9b192a4b9eb60e",
+    "evidence/V1-RMD-604/README.md": "d84869abcded6306151a7faeb2ac7bde9bf15dc41b3212607e85660d6c7d738c",
+    "src/Modules/Payments/PaymentAggregate/Payment.cs": "52e89eb49d01ebed0f99f56b82d5a3a5d5ab993524ff000c4aeaeef8a5952978",
+    "tests/Modules/Payments/PaymentAggregate/PaymentDomainTests.cs": "d608ce2a8ab05f4a339117e5c74082c923102c9d65cf0d2be6a8b71c59eee828",
+    "plan/v1/remediation/V1-RMD-750-hesap-kapatma-sweeper-tikanmasi.md": "27f7810662d4e86d52be968b0651023072288242761ff3b977d25fb83c8fac70"
+  },
+  "planning_status": "Taslak: kaynak ve yol kontrolü geçti; bağımsız davranış/kapsam incelemesi bekliyor. Uygulama görevi değildir.",
+  "review_merge_suggestions": [
+    "PAY-G09+PAY-G12 aynı seçim sorgusu: tek grup, PAY-G10 sonra",
+    "PAY-G06/G07/G08 PaymentRefunds.cs: seri",
+    "PAY-G02/G04/G10 OrderSettlementService.cs: seri",
+    "PAY-G01/G05 BillClosureService.cs: seri"
+  ],
+  "review_surface_gaps": "PAY-003 için src/Modules/Payments/CardSettlement/CardSettlementModule.cs yazma yüzeyine eklenecek.",
+  "independent_review": "Bağımsız statik inceleme tamamlandı; düzeltmeler uygulandı. Runtime testi yok. Task ID atanmadı."
+}

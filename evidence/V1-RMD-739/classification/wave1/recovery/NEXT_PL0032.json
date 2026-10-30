@@ -1,0 +1,20 @@
+{
+  "source_id": "PL0032",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V13-PAY-003 evidence folder missing",
+      "status": "verification-needed",
+      "invariant": "Every Done task must have an evidence/<Task-ID>/ folder with reproducible acceptance proof (AGENTS.md line 82-83, V1-RMD-433)",
+      "mechanism": "Task V13-PAY-003 is marked Done but no evidence/V13-PAY-003/ directory exists in the repository. The task's Acceptance evidence section lists 8/8 TenderComposition tests passing, regression tests across 4 test suites, and audit tool passes, but these artifacts were not persisted to the required evidence folder. Additionally, the task was marked Done while its declared dependency V13-MCD-004 was not Done — waived by V13-GOV-008 but this waiver itself needs evidence.",
+      "source_evidence": "evidence/V1-RMD-604/README.md:34; plan/v1.3/payments/V13-PAY-003-tender-handler-composition.md:62-66, 136-144",
+      "acceptance": "Create evidence/V13-PAY-003/ with test logs, build output, and audit tool outputs matching the Acceptance evidence claims. Document the V13-MCD-004 waiver (V13-GOV-008) with approval record. Re-run tests if needed to generate fresh artifacts.",
+      "id": "W2-N-PL0032-01",
+      "parents": [
+        "PL0032"
+      ]
+    }
+  ],
+  "limitations": "Task is marked Done with detailed Acceptance evidence in its plan file, but the mandatory evidence folder per AGENTS.md and V1-RMD-433 was never created. The V13-MCD-004 dependency waiver via V13-GOV-008 is documented in the task but the gate waiver evidence itself is not in the evidence folder. No runtime verification possible in this read-only review.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

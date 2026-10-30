@@ -1,0 +1,37 @@
+{
+  "source_id": "F0099",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Kapalı fatura dönemine geçmiş tarihli yeni kaynak yazılabiliyor",
+      "status": "open",
+      "invariant": "V14-INV-001 kapsamındaki kapalı döneme yeni kaynak eklenemez kuralı, dönem kapandıktan sonra o döneme ait yeni kaynak hareketlerinin kabul edilmemesini gerektirir.",
+      "mechanism": "OccurredAt doğrulanmadan saklanıyor; ledger INSERT işlemi dönemi okumuyor veya kapanışla ortak kilit almıyor. Dönem migration'ında ledger INSERT'ini engelleyen kural yok. Veritabanı genelinde invoice_periods/closed-period adları için yapılan aramada başka bir kapalı dönem koruması bulunmadı. Kaynak kümesi mevcutsa SelectInTransactionAsync yeni uygun hareketleri okumadan eski kümeyi döndürüyor. Böylece geç tarihli satır mevcut kümeye alınmıyor; farklı dönem pencerelerine de uymuyor. Test kaynağı bu geç yazmayı açıkça kabul ediyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:109",
+        "evidence/V1-RMD-739/tasks/B026.md:19-22",
+        "plan/v1.4/invoicing/V14-INV-001-periodic-source-selection.md:43-46",
+        "src/Modules/CustomerAccounts/TransactionLedger/RecordAccountTransactionRequest.cs:37-68",
+        "src/Modules/CustomerAccounts/TransactionLedger/PostgresAccountTransactionLedger.cs:32-64",
+        "database/migrations/V14/V14-INV-001/167-invoice-source-selection.up.sql:1-57",
+        "src/Modules/Invoicing/SourceSelection/PostgresInvoiceSourceSelectionService.cs:23-35,44-110,239-255",
+        "tests/Modules/Invoicing/SourceSelection/InvoiceSourceSelectionTests.cs:113-127"
+      ],
+      "acceptance": [
+        "Tam üretim migration zincirinde dönem kapanışından sonra o döneme ait yeni, farklı kaynak kimlikli ledger hareketi reddedilir; mevcut geçerli kaynak retry davranışı korunur.",
+        "Kapanış ile yeni kaynak INSERT yarışı deterministik entegrasyon testiyle doğrulanır; kapanmış dönemde sessizce dışarıda kalan kaynak oluşmaz.",
+        "Kapanış öncesi kaynakların ilk seçimi ve aynı kümenin idempotent tekrarı korunur; mevcut geç yazmayı kabul eden test kuralı ihlal etmeyecek şekilde güncellenir."
+      ],
+      "id": "W2-R-F0099-01",
+      "parents": [
+        "F0099"
+      ]
+    }
+  ],
+  "limitations": [
+    "Yalnız statik kaynak doğrulaması yapıldı; repo kodu, test veya migration çalıştırılmadı.",
+    "Veritabanı araması dönem isimlerine dayalıdır; canlı şema ve dışarıdan yüklenen olası trigger'lar görülmedi.",
+    "B026 kartındaki 500 müşteri kesme bulgusu bu source_id kapsamına alınmadı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

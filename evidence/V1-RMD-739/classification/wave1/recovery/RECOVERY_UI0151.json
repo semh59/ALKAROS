@@ -1,0 +1,55 @@
+{
+  "source_id": "UI0151",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Taslak kalem kaldırmada yanlış dokunuş kurtarma adımı yok",
+      "status": "open",
+      "invariant": "Ucuz/geri alınabilir aksiyon kısa süreli Geri Al sunmalı; geri alınamaz silme açık onay adımı olmadan uygulanmamalı.",
+      "mechanism": "Kaldır doğrudan DELETE gönderiyor. execute yalnız işlemi uygulayıp siparişi yeniden okuyor; bu çağrı başarı mesajı bile vermiyor. Domain kalemi listeden çıkarıyor. Kaldırma için ne açık onay ne kaldırılan kalemi geri getiren undo akışı görüldü. Bu, taslak düzenleme UX koruması açığıdır; gönderilmiş kalemin denetimsiz iptali değildir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:5 — özgün tek dokunuş iddiası",
+        "src/Clients/PosTerminal/src/routes/Cashier.tsx:357-390,761-767 — execute ve doğrudan kaldırma",
+        "src/Clients/PosTerminal/src/routes/Cashier.tsx:602-609 — genel bildirim yalnız metin/kapatma",
+        "src/Clients/PosTerminal/src/api.ts:216-225 — DELETE isteği",
+        "src/Modules/Orders/OrderAggregate/Order.cs:658-668 — listeden çıkarma",
+        "docs/design/foundations.md:167-176 — ucuz aksiyon/undo ve geri alınamaz silme/onay ayrımı"
+      ],
+      "acceptance": [
+        "Taslak kalem kaldırmanın ardından kısa süreli, görünür ve klavyeyle erişilir Geri Al sunulmalı; aynı kalemin özgün miktar ve verilerini sunucu otoritesiyle geri getirmeli.",
+        "İşlem geri alınamaz olarak korunacaksa kaldırmadan önce açık onay gösterilmeli; ilk dokunuş tek başına kalemi silmemeli.",
+        "Ağ hatası, eski revision ve gönderimle yarış durumlarında yanlış başarı/yerel sahte geri alma olmamalı."
+      ],
+      "id": "W2-R-UI0151-01",
+      "parents": [
+        "UI0151"
+      ]
+    },
+    {
+      "title": "Gönderilmiş kalem gerekçesiz veya yetkisiz iptal edilebiliyor iddiası bu akışta geçerli değil",
+      "status": "not-defect",
+      "invariant": "Taslak sepet kalemi kaldırma ile gönderilmiş/aktif kalem iptali ayrı işlemlerdir; aktif sipariş ve aktif kalem bu DELETE üzerinden silinememeli.",
+      "mechanism": "Endpoint OrdersCreate yetkisini denetliyor. Store terminale bağlı aktif siparişi kilitliyor, Draft ve expectedRevision koşullarını arıyor. Domain hem siparişin hem kalemin Draft olmasını şart koşuyor; CancelItem ile farkı açıkça belgelenmiş. Bu yüzden WaiterPwa iptal/ikram akışındaki gerekçe/yönetici onayının burada yokluğu tek başına yetki açığı değildir.",
+      "source_evidence": [
+        "src/Host/DualScreen/DualScreenApplication.Endpoints.cs:458-475 — OrdersCreate kapısı",
+        "src/Host/DualScreen/DualScreenStore.Orders.cs:296-302 — gerçek mutator yönlendirmesi",
+        "src/Host/DualScreen/DualScreenStore.cs:376-420,423-448 — terminal bağı, Draft ve revision kapısı",
+        "src/Modules/Orders/OrderAggregate/Order.cs:651-668 — yalnız Draft kalem kaldırma"
+      ],
+      "acceptance": [
+        "Yetkisiz çağrı reddedilmeli; başka terminalin siparişi, eski revision, Draft olmayan sipariş ve Draft olmayan kalem mutasyona uğramamalı.",
+        "Taslak kaldırma ile gönderilmiş kalem iptalinin ayrı domain işlemleri olduğu korunmalı; UX kurtarma açığı ayrı ele alınmalı."
+      ],
+      "id": "W2-R-UI0151-02",
+      "parents": [
+        "UI0151"
+      ]
+    }
+  ],
+  "limitations": [
+    "Kod/API/domain zinciri statik okundu; runtime veya negatif test çalıştırılmadı. Güvenlik kapılarının çalıştırma sonucu raporlanmıyor.",
+    "İlk aranan DualScreenEndpoints.cs ve Modules/Orders/Order.cs yolları yoktu; aramayla mevcut DualScreenApplication.Endpoints.cs ve OrderAggregate/Order.cs bulundu ve okundu.",
+    "Kayıt kısmen çürütüldü ama yanlış dokunuş koruması açık kaldı; bütün kaynak historical-fixed/not-defect olarak kapatılmadı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

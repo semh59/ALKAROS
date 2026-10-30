@@ -1,0 +1,29 @@
+{
+  "source_id": "W2-04-006",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Dead-letter değişimi net sayaçta kaybolabiliyor",
+      "status": "open",
+      "invariant": "Yeni dead-letter oluşumu aradaki silme veya yeniden kuyruğa alma nedeniyle kaybolmamalı.",
+      "mechanism": "Watcher yalnız poll anındaki dead sayısını karşılaştırıyor. İki poll arasında bir silme ve bir yeni dead toplamı aynı bırakırsa olay üretilmez.",
+      "source_evidence": [
+        "D:/project/ALKAROS/src/Host/Observability/SecurityDetectors/SecurityDetectors.cs:74-84",
+        "D:/project/ALKAROS/src/BuildingBlocks/Messaging/OutboxStore.cs:251"
+      ],
+      "acceptance": "İki poll arasında dead kümesi değişip toplam aynı kaldığında yeni hata algılanır.",
+      "id": "W2-N-W2-04-006-01",
+      "parents": [
+        "W2-04-006"
+      ]
+    }
+  ],
+  "limitations": [
+    "Özgün yüksek-su-seviyesi anlatımı yanlış: satır 81 her okumada _lastDead değerini azaltır. Açık kusur aynı toplam altında yeni dead olayının kaçmasıdır; eski en yüksek sayıya takılma değildir.",
+    "OutboxDeadLetterWatcher.CheckOnceAsync satır 78-81: dead > Math.Max(_lastDead, 0) kontrolü sadece artış algılar. Eski dead silinip yenisinikaydedilirse dead sayısı aynı kalır, rose=false olur, olay üretilmez.",
+    "_lastDead = dead ataması (satır 81) her poll'da güncellenir; bu, önceki düşüşü de unutturur. Sadece monoton artış takip ediliyor.",
+    "OutboxStore.cs:251 (requeue/dead-letter mantığı) okunup doğrulanmadı; watcher sadece sayaç bakıyor, kimlik/değişim değil.",
+    "Test çalıştırılmadı; kabul koşulu sadece taslak."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

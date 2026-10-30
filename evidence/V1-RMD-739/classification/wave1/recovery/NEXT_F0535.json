@@ -1,0 +1,32 @@
+{
+  "source_id": "F0535",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "TelemetryPrivacyGuard duplicates redaction logic instead of reusing ObservabilityRedactionHook",
+      "status": "open",
+      "invariant": "Single source of truth for sensitive field/value redaction; no duplicate regex patterns",
+      "mechanism": "TelemetryPrivacyGuard.cs:17-22 defines its own ForbiddenField regex (password|secret|token|cvv|pan|authorization|cookie|api_key|private_key) and BearerOrJwt/Digits patterns for value-based redaction. ObservabilityRedactionHook.cs:29-69 already maintains a SensitiveKeys HashSet (password, pwd, secret, client_secret, token, auth_token, access_token, refresh_token, api_key, apikey, private_key, credential, credentials, pan, cvv, cvv2, card_number, cardnumber, pin, tc_kimlik, tckn, identity_no, tax_id, passwd, passphrase, one_time_password, otp, security_code, verification_code, recovery_code) and IsSensitiveKey method (exact + substring match). The two implementations overlap but differ: TelemetryPrivacyGuard uses regex on field names, ObservabilityRedactionHook uses HashSet + Contains. TelemetryPrivacyGuard also adds value-based detection (Bearer/JWT tokens, Luhn card numbers) which ObservabilityRedactionHook lacks. Neither reuses the other.",
+      "source_evidence": "src/Modules/Observability/TelemetryPrivacy/TelemetryPrivacyGuard.cs:17-22 (ForbiddenField, BearerOrJwt, Digits regex); src/Modules/Observability/Foundation/ObservabilityRedactionHook.cs:29-86 (SensitiveKeys, IsSensitiveKey); evidence/V1-RMD-739/findings/low-A.md:192",
+      "acceptance": "Consolidate redaction logic into a single shared implementation. Either: (a) TelemetryPrivacyGuard.Sanitize delegates to ObservabilityRedactionHook.IsSensitiveKey for field-name checks and adds only value-based detection (Bearer/JWT, Luhn) as a separate layer, or (b) ObservabilityRedactionHook gains value-based detection and TelemetryPrivacyGuard is removed. All tests must pass with unified behavior.",
+      "id": "W2-N-F0535-01",
+      "parents": [
+        "F0535"
+      ]
+    },
+    {
+      "title": "Telemetry data class not registered in approved retention catalog (TelemetryRetention policies)",
+      "status": "open",
+      "invariant": "Every telemetry table must have a TelemetryRetentionPolicy entry with retention days",
+      "mechanism": "TelemetryRetention.cs:7-14 defines three constants (RawEventDays=30, HourlySummaryDays=395, ErrorEventDays=90) but these are not automatically linked to a catalog. The PurgeAsync method accepts IEnumerable<TelemetryRetentionPolicy> from callers. There is no centralized catalog/registry where telemetry table names are declared with their retention policies. The Privacy module (src/Modules/Privacy) contains Anonymization and RetentionExecution but no telemetry-specific retention entries. The finding notes \"Privacy altında telemetri yok; Grep iki desen\" - grep for telemetry in Privacy yields no results.",
+      "source_evidence": "src/Modules/Observability/TelemetryPrivacy/TelemetryRetention.cs:7-62; src/Modules/Privacy/ (no telemetry references); evidence/V1-RMD-739/findings/low-A.md:192",
+      "acceptance": "Create a central telemetry retention catalog (e.g., TelemetryRetentionCatalog static class or configuration) listing all observability tables with their retention days. TelemetryPrivacyGuard-sanitized telemetry tables must appear in this catalog. PurgeAsync callers must use the catalog instead of ad-hoc policy lists. Verify with grep that all observability tables have catalog entries.",
+      "id": "W2-N-F0535-02",
+      "parents": [
+        "F0535"
+      ]
+    }
+  ],
+  "limitations": "The value-based detection in TelemetryPrivacyGuard (Bearer/JWT tokens, Luhn card validation) has no equivalent in ObservabilityRedactionHook. Consolidation must preserve this capability. The retention catalog is currently implicit - callers of PurgeAsync construct policy lists manually. A formal catalog would require identifying all observability tables across the codebase (raw_ui_interactions, error_events, error_occurrences, alert_events, health_checks, etc.).",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

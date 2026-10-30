@@ -1,0 +1,37 @@
+{
+  "source_id": "F0351",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Kalem silme bağlı finansal adjustment satırını kademeli siliyor",
+      "status": "open",
+      "invariant": "Kaleme bağlı indirim/adjustment finansal geçmişi, kalemin fiziksel silinmesiyle örtük biçimde kaybolmamalı; işlem reddedilmeli veya tarihsel kalem ve bağlantı korunmalıdır.",
+      "mechanism": "032 migration'ı bill_adjustments için (bill_id,bill_item_id) composite FK'yı ON DELETE CASCADE ile kuruyor; allocation FK'sı da aynı silme davranışını taşıyor. Güncel PostgresBillRepository.SaveAsync mevcut kümeden çıkarılan kalemlerde fiziksel DELETE çalıştırıyor; bu dal bağlı adjustment satırlarının da veritabanınca silinmesine izin verir. Migration 180 iptal yolunu superseded_at ile tarihsel tutuyor fakat 032'nin CASCADE kuralını değiştirmiyor. Bu bulgu adjustment ayrıntısının kaybıdır; ayrı AuditEventStore olayının da silindiği iddia edilmedi.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:8 — özgün kaynak",
+        "evidence/V1-RMD-739/tasks/B002.md:20-23 — tam kart",
+        "database/migrations/V1/V1-BIL-004/032-billing-composite-integrity.up.sql:24-28,40-44 — allocation ve adjustment composite FK CASCADE",
+        "database/migrations/V1/V1-BIL-003/021-bill-adjustments.up.sql:14-22 — gerekçe, yetkilendiren ve oluşturan alanlarıyla kayıt",
+        "src/Modules/Billing/BillFoundation/PostgresBillRepository.cs:99-107,560-570 — eksilen kalemlerin fiziksel silinmesi",
+        "src/Modules/Billing/Adjustments/PostgresBillAdjustmentRepository.cs:25-77 — finansal ayrıntıların adjustment tablosundan okunması",
+        "database/migrations/V1/V1-RMD-506/180-bill-cancellation.up.sql:10-14 — tarihsel kalem için superseded_at, CASCADE değişikliği yok"
+      ],
+      "acceptance": [
+        "Tam migration zinciriyle gerçek PostgreSQL'de kaleme bağlı adjustment oluşturulup kalem silme denendiğinde finansal kayıt kaybolmamalı: silme reddedilmeli ya da tarihsel satır bağlantısıyla korunmalı.",
+        "Aynı invariant repository SaveAsync içindeki eksilen kalem dalında da doğrulanmalı; ilişkili allocation geçmişi ayrıca denetlenmeli.",
+        "Düzeltme geçmiş 032'yi değiştirmek yerine yeni additive migration ile yapılmalı ve ileri/geri kanıtı kaydedilmeli."
+      ],
+      "id": "W2-R-F0351-01",
+      "parents": [
+        "F0351"
+      ]
+    }
+  ],
+  "limitations": [
+    "ON DELETE CASCADE ve fiziksel DELETE dalı statik olarak doğrulandı; veri silme denemesi veya test çalıştırılmadı.",
+    "Bu SaveAsync dalına ulaşan bütün kullanıcı akışları tüketilmedi; belirli bir UI eyleminde gerçekleşmiş kayıp iddiası yok.",
+    "Migration ağacında ilgili FK adları ve bill_adjustments kullanımları arandı; gerçek dağıtım şemasına bağlanılmadı.",
+    "Özgün kartın 032 satır numaraları eskidir; güncel kanıt 28 ve 44. satırlardır."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

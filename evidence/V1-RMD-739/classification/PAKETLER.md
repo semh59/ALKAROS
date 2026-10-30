@@ -1,0 +1,323 @@
+# Düzeltme paketleri ve yürütme sırası
+
+**1376 kaynak kaydı → 300 kategori/alan yönlendirme paketi.** Bu sayı bağımsız hata, kesin uygulama görevi veya tekil kök neden sayısı değildir.
+Paketler kod yazma yetkisi vermez. Her paket içindeki bağımsız davranışlar exact sahiplik ve bağımlılıklarla ayrı görevlenir; aynı modülde olmak birleştirme gerekçesi değildir.
+
+## Sıra ve kapanış kapısı
+
+1. Her kayıt kaynak kartıyla açılır; bileşik iddia alt kusurlara ayrılır, güncel giriş/çağrı/kalıcı etki doğrulanır. Mevcut 16 kapanış eşleşmesi için eski kanıt sınırı korunur.
+2. Para/stok/yetki/gizlilikte invariant ve eşzamanlılık; eksik teslimatla aynı invariant içindeyse birlikte planlanır. Hepsi kritik; sıra önem düşürmek değildir.
+3. Ulaşılabilirlik ve yasaklı kod: ölü/hayali/varsayımsal yol için gerçek kaynak ve tüketici kanıtı. Dış bağımlılık varsayımsal adaptörle kapatılmaz; silme onayı ayrı.
+4. Mevcut teslimatın uç/worker/UI bağlantıları; kaynak verisi ve hata yolları. Yeni davranış kararı gerekirse PO kapısı açık kalır, yetkisiz özellik yazılmaz.
+5. Arayüz/erişilebilirlik/dil ile mimari/veri/dayanıklılık kusurları gerçek davranış üzerinden doğrulanır; tüm komşu etkiler aynı kabul matrisine eklenir.
+6. Her düzeltmeyle aynı anda kalıcı test ve belge/kanıt güncellemesi. Test/kanıt ve belge işleri sonradan bırakılacak borç değildir.
+7. Kırmızı→yeşil, geçerli mutant, komşu/tam ilgili testler, bağımsız denetim ve scope/plan/consistency kapıları. Grup, son alt kusur kapanmadan kapatılmaz.
+
+## Tekrar yönetimi
+
+- `KOK_NEDEN_BAGLARI.json` yalnız kaynakta desteklenen beş bağı ilişkilendirir; kayıt silinmez, aynı düzeltme birden fazla kayda bağlanabilir.
+- Diğer örtüşmeler henüz kesin birleştirilmedi. Aynı source satırı, aynı Task ID veya benzer kelime otomatik kök neden birleştirmesi değildir.
+- Bilgi/bulgu-değil kayıtları inceleme kuyruğunda korunur; yeni kural ve kaynak çelişkisi varsa belirsiz/aday olarak geri açılır.
+
+## Paket dizini
+
+- **PK0001** Audit — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0533
+- **PK0002** Audit+Billing+Catalog — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0908
+- **PK0003** Billing — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0388
+- **PK0004** Billing+Tables — Belge ve izlenebilirlik: 2 kayıt; kuyruk: is; kimlikler: F0371, F0372
+- **PK0005** Cashier — Belge ve izlenebilirlik: 20 kayıt; kuyruk: is; kimlikler: F0050, F0051, F0052, F0083, F0084, F0086, F0324, F0356, F0361, F0368, F0376, F0394, F0395, F0397, F0402, F0441, F0910, F0920, F0927, F0982
+- **PK0006** CustomerAccounts — Belge ve izlenebilirlik: 3 kayıt; kuyruk: is; kimlikler: F0453, F0454, F0455
+- **PK0007** CustomerData — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0662
+- **PK0008** Identity — Belge ve izlenebilirlik: 3 kayıt; kuyruk: is; kimlikler: F0367, F0369, F0502
+- **PK0009** Inventory — Belge ve izlenebilirlik: 4 kayıt; kuyruk: is; kimlikler: F0515, F0641, F0660, F0697
+- **PK0010** Kaynak-kapsami-teyit — Belge ve izlenebilirlik: 8 kayıt; kuyruk: is; kimlikler: F0654, F0937, F0997, PO0013, PO0040, PO0045, PO0055, PO0073
+- **PK0011** Kitchen — Belge ve izlenebilirlik: 8 kayıt; kuyruk: is; kimlikler: F0064, F0584, F0587, F0595, F0599, F0966, F0996, F0999
+- **PK0012** Observability — Belge ve izlenebilirlik: 4 kayıt; kuyruk: is; kimlikler: F0148, F0764, F0767, F0770
+- **PK0013** OnlineOrdering — Belge ve izlenebilirlik: 3 kayıt; kuyruk: is; kimlikler: F0644, F0650, F0661
+- **PK0014** Operations — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0791
+- **PK0015** Orders — Belge ve izlenebilirlik: 10 kayıt; kuyruk: is; kimlikler: F0070, F0185, F0352, F0381, F0527, F0573, F0581, F0849, F0909, F1001
+- **PK0016** Payments — Belge ve izlenebilirlik: 2 kayıt; kuyruk: is; kimlikler: PO0058, PO0059
+- **PK0017** PosTerminal — Belge ve izlenebilirlik: 1 kayıt; kuyruk: inceleme; kimlikler: F0900
+- **PK0018** PosTerminal — Belge ve izlenebilirlik: 11 kayıt; kuyruk: is; kimlikler: F0282, F0286, F0635, F0689, F0722, F0740, F0744, F0759, F0769, F0801, F0922
+- **PK0019** QrOrdering — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0987
+- **PK0020** QrOrdering+Settings — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0655
+- **PK0021** Recipes — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0712
+- **PK0022** Reconciliation — Belge ve izlenebilirlik: 2 kayıt; kuyruk: is; kimlikler: F0727, F1009
+- **PK0023** Reporting — Belge ve izlenebilirlik: 2 kayıt; kuyruk: is; kimlikler: F0739, F0743
+- **PK0024** Security — Belge ve izlenebilirlik: 3 kayıt; kuyruk: is; kimlikler: F0539, F0567, F0991
+- **PK0025** Settings — Belge ve izlenebilirlik: 4 kayıt; kuyruk: is; kimlikler: F0400, F0657, F0980, UI0099
+- **PK0026** Support — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0715
+- **PK0027** V0-ARC — Belge ve izlenebilirlik: 3 kayıt; kuyruk: is; kimlikler: F0289, F0810, F0811
+- **PK0028** V0-BKP — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0716
+- **PK0029** V0-CMP — Belge ve izlenebilirlik: 4 kayıt; kuyruk: is; kimlikler: F0042, F0291, F0294, F0462
+- **PK0030** V0-DAT — Belge ve izlenebilirlik: 7 kayıt; kuyruk: is; kimlikler: F0043, F0217, F0218, F0295, F0296, F0297, F0663
+- **PK0031** V0-DOM — Belge ve izlenebilirlik: 1 kayıt; kuyruk: inceleme; kimlikler: F0347
+- **PK0032** V0-DOM — Belge ve izlenebilirlik: 3 kayıt; kuyruk: is; kimlikler: F0239, F0346, F0568
+- **PK0033** V0-GOV — Belge ve izlenebilirlik: 2 kayıt; kuyruk: inceleme; kimlikler: F0466, F0815
+- **PK0034** V0-GOV — Belge ve izlenebilirlik: 6 kayıt; kuyruk: is; kimlikler: F0104, F0105, F0795, F0813, F0816, F0817
+- **PK0035** V0-REV — Belge ve izlenebilirlik: 20 kayıt; kuyruk: is; kimlikler: F0300, F0320, F0818, F0819, F0820, F0821, F0822, F0823, F0824, F0825, F0826, F0827, F0828, F0829, F0830, F0831, F0832, F0833, F0834, F0835
+- **PK0036** V0-SEC — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0468
+- **PK0037** V1-CUI — Belge ve izlenebilirlik: 2 kayıt; kuyruk: is; kimlikler: F0053, F0358
+- **PK0038** V1-FND — Belge ve izlenebilirlik: 13 kayıt; kuyruk: is; kimlikler: F0034, F0035, F0036, F0037, F0045, F0179, F0278, F0279, F0470, F0798, F0799, F0840, F0842
+- **PK0039** V1-GOV — Belge ve izlenebilirlik: 3 kayıt; kuyruk: inceleme; kimlikler: F0479, F0485, F0493
+- **PK0040** V1-GOV — Belge ve izlenebilirlik: 21 kayıt; kuyruk: is; kimlikler: F0110, F0111, F0118, F0128, F0362, F0363, F0365, F0471, F0474, F0476, F0477, F0486, F0487, F0488, F0491, F0494, F0844, F0898, F0928, F0933, F0951
+- **PK0041** V1-IAM — Belge ve izlenebilirlik: 3 kayıt; kuyruk: is; kimlikler: F0497, F0501, F0899
+- **PK0042** V1-KDS — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0570
+- **PK0043** V1-ORD — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0183
+- **PK0044** V1-REM — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0728
+- **PK0045** V1-RMD — Belge ve izlenebilirlik: 7 kayıt; kuyruk: inceleme; kimlikler: F0374, F0506, F0507, F0666, F0735, F0802, F0860
+- **PK0046** V1-RMD — Belge ve izlenebilirlik: 80 kayıt; kuyruk: is; kimlikler: F0069, F0136, F0144, F0147, F0154, F0158, F0221, F0223, F0269, F0284, F0336, F0375, F0380, F0387, F0392, F0393, F0398, F0409, F0422, F0508, F0509, F0510, F0512, F0514, F0526, F0540, F0541, F0542, F0545, F0547, F0549, F0550, F0553, F0575, F0580, F0591, F0596, F0597, F0603, F0609, F0613, F0620, F0622, F0670, F0680, F0691, F0695, F0730, F0731, F0781, F0803, F0805, F0806, F0808, F0851, F0852, F0853, F0856, F0858, F0862, F0864, F0866, F0867, F0868, F0870, F0871, F0873, F0875, F0883, F0885, F0886, F0901, F0918, F0967, F0973, F0995, F1007, F1011, F1012, PO0064
+- **PK0047** V1-TBL — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0438
+- **PK0048** V1-WTR — Belge ve izlenebilirlik: 2 kayıt; kuyruk: is; kimlikler: F0634, F1000
+- **PK0049** V11-RPT — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0787
+- **PK0050** V12-GOV — Belge ve izlenebilirlik: 2 kayıt; kuyruk: is; kimlikler: F0642, F0643
+- **PK0051** V12-NFC — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0646
+- **PK0052** V12-REC — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0789
+- **PK0053** V12-RMD — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0658
+- **PK0054** V13-GOV — Belge ve izlenebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0444
+- **PK0055** WaiterPwa — Belge ve izlenebilirlik: 6 kayıt; kuyruk: is; kimlikler: F0024, F0133, F0204, F0557, F0985, F1002
+- **PK0056** Billing — Kod kalitesi ve yasaklı uygulama: 2 kayıt; kuyruk: is; kimlikler: F0082, F0329
+- **PK0057** Cashier — Kod kalitesi ve yasaklı uygulama: 1 kayıt; kuyruk: is; kimlikler: F0377
+- **PK0058** Inventory — Kod kalitesi ve yasaklı uygulama: 2 kayıt; kuyruk: is; kimlikler: F0228, F1005
+- **PK0059** Invoicing — Kod kalitesi ve yasaklı uygulama: 1 kayıt; kuyruk: is; kimlikler: F0426
+- **PK0060** Kitchen — Kod kalitesi ve yasaklı uygulama: 1 kayıt; kuyruk: is; kimlikler: F0330
+- **PK0061** Observability — Kod kalitesi ve yasaklı uygulama: 2 kayıt; kuyruk: is; kimlikler: F0262, F0536
+- **PK0062** PosTerminal — Kod kalitesi ve yasaklı uygulama: 2 kayıt; kuyruk: is; kimlikler: F0207, F0970
+- **PK0063** Reporting — Kod kalitesi ve yasaklı uygulama: 2 kayıt; kuyruk: is; kimlikler: F0450, F0783
+- **PK0064** V0-GOV — Kod kalitesi ve yasaklı uygulama: 1 kayıt; kuyruk: inceleme; kimlikler: F0277
+- **PK0065** V1-RMD — Kod kalitesi ve yasaklı uygulama: 13 kayıt; kuyruk: is; kimlikler: F0268, F0412, F0421, F0423, F0511, F0551, F0604, F0606, F0617, F0672, F0679, F0694, F0807
+- **PK0066** V12-RMD — Kod kalitesi ve yasaklı uygulama: 1 kayıt; kuyruk: is; kimlikler: F0713
+- **PK0067** Cashier — Dayanıklılık ve performans: 2 kayıt; kuyruk: is; kimlikler: F0406, F0419
+- **PK0068** Inventory — Dayanıklılık ve performans: 2 kayıt; kuyruk: is; kimlikler: F0229, F0710
+- **PK0069** Invoicing — Dayanıklılık ve performans: 2 kayıt; kuyruk: is; kimlikler: F0427, F0457
+- **PK0070** Kaynak-kapsami-teyit — Dayanıklılık ve performans: 10 kayıt; kuyruk: is; kimlikler: UI0014, UI0015, UI0030, UI0043, UI0061, UI0062, UI0063, PO0054, PL0015, PL0016
+- **PK0071** Kitchen — Dayanıklılık ve performans: 3 kayıt; kuyruk: is; kimlikler: F0014, F0182, F0327
+- **PK0072** Observability — Dayanıklılık ve performans: 1 kayıt; kuyruk: inceleme; kimlikler: F0774
+- **PK0073** Observability — Dayanıklılık ve performans: 9 kayıt; kuyruk: is; kimlikler: F0250, F0256, F0259, F0723, F0751, F0762, F0773, F0778, F0793
+- **PK0074** OnlineOrdering — Dayanıklılık ve performans: 1 kayıt; kuyruk: is; kimlikler: F0649
+- **PK0075** Operations — Dayanıklılık ve performans: 3 kayıt; kuyruk: is; kimlikler: F0274, F0726, F0790
+- **PK0076** Orders — Dayanıklılık ve performans: 1 kayıt; kuyruk: is; kimlikler: F0590
+- **PK0077** PosTerminal — Dayanıklılık ve performans: 5 kayıt; kuyruk: is; kimlikler: F0074, F0417, F0685, F0688, F0753
+- **PK0078** Privacy — Dayanıklılık ve performans: 2 kayıt; kuyruk: is; kimlikler: F0564, F0565
+- **PK0079** QrOrdering — Dayanıklılık ve performans: 2 kayıt; kuyruk: is; kimlikler: F0170, F0561
+- **PK0080** Reconciliation — Dayanıklılık ve performans: 1 kayıt; kuyruk: is; kimlikler: F0092
+- **PK0081** Reporting — Dayanıklılık ve performans: 1 kayıt; kuyruk: is; kimlikler: F0709
+- **PK0082** Security — Dayanıklılık ve performans: 2 kayıt; kuyruk: is; kimlikler: F0149, F0177
+- **PK0083** Support — Dayanıklılık ve performans: 1 kayıt; kuyruk: is; kimlikler: F0714
+- **PK0084** V1-CDP — Dayanıklılık ve performans: 1 kayıt; kuyruk: is; kimlikler: F0838
+- **PK0085** V1-FND — Dayanıklılık ve performans: 1 kayıt; kuyruk: is; kimlikler: F0839
+- **PK0086** V1-RMD — Dayanıklılık ve performans: 2 kayıt; kuyruk: inceleme; kimlikler: F0737, F0779
+- **PK0087** V1-RMD — Dayanıklılık ve performans: 22 kayıt; kuyruk: is; kimlikler: F0075, F0145, F0189, F0246, F0247, F0326, F0403, F0407, F0435, F0519, F0529, F0592, F0605, F0611, F0675, F0692, F0733, F0782, F0859, F0861, F0895, F0905
+- **PK0088** V1-WTR — Dayanıklılık ve performans: 1 kayıt; kuyruk: is; kimlikler: F0208
+- **PK0089** V12-RMD — Dayanıklılık ve performans: 2 kayıt; kuyruk: is; kimlikler: F0216, F0659
+- **PK0090** V13-RMD — Dayanıklılık ve performans: 1 kayıt; kuyruk: is; kimlikler: F0449
+- **PK0091** WaiterPwa — Dayanıklılık ve performans: 1 kayıt; kuyruk: is; kimlikler: F0210
+- **PK0092** Billing — Eşzamanlılık ve atomiklik: 3 kayıt; kuyruk: is; kimlikler: F0058, F0341, F0925
+- **PK0093** Cash — Eşzamanlılık ve atomiklik: 1 kayıt; kuyruk: is; kimlikler: F0926
+- **PK0094** Cashier — Eşzamanlılık ve atomiklik: 1 kayıt; kuyruk: inceleme; kimlikler: F0914
+- **PK0095** Cashier — Eşzamanlılık ve atomiklik: 2 kayıt; kuyruk: is; kimlikler: F0354, F0378
+- **PK0096** CustomerAccounts — Eşzamanlılık ve atomiklik: 1 kayıt; kuyruk: inceleme; kimlikler: F0410
+- **PK0097** CustomerAccounts — Eşzamanlılık ve atomiklik: 3 kayıt; kuyruk: is; kimlikler: F0096, F0452, F0552
+- **PK0098** CustomerData — Eşzamanlılık ve atomiklik: 2 kayıt; kuyruk: is; kimlikler: F0173, F0562
+- **PK0099** Identity — Eşzamanlılık ve atomiklik: 4 kayıt; kuyruk: is; kimlikler: F0130, F0131, F0892, F0971
+- **PK0100** Inventory — Eşzamanlılık ve atomiklik: 6 kayıt; kuyruk: is; kimlikler: F0025, F0030, F0031, F0211, F0231, F0699
+- **PK0101** Inventory+Menu+Production+Purchasing+Recipes — Eşzamanlılık ve atomiklik: 1 kayıt; kuyruk: is; kimlikler: F0017
+- **PK0102** Kaynak-kapsami-teyit — Eşzamanlılık ve atomiklik: 4 kayıt; kuyruk: is; kimlikler: UI0032, UI0034, UI0057, PL0009
+- **PK0103** Kitchen — Eşzamanlılık ve atomiklik: 1 kayıt; kuyruk: is; kimlikler: F0022
+- **PK0104** Menu — Eşzamanlılık ve atomiklik: 3 kayıt; kuyruk: is; kimlikler: F0233, F0235, F0700
+- **PK0105** Observability — Eşzamanlılık ve atomiklik: 2 kayıt; kuyruk: is; kimlikler: F0240, F0757
+- **PK0106** Orders — Eşzamanlılık ve atomiklik: 1 kayıt; kuyruk: is; kimlikler: F0555
+- **PK0107** PosTerminal — Eşzamanlılık ve atomiklik: 3 kayıt; kuyruk: is; kimlikler: F0682, F0684, F0686
+- **PK0108** Purchasing — Eşzamanlılık ve atomiklik: 1 kayıt; kuyruk: is; kimlikler: F0026
+- **PK0109** Reporting — Eşzamanlılık ve atomiklik: 1 kayıt; kuyruk: is; kimlikler: F0729
+- **PK0110** Security — Eşzamanlılık ve atomiklik: 1 kayıt; kuyruk: is; kimlikler: F0566
+- **PK0111** V1-RMD — Eşzamanlılık ve atomiklik: 15 kayıt; kuyruk: is; kimlikler: F0068, F0139, F0159, F0187, F0338, F0391, F0405, F0420, F0513, F0520, F0544, F0554, F0615, F0696, F0975
+- **PK0112** Audit — Güvenlik, yetki ve gizlilik: 1 kayıt; kuyruk: is; kimlikler: F0157
+- **PK0113** Billing — Güvenlik, yetki ve gizlilik: 1 kayıt; kuyruk: is; kimlikler: F0351
+- **PK0114** Cash — Güvenlik, yetki ve gizlilik: 2 kayıt; kuyruk: is; kimlikler: F0353, F0440
+- **PK0115** Cashier — Güvenlik, yetki ve gizlilik: 1 kayıt; kuyruk: inceleme; kimlikler: F0911
+- **PK0116** Cashier — Güvenlik, yetki ve gizlilik: 3 kayıt; kuyruk: is; kimlikler: F0396, F0408, UI0075
+- **PK0117** Identity — Güvenlik, yetki ve gizlilik: 2 kayıt; kuyruk: is; kimlikler: F0495, F0968
+- **PK0118** Inventory — Güvenlik, yetki ve gizlilik: 2 kayıt; kuyruk: is; kimlikler: F0230, F0711
+- **PK0119** Invoicing — Güvenlik, yetki ve gizlilik: 1 kayıt; kuyruk: is; kimlikler: F0460
+- **PK0120** Kaynak-kapsami-teyit — Güvenlik, yetki ve gizlilik: 5 kayıt; kuyruk: is; kimlikler: PO0024, PO0036, PO0079, PL0008, PL0012
+- **PK0121** Observability — Güvenlik, yetki ve gizlilik: 1 kayıt; kuyruk: is; kimlikler: F0535
+- **PK0122** Orders — Güvenlik, yetki ve gizlilik: 3 kayıt; kuyruk: is; kimlikler: F0163, F0627, F0993
+- **PK0123** PosTerminal — Güvenlik, yetki ve gizlilik: 2 kayıt; kuyruk: is; kimlikler: F0188, F0687
+- **PK0124** Privacy — Güvenlik, yetki ve gizlilik: 2 kayıt; kuyruk: is; kimlikler: F0019, F0175
+- **PK0125** Purchasing — Güvenlik, yetki ve gizlilik: 2 kayıt; kuyruk: is; kimlikler: F0706, PO0047
+- **PK0126** QrOrdering — Güvenlik, yetki ve gizlilik: 2 kayıt; kuyruk: is; kimlikler: F0018, F0172
+- **PK0127** Reconciliation — Güvenlik, yetki ve gizlilik: 2 kayıt; kuyruk: is; kimlikler: F0243, F0447
+- **PK0128** Security — Güvenlik, yetki ve gizlilik: 4 kayıt; kuyruk: is; kimlikler: F0015, F0178, F0556, F0979
+- **PK0129** V1-IAM — Güvenlik, yetki ve gizlilik: 1 kayıt; kuyruk: is; kimlikler: F0002
+- **PK0130** V1-RMD — Güvenlik, yetki ve gizlilik: 1 kayıt; kuyruk: inceleme; kimlikler: F0543
+- **PK0131** V1-RMD — Güvenlik, yetki ve gizlilik: 15 kayıt; kuyruk: is; kimlikler: F0073, F0140, F0160, F0334, F0337, F0523, F0546, F0593, F0690, F0738, F0857, F0869, F0887, F0893, F0972
+- **PK0132** V1-SEC — Güvenlik, yetki ve gizlilik: 1 kayıt; kuyruk: is; kimlikler: F0165
+- **PK0133** V12-RMD — Güvenlik, yetki ve gizlilik: 1 kayıt; kuyruk: is; kimlikler: F0989
+- **PK0134** Audit — Kanıt ve test boşluğu: 2 kayıt; kuyruk: is; kimlikler: F0548, F0959
+- **PK0135** Audit+Billing+Cash+Identity+Kitchen+Observability+Operations+Reconciliation+Reporting+Settings — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0370
+- **PK0136** Billing — Kanıt ve test boşluğu: 7 kayıt; kuyruk: is; kimlikler: F0048, F0350, F0373, F0903, F0912, F0978, PO0002
+- **PK0137** Billing+Kitchen+Orders — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0062
+- **PK0138** Billing+Tables — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0056
+- **PK0139** Cashier — Kanıt ve test boşluğu: 12 kayıt; kuyruk: is; kimlikler: F0059, F0061, F0080, F0411, F0413, F0425, F0524, F0961, F0974, F0994, UI0119, UI0148
+- **PK0140** Catalog — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0669
+- **PK0141** Identity — Kanıt ve test boşluğu: 5 kayıt; kuyruk: is; kimlikler: F0132, F0498, F0957, F0981, F0983
+- **PK0142** Inventory — Kanıt ve test boşluğu: 4 kayıt; kuyruk: is; kimlikler: F0209, F0212, F0516, F1010
+- **PK0143** Invoicing — Kanıt ve test boşluğu: 2 kayıt; kuyruk: is; kimlikler: F0100, F0101
+- **PK0144** Kaynak-kapsami-teyit — Kanıt ve test boşluğu: 5 kayıt; kuyruk: inceleme; kimlikler: PO0026, PO0027, PO0068, KN0001, KN0002
+- **PK0145** Kaynak-kapsami-teyit — Kanıt ve test boşluğu: 33 kayıt; kuyruk: is; kimlikler: UI0001, UI0002, UI0035, UI0042, UI0100, UI0101, UI0102, UI0103, UI0108, UI0144, UI0145, UI0146, UI0147, PO0011, PO0025, PO0034, PO0065, PO0070, PO0071, PL0001, PL0002, PL0003, PL0004, PL0010, PL0026, PL0027, KN0003, KN0004, KN0005, KN0006, KN0007, KN0008, KN0009
+- **PK0146** Kitchen — Kanıt ve test boşluğu: 13 kayıt; kuyruk: is; kimlikler: F0065, F0206, F0504, F0505, F0569, F0582, F0992, UI0006, UI0064, UI0065, UI0066, UI0067, UI0068
+- **PK0147** Observability — Kanıt ve test boşluğu: 13 kayıt; kuyruk: is; kimlikler: F0153, F0260, F0725, F0747, F0748, F0750, F0752, F0756, F0758, F0765, F0772, F0775, F0777
+- **PK0148** OnlineOrdering — Kanıt ve test boşluğu: 2 kayıt; kuyruk: is; kimlikler: F0137, F0651
+- **PK0149** Operations — Kanıt ve test boşluğu: 2 kayıt; kuyruk: is; kimlikler: F0241, F0792
+- **PK0150** Orders — Kanıt ve test boşluğu: 4 kayıt; kuyruk: is; kimlikler: F0141, F0184, F0186, F0528
+- **PK0151** Payments — Kanıt ve test boşluğu: 16 kayıt; kuyruk: is; kimlikler: PO0060, PL0028, PL0029, PL0030, PL0031, PL0032, PL0033, PL0034, PL0035, PL0036, PL0037, PL0038, PL0039, PL0040, PL0041, PL0042
+- **PK0152** PosTerminal — Kanıt ve test boşluğu: 17 kayıt; kuyruk: is; kimlikler: F0039, F0054, F0142, F0222, F0667, F0674, F0683, F0721, F0745, F0754, F0904, F0965, UI0115, UI0116, UI0117, UI0118, PO0051
+- **PK0153** Production — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0704
+- **PK0154** QrOrdering — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0988
+- **PK0155** Recipes — Kanıt ve test boşluğu: 2 kayıt; kuyruk: is; kimlikler: F0213, F0707
+- **PK0156** Reconciliation — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0448
+- **PK0157** Security — Kanıt ve test boşluğu: 4 kayıt; kuyruk: is; kimlikler: F0016, F0164, F0465, F1017
+- **PK0158** Settings — Kanıt ve test boşluğu: 3 kayıt; kuyruk: is; kimlikler: F0630, F0631, F0719
+- **PK0159** Tables — Kanıt ve test boşluğu: 2 kayıt; kuyruk: is; kimlikler: F0166, F0962
+- **PK0160** V0-ARC — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0461
+- **PK0161** V0-CMP — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0103
+- **PK0162** V0-DAT — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0794
+- **PK0163** V0-GOV — Kanıt ve test boşluğu: 11 kayıt; kuyruk: is; kimlikler: F0007, F0008, F0106, F0107, F0348, F0463, F0464, F0796, F0797, F0814, F1014
+- **PK0164** V0-SEC — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0469
+- **PK0165** V1-CAT — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0029
+- **PK0166** V1-CDP — Kanıt ve test boşluğu: 3 kayıt; kuyruk: is; kimlikler: F0720, F0836, F0837
+- **PK0167** V1-CUI — Kanıt ve test boşluğu: 2 kayıt; kuyruk: is; kimlikler: F0355, F0360
+- **PK0168** V1-FND — Kanıt ve test boşluğu: 3 kayıt; kuyruk: is; kimlikler: F0800, F0841, F0843
+- **PK0169** V1-GOV — Kanıt ve test boşluğu: 52 kayıt; kuyruk: is; kimlikler: F0009, F0010, F0011, F0012, F0112, F0113, F0114, F0115, F0116, F0117, F0119, F0124, F0125, F0126, F0127, F0364, F0472, F0473, F0475, F0480, F0481, F0482, F0483, F0484, F0489, F0490, F0492, F0929, F0930, F0931, F0932, F0934, F0935, F0936, F0938, F0939, F0940, F0941, F0942, F0943, F0944, F0945, F0946, F0947, F0948, F0949, F0950, F0952, F0953, F0954, F0955, F0956
+- **PK0170** V1-IAM — Kanıt ve test boşluğu: 3 kayıt; kuyruk: is; kimlikler: F0055, F0129, F0500
+- **PK0171** V1-RMD — Kanıt ve test boşluğu: 2 kayıt; kuyruk: inceleme; kimlikler: F0845, F0916
+- **PK0172** V1-RMD — Kanıt ve test boşluğu: 88 kayıt; kuyruk: is; kimlikler: F0013, F0038, F0040, F0060, F0063, F0066, F0081, F0143, F0146, F0150, F0151, F0152, F0155, F0197, F0200, F0280, F0281, F0283, F0322, F0323, F0328, F0331, F0332, F0333, F0385, F0386, F0399, F0428, F0431, F0437, F0522, F0525, F0530, F0531, F0532, F0538, F0574, F0576, F0578, F0586, F0594, F0598, F0600, F0602, F0608, F0610, F0612, F0614, F0621, F0623, F0624, F0668, F0671, F0673, F0677, F0678, F0681, F0693, F0847, F0848, F0850, F0854, F0855, F0863, F0865, F0872, F0879, F0880, F0881, F0882, F0884, F0888, F0891, F0894, F0902, F0906, F0907, F0913, F0917, F0960, F0963, F0964, F0969, F0976, F0998, F1008, F1013, F1016
+- **PK0173** V1-SET — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0785
+- **PK0174** V1-TBL — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0202
+- **PK0175** V1-WTR — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0439
+- **PK0176** V11-GOV — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F1018
+- **PK0177** V11-RMD — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F1019
+- **PK0178** V12-NFC — Kanıt ve test boşluğu: 2 kayıt; kuyruk: is; kimlikler: F0645, F0647
+- **PK0179** V12-QRT — Kanıt ve test boşluğu: 1 kayıt; kuyruk: inceleme; kimlikler: F0924
+- **PK0180** V12-REC — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F0788
+- **PK0181** V13-GOV — Kanıt ve test boşluğu: 3 kayıt; kuyruk: is; kimlikler: F0442, F0443, F0990
+- **PK0182** V15-GOV — Kanıt ve test boşluğu: 1 kayıt; kuyruk: is; kimlikler: F1020
+- **PK0183** V15-PER — Kanıt ve test boşluğu: 3 kayıt; kuyruk: is; kimlikler: F0343, F0344, F0345
+- **PK0184** WaiterPwa — Kanıt ve test boşluğu: 14 kayıt; kuyruk: is; kimlikler: F0003, F0078, F0079, F0167, F0205, F0577, F0579, F0636, F0637, F0639, F0921, F0984, F1003, F1004
+- **PK0185** Audit — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: is; kimlikler: F0156
+- **PK0186** Billing — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: is; kimlikler: F0339
+- **PK0187** Catalog — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: is; kimlikler: F0220
+- **PK0188** Inventory+Menu+Production+Purchasing+Recipes — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: is; kimlikler: F0560
+- **PK0189** Kitchen — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: is; kimlikler: F0601
+- **PK0190** OnlineOrdering — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: inceleme; kimlikler: F0652
+- **PK0191** PosTerminal — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: is; kimlikler: F1006
+- **PK0192** Privacy — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: is; kimlikler: F0176
+- **PK0193** Security — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: is; kimlikler: F0977
+- **PK0194** V0-DAT — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: is; kimlikler: F0298
+- **PK0195** V1-FND — Mimari sınır ve sahiplik: 1 kayıt; kuyruk: is; kimlikler: F0109
+- **PK0196** V1-RMD — Mimari sınır ve sahiplik: 2 kayıt; kuyruk: is; kimlikler: F0195, F0890
+- **PK0197** Audit — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: is; kimlikler: F0958
+- **PK0198** Billing — Ürün, iş kuralı ve mevzuat: 2 kayıt; kuyruk: is; kimlikler: F0088, PO0001
+- **PK0199** Cashier — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: inceleme; kimlikler: PO0003
+- **PK0200** Cashier — Ürün, iş kuralı ve mevzuat: 16 kayıt; kuyruk: is; kimlikler: F0445, F0446, UI0004, UI0007, UI0008, UI0009, UI0010, UI0149, UI0150, UI0152, UI0153, UI0171, UI0172, UI0173, UI0176, UI0177
+- **PK0201** Catalog — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: is; kimlikler: F0665
+- **PK0202** Kaynak-kapsami-teyit — Ürün, iş kuralı ve mevzuat: 8 kayıt; kuyruk: inceleme; kimlikler: PO0023, PO0031, PO0033, PO0038, PO0046, PO0074, PO0075, PO0080
+- **PK0203** Kaynak-kapsami-teyit — Ürün, iş kuralı ve mevzuat: 84 kayıt; kuyruk: is; kimlikler: UI0013, UI0016, UI0017, UI0019, UI0020, UI0025, UI0046, UI0048, UI0050, UI0052, UI0056, UI0059, UI0079, UI0080, UI0081, UI0082, UI0083, UI0086, UI0156, UI0157, UI0158, UI0161, UI0162, UI0164, UI0165, UI0166, UI0167, UI0168, UI0169, UI0178, UI0179, UI0180, UI0181, UI0182, UI0183, UI0184, UI0185, UI0186, UI0215, UI0216, UI0217, UI0218, UI0219, UI0220, UI0221, UI0222, UI0223, UI0224, UI0225, PO0009, PO0010, PO0012, PO0014, PO0017, PO0018, PO0020, PO0021, PO0022, PO0028, PO0029, PO0030, PO0032, PO0037, PO0039, PO0041, PO0044, PO0049, PO0056, PO0061, PO0062, PO0066, PO0067, PO0069, PO0072, PO0076, PO0077, PO0078, PL0019, PL0020, PL0021, PL0022, PL0023, PL0024, PL0025
+- **PK0204** Kitchen — Ürün, iş kuralı ve mevzuat: 3 kayıt; kuyruk: is; kimlikler: F0503, UI0084, UI0085
+- **PK0205** Observability — Ürün, iş kuralı ve mevzuat: 7 kayıt; kuyruk: is; kimlikler: UI0087, UI0088, UI0089, UI0090, UI0091, UI0092, UI0093
+- **PK0206** OnlineOrdering — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: is; kimlikler: F0416
+- **PK0207** Operations — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: is; kimlikler: F0273
+- **PK0208** Orders — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: is; kimlikler: F0626
+- **PK0209** Purchasing — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: is; kimlikler: PO0048
+- **PK0210** Reporting — Ürün, iş kuralı ve mevzuat: 2 kayıt; kuyruk: is; kimlikler: F0742, PO0006
+- **PK0211** Security — Ürün, iş kuralı ve mevzuat: 2 kayıt; kuyruk: is; kimlikler: UI0077, UI0078
+- **PK0212** Settings — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: inceleme; kimlikler: F0632
+- **PK0213** V0-ARC — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: is; kimlikler: F0021
+- **PK0214** V0-CMP — Ürün, iş kuralı ve mevzuat: 5 kayıt; kuyruk: is; kimlikler: F0041, F0102, F0292, F0293, F0812
+- **PK0215** V0-GOV — Ürün, iş kuralı ve mevzuat: 2 kayıt; kuyruk: is; kimlikler: F0467, F0718
+- **PK0216** V0-SEC — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: is; kimlikler: F0108
+- **PK0217** V0-YSP — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: inceleme; kimlikler: PO0035
+- **PK0218** V1-RMD — Ürün, iş kuralı ve mevzuat: 2 kayıt; kuyruk: inceleme; kimlikler: F0878, PO0007
+- **PK0219** V1-RMD — Ürün, iş kuralı ve mevzuat: 15 kayıt; kuyruk: is; kimlikler: F0193, F0198, F0340, F0414, F0418, F0429, F0433, F0518, F0607, F0625, F0628, F0676, F0734, F0897, F1015
+- **PK0220** V13-FSC — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: is; kimlikler: PO0016
+- **PK0221** V13-GOV — Ürün, iş kuralı ve mevzuat: 2 kayıt; kuyruk: is; kimlikler: F0089, F0090
+- **PK0222** V14-GOV — Ürün, iş kuralı ve mevzuat: 1 kayıt; kuyruk: is; kimlikler: F0563
+- **PK0223** WaiterPwa — Ürün, iş kuralı ve mevzuat: 5 kayıt; kuyruk: is; kimlikler: UI0094, UI0095, UI0096, UI0097, UI0098
+- **PK0224** Billing — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0046
+- **PK0225** Cashier — Eksik teslimat ve entegrasyon: 4 kayıt; kuyruk: is; kimlikler: F0001, F0004, UI0011, UI0076
+- **PK0226** CustomerAccounts — Eksik teslimat ve entegrasyon: 3 kayıt; kuyruk: is; kimlikler: F0097, F0098, F0456
+- **PK0227** CustomerData — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0174
+- **PK0228** Identity — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0366
+- **PK0229** Inventory — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0227
+- **PK0230** Invoicing — Eksik teslimat ve entegrasyon: 2 kayıt; kuyruk: is; kimlikler: F0458, F0459
+- **PK0231** Kaynak-kapsami-teyit — Eksik teslimat ve entegrasyon: 2 kayıt; kuyruk: inceleme; kimlikler: PO0008, PO0042
+- **PK0232** Kaynak-kapsami-teyit — Eksik teslimat ve entegrasyon: 3 kayıt; kuyruk: is; kimlikler: UI0155, PO0043, PL0014
+- **PK0233** Kitchen — Eksik teslimat ve entegrasyon: 3 kayıt; kuyruk: is; kimlikler: F0023, F0134, F0517
+- **PK0234** Menu — Eksik teslimat ve entegrasyon: 2 kayıt; kuyruk: is; kimlikler: F0032, F0234
+- **PK0235** Observability — Eksik teslimat ve entegrasyon: 12 kayıt; kuyruk: is; kimlikler: F0249, F0253, F0254, F0255, F0258, F0261, F0264, F0265, F0266, F0276, F0736, F0766
+- **PK0236** Operations — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0242
+- **PK0237** Payments — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: inceleme; kimlikler: PO0057
+- **PK0238** Payments — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: PL0018
+- **PK0239** PosTerminal — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: inceleme; kimlikler: PO0050
+- **PK0240** PosTerminal — Eksik teslimat ve entegrasyon: 10 kayıt; kuyruk: is; kimlikler: F0027, F0257, F0585, F0656, UI0069, UI0070, UI0071, UI0072, UI0073, UI0074
+- **PK0241** QrOrdering — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0006
+- **PK0242** Reconciliation — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0093
+- **PK0243** Reporting — Eksik teslimat ve entegrasyon: 3 kayıt; kuyruk: is; kimlikler: F0237, F0270, PO0005
+- **PK0244** Security — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0020
+- **PK0245** Settings — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0267
+- **PK0246** V0-ARC — Eksik teslimat ve entegrasyon: 2 kayıt; kuyruk: is; kimlikler: F0288, F0290
+- **PK0247** V0-GOV — Eksik teslimat ve entegrasyon: 2 kayıt; kuyruk: is; kimlikler: F0299, F0717
+- **PK0248** V0-REV — Eksik teslimat ve entegrasyon: 20 kayıt; kuyruk: is; kimlikler: F0044, F0301, F0302, F0303, F0304, F0305, F0306, F0307, F0308, F0309, F0310, F0311, F0312, F0313, F0314, F0315, F0316, F0317, F0318, F0319
+- **PK0249** V1-FND — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0321
+- **PK0250** V1-GOV — Eksik teslimat ve entegrasyon: 5 kayıt; kuyruk: is; kimlikler: F0120, F0121, F0122, F0123, F0478
+- **PK0251** V1-RMD — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: inceleme; kimlikler: F0534
+- **PK0252** V1-RMD — Eksik teslimat ve entegrasyon: 14 kayıt; kuyruk: is; kimlikler: F0071, F0161, F0190, F0196, F0199, F0201, F0287, F0325, F0335, F0342, F0804, F0846, F0877, PO0063
+- **PK0253** V13-FSC — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: PO0015
+- **PK0254** WaiterPwa — Eksik teslimat ve entegrasyon: 1 kayıt; kuyruk: is; kimlikler: F0194
+- **PK0255** Cashier — Arayüz ve erişilebilirlik: 24 kayıt; kuyruk: is; kimlikler: F0085, F0357, F0359, F0915, UI0003, UI0104, UI0105, UI0120, UI0121, UI0122, UI0123, UI0129, UI0130, UI0131, UI0138, UI0139, UI0140, UI0141, UI0142, UI0143, UI0151, UI0154, UI0174, UI0175
+- **PK0256** Kaynak-kapsami-teyit — Arayüz ve erişilebilirlik: 1 kayıt; kuyruk: inceleme; kimlikler: PO0019
+- **PK0257** Kaynak-kapsami-teyit — Arayüz ve erişilebilirlik: 58 kayıt; kuyruk: is; kimlikler: UI0012, UI0018, UI0021, UI0022, UI0023, UI0024, UI0026, UI0027, UI0028, UI0029, UI0033, UI0036, UI0038, UI0039, UI0040, UI0041, UI0044, UI0045, UI0047, UI0049, UI0051, UI0053, UI0054, UI0055, UI0058, UI0060, UI0106, UI0107, UI0109, UI0127, UI0128, UI0163, UI0170, UI0187, UI0188, UI0193, UI0194, UI0195, UI0196, UI0197, UI0198, UI0199, UI0200, UI0201, UI0202, UI0203, UI0204, UI0205, UI0206, UI0207, UI0208, UI0209, UI0210, UI0211, UI0212, UI0213, UI0214, PO0004
+- **PK0258** Kitchen — Arayüz ve erişilebilirlik: 6 kayıt; kuyruk: is; kimlikler: F0180, UI0005, UI0189, UI0190, UI0191, UI0192
+- **PK0259** Menu — Arayüz ve erişilebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0701
+- **PK0260** Observability — Arayüz ve erişilebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0755
+- **PK0261** PosTerminal — Arayüz ve erişilebilirlik: 12 kayıt; kuyruk: is; kimlikler: F0263, F0583, F0653, F0741, F0768, UI0124, UI0125, UI0126, UI0134, UI0135, UI0136, UI0137
+- **PK0262** V1-RMD — Arayüz ve erişilebilirlik: 14 kayıt; kuyruk: is; kimlikler: F0067, F0076, F0225, F0248, F0285, F0384, F0390, F0424, F0436, F0521, F0588, F0618, F0629, F0889
+- **PK0263** V1-WTR — Arayüz ve erişilebilirlik: 1 kayıt; kuyruk: is; kimlikler: F0640
+- **PK0264** V12-CWB — Arayüz ve erişilebilirlik: 3 kayıt; kuyruk: is; kimlikler: F0168, F0214, F0215
+- **PK0265** WaiterPwa — Arayüz ve erişilebilirlik: 7 kayıt; kuyruk: is; kimlikler: UI0110, UI0111, UI0112, UI0113, UI0114, UI0132, UI0133
+- **PK0266** Billing — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0057
+- **PK0267** Cashier — Veri doğruluğu ve doğrulama: 3 kayıt; kuyruk: is; kimlikler: F0005, F0091, F0379
+- **PK0268** Catalog — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0664
+- **PK0269** Identity — Veri doğruluğu ve doğrulama: 3 kayıt; kuyruk: is; kimlikler: F0499, PL0005, PL0006
+- **PK0270** Inventory — Veri doğruluğu ve doğrulama: 3 kayıt; kuyruk: is; kimlikler: F0232, F0698, F0786
+- **PK0271** Invoicing — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0099
+- **PK0272** Kaynak-kapsami-teyit — Veri doğruluğu ve doğrulama: 9 kayıt; kuyruk: is; kimlikler: UI0031, UI0037, UI0159, UI0160, PO0052, PO0053, PL0007, PL0011, PL0013
+- **PK0273** Kitchen — Veri doğruluğu ve doğrulama: 4 kayıt; kuyruk: is; kimlikler: F0135, F0138, F0571, F0572
+- **PK0274** Menu — Veri doğruluğu ve doğrulama: 2 kayıt; kuyruk: is; kimlikler: F0033, F0702
+- **PK0275** Observability — Veri doğruluğu ve doğrulama: 8 kayıt; kuyruk: is; kimlikler: F0245, F0251, F0252, F0724, F0749, F0763, F0771, F0776
+- **PK0276** OnlineOrdering — Veri doğruluğu ve doğrulama: 2 kayıt; kuyruk: is; kimlikler: F0648, F0986
+- **PK0277** Operations — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0275
+- **PK0278** Orders — Veri doğruluğu ve doğrulama: 2 kayıt; kuyruk: is; kimlikler: F0049, F0162
+- **PK0279** Payments — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: PL0017
+- **PK0280** PosTerminal — Veri doğruluğu ve doğrulama: 5 kayıt; kuyruk: is; kimlikler: F0181, F0224, F0415, F0760, F0761
+- **PK0281** Production — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: inceleme; kimlikler: F0703
+- **PK0282** Production — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0236
+- **PK0283** Purchasing — Veri doğruluğu ve doğrulama: 2 kayıt; kuyruk: is; kimlikler: F0072, F0705
+- **PK0284** QrOrdering — Veri doğruluğu ve doğrulama: 3 kayıt; kuyruk: is; kimlikler: F0087, F0171, F0923
+- **PK0285** Recipes — Veri doğruluğu ve doğrulama: 3 kayıt; kuyruk: is; kimlikler: F0558, F0559, F0708
+- **PK0286** Reporting — Veri doğruluğu ve doğrulama: 3 kayıt; kuyruk: is; kimlikler: F0094, F0095, F0238
+- **PK0287** Security — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0537
+- **PK0288** Settings — Veri doğruluğu ve doğrulama: 2 kayıt; kuyruk: is; kimlikler: F0633, F0784
+- **PK0289** Tables — Veri doğruluğu ve doğrulama: 3 kayıt; kuyruk: is; kimlikler: F0203, F0383, F0451
+- **PK0290** V0-DOM — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0219
+- **PK0291** V1-BIL — Veri doğruluğu ve doğrulama: 2 kayıt; kuyruk: is; kimlikler: F0047, F0349
+- **PK0292** V1-IAM — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0496
+- **PK0293** V1-RMD — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: inceleme; kimlikler: F0919
+- **PK0294** V1-RMD — Veri doğruluğu ve doğrulama: 20 kayıt; kuyruk: is; kimlikler: F0077, F0191, F0192, F0226, F0244, F0382, F0389, F0401, F0404, F0434, F0589, F0616, F0619, F0732, F0746, F0780, F0809, F0874, F0876, F0896
+- **PK0295** V1-RPT — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0271
+- **PK0296** V1-WTR — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0638
+- **PK0297** V11-RPT — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0272
+- **PK0298** V12-CWB — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0169
+- **PK0299** V12-RMD — Veri doğruluğu ve doğrulama: 1 kayıt; kuyruk: is; kimlikler: F0028
+- **PK0300** WaiterPwa — Veri doğruluğu ve doğrulama: 2 kayıt; kuyruk: is; kimlikler: F0430, F0432

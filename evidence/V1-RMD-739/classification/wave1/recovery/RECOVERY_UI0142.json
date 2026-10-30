@@ -1,0 +1,33 @@
+{
+  "source_id": "UI0142",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Kasa yerleşim boşlukları onaylı 4px ölçeğinden sapıyor",
+      "status": "open",
+      "invariant": "Yerleşim boşlukları onaylı 4/8/12/16/24/32px ölçeğinden seçilmeli ve ortak boşluk tokenlarını izlemeli.",
+      "mechanism": "PosTerminal ürün kartında gap:.55rem ve bilet satırında gap:.55rem .8rem sabit kalmış; standart 16px kök boyutta .55rem=8.8px ve .8rem=12.8px. Cashier skip-link padding:10px 14px de aynı ölçeğin dışında. Bunlar ortak boşluk tokenlarından çözülmüyor. Bu kayıt renklerden bağımsız boşluk invariantını kapsıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:17 — özgün .55rem ve 10px 14px iddiası",
+        "docs/design/foundations.md:3-7,93-101 — onaylı boşluk ölçeği",
+        "src/Clients/PosTerminal/src/design-system/tokens.css:78-83 — --ds-space-1..6",
+        "src/Clients/PosTerminal/src/styles.css:301-310,343-345 — ürün kartı ve bilet satırı gap değerleri",
+        "src/Clients/Cashier/wwwroot/cashier-app.css:786-788 — skip-link 10px 14px padding"
+      ],
+      "acceptance": [
+        "İlgili gap ve padding değerleri onaylı ölçek tokenlarından çözülmeli; .55rem ve 10px 14px yerel boşluk tanımları kalkmalı.",
+        "Ürün kartı, bilet satırı ve klavye odağıyla açılan skip-link normal ve büyütülmüş metinde taşma/kırpılma olmadan doğrulanmalı."
+      ],
+      "id": "W2-R-UI0142-01",
+      "parents": [
+        "UI0142"
+      ]
+    }
+  ],
+  "limitations": [
+    "Statik kaynak doğrulandı; computed-style, ekran görüntüsü ve test çalıştırılmadı. rem-piksel dönüşümü yalnız 16px kök boyut varsayımını açıklıyor; ölçüm iddiası değil.",
+    "10px 14px değeri PosTerminal styles.css içinde değil, Cashier skip-link kuralında bulundu; kaynak satırının istemciler arası özeti buna göre ayrıştırıldı.",
+    "Tüm repository boşlukları taranmış/kapatılmış sayılmadı; ilk beş kaynak sınırı korundu."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

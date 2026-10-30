@@ -1,0 +1,64 @@
+{
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "candidate_groups": 62,
+  "readiness_counts": {
+    "scope-reviewed": 21,
+    "historical-regression-only": 6,
+    "decision-blocked": 21,
+    "scope-blocked": 8,
+    "verification-only": 6
+  },
+  "revisions": [
+    {
+      "group": "PAY-G04",
+      "previous": "scope-blocked",
+      "current": "scope-reviewed",
+      "write_paths_before": 3,
+      "write_paths_after": 14
+    },
+    {
+      "group": "RG-ANON-BOUNDARY",
+      "previous": "scope-blocked",
+      "current": "scope-reviewed",
+      "write_paths_before": 2,
+      "write_paths_after": 1
+    },
+    {
+      "group": "RG-CUSTOMER-ELIGIBILITY",
+      "previous": "scope-blocked",
+      "current": "scope-blocked",
+      "write_paths_before": 4,
+      "write_paths_after": 16
+    },
+    {
+      "group": "RG-SUPPLIER-ELIGIBILITY",
+      "previous": "scope-blocked",
+      "current": "scope-blocked",
+      "write_paths_before": 4,
+      "write_paths_after": 16
+    }
+  ],
+  "line_ranges_checked": 142,
+  "source_hashes_checked": 43,
+  "shared_write_pairs": 37,
+  "unallocated_integration_needs": [
+    {
+      "group": "RG-CUSTOMER-ELIGIBILITY",
+      "task_id": null,
+      "kind": "new-integration-required",
+      "reason": "Privacy + CustomerAccounts + CustomerData + Invoicing mevcut owner write yollarını tek invariant için seri teslim eden ayrı integration task tahsisi. write_paths kesin aday yüzeyidir; API/migration tasarımı veya onayı değildir."
+    },
+    {
+      "group": "RG-SUPPLIER-ELIGIBILITY",
+      "task_id": null,
+      "kind": "new-integration-required",
+      "reason": "Purchasing PO+receipt+invoice+supplier master owner write yolları ve Privacy destructive adımı aynı serialization invariantını teslim etmeli. Yeni integration Task ID atanmadı; write_paths öneri olup yetki değildir."
+    }
+  ],
+  "document_artifact_allocation_review": "3 exact notes written; independent review pending, no readiness or closure upgrade",
+  "application_changes": 0,
+  "application_tests_run": 0,
+  "source_records_covered": 54,
+  "remaining_source_records": 1322,
+  "tier": "Static scope planning only; not implementation authorization or runtime verification"
+}

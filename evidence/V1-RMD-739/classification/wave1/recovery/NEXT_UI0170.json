@@ -1,0 +1,24 @@
+{
+  "source_id": "UI0170",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Kritik düğmeler yalnız ikon (kasaya gönder, masa değiştir, yardım, kişi sayısı)",
+      "status": "open",
+      "invariant": "UI_STYLE_GUIDE §2.1: her eylem düğmesi (action button) görünür metin etiketi içermeli; ikon-only sadece ikincil/tertiary ve tooltip destekliyse kabul edilir. DESIGN.md --touch-target-min 48px metin+ikon için; ikon-only 48x48 dokunma alanına sığmaz.",
+      "mechanism": "WaiterPwa/index.html:158 satırında (ve 150-163 arası) dört kritik aksiyon butonu yalnız SVG ikon ile render ediliyor: btnSendToCashier (ico-cashier), btnMoveTable (ico-move), btnHelpRequest (ico-bell), btnPartySize (ico-seats). Text label yok; aria-label var ama görsel metin yok. waiter-app.css'te bu butonlar .btn-icon sınıfıyla 48x48 minimum boyutunda; ancak dokunma hedefi metin için yetersiz. aksis-uzmani:17 (pazar-uzmani.md:19) aynı bulguyu tekrar ediyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:19",
+        "src/Clients/WaiterPwa/wwwroot/index.html:150-163",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.css:100 (btn-icon rule - implicit)"
+      ],
+      "acceptance": "Dört butona da görünür metin etiketi eklenir (ör. 'Kasaya gönder', 'Masa değiştir', 'Yardım çağır', 'Kişi sayısı'). .btn-icon sınıfı .btn-icon--with-text varyantı alır veya metinli versiyon .btn sınıfına taşınır. Minimum dokunma alanı 48px korunur; metin + ikon yan yana (gap: var(--ds-space-2)). Screen reader için aria-label korurken sighted kullanıcı metni görür. Test: butonlar dar ekranda (320px) metin kesilmez; zoom 200%'de metin okunabilir.",
+      "id": "W2-N-UI0170-01",
+      "parents": [
+        "UI0170"
+      ]
+    }
+  ],
+  "limitations": "WaiterPwa/index.html ve pazar-uzmani.md raporuna dayalı. waiter-app.css tam okunmadı (btn-icon kuralı satır numarası tahmini). PosTerminal Cashier.tsx'deki karşılık gelen butonlar (header-action, icon-action) metinli olduğu için bu kusur WaiterPwa'ya özgü.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

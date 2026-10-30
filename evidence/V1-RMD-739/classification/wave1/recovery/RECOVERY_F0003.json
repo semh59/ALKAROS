@@ -1,0 +1,67 @@
+{
+  "source_id": "F0003",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "WaiterPwa sözleşme testi modüler istemci yerine kaldırılmış DOM ve sembolleri bekliyor",
+      "status": "open",
+      "invariant": "Kalıcı frontend regresyon testi güncel DOM, modül ve API sözleşmesini sınamalı; geçerli refactor nedeniyle yanlış kırmızı üretmemeli.",
+      "mechanism": "test_waiter_pwa_frontend.py HTML'de olmayan zoneList/orderDrawer/orderModal/statusRibbon/btnSendKitchen kimliklerini istiyor. Giriş testi waiter-app.js içinde artık util.js'e taşınmış terminal anahtarı ve UUID gövdesini arıyor. API/kuyruk testi /catalog-management/categories, flushOfflineQueue, queueOrderAction ve dispatchInFlight bekliyor; güncel kod /catalog, offline-queue.js içindeki flushQueue/sendDraft/sendInFlight kullanıyor. Üç ayrı test fonksiyonu aynı bayat kaynak-sözleşmesi mekanizmasıyla etkileniyor; tek kusur olarak tutuldu. Testlerin çalıştırıldığı veya bugünkü toplamın 3 failed olduğu iddia edilmiyor; uyuşmazlık kaynakta kesin.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:10",
+        "evidence/V1-RMD-739/tasks/B007.md:3-5",
+        "plan/v1/remediation/V1-RMD-051-waiter-pwa-and-cashier-ui-contract-alignment.md:17-30",
+        "plan/v1/remediation/V1-RMD-051-waiter-pwa-and-cashier-ui-contract-alignment.md:44-46",
+        "tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py:30-65",
+        "tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py:78-98",
+        "src/Clients/WaiterPwa/wwwroot/index.html:62-68",
+        "src/Clients/WaiterPwa/wwwroot/index.html:88-91",
+        "src/Clients/WaiterPwa/wwwroot/index.html:123-134",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.js:22-56",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.js:230-260",
+        "src/Clients/WaiterPwa/wwwroot/js/util.js:63-85",
+        "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:235-280",
+        "src/Clients/WaiterPwa/wwwroot/js/offline-queue.js:296-355"
+      ],
+      "acceptance": [
+        "Test güncel DOM ve modül girişlerini doğrular; zoneChips/ribbon/billSheet ve gerçek gönder düğmelerini esas alır.",
+        "Terminal kimliği, oturum çerezi, /catalog yüklemesi ve çift gönderim koruması gerçek modül davranışıyla sınanır; yalnız yorumdaki rota dizeleri yeterli sayılmaz.",
+        "İzin verilen uygulama aşamasında pytest tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py exit code 0 verir; hata sayısı ve HEAD ham loga kaydedilir."
+      ],
+      "id": "W2-R-F0003-01",
+      "parents": [
+        "F0003"
+      ]
+    },
+    {
+      "title": "V1-RMD-051 kapanış kanıtı bugünkü test ve katalog sözleşmesini temsil etmiyor",
+      "status": "open",
+      "invariant": "Done kabul kanıtı tarihsel koşuyu güncel HEAD doğrulaması gibi göstermemeli; test/kod devri ve değişen sözleşme izlenebilir olmalı.",
+      "mechanism": "verification.md 2026-08-29 tarihli 5/5 özetini ve eski categories/products rotalarını içeriyor; bugünkü dosyada dokuz test fonksiyonu bulunuyor ve güncel katalog /catalog kullanıyor. Kart uyuşmazlığı açıkça kaydetmiş; görev hâlâ Done ve kabulü frontend kontrollerinin exit code 0 vermesi. Üretim yüzeyi devri notu bulunması, elde kalan test/kanıt uyumsuzluğunu çözmüyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/tasks/B007.md:3-5",
+        "evidence/V1-RMD-051/verification.md:3-14",
+        "evidence/V1-RMD-051/verification.md:22-24",
+        "plan/v1/remediation/V1-RMD-051-waiter-pwa-and-cashier-ui-contract-alignment.md:3-7",
+        "plan/v1/remediation/V1-RMD-051-waiter-pwa-and-cashier-ui-contract-alignment.md:19-22",
+        "plan/v1/remediation/V1-RMD-051-waiter-pwa-and-cashier-ui-contract-alignment.md:44-46",
+        "tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py:8-135",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.js:230-260"
+      ],
+      "acceptance": [
+        "Tarihsel 5/5 kanıtı korunup tarihsel olarak işaretlenir; güncel sahiplik ve API sözleşmesine bağlantı eklenir.",
+        "Güncel HEAD, komut, ortam, gerçek çıkış kodu ve test sayılarıyla yeniden üretilebilir doğrulama kaydedilir."
+      ],
+      "id": "W2-R-F0003-02",
+      "parents": [
+        "F0003"
+      ]
+    }
+  ],
+  "limitations": [
+    "Repo kodu/test çalıştırılmadı; 3 failed/6 passed eski kart gözlemi, bugünkü çalıştırma sonucu değil.",
+    "Diğer altı testin tüm bağımlılıkları bu kaynak kapsamında doğrulanmadı; toplam başarısızlık sayısı belirlenmedi.",
+    "DOM ve waiter-app.js için hedefli kaynak aramaları yapıldı; tüm istemci davranışının doğrulandığı iddia edilmiyor."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

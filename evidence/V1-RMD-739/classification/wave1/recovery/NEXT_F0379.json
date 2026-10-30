@@ -1,0 +1,20 @@
+{
+  "source_id": "F0379",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "ProductionStockEffectService.ExecuteBatchStockEffectsAsync — aynı stok kalemi reçetede iki satırsa yeterlilik kontrolü satır başına, kümülatif değil",
+      "status": "open",
+      "invariant": "Bir reçetede aynı stok kalemi birden fazla satırda (farklı işlem adımları, farklı birim/loss %) geçiyorsa, toplam tüketim kümülatif olarak hesaplanmalı ve stok yeterliliği toplam requiredQuantity'e göre kontrol edilmeli. Satır bazlı bağımsız kontrol, aynı stoktan iki kez çekim yapmasına izin verip stokta negatif kalmaya yol açar.",
+      "mechanism": "ProductionStockEffectService.cs:188-216 — `ingredients` listesi reçete satırları (recipe_ingredients) olarak yükleniyor, aynı stock_item_id birden kez gelebilir. Satır 229-262 döngüsünde her `pc` (PlannedConsumption) için ayrı `SELECT available_quantity ... FOR UPDATE` ve `availableQuantity < pc.StockQuantity` kontrolü yapılıyor. İlk satır geçerse stoktan düşülüyor (ApplyOnHandDeltaAsync, satır 273-274) ama ikinci satır için availableQuantity yine aynı başlangıç değerine göre kontrol ediliyor (FOR UPDATE lock aldı ama balance henüz güncellenmedi — transaction içinde). Sonuç: iki satırın toplamı available'dan büyükse ikinci satır hata vermeli ama vermiyor çünkü her satır kendi pc.StockQuantity'e göre ayrı değerlendiriliyor.",
+      "source_evidence": "D:/project/ALKAROS/src/Modules/Production/StockEffects/ProductionStockEffectService.cs:188-216 (ingredients listesi), 229-262 (satır bazlı kontrol döngüsü), 267-274 (ApplyOnHandDeltaAsync her satırda çağrılıyor)",
+      "acceptance": "PlannedConsumption listesi stock_item_id'ye göre gruplanmalı ve toplam StockQuantity hesaplanmalı. Yeterlilik kontrolü (FOR UPDATE lock + availableQuantity karşılaştırması) gruplanmış toplamlar üzerinden tek seferde yapılmalı. Sonra consumptions yazılırken her satır için ayrı movement/consumption kaydı oluşturulabilir (audit izi için) ama stok düşümü atomik/toplam olmalı. Test: aynı stok kalemi iki satırda olan reçete ile batch tamamlandığında, toplam tüketim available'ı aşıyorsa InsufficientProductionStockException fırlatmalı; aşmıyorsa her iki satır da başarılı olmalı.",
+      "id": "W2-N-F0379-01",
+      "parents": [
+        "F0379"
+      ]
+    }
+  ],
+  "limitations": "Transaction isolation seviyesi ReadCommitted (satır 59) — FOR UPDATE lock satır 235'te alınıyor ama ApplyOnHandDeltaAsync (satır 273) balance'i güncelliyor. Aynı transaction içinde ikinci satır için SELECT FOR UPDATE yeniden çalıştığında güncellenmiş değeri görmeli (PostgreSQL'de SELECT FOR UPDATE aynı transaction içinde güncellenmiş veriyi görür). Ancak kod akışı: (1) tüm satırlar için kontrol döngüsü (229-262) — burada henüz ApplyOnHandDeltaAsync çağrılmamış, availableQuantity her satır için aynı. (2) Sonra consumptions yazma döngüsü (267-350) — burada ApplyOnHandDeltaAsync çağrılıyor. Yani kontrol aşamasında kümülatif hesaplanmamış; yazma aşamasında kümülatif düşüyor. Bu race condition/doğruluk açığı. Gerçek test çalıştırılmadığı için davranış doğrulanmadı.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,46 @@
+{
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "candidate_groups": 62,
+  "group_id_set_equal": true,
+  "readiness_counts": {
+    "scope-reviewed": 19,
+    "historical-regression-only": 6,
+    "decision-blocked": 21,
+    "scope-blocked": 10,
+    "verification-only": 6
+  },
+  "shared_write_conflict_pairs": 35,
+  "fresh_hash_paths_checked": 83,
+  "source_line_ranges_checked": 499,
+  "parent_revisions": [
+    {
+      "group": "RG-STK-25",
+      "previous": "scope-reviewed",
+      "current": "scope-blocked",
+      "reason": "Yalnız gelecekteki görev kanıtı önerildi; exact tahsis ve düzeltme keşfedilebilirliği belirlenmedi."
+    },
+    {
+      "group": "RG-STK-26",
+      "previous": "scope-reviewed",
+      "current": "scope-blocked",
+      "reason": "Yalnız gelecekteki görev kanıtı önerildi; exact tahsis ve düzeltme keşfedilebilirliği belirlenmedi."
+    },
+    {
+      "group": "RG-AUDIT-REFERENCE",
+      "previous": "scope-reviewed",
+      "current": "scope-blocked",
+      "reason": "Yalnız gelecekteki görev kanıtı önerildi; exact tahsis ve düzeltme keşfedilebilirliği belirlenmedi."
+    }
+  ],
+  "application_changes": 0,
+  "application_tests_run": 0,
+  "implementation_ready_claim": false,
+  "limitations": [
+    "Scope-reviewed yalnız yazma planı incelendi demektir; yeni Task ID, ownership, gate ve RED kabulü ayrı zorunluluk.",
+    "7 özgün scope blocker ve son kontrolde bulunan 3 kanıt-tahsis blocker açık; kapsam tamamlandı denmez.",
+    "Karar bekleyen gruplar teknik ürün ayrımını notlarında korur; her karar Semih sorusu değildir.",
+    "Scope-blocked ve decision-blocked write_paths listeleri koşulludur, yazma yetkisi değildir.",
+    "Kaynak dalga sayımı54/1376, kalan1322 değişmedi; yeni PAY-012 özgün kayıtlara eklenmedi.",
+    "Alt ajan fresh_reads kapsamı dışındaki metin tam semantik inceleme diye sunulmaz."
+  ]
+}

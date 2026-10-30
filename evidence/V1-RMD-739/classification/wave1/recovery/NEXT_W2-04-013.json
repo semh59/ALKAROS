@@ -1,0 +1,29 @@
+{
+  "source_id": "W2-04-013",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Approved güvenlik kararının imza izi boş",
+      "status": "open",
+      "invariant": "Approved karar adı belirli gerçek onay kanıtına bağlanmalı.",
+      "mechanism": "Status Approved olmasına rağmen iki imza satırında [Ad Soyad] ve boş Signature var.",
+      "source_evidence": [
+        "D:/project/ALKAROS/docs/security/security-verification-baseline.md:68-73"
+      ],
+      "acceptance": "Yetkili gerçek onay izi eklenir veya onaysız statü açıkça düzeltilir.",
+      "id": "W2-N-W2-04-013-01",
+      "parents": [
+        "W2-04-013"
+      ]
+    }
+  ],
+  "limitations": [
+    "Seviye seçimi değiştirilmedi; doğrulanan kusur kanıtsız Approved beyanı.",
+    "po-questions.md mevcut metninde bu kayda ait numaralı soru bulunmadığından decision-blocked veya uydurma soru numarası kullanılmadı.",
+    "Dosya satır 70-73: 'Mali Müşavir | [Ad Soyad] | | 2026-08-04' ve 'CTO | [Ad Soyad] | | 2026-08-04' — isim ve imza alanları boş placeholder.",
+    "Satır 6: 'Status: Approved' beyanı ile satır 70-73'teki boş imzalar çelişiyor.",
+    "AGENTS.md:82 kuralı 'komut, SHA, ortam ve gerçek exit code kaydedilir' diyor; bu belge için hiçbir kanıt (komut, hash, transcript) yok.",
+    "Karar tarihi 2026-08-04; bugün 2026-10-29. Yaklaşık 3 aydır 'Approved' durumunda ama imzasız."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

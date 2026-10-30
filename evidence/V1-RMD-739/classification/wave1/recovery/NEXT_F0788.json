@@ -1,0 +1,22 @@
+{
+  "source_id": "F0788",
+  "head": "F0788 from audit-overrides (KN/aday)",
+  "defects": [
+    {
+      "title": "KN - aday",
+      "status": "verification-needed",
+      "invariant": "Category: KN, Secondary: VD",
+      "mechanism": "low-B.md:205 / tasks/B110.md:25: iki platformun aynı numarasının tek kanıtta birleşmemesi kabulü testsiz. Uzun Türkçe ay adı ve alan hizası gerekçesi bu kayda ait değil.",
+      "source_evidence": [
+        "source-reason: low-B.md:205 / tasks/B110.md:25: iki platformun aynı numarasının tek kanıtta birleşmemesi kabulü testsiz. Uzun Türkçe ay adı ve alan hizası gerekçesi bu kayda ait değil."
+      ],
+      "acceptance": "Needs verification against current codebase",
+      "id": "W2-N-F0788-01",
+      "parents": [
+        "F0788"
+      ]
+    }
+  ],
+  "limitations": "Source: audit-overrides. Evidence limited to text search in low-A/B/C.md and task files. No code execution or repo writes performed.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

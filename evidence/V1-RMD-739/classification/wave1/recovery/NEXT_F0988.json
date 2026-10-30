@@ -1,0 +1,24 @@
+{
+  "source_id": "F0988",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V12-QRT-003 için evidence klasörü yok; kanıt yalnız md'de (kanıt yok, uydurulmadı); md '6/6 test' bugün 9 test (kapsam büyümüş)",
+      "status": "verification-needed",
+      "invariant": "Her Done görevi için evidence/<Task-ID>/ altında command transcript, test run output, build log gibi yeniden üretilebilir kanıt dosyaları olmalı; test sayısı md ile birebir eşleşmeli",
+      "mechanism": "low-C.md:93 (evidence/V1-RMD-739/findings/low-C.md:93) kaydı: 'F: evidence/V12-QRT-003/ yok; kanıt yalnız md'de (kanıt yok, uydurulmadı). H: Düşük, md \"6/6 test\" bugün 9 test (kapsam büyümüş)'. register.md:93 (evidence/V1-RMD-739/findings/register.md:93) aynı. V12-QRT-003 plan dosyası (plan/v1.2/qr-transport/V12-QRT-003-relay-credential-configuration-ui.md:113-124) acceptance evidence '5/5', '6/6', '21 dosya/130 test', 'vite build başarılı' diyor ama evidence/V12-QRT-003/ dizini filesystem'de yok (search_files 0 sonuç). Test sayısı md'de 5+6=11 ama PosTerminal 130 test, RelayCredential 5 test, RelaySettings 6 test = 141 test; md '6/6 test' ifadesi hangi 6 test için geçerli belirsiz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:93",
+        "evidence/V1-RMD-739/findings/register.md:93",
+        "plan/v1.2/qr-transport/V12-QRT-003-relay-credential-configuration-ui.md:113-124"
+      ],
+      "acceptance": "evidence/V12-QRT-003/ oluşturulur; içine dotnet test transcripts, vitest run output, tsc --noEmit, vite build, plan_audit_tool.py validate çıktıları konur; md'deki test sayıları (5/5, 6/6, 130 test) güncel kodla eşleşiyor mu doğrulanır ve md güncellenir.",
+      "id": "W2-N-F0988-01",
+      "parents": [
+        "F0988"
+      ]
+    }
+  ],
+  "limitations": "Bu bir 'kanıt eksikliği' tespiti, kod kusuru değil. evidence/V12-QRT-003/ yokluğunu filesystem'de doğruladım (search_files 0). Ancak V12-QRT-003 kodunu (RelayCredential, RelaySettings, PosTerminal relay route) okumadım; testlerin gerçekten geçip geçmediğini çalıştırarak doğrulamadım (read-only kısıt). Sadece plan md ve finding kayıtlarıyla karşılaştırdım. Status 'verification-needed' - gerçek test koşulup evidence yazılınca 'historical-fixed' veya 'open' olabilir.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

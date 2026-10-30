@@ -1,0 +1,24 @@
+{
+  "source_id": "F1006",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "ProductionShell.tsx sahiplik listesinde yok; devir kesin değil",
+      "status": "verification-needed",
+      "invariant": "V1-RMD-016 Done kabulünde owned surface tam ve güncel olmalı; ProductionShell.tsx routes/workspace.tsx:139'da aktif kullanımda",
+      "mechanism": "Görev B095.md V1-RMD-016 bölümünde sahiplik listesi shell/index.ts, models.ts içeriyor; ProductionShell.tsx listede yok. low-C.md:111 'sonraki görevlerle (CUI) devredilmiş olabilir - Düşük, yalnız not' diyor. B095.md:27 'gerçek tarayıcı 3 çözünürlük elle kabulü kanıtta yok (E2E RMD-020'ye devredilmiş)' yazıyor. Devir hedef görevi (RMD-020/CUI) ve kesinlik doğrulanmamış.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-C.md:111",
+        "evidence/V1-RMD-739/tasks/B095.md:26-27",
+        "evidence/V1-RMD-739/findings/low-C.md:111 (F1006 reason)"
+      ],
+      "acceptance": "RMD-020 veya CUI görevi ProductionShell.tsx sahipliğini almış mı ve 3 çözünürlük elle kabulü kanıtlanmış mı doğrulanmalı; B095.md sahiplik listesi güncellenmeli veya devir notu eklenmeli",
+      "id": "W2-N-F1006-01",
+      "parents": [
+        "F1006"
+      ]
+    }
+  ],
+  "limitations": "Sahiplik devirinin hedef görevi (RMD-020/CUI) tamamlanıp tamamlanmadığı, 3 çözünürlük elle kabulü kanıtlanıp kanıtlanmadığı bu oturumda doğrulanamıyor; sadece belge/plan seviyesinde kapanış teyidi eksikliği tespit edildi. Repo yazma/kod çalıştırma yok.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,59 @@
+{
+  "source_id": "F0162",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Done kartındaki İstanbul bütçe günü teslimatı gerçekleşmemiş",
+      "status": "open",
+      "invariant": "Done kartının vaat ettiği B014 teslimatı, güncel kod ve kapanış açıklamasıyla tutarlı olmalı.",
+      "mechanism": "V1-RMD-722 Goal ve In scope İstanbul iş gününü uygulamayı vaat ederken Status Done. Kendi README dosyası B014'ün bilerek yapılmadığını söylüyor. Resolver, endpoint kalan-bütçe hesabı ve vardiya özeti UTC gece yarısını kullanıyor. Bu, UTC ürün davranışının yanlış olduğuna karar vermeden de doğrulanabilen açık teslimat/izlenebilirlik çelişkisi.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/register.md:172",
+        "evidence/V1-RMD-739/tasks/B060.md:18-23",
+        "plan/v1/remediation/V1-RMD-722-sent-item-void-comp-atomicity-and-audit.md:4-15",
+        "plan/v1/remediation/V1-RMD-722-sent-item-void-comp-atomicity-and-audit.md:32-34",
+        "evidence/V1-RMD-722/README.md:3-11",
+        "src/Host/Experience/Orders/OrderManagementEndpoints.cs:700-707",
+        "src/Host/Experience/Orders/ShiftSummaryStore.cs:26-43",
+        "src/Modules/Identity/Authorization/PersonalBudgets/PersonalCompBudgetEscalationResolver.cs:51-64"
+      ],
+      "acceptance": [
+        "B014 için onaylı plan değişikliğiyle açık takip/karar bağımlılığı ve gerçek teslimat durumu kaydedilir veya vaat edilen davranış uygulanıp kanıtlanır; salt Done etiketi kapanış sayılmaz.",
+        "Kart, README ve güncel davranış aynı teslimat sınırını belirtir; yapılmamış B014 kapanmış gösterilmez."
+      ],
+      "id": "W2-R-F0162-01",
+      "parents": [
+        "F0162"
+      ]
+    },
+    {
+      "title": "Kişisel bütçe gününün UTC veya İstanbul seçimi çelişkili",
+      "status": "decision-blocked",
+      "invariant": "Kişisel bütçe sıfırlama ve kalan-bütçe gösterimi açık, tekil PO gün sınırı kararına uymalı.",
+      "mechanism": "İş tarihi belgesi Europe/Istanbul der; kişisel bütçeye özel authorization-model §3.3 ise PO 2026-10-21 başlığı altında UTC gününü açıkça seçer. Kod UTC uygular, İstanbul'da sıfırlama 03:00'e denk gelir. Bu nedenle her UTC kullanımını doğrudan ürün hatası saymak yanlış; genel iş günü ile kişisel bütçe istisnasının önceliği netleştirilmeli. PO soru kimliği: evidence/V1-RMD-739/findings/po-questions.md:21, numaralandırılmamış B060/B014 maddesi.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/po-questions.md:21-22",
+        "docs/compliance/money-tax-business-date.md:27-28",
+        "docs/domain/authorization-model.md:149-151",
+        "evidence/V1-RMD-722/README.md:10-11",
+        "src/Modules/Identity/Authorization/PersonalBudgets/PersonalCompBudgetEscalationResolver.cs:51-59",
+        "src/Host/Experience/Orders/OrderManagementEndpoints.cs:703-707",
+        "src/Host/Experience/Orders/ShiftSummaryStore.cs:43-80"
+      ],
+      "acceptance": [
+        "Semih, kişisel bütçe ve vardiya özetinin genel İstanbul iş gününe istisna olup olmadığını tarihli kararla açıklar; iki belge ve PO soru kaydı hizalanır.",
+        "Seçilen sınır resolver, kalan-bütçe yanıtı ve ilgili özet sorgularında tutarlı uygulanır; İstanbul 00:00 ve 03:00 öncesi/sonrası kayıtlarla gerçek test kanıtı üretilir."
+      ],
+      "id": "W2-R-F0162-02",
+      "parents": [
+        "F0162"
+      ]
+    }
+  ],
+  "limitations": [
+    "Test veya uygulama çalıştırılmadı; gün sınırı davranışı kaynak ifadelerinden statik doğrulandı.",
+    "PO kayıtlarının gerçek onay geçmişi/harici görüşmeleri doğrulanmadı; okunmuş belgelerdeki UTC ve İstanbul ifadeleri aynen ayrıştırıldı.",
+    "İki atomik sonuç farklıdır: teslimat kartının mevcut çelişkisi open; doğru ürün gün sınırının seçimi decision-blocked."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

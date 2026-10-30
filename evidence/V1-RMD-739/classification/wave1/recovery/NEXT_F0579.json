@@ -1,0 +1,25 @@
+{
+  "source_id": "F0579",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-RMD-042 waiter-app.css'te 44px literal yok (dokunma minimumu)",
+      "status": "verification-needed",
+      "invariant": "WCAG 2.2 AA dokunma hedefi minimum 44x44 CSS piksel (V1-RMD-042 Goal: 'min 44x44 dokunma hedeflerini tamamlamak')",
+      "mechanism": "low-A.md:236 kaydı 'waiter-app.css'te 44px literal yok (dokunma minimumu sonra V1-RMD-145'te kapandı); kanıt komutsuz'. waiter-app.css okundu (satır 50-53): --target-min: 48px; --target-primary: 56px; tanımlı. 44px literal yok ama 48px/56px token'ları var. V1-RMD-042 planı (satır 11) 'min 44x44 dokunma hedeflerini tamamlamak' diyor. CSS token'ları 48px minimum kullanıyor - bu 44px'ten büyük, dolayısıyla kriter karşılanıyor olabilir. Ancak '44px literal' arama tam olarak yok. V1-RMD-145 referansı 'sonra kapandı' diyor ama o task planlarda yok.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:236",
+        "plan/v1/remediation/V1-RMD-042-shell-freshness-accessibility-and-wcag.md:11",
+        "src/Clients/WaiterPwa/wwwroot/waiter-app.css:50-53",
+        "evidence/V1-RMD-042/verification.md:1-11"
+      ],
+      "acceptance": "CSS'te --target-min ≥ 44px olmalı (şu an 48px). V1-RMD-145 görev varlığını doğrula; yoksa bu kayıt historical-fixed olabilir",
+      "id": "W2-N-F0579-01",
+      "parents": [
+        "F0579"
+      ]
+    }
+  ],
+  "limitations": "V1-RMD-145 plan dosyası bulunamadı (arama yapıldı). CSS token'ları 48px kullanıyor, bu 44px WCAG minimumunu karşılıyor. Ancak '44px literal' tam metin araması yapılmadığı için verification-needed durumunda. Gerçek çalışma zamanı test (device/emulator) yapılmadığı için WCAG uyumu tam kanıtlanamaz.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

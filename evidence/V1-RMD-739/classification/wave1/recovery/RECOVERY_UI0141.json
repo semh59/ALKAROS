@@ -1,0 +1,33 @@
+{
+  "source_id": "UI0141",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "PosTerminal metin grileri ortak renk tokenlarını atlıyor",
+      "status": "open",
+      "invariant": "Onaylı tek palet ekranlar arasında korunmalı; aynı metin rolleri ortak semantik tokenlarla yönetilmeli.",
+      "mechanism": "styles.css ortak tokenları içe aktarıyor fakat .terminal-reference (#9099a2), .pos-brand span (#8e9ca8) ve .system-state.compact (#aeb8c1) doğrudan farklı gri değerler kullanıyor. Bu kurallar token güncellemesini izlemiyor; genel alias geçişi bu üç kuralı düzeltmemiş.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:17 — özgün iddia",
+        "src/Clients/PosTerminal/src/styles.css:9-33 — token importu ve renk aliasları",
+        "src/Clients/PosTerminal/src/styles.css:141,164,166 — hâlâ sabit gri değerler",
+        "src/Clients/PosTerminal/src/design-system/tokens.css:22-27 — mevcut ortak yüzey/metin/çizgi paleti",
+        "docs/design/foundations.md:3-7,38-50,110-119 — onaylı ortak palet ve sapma yasağı"
+      ],
+      "acceptance": [
+        "Üç seçicinin metin renkleri, açık ve koyu üst-bar yüzey rollerine uygun ortak semantik tokenlardan çözülmeli; seçiciye özel ham gri kalmamalı.",
+        "Login ve kasa üst barında computed-style ve ekran görüntüsüyle token tüketimi, okunabilirlik ve kontrast doğrulanmalı; koyu üst barın metnine açık-yüzey muted tokenı körlemesine uygulanmamalı."
+      ],
+      "id": "W2-R-UI0141-01",
+      "parents": [
+        "UI0141"
+      ]
+    }
+  ],
+  "limitations": [
+    "Salt okunur statik doğrulama; uygulama, tarayıcı veya test çalıştırılmadı. Kontrast ihlali ölçülmüş sonuç olarak ileri sürülmedi.",
+    "Ortak kaynak satırındaki diğer konular bu kayda eklenmedi; UI0141 reason alanındaki üç PosTerminal grisi incelendi.",
+    "Önceki task-7.log yalnız kurtarma indeksi olarak arandı; karar bugünkü dosya okumalarına dayanıyor. Repo değişikliklerine dokunulmadı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

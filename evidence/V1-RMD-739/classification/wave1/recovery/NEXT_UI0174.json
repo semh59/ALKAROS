@@ -1,0 +1,44 @@
+{
+  "source_id": "UI0174",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "PT Cashier.tsx rol etiketi sabit \"Kasiyer\" — gerçek kullanıcı rolü gösterilmiyor",
+      "status": "open",
+      "invariant": "Kullanıcı arayüzünde görüntülenen rol/yetki, oturum açan kullanıcının gerçek yetkilerini yansıtmalıdır (hardcoded literal değil).",
+      "mechanism": "Cashier.tsx:562'de `<small>Kasiyer</small>` sabit metin olarak render ediliyor. `capabilities` state'i (satır 67) yükse rol tespiti yapılabiliyor ama UI'a yansıtılmıyor.",
+      "source_evidence": "D:/project/ALKAROS/src/Clients/PosTerminal/src/routes/Cashier.tsx:562",
+      "acceptance": "Rol etiketi `capabilities` dizisinden (örn. `cash.drawer`, `payments.take`, `orders.create`) dinamik olarak çözümlenip görüntülenmeli; en az bir yetki yoksa \"Kasiyer\" yerine \"Personel\" gibi nötr bir fallback kullanılmalı.",
+      "id": "W2-N-UI0174-01",
+      "parents": [
+        "UI0174"
+      ]
+    },
+    {
+      "title": "CA index.html \"İptal\" düğmesi aslında \"Fişi Temizle\" eylemi yapıyor — metin/eylem uyuşmazlığı",
+      "status": "open",
+      "invariant": "Düğme etiketi, tıklanma sonucu gerçekleşen eylemi doğru tanımlamalıdır (i18n key veya aria-label ile tutarlı olmalı).",
+      "mechanism": "index.html:97'de `<button ... id=\"btnClearTicket\" title=\"Fişi Temizle\">İptal</button>` — görünen metin \"İptal\", title/tooltip \"Fişi Temizle\". cashier-app.js'de bu düğme `clearTicket` fonksiyonunu çağırır (fişi temizler), iptal etmez.",
+      "source_evidence": "D:/project/ALKAROS/src/Clients/Cashier/wwwroot/index.html:97",
+      "acceptance": "Görünen metin \"Fişi Temizle\" (veya eşdeğer net bir etiket) olmalı; \"İptal\" kelimesi yalnız sipariş/ödeme iptali yapan eylemlerde kullanılmalı. aria-label ve title da aynı anlamsal eylemi taşımalı.",
+      "id": "W2-N-UI0174-02",
+      "parents": [
+        "UI0174"
+      ]
+    },
+    {
+      "title": "PT Cashier.tsx ve CA index.html satış akışında masa seçimi yok — KASA-1 sabit pseudo-table kullanılıyor",
+      "status": "open",
+      "invariant": "Kasa satış ekranında (PT) ve vanilla CA'da, masasız (take-away/quick-sale) siparişlerde bile hedef masa/konum seçimi sunulmalı; sabit KASA-1 varsayımı üretimde yanlış raporlamaya yol açar.",
+      "mechanism": "PT Cashier.tsx:549-552 — `<a ... href=\"/tables\">Masalar</a>` navigasyonu var ama satış başlatırken (`api.startOrder`) masa ID'si gönderilmiyor; backend KASA-1'e düşer. CA index.html:114 — `dispatchWaiterSelect` sadece servis eden personel seçiyor, masa/konum seçimi yok.",
+      "source_evidence": "D:/project/ALKAROS/src/Clients/PosTerminal/src/routes/Cashier.tsx:549-552,619-620; D:/project/ALKAROS/src/Clients/Cashier/wwwroot/index.html:114,118-121",
+      "acceptance": "Hızlı satış başlatılırken (`startOrder` / `api.addItem` zinciri) opsiyonel `tableId` parametresi kabul edilmeli; UI'da \"Masa seç\" veya \"Paket servis\" toggle'ı eklenmeli. Backend'de KASA-1 fallback'ı sadece UI seçim yapılmadığında son çare olarak kalmalı, varsayılan olmamalı.",
+      "id": "W2-N-UI0174-03",
+      "parents": [
+        "UI0174"
+      ]
+    }
+  ],
+  "limitations": "Sadece statik kod incelemesi yapıldı; runtime davranışı (SignalR masa durumu, gerçek kullanıcı yetkileri) doğrulanmadı. CA tarafında cashier-app.js içeriği okunmadığı için düğme bağlama mantığı doğrulanmadı (sadece HTML tetikleyicisi görüldü).",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

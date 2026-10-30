@@ -1,0 +1,28 @@
+{
+  "source_id": "W2-04-001",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Saklama adayları sınırsız belleğe alınıyor",
+      "status": "open",
+      "invariant": "Saklama planlama ve yürütme sınırlı kaynakla tamamlanmalı.",
+      "mechanism": "SelectAsync bütün sınıfların adaylarını tek List içinde biriktiriyor; ExecuteAsync ayrıca adaylardan üç dizi üretiyor. RetentionSelection.Due sorgusunda sayfalama yok.",
+      "source_evidence": [
+        "D:/project/ALKAROS/src/Modules/Privacy/RetentionExecution/PostgresRetentionExecutionService.cs:232-279",
+        "D:/project/ALKAROS/src/Modules/Privacy/RetentionExecution/RetentionSelection.cs:71-82"
+      ],
+      "acceptance": "Büyük aday kümesi kayıpsız ve tekrarsız partilenir; bellek üst sınırı yük testiyle ölçülür.",
+      "id": "W2-N-W2-04-001-01",
+      "parents": [
+        "W2-04-001"
+      ]
+    }
+  ],
+  "limitations": [
+    "Sınırsız biriktirme statik olarak doğrulandı; gerçek OOM veya performans ölçümü yapılmadı.",
+    "RetentionSelection.Due sorgusu ORDER BY kullanıyor ancak LIMIT/OFFSET yok; her sınıf için tüm adaylar tek seferde çekiliyor.",
+    "ExecuteAsync içinde candidates.ToArray() ve üç ayrı dizi (subjectIds, bases, dueAts) üretilerek bellek 4x artıyor.",
+    "Test çalıştırılmadı; kabul koşulu sadece taslak."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

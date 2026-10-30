@@ -1,0 +1,27 @@
+{
+  "source_id": "UI0128",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Odak halkası renk ve kalınlık tutarsızlığı (5 renk, 2/3px)",
+      "status": "open",
+      "invariant": "UI_STYLE_GUIDE §1.1: odak göstergesi (focus ring) sistem geneli tek renk/kalınlık olmalı; DESIGN.md --ds-color-focus ve primitives.css :focus-visible kuralı tek kaynak olmalı.",
+      "mechanism": "Beş farklı CSS dosyası kendi :focus-visible / focus-visible kuralını yazar; outline rengi ve kalınlığı dosya başına değişiyor. primitives.css:23 (--ds-color-focus, 3px/2px), split-payment.css:77,104,112,201 (var(--color-brand), 2px/1px), cashier-app.css:788 (#111827 + 5px white box-shadow), billing.css:16,74 (var(--ds-color-focus) #ff7d49, 3px/2px), styles.css:44,184 (#111827 + 5px white box-shadow). Tek bir design-system primitive (primitives.css:18-25) kullanılmamış.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/gorsel-tutarlilik.md:9",
+        "src/Clients/PosTerminal/src/design-system/primitives.css:18-25",
+        "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css:77,104,112,201",
+        "src/Clients/Cashier/wwwroot/cashier-app.css:788",
+        "src/Clients/PosTerminal/src/features/billing/billing.css:16,74",
+        "src/Clients/PosTerminal/src/styles.css:43-47,184"
+      ],
+      "acceptance": "Tüm :focus-visible kuralı primitives.css:18-25 tek tanımına indirgenir; her bileşen dosyası kendi focus kuralını siler ve .ds-button/.ds-input/.ds-select/.ds-dialog__close/.ds-drawer__close sınıflarını kullanır. Smoke test: her fokuslanabilir öğe (buton, input, select, dialog close, drawer close) aynı 3px --ds-color-focus (#00cfff) outline ve 2px offset gösterir.",
+      "id": "W2-N-UI0128-01",
+      "parents": [
+        "UI0128"
+      ]
+    }
+  ],
+  "limitations": "Statik kod incelemesine dayalı; runtime tarayıcı devtools ile her fokuslanabilir öğenin computed style doğrulaması yapılmadı. WaiterPwa (waiter-app.css:94) ve diğer istemciler (online-*.css, kitchen-operations.css, tables.css, floorPlan.css) aynı desenle yazılmış olabilir; bu kayıt bunları kapsamaz.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

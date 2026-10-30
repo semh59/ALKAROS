@@ -1,0 +1,35 @@
+{
+  "source_id": "PL0028",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V13-HUG-005 için kalıcı kabul kanıtı klasörü eksik",
+      "status": "open",
+      "invariant": "Done görevin build/test çıktıları komut ve gerçek exit code ile evidence/<Task-ID>/ altında izlenebilir olmalı; migration için ileri/geri kanıt bulunmalı.",
+      "mechanism": "V13-HUG-005 kartı Done; kabul kısmında gerçek Postgres HTTP, build/test ve audit koşulları var. Path.exists ile evidence/V13-HUG-005 dizininin bulunmadığı doğrulandı. İlgili production/test yolları mevcut; okunan HTTP test kaynağında yetkisiz erişim, kaydet/durum ve secret geri dönmeme assert'leri var. Bunlar koşum sonucu değildir ve eksik kalıcı kanıtı kapatmaz. Kusur kanıt teslimidir; production davranışının bozuk olduğu veya testlerin geçtiği iddia edilmez.",
+      "source_evidence": [
+        "evidence/V1-RMD-604/README.md:33-34",
+        "plan/v1.3/hugin-t300/V13-HUG-005-terminal-credential-registration.md:3-7,39-45,96-110",
+        "plan/TASK_STANDARD.md:155-166",
+        "AGENTS.md:73-83",
+        "tests/Host/Experience/TokenTerminalSettings/TokenTerminalSettingsHttpTests.cs:32-79,136-151",
+        "Salt okunur pathlib.Path.exists kontrolü: evidence/V13-HUG-005 = false; terminal exit code 0"
+      ],
+      "acceptance": [
+        "Yetkili ayrı çalışmada build, ilgili store/HTTP/UI testleri ve kartın audit kontrolleri gerçek exit code ile çalıştırılır; çıktılar evidence/V13-HUG-005/ altında kaynak sürümü/hash ile saklanır.",
+        "Migration ileri/geri kanıtı ve elle denenebilir credential kaydet/durum senaryosu eklenir; test kaynaklarının varlığı koşum kanıtı sayılmaz."
+      ],
+      "id": "W2-R-PL0028-01",
+      "parents": [
+        "PL0028"
+      ]
+    }
+  ],
+  "limitations": [
+    "Repo kodu, test, build veya migration çalıştırılmadı; derlenebilirlik ve başarı sayısı doğrulanmadı.",
+    "Production dosyalarının yalnız varlığı kontrol edildi; işlevsel inceleme ve secret sızıntısı denetimi yapılmadı.",
+    "Başka klasörlerde alternatif tarihsel kanıt bulunabileceği dışlanmadı; standart görev dizininin yokluğu doğrulandı.",
+    "PL0029 ayrı görevin ayrı kanıt teslimidir; aynı README satırını paylaşması tek başına aynı kusur yapmaz."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

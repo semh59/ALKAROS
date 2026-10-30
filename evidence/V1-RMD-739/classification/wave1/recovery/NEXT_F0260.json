@@ -1,0 +1,20 @@
+{
+  "source_id": "F0260",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "ErrorEvent acknowledge/resolve audit record not tested; admin session success path not verified",
+      "status": "open",
+      "invariant": "Every state-changing management endpoint must have audit record verified by test; admin authorization path must be tested",
+      "mechanism": "ErrorEventEndpointsTests.cs:46-133 tests List, AcknowledgeAsync, ResolveAsync, GetAsync, filter injection, pagination, performance, and 401/403 rejection for non-manager sessions. However: (1) No test verifies that audit.AppendAsync is called with correct parameters (AggregateId=fingerprint, actorId, afterStateJson) after AcknowledgeAsync or ResolveAsync. The audit call in ChangeAsync (lines 196-201) uses Guid.NewGuid() for AggregateId (defect F0757) and is not asserted in any test. (2) The test CallWithoutAManagerSessionIsRejected (lines 117-132) only verifies 401/403 for non-manager; there is no test that a valid manager session (with ObservabilityEndpoints.ManagePermission) successfully completes acknowledge/resolve and returns 204. The authorization check at line 192 uses authorization.AuthorizeAsync but no test exercises the success path with a properly authorized principal.",
+      "source_evidence": "tests/Host/Observability/ErrorEventEndpoints/ErrorEventEndpointsTests.cs:46-133 (all tests); src/Host/Observability/ErrorEventEndpoints/ErrorEventEndpoints.cs:173-202 (ChangeAsync, audit.AppendAsync); evidence/V1-RMD-739/findings/register.md:270; evidence/V1-RMD-739/findings/low-B.md:174",
+      "acceptance": "Add tests verifying: (a) audit.AppendAsync is invoked with correct AuditEvent (AggregateId = fingerprint, actorId = manager, action = monitoring.error.acknowledged/resolved) after successful acknowledge/resolve; (b) a request with valid manager session/permission succeeds (204) and changes error event status. Mock or use real IAuditEventStore to capture and assert the audit call.",
+      "id": "W2-N-F0260-01",
+      "parents": [
+        "F0260"
+      ]
+    }
+  ],
+  "limitations": "The IAuditEventStore interface is used directly in endpoints; tests would need to either mock it (via DI override) or use a capturing implementation. The current test infrastructure uses PgTestDatabase for DB but the audit store may write to a different table/schema. The authorization check uses IAuthorizationService with ObservabilityEndpoints.ManagePermission - tests need to construct a principal with this permission or mock the authorization service.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

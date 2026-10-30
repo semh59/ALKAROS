@@ -1,0 +1,20 @@
+{
+  "source_id": "F0005",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "CashierHandoffStore.cs'te Draft sipariş kuralı yok — Draft kalemler faturaya giriyor / Draft sipariş kasaya gönderilebiliyor",
+      "status": "open",
+      "invariant": "Draft durumundaki siparişler kasaya gönderilememeli ve faturalanmamalı; yalnız Submitted ve sonrası durumlar kasaya geçebilmeli (OrderState geçiş matrisi: Draft→Submitted; Draft→Cancelled izinli, Draft→Accepted yasak).",
+      "mechanism": "CashierHandoffStore.cs:149-151 — `RecallCheckAsync` içinde sipariş durumu `Submitted` kontrol ediliyor ama `SendCheckToCashierAsync` (satır 37-79) hiçbir durum kontrolü yapmıyor. Sipariş `Draft` olsa bile `current_order_id` eşleşirse kasaya gönderilir. Billing modülünde de OrderStatus.Draft dışlaması yok (grep Draft sadece yorum satırında:14). Commit b9ced03b sunucu koduna dokunmamış.",
+      "source_evidence": "D:/project/ALKAROS/src/Host/Experience/Orders/CashierHandoffStore.cs:37-79,149-151; D:/project/ALKAROS/src/Modules/Orders/OrderAggregate/OrderEnums.cs:8-20 (OrderState Draft var ama handoff'te kontrol yok)",
+      "acceptance": "SendCheckToCashierAsync içinde sipariş durumu `Submitted` (veya `PendingConfirmation`/`Accepted` — iş kuralına göre) olmalı kontrolü eklenmeli; Draft ise `CheckNotRecallableException` veya özel `DraftOrderCannotBeSentException` fırlatmalı. Billing'de fatura oluşturma/yazma yollarında da Draft dışlama guard'ı eklenmeli. İlgili test (CashierHandoffStore unit/integration) Draft sipariş gönderimi reddettiğini kanıtlamalı.",
+      "id": "W2-N-F0005-01",
+      "parents": [
+        "F0005"
+      ]
+    }
+  ],
+  "limitations": "Billing modülü içindeki fatura oluşturma kod yolları (Bill.cs, BillFoundation, BillingSplitStore) tam taranmadı — grep Draft sıfır sonuç verdi ama dinamik string/property ile Draft filtresi olabilir. Sadece CashierHandoffStore.cs ve OrderState enum'i doğrulandı. V1-RMD-719 görev dosyası ve evidence/V1-RMD-719/ okunmadı (sadece register.md'te geçiyor).",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

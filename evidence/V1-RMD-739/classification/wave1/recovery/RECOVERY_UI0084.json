@@ -1,0 +1,34 @@
+{
+  "source_id": "UI0084",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Aggregate bazlı denetim sorgusunun kullanıcı yüzeyi gereksinimi doğrulanmalı",
+      "status": "verification-needed",
+      "invariant": "Kullanıcıya sunulması onaylanan denetim sorgusu, yetkili kullanıcının erişebildiği bir akışa bağlanmalıdır; yalnız API varlığı yeni ekran zorunluluğu doğurmaz.",
+      "mechanism": "Backend aggregate türü/kimliğiyle audit sorgusunu reports.view kapısı altında sunar. KitchenOperationsClient arayüzü ve uygulamasında bu sorgu yoktur; istemci ağacında audit/aggregate ve ilgili sorgu sembolleri aranırken çağıran bulunmadı. Bu, istemci bağlantısı yokluğunu destekler; fakat kaynak rapor onaylanmış ekran kabul maddesi sağlamaz. Eksik ürün gereksinimi bulunmadan kesin UI kusuru veya yeni ekran yetkisi sayılamaz.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/eksik-avcisi.md:7-10,19",
+        "src/Host/Experience/KitchenOperations/KitchenOperationsEndpoints.cs:483-499",
+        "src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:822-830",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts:22-38,80-168",
+        "src/Clients/PosTerminal/src/App.tsx:14-38,41-112"
+      ],
+      "acceptance": [
+        "Mevcut onaylı ürün/kabul kaydından aggregate denetim sorgusunun hangi role, hangi ekranda sunulacağı belirlenir; böyle bir gereksinim yoksa eksik özellik adayının not-defect kararı gerekçelendirilir.",
+        "UI gereksinimi onaylanırsa erişilebilir menü/akıştan aggregate türü ve kimliğiyle gerçek audit verisi sorgulanır; boş, hata ve yetkisiz durumları doğrulanır; reports.view kapısı korunur."
+      ],
+      "id": "W2-R-UI0084-01",
+      "parents": [
+        "UI0084"
+      ]
+    }
+  ],
+  "limitations": [
+    "Statik okuma yapıldı; tarayıcı/runtime doğrulaması ve test çalıştırılmadı.",
+    "İstemci dizininde audit/aggregate ve sorgu sembolleri için çağıran bulunmaması dinamik olarak kurulmuş her olası URL'nin yokluğunu kesin kanıtlamaz.",
+    "Özgün UI raporu Bnnn görev kartı belirtmiyor; aynı uçlarla ilgili plan araması yeni ekran için onaylı kabul kaydı sağlamadı.",
+    "po-questions.md içinde bu ekrana ait numaralı soru yok; soru numarası veya PO kararı uydurulmadı. Repo içine yazılmadı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

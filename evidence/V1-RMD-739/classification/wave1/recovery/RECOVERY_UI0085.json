@@ -1,0 +1,37 @@
+{
+  "source_id": "UI0085",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Korelasyon bazlı audit görüntüleme gereksinimi ve tanılama paneli eşdeğerliği doğrulanmalı",
+      "status": "verification-needed",
+      "invariant": "Onaylanmış audit izleme ihtiyacı yetkili kullanıcıya ulaşmalıdır; korelasyon kimliği alan herhangi bir tanılama ekranı audit olay görüntüleyicisi sayılmaz.",
+      "mechanism": "reports.view korumalı audit/correlation ucu ve store sorgusu mevcut, KitchenOperationsClient bunu sunmuyor ve istemci ağacında uç/sorgu sembolü çağıranı bulunmadı. Buna karşılık güncel DiagnosticPanel korelasyon kimlikleri alarak ayrı security/diagnostic-bundle ucundan paket üretip indiriyor. Bu yeni yüzey özgün audit olay sorgusuyla aynı sözleşme değildir; ne tüm korelasyon UI'si yok denebilir ne de bu panelin eski bulguyu kapattığı kanıtlanmıştır. Onaylı audit görüntüleme gereksinimi ve bu panelin onu karşılayıp karşılamadığı eksiktir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/eksik-avcisi.md:7-10,19",
+        "src/Host/Experience/KitchenOperations/KitchenOperationsEndpoints.cs:501-512",
+        "src/Host/Experience/KitchenOperations/KitchenOperationsStore.cs:832-837",
+        "src/Clients/PosTerminal/src/features/kitchen-operations/kitchenApi.ts:22-38,80-168",
+        "src/Clients/PosTerminal/src/features/management-security-system/DiagnosticBacklogPanels.tsx:12-60",
+        "src/Clients/PosTerminal/src/features/management-security-system/api.ts:16,21-42",
+        "plan/v1/remediation/V1-RMD-116-grant-replay-tampering-audit-exposure-connectivity-badge.md:62-72"
+      ],
+      "acceptance": [
+        "PO/kabul kaydı korelasyonla audit olaylarını kullanıcıya gösterme ihtiyacını tanımlar veya bu API-only yeteneğinin ekran zorunluluğu olmadığını teyit eder.",
+        "Mevcut tanılama panelinin audit olaylarını gereken alan ve erişim kontrolleriyle karşılayıp karşılamadığı gerçek sonuçla doğrulanır; karşılamazsa yalnız onaylı entegrasyon görevi üzerinden eksik akış planlanır.",
+        "UI gereksinimi varsa geçerli, boş ve hatalı korelasyon sorguları ile reports.view olmayan kullanıcı davranışı gözlemlenir; API kapısı korunur."
+      ],
+      "id": "W2-R-UI0085-01",
+      "parents": [
+        "UI0085"
+      ]
+    }
+  ],
+  "limitations": [
+    "Yalnız statik inceleme; paket üretimi, tarayıcı akışı ve audit API çağrısı çalıştırılmadı.",
+    "Diagnostic bundle'ın backend içeriği bu kaynakta izlenmedi; audit olaylarını içerir/içermez iddiası yapılmadı.",
+    "po-questions.md içinde bu ekran için soru numarası yok; karar uydurulmadı. Yeni ekran uygulama yetkisi çıkarılmadı.",
+    "UI0084 ile aynı özgün rapor satırı olsa da aggregate seçimi ile korelasyon/tanılama akışı farklıdır; ortak dosya gerekçesiyle birleştirilmedi. Repo değişikliği yok."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

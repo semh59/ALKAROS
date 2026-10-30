@@ -1,0 +1,38 @@
+{
+  "source_id": "PO0059",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Transaction çerçevesi kaldırıldıktan sonra bağımlılık kenarları uzlaştırılmamış",
+      "status": "open",
+      "invariant": "Güncel bağımlılık/handoff zinciri, kaldırılan teslimat yerine hangi desteklenen sözleşmenin kullanıldığını izlenebilir göstermeli; geçmiş Done kaydı bugünkü framework mevcudiyeti kanıtı sayılmamalı.",
+      "mechanism": "V1-FND-005 handoff listesinde V1-SEC-001, V1-TBL-002, V13-PAY-004 ve V13-ALC-004 var; dört tüketici kartında da V1-FND-005 bağımlılığı duruyor ve V1-RMD-134 kaldırma kararına veya karşılık gelen yerel transaction sözleşmesine açıklama yok. Statik olarak doğrulanan kusur uzlaştırılmamış plan kenarlarıdır. Silinmiş framework'e runtime bağımlılık veya transaction davranışı kaybı kanıtlanmadı: CardSettlementOrchestrator mevcut Npgsql transaction'ını ödeme/allocation/outbox çağrılarına açıkça geçirip commit ediyor. V1-TBL-002 ayrıca tarihsel konsolidasyon notuna sahip; bunu yeni implementation açığı saymak doğru değil. PO0058 ile aynı kusur sayılmamalı: orada sağlayıcı kartının teslimat durumu, burada dört bağımlı karttaki kenarların anlamı ve kanıt yönlendirmesi düzeltilir.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/po-questions.md:38",
+        "evidence/V1-RMD-739/tasks/B111.md:19-21",
+        "plan/v1/foundation/V1-FND-005-transaction-execution-boundary.md:42-58",
+        "plan/v1/remediation/V1-RMD-134-buildingblocks-dead-foundation-cleanup.md:11-24,45-52",
+        "plan/v1/security-foundation/V1-SEC-001-secret-resolution-boundary.md:26-48",
+        "plan/v1/table-management/V1-TBL-002-table-transfer.md:25-26,29-42",
+        "plan/v1.3/payments/V13-PAY-004-card-settlement-orchestration.md:49-84",
+        "plan/v1.3/payment-allocation/V13-ALC-004-refund-finalization.md:39-58",
+        "src/Modules/Payments/CardSettlement/CardSettlementOrchestrator.cs:53-74,101-112,149-150"
+      ],
+      "acceptance": [
+        "Dört bağımlı görevde V1-FND-005 kenarının tarihsel gate mi, güncel teknik sözleşme mi olduğu açıkça yazılır; kaldırılmış framework'e örtük üretim bağımlılığı kalmaz.",
+        "Transaction gerektiren görevler desteklenen yerel transaction sahiplerine ve görev bazlı atomiklik/rollback kanıtlarına yönlendirilir; Secrets görevinin yalnız tarihsel sıralama kenarı varsa bu belirtilir.",
+        "Planlanan V13-ALC-004, kaldırılmış API'yi yeniden oluşturma önkoşulu olmadan güncel transaction sözleşmesine göre yürütülebilir hale gelir."
+      ],
+      "id": "W2-R-PO0059-01",
+      "parents": [
+        "PO0059"
+      ]
+    }
+  ],
+  "limitations": [
+    "Runtime arızası veya atomiklik kaybı doğrulanmadı; test çalıştırılmadı.",
+    "Örnek production akışı CardSettlement ile sınırlı; bütün modüllerin transaction ve nested-call davranışı denetlenmedi.",
+    "Bu teknik/belgesel uzlaştırma için yeni ürün kararı gerektiği kanıtlanmadı; decision-blocked verilmedi."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

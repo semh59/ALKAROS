@@ -1,0 +1,20 @@
+{
+  "source_id": "UI0085",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "/audit/correlation endpoint exists in KitchenOperationsEndpoints but no UI screen in PosTerminal client",
+      "status": "open",
+      "invariant": "Backend endpoints exposed via KitchenOperationsEndpoints must have corresponding frontend screens in the PosTerminal client for operator access",
+      "mechanism": "KitchenOperationsEndpoints.cs lines 501-512 define GET /audit/correlation/{correlationId} with ReportsView permission gate. However, a search across all PosTerminal client source (src/Clients/PosTerminal/src) finds zero references to 'audit/correlation' in any route, component, or API call. The eksik-avcisi.md finding explicitly states \"/audit/correlation ekranı yok\" and classifies it as static report classification without runtime verification. The endpoint is live but unreachable by operators.",
+      "source_evidence": "evidence/V1-RMD-739/ui/eksik-avcisi.md:10; src/Host/Experience/KitchenOperations/KitchenOperationsEndpoints.cs:501-512; search of src/Clients/PosTerminal/src for 'audit/correlation' returns 0 matches",
+      "acceptance": "Implement a Kitchen Operations Audit Correlation screen in PosTerminal client (e.g., under features/kitchen-operations or routes) that calls the /audit/correlation endpoint and displays results. Add navigation/link from KitchenOperationsWorkspace or management menu. Verify end-to-end with a test that loads the screen and fetches data.",
+      "id": "W2-N-UI0085-01",
+      "parents": [
+        "UI0085"
+      ]
+    }
+  ],
+  "limitations": "The defect is confirmed by source code inspection: the backend endpoint exists and is wired in KitchenOperationsEndpoints.cs, but no frontend consumer exists in the PosTerminal client codebase. The eksik-avcisi.md finding is a static classification from code reading, not a runtime verification - but the code search confirms zero frontend references.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

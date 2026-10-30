@@ -1,0 +1,24 @@
+{
+  "source_id": "UI0167",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "WaiterPWA bill sheet lacks split payment (hesap bölme) functionality",
+      "status": "open",
+      "invariant": "Waiter must be able to split a check by items/seats and send partial payments, matching Cashier split-payment capability",
+      "mechanism": "WaiterPWA bill.js and index.html show no split UI — bill sheet (lines 132-177 in index.html) has buttons for add items, party size, help, move table, send to cashier, close — no split button; Cashier split-payment.js exists at CA/payments/split-payment/split-payment.js with product-based splitting (line 1566 in pazar-uzmani.md)",
+      "source_evidence": [
+        "src/Clients/WaiterPwa/wwwroot/index.html:132-177",
+        "src/Clients/WaiterPwa/wwwroot/js/sheets/bill.js:1-348",
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:13"
+      ],
+      "acceptance": "WaiterPWA bill sheet adds split button/action allowing item/seat-based division and partial send-to-cashier, with server-side split order support",
+      "id": "W2-N-UI0167-01",
+      "parents": [
+        "UI0167"
+      ]
+    }
+  ],
+  "limitations": "Static review only; Cashier split-payment.js not examined for API contract; server-side split order endpoint not verified",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,24 @@
+{
+  "source_id": "UI0163",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Kasa kapalıyken varsayılan ödeme yöntemi sessizce 'EFT'",
+      "status": "open",
+      "invariant": "Ödeme yöntemi seçimi kasiyerin açık kararına bağlı olmalı; sistem hiçbir zaman sessizce bir yöntemi seçmemeli (UI_STYLE_GUIDE §5.1: kullanıcı eylemi olmadan ödeme yöntemi değişmez).",
+      "mechanism": "split-payment.js:300 satırında `if (!state.cashSessionOpen) state.selectedMethod = 'Eft';` ataması yapılıyor. Kullanıcıya hiçbir bildirim, onay veya görsel ipucu verilmeden yöntem Nakit'ten EFT'ye zorlanıyor. split-payment.css:77-90 (method chips) ve 1586-1590 (EFT onay kutusu) UI'sında bu değişiklik kullanıcıya yansıtılmıyor; sadece arka planda state değişiyor. cashier-app.js ve cash-session.js'de karşılık gelen mantık yok; bu sayfa bağımsız çalışıyor.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:15",
+        "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js:300",
+        "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.css:77-90,1586-1590"
+      ],
+      "acceptance": "Kasa kapalıyken varsayılan yöntem ataması kaldırılır. Method chips (split-payment.css:77-90) Nakit devre dışı gösterilir (disabled), kullanıcı açıkça EFT/BankCard/Account seçeneğine tıklar. EFT seçilirse onay kutusu (split-payment.js:1586-1590) görünür ve işaretlenene kadar 'Ödemeyi Ekle' butonu disabled kalır. Test: kasa kapalı sayfa açılır → method chips'ta Nakit disabled, EFT aktif değil → kullanıcı EFT tıklar → onay kutusu çıkar → onaylanana kadar submit disabled.",
+      "id": "W2-N-UI0163-01",
+      "parents": [
+        "UI0163"
+      ]
+    }
+  ],
+  "limitations": "Sadece split-payment.js (Cashier/wwwroot/payments/split-payment/) incelendi. PosTerminal/src/routes/Cashier.tsx (satır 693-767) ve WaiterPwa'daki benzer akışlar bu kayıt kapsamında doğrulanmadı. aksis-uzmani:21 ile tekrar-adayı olduğu belirtiliyor; bu dosya okunmadı.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,24 @@
+{
+  "source_id": "F0561",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Süresi dolan/iptal oturum satırları temizlenmiyor; ValidateAsync her geçerli istekte TouchActivity ile DB yazıyor",
+      "status": "open",
+      "invariant": "qr_ordering.customer_sessions tablosunda revoked_at IS NOT NULL veya expires_at < NOW() olan satırların periyodik temizliği yok; ValidateAsync başarılı her çağrıda TouchActivityAsync (UPDATE) yazar",
+      "mechanism": "CustomerSessionService.ValidateAsync (CustomerSessionService.cs:82) başarıyla doğrulanan her oturum için PostgresCustomerSessionRepository.TouchActivityAsync (PostgresCustomerSessionRepository.cs:48-59) çağırır; bu, her geçerli istekte last_activity_at güncelleyen bir UPDATE yazar. Tabloda expired (expires_at geçmiş) veya revoked (revoked_at dolu) satırları silen/arkive eden hiçbir job, trigger veya servis yok. Migration 085 (085-qr-ordering-customer-sessions.up.sql:5-18) revoked_at/expires_at tutar ama temizleme mekanizması tanımlamaz.",
+      "source_evidence": [
+        "src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs:82",
+        "src/Modules/QrOrdering/CustomerSession/PostgresCustomerSessionRepository.cs:48-59",
+        "database/migrations/V12/V12-QRS-003/085-qr-ordering-customer-sessions.up.sql:5-18"
+      ],
+      "acceptance": "Bir temizleme job/servisi eklenip; revoked_at IS NOT NULL OR expires_at < NOW() - INTERVAL '1 day' (veya politikaya uygun süre) koşuluyla satırlar siliniyor/arkiveleniyor; ValidateAsync TouchActivity yazmaya devam ediyor ama tablo büyümesi sınırlı kalıyor.",
+      "id": "W2-N-F0561-01",
+      "parents": [
+        "F0561"
+      ]
+    }
+  ],
+  "limitations": "Repo-sadece inceleme; gerçek Postgres'e karşı çalışan bir temizleme job'unun varlığını/planını kodda göremedim. Plan V12-QRS-003.md'de 'In scope' altında 'iptal' geçiyor ama acceptance evidence'de temizleme job from gözükmüyor. 'Out of scope' temizleme job'u açıkça dışlamıyor.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

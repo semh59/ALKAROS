@@ -1,0 +1,28 @@
+{
+  "source_id": "W2-04-002",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "HTTP güvenlik bölüm haritası eksik",
+      "status": "open",
+      "invariant": "ASVS haritası uygulanabilir kesimleri veya gerekçeli dışlamaları izlemeli.",
+      "mechanism": "HTTP Security satırı 3.1, 4.3 ve 4.4 kesimlerini içermiyor; yerel kaynak envanteri bu kesimleri listeliyor.",
+      "source_evidence": [
+        "D:/project/ALKAROS/docs/security/asvs-5-chapter-map.md:24",
+        "D:/project/ALKAROS/evidence/V1-RMD-583/asvs-5.0.0-sections.txt:66-76"
+      ],
+      "acceptance": "3.1 ve 4.4 kapsanır; GraphQL kullanılmıyorsa 4.3 için kaynaklı uygulanamazlık gerekçesi yazılır.",
+      "id": "W2-N-W2-04-002-01",
+      "parents": [
+        "W2-04-002"
+      ]
+    }
+  ],
+  "limitations": [
+    "Dış OWASP kaynağı bu oturumda yeniden alınmadı; mevcut yerel kaynak listesiyle karşılaştırıldı.",
+    "ASVS 5.0.0'da V3 (Web Frontend Security) kesimleri: 3.1 Documentation, 3.2 Unintended Content Interpretation, 3.3 Cookie Setup, 3.4 Browser Security Mechanism Headers, 3.5 Browser Origin Separation, 3.6 External Resource Integrity, 3.7 Other Browser Security Considerations. Haritada 3.1 eksik.",
+    "ASVS 5.0.0'da V4 (API and Web Service) kesimleri: 4.1 Generic Web Service Security, 4.2 HTTP Message Structure Validation, 4.3 GraphQL, 4.4 WebSocket. Haritada 4.3 ve 4.4 eksik.",
+    "GraphQL ve WebSocket yüzeyinin ALKAROS'ta olmadığı kanıtlanmadı; sadece 'gerekçeli uygulanamazlık' yazılacak deniliyor."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

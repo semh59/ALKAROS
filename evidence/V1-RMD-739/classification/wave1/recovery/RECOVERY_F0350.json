@@ -1,0 +1,56 @@
+{
+  "source_id": "F0350",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "032 kabulünün ham komut ve çıkış kodlu kapanış kanıtı eksik",
+      "status": "open",
+      "invariant": "Done durumundaki migration kabulü UP/DOWN, manifest testi ve scope kontrolünün gerçek komut/çıkış kodu ve ilgili sürümle eşlenmiş yeniden üretilebilir kanıtını taşımalıdır.",
+      "mechanism": "V1-BIL-004 kanıt dizininde yalnız 22 satırlık verification.txt var. Metin UP/DOWN uygulandı ve testler geçti diyor; komut, ham çıktı, exit code ve commit/hash vermiyor. Plan UP/DOWN, manifest ve task_scope_tool.py exit 0 istiyor. Özet bu koşuların gerçekten yapıldığını bağımsız teyit ettirmiyor; yeni test çalıştırmadan sonuç uydurulmadı.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/findings/low-A.md:7 — özgün kaynak (önceki okumada açıldı)",
+        "evidence/V1-RMD-739/tasks/B002.md:20-22 — tam kart",
+        "evidence/V1-BIL-004/verification.txt:1-22 — tek mevcut kanıt dosyası, anlatısal UP/DOWN ve test sayıları",
+        "plan/v1/billing/V1-BIL-004-billing-composite-integrity.md:3-7,31-36 — Done ve çalıştırma kabulü",
+        "database/migrations/V1/V1-BIL-004/032-billing-composite-integrity.up.sql:4-44 — gerçek ileri SQL",
+        "database/migrations/V1/V1-BIL-004/032-billing-composite-integrity.down.sql:4-18 — gerçek geri SQL"
+      ],
+      "acceptance": [
+        "032'nin gerekli öncülleri kurulmuş boş PostgreSQL veritabanında UP ve DOWN komutları ham çıktıları ve exit code'larıyla kaydedilsin; constraints önce/sonra sorgularıyla gösterilsin.",
+        "Mevcut manifest test projesi ve scope kontrolü gerçek komut, exit code ve doğrulanan HEAD/hash ile kaydedilsin; tarihsel 15/14/22 sayıları yeni koşu gibi sunulmasın."
+      ],
+      "id": "W2-R-F0350-01",
+      "parents": [
+        "F0350"
+      ]
+    },
+    {
+      "title": "V1-BIL-004 kabulündeki manifest test proje yolu güncel değil",
+      "status": "open",
+      "invariant": "Planın kabul komutu mevcut doğru test projesini hedeflemeli; geçerli proje adı yanlış kanıt diye sınıflanmamalıdır.",
+      "mechanism": "Plan 34. satırda tests/Host/MigrationComposition/Manifest/ALKAROS.Host.MigrationComposition.Manifest.Tests.csproj yolunu istiyor; güncel proje tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj. ManifestTests.cs bu projenin alt dizininde ve namespace'i ALKAROS.Host.Tests.Manifest. Dolayısıyla özgün bulgunun 'verification.txt ALKAROS.Host.Tests yazmış, yanlış' kısmı güncel kodla çürütülüyor: bugün doğru ad budur. Açık kusur bayat kabul yolu ve komutun çalıştırılamamasıdır, kanıt metnindeki proje adının kendisi değil. Runtime order.json'da 032 zaten kayıtlı; manifest eksikliği yok.",
+      "source_evidence": [
+        "plan/v1/billing/V1-BIL-004-billing-composite-integrity.md:33-36 — bayat csproj yolu",
+        "tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj:1-24 — mevcut proje, RootNamespace ve manifest kopyası",
+        "tests/Host/MigrationComposition/Manifest/ManifestTests.cs:1-12,69-88 — test sınıfı, 032 içeren kimlik listesi ve manifest testi",
+        "evidence/V1-BIL-004/verification.txt:9-12 — ALKAROS.Host.Tests (ManifestTests) ifadesi",
+        "database/MigrationComposition/order.json:278-286 — 032 girdisi"
+      ],
+      "acceptance": [
+        "Ayrı yetkili plan değişikliğiyle kabul komutu tests/Host/MigrationComposition/ALKAROS.Host.Tests.csproj yoluna hizalansın; eski yol için hayali proje üretilmesin.",
+        "Düzeltilen komutun ManifestTests'i gerçekten keşfettiği ve exit 0 verdiği ham kanıtla gösterilsin; proje adı alt iddiası ayrıca not-defect olarak korunabilsin."
+      ],
+      "id": "W2-R-F0350-02",
+      "parents": [
+        "F0350"
+      ]
+    }
+  ],
+  "limitations": [
+    "Hiçbir test, migration veya scope aracı çalıştırılmadı; mevcut tarihsel sonuçlar yeniden doğrulanmış başarı sayılmadı.",
+    "032 UP/DOWN SQL'inin varlığı çalıştırma kanıtı yerine geçmez; görev dizini dışındaki tüm tarihsel loglar taranmadı.",
+    "İlk denenen database/migrations/order.json yolu mevcut değildi; doğru database/MigrationComposition/order.json dosyası açılıp 032 doğrulandı.",
+    "Kabul komutundaki yolu değiştirmek repo yazımı gerektirir; bu salt okunur görevde yapılmadı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

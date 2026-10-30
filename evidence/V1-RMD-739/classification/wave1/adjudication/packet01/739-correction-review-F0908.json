@@ -1,0 +1,70 @@
+{
+  "source_id": "F0908",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "verdict": {
+    "result": "belge-kusuru-dogrulandi-not-defect-elemesi-yanlis",
+    "documentation": "F0908 düşük bulgu satırının yanlış olduğunu değil, gerçek V1-RMD-103 görev md'sinin SplitEngine hakkındaki bugün/hâlâ anlatımının bayat olduğunu söylüyor. Görev md'si güncel koda yönlendirme olmadan bu anlatımı koruyor. Belge kusuru not-defect diye elenmemeli.",
+    "application": "Equal/amount/custom engine yolları adjustment sağlanınca AdjustedPayableAmount ve AdjustedTaxTotal kullanır; null ise Bill tutarlarına döner. Host bu üç yolda LoadAdjustmentAsync sonucunu geçirir. Kalem bölme farklıdır: engine adjustment almaz; Host düzeltilmiş toplam özgün toplamdan farklıysa reddeder. Bu kayıt açık üretim kusuru kanıtlamıyor; tüm ödeme akışının doğruluğu da onaylanmıyor.",
+    "prior_classification": "739-next-01f-F0908.json:6-11 low-C.md satırını SplitEngine hâlâ yanlış tutarı kullanıyor diye ters okumuş; satır bunu gerçek görev md'sine atfeder. Uygulamanın koşullu düzeltilmiş tutar desteği, belgede kalan yanlış güncel-durum iddiasını ortadan kaldırmaz.",
+    "closure": "Bulgu kapatılmadı; sınıflama düzeltmesi için bağımsız statik kaynak görüşü. Görev durumu ve sahiplik değiştirilmedi."
+  },
+  "defects": [
+    {
+      "id": "F0908-BD-1",
+      "category": "BD",
+      "status": "statik-olarak-dogrulandi-kapatilmadi",
+      "title": "V1-RMD-103 SplitEngine'in hâlâ yalnız Bill.PayableAmount kullandığını güncel durum gibi anlatıyor",
+      "mechanism": "Görev md'si 108-116 tarihsel kapsam sınırını anlatırken Bugün indirim uygulanabilir ve görülebilir ama SplitEngine hesaplamaları hâlâ Bill.PayableAmount'ın kendisini kullanıyor, düzeltilmiş tutarı değil der. Güncel engine equal/amount/custom yollarında adjustment destekler; Host bunlara hesaplanan adjustment'ı geçirir. Tam görev belgesinde bu sonraki durumu açıklayan superseded/güncellik notu yok.",
+      "impact": "Okuyucu indirimli toplamların bölme entegrasyonunun hâlâ hiç bulunmadığını sanır. Tarihsel kapsamı korumak ile bugünkü mekanizmayı yanlış bildirmek ayrı konulardır.",
+      "evidence_refs": ["E3", "E4", "E5", "E6"],
+      "scope": "Null-adjustment dalı ve kalem bölme sınırı korunmalı. Bu bulgu ücret/bahşiş izin politikası, kalıcı test/evidence eksikliği veya ödeme entegrasyonunun bütünü hakkında yeni kusur değildir."
+    }
+  ],
+  "exact_evidence": [
+    {
+      "id": "E1",
+      "path": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-w2-batch-01.json:5-16",
+      "observation": "Tam F0908 kaydı okundu: category BD; md anlatımı ile AdjustedPayableAmount kullanımı arasındaki fark kaydedilmiş. reason kalıcı test/evidence yokluğunun bu kayda ait olmadığını belirtir. Kayıt iddia kimliği içindir; doğruluk tek başına buradan çıkarılmadı."
+    },
+    {
+      "id": "E2",
+      "path": "D:/project/ALKAROS/evidence/V1-RMD-739/findings/low-C.md:13; D:/project/ALKAROS/evidence/V1-RMD-739/tasks/B008.md:20-22",
+      "observation": "Özgün kaynak açıkça md ifadesi eski der; kod hâlâ yanlış tutarı kullanıyor iddiası yok. B008 eski inceleme kartıdır; bağımsız doğruluk kanıtı kabul edilmedi."
+    },
+    {
+      "id": "E3",
+      "path": "D:/project/ALKAROS/plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md:108-116",
+      "observation": "Gerçek görev md'si indirim entegrasyonunu kapsam dışı anlatır; 112-114 Bugün ... SplitEngine hesaplamaları hâlâ Bill.PayableAmount'ın kendisini kullanıyor, düzeltilmiş tutarı değil ifadesini taşır. Görev dosyasının tamamı 1-196 okundu; sonraki koşullu desteğe yönlendirme bulunmadı."
+    },
+    {
+      "id": "E4",
+      "path": "D:/project/ALKAROS/src/Modules/Billing/SplitDesign/SplitEngine.cs:20-33,79-106,246-289",
+      "observation": "CreateEqualSplit, CreateAmountSplit ve CreateCustomSplit adjustment parametresi alır. 32,99,282: adjustment?.AdjustedPayableAmount ?? bill.PayableAmount. 33,100,283 vergi için aynı koşullu seçimi yapar. Adjustment=null iken Bill tutarları kullanılmaya devam eder. Engine dosyasının tamamı 1-331 okundu."
+    },
+    {
+      "id": "E5",
+      "path": "D:/project/ALKAROS/src/Host/Experience/Billing/BillingSplitStore.cs:497-530,558-592",
+      "observation": "SaveEqualAsync 506-507, SaveAmountsAsync 524-529, SaveCustomAsync 567-576 LoadAdjustmentAsync sonucunu engine'e geçirir. 588-589 repository yoksa null; 591-592 varsa kayıtları okuyup AdjustmentCalculator.Calculate çağrısı döner."
+    },
+    {
+      "id": "E6",
+      "path": "D:/project/ALKAROS/src/Host/Experience/Billing/BillingSplitStore.cs:533-555; D:/project/ALKAROS/src/Modules/Billing/SplitDesign/SplitEngine.cs:134-237",
+      "observation": "CreateItemSplit adjustment parametresi almaz; kalem GrossAmount/TaxAmount değerleriyle hesaplar. Host 545-547 adjustment varsa ve toplam değişmişse SplitItemsOnAdjustedBillException atar. Tüm bölme türleri düzeltilmiş tutarı kullanır genellemesi kurulamaz."
+    },
+    {
+      "id": "E7",
+      "path": "C:/Users/semih/AppData/Local/hermes/profiles/alkaros/cache/scratch/739-next-01f-F0908.json:6-14",
+      "observation": "Eski not-defect hükmü belge kusurunu uygulama doğru gerekçesiyle eler; low-C.md satırını bayat belge sanır. Bu dosya yalnız denetlenen sınıflama hatasının kanıtıdır; kaynak doğruluğunun kanıtı değildir."
+    }
+  ],
+  "unread_sources": [],
+  "limitations": [
+    "AGENTS.md tamamı okundu. Repository salt okunur tutuldu; yalnız yetkili scratch çıktısı yazıldı.",
+    "git rev-parse HEAD çıkış 0: 8c03e79bdc5263f5a5a26a524693403012d871d2; batch head ile aynı. Çalışma ağacı okundu; clean-tree veya kaynak hash eşitliği iddiası yok.",
+    "Repository kodu, build veya test çalıştırılmadı. Statik koşullu entegrasyon gözlemi runtime/ödeme doğrulaması veya test başarısı değildir.",
+    "AdjustmentCalculator iç hesaplamasının ve gerçek ödeme/tahsilat çağrı zincirinin tamamı bu dar belge incelemesinde denetlenmedi.",
+    "unread_sources boş olması yalnız kullanıcının bu iddialar için istediği kaynakların okunduğunu ifade eder; bütün Billing modülü okundu anlamına gelmez.",
+    "Eski parent-independent ve next raporları doğruluk kanıtı kabul edilmedi. Hüküm güncel gerçek görev md'si ve güncel engine/Host bölümlerinin doğrudan karşılaştırmasına dayanır.",
+    "Bulgu kapatma, Done onayı, severity yükseltme veya repository değişikliği yapılmadı."
+  ]
+}

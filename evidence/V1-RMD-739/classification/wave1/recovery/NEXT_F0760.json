@@ -1,0 +1,20 @@
+{
+  "source_id": "F0760",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "Key regex accepts lowercase free text (e.g. 'ali') — only format validation, not content",
+      "status": "open",
+      "invariant": "Input validation — regex must reject semantically invalid values, not just structural mismatches; 'ali' is not a valid key format",
+      "mechanism": "low-B.md:177 references V1-RMD-541 — key regex pattern permits any lowercase string (e.g. 'ali') because it only checks format (likely ^[a-z]+$ or similar) without validating against actual key namespace/format rules (prefix, length, character set)",
+      "source_evidence": "D:/project/ALKAROS/evidence/V1-RMD-739/findings/low-B.md:177 (references V1-RMD-541)",
+      "acceptance": "Tighten regex to enforce actual key format: required prefix, exact length, allowed character set (e.g. alphanumeric, specific prefixes like 'key_', 'idemp_'); add test cases for 'ali', 'test', 'foo' — all must be rejected",
+      "id": "W2-N-F0760-01",
+      "parents": [
+        "F0760"
+      ]
+    }
+  ],
+  "limitations": "Only finding document (low-B.md) available; actual regex pattern source code not inspected. Defect inferred from finding description. Runtime validation behavior not tested.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

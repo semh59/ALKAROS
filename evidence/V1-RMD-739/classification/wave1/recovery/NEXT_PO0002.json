@@ -1,0 +1,20 @@
+{
+  "source_id": "PO0002",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "from-order endpoint accepts Draft/PendingConfirmation orders — only Cancelled tested; PO decision needed",
+      "status": "decision-blocked",
+      "invariant": "Bill creation from order must align with business rule for 'gönderilmiş sipariş' — if only Confirmed/Accepted orders should create bills, Draft/Submitted/PendingConfirmation must be rejected",
+      "mechanism": "BillingSplitStore.cs:427-428 rejects only OrderState.Cancelled or OrderState.Rejected. OrderState.Draft, OrderState.Submitted, OrderState.PendingConfirmation all pass through and create bills. BillingSplitHttpTests.cs:211-220 tests only Cancelled order rejection (line 226-227). PO decision not documented in task markdown. Identity with F0903 not established (1020 main record).",
+      "source_evidence": "src/Host/Experience/Billing/BillingSplitStore.cs:427-428; tests/Host/Experience/Billing/BillingSplitHttpTests.cs:211-220; evidence/V1-RMD-739/findings/po-questions.md:3",
+      "acceptance": "PO decision required: (a) confirm current behavior is correct and update task markdown to document accepted states, or (b) reject Draft/Submitted/PendingConfirmation in CreateBillFromOrderAsync and add tests. If (b), new task needed for implementation.",
+      "id": "W2-N-PO0002-01",
+      "parents": [
+        "PO0002"
+      ]
+    }
+  ],
+  "limitations": "Read-only review; PO decision required to resolve. This is a business rule question, not a code defect per se. Duplicate candidate with F0903 — same underlying code behavior but different classification (PO question vs. defect candidate).",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

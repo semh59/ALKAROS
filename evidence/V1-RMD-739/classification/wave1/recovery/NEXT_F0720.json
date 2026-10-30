@@ -1,0 +1,32 @@
+{
+  "source_id": "F0720",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "V1-CDP-003 görevü Done ve kodda implementasyon var ama evidence/V1-CDP-003/ klasörü yok (kanıt dosyaları eksik)",
+      "status": "historical-fixed",
+      "invariant": "Done statüsündeki görevlerin evidence/ altında kabul kanıtı (test çıktıları, build logları, doğrulama komutları) bulunmalı",
+      "mechanism": "low-B.md:137 satırında 'F: evidence/V1-CDP-003/ yok (kanıt yok)' beyanı var; plan/v1/customer-display/V1-CDP-003-screensaver-upload-management-ui.md:4-6 Status: Done, Assignee: Claude Sonnet 5; kod src/Clients/PosTerminal/src/routes/CustomerDisplayScreensaverSettings.tsx:1-262 mevcut ve çalışır durumda; ancak evidence/V1-CDP-003/ dizini dosya sisteminde bulunmuyor (ls evidence/ | grep V1-CDP-003 → sonuç yok)",
+      "source_evidence": "evidence/V1-RMD-739/findings/low-B.md:137; plan/v1/customer-display/V1-CDP-003-screensaver-upload-management-ui.md:4-6,23; src/Clients/PosTerminal/src/routes/CustomerDisplayScreensaverSettings.tsx:1-262",
+      "acceptance": "evidence/V1-CDP-003/ klasörü oluşturulup içine typecheck/test/build çıkış kodları, acceptance maddeleri (23 dosya/175 test geçti, rota chunk ayrımı, catalog.manage yetkisi kontrolü) yazılır; veya görev zaten Done olduğu için evidence eksikliği 'historical-fixed' olarak kabul edilir",
+      "id": "W2-N-F0720-01",
+      "parents": [
+        "F0720"
+      ]
+    },
+    {
+      "title": "Yönetici mevcut ekran koruyucu görselini geri okuyamaz (yönetim GET uç noktası yok) — bilinen sınır, UI'da Türkçe notla belirtilmiş",
+      "status": "open",
+      "invariant": "Yönetici ayar ekranında 'mevcut görsel' sunucudan çekilip gösterilebilmeli; şimdilik sadece bu oturumdaki son işlem gösteriliyor",
+      "mechanism": "V1-CDP-003-screensaver-upload-management-ui.md:66-77 belirtir: V1-CDP-001'in GET /screensaver uç noktası kasıtlı olarak yalnız display principal'a açık; yönetici oturumunun görseli geri okuyabileceği uç nokta yok. CustomerDisplayScreensaverSettings.tsx:254-258 UI bunu 'Bu ekran, sunucuda hâlihazırda ayarlı olanı otomatik göstermez — yalnızca bu oturumda yaptığınız son yükleme/kaldırma işlemini gösterir' notuyla açıklar. PO'ya açık bırakılmış (fast-follow ayrı görev olarak).",
+      "source_evidence": "plan/v1/customer-display/V1-CDP-003-screensaver-upload-management-ui.md:66-77; src/Clients/PosTerminal/src/routes/CustomerDisplayScreensaverSettings.tsx:254-258",
+      "acceptance": "DualScreenApplication.Screensaver.cs'ye yönetici-yetkili ayrı bir GET endpoint eklenir (ör. GET /admin/screensaver/current) ve CustomerDisplayScreensaverSettings.tsx bu uç noktayı sayfa yüklendiğinde çağırır; veya PO kararıyla bu sınır kabul edilir ve belgeye işlenir",
+      "id": "W2-N-F0720-02",
+      "parents": [
+        "F0720"
+      ]
+    }
+  ],
+  "limitations": "Görev zaten Done ve kod üretimde; evidence klasörü sadece doğrulama artefaktı eksikliği. Yönetici GET uç noktası eksikliği bilinen sınır ve PO kararı bekleyen fast-follow konusu.",
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}

@@ -1,0 +1,38 @@
+{
+  "source_id": "UI0154",
+  "head": "8c03e79bdc5263f5a5a26a524693403012d871d2",
+  "defects": [
+    {
+      "title": "PosTerminal hızlı satıştan aktif siparişin tahsilatına doğrudan geçiş yok",
+      "status": "open",
+      "invariant": "Kasa hızlı satış akışı, tahsilat yetkili kullanıcının aktif sipariş kimliğini koruyarak doğru hesabın ödeme ekranına ulaşmasını sağlamalı.",
+      "mechanism": "Cashier ana satış görünümünün masaüstü ve mobil aksiyonları yalnız sipariş gönderme ve sonraki sipariş açmayı sunuyor. Gönderim başarı mesajı da yeni satışa yönlendiriyor; aktif orderId üzerinden tahsilat bağlantısı yok. Üst barda Bekleyen hesaplar ve Masalar gibi ayrı rotalar bulunuyor. Ödeme sayfası ise mevcut: BillingRoute tasarımın billId'siyle Tahsilata geç bağlantısı veriyor, PendingChecksWorkspace liste satırından adisyon açıp collectionHref'e gidiyor. Dolayısıyla kusur ödeme modülünün yokluğu değil, aktif hızlı satıştan bağlamı koruyan kısa yol eksikliği.",
+      "source_evidence": [
+        "evidence/V1-RMD-739/ui/pazar-uzmani.md:6 — özgün doğrudan Ödeme al yokluğu",
+        "src/Clients/PosTerminal/src/routes/Cashier.tsx:499-518,547-552 — aktif sipariş ve ayrı rota bağlantıları",
+        "src/Clients/PosTerminal/src/routes/Cashier.tsx:613-635 — mobil gönder/sonraki sipariş aksiyonları",
+        "src/Clients/PosTerminal/src/routes/Cashier.tsx:780-803 — masaüstü gönder/sonraki sipariş; ödeme bağlantısı yok",
+        "src/Clients/PosTerminal/src/routes/workspace.tsx:361-396,437-446 — orderId'den bill açma ve mevcut tahsilat bağlantısı",
+        "src/Clients/PosTerminal/src/features/pending-checks/PendingChecksWorkspace.tsx:102-111,133-155 — listedeki hesabı açıp tahsilata yönlendirme",
+        "src/Clients/PosTerminal/src/features/pending-checks/pendingChecksApi.ts:42-45 — gerçek ödeme sayfası yolu",
+        "plan/v1/cashier-ui/V1-CUI-004-cashier-quick-pos-frontend.md:11,21-24,41-44 — kasa hızlı tahsilat hedefi; Owned surface 16 nedeniyle Cashier wwwroot'a ait, PosTerminal için tek başına kabul sözleşmesi değil"
+      ],
+      "acceptance": [
+        "Tahsilat yetkili kasiyer hızlı satıştan, mevcut sunucu durumunun izin verdiği aşamada görünür ve erişilebilir Ödeme al/Tahsilata geç eylemiyle aynı siparişin hesabına gitmeli; masa/listeden siparişi yeniden seçmek gerekmemeli.",
+        "Geçiş sunucunun döndürdüğü doğru orderId/billId'yi kullanmalı; önceki satıştan yerelde kalan billId'ye dayanmamalı. Taslak siparişi faturalanabilir varsayan kanıtsız yeni kural yazılmamalı.",
+        "Çift dokunuş/yeniden deneme yeni ikinci adisyon oluşturmamalı; gönderim veya adisyon açma hatasında aynı satış bağlamı ve anlaşılır Türkçe tekrar deneme korunmalı.",
+        "Masaüstü ve mobil görünümde gerçek Host'a karşı ürün ekle → geçerli gönderim → aynı sipariş için tahsilat sayfası zinciri, ödeme yetkisi olmayan kullanıcı ve ağ hatasıyla doğrulanmalı."
+      ],
+      "id": "W2-R-UI0154-01",
+      "parents": [
+        "UI0154"
+      ]
+    }
+  ],
+  "limitations": [
+    "Statik kod/kart okuması; tarayıcı, Host, kod veya test çalıştırılmadı. Akışın gerçek tıklama sayısı ve mevcut siparişin bekleyen hesaplara düşmesi runtime ile doğrulanmadı.",
+    "V1-CUI-004 hızlı tahsilat hedefi Cashier vanilla yüzeyine ait; PosTerminal için yanlış sahiplik/kapanış iddiası kurulmadı.",
+    "Aktif satışta doğrudan bağlantı eksikliği doğrulandı; sistem genelinde ödeme alınamıyor denmedi. Ek karar veya yeni kaynak kaydı açılmadı."
+  ],
+  "review_tier": "Child static-source draft; parent ID/ref validation passed; independent semantics pending"
+}
