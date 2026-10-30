@@ -1,0 +1,1 @@
+- Kanıt koşularından sonra yalnız iki yorum satırı değişti (kapanış kapısı yorumda görev ID'sini yasaklar); çalışan kod aynıdır.

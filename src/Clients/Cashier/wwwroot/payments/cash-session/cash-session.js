@@ -260,7 +260,8 @@
     // V1-RMD-314: reuse the in-flight key across a retry of the same body - see cashMovementIdempotencyKey's
     // own doc comment. Without this, V1-RMD-241's own server-side protection (below) never actually engages.
     var movementBody = { Direction: direction === 'in' ? 'In' : 'Out', Amount: amount, Notes: notes || null };
-    var movementSignature = JSON.stringify(movementBody);
+    // The server tells replays apart by direction and amount only; a note-only edit keeps the key.
+    var movementSignature = JSON.stringify({ Direction: movementBody.Direction, Amount: movementBody.Amount });
     if (!state.cashMovementIdempotencyKey || state.cashMovementRequestSignature !== movementSignature) {
       state.cashMovementIdempotencyKey = crypto.randomUUID();
       state.cashMovementRequestSignature = movementSignature;

@@ -142,9 +142,9 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
       keys.push(JSON.parse(route.request().postData()).IdempotencyKey);
       await route.abort('failed');
     });
-    const submit = async (amount, count) => {
+    const submit = async (amount, count, notes = 'E2E test - tekrar') => {
       await page.locator('#movement-amount').fill(amount);
-      await page.locator('#movement-notes').fill('E2E test - tekrar');
+      await page.locator('#movement-notes').fill(notes);
       await page.getByRole('button', { name: 'Girişi Kaydet' }).click();
       await expect.poll(() => keys.length, { timeout: 10_000 }).toBe(count);
       await expect(page.getByText('Sunucuya ulaşılamadı.')).toBeVisible();
@@ -153,8 +153,11 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     await submit('50', 1);
     await submit('50', 2);
     await submit('70', 3);
+    // The server tells replays apart by amount and direction only, so a note-only edit must not mint a new key.
+    await submit('70', 4, 'E2E test - açıklama düzeltildi');
     expect(keys[1]).toBe(keys[0]);
     expect(keys[2]).not.toBe(keys[1]);
+    expect(keys[3]).toBe(keys[2]);
 
     await page.unroute('**/cash-movements');
     await page.locator('#movement-amount').fill('70');

@@ -1,0 +1,12 @@
+[global-setup] applied 208 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › specs\05-cash-session-lifecycle.spec.js:28:3 › Kasa Oturumu (V13-PUI-002) › açılış, nakit giriş, sayım ve sıfır farkla kapatma tam akışı (1.6s)
+  ok 2 [chromium] › specs\05-cash-session-lifecycle.spec.js:67:3 › Kasa Oturumu (V13-PUI-002) › kasa kapatıldığında bekletilen sepetler temizlenir (1.3s)
+  ok 3 [chromium] › specs\05-cash-session-lifecycle.spec.js:99:3 › Kasa Oturumu (V13-PUI-002) › kapalı süpervizör toleransını aşan fark için açıklama zorunlu tutulur (1.4s)
+  ok 4 [chromium] › specs\05-cash-session-lifecycle.spec.js:131:3 › Kasa Oturumu (V13-PUI-002) › ağ hatasından sonra kasa hareketi: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (1.7s)
+[global-teardown] Host stopped, database dropped
+
+  4 passed (20.7s)

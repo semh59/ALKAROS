@@ -1,0 +1,17 @@
+{
+  "label": "mutation-notes-in-signature",
+  "specs": [
+    "05-cash-session-lifecycle.spec.js"
+  ],
+  "build_exit": 0,
+  "playwright_exit": 1,
+  "summary": [
+    "1 failed",
+    "3 passed (20.8s)"
+  ],
+  "source_sha256": {
+    "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js": "04665068a97aeb33542c8ba9e834c76f17577afcab806ccf00f76f2e28c4ed3a",
+    "src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js": "293624c77ed9cb53a4ba3c944477ad7c1b5138795debb0fb3ebd023d47b83e61",
+    "tests/E2E/Cashier/specs/05-cash-session-lifecycle.spec.js": "15481ba9f07a36bf414c505a57e0fc7072432163d357b4bc19b4b7e0451ad370"
+  }
+}

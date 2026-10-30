@@ -1,0 +1,49 @@
+[global-setup] applied 208 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 4 tests using 1 worker
+
+  ok 1 [chromium] › specs\05-cash-session-lifecycle.spec.js:28:3 › Kasa Oturumu (V13-PUI-002) › açılış, nakit giriş, sayım ve sıfır farkla kapatma tam akışı (1.7s)
+  ok 2 [chromium] › specs\05-cash-session-lifecycle.spec.js:67:3 › Kasa Oturumu (V13-PUI-002) › kasa kapatıldığında bekletilen sepetler temizlenir (1.1s)
+  ok 3 [chromium] › specs\05-cash-session-lifecycle.spec.js:99:3 › Kasa Oturumu (V13-PUI-002) › kapalı süpervizör toleransını aşan fark için açıklama zorunlu tutulur (1.3s)
+  x  4 [chromium] › specs\05-cash-session-lifecycle.spec.js:131:3 › Kasa Oturumu (V13-PUI-002) › ağ hatasından sonra kasa hareketi: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (1.3s)
+[global-teardown] Host stopped, database dropped
+
+
+  1) [chromium] › specs\05-cash-session-lifecycle.spec.js:131:3 › Kasa Oturumu (V13-PUI-002) › ağ hatasından sonra kasa hareketi: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "bbf48888-12dc-466e-aa65-af83ef79b53a"
+    Received: "2cee8636-9c59-4198-bd64-3c661a3c3f2d"
+
+      158 |     expect(keys[1]).toBe(keys[0]);
+      159 |     expect(keys[2]).not.toBe(keys[1]);
+    > 160 |     expect(keys[3]).toBe(keys[2]);
+          |                     ^
+      161 |
+      162 |     await page.unroute('**/cash-movements');
+      163 |     await page.locator('#movement-amount').fill('70');
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\05-cash-session-lifecycle.spec.js:160:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\05-cash-session-lifecycle--7f569-utar-yeni-anahtarı-kullanır-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\05-cash-session-lifecycle--7f569-utar-yeni-anahtarı-kullanır-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\05-cash-session-lifecycle--7f569-utar-yeni-anahtarı-kullanır-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\05-cash-session-lifecycle--7f569-utar-yeni-anahtarı-kullanır-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\05-cash-session-lifecycle--7f569-utar-yeni-anahtarı-kullanır-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › specs\05-cash-session-lifecycle.spec.js:131:3 › Kasa Oturumu (V13-PUI-002) › ağ hatasından sonra kasa hareketi: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır 
+  3 passed (20.8s)

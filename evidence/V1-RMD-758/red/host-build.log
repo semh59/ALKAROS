@@ -1,0 +1,83 @@
+  Geri y�klenecek projeler belirleniyor...
+  D:\project\ALKAROS\src\BuildingBlocks\Security\Secrets\ALKAROS.Secrets.csproj geri y�klendi (253 ms i�inde).
+  D:\project\ALKAROS\src\BuildingBlocks\ModuleComposition\ALKAROS.ModuleComposition.csproj geri y�klendi (253 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Settings\ALKAROS.Settings.csproj geri y�klendi (253 ms i�inde).
+  D:\project\ALKAROS\src\BuildingBlocks\Security\SensitiveData\ALKAROS.SensitiveData.csproj geri y�klendi (253 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Reporting\ALKAROS.Reporting.csproj geri y�klendi (275 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Security\ALKAROS.Security.csproj geri y�klendi (282 ms i�inde).
+  D:\project\ALKAROS\src\Modules\CustomerData\ALKAROS.CustomerData.csproj geri y�klendi (287 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Cash\ALKAROS.Cash.csproj geri y�klendi (295 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Billing\PaymentClosure\ALKAROS.Billing.PaymentClosure.csproj geri y�klendi (304 ms i�inde).
+  D:\project\ALKAROS\src\Modules\CustomerAccounts\ALKAROS.CustomerAccounts.csproj geri y�klendi (305 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Billing\ALKAROS.Billing.csproj geri y�klendi (10 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Invoicing\ALKAROS.Invoicing.csproj geri y�klendi (5 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Identity\ALKAROS.Identity.csproj geri y�klendi (3 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Catalog\ALKAROS.Catalog.csproj geri y�klendi (274 ms i�inde).
+  D:\project\ALKAROS\src\BuildingBlocks\Messaging\ALKAROS.Messaging.csproj geri y�klendi (7 ms i�inde).
+  D:\project\ALKAROS\src\BuildingBlocks\IntegrationContracts\ALKAROS.IntegrationContracts.csproj geri y�klendi (2 ms i�inde).
+  D:\project\ALKAROS\src\BuildingBlocks\Measurements\ALKAROS.Measurements.csproj geri y�klendi (2 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Recipes\ALKAROS.Recipes.csproj geri y�klendi (4 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Reconciliation\ALKAROS.Reconciliation.csproj geri y�klendi (6 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Audit\ALKAROS.Audit.csproj geri y�klendi (4 ms i�inde).
+  D:\project\ALKAROS\src\Integrations\QrRelay\ALKAROS.QrRelay.csproj geri y�klendi (8 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Privacy\RetentionExecution\ALKAROS.Privacy.RetentionExecution.csproj geri y�klendi (3 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Support\ALKAROS.Support.csproj geri y�klendi (5 ms i�inde).
+  D:\project\ALKAROS\src\Host\ALKAROS.Host.csproj geri y�klendi (308 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Payments\TenderComposition\ALKAROS.Payments.TenderComposition.csproj geri y�klendi (10 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Payments\ALKAROS.Payments.csproj geri y�klendi (7 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Orders\ALKAROS.Orders.csproj geri y�klendi (6 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Tables\ALKAROS.Tables.csproj geri y�klendi (4 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Production\ALKAROS.Production.csproj geri y�klendi (5 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Observability\ALKAROS.Observability.csproj geri y�klendi (3 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Inventory\ALKAROS.Inventory.csproj geri y�klendi (193 ms i�inde).
+  D:\project\ALKAROS\src\Modules\QrOrdering\ALKAROS.QrOrdering.csproj geri y�klendi (129 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Menu\ALKAROS.Menu.csproj geri y�klendi (3 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Kitchen\ALKAROS.Kitchen.csproj geri y�klendi (98 ms i�inde).
+  D:\project\ALKAROS\src\Modules\OnlineOrdering\ALKAROS.OnlineOrdering.csproj geri y�klendi (5 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Purchasing\ALKAROS.Purchasing.csproj geri y�klendi (4 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Operations\ALKAROS.Operations.csproj geri y�klendi (12 ms i�inde).
+  D:\project\ALKAROS\src\Modules\Privacy\Anonymization\ALKAROS.Privacy.Anonymization.csproj geri y�klendi (72 ms i�inde).
+  ALKAROS.Measurements -> D:\project\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.IntegrationContracts -> D:\project\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\project\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.Secrets -> D:\project\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.Catalog -> D:\project\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.SensitiveData -> D:\project\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.Reporting -> D:\project\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\project\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Reconciliation -> D:\project\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
+  ALKAROS.Settings -> D:\project\ALKAROS\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Identity -> D:\project\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
+  ALKAROS.Privacy.Anonymization -> D:\project\ALKAROS\src\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.Audit -> D:\project\ALKAROS\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
+  ALKAROS.Messaging -> D:\project\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Observability -> D:\project\ALKAROS\src\Modules\Observability\bin\Debug\net8.0\ALKAROS.Observability.dll
+  ALKAROS.Support -> D:\project\ALKAROS\src\Modules\Support\bin\Debug\net8.0\ALKAROS.Support.dll
+  ALKAROS.CustomerData -> D:\project\ALKAROS\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
+  ALKAROS.Security -> D:\project\ALKAROS\src\Modules\Security\bin\Debug\net8.0\ALKAROS.Security.dll
+  ALKAROS.Tables -> D:\project\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
+  ALKAROS.OnlineOrdering -> D:\project\ALKAROS\src\Modules\OnlineOrdering\bin\Debug\net8.0\ALKAROS.OnlineOrdering.dll
+  ALKAROS.Operations -> D:\project\ALKAROS\src\Modules\Operations\bin\Debug\net8.0\ALKAROS.Operations.dll
+  ALKAROS.Orders -> D:\project\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Inventory -> D:\project\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.QrOrdering -> D:\project\ALKAROS\src\Modules\QrOrdering\bin\Debug\net8.0\ALKAROS.QrOrdering.dll
+  ALKAROS.Invoicing -> D:\project\ALKAROS\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
+  ALKAROS.Kitchen -> D:\project\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
+  ALKAROS.Billing -> D:\project\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
+  ALKAROS.Recipes -> D:\project\ALKAROS\src\Modules\Recipes\bin\Debug\net8.0\ALKAROS.Recipes.dll
+  ALKAROS.Production -> D:\project\ALKAROS\src\Modules\Production\bin\Debug\net8.0\ALKAROS.Production.dll
+  ALKAROS.Purchasing -> D:\project\ALKAROS\src\Modules\Purchasing\bin\Debug\net8.0\ALKAROS.Purchasing.dll
+  ALKAROS.QrRelay -> D:\project\ALKAROS\src\Integrations\QrRelay\bin\Debug\net8.0\ALKAROS.QrRelay.dll
+  ALKAROS.Menu -> D:\project\ALKAROS\src\Modules\Menu\bin\Debug\net8.0\ALKAROS.Menu.dll
+  ALKAROS.Payments -> D:\project\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
+  ALKAROS.Billing.PaymentClosure -> D:\project\ALKAROS\src\Modules\Billing\PaymentClosure\bin\Debug\net8.0\ALKAROS.Billing.PaymentClosure.dll
+  ALKAROS.Cash -> D:\project\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
+  ALKAROS.Payments.TenderComposition -> D:\project\ALKAROS\src\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.CustomerAccounts -> D:\project\ALKAROS\src\Modules\CustomerAccounts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Host -> D:\project\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
+
+Oluşturma başarılı oldu.
+    0 Uyarı
+    0 Hata
+
+Geçen Süre 00:00:43.57
