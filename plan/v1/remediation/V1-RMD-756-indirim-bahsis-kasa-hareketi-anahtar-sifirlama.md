@@ -1,7 +1,7 @@
 # V1-RMD-756 - İndirim, bahşiş ve kasa hareketi tekrar anahtarı değişen denemede sıfırlanır
 
 - Task ID: V1-RMD-756
-- Status: InProgress
+- Status: Done
 - Assignee: hermes-session-20261028_015834_6948d340
 - Work type: implementation
 - Surface state: Existing

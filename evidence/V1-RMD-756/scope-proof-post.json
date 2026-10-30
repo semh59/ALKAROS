@@ -1,0 +1,47 @@
+{
+  "mode": "post",
+  "base": "6efd0151f5964c0342f77c2320f935541361678d",
+  "main_head": "2e865e31fcc7136f1a409ab946219b91def180ed",
+  "replayed_commits": [
+    "b6d066903d2c4469482976f3e981b982bc3da530",
+    "2e865e31fcc7136f1a409ab946219b91def180ed"
+  ],
+  "local_range_commit_count": 2,
+  "steps": [
+    {
+      "step": "clone",
+      "exit_code": 0
+    },
+    {
+      "step": "checkout-baseline",
+      "exit_code": 0
+    },
+    {
+      "step": "cherry-pick",
+      "sha": "b6d066903d2c4469482976f3e981b982bc3da530",
+      "files": 25,
+      "foreign_paths_in_commit": [
+        "src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js",
+        "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js",
+        "tests/E2E/Cashier/specs/05-cash-session-lifecycle.spec.js",
+        "tests/E2E/Cashier/specs/18-discount-and-tip.spec.js"
+      ],
+      "exit_code": 0
+    },
+    {
+      "step": "cherry-pick",
+      "sha": "2e865e31fcc7136f1a409ab946219b91def180ed",
+      "files": 4,
+      "foreign_paths_in_commit": [],
+      "exit_code": 0
+    },
+    {
+      "step": "task-scope-local-range",
+      "exit_code": 0,
+      "log_sha256": "15947a4c100e87fed75d2fd7fba2c111118ed79a26f58fc1f6faaae16ebd3f83"
+    }
+  ],
+  "valid": false,
+  "method": "Shared scratch clone; 756-only commits cherry-picked onto the InProgress baseline so the range excludes 752-755 commits.",
+  "utc": "2026-10-30T15:53:17.311282+00:00"
+}
