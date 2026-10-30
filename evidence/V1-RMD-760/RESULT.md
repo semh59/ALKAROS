@@ -8,3 +8,6 @@
 ## Yapılmayanlar
 - V1-RMD-103 notu güncellenmedi: kanıt klasörü olmayan Done görev planı değişince kapanış kapısı reddeder; not eski kaldı (vergi reddi 754 planında belgeli).
 - `evidence/V1-RMD-755/isolated/` silinmedi (Semih onayı gerekir). V1-RMD-739 DEVIR.md sayıları 739 sahibine bırakıldı.
+
+## Kapsam aracı
+`scope-vs-537968e6.json` valid=false, tek bulgu: görev planının kendi `.md` dosyası baseline'dan sonra Status dışında değişti. Neden: V1-RMD-103 düzeltmesi kapanış kapısı yüzünden kapsamdan çıkarıldı ve plan metni (Goal, Owned surface, In scope) buna göre daralttı. Kapsam genişlemedi, daraldı; araç daralmayı ayırt etmez. Başka bulgu yok.

@@ -1,0 +1,13 @@
+{
+  "task_id": "V1-RMD-760",
+  "valid": false,
+  "metadata_errors": [],
+  "findings": [
+    {
+      "path": "plan/v1/remediation/v1-rmd-760-plan-ve-kanit-tutarsizliklari.md",
+      "change_type": "modified",
+      "reason": "task Markdown changed outside Status or Assignee metadata",
+      "detail": "--- \n\\n+++ \n\\n@@ -14 +14 @@\n\\n-2. V1-RMD-103 notu kalem b\u00f6lme reddini yaln\u0131z payable fark\u0131 olarak anlat\u0131yor; V1-RMD-754'ten beri vergi fark\u0131 da reddedilir.\\n+2. (Kapsam d\u0131\u015f\u0131na al\u0131nd\u0131) V1-RMD-103 notu vergi reddini i\u00e7ermiyor; g\u00f6revin kan\u0131t klas\u00f6r\u00fc olmad\u0131\u011f\u0131 i\u00e7in kapan\u0131\u015f kap\u0131s\u0131 Done plan de\u011fi\u015fikli\u011fini kabul etmez.\\n@@ -23 +22,0 @@\n\\n-- S\u0131n\u0131rl\u0131 ek: plan/v1/remediation/V1-RMD-103-older-audit-remaining-high-medium-findings.md\\n@@ -30 +29 @@\n"
+    }
+  ]
+}
