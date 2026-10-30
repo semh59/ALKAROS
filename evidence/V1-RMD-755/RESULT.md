@@ -1,4 +1,4 @@
-# V1-RMD-755 — doğrulama özeti (kapanış henüz bekliyor)
+# V1-RMD-755 — doğrulama özeti (görev Done; V1-RMD-760 ile başlık güncellendi, aşağıdaki ara durum metni tarihseldir)
 
 ## Güncel sonuç — önceki ara durumların yerine geçer
 

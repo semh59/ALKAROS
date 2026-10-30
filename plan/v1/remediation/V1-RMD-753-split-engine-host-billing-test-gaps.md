@@ -1,7 +1,7 @@
 # V1-RMD-753 - SplitEngine ve Host Billing eksik test kapsamını kapat (F0908 test boşlukları)
 
 - Task ID: V1-RMD-753
-- Status: Blocked
+- Status: Done
 - Assignee: hermes-session-20261028_015834_6948d340
 - Work type: test
 - Surface state: Existing
@@ -15,6 +15,7 @@ V1-RMD-752 belgesi (F0908) dokümante ettiği üç motor davranışını gerçek
 3. **Item split**, ayarlama (discount/fee/tip) net sıfırsa (yani `AdjustedPayableAmount == Bill.PayableAmount`) hâlâ serbest kalmalı; bugün bu dal test edilmiyor (BillingSplitStore.cs:546).
 
 Yeni bir politika veya dağıtım mantığı eklenmez; sadece mevcut davranışlar test altına alınır.
+Çözülmüş engel (tarihsel, V1-RMD-760 ile kapandı): gerçek kaynak derlemesi CS1503 ile başarısızdır; önceki --no-build koşuları yeni domain testlerini çalıştırmamıştır. Görev ancak V1-RMD-755 altında derleme, yeni testlerin TRX adıyla yürütülmesi, mutasyon, bağımsız inceleme ve kapsam kapıları kanıtlandığında yeniden değerlendirilir. Net-sıfır payable tek başına kalem bölme başarısı değildir; Semih'in A kararı ve V1-RMD-754 vergi farkında reddi gerektirir. Tarihsel kabul metni değişmeden korunur.
 
 ## Owned surface
 
@@ -44,10 +45,6 @@ Yeni bir politika veya dağıtım mantığı eklenmez; sadece mevcut davranışl
 - V1-RMD-754
 - V1-RMD-298
 - V1-RMD-413
-
-## Blocker
-
-- Gerçek kaynak derlemesi CS1503 ile başarısızdır; önceki --no-build koşuları yeni domain testlerini çalıştırmamıştır. Görev ancak V1-RMD-755 altında derleme, yeni testlerin TRX adıyla yürütülmesi, mutasyon, bağımsız inceleme ve kapsam kapıları kanıtlandığında yeniden değerlendirilir. Net-sıfır payable tek başına kalem bölme başarısı değildir; Semih'in A kararı ve V1-RMD-754 vergi farkında reddi gerektirir. Tarihsel kabul metni değişmeden korunur.
 
 ## Acceptance evidence
 
