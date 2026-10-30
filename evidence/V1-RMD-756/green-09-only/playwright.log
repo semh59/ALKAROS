@@ -1,0 +1,16 @@
+[global-setup] applied 208 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 6 tests using 1 worker
+
+  ok 1 [chromium] › specs\09-split-payment-race-and-edges.spec.js:18:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › eşzamanlı tahsilatlar hesabı asla aşmaz: kazananlar uygulanır, kaybedenler Türkçe 409 alır (1.1s)
+  ok 2 [chromium] › specs\09-split-payment-race-and-edges.spec.js:46:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › aynı idempotency anahtarıyla tekrarlanan tahsilat ikinci bir tahsis oluşturmaz (599ms)
+  ok 3 [chromium] › specs\09-split-payment-race-and-edges.spec.js:63:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › V1-RMD-314 (K3): ağ hatası sonrası "tekrar dene" aynı idempotency anahtarını kullanır, mükerrer tahsis oluşturmaz (886ms)
+  ok 4 [chromium] › specs\09-split-payment-race-and-edges.spec.js:86:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › eşit bölüşümün kuruş kalıntısı gizlenmez: kalan görünür kalır ve elle kapatılır (1.7s)
+  ok 5 [chromium] › specs\09-split-payment-race-and-edges.spec.js:115:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › tamamen ödenmiş hesap yeniden yüklenince "Hesap Ödendi" gösterir ve tahsilat formu açmaz (958ms)
+  ok 6 [chromium] › specs\09-split-payment-race-and-edges.spec.js:129:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › geçersiz durumlar: billId yok, bilinmeyen billId ve oturumsuz erişim güvenli ekranlar gösterir (813ms)
+[global-teardown] Host stopped, database dropped
+
+  6 passed (20.6s)
+(node:29080) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

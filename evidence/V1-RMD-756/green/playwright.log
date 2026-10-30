@@ -1,0 +1,25 @@
+[global-setup] applied 208 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 15 tests using 1 worker
+
+  ok  1 [chromium] › specs\05-cash-session-lifecycle.spec.js:28:3 › Kasa Oturumu (V13-PUI-002) › açılış, nakit giriş, sayım ve sıfır farkla kapatma tam akışı (1.4s)
+  ok  2 [chromium] › specs\05-cash-session-lifecycle.spec.js:67:3 › Kasa Oturumu (V13-PUI-002) › kasa kapatıldığında bekletilen sepetler temizlenir (956ms)
+  ok  3 [chromium] › specs\05-cash-session-lifecycle.spec.js:99:3 › Kasa Oturumu (V13-PUI-002) › kapalı süpervizör toleransını aşan fark için açıklama zorunlu tutulur (1.2s)
+  ok  4 [chromium] › specs\05-cash-session-lifecycle.spec.js:131:3 › Kasa Oturumu (V13-PUI-002) › ağ hatasından sonra kasa hareketi: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (1.4s)
+  ok  5 [chromium] › specs\09-split-payment-race-and-edges.spec.js:18:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › eşzamanlı tahsilatlar hesabı asla aşmaz: kazananlar uygulanır, kaybedenler Türkçe 409 alır (891ms)
+  ok  6 [chromium] › specs\09-split-payment-race-and-edges.spec.js:46:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › aynı idempotency anahtarıyla tekrarlanan tahsilat ikinci bir tahsis oluşturmaz (565ms)
+  ok  7 [chromium] › specs\09-split-payment-race-and-edges.spec.js:63:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › V1-RMD-314 (K3): ağ hatası sonrası "tekrar dene" aynı idempotency anahtarını kullanır, mükerrer tahsis oluşturmaz (877ms)
+  ok  8 [chromium] › specs\09-split-payment-race-and-edges.spec.js:86:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › eşit bölüşümün kuruş kalıntısı gizlenmez: kalan görünür kalır ve elle kapatılır (1.6s)
+  ok  9 [chromium] › specs\09-split-payment-race-and-edges.spec.js:115:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › tamamen ödenmiş hesap yeniden yüklenince "Hesap Ödendi" gösterir ve tahsilat formu açmaz (946ms)
+  ok 10 [chromium] › specs\09-split-payment-race-and-edges.spec.js:129:3 › Hesap Ödeme - yarış, tekrar ve uç durumlar (V13-PUI-001, V1-RMD-258) › geçersiz durumlar: billId yok, bilinmeyen billId ve oturumsuz erişim güvenli ekranlar gösterir (711ms)
+  ok 11 [chromium] › specs\18-discount-and-tip.spec.js:14:3 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › indirim ve bahşiş kaydedilir; tahsilat tavanı düzeltilmiş tutara göre gerçekten değişir (1.2s)
+  ok 12 [chromium] › specs\18-discount-and-tip.spec.js:52:3 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › bahşiş dahil düzeltilmiş tutar artık gerçekten tahsil edilebiliyor; onu aşan tutar hâlâ reddedilir (1.0s)
+  ok 13 [chromium] › specs\18-discount-and-tip.spec.js:73:3 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › yetkisiz kullanıcı reddedilir: indirim isteği yönetici onayına düşer, ret Türkçe gösterilir (840ms)
+  ok 14 [chromium] › specs\18-discount-and-tip.spec.js:101:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra indirim: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (994ms)
+  ok 15 [chromium] › specs\18-discount-and-tip.spec.js:101:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra bahşiş: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (960ms)
+[global-teardown] Host stopped, database dropped
+
+  15 passed (29.8s)
+(node:22852) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

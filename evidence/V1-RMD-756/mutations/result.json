@@ -1,0 +1,64 @@
+{
+  "mutants": [
+    {
+      "mutant": "discount-signature-ignored",
+      "file": "src\\Clients\\Cashier\\wwwroot\\payments\\split-payment\\split-payment.js",
+      "exit": 1,
+      "assertion": [
+        "Error: expect(received).not.toBe(expected) // Object.is equality"
+      ],
+      "killed": true
+    },
+    {
+      "mutant": "tip-signature-ignored",
+      "file": "src\\Clients\\Cashier\\wwwroot\\payments\\split-payment\\split-payment.js",
+      "exit": 1,
+      "assertion": [
+        "Error: expect(received).not.toBe(expected) // Object.is equality"
+      ],
+      "killed": true
+    },
+    {
+      "mutant": "movement-signature-ignored",
+      "file": "src\\Clients\\Cashier\\wwwroot\\payments\\cash-session\\cash-session.js",
+      "exit": 1,
+      "assertion": [
+        "Error: expect(received).not.toBe(expected) // Object.is equality"
+      ],
+      "killed": true
+    },
+    {
+      "mutant": "discount-key-always-new",
+      "file": "src\\Clients\\Cashier\\wwwroot\\payments\\split-payment\\split-payment.js",
+      "exit": 1,
+      "assertion": [
+        "Error: expect(received).toBe(expected) // Object.is equality"
+      ],
+      "killed": true
+    },
+    {
+      "mutant": "tip-key-always-new",
+      "file": "src\\Clients\\Cashier\\wwwroot\\payments\\split-payment\\split-payment.js",
+      "exit": 1,
+      "assertion": [
+        "Error: expect(received).toBe(expected) // Object.is equality"
+      ],
+      "killed": true
+    },
+    {
+      "mutant": "movement-key-always-new",
+      "file": "src\\Clients\\Cashier\\wwwroot\\payments\\cash-session\\cash-session.js",
+      "exit": 1,
+      "assertion": [
+        "Error: expect(received).toBe(expected) // Object.is equality"
+      ],
+      "killed": true
+    }
+  ],
+  "all_killed": true,
+  "sources_restored": true,
+  "source_sha256": {
+    "D:\\project\\ALKAROS\\src\\Clients\\Cashier\\wwwroot\\payments\\split-payment\\split-payment.js": "1ef7f6275397b945ee870e08794db93449bedac5ed4e69fe5b66075a3f5cad10",
+    "D:\\project\\ALKAROS\\src\\Clients\\Cashier\\wwwroot\\payments\\cash-session\\cash-session.js": "412a4dd33f52ec75dd03779ccd513d0ca6458235e6a0e444b05e4dfecc35520e"
+  }
+}

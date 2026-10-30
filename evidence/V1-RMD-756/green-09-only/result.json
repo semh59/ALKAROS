@@ -1,0 +1,16 @@
+{
+  "label": "green",
+  "specs": [
+    "09-split-payment-race-and-edges.spec.js"
+  ],
+  "build_exit": 0,
+  "playwright_exit": 0,
+  "summary": [
+    "6 passed (20.6s)"
+  ],
+  "source_sha256": {
+    "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js": "1ef7f6275397b945ee870e08794db93449bedac5ed4e69fe5b66075a3f5cad10",
+    "src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js": "412a4dd33f52ec75dd03779ccd513d0ca6458235e6a0e444b05e4dfecc35520e",
+    "tests/E2E/Cashier/specs/09-split-payment-race-and-edges.spec.js": "962f1caca384b6ea1efe1270bbe0c80d1054043d76706abf251ea1162942d92f"
+  }
+}

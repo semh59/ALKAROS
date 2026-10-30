@@ -26,8 +26,10 @@
     // CURRENT attempt - generated once (lazily, in submitCashMovement) and kept across a retry (a network
     // failure where the request may have actually landed server-side), same fix/reasoning as
     // split-payment.js's tenderIdempotencyKey. Cleared on any real server response (success or a
-    // definitive rejection); only a network failure keeps it for a retry.
+    // definitive rejection); only a network failure keeps it for a retry. V1-RMD-756: bound to the body it
+    // was minted for - an edited movement after a network failure gets a new key, never the old record.
     cashMovementIdempotencyKey: null,
+    cashMovementRequestSignature: null,
     // V1-RMD-377 (module-by-module UI audit round 2, P1 - rakip karşılaştırması): counts of each
     // banknote/coin while the denomination-based counter is in use; countMode toggles between it
     // and the original single free-typed field (kept for the real edge case a kupür sayımı cannot
@@ -255,10 +257,15 @@
 
   function submitCashMovement(direction, amount, notes) {
     setBusy(true);
-    // V1-RMD-314: reuse the in-flight key across a retry - see cashMovementIdempotencyKey's own doc
-    // comment. Without this, V1-RMD-241's own server-side protection (below) never actually engages,
-    // because a fresh key was minted on every call, including a retry of the exact same attempt.
-    if (!state.cashMovementIdempotencyKey) state.cashMovementIdempotencyKey = crypto.randomUUID();
+    // V1-RMD-314: reuse the in-flight key across a retry of the same body - see cashMovementIdempotencyKey's
+    // own doc comment. Without this, V1-RMD-241's own server-side protection (below) never actually engages.
+    var movementBody = { Direction: direction === 'in' ? 'In' : 'Out', Amount: amount, Notes: notes || null };
+    var movementSignature = JSON.stringify(movementBody);
+    if (!state.cashMovementIdempotencyKey || state.cashMovementRequestSignature !== movementSignature) {
+      state.cashMovementIdempotencyKey = crypto.randomUUID();
+      state.cashMovementRequestSignature = movementSignature;
+    }
+    movementBody.IdempotencyKey = state.cashMovementIdempotencyKey;
     api(cashSessionsBase() + '/' + state.session.cashSessionId + '/cash-movements', {
       method: 'POST',
       // V1-RMD-241: the endpoint now requires a key and rejects a second
@@ -266,7 +273,7 @@
       // race just under the button's own busy-guard, a browser/proxy
       // resend of the same request) return the original row instead of
       // posting the movement twice.
-      body: { Direction: direction === 'in' ? 'In' : 'Out', Amount: amount, Notes: notes || null, IdempotencyKey: state.cashMovementIdempotencyKey },
+      body: movementBody,
     }).then(function (result) {
       state.busy = false;
       // Any real server response (success or a definitive rejection) means this key has already been

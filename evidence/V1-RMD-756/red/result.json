@@ -1,0 +1,19 @@
+{
+  "label": "red",
+  "specs": [
+    "05-cash-session-lifecycle.spec.js",
+    "18-discount-and-tip.spec.js"
+  ],
+  "build_exit": 0,
+  "playwright_exit": 1,
+  "summary": [
+    "3 failed",
+    "6 passed (33.3s)"
+  ],
+  "source_sha256": {
+    "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js": "c33cd05295078dc82d6492c855a16e363d29fc5b86b5e1756a2062c442f71712",
+    "src/Clients/Cashier/wwwroot/payments/cash-session/cash-session.js": "a1d4593d1a8421cff1c613496b280d7f3cdb581c3af548252b39336c95bd1421",
+    "tests/E2E/Cashier/specs/05-cash-session-lifecycle.spec.js": "59efd670c974a27f1ea19c75abfe488408a822658dc862d770b9ccb1ceea36da",
+    "tests/E2E/Cashier/specs/18-discount-and-tip.spec.js": "b05ce3cd81a2cda2f15b5de5d21152073ee140e26afcc4c78b59987bcc29ed7f"
+  }
+}

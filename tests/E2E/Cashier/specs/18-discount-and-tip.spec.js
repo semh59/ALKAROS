@@ -91,4 +91,43 @@ test.describe('Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RM
     await expect(page.getByText('Discount request was denied.')).toHaveCount(0);
     await expect(page.locator('.sp-summary-row.is-remaining .value')).toHaveText('₺100,00');
   });
+
+  // V1-RMD-756 (F0068): after a network failure the same body must replay the same key, but an edited
+  // body must not reuse it - the server would answer the edited request with the first attempt's record.
+  for (const form of [
+    { name: 'indirim', path: 'discount', input: '#discount-value', button: 'İndirim uygula', first: '10', edited: '20', remaining: '₺80,00' },
+    { name: 'bahşiş', path: 'tip', input: '#tip-amount', button: 'Bahşiş ekle', first: '5', edited: '10', remaining: '₺110,00' },
+  ]) {
+    test(`ağ hatasından sonra ${form.name}: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır`, async ({ page }) => {
+      const seed = readSeed();
+      const terminalId = await loginViaApi(page, seed);
+      const billId = await createBill(page, terminalId, seed, { quantity: 1 }); // 100 ₺
+      await openSplitPayment(page, billId);
+      await expect(page.getByRole('heading', { name: 'Tahsilat' })).toBeVisible({ timeout: 15_000 });
+
+      const url = `**/api/v1/terminals/${terminalId}/billing/bills/${billId}/${form.path}`;
+      const keys = [];
+      await page.route(url, async (route) => {
+        keys.push(JSON.parse(route.request().postData()).IdempotencyKey);
+        await route.abort('failed');
+      });
+      const submit = async (count) => {
+        await page.getByRole('button', { name: form.button }).click();
+        await expect.poll(() => keys.length, { timeout: 10_000 }).toBe(count);
+        await expect(page.getByText('Bağlantı kurulamadı. Tekrar deneyin.')).toBeVisible();
+      };
+
+      await page.locator(form.input).fill(form.first);
+      await submit(1);
+      await submit(2);
+      await page.locator(form.input).fill(form.edited);
+      await submit(3);
+      expect(keys[1]).toBe(keys[0]);
+      expect(keys[2]).not.toBe(keys[1]);
+
+      await page.unroute(url);
+      await page.getByRole('button', { name: form.button }).click();
+      await expect(page.locator('.sp-summary-row.is-remaining .value')).toHaveText(form.remaining, { timeout: 10_000 });
+    });
+  }
 });

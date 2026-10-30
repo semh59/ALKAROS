@@ -1,0 +1,46 @@
+[global-setup] applied 208 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › specs\18-discount-and-tip.spec.js:101:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra indirim: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (1.6s)
+[global-teardown] Host stopped, database dropped
+
+
+  1) [chromium] › specs\18-discount-and-tip.spec.js:101:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra indirim: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır 
+
+    Error: expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "61d95a70-360d-4cfc-84bb-8b8c4b1f4c82"
+
+      124 |       await submit(3);
+      125 |       expect(keys[1]).toBe(keys[0]);
+    > 126 |       expect(keys[2]).not.toBe(keys[1]);
+          |                           ^
+      127 |
+      128 |       await page.unroute(url);
+      129 |       await page.getByRole('button', { name: form.button }).click();
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\18-discount-and-tip.spec.js:126:27
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\18-discount-and-tip-Hesap--f35b9-utar-yeni-anahtarı-kullanır-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\18-discount-and-tip-Hesap--f35b9-utar-yeni-anahtarı-kullanır-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\18-discount-and-tip-Hesap--f35b9-utar-yeni-anahtarı-kullanır-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\18-discount-and-tip-Hesap--f35b9-utar-yeni-anahtarı-kullanır-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\18-discount-and-tip-Hesap--f35b9-utar-yeni-anahtarı-kullanır-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › specs\18-discount-and-tip.spec.js:101:5 › Hesap Ödeme - indirim ve gönüllü bahşiş (V1-RMD-292 / V1-RMD-298) › ağ hatasından sonra indirim: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır 
+(node:26536) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)

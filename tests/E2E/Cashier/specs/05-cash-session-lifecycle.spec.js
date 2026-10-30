@@ -125,4 +125,51 @@ test.describe('Kasa Oturumu (V13-PUI-002)', () => {
     await page.getByRole('button', { name: 'Kasayı Kapat' }).click();
     await expect(page.getByRole('heading', { name: 'Kasa Kapatıldı' })).toBeVisible({ timeout: 10_000 });
   });
+
+  // V1-RMD-756 (F0068): the same movement retried after a network failure replays its key; an edited
+  // amount gets a new one, so the server records the edited amount instead of replaying the first.
+  test('ağ hatasından sonra kasa hareketi: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır', async ({ page }) => {
+    const seed = readSeed();
+    await loginOnCashSessionPage(page, seed);
+    await expect(page.getByRole('heading', { name: 'Vardiyayı Başlat' })).toBeVisible({ timeout: 15_000 });
+    await page.locator('#opening-balance').fill('500');
+    await page.getByRole('button', { name: 'Kasayı Aç' }).click();
+    await expect(page.getByRole('heading', { name: /E2E Kasiyer/ })).toBeVisible();
+    await page.getByRole('button', { name: 'Nakit Giriş' }).click();
+
+    const keys = [];
+    await page.route('**/cash-movements', async (route) => {
+      keys.push(JSON.parse(route.request().postData()).IdempotencyKey);
+      await route.abort('failed');
+    });
+    const submit = async (amount, count) => {
+      await page.locator('#movement-amount').fill(amount);
+      await page.locator('#movement-notes').fill('E2E test - tekrar');
+      await page.getByRole('button', { name: 'Girişi Kaydet' }).click();
+      await expect.poll(() => keys.length, { timeout: 10_000 }).toBe(count);
+      await expect(page.getByText('Sunucuya ulaşılamadı.')).toBeVisible();
+    };
+
+    await submit('50', 1);
+    await submit('50', 2);
+    await submit('70', 3);
+    expect(keys[1]).toBe(keys[0]);
+    expect(keys[2]).not.toBe(keys[1]);
+
+    await page.unroute('**/cash-movements');
+    await page.locator('#movement-amount').fill('70');
+    await page.locator('#movement-notes').fill('E2E test - tekrar');
+    await page.getByRole('button', { name: 'Girişi Kaydet' }).click();
+    await expect(page.getByRole('heading', { name: /E2E Kasiyer/ })).toBeVisible();
+
+    await page.getByRole('button', { name: 'Sayıma Başla' }).click();
+    await useManualCount(page);
+    await page.locator('#counted-amount').fill('570');
+    await page.getByRole('button', { name: 'Sayımı Kaydet' }).click();
+    await expect(page.getByRole('heading', { name: 'Fark Teyidi' })).toBeVisible();
+    await expect(page.getByText('₺570,00').first()).toBeVisible();
+    await page.getByRole('button', { name: 'Kasayı Kapat' }).click();
+    await expect(page.getByRole('heading', { name: 'Kasa Kapatıldı' })).toBeVisible({ timeout: 10_000 });
+    await expect(page.getByText('₺0,00').last()).toBeVisible();
+  });
 });

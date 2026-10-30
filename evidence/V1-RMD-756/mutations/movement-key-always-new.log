@@ -1,0 +1,47 @@
+[global-setup] applied 208 migrations, seeded database alkaros_e2e_cashier
+[global-setup] Host ready at http://127.0.0.1:5098
+
+Running 1 test using 1 worker
+
+  x  1 [chromium] › specs\05-cash-session-lifecycle.spec.js:131:3 › Kasa Oturumu (V13-PUI-002) › ağ hatasından sonra kasa hareketi: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır (1.4s)
+[global-teardown] Host stopped, database dropped
+
+
+  1) [chromium] › specs\05-cash-session-lifecycle.spec.js:131:3 › Kasa Oturumu (V13-PUI-002) › ağ hatasından sonra kasa hareketi: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır 
+
+    Error: expect(received).toBe(expected) // Object.is equality
+
+    Expected: "86879230-0b61-4305-8287-9fa39e807aae"
+    Received: "317e665d-4da6-4aa2-9128-8750af3089c3"
+
+      154 |     await submit('50', 2);
+      155 |     await submit('70', 3);
+    > 156 |     expect(keys[1]).toBe(keys[0]);
+          |                     ^
+      157 |     expect(keys[2]).not.toBe(keys[1]);
+      158 |
+      159 |     await page.unroute('**/cash-movements');
+        at D:\PROJECT\ALKAROS\tests\E2E\Cashier\specs\05-cash-session-lifecycle.spec.js:156:21
+
+    attachment #1: screenshot (image/png) ──────────────────────────────────────────────────────────
+    test-results\05-cash-session-lifecycle--7f569-utar-yeni-anahtarı-kullanır-chromium\test-failed-1.png
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    attachment #2: video (video/webm) ──────────────────────────────────────────────────────────────
+    test-results\05-cash-session-lifecycle--7f569-utar-yeni-anahtarı-kullanır-chromium\video.webm
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+    Error Context: test-results\05-cash-session-lifecycle--7f569-utar-yeni-anahtarı-kullanır-chromium\error-context.md
+
+    attachment #4: trace (application/zip) ─────────────────────────────────────────────────────────
+    test-results\05-cash-session-lifecycle--7f569-utar-yeni-anahtarı-kullanır-chromium\trace.zip
+    Usage:
+
+        npx playwright show-trace test-results\05-cash-session-lifecycle--7f569-utar-yeni-anahtarı-kullanır-chromium\trace.zip
+
+    ────────────────────────────────────────────────────────────────────────────────────────────────
+
+  1 failed
+    [chromium] › specs\05-cash-session-lifecycle.spec.js:131:3 › Kasa Oturumu (V13-PUI-002) › ağ hatasından sonra kasa hareketi: aynı tutar aynı anahtarı, değişen tutar yeni anahtarı kullanır 
+(node:17612) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(Use `node --trace-warnings ...` to show where the warning was created)
