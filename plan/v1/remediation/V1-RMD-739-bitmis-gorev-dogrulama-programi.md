@@ -2,7 +2,7 @@
 
 - Task ID: V1-RMD-739
 - Status: InProgress
-- Assignee: claude-code-session_019auoHryukF9ryWZPtnjznR
+- Assignee: hermes-session-20261028_015834_6948d340
 - Work type: implementation
 - Surface state: Planned
 
