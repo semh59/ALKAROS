@@ -1,5 +1,5 @@
 {
-  "label": "green",
+  "label": "green-patch-not-applied",
   "specs": [
     "05-cash-session-lifecycle.spec.js",
     "18-discount-and-tip.spec.js"

@@ -1,0 +1,37 @@
+{
+  "task_id": "V1-RMD-756",
+  "valid": false,
+  "metadata_errors": [],
+  "findings": [
+    {
+      "path": "evidence/v1-rmd-739/foreign-wip-2026-10-30/09-split-payment-race-and-edges.spec.js.diff",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/foreign-wip-2026-10-30/billingsplithttptests.cs.diff",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/foreign-wip-2026-10-30/billingsplitstore.cs.diff",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/foreign-wip-2026-10-30/readme.md",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/foreign-wip-2026-10-30/split-payment.js.diff",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    },
+    {
+      "path": "evidence/v1-rmd-739/foreign-wip-2026-10-30/v1-rmd-314-tender-idempotency-key-stable-across-retry.md.diff",
+      "change_type": "added",
+      "reason": "path not in task allowlist"
+    }
+  ]
+}
