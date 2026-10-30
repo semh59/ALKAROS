@@ -1,0 +1,9 @@
+[master 75cbc761] test(billing): finalize V1-RMD-755 split test closure proof
+ 9 files changed, 596 insertions(+), 503 deletions(-)
+ create mode 100644 evidence/V1-RMD-755/commit-ancestor.log
+ create mode 100644 evidence/V1-RMD-755/commit-count.log
+ create mode 100644 evidence/V1-RMD-755/committed-paths.log
+ create mode 100644 evidence/V1-RMD-755/committed-scope.log
+ create mode 100644 evidence/V1-RMD-755/implementation-commit.log
+ create mode 100644 evidence/V1-RMD-755/postcommit-delta.log
+ create mode 100644 evidence/V1-RMD-755/postcommit-proof.json

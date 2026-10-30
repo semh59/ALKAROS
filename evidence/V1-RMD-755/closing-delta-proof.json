@@ -1,14 +1,12 @@
 {
-  "utc": "2026-10-29T21:06:45.646653+00:00",
+  "utc": "2026-10-29T21:15:28.543339+00:00",
   "outside_worktree": [],
   "outside_index": [],
   "staged_name_status_z": [
-    "M",
-    "evidence/V1-RMD-755/755-final-v2.py",
     ""
   ],
   "valid": true,
   "baseline_unrelated_count": 8784,
-  "current_governed_count": 12065,
-  "head": "15a9d3ba88bebf82dca1ca121fc85dc703987b2d"
+  "current_governed_count": 12066,
+  "head": "75cbc7611676e7d2effd1f9f267170690e065f1c"
 }

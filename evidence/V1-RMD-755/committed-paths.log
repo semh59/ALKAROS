@@ -77,6 +77,10 @@ A	evidence/V1-RMD-755/before-assertion-cleanup/whitespace.log
 A	evidence/V1-RMD-755/build-before-fix.log
 A	evidence/V1-RMD-755/build-results.json
 A	evidence/V1-RMD-755/closing-delta-proof.json
+A	evidence/V1-RMD-755/commit-ancestor.log
+A	evidence/V1-RMD-755/commit-count.log
+A	evidence/V1-RMD-755/committed-paths.log
+A	evidence/V1-RMD-755/committed-scope.log
 A	evidence/V1-RMD-755/consistency.log
 A	evidence/V1-RMD-755/evidence-verification.json
 A	evidence/V1-RMD-755/execution-results.json
@@ -158,6 +162,7 @@ A	evidence/V1-RMD-755/guard-mutation-results.json
 A	evidence/V1-RMD-755/host-billing-build.log
 A	evidence/V1-RMD-755/host-billing-full.log
 A	evidence/V1-RMD-755/host-billing-results/full.trx
+A	evidence/V1-RMD-755/implementation-commit.log
 A	evidence/V1-RMD-755/independent-code-followup.json
 A	evidence/V1-RMD-755/independent-intake-755-test-audit.json
 A	evidence/V1-RMD-755/independent-intake-packet02-real-audit.json
@@ -232,6 +237,8 @@ A	evidence/V1-RMD-755/order-regression-results/8/run.trx
 A	evidence/V1-RMD-755/order-regression-results/9/run.log
 A	evidence/V1-RMD-755/order-regression-results/9/run.trx
 A	evidence/V1-RMD-755/plan.log
+A	evidence/V1-RMD-755/postcommit-delta.log
+A	evidence/V1-RMD-755/postcommit-proof.json
 A	evidence/V1-RMD-755/precommit-committed-range.log
 A	evidence/V1-RMD-755/preflight.json
 A	evidence/V1-RMD-755/preservation-proof.json
