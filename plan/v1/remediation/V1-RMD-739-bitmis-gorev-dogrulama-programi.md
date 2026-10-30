@@ -1,7 +1,7 @@
 # V1-RMD-739 - Bitmiş görev doğrulama programı (1276 Done görev ve tüm md dosyaları)
 
 - Task ID: V1-RMD-739
-- Status: InProgress
+- Status: Planned
 - Assignee: hermes-session-20261028_015834_6948d340
 - Work type: implementation
 - Surface state: Planned
