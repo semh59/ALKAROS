@@ -1,0 +1,34 @@
+{
+  "mode": "post",
+  "base": "114b8da4c527da6805b34ca89fd770613c5c6c7d",
+  "main_head": "95c81c39f5d1bbaf0207e6c762169fe720aa81af",
+  "replayed_commits": [
+    "95c81c39f5d1bbaf0207e6c762169fe720aa81af"
+  ],
+  "local_range_commit_count": 1,
+  "steps": [
+    {
+      "step": "clone",
+      "exit_code": 0
+    },
+    {
+      "step": "checkout-baseline",
+      "exit_code": 0
+    },
+    {
+      "step": "cherry-pick",
+      "sha": "95c81c39f5d1bbaf0207e6c762169fe720aa81af",
+      "files": 28,
+      "foreign_paths_in_commit": [],
+      "exit_code": 0
+    },
+    {
+      "step": "task-scope-local-range",
+      "exit_code": 0,
+      "log_sha256": "0fa0cd68c25b89504dcf4ee5d462fecc545a03103d705945809b6e22c1d47c82"
+    }
+  ],
+  "valid": true,
+  "method": "Shared scratch clone; 751-only commits cherry-picked onto the InProgress baseline so the range excludes 752-755 commits.",
+  "utc": "2026-10-30T04:33:12.797189+00:00"
+}
