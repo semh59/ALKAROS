@@ -1,7 +1,7 @@
 # V1-RMD-758 - Kasa hareketi anahtarı yalnız sunucunun karşılaştırdığı alanlara bağlanır
 
 - Task ID: V1-RMD-758
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: remediation
 - Surface state: Existing
