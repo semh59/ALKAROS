@@ -1,0 +1,47 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-receipt.test.js (10 tests | 2 failed) 1892ms
+     × lists refunded units, the amount paid back per payment and the net amount kept 192ms
+     × prints no refunded units for a refund that is still waiting for approval 191ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 17 passed (19)
+   Start at  22:17:11
+   Duration  4.16s (transform 1.22s, setup 57ms, import 149ms, tests 4.18s, environment 2.92s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > lists refunded units, the amount paid back per payment and the net amount kept
+AssertionError: expected 'Bilgi FişiBu belge mali fiş değildir.…' to contain 'İade edildi: 2 adet'
+
+Expected: "İade edildi: 2 adet"
+Received: "Bilgi FişiBu belge mali fiş değildir.Hesap: H-104213.10.2026 13:05:003 × Çay₺150,00İade edildi: 3 adet1 × Tost₺50,00Ara toplam₺100,00Bahşiş₺20,00İndirim-₺10,00Toplam₺110,00Nakit (Kısmen iade edildi)₺200,00İade-₺100,00Net tahsilat₺100,00Teşekkür ederiz."
+
+ ❯ split-payment-receipt.test.js:156:19
+    154|     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    155|     const sheet = document.getElementById("receipt-print").textContent;
+    156|     expect(sheet).toContain("İade edildi: 2 adet");
+       |                   ^
+    157|     expect(sheet.match(/İade edildi: /g)).toHaveLength(1);
+    158|     expect(sheet).toContain("Kısmen iade edildi");
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > prints no refunded units for a refund that is still waiting for approval
+AssertionError: expected 'Bilgi FişiBu belge mali fiş değildir.…' not to contain 'İade edildi:'
+
+Expected: "İade edildi:"
+Received: "Bilgi FişiBu belge mali fiş değildir.Hesap: H-104213.10.2026 13:05:003 × Çay₺150,00İade edildi: 2 adetAra toplam₺100,00Bahşiş₺20,00İndirim-₺10,00Toplam₺110,00Nakit₺60,00Cari hesap₺30,00EFT / diğer (İade edildi)₺20,00Banka kartı₺15,00Teşekkür ederiz."
+
+ ❯ split-payment-receipt.test.js:174:70
+    172|
+    173|     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    174|     expect(document.getElementById("receipt-print").textContent).not.t…
+       |                                                                      ^
+    175|   });
+    176|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+

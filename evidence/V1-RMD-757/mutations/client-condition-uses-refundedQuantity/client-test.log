@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
+
+ ❯ split-payment-receipt.test.js (10 tests | 1 failed) 1725ms
+     × prints no refunded units for a refund that is still waiting for approval 180ms
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 18 passed (19)
+   Start at  22:26:10
+   Duration  3.73s (transform 971ms, setup 39ms, import 130ms, tests 3.88s, environment 2.44s)
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  split-payment-receipt.test.js > split-payment.js information receipt > prints no refunded units for a refund that is still waiting for approval
+AssertionError: expected 'Bilgi FişiBu belge mali fiş değildir.…' not to contain 'İade edildi:'
+
+Expected: "İade edildi:"
+Received: "Bilgi FişiBu belge mali fiş değildir.Hesap: H-104213.10.2026 13:05:003 × Çay₺150,00İade edildi: 0 adetAra toplam₺100,00Bahşiş₺20,00İndirim-₺10,00Toplam₺110,00Nakit₺60,00Cari hesap₺30,00EFT / diğer (İade edildi)₺20,00Banka kartı₺15,00Teşekkür ederiz."
+
+ ❯ split-payment-receipt.test.js:174:70
+    172|
+    173|     await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    174|     expect(document.getElementById("receipt-print").textContent).not.t…
+       |                                                                      ^
+    175|   });
+    176|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+

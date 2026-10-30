@@ -1,0 +1,30 @@
+{
+  "host_exit": 1,
+  "host_summary": [
+    "Başarısız! - Başarısız:     1, Başarılı:     7, Atlanan:     0, Toplam:     8, Süre: 49 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)"
+  ],
+  "host_failures": [
+    "System.Collections.Generic.KeyNotFoundException : The given key was not present in the dictionary.",
+    "[xUnit.net 00:00:52.85]     ALKAROS.Host.Experience.PaymentTender.Tests.BillReceiptHttpTests.EachItemCarriesCompletedRefundedQuantitySeparately [FAIL]"
+  ],
+  "client_exit": 1,
+  "client_summary": [
+    "Test Files  1 failed | 1 passed (2)",
+    "Tests  2 failed | 17 passed (19)",
+    "⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯"
+  ],
+  "client_failures": [
+    "FAIL  split-payment-receipt.test.js > split-payment.js information receipt > lists refunded units, the amount paid back per payment and the net amount kept",
+    "AssertionError: expected 'Bilgi FişiBu belge mali fiş değildir.…' to contain 'İade edildi: 2 adet'",
+    "FAIL  split-payment-receipt.test.js > split-payment.js information receipt > prints no refunded units for a refund that is still waiting for approval",
+    "AssertionError: expected 'Bilgi FişiBu belge mali fiş değildir.…' not to contain 'İade edildi:'"
+  ],
+  "source_sha256": {
+    "src/Host/DualScreen/DualScreenApplication.Receipt.cs": "e61fcf972579b29ea002bbe0c82ef69777b2ffcda9512f9a47e989b068b98245",
+    "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js": "1ef7f6275397b945ee870e08794db93449bedac5ed4e69fe5b66075a3f5cad10",
+    "tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs": "a7f33c6cad846b25ece9af16ae4e6effffe36f6b521d6a33e68270659da21553",
+    "tests/Clients/StaticApps/split-payment-receipt.test.js": "9d81fdd839fcf3d51bfaabb15d116900701f2d45e68733618259e970335b0e1e",
+    "tests/Clients/StaticApps/split-payment-item-refund.test.js": "aff81505a3ecc6a373e6eb037179abc3be46e7ff5d97d9d87855d6224e53a0c0"
+  },
+  "passed": true
+}

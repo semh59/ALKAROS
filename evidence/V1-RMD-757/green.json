@@ -1,0 +1,23 @@
+{
+  "host_exit": 0,
+  "host_summary": [
+    "Başarılı!  - Başarısız:     0, Başarılı:     8, Atlanan:     0, Toplam:     8, Süre: 51 s - ALKAROS.Host.Experience.PaymentTender.Tests.dll (net8.0)"
+  ],
+  "host_failures": [],
+  "client_exit": 0,
+  "client_summary": [
+    "Test Files  2 passed (2)",
+    "Tests  19 passed (19)"
+  ],
+  "client_failures": [],
+  "build_exit": 0,
+  "source_sha256": {
+    "src/Host/DualScreen/DualScreenApplication.Receipt.cs": "9fffa946c5fd5de043758a67e04cbc6be4160108bfa3d8155771df05c7e71040",
+    "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js": "04665068a97aeb33542c8ba9e834c76f17577afcab806ccf00f76f2e28c4ed3a",
+    "tests/Host/Experience/PaymentTender/BillReceiptHttpTests.cs": "a7f33c6cad846b25ece9af16ae4e6effffe36f6b521d6a33e68270659da21553",
+    "tests/Clients/StaticApps/split-payment-receipt.test.js": "9d81fdd839fcf3d51bfaabb15d116900701f2d45e68733618259e970335b0e1e",
+    "tests/Clients/StaticApps/split-payment-item-refund.test.js": "aff81505a3ecc6a373e6eb037179abc3be46e7ff5d97d9d87855d6224e53a0c0"
+  },
+  "build_clean": true,
+  "passed": true
+}

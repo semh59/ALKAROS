@@ -1452,8 +1452,8 @@
           (item.lineDiscount > 0
             ? '<tr class="sp-receipt-refund"><td>İndirim / ikram</td><td>-' + formatMoney(item.lineDiscount) + '</td></tr>'
             : '') +
-          (item.refundedQuantity > 0
-            ? '<tr class="sp-receipt-refund"><td>İade edildi: ' + escapeHtml(Number(item.refundedQuantity).toLocaleString('tr-TR')) + ' adet</td><td></td></tr>'
+          (item.completedRefundedQuantity > 0
+            ? '<tr class="sp-receipt-refund"><td>İade edildi: ' + escapeHtml(Number(item.completedRefundedQuantity).toLocaleString('tr-TR')) + ' adet</td><td></td></tr>'
             : '');
       }).join('') +
       '</table>' +

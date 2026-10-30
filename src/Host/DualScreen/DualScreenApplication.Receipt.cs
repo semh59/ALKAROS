@@ -13,7 +13,7 @@ namespace ALKAROS.Host.DualScreen;
 
 public sealed record BillReceiptItemV1(
     string Name, decimal Quantity, decimal UnitPrice, decimal Amount, Guid BillItemId, decimal RefundedQuantity,
-    decimal LineDiscount = 0m);
+    decimal CompletedRefundedQuantity, decimal LineDiscount = 0m);
 
 public sealed record BillReceiptTaxLineV1(decimal RatePercent, decimal Net, decimal Tax, decimal Gross);
 
@@ -74,6 +74,7 @@ public static partial class DualScreenApplication
                 var payments = await paymentRepository.GetByBillIdAsync(billId, cancellationToken);
                 var methods = await PaymentMethodsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
                 var refunded = await RefundedQuantitiesAsync(dataSource, billId, cancellationToken);
+                var completedRefunded = await CompletedRefundedQuantitiesAsync(dataSource, billId, cancellationToken);
                 var paidBack = await RefundedAmountsAsync(dataSource, payments.Select(p => p.Id).ToArray(), cancellationToken);
 
                 return Results.Ok(new BillReceiptV1(
@@ -86,7 +87,7 @@ public static partial class DualScreenApplication
                     bill.Items
                         .Select(i => new BillReceiptItemV1(
                             i.ProductNameSnapshot, i.Quantity, i.UnitPrice, i.GrossAmount, i.Id, refunded.GetValueOrDefault(i.Id),
-                            i.DiscountAmount))
+                            completedRefunded.GetValueOrDefault(i.Id), i.DiscountAmount))
                         .ToList(),
                     adjustments
                         .Select(a => new BillReceiptAdjustmentV1(a.AdjustmentType.ToString(), a.GrossAmount, a.IsDeduction))
@@ -138,6 +139,25 @@ public static partial class DualScreenApplication
             FROM payments.refund_request_items i
             JOIN payments.refund_requests r ON r.refund_request_id = i.refund_request_id
             WHERE r.bill_id = @bill AND r.status IN ('Requested', 'AwaitingManualRefund', 'Completed')
+            GROUP BY i.bill_item_id;
+            """);
+        command.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = billId;
+        var result = new Dictionary<Guid, decimal>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken))
+            result[reader.GetGuid(0)] = reader.GetDecimal(1);
+        return result;
+    }
+
+    private static async Task<Dictionary<Guid, decimal>> CompletedRefundedQuantitiesAsync(
+        NpgsqlDataSource dataSource, Guid billId, CancellationToken cancellationToken)
+    {
+        await using var command = dataSource.CreateCommand(
+            """
+            SELECT i.bill_item_id, SUM(i.quantity)
+            FROM payments.refund_request_items i
+            JOIN payments.refund_requests r ON r.refund_request_id = i.refund_request_id
+            WHERE r.bill_id = @bill AND r.status = 'Completed'
             GROUP BY i.bill_item_id;
             """);
         command.Parameters.Add("bill", NpgsqlDbType.Uuid).Value = billId;

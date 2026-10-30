@@ -20,8 +20,8 @@ const summary = (status = "Approved") => ({
   allocations: [{ allocationId: "a1", paymentId: PAYMENT_ID, amount: 200, paymentStatus: status }],
   unsettledPayment: null,
 });
-const line = (id, name, quantity, refundedQuantity = 0) => ({
-  billItemId: id, name, quantity, unitPrice: 50, amount: 50 * quantity, refundedQuantity,
+const line = (id, name, quantity, refundedQuantity = 0, completedRefundedQuantity = 0) => ({
+  billItemId: id, name, quantity, unitPrice: 50, amount: 50 * quantity, refundedQuantity, completedRefundedQuantity,
 });
 const receiptBody = (items) => ({
   billId: BILL_ID, billNumber: "B-1", status: "Open", currencyCode: "TRY", openedAt: "2026-10-14T10:00:00Z", closedAt: null,

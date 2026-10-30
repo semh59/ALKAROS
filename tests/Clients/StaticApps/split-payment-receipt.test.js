@@ -139,8 +139,8 @@ describe("split-payment.js information receipt", () => {
     const refunded = {
       ...receipt,
       items: [
-        { name: "Çay", quantity: 3, unitPrice: 50, amount: 150, billItemId: "i1", refundedQuantity: 2 },
-        { name: "Tost", quantity: 1, unitPrice: 50, amount: 50, billItemId: "i2", refundedQuantity: 0 },
+        { name: "Çay", quantity: 3, unitPrice: 50, amount: 150, billItemId: "i1", refundedQuantity: 3, completedRefundedQuantity: 2 },
+        { name: "Tost", quantity: 1, unitPrice: 50, amount: 50, billItemId: "i2", refundedQuantity: 0, completedRefundedQuantity: 0 },
       ],
       payments: [
         { paymentId: "p1", amount: 200, method: "Cash", status: "PartiallyRefunded", at: "2026-10-14T10:30:00Z", refundedAmount: 100 },
@@ -160,8 +160,22 @@ describe("split-payment.js information receipt", () => {
     expect(sheet).toMatch(/Net tahsilats*₺100,00/);
   });
 
+  it("prints no refunded units for a refund that is still waiting for approval", async () => {
+    const pending = {
+      ...receipt,
+      items: [{ name: "Çay", quantity: 3, unitPrice: 50, amount: 150, billItemId: "i1", refundedQuantity: 2, completedRefundedQuantity: 0 }],
+    };
+    await open({ body: pending });
+    await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
+
+    document.getElementById("print-receipt").click();
+
+    await vi.waitFor(() => expect(printSpy).toHaveBeenCalledTimes(1));
+    expect(document.getElementById("receipt-print").textContent).not.toContain("İade edildi:");
+  });
+
   it("shows no refund rows and no net line when nothing was paid back", async () => {
-    await open({ body: { ...receipt, payments: receipt.payments.map((payment) => ({ ...payment, refundedAmount: 0 })) } });
+    await open({ body: { ...receipt, items: receipt.items.map(i => ({ ...i, refundedQuantity: 0, completedRefundedQuantity: 0 })), payments: receipt.payments.map((payment) => ({ ...payment, refundedAmount: 0 })) } });
     await vi.waitFor(() => expect(document.getElementById("print-receipt")).not.toBeNull());
 
     document.getElementById("print-receipt").click();

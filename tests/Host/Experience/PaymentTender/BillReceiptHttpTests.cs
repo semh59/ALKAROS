@@ -107,6 +107,34 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task EachItemCarriesCompletedRefundedQuantitySeparately()
+    {
+        var terminalId = Guid.NewGuid();
+        var cookie = await _database.SeedCashierSessionAsync(terminalId, "receipt-completed-only");
+        var billId = await _database.SeedBillAsync(payable: 300m);
+        var actor = await UserIdAsync();
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        await _database.SeedCollectedAsync(billId, 100m);
+        var billItemId = await BillItemIdAsync(billId);
+        // One open request per payment is allowed, so each status gets its own payment.
+        var paymentIds = await PaymentIdsAsync(billId);
+        await AddRefundAsync(billId, paymentIds[0], billItemId, "Completed", actor);
+        await AddRefundAsync(billId, paymentIds[1], billItemId, "AwaitingManualRefund", actor);
+        await AddRefundAsync(billId, paymentIds[2], billItemId, "Requested", actor);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        var response = await GetAsync(client, ReceiptPath(terminalId, billId), cookie);
+
+        var body = await response.Content.ReadFromJsonAsync<JsonElement>();
+        var item = Assert.Single(body.GetProperty("items").EnumerateArray());
+        Assert.Equal(billItemId, item.GetProperty("billItemId").GetGuid());
+        Assert.Equal(3m, item.GetProperty("refundedQuantity").GetDecimal());
+        Assert.Equal(1m, item.GetProperty("completedRefundedQuantity").GetDecimal());
+    }
+
+    [Fact]
     public async Task EachPaymentCarriesWhatWasPaidBackOfIt()
     {
         var terminalId = Guid.NewGuid();
@@ -228,6 +256,18 @@ public sealed class BillReceiptHttpTests : IAsyncLifetime
     {
         await using var command = _database.DataSource.CreateCommand("SELECT user_id FROM identity.users ORDER BY username LIMIT 1;");
         return (Guid)(await command.ExecuteScalarAsync())!;
+    }
+
+    private async Task<List<Guid>> PaymentIdsAsync(Guid billId)
+    {
+        await using var command = _database.DataSource.CreateCommand(
+            "SELECT payment_id FROM payments.payments WHERE bill_id = @b ORDER BY payment_id;");
+        command.Parameters.AddWithValue("b", billId);
+        var result = new List<Guid>();
+        await using var reader = await command.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            result.Add(reader.GetGuid(0));
+        return result;
     }
 
     private async Task<Guid> FirstPaymentIdAsync(Guid billId, decimal amount)
