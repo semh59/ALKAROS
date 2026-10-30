@@ -1,0 +1,36 @@
+{
+  "mutants": [
+    {
+      "mutant": "server-counts-pending-refunds",
+      "file": "src/Host/DualScreen/DualScreenApplication.Receipt.cs",
+      "side": "host",
+      "exit": 1,
+      "assertions": [
+        "Assert.Equal() Failure: Values differ"
+      ],
+      "killed": true
+    },
+    {
+      "mutant": "client-condition-uses-refundedQuantity",
+      "file": "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js",
+      "side": "client",
+      "exit": 1,
+      "assertions": [
+        "AssertionError: expected 'Bilgi FişiBu belge mali fiş değildir.…' not to contain 'İade edildi:'"
+      ],
+      "killed": true
+    },
+    {
+      "mutant": "client-prints-refundedQuantity",
+      "file": "src/Clients/Cashier/wwwroot/payments/split-payment/split-payment.js",
+      "side": "client",
+      "exit": 1,
+      "assertions": [
+        "AssertionError: expected 'Bilgi FişiBu belge mali fiş değildir.…' to contain 'İade edildi: 2 adet'"
+      ],
+      "killed": true
+    }
+  ],
+  "sources_restored": true,
+  "passed": true
+}

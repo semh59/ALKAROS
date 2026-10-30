@@ -1,46 +1,46 @@
   Geri y�klenecek projeler belirleniyor...
   Geri y�kleme i�in t�m projeler g�ncel.
   ALKAROS.IntegrationContracts -> D:\project\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.ModuleComposition -> D:\project\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
   ALKAROS.Secrets -> D:\project\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
   ALKAROS.Measurements -> D:\project\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
-  ALKAROS.ModuleComposition -> D:\project\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
-  ALKAROS.SensitiveData -> D:\project\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
-  ALKAROS.Catalog -> D:\project\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Reconciliation -> D:\project\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
   ALKAROS.Menu -> D:\project\ALKAROS\src\Modules\Menu\bin\Debug\net8.0\ALKAROS.Menu.dll
-  ALKAROS.Inventory -> D:\project\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
-  ALKAROS.Privacy.RetentionExecution -> D:\project\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Catalog -> D:\project\ALKAROS\src\Modules\Catalog\bin\Debug\net8.0\ALKAROS.Catalog.dll
+  ALKAROS.Identity -> D:\project\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
   ALKAROS.Settings -> D:\project\ALKAROS\src\Modules\Settings\bin\Debug\net8.0\ALKAROS.Settings.dll
+  ALKAROS.Recipes -> D:\project\ALKAROS\src\Modules\Recipes\bin\Debug\net8.0\ALKAROS.Recipes.dll
+  ALKAROS.SensitiveData -> D:\project\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
   ALKAROS.Reporting -> D:\project\ALKAROS\src\Modules\Reporting\bin\Debug\net8.0\ALKAROS.Reporting.dll
+  ALKAROS.Privacy.RetentionExecution -> D:\project\ALKAROS\src\Modules\Privacy\RetentionExecution\bin\Debug\net8.0\ALKAROS.Privacy.RetentionExecution.dll
+  ALKAROS.Privacy.Anonymization -> D:\project\ALKAROS\src\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.Inventory -> D:\project\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
   ALKAROS.Audit -> D:\project\ALKAROS\src\Modules\Audit\bin\Debug\net8.0\ALKAROS.Audit.dll
   ALKAROS.Messaging -> D:\project\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
-  ALKAROS.Recipes -> D:\project\ALKAROS\src\Modules\Recipes\bin\Debug\net8.0\ALKAROS.Recipes.dll
-  ALKAROS.Purchasing -> D:\project\ALKAROS\src\Modules\Purchasing\bin\Debug\net8.0\ALKAROS.Purchasing.dll
   ALKAROS.Production -> D:\project\ALKAROS\src\Modules\Production\bin\Debug\net8.0\ALKAROS.Production.dll
-  ALKAROS.Identity -> D:\project\ALKAROS\src\Modules\Identity\bin\Debug\net8.0\ALKAROS.Identity.dll
-  ALKAROS.Reconciliation -> D:\project\ALKAROS\src\Modules\Reconciliation\bin\Debug\net8.0\ALKAROS.Reconciliation.dll
   ALKAROS.Observability -> D:\project\ALKAROS\src\Modules\Observability\bin\Debug\net8.0\ALKAROS.Observability.dll
+  ALKAROS.Purchasing -> D:\project\ALKAROS\src\Modules\Purchasing\bin\Debug\net8.0\ALKAROS.Purchasing.dll
   ALKAROS.Support -> D:\project\ALKAROS\src\Modules\Support\bin\Debug\net8.0\ALKAROS.Support.dll
   ALKAROS.CustomerData -> D:\project\ALKAROS\src\Modules\CustomerData\bin\Debug\net8.0\ALKAROS.CustomerData.dll
-  ALKAROS.Privacy.Anonymization -> D:\project\ALKAROS\src\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.dll
+  ALKAROS.Invoicing -> D:\project\ALKAROS\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
   ALKAROS.Security -> D:\project\ALKAROS\src\Modules\Security\bin\Debug\net8.0\ALKAROS.Security.dll
   ALKAROS.Operations -> D:\project\ALKAROS\src\Modules\Operations\bin\Debug\net8.0\ALKAROS.Operations.dll
-  ALKAROS.OnlineOrdering -> D:\project\ALKAROS\src\Modules\OnlineOrdering\bin\Debug\net8.0\ALKAROS.OnlineOrdering.dll
   ALKAROS.Tables -> D:\project\ALKAROS\src\Modules\Tables\bin\Debug\net8.0\ALKAROS.Tables.dll
-  ALKAROS.Invoicing -> D:\project\ALKAROS\src\Modules\Invoicing\bin\Debug\net8.0\ALKAROS.Invoicing.dll
+  ALKAROS.OnlineOrdering -> D:\project\ALKAROS\src\Modules\OnlineOrdering\bin\Debug\net8.0\ALKAROS.OnlineOrdering.dll
   ALKAROS.QrOrdering -> D:\project\ALKAROS\src\Modules\QrOrdering\bin\Debug\net8.0\ALKAROS.QrOrdering.dll
   ALKAROS.Orders -> D:\project\ALKAROS\src\Modules\Orders\bin\Debug\net8.0\ALKAROS.Orders.dll
+  ALKAROS.Kitchen -> D:\project\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
   ALKAROS.Billing -> D:\project\ALKAROS\src\Modules\Billing\bin\Debug\net8.0\ALKAROS.Billing.dll
   ALKAROS.QrRelay -> D:\project\ALKAROS\src\Integrations\QrRelay\bin\Debug\net8.0\ALKAROS.QrRelay.dll
-  ALKAROS.Kitchen -> D:\project\ALKAROS\src\Modules\Kitchen\bin\Debug\net8.0\ALKAROS.Kitchen.dll
   ALKAROS.Payments -> D:\project\ALKAROS\src\Modules\Payments\bin\Debug\net8.0\ALKAROS.Payments.dll
-  ALKAROS.Cash -> D:\project\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
   ALKAROS.Billing.PaymentClosure -> D:\project\ALKAROS\src\Modules\Billing\PaymentClosure\bin\Debug\net8.0\ALKAROS.Billing.PaymentClosure.dll
-  ALKAROS.CustomerAccounts -> D:\project\ALKAROS\src\Modules\CustomerAccounts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.dll
+  ALKAROS.Cash -> D:\project\ALKAROS\src\Modules\Cash\bin\Debug\net8.0\ALKAROS.Cash.dll
   ALKAROS.Payments.TenderComposition -> D:\project\ALKAROS\src\Modules\Payments\TenderComposition\bin\Debug\net8.0\ALKAROS.Payments.TenderComposition.dll
+  ALKAROS.CustomerAccounts -> D:\project\ALKAROS\src\Modules\CustomerAccounts\bin\Debug\net8.0\ALKAROS.CustomerAccounts.dll
   ALKAROS.Host -> D:\project\ALKAROS\src\Host\bin\Debug\net8.0\ALKAROS.Host.dll
 
 Oluşturma başarılı oldu.
     0 Uyarı
     0 Hata
 
-Geçen Süre 00:00:15.63
+Geçen Süre 00:00:42.24

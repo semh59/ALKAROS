@@ -1,13 +1,13 @@
 
  RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
 
- ❯ split-payment-receipt.test.js (10 tests | 1 failed) 1772ms
-     × lists refunded units, the amount paid back per payment and the net amount kept 182ms
+ ❯ split-payment-receipt.test.js (10 tests | 1 failed) 1686ms
+     × lists refunded units, the amount paid back per payment and the net amount kept 173ms
 
  Test Files  1 failed | 1 passed (2)
       Tests  1 failed | 18 passed (19)
-   Start at  22:27:14
-   Duration  3.57s (transform 1.03s, setup 48ms, import 153ms, tests 3.92s, environment 2.09s)
+   Start at  23:07:24
+   Duration  3.42s (transform 966ms, setup 30ms, import 107ms, tests 3.78s, environment 1.90s)
 
 
 ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯

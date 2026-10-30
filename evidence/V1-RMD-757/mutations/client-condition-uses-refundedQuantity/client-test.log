@@ -1,13 +1,13 @@
 
  RUN  v4.1.11 D:/PROJECT/ALKAROS/tests/Clients/StaticApps
 
- ❯ split-payment-receipt.test.js (10 tests | 1 failed) 1725ms
-     × prints no refunded units for a refund that is still waiting for approval 180ms
+ ❯ split-payment-receipt.test.js (10 tests | 1 failed) 1829ms
+     × prints no refunded units for a refund that is still waiting for approval 198ms
 
  Test Files  1 failed | 1 passed (2)
       Tests  1 failed | 18 passed (19)
-   Start at  22:26:10
-   Duration  3.73s (transform 971ms, setup 39ms, import 130ms, tests 3.88s, environment 2.44s)
+   Start at  23:06:20
+   Duration  3.53s (transform 1.14s, setup 45ms, import 121ms, tests 4.07s, environment 1.92s)
 
 
 ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
