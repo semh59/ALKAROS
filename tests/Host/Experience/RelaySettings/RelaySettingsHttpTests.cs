@@ -1,9 +1,5 @@
 using System.Net;
 using System.Net.Http.Json;
-using System.Security.Cryptography;
-using ALKAROS.QrOrdering.RelayCredential;
-using ALKAROS.Secrets;
-using ALKAROS.SensitiveData;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -193,20 +189,7 @@ public sealed class RelaySettingsHttpTests : IAsyncLifetime
         builder.WebHost.UseUrls("http://127.0.0.1:0");
         builder.Services.AddSingleton(_database.DataSource);
         builder.Services.AddRelaySettingsExperience();
-
-        // The production wiring (QrOrderingModule) uses EnvironmentVariableSecretProvider;
-        // this standalone test host uses the in-memory one instead, exactly
-        // as that provider's own doc comment intends.
-        var secretProvider = new InMemorySecretProvider();
-        secretProvider.Set(new SecretReference("envelope-master-key"), Convert.ToBase64String(RandomNumberGenerator.GetBytes(32)));
-        builder.Services.AddSingleton<ISecretProvider>(secretProvider);
-        var accessPolicy = new RelayCredentialAccessPolicy();
-        builder.Services.AddSingleton<ISecretAccessPolicy>(accessPolicy);
-        builder.Services.AddSingleton<ISensitiveDataAccessPolicy>(accessPolicy);
-        builder.Services.AddSingleton<ISecretResolver, SecretResolver>();
-        builder.Services.AddSingleton<IEnvelopeCipher, AesGcmEnvelopeCipher>();
-        builder.Services.AddSingleton<SensitivePayloadProtector>();
-        builder.Services.AddSingleton<IRelayCredentialStore, PostgresRelayCredentialStore>();
+        RelaySettingsTestHost.AddRelayCredentialChain(builder.Services);
 
         var app = builder.Build();
         app.MapRelaySettingsApi();

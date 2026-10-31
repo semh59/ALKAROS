@@ -297,6 +297,18 @@
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-RMD-132"
     },
+    "POST /api/v1/management/qr-tables/{tableId:guid}/issue": {
+      "reason": "Yanıt ham masa token'ını taşır ve sunucu yalnız özetini saklar; kayıtlı bir tekrar yanıtı token'ı kalıcılaştırırdı. İkinci üretme zaten 409 QR_ALREADY_EXISTS döner, bu yüzden tekrar yeni bir QR üretmez.",
+      "task": "V1-RMD-778"
+    },
+    "POST /api/v1/management/qr-tables/{tableId:guid}/revoke": {
+      "reason": "Tekrarlanan iptal ikinci kez 404 QR_NOT_FOUND döner ve durumu değiştirmez; yanıt gövdesi yoktur.",
+      "task": "V1-RMD-778"
+    },
+    "POST /api/v1/management/qr-tables/{tableId:guid}/rotate": {
+      "reason": "Yanıt ham masa token'ını taşır ve sunucu yalnız özetini saklar; kayıtlı bir tekrar yanıtı token'ı kalıcılaştırırdı. Yenileme bilerek yeni bir token üretir ve eskisini geçersiz kılar; ağ hatasından sonra tekrar eden istek bir önceki kodu da geçersiz kılar (yönetici etiketi yeniden basar).",
+      "task": "V1-RMD-778"
+    },
     "POST /api/v1/management/recipes/": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V11-RCP-003"

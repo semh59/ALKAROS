@@ -51,7 +51,7 @@ authenticated, still owned entirely by POS. Rule 1 below is unaffected.
 ## 3. Rules
 
 1. No public inbound ports on local network.
-2. QR tokens expire after 4 hours.
+2. A table's QR token is valid until a manager revokes or rotates it (amended, see 2c). A customer session still ends after 4 hours.
 3. Queue retention: 7 days max.
 4. Outage: connector retries with backoff; queue buffers during outage.
 
@@ -85,6 +85,20 @@ resolve.** Two honest options, neither implemented here:
 
 Until Semih decides between these, this amendment records the gap so a future reader of §1/§3 does not
 mistake the original decision for what is actually running.
+
+## 2c. Amendment (V1-RMD-778, 2026-10-31) — a table's QR no longer expires after 4 hours
+
+Rule 2 originally said QR tokens expire after 4 hours. A table's QR is a fixed printed label, so a 4-hour token
+would stop working in the middle of the first service day. Decision (Semih, 2026-10-31): the printed QR is valid
+until a manager revokes or rotates it. There is no automatic renewal and a table closing does not change the
+token. The column `expires_at` stays NOT NULL and validation is unchanged; "until revoked" is stored as an expiry
+ten years after issue (`TableTokenService.DefaultLifetime`). The customer session behind the QR keeps its 4-hour
+absolute limit. The token's raw value is not stored, so the QR is shown and printed only when a manager issues or
+rotates it; a lost label is replaced by rotating, which invalidates the old one at once.
+
+Accepted risk: a customer session is not bound to the token and is not closed when the token is revoked. A QR
+order is created as a pending order and becomes a real order only when staff accept it, so a stale session
+cannot place an order the staff have not seen.
 
 ## 4. Affected Tasks
 

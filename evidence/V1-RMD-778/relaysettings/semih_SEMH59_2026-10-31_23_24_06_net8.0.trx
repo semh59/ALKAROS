@@ -1,0 +1,783 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="9ff957e8-e338-4bec-bcc6-d5956e9a7902" name="semih@SEMH59 2026-10-31 23:24:06" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T23:24:06.2575570+03:00" queuing="2026-10-31T23:24:06.2575573+03:00" start="2026-10-31T23:24:04.1940197+03:00" finish="2026-10-31T23:24:10.9542714+03:00" />
+  <TestSettings name="default" id="b80217d0-8308-4e72-8543-7270f73519e0">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_23_24_06" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="7e29105e-b46e-4d19-acf9-bed7ad2ec1bb" testId="262411a6-ae7f-e7a2-77a1-e36eb2481be0" testName="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.AManagerSessionWithoutIntegrationsManageIsForbidden" computerName="SEMH59" duration="00:00:00.0785792" startTime="2026-10-31T23:24:10.8759823+03:00" endTime="2026-10-31T23:24:10.8759824+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e29105e-b46e-4d19-acf9-bed7ad2ec1bb" />
+    <UnitTestResult executionId="9a902ae0-3f80-4e99-b3a0-97c20a30f7c6" testId="db2027c8-8f06-ada4-14e8-28cdd22d8f60" testName="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.AnEmptyTokenIsRejected" computerName="SEMH59" duration="00:00:00.0505717" startTime="2026-10-31T23:24:06.6580635+03:00" endTime="2026-10-31T23:24:06.6580639+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a902ae0-3f80-4e99-b3a0-97c20a30f7c6" />
+    <UnitTestResult executionId="97bed63a-50ca-496a-ac94-45d7d062158d" testId="42c21c85-fe1e-353d-e8f0-bd8952757ca0" testName="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.ProvisioningWithoutASavedCredentialFailsWithAProvisioningError" computerName="SEMH59" duration="00:00:00.0696329" startTime="2026-10-31T23:24:07.4620618+03:00" endTime="2026-10-31T23:24:07.4620621+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="97bed63a-50ca-496a-ac94-45d7d062158d" />
+    <UnitTestResult executionId="29c58804-571e-4b87-af4f-5614cf04885a" testId="b43b70e1-db43-04eb-e628-b21a99feb6d0" testName="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.AnUnknownTableAndTheQuickSaleAnchorAreNotFound" computerName="SEMH59" duration="00:00:00.1061103" startTime="2026-10-31T23:24:08.6954737+03:00" endTime="2026-10-31T23:24:08.6954740+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="29c58804-571e-4b87-af4f-5614cf04885a" />
+    <UnitTestResult executionId="a8482886-20fb-4fe6-852d-705ecb885849" testId="648a8f18-91d5-3ce1-c71d-b3a2926d51d4" testName="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.AManagerCanSaveACredentialAndStatusReflectsIt" computerName="SEMH59" duration="00:00:00.0814574" startTime="2026-10-31T23:24:07.7449848+03:00" endTime="2026-10-31T23:24:07.7449850+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a8482886-20fb-4fe6-852d-705ecb885849" />
+    <UnitTestResult executionId="fde1dfd3-16e3-481a-add5-913575d3c0f0" testId="62d9e146-0093-3002-005a-31c57799c53c" testName="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.ACashierWithoutIntegrationsManageIsForbidden" computerName="SEMH59" duration="00:00:00.0598576" startTime="2026-10-31T23:24:06.9428705+03:00" endTime="2026-10-31T23:24:06.9428709+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fde1dfd3-16e3-481a-add5-913575d3c0f0" />
+    <UnitTestResult executionId="57cb0ce3-91f0-4978-a678-2ff41a8551a7" testId="76abbb0c-aecf-53f9-0400-ae2d845982a6" testName="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.WithoutAManagerCookieEveryRouteIsUnauthorized" computerName="SEMH59" duration="00:00:00.0782905" startTime="2026-10-31T23:24:09.8319839+03:00" endTime="2026-10-31T23:24:09.8319840+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="57cb0ce3-91f0-4978-a678-2ff41a8551a7" />
+    <UnitTestResult executionId="0062cd76-081f-44ef-81eb-823d8609686f" testId="c567ef2a-57e4-072a-2d2d-37fe743bbfcd" testName="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.RevokingClosesTheQrAndTheTableShowsNoQrAfterwards" computerName="SEMH59" duration="00:00:00.2001099" startTime="2026-10-31T23:24:08.4029054+03:00" endTime="2026-10-31T23:24:08.4029055+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0062cd76-081f-44ef-81eb-823d8609686f" />
+    <UnitTestResult executionId="533854e5-8595-4d5b-a61c-28d418a2f0b7" testId="1f13f3b6-8e8c-6acd-d8ea-a5432cf004db" testName="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.ASupervisorSessionIsRefusedEvenWithTheGrant" computerName="SEMH59" duration="00:00:00.0695083" startTime="2026-10-31T23:24:08.9543859+03:00" endTime="2026-10-31T23:24:08.9543860+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="533854e5-8595-4d5b-a61c-28d418a2f0b7" />
+    <UnitTestResult executionId="8fa07543-cc14-4172-8062-02e72e0f4ac3" testId="b4a7c316-5b97-b3c5-5105-7942c17221ec" testName="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.ASupervisorWithoutIntegrationsManageIsAlsoForbidden" computerName="SEMH59" duration="00:00:00.0601073" startTime="2026-10-31T23:24:08.0038440+03:00" endTime="2026-10-31T23:24:08.0038444+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8fa07543-cc14-4172-8062-02e72e0f4ac3" />
+    <UnitTestResult executionId="7383e111-eb12-4d66-9823-b98fd5f5d648" testId="6d820fb0-adc1-c247-e38e-0b26403b6531" testName="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.WithoutAnActivatedRelayNoTokenIsIssuedAndTheMessageIsTurkish" computerName="SEMH59" duration="00:00:00.1256422" startTime="2026-10-31T23:24:10.1946268+03:00" endTime="2026-10-31T23:24:10.1946273+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7383e111-eb12-4d66-9823-b98fd5f5d648" />
+    <UnitTestResult executionId="661f5125-4dfd-4f2d-b7aa-2fa9b32b3305" testId="ef7151f2-7e2b-e4c5-1350-82d05f75d6ba" testName="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.TheSavedTokenIsNeverReturnedByAnyEndpoint" computerName="SEMH59" duration="00:00:00.1530037" startTime="2026-10-31T23:24:06.1527028+03:00" endTime="2026-10-31T23:24:06.1527032+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="661f5125-4dfd-4f2d-b7aa-2fa9b32b3305" />
+    <UnitTestResult executionId="bc22461f-0949-4600-9f65-5418e258591e" testId="80985c5e-58c9-f93d-5465-1ea6b90fec8e" testName="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.AnIssuedAddressOpensACustomerSessionAndARotationClosesTheOldOne" computerName="SEMH59" duration="00:00:00.1314825" startTime="2026-10-31T23:24:09.5632748+03:00" endTime="2026-10-31T23:24:09.5632750+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bc22461f-0949-4600-9f65-5418e258591e" />
+    <UnitTestResult executionId="22f8844f-7f72-4415-be2c-2ce90c18caa9" testId="ebc7a9f1-1f7e-fee7-2ece-3cc7d1bf247f" testName="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.ProvisioningWithoutIntegrationsManageIsForbidden" computerName="SEMH59" duration="00:00:00.3882474" startTime="2026-10-31T23:24:05.7860227+03:00" endTime="2026-10-31T23:24:05.7860494+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="22f8844f-7f72-4415-be2c-2ce90c18caa9" />
+    <UnitTestResult executionId="36b87c20-4e4f-49ba-98ce-06bcf6ac1268" testId="5bada4da-f409-3a7e-4b46-28bab87fd20a" testName="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.AnEmptySubdomainLabelIsRejected" computerName="SEMH59" duration="00:00:00.0525891" startTime="2026-10-31T23:24:07.1928521+03:00" endTime="2026-10-31T23:24:07.1928525+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="36b87c20-4e4f-49ba-98ce-06bcf6ac1268" />
+    <UnitTestResult executionId="af1a94bc-7e5c-45d8-b5e5-df369e7f74a0" testId="81d5f61d-592e-37a4-ad7d-e242f4bf37ca" testName="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.IssuingTwiceIsAConflictAndRotatingOrRevokingWithoutAQrIsNotFound" computerName="SEMH59" duration="00:00:00.1430278" startTime="2026-10-31T23:24:10.6038916+03:00" endTime="2026-10-31T23:24:10.6038918+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af1a94bc-7e5c-45d8-b5e5-df369e7f74a0" />
+    <UnitTestResult executionId="0c9f6565-8fce-4b20-a6bc-d993351006b5" testId="0bb17e11-cdac-c47b-b8b5-c599ca953335" testName="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.TheListShowsEachSeatWithItsZoneAndQrStateAndNeverTheRawToken" computerName="SEMH59" duration="00:00:00.1044459" startTime="2026-10-31T23:24:09.2393377+03:00" endTime="2026-10-31T23:24:09.2393378+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0c9f6565-8fce-4b20-a6bc-d993351006b5" />
+    <UnitTestResult executionId="41464c55-9d7a-4f8b-b6dd-96352c855de3" testId="e590718f-caa3-9d96-7d15-3ba9174041dd" testName="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.NoSessionCookieIsUnauthorized" computerName="SEMH59" duration="00:00:00.0334597" startTime="2026-10-31T23:24:06.3875661+03:00" endTime="2026-10-31T23:24:06.3875663+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="41464c55-9d7a-4f8b-b6dd-96352c855de3" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.AnEmptyTokenIsRejected" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="db2027c8-8f06-ada4-14e8-28cdd22d8f60">
+      <Execution id="9a902ae0-3f80-4e99-b3a0-97c20a30f7c6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests" name="AnEmptyTokenIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.ASupervisorWithoutIntegrationsManageIsAlsoForbidden" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="b4a7c316-5b97-b3c5-5105-7942c17221ec">
+      <Execution id="8fa07543-cc14-4172-8062-02e72e0f4ac3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests" name="ASupervisorWithoutIntegrationsManageIsAlsoForbidden" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.ProvisioningWithoutASavedCredentialFailsWithAProvisioningError" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="42c21c85-fe1e-353d-e8f0-bd8952757ca0">
+      <Execution id="97bed63a-50ca-496a-ac94-45d7d062158d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests" name="ProvisioningWithoutASavedCredentialFailsWithAProvisioningError" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.TheListShowsEachSeatWithItsZoneAndQrStateAndNeverTheRawToken" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="0bb17e11-cdac-c47b-b8b5-c599ca953335">
+      <Execution id="0c9f6565-8fce-4b20-a6bc-d993351006b5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests" name="TheListShowsEachSeatWithItsZoneAndQrStateAndNeverTheRawToken" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.ACashierWithoutIntegrationsManageIsForbidden" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="62d9e146-0093-3002-005a-31c57799c53c">
+      <Execution id="fde1dfd3-16e3-481a-add5-913575d3c0f0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests" name="ACashierWithoutIntegrationsManageIsForbidden" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.WithoutAnActivatedRelayNoTokenIsIssuedAndTheMessageIsTurkish" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="6d820fb0-adc1-c247-e38e-0b26403b6531">
+      <Execution id="7383e111-eb12-4d66-9823-b98fd5f5d648" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests" name="WithoutAnActivatedRelayNoTokenIsIssuedAndTheMessageIsTurkish" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.TheSavedTokenIsNeverReturnedByAnyEndpoint" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="ef7151f2-7e2b-e4c5-1350-82d05f75d6ba">
+      <Execution id="661f5125-4dfd-4f2d-b7aa-2fa9b32b3305" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests" name="TheSavedTokenIsNeverReturnedByAnyEndpoint" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.AManagerCanSaveACredentialAndStatusReflectsIt" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="648a8f18-91d5-3ce1-c71d-b3a2926d51d4">
+      <Execution id="a8482886-20fb-4fe6-852d-705ecb885849" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests" name="AManagerCanSaveACredentialAndStatusReflectsIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.IssuingTwiceIsAConflictAndRotatingOrRevokingWithoutAQrIsNotFound" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="81d5f61d-592e-37a4-ad7d-e242f4bf37ca">
+      <Execution id="af1a94bc-7e5c-45d8-b5e5-df369e7f74a0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests" name="IssuingTwiceIsAConflictAndRotatingOrRevokingWithoutAQrIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.WithoutAManagerCookieEveryRouteIsUnauthorized" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="76abbb0c-aecf-53f9-0400-ae2d845982a6">
+      <Execution id="57cb0ce3-91f0-4978-a678-2ff41a8551a7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests" name="WithoutAManagerCookieEveryRouteIsUnauthorized" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.NoSessionCookieIsUnauthorized" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="e590718f-caa3-9d96-7d15-3ba9174041dd">
+      <Execution id="41464c55-9d7a-4f8b-b6dd-96352c855de3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests" name="NoSessionCookieIsUnauthorized" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.AnEmptySubdomainLabelIsRejected" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="5bada4da-f409-3a7e-4b46-28bab87fd20a">
+      <Execution id="36b87c20-4e4f-49ba-98ce-06bcf6ac1268" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests" name="AnEmptySubdomainLabelIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.AManagerSessionWithoutIntegrationsManageIsForbidden" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="262411a6-ae7f-e7a2-77a1-e36eb2481be0">
+      <Execution id="7e29105e-b46e-4d19-acf9-bed7ad2ec1bb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests" name="AManagerSessionWithoutIntegrationsManageIsForbidden" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests.ProvisioningWithoutIntegrationsManageIsForbidden" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="ebc7a9f1-1f7e-fee7-2ece-3cc7d1bf247f">
+      <Execution id="22f8844f-7f72-4415-be2c-2ce90c18caa9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.RelaySettingsHttpTests" name="ProvisioningWithoutIntegrationsManageIsForbidden" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.AnIssuedAddressOpensACustomerSessionAndARotationClosesTheOldOne" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="80985c5e-58c9-f93d-5465-1ea6b90fec8e">
+      <Execution id="bc22461f-0949-4600-9f65-5418e258591e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests" name="AnIssuedAddressOpensACustomerSessionAndARotationClosesTheOldOne" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.AnUnknownTableAndTheQuickSaleAnchorAreNotFound" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="b43b70e1-db43-04eb-e628-b21a99feb6d0">
+      <Execution id="29c58804-571e-4b87-af4f-5614cf04885a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests" name="AnUnknownTableAndTheQuickSaleAnchorAreNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.RevokingClosesTheQrAndTheTableShowsNoQrAfterwards" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="c567ef2a-57e4-072a-2d2d-37fe743bbfcd">
+      <Execution id="0062cd76-081f-44ef-81eb-823d8609686f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests" name="RevokingClosesTheQrAndTheTableShowsNoQrAfterwards" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests.ASupervisorSessionIsRefusedEvenWithTheGrant" storage="d:\project\alkaros\tests\host\experience\relaysettings\bin\debug\net8.0\alkaros.host.experience.relaysettings.tests.dll" id="1f13f3b6-8e8c-6acd-d8ea-a5432cf004db">
+      <Execution id="533854e5-8595-4d5b-a61c-28d418a2f0b7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0\ALKAROS.Host.Experience.RelaySettings.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.RelaySettings.Tests.TableQrManagementHttpTests" name="ASupervisorSessionIsRefusedEvenWithTheGrant" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="262411a6-ae7f-e7a2-77a1-e36eb2481be0" executionId="7e29105e-b46e-4d19-acf9-bed7ad2ec1bb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db2027c8-8f06-ada4-14e8-28cdd22d8f60" executionId="9a902ae0-3f80-4e99-b3a0-97c20a30f7c6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="42c21c85-fe1e-353d-e8f0-bd8952757ca0" executionId="97bed63a-50ca-496a-ac94-45d7d062158d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b43b70e1-db43-04eb-e628-b21a99feb6d0" executionId="29c58804-571e-4b87-af4f-5614cf04885a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="648a8f18-91d5-3ce1-c71d-b3a2926d51d4" executionId="a8482886-20fb-4fe6-852d-705ecb885849" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="62d9e146-0093-3002-005a-31c57799c53c" executionId="fde1dfd3-16e3-481a-add5-913575d3c0f0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="76abbb0c-aecf-53f9-0400-ae2d845982a6" executionId="57cb0ce3-91f0-4978-a678-2ff41a8551a7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c567ef2a-57e4-072a-2d2d-37fe743bbfcd" executionId="0062cd76-081f-44ef-81eb-823d8609686f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f13f3b6-8e8c-6acd-d8ea-a5432cf004db" executionId="533854e5-8595-4d5b-a61c-28d418a2f0b7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b4a7c316-5b97-b3c5-5105-7942c17221ec" executionId="8fa07543-cc14-4172-8062-02e72e0f4ac3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6d820fb0-adc1-c247-e38e-0b26403b6531" executionId="7383e111-eb12-4d66-9823-b98fd5f5d648" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ef7151f2-7e2b-e4c5-1350-82d05f75d6ba" executionId="661f5125-4dfd-4f2d-b7aa-2fa9b32b3305" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="80985c5e-58c9-f93d-5465-1ea6b90fec8e" executionId="bc22461f-0949-4600-9f65-5418e258591e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ebc7a9f1-1f7e-fee7-2ece-3cc7d1bf247f" executionId="22f8844f-7f72-4415-be2c-2ce90c18caa9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5bada4da-f409-3a7e-4b46-28bab87fd20a" executionId="36b87c20-4e4f-49ba-98ce-06bcf6ac1268" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="81d5f61d-592e-37a4-ad7d-e242f4bf37ca" executionId="af1a94bc-7e5c-45d8-b5e5-df369e7f74a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0bb17e11-cdac-c47b-b8b5-c599ca953335" executionId="0c9f6565-8fce-4b20-a6bc-d993351006b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e590718f-caa3-9d96-7d15-3ba9174041dd" executionId="41464c55-9d7a-4f8b-b6dd-96352c855de3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="18" executed="18" passed="18" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.11]   Discovering: ALKAROS.Host.Experience.RelaySettings.Tests&#xD;
+[xUnit.net 00:00:00.15]   Discovered:  ALKAROS.Host.Experience.RelaySettings.Tests&#xD;
+[xUnit.net 00:00:00.15]   Starting:    ALKAROS.Host.Experience.RelaySettings.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52655&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52655/api/v1/terminals/cdd64fd2-6470-4c5f-8638-2b675db25df6/relay-credential/provision - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/provision'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/provision'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52655/api/v1/terminals/cdd64fd2-6470-4c5f-8638-2b675db25df6/relay-credential/provision - 403 - application/json;+charset=utf-8 127.0552ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52660&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52660/api/v1/terminals/d5293c01-b2ad-4869-aa6e-dc9d01431013/relay-credential/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]&#xD;
+      Setting HTTP status code 204.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52660/api/v1/terminals/d5293c01-b2ad-4869-aa6e-dc9d01431013/relay-credential/ - 204 - - 75.2290ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52660/api/v1/terminals/d5293c01-b2ad-4869-aa6e-dc9d01431013/relay-credential/status - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/relay-credential/status'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RelayCredentialStatusResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/relay-credential/status'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52660/api/v1/terminals/d5293c01-b2ad-4869-aa6e-dc9d01431013/relay-credential/status - 200 - application/json;+charset=utf-8 32.0247ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52665&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52665/api/v1/terminals/fcde1e6a-b662-4b43-8d49-26071746052a/relay-credential/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52665/api/v1/terminals/fcde1e6a-b662-4b43-8d49-26071746052a/relay-credential/ - 401 - application/json;+charset=utf-8 24.4549ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52670&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52670/api/v1/terminals/8446dc39-4686-4460-a033-6dac8a11f49d/relay-credential/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52670/api/v1/terminals/8446dc39-4686-4460-a033-6dac8a11f49d/relay-credential/ - 400 - application/json;+charset=utf-8 28.8605ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52675&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52675/api/v1/terminals/b14d5a73-8a8f-469b-8a4f-e3fec4869b56/relay-credential/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52675/api/v1/terminals/b14d5a73-8a8f-469b-8a4f-e3fec4869b56/relay-credential/ - 403 - application/json;+charset=utf-8 33.3948ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52681&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52681/api/v1/terminals/c2a1d63f-772c-4a15-8d64-c83f3b8f94dc/relay-credential/provision - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/provision'&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/provision'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52681/api/v1/terminals/c2a1d63f-772c-4a15-8d64-c83f3b8f94dc/relay-credential/provision - 400 - application/json;+charset=utf-8 31.2813ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52686&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52686/api/v1/terminals/27284f3a-f08b-46fb-b0ac-90198847aa0d/relay-credential/provision - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/provision'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 422.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/provision'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52686/api/v1/terminals/27284f3a-f08b-46fb-b0ac-90198847aa0d/relay-credential/provision - 422 - application/json;+charset=utf-8 36.2965ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52691&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52691/api/v1/terminals/fbe1bf3d-22fe-4658-bdbb-8266db9f69f3/relay-credential/status - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/relay-credential/status'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RelayCredentialStatusResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/relay-credential/status'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52691/api/v1/terminals/fbe1bf3d-22fe-4658-bdbb-8266db9f69f3/relay-credential/status - 200 - application/json;+charset=utf-8 31.8300ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52691/api/v1/terminals/fbe1bf3d-22fe-4658-bdbb-8266db9f69f3/relay-credential/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]&#xD;
+      Setting HTTP status code 204.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52691/api/v1/terminals/fbe1bf3d-22fe-4658-bdbb-8266db9f69f3/relay-credential/ - 204 - - 11.0664ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52691/api/v1/terminals/fbe1bf3d-22fe-4658-bdbb-8266db9f69f3/relay-credential/status - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/relay-credential/status'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'RelayCredentialStatusResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/relay-credential/status'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52691/api/v1/terminals/fbe1bf3d-22fe-4658-bdbb-8266db9f69f3/relay-credential/status - 200 - application/json;+charset=utf-8 9.0308ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52696&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52696/api/v1/terminals/2aacc059-36a8-484b-99ad-2c5a9d16821f/relay-credential/ - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/relay-credential/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52696/api/v1/terminals/2aacc059-36a8-484b-99ad-2c5a9d16821f/relay-credential/ - 403 - application/json;+charset=utf-8 35.7511ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52701&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52701/api/v1/management/qr-tables/7a1d157f-8be2-4fd3-8e38-1ba1086b4fff/issue - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'TableQrCodeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52701/api/v1/management/qr-tables/7a1d157f-8be2-4fd3-8e38-1ba1086b4fff/issue - 200 - application/json;+charset=utf-8 86.0345ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52701/api/v1/management/qr-tables/7a1d157f-8be2-4fd3-8e38-1ba1086b4fff/revoke - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/revoke'&#xD;
+info: Microsoft.AspNetCore.Http.Result.NoContentResult[1]&#xD;
+      Setting HTTP status code 204.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/revoke'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52701/api/v1/management/qr-tables/7a1d157f-8be2-4fd3-8e38-1ba1086b4fff/revoke - 204 - - 14.4627ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52701/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52701/api/v1/qr/sessions - 401 - application/json;+charset=utf-8 16.0747ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52701/api/v1/management/qr-tables - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52701/api/v1/management/qr-tables - 200 - application/json;+charset=utf-8 18.5542ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52706&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52706/api/v1/management/qr-tables/76dad9ea-1437-4eff-a32b-40fbe648a798/issue - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.RelaySettings.TableQrTableNotFoundException: The table does not exist.&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagementEndpoints.RequireIssuableAsync(Guid tableId, ITableRepository tables, IRelayTunnelStore tunnel, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 122&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagementEndpoints.&lt;&gt;c.&lt;&lt;MapTableQrManagementApi&gt;b__3_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 85&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 164&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52706/api/v1/management/qr-tables/76dad9ea-1437-4eff-a32b-40fbe648a798/issue - 404 - application/json;+charset=utf-8 62.4352ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52706/api/v1/management/qr-tables/00000000-0000-0000-0000-000000000001/issue - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.RelaySettings.TableQrTableNotFoundException: The table does not exist.&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagementEndpoints.RequireIssuableAsync(Guid tableId, ITableRepository tables, IRelayTunnelStore tunnel, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 122&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagementEndpoints.&lt;&gt;c.&lt;&lt;MapTableQrManagementApi&gt;b__3_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 85&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 164&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52706/api/v1/management/qr-tables/00000000-0000-0000-0000-000000000001/issue - 404 - application/json;+charset=utf-8 8.7309ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52711&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52711/api/v1/management/qr-tables - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.RelaySettings.TableQrUnauthorizedException: A valid manager session is required.&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 160&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52711/api/v1/management/qr-tables - 401 - application/json;+charset=utf-8 46.8040ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52716&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52716/api/v1/management/qr-tables/42b72969-4257-4622-8c39-0c4da2b6e712/issue - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'TableQrCodeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52716/api/v1/management/qr-tables/42b72969-4257-4622-8c39-0c4da2b6e712/issue - 200 - application/json;+charset=utf-8 50.0077ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52716/api/v1/management/qr-tables - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52716/api/v1/management/qr-tables - 200 - application/json;+charset=utf-8 12.6263ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52721&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52721/api/v1/management/qr-tables/e761add7-38c6-408d-b678-0896936fffa2/issue - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'TableQrCodeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52721/api/v1/management/qr-tables/e761add7-38c6-408d-b678-0896936fffa2/issue - 200 - application/json;+charset=utf-8 47.7001ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52721/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52721/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 15.7586ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52721/api/v1/management/qr-tables/e761add7-38c6-408d-b678-0896936fffa2/rotate - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/rotate'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'TableQrCodeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/rotate'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52721/api/v1/management/qr-tables/e761add7-38c6-408d-b678-0896936fffa2/rotate - 200 - application/json;+charset=utf-8 21.2074ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52721/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52721/api/v1/qr/sessions - 401 - application/json;+charset=utf-8 2.6484ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52721/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52721/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 7.2651ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52726&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52726/api/v1/management/qr-tables - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.RelaySettings.TableQrUnauthorizedException: A valid manager session is required.&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 160&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52726/api/v1/management/qr-tables - 401 - application/json;+charset=utf-8 38.2143ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52726/api/v1/management/qr-tables/ae3e5dab-4de5-4247-b973-1ab5af622f35/issue - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.RelaySettings.TableQrUnauthorizedException: A valid manager session is required.&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 160&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52726/api/v1/management/qr-tables/ae3e5dab-4de5-4247-b973-1ab5af622f35/issue - 401 - application/json;+charset=utf-8 1.7294ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52726/api/v1/management/qr-tables/ae3e5dab-4de5-4247-b973-1ab5af622f35/rotate - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/rotate'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/rotate'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.RelaySettings.TableQrUnauthorizedException: A valid manager session is required.&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 160&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52726/api/v1/management/qr-tables/ae3e5dab-4de5-4247-b973-1ab5af622f35/rotate - 401 - application/json;+charset=utf-8 1.5840ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52726/api/v1/management/qr-tables/ae3e5dab-4de5-4247-b973-1ab5af622f35/revoke - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/revoke'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/revoke'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.RelaySettings.TableQrUnauthorizedException: A valid manager session is required.&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 160&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52726/api/v1/management/qr-tables/ae3e5dab-4de5-4247-b973-1ab5af622f35/revoke - 401 - application/json;+charset=utf-8 0.9254ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52726/api/v1/management/qr-tables - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.RelaySettings.TableQrUnauthorizedException: A valid manager session is required.&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 160&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52726/api/v1/management/qr-tables - 401 - application/json;+charset=utf-8 0.7832ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52731&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52731/api/v1/management/qr-tables/dcfbfee1-ab9b-4ade-941f-80898a5e10d0/issue - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.RelaySettings.TableQrRelayNotReadyException: The relay tunnel has not been provisioned, so a QR address cannot be built.&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagementEndpoints.RequireIssuableAsync(Guid tableId, ITableRepository tables, IRelayTunnelStore tunnel, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 124&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagementEndpoints.&lt;&gt;c.&lt;&lt;MapTableQrManagementApi&gt;b__3_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 85&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 164&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52731/api/v1/management/qr-tables/dcfbfee1-ab9b-4ade-941f-80898a5e10d0/issue - 409 - application/json;+charset=utf-8 69.6080ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52736&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52736/api/v1/management/qr-tables/8f69651e-73ac-4724-ae29-87e2882e2170/rotate - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/rotate'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/rotate'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.QrOrdering.TokenLifecycle.TableTokenNotFoundException: Table 8f69651e-73ac-4724-ae29-87e2882e2170 has no active token to rotate.&#xD;
+         at ALKAROS.QrOrdering.TokenLifecycle.TableTokenService.RotateAsync(Guid tableId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\QrOrdering\TokenLifecycle\TableTokenService.cs:line 76&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagementEndpoints.&lt;&gt;c.&lt;&lt;MapTableQrManagementApi&gt;b__3_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 97&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 164&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52736/api/v1/management/qr-tables/8f69651e-73ac-4724-ae29-87e2882e2170/rotate - 404 - application/json;+charset=utf-8 61.1196ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52736/api/v1/management/qr-tables/8f69651e-73ac-4724-ae29-87e2882e2170/revoke - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/revoke'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/revoke'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.QrOrdering.TokenLifecycle.TableTokenNotFoundException: Table 8f69651e-73ac-4724-ae29-87e2882e2170 has no active token to revoke.&#xD;
+         at ALKAROS.QrOrdering.TokenLifecycle.TableTokenService.RevokeAsync(Guid tableId, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\QrOrdering\TokenLifecycle\TableTokenService.cs:line 94&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagementEndpoints.&lt;&gt;c.&lt;&lt;MapTableQrManagementApi&gt;b__3_3&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 107&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 164&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52736/api/v1/management/qr-tables/8f69651e-73ac-4724-ae29-87e2882e2170/revoke - 404 - application/json;+charset=utf-8 8.8055ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52736/api/v1/management/qr-tables/8f69651e-73ac-4724-ae29-87e2882e2170/issue - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'TableQrCodeV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52736/api/v1/management/qr-tables/8f69651e-73ac-4724-ae29-87e2882e2170/issue - 200 - application/json;+charset=utf-8 10.2386ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:52736/api/v1/management/qr-tables/8f69651e-73ac-4724-ae29-87e2882e2170/issue - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/qr-tables/{tableId:guid}/issue'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.QrOrdering.TokenLifecycle.TableTokenAlreadyActiveException: Table 8f69651e-73ac-4724-ae29-87e2882e2170 already has an active token; use Rotate instead of Issue.&#xD;
+         at ALKAROS.QrOrdering.TokenLifecycle.TableTokenService.IssueAsync(Guid tableId, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\QrOrdering\TokenLifecycle\TableTokenService.cs:line 48&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagementEndpoints.&lt;&gt;c.&lt;&lt;MapTableQrManagementApi&gt;b__3_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 86&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 164&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:52736/api/v1/management/qr-tables/8f69651e-73ac-4724-ae29-87e2882e2170/issue - 409 - application/json;+charset=utf-8 9.5491ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:52741&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\RelaySettings\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:52741/api/v1/management/qr-tables - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/qr-tables/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '182e2ae9-a095-4f44-aa3d-9a500511fffe' denied permission 'integrations.manage': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.RelaySettings.TableQrManagerEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\RelaySettings\TableQrManagementEndpoints.cs:line 162&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:52741/api/v1/management/qr-tables - 403 - application/json;+charset=utf-8 55.0983ms&#xD;
+[xUnit.net 00:00:06.13]   Finished:    ALKAROS.Host.Experience.RelaySettings.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

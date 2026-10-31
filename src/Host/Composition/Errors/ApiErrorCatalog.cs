@@ -12,6 +12,7 @@ using ALKAROS.Host.Experience.Production;
 using ALKAROS.Host.Experience.Purchasing;
 using ALKAROS.Host.Experience.Recipes;
 using ALKAROS.Host.Experience.Reconciliation;
+using ALKAROS.Host.Experience.RelaySettings;
 using ALKAROS.Host.Experience.Reporting;
 using ALKAROS.Host.Experience.Roles;
 using ALKAROS.Host.Experience.SecurityAdministration;
@@ -31,6 +32,7 @@ using ALKAROS.Production.StockEffects;
 using ALKAROS.Purchasing.OrdersAndReceipts;
 using ALKAROS.Purchasing.PurchaseInvoices;
 using ALKAROS.Purchasing.Suppliers;
+using ALKAROS.QrOrdering.TokenLifecycle;
 using ALKAROS.Recipes.CostSnapshots;
 using ALKAROS.Recipes.Versioning;
 using ALKAROS.Reconciliation.CaseFoundation;
@@ -567,6 +569,41 @@ public static class ApiErrorCatalog
                 (StatusCodes.Status400BadRequest, "REFERENCE_NOT_FOUND", "Başvurulan bir kayıt mevcut değil."),
             PostgresException { SqlState: PostgresErrorCodes.CheckViolation or PostgresErrorCodes.NumericValueOutOfRange } =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek bir veri kısıtını ihlal ediyor."),
+            ArgumentException or BadHttpRequestException =>
+                (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
+            Exception when IsDatabaseUnavailable(exception) =>
+                (StatusCodes.Status503ServiceUnavailable, "DATABASE_UNAVAILABLE", "Veritabanı işlemi tamamlanamadı."),
+            _ => null,
+        });
+
+    /// <summary>RelaySettings/TableQrManagementEndpoints.</summary>
+    public static readonly ApiErrorArea TableQrManagement = new(
+        [
+            typeof(TableQrUnauthorizedException),
+            typeof(AuthorizationDeniedException),
+            typeof(TableQrTableNotFoundException),
+            typeof(TableQrRelayNotReadyException),
+            typeof(TableTokenAlreadyActiveException),
+            typeof(TableTokenNotFoundException),
+            typeof(PostgresException),
+            typeof(NpgsqlException),
+            typeof(BadHttpRequestException),
+            typeof(ArgumentException),
+        ],
+        exception => exception switch
+        {
+            TableQrUnauthorizedException =>
+                (StatusCodes.Status401Unauthorized, "UNAUTHORIZED", "Oturum geçersiz veya süresi dolmuş."),
+            AuthorizationDeniedException =>
+                (StatusCodes.Status403Forbidden, "FORBIDDEN", "Masa QR kodlarını yalnızca yönetici yönetebilir."),
+            TableQrTableNotFoundException =>
+                (StatusCodes.Status404NotFound, "TABLE_NOT_FOUND", "Masa bulunamadı."),
+            TableQrRelayNotReadyException =>
+                (StatusCodes.Status409Conflict, "RELAY_NOT_READY", "Uzaktan sipariş bağlantısı henüz etkinleştirilmedi; önce bağlantı ayarlarından etkinleştirin."),
+            TableTokenAlreadyActiveException =>
+                (StatusCodes.Status409Conflict, "QR_ALREADY_EXISTS", "Bu masanın zaten bir QR kodu var; yeni kod için yenileyin."),
+            TableTokenNotFoundException =>
+                (StatusCodes.Status404NotFound, "QR_NOT_FOUND", "Bu masa için etkin bir QR kodu yok."),
             ArgumentException or BadHttpRequestException =>
                 (StatusCodes.Status400BadRequest, "VALIDATION_FAILED", "İstek doğrulanamadı."),
             Exception when IsDatabaseUnavailable(exception) =>

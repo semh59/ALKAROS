@@ -8,6 +8,9 @@ public interface ITableTokenRepository
     /// <summary>The table's current non-revoked token row, if any (may still be time-expired — callers check).</summary>
     Task<TableToken?> GetActiveForTableAsync(Guid tableId, CancellationToken cancellationToken = default);
 
+    /// <summary>Every table's current non-revoked token row (at most one per table).</summary>
+    Task<IReadOnlyList<TableToken>> ListActiveAsync(CancellationToken cancellationToken = default);
+
     /// <summary>
     /// Inserts a new token row. Throws a <see cref="Npgsql.PostgresException"/>
     /// unique-violation on ux_table_tokens_active_per_table if the table

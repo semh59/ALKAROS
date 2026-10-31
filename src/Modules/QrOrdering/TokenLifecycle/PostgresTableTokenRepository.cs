@@ -6,6 +6,9 @@ namespace ALKAROS.QrOrdering.TokenLifecycle;
 
 public sealed class PostgresTableTokenRepository : ITableTokenRepository
 {
+    // At most one non-revoked token per table, and a venue has far fewer tables than this.
+    private const int MaxActiveTokens = 5000;
+
     private readonly NpgsqlDataSource _dataSource;
 
     public PostgresTableTokenRepository(NpgsqlDataSource dataSource)
@@ -37,6 +40,26 @@ public sealed class PostgresTableTokenRepository : ITableTokenRepository
         command.Parameters.Add("table_id", NpgsqlDbType.Uuid).Value = tableId;
         await using var reader = await command.ExecuteReaderAsync(cancellationToken);
         return await reader.ReadAsync(cancellationToken) ? Map(reader) : null;
+    }
+
+    public async Task<IReadOnlyList<TableToken>> ListActiveAsync(CancellationToken cancellationToken = default)
+    {
+        await using var command = _dataSource.CreateCommand(
+            $"""
+            SELECT token_id, table_id, token_hash, issued_at, expires_at, revoked_at, revoked_reason
+            FROM qr_ordering.table_tokens
+            WHERE revoked_at IS NULL
+            LIMIT {MaxActiveTokens + 1};
+            """);
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        var tokens = new List<TableToken>();
+        while (await reader.ReadAsync(cancellationToken))
+            tokens.Add(Map(reader));
+
+        if (tokens.Count > MaxActiveTokens)
+            throw new InvalidOperationException($"ListActiveAsync returned more than {MaxActiveTokens} rows; paginate.");
+
+        return tokens;
     }
 
     public async Task AddAsync(TableToken token, CancellationToken cancellationToken = default)

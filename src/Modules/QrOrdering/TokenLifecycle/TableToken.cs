@@ -4,9 +4,9 @@ namespace ALKAROS.QrOrdering.TokenLifecycle;
 /// A hashed, time/policy-bound credential bound to exactly one table
 /// (qr_ordering.table_tokens, V12-QRS-001). The raw token is never
 /// persisted or reconstructable from this record — only its hash. A
-/// database leak of this table exposes no usable raw token
-/// (docs/architecture/qr-relay-topology.md rule 2: tokens expire after
-/// 4 hours; see <see cref="TableTokenService.DefaultLifetime"/>).
+/// database leak of this table exposes no usable raw token. A token is
+/// valid until it is revoked or rotated; see
+/// <see cref="TableTokenService.DefaultLifetime"/>.
 /// </summary>
 public sealed class TableToken
 {

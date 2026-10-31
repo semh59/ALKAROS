@@ -1,0 +1,1208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="a70b5f7b-4f98-4c15-ac28-f34cac74db5d" name="semih@SEMH59 2026-10-31 23:27:23" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T23:27:23.3734693+03:00" queuing="2026-10-31T23:27:23.3734697+03:00" start="2026-10-31T23:27:19.6870851+03:00" finish="2026-10-31T23:27:33.7881536+03:00" />
+  <TestSettings name="default" id="55453295-5a9c-4fb6-b7f7-d2296a33280e">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_23_27_23" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9496e6c8-985b-4ab1-b114-110072c11a21" testId="b9926219-2ebf-8d8a-5bb3-b084bc7b25d2" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ABeforeAnyOrderTheBillHasNoActiveOrder" computerName="SEMH59" duration="00:00:00.0783345" startTime="2026-10-31T23:27:31.1886911+03:00" endTime="2026-10-31T23:27:31.1886913+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9496e6c8-985b-4ab1-b114-110072c11a21" />
+    <UnitTestResult executionId="2d7338b2-f175-4982-be93-2247ce8a054b" testId="4fa44d5b-f7b1-b47c-774f-72bc916ef981" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ARequiredGroupWithNoPickIsRefusedAndNothingIsQueuedOrReserved" computerName="SEMH59" duration="00:00:00.0649452" startTime="2026-10-31T23:27:29.0643302+03:00" endTime="2026-10-31T23:27:29.0643303+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d7338b2-f175-4982-be93-2247ce8a054b" />
+    <UnitTestResult executionId="a68e9cbf-94a1-4190-af88-a98fd12d6e51" testId="c7a77765-dc15-e211-6857-5b1df7397cec" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.BrandingReportsHasLogoFalseWhenNoneHasBeenSet" computerName="SEMH59" duration="00:00:00.0360308" startTime="2026-10-31T23:27:28.7260807+03:00" endTime="2026-10-31T23:27:28.7260808+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a68e9cbf-94a1-4190-af88-a98fd12d6e51" />
+    <UnitTestResult executionId="fae7bf20-ecab-4519-9cfc-34a42be3427c" testId="df016997-abd5-e1bb-2374-007fdf9b0b63" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnEmptyTableTokenIsRejectedWithATurkishMessage" computerName="SEMH59" duration="00:00:00.0275992" startTime="2026-10-31T23:27:24.8491172+03:00" endTime="2026-10-31T23:27:24.8491177+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fae7bf20-ecab-4519-9cfc-34a42be3427c" />
+    <UnitTestResult executionId="9a87a597-d66a-43f1-bea3-12d4f1867fdc" testId="6329f277-1a9a-de58-36f1-f5a0a03c5131" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AValidSessionListsAvailableProductsOnTheMenu" computerName="SEMH59" duration="00:00:00.0997055" startTime="2026-10-31T23:27:25.5396981+03:00" endTime="2026-10-31T23:27:25.5396983+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a87a597-d66a-43f1-bea3-12d4f1867fdc" />
+    <UnitTestResult executionId="7dd79b27-c453-465e-aff8-35a2f54957bd" testId="05488534-527a-c93f-c574-4621e4c08734" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.BrandingIsReachableWithNoSessionAndDefaultsToTheUnsetPaletteColor" computerName="SEMH59" duration="00:00:00.0417768" startTime="2026-10-31T23:27:29.6770938+03:00" endTime="2026-10-31T23:27:29.6770939+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7dd79b27-c453-465e-aff8-35a2f54957bd" />
+    <UnitTestResult executionId="5cef68db-191c-4f1c-8745-1ae66236a5a8" testId="82bbd694-27a3-28f0-20ba-5cd091e82b7b" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.LogoReturnsTheUploadedBytesAndBrandingReflectsItsPresence" computerName="SEMH59" duration="00:00:00.0433796" startTime="2026-10-31T23:27:29.3716466+03:00" endTime="2026-10-31T23:27:29.3716467+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5cef68db-191c-4f1c-8745-1ae66236a5a8" />
+    <UnitTestResult executionId="33bc4447-3434-4558-83c4-e5179b1a4584" testId="21e2f5a1-46c8-ad84-d1dd-6d1e7ad1f758" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.PollingWithAnInvalidSessionIsRejected" computerName="SEMH59" duration="00:00:00.0277882" startTime="2026-10-31T23:27:27.7720846+03:00" endTime="2026-10-31T23:27:27.7720849+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="33bc4447-3434-4558-83c4-e5179b1a4584" />
+    <UnitTestResult executionId="a18babbd-ce9f-419d-b14f-4fc2e64d4ffa" testId="c995c1e7-7027-48d3-a894-27214b64b4a6" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnUnavailableProductIsHiddenFromTheMenu" computerName="SEMH59" duration="00:00:00.0565531" startTime="2026-10-31T23:27:32.7831375+03:00" endTime="2026-10-31T23:27:32.7831376+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a18babbd-ce9f-419d-b14f-4fc2e64d4ffa" />
+    <UnitTestResult executionId="a57c7445-4b70-4c16-b2f9-124dd75c023e" testId="1fb22020-b2f8-b538-1fd1-0a578b7c309e" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AfterAnOrderTheBillShowsTheLiveLinesAndTotals" computerName="SEMH59" duration="00:00:00.0907152" startTime="2026-10-31T23:27:28.1264395+03:00" endTime="2026-10-31T23:27:28.1264398+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a57c7445-4b70-4c16-b2f9-124dd75c023e" />
+    <UnitTestResult executionId="2f1d78b6-a68e-4b74-b25d-a74730b9b186" testId="aae3535b-05f5-b6ba-f84a-b48113ce0c25" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ACancelledLineNeverAppearsOnTheLiveBillEvenInsideAnOpenOrder" computerName="SEMH59" duration="00:00:00.2561313" startTime="2026-10-31T23:27:23.1740526+03:00" endTime="2026-10-31T23:27:23.1740530+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f1d78b6-a68e-4b74-b25d-a74730b9b186" />
+    <UnitTestResult executionId="c9ae2830-ceb5-46f8-907a-a619d5b75928" testId="9246e7b7-7358-abb5-ef6e-b4ab56cec28d" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.BrandingFallsBackToTheDefaultPaletteColorWhenTheStoredThemeIsNotARecognizedKey" computerName="SEMH59" duration="00:00:00.0618100" startTime="2026-10-31T23:27:25.1727379+03:00" endTime="2026-10-31T23:27:25.1727380+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c9ae2830-ceb5-46f8-907a-a619d5b75928" />
+    <UnitTestResult executionId="b9d0d0c4-e396-41e1-ac57-0192438adaf9" testId="352f0fc9-8343-7164-f92e-43bae7a81050" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.LogoHonorsIfNoneMatchWithA304" computerName="SEMH59" duration="00:00:00.0516618" startTime="2026-10-31T23:27:26.2077038+03:00" endTime="2026-10-31T23:27:26.2077039+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b9d0d0c4-e396-41e1-ac57-0192438adaf9" />
+    <UnitTestResult executionId="18a57100-e45e-4746-854a-0f329ad46da2" testId="ad3280f8-1cc2-d3d6-ae90-0a9cf921def9" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnExpiredTableTokenIsRejected" computerName="SEMH59" duration="00:00:00.0369169" startTime="2026-10-31T23:27:31.8289022+03:00" endTime="2026-10-31T23:27:31.8289025+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18a57100-e45e-4746-854a-0f329ad46da2" />
+    <UnitTestResult executionId="17abd876-6c7c-44cc-9724-4d1a26cac258" testId="b94ac860-5105-dd7e-229a-efae233384fc" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnUnknownTableTokenIsRejectedWithATurkishMessage" computerName="SEMH59" duration="00:00:00.0236008" startTime="2026-10-31T23:27:33.7114950+03:00" endTime="2026-10-31T23:27:33.7114951+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="17abd876-6c7c-44cc-9724-4d1a26cac258" />
+    <UnitTestResult executionId="726705a0-a949-4295-b7b4-5370613df2e4" testId="9b949a52-3871-495e-6a92-700547f1c705" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnActiveTableTokenIssuesASessionScopedToItsTable" computerName="SEMH59" duration="00:00:00.0461203" startTime="2026-10-31T23:27:33.4171885+03:00" endTime="2026-10-31T23:27:33.4171888+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="726705a0-a949-4295-b7b4-5370613df2e4" />
+    <UnitTestResult executionId="9881e8cd-acd8-437f-8b49-8b2d84d52e98" testId="b643a608-ff72-f8cb-a208-9e7a1e1f0a2a" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.MoreExtrasThanAGroupAllowsAndAnotherProductsExtraAreRefused" computerName="SEMH59" duration="00:00:00.0778283" startTime="2026-10-31T23:27:30.8366415+03:00" endTime="2026-10-31T23:27:30.8366434+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9881e8cd-acd8-437f-8b49-8b2d84d52e98" />
+    <UnitTestResult executionId="106fc288-e4f8-406f-9bb3-4525169e4c01" testId="d42b35a5-ddc4-236a-0723-134dd9dc228d" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ALineNoteIsCappedAtTwoHundredCharactersOnTheServer(length: 201, expected: BadRequest)" computerName="SEMH59" duration="00:00:00.0624872" startTime="2026-10-31T23:27:24.2182064+03:00" endTime="2026-10-31T23:27:24.2182066+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="106fc288-e4f8-406f-9bb3-4525169e4c01" />
+    <UnitTestResult executionId="e947c051-1628-428a-aaa9-61fc35a9f940" testId="8a5153c3-f429-1d6f-cc64-c9ae58ab0c9a" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ASecondGuestAtAnOccupiedTableSucceeds" computerName="SEMH59" duration="00:00:00.0615928" startTime="2026-10-31T23:27:33.1016552+03:00" endTime="2026-10-31T23:27:33.1016556+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e947c051-1628-428a-aaa9-61fc35a9f940" />
+    <UnitTestResult executionId="4aa2bccd-2588-4cbd-97d1-619127c62f99" testId="0d6a2989-658f-5acb-fbd6-e77648c3ec05" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.LogoIsNotFoundWhenNoneHasBeenSet" computerName="SEMH59" duration="00:00:00.0321358" startTime="2026-10-31T23:27:26.8296246+03:00" endTime="2026-10-31T23:27:26.8296247+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4aa2bccd-2588-4cbd-97d1-619127c62f99" />
+    <UnitTestResult executionId="499822d1-599a-443c-b282-8ade3e33123d" testId="e0cbb960-120e-c30c-f188-73da8beadf21" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.BrandingReflectsAnOperatorSettingTheBusinessNameAndColor" computerName="SEMH59" duration="00:00:00.0485375" startTime="2026-10-31T23:27:31.5284156+03:00" endTime="2026-10-31T23:27:31.5284157+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="499822d1-599a-443c-b282-8ade3e33123d" />
+    <UnitTestResult executionId="eccb2c43-0e03-46d3-a003-8fbe14dca12d" testId="da08b2b9-05bb-9e06-ea85-48f0403920a4" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.PollingTheBillWithAnInvalidSessionIsRejected" computerName="SEMH59" duration="00:00:00.0268252" startTime="2026-10-31T23:27:28.4172603+03:00" endTime="2026-10-31T23:27:28.4172605+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eccb2c43-0e03-46d3-a003-8fbe14dca12d" />
+    <UnitTestResult executionId="4cbea77a-a6be-487d-be3b-b13eee1894a3" testId="c8aaf8d4-9756-87c1-78d1-fc942e8c4b6c" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AMissingSessionHeaderIsRejectedWithATurkishMessage" computerName="SEMH59" duration="00:00:00.0396124" startTime="2026-10-31T23:27:23.5084869+03:00" endTime="2026-10-31T23:27:23.5084873+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4cbea77a-a6be-487d-be3b-b13eee1894a3" />
+    <UnitTestResult executionId="c42c4d18-4688-43ca-b13b-80740dcb39d2" testId="a591fb57-eb71-a576-f301-0eb9e8fc835a" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.SubmittingAnOrderQueuesItAndReservesTheTable" computerName="SEMH59" duration="00:00:00.0636866" startTime="2026-10-31T23:27:24.5500754+03:00" endTime="2026-10-31T23:27:24.5500755+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c42c4d18-4688-43ca-b13b-80740dcb39d2" />
+    <UnitTestResult executionId="ab945b17-c3de-48fe-8231-9444198475da" testId="eaed0912-019e-7f98-2732-9cd6f74ccfb9" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnUnknownSessionTokenIsRejected" computerName="SEMH59" duration="00:00:00.0257139" startTime="2026-10-31T23:27:32.1288829+03:00" endTime="2026-10-31T23:27:32.1288831+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ab945b17-c3de-48fe-8231-9444198475da" />
+    <UnitTestResult executionId="4a5f32e4-f33c-412f-b078-2732102299f1" testId="ed4e52b4-74b8-abad-b21c-222a199344b0" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.PollingAnUnmaterializedSubmissionReturnsPending" computerName="SEMH59" duration="00:00:00.0742122" startTime="2026-10-31T23:27:27.1693194+03:00" endTime="2026-10-31T23:27:27.1693195+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a5f32e4-f33c-412f-b078-2732102299f1" />
+    <UnitTestResult executionId="73591a3b-0f1b-48f9-8c64-f96de29a0f5e" testId="5cac2736-967c-f849-2c42-8be7038ec406" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AClosedOrderNeverShowsAStaleBillEvenThoughTheTablesPointerStillNamesIt" computerName="SEMH59" duration="00:00:00.0863855" startTime="2026-10-31T23:27:25.8880908+03:00" endTime="2026-10-31T23:27:25.8880910+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="73591a3b-0f1b-48f9-8c64-f96de29a0f5e" />
+    <UnitTestResult executionId="9fbf8a4c-56f7-4694-9d65-7be39ac35ce0" testId="929aae69-7bd0-3145-44fd-542c9329cf6e" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnEmptyOrderIsRejectedWithATurkishMessage" computerName="SEMH59" duration="00:00:00.0396464" startTime="2026-10-31T23:27:27.4779556+03:00" endTime="2026-10-31T23:27:27.4779557+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9fbf8a4c-56f7-4694-9d65-7be39ac35ce0" />
+    <UnitTestResult executionId="986cb2bc-5f0b-44b9-8dcc-0b8776ee298b" testId="fa47353d-87ae-17a0-bc49-ff0674b52b26" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ASelectedExtraIsResolvedFromTheCatalogAndQueuedWithTheOrder" computerName="SEMH59" duration="00:00:00.1191071" startTime="2026-10-31T23:27:22.6341551+03:00" endTime="2026-10-31T23:27:22.6341556+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="986cb2bc-5f0b-44b9-8dcc-0b8776ee298b" />
+    <UnitTestResult executionId="8539791a-60ad-4d0f-b777-03d00e4b86a3" testId="b56fbef5-c61a-ce4b-292b-563a985fd78e" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ALineNoteIsCappedAtTwoHundredCharactersOnTheServer(length: 200, expected: Accepted)" computerName="SEMH59" duration="00:00:00.0639002" startTime="2026-10-31T23:27:23.8634221+03:00" endTime="2026-10-31T23:27:23.8634222+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8539791a-60ad-4d0f-b777-03d00e4b86a3" />
+    <UnitTestResult executionId="490a2336-421f-4f62-82b1-b08d552b237d" testId="2fd3ac4a-2ea7-bc29-a53b-77d44142ab27" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AStaleRequestTimestampIsRejected" computerName="SEMH59" duration="00:00:00.0728004" startTime="2026-10-31T23:27:30.4462911+03:00" endTime="2026-10-31T23:27:30.4462914+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="490a2336-421f-4f62-82b1-b08d552b237d" />
+    <UnitTestResult executionId="1239ec0d-0f97-42dc-be2b-146160b6e49d" testId="14089e74-41b8-9ea2-e867-b42618fe1a45" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ARevokedTableTokenIsRejected" computerName="SEMH59" duration="00:00:00.0432542" startTime="2026-10-31T23:27:32.4573903+03:00" endTime="2026-10-31T23:27:32.4573907+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1239ec0d-0f97-42dc-be2b-146160b6e49d" />
+    <UnitTestResult executionId="f8ccff87-6043-4581-811d-433f898a7be9" testId="32df19e9-8fee-0091-e550-47db47697f87" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AReservedTableStillRefusesTheSubmission" computerName="SEMH59" duration="00:00:00.0572903" startTime="2026-10-31T23:27:26.5318828+03:00" endTime="2026-10-31T23:27:26.5318829+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f8ccff87-6043-4581-811d-433f898a7be9" />
+    <UnitTestResult executionId="30fb83df-5a80-4daa-a177-072195350b6e" testId="ffd44d43-bffd-9a85-ad59-dd7d9f967bc7" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ReplayingTheExactSameRequestIsRejectedTheSecondTime" computerName="SEMH59" duration="00:00:00.0430932" startTime="2026-10-31T23:27:29.9897058+03:00" endTime="2026-10-31T23:27:29.9897061+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30fb83df-5a80-4daa-a177-072195350b6e" />
+    <UnitTestResult executionId="bb9c89f4-34b9-414f-9912-4a534583a580" testId="339fa5ed-1d34-914b-bcab-82eb7ed2c26e" testName="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.RetryingTheSameSubmissionReplaysTheExistingResultInsteadOfQueuingTwice" computerName="SEMH59" duration="00:00:00.7930935" startTime="2026-10-31T23:27:22.2202810+03:00" endTime="2026-10-31T23:27:22.2203000+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bb9c89f4-34b9-414f-9912-4a534583a580" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.MoreExtrasThanAGroupAllowsAndAnotherProductsExtraAreRefused" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="b643a608-ff72-f8cb-a208-9e7a1e1f0a2a">
+      <Execution id="9881e8cd-acd8-437f-8b49-8b2d84d52e98" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="MoreExtrasThanAGroupAllowsAndAnotherProductsExtraAreRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.BrandingReportsHasLogoFalseWhenNoneHasBeenSet" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="c7a77765-dc15-e211-6857-5b1df7397cec">
+      <Execution id="a68e9cbf-94a1-4190-af88-a98fd12d6e51" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="BrandingReportsHasLogoFalseWhenNoneHasBeenSet" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ALineNoteIsCappedAtTwoHundredCharactersOnTheServer(length: 201, expected: BadRequest)" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="d42b35a5-ddc4-236a-0723-134dd9dc228d">
+      <Execution id="106fc288-e4f8-406f-9bb3-4525169e4c01" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="ALineNoteIsCappedAtTwoHundredCharactersOnTheServer" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AStaleRequestTimestampIsRejected" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="2fd3ac4a-2ea7-bc29-a53b-77d44142ab27">
+      <Execution id="490a2336-421f-4f62-82b1-b08d552b237d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AStaleRequestTimestampIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ASecondGuestAtAnOccupiedTableSucceeds" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="8a5153c3-f429-1d6f-cc64-c9ae58ab0c9a">
+      <Execution id="e947c051-1628-428a-aaa9-61fc35a9f940" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="ASecondGuestAtAnOccupiedTableSucceeds" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnExpiredTableTokenIsRejected" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="ad3280f8-1cc2-d3d6-ae90-0a9cf921def9">
+      <Execution id="18a57100-e45e-4746-854a-0f329ad46da2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AnExpiredTableTokenIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.BrandingIsReachableWithNoSessionAndDefaultsToTheUnsetPaletteColor" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="05488534-527a-c93f-c574-4621e4c08734">
+      <Execution id="7dd79b27-c453-465e-aff8-35a2f54957bd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="BrandingIsReachableWithNoSessionAndDefaultsToTheUnsetPaletteColor" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ALineNoteIsCappedAtTwoHundredCharactersOnTheServer(length: 200, expected: Accepted)" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="b56fbef5-c61a-ce4b-292b-563a985fd78e">
+      <Execution id="8539791a-60ad-4d0f-b777-03d00e4b86a3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="ALineNoteIsCappedAtTwoHundredCharactersOnTheServer" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnUnavailableProductIsHiddenFromTheMenu" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="c995c1e7-7027-48d3-a894-27214b64b4a6">
+      <Execution id="a18babbd-ce9f-419d-b14f-4fc2e64d4ffa" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AnUnavailableProductIsHiddenFromTheMenu" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.PollingWithAnInvalidSessionIsRejected" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="21e2f5a1-46c8-ad84-d1dd-6d1e7ad1f758">
+      <Execution id="33bc4447-3434-4558-83c4-e5179b1a4584" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="PollingWithAnInvalidSessionIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnUnknownSessionTokenIsRejected" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="eaed0912-019e-7f98-2732-9cd6f74ccfb9">
+      <Execution id="ab945b17-c3de-48fe-8231-9444198475da" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AnUnknownSessionTokenIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AValidSessionListsAvailableProductsOnTheMenu" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="6329f277-1a9a-de58-36f1-f5a0a03c5131">
+      <Execution id="9a87a597-d66a-43f1-bea3-12d4f1867fdc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AValidSessionListsAvailableProductsOnTheMenu" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.RetryingTheSameSubmissionReplaysTheExistingResultInsteadOfQueuingTwice" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="339fa5ed-1d34-914b-bcab-82eb7ed2c26e">
+      <Execution id="bb9c89f4-34b9-414f-9912-4a534583a580" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="RetryingTheSameSubmissionReplaysTheExistingResultInsteadOfQueuingTwice" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ABeforeAnyOrderTheBillHasNoActiveOrder" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="b9926219-2ebf-8d8a-5bb3-b084bc7b25d2">
+      <Execution id="9496e6c8-985b-4ab1-b114-110072c11a21" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="ABeforeAnyOrderTheBillHasNoActiveOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AMissingSessionHeaderIsRejectedWithATurkishMessage" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="c8aaf8d4-9756-87c1-78d1-fc942e8c4b6c">
+      <Execution id="4cbea77a-a6be-487d-be3b-b13eee1894a3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AMissingSessionHeaderIsRejectedWithATurkishMessage" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.BrandingReflectsAnOperatorSettingTheBusinessNameAndColor" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="e0cbb960-120e-c30c-f188-73da8beadf21">
+      <Execution id="499822d1-599a-443c-b282-8ade3e33123d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="BrandingReflectsAnOperatorSettingTheBusinessNameAndColor" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AReservedTableStillRefusesTheSubmission" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="32df19e9-8fee-0091-e550-47db47697f87">
+      <Execution id="f8ccff87-6043-4581-811d-433f898a7be9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AReservedTableStillRefusesTheSubmission" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnEmptyOrderIsRejectedWithATurkishMessage" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="929aae69-7bd0-3145-44fd-542c9329cf6e">
+      <Execution id="9fbf8a4c-56f7-4694-9d65-7be39ac35ce0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AnEmptyOrderIsRejectedWithATurkishMessage" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnActiveTableTokenIssuesASessionScopedToItsTable" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="9b949a52-3871-495e-6a92-700547f1c705">
+      <Execution id="726705a0-a949-4295-b7b4-5370613df2e4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AnActiveTableTokenIssuesASessionScopedToItsTable" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.PollingAnUnmaterializedSubmissionReturnsPending" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="ed4e52b4-74b8-abad-b21c-222a199344b0">
+      <Execution id="4a5f32e4-f33c-412f-b078-2732102299f1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="PollingAnUnmaterializedSubmissionReturnsPending" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.SubmittingAnOrderQueuesItAndReservesTheTable" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="a591fb57-eb71-a576-f301-0eb9e8fc835a">
+      <Execution id="c42c4d18-4688-43ca-b13b-80740dcb39d2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="SubmittingAnOrderQueuesItAndReservesTheTable" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ARequiredGroupWithNoPickIsRefusedAndNothingIsQueuedOrReserved" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="4fa44d5b-f7b1-b47c-774f-72bc916ef981">
+      <Execution id="2d7338b2-f175-4982-be93-2247ce8a054b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="ARequiredGroupWithNoPickIsRefusedAndNothingIsQueuedOrReserved" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnEmptyTableTokenIsRejectedWithATurkishMessage" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="df016997-abd5-e1bb-2374-007fdf9b0b63">
+      <Execution id="fae7bf20-ecab-4519-9cfc-34a42be3427c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AnEmptyTableTokenIsRejectedWithATurkishMessage" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.BrandingFallsBackToTheDefaultPaletteColorWhenTheStoredThemeIsNotARecognizedKey" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="9246e7b7-7358-abb5-ef6e-b4ab56cec28d">
+      <Execution id="c9ae2830-ceb5-46f8-907a-a619d5b75928" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="BrandingFallsBackToTheDefaultPaletteColorWhenTheStoredThemeIsNotARecognizedKey" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AnUnknownTableTokenIsRejectedWithATurkishMessage" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="b94ac860-5105-dd7e-229a-efae233384fc">
+      <Execution id="17abd876-6c7c-44cc-9724-4d1a26cac258" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AnUnknownTableTokenIsRejectedWithATurkishMessage" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.LogoIsNotFoundWhenNoneHasBeenSet" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="0d6a2989-658f-5acb-fbd6-e77648c3ec05">
+      <Execution id="4aa2bccd-2588-4cbd-97d1-619127c62f99" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="LogoIsNotFoundWhenNoneHasBeenSet" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AfterAnOrderTheBillShowsTheLiveLinesAndTotals" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="1fb22020-b2f8-b538-1fd1-0a578b7c309e">
+      <Execution id="a57c7445-4b70-4c16-b2f9-124dd75c023e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AfterAnOrderTheBillShowsTheLiveLinesAndTotals" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ReplayingTheExactSameRequestIsRejectedTheSecondTime" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="ffd44d43-bffd-9a85-ad59-dd7d9f967bc7">
+      <Execution id="30fb83df-5a80-4daa-a177-072195350b6e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="ReplayingTheExactSameRequestIsRejectedTheSecondTime" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.LogoHonorsIfNoneMatchWithA304" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="352f0fc9-8343-7164-f92e-43bae7a81050">
+      <Execution id="b9d0d0c4-e396-41e1-ac57-0192438adaf9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="LogoHonorsIfNoneMatchWithA304" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.AClosedOrderNeverShowsAStaleBillEvenThoughTheTablesPointerStillNamesIt" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="5cac2736-967c-f849-2c42-8be7038ec406">
+      <Execution id="73591a3b-0f1b-48f9-8c64-f96de29a0f5e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="AClosedOrderNeverShowsAStaleBillEvenThoughTheTablesPointerStillNamesIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.PollingTheBillWithAnInvalidSessionIsRejected" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="da08b2b9-05bb-9e06-ea85-48f0403920a4">
+      <Execution id="eccb2c43-0e03-46d3-a003-8fbe14dca12d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="PollingTheBillWithAnInvalidSessionIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ARevokedTableTokenIsRejected" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="14089e74-41b8-9ea2-e867-b42618fe1a45">
+      <Execution id="1239ec0d-0f97-42dc-be2b-146160b6e49d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="ARevokedTableTokenIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ASelectedExtraIsResolvedFromTheCatalogAndQueuedWithTheOrder" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="fa47353d-87ae-17a0-bc49-ff0674b52b26">
+      <Execution id="986cb2bc-5f0b-44b9-8dcc-0b8776ee298b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="ASelectedExtraIsResolvedFromTheCatalogAndQueuedWithTheOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.LogoReturnsTheUploadedBytesAndBrandingReflectsItsPresence" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="82bbd694-27a3-28f0-20ba-5cd091e82b7b">
+      <Execution id="5cef68db-191c-4f1c-8745-1ae66236a5a8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="LogoReturnsTheUploadedBytesAndBrandingReflectsItsPresence" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests.ACancelledLineNeverAppearsOnTheLiveBillEvenInsideAnOpenOrder" storage="d:\project\alkaros\tests\host\experience\qrordering\bin\debug\net8.0\alkaros.host.experience.qrordering.tests.dll" id="aae3535b-05f5-b6ba-f84a-b48113ce0c25">
+      <Execution id="2f1d78b6-a68e-4b74-b25d-a74730b9b186" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0\ALKAROS.Host.Experience.QrOrdering.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.QrOrdering.Tests.QrOrderingHttpTests" name="ACancelledLineNeverAppearsOnTheLiveBillEvenInsideAnOpenOrder" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="b9926219-2ebf-8d8a-5bb3-b084bc7b25d2" executionId="9496e6c8-985b-4ab1-b114-110072c11a21" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4fa44d5b-f7b1-b47c-774f-72bc916ef981" executionId="2d7338b2-f175-4982-be93-2247ce8a054b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c7a77765-dc15-e211-6857-5b1df7397cec" executionId="a68e9cbf-94a1-4190-af88-a98fd12d6e51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="df016997-abd5-e1bb-2374-007fdf9b0b63" executionId="fae7bf20-ecab-4519-9cfc-34a42be3427c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6329f277-1a9a-de58-36f1-f5a0a03c5131" executionId="9a87a597-d66a-43f1-bea3-12d4f1867fdc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="05488534-527a-c93f-c574-4621e4c08734" executionId="7dd79b27-c453-465e-aff8-35a2f54957bd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="82bbd694-27a3-28f0-20ba-5cd091e82b7b" executionId="5cef68db-191c-4f1c-8745-1ae66236a5a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="21e2f5a1-46c8-ad84-d1dd-6d1e7ad1f758" executionId="33bc4447-3434-4558-83c4-e5179b1a4584" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c995c1e7-7027-48d3-a894-27214b64b4a6" executionId="a18babbd-ce9f-419d-b14f-4fc2e64d4ffa" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1fb22020-b2f8-b538-1fd1-0a578b7c309e" executionId="a57c7445-4b70-4c16-b2f9-124dd75c023e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aae3535b-05f5-b6ba-f84a-b48113ce0c25" executionId="2f1d78b6-a68e-4b74-b25d-a74730b9b186" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9246e7b7-7358-abb5-ef6e-b4ab56cec28d" executionId="c9ae2830-ceb5-46f8-907a-a619d5b75928" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="352f0fc9-8343-7164-f92e-43bae7a81050" executionId="b9d0d0c4-e396-41e1-ac57-0192438adaf9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ad3280f8-1cc2-d3d6-ae90-0a9cf921def9" executionId="18a57100-e45e-4746-854a-0f329ad46da2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b94ac860-5105-dd7e-229a-efae233384fc" executionId="17abd876-6c7c-44cc-9724-4d1a26cac258" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9b949a52-3871-495e-6a92-700547f1c705" executionId="726705a0-a949-4295-b7b4-5370613df2e4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b643a608-ff72-f8cb-a208-9e7a1e1f0a2a" executionId="9881e8cd-acd8-437f-8b49-8b2d84d52e98" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d42b35a5-ddc4-236a-0723-134dd9dc228d" executionId="106fc288-e4f8-406f-9bb3-4525169e4c01" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8a5153c3-f429-1d6f-cc64-c9ae58ab0c9a" executionId="e947c051-1628-428a-aaa9-61fc35a9f940" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0d6a2989-658f-5acb-fbd6-e77648c3ec05" executionId="4aa2bccd-2588-4cbd-97d1-619127c62f99" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e0cbb960-120e-c30c-f188-73da8beadf21" executionId="499822d1-599a-443c-b282-8ade3e33123d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="da08b2b9-05bb-9e06-ea85-48f0403920a4" executionId="eccb2c43-0e03-46d3-a003-8fbe14dca12d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c8aaf8d4-9756-87c1-78d1-fc942e8c4b6c" executionId="4cbea77a-a6be-487d-be3b-b13eee1894a3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a591fb57-eb71-a576-f301-0eb9e8fc835a" executionId="c42c4d18-4688-43ca-b13b-80740dcb39d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eaed0912-019e-7f98-2732-9cd6f74ccfb9" executionId="ab945b17-c3de-48fe-8231-9444198475da" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ed4e52b4-74b8-abad-b21c-222a199344b0" executionId="4a5f32e4-f33c-412f-b078-2732102299f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5cac2736-967c-f849-2c42-8be7038ec406" executionId="73591a3b-0f1b-48f9-8c64-f96de29a0f5e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="929aae69-7bd0-3145-44fd-542c9329cf6e" executionId="9fbf8a4c-56f7-4694-9d65-7be39ac35ce0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fa47353d-87ae-17a0-bc49-ff0674b52b26" executionId="986cb2bc-5f0b-44b9-8dcc-0b8776ee298b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b56fbef5-c61a-ce4b-292b-563a985fd78e" executionId="8539791a-60ad-4d0f-b777-03d00e4b86a3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2fd3ac4a-2ea7-bc29-a53b-77d44142ab27" executionId="490a2336-421f-4f62-82b1-b08d552b237d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="14089e74-41b8-9ea2-e867-b42618fe1a45" executionId="1239ec0d-0f97-42dc-be2b-146160b6e49d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="32df19e9-8fee-0091-e550-47db47697f87" executionId="f8ccff87-6043-4581-811d-433f898a7be9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ffd44d43-bffd-9a85-ad59-dd7d9f967bc7" executionId="30fb83df-5a80-4daa-a177-072195350b6e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="339fa5ed-1d34-914b-bcab-82eb7ed2c26e" executionId="bb9c89f4-34b9-414f-9912-4a534583a580" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="35" executed="35" passed="35" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.38]   Discovering: ALKAROS.Host.Experience.QrOrdering.Tests&#xD;
+[xUnit.net 00:00:00.43]   Discovered:  ALKAROS.Host.Experience.QrOrdering.Tests&#xD;
+[xUnit.net 00:00:00.43]   Starting:    ALKAROS.Host.Experience.QrOrdering.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54895&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54895/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54895/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 119.6830ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54895/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'QrOrderSubmissionResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54895/api/v1/qr/orders - 202 - application/json;+charset=utf-8 266.0820ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54895/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'QrOrderSubmissionResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54895/api/v1/qr/orders - 202 - application/json;+charset=utf-8 6.0266ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54900&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54900/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54900/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 31.2635ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54900/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'QrOrderSubmissionResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54900/api/v1/qr/orders - 202 - application/json;+charset=utf-8 30.2166ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54905&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54905/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54905/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 24.3805ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54905/api/v1/qr/bill - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/bill'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrLiveBillDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/bill'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54905/api/v1/qr/bill - 200 - application/json;+charset=utf-8 202.2057ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54910&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54910/api/v1/qr/menu - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/menu'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/menu'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54910/api/v1/qr/menu - 401 - application/json;+charset=utf-8 21.6861ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54915&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54915/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54915/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 23.5213ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54915/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'QrOrderSubmissionResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54915/api/v1/qr/orders - 202 - application/json;+charset=utf-8 21.4223ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54920&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54920/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54920/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 25.7396ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54920/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54920/api/v1/qr/orders - 400 - application/json;+charset=utf-8 15.7963ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54925&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54925/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54925/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 22.8450ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54925/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'QrOrderSubmissionResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54925/api/v1/qr/orders - 202 - application/json;+charset=utf-8 17.4001ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54930&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54930/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54930/api/v1/qr/sessions - 400 - application/json;+charset=utf-8 15.6755ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54935&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54935/api/v1/qr/branding - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/branding'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrBrandingResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/branding'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54935/api/v1/qr/branding - 200 - application/json;+charset=utf-8 33.1499ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54940&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54940/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54940/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 25.2150ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54940/api/v1/qr/menu - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/menu'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'CatalogProductDto[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/menu'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54940/api/v1/qr/menu - 200 - application/json;+charset=utf-8 38.0846ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54946&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54946/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54946/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 23.0261ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54946/api/v1/qr/bill - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/bill'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrLiveBillDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/bill'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54946/api/v1/qr/bill - 200 - application/json;+charset=utf-8 38.2074ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54951&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54951/api/v1/qr/logo - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/logo'&#xD;
+info: Microsoft.AspNetCore.Http.Result.FileContentResult[5]&#xD;
+      Sending file with download name ''.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/logo'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54951/api/v1/qr/logo - 200 8 image/png 26.7743ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54951/api/v1/qr/logo - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/logo'&#xD;
+info: Microsoft.AspNetCore.Http.Result.StatusCodeResult[1]&#xD;
+      Setting HTTP status code 304.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/logo'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54951/api/v1/qr/logo - 304 - - 2.3400ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54956&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54956/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54956/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 23.5580ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54956/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54956/api/v1/qr/orders - 409 - application/json;+charset=utf-8 15.0022ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54961&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54961/api/v1/qr/logo - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/logo'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/logo'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54961/api/v1/qr/logo - 404 - application/json;+charset=utf-8 22.9494ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54966&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54966/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54966/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 23.1224ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54966/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'QrOrderSubmissionResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54966/api/v1/qr/orders - 202 - application/json;+charset=utf-8 16.1951ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54966/api/v1/qr/orders/aa7e8e4b-cb1e-4b21-a650-2a7950ab7df2 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/orders/{submissionId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrOrderPollResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/orders/{submissionId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54966/api/v1/qr/orders/aa7e8e4b-cb1e-4b21-a650-2a7950ab7df2 - 200 - application/json;+charset=utf-8 11.8828ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54971&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54971/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54971/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 22.3703ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54971/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.BadRequestObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54971/api/v1/qr/orders - 400 - application/json;+charset=utf-8 1.1235ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54976&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54976/api/v1/qr/orders/6faa38bd-a231-479c-ae09-46079cf41463 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/orders/{submissionId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/orders/{submissionId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54976/api/v1/qr/orders/6faa38bd-a231-479c-ae09-46079cf41463 - 401 - application/json;+charset=utf-8 18.4230ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54981&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54981/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54981/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 25.2956ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54981/api/v1/qr/bill - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/bill'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrLiveBillDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/bill'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54981/api/v1/qr/bill - 200 - application/json;+charset=utf-8 38.6877ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54986&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54986/api/v1/qr/bill - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/bill'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/bill'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54986/api/v1/qr/bill - 401 - application/json;+charset=utf-8 17.2710ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54991&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54991/api/v1/qr/branding - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/branding'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrBrandingResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/branding'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54991/api/v1/qr/branding - 200 - application/json;+charset=utf-8 25.8455ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54996&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54996/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54996/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 22.4562ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54996/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54996/api/v1/qr/orders - 400 - application/json;+charset=utf-8 12.9653ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55001&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:55001/api/v1/qr/logo - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/logo'&#xD;
+info: Microsoft.AspNetCore.Http.Result.FileContentResult[5]&#xD;
+      Sending file with download name ''.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/logo'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:55001/api/v1/qr/logo - 200 11 image/png 18.2579ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:55001/api/v1/qr/branding - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/branding'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrBrandingResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/branding'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:55001/api/v1/qr/branding - 200 - application/json;+charset=utf-8 11.4988ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55006&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:55006/api/v1/qr/branding - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/branding'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrBrandingResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/branding'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:55006/api/v1/qr/branding - 200 - application/json;+charset=utf-8 26.6338ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55011&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55011/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55011/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 22.3932ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55011/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55011/api/v1/qr/sessions - 409 - application/json;+charset=utf-8 3.3671ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55016&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55016/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55016/api/v1/qr/sessions - 401 - application/json;+charset=utf-8 41.3837ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55021&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55021/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55021/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 21.4979ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55021/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55021/api/v1/qr/orders - 400 - application/json;+charset=utf-8 11.5693ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55021/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55021/api/v1/qr/orders - 400 - application/json;+charset=utf-8 7.4431ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55026&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55026/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55026/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 22.0543ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:55026/api/v1/qr/bill - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/bill'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrLiveBillDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/bill'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:55026/api/v1/qr/bill - 200 - application/json;+charset=utf-8 39.2959ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55031&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:55031/api/v1/qr/branding - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/branding'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrBrandingResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/branding'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:55031/api/v1/qr/branding - 200 - application/json;+charset=utf-8 20.5807ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55036&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55036/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55036/api/v1/qr/sessions - 401 - application/json;+charset=utf-8 16.5094ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55041&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:55041/api/v1/qr/menu - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/menu'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/menu'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:55041/api/v1/qr/menu - 401 - application/json;+charset=utf-8 16.3937ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55046&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55046/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55046/api/v1/qr/sessions - 401 - application/json;+charset=utf-8 24.9859ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55051&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55051/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55051/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 24.6235ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:55051/api/v1/qr/menu - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/qr/menu'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'CatalogProductDto[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/qr/menu'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:55051/api/v1/qr/menu - 200 - application/json;+charset=utf-8 8.3131ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55056&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55056/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55056/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 21.4836ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55056/api/v1/qr/orders - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[1]&#xD;
+      Setting HTTP status code 202.&#xD;
+info: Microsoft.AspNetCore.Http.Result.AcceptedResult[3]&#xD;
+      Writing value of type 'QrOrderSubmissionResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/orders'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55056/api/v1/qr/orders - 202 - application/json;+charset=utf-8 14.6340ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55061&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55061/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'QrSessionIssueResponse' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55061/api/v1/qr/sessions - 200 - application/json;+charset=utf-8 26.9053ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:55066&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\QrOrdering\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:55066/api/v1/qr/sessions - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/qr/sessions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:55066/api/v1/qr/sessions - 401 - application/json;+charset=utf-8 15.8591ms&#xD;
+[xUnit.net 00:00:13.29]   Finished:    ALKAROS.Host.Experience.QrOrdering.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

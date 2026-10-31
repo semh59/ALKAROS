@@ -156,7 +156,7 @@ public sealed class TableTokenServiceTests : IClassFixture<QrOrderingTokenLifecy
     }
 
     [Fact]
-    public async Task ADefaultIssuedTokenExpiresFourHoursAfterIssuance()
+    public async Task ADefaultIssuedTokenStaysValidForTenYearsLikeAPrintedLabel()
     {
         var tableId = await _database.SeedTableAsync();
         var before = DateTimeOffset.UtcNow;
@@ -165,7 +165,80 @@ public sealed class TableTokenServiceTests : IClassFixture<QrOrderingTokenLifecy
 
         var active = await _repository.GetActiveForTableAsync(tableId);
         Assert.NotNull(active);
-        Assert.InRange(active!.ExpiresAt - active.IssuedAt, TimeSpan.FromHours(4), TimeSpan.FromHours(4));
+        Assert.Equal(TimeSpan.FromDays(3650), active!.ExpiresAt - active.IssuedAt);
         Assert.InRange(active.IssuedAt, before, after);
+        Assert.False(active.IsExpired(DateTimeOffset.UtcNow.AddHours(5)));
+    }
+
+    [Fact]
+    public async Task IssuingForATableWhoseTokenTimedOutReplacesItInsteadOfRefusing()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var shortLived = new TableTokenService(_repository, TimeSpan.FromMilliseconds(1));
+        var staleRaw = await shortLived.IssueAsync(tableId);
+        await Task.Delay(20);
+
+        var freshRaw = await _service.IssueAsync(tableId);
+
+        var stale = await _service.ValidateAsync(staleRaw);
+        Assert.False(stale.IsValid);
+        Assert.Equal("REVOKED", stale.FailureReason);
+        Assert.True((await _service.ValidateAsync(freshRaw)).IsValid);
+        Assert.Equal(1L, await _database.ActiveTokenCountAsync(tableId));
+    }
+
+    [Fact]
+    public async Task RevokingWithABlankReasonIsRejectedBeforeAnythingChanges()
+    {
+        var tableId = await _database.SeedTableAsync();
+        var raw = await _service.IssueAsync(tableId);
+
+        await Assert.ThrowsAnyAsync<ArgumentException>(() => _service.RevokeAsync(tableId, " "));
+
+        Assert.True((await _service.ValidateAsync(raw)).IsValid);
+    }
+
+    [Fact]
+    public async Task ListActiveReturnsEachTablesCurrentTokenAndNotARevokedOne()
+    {
+        var withToken = await _database.SeedTableAsync();
+        var revoked = await _database.SeedTableAsync();
+        await _service.IssueAsync(withToken);
+        await _service.IssueAsync(revoked);
+        await _service.RevokeAsync(revoked, "test");
+
+        var tableIds = (await _repository.ListActiveAsync()).Select(token => token.TableId).ToList();
+
+        Assert.Contains(withToken, tableIds);
+        Assert.DoesNotContain(revoked, tableIds);
+    }
+
+    [Fact]
+    public async Task LosingTheRaceToReplaceATimedOutTokenReportsAlreadyActiveNotMissing()
+    {
+        var tableId = Guid.NewGuid();
+        var issued = DateTimeOffset.UtcNow.AddHours(-2);
+        var timedOut = new TableToken(Guid.NewGuid(), tableId, "hash", issued, issued.AddHours(1));
+        var service = new TableTokenService(new RacedRepository(timedOut));
+
+        await Assert.ThrowsAsync<TableTokenAlreadyActiveException>(() => service.IssueAsync(tableId));
+    }
+
+    /// <summary>Reports a timed-out token, then loses the rotation to a concurrent caller.</summary>
+    private sealed class RacedRepository(TableToken current) : ITableTokenRepository
+    {
+        public Task<TableToken?> GetActiveForTableAsync(Guid tableId, CancellationToken cancellationToken = default) =>
+            Task.FromResult<TableToken?>(current);
+
+        public Task RotateAsync(Guid previousTokenId, string revokedReason, TableToken newToken, CancellationToken cancellationToken = default) =>
+            throw new TableTokenNotFoundException("already replaced");
+
+        public Task<TableToken?> GetByHashAsync(string tokenHash, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task<IReadOnlyList<TableToken>> ListActiveAsync(CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task AddAsync(TableToken token, CancellationToken cancellationToken = default) => throw new NotSupportedException();
+
+        public Task RevokeAsync(Guid tokenId, DateTimeOffset revokedAt, string reason, CancellationToken cancellationToken = default) => throw new NotSupportedException();
     }
 }

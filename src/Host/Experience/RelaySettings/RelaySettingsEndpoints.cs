@@ -55,7 +55,7 @@ public static class RelaySettingsEndpoints
         // to Postgres (RelayConnectorStatusPublisher); this reads it back.
         services.TryAddSingleton<IRelayConnectorStatusReporter, PostgresRelayConnectorStatusReporter>();
         services.TryAddTransient<RelaySettingsExceptionFilter>();
-        return services;
+        return services.AddTableQrManagementExperience();
     }
 
     public static RouteGroupBuilder MapRelaySettingsApi(this IEndpointRouteBuilder endpoints)
@@ -137,6 +137,7 @@ public static class RelaySettingsEndpoints
             return Results.Ok(new ProvisionRelayTunnelResponse(result.Hostname));
         });
 
+        endpoints.MapTableQrManagementApi();
         return group;
     }
 

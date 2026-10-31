@@ -1,7 +1,7 @@
 # V1-RMD-778 - Masa QR kodunu yönetici üretsin, yenilesin, iptal etsin (sunucu)
 
 - Task ID: V1-RMD-778
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
@@ -17,7 +17,7 @@ Kararlar:
 3. Masa QR'ı sabit basılı etikettir: otomatik yenileme yok, masa kapanışında token değişmez. Yenileme yalnız yöneticinin elle yaptığı işlemdir. Ham token saklanmaz; QR yalnız üretme veya yenileme anında yanıtla döner. Kaybolursa yenile ile yeni QR basılır, eskisi hemen geçersiz olur.
 4. Süre: basılı sabit QR 4 saatte ölmemeli. `TableTokenService.DefaultLifetime` 4 saatten 10 yıla çıkar. `expires_at` NOT NULL kalır, şema ve doğrulama (`ValidateAsync`, `IsExpired`) değişmez; kullanılan "süresiz" budur. İptal edilene kadar geçerlidir. Müşteri oturumu 4 saat kalır (V12-QRS-003). `docs/architecture/qr-relay-topology.md` kural 2 amendment ile güncellenir.
 5. Düzeltme: `IssueAsync` süresi dolmuş ama iptal edilmemiş token'ı "aktif" sayıp `TableTokenAlreadyActiveException` atıyordu (`GetActiveForTableAsync` yalnız `revoked_at IS NULL` bakar). Süresi dolmuş token artık tek işlemde (`RotateAsync`, neden `expired`) yenisiyle değişir; süresi dolmamış aktif token için `AlreadyActive` aynen kalır. `RevokeAsync` boş nedeni doğrulamıyordu; artık `ArgumentException` atar.
-6. Kabul edilmiş risk (kod yok, V12-QRS-003 kapsamı): müşteri oturumu token'a bağlanmaz ve token iptalinde oturum kapatılmaz. QR siparişi "bekleyen" açılır ve personel kabulüyle siparişe döner (V12-QRO-001/003); garson onayı riski kapatır. Kayıt V12-QRS-003 görev dosyasına eklenir.
+6. Kabul edilmiş risk (kod yok, V12-QRS-003 kapsamı): müşteri oturumu token'a bağlanmaz ve token iptalinde oturum kapatılmaz. QR siparişi "bekleyen" açılır ve personel kabulüyle siparişe döner (V12-QRO-001/003); garson onayı riski kapatır. Kayıt `docs/architecture/qr-relay-topology.md` 2c bölümünde ve RESULT.md'dedir (V12-QRS-003, V12-CWB-001 ve V12-QRO-004 görev dosyaları kanıt klasörleri olmadığı için kapanış kapısınca değiştirilemez; "ayrı görev" ve "4 saat" ifadeleri orada tarihsel kalır).
 
 Uç noktalar (hepsi yönetici):
 
@@ -37,9 +37,6 @@ Uç noktalar (hepsi yönetici):
   - src/Modules/QrOrdering/CustomerSession/CustomerSessionService.cs (V12-QRS-003) — yalnız süre yorumu.
   - src/Host/Experience/QrOrdering/QrOrderingEndpoints.cs (V12-CWB-001) — yalnız süre yorumu.
   - docs/architecture/qr-relay-topology.md (V0-ARC-009) — kural 2 amendment.
-  - plan/v1.2/qr-security/V12-QRS-003-customer-session-lifecycle.md (V12-QRS-003) — kabul edilmiş risk kaydı.
-  - plan/v1.2/customer-web/V12-CWB-001-public-menu-browsing.md (V12-CWB-001) — "ayrı görev" ifadesi V1-RMD-778 ve V1-RMD-779'a bağlanır.
-  - plan/v1.2/qr-ordering/V12-QRO-004-multi-guest-qr-ordering.md (V12-QRO-004) — aynı bağlantı.
   - tests/Modules/QrOrdering/TokenLifecycle/ (V12-QRS-001) — süre, Issue düzeltmesi, liste, boş neden testleri.
   - tests/Host/Experience/RelaySettings/ (V12-QRT-003) — uç nokta ve uçtan uca QR akışı testleri.
   - tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs (V1-FND-008) — RelaySettings için Tables kenarı.
@@ -69,7 +66,7 @@ Uç noktalar (hepsi yönetici):
 ## Acceptance evidence
 
 1. TokenLifecycle testleri gerçek Postgres'te yeşil: 10 yıllık süre, süresi dolmuş token ile Issue yenisini verir (eski `expired` ile iptal), aktif token ile Issue `AlreadyActive`, boş nedenle Revoke `ArgumentException`, `ListActiveAsync`.
-2. RelaySettings HTTP testleri yeşil: oturumsuz 401, kasiyer/süpervizör 403, yönetici liste/üret/yenile/iptal, sistem masası listede yok, röle hazır değilken 409 ve token üretilmemiş, ham token liste yanıtında yok; üretilen adres `/api/v1/qr/sessions` ile 200, yenilemeden sonra eski token 401 `QR_TOKEN_REVOKED`.
+2. RelaySettings HTTP testleri yeşil: oturumsuz, kasiyer çerezi ve süpervizör yönetim oturumu 401; `integrations.manage` izni olmayan yönetim oturumu her rotada 403, yönetici liste/üret/yenile/iptal, sistem masası listede yok, röle hazır değilken 409 ve token üretilmemiş, ham token liste yanıtında yok; üretilen adres `/api/v1/qr/sessions` ile 200, yenilemeden sonra eski token 401 `QR_TOKEN_REVOKED`.
 3. Mutasyon: `IssueAsync` süresi dolmuş dalını kaldırmak ve `DefaultLifetime`'ı 4 saate döndürmek ilgili testi kırmızıya çevirir; kaynak `cp`/`cmp` ile geri alınır.
 4. QrOrdering, Host (RelaySettings, Orders.Confirmation), ApiConventions ve ModuleBoundaries testleri exit 0.
 5. Plan audit ve consistency audit 0 hata/0 uyarı; kapsam aracı exit 0; iki bağımsız inceleme bulguları giderilmiş.

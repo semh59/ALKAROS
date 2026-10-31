@@ -13,8 +13,12 @@ namespace ALKAROS.QrOrdering.TokenLifecycle;
 /// </summary>
 public sealed class TableTokenService
 {
-    /// <summary>docs/architecture/qr-relay-topology.md rule 2: QR tokens expire after 4 hours.</summary>
-    public static readonly TimeSpan DefaultLifetime = TimeSpan.FromHours(4);
+    /// <summary>
+    /// A table's QR is a fixed printed label, so a token stays valid until a manager revokes or rotates it;
+    /// ten years stands in for "never expires" because expires_at is NOT NULL
+    /// (docs/architecture/qr-relay-topology.md rule 2).
+    /// </summary>
+    public static readonly TimeSpan DefaultLifetime = TimeSpan.FromDays(3650);
 
     private readonly ITableTokenRepository _repository;
     private readonly TimeSpan _lifetime;
@@ -27,19 +31,36 @@ public sealed class TableTokenService
             throw new ArgumentOutOfRangeException(nameof(lifetime), lifetime, "Lifetime must be positive.");
     }
 
-    /// <summary>Issues the first token for a table. Throws <see cref="TableTokenAlreadyActiveException"/> if one already exists — use <see cref="RotateAsync"/> to replace it.</summary>
+    /// <summary>Issues the first token for a table. Throws <see cref="TableTokenAlreadyActiveException"/> if a usable one already exists — use <see cref="RotateAsync"/> to replace it. A token that has only timed out is replaced.</summary>
     public async Task<string> IssueAsync(Guid tableId, CancellationToken cancellationToken = default)
     {
         if (tableId == Guid.Empty)
             throw new ArgumentException("Table id cannot be empty.", nameof(tableId));
 
         var existing = await _repository.GetActiveForTableAsync(tableId, cancellationToken);
-        if (existing is not null)
-            throw new TableTokenAlreadyActiveException(tableId);
-
         var (raw, hash) = TableTokenGenerator.Create();
         var now = DateTimeOffset.UtcNow;
         var token = new TableToken(Guid.NewGuid(), tableId, hash, now, now + _lifetime);
+
+        if (existing is not null)
+        {
+            if (!existing.IsExpired(now))
+                throw new TableTokenAlreadyActiveException(tableId);
+
+            // Only the unique index keeps one non-revoked row per table, so a timed-out row must be revoked
+            // in the same transaction that inserts its replacement.
+            try
+            {
+                await _repository.RotateAsync(existing.TokenId, "expired", token, cancellationToken);
+            }
+            catch (TableTokenNotFoundException)
+            {
+                // A concurrent Issue already replaced the timed-out row.
+                throw new TableTokenAlreadyActiveException(tableId);
+            }
+
+            return raw;
+        }
 
         try
         {
@@ -77,6 +98,7 @@ public sealed class TableTokenService
     {
         if (tableId == Guid.Empty)
             throw new ArgumentException("Table id cannot be empty.", nameof(tableId));
+        ArgumentException.ThrowIfNullOrWhiteSpace(reason);
 
         var existing = await _repository.GetActiveForTableAsync(tableId, cancellationToken)
             ?? throw new TableTokenNotFoundException($"Table {tableId} has no active token to revoke.");

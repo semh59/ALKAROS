@@ -1,4 +1,5 @@
 using ALKAROS.Host.DualScreen;
+using ALKAROS.Host.Experience.Catalog;
 using ALKAROS.Identity.DeviceSessions;
 using ALKAROS.TestHelpers;
 
@@ -18,9 +19,55 @@ public sealed class RelaySettingsTestDatabase : PgTestDatabase
             await RunAsync(DataSource, await File.ReadAllTextAsync(file));
     }
 
+    public async Task<Guid> SeedTableAsync(string tableNumber, string? zoneName = null)
+    {
+        var tableId = Guid.NewGuid();
+        Guid? zoneId = null;
+        if (zoneName is not null)
+        {
+            zoneId = Guid.NewGuid();
+            await ExecuteAsync(
+                "INSERT INTO table_mgmt.zones (zone_id, code, name) VALUES (@zone_id, @code, @name);",
+                ("zone_id", zoneId.Value),
+                ("code", "Z-" + zoneId.Value.ToString("N")[..8]),
+                ("name", zoneName));
+        }
+
+        await ExecuteAsync(
+            """
+            INSERT INTO table_mgmt.tables (table_id, zone_id, table_number, capacity, current_status)
+            VALUES (@table_id, @zone_id, @table_number, 4, 'Available');
+            """,
+            ("table_id", tableId),
+            ("zone_id", (object?)zoneId ?? DBNull.Value),
+            ("table_number", tableNumber));
+        return tableId;
+    }
+
+    /// <summary>The tunnel's run-token envelope is irrelevant to the address, so a placeholder byte is stored.</summary>
+    public Task<int> SeedTunnelAsync(string hostname) =>
+        ExecuteAsync(
+            """
+            INSERT INTO qr_ordering.relay_tunnel (tunnel_key, tunnel_id, hostname, token_envelope, updated_at)
+            VALUES ('cloudflare', 'tunnel-1', @hostname, '\x00', now());
+            """,
+            ("hostname", hostname));
+
+    public Task<int> ActiveTokenCountAsync(Guid tableId) =>
+        ScalarAsync<int>($"SELECT count(*)::int FROM qr_ordering.table_tokens WHERE table_id = '{tableId:D}' AND revoked_at IS NULL");
+
     /// <summary>Seeds a session under the given role, with the given permission codes granted outright, and returns the cookie.</summary>
-    public async Task<string> SeedCashierSessionWithPermissionsAsync(
-        Guid terminalId, string roleCode, params string[] permissionCodes)
+    public Task<string> SeedCashierSessionWithPermissionsAsync(
+        Guid terminalId, string roleCode, params string[] permissionCodes) =>
+        SeedSessionAsync("cashier", DualScreenApplication.CashierCookieName, terminalId, roleCode, permissionCodes);
+
+    /// <summary>The management surfaces authenticate the <c>alkaros.manager</c> cookie, whose session is bound to a <c>manager:</c> or <c>supervisor:</c> device.</summary>
+    public Task<string> SeedManagementSessionAsync(
+        string devicePrefix, Guid terminalId, string roleCode, params string[] permissionCodes) =>
+        SeedSessionAsync(devicePrefix, CatalogManagementEndpoints.ManagerCookieName, terminalId, roleCode, permissionCodes);
+
+    private async Task<string> SeedSessionAsync(
+        string devicePrefix, string cookieName, Guid terminalId, string roleCode, string[] permissionCodes)
     {
         var userId = Guid.NewGuid();
         var suffix = userId.ToString("N");
@@ -36,7 +83,7 @@ public sealed class RelaySettingsTestDatabase : PgTestDatabase
             ("user_id", userId),
             ("username", "qrt003-api-" + suffix),
             ("session_id", Guid.NewGuid()),
-            ("device_id", $"cashier:{terminalId:D}"),
+            ("device_id", $"{devicePrefix}:{terminalId:D}"),
             ("token_hash", hash));
 
         var roleId = Guid.NewGuid();
@@ -62,6 +109,6 @@ public sealed class RelaySettingsTestDatabase : PgTestDatabase
                 ("code", code));
         }
 
-        return $"{DualScreenApplication.CashierCookieName}={raw}";
+        return $"{cookieName}={raw}";
     }
 }

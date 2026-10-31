@@ -1,0 +1,927 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="996c48d0-2cc0-48b1-bc5e-c74df87bae79" name="semih@SEMH59 2026-10-31 23:26:46" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T23:26:46.8240322+03:00" queuing="2026-10-31T23:26:46.8240323+03:00" start="2026-10-31T23:26:44.5727126+03:00" finish="2026-10-31T23:27:08.2651282+03:00" />
+  <TestSettings name="default" id="b3fa4943-0d19-4858-b32a-648d2fb06158">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_23_26_46" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="801d377e-80a3-40da-9a84-f476bfe7e823" testId="8154ae81-3b68-dc8c-a678-99d8d1a8432a" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.AnOverdueNfcAgeRestrictedHoldWhoseKitchenHasNotStartedIsRejectedAndItsTableReleased" computerName="SEMH59" duration="00:00:00.0360391" startTime="2026-10-31T23:27:07.8197990+03:00" endTime="2026-10-31T23:27:07.8197991+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="801d377e-80a3-40da-9a84-f476bfe7e823" />
+    <UnitTestResult executionId="a6c7af57-c5a0-4635-8f30-ea1109798d8a" testId="1e5a7871-1fb7-c0a8-eea0-116cd793c00f" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests.ACallerThatHungUpGetsNoErrorAndNothingIsLoggedAsAFailure" computerName="SEMH59" duration="00:00:00.0009425" startTime="2026-10-31T23:26:46.3815359+03:00" endTime="2026-10-31T23:26:46.3815361+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6c7af57-c5a0-4635-8f30-ea1109798d8a" />
+    <UnitTestResult executionId="42ca2594-bad4-448b-b81b-6f41aad9ced9" testId="fdab2dbd-a76a-ab98-40ae-43514d537742" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.TwoStaffAcceptingTheSameQrOrderAtOnceHaveOneWinnerAndOneStockEffect" computerName="SEMH59" duration="00:00:00.2489285" startTime="2026-10-31T23:27:03.5092057+03:00" endTime="2026-10-31T23:27:03.5092058+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="42ca2594-bad4-448b-b81b-6f41aad9ced9" />
+    <UnitTestResult executionId="af24b98f-e127-4c5f-8e94-c4ccd83e1e67" testId="051c5fa3-a02f-f60a-3f60-adba3e5c6564" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests.ABrokenDisplayHubDoesNotFailAnOrderThatIsAlreadyCommitted" computerName="SEMH59" duration="00:00:00.0026684" startTime="2026-10-31T23:26:46.3810999+03:00" endTime="2026-10-31T23:26:46.3810999+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="af24b98f-e127-4c5f-8e94-c4ccd83e1e67" />
+    <UnitTestResult executionId="0463d43b-2098-4dc3-8687-60b7547b85ff" testId="4198e737-9964-bc5d-18fa-4bc0f52262cc" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AcceptingAQrOrderLocksEveryStockRowInTheGlobalOrderBeforeTheHoldTakesAny" computerName="SEMH59" duration="00:00:00.2891082" startTime="2026-10-31T23:27:04.1541612+03:00" endTime="2026-10-31T23:27:04.1541614+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0463d43b-2098-4dc3-8687-60b7547b85ff" />
+    <UnitTestResult executionId="9a4733e1-1e0a-4d7f-a8b4-58cb6003b4c9" testId="d73cb753-b704-ca9d-96d7-1c2521c6f182" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.ViewingAnOrderShowsTheAvailableStockForEachItem" computerName="SEMH59" duration="00:00:00.2644478" startTime="2026-10-31T23:26:55.4996028+03:00" endTime="2026-10-31T23:26:55.4996030+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a4733e1-1e0a-4d7f-a8b4-58cb6003b4c9" />
+    <UnitTestResult executionId="7e4e18f4-7b72-49cd-bf26-4b34a77edd00" testId="9c14ceb1-85eb-37fc-0370-7f03930079c4" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.PendingOrdersAreListedUntilTheyAreResolved" computerName="SEMH59" duration="00:00:00.3146727" startTime="2026-10-31T23:26:52.3849563+03:00" endTime="2026-10-31T23:26:52.3849565+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e4e18f4-7b72-49cd-bf26-4b34a77edd00" />
+    <UnitTestResult executionId="0a94ba9c-7fd5-4138-b902-8f9c3eae5c2e" testId="7187f6fc-d088-e2e4-26e2-6073fb56a12b" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AStaleRowVersionRefusesTheQrAcceptWithoutAnyHold" computerName="SEMH59" duration="00:00:00.2083174" startTime="2026-10-31T23:27:02.3153759+03:00" endTime="2026-10-31T23:27:02.3153762+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0a94ba9c-7fd5-4138-b902-8f9c3eae5c2e" />
+    <UnitTestResult executionId="b0ccaa35-a909-4417-80b6-b4d08163cee8" testId="21d11f6b-2efa-1736-9d08-87f3863629b4" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.NoSessionCookieIsUnauthorizedForBothActions" computerName="SEMH59" duration="00:00:00.1819041" startTime="2026-10-31T23:26:49.4969308+03:00" endTime="2026-10-31T23:26:49.4969309+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b0ccaa35-a909-4417-80b6-b4d08163cee8" />
+    <UnitTestResult executionId="b9c8854d-5164-4eb4-b532-46a695dd600c" testId="b436e6d7-9606-ccb9-58f7-d56360e235b5" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderConsumesItsOwnHold" computerName="SEMH59" duration="00:00:00.4407660" startTime="2026-10-31T23:26:51.7139360+03:00" endTime="2026-10-31T23:26:51.7139362+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b9c8854d-5164-4eb4-b532-46a695dd600c" />
+    <UnitTestResult executionId="f19b4a60-e634-48d7-8259-aecd1c7002e8" testId="f71bfbe4-c9aa-65ee-32a0-2a03f9b59311" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AcceptingAQrOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed" computerName="SEMH59" duration="00:00:00.2852245" startTime="2026-10-31T23:27:01.7378346+03:00" endTime="2026-10-31T23:27:01.7378347+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f19b4a60-e634-48d7-8259-aecd1c7002e8" />
+    <UnitTestResult executionId="ec7179ac-d539-46e4-b2a5-5c4ff6136c16" testId="5be770ab-8400-f2a0-a1ac-057c27829d18" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.ListingPendingOrdersWithoutASessionIsUnauthorized" computerName="SEMH59" duration="00:00:00.1853072" startTime="2026-10-31T23:26:50.8931812+03:00" endTime="2026-10-31T23:26:50.8931813+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ec7179ac-d539-46e4-b2a5-5c4ff6136c16" />
+    <UnitTestResult executionId="adb987b8-6e18-4ae1-9e87-efdc84af96de" testId="3407876d-d7dd-d296-d386-7785474e72ea" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAPendingOrderConsumesTheMappedStock" computerName="SEMH59" duration="00:00:00.3487456" startTime="2026-10-31T23:26:50.2414832+03:00" endTime="2026-10-31T23:26:50.2414836+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="adb987b8-6e18-4ae1-9e87-efdc84af96de" />
+    <UnitTestResult executionId="d5068830-e7d1-4c75-9621-8efb7ecb83b0" testId="bf3bb182-8cd2-1227-f1aa-75c058cea950" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.ARejectionThatLosesToAConcurrentAcceptLeavesTheKitchenItemsUntouched" computerName="SEMH59" duration="00:00:00.4786955" startTime="2026-10-31T23:27:00.4792679+03:00" endTime="2026-10-31T23:27:00.4792683+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d5068830-e7d1-4c75-9621-8efb7ecb83b0" />
+    <UnitTestResult executionId="c56d0dac-fc1d-4b45-bcca-5ff2b6bee456" testId="32538ded-9a08-dc71-cfca-3b735a4fd5d9" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.RejectingAPendingOrderCancelsTheKitchenTicketAndFreesTheTable" computerName="SEMH59" duration="00:00:00.2861948" startTime="2026-10-31T23:26:59.0410837+03:00" endTime="2026-10-31T23:26:59.0410840+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c56d0dac-fc1d-4b45-bcca-5ff2b6bee456" />
+    <UnitTestResult executionId="b18fd30f-cb9b-4330-91be-54ce9c0a2233" testId="392f8a6f-b329-9f97-fab6-1637dddacb3e" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderThatIsNotAwaitingConfirmationIsRejected" computerName="SEMH59" duration="00:00:00.2528688" startTime="2026-10-31T23:26:53.0061838+03:00" endTime="2026-10-31T23:26:53.0061842+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b18fd30f-cb9b-4330-91be-54ce9c0a2233" />
+    <UnitTestResult executionId="0b8d8d7f-36d3-449f-a71f-33ef005e31c3" testId="8e505190-fcb8-8240-446a-70b99c59600d" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderWithInsufficientStockIsRefused" computerName="SEMH59" duration="00:00:00.2226062" startTime="2026-10-31T23:26:56.6616687+03:00" endTime="2026-10-31T23:26:56.6616689+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0b8d8d7f-36d3-449f-a71f-33ef005e31c3" />
+    <UnitTestResult executionId="efd0566f-9cd4-4bcf-98e3-75e30f22f6bd" testId="f05e2ba3-9b17-adce-b2e8-40c0c1ea3c29" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingIsRefusedWhenAnotherOrderHoldsTheLastPortion" computerName="SEMH59" duration="00:00:00.2323630" startTime="2026-10-31T23:26:58.4029304+03:00" endTime="2026-10-31T23:26:58.4029308+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="efd0566f-9cd4-4bcf-98e3-75e30f22f6bd" />
+    <UnitTestResult executionId="2ac6efca-3879-4eab-abf6-004ec259ce18" testId="b7658f01-bdd3-8b7f-a859-1fd05a3c23c8" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.AnOrderThatKeepsFailingIsLoggedAndTheOrdersBehindItStillExpire" computerName="SEMH59" duration="00:00:00.0694422" startTime="2026-10-31T23:27:07.4445674+03:00" endTime="2026-10-31T23:27:07.4445676+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2ac6efca-3879-4eab-abf6-004ec259ce18" />
+    <UnitTestResult executionId="7f9c3c14-eb9b-42b4-aec4-1f34e5fcb66a" testId="8c3d2b07-431f-4f5b-2a1c-871c4f651957" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.RejectingWithAnEmptyReasonIsRejected" computerName="SEMH59" duration="00:00:00.2306753" startTime="2026-10-31T23:26:48.9476205+03:00" endTime="2026-10-31T23:26:48.9476207+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7f9c3c14-eb9b-42b4-aec4-1f34e5fcb66a" />
+    <UnitTestResult executionId="27750df5-fb12-43d2-8512-d74204785a43" testId="2a6f0064-6f13-776c-310c-9c113505671a" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests.ATextTooLongForItsColumnIsABadRequestNotAnOutage" computerName="SEMH59" duration="00:00:00.0016229" startTime="2026-10-31T23:26:46.3832179+03:00" endTime="2026-10-31T23:26:46.3832181+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="27750df5-fb12-43d2-8512-d74204785a43" />
+    <UnitTestResult executionId="a9e9e18c-5267-4729-90ed-603f02e0772d" testId="d87c1963-3058-7dbd-56a2-0facc23385b5" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests.ATimeoutWhileTheCallerIsStillThereIsStillAServerError" computerName="SEMH59" duration="00:00:00.1843046" startTime="2026-10-31T23:26:46.3782588+03:00" endTime="2026-10-31T23:26:46.3782808+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a9e9e18c-5267-4729-90ed-603f02e0772d" />
+    <UnitTestResult executionId="da9cd43a-1de4-4137-aa92-c60235e201cf" testId="8847341a-8f25-3e19-3624-4e76cc4d0751" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.AnOrderYoungerThanTheTimeoutIsLeftAlone" computerName="SEMH59" duration="00:00:00.0247009" startTime="2026-10-31T23:27:07.0233412+03:00" endTime="2026-10-31T23:27:07.0233415+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da9cd43a-1de4-4137-aa92-c60235e201cf" />
+    <UnitTestResult executionId="bf82be11-d800-43de-92e2-9d682eea76d8" testId="14d0f456-e416-b60b-6321-01a8fa8d70ae" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AQrOrderLosingTheLastPortionToAnotherChannelLeavesNothingBehind" computerName="SEMH59" duration="00:00:00.2306835" startTime="2026-10-31T23:27:05.3100126+03:00" endTime="2026-10-31T23:27:05.3100130+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf82be11-d800-43de-92e2-9d682eea76d8" />
+    <UnitTestResult executionId="dced46a4-8864-4fe4-a356-bce508b80999" testId="ca351ecf-f45c-a76b-0625-76c67e22ee3d" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingWithAStaleRowVersionIsRejected" computerName="SEMH59" duration="00:00:00.2070296" startTime="2026-10-31T23:26:57.2264033+03:00" endTime="2026-10-31T23:26:57.2264034+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dced46a4-8864-4fe4-a356-bce508b80999" />
+    <UnitTestResult executionId="67530621-7474-4115-b954-667d5b724ba4" testId="5959d933-13e3-b28c-6dae-ee02cb953129" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderWithATwoIngredientBomAppliesNeitherDeltaWhenOneIsInsufficient" computerName="SEMH59" duration="00:00:00.2426338" startTime="2026-10-31T23:26:54.8680022+03:00" endTime="2026-10-31T23:26:54.8680023+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="67530621-7474-4115-b954-667d5b724ba4" />
+    <UnitTestResult executionId="51dbaad9-1cf1-409d-99bf-7209f3b957d1" testId="c428dd7d-7867-4433-3e58-0453637ecc34" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.RejectingAQrOrderFreesTheTableAndNeverClaimsStock" computerName="SEMH59" duration="00:00:00.2315787" startTime="2026-10-31T23:27:05.8890014+03:00" endTime="2026-10-31T23:27:05.8890015+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="51dbaad9-1cf1-409d-99bf-7209f3b957d1" />
+    <UnitTestResult executionId="4d891f9d-f2f4-48c7-a7b2-2dbf14f5ed76" testId="90c7c957-0938-24e6-dd71-eade2f722e55" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderForAnUnmappedProductIsRefused" computerName="SEMH59" duration="00:00:01.1080003" startTime="2026-10-31T23:26:48.3500197+03:00" endTime="2026-10-31T23:26:48.3500200+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4d891f9d-f2f4-48c7-a7b2-2dbf14f5ed76" />
+    <UnitTestResult executionId="ca5aa075-9c91-4e72-98ce-d57971d2059f" testId="9b950868-32ce-e37c-00f3-94c6b63020c4" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AQrOrderForAnUnmappedProductIsRefusedWithoutAnyHold" computerName="SEMH59" duration="00:00:00.2274047" startTime="2026-10-31T23:27:04.7338544+03:00" endTime="2026-10-31T23:27:04.7338548+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ca5aa075-9c91-4e72-98ce-d57971d2059f" />
+    <UnitTestResult executionId="86d8ea25-26f6-4803-bf3b-c570d4b4a626" testId="440e39ab-d8de-47d7-a32a-3b8067dde9b4" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderWithACancelledItemNeverConsumesItsStock" computerName="SEMH59" duration="00:00:00.2998190" startTime="2026-10-31T23:26:54.2723660+03:00" endTime="2026-10-31T23:26:54.2723662+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86d8ea25-26f6-4803-bf3b-c570d4b4a626" />
+    <UnitTestResult executionId="24d908cd-fba3-48f6-b742-0e8546d4cc0f" testId="e9ca5d72-d5f6-ad1c-55e2-673fa40b8257" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.RejectingAnAlreadyBilledOrderIsRefused" computerName="SEMH59" duration="00:00:00.2368573" startTime="2026-10-31T23:26:53.6006175+03:00" endTime="2026-10-31T23:26:53.6006178+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="24d908cd-fba3-48f6-b742-0e8546d4cc0f" />
+    <UnitTestResult executionId="b1dab4c5-0e3d-42d0-b866-6cb75f99ba51" testId="4a8a7bb5-3d18-9733-0808-562ea30be8cb" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.AnOverdueQrOrderIsRejectedAndItsTableReleased" computerName="SEMH59" duration="00:00:00.0399604" startTime="2026-10-31T23:27:06.2754138+03:00" endTime="2026-10-31T23:27:06.2754143+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b1dab4c5-0e3d-42d0-b866-6cb75f99ba51" />
+    <UnitTestResult executionId="898960cd-eace-4a77-971f-4780b8992adf" testId="eb0f96ec-fe6a-9d54-c0c1-e2d2d8c5f643" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.ANonQrPendingOrderIsNeverExpiredByThisSweep" computerName="SEMH59" duration="00:00:00.0231225" startTime="2026-10-31T23:27:08.1798927+03:00" endTime="2026-10-31T23:27:08.1798929+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="898960cd-eace-4a77-971f-4780b8992adf" />
+    <UnitTestResult executionId="ebda94ac-d98d-48dc-8dc4-35854eb5f51f" testId="c8803944-7d17-d0c7-858c-c1bc493894aa" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderWithAComplimentaryItemStillConsumesItsStock" computerName="SEMH59" duration="00:00:00.2288214" startTime="2026-10-31T23:26:57.8107806+03:00" endTime="2026-10-31T23:26:57.8107807+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ebda94ac-d98d-48dc-8dc4-35854eb5f51f" />
+    <UnitTestResult executionId="68a6240f-b65c-47d4-9e5c-356b6ad21670" testId="d41183ee-8d0f-409c-b870-5d064aa496dd" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.ThePendingListIsCappedAt200OldestFirst" computerName="SEMH59" duration="00:00:00.2170448" startTime="2026-10-31T23:26:56.0722913+03:00" endTime="2026-10-31T23:26:56.0722915+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68a6240f-b65c-47d4-9e5c-356b6ad21670" />
+    <UnitTestResult executionId="8ffcc843-6c9a-436d-874e-9cccea8de13d" testId="7e05f233-139e-543f-d80c-a24dd9fce2c8" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AcceptingAQrOrderClaimsItsPortionsAndOccupiesTheTableTogether" computerName="SEMH59" duration="00:00:00.2440869" startTime="2026-10-31T23:27:02.9196372+03:00" endTime="2026-10-31T23:27:02.9196375+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8ffcc843-6c9a-436d-874e-9cccea8de13d" />
+    <UnitTestResult executionId="e909cc2b-23b0-47ff-bc55-9e2e84656059" testId="03240236-a76d-acad-2070-77ab5c387958" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.AnOverdueNfcHoldWhoseKitchenAlreadyStartedCookingIsLeftForTheWaiter" computerName="SEMH59" duration="00:00:00.0273105" startTime="2026-10-31T23:27:06.6512330+03:00" endTime="2026-10-31T23:27:06.6512336+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e909cc2b-23b0-47ff-bc55-9e2e84656059" />
+    <UnitTestResult executionId="5a962b10-1d57-43cc-af9a-89980fb62323" testId="7c8f485f-b7ab-90b3-a360-ecfa3304a19f" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AStaffSessionWithoutOrderPermissionCannotAcceptAQrOrder" computerName="SEMH59" duration="00:00:00.2120889" startTime="2026-10-31T23:27:01.1010383+03:00" endTime="2026-10-31T23:27:01.1010384+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5a962b10-1d57-43cc-af9a-89980fb62323" />
+    <UnitTestResult executionId="89e99f72-1556-458b-83bd-3ed824efc2af" testId="ae76fc49-1cfa-7bb7-613c-b5420c15e3e2" testName="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAPendingOrderTransitionsToAcceptedAndOccupiesTheTable" computerName="SEMH59" duration="00:00:00.2357112" startTime="2026-10-31T23:26:59.6318476+03:00" endTime="2026-10-31T23:26:59.6318477+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="89e99f72-1556-458b-83bd-3ed824efc2af" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.AnOverdueNfcAgeRestrictedHoldWhoseKitchenHasNotStartedIsRejectedAndItsTableReleased" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="8154ae81-3b68-dc8c-a678-99d8d1a8432a">
+      <Execution id="801d377e-80a3-40da-9a84-f476bfe7e823" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests" name="AnOverdueNfcAgeRestrictedHoldWhoseKitchenHasNotStartedIsRejectedAndItsTableReleased" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.ARejectionThatLosesToAConcurrentAcceptLeavesTheKitchenItemsUntouched" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="bf3bb182-8cd2-1227-f1aa-75c058cea950">
+      <Execution id="d5068830-e7d1-4c75-9621-8efb7ecb83b0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests" name="ARejectionThatLosesToAConcurrentAcceptLeavesTheKitchenItemsUntouched" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.RejectingAQrOrderFreesTheTableAndNeverClaimsStock" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="c428dd7d-7867-4433-3e58-0453637ecc34">
+      <Execution id="51dbaad9-1cf1-409d-99bf-7209f3b957d1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests" name="RejectingAQrOrderFreesTheTableAndNeverClaimsStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests.ATextTooLongForItsColumnIsABadRequestNotAnOutage" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="2a6f0064-6f13-776c-310c-9c113505671a">
+      <Execution id="27750df5-fb12-43d2-8512-d74204785a43" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests" name="ATextTooLongForItsColumnIsABadRequestNotAnOutage" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderWithACancelledItemNeverConsumesItsStock" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="440e39ab-d8de-47d7-a32a-3b8067dde9b4">
+      <Execution id="86d8ea25-26f6-4803-bf3b-c570d4b4a626" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingAnOrderWithACancelledItemNeverConsumesItsStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.ANonQrPendingOrderIsNeverExpiredByThisSweep" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="eb0f96ec-fe6a-9d54-c0c1-e2d2d8c5f643">
+      <Execution id="898960cd-eace-4a77-971f-4780b8992adf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests" name="ANonQrPendingOrderIsNeverExpiredByThisSweep" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.ListingPendingOrdersWithoutASessionIsUnauthorized" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="5be770ab-8400-f2a0-a1ac-057c27829d18">
+      <Execution id="ec7179ac-d539-46e4-b2a5-5c4ff6136c16" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="ListingPendingOrdersWithoutASessionIsUnauthorized" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderWithAComplimentaryItemStillConsumesItsStock" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="c8803944-7d17-d0c7-858c-c1bc493894aa">
+      <Execution id="ebda94ac-d98d-48dc-8dc4-35854eb5f51f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingAnOrderWithAComplimentaryItemStillConsumesItsStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.TwoStaffAcceptingTheSameQrOrderAtOnceHaveOneWinnerAndOneStockEffect" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="fdab2dbd-a76a-ab98-40ae-43514d537742">
+      <Execution id="42ca2594-bad4-448b-b81b-6f41aad9ced9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests" name="TwoStaffAcceptingTheSameQrOrderAtOnceHaveOneWinnerAndOneStockEffect" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderForAnUnmappedProductIsRefused" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="90c7c957-0938-24e6-dd71-eade2f722e55">
+      <Execution id="4d891f9d-f2f4-48c7-a7b2-2dbf14f5ed76" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingAnOrderForAnUnmappedProductIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.RejectingAPendingOrderCancelsTheKitchenTicketAndFreesTheTable" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="32538ded-9a08-dc71-cfca-3b735a4fd5d9">
+      <Execution id="c56d0dac-fc1d-4b45-bcca-5ff2b6bee456" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="RejectingAPendingOrderCancelsTheKitchenTicketAndFreesTheTable" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.AnOverdueQrOrderIsRejectedAndItsTableReleased" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="4a8a7bb5-3d18-9733-0808-562ea30be8cb">
+      <Execution id="b1dab4c5-0e3d-42d0-b866-6cb75f99ba51" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests" name="AnOverdueQrOrderIsRejectedAndItsTableReleased" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AcceptingAQrOrderLocksEveryStockRowInTheGlobalOrderBeforeTheHoldTakesAny" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="4198e737-9964-bc5d-18fa-4bc0f52262cc">
+      <Execution id="0463d43b-2098-4dc3-8687-60b7547b85ff" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests" name="AcceptingAQrOrderLocksEveryStockRowInTheGlobalOrderBeforeTheHoldTakesAny" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.RejectingAnAlreadyBilledOrderIsRefused" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="e9ca5d72-d5f6-ad1c-55e2-673fa40b8257">
+      <Execution id="24d908cd-fba3-48f6-b742-0e8546d4cc0f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="RejectingAnAlreadyBilledOrderIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.ViewingAnOrderShowsTheAvailableStockForEachItem" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="d73cb753-b704-ca9d-96d7-1c2521c6f182">
+      <Execution id="9a4733e1-1e0a-4d7f-a8b4-58cb6003b4c9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="ViewingAnOrderShowsTheAvailableStockForEachItem" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AStaleRowVersionRefusesTheQrAcceptWithoutAnyHold" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="7187f6fc-d088-e2e4-26e2-6073fb56a12b">
+      <Execution id="0a94ba9c-7fd5-4138-b902-8f9c3eae5c2e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests" name="AStaleRowVersionRefusesTheQrAcceptWithoutAnyHold" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.NoSessionCookieIsUnauthorizedForBothActions" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="21d11f6b-2efa-1736-9d08-87f3863629b4">
+      <Execution id="b0ccaa35-a909-4417-80b6-b4d08163cee8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="NoSessionCookieIsUnauthorizedForBothActions" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.RejectingWithAnEmptyReasonIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="8c3d2b07-431f-4f5b-2a1c-871c4f651957">
+      <Execution id="7f9c3c14-eb9b-42b4-aec4-1f34e5fcb66a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="RejectingWithAnEmptyReasonIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingIsRefusedWhenAnotherOrderHoldsTheLastPortion" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="f05e2ba3-9b17-adce-b2e8-40c0c1ea3c29">
+      <Execution id="efd0566f-9cd4-4bcf-98e3-75e30f22f6bd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingIsRefusedWhenAnotherOrderHoldsTheLastPortion" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.ThePendingListIsCappedAt200OldestFirst" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="d41183ee-8d0f-409c-b870-5d064aa496dd">
+      <Execution id="68a6240f-b65c-47d4-9e5c-356b6ad21670" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="ThePendingListIsCappedAt200OldestFirst" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests.ATimeoutWhileTheCallerIsStillThereIsStillAServerError" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="d87c1963-3058-7dbd-56a2-0facc23385b5">
+      <Execution id="a9e9e18c-5267-4729-90ed-603f02e0772d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests" name="ATimeoutWhileTheCallerIsStillThereIsStillAServerError" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AcceptingAQrOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="f71bfbe4-c9aa-65ee-32a0-2a03f9b59311">
+      <Execution id="f19b4a60-e634-48d7-8259-aecd1c7002e8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests" name="AcceptingAQrOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderConsumesItsOwnHold" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="b436e6d7-9606-ccb9-58f7-d56360e235b5">
+      <Execution id="b9c8854d-5164-4eb4-b532-46a695dd600c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingAnOrderConsumesItsOwnHold" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.AnOrderYoungerThanTheTimeoutIsLeftAlone" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="8847341a-8f25-3e19-3624-4e76cc4d0751">
+      <Execution id="da9cd43a-1de4-4137-aa92-c60235e201cf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests" name="AnOrderYoungerThanTheTimeoutIsLeftAlone" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderWithInsufficientStockIsRefused" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="8e505190-fcb8-8240-446a-70b99c59600d">
+      <Execution id="0b8d8d7f-36d3-449f-a71f-33ef005e31c3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingAnOrderWithInsufficientStockIsRefused" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests.ACallerThatHungUpGetsNoErrorAndNothingIsLoggedAsAFailure" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="1e5a7871-1fb7-c0a8-eea0-116cd793c00f">
+      <Execution id="a6c7af57-c5a0-4635-8f30-ea1109798d8a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests" name="ACallerThatHungUpGetsNoErrorAndNothingIsLoggedAsAFailure" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AStaffSessionWithoutOrderPermissionCannotAcceptAQrOrder" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="7c8f485f-b7ab-90b3-a360-ecfa3304a19f">
+      <Execution id="5a962b10-1d57-43cc-af9a-89980fb62323" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests" name="AStaffSessionWithoutOrderPermissionCannotAcceptAQrOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.AnOverdueNfcHoldWhoseKitchenAlreadyStartedCookingIsLeftForTheWaiter" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="03240236-a76d-acad-2070-77ab5c387958">
+      <Execution id="e909cc2b-23b0-47ff-bc55-9e2e84656059" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests" name="AnOverdueNfcHoldWhoseKitchenAlreadyStartedCookingIsLeftForTheWaiter" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AQrOrderLosingTheLastPortionToAnotherChannelLeavesNothingBehind" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="14d0f456-e416-b60b-6321-01a8fa8d70ae">
+      <Execution id="bf82be11-d800-43de-92e2-9d682eea76d8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests" name="AQrOrderLosingTheLastPortionToAnotherChannelLeavesNothingBehind" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.PendingOrdersAreListedUntilTheyAreResolved" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="9c14ceb1-85eb-37fc-0370-7f03930079c4">
+      <Execution id="7e4e18f4-7b72-49cd-bf26-4b34a77edd00" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="PendingOrdersAreListedUntilTheyAreResolved" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingWithAStaleRowVersionIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="ca351ecf-f45c-a76b-0625-76c67e22ee3d">
+      <Execution id="dced46a4-8864-4fe4-a356-bce508b80999" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingWithAStaleRowVersionIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderWithATwoIngredientBomAppliesNeitherDeltaWhenOneIsInsufficient" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="5959d933-13e3-b28c-6dae-ee02cb953129">
+      <Execution id="67530621-7474-4115-b954-667d5b724ba4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingAnOrderWithATwoIngredientBomAppliesNeitherDeltaWhenOneIsInsufficient" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests.ABrokenDisplayHubDoesNotFailAnOrderThatIsAlreadyCommitted" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="051c5fa3-a02f-f60a-3f60-adba3e5c6564">
+      <Execution id="af24b98f-e127-4c5f-8e94-c4ccd83e1e67" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderRequestRobustnessTests" name="ABrokenDisplayHubDoesNotFailAnOrderThatIsAlreadyCommitted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAPendingOrderTransitionsToAcceptedAndOccupiesTheTable" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="ae76fc49-1cfa-7bb7-613c-b5420c15e3e2">
+      <Execution id="89e99f72-1556-458b-83bd-3ed824efc2af" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingAPendingOrderTransitionsToAcceptedAndOccupiesTheTable" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests.AnOrderThatKeepsFailingIsLoggedAndTheOrdersBehindItStillExpire" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="b7658f01-bdd3-8b7f-a859-1fd05a3c23c8">
+      <Execution id="2ac6efca-3879-4eab-abf6-004ec259ce18" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrOrderExpiryHostedServiceTests" name="AnOrderThatKeepsFailingIsLoggedAndTheOrdersBehindItStillExpire" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAPendingOrderConsumesTheMappedStock" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="3407876d-d7dd-d296-d386-7785474e72ea">
+      <Execution id="adb987b8-6e18-4ae1-9e87-efdc84af96de" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingAPendingOrderConsumesTheMappedStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests.AcceptingAnOrderThatIsNotAwaitingConfirmationIsRejected" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="392f8a6f-b329-9f97-fab6-1637dddacb3e">
+      <Execution id="b18fd30f-cb9b-4330-91be-54ce9c0a2233" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.OrderManagementConfirmationHttpTests" name="AcceptingAnOrderThatIsNotAwaitingConfirmationIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AcceptingAQrOrderClaimsItsPortionsAndOccupiesTheTableTogether" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="7e05f233-139e-543f-d80c-a24dd9fce2c8">
+      <Execution id="8ffcc843-6c9a-436d-874e-9cccea8de13d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests" name="AcceptingAQrOrderClaimsItsPortionsAndOccupiesTheTableTogether" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests.AQrOrderForAnUnmappedProductIsRefusedWithoutAnyHold" storage="d:\project\alkaros\tests\host\experience\orders\confirmation\bin\debug\net8.0\alkaros.host.experience.orders.confirmation.tests.dll" id="9b950868-32ce-e37c-00f3-94c6b63020c4">
+      <Execution id="ca5aa075-9c91-4e72-98ce-d57971d2059f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0\ALKAROS.Host.Experience.Orders.Confirmation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Orders.Confirmation.Tests.QrConfirmationReservationHttpTests" name="AQrOrderForAnUnmappedProductIsRefusedWithoutAnyHold" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="8154ae81-3b68-dc8c-a678-99d8d1a8432a" executionId="801d377e-80a3-40da-9a84-f476bfe7e823" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1e5a7871-1fb7-c0a8-eea0-116cd793c00f" executionId="a6c7af57-c5a0-4635-8f30-ea1109798d8a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fdab2dbd-a76a-ab98-40ae-43514d537742" executionId="42ca2594-bad4-448b-b81b-6f41aad9ced9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="051c5fa3-a02f-f60a-3f60-adba3e5c6564" executionId="af24b98f-e127-4c5f-8e94-c4ccd83e1e67" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4198e737-9964-bc5d-18fa-4bc0f52262cc" executionId="0463d43b-2098-4dc3-8687-60b7547b85ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d73cb753-b704-ca9d-96d7-1c2521c6f182" executionId="9a4733e1-1e0a-4d7f-a8b4-58cb6003b4c9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9c14ceb1-85eb-37fc-0370-7f03930079c4" executionId="7e4e18f4-7b72-49cd-bf26-4b34a77edd00" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7187f6fc-d088-e2e4-26e2-6073fb56a12b" executionId="0a94ba9c-7fd5-4138-b902-8f9c3eae5c2e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="21d11f6b-2efa-1736-9d08-87f3863629b4" executionId="b0ccaa35-a909-4417-80b6-b4d08163cee8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b436e6d7-9606-ccb9-58f7-d56360e235b5" executionId="b9c8854d-5164-4eb4-b532-46a695dd600c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f71bfbe4-c9aa-65ee-32a0-2a03f9b59311" executionId="f19b4a60-e634-48d7-8259-aecd1c7002e8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5be770ab-8400-f2a0-a1ac-057c27829d18" executionId="ec7179ac-d539-46e4-b2a5-5c4ff6136c16" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3407876d-d7dd-d296-d386-7785474e72ea" executionId="adb987b8-6e18-4ae1-9e87-efdc84af96de" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf3bb182-8cd2-1227-f1aa-75c058cea950" executionId="d5068830-e7d1-4c75-9621-8efb7ecb83b0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="32538ded-9a08-dc71-cfca-3b735a4fd5d9" executionId="c56d0dac-fc1d-4b45-bcca-5ff2b6bee456" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="392f8a6f-b329-9f97-fab6-1637dddacb3e" executionId="b18fd30f-cb9b-4330-91be-54ce9c0a2233" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8e505190-fcb8-8240-446a-70b99c59600d" executionId="0b8d8d7f-36d3-449f-a71f-33ef005e31c3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f05e2ba3-9b17-adce-b2e8-40c0c1ea3c29" executionId="efd0566f-9cd4-4bcf-98e3-75e30f22f6bd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b7658f01-bdd3-8b7f-a859-1fd05a3c23c8" executionId="2ac6efca-3879-4eab-abf6-004ec259ce18" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8c3d2b07-431f-4f5b-2a1c-871c4f651957" executionId="7f9c3c14-eb9b-42b4-aec4-1f34e5fcb66a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a6f0064-6f13-776c-310c-9c113505671a" executionId="27750df5-fb12-43d2-8512-d74204785a43" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d87c1963-3058-7dbd-56a2-0facc23385b5" executionId="a9e9e18c-5267-4729-90ed-603f02e0772d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8847341a-8f25-3e19-3624-4e76cc4d0751" executionId="da9cd43a-1de4-4137-aa92-c60235e201cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="14d0f456-e416-b60b-6321-01a8fa8d70ae" executionId="bf82be11-d800-43de-92e2-9d682eea76d8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca351ecf-f45c-a76b-0625-76c67e22ee3d" executionId="dced46a4-8864-4fe4-a356-bce508b80999" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5959d933-13e3-b28c-6dae-ee02cb953129" executionId="67530621-7474-4115-b954-667d5b724ba4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c428dd7d-7867-4433-3e58-0453637ecc34" executionId="51dbaad9-1cf1-409d-99bf-7209f3b957d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90c7c957-0938-24e6-dd71-eade2f722e55" executionId="4d891f9d-f2f4-48c7-a7b2-2dbf14f5ed76" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9b950868-32ce-e37c-00f3-94c6b63020c4" executionId="ca5aa075-9c91-4e72-98ce-d57971d2059f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="440e39ab-d8de-47d7-a32a-3b8067dde9b4" executionId="86d8ea25-26f6-4803-bf3b-c570d4b4a626" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e9ca5d72-d5f6-ad1c-55e2-673fa40b8257" executionId="24d908cd-fba3-48f6-b742-0e8546d4cc0f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4a8a7bb5-3d18-9733-0808-562ea30be8cb" executionId="b1dab4c5-0e3d-42d0-b866-6cb75f99ba51" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="eb0f96ec-fe6a-9d54-c0c1-e2d2d8c5f643" executionId="898960cd-eace-4a77-971f-4780b8992adf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c8803944-7d17-d0c7-858c-c1bc493894aa" executionId="ebda94ac-d98d-48dc-8dc4-35854eb5f51f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d41183ee-8d0f-409c-b870-5d064aa496dd" executionId="68a6240f-b65c-47d4-9e5c-356b6ad21670" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7e05f233-139e-543f-d80c-a24dd9fce2c8" executionId="8ffcc843-6c9a-436d-874e-9cccea8de13d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="03240236-a76d-acad-2070-77ab5c387958" executionId="e909cc2b-23b0-47ff-bc55-9e2e84656059" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7c8f485f-b7ab-90b3-a360-ecfa3304a19f" executionId="5a962b10-1d57-43cc-af9a-89980fb62323" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ae76fc49-1cfa-7bb7-613c-b5420c15e3e2" executionId="89e99f72-1556-458b-83bd-3ed824efc2af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="39" executed="39" passed="39" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.80]   Discovering: ALKAROS.Host.Experience.Orders.Confirmation.Tests&#xD;
+[xUnit.net 00:00:00.83]   Discovered:  ALKAROS.Host.Experience.Orders.Confirmation.Tests&#xD;
+[xUnit.net 00:00:00.84]   Starting:    ALKAROS.Host.Experience.Orders.Confirmation.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54651&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54651/api/v1/terminals/065a5261-a7b5-44d5-9b5d-bddacdbac2f7/orders/c2599543-2f85-41f3-91bc-bef1e1af018d/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54651/api/v1/terminals/065a5261-a7b5-44d5-9b5d-bddacdbac2f7/orders/c2599543-2f85-41f3-91bc-bef1e1af018d/accept - 409 - application/json;+charset=utf-8 244.9769ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54657&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54657/api/v1/terminals/949c1f6f-64dc-4482-8bc6-12cfea064784/orders/ef0d5b49-5e26-4786-a179-bcc42a22e77f/reject - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54657/api/v1/terminals/949c1f6f-64dc-4482-8bc6-12cfea064784/orders/ef0d5b49-5e26-4786-a179-bcc42a22e77f/reject - 400 - application/json;+charset=utf-8 93.2777ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54662&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54662/api/v1/terminals/2e99c385-de44-4e2e-98e5-283c7a2b873b/orders/11832791-e071-4c62-9fb1-db99bde6b5f1/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54662/api/v1/terminals/2e99c385-de44-4e2e-98e5-283c7a2b873b/orders/11832791-e071-4c62-9fb1-db99bde6b5f1/accept - 401 - application/json;+charset=utf-8 82.0229ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54662/api/v1/terminals/ac9e7d12-6314-4cf2-a62a-7779de5d60e0/orders/e4e17053-fcfb-4ea2-a5d5-e63f901230a1/reject - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54662/api/v1/terminals/ac9e7d12-6314-4cf2-a62a-7779de5d60e0/orders/e4e17053-fcfb-4ea2-a5d5-e63f901230a1/reject - 401 - application/json;+charset=utf-8 3.1730ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54667&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54667/api/v1/terminals/7d213f85-c9eb-48cb-825c-479d1fe7b25c/orders/5d691cef-14ce-4211-9133-3cc021aeee21/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54667/api/v1/terminals/7d213f85-c9eb-48cb-825c-479d1fe7b25c/orders/5d691cef-14ce-4211-9133-3cc021aeee21/accept - 200 - application/json;+charset=utf-8 216.4141ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54673&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54673/api/v1/terminals/5c3f4885-ab89-4707-a247-53a8156d7a14/orders/pending - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/pending'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/pending'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54673/api/v1/terminals/5c3f4885-ab89-4707-a247-53a8156d7a14/orders/pending - 401 - application/json;+charset=utf-8 81.6363ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54678&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54678/api/v1/terminals/92215271-d6c0-48e8-9fe3-d9b3ba7a144a/orders/c7fa8797-8959-4fca-8461-47dc6fea9e04/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54678/api/v1/terminals/92215271-d6c0-48e8-9fe3-d9b3ba7a144a/orders/c7fa8797-8959-4fca-8461-47dc6fea9e04/accept - 200 - application/json;+charset=utf-8 119.3947ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54684&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54684/api/v1/terminals/04d8c850-22a2-468c-99d2-db18a4bfe564/orders/pending - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/pending'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/pending'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54684/api/v1/terminals/04d8c850-22a2-468c-99d2-db18a4bfe564/orders/pending - 200 - application/json;+charset=utf-8 99.0146ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54684/api/v1/terminals/04d8c850-22a2-468c-99d2-db18a4bfe564/orders/0991a351-c4b7-4c5a-b1f1-e49e1436cb5e/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54684/api/v1/terminals/04d8c850-22a2-468c-99d2-db18a4bfe564/orders/0991a351-c4b7-4c5a-b1f1-e49e1436cb5e/accept - 200 - application/json;+charset=utf-8 45.2996ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54684/api/v1/terminals/04d8c850-22a2-468c-99d2-db18a4bfe564/orders/pending - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/pending'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/pending'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54684/api/v1/terminals/04d8c850-22a2-468c-99d2-db18a4bfe564/orders/pending - 200 - application/json;+charset=utf-8 8.0777ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54690&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54690/api/v1/terminals/432bfbf3-558d-4a0d-ad1b-4ad304f17940/orders/7fc24055-c668-4db4-9fe4-a4861de13900/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54690/api/v1/terminals/432bfbf3-558d-4a0d-ad1b-4ad304f17940/orders/7fc24055-c668-4db4-9fe4-a4861de13900/accept - 200 - application/json;+charset=utf-8 113.4961ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54690/api/v1/terminals/432bfbf3-558d-4a0d-ad1b-4ad304f17940/orders/7fc24055-c668-4db4-9fe4-a4861de13900/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54690/api/v1/terminals/432bfbf3-558d-4a0d-ad1b-4ad304f17940/orders/7fc24055-c668-4db4-9fe4-a4861de13900/accept - 409 - application/json;+charset=utf-8 13.9320ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54696&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54696/api/v1/terminals/c8947424-dbeb-4f37-b7a9-31dd4a6d27dd/orders/b422a573-cae2-4b1b-be46-b9ea43e0005c/reject - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54696/api/v1/terminals/c8947424-dbeb-4f37-b7a9-31dd4a6d27dd/orders/b422a573-cae2-4b1b-be46-b9ea43e0005c/reject - 409 - application/json;+charset=utf-8 93.2211ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54701&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54701/api/v1/terminals/e700d12d-3e04-470c-ad5b-e620b89627de/orders/d29d3472-da08-4357-94d4-d057abea45dd/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54701/api/v1/terminals/e700d12d-3e04-470c-ad5b-e620b89627de/orders/d29d3472-da08-4357-94d4-d057abea45dd/accept - 200 - application/json;+charset=utf-8 127.6519ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54707&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54707/api/v1/terminals/845a3d35-907d-445e-8060-bfccb5bc6e24/orders/4c1f5420-0d58-4199-9fb1-b418d8ec8c97/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54707/api/v1/terminals/845a3d35-907d-445e-8060-bfccb5bc6e24/orders/4c1f5420-0d58-4199-9fb1-b418d8ec8c97/accept - 409 - application/json;+charset=utf-8 108.8184ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54713&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54713/api/v1/terminals/cc260856-0323-453f-adb5-35b685707e56/orders/f423bde2-f38d-463a-89e0-f50953a20ad9 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderDto' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54713/api/v1/terminals/cc260856-0323-453f-adb5-35b685707e56/orders/f423bde2-f38d-463a-89e0-f50953a20ad9 - 200 - application/json;+charset=utf-8 128.9228ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54718&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:54718/api/v1/terminals/4a94f808-93b1-4358-a927-42ebcfad287c/orders/pending - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/pending'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/orders/pending'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:54718/api/v1/terminals/4a94f808-93b1-4358-a927-42ebcfad287c/orders/pending - 200 - application/json;+charset=utf-8 85.0425ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54723&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54723/api/v1/terminals/8e42d336-488e-4509-af1d-ae1b212b06be/orders/834d81ae-2e82-45d4-bcea-6d370dfa11e2/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54723/api/v1/terminals/8e42d336-488e-4509-af1d-ae1b212b06be/orders/834d81ae-2e82-45d4-bcea-6d370dfa11e2/accept - 409 - application/json;+charset=utf-8 98.2290ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54729&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54729/api/v1/terminals/09b5c72f-e24f-42c2-a4f2-19bf447de6ba/orders/ed96de1c-5f38-45d3-9e92-be14814b6b34/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54729/api/v1/terminals/09b5c72f-e24f-42c2-a4f2-19bf447de6ba/orders/ed96de1c-5f38-45d3-9e92-be14814b6b34/accept - 409 - application/json;+charset=utf-8 83.5421ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54734&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54734/api/v1/terminals/db7afcbf-ddda-4717-9984-64b165ce468e/orders/dec5a664-1884-48ec-a746-348a766df8e1/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54734/api/v1/terminals/db7afcbf-ddda-4717-9984-64b165ce468e/orders/dec5a664-1884-48ec-a746-348a766df8e1/accept - 200 - application/json;+charset=utf-8 106.8613ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54740&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54740/api/v1/terminals/1ac54aba-73fa-4fdb-9459-80fb708c5b3b/orders/33ad36bb-6aa1-41cf-a091-c5f01f84b995/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54740/api/v1/terminals/1ac54aba-73fa-4fdb-9459-80fb708c5b3b/orders/33ad36bb-6aa1-41cf-a091-c5f01f84b995/accept - 409 - application/json;+charset=utf-8 95.7944ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54746&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54746/api/v1/terminals/c7ad2d42-64d3-4ca8-9403-d017fc619569/orders/b3ca6ddc-e2c5-4520-926b-564ce2f160e8/reject - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54746/api/v1/terminals/c7ad2d42-64d3-4ca8-9403-d017fc619569/orders/b3ca6ddc-e2c5-4520-926b-564ce2f160e8/reject - 200 - application/json;+charset=utf-8 106.3271ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54751&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54751/api/v1/terminals/b40700cc-f503-47ff-a767-82f40d4dead8/orders/1ffcdf2c-c4f0-4a01-b894-dc3912eb2325/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54751/api/v1/terminals/b40700cc-f503-47ff-a767-82f40d4dead8/orders/1ffcdf2c-c4f0-4a01-b894-dc3912eb2325/accept - 200 - application/json;+charset=utf-8 108.5713ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54757&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54757/api/v1/terminals/01856609-6a61-4617-9a55-17fe159912a8/orders/64764e6d-b7d1-4d00-9249-bb88bdd07fa1/reject - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54757/api/v1/terminals/01856609-6a61-4617-9a55-17fe159912a8/orders/64764e6d-b7d1-4d00-9249-bb88bdd07fa1/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54757/api/v1/terminals/01856609-6a61-4617-9a55-17fe159912a8/orders/64764e6d-b7d1-4d00-9249-bb88bdd07fa1/accept - 200 - application/json;+charset=utf-8 91.5170ms&#xD;
+warn: ALKAROS.Host.Experience.Orders.OrderManagementExceptionFilter[5201]&#xD;
+      Order management request on /api/v1/terminals/01856609-6a61-4617-9a55-17fe159912a8/orders/64764e6d-b7d1-4d00-9249-bb88bdd07fa1/reject (0HNPNHL4UQAIA:00000001) mapped to a 409 via InvalidOperationException.&#xD;
+      System.InvalidOperationException: Order 64764e6d-b7d1-4d00-9249-bb88bdd07fa1 not found or concurrent modification (expected row version 1).&#xD;
+         at ALKAROS.Orders.OrderAggregate.PostgresOrderRepository.UpdateOrderAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, Order order, Int64 expectedRowVersion, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Orders\OrderAggregate\PostgresOrderRepository.cs:line 344&#xD;
+         at ALKAROS.Orders.OrderAggregate.PostgresOrderRepository.UpdateOrderAsync(NpgsqlConnection connection, NpgsqlTransaction transaction, Order order, Int64 expectedRowVersion, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Orders\OrderAggregate\PostgresOrderRepository.cs:line 348&#xD;
+         at ALKAROS.Orders.OrderAggregate.PostgresOrderRepository.SaveAsync(Order order, Int64 expectedRowVersion, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Orders\OrderAggregate\PostgresOrderRepository.cs:line 151&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.PendingOrderConfirmationStore.RejectAsync(Guid orderId, Int64 expectedRowVersion, Guid actorId, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\PendingOrderConfirmationStore.cs:line 185&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.PendingOrderConfirmationStore.RejectAsync(Guid orderId, Int64 expectedRowVersion, Guid actorId, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\PendingOrderConfirmationStore.cs:line 194&#xD;
+         at ALKAROS.Host.Experience.Orders.PendingOrderConfirmation.PendingOrderConfirmationStore.RejectAsync(Guid orderId, Int64 expectedRowVersion, Guid actorId, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\PendingOrderConfirmation\PendingOrderConfirmationStore.cs:line 194&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementEndpoints.&lt;&gt;c.&lt;&lt;MapOrderManagementApi&gt;b__3_14&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 896&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Orders.OrderManagementExceptionFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Orders\OrderManagementEndpoints.cs:line 1152&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54757/api/v1/terminals/01856609-6a61-4617-9a55-17fe159912a8/orders/64764e6d-b7d1-4d00-9249-bb88bdd07fa1/reject - 409 - application/json;+charset=utf-8 293.9119ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54766&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54766/api/v1/terminals/5e958bf5-66a8-4218-9f70-5a5fc1b306b6/orders/ed4643b7-486c-48a5-b034-68480dc67c2d/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54766/api/v1/terminals/5e958bf5-66a8-4218-9f70-5a5fc1b306b6/orders/ed4643b7-486c-48a5-b034-68480dc67c2d/accept - 403 - application/json;+charset=utf-8 91.9461ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54771&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54771/api/v1/terminals/48a47346-4dc1-4e8e-9935-14bf2ee08210/orders/5435a519-3ea0-4bef-9738-cbe49fde534f/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54771/api/v1/terminals/48a47346-4dc1-4e8e-9935-14bf2ee08210/orders/5435a519-3ea0-4bef-9738-cbe49fde534f/accept - 200 - application/json;+charset=utf-8 125.1067ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54777&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54777/api/v1/terminals/9ace2455-b16b-4ec3-92ff-d844358d3aba/orders/38c617a6-3a23-45f8-a32a-93b83bd66ede/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54777/api/v1/terminals/9ace2455-b16b-4ec3-92ff-d844358d3aba/orders/38c617a6-3a23-45f8-a32a-93b83bd66ede/accept - 409 - application/json;+charset=utf-8 86.2039ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54782&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54782/api/v1/terminals/fe51ea4b-eb2f-4215-81f7-30b3413b25e0/orders/052f01bd-5eca-4f86-8e73-2a067c9c8a48/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54782/api/v1/terminals/fe51ea4b-eb2f-4215-81f7-30b3413b25e0/orders/052f01bd-5eca-4f86-8e73-2a067c9c8a48/accept - 200 - application/json;+charset=utf-8 122.2827ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54788&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54788/api/v1/terminals/c8a91ac8-700b-4b6e-b6de-a381104a2a7d/orders/23976014-a97a-4734-bdc0-47f46c44a5db/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54788/api/v1/terminals/c8a91ac8-700b-4b6e-b6de-a381104a2a7d/orders/23976014-a97a-4734-bdc0-47f46c44a5db/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54788/api/v1/terminals/c8a91ac8-700b-4b6e-b6de-a381104a2a7d/orders/23976014-a97a-4734-bdc0-47f46c44a5db/accept - 200 - application/json;+charset=utf-8 122.9015ms&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54788/api/v1/terminals/c8a91ac8-700b-4b6e-b6de-a381104a2a7d/orders/23976014-a97a-4734-bdc0-47f46c44a5db/accept - 409 - application/json;+charset=utf-8 134.2022ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54797&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54797/api/v1/terminals/882b44d5-b29b-4882-969d-dbd13e83940c/orders/923a8a64-3c07-4d6b-803e-a2a25aa3957c/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54797/api/v1/terminals/882b44d5-b29b-4882-969d-dbd13e83940c/orders/923a8a64-3c07-4d6b-803e-a2a25aa3957c/accept - 200 - application/json;+charset=utf-8 162.8374ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54805&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54805/api/v1/terminals/ddc41548-7d87-4b59-a0d0-352009cf7bcd/orders/fed5a475-26f6-4b42-9ff0-075ef55a49c7/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54805/api/v1/terminals/ddc41548-7d87-4b59-a0d0-352009cf7bcd/orders/fed5a475-26f6-4b42-9ff0-075ef55a49c7/accept - 409 - application/json;+charset=utf-8 106.8061ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54811&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54811/api/v1/terminals/6d67c65a-55cc-4563-8d66-acd597c00d0b/orders/42fc13fa-540c-4ad4-9bb1-527db196c357/accept - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/accept'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54811/api/v1/terminals/6d67c65a-55cc-4563-8d66-acd597c00d0b/orders/42fc13fa-540c-4ad4-9bb1-527db196c357/accept - 409 - application/json;+charset=utf-8 104.4241ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:54817&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Orders\Confirmation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:54817/api/v1/terminals/c30b592e-b4e3-4549-8087-e4cb57d16b50/orders/d9b1c6b0-2c7e-4c69-9042-9aac6d02fddb/reject - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PendingOrderConfirmationResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/orders/{orderId:guid}/reject'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:54817/api/v1/terminals/c30b592e-b4e3-4549-8087-e4cb57d16b50/orders/d9b1c6b0-2c7e-4c69-9042-9aac6d02fddb/reject - 200 - application/json;+charset=utf-8 112.8068ms&#xD;
+[xUnit.net 00:00:22.86]   Finished:    ALKAROS.Host.Experience.Orders.Confirmation.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

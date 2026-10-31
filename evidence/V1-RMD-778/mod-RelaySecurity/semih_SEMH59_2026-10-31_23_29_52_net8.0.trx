@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3b18c02e-b232-4193-98d6-aafdb1c4a049" name="semih@SEMH59 2026-10-31 23:29:52" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T23:29:52.2348682+03:00" queuing="2026-10-31T23:29:52.2348685+03:00" start="2026-10-31T23:29:50.8230488+03:00" finish="2026-10-31T23:29:52.2433883+03:00" />
+  <TestSettings name="default" id="eacb299b-26a8-47ec-ae99-fae390aef641">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_23_29_52" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="c3d1a3c4-943f-4c14-8144-cbe41365ee4c" testId="63a85327-252e-218a-0f54-fbb86a5ae5ca" testName="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.AnUnknownTokenIsRejectedBeforeTheNonceOrTimestampIsEvenChecked" computerName="SEMH59" duration="00:00:00.0031170" startTime="2026-10-31T23:29:52.0663770+03:00" endTime="2026-10-31T23:29:52.0663774+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c3d1a3c4-943f-4c14-8144-cbe41365ee4c" />
+    <UnitTestResult executionId="bfa394e9-f790-4082-9c86-84877fd5f489" testId="110a6fa7-7dbf-be6a-d694-eb6e3cbcb4e3" testName="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.TheSameNonceValueIsIndependentAcrossDifferentTokens" computerName="SEMH59" duration="00:00:00.0221040" startTime="2026-10-31T23:29:52.0091875+03:00" endTime="2026-10-31T23:29:52.0091878+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bfa394e9-f790-4082-9c86-84877fd5f489" />
+    <UnitTestResult executionId="bbbb13ea-b57f-4d5c-ac95-b3725f91a82f" testId="7dbd6d84-0e87-8b36-558a-39437d0f5271" testName="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.AFreshRequestWithAValidTokenAndNonceIsAccepted" computerName="SEMH59" duration="00:00:00.0146931" startTime="2026-10-31T23:29:52.0529749+03:00" endTime="2026-10-31T23:29:52.0529752+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bbbb13ea-b57f-4d5c-ac95-b3725f91a82f" />
+    <UnitTestResult executionId="ad8f139b-c633-4f2a-a2da-1068b734a349" testId="f7a6ad12-c216-6dce-17cc-de911cb36d2d" testName="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.ATimestampTooFarInThePastIsRejected" computerName="SEMH59" duration="00:00:00.0672947" startTime="2026-10-31T23:29:51.9857306+03:00" endTime="2026-10-31T23:29:51.9857499+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad8f139b-c633-4f2a-a2da-1068b734a349" />
+    <UnitTestResult executionId="2c966466-f207-4ab6-8ba6-013009770833" testId="0fb5f715-4158-b376-5c9e-3a4927fa09a7" testName="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.ATimestampTooFarInTheFutureIsRejected" computerName="SEMH59" duration="00:00:00.0093481" startTime="2026-10-31T23:29:52.0628013+03:00" endTime="2026-10-31T23:29:52.0628015+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2c966466-f207-4ab6-8ba6-013009770833" />
+    <UnitTestResult executionId="5e9bf4e1-9e5f-4247-9a70-189a69fbb208" testId="54eac7da-2a11-0e87-8464-2f90d790e224" testName="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.TheSameNonceUsedTwiceForTheSameTokenIsRejectedTheSecondTime" computerName="SEMH59" duration="00:00:00.0130508" startTime="2026-10-31T23:29:52.0227090+03:00" endTime="2026-10-31T23:29:52.0227097+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5e9bf4e1-9e5f-4247-9a70-189a69fbb208" />
+    <UnitTestResult executionId="39d40fea-d6c7-43d6-bcb5-60baa199c7a9" testId="4f8aa702-1e31-2f83-0e77-a0ebe9d2d529" testName="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.ARevokedTokenIsRejectedWithTheTokenServicesOwnReason" computerName="SEMH59" duration="00:00:00.0144578" startTime="2026-10-31T23:29:52.0377090+03:00" endTime="2026-10-31T23:29:52.0377093+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="39d40fea-d6c7-43d6-bcb5-60baa199c7a9" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.TheSameNonceUsedTwiceForTheSameTokenIsRejectedTheSecondTime" storage="d:\project\alkaros\tests\modules\qrordering\relaysecurity\bin\debug\net8.0\alkaros.qrordering.relaysecurity.tests.dll" id="54eac7da-2a11-0e87-8464-2f90d790e224">
+      <Execution id="5e9bf4e1-9e5f-4247-9a70-189a69fbb208" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\RelaySecurity\bin\Debug\net8.0\ALKAROS.QrOrdering.RelaySecurity.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests" name="TheSameNonceUsedTwiceForTheSameTokenIsRejectedTheSecondTime" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.TheSameNonceValueIsIndependentAcrossDifferentTokens" storage="d:\project\alkaros\tests\modules\qrordering\relaysecurity\bin\debug\net8.0\alkaros.qrordering.relaysecurity.tests.dll" id="110a6fa7-7dbf-be6a-d694-eb6e3cbcb4e3">
+      <Execution id="bfa394e9-f790-4082-9c86-84877fd5f489" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\RelaySecurity\bin\Debug\net8.0\ALKAROS.QrOrdering.RelaySecurity.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests" name="TheSameNonceValueIsIndependentAcrossDifferentTokens" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.ARevokedTokenIsRejectedWithTheTokenServicesOwnReason" storage="d:\project\alkaros\tests\modules\qrordering\relaysecurity\bin\debug\net8.0\alkaros.qrordering.relaysecurity.tests.dll" id="4f8aa702-1e31-2f83-0e77-a0ebe9d2d529">
+      <Execution id="39d40fea-d6c7-43d6-bcb5-60baa199c7a9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\RelaySecurity\bin\Debug\net8.0\ALKAROS.QrOrdering.RelaySecurity.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests" name="ARevokedTokenIsRejectedWithTheTokenServicesOwnReason" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.ATimestampTooFarInThePastIsRejected" storage="d:\project\alkaros\tests\modules\qrordering\relaysecurity\bin\debug\net8.0\alkaros.qrordering.relaysecurity.tests.dll" id="f7a6ad12-c216-6dce-17cc-de911cb36d2d">
+      <Execution id="ad8f139b-c633-4f2a-a2da-1068b734a349" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\RelaySecurity\bin\Debug\net8.0\ALKAROS.QrOrdering.RelaySecurity.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests" name="ATimestampTooFarInThePastIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.AnUnknownTokenIsRejectedBeforeTheNonceOrTimestampIsEvenChecked" storage="d:\project\alkaros\tests\modules\qrordering\relaysecurity\bin\debug\net8.0\alkaros.qrordering.relaysecurity.tests.dll" id="63a85327-252e-218a-0f54-fbb86a5ae5ca">
+      <Execution id="c3d1a3c4-943f-4c14-8144-cbe41365ee4c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\RelaySecurity\bin\Debug\net8.0\ALKAROS.QrOrdering.RelaySecurity.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests" name="AnUnknownTokenIsRejectedBeforeTheNonceOrTimestampIsEvenChecked" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.ATimestampTooFarInTheFutureIsRejected" storage="d:\project\alkaros\tests\modules\qrordering\relaysecurity\bin\debug\net8.0\alkaros.qrordering.relaysecurity.tests.dll" id="0fb5f715-4158-b376-5c9e-3a4927fa09a7">
+      <Execution id="2c966466-f207-4ab6-8ba6-013009770833" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\RelaySecurity\bin\Debug\net8.0\ALKAROS.QrOrdering.RelaySecurity.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests" name="ATimestampTooFarInTheFutureIsRejected" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests.AFreshRequestWithAValidTokenAndNonceIsAccepted" storage="d:\project\alkaros\tests\modules\qrordering\relaysecurity\bin\debug\net8.0\alkaros.qrordering.relaysecurity.tests.dll" id="7dbd6d84-0e87-8b36-558a-39437d0f5271">
+      <Execution id="bbbb13ea-b57f-4d5c-ac95-b3725f91a82f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\RelaySecurity\bin\Debug\net8.0\ALKAROS.QrOrdering.RelaySecurity.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.RelaySecurity.Tests.RelayRequestValidatorTests" name="AFreshRequestWithAValidTokenAndNonceIsAccepted" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="63a85327-252e-218a-0f54-fbb86a5ae5ca" executionId="c3d1a3c4-943f-4c14-8144-cbe41365ee4c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="110a6fa7-7dbf-be6a-d694-eb6e3cbcb4e3" executionId="bfa394e9-f790-4082-9c86-84877fd5f489" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7dbd6d84-0e87-8b36-558a-39437d0f5271" executionId="bbbb13ea-b57f-4d5c-ac95-b3725f91a82f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f7a6ad12-c216-6dce-17cc-de911cb36d2d" executionId="ad8f139b-c633-4f2a-a2da-1068b734a349" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0fb5f715-4158-b376-5c9e-3a4927fa09a7" executionId="2c966466-f207-4ab6-8ba6-013009770833" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54eac7da-2a11-0e87-8464-2f90d790e224" executionId="5e9bf4e1-9e5f-4247-9a70-189a69fbb208" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4f8aa702-1e31-2f83-0e77-a0ebe9d2d529" executionId="39d40fea-d6c7-43d6-bcb5-60baa199c7a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="7" executed="7" passed="7" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.23]   Discovering: ALKAROS.QrOrdering.RelaySecurity.Tests&#xD;
+[xUnit.net 00:00:00.26]   Discovered:  ALKAROS.QrOrdering.RelaySecurity.Tests&#xD;
+[xUnit.net 00:00:00.26]   Starting:    ALKAROS.QrOrdering.RelaySecurity.Tests&#xD;
+[xUnit.net 00:00:00.74]   Finished:    ALKAROS.QrOrdering.RelaySecurity.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

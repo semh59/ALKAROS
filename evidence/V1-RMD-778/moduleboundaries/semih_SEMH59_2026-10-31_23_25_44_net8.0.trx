@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="1db4d119-660e-46fd-b256-3075fdf4646f" name="semih@SEMH59 2026-10-31 23:25:44" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T23:25:44.1425250+03:00" queuing="2026-10-31T23:25:44.1425252+03:00" start="2026-10-31T23:25:40.3439356+03:00" finish="2026-10-31T23:25:48.8586366+03:00" />
+  <TestSettings name="default" id="f2ce63a6-5394-47e9-98fb-8d0b641875b6">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_23_25_44" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="86dcefae-97f0-4652-b452-d44241dd9b20" testId="67faf12d-5fd8-6b5a-38af-8809e11f310a" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldRetainTypedServiceRegistrations" computerName="SEMH59" duration="00:00:00.0147800" startTime="2026-10-31T23:25:46.9553925+03:00" endTime="2026-10-31T23:25:46.9553929+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="86dcefae-97f0-4652-b452-d44241dd9b20" />
+    <UnitTestResult executionId="b1a0ab38-d2bd-401f-93f3-a761a20b1149" testId="99e890ad-a3fe-4914-896e-bab464a00eb0" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;INSERT INTO audit.audit_events (id)&quot;, expected: True)" computerName="SEMH59" duration="00:00:00.0000038" startTime="2026-10-31T23:25:43.4645884+03:00" endTime="2026-10-31T23:25:43.4645885+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b1a0ab38-d2bd-401f-93f3-a761a20b1149" />
+    <UnitTestResult executionId="87548277-e484-48af-ba81-63c743b90aff" testId="5e57a80c-64b9-cee5-d648-adffddb974aa" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.HostOrchestrationEdgesStayWithinTheApprovedList" computerName="SEMH59" duration="00:00:01.4806458" startTime="2026-10-31T23:25:48.7792167+03:00" endTime="2026-10-31T23:25:48.7792171+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="87548277-e484-48af-ba81-63c743b90aff" />
+    <UnitTestResult executionId="740be196-4af4-4f43-94e9-16c976f628ca" testId="b217df9b-20a1-4369-8849-8d55b23dcef0" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionShouldNotDependOnAnyModule" computerName="SEMH59" duration="00:00:00.2919378" startTime="2026-10-31T23:25:43.7533606+03:00" endTime="2026-10-31T23:25:43.7533611+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="740be196-4af4-4f43-94e9-16c976f628ca" />
+    <UnitTestResult executionId="cf48dd08-e08d-46c4-9008-1b51593bb465" testId="f1f148ad-8d42-ef62-d58d-77375736dfe5" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;INSERT INTO {AuditEventsTable} (id)&quot;, expected: True)" computerName="SEMH59" duration="00:00:00.0000041" startTime="2026-10-31T23:25:43.4646374+03:00" endTime="2026-10-31T23:25:43.4646374+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cf48dd08-e08d-46c4-9008-1b51593bb465" />
+    <UnitTestResult executionId="b090dc32-e041-463c-8aa7-3db9d7abe9e7" testId="498481a5-0153-fa2d-8fcc-72fafcd8ae7b" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldDetectCyclicDependencies" computerName="SEMH59" duration="00:00:00.0003155" startTime="2026-10-31T23:25:47.0563809+03:00" endTime="2026-10-31T23:25:47.0563810+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b090dc32-e041-463c-8aa7-3db9d7abe9e7" />
+    <UnitTestResult executionId="b08c25af-bcb8-4393-bbb3-d7f36d47f5d7" testId="b567bb2c-528a-5831-a962-38a436e1fa9e" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.RawAuditInsertsStayOnTheKnownList" computerName="SEMH59" duration="00:00:00.2418407" startTime="2026-10-31T23:25:47.2983496+03:00" endTime="2026-10-31T23:25:47.2983498+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b08c25af-bcb8-4393-bbb3-d7f36d47f5d7" />
+    <UnitTestResult executionId="de648b69-5578-4190-97f2-6858c24ec6cf" testId="8b9102bd-3622-cc90-7015-a6a0bb4b423e" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ActualAssemblyDependenciesAreDeclaredInDependsOn" computerName="SEMH59" duration="00:00:00.0092709" startTime="2026-10-31T23:25:47.0497033+03:00" endTime="2026-10-31T23:25:47.0497037+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de648b69-5578-4190-97f2-6858c24ec6cf" />
+    <UnitTestResult executionId="eb037a70-c0bc-42aa-8296-7eae059e3622" testId="bdafce10-fe84-9bed-9a84-90595879222d" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;insert   into audit.audit_events (id)&quot;, expected: True)" computerName="SEMH59" duration="00:00:00.0000041" startTime="2026-10-31T23:25:43.4645337+03:00" endTime="2026-10-31T23:25:43.4645338+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eb037a70-c0bc-42aa-8296-7eae059e3622" />
+    <UnitTestResult executionId="8f91c02b-50c7-47f8-a93d-da3be445483a" testId="ff646f90-ee9e-2cd1-1900-31349c1ab3ac" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.DeclaredDependenciesStayWithinTheApprovedEdgeList" computerName="SEMH59" duration="00:00:00.0530093" startTime="2026-10-31T23:25:47.0085377+03:00" endTime="2026-10-31T23:25:47.0085380+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8f91c02b-50c7-47f8-a93d-da3be445483a" />
+    <UnitTestResult executionId="7298841e-d59b-4e91-bb06-12f5451bb59f" testId="7920ab50-b60b-e434-9dfa-288edd90ef3e" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;INSERT INTO {AuditTable} (id)&quot;, expected: True)" computerName="SEMH59" duration="00:00:00.0000093" startTime="2026-10-31T23:25:43.4644805+03:00" endTime="2026-10-31T23:25:43.4644806+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7298841e-d59b-4e91-bb06-12f5451bb59f" />
+    <UnitTestResult executionId="5dcc6104-5b37-4a52-bff9-f5dd0a970825" testId="399283e3-aae5-85be-9d97-ff9d9c70fb5d" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.NoModuleOrIntegrationProjectIsAnEmptyShell" computerName="SEMH59" duration="00:00:00.0316422" startTime="2026-10-31T23:25:47.0403025+03:00" endTime="2026-10-31T23:25:47.0403029+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5dcc6104-5b37-4a52-bff9-f5dd0a970825" />
+    <UnitTestResult executionId="5686f45c-4288-4859-b422-eee61db3da29" testId="65b82e61-a7b0-64ca-060c-abf508c0b476" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.EveryHostAreaIsCoveredByAnApprovedEdgeEntry" computerName="SEMH59" duration="00:00:03.1868127" startTime="2026-10-31T23:25:46.9403503+03:00" endTime="2026-10-31T23:25:46.9403506+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5686f45c-4288-4859-b422-eee61db3da29" />
+    <UnitTestResult executionId="fdb10d2e-7bf1-4e6f-ac75-631f50f7b42b" testId="47cd1719-b64c-9a6b-60cf-17f95f3d0c89" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldComposeInTopologicalOrder" computerName="SEMH59" duration="00:00:00.0054755" startTime="2026-10-31T23:25:47.0552996+03:00" endTime="2026-10-31T23:25:47.0552999+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fdb10d2e-7bf1-4e6f-ac75-631f50f7b42b" />
+    <UnitTestResult executionId="e34c1c6f-dece-4799-9e48-00889271ee8b" testId="e8929d2c-c52e-9d37-82fd-9b010043746f" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;INSERT INTO {OrdersTable} (id)&quot;, expected: False)" computerName="SEMH59" duration="00:00:00.0002447" startTime="2026-10-31T23:25:43.4641756+03:00" endTime="2026-10-31T23:25:43.4641757+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e34c1c6f-dece-4799-9e48-00889271ee8b" />
+    <UnitTestResult executionId="731e498d-0ba9-462f-b57f-3cc9bcb67439" testId="2b9c55ca-6797-d6ed-2c54-d0a9d119cb1d" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldRejectUnknownDependency" computerName="SEMH59" duration="00:00:00.0006395" startTime="2026-10-31T23:25:47.0560068+03:00" endTime="2026-10-31T23:25:47.0560069+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="731e498d-0ba9-462f-b57f-3cc9bcb67439" />
+    <UnitTestResult executionId="c80cb775-eab9-4219-a556-27ac2417b969" testId="a6bcdeda-1bfd-38fc-3595-44435d7f6f9c" testName="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;INSERT INTO billing.bills (id)&quot;, expected: False)" computerName="SEMH59" duration="00:00:00.1257311" startTime="2026-10-31T23:25:43.4614389+03:00" endTime="2026-10-31T23:25:43.4614607+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c80cb775-eab9-4219-a556-27ac2417b969" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.EveryHostAreaIsCoveredByAnApprovedEdgeEntry" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="65b82e61-a7b0-64ca-060c-abf508c0b476">
+      <Execution id="5686f45c-4288-4859-b422-eee61db3da29" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="EveryHostAreaIsCoveredByAnApprovedEdgeEntry" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;INSERT INTO {AuditEventsTable} (id)&quot;, expected: True)" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="f1f148ad-8d42-ef62-d58d-77375736dfe5">
+      <Execution id="cf48dd08-e08d-46c4-9008-1b51593bb465" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="TheRawAuditInsertPatternSeesAnAuditNamedConstantToo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;INSERT INTO audit.audit_events (id)&quot;, expected: True)" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="99e890ad-a3fe-4914-896e-bab464a00eb0">
+      <Execution id="b1a0ab38-d2bd-401f-93f3-a761a20b1149" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="TheRawAuditInsertPatternSeesAnAuditNamedConstantToo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.RawAuditInsertsStayOnTheKnownList" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="b567bb2c-528a-5831-a962-38a436e1fa9e">
+      <Execution id="b08c25af-bcb8-4393-bbb3-d7f36d47f5d7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="RawAuditInsertsStayOnTheKnownList" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldRetainTypedServiceRegistrations" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="67faf12d-5fd8-6b5a-38af-8809e11f310a">
+      <Execution id="86dcefae-97f0-4652-b452-d44241dd9b20" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="ModuleCompositionRootShouldRetainTypedServiceRegistrations" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;INSERT INTO billing.bills (id)&quot;, expected: False)" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="a6bcdeda-1bfd-38fc-3595-44435d7f6f9c">
+      <Execution id="c80cb775-eab9-4219-a556-27ac2417b969" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="TheRawAuditInsertPatternSeesAnAuditNamedConstantToo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;INSERT INTO {AuditTable} (id)&quot;, expected: True)" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="7920ab50-b60b-e434-9dfa-288edd90ef3e">
+      <Execution id="7298841e-d59b-4e91-bb06-12f5451bb59f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="TheRawAuditInsertPatternSeesAnAuditNamedConstantToo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldRejectUnknownDependency" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="2b9c55ca-6797-d6ed-2c54-d0a9d119cb1d">
+      <Execution id="731e498d-0ba9-462f-b57f-3cc9bcb67439" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="ModuleCompositionRootShouldRejectUnknownDependency" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldDetectCyclicDependencies" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="498481a5-0153-fa2d-8fcc-72fafcd8ae7b">
+      <Execution id="b090dc32-e041-463c-8aa7-3db9d7abe9e7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="ModuleCompositionRootShouldDetectCyclicDependencies" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionShouldNotDependOnAnyModule" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="b217df9b-20a1-4369-8849-8d55b23dcef0">
+      <Execution id="740be196-4af4-4f43-94e9-16c976f628ca" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="ModuleCompositionShouldNotDependOnAnyModule" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.DeclaredDependenciesStayWithinTheApprovedEdgeList" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="ff646f90-ee9e-2cd1-1900-31349c1ab3ac">
+      <Execution id="8f91c02b-50c7-47f8-a93d-da3be445483a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="DeclaredDependenciesStayWithinTheApprovedEdgeList" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.NoModuleOrIntegrationProjectIsAnEmptyShell" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="399283e3-aae5-85be-9d97-ff9d9c70fb5d">
+      <Execution id="5dcc6104-5b37-4a52-bff9-f5dd0a970825" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="NoModuleOrIntegrationProjectIsAnEmptyShell" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;insert   into audit.audit_events (id)&quot;, expected: True)" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="bdafce10-fe84-9bed-9a84-90595879222d">
+      <Execution id="eb037a70-c0bc-42aa-8296-7eae059e3622" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="TheRawAuditInsertPatternSeesAnAuditNamedConstantToo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ModuleCompositionRootShouldComposeInTopologicalOrder" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="47cd1719-b64c-9a6b-60cf-17f95f3d0c89">
+      <Execution id="fdb10d2e-7bf1-4e6f-ac75-631f50f7b42b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="ModuleCompositionRootShouldComposeInTopologicalOrder" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.TheRawAuditInsertPatternSeesAnAuditNamedConstantToo(sql: &quot;INSERT INTO {OrdersTable} (id)&quot;, expected: False)" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="e8929d2c-c52e-9d37-82fd-9b010043746f">
+      <Execution id="e34c1c6f-dece-4799-9e48-00889271ee8b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="TheRawAuditInsertPatternSeesAnAuditNamedConstantToo" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.HostOrchestrationEdgesStayWithinTheApprovedList" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="5e57a80c-64b9-cee5-d648-adffddb974aa">
+      <Execution id="87548277-e484-48af-ba81-63c743b90aff" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="HostOrchestrationEdgesStayWithinTheApprovedList" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Architecture.Tests.ModuleBoundaryTests.ActualAssemblyDependenciesAreDeclaredInDependsOn" storage="d:\project\alkaros\tests\architecture\moduleboundaries\bin\debug\net8.0\alkaros.architecture.tests.dll" id="8b9102bd-3622-cc90-7015-a6a0bb4b423e">
+      <Execution id="de648b69-5578-4190-97f2-6858c24ec6cf" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Architecture\ModuleBoundaries\bin\Debug\net8.0\ALKAROS.Architecture.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Architecture.Tests.ModuleBoundaryTests" name="ActualAssemblyDependenciesAreDeclaredInDependsOn" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="67faf12d-5fd8-6b5a-38af-8809e11f310a" executionId="86dcefae-97f0-4652-b452-d44241dd9b20" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99e890ad-a3fe-4914-896e-bab464a00eb0" executionId="b1a0ab38-d2bd-401f-93f3-a761a20b1149" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5e57a80c-64b9-cee5-d648-adffddb974aa" executionId="87548277-e484-48af-ba81-63c743b90aff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b217df9b-20a1-4369-8849-8d55b23dcef0" executionId="740be196-4af4-4f43-94e9-16c976f628ca" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f1f148ad-8d42-ef62-d58d-77375736dfe5" executionId="cf48dd08-e08d-46c4-9008-1b51593bb465" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="498481a5-0153-fa2d-8fcc-72fafcd8ae7b" executionId="b090dc32-e041-463c-8aa7-3db9d7abe9e7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b567bb2c-528a-5831-a962-38a436e1fa9e" executionId="b08c25af-bcb8-4393-bbb3-d7f36d47f5d7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b9102bd-3622-cc90-7015-a6a0bb4b423e" executionId="de648b69-5578-4190-97f2-6858c24ec6cf" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bdafce10-fe84-9bed-9a84-90595879222d" executionId="eb037a70-c0bc-42aa-8296-7eae059e3622" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ff646f90-ee9e-2cd1-1900-31349c1ab3ac" executionId="8f91c02b-50c7-47f8-a93d-da3be445483a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7920ab50-b60b-e434-9dfa-288edd90ef3e" executionId="7298841e-d59b-4e91-bb06-12f5451bb59f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="399283e3-aae5-85be-9d97-ff9d9c70fb5d" executionId="5dcc6104-5b37-4a52-bff9-f5dd0a970825" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="65b82e61-a7b0-64ca-060c-abf508c0b476" executionId="5686f45c-4288-4859-b422-eee61db3da29" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="47cd1719-b64c-9a6b-60cf-17f95f3d0c89" executionId="fdb10d2e-7bf1-4e6f-ac75-631f50f7b42b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e8929d2c-c52e-9d37-82fd-9b010043746f" executionId="e34c1c6f-dece-4799-9e48-00889271ee8b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b9c55ca-6797-d6ed-2c54-d0a9d119cb1d" executionId="731e498d-0ba9-462f-b57f-3cc9bcb67439" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a6bcdeda-1bfd-38fc-3595-44435d7f6f9c" executionId="c80cb775-eab9-4219-a556-27ac2417b969" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="17" executed="17" passed="17" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.61]   Discovering: ALKAROS.Architecture.Tests&#xD;
+[xUnit.net 00:00:00.66]   Discovered:  ALKAROS.Architecture.Tests&#xD;
+[xUnit.net 00:00:00.66]   Starting:    ALKAROS.Architecture.Tests&#xD;
+[xUnit.net 00:00:06.16]   Finished:    ALKAROS.Architecture.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

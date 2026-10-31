@@ -12,7 +12,7 @@ public sealed class CustomerSessionService
     /// <summary>No activity for this long ends the session even if its absolute lifetime has not elapsed.</summary>
     public static readonly TimeSpan DefaultIdleTimeout = TimeSpan.FromMinutes(30);
 
-    /// <summary>Matches <see cref="TableTokenService.DefaultLifetime"/> — a session should not outlive the dining visit its table token was scoped to.</summary>
+    /// <summary>A session should not outlive a dining visit; unlike the table's printed QR, which stays valid until a manager revokes it.</summary>
     public static readonly TimeSpan DefaultAbsoluteLifetime = TimeSpan.FromHours(4);
 
     private readonly ICustomerSessionRepository _repository;

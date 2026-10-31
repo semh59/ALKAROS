@@ -337,7 +337,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.Reconciliation"] =
                 ["ALKAROS.Reporting", "ALKAROS.Reconciliation", "ALKAROS.Identity", "ALKAROS.OnlineOrdering", "ALKAROS.Payments"],
             ["ALKAROS.Host.Experience.RelaySettings"] =
-                ["ALKAROS.Identity", "ALKAROS.QrOrdering", "ALKAROS.QrRelay"],
+                ["ALKAROS.Identity", "ALKAROS.QrOrdering", "ALKAROS.QrRelay", "ALKAROS.Tables"],
             ["ALKAROS.Host.Experience.Reporting"] =
                 ["ALKAROS.Reporting", "ALKAROS.Identity"],
             ["ALKAROS.Host.Experience.Roles"] =

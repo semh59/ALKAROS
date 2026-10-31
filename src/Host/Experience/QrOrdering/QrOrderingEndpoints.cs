@@ -92,7 +92,7 @@ public static class QrOrderingEndpoints
             .AddEndpointFilter<QrOrderingExceptionFilter>();
 
         // V12-QRS-002's anti-replay pair guards this one call — the raw
-        // table token is a long-lived (up to 4h), URL-embedded secret a
+        // table token is a long-lived (until a manager revokes it), URL-embedded secret a
         // customer's own scan exposes to their browser history/screenshots;
         // nonce+timestamp bound how long a captured HTTP request (not the
         // token itself) stays replayable. No route parameter to partition

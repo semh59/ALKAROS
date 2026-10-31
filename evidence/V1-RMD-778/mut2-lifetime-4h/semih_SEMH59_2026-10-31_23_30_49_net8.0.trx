@@ -1,0 +1,193 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b3780e4c-7e97-4e9f-90af-99110b9a8322" name="semih@SEMH59 2026-10-31 23:30:49" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T23:30:49.7886817+03:00" queuing="2026-10-31T23:30:49.7886818+03:00" start="2026-10-31T23:30:48.9829024+03:00" finish="2026-10-31T23:30:50.3542441+03:00" />
+  <TestSettings name="default" id="176d5e04-0040-40e8-9048-acaf57255c0c">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_23_30_49" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="21d9c2d0-9323-4a75-b2f0-3d6de881d450" testId="63c4fb4f-ac7f-d3a6-c106-6ed2a0ceccbc" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.IssuingForATableWhoseTokenTimedOutReplacesItInsteadOfRefusing" computerName="SEMH59" duration="00:00:00.1121792" startTime="2026-10-31T23:30:50.0346888+03:00" endTime="2026-10-31T23:30:50.0346895+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="21d9c2d0-9323-4a75-b2f0-3d6de881d450" />
+    <UnitTestResult executionId="773514ce-b774-4d40-89f4-dd0d29d9dee7" testId="9c6a2627-63df-797f-b63a-cc565a242f9f" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.IssuingASecondTokenForATableThatAlreadyHasOneThrows" computerName="SEMH59" duration="00:00:00.0120148" startTime="2026-10-31T23:30:50.0483791+03:00" endTime="2026-10-31T23:30:50.0483795+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="773514ce-b774-4d40-89f4-dd0d29d9dee7" />
+    <UnitTestResult executionId="e99a2713-6f3d-4a51-be01-c9a416ff9733" testId="2b0fcb3f-fb42-235c-ae07-674866152e5e" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.RotatingATableWithNoActiveTokenThrows" computerName="SEMH59" duration="00:00:00.0070274" startTime="2026-10-31T23:30:50.0677258+03:00" endTime="2026-10-31T23:30:50.0677260+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e99a2713-6f3d-4a51-be01-c9a416ff9733" />
+    <UnitTestResult executionId="8c940e09-b87a-497f-8c52-a1820856d1d2" testId="71806532-4f33-cd69-d495-77e0fb7c8cb2" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.RevokingAnAlreadyRevokedTokenThrows" computerName="SEMH59" duration="00:00:00.0012855" startTime="2026-10-31T23:30:49.7186736+03:00" endTime="2026-10-31T23:30:49.7186736+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c940e09-b87a-497f-8c52-a1820856d1d2" />
+    <UnitTestResult executionId="b5b1f694-73db-4230-ae2b-5f80235f8968" testId="0a4688f7-f0c0-5bae-b3cb-7af485fdbe51" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.RevokeProducesARevokedCopyWithoutMutatingTheOriginal" computerName="SEMH59" duration="00:00:00.0043291" startTime="2026-10-31T23:30:49.7221239+03:00" endTime="2026-10-31T23:30:49.7221242+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b5b1f694-73db-4230-ae2b-5f80235f8968" />
+    <UnitTestResult executionId="5c090eba-dafb-4e9e-8368-b5a712f004a9" testId="1c25e7c2-d0da-72b5-e1d0-adac7cd82090" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ConcurrentIssuanceForTheSameTableLetsExactlyOneWin" computerName="SEMH59" duration="00:00:00.0159003" startTime="2026-10-31T23:30:50.1785081+03:00" endTime="2026-10-31T23:30:50.1785083+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5c090eba-dafb-4e9e-8368-b5a712f004a9" />
+    <UnitTestResult executionId="15636d24-f508-43a3-9274-2fade5ddba50" testId="c30d39ae-f8fe-a0fd-d871-a576421fcc1a" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.AnUnknownTokenFailsValidationAsNotFound" computerName="SEMH59" duration="00:00:00.0027322" startTime="2026-10-31T23:30:50.1621212+03:00" endTime="2026-10-31T23:30:50.1621213+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="15636d24-f508-43a3-9274-2fade5ddba50" />
+    <UnitTestResult executionId="356a1868-6eb7-4c2c-ae84-c8bf969a0e95" testId="46a4bef8-9b2c-6810-1e26-1d6b70668f4a" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.IssuedTokenValidatesToItsOwnTable" computerName="SEMH59" duration="00:00:00.0114168" startTime="2026-10-31T23:30:50.0923447+03:00" endTime="2026-10-31T23:30:50.0923451+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="356a1868-6eb7-4c2c-ae84-c8bf969a0e95" />
+    <UnitTestResult executionId="c8fc431e-7e81-425e-9b76-0e40667bc77e" testId="cf287a13-8d9e-521a-a676-ade6759f41c8" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.RotatingInvalidatesThePreviousTokenAndTheNewOneWorks" computerName="SEMH59" duration="00:00:00.0158031" startTime="2026-10-31T23:30:50.1206880+03:00" endTime="2026-10-31T23:30:50.1206882+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c8fc431e-7e81-425e-9b76-0e40667bc77e" />
+    <UnitTestResult executionId="2fad17fa-43a0-4ca1-8b49-4c5c4d3e4963" testId="2f310a97-91a6-659a-6acf-3f9c60cdaeb2" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ADatabaseLeakExposesNoUsableRawToken" computerName="SEMH59" duration="00:00:00.0122100" startTime="2026-10-31T23:30:50.0804354+03:00" endTime="2026-10-31T23:30:50.0804357+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2fad17fa-43a0-4ca1-8b49-4c5c4d3e4963" />
+    <UnitTestResult executionId="bb92c927-8b49-42a6-a3ca-ca830a3d9533" testId="533e43cc-f8b9-8461-8346-636c75c5b8fd" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.RevokingATableWithNoActiveTokenThrows" computerName="SEMH59" duration="00:00:00.0064748" startTime="2026-10-31T23:30:50.2081364+03:00" endTime="2026-10-31T23:30:50.2081366+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bb92c927-8b49-42a6-a3ca-ca830a3d9533" />
+    <UnitTestResult executionId="8d8c78c0-3d3b-41ad-9236-c61ee4b90867" testId="dbf97b32-a212-4448-6047-8ba72dc59cac" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.RevokingWithABlankReasonIsRejectedBeforeAnythingChanges" computerName="SEMH59" duration="00:00:00.0113322" startTime="2026-10-31T23:30:50.0602114+03:00" endTime="2026-10-31T23:30:50.0602118+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8d8c78c0-3d3b-41ad-9236-c61ee4b90867" />
+    <UnitTestResult executionId="dfbe2c46-2c32-453e-b06f-f794e621d172" testId="9cf7307c-2319-5fbb-9599-276fbf589651" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ConstructorRejectsRevocationFieldsSetOnlyHalfway" computerName="SEMH59" duration="00:00:00.0004471" startTime="2026-10-31T23:30:49.7190002+03:00" endTime="2026-10-31T23:30:49.7190003+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dfbe2c46-2c32-453e-b06f-f794e621d172" />
+    <UnitTestResult executionId="b973c380-117f-4c63-9d48-4579df77216b" testId="b6a4dea1-ecff-668d-a752-0a55c4b1694f" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ADefaultIssuedTokenStaysValidForTenYearsLikeAPrintedLabel" computerName="SEMH59" duration="00:00:00.0133449" startTime="2026-10-31T23:30:50.2058452+03:00" endTime="2026-10-31T23:30:50.2058455+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b973c380-117f-4c63-9d48-4579df77216b">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 3650.00:00:00&#xD;
+Actual:   04:00:00</Message>
+          <StackTrace>   at ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ADefaultIssuedTokenStaysValidForTenYearsLikeAPrintedLabel() in D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\TableTokenServiceTests.cs:line 168&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="4dfef9ae-75c2-4e03-a3cb-acd1f9385bc8" testId="93661e66-864a-e12b-4070-62acca56c70e" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ARevokedTokenFailsValidation" computerName="SEMH59" duration="00:00:00.0135316" startTime="2026-10-31T23:30:50.1347039+03:00" endTime="2026-10-31T23:30:50.1347040+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4dfef9ae-75c2-4e03-a3cb-acd1f9385bc8" />
+    <UnitTestResult executionId="8c4f3929-220c-4997-9072-364e933ab722" testId="35c11e85-a296-0bff-0500-d7b2736fb8a1" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.RevokingWithAnEmptyReasonThrows" computerName="SEMH59" duration="00:00:00.0001995" startTime="2026-10-31T23:30:49.7535289+03:00" endTime="2026-10-31T23:30:49.7535290+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8c4f3929-220c-4997-9072-364e933ab722" />
+    <UnitTestResult executionId="b9d99eb1-b362-4c53-9307-be41def1787a" testId="79ebe2b0-78ae-7007-fb35-d71e1671dc0d" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.AnExpiredTokenFailsValidation" computerName="SEMH59" duration="00:00:00.0116310" startTime="2026-10-31T23:30:50.1044349+03:00" endTime="2026-10-31T23:30:50.1044351+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b9d99eb1-b362-4c53-9307-be41def1787a" />
+    <UnitTestResult executionId="448c4ae5-9ef0-492b-8dc8-18f92453452f" testId="671b57d9-927c-70da-7bc2-ccee5d115e9f" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ConstructorRejectsEmptyHash" computerName="SEMH59" duration="00:00:00.0002841" startTime="2026-10-31T23:30:49.7224670+03:00" endTime="2026-10-31T23:30:49.7224671+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="448c4ae5-9ef0-492b-8dc8-18f92453452f" />
+    <UnitTestResult executionId="c41f3097-2681-4754-bcad-ad298f662188" testId="9121dd76-4230-cbd0-9df2-7733440127e9" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.AFreshTokenIsActive" computerName="SEMH59" duration="00:00:00.0051356" startTime="2026-10-31T23:30:49.7156442+03:00" endTime="2026-10-31T23:30:49.7156644+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c41f3097-2681-4754-bcad-ad298f662188" />
+    <UnitTestResult executionId="6764641f-ad05-4623-a1ba-61768cd0a0f1" testId="459a7645-5274-36ca-a64b-b557e098da57" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ConstructorRejectsEmptyTableId" computerName="SEMH59" duration="00:00:00.0002345" startTime="2026-10-31T23:30:49.7232111+03:00" endTime="2026-10-31T23:30:49.7232112+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6764641f-ad05-4623-a1ba-61768cd0a0f1" />
+    <UnitTestResult executionId="a961a7ea-f816-40b1-bb5e-3de9c271b22d" testId="fe1c93b9-0f74-42a5-04f1-109488737105" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ConstructorRejectsEmptyTokenId" computerName="SEMH59" duration="00:00:00.0003385" startTime="2026-10-31T23:30:49.7190431+03:00" endTime="2026-10-31T23:30:49.7190432+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a961a7ea-f816-40b1-bb5e-3de9c271b22d" />
+    <UnitTestResult executionId="eade8b9f-4cb3-4635-85c7-ef48fae884f4" testId="305e9f0c-dfed-26bb-d827-290fed5d7d57" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ListActiveReturnsEachTablesCurrentTokenAndNotARevokedOne" computerName="SEMH59" duration="00:00:00.0237662" startTime="2026-10-31T23:30:50.1590378+03:00" endTime="2026-10-31T23:30:50.1590381+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="eade8b9f-4cb3-4635-85c7-ef48fae884f4" />
+    <UnitTestResult executionId="cee853bc-2016-403f-b19d-0c4353c573d1" testId="1416e07d-c8d7-a0fa-4474-059c0ad8194d" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ATokenIsExpiredExactlyAtItsExpiryInstant" computerName="SEMH59" duration="00:00:00.0002099" startTime="2026-10-31T23:30:49.7190909+03:00" endTime="2026-10-31T23:30:49.7190910+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cee853bc-2016-403f-b19d-0c4353c573d1" />
+    <UnitTestResult executionId="84017f07-da8f-4bc4-bdc1-8997c5e3f239" testId="42b4e4b4-934f-aee2-a7ad-1b4e1634b152" testName="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ConstructorRejectsExpiryAtOrBeforeIssuance" computerName="SEMH59" duration="00:00:00.0004202" startTime="2026-10-31T23:30:49.7229354+03:00" endTime="2026-10-31T23:30:49.7229355+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="84017f07-da8f-4bc4-bdc1-8997c5e3f239" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.IssuingForATableWhoseTokenTimedOutReplacesItInsteadOfRefusing" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="63c4fb4f-ac7f-d3a6-c106-6ed2a0ceccbc">
+      <Execution id="21d9c2d0-9323-4a75-b2f0-3d6de881d450" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="IssuingForATableWhoseTokenTimedOutReplacesItInsteadOfRefusing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ConstructorRejectsEmptyTokenId" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="fe1c93b9-0f74-42a5-04f1-109488737105">
+      <Execution id="a961a7ea-f816-40b1-bb5e-3de9c271b22d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests" name="ConstructorRejectsEmptyTokenId" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ARevokedTokenFailsValidation" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="93661e66-864a-e12b-4070-62acca56c70e">
+      <Execution id="4dfef9ae-75c2-4e03-a3cb-acd1f9385bc8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="ARevokedTokenFailsValidation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ConstructorRejectsEmptyTableId" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="459a7645-5274-36ca-a64b-b557e098da57">
+      <Execution id="6764641f-ad05-4623-a1ba-61768cd0a0f1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests" name="ConstructorRejectsEmptyTableId" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ADefaultIssuedTokenStaysValidForTenYearsLikeAPrintedLabel" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="b6a4dea1-ecff-668d-a752-0a55c4b1694f">
+      <Execution id="b973c380-117f-4c63-9d48-4579df77216b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="ADefaultIssuedTokenStaysValidForTenYearsLikeAPrintedLabel" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.RevokingATableWithNoActiveTokenThrows" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="533e43cc-f8b9-8461-8346-636c75c5b8fd">
+      <Execution id="bb92c927-8b49-42a6-a3ca-ca830a3d9533" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="RevokingATableWithNoActiveTokenThrows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ConstructorRejectsEmptyHash" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="671b57d9-927c-70da-7bc2-ccee5d115e9f">
+      <Execution id="448c4ae5-9ef0-492b-8dc8-18f92453452f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests" name="ConstructorRejectsEmptyHash" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.AFreshTokenIsActive" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="9121dd76-4230-cbd0-9df2-7733440127e9">
+      <Execution id="c41f3097-2681-4754-bcad-ad298f662188" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests" name="AFreshTokenIsActive" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ADatabaseLeakExposesNoUsableRawToken" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="2f310a97-91a6-659a-6acf-3f9c60cdaeb2">
+      <Execution id="2fad17fa-43a0-4ca1-8b49-4c5c4d3e4963" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="ADatabaseLeakExposesNoUsableRawToken" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ATokenIsExpiredExactlyAtItsExpiryInstant" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="1416e07d-c8d7-a0fa-4474-059c0ad8194d">
+      <Execution id="cee853bc-2016-403f-b19d-0c4353c573d1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests" name="ATokenIsExpiredExactlyAtItsExpiryInstant" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.AnExpiredTokenFailsValidation" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="79ebe2b0-78ae-7007-fb35-d71e1671dc0d">
+      <Execution id="b9d99eb1-b362-4c53-9307-be41def1787a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="AnExpiredTokenFailsValidation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ConstructorRejectsExpiryAtOrBeforeIssuance" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="42b4e4b4-934f-aee2-a7ad-1b4e1634b152">
+      <Execution id="84017f07-da8f-4bc4-bdc1-8997c5e3f239" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests" name="ConstructorRejectsExpiryAtOrBeforeIssuance" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.RotatingATableWithNoActiveTokenThrows" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="2b0fcb3f-fb42-235c-ae07-674866152e5e">
+      <Execution id="e99a2713-6f3d-4a51-be01-c9a416ff9733" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="RotatingATableWithNoActiveTokenThrows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.RevokingAnAlreadyRevokedTokenThrows" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="71806532-4f33-cd69-d495-77e0fb7c8cb2">
+      <Execution id="8c940e09-b87a-497f-8c52-a1820856d1d2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests" name="RevokingAnAlreadyRevokedTokenThrows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ListActiveReturnsEachTablesCurrentTokenAndNotARevokedOne" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="305e9f0c-dfed-26bb-d827-290fed5d7d57">
+      <Execution id="eade8b9f-4cb3-4635-85c7-ef48fae884f4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="ListActiveReturnsEachTablesCurrentTokenAndNotARevokedOne" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.RotatingInvalidatesThePreviousTokenAndTheNewOneWorks" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="cf287a13-8d9e-521a-a676-ade6759f41c8">
+      <Execution id="c8fc431e-7e81-425e-9b76-0e40667bc77e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="RotatingInvalidatesThePreviousTokenAndTheNewOneWorks" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.IssuingASecondTokenForATableThatAlreadyHasOneThrows" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="9c6a2627-63df-797f-b63a-cc565a242f9f">
+      <Execution id="773514ce-b774-4d40-89f4-dd0d29d9dee7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="IssuingASecondTokenForATableThatAlreadyHasOneThrows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.IssuedTokenValidatesToItsOwnTable" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="46a4bef8-9b2c-6810-1e26-1d6b70668f4a">
+      <Execution id="356a1868-6eb7-4c2c-ae84-c8bf969a0e95" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="IssuedTokenValidatesToItsOwnTable" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.ConstructorRejectsRevocationFieldsSetOnlyHalfway" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="9cf7307c-2319-5fbb-9599-276fbf589651">
+      <Execution id="dfbe2c46-2c32-453e-b06f-f794e621d172" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests" name="ConstructorRejectsRevocationFieldsSetOnlyHalfway" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ConcurrentIssuanceForTheSameTableLetsExactlyOneWin" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="1c25e7c2-d0da-72b5-e1d0-adac7cd82090">
+      <Execution id="5c090eba-dafb-4e9e-8368-b5a712f004a9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="ConcurrentIssuanceForTheSameTableLetsExactlyOneWin" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.RevokeProducesARevokedCopyWithoutMutatingTheOriginal" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="0a4688f7-f0c0-5bae-b3cb-7af485fdbe51">
+      <Execution id="b5b1f694-73db-4230-ae2b-5f80235f8968" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests" name="RevokeProducesARevokedCopyWithoutMutatingTheOriginal" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.RevokingWithABlankReasonIsRejectedBeforeAnythingChanges" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="dbf97b32-a212-4448-6047-8ba72dc59cac">
+      <Execution id="8d8c78c0-3d3b-41ad-9236-c61ee4b90867" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="RevokingWithABlankReasonIsRejectedBeforeAnythingChanges" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.AnUnknownTokenFailsValidationAsNotFound" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="c30d39ae-f8fe-a0fd-d871-a576421fcc1a">
+      <Execution id="15636d24-f508-43a3-9274-2fade5ddba50" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests" name="AnUnknownTokenFailsValidationAsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests.RevokingWithAnEmptyReasonThrows" storage="d:\project\alkaros\tests\modules\qrordering\tokenlifecycle\bin\debug\net8.0\alkaros.qrordering.tokenlifecycle.tests.dll" id="35c11e85-a296-0bff-0500-d7b2736fb8a1">
+      <Execution id="8c4f3929-220c-4997-9072-364e933ab722" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\bin\Debug\net8.0\ALKAROS.QrOrdering.TokenLifecycle.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenDomainTests" name="RevokingWithAnEmptyReasonThrows" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="63c4fb4f-ac7f-d3a6-c106-6ed2a0ceccbc" executionId="21d9c2d0-9323-4a75-b2f0-3d6de881d450" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9c6a2627-63df-797f-b63a-cc565a242f9f" executionId="773514ce-b774-4d40-89f4-dd0d29d9dee7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2b0fcb3f-fb42-235c-ae07-674866152e5e" executionId="e99a2713-6f3d-4a51-be01-c9a416ff9733" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="71806532-4f33-cd69-d495-77e0fb7c8cb2" executionId="8c940e09-b87a-497f-8c52-a1820856d1d2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0a4688f7-f0c0-5bae-b3cb-7af485fdbe51" executionId="b5b1f694-73db-4230-ae2b-5f80235f8968" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1c25e7c2-d0da-72b5-e1d0-adac7cd82090" executionId="5c090eba-dafb-4e9e-8368-b5a712f004a9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c30d39ae-f8fe-a0fd-d871-a576421fcc1a" executionId="15636d24-f508-43a3-9274-2fade5ddba50" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="46a4bef8-9b2c-6810-1e26-1d6b70668f4a" executionId="356a1868-6eb7-4c2c-ae84-c8bf969a0e95" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cf287a13-8d9e-521a-a676-ade6759f41c8" executionId="c8fc431e-7e81-425e-9b76-0e40667bc77e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2f310a97-91a6-659a-6acf-3f9c60cdaeb2" executionId="2fad17fa-43a0-4ca1-8b49-4c5c4d3e4963" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="533e43cc-f8b9-8461-8346-636c75c5b8fd" executionId="bb92c927-8b49-42a6-a3ca-ca830a3d9533" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="dbf97b32-a212-4448-6047-8ba72dc59cac" executionId="8d8c78c0-3d3b-41ad-9236-c61ee4b90867" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9cf7307c-2319-5fbb-9599-276fbf589651" executionId="dfbe2c46-2c32-453e-b06f-f794e621d172" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b6a4dea1-ecff-668d-a752-0a55c4b1694f" executionId="b973c380-117f-4c63-9d48-4579df77216b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="93661e66-864a-e12b-4070-62acca56c70e" executionId="4dfef9ae-75c2-4e03-a3cb-acd1f9385bc8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35c11e85-a296-0bff-0500-d7b2736fb8a1" executionId="8c4f3929-220c-4997-9072-364e933ab722" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79ebe2b0-78ae-7007-fb35-d71e1671dc0d" executionId="b9d99eb1-b362-4c53-9307-be41def1787a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="671b57d9-927c-70da-7bc2-ccee5d115e9f" executionId="448c4ae5-9ef0-492b-8dc8-18f92453452f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9121dd76-4230-cbd0-9df2-7733440127e9" executionId="c41f3097-2681-4754-bcad-ad298f662188" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="459a7645-5274-36ca-a64b-b557e098da57" executionId="6764641f-ad05-4623-a1ba-61768cd0a0f1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe1c93b9-0f74-42a5-04f1-109488737105" executionId="a961a7ea-f816-40b1-bb5e-3de9c271b22d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="305e9f0c-dfed-26bb-d827-290fed5d7d57" executionId="eade8b9f-4cb3-4635-85c7-ef48fae884f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1416e07d-c8d7-a0fa-4474-059c0ad8194d" executionId="cee853bc-2016-403f-b19d-0c4353c573d1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="42b4e4b4-934f-aee2-a7ad-1b4e1634b152" executionId="84017f07-da8f-4bc4-bdc1-8997c5e3f239" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="24" executed="24" passed="23" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.17]   Discovering: ALKAROS.QrOrdering.TokenLifecycle.Tests&#xD;
+[xUnit.net 00:00:00.20]   Discovered:  ALKAROS.QrOrdering.TokenLifecycle.Tests&#xD;
+[xUnit.net 00:00:00.20]   Starting:    ALKAROS.QrOrdering.TokenLifecycle.Tests&#xD;
+[xUnit.net 00:00:00.74]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:00.74]       Expected: 3650.00:00:00&#xD;
+[xUnit.net 00:00:00.74]       Actual:   04:00:00&#xD;
+[xUnit.net 00:00:00.74]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.74]         D:\PROJECT\ALKAROS\tests\Modules\QrOrdering\TokenLifecycle\TableTokenServiceTests.cs(168,0): at ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ADefaultIssuedTokenStaysValidForTenYearsLikeAPrintedLabel()&#xD;
+[xUnit.net 00:00:00.74]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:00.80]   Finished:    ALKAROS.QrOrdering.TokenLifecycle.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T23:30:50.2041342+03:00">
+        <Text>[xUnit.net 00:00:00.74]     ALKAROS.QrOrdering.TokenLifecycle.Tests.TableTokenServiceTests.ADefaultIssuedTokenStaysValidForTenYearsLikeAPrintedLabel [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
