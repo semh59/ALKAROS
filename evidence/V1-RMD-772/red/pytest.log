@@ -1,0 +1,63 @@
+..FF.F...                                                                [100%]
+================================== FAILURES ===================================
+___________________ test_waiter_pwa_html_landmarks_and_meta ___________________
+
+    def test_waiter_pwa_html_landmarks_and_meta():
+        """Verify index.html contains mobile viewport, PWA meta, and essential landmarks."""
+        html = (WWWROOT / "index.html").read_text(encoding="utf-8")
+    
+        assert 'name="viewport"' in html
+        assert "viewport-fit=cover" in html
+        assert 'rel="manifest"' in html
+        assert 'id="tablesGrid"' in html
+>       assert 'id="zoneList"' in html
+E       assert 'id="zoneList"' in '<!DOCTYPE html>\n<html lang="tr">\n<head>\n  <meta charset="UTF-8">\n  <meta name="viewport" content="width=device-wi...t src="./vendor/signalr.min.js"></script>\n  <script type="module" src="./waiter-app.js"></script>\n</body>\n</html>\n'
+
+tests\Clients\WaiterPwa\Frontend\test_waiter_pwa_frontend.py:38: AssertionError
+__________________ test_waiter_pwa_has_a_staff_sign_in_flow ___________________
+
+    def test_waiter_pwa_has_a_staff_sign_in_flow():
+        """The PWA gates on a cashier session and offers sign-in / sign-out."""
+        html = (WWWROOT / "index.html").read_text(encoding="utf-8")
+        app_code = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
+    
+        assert 'id="loginForm"' in html
+        assert 'id="loginUsername"' in html
+        assert 'id="loginPassword"' in html
+    
+        # Signs in against the shared auth endpoint with this device's own terminal id.
+        assert "/api/v1/auth/login" in app_code
+>       assert "alkaros_waiter_terminal_id" in app_code
+E       assert 'alkaros_waiter_terminal_id' in "// ALKAROS Waiter PWA (V1-WTR-010 rewrite of V1-WTR-008 / V1-RMD-051 / -066 / -129)\n//\n// Rewritten against docs/de...tate === 'loading') {\n    document.addEventListener('DOMContentLoaded', init);\n  } else {\n    init();\n  }\n})();\n"
+
+tests\Clients\WaiterPwa\Frontend\test_waiter_pwa_frontend.py:56: AssertionError
+_________________ test_waiter_pwa_real_api_and_reliable_queue _________________
+
+    def test_waiter_pwa_real_api_and_reliable_queue():
+        """Verify waiter-app.js connects to Host API and keeps items in queue when server call fails."""
+        app_code = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
+    
+        # Authoritative Host Endpoints
+        assert "/orders/table-draft" in app_code
+        assert "/table-management/zones" in app_code
+        assert "/table-management/tables" in app_code
+>       assert "/catalog-management/categories" in app_code
+E       assert '/catalog-management/categories' in "// ALKAROS Waiter PWA (V1-WTR-010 rewrite of V1-WTR-008 / V1-RMD-051 / -066 / -129)\n//\n// Rewritten against docs/de...tate === 'loading') {\n    document.addEventListener('DOMContentLoaded', init);\n  } else {\n    init();\n  }\n})();\n"
+
+tests\Clients\WaiterPwa\Frontend\test_waiter_pwa_frontend.py:86: AssertionError
+============================== warnings summary ===============================
+C:\Users\semih\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\_pytest\cacheprovider.py:469
+  C:\Users\semih\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\_pytest\cacheprovider.py:469: PytestCacheWarning: could not create cache path D:\PROJECT\ALKAROS\.pytest_cache\v\cache\nodeids: [WinError 5] Eriþim engellendi: 'D:\\PROJECT\\ALKAROS\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/nodeids", sorted(self.cached_nodeids))
+
+C:\Users\semih\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\_pytest\cacheprovider.py:423
+  C:\Users\semih\AppData\Local\Packages\PythonSoftwareFoundation.Python.3.13_qbz5n2kfra8p0\LocalCache\local-packages\Python313\site-packages\_pytest\cacheprovider.py:423: PytestCacheWarning: could not create cache path D:\PROJECT\ALKAROS\.pytest_cache\v\cache\lastfailed: [WinError 5] Eriþim engellendi: 'D:\\PROJECT\\ALKAROS\\.pytest_cache\\v\\cache'
+    config.cache.set("cache/lastfailed", self.lastfailed)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py::test_waiter_pwa_html_landmarks_and_meta
+FAILED tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py::test_waiter_pwa_has_a_staff_sign_in_flow
+FAILED tests/Clients/WaiterPwa/Frontend/test_waiter_pwa_frontend.py::test_waiter_pwa_real_api_and_reliable_queue
+3 failed, 6 passed, 2 warnings in 0.16s
+exit 1

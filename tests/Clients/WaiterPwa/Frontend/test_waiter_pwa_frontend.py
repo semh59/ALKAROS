@@ -5,6 +5,12 @@ WORKSPACE = Path(__file__).resolve().parents[4]
 WWWROOT = WORKSPACE / "src" / "Clients" / "WaiterPwa" / "wwwroot"
 
 
+def _app_source() -> str:
+    """The app is split across waiter-app.js and the js/ modules; assert against all of it."""
+    files = [WWWROOT / "waiter-app.js", *sorted((WWWROOT / "js").rglob("*.js"))]
+    return "\n".join(path.read_text(encoding="utf-8") for path in files)
+
+
 def test_waiter_pwa_static_files_exist():
     """Verify that all required static assets for Waiter PWA exist."""
     assert (WWWROOT / "index.html").is_file(), "index.html must exist"
@@ -35,17 +41,18 @@ def test_waiter_pwa_html_landmarks_and_meta():
     assert "viewport-fit=cover" in html
     assert 'rel="manifest"' in html
     assert 'id="tablesGrid"' in html
-    assert 'id="zoneList"' in html
-    assert 'id="orderDrawer"' in html
-    assert 'id="orderModal"' in html
-    assert 'id="statusRibbon"' in html
-    assert 'id="btnSendKitchen"' in html
+    assert 'id="zoneChips"' in html
+    assert 'id="billSheet"' in html
+    assert 'id="optionsSheet"' in html
+    assert 'id="ribbon"' in html
+    assert 'id="btnSendFromMenu"' in html
+    assert 'id="btnSendFromBill"' in html
 
 
 def test_waiter_pwa_has_a_staff_sign_in_flow():
     """The PWA gates on a cashier session and offers sign-in / sign-out."""
     html = (WWWROOT / "index.html").read_text(encoding="utf-8")
-    app_code = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
+    app_code = _app_source()
 
     assert 'id="loginForm"' in html
     assert 'id="loginUsername"' in html
@@ -77,25 +84,30 @@ def test_waiter_pwa_service_worker_lifecycle():
 
 def test_waiter_pwa_real_api_and_reliable_queue():
     """Verify waiter-app.js connects to Host API and keeps items in queue when server call fails."""
-    app_code = (WWWROOT / "waiter-app.js").read_text(encoding="utf-8")
+    app_code = _app_source()
 
     # Authoritative Host Endpoints
     assert "/orders/table-draft" in app_code
     assert "/table-management/zones" in app_code
     assert "/table-management/tables" in app_code
-    assert "/catalog-management/categories" in app_code
+    # Categories come from the /catalog response; a waiter session has no categories endpoint.
+    assert "apiUrl('/catalog')" in app_code
+    assert "/catalog-management/categories" not in app_code
 
     # Reliable queue: checks response.ok and only deletes on success
-    assert "response.ok" in app_code
-    assert "flushOfflineQueue" in app_code
-    assert "queueOrderAction" in app_code
+    assert "if (response.ok)" in (WWWROOT / "js" / "api.js").read_text(encoding="utf-8")
+    queue_code = (WWWROOT / "js" / "offline-queue.js").read_text(encoding="utf-8")
+    assert "if (result.ok) {\n        state.offlineQueue = state.offlineQueue.filter" in queue_code
+    assert "async function flushQueue(" in app_code
+    assert "function queueOrder(" in app_code
     assert "mock-session-token" not in app_code
 
-    # Bağımsız denetimde bulundu (2026-09-05): btnSendKitchen'in click
-    # handler'ı async'ti ama yeniden girişe (çift tıklama, ya da istek
-    # sürerken ikinci bir tıklama) karşı korunmuyordu.
-    assert "dispatchInFlight" in app_code
-    assert "btnSendKitchen.disabled = true" in app_code
+    # sendDraft is async; a double tap or a second tap while the request is in flight must not re-enter it.
+    assert "|| state.sendInFlight) return;" in queue_code
+    assert "state.sendInFlight = true" in queue_code
+    assert "state.sendInFlight = false;\n    afterDraftChange();" in queue_code
+    assert "el.btnSendFromMenu.disabled = true" in queue_code
+    assert "el.btnSendFromBill.disabled = true" in queue_code
 
 
 def test_waiter_help_request_is_honest_about_delivery_and_hears_back():
