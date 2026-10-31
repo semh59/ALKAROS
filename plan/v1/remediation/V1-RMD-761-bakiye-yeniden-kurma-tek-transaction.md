@@ -1,7 +1,7 @@
 # V1-RMD-761 - Bakiye yeniden kurma silme ve yazmayı tek transaction'da yapar
 
 - Task ID: V1-RMD-761
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: remediation
 - Surface state: Existing
