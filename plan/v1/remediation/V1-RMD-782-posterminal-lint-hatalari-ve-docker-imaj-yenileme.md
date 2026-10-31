@@ -1,7 +1,7 @@
 # V1-RMD-782 - PosTerminal lint hataları giderilsin, Docker imajları bugünkü kodla yenilensin
 
 - Task ID: V1-RMD-782
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
@@ -15,6 +15,8 @@ V1-RMD-781 raporu: Docker imaj derlemesi `pnpm build` içindeki `pnpm run lint` 
 
 3. Lint düzeltilince imaj derlemesi ikinci bir kök nedene takılıyor: `.dockerignore` `.git` satırı (V1-RMD-697) build bağlamından `.git` klasörünü çıkarıyor, oysa `Directory.Build.props` içindeki `ResolveAndValidateRepositoryCommit` hedefi konteyner içinde `git rev-parse HEAD` çalıştırıyor ve `fatal: not a git repository` ile her csproj'u kırıyor (`dotnet publish` exit 1). V1-RMD-098 `.git`'in build provenance için bağlamda tutulduğunu kayda geçirmişti. `.git` satırı kaldırılır (`.env` dışlamaları kalır); `.git` yalnız `backend-build` aşamasında bulunur, çalışma imajlarına `COPY --from` ile geçmez. Bu bir regresyon testiyle korunur.
 
+4. Imaj derlenince `api` konteyneri açılışta çöküyor (`CultureNotFoundException: tr-tr is an invalid culture identifier`): `aspnet:8.0-alpine` tabanı `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=true` ile geliyor (ICU yok), oysa `DualScreenApplication.CustomerAccounts.cs:32`, `CustomerAccountsStore.cs:27`, `DualScreenApplication.Payments.cs:639` ve diğerleri `CultureInfo.GetCultureInfo("tr-TR")` kullanıyor; 17 Ekim imajı bu kodu içermediği için o zaman görünmedi. `api` aşamasına `icu-libs` kurulur ve `DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false` yapılır (kod değişmez). Regresyon testi Dockerfile'ı denetler; kanıt canlı açılış.
+
 Ardından imajlar bugünkü HEAD ile yeniden derlenir, yığın mevcut volume'lar korunarak yeniden oluşturulur, yeni migration'ların uygulandığı doğrulanır ve kasa akışı canlıda denenir.
 
 ## Owned surface
@@ -24,7 +26,8 @@ Ardından imajlar bugünkü HEAD ile yeniden derlenir, yığın mevcut volume'la
   - src/Clients/PosTerminal/src/features/management-security-system/ (V1-RMD-450) — boş sütun başlığına ad, test.
   - src/Clients/PosTerminal/src/routes/CustomerDisplay.tsx (V1-RMD-097) — render içi saat okuması kaldırılır.
   - .dockerignore (V1-RMD-697) — yalnız `.git` dışlamasının kaldırılması.
-  - tests/Deployment/test_container_contract.py (V1-RMD-098) — `.git` bağlamda kalır sözleşmesi.
+  - tests/Deployment/test_container_contract.py (V1-RMD-098) — `.git` bağlamda kalır ve api imajında ICU var sözleşmeleri.
+  - deploy/docker/Dockerfile (V1-RMD-098) — yalnız `api` aşamasına icu-libs ve küreselleştirme ortam değişkeni.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
