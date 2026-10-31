@@ -1,3 +1,5 @@
+using System.Collections.ObjectModel;
+
 namespace ALKAROS.SensitiveData;
 
 /// <summary>
@@ -28,7 +30,8 @@ public sealed record SensitivePayload
                 + string.Join(", ", unclassified),
                 nameof(categories));
 
-        Fields = new Dictionary<string, string>(fields, StringComparer.Ordinal);
-        Categories = new Dictionary<string, SensitiveCategory>(categories, StringComparer.Ordinal);
+        Fields = new ReadOnlyDictionary<string, string>(new Dictionary<string, string>(fields, StringComparer.Ordinal));
+        Categories = new ReadOnlyDictionary<string, SensitiveCategory>(
+            new Dictionary<string, SensitiveCategory>(categories, StringComparer.Ordinal));
     }
 }

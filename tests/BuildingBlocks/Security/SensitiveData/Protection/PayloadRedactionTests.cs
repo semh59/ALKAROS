@@ -37,6 +37,40 @@ public static class PayloadRedactionTests
     }
 
     [Fact]
+    public static void PayloadClassificationCannotBeChangedByDowncastingTheDictionaries()
+    {
+        Assert.False(SamplePayload.Categories is Dictionary<string, SensitiveCategory>);
+        Assert.False(SamplePayload.Fields is Dictionary<string, string>);
+        Assert.Equal(SensitiveCategory.Payment, SamplePayload.Categories["card-number"]);
+    }
+
+    [Fact]
+    public static void EnvelopeClassificationCannotBeChangedByDowncastingTheDictionary()
+    {
+        var envelope = new SensitiveEnvelope(
+            new Dictionary<string, SensitiveCategory> { ["card-number"] = SensitiveCategory.Payment },
+            new EnvelopeCiphertext("key", [1], [2], [3]),
+            DateTimeOffset.UnixEpoch);
+
+        Assert.False(envelope.FieldCategories is Dictionary<string, SensitiveCategory>);
+        Assert.Equal(SensitiveCategory.Payment, envelope.FieldCategories["card-number"]);
+    }
+
+    [Fact]
+    public static void ChangingTheSourceDictionaryAfterConstructionDoesNotChangeThePayload()
+    {
+        var fields = new Dictionary<string, string> { ["card-number"] = "4111111111111111" };
+        var categories = new Dictionary<string, SensitiveCategory> { ["card-number"] = SensitiveCategory.Payment };
+        var payload = new SensitivePayload(fields, categories);
+
+        categories["card-number"] = SensitiveCategory.Public;
+        fields["card-number"] = "changed";
+
+        Assert.Equal(SensitiveCategory.Payment, payload.Categories["card-number"]);
+        Assert.Equal("4111111111111111", payload.Fields["card-number"]);
+    }
+
+    [Fact]
     public static void RedactedLogLineContainsNoSensitiveValue()
     {
         var redactor = new PayloadRedactor();

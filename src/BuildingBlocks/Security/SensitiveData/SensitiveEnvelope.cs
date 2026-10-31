@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.Text;
 
 namespace ALKAROS.SensitiveData;
@@ -25,7 +26,8 @@ public sealed record SensitiveEnvelope
         ArgumentNullException.ThrowIfNull(fieldCategories);
         ArgumentNullException.ThrowIfNull(ciphertext);
 
-        FieldCategories = new Dictionary<string, SensitiveCategory>(fieldCategories, StringComparer.Ordinal);
+        FieldCategories = new ReadOnlyDictionary<string, SensitiveCategory>(
+            new Dictionary<string, SensitiveCategory>(fieldCategories, StringComparer.Ordinal));
         Ciphertext = ciphertext;
         CreatedAt = createdAt;
     }

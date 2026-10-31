@@ -1,0 +1,10 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.Secrets -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\Secrets\bin\Debug\net8.0\ALKAROS.Secrets.dll
+  ALKAROS.SensitiveData -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.dll
+  ALKAROS.SensitiveData.Tests -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll
+D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-767\green\semih_SEMH59_2026-10-31_13_41_29_net8.0.trx
+
+Başarılı!  - Başarısız:     0, Başarılı:    39, Atlanan:     0, Toplam:    39, Süre: 82 ms - ALKAROS.SensitiveData.Tests.dll (net8.0)

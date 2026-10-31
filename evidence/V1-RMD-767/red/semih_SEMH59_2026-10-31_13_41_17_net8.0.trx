@@ -1,0 +1,306 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="3031d951-d04d-4b66-a4c0-a6addbc57d65" name="semih@SEMH59 2026-10-31 13:41:17" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T13:41:17.2972560+03:00" queuing="2026-10-31T13:41:17.2972562+03:00" start="2026-10-31T13:41:16.4216080+03:00" finish="2026-10-31T13:41:17.3569496+03:00" />
+  <TestSettings name="default" id="04bacb7b-ca2b-4af0-abe0-915c32517491">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_13_41_17" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b77d1f03-b5ea-4033-ad4e-6b8cee043387" testId="4201b778-a2b8-9da4-3555-f9e653a14be5" testName="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.ProtectThenUnprotectReturnsTheOriginalPayload" computerName="SEMH59" duration="00:00:00.0003357" startTime="2026-10-31T13:41:17.2890964+03:00" endTime="2026-10-31T13:41:17.2890965+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b77d1f03-b5ea-4033-ad4e-6b8cee043387" />
+    <UnitTestResult executionId="b2502e6a-fd21-47da-8506-c791db7c76f4" testId="8fb1becc-8a75-0629-5f9a-b291e670601a" testName="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.EnvelopeSurvivesPersistenceRoundTrip" computerName="SEMH59" duration="00:00:00.0111846" startTime="2026-10-31T13:41:17.2885574+03:00" endTime="2026-10-31T13:41:17.2885575+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b2502e6a-fd21-47da-8506-c791db7c76f4" />
+    <UnitTestResult executionId="2d60b74e-0163-4b3e-980a-639a92622853" testId="51c9ddbb-2efc-9c57-51bf-6e8a559c542e" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.PersistedBytesWithMissingFieldsAreATypedFailure(json: &quot;null&quot;)" computerName="SEMH59" duration="00:00:00.0021487" startTime="2026-10-31T13:41:17.2741829+03:00" endTime="2026-10-31T13:41:17.2741830+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d60b74e-0163-4b3e-980a-639a92622853" />
+    <UnitTestResult executionId="c2167dce-53ba-496c-8b76-b666b8f92e66" testId="adf2a139-75b2-302c-bde2-ec543c75b5d6" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.ATamperedNonceFailsTheIntegrityCheck" computerName="SEMH59" duration="00:00:00.0006053" startTime="2026-10-31T13:41:17.2719447+03:00" endTime="2026-10-31T13:41:17.2719448+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c2167dce-53ba-496c-8b76-b666b8f92e66" />
+    <UnitTestResult executionId="a5f1db63-0698-4eab-a2db-529e3e6a70d6" testId="109cfce1-d089-3bb8-b8fc-2a9affb41c92" testName="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.PayloadRejectsFieldWithoutClassification" computerName="SEMH59" duration="00:00:00.0004427" startTime="2026-10-31T13:41:17.2772973+03:00" endTime="2026-10-31T13:41:17.2772974+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a5f1db63-0698-4eab-a2db-529e3e6a70d6" />
+    <UnitTestResult executionId="2993b4e3-6d66-4a55-919f-1e01cb4e342e" testId="5ec94836-af36-9a12-1e4f-68f7c86bdfce" testName="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.ChangingTheSourceDictionaryAfterConstructionDoesNotChangeThePayload" computerName="SEMH59" duration="00:00:00.0051260" startTime="2026-10-31T13:41:17.2592744+03:00" endTime="2026-10-31T13:41:17.2592745+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2993b4e3-6d66-4a55-919f-1e01cb4e342e" />
+    <UnitTestResult executionId="b35df48c-d0f2-4eb6-881f-2d698eb8e2b2" testId="cb3b62b8-99d5-34cc-f5dc-d289585676c6" testName="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.ProtectProducesEnvelopeWithoutAnyPlaintextValue" computerName="SEMH59" duration="00:00:00.0681557" startTime="2026-10-31T13:41:17.2767553+03:00" endTime="2026-10-31T13:41:17.2767555+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b35df48c-d0f2-4eb6-881f-2d698eb8e2b2" />
+    <UnitTestResult executionId="fef65aa6-163d-4762-afcf-14d17768646f" testId="9e001ee1-b35e-9f98-1c28-f2b5f199fb76" testName="ALKAROS.SensitiveData.Tests.MetadataIntegrity.EnvelopeMetadataIntegrityTests.AlteredCreatedAtCannotDecrypt" computerName="SEMH59" duration="00:00:00.0007073" startTime="2026-10-31T13:41:17.2698453+03:00" endTime="2026-10-31T13:41:17.2698454+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fef65aa6-163d-4762-afcf-14d17768646f" />
+    <UnitTestResult executionId="7e814c37-d216-4c88-a0a8-bbc443fd5db0" testId="2c6ffbaf-cbae-7eda-e0ef-f4b0f41a5318" testName="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests.MaxAgeRejectsNegativeDuration" computerName="SEMH59" duration="00:00:00.0004211" startTime="2026-10-31T13:41:17.2238629+03:00" endTime="2026-10-31T13:41:17.2238630+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="7e814c37-d216-4c88-a0a8-bbc443fd5db0" />
+    <UnitTestResult executionId="bff83d8a-ef36-4a0a-a760-2a9bf1c6f568" testId="34fcd98b-11ea-0c44-e00f-f6b26d7d759f" testName="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests.WrongLengthKeyFailsClosed" computerName="SEMH59" duration="00:00:00.0004544" startTime="2026-10-31T13:41:17.2851197+03:00" endTime="2026-10-31T13:41:17.2851198+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bff83d8a-ef36-4a0a-a760-2a9bf1c6f568" />
+    <UnitTestResult executionId="8a69ea39-18a1-43bb-ba8d-5b80de13a693" testId="3af4293d-cce9-930b-769b-d690daaab32d" testName="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.FromPersistenceBytesRejectsMalformedBytesWithTypedException" computerName="SEMH59" duration="00:00:00.0003946" startTime="2026-10-31T13:41:17.2894082+03:00" endTime="2026-10-31T13:41:17.2894083+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8a69ea39-18a1-43bb-ba8d-5b80de13a693" />
+    <UnitTestResult executionId="a96bdde8-f774-4f6b-af12-db58855b108a" testId="043016e9-9637-6b34-5793-6227e233e83f" testName="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.RedactMasksNonPublicFieldsAndKeepsPublicFields" computerName="SEMH59" duration="00:00:00.0007929" startTime="2026-10-31T13:41:17.2585631+03:00" endTime="2026-10-31T13:41:17.2585632+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a96bdde8-f774-4f6b-af12-db58855b108a" />
+    <UnitTestResult executionId="02a77ac2-7bc5-40b0-bded-679a3c806875" testId="49137230-3511-4bef-4603-f1f85dde2586" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.EveryEncryptionUsesAFreshNonce" computerName="SEMH59" duration="00:00:00.0015793" startTime="2026-10-31T13:41:17.2711790+03:00" endTime="2026-10-31T13:41:17.2711791+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="02a77ac2-7bc5-40b0-bded-679a3c806875" />
+    <UnitTestResult executionId="dc531956-9d97-4cb1-8078-7ad332b64165" testId="872daf44-b98c-1abf-0902-40db80154861" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.OnlyA32ByteKeyIsAccepted(length: 33)" computerName="SEMH59" duration="00:00:00.0528588" startTime="2026-10-31T13:41:17.2614878+03:00" endTime="2026-10-31T13:41:17.2614883+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc531956-9d97-4cb1-8078-7ad332b64165" />
+    <UnitTestResult executionId="5ebbb5b8-3c7a-446f-be98-77eb18f8338c" testId="e570018c-5898-7b28-79df-ed69e0749f39" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.ATamperedTagFailsTheIntegrityCheck" computerName="SEMH59" duration="00:00:00.0005285" startTime="2026-10-31T13:41:17.2810349+03:00" endTime="2026-10-31T13:41:17.2810350+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5ebbb5b8-3c7a-446f-be98-77eb18f8338c" />
+    <UnitTestResult executionId="53331f30-947a-4fd1-9272-a0789a18ff90" testId="f4bbc00c-08fc-0ca4-76f4-282c9feb403d" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.PersistedBytesWithMissingFieldsAreATypedFailure(json: &quot;{}&quot;)" computerName="SEMH59" duration="00:00:00.0000892" startTime="2026-10-31T13:41:17.2766385+03:00" endTime="2026-10-31T13:41:17.2766386+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="53331f30-947a-4fd1-9272-a0789a18ff90" />
+    <UnitTestResult executionId="85a26832-79d4-4eca-b31e-fc9c8e39279c" testId="c35cba4a-afdd-87fe-da9c-ebf599ea53fb" testName="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests.OldEnvelopeIsExpired" computerName="SEMH59" duration="00:00:00.0002516" startTime="2026-10-31T13:41:17.2234617+03:00" endTime="2026-10-31T13:41:17.2234618+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="85a26832-79d4-4eca-b31e-fc9c8e39279c" />
+    <UnitTestResult executionId="60940a68-1d22-490e-a50d-f4600f2a8429" testId="aa277117-6714-e505-77c0-a2fac4671331" testName="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests.FreshEnvelopeIsNotExpired" computerName="SEMH59" duration="00:00:00.0001319" startTime="2026-10-31T13:41:17.2527296+03:00" endTime="2026-10-31T13:41:17.2527297+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="60940a68-1d22-490e-a50d-f4600f2a8429" />
+    <UnitTestResult executionId="db4c0ce6-5f1a-4a52-9647-9ccdfce1daa2" testId="9d7d4821-f29b-a1d2-4dfe-846e1bffc92f" testName="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests.MissingKeyFailsClosedOnProtect" computerName="SEMH59" duration="00:00:00.0002304" startTime="2026-10-31T13:41:17.2854009+03:00" endTime="2026-10-31T13:41:17.2854010+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="db4c0ce6-5f1a-4a52-9647-9ccdfce1daa2" />
+    <UnitTestResult executionId="2f6a5c49-aa9a-4d96-bd36-63b160b570a0" testId="b5e5c80e-3453-c843-cec4-811b59541f65" testName="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests.MalformedKeyFailsClosedOnProtect" computerName="SEMH59" duration="00:00:00.0017770" startTime="2026-10-31T13:41:17.2845843+03:00" endTime="2026-10-31T13:41:17.2845844+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f6a5c49-aa9a-4d96-bd36-63b160b570a0" />
+    <UnitTestResult executionId="b8f7f0be-57a7-49a4-af84-74096350071e" testId="637f8c8b-2176-3986-b436-776aff172148" testName="ALKAROS.SensitiveData.Tests.MetadataIntegrity.EnvelopeMetadataIntegrityTests.AlteredKeyIdentityIsRejectedBeforeDecrypt" computerName="SEMH59" duration="00:00:00.0007164" startTime="2026-10-31T13:41:17.2706866+03:00" endTime="2026-10-31T13:41:17.2706867+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b8f7f0be-57a7-49a4-af84-74096350071e" />
+    <UnitTestResult executionId="77bc8df9-5e07-4f2e-8603-2ebce44c8e1d" testId="1b2e69b4-a2de-048b-1206-d78efa3dc590" testName="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.EnvelopeClassificationCannotBeChangedByDowncastingTheDictionary" computerName="SEMH59" duration="00:00:00.0004407" startTime="2026-10-31T13:41:17.2592113+03:00" endTime="2026-10-31T13:41:17.2592115+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="77bc8df9-5e07-4f2e-8603-2ebce44c8e1d">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.EnvelopeClassificationCannotBeChangedByDowncastingTheDictionary() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\Protection\PayloadRedactionTests.cs:line 55&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="665f9284-7168-4ad2-8a55-c3bcd21b598d" testId="a73ed850-4395-b944-1c00-0a2b690a92c4" testName="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests.MissingKeyFailsClosedOnUnprotect" computerName="SEMH59" duration="00:00:00.0005586" startTime="2026-10-31T13:41:17.2827257+03:00" endTime="2026-10-31T13:41:17.2827258+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="665f9284-7168-4ad2-8a55-c3bcd21b598d" />
+    <UnitTestResult executionId="bc8af92b-1d06-4c0a-a826-0460f0acbe4c" testId="e81cf9d8-e682-5990-a97a-6832bdd11a2b" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.PersistedBytesWithMissingFieldsAreATypedFailure(json: &quot;{\&quot;fieldCategories\&quot;:{}}&quot;)" computerName="SEMH59" duration="00:00:00.0022762" startTime="2026-10-31T13:41:17.2765686+03:00" endTime="2026-10-31T13:41:17.2765692+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bc8af92b-1d06-4c0a-a826-0460f0acbe4c" />
+    <UnitTestResult executionId="559d02ab-ae57-44e3-ad21-55ea00354c67" testId="d9f71318-e8e8-b5b1-73e7-94ab276141bc" testName="ALKAROS.SensitiveData.Tests.MetadataIntegrity.EnvelopeMetadataIntegrityTests.AlteredClassificationCannotBypassPolicyOrDecrypt" computerName="SEMH59" duration="00:00:00.0604015" startTime="2026-10-31T13:41:17.2690131+03:00" endTime="2026-10-31T13:41:17.2690133+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="559d02ab-ae57-44e3-ad21-55ea00354c67" />
+    <UnitTestResult executionId="f7b18bd5-e44e-4d40-9172-cc961534012e" testId="d7d856b5-4203-6730-de22-b8149ef17b41" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.OnlyA32ByteKeyIsAccepted(length: 24)" computerName="SEMH59" duration="00:00:00.0000550" startTime="2026-10-31T13:41:17.2642652+03:00" endTime="2026-10-31T13:41:17.2642653+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f7b18bd5-e44e-4d40-9172-cc961534012e" />
+    <UnitTestResult executionId="c87089d4-c819-4cb0-8bf2-a857311c738c" testId="1043e967-0417-7a3f-2d82-cd0bc8a3549c" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.OnlyA32ByteKeyIsAccepted(length: 16)" computerName="SEMH59" duration="00:00:00.0004160" startTime="2026-10-31T13:41:17.2619769+03:00" endTime="2026-10-31T13:41:17.2619770+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c87089d4-c819-4cb0-8bf2-a857311c738c" />
+    <UnitTestResult executionId="f6ebcb56-2d19-4787-80c0-b2692d023371" testId="2206693f-c3ce-ca93-b378-9751f51ae867" testName="ALKAROS.SensitiveData.Tests.Authorization.UnauthorizedReadTests.UnauthorizedReadExceptionDoesNotRevealPayloadContent" computerName="SEMH59" duration="00:00:00.0054814" startTime="2026-10-31T13:41:17.2817041+03:00" endTime="2026-10-31T13:41:17.2817043+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f6ebcb56-2d19-4787-80c0-b2692d023371" />
+    <UnitTestResult executionId="fd35e236-b4b4-44c6-ad9a-d92b8b3bf61e" testId="809fb540-d200-ac6b-e4bb-298587a685db" testName="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.PayloadClassificationCannotBeChangedByDowncastingTheDictionaries" computerName="SEMH59" duration="00:00:00.0082942" startTime="2026-10-31T13:41:17.2582848+03:00" endTime="2026-10-31T13:41:17.2582852+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fd35e236-b4b4-44c6-ad9a-d92b8b3bf61e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.False() Failure&#xD;
+Expected: False&#xD;
+Actual:   True</Message>
+          <StackTrace>   at ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.PayloadClassificationCannotBeChangedByDowncastingTheDictionaries() in D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\Protection\PayloadRedactionTests.cs:line 42&#xD;
+   at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+   at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0a7d599b-5bc1-4b5b-8a37-49791fb0f050" testId="443befb8-2eca-4b88-8c66-7f512abf68c0" testName="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.RedactedLogLineContainsNoSensitiveValue" computerName="SEMH59" duration="00:00:00.0012974" startTime="2026-10-31T13:41:17.2585274+03:00" endTime="2026-10-31T13:41:17.2585275+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0a7d599b-5bc1-4b5b-8a37-49791fb0f050" />
+    <UnitTestResult executionId="12a91fee-a8d5-4d13-bcae-ca249409e3ec" testId="8b4253c4-8a58-ff8d-3d4f-6110ae023cbe" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.ANonceOrTagOfTheWrongSizeIsATypedFailureNotARawArgumentException(nonceLength: 5, tagLength: 16)" computerName="SEMH59" duration="00:00:00.0007417" startTime="2026-10-31T13:41:17.2695292+03:00" endTime="2026-10-31T13:41:17.2695293+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="12a91fee-a8d5-4d13-bcae-ca249409e3ec" />
+    <UnitTestResult executionId="37d0b6b5-29af-4dca-a317-faded752f6c0" testId="94026232-6d5a-a0de-b1d6-8bb8de8d3570" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.ANonceOrTagOfTheWrongSizeIsATypedFailureNotARawArgumentException(nonceLength: 12, tagLength: 3)" computerName="SEMH59" duration="00:00:00.0064688" startTime="2026-10-31T13:41:17.2687499+03:00" endTime="2026-10-31T13:41:17.2687501+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="37d0b6b5-29af-4dca-a317-faded752f6c0" />
+    <UnitTestResult executionId="e04db390-df36-4732-a5f0-9ed7c045149c" testId="60ae47be-5593-2532-1477-24bbba7996e7" testName="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests.EnvelopeAtExactlyTheMaxAgeIsNotExpired" computerName="SEMH59" duration="00:00:00.0076893" startTime="2026-10-31T13:41:17.2196529+03:00" endTime="2026-10-31T13:41:17.2196733+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e04db390-df36-4732-a5f0-9ed7c045149c" />
+    <UnitTestResult executionId="79e6f9ca-22c6-40ad-a771-c93c339e0336" testId="4893e622-bb7b-e2e6-3609-b6b022329e8f" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.PersistedBytesWithMissingFieldsAreATypedFailure(json: &quot;not json&quot;)" computerName="SEMH59" duration="00:00:00.0037372" startTime="2026-10-31T13:41:17.2804386+03:00" endTime="2026-10-31T13:41:17.2804389+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="79e6f9ca-22c6-40ad-a771-c93c339e0336" />
+    <UnitTestResult executionId="96f8c6b1-bfd9-4a9e-946a-51a25902e46a" testId="08c3515f-0f13-6a69-ee86-19b05f8bdccc" testName="ALKAROS.SensitiveData.Tests.Authorization.UnauthorizedReadTests.AuthorizedReadDecryptsExactlyOnce" computerName="SEMH59" duration="00:00:00.0069609" startTime="2026-10-31T13:41:17.2761336+03:00" endTime="2026-10-31T13:41:17.2761340+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="96f8c6b1-bfd9-4a9e-946a-51a25902e46a" />
+    <UnitTestResult executionId="da94b12c-a470-4465-9481-c18d3ac854eb" testId="2a325430-4637-0d20-7c70-04717b4d6f3c" testName="ALKAROS.SensitiveData.Tests.Authorization.UnauthorizedReadTests.UnauthorizedReadThrowsAndDecryptIsNeverCalled" computerName="SEMH59" duration="00:00:00.0605015" startTime="2026-10-31T13:41:17.2690950+03:00" endTime="2026-10-31T13:41:17.2690951+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="da94b12c-a470-4465-9481-c18d3ac854eb" />
+    <UnitTestResult executionId="c3de29ee-033d-43c6-918a-3120384dbe0d" testId="74a7dfe2-eec1-0c69-56a2-a19ef1344b9a" testName="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.FromPersistenceBytesRejectsNullJsonWithTypedException" computerName="SEMH59" duration="00:00:00.0001798" startTime="2026-10-31T13:41:17.2896233+03:00" endTime="2026-10-31T13:41:17.2896234+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c3de29ee-033d-43c6-918a-3120384dbe0d" />
+    <UnitTestResult executionId="2a5735a8-584e-4173-8aa8-e1274c15e972" testId="e812b877-70f4-8e06-e949-37153d948801" testName="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.OnlyA32ByteKeyIsAccepted(length: 31)" computerName="SEMH59" duration="00:00:00.0000777" startTime="2026-10-31T13:41:17.2620784+03:00" endTime="2026-10-31T13:41:17.2620785+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2a5735a8-584e-4173-8aa8-e1274c15e972" />
+    <UnitTestResult executionId="d51e87a7-0cc9-4a13-9cdb-2e3b37f1fc37" testId="937a9a53-0ccd-8388-7f69-c01ff52e49a0" testName="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests.TamperedCiphertextFailsIntegrityCheckWithoutPlaintext" computerName="SEMH59" duration="00:00:00.0735613" startTime="2026-10-31T13:41:17.2821004+03:00" endTime="2026-10-31T13:41:17.2821005+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d51e87a7-0cc9-4a13-9cdb-2e3b37f1fc37" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.PersistedBytesWithMissingFieldsAreATypedFailure(json: &quot;{\&quot;fieldCategories\&quot;:{}}&quot;)" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="e81cf9d8-e682-5990-a97a-6832bdd11a2b">
+      <Execution id="bc8af92b-1d06-4c0a-a826-0460f0acbe4c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="PersistedBytesWithMissingFieldsAreATypedFailure" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.OnlyA32ByteKeyIsAccepted(length: 31)" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="e812b877-70f4-8e06-e949-37153d948801">
+      <Execution id="2a5735a8-584e-4173-8aa8-e1274c15e972" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="OnlyA32ByteKeyIsAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.MetadataIntegrity.EnvelopeMetadataIntegrityTests.AlteredKeyIdentityIsRejectedBeforeDecrypt" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="637f8c8b-2176-3986-b436-776aff172148">
+      <Execution id="b8f7f0be-57a7-49a4-af84-74096350071e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.MetadataIntegrity.EnvelopeMetadataIntegrityTests" name="AlteredKeyIdentityIsRejectedBeforeDecrypt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.ATamperedNonceFailsTheIntegrityCheck" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="adf2a139-75b2-302c-bde2-ec543c75b5d6">
+      <Execution id="c2167dce-53ba-496c-8b76-b666b8f92e66" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="ATamperedNonceFailsTheIntegrityCheck" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.ATamperedTagFailsTheIntegrityCheck" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="e570018c-5898-7b28-79df-ed69e0749f39">
+      <Execution id="5ebbb5b8-3c7a-446f-be98-77eb18f8338c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="ATamperedTagFailsTheIntegrityCheck" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.EnvelopeSurvivesPersistenceRoundTrip" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="8fb1becc-8a75-0629-5f9a-b291e670601a">
+      <Execution id="b2502e6a-fd21-47da-8506-c791db7c76f4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests" name="EnvelopeSurvivesPersistenceRoundTrip" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.OnlyA32ByteKeyIsAccepted(length: 16)" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="1043e967-0417-7a3f-2d82-cd0bc8a3549c">
+      <Execution id="c87089d4-c819-4cb0-8bf2-a857311c738c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="OnlyA32ByteKeyIsAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.ANonceOrTagOfTheWrongSizeIsATypedFailureNotARawArgumentException(nonceLength: 12, tagLength: 3)" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="94026232-6d5a-a0de-b1d6-8bb8de8d3570">
+      <Execution id="37d0b6b5-29af-4dca-a317-faded752f6c0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="ANonceOrTagOfTheWrongSizeIsATypedFailureNotARawArgumentException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests.EnvelopeAtExactlyTheMaxAgeIsNotExpired" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="60ae47be-5593-2532-1477-24bbba7996e7">
+      <Execution id="e04db390-df36-4732-a5f0-9ed7c045149c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests" name="EnvelopeAtExactlyTheMaxAgeIsNotExpired" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests.MissingKeyFailsClosedOnUnprotect" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="a73ed850-4395-b944-1c00-0a2b690a92c4">
+      <Execution id="665f9284-7168-4ad2-8a55-c3bcd21b598d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests" name="MissingKeyFailsClosedOnUnprotect" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.ProtectProducesEnvelopeWithoutAnyPlaintextValue" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="cb3b62b8-99d5-34cc-f5dc-d289585676c6">
+      <Execution id="b35df48c-d0f2-4eb6-881f-2d698eb8e2b2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests" name="ProtectProducesEnvelopeWithoutAnyPlaintextValue" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests.MissingKeyFailsClosedOnProtect" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="9d7d4821-f29b-a1d2-4dfe-846e1bffc92f">
+      <Execution id="db4c0ce6-5f1a-4a52-9647-9ccdfce1daa2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests" name="MissingKeyFailsClosedOnProtect" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.EveryEncryptionUsesAFreshNonce" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="49137230-3511-4bef-4603-f1f85dde2586">
+      <Execution id="02a77ac2-7bc5-40b0-bded-679a3c806875" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="EveryEncryptionUsesAFreshNonce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.MetadataIntegrity.EnvelopeMetadataIntegrityTests.AlteredClassificationCannotBypassPolicyOrDecrypt" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="d9f71318-e8e8-b5b1-73e7-94ab276141bc">
+      <Execution id="559d02ab-ae57-44e3-ad21-55ea00354c67" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.MetadataIntegrity.EnvelopeMetadataIntegrityTests" name="AlteredClassificationCannotBypassPolicyOrDecrypt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.MetadataIntegrity.EnvelopeMetadataIntegrityTests.AlteredCreatedAtCannotDecrypt" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="9e001ee1-b35e-9f98-1c28-f2b5f199fb76">
+      <Execution id="fef65aa6-163d-4762-afcf-14d17768646f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.MetadataIntegrity.EnvelopeMetadataIntegrityTests" name="AlteredCreatedAtCannotDecrypt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.RedactedLogLineContainsNoSensitiveValue" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="443befb8-2eca-4b88-8c66-7f512abf68c0">
+      <Execution id="0a7d599b-5bc1-4b5b-8a37-49791fb0f050" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests" name="RedactedLogLineContainsNoSensitiveValue" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests.TamperedCiphertextFailsIntegrityCheckWithoutPlaintext" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="937a9a53-0ccd-8388-7f69-c01ff52e49a0">
+      <Execution id="d51e87a7-0cc9-4a13-9cdb-2e3b37f1fc37" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests" name="TamperedCiphertextFailsIntegrityCheckWithoutPlaintext" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests.MaxAgeRejectsNegativeDuration" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="2c6ffbaf-cbae-7eda-e0ef-f4b0f41a5318">
+      <Execution id="7e814c37-d216-4c88-a0a8-bbc443fd5db0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests" name="MaxAgeRejectsNegativeDuration" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.ANonceOrTagOfTheWrongSizeIsATypedFailureNotARawArgumentException(nonceLength: 5, tagLength: 16)" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="8b4253c4-8a58-ff8d-3d4f-6110ae023cbe">
+      <Execution id="12a91fee-a8d5-4d13-bcae-ca249409e3ec" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="ANonceOrTagOfTheWrongSizeIsATypedFailureNotARawArgumentException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.PersistedBytesWithMissingFieldsAreATypedFailure(json: &quot;{}&quot;)" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="f4bbc00c-08fc-0ca4-76f4-282c9feb403d">
+      <Execution id="53331f30-947a-4fd1-9272-a0789a18ff90" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="PersistedBytesWithMissingFieldsAreATypedFailure" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.PayloadClassificationCannotBeChangedByDowncastingTheDictionaries" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="809fb540-d200-ac6b-e4bb-298587a685db">
+      <Execution id="fd35e236-b4b4-44c6-ad9a-d92b8b3bf61e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests" name="PayloadClassificationCannotBeChangedByDowncastingTheDictionaries" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.PersistedBytesWithMissingFieldsAreATypedFailure(json: &quot;null&quot;)" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="51c9ddbb-2efc-9c57-51bf-6e8a559c542e">
+      <Execution id="2d60b74e-0163-4b3e-980a-639a92622853" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="PersistedBytesWithMissingFieldsAreATypedFailure" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests.MalformedKeyFailsClosedOnProtect" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="b5e5c80e-3453-c843-cec4-811b59541f65">
+      <Execution id="2f6a5c49-aa9a-4d96-bd36-63b160b570a0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests" name="MalformedKeyFailsClosedOnProtect" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Authorization.UnauthorizedReadTests.AuthorizedReadDecryptsExactlyOnce" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="08c3515f-0f13-6a69-ee86-19b05f8bdccc">
+      <Execution id="96f8c6b1-bfd9-4a9e-946a-51a25902e46a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Authorization.UnauthorizedReadTests" name="AuthorizedReadDecryptsExactlyOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests.OldEnvelopeIsExpired" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="c35cba4a-afdd-87fe-da9c-ebf599ea53fb">
+      <Execution id="85a26832-79d4-4eca-b31e-fc9c8e39279c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests" name="OldEnvelopeIsExpired" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.OnlyA32ByteKeyIsAccepted(length: 33)" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="872daf44-b98c-1abf-0902-40db80154861">
+      <Execution id="dc531956-9d97-4cb1-8078-7ad332b64165" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="OnlyA32ByteKeyIsAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests.WrongLengthKeyFailsClosed" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="34fcd98b-11ea-0c44-e00f-f6b26d7d759f">
+      <Execution id="bff83d8a-ef36-4a0a-a760-2a9bf1c6f568" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.KeyFailureTests" name="WrongLengthKeyFailsClosed" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Authorization.UnauthorizedReadTests.UnauthorizedReadThrowsAndDecryptIsNeverCalled" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="2a325430-4637-0d20-7c70-04717b4d6f3c">
+      <Execution id="da94b12c-a470-4465-9481-c18d3ac854eb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Authorization.UnauthorizedReadTests" name="UnauthorizedReadThrowsAndDecryptIsNeverCalled" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.PersistedBytesWithMissingFieldsAreATypedFailure(json: &quot;not json&quot;)" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="4893e622-bb7b-e2e6-3609-b6b022329e8f">
+      <Execution id="79e6f9ca-22c6-40ad-a771-c93c339e0336" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="PersistedBytesWithMissingFieldsAreATypedFailure" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.EnvelopeClassificationCannotBeChangedByDowncastingTheDictionary" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="1b2e69b4-a2de-048b-1206-d78efa3dc590">
+      <Execution id="77bc8df9-5e07-4f2e-8603-2ebce44c8e1d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests" name="EnvelopeClassificationCannotBeChangedByDowncastingTheDictionary" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.RedactMasksNonPublicFieldsAndKeepsPublicFields" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="043016e9-9637-6b34-5793-6227e233e83f">
+      <Execution id="a96bdde8-f774-4f6b-af12-db58855b108a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests" name="RedactMasksNonPublicFieldsAndKeepsPublicFields" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.ChangingTheSourceDictionaryAfterConstructionDoesNotChangeThePayload" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="5ec94836-af36-9a12-1e4f-68f7c86bdfce">
+      <Execution id="2993b4e3-6d66-4a55-919f-1e01cb4e342e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests" name="ChangingTheSourceDictionaryAfterConstructionDoesNotChangeThePayload" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests.OnlyA32ByteKeyIsAccepted(length: 24)" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="d7d856b5-4203-6730-de22-b8149ef17b41">
+      <Execution id="f7b18bd5-e44e-4d40-9172-cc961534012e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Encryption.EnvelopeHardeningTests" name="OnlyA32ByteKeyIsAccepted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests.FreshEnvelopeIsNotExpired" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="aa277117-6714-e505-77c0-a2fac4671331">
+      <Execution id="60940a68-1d22-490e-a50d-f4600f2a8429" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Retention.RetentionPolicyHookTests" name="FreshEnvelopeIsNotExpired" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.FromPersistenceBytesRejectsNullJsonWithTypedException" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="74a7dfe2-eec1-0c69-56a2-a19ef1344b9a">
+      <Execution id="c3de29ee-033d-43c6-918a-3120384dbe0d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests" name="FromPersistenceBytesRejectsNullJsonWithTypedException" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.ProtectThenUnprotectReturnsTheOriginalPayload" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="4201b778-a2b8-9da4-3555-f9e653a14be5">
+      <Execution id="b77d1f03-b5ea-4033-ad4e-6b8cee043387" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests" name="ProtectThenUnprotectReturnsTheOriginalPayload" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.PayloadRejectsFieldWithoutClassification" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="109cfce1-d089-3bb8-b8fc-2a9affb41c92">
+      <Execution id="a5f1db63-0698-4eab-a2db-529e3e6a70d6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests" name="PayloadRejectsFieldWithoutClassification" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Authorization.UnauthorizedReadTests.UnauthorizedReadExceptionDoesNotRevealPayloadContent" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="2206693f-c3ce-ca93-b378-9751f51ae867">
+      <Execution id="f6ebcb56-2d19-4787-80c0-b2692d023371" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Authorization.UnauthorizedReadTests" name="UnauthorizedReadExceptionDoesNotRevealPayloadContent" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests.FromPersistenceBytesRejectsMalformedBytesWithTypedException" storage="d:\project\alkaros\tests\buildingblocks\security\sensitivedata\bin\debug\net8.0\alkaros.sensitivedata.tests.dll" id="3af4293d-cce9-930b-769b-d690daaab32d">
+      <Execution id="8a69ea39-18a1-43bb-ba8d-5b80de13a693" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\bin\Debug\net8.0\ALKAROS.SensitiveData.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.SensitiveData.Tests.Protection.EnvelopeProtectionTests" name="FromPersistenceBytesRejectsMalformedBytesWithTypedException" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="4201b778-a2b8-9da4-3555-f9e653a14be5" executionId="b77d1f03-b5ea-4033-ad4e-6b8cee043387" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8fb1becc-8a75-0629-5f9a-b291e670601a" executionId="b2502e6a-fd21-47da-8506-c791db7c76f4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="51c9ddbb-2efc-9c57-51bf-6e8a559c542e" executionId="2d60b74e-0163-4b3e-980a-639a92622853" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="adf2a139-75b2-302c-bde2-ec543c75b5d6" executionId="c2167dce-53ba-496c-8b76-b666b8f92e66" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="109cfce1-d089-3bb8-b8fc-2a9affb41c92" executionId="a5f1db63-0698-4eab-a2db-529e3e6a70d6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5ec94836-af36-9a12-1e4f-68f7c86bdfce" executionId="2993b4e3-6d66-4a55-919f-1e01cb4e342e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="cb3b62b8-99d5-34cc-f5dc-d289585676c6" executionId="b35df48c-d0f2-4eb6-881f-2d698eb8e2b2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9e001ee1-b35e-9f98-1c28-f2b5f199fb76" executionId="fef65aa6-163d-4762-afcf-14d17768646f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2c6ffbaf-cbae-7eda-e0ef-f4b0f41a5318" executionId="7e814c37-d216-4c88-a0a8-bbc443fd5db0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="34fcd98b-11ea-0c44-e00f-f6b26d7d759f" executionId="bff83d8a-ef36-4a0a-a760-2a9bf1c6f568" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3af4293d-cce9-930b-769b-d690daaab32d" executionId="8a69ea39-18a1-43bb-ba8d-5b80de13a693" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="043016e9-9637-6b34-5793-6227e233e83f" executionId="a96bdde8-f774-4f6b-af12-db58855b108a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="49137230-3511-4bef-4603-f1f85dde2586" executionId="02a77ac2-7bc5-40b0-bded-679a3c806875" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="872daf44-b98c-1abf-0902-40db80154861" executionId="dc531956-9d97-4cb1-8078-7ad332b64165" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e570018c-5898-7b28-79df-ed69e0749f39" executionId="5ebbb5b8-3c7a-446f-be98-77eb18f8338c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f4bbc00c-08fc-0ca4-76f4-282c9feb403d" executionId="53331f30-947a-4fd1-9272-a0789a18ff90" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c35cba4a-afdd-87fe-da9c-ebf599ea53fb" executionId="85a26832-79d4-4eca-b31e-fc9c8e39279c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aa277117-6714-e505-77c0-a2fac4671331" executionId="60940a68-1d22-490e-a50d-f4600f2a8429" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9d7d4821-f29b-a1d2-4dfe-846e1bffc92f" executionId="db4c0ce6-5f1a-4a52-9647-9ccdfce1daa2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b5e5c80e-3453-c843-cec4-811b59541f65" executionId="2f6a5c49-aa9a-4d96-bd36-63b160b570a0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="637f8c8b-2176-3986-b436-776aff172148" executionId="b8f7f0be-57a7-49a4-af84-74096350071e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1b2e69b4-a2de-048b-1206-d78efa3dc590" executionId="77bc8df9-5e07-4f2e-8603-2ebce44c8e1d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a73ed850-4395-b944-1c00-0a2b690a92c4" executionId="665f9284-7168-4ad2-8a55-c3bcd21b598d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e81cf9d8-e682-5990-a97a-6832bdd11a2b" executionId="bc8af92b-1d06-4c0a-a826-0460f0acbe4c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d9f71318-e8e8-b5b1-73e7-94ab276141bc" executionId="559d02ab-ae57-44e3-ad21-55ea00354c67" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d7d856b5-4203-6730-de22-b8149ef17b41" executionId="f7b18bd5-e44e-4d40-9172-cc961534012e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1043e967-0417-7a3f-2d82-cd0bc8a3549c" executionId="c87089d4-c819-4cb0-8bf2-a857311c738c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2206693f-c3ce-ca93-b378-9751f51ae867" executionId="f6ebcb56-2d19-4787-80c0-b2692d023371" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="809fb540-d200-ac6b-e4bb-298587a685db" executionId="fd35e236-b4b4-44c6-ad9a-d92b8b3bf61e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="443befb8-2eca-4b88-8c66-7f512abf68c0" executionId="0a7d599b-5bc1-4b5b-8a37-49791fb0f050" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8b4253c4-8a58-ff8d-3d4f-6110ae023cbe" executionId="12a91fee-a8d5-4d13-bcae-ca249409e3ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="94026232-6d5a-a0de-b1d6-8bb8de8d3570" executionId="37d0b6b5-29af-4dca-a317-faded752f6c0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="60ae47be-5593-2532-1477-24bbba7996e7" executionId="e04db390-df36-4732-a5f0-9ed7c045149c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4893e622-bb7b-e2e6-3609-b6b022329e8f" executionId="79e6f9ca-22c6-40ad-a771-c93c339e0336" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="08c3515f-0f13-6a69-ee86-19b05f8bdccc" executionId="96f8c6b1-bfd9-4a9e-946a-51a25902e46a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2a325430-4637-0d20-7c70-04717b4d6f3c" executionId="da94b12c-a470-4465-9481-c18d3ac854eb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="74a7dfe2-eec1-0c69-56a2-a19ef1344b9a" executionId="c3de29ee-033d-43c6-918a-3120384dbe0d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e812b877-70f4-8e06-e949-37153d948801" executionId="2a5735a8-584e-4173-8aa8-e1274c15e972" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="937a9a53-0ccd-8388-7f69-c01ff52e49a0" executionId="d51e87a7-0cc9-4a13-9cdb-2e3b37f1fc37" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="39" executed="39" passed="37" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.17]   Discovering: ALKAROS.SensitiveData.Tests&#xD;
+[xUnit.net 00:00:00.22]   Discovered:  ALKAROS.SensitiveData.Tests&#xD;
+[xUnit.net 00:00:00.23]   Starting:    ALKAROS.SensitiveData.Tests&#xD;
+[xUnit.net 00:00:00.32]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.32]       Expected: False&#xD;
+[xUnit.net 00:00:00.32]       Actual:   True&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\Protection\PayloadRedactionTests.cs(42,0): at ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.PayloadClassificationCannotBeChangedByDowncastingTheDictionaries()&#xD;
+[xUnit.net 00:00:00.32]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.32]       Assert.False() Failure&#xD;
+[xUnit.net 00:00:00.32]       Expected: False&#xD;
+[xUnit.net 00:00:00.32]       Actual:   True&#xD;
+[xUnit.net 00:00:00.32]       Stack Trace:&#xD;
+[xUnit.net 00:00:00.32]         D:\PROJECT\ALKAROS\tests\BuildingBlocks\Security\SensitiveData\Protection\PayloadRedactionTests.cs(55,0): at ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.EnvelopeClassificationCannotBeChangedByDowncastingTheDictionary()&#xD;
+[xUnit.net 00:00:00.32]            at System.RuntimeMethodHandle.InvokeMethod(Object target, Void** arguments, Signature sig, Boolean isConstructor)&#xD;
+[xUnit.net 00:00:00.32]            at System.Reflection.MethodBaseInvoker.InvokeWithNoArgs(Object obj, BindingFlags invokeAttr)&#xD;
+[xUnit.net 00:00:00.35]   Finished:    ALKAROS.SensitiveData.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T13:41:17.3037895+03:00">
+        <Text>[xUnit.net 00:00:00.31]     ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.PayloadClassificationCannotBeChangedByDowncastingTheDictionaries [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T13:41:17.3043138+03:00">
+        <Text>[xUnit.net 00:00:00.32]     ALKAROS.SensitiveData.Tests.Protection.PayloadRedactionTests.EnvelopeClassificationCannotBeChangedByDowncastingTheDictionary [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
