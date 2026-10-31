@@ -1,7 +1,7 @@
 # V1-RMD-774 - Ana kasa ekranı zorunlu seçenek grubu olan ürünü seçimsiz satamasın
 
 - Task ID: V1-RMD-774
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
@@ -24,7 +24,9 @@ V1-RMD-739 bulgusu (V1-RMD-380, Yüksek). PosTerminal ana kasa ekranı (`Cashier
   - src/Clients/PosTerminal/src/routes/Cashier.tsx (V1-RMD-364) — seçenekli ürün için seçim penceresi.
   - src/Clients/PosTerminal/src/api.ts (V1-RMD-031) — `addItem` seçimi yollar.
   - tests/Host/MigrationComposition/DualScreen/DualScreenStoreTests.cs (V1-RMD-090) — sunucu testleri.
-  - plan/v1/remediation/V1-RMD-380-posterminal-cashier-round2-audit.md (V1-RMD-380) — bayat bulguya kapanış notu.
+  - src/Host/Experience/Orders/TableDraft/TableDraftService.cs (V1-WTR-034) — yalnız iki sınır sabiti Host içinde paylaşılır.
+  - src/Modules/Orders/OrderAggregate/OrderItem.cs (V1-RMD-120) — satır adedi değişince seçenek adetleri orantılanır.
+  - tests/Modules/Orders/OrderAggregate/OrderDomainTests.cs (V1-RMD-120) — orantılama testi.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
@@ -33,7 +35,8 @@ V1-RMD-739 bulgusu (V1-RMD-380, Yüksek). PosTerminal ana kasa ekranı (`Cashier
 2. Sunucu, ürünün gruplarının min/max kuralını garson yoluyla aynı yardımcılarla denetler: zorunlu grup seçimsizse veya en çok seçim aşılırsa 400; ürüne ait olmayan seçenek reddedilir.
 3. Seçenekli istek her zaman yeni satır açar; seçimsiz bare satır birleşmesi korunur.
 4. Seçenek grubu olan ürüne basılınca kasa ekranı Türkçe seçim penceresi açar (zorunlu/isteğe bağlı, tek/çoklu seçim, fiyat farkı), zorunlu grup tamamlanmadan onaylanamaz, seçimle birlikte gönderir.
-5. V1-RMD-380 md'sine bulgunun kapandığına dair not.
+5. Bağımsız inceleme bulgusu: kasa `+` düğmesi seçenekli satırın adedini değiştirince seçenek ücreti çarpılmıyordu (3 adet pide + büyük boy: 305 yerine 315 TL). `OrderItem.ChangeQuantity` seçenek adetlerini satırın yukarı yuvarlanmış adet oranıyla orantılar (seçenek her porsiyona gider, `BuildModifiers` varsayılanıyla aynı kural).
+6. Aynı incelemeden: kasa yolu seçenek adedi ve sayısı için garson yolundaki sınırı (`MaximumOrderQuantity`, `MaximumModifiersPerItem`) uygulamıyordu; aynı sınırlar eklenir.
 
 ## Out of scope
 
