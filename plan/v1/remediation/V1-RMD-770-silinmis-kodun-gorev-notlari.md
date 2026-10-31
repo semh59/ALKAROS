@@ -1,7 +1,7 @@
 # V1-RMD-770 - Silinmiş koda ait Done görevlere "yerine geçildi" notu
 
 - Task ID: V1-RMD-770
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: documentation
 - Surface state: Existing
