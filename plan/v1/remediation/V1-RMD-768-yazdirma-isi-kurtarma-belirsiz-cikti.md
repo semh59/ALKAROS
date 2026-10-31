@@ -22,11 +22,13 @@ Operatör incelemesi `physical_print_deliveries` içindeki `Unknown` kayıtları
 - Sınırlı ek: src/Modules/Kitchen/PrintQueue/PrintJob.cs
 - Sınırlı ek: tests/Modules/Kitchen/PrintQueue/PrintQueueUnitTests.cs
 - Sınırlı ek: tests/Modules/Kitchen/PrintQueue/PostgresPrintQueueIntegrationTests.cs
+- Sınırlı ek: tests/Modules/Kitchen/PrintQueue/ALKAROS.Kitchen.PrintQueue.Tests.csproj
 
 ## In scope
 
 - `RecoverExpiredLeasesAsync`: `Leased` → `Pending`, `Printing` → `AwaitingOperatorReview` (hata metni nedenini yazar) ve aynı komutta işe bağlı `Unknown` teslimat kaydı (açık teslimatı olan iş için yenisi yazılmaz).
 - `PrintJob.ResetExpiredLease`: aynı ayrım.
+- Test veritabanına teslimat tablosunun migration dosyaları (018, 034, 037) eklenir.
 - Birim testi ve gerçek PostgreSQL testi (kurtarılan işin `Unknown` teslimatı operatör listesinde görünür, karışık `Leased`+`Printing` durumu, ikinci kurtarma turu çift kayıt yazmaz); mevcut `Leased` → `Pending` testleri geçmeye devam eder.
 
 ## Out of scope
