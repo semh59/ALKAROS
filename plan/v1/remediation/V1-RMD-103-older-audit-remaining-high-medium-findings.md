@@ -10,7 +10,7 @@
 
 Aşağıdaki görev metni tarihsel kapsam ve kabul sözleşmesini korur; B1 altındaki bugün/hâlâ anlatımı görev tarihindeki durumu belirtir.
 `src/Modules/Billing/SplitDesign/SplitEngine.cs` içindeki `CreateEqualSplit`, `CreateAmountSplit` ve `CreateCustomSplit`, `adjustment` verilince `AdjustedPayableAmount`/`AdjustedTaxTotal`, null iken `Bill.PayableAmount`/`Bill.TaxTotal` kullanır.
-`src/Host/Experience/Billing/BillingSplitStore.cs` içindeki `SaveEqualAsync`, `SaveAmountsAsync` ve `SaveCustomAsync`, `LoadAdjustmentAsync` sonucunu engine'e taşır; `SaveItemsAsync`, adjustment mevcut ve `AdjustedPayableAmount != Bill.PayableAmount` ise kalem bölmeyi reddeder.
+`src/Host/Experience/Billing/BillingSplitStore.cs` içindeki `SaveEqualAsync`, `SaveAmountsAsync` ve `SaveCustomAsync`, `LoadAdjustmentAsync` sonucunu engine'e taşır; `SaveItemsAsync`, adjustment mevcut ve `AdjustedPayableAmount != Bill.PayableAmount` ise kalem bölmeyi reddeder; V1-RMD-754 sonrası `AdjustedTaxTotal != Bill.TaxTotal` de reddedilir.
 Bu not kalem bazlı indirim dağıtım politikası, yeni üretim değişikliği veya tüm ödeme akışının doğruluğu iddiası değildir.
 
 ## Goal

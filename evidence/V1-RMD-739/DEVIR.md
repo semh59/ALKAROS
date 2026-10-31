@@ -37,7 +37,7 @@ Ayrıca 44 kapalı görev md'sine "ölü yol" notu eklendi (commit 1aeb7284).
 | Arayüz | 0 | 10 | 23 | 33 (+ ui/*.md ayrı) |
 | İş kuralı (Semih) | 2 | 10 | 20 | 32 |
 | Diğer | 0 | 3 | 29 | 32 |
-(Toplamlar 9 kapanan bulguyu henüz düşmüyor.)
+(Toplamlar 9 kapanan bulguyu henüz düşmüyor. Sonradan kapanan, toplamdan ayrıca düşülecek bulgular: F0388 (V1-RMD-751), F0908 (V1-RMD-752, 754), F0068 (V1-RMD-756), F0077 (V1-RMD-757). V1-RMD-758..761 bu register dışındaki denetim bulgularıdır.)
 
 Sıradaki işler: (a) K3 kanıtsız Done kalanı (V0-GOV-003/004/045/048, V1-GOV-036/037/039/041/043/088/090/092/094/096, V1-RMD-010/031/043/079/087/595/599/600/602, V1-CAT-004, V1-SEC-005, V13-GOV-005/007) — kanıtı yeniden üret ya da Blocked/Reopened yap; (b) K1 eşzamanlılık kalanı: V11-INV-006, V1-RMD-276 ve 727 (pilot 604 notları), V13-PUI-002, V1-RMD-314; (c) 42 kanıtsız Done görevin md'sine ölü-yol notu (`findings/stale-md-noevidence.md`; kapı md değişikliğini kanıt gelene dek engeller); (d) K2 teslimat eksikleri (QR token, müşteri oturumu iptali, KVKK retention_subjects, menü sayaç/rapor, yazdırma kurtarma, yaş kısıtı bayrağı); (e) BD kalanı (yanlış sayı/eski karar metni), KN test boşlukları, UI (ui/*.md); (f) md güncelleme, kapanış taraması, %15 bağımsız yeniden doğrulama, Aşama 5 (kalan her iş için ayrı md + indeks).
 
