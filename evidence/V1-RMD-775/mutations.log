@@ -1,0 +1,6 @@
+m1 (status compare removed): exit=1; failed tests: ChangedStatusIsRejectedWhenLockingTheOrder ReceiptRacingACancellationIsRefusedAndTheOrderStaysCancelled SubmitRacingACancellationIsRefusedAndTheOrderStaysCancelled 
+  restored, cmp identical
+m2 (header FOR UPDATE removed): exit=0; failed tests: 
+  restored, cmp identical
+m3 (lock call removed from submit, cancel and receipt): exit=1; failed tests: CancellationRacingAReceiptIsRefusedAndTheReceiptSurvives ConcurrentReceiptsOfSameOrderPostStockOnce ReceiptRacingACancellationIsRefusedAndTheOrderStaysCancelled SubmitRacingACancellationIsRefusedAndTheOrderStaysCancelled 
+  restored, cmp identical

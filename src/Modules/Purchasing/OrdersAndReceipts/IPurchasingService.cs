@@ -124,8 +124,9 @@ public sealed class PurchasingService : IPurchasingService
             ?? throw new SupplierNotFoundException(order.SupplierId);
         supplier.AssertCanAcceptOrders();
 
+        var statusBefore = order.Status;
         order.Submit();
-        await _poRepo.UpdateAsync(order, ct);
+        await UpdateLockedAsync(order, statusBefore, ct);
     }
 
     public async Task CancelPurchaseOrderAsync(Guid orderId, CancellationToken ct = default)
@@ -133,8 +134,21 @@ public sealed class PurchasingService : IPurchasingService
         var order = await _poRepo.GetByIdAsync(orderId, ct)
             ?? throw new PurchaseOrderNotFoundException(orderId);
 
+        var statusBefore = order.Status;
         order.Cancel();
-        await _poRepo.UpdateAsync(order, ct);
+        await UpdateLockedAsync(order, statusBefore, ct);
+    }
+
+    // Submit and Cancel change no line quantities, so the lines' current received quantities are the ones read.
+    private async Task UpdateLockedAsync(PurchaseOrder order, PurchaseOrderStatus statusBefore, CancellationToken ct)
+    {
+        var receivedBefore = order.Lines.ToDictionary(l => l.Id, l => l.ReceivedQuantity);
+
+        await using var conn = await _dataSource.OpenConnectionAsync(ct);
+        await using var tx = await conn.BeginTransactionAsync(ct);
+        await _poRepo.LockAndAssertUnchangedAsync(order.Id, statusBefore, receivedBefore, conn, tx, ct);
+        await _poRepo.UpdateAsync(order, conn, tx, ct);
+        await tx.CommitAsync(ct);
     }
 
     public async Task<GoodsReceipt> ReceiveGoodsAsync(ReceiveGoodsCommand command, CancellationToken ct = default)
@@ -161,6 +175,7 @@ public sealed class PurchasingService : IPurchasingService
             throw new DuplicateGoodsReceiptException(command.ReceiptNumber);
         }
 
+        var statusBefore = order.Status;
         var receivedBefore = order.Lines.ToDictionary(l => l.Id, l => l.ReceivedQuantity);
         var receiptId = Guid.NewGuid();
         var receivedAt = DateTimeOffset.UtcNow;
@@ -255,8 +270,8 @@ public sealed class PurchasingService : IPurchasingService
         await using var conn = await _dataSource.OpenConnectionAsync(ct);
         await using var tx = await conn.BeginTransactionAsync(ct);
 
-        // 0. Lock the order lines and refuse when a concurrent receipt already changed them.
-        await _poRepo.LockLinesAndAssertReceivedAsync(order.Id, receivedBefore, conn, tx, ct);
+        // 0. Lock the order and refuse when a concurrent receipt or cancellation already changed it.
+        await _poRepo.LockAndAssertUnchangedAsync(order.Id, statusBefore, receivedBefore, conn, tx, ct);
 
         // 1. Save goods receipt
         await _grRepo.SaveAsync(receipt, conn, tx, ct);

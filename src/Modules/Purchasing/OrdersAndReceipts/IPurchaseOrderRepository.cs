@@ -27,10 +27,10 @@ public interface IPurchaseOrderRepository
     Task UpdateAsync(PurchaseOrder order, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default);
 
     /// <summary>
-    /// Locks the order's lines and fails when another receipt changed any received quantity
-    /// since the order was read, so two concurrent receipts cannot both post stock.
+    /// Locks the order header and then its lines, and fails when the status or any received quantity
+    /// changed since the order was read, so a concurrent receipt or cancellation cannot be overwritten.
     /// </summary>
-    Task LockLinesAndAssertReceivedAsync(Guid orderId, IReadOnlyDictionary<Guid, decimal> expectedReceived, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default);
+    Task LockAndAssertUnchangedAsync(Guid orderId, PurchaseOrderStatus expectedStatus, IReadOnlyDictionary<Guid, decimal> expectedReceived, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default);
 }
 
 public sealed class PostgresPurchaseOrderRepository : IPurchaseOrderRepository
@@ -250,11 +250,25 @@ WHERE line_id = $1;";
         }
     }
 
-    public async Task LockLinesAndAssertReceivedAsync(Guid orderId, IReadOnlyDictionary<Guid, decimal> expectedReceived, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
+    public async Task LockAndAssertUnchangedAsync(Guid orderId, PurchaseOrderStatus expectedStatus, IReadOnlyDictionary<Guid, decimal> expectedReceived, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default)
     {
         ArgumentNullException.ThrowIfNull(expectedReceived);
         ArgumentNullException.ThrowIfNull(connection);
         ArgumentNullException.ThrowIfNull(transaction);
+
+        // Cancellation writes the header before the lines, so locking in the same order cannot deadlock.
+        await using (var headerCmd = new NpgsqlCommand(
+            "SELECT status FROM purchasing.purchase_orders WHERE order_id = $1 FOR UPDATE;", connection, transaction))
+        {
+            headerCmd.Parameters.AddWithValue(orderId);
+            var status = (string?)await headerCmd.ExecuteScalarAsync(ct)
+                ?? throw new PurchaseOrderNotFoundException(orderId);
+            if (status != expectedStatus.ToString())
+            {
+                throw new PurchaseOrderStatusException(
+                    $"Purchase order '{orderId}' is now {status}; reload it and try again.");
+            }
+        }
 
         const string sql = @"
 SELECT line_id, received_quantity

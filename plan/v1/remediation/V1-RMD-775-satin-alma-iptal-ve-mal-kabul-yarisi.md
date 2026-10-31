@@ -1,7 +1,7 @@
 # V1-RMD-775 - Satın alma siparişi iptali ile mal kabul aynı anda gelince biri diğerinin durumunu ezmesin
 
 - Task ID: V1-RMD-775
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing

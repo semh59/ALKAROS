@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
@@ -414,14 +415,55 @@ WHERE source_reference_id = $1;";
         await using var conn = await _db.DataSource.OpenConnectionAsync();
         await using var tx = await conn.BeginTransactionAsync();
         var stale = new Dictionary<Guid, decimal> { [po.Lines[0].Id] = 0m };
-        var act = async () => await _poRepo.LockLinesAndAssertReceivedAsync(po.Id, stale, conn, tx);
+        var act = async () => await _poRepo.LockAndAssertUnchangedAsync(po.Id, PurchaseOrderStatus.PartiallyReceived, stale, conn, tx);
         await act.Should().ThrowAsync<PurchaseOrderStatusException>();
         await tx.RollbackAsync();
 
         await using var conn2 = await _db.DataSource.OpenConnectionAsync();
         await using var tx2 = await conn2.BeginTransactionAsync();
         var fresh = new Dictionary<Guid, decimal> { [po.Lines[0].Id] = 40m };
-        await _poRepo.LockLinesAndAssertReceivedAsync(po.Id, fresh, conn2, tx2);
+        await _poRepo.LockAndAssertUnchangedAsync(po.Id, PurchaseOrderStatus.PartiallyReceived, fresh, conn2, tx2);
+        await tx2.RollbackAsync();
+    }
+
+    [Fact]
+    public async Task ChangedStatusIsRejectedWhenLockingTheOrder()
+    {
+        var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();
+        var po = await CreateSubmittedOrderAsync(supplierId, locationId, itemId);
+        var received = new Dictionary<Guid, decimal> { [po.Lines[0].Id] = 0m };
+
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var tx = await conn.BeginTransactionAsync();
+        var act = async () => await _poRepo.LockAndAssertUnchangedAsync(po.Id, PurchaseOrderStatus.Draft, received, conn, tx);
+        (await act.Should().ThrowAsync<PurchaseOrderStatusException>()).WithMessage("*is now Submitted*");
+        await tx.RollbackAsync();
+
+        await using var conn2 = await _db.DataSource.OpenConnectionAsync();
+        await using var tx2 = await conn2.BeginTransactionAsync();
+        var notFound = async () => await _poRepo.LockAndAssertUnchangedAsync(Guid.NewGuid(), PurchaseOrderStatus.Draft, received, conn2, tx2);
+        await notFound.Should().ThrowAsync<PurchaseOrderNotFoundException>();
+        await tx2.RollbackAsync();
+    }
+
+    [Fact]
+    public async Task LockedOrderBlocksAnotherLockUntilTheFirstTransactionEnds()
+    {
+        var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();
+        var po = await CreateSubmittedOrderAsync(supplierId, locationId, itemId);
+        var received = new Dictionary<Guid, decimal> { [po.Lines[0].Id] = 0m };
+
+        await using var conn1 = await _db.DataSource.OpenConnectionAsync();
+        await using var tx1 = await conn1.BeginTransactionAsync();
+        await _poRepo.LockAndAssertUnchangedAsync(po.Id, PurchaseOrderStatus.Submitted, received, conn1, tx1);
+
+        await using var conn2 = await _db.DataSource.OpenConnectionAsync();
+        await using var tx2 = await conn2.BeginTransactionAsync();
+        var second = _poRepo.LockAndAssertUnchangedAsync(po.Id, PurchaseOrderStatus.Submitted, received, conn2, tx2);
+        (await Task.WhenAny(second, Task.Delay(500))).Should().NotBeSameAs(second);
+
+        await tx1.RollbackAsync();
+        await second.WaitAsync(TimeSpan.FromSeconds(10));
         await tx2.RollbackAsync();
     }
 
@@ -460,6 +502,127 @@ WHERE source_reference_id = $1;";
             "SELECT COALESCE(SUM(quantity), 0) FROM inventory.stock_movements WHERE stock_item_id = $1;", conn);
         cmd.Parameters.AddWithValue(itemId);
         ((decimal)(await cmd.ExecuteScalarAsync())!).Should().Be(100m);
+    }
+
+    [Fact]
+    public async Task ReceiptRacingACancellationIsRefusedAndTheOrderStaysCancelled()
+    {
+        var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();
+        var po = await CreateSubmittedOrderAsync(supplierId, locationId, itemId);
+        var racing = ServiceWithHookAfterOrderRead(() => _service.CancelPurchaseOrderAsync(po.Id));
+        var receiptNumber = "GR-" + Guid.NewGuid().ToString("N")[..8];
+
+        var act = async () => await racing.ReceiveGoodsAsync(new ReceiveGoodsCommand(
+            ReceiptNumber: receiptNumber,
+            OrderId: po.Id,
+            ReceivedBy: "Clerk",
+            DeliveredItems: new[] { new ReceiveLineItemDto(po.Lines[0].Id, DeliveredQuantity: 100m) }));
+
+        await act.Should().ThrowAsync<PurchaseOrderStatusException>();
+        var stored = await _poRepo.GetByIdAsync(po.Id);
+        stored!.Status.Should().Be(PurchaseOrderStatus.Cancelled);
+        stored.Lines[0].ReceivedQuantity.Should().Be(0m);
+        (await _grRepo.GetByReceiptNumberAsync(receiptNumber)).Should().BeNull();
+        (await StockMovementTotalAsync(itemId)).Should().Be(0m);
+    }
+
+    [Fact]
+    public async Task CancellationRacingAReceiptIsRefusedAndTheReceiptSurvives()
+    {
+        var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();
+        var po = await CreateSubmittedOrderAsync(supplierId, locationId, itemId);
+        var racing = ServiceWithHookAfterOrderRead(() => _service.ReceiveGoodsAsync(new ReceiveGoodsCommand(
+            ReceiptNumber: "GR-" + Guid.NewGuid().ToString("N")[..8],
+            OrderId: po.Id,
+            ReceivedBy: "Clerk",
+            DeliveredItems: new[] { new ReceiveLineItemDto(po.Lines[0].Id, DeliveredQuantity: 100m) })));
+
+        var act = async () => await racing.CancelPurchaseOrderAsync(po.Id);
+
+        await act.Should().ThrowAsync<PurchaseOrderStatusException>();
+        var stored = await _poRepo.GetByIdAsync(po.Id);
+        stored!.Status.Should().Be(PurchaseOrderStatus.Completed);
+        stored.Lines[0].ReceivedQuantity.Should().Be(100m);
+        (await StockMovementTotalAsync(itemId)).Should().Be(100m);
+    }
+
+    [Fact]
+    public async Task SubmitRacingACancellationIsRefusedAndTheOrderStaysCancelled()
+    {
+        var (supplierId, locationId, itemId) = await SeedPrerequisitesAsync();
+        var draft = await _service.CreatePurchaseOrderAsync(new CreatePOCommand(
+            OrderNumber: "PO-" + Guid.NewGuid().ToString("N")[..8],
+            SupplierId: supplierId,
+            DestinationLocationId: locationId,
+            Lines: new[] { new CreatePOLineDto(itemId, 100m, "kg", 20m) }));
+        var racing = ServiceWithHookAfterOrderRead(() => _service.CancelPurchaseOrderAsync(draft.Id));
+
+        var act = async () => await racing.SubmitPurchaseOrderAsync(draft.Id);
+
+        await act.Should().ThrowAsync<PurchaseOrderStatusException>();
+        (await _poRepo.GetByIdAsync(draft.Id))!.Status.Should().Be(PurchaseOrderStatus.Cancelled);
+    }
+
+    private async Task<PurchaseOrder> CreateSubmittedOrderAsync(Guid supplierId, Guid locationId, Guid itemId)
+    {
+        var po = await _service.CreatePurchaseOrderAsync(new CreatePOCommand(
+            OrderNumber: "PO-" + Guid.NewGuid().ToString("N")[..8],
+            SupplierId: supplierId,
+            DestinationLocationId: locationId,
+            Lines: new[] { new CreatePOLineDto(itemId, 100m, "kg", 20m) }));
+        await _service.SubmitPurchaseOrderAsync(po.Id);
+        return po;
+    }
+
+    private PurchasingService ServiceWithHookAfterOrderRead(Func<Task> hook) => new(
+        new HookAfterOrderReadRepository(_poRepo, hook),
+        _grRepo,
+        _supplierRepo,
+        _db.DataSource,
+        new PostgresStockBalanceRepository(_db.DataSource),
+        new PostgresStockMovementRepository(_db.DataSource),
+        new PostgresStockItemRepository(_db.DataSource),
+        new UnitConverter());
+
+    private async Task<decimal> StockMovementTotalAsync(Guid itemId)
+    {
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var cmd = new NpgsqlCommand(
+            "SELECT COALESCE(SUM(quantity), 0) FROM inventory.stock_movements WHERE stock_item_id = $1;", conn);
+        cmd.Parameters.AddWithValue(itemId);
+        return (decimal)(await cmd.ExecuteScalarAsync())!;
+    }
+
+    private sealed class HookAfterOrderReadRepository : IPurchaseOrderRepository
+    {
+        private readonly IPurchaseOrderRepository _inner;
+        private Func<Task>? _hook;
+
+        public HookAfterOrderReadRepository(IPurchaseOrderRepository inner, Func<Task> hook)
+        {
+            _inner = inner;
+            _hook = hook;
+        }
+
+        public async Task<PurchaseOrder?> GetByIdAsync(Guid id, CancellationToken ct = default)
+        {
+            var order = await _inner.GetByIdAsync(id, ct);
+            var hook = _hook;
+            _hook = null;
+            if (hook is not null)
+            {
+                await hook();
+            }
+
+            return order;
+        }
+
+        public Task<PurchaseOrder?> GetByOrderNumberAsync(string orderNumber, CancellationToken ct = default) => _inner.GetByOrderNumberAsync(orderNumber, ct);
+        public Task<IReadOnlyList<PurchaseOrder>> ListAsync(Guid? supplierId = null, PurchaseOrderStatus? status = null, CancellationToken ct = default) => _inner.ListAsync(supplierId, status, ct);
+        public Task SaveAsync(PurchaseOrder order, CancellationToken ct = default) => _inner.SaveAsync(order, ct);
+        public Task UpdateAsync(PurchaseOrder order, CancellationToken ct = default) => _inner.UpdateAsync(order, ct);
+        public Task UpdateAsync(PurchaseOrder order, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default) => _inner.UpdateAsync(order, connection, transaction, ct);
+        public Task LockAndAssertUnchangedAsync(Guid orderId, PurchaseOrderStatus expectedStatus, IReadOnlyDictionary<Guid, decimal> expectedReceived, NpgsqlConnection connection, NpgsqlTransaction transaction, CancellationToken ct = default) => _inner.LockAndAssertUnchangedAsync(orderId, expectedStatus, expectedReceived, connection, transaction, ct);
     }
 
     [Fact]
