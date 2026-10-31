@@ -1,7 +1,7 @@
 # V1-RMD-767 - Hassas veri yükü ve zarfı sözlükleri aşağı çevrilerek değiştirilemez
 
 - Task ID: V1-RMD-767
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: remediation
 - Surface state: Existing
