@@ -1,7 +1,7 @@
 # V1-RMD-777 - Günlük menü sayaçları gerçek siparişlerle ve üretimle dolsun
 
 - Task ID: V1-RMD-777
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
@@ -43,6 +43,7 @@ V1-RMD-739 bulgusu (V11-MNU-002, Yüksek), Semih kararıyla: sayaçlar gerçek o
   - src/Host/Experience/Menu/MenuManagementContracts.cs (V1-RMD-131) — rebuild ve drift sözleşmeleri.
   - docs/architecture/module-dependency-rules.md (V0-ARC-001) — yeni olay kenarları ve Host kenarları.
   - tests/Architecture/ModuleBoundaries/ModuleBoundaryTests.cs (V1-FND-008) — onaylı Host kenarları.
+  - tests/Architecture/ApiConventions/idempotency_allowlist.json (V1-RMD-430) — rebuild uç noktası kaydı (kendiliğinden idempotent).
   - tests/Modules/Menu/CounterProjection/ (V11-MNU-002) — tüketici, uçtan uca ve toplama testleri.
   - tests/Modules/Menu/DailyMenuLifecycle/ (V11-MNU-001) — eşleyici testleri.
   - tests/Modules/Inventory/CrossChannelReservation/ (V12-STK-001) — anahtar, olay ve çift sayım testleri.
