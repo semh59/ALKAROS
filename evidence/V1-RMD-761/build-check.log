@@ -1,0 +1,6 @@
+tests/Modules/Inventory/ManualAdjustments exit=0
+    0 Uyarı
+    0 Hata
+src/Host/ALKAROS.Host.csproj exit=0
+    0 Uyarı
+    0 Hata

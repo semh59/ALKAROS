@@ -190,6 +190,28 @@ public sealed class StockBalanceDatabaseTests : IClassFixture<StockBalanceTestDb
         (await _balanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id))!.OnHandQuantity.Should().Be(42m);
     }
 
+    [Fact]
+    public async Task ReplacingBalancesKeepsTheOldBalancesAndReservationsWhenAWriteFails()
+    {
+        var loc = await _masterService.CreateLocationAsync("LOC-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Atomic Store", StockLocationType.Warehouse);
+        var item = await _masterService.CreateStockItemAsync("SKU-" + Guid.NewGuid().ToString("N")[..8].ToUpperInvariant(), "Flour", StockItemType.RawMaterial, "kg");
+        await _balanceRepo.SetExactBalanceAsync(item.Id, loc.Id, 42m);
+        await _balanceRepo.RestoreReservedQuantityAsync(item.Id, loc.Id, 3m);
+        var sums = new[]
+        {
+            new LedgerBalanceSum(item.Id, loc.Id, 10m, 1),
+            new LedgerBalanceSum(Guid.NewGuid(), loc.Id, 5m, 1), // no such stock item: the insert breaks the foreign key
+        };
+
+        var act = async () => await ((IStockBalanceRepository)_balanceRepo).ReplaceAllBalancesAsync(sums);
+
+        await act.Should().ThrowAsync<PostgresException>();
+        var kept = await _balanceRepo.GetByItemAndLocationAsync(item.Id, loc.Id);
+        kept.Should().NotBeNull();
+        kept!.OnHandQuantity.Should().Be(42m);
+        kept.ReservedQuantity.Should().Be(3m);
+    }
+
     public class FailingLedger : System.Reflection.DispatchProxy
     {
         public static IStockMovementRepository Create() => Create<IStockMovementRepository, FailingLedger>();

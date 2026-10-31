@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b11c542a-d6ca-4d59-8f59-becd2e95d802" name="semih@SEMH59 2026-10-31 11:39:17" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T11:39:17.1755939+03:00" queuing="2026-10-31T11:39:17.1755949+03:00" start="2026-10-31T11:39:15.6740381+03:00" finish="2026-10-31T11:39:17.6625824+03:00" />
+  <TestSettings name="default" id="6441c7fd-2ff0-4653-a3b3-48cc082d4e0d">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_11_39_17" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="5d1f11c2-a38c-4446-80e5-7022813a4057" testId="31d333d4-9a0a-c6ee-e7a0-c784b290b1ce" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.RebuildKeepsExistingBalancesWhenTheLedgerCannotBeRead" computerName="SEMH59" duration="00:00:00.0190653" startTime="2026-10-31T11:39:17.2919532+03:00" endTime="2026-10-31T11:39:17.2919534+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5d1f11c2-a38c-4446-80e5-7022813a4057" />
+    <UnitTestResult executionId="dc6a5c69-2de9-4979-9f0f-dc85aa131f43" testId="3fe5b458-f8e4-4d9d-4a0b-4e4945ed30bb" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ARefusedGuardedDecreaseLeavesTheCallersTransactionUsable" computerName="SEMH59" duration="00:00:00.0288135" startTime="2026-10-31T11:39:17.5345038+03:00" endTime="2026-10-31T11:39:17.5345042+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc6a5c69-2de9-4979-9f0f-dc85aa131f43" />
+    <UnitTestResult executionId="39b6db1c-f1bc-46fa-afdd-5de48b6be79e" testId="e67df98a-10dc-bcce-cbd3-1bace45d972c" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.NullPolicyRejectsEmptyGuids" computerName="SEMH59" duration="00:00:00.0286860" startTime="2026-10-31T11:39:16.5627529+03:00" endTime="2026-10-31T11:39:16.5627533+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="39b6db1c-f1bc-46fa-afdd-5de48b6be79e" />
+    <UnitTestResult executionId="804456cb-71ca-4c59-a6c8-13aff6a1a9be" testId="bea1a895-1137-5a71-5790-86e7f2f62e1d" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.StockBalanceProjectorReplaysLedgerDeterministically" computerName="SEMH59" duration="00:00:00.0196610" startTime="2026-10-31T11:39:16.5342231+03:00" endTime="2026-10-31T11:39:16.5342600+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="804456cb-71ca-4c59-a6c8-13aff6a1a9be" />
+    <UnitTestResult executionId="e8a0e9c5-a3fd-4073-ac7e-5a957ab7372a" testId="7ece5eb0-54bd-4200-dff4-f86b260d8db7" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.RebuildSucceedsForALocationWithMoreMovementsThanTheUnpagedCap" computerName="SEMH59" duration="00:00:00.1530037" startTime="2026-10-31T11:39:17.4454102+03:00" endTime="2026-10-31T11:39:17.4454104+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e8a0e9c5-a3fd-4073-ac7e-5a957ab7372a" />
+    <UnitTestResult executionId="02a1b92d-90f2-4d1d-9aa5-a27c70f14642" testId="5f328251-3f95-42aa-dfb6-253f64389f79" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.StockBalanceProjectorRebuildAllBalancesClearsAndReplaysAllLocations" computerName="SEMH59" duration="00:00:00.0130834" startTime="2026-10-31T11:39:16.5827602+03:00" endTime="2026-10-31T11:39:16.5827607+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="02a1b92d-90f2-4d1d-9aa5-a27c70f14642" />
+    <UnitTestResult executionId="10b50f52-3020-4c3f-bd28-e07052a685f8" testId="9e64f964-9eec-7b1e-c452-88415ad8bb54" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.SetOnHandUpdatesOnHandAndAvailablePreservingReserved" computerName="SEMH59" duration="00:00:00.0008700" startTime="2026-10-31T11:39:16.5636077+03:00" endTime="2026-10-31T11:39:16.5636078+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="10b50f52-3020-4c3f-bd28-e07052a685f8" />
+    <UnitTestResult executionId="1491fe2f-cc7f-4b39-9e13-69def3ab7064" testId="44115db8-4148-e604-5fc6-515cb42e96cf" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ReplacingBalancesKeepsTheOldBalancesAndReservationsWhenAWriteFails" computerName="SEMH59" duration="00:00:00.1677832" startTime="2026-10-31T11:39:17.2382387+03:00" endTime="2026-10-31T11:39:17.2382390+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1491fe2f-cc7f-4b39-9e13-69def3ab7064">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected kept!.OnHandQuantity to be 42M, but found 10.0000M (difference of -32.0000).</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ReplacingBalancesKeepsTheOldBalancesAndReservationsWhenAWriteFails() in D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\StockBalanceDatabaseTests.cs:line 211&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="14ba82fd-15ef-45ed-bb0d-2ecd778a51a8" testId="6ede0711-857c-f2ac-876f-f0b16c0f2b7d" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.Migration061RollbackAndReapplyWorksCleanly" computerName="SEMH59" duration="00:00:00.0171930" startTime="2026-10-31T11:39:17.2508424+03:00" endTime="2026-10-31T11:39:17.2508428+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="14ba82fd-15ef-45ed-bb0d-2ecd778a51a8" />
+    <UnitTestResult executionId="6de3baf2-1883-47a6-a015-51bbae0f8a8d" testId="6726f032-e5af-ff6c-7330-779ce110d846" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.CreateStockBalanceInitializesPropertiesCorrectly" computerName="SEMH59" duration="00:00:00.0009639" startTime="2026-10-31T11:39:16.5837987+03:00" endTime="2026-10-31T11:39:16.5837990+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6de3baf2-1883-47a6-a015-51bbae0f8a8d" />
+    <UnitTestResult executionId="30beab0a-5240-4b68-ab90-e31b0a7e4d1e" testId="ebe3d4a7-a26f-7d28-a459-2ee79ff47db9" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.StockBalanceProjectorAppliesMovementOnHandDelta" computerName="SEMH59" duration="00:00:00.0053144" startTime="2026-10-31T11:39:16.5691389+03:00" endTime="2026-10-31T11:39:16.5691391+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="30beab0a-5240-4b68-ab90-e31b0a7e4d1e" />
+    <UnitTestResult executionId="b009496b-695c-4928-87d5-e62f2a83beab" testId="f6c7476d-70a9-1825-9883-a0bde7e8d875" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ApplyOnHandDeltaCreatesAndUpdatesBalancesAccurately" computerName="SEMH59" duration="00:00:00.0164508" startTime="2026-10-31T11:39:17.5052065+03:00" endTime="2026-10-31T11:39:17.5052067+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b009496b-695c-4928-87d5-e62f2a83beab" />
+    <UnitTestResult executionId="1c9c47ad-2247-4d53-a33d-37e4f5879fac" testId="e42b4f8e-bd9a-a482-3f4d-72b73be897c3" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.FullLedgerRebuildFromDatabaseMovementsReconcilesAccurately" computerName="SEMH59" duration="00:00:00.1276342" startTime="2026-10-31T11:39:17.0596336+03:00" endTime="2026-10-31T11:39:17.0596341+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1c9c47ad-2247-4d53-a33d-37e4f5879fac" />
+    <UnitTestResult executionId="fdf3d6f3-61cf-4f47-99a2-0018073ffde9" testId="6f67585f-5222-a71f-f480-16f21d8101a2" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ConcurrentWritersApplyingDeltasProduceExactNetSumWithoutLostUpdates" computerName="SEMH59" duration="00:00:00.1535335" startTime="2026-10-31T11:39:16.9291968+03:00" endTime="2026-10-31T11:39:16.9291973+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fdf3d6f3-61cf-4f47-99a2-0018073ffde9" />
+    <UnitTestResult executionId="121b3115-d86f-46dc-b3b5-673ccdcd59c2" testId="d7199244-611c-aa67-68b3-72ad74713bfd" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.DeletingStockItemReferencedByStockBalanceThrowsForeignKeyRestriction" computerName="SEMH59" duration="00:00:00.0209843" startTime="2026-10-31T11:39:17.2724226+03:00" endTime="2026-10-31T11:39:17.2724229+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="121b3115-d86f-46dc-b3b5-673ccdcd59c2" />
+    <UnitTestResult executionId="2b1e7259-4b11-4ba4-9b6e-a3871516771b" testId="1e52ab7e-1954-8308-151f-67414456d142" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.RebuildAllBalancesPreservesAnActiveReservationInsteadOfSilentlyZeroingIt" computerName="SEMH59" duration="00:00:00.0423344" startTime="2026-10-31T11:39:17.4882094+03:00" endTime="2026-10-31T11:39:17.4882096+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2b1e7259-4b11-4ba4-9b6e-a3871516771b" />
+    <UnitTestResult executionId="a6d484ff-fd63-4f70-98c2-e8fad97218b5" testId="167c047b-77ef-430f-c6eb-2c365fc51815" testName="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.ApplyOnHandDeltaUpdatesOnHandAndAvailable" computerName="SEMH59" duration="00:00:00.0003608" startTime="2026-10-31T11:39:16.5695474+03:00" endTime="2026-10-31T11:39:16.5695476+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a6d484ff-fd63-4f70-98c2-e8fad97218b5" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.RebuildSucceedsForALocationWithMoreMovementsThanTheUnpagedCap" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="7ece5eb0-54bd-4200-dff4-f86b260d8db7">
+      <Execution id="e8a0e9c5-a3fd-4073-ac7e-5a957ab7372a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests" name="RebuildSucceedsForALocationWithMoreMovementsThanTheUnpagedCap" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.StockBalanceProjectorReplaysLedgerDeterministically" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="bea1a895-1137-5a71-5790-86e7f2f62e1d">
+      <Execution id="804456cb-71ca-4c59-a6c8-13aff6a1a9be" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests" name="StockBalanceProjectorReplaysLedgerDeterministically" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ConcurrentWritersApplyingDeltasProduceExactNetSumWithoutLostUpdates" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="6f67585f-5222-a71f-f480-16f21d8101a2">
+      <Execution id="fdf3d6f3-61cf-4f47-99a2-0018073ffde9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests" name="ConcurrentWritersApplyingDeltasProduceExactNetSumWithoutLostUpdates" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.NullPolicyRejectsEmptyGuids" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="e67df98a-10dc-bcce-cbd3-1bace45d972c">
+      <Execution id="39b6db1c-f1bc-46fa-afdd-5de48b6be79e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests" name="NullPolicyRejectsEmptyGuids" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.FullLedgerRebuildFromDatabaseMovementsReconcilesAccurately" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="e42b4f8e-bd9a-a482-3f4d-72b73be897c3">
+      <Execution id="1c9c47ad-2247-4d53-a33d-37e4f5879fac" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests" name="FullLedgerRebuildFromDatabaseMovementsReconcilesAccurately" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.RebuildKeepsExistingBalancesWhenTheLedgerCannotBeRead" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="31d333d4-9a0a-c6ee-e7a0-c784b290b1ce">
+      <Execution id="5d1f11c2-a38c-4446-80e5-7022813a4057" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests" name="RebuildKeepsExistingBalancesWhenTheLedgerCannotBeRead" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.StockBalanceProjectorAppliesMovementOnHandDelta" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="ebe3d4a7-a26f-7d28-a459-2ee79ff47db9">
+      <Execution id="30beab0a-5240-4b68-ab90-e31b0a7e4d1e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests" name="StockBalanceProjectorAppliesMovementOnHandDelta" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.RebuildAllBalancesPreservesAnActiveReservationInsteadOfSilentlyZeroingIt" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="1e52ab7e-1954-8308-151f-67414456d142">
+      <Execution id="2b1e7259-4b11-4ba4-9b6e-a3871516771b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests" name="RebuildAllBalancesPreservesAnActiveReservationInsteadOfSilentlyZeroingIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.StockBalanceProjectorRebuildAllBalancesClearsAndReplaysAllLocations" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="5f328251-3f95-42aa-dfb6-253f64389f79">
+      <Execution id="02a1b92d-90f2-4d1d-9aa5-a27c70f14642" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests" name="StockBalanceProjectorRebuildAllBalancesClearsAndReplaysAllLocations" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.ApplyOnHandDeltaUpdatesOnHandAndAvailable" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="167c047b-77ef-430f-c6eb-2c365fc51815">
+      <Execution id="a6d484ff-fd63-4f70-98c2-e8fad97218b5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests" name="ApplyOnHandDeltaUpdatesOnHandAndAvailable" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.DeletingStockItemReferencedByStockBalanceThrowsForeignKeyRestriction" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="d7199244-611c-aa67-68b3-72ad74713bfd">
+      <Execution id="121b3115-d86f-46dc-b3b5-673ccdcd59c2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests" name="DeletingStockItemReferencedByStockBalanceThrowsForeignKeyRestriction" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ApplyOnHandDeltaCreatesAndUpdatesBalancesAccurately" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="f6c7476d-70a9-1825-9883-a0bde7e8d875">
+      <Execution id="b009496b-695c-4928-87d5-e62f2a83beab" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests" name="ApplyOnHandDeltaCreatesAndUpdatesBalancesAccurately" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ReplacingBalancesKeepsTheOldBalancesAndReservationsWhenAWriteFails" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="44115db8-4148-e604-5fc6-515cb42e96cf">
+      <Execution id="1491fe2f-cc7f-4b39-9e13-69def3ab7064" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests" name="ReplacingBalancesKeepsTheOldBalancesAndReservationsWhenAWriteFails" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ARefusedGuardedDecreaseLeavesTheCallersTransactionUsable" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="3fe5b458-f8e4-4d9d-4a0b-4e4945ed30bb">
+      <Execution id="dc6a5c69-2de9-4979-9f0f-dc85aa131f43" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests" name="ARefusedGuardedDecreaseLeavesTheCallersTransactionUsable" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.CreateStockBalanceInitializesPropertiesCorrectly" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="6726f032-e5af-ff6c-7330-779ce110d846">
+      <Execution id="6de3baf2-1883-47a6-a015-51bbae0f8a8d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests" name="CreateStockBalanceInitializesPropertiesCorrectly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.Migration061RollbackAndReapplyWorksCleanly" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="6ede0711-857c-f2ac-876f-f0b16c0f2b7d">
+      <Execution id="14ba82fd-15ef-45ed-bb0d-2ecd778a51a8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests" name="Migration061RollbackAndReapplyWorksCleanly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests.SetOnHandUpdatesOnHandAndAvailablePreservingReserved" storage="d:\project\alkaros\tests\modules\inventory\balanceprojection\bin\debug\net8.0\alkaros.inventory.balanceprojection.tests.dll" id="9e64f964-9eec-7b1e-c452-88415ad8bb54">
+      <Execution id="10b50f52-3020-4c3f-bd28-e07052a685f8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\bin\Debug\net8.0\ALKAROS.Inventory.BalanceProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDomainTests" name="SetOnHandUpdatesOnHandAndAvailablePreservingReserved" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="31d333d4-9a0a-c6ee-e7a0-c784b290b1ce" executionId="5d1f11c2-a38c-4446-80e5-7022813a4057" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="3fe5b458-f8e4-4d9d-4a0b-4e4945ed30bb" executionId="dc6a5c69-2de9-4979-9f0f-dc85aa131f43" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e67df98a-10dc-bcce-cbd3-1bace45d972c" executionId="39b6db1c-f1bc-46fa-afdd-5de48b6be79e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bea1a895-1137-5a71-5790-86e7f2f62e1d" executionId="804456cb-71ca-4c59-a6c8-13aff6a1a9be" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7ece5eb0-54bd-4200-dff4-f86b260d8db7" executionId="e8a0e9c5-a3fd-4073-ac7e-5a957ab7372a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5f328251-3f95-42aa-dfb6-253f64389f79" executionId="02a1b92d-90f2-4d1d-9aa5-a27c70f14642" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9e64f964-9eec-7b1e-c452-88415ad8bb54" executionId="10b50f52-3020-4c3f-bd28-e07052a685f8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="44115db8-4148-e604-5fc6-515cb42e96cf" executionId="1491fe2f-cc7f-4b39-9e13-69def3ab7064" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6ede0711-857c-f2ac-876f-f0b16c0f2b7d" executionId="14ba82fd-15ef-45ed-bb0d-2ecd778a51a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6726f032-e5af-ff6c-7330-779ce110d846" executionId="6de3baf2-1883-47a6-a015-51bbae0f8a8d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ebe3d4a7-a26f-7d28-a459-2ee79ff47db9" executionId="30beab0a-5240-4b68-ab90-e31b0a7e4d1e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f6c7476d-70a9-1825-9883-a0bde7e8d875" executionId="b009496b-695c-4928-87d5-e62f2a83beab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e42b4f8e-bd9a-a482-3f4d-72b73be897c3" executionId="1c9c47ad-2247-4d53-a33d-37e4f5879fac" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="6f67585f-5222-a71f-f480-16f21d8101a2" executionId="fdf3d6f3-61cf-4f47-99a2-0018073ffde9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d7199244-611c-aa67-68b3-72ad74713bfd" executionId="121b3115-d86f-46dc-b3b5-673ccdcd59c2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1e52ab7e-1954-8308-151f-67414456d142" executionId="2b1e7259-4b11-4ba4-9b6e-a3871516771b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="167c047b-77ef-430f-c6eb-2c365fc51815" executionId="a6d484ff-fd63-4f70-98c2-e8fad97218b5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="17" executed="17" passed="16" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.19]   Discovering: ALKAROS.Inventory.BalanceProjection.Tests&#xD;
+[xUnit.net 00:00:00.23]   Discovered:  ALKAROS.Inventory.BalanceProjection.Tests&#xD;
+[xUnit.net 00:00:00.24]   Starting:    ALKAROS.Inventory.BalanceProjection.Tests&#xD;
+[xUnit.net 00:00:01.02]       Expected kept!.OnHandQuantity to be 42M, but found 10.0000M (difference of -32.0000).&#xD;
+[xUnit.net 00:00:01.02]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.02]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.02]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.02]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.02]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.02]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.02]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.02]            at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.02]         D:\PROJECT\ALKAROS\tests\Modules\Inventory\BalanceProjection\StockBalanceDatabaseTests.cs(211,0): at ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ReplacingBalancesKeepsTheOldBalancesAndReservationsWhenAWriteFails()&#xD;
+[xUnit.net 00:00:01.02]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.38]   Finished:    ALKAROS.Inventory.BalanceProjection.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T11:39:17.2360077+03:00">
+        <Text>[xUnit.net 00:00:01.02]     ALKAROS.Inventory.BalanceProjection.Tests.StockBalanceDatabaseTests.ReplacingBalancesKeepsTheOldBalancesAndReservationsWhenAWriteFails [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

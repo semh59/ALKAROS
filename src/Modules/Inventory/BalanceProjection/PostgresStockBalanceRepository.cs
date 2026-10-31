@@ -1,3 +1,4 @@
+using ALKAROS.Inventory.MovementLedger;
 using Npgsql;
 
 namespace ALKAROS.Inventory.BalanceProjection;
@@ -5,6 +6,32 @@ namespace ALKAROS.Inventory.BalanceProjection;
 public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
 {
     private const int MaxUnpagedRows = 5000;
+
+    private const string SetExactBalanceSql = @"
+            INSERT INTO inventory.stock_balances (
+                stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+                reserved_quantity, available_quantity, updated_at, row_version
+            ) VALUES (
+                $1, $2, $3, $4, 0, $4, NOW(), 1
+            )
+            ON CONFLICT (stock_item_id, stock_location_id) DO UPDATE
+            SET on_hand_quantity = EXCLUDED.on_hand_quantity,
+                available_quantity = EXCLUDED.on_hand_quantity - inventory.stock_balances.reserved_quantity,
+                updated_at = NOW(),
+                row_version = inventory.stock_balances.row_version + 1;";
+
+    private const string RestoreReservedSql = @"
+            INSERT INTO inventory.stock_balances (
+                stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
+                reserved_quantity, available_quantity, updated_at, row_version
+            ) VALUES (
+                $1, $2, $3, 0, $4, -$4, NOW(), 1
+            )
+            ON CONFLICT (stock_item_id, stock_location_id) DO UPDATE
+            SET reserved_quantity = EXCLUDED.reserved_quantity,
+                available_quantity = inventory.stock_balances.on_hand_quantity - EXCLUDED.reserved_quantity,
+                updated_at = NOW(),
+                row_version = inventory.stock_balances.row_version + 1;";
 
     private readonly NpgsqlDataSource _dataSource;
 
@@ -317,24 +344,9 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         decimal onHandQuantity,
         CancellationToken ct = default)
     {
-        const string sql = @"
-            INSERT INTO inventory.stock_balances (
-                stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
-                reserved_quantity, available_quantity, updated_at, row_version
-            ) VALUES (
-                $1, $2, $3, $4, 0, $4, NOW(), 1
-            )
-            ON CONFLICT (stock_item_id, stock_location_id) DO UPDATE
-            SET on_hand_quantity = EXCLUDED.on_hand_quantity,
-                available_quantity = EXCLUDED.on_hand_quantity - inventory.stock_balances.reserved_quantity,
-                updated_at = NOW(),
-                row_version = inventory.stock_balances.row_version + 1;";
 
-        await using var cmd = _dataSource.CreateCommand(sql);
-        cmd.Parameters.AddWithValue(Guid.NewGuid());
-        cmd.Parameters.AddWithValue(stockItemId);
-        cmd.Parameters.AddWithValue(stockLocationId);
-        cmd.Parameters.AddWithValue(onHandQuantity);
+        await using var cmd = _dataSource.CreateCommand(SetExactBalanceSql);
+        AddBalanceParameters(cmd, stockItemId, stockLocationId, onHandQuantity);
 
         await cmd.ExecuteNonQueryAsync(ct);
     }
@@ -344,6 +356,49 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
         const string sql = "DELETE FROM inventory.stock_balances;";
         await using var cmd = _dataSource.CreateCommand(sql);
         await cmd.ExecuteNonQueryAsync(ct);
+    }
+
+    public async Task ReplaceAllBalancesAsync(IReadOnlyList<LedgerBalanceSum> sums, CancellationToken ct = default)
+    {
+        await using var connection = await _dataSource.OpenConnectionAsync(ct);
+        await using var transaction = await connection.BeginTransactionAsync(ct);
+
+        var reserved = new List<(Guid StockItemId, Guid StockLocationId, decimal Quantity)>();
+        await using (var read = new NpgsqlCommand(
+            "SELECT stock_item_id, stock_location_id, reserved_quantity FROM inventory.stock_balances WHERE reserved_quantity <> 0;",
+            connection, transaction))
+        await using (var reader = await read.ExecuteReaderAsync(ct))
+        {
+            while (await reader.ReadAsync(ct))
+                reserved.Add((reader.GetGuid(0), reader.GetGuid(1), reader.GetDecimal(2)));
+        }
+
+        await using (var delete = new NpgsqlCommand("DELETE FROM inventory.stock_balances;", connection, transaction))
+            await delete.ExecuteNonQueryAsync(ct);
+
+        foreach (var sum in sums)
+        {
+            await using var insert = new NpgsqlCommand(SetExactBalanceSql, connection, transaction);
+            AddBalanceParameters(insert, sum.StockItemId, sum.StockLocationId, sum.OnHandQuantity);
+            await insert.ExecuteNonQueryAsync(ct);
+        }
+
+        foreach (var (stockItemId, stockLocationId, quantity) in reserved)
+        {
+            await using var restore = new NpgsqlCommand(RestoreReservedSql, connection, transaction);
+            AddBalanceParameters(restore, stockItemId, stockLocationId, quantity);
+            await restore.ExecuteNonQueryAsync(ct);
+        }
+
+        await transaction.CommitAsync(ct);
+    }
+
+    private static void AddBalanceParameters(NpgsqlCommand command, Guid stockItemId, Guid stockLocationId, decimal quantity)
+    {
+        command.Parameters.AddWithValue(Guid.NewGuid());
+        command.Parameters.AddWithValue(stockItemId);
+        command.Parameters.AddWithValue(stockLocationId);
+        command.Parameters.AddWithValue(quantity);
     }
 
     public async Task<IReadOnlyDictionary<(Guid StockItemId, Guid StockLocationId), decimal>> GetAllReservedQuantitiesAsync(
@@ -372,24 +427,9 @@ public sealed class PostgresStockBalanceRepository : IStockBalanceRepository
     public async Task RestoreReservedQuantityAsync(
         Guid stockItemId, Guid stockLocationId, decimal reservedQuantity, CancellationToken ct = default)
     {
-        const string sql = @"
-            INSERT INTO inventory.stock_balances (
-                stock_balance_id, stock_item_id, stock_location_id, on_hand_quantity,
-                reserved_quantity, available_quantity, updated_at, row_version
-            ) VALUES (
-                $1, $2, $3, 0, $4, -$4, NOW(), 1
-            )
-            ON CONFLICT (stock_item_id, stock_location_id) DO UPDATE
-            SET reserved_quantity = EXCLUDED.reserved_quantity,
-                available_quantity = inventory.stock_balances.on_hand_quantity - EXCLUDED.reserved_quantity,
-                updated_at = NOW(),
-                row_version = inventory.stock_balances.row_version + 1;";
 
-        await using var cmd = _dataSource.CreateCommand(sql);
-        cmd.Parameters.AddWithValue(Guid.NewGuid());
-        cmd.Parameters.AddWithValue(stockItemId);
-        cmd.Parameters.AddWithValue(stockLocationId);
-        cmd.Parameters.AddWithValue(reservedQuantity);
+        await using var cmd = _dataSource.CreateCommand(RestoreReservedSql);
+        AddBalanceParameters(cmd, stockItemId, stockLocationId, reservedQuantity);
 
         await cmd.ExecuteNonQueryAsync(ct);
     }

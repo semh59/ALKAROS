@@ -1,3 +1,4 @@
+using ALKAROS.Inventory.MovementLedger;
 using Npgsql;
 
 namespace ALKAROS.Inventory.BalanceProjection;
@@ -46,6 +47,20 @@ public interface IStockBalanceRepository
 
     Task SetExactBalanceAsync(Guid stockItemId, Guid stockLocationId, decimal onHandQuantity, CancellationToken ct = default);
     Task ResetAllBalancesAsync(CancellationToken ct = default);
+
+    /// <summary>
+    /// Replaces every balance with the ledger sums while keeping the reservations that exist now. The default
+    /// runs the steps one by one; a store with transactions overrides it so a failure leaves the old balances.
+    /// </summary>
+    async Task ReplaceAllBalancesAsync(IReadOnlyList<LedgerBalanceSum> sums, CancellationToken ct = default)
+    {
+        var reserved = await GetAllReservedQuantitiesAsync(ct);
+        await ResetAllBalancesAsync(ct);
+        foreach (var sum in sums)
+            await SetExactBalanceAsync(sum.StockItemId, sum.StockLocationId, sum.OnHandQuantity, ct);
+        foreach (var ((stockItemId, stockLocationId), reservedQuantity) in reserved)
+            await RestoreReservedQuantityAsync(stockItemId, stockLocationId, reservedQuantity, ct);
+    }
 
     /// <summary>
     /// V1-RMD-320 (independent 2026-09-26 audit, finding K8): every (stock item, location) pair that
