@@ -1,7 +1,7 @@
 # V1-RMD-763 - Oturum belirteci nesne biçimlendirmesinde görünmez
 
 - Task ID: V1-RMD-763
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: remediation
 - Surface state: Existing
