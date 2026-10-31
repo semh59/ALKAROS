@@ -1,7 +1,7 @@
 # V1-RMD-774 - Ana kasa ekranı zorunlu seçenek grubu olan ürünü seçimsiz satamasın
 
 - Task ID: V1-RMD-774
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
