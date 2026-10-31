@@ -23,7 +23,7 @@ V1-RMD-739 bulgusu (V11-MNU-002, Yüksek), Semih kararıyla: sayaçlar gerçek o
 
 - `evidence/V1-RMD-777/**`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
-  - src/BuildingBlocks/IntegrationContracts/DailyMenuCounterIntegrationEvents.cs (V1-RMD-663) — iki olay sözleşmesi.
+  - `src/BuildingBlocks/IntegrationContracts/DailyMenuCounterIntegrationEvents.cs` — iki olay sözleşmesi (yeni dosya; bu görev sahibidir).
   - src/Modules/Inventory/ALKAROS.Inventory.csproj (V11-INV-004) — Messaging ve IntegrationContracts başvurusu.
   - src/Modules/Inventory/CrossChannelReservation/ (V12-STK-001) — satır modeli, anahtar yazımı, tüketim köprüsü, olay yazıcı.
   - src/Modules/Inventory/PortionReservations/Lifecycle/PostgresPortionReservationRepository.cs (V11-RSV-001) — terminal geçişte olay.
