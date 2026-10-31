@@ -53,10 +53,14 @@ public sealed class PostgresAnonymizationWorkflow(
             {
                 try
                 {
-                    var changed = await ApplyStepAsync(jobId, plan, step, subject, actor, cancellationToken);
+                    var changed = await ApplyStepAsync(jobId, dataClass, plan, step, subject, actor, cancellationToken);
                     if (changed is null)
                         return await StopAsync(jobId, "Blocked", "Blocked", null, "open balance", actor, JobOutcome.Blocked, cancellationToken);
                     fieldsByStore[step.Key] = fieldsByStore.GetValueOrDefault(step.Key) + changed.Value;
+                }
+                catch (RetentionSubjectHeldException)
+                {
+                    return await StopAsync(jobId, "Blocked", "Blocked", null, "legal hold", actor, JobOutcome.Blocked, cancellationToken);
                 }
                 catch (NpgsqlException exception)
                 {
@@ -108,9 +112,9 @@ public sealed class PostgresAnonymizationWorkflow(
     /// The write, its checkpoint and its event commit together, so a step is either fully done or not done at all. The step runs
     /// under the customer's account lock (the same key a charge takes): a charge cannot land between the block check and the
     /// write, and a second worker on the same subject waits and then finds the step already done.
-    /// Returns null when the record became blocked; nothing was written then.
+    /// Returns null when the record became blocked and throws when it is under a legal hold; nothing was written then.
     /// </summary>
-    private async Task<int?> ApplyStepAsync(Guid jobId, AnonymizationPlan plan, AnonymizationStep step, Guid subject, string actor, CancellationToken cancellationToken)
+    private async Task<int?> ApplyStepAsync(Guid jobId, RetentionClass dataClass, AnonymizationPlan plan, AnonymizationStep step, Guid subject, string actor, CancellationToken cancellationToken)
     {
         await using var connection = await dataSource.OpenConnectionAsync(cancellationToken);
         await using var transaction = await connection.BeginTransactionAsync(cancellationToken);
@@ -128,6 +132,16 @@ public sealed class PostgresAnonymizationWorkflow(
             done.Parameters.Add("step", NpgsqlDbType.Text).Value = step.Key;
             if ((bool)(await done.ExecuteScalarAsync(cancellationToken))!)
                 return 0;
+        }
+
+        await using (var hold = new NpgsqlCommand(
+            "SELECT EXISTS (SELECT 1 FROM privacy.legal_holds WHERE data_class = @class AND subject_id = @subject AND released_at IS NULL);",
+            connection, transaction))
+        {
+            hold.Parameters.Add("class", NpgsqlDbType.Text).Value = dataClass.ToString();
+            hold.Parameters.Add("subject", NpgsqlDbType.Uuid).Value = subject;
+            if ((bool)(await hold.ExecuteScalarAsync(cancellationToken))!)
+                throw new RetentionSubjectHeldException(dataClass, subject);
         }
 
         if (plan.BlockSql is not null)

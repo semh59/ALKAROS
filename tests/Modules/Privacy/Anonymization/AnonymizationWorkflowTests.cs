@@ -205,6 +205,31 @@ public sealed class AnonymizationWorkflowTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AHoldPlacedAfterTheRecordWasListedLeavesItsDataUntouched()
+    {
+        var id = await QueuedRecordAsync();
+        // The job row is created after the records were listed and before any store is written.
+        await _database.RunSqlAsync(
+            $"""
+            CREATE FUNCTION public.place_hold_on_open() RETURNS trigger LANGUAGE plpgsql AS $$
+            BEGIN
+                INSERT INTO privacy.legal_holds (hold_id, data_class, subject_id, reason, placed_by)
+                VALUES (gen_random_uuid(), 'Supplier', '{id}', 'hold after listing', gen_random_uuid()) ON CONFLICT DO NOTHING;
+                RETURN NEW;
+            END; $$;
+            CREATE TRIGGER place_hold_on_open AFTER INSERT ON privacy.anonymization_jobs FOR EACH ROW EXECUTE FUNCTION public.place_hold_on_open();
+            """);
+
+        var result = await RunAsync();
+
+        Assert.Equal((0, 1, 0), (result.Completed, result.Blocked, result.Failed));
+        Assert.Equal("legal hold", await Scalar<string>($"SELECT last_error FROM privacy.anonymization_jobs WHERE subject_id = '{id}'"));
+        Assert.True(await Scalar<bool>($"SELECT a IS NOT NULL AND b IS NOT NULL FROM public.anon_scratch WHERE id = '{id}'"));
+        Assert.Equal(0L, await Scalar<long>("SELECT count(*) FROM privacy.anonymization_checkpoints"));
+        Assert.Equal(1L, await PendingItems(id));
+    }
+
+    [Fact]
     public async Task ARecordTheClassMustHoldBackIsNotWrittenUntilItIsReleased()
     {
         var id = await QueuedRecordAsync(blocked: true);

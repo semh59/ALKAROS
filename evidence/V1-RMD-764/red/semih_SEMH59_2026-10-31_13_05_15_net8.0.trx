@@ -1,0 +1,127 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="e108e26e-38ea-4389-9d67-ce8a624965c1" name="semih@SEMH59 2026-10-31 13:05:15" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T13:05:15.6368060+03:00" queuing="2026-10-31T13:05:15.6368063+03:00" start="2026-10-31T13:05:11.5874854+03:00" finish="2026-10-31T13:05:47.5729524+03:00" />
+  <TestSettings name="default" id="99e1e84e-6c3d-43c1-bf0e-563dab997556">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_13_05_15" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="b0b03bf2-2d91-42f1-b9f5-c6ddb473410d" testId="fa148197-a477-a258-37f5-df0b02c57b2a" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.ARecordThatStillCarriesPersonalDataAfterItsStepsIsNeverMarkedDone" computerName="SEMH59" duration="00:00:00.0361735" startTime="2026-10-31T13:05:47.5059923+03:00" endTime="2026-10-31T13:05:47.5059927+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b0b03bf2-2d91-42f1-b9f5-c6ddb473410d" />
+    <UnitTestResult executionId="90b73b70-d31f-4380-af2c-6f5570b7aa38" testId="abd8edcc-a13c-fc51-51d3-e2074fabdaec" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.TheTrailIsAppendOnlyAndHoldsNoPersonalData" computerName="SEMH59" duration="00:00:00.0440596" startTime="2026-10-31T13:05:23.6045251+03:00" endTime="2026-10-31T13:05:23.6045254+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="90b73b70-d31f-4380-af2c-6f5570b7aa38" />
+    <UnitTestResult executionId="890312ea-c0c5-4d3f-bea7-ffbe11bb9fab" testId="79fd2a7e-7945-eb45-f392-75afb2e09071" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.ARecordTheClassMustHoldBackIsNotWrittenUntilItIsReleased" computerName="SEMH59" duration="00:00:00.1853035" startTime="2026-10-31T13:05:15.6087276+03:00" endTime="2026-10-31T13:05:15.6087481+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="890312ea-c0c5-4d3f-bea7-ffbe11bb9fab" />
+    <UnitTestResult executionId="3274a84a-32a6-461d-8336-fd3dd4d5a187" testId="4f409fc4-e9c9-e1f8-d02f-ed27e30d0d6e" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.ARecordTheCallerSkipsIsLeftAlone" computerName="SEMH59" duration="00:00:00.0596054" startTime="2026-10-31T13:05:31.3313892+03:00" endTime="2026-10-31T13:05:31.3313893+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3274a84a-32a6-461d-8336-fd3dd4d5a187" />
+    <UnitTestResult executionId="6abbd662-e211-4fe1-bce6-b121541d9be4" testId="aaddef53-618d-fdf1-cc5e-1f240868a250" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.ALegalHoldKeepsTheRecordUntouchedAndItsWorkItemPending" computerName="SEMH59" duration="00:00:00.0152576" startTime="2026-10-31T13:05:36.4274794+03:00" endTime="2026-10-31T13:05:36.4274796+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6abbd662-e211-4fe1-bce6-b121541d9be4" />
+    <UnitTestResult executionId="48e0fc21-5922-448b-99fa-5b4da0732c73" testId="67f2c99d-3db8-cdbe-bd15-48362f1e2346" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.EachStoreIsClearedWithOneCheckpointAndOneEventAndTheWorkItemIsCompleted" computerName="SEMH59" duration="00:00:00.0412043" startTime="2026-10-31T13:05:33.8260703+03:00" endTime="2026-10-31T13:05:33.8260704+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="48e0fc21-5922-448b-99fa-5b4da0732c73" />
+    <UnitTestResult executionId="dd347cc0-4f70-49f7-8120-a26e9ea602ce" testId="27501ab7-410c-2fdc-5bc2-82853d3c5a46" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AJobThatStoppedHalfwayResumesAtTheUnfinishedStoreWithoutRepeatingTheFinishedOne" computerName="SEMH59" duration="00:00:00.0694481" startTime="2026-10-31T13:05:26.2213596+03:00" endTime="2026-10-31T13:05:26.2213600+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dd347cc0-4f70-49f7-8120-a26e9ea602ce" />
+    <UnitTestResult executionId="179db8d8-dfb4-4a3c-8e97-5b7d3fe7f4d3" testId="c4c6cf61-cdda-c721-d028-bf3dc9c90146" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.ARecordThatBecomesBlockedBetweenStepsStopsBeforeTheNextStepWritesAnything" computerName="SEMH59" duration="00:00:00.0331216" startTime="2026-10-31T13:05:28.7234393+03:00" endTime="2026-10-31T13:05:28.7234394+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="179db8d8-dfb4-4a3c-8e97-5b7d3fe7f4d3" />
+    <UnitTestResult executionId="fc0c9a87-c2e9-492f-a910-ffb10ac75e03" testId="5bde4fa8-f54a-6db6-5052-a0602db31981" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AHoldPlacedAfterTheRecordWasListedLeavesItsDataUntouched" computerName="SEMH59" duration="00:00:00.0627697" startTime="2026-10-31T13:05:20.8578815+03:00" endTime="2026-10-31T13:05:20.8578816+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc0c9a87-c2e9-492f-a910-ffb10ac75e03">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.True() Failure&#xD;
+Expected: True&#xD;
+Actual:   False</Message>
+          <StackTrace>   at ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AHoldPlacedAfterTheRecordWasListedLeavesItsDataUntouched() in D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\AnonymizationWorkflowTests.cs:line 227&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="0eff02d7-3ef1-4bf5-8214-2e6e6cad2e0a" testId="2d437edb-f787-9c80-2803-e49d25bda323" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AStepWaitsForAChargeInProgressAndThenSeesTheBalanceItLeft" computerName="SEMH59" duration="00:00:00.7273077" startTime="2026-10-31T13:05:44.9674942+03:00" endTime="2026-10-31T13:05:44.9674951+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0eff02d7-3ef1-4bf5-8214-2e6e6cad2e0a" />
+    <UnitTestResult executionId="b8acaf03-c704-4677-9ccc-b0fad334bea0" testId="965a192d-1bd0-6c44-965e-e2c0a779b463" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.TwoWorkersRunningTheSameQueueAtOnceFinishEveryJobWithoutAFailure" computerName="SEMH59" duration="00:00:00.2402464" startTime="2026-10-31T13:05:41.7124279+03:00" endTime="2026-10-31T13:05:41.7124280+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b8acaf03-c704-4677-9ccc-b0fad334bea0" />
+    <UnitTestResult executionId="b9ac4236-eafc-40bb-8f4e-f03f0302b4bd" testId="9a3c4bf2-da98-8af6-71cb-ccacc58d8867" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AHoldPlacedWhileTheJobRunsStopsItBeforeTheWorkItemIsCompleted" computerName="SEMH59" duration="00:00:00.0490966" startTime="2026-10-31T13:05:38.8569467+03:00" endTime="2026-10-31T13:05:38.8569470+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b9ac4236-eafc-40bb-8f4e-f03f0302b4bd" />
+    <UnitTestResult executionId="5b353bad-b783-4c0a-8885-521908ebe848" testId="a07b5839-6064-fcf7-330d-1a61b89d08a2" testName="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.RunningAgainChangesNothing" computerName="SEMH59" duration="00:00:00.0405376" startTime="2026-10-31T13:05:18.2279241+03:00" endTime="2026-10-31T13:05:18.2279242+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5b353bad-b783-4c0a-8885-521908ebe848" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.ARecordThatBecomesBlockedBetweenStepsStopsBeforeTheNextStepWritesAnything" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="c4c6cf61-cdda-c721-d028-bf3dc9c90146">
+      <Execution id="179db8d8-dfb4-4a3c-8e97-5b7d3fe7f4d3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="ARecordThatBecomesBlockedBetweenStepsStopsBeforeTheNextStepWritesAnything" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.TwoWorkersRunningTheSameQueueAtOnceFinishEveryJobWithoutAFailure" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="965a192d-1bd0-6c44-965e-e2c0a779b463">
+      <Execution id="b8acaf03-c704-4677-9ccc-b0fad334bea0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="TwoWorkersRunningTheSameQueueAtOnceFinishEveryJobWithoutAFailure" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.TheTrailIsAppendOnlyAndHoldsNoPersonalData" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="abd8edcc-a13c-fc51-51d3-e2074fabdaec">
+      <Execution id="90b73b70-d31f-4380-af2c-6f5570b7aa38" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="TheTrailIsAppendOnlyAndHoldsNoPersonalData" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.ARecordThatStillCarriesPersonalDataAfterItsStepsIsNeverMarkedDone" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="fa148197-a477-a258-37f5-df0b02c57b2a">
+      <Execution id="b0b03bf2-2d91-42f1-b9f5-c6ddb473410d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="ARecordThatStillCarriesPersonalDataAfterItsStepsIsNeverMarkedDone" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AHoldPlacedWhileTheJobRunsStopsItBeforeTheWorkItemIsCompleted" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="9a3c4bf2-da98-8af6-71cb-ccacc58d8867">
+      <Execution id="b9ac4236-eafc-40bb-8f4e-f03f0302b4bd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="AHoldPlacedWhileTheJobRunsStopsItBeforeTheWorkItemIsCompleted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.ALegalHoldKeepsTheRecordUntouchedAndItsWorkItemPending" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="aaddef53-618d-fdf1-cc5e-1f240868a250">
+      <Execution id="6abbd662-e211-4fe1-bce6-b121541d9be4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="ALegalHoldKeepsTheRecordUntouchedAndItsWorkItemPending" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.RunningAgainChangesNothing" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="a07b5839-6064-fcf7-330d-1a61b89d08a2">
+      <Execution id="5b353bad-b783-4c0a-8885-521908ebe848" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="RunningAgainChangesNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.EachStoreIsClearedWithOneCheckpointAndOneEventAndTheWorkItemIsCompleted" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="67f2c99d-3db8-cdbe-bd15-48362f1e2346">
+      <Execution id="48e0fc21-5922-448b-99fa-5b4da0732c73" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="EachStoreIsClearedWithOneCheckpointAndOneEventAndTheWorkItemIsCompleted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.ARecordTheCallerSkipsIsLeftAlone" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="4f409fc4-e9c9-e1f8-d02f-ed27e30d0d6e">
+      <Execution id="3274a84a-32a6-461d-8336-fd3dd4d5a187" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="ARecordTheCallerSkipsIsLeftAlone" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.ARecordTheClassMustHoldBackIsNotWrittenUntilItIsReleased" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="79fd2a7e-7945-eb45-f392-75afb2e09071">
+      <Execution id="890312ea-c0c5-4d3f-bea7-ffbe11bb9fab" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="ARecordTheClassMustHoldBackIsNotWrittenUntilItIsReleased" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AHoldPlacedAfterTheRecordWasListedLeavesItsDataUntouched" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="5bde4fa8-f54a-6db6-5052-a0602db31981">
+      <Execution id="fc0c9a87-c2e9-492f-a910-ffb10ac75e03" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="AHoldPlacedAfterTheRecordWasListedLeavesItsDataUntouched" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AStepWaitsForAChargeInProgressAndThenSeesTheBalanceItLeft" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="2d437edb-f787-9c80-2803-e49d25bda323">
+      <Execution id="0eff02d7-3ef1-4bf5-8214-2e6e6cad2e0a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="AStepWaitsForAChargeInProgressAndThenSeesTheBalanceItLeft" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AJobThatStoppedHalfwayResumesAtTheUnfinishedStoreWithoutRepeatingTheFinishedOne" storage="d:\project\alkaros\tests\modules\privacy\anonymization\bin\debug\net8.0\alkaros.privacy.anonymization.tests.dll" id="27501ab7-410c-2fdc-5bc2-82853d3c5a46">
+      <Execution id="dd347cc0-4f70-49f7-8120-a26e9ea602ce" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\bin\Debug\net8.0\ALKAROS.Privacy.Anonymization.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests" name="AJobThatStoppedHalfwayResumesAtTheUnfinishedStoreWithoutRepeatingTheFinishedOne" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="fa148197-a477-a258-37f5-df0b02c57b2a" executionId="b0b03bf2-2d91-42f1-b9f5-c6ddb473410d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="abd8edcc-a13c-fc51-51d3-e2074fabdaec" executionId="90b73b70-d31f-4380-af2c-6f5570b7aa38" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="79fd2a7e-7945-eb45-f392-75afb2e09071" executionId="890312ea-c0c5-4d3f-bea7-ffbe11bb9fab" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4f409fc4-e9c9-e1f8-d02f-ed27e30d0d6e" executionId="3274a84a-32a6-461d-8336-fd3dd4d5a187" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="aaddef53-618d-fdf1-cc5e-1f240868a250" executionId="6abbd662-e211-4fe1-bce6-b121541d9be4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="67f2c99d-3db8-cdbe-bd15-48362f1e2346" executionId="48e0fc21-5922-448b-99fa-5b4da0732c73" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="27501ab7-410c-2fdc-5bc2-82853d3c5a46" executionId="dd347cc0-4f70-49f7-8120-a26e9ea602ce" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c4c6cf61-cdda-c721-d028-bf3dc9c90146" executionId="179db8d8-dfb4-4a3c-8e97-5b7d3fe7f4d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5bde4fa8-f54a-6db6-5052-a0602db31981" executionId="fc0c9a87-c2e9-492f-a910-ffb10ac75e03" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2d437edb-f787-9c80-2803-e49d25bda323" executionId="0eff02d7-3ef1-4bf5-8214-2e6e6cad2e0a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="965a192d-1bd0-6c44-965e-e2c0a779b463" executionId="b8acaf03-c704-4677-9ccc-b0fad334bea0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9a3c4bf2-da98-8af6-71cb-ccacc58d8867" executionId="b9ac4236-eafc-40bb-8f4e-f03f0302b4bd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a07b5839-6064-fcf7-330d-1a61b89d08a2" executionId="5b353bad-b783-4c0a-8885-521908ebe848" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="13" executed="13" passed="12" failed="1" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.23]   Discovering: ALKAROS.Privacy.Anonymization.Tests&#xD;
+[xUnit.net 00:00:00.27]   Discovered:  ALKAROS.Privacy.Anonymization.Tests&#xD;
+[xUnit.net 00:00:00.27]   Starting:    ALKAROS.Privacy.Anonymization.Tests&#xD;
+[xUnit.net 00:00:08.66]       Assert.True() Failure&#xD;
+[xUnit.net 00:00:08.67]       Expected: True&#xD;
+[xUnit.net 00:00:08.67]       Actual:   False&#xD;
+[xUnit.net 00:00:08.67]       Stack Trace:&#xD;
+[xUnit.net 00:00:08.67]         D:\PROJECT\ALKAROS\tests\Modules\Privacy\Anonymization\AnonymizationWorkflowTests.cs(227,0): at ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AHoldPlacedAfterTheRecordWasListedLeavesItsDataUntouched()&#xD;
+[xUnit.net 00:00:08.67]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:35.32]   Finished:    ALKAROS.Privacy.Anonymization.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T13:05:20.8554062+03:00">
+        <Text>[xUnit.net 00:00:08.66]     ALKAROS.Privacy.Anonymization.Tests.AnonymizationWorkflowTests.AHoldPlacedAfterTheRecordWasListedLeavesItsDataUntouched [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>
