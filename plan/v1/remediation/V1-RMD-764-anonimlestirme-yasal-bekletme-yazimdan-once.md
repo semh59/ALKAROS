@@ -1,7 +1,7 @@
 # V1-RMD-764 - Anonimleştirme yasal bekletmeyi veriyi silmeden önce denetler
 
 - Task ID: V1-RMD-764
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: remediation
 - Surface state: Existing
