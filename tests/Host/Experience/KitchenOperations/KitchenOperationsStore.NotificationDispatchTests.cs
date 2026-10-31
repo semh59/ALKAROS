@@ -148,6 +148,12 @@ internal sealed class FakeOrderRepository : IOrderRepository
     public Task<int> ReassignServingUserAsync(
         Guid fromUserId, Guid toUserId, CancellationToken cancellationToken = default)
         => throw new NotSupportedException();
+
+    public Task<int> ReassignServingUserAsync(
+        Guid fromUserId, Guid toUserId,
+        Npgsql.NpgsqlConnection connection, Npgsql.NpgsqlTransaction transaction,
+        CancellationToken cancellationToken = default)
+        => throw new NotSupportedException();
 }
 
 /// <summary>Records which selector (<c>All</c> vs <c>Group</c>) a send used, and the payload sent.</summary>

@@ -1,0 +1,9 @@
+D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\KitchenOperationsStore.NotificationDispatchTests.cs(111,45): error CS0535: 'FakeOrderRepository', 'IOrderRepository.ReassignServingUserAsync(Guid, Guid, NpgsqlConnection, NpgsqlTransaction, CancellationToken)' arabirim üyesini uygulamaz [D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\ALKAROS.Host.Experience.KitchenOperations.Tests.csproj]
+
+Oluşturma BAŞARISIZ OLDU.
+
+D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\KitchenOperationsStore.NotificationDispatchTests.cs(111,45): error CS0535: 'FakeOrderRepository', 'IOrderRepository.ReassignServingUserAsync(Guid, Guid, NpgsqlConnection, NpgsqlTransaction, CancellationToken)' arabirim üyesini uygulamaz [D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\ALKAROS.Host.Experience.KitchenOperations.Tests.csproj]
+    0 Uyarı
+    1 Hata
+
+Geçen Süre 00:00:22.82
