@@ -1,7 +1,7 @@
 # V1-RMD-779 - Yönetim ekranında masa QR kodu göster ve yazdır
 
 - Task ID: V1-RMD-779
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
