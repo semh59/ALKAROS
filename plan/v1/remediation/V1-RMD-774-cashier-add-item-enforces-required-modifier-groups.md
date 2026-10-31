@@ -17,6 +17,7 @@ V1-RMD-739 bulgusu (V1-RMD-380, Yüksek). PosTerminal ana kasa ekranı (`Cashier
 - `plan/v1/remediation/V1-RMD-774-cashier-add-item-enforces-required-modifier-groups.md`
 - `evidence/V1-RMD-774/**`
 - `src/Clients/PosTerminal/src/routes/CashierModifierPicker.tsx`
+- `src/Clients/PosTerminal/src/routes/cashier-modifier-picker.css`
 - `src/Clients/PosTerminal/src/routes/Cashier.modifier-picker.test.tsx`
 - Sınırlı ek — yollar ilgili görevlerin sahipliğinde kalır (geri-tik olmadan):
   - src/Host/DualScreen/DualScreenStore.Orders.cs (V1-RMD-120) — seçenekleri çöz ve grup kuralını denetle.
@@ -27,6 +28,7 @@ V1-RMD-739 bulgusu (V1-RMD-380, Yüksek). PosTerminal ana kasa ekranı (`Cashier
   - src/Host/Experience/Orders/TableDraft/TableDraftService.cs (V1-WTR-034) — yalnız iki sınır sabiti Host içinde paylaşılır.
   - src/Modules/Orders/OrderAggregate/OrderItem.cs (V1-RMD-120) — satır adedi değişince seçenek adetleri orantılanır.
   - tests/Modules/Orders/OrderAggregate/OrderDomainTests.cs (V1-RMD-120) — orantılama testi.
+  - src/Modules/Orders/OrderAggregate/PostgresOrderRepository.cs (V1-RMD-725) — satır güncellemesi seçenek adetlerini de yazar (yoksa orantılanan adet kaydedilmez).
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
 
 ## In scope
@@ -36,6 +38,7 @@ V1-RMD-739 bulgusu (V1-RMD-380, Yüksek). PosTerminal ana kasa ekranı (`Cashier
 3. Seçenekli istek her zaman yeni satır açar; seçimsiz bare satır birleşmesi korunur.
 4. Seçenek grubu olan ürüne basılınca kasa ekranı Türkçe seçim penceresi açar (zorunlu/isteğe bağlı, tek/çoklu seçim, fiyat farkı), zorunlu grup tamamlanmadan onaylanamaz, seçimle birlikte gönderir.
 5. Bağımsız inceleme bulgusu: kasa `+` düğmesi seçenekli satırın adedini değiştirince seçenek ücreti çarpılmıyordu (3 adet pide + büyük boy: 305 yerine 315 TL). `OrderItem.ChangeQuantity` seçenek adetlerini satırın yukarı yuvarlanmış adet oranıyla orantılar (seçenek her porsiyona gider, `BuildModifiers` varsayılanıyla aynı kural).
+5a. Gerçek Postgres testi gösterdi: `UpdateItemAsync` yalnız satır alanlarını yazıyor, seçenek adedi güncellenmiyor; orantılanan adet kaydedilmezse yeniden yüklemede 305 TL'ye döner. Güncelleme seçenek adetlerini de yazar.
 6. Aynı incelemeden: kasa yolu seçenek adedi ve sayısı için garson yolundaki sınırı (`MaximumOrderQuantity`, `MaximumModifiersPerItem`) uygulamıyordu; aynı sınırlar eklenir.
 
 ## Out of scope
