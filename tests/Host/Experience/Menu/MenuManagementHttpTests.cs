@@ -204,6 +204,63 @@ public sealed class MenuManagementHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ManagerCanDetectAndRepairCounterDriftOverHttp()
+    {
+        using var client = CreateClient(MenuManagementTestDatabase.ManagerToken);
+        var productId = await _database.SeedProductAsync("Drifting soup");
+        var businessDate = DateOnly.FromDateTime(DateTime.UtcNow.AddDays(Random.Shared.Next(3651, 7300)));
+        using var created = await client.PostAsJsonAsync(
+            "/api/v1/management/menus-and-specials/daily-menus", new CreateDailyMenuV1(businessDate, "Drift day"));
+        var dailyMenu = (await created.Content.ReadFromJsonAsync<DailyMenuV1>())!;
+        using var added = await client.PostAsJsonAsync(
+            $"/api/v1/management/menus-and-specials/daily-menus/{dailyMenu.Id:D}/items",
+            new AddDailyMenuItemV1(productId, 45.5m, null, 20m, null));
+        var item = (await added.Content.ReadFromJsonAsync<DailyMenuItemV1>())!;
+        await using (var tamper = _database.DataSource.CreateCommand(
+            "UPDATE menu.daily_menu_items SET reserved_portions = 4 WHERE daily_menu_item_id = $1;"))
+        {
+            tamper.Parameters.AddWithValue(item.Id);
+            await tamper.ExecuteNonQueryAsync();
+        }
+
+        var driftUrl = $"/api/v1/management/menus-and-specials/daily-menus/{dailyMenu.Id:D}/counters/drift";
+        var drift = await client.GetFromJsonAsync<DailyMenuCounterDriftV1>(driftUrl);
+        Assert.True(drift!.HasDrift);
+        Assert.Equal(item.Id, Assert.Single(drift.Items).DailyMenuItemId);
+        Assert.Equal(4m, drift.Items[0].ReservedDrift);
+
+        using var rebuilt = await client.PostAsync(
+            $"/api/v1/management/menus-and-specials/daily-menus/{dailyMenu.Id:D}/counters/rebuild", null);
+        Assert.Equal(HttpStatusCode.OK, rebuilt.StatusCode);
+        Assert.Equal(1, (await rebuilt.Content.ReadFromJsonAsync<DailyMenuCounterRebuildV1>())!.RebuiltItemCount);
+        Assert.False((await client.GetFromJsonAsync<DailyMenuCounterDriftV1>(driftUrl))!.HasDrift);
+    }
+
+    [Fact]
+    public async Task CounterRepairIsForMenuManagersAndAnUnknownMenuIsNotFound()
+    {
+        var unknown = Guid.NewGuid();
+        var driftUrl = $"/api/v1/management/menus-and-specials/daily-menus/{unknown:D}/counters/drift";
+        var rebuildUrl = $"/api/v1/management/menus-and-specials/daily-menus/{unknown:D}/counters/rebuild";
+
+        using (var anonymous = CreateClient(null))
+        {
+            Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.GetAsync(driftUrl)).StatusCode);
+            Assert.Equal(HttpStatusCode.Unauthorized, (await anonymous.PostAsync(rebuildUrl, null)).StatusCode);
+        }
+
+        using (var denied = CreateClient(MenuManagementTestDatabase.DeniedToken))
+        {
+            Assert.Equal(HttpStatusCode.Forbidden, (await denied.GetAsync(driftUrl)).StatusCode);
+            Assert.Equal(HttpStatusCode.Forbidden, (await denied.PostAsync(rebuildUrl, null)).StatusCode);
+        }
+
+        using var manager = CreateClient(MenuManagementTestDatabase.ManagerToken);
+        Assert.Equal(HttpStatusCode.NotFound, (await manager.GetAsync(driftUrl)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await manager.PostAsync(rebuildUrl, null)).StatusCode);
+    }
+
+    [Fact]
     public async Task UnknownDailyMenuByDateReturnsNotFound()
     {
         using var client = CreateClient(MenuManagementTestDatabase.ManagerToken);

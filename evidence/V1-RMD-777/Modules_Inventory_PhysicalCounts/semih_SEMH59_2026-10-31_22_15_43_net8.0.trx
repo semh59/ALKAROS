@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="2f1235fb-e142-4ac2-b223-906440f99f11" name="semih@SEMH59 2026-10-31 22:15:43" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T22:15:43.1484099+03:00" queuing="2026-10-31T22:15:43.1484101+03:00" start="2026-10-31T22:15:41.6463501+03:00" finish="2026-10-31T22:15:43.2452670+03:00" />
+  <TestSettings name="default" id="c04ee9ed-1b49-4f4c-b322-e0e05733502d">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_22_15_43" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d5b1f1ae-b5cd-44be-a140-8b9a15b7f200" testId="ccd5a188-bf82-bfc8-ea3c-9eb054e89f20" testName="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.Migration117RollbackAndReapplyWorksCleanly" computerName="SEMH59" duration="00:00:00.0185902" startTime="2026-10-31T22:15:43.1294783+03:00" endTime="2026-10-31T22:15:43.1294785+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d5b1f1ae-b5cd-44be-a140-8b9a15b7f200" />
+    <UnitTestResult executionId="142dbbe7-8391-4ac1-8d78-449d06e1b98a" testId="443359e5-9546-eee8-f508-5849f214b2ec" testName="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests.EmptyCountedByUserIdThrows" computerName="SEMH59" duration="00:00:00.0009528" startTime="2026-10-31T22:15:42.5398904+03:00" endTime="2026-10-31T22:15:42.5398906+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="142dbbe7-8391-4ac1-8d78-449d06e1b98a" />
+    <UnitTestResult executionId="06194646-07eb-40db-897a-fa795341cba9" testId="5c02d04a-f492-5097-98d1-d4db7c11537f" testName="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests.NegativeCountedQuantityThrows" computerName="SEMH59" duration="00:00:00.0060720" startTime="2026-10-31T22:15:42.5388591+03:00" endTime="2026-10-31T22:15:42.5388594+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06194646-07eb-40db-897a-fa795341cba9" />
+    <UnitTestResult executionId="0bed113c-9bbd-49c7-a4fb-3a9f5ff5413e" testId="1765b0ca-d931-a839-8018-0aa59b64ff22" testName="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.FirstCountOnAZeroBalanceRecordsAnIncreaseMovement" computerName="SEMH59" duration="00:00:00.0267349" startTime="2026-10-31T22:15:43.1115665+03:00" endTime="2026-10-31T22:15:43.1115666+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0bed113c-9bbd-49c7-a4fb-3a9f5ff5413e" />
+    <UnitTestResult executionId="9406eecf-abc7-48f6-8cba-c94154583fd2" testId="c8c80c51-1444-b874-a006-2a88fe7e41b7" testName="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.ACountMatchingTheCurrentBalanceRecordsNoMovementButStillPersistsTheCount" computerName="SEMH59" duration="00:00:00.0302301" startTime="2026-10-31T22:15:43.0190075+03:00" endTime="2026-10-31T22:15:43.0190079+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9406eecf-abc7-48f6-8cba-c94154583fd2" />
+    <UnitTestResult executionId="e27bd360-7b78-4859-869a-5ba33dc52b2d" testId="90448db9-9ddd-2e2f-78f9-54a73404e194" testName="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests.ZeroCountedQuantityIsAllowed" computerName="SEMH59" duration="00:00:00.0021471" startTime="2026-10-31T22:15:42.5346065+03:00" endTime="2026-10-31T22:15:42.5346066+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e27bd360-7b78-4859-869a-5ba33dc52b2d" />
+    <UnitTestResult executionId="00a4eb63-b83c-415a-9760-fafc70573207" testId="e14aae5b-eb70-e17e-d7c2-f607a47077f9" testName="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests.DeltaCanBeNegative" computerName="SEMH59" duration="00:00:00.0118298" startTime="2026-10-31T22:15:42.5311412+03:00" endTime="2026-10-31T22:15:42.5312460+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00a4eb63-b83c-415a-9760-fafc70573207" />
+    <UnitTestResult executionId="bf9e3a1c-43a5-4be2-a95e-17f1f52d92af" testId="5744cfbf-c495-bf99-8b52-e43d70a0df07" testName="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.AMovementBetweenReadingAndApplyingRollsTheCountBack" computerName="SEMH59" duration="00:00:00.0378094" startTime="2026-10-31T22:15:43.0831218+03:00" endTime="2026-10-31T22:15:43.0831221+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bf9e3a1c-43a5-4be2-a95e-17f1f52d92af" />
+    <UnitTestResult executionId="21558f71-1498-4066-96a7-71ea23fb1ac4" testId="99ca01e5-9157-df4d-98f4-93e6e95a2d9d" testName="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.ACountLowerThanBalanceProducesADecreaseMovement" computerName="SEMH59" duration="00:00:00.0253451" startTime="2026-10-31T22:15:43.0448026+03:00" endTime="2026-10-31T22:15:43.0448028+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="21558f71-1498-4066-96a7-71ea23fb1ac4" />
+    <UnitTestResult executionId="08bd7874-4f83-41a7-acfc-d128b0a1b3ff" testId="35a87b02-b425-7661-ef19-207bd3abea89" testName="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests.DeltaIsCountedMinusPrevious" computerName="SEMH59" duration="00:00:00.0001811" startTime="2026-10-31T22:15:42.5349892+03:00" endTime="2026-10-31T22:15:42.5349892+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="08bd7874-4f83-41a7-acfc-d128b0a1b3ff" />
+    <UnitTestResult executionId="d9c1f967-b0b2-43a0-9c62-597faee1e8d0" testId="4ced612c-3d61-a9e0-4725-36483cdab176" testName="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.GetMostRecentBeforeReturnsTheLatestCountAtOrBeforeTheGivenTime" computerName="SEMH59" duration="00:00:00.2244200" startTime="2026-10-31T22:15:42.9870491+03:00" endTime="2026-10-31T22:15:42.9870494+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d9c1f967-b0b2-43a0-9c62-597faee1e8d0" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.GetMostRecentBeforeReturnsTheLatestCountAtOrBeforeTheGivenTime" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="4ced612c-3d61-a9e0-4725-36483cdab176">
+      <Execution id="d9c1f967-b0b2-43a0-9c62-597faee1e8d0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests" name="GetMostRecentBeforeReturnsTheLatestCountAtOrBeforeTheGivenTime" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests.DeltaCanBeNegative" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="e14aae5b-eb70-e17e-d7c2-f607a47077f9">
+      <Execution id="00a4eb63-b83c-415a-9760-fafc70573207" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests" name="DeltaCanBeNegative" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.AMovementBetweenReadingAndApplyingRollsTheCountBack" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="5744cfbf-c495-bf99-8b52-e43d70a0df07">
+      <Execution id="bf9e3a1c-43a5-4be2-a95e-17f1f52d92af" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests" name="AMovementBetweenReadingAndApplyingRollsTheCountBack" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests.DeltaIsCountedMinusPrevious" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="35a87b02-b425-7661-ef19-207bd3abea89">
+      <Execution id="08bd7874-4f83-41a7-acfc-d128b0a1b3ff" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests" name="DeltaIsCountedMinusPrevious" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests.EmptyCountedByUserIdThrows" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="443359e5-9546-eee8-f508-5849f214b2ec">
+      <Execution id="142dbbe7-8391-4ac1-8d78-449d06e1b98a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests" name="EmptyCountedByUserIdThrows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.FirstCountOnAZeroBalanceRecordsAnIncreaseMovement" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="1765b0ca-d931-a839-8018-0aa59b64ff22">
+      <Execution id="0bed113c-9bbd-49c7-a4fb-3a9f5ff5413e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests" name="FirstCountOnAZeroBalanceRecordsAnIncreaseMovement" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.ACountLowerThanBalanceProducesADecreaseMovement" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="99ca01e5-9157-df4d-98f4-93e6e95a2d9d">
+      <Execution id="21558f71-1498-4066-96a7-71ea23fb1ac4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests" name="ACountLowerThanBalanceProducesADecreaseMovement" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.Migration117RollbackAndReapplyWorksCleanly" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="ccd5a188-bf82-bfc8-ea3c-9eb054e89f20">
+      <Execution id="d5b1f1ae-b5cd-44be-a140-8b9a15b7f200" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests" name="Migration117RollbackAndReapplyWorksCleanly" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests.ACountMatchingTheCurrentBalanceRecordsNoMovementButStillPersistsTheCount" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="c8c80c51-1444-b874-a006-2a88fe7e41b7">
+      <Execution id="9406eecf-abc7-48f6-8cba-c94154583fd2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.PhysicalCountDatabaseTests" name="ACountMatchingTheCurrentBalanceRecordsNoMovementButStillPersistsTheCount" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests.NegativeCountedQuantityThrows" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="5c02d04a-f492-5097-98d1-d4db7c11537f">
+      <Execution id="06194646-07eb-40db-897a-fa795341cba9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests" name="NegativeCountedQuantityThrows" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests.ZeroCountedQuantityIsAllowed" storage="d:\project\alkaros\tests\modules\inventory\physicalcounts\bin\debug\net8.0\alkaros.inventory.physicalcounts.tests.dll" id="90448db9-9ddd-2e2f-78f9-54a73404e194">
+      <Execution id="e27bd360-7b78-4859-869a-5ba33dc52b2d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Inventory\PhysicalCounts\bin\Debug\net8.0\ALKAROS.Inventory.PhysicalCounts.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Inventory.PhysicalCounts.Tests.StockPhysicalCountDomainTests" name="ZeroCountedQuantityIsAllowed" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="ccd5a188-bf82-bfc8-ea3c-9eb054e89f20" executionId="d5b1f1ae-b5cd-44be-a140-8b9a15b7f200" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="443359e5-9546-eee8-f508-5849f214b2ec" executionId="142dbbe7-8391-4ac1-8d78-449d06e1b98a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5c02d04a-f492-5097-98d1-d4db7c11537f" executionId="06194646-07eb-40db-897a-fa795341cba9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1765b0ca-d931-a839-8018-0aa59b64ff22" executionId="0bed113c-9bbd-49c7-a4fb-3a9f5ff5413e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="c8c80c51-1444-b874-a006-2a88fe7e41b7" executionId="9406eecf-abc7-48f6-8cba-c94154583fd2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="90448db9-9ddd-2e2f-78f9-54a73404e194" executionId="e27bd360-7b78-4859-869a-5ba33dc52b2d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e14aae5b-eb70-e17e-d7c2-f607a47077f9" executionId="00a4eb63-b83c-415a-9760-fafc70573207" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5744cfbf-c495-bf99-8b52-e43d70a0df07" executionId="bf9e3a1c-43a5-4be2-a95e-17f1f52d92af" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="99ca01e5-9157-df4d-98f4-93e6e95a2d9d" executionId="21558f71-1498-4066-96a7-71ea23fb1ac4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="35a87b02-b425-7661-ef19-207bd3abea89" executionId="08bd7874-4f83-41a7-acfc-d128b0a1b3ff" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4ced612c-3d61-a9e0-4725-36483cdab176" executionId="d9c1f967-b0b2-43a0-9c62-597faee1e8d0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="11" executed="11" passed="11" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.25]   Discovering: ALKAROS.Inventory.PhysicalCounts.Tests&#xD;
+[xUnit.net 00:00:00.28]   Discovered:  ALKAROS.Inventory.PhysicalCounts.Tests&#xD;
+[xUnit.net 00:00:00.28]   Starting:    ALKAROS.Inventory.PhysicalCounts.Tests&#xD;
+[xUnit.net 00:00:00.99]   Finished:    ALKAROS.Inventory.PhysicalCounts.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

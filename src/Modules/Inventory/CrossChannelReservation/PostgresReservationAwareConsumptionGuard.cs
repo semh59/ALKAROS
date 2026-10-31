@@ -37,9 +37,9 @@ public sealed class PostgresReservationAwareConsumptionGuard : IReservationAware
                 transition_reason = 'Consumed on order acceptance',
                 transitioned_by = $4
             WHERE order_item_id = $1 AND stock_item_id = $2 AND stock_location_id = $3 AND status = 'Reserved'
-            RETURNING id, quantity;";
+            RETURNING id, quantity, metadata::text;";
 
-        var converted = new List<(Guid ReservationId, decimal Quantity)>();
+        var converted = new List<(Guid ReservationId, decimal Quantity, string? Metadata)>();
         await using (var cmd = new NpgsqlCommand(convertSql, connection, transaction))
         {
             cmd.Parameters.AddWithValue(orderItemId);
@@ -48,11 +48,15 @@ public sealed class PostgresReservationAwareConsumptionGuard : IReservationAware
             cmd.Parameters.AddWithValue(actorId);
             await using var reader = await cmd.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
             while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
-                converted.Add((reader.GetGuid(0), reader.GetDecimal(1)));
+                converted.Add((reader.GetGuid(0), reader.GetDecimal(1), reader.IsDBNull(2) ? null : reader.GetString(2)));
         }
 
-        foreach (var (reservationId, heldQuantity) in converted)
+        foreach (var (reservationId, heldQuantity, metadata) in converted)
         {
+            await DailyMenuPortionEvents.PublishAsync(
+                reservationId, "Consumed", metadata, DateTimeOffset.UtcNow, connection, transaction, cancellationToken)
+                .ConfigureAwait(false);
+
             const string eventSql = @"
                 INSERT INTO inventory.reservation_balance_applied_events (
                     id, reservation_id, event_type, terminal_status, stock_item_id, stock_location_id, quantity, applied_at

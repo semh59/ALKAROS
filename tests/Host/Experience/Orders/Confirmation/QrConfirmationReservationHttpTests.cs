@@ -50,6 +50,25 @@ public sealed class QrConfirmationReservationHttpTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AcceptingAQrOrderForAProductOnTodaysMenuCountsItsPortionsAsConsumed()
+    {
+        var terminalId = Guid.NewGuid();
+        var (_, cookie) = await _database.SeedCashierSessionAsync(terminalId, "waiter", "orders.create");
+        var (orderId, _, productId, _) = await _database.SeedQrPendingOrderAsync(stockOnHandQuantity: 2m);
+        var menuItemId = await _database.SeedPublishedDailyMenuItemAsync(productId);
+        await using var app = await StartAsync();
+        using var client = CreateClient(app);
+
+        using var response = await client.SendAsync(JsonRequest(
+            AcceptPath(terminalId, orderId), cookie, new AcceptPendingOrderRequestV1(1, null)));
+
+        Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+        var counters = await _database.DeliverDailyMenuEventsAsync(menuItemId);
+        Assert.Equal(1m, counters.ConsumedPortions);
+        Assert.Equal(0m, counters.ReservedPortions);
+    }
+
+    [Fact]
     public async Task AQrOrderLosingTheLastPortionToAnotherChannelLeavesNothingBehind()
     {
         var terminalId = Guid.NewGuid();

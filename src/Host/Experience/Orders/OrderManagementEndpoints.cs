@@ -28,6 +28,7 @@ using ALKAROS.Identity.Authorization.PersonalBudgets;
 using ALKAROS.Identity.Authorization.Policies;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Measurements;
+using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
@@ -193,6 +194,9 @@ public static class OrderManagementEndpoints
         services.TryAddSingleton<IKitchenItemStateProvider, PostgresKitchenItemStateProvider>();
         services.TryAddSingleton<IPortionCancellationDecisionService, PortionCancellationDecisionService>();
         services.TryAddSingleton<ICrossChannelPortionArbiter, PostgresCrossChannelPortionArbiter>();
+        // A QR order's portions count against the published daily menu item they were sold from.
+        services.TryAddSingleton<IBusinessDateProvider, BusinessDateProvider>();
+        services.TryAddSingleton<IDailyMenuItemLocator, PostgresDailyMenuItemLocator>();
         services.TryAddSingleton<PendingOrderConfirmationStore>();
         // V12-QRO-002: the background half of "no remote QR service denial"
         // (see QrOrderExpiryHostedService's own doc comment) — an

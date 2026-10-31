@@ -5,8 +5,10 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ALKAROS.IntegrationContracts;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
+using ALKAROS.Messaging;
 using ALKAROS.Production.BatchLifecycle;
 using Npgsql;
 
@@ -67,7 +69,8 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
                 status,
                 portion_unit_code,
                 destination_location_id,
-                actual_quantity
+                actual_quantity,
+                daily_menu_item_id
             FROM production.production_batches
             WHERE production_batch_id = @id
             FOR UPDATE;
@@ -79,6 +82,7 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
         string portionUnitCode;
         Guid? defaultDestLocId;
         decimal existingActualQty;
+        Guid? dailyMenuItemId;
 
         await using (var bCmd = new NpgsqlCommand(batchSql, conn, tx))
         {
@@ -95,6 +99,7 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
             portionUnitCode = bReader.GetString(4);
             defaultDestLocId = bReader.IsDBNull(5) ? null : bReader.GetGuid(5);
             existingActualQty = bReader.GetDecimal(6);
+            dailyMenuItemId = bReader.IsDBNull(7) ? null : bReader.GetGuid(7);
         }
 
         if (string.Equals(status, "Cancelled", StringComparison.OrdinalIgnoreCase))
@@ -413,6 +418,20 @@ public sealed class ProductionStockEffectService : IProductionStockEffectService
             outCmd.Parameters.AddWithValue("movement_id", (object?)outputMovementId ?? DBNull.Value);
             outCmd.Parameters.AddWithValue("now", now);
             await outCmd.ExecuteNonQueryAsync(ct);
+        }
+
+        if (dailyMenuItemId is { } menuItemId)
+        {
+            await OutboxStore.EnqueueAsync(
+                new OutboxEnvelope(
+                    DailyMenuCounterIntegrationEventTypes.ProductionOutputRecorded,
+                    "production_output",
+                    outputId,
+                    IntegrationEventSerializer.Serialize(new DailyMenuProductionOutputRecorded(
+                        outputId, menuItemId, command.ActualQuantity, now))),
+                conn,
+                tx,
+                ct);
         }
 
         outputRecord = new ProductionOutputRecord(

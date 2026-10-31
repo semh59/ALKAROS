@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="6dc18100-b6bd-49ff-b277-202c823b9dbc" name="semih@SEMH59 2026-10-31 22:51:57" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T22:51:57.3559303+03:00" queuing="2026-10-31T22:51:57.3559306+03:00" start="2026-10-31T22:51:55.7519855+03:00" finish="2026-10-31T22:51:57.4840284+03:00" />
+  <TestSettings name="default" id="80a16181-5ebd-49a4-b570-4a49f0559742">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_22_51_57" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="d7c71f9e-dd00-4c1d-b8ee-a2fac30e6a11" testId="c1102a81-b1d2-96f7-8b5a-e41e8a9795c7" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ACountDimensionCrossUnitIngredientConvertsThroughTheSharedUnitConverterWithNoCustomDbRow" computerName="SEMH59" duration="00:00:00.0323642" startTime="2026-10-31T22:51:57.3671348+03:00" endTime="2026-10-31T22:51:57.3671353+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d7c71f9e-dd00-4c1d-b8ee-a2fac30e6a11" />
+    <UnitTestResult executionId="3fb85764-4b15-4db3-9bfd-f3114416a5a4" testId="d7090738-3366-422e-2874-b37492928e42" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchWhoseUnitCannotBeConvertedToTheRecipeYieldUnitIsRefusedAndConsumesNothing" computerName="SEMH59" duration="00:00:00.0234752" startTime="2026-10-31T22:51:57.2955368+03:00" endTime="2026-10-31T22:51:57.2955370+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3fb85764-4b15-4db3-9bfd-f3114416a5a4" />
+    <UnitTestResult executionId="1caaf3ee-319d-4855-9bf8-7b86153b7d1d" testId="e0776a7a-4896-5417-e552-cb782de83eea" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ExecutionFailsForCancelledBatch" computerName="SEMH59" duration="00:00:00.0447567" startTime="2026-10-31T22:51:57.0729130+03:00" endTime="2026-10-31T22:51:57.0729134+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1caaf3ee-319d-4855-9bf8-7b86153b7d1d" />
+    <UnitTestResult executionId="47dff904-f2a3-48c8-b8b9-b96713ca93ee" testId="a445e122-5ebf-665d-b193-96b135c8e490" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.RollbackAndReapplyMigration072SucceedsWithoutErrors" computerName="SEMH59" duration="00:00:00.0196489" startTime="2026-10-31T22:51:57.2716104+03:00" endTime="2026-10-31T22:51:57.2716108+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="47dff904-f2a3-48c8-b8b9-b96713ca93ee" />
+    <UnitTestResult executionId="0766b97f-1937-474e-a491-39fbb093bb80" testId="71bde224-34b9-5df0-556f-98ab676a854d" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchWithoutADailyMenuItemPublishesNothing" computerName="SEMH59" duration="00:00:00.0305196" startTime="2026-10-31T22:51:57.1855803+03:00" endTime="2026-10-31T22:51:57.1855804+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0766b97f-1937-474e-a491-39fbb093bb80" />
+    <UnitTestResult executionId="039040ed-c100-4ddb-beed-b7f0f351231d" testId="4b7bb27a-1038-a1e8-6df7-bf1999b541a9" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ExecuteBatchStockEffectsWithOutputStockItemCreatesOutputMovementAndIncrementsStock" computerName="SEMH59" duration="00:00:00.0382528" startTime="2026-10-31T22:51:57.3342516+03:00" endTime="2026-10-31T22:51:57.3342519+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="039040ed-c100-4ddb-beed-b7f0f351231d" />
+    <UnitTestResult executionId="2cad52e3-a8b8-4b1e-b41d-a1487b0e5acd" testId="39ed8413-0679-f6d7-b62c-21cd9fbc7a00" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.InsufficientStockFailsAtomicallyWithoutSideEffects" computerName="SEMH59" duration="00:00:00.0308944" startTime="2026-10-31T22:51:57.2168643+03:00" endTime="2026-10-31T22:51:57.2168646+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2cad52e3-a8b8-4b1e-b41d-a1487b0e5acd" />
+    <UnitTestResult executionId="82ff1b40-511f-459d-ad0e-c0f6d5ef95b7" testId="58eb68da-ab21-056e-c56e-70e7171777cf" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchLinkedToADailyMenuItemPublishesItsOutputOnceInTheBatchTransaction" computerName="SEMH59" duration="00:00:00.0811759" startTime="2026-10-31T22:51:57.1545326+03:00" endTime="2026-10-31T22:51:57.1545328+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="82ff1b40-511f-459d-ad0e-c0f6d5ef95b7" />
+    <UnitTestResult executionId="06359568-7e8c-4e02-a208-faa2ab0d9527" testId="ae80e388-aa89-6012-efa1-d52808eaea47" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ReplayExecutionIsIdempotentAndCreatesZeroAdditionalMovements" computerName="SEMH59" duration="00:00:00.0342077" startTime="2026-10-31T22:51:57.2514954+03:00" endTime="2026-10-31T22:51:57.2514957+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06359568-7e8c-4e02-a208-faa2ab0d9527" />
+    <UnitTestResult executionId="a82f3ea1-1841-43c9-a49c-668fbc1acebb" testId="11cbc0d1-18d1-61a0-6934-cd9408c1c62e" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchInAConvertibleUnitIsScaledInTheRecipeYieldUnit" computerName="SEMH59" duration="00:00:00.0309208" startTime="2026-10-31T22:51:57.0274342+03:00" endTime="2026-10-31T22:51:57.0274345+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a82f3ea1-1841-43c9-a49c-668fbc1acebb" />
+    <UnitTestResult executionId="bcd40209-a83c-4b36-9b6b-433d95709fa0" testId="f570cafe-70c1-c10d-178d-71370e1dc683" testName="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ExecuteBatchStockEffectsCreatesTraceableConsumptionsAndMovements" computerName="SEMH59" duration="00:00:00.1374679" startTime="2026-10-31T22:51:56.9953035+03:00" endTime="2026-10-31T22:51:56.9953257+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="bcd40209-a83c-4b36-9b6b-433d95709fa0" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ACountDimensionCrossUnitIngredientConvertsThroughTheSharedUnitConverterWithNoCustomDbRow" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="c1102a81-b1d2-96f7-8b5a-e41e8a9795c7">
+      <Execution id="d7c71f9e-dd00-4c1d-b8ee-a2fac30e6a11" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="ACountDimensionCrossUnitIngredientConvertsThroughTheSharedUnitConverterWithNoCustomDbRow" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ExecutionFailsForCancelledBatch" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="e0776a7a-4896-5417-e552-cb782de83eea">
+      <Execution id="1caaf3ee-319d-4855-9bf8-7b86153b7d1d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="ExecutionFailsForCancelledBatch" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchLinkedToADailyMenuItemPublishesItsOutputOnceInTheBatchTransaction" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="58eb68da-ab21-056e-c56e-70e7171777cf">
+      <Execution id="82ff1b40-511f-459d-ad0e-c0f6d5ef95b7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="ABatchLinkedToADailyMenuItemPublishesItsOutputOnceInTheBatchTransaction" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.RollbackAndReapplyMigration072SucceedsWithoutErrors" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="a445e122-5ebf-665d-b193-96b135c8e490">
+      <Execution id="47dff904-f2a3-48c8-b8b9-b96713ca93ee" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="RollbackAndReapplyMigration072SucceedsWithoutErrors" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ExecuteBatchStockEffectsCreatesTraceableConsumptionsAndMovements" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="f570cafe-70c1-c10d-178d-71370e1dc683">
+      <Execution id="bcd40209-a83c-4b36-9b6b-433d95709fa0" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="ExecuteBatchStockEffectsCreatesTraceableConsumptionsAndMovements" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.InsufficientStockFailsAtomicallyWithoutSideEffects" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="39ed8413-0679-f6d7-b62c-21cd9fbc7a00">
+      <Execution id="2cad52e3-a8b8-4b1e-b41d-a1487b0e5acd" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="InsufficientStockFailsAtomicallyWithoutSideEffects" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchWhoseUnitCannotBeConvertedToTheRecipeYieldUnitIsRefusedAndConsumesNothing" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="d7090738-3366-422e-2874-b37492928e42">
+      <Execution id="3fb85764-4b15-4db3-9bfd-f3114416a5a4" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="ABatchWhoseUnitCannotBeConvertedToTheRecipeYieldUnitIsRefusedAndConsumesNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ExecuteBatchStockEffectsWithOutputStockItemCreatesOutputMovementAndIncrementsStock" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="4b7bb27a-1038-a1e8-6df7-bf1999b541a9">
+      <Execution id="039040ed-c100-4ddb-beed-b7f0f351231d" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="ExecuteBatchStockEffectsWithOutputStockItemCreatesOutputMovementAndIncrementsStock" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ReplayExecutionIsIdempotentAndCreatesZeroAdditionalMovements" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="ae80e388-aa89-6012-efa1-d52808eaea47">
+      <Execution id="06359568-7e8c-4e02-a208-faa2ab0d9527" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="ReplayExecutionIsIdempotentAndCreatesZeroAdditionalMovements" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchWithoutADailyMenuItemPublishesNothing" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="71bde224-34b9-5df0-556f-98ab676a854d">
+      <Execution id="0766b97f-1937-474e-a491-39fbb093bb80" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="ABatchWithoutADailyMenuItemPublishesNothing" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests.ABatchInAConvertibleUnitIsScaledInTheRecipeYieldUnit" storage="d:\project\alkaros\tests\modules\production\stockeffects\bin\debug\net8.0\alkaros.production.stockeffects.tests.dll" id="11cbc0d1-18d1-61a0-6934-cd9408c1c62e">
+      <Execution id="a82f3ea1-1841-43c9-a49c-668fbc1acebb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Production\StockEffects\bin\Debug\net8.0\ALKAROS.Production.StockEffects.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Production.StockEffects.Tests.ProductionStockEffectsDatabaseTests" name="ABatchInAConvertibleUnitIsScaledInTheRecipeYieldUnit" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="c1102a81-b1d2-96f7-8b5a-e41e8a9795c7" executionId="d7c71f9e-dd00-4c1d-b8ee-a2fac30e6a11" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d7090738-3366-422e-2874-b37492928e42" executionId="3fb85764-4b15-4db3-9bfd-f3114416a5a4" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e0776a7a-4896-5417-e552-cb782de83eea" executionId="1caaf3ee-319d-4855-9bf8-7b86153b7d1d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a445e122-5ebf-665d-b193-96b135c8e490" executionId="47dff904-f2a3-48c8-b8b9-b96713ca93ee" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="71bde224-34b9-5df0-556f-98ab676a854d" executionId="0766b97f-1937-474e-a491-39fbb093bb80" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4b7bb27a-1038-a1e8-6df7-bf1999b541a9" executionId="039040ed-c100-4ddb-beed-b7f0f351231d" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="39ed8413-0679-f6d7-b62c-21cd9fbc7a00" executionId="2cad52e3-a8b8-4b1e-b41d-a1487b0e5acd" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="58eb68da-ab21-056e-c56e-70e7171777cf" executionId="82ff1b40-511f-459d-ad0e-c0f6d5ef95b7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ae80e388-aa89-6012-efa1-d52808eaea47" executionId="06359568-7e8c-4e02-a208-faa2ab0d9527" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="11cbc0d1-18d1-61a0-6934-cd9408c1c62e" executionId="a82f3ea1-1841-43c9-a49c-668fbc1acebb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f570cafe-70c1-c10d-178d-71370e1dc683" executionId="bcd40209-a83c-4b36-9b6b-433d95709fa0" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="11" executed="11" passed="11" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.18]   Discovering: ALKAROS.Production.StockEffects.Tests&#xD;
+[xUnit.net 00:00:00.21]   Discovered:  ALKAROS.Production.StockEffects.Tests&#xD;
+[xUnit.net 00:00:00.22]   Starting:    ALKAROS.Production.StockEffects.Tests&#xD;
+[xUnit.net 00:00:01.12]   Finished:    ALKAROS.Production.StockEffects.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

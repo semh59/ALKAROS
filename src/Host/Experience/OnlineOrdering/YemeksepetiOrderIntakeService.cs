@@ -1,4 +1,5 @@
 using ALKAROS.Inventory.CrossChannelReservation;
+using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.OnlineOrdering.OrderLinks;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
 using ALKAROS.OnlineOrdering.Providers.Inbox;
@@ -56,6 +57,7 @@ public sealed class YemeksepetiOrderIntakeService
     private readonly IOrderSubmissionDispatcher _dispatcher;
     private readonly ICrossChannelPortionArbiter _arbiter;
     private readonly YemeksepetiStatusSyncService _statusSync;
+    private readonly IDailyMenuItemLocator _dailyMenuItems;
 
     public YemeksepetiOrderIntakeService(
         NpgsqlDataSource dataSource,
@@ -64,7 +66,8 @@ public sealed class YemeksepetiOrderIntakeService
         IOrderRepository orders,
         IOrderSubmissionDispatcher dispatcher,
         ICrossChannelPortionArbiter arbiter,
-        YemeksepetiStatusSyncService statusSync)
+        YemeksepetiStatusSyncService statusSync,
+        IDailyMenuItemLocator dailyMenuItems)
     {
         _dataSource = dataSource ?? throw new ArgumentNullException(nameof(dataSource));
         _inbox = inbox ?? throw new ArgumentNullException(nameof(inbox));
@@ -73,6 +76,7 @@ public sealed class YemeksepetiOrderIntakeService
         _dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
         _arbiter = arbiter ?? throw new ArgumentNullException(nameof(arbiter));
         _statusSync = statusSync ?? throw new ArgumentNullException(nameof(statusSync));
+        _dailyMenuItems = dailyMenuItems ?? throw new ArgumentNullException(nameof(dailyMenuItems));
     }
 
     /// <summary>Processes the oldest pending event, if any. Returns false when nothing was waiting.</summary>
@@ -204,6 +208,9 @@ public sealed class YemeksepetiOrderIntakeService
                 skuSnapshot: line.ExternalSku, notes: line.Instructions, createdAt: now, updatedAt: now))
             .ToList();
 
+        var menuItems = await _dailyMenuItems.FindPublishedItemIdsAsync(
+            items.Select(item => item.ProductId).Distinct().ToList(), cancellationToken).ConfigureAwait(false);
+
         // Stock first: a refusal writes nothing, so there is never an order without its holds.
         var hold = await _arbiter.ReserveAsync(
             new CrossChannelReservationRequest(
@@ -211,7 +218,8 @@ public sealed class YemeksepetiOrderIntakeService
                 onlineOrder.ExternalOrderId,
                 orderId,
                 SystemActorId,
-                items.Select(item => new CrossChannelReservationLine(item.Id, item.ProductId, item.Quantity)).ToList()),
+                items.Select(item => new CrossChannelReservationLine(
+                    item.Id, item.ProductId, item.Quantity, menuItems.TryGetValue(item.ProductId, out var menuItemId) ? menuItemId : null)).ToList()),
             connection, transaction, cancellationToken).ConfigureAwait(false);
         if (hold.Outcome == CrossChannelReservationOutcome.AlreadyConsumed)
         {

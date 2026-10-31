@@ -137,9 +137,9 @@ public sealed class MenuInventoryReportingDatabaseTests : IClassFixture<MenuInve
                     id, order_id, order_item_id, stock_item_id, stock_location_id,
                     quantity, unit_code, status, version, created_by, metadata
                 ) VALUES
-                    (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @sId, @loc, 3.000, 'portion', 'Reserved', 1, gen_random_uuid(), @meta::jsonb),
-                    (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @sId, @loc, 10.000, 'portion', 'Consumed', 2, gen_random_uuid(), @meta::jsonb),
-                    (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @sId, @loc, 2.000, 'portion', 'Waste', 2, gen_random_uuid(), @meta::jsonb);
+                    (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @sId, @loc, 0.500, 'kg', 'Reserved', 1, gen_random_uuid(), @meta::jsonb || '{"portion_count": 3}'),
+                    (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @sId, @loc, 1.500, 'kg', 'Consumed', 2, gen_random_uuid(), @meta::jsonb || '{"portion_count": 10}'),
+                    (gen_random_uuid(), gen_random_uuid(), gen_random_uuid(), @sId, @loc, 0.300, 'kg', 'Waste', 2, gen_random_uuid(), @meta::jsonb || '{"portion_count": 2}');
                 """;
             await using var rCmd = new NpgsqlCommand(rsvSql, conn);
             rCmd.Parameters.AddWithValue("sId", stockItemId);

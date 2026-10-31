@@ -1,3 +1,4 @@
+using ALKAROS.Inventory.CrossChannelReservation;
 using Npgsql;
 
 namespace ALKAROS.Inventory.PortionReservations.Lifecycle;
@@ -207,7 +208,13 @@ public sealed class PostgresPortionReservationRepository : IPortionReservationRe
                 transitioned_by = $5
             WHERE id = $6 AND version = $7;";
 
-        await using var cmd = connection is null ? _dataSource.CreateCommand(sql) : new NpgsqlCommand(sql, connection, transaction);
+        // The counter event commits with the status change, so without a caller transaction one is opened here.
+        await using var ownConnection = connection is null ? await _dataSource.OpenConnectionAsync(cancellationToken) : null;
+        var activeConnection = connection ?? ownConnection!;
+        await using var ownTransaction = transaction is null ? await activeConnection.BeginTransactionAsync(cancellationToken) : null;
+        var activeTransaction = transaction ?? ownTransaction!;
+
+        await using var cmd = new NpgsqlCommand(sql, activeConnection, activeTransaction);
         cmd.Parameters.AddWithValue(reservation.Status.ToString());
         cmd.Parameters.AddWithValue(reservation.Version);
         cmd.Parameters.AddWithValue((object?)reservation.TransitionedAt ?? DBNull.Value);
@@ -217,7 +224,20 @@ public sealed class PostgresPortionReservationRepository : IPortionReservationRe
         cmd.Parameters.AddWithValue(expectedVersion);
 
         var rowsAffected = await cmd.ExecuteNonQueryAsync(cancellationToken);
-        return rowsAffected > 0;
+        if (rowsAffected == 0)
+            return false;
+
+        await DailyMenuPortionEvents.PublishAsync(
+            reservation.Id,
+            reservation.Status.ToString(),
+            reservation.MetadataJson,
+            reservation.TransitionedAt ?? DateTimeOffset.UtcNow,
+            activeConnection,
+            activeTransaction,
+            cancellationToken);
+        if (ownTransaction is not null)
+            await ownTransaction.CommitAsync(cancellationToken);
+        return true;
     }
 
     private static PortionReservation MapRow(NpgsqlDataReader reader)

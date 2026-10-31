@@ -104,6 +104,19 @@ public sealed class YemeksepetiOrderIntakeTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task AProviderOrderForAProductOnTodaysMenuCountsItsPortionsAsReserved()
+    {
+        var (productId, sku) = await _database.SeedSellableProductAsync(onHand: 3m);
+        var menuItemId = await _database.SeedPublishedDailyMenuItemAsync(productId);
+        await StoreAsync(Delivery(NewOrderId(), "RECEIVED", "t1", (sku, 2)));
+
+        Assert.Equal(1, await DrainAsync());
+
+        var counters = await _database.DeliverDailyMenuEventsAsync(menuItemId);
+        Assert.Equal(2m, counters.ReservedPortions);
+    }
+
+    [Fact]
     public async Task TheSameProviderOrderDeliveredTwiceIsStillOneOrder()
     {
         var (_, sku) = await _database.SeedSellableProductAsync(onHand: 5m);

@@ -256,6 +256,26 @@ public static class MenuManagementEndpoints
             return Results.Ok(DailyMenuItemV1.From(updated));
         });
 
+        group.MapGet("/daily-menus/{dailyMenuId:guid}/counters/drift", async (
+            Guid dailyMenuId,
+            IDailyMenuService service,
+            IDailyMenuCounterProjector projector,
+            CancellationToken cancellationToken) =>
+        {
+            await service.GetDailyMenuDetailsAsync(dailyMenuId, false, cancellationToken);
+            return Results.Ok(DailyMenuCounterDriftV1.From(await projector.DetectDriftAsync(dailyMenuId, cancellationToken)));
+        });
+
+        group.MapPost("/daily-menus/{dailyMenuId:guid}/counters/rebuild", async (
+            Guid dailyMenuId,
+            IDailyMenuService service,
+            IDailyMenuCounterProjector projector,
+            CancellationToken cancellationToken) =>
+        {
+            await service.GetDailyMenuDetailsAsync(dailyMenuId, false, cancellationToken);
+            return Results.Ok(DailyMenuCounterRebuildV1.From(await projector.RebuildDailyMenuCountersAsync(dailyMenuId, cancellationToken)));
+        });
+
         return group;
     }
 }

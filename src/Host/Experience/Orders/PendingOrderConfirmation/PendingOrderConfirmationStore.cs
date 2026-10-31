@@ -4,6 +4,7 @@ using ALKAROS.Host.Experience.Orders.OrderStockConsumption;
 using ALKAROS.Inventory.CrossChannelReservation;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
+using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.Orders.ItemExceptions;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Orders.SubmitOrder;
@@ -43,6 +44,7 @@ public sealed class PendingOrderConfirmationStore
     private readonly ICrossChannelPortionArbiter _portionArbiter;
     private readonly IProductStockMappingRepository _stockMappings;
     private readonly IStockItemRepository _stockItems;
+    private readonly IDailyMenuItemLocator _dailyMenuItems;
 
     public PendingOrderConfirmationStore(
         IOrderRepository orders,
@@ -52,7 +54,8 @@ public sealed class PendingOrderConfirmationStore
         OrderStockConsumptionService stockConsumption,
         ICrossChannelPortionArbiter portionArbiter,
         IProductStockMappingRepository stockMappings,
-        IStockItemRepository stockItems)
+        IStockItemRepository stockItems,
+        IDailyMenuItemLocator dailyMenuItems)
     {
         _orders = orders ?? throw new ArgumentNullException(nameof(orders));
         _tickets = tickets ?? throw new ArgumentNullException(nameof(tickets));
@@ -62,6 +65,7 @@ public sealed class PendingOrderConfirmationStore
         _portionArbiter = portionArbiter ?? throw new ArgumentNullException(nameof(portionArbiter));
         _stockMappings = stockMappings ?? throw new ArgumentNullException(nameof(stockMappings));
         _stockItems = stockItems ?? throw new ArgumentNullException(nameof(stockItems));
+        _dailyMenuItems = dailyMenuItems ?? throw new ArgumentNullException(nameof(dailyMenuItems));
     }
 
     /// <summary>
@@ -275,12 +279,16 @@ public sealed class PendingOrderConfirmationStore
         NpgsqlTransaction transaction,
         CancellationToken cancellationToken)
     {
-        var lines = order.Items
-            .Where(item => item.Status != OrderItemState.Cancelled)
-            .Select(item => new CrossChannelReservationLine(item.Id, item.ProductId, item.Quantity))
-            .ToList();
-        if (lines.Count == 0)
+        var active = order.Items.Where(item => item.Status != OrderItemState.Cancelled).ToList();
+        if (active.Count == 0)
             return;
+
+        var menuItems = await _dailyMenuItems.FindPublishedItemIdsAsync(
+            active.Select(item => item.ProductId).Distinct().ToList(), cancellationToken).ConfigureAwait(false);
+        var lines = active
+            .Select(item => new CrossChannelReservationLine(
+                item.Id, item.ProductId, item.Quantity, menuItems.TryGetValue(item.ProductId, out var menuItemId) ? menuItemId : null))
+            .ToList();
 
         var result = await _portionArbiter.ReserveAsync(
             new CrossChannelReservationRequest(

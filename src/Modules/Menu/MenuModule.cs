@@ -1,3 +1,4 @@
+using ALKAROS.IntegrationContracts;
 using ALKAROS.Menu.CounterProjection;
 using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.Menu.StaticMenu;
@@ -37,5 +38,7 @@ public sealed class MenuModule : IModule
         context.RegisterTransient<IDailyMenuService, DailyMenuService>();
 
         context.RegisterTransient<IDailyMenuCounterProjector, PostgresDailyMenuCounterProjector>();
+        context.RegisterTransient<IDailyMenuItemLocator, PostgresDailyMenuItemLocator>();
+        context.RegisterTransient<IIntegrationEventConsumer, DailyMenuCounterEventConsumer>();
     }
 }

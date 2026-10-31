@@ -1,6 +1,9 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading.Tasks;
+using ALKAROS.IntegrationContracts;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.MovementLedger;
 using ALKAROS.Production.BatchLifecycle;
@@ -65,6 +68,11 @@ public sealed class ProductionStockEffectsTestDb : PgTestDatabase
         // 072: Production outputs and consumptions
         var sql072 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "072-production-outputs-consumptions.up.sql"));
         await RunAsync(DataSource, sql072);
+
+        foreach (var file in new[] { "002-inbox-messages.up.sql", "003-outbox-messages.up.sql", "033-message-lease-generation.up.sql" })
+        {
+            await RunAsync(DataSource, await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", file)));
+        }
     }
 
     public async Task RollbackMigration072Async()
@@ -378,6 +386,71 @@ public sealed class ProductionStockEffectsDatabaseTests : IClassFixture<Producti
         balCmd.Parameters.AddWithValue(locationId);
         var soupBal = Convert.ToDecimal(await balCmd.ExecuteScalarAsync(), System.Globalization.CultureInfo.InvariantCulture);
         soupBal.Should().Be(12.0000m);
+    }
+
+    private async Task<Guid> LinkBatchToNewDailyMenuItemAsync(Guid batchId)
+    {
+        var productId = Guid.NewGuid();
+        var menuId = Guid.NewGuid();
+        var menuItemId = Guid.NewGuid();
+        await using var conn = await _db.DataSource.OpenConnectionAsync();
+        await using var cmd = new NpgsqlCommand("""
+            INSERT INTO catalog.products (product_id, code, name) VALUES (@product, @code, 'Tomato Soup');
+            INSERT INTO menu.daily_menus (daily_menu_id, business_date, status)
+            VALUES (@menu, DATE '2100-01-01' + (SELECT count(*)::int FROM menu.daily_menus), 'Open');
+            INSERT INTO menu.daily_menu_items (daily_menu_item_id, daily_menu_id, product_id, product_name_snapshot, price)
+            VALUES (@item, @menu, @product, 'Tomato Soup', 40);
+            UPDATE production.production_batches SET daily_menu_item_id = @item WHERE production_batch_id = @batch;
+            """, conn);
+        cmd.Parameters.AddWithValue("product", productId);
+        cmd.Parameters.AddWithValue("code", "P-" + Guid.NewGuid().ToString("N")[..8]);
+        cmd.Parameters.AddWithValue("menu", menuId);
+        cmd.Parameters.AddWithValue("item", menuItemId);
+        cmd.Parameters.AddWithValue("batch", batchId);
+        await cmd.ExecuteNonQueryAsync();
+        return menuItemId;
+    }
+
+    private async Task<IReadOnlyList<DailyMenuProductionOutputRecorded>> OutputEventsAsync()
+    {
+        await using var cmd = _db.DataSource.CreateCommand("""
+            SELECT payload_envelope FROM outbox_messages WHERE event_type = $1 ORDER BY created_at;
+            """);
+        cmd.Parameters.AddWithValue(DailyMenuCounterIntegrationEventTypes.ProductionOutputRecorded);
+        var events = new List<DailyMenuProductionOutputRecorded>();
+        await using var reader = await cmd.ExecuteReaderAsync();
+        while (await reader.ReadAsync())
+            events.Add(IntegrationEventSerializer.Deserialize<DailyMenuProductionOutputRecorded>((byte[])reader[0]));
+        return events;
+    }
+
+    [Fact]
+    public async Task ABatchLinkedToADailyMenuItemPublishesItsOutputOnceInTheBatchTransaction()
+    {
+        var (_, versionId, _, _, locationId) = await SeedRecipeAndStockAsync();
+        var batchId = await CreateBatchAsync(versionId, locationId, plannedQuantity: 8.0m);
+        var menuItemId = await LinkBatchToNewDailyMenuItemAsync(batchId);
+        var cmd = new ExecuteBatchStockEffectsCommand(BatchId: batchId, ActualQuantity: 8.0m, SourceLocationId: locationId);
+
+        var result = await _service.ExecuteBatchStockEffectsAsync(cmd);
+        await _service.ExecuteBatchStockEffectsAsync(cmd);
+
+        var published = (await OutputEventsAsync()).Where(e => e.DailyMenuItemId == menuItemId).ToList();
+        published.Should().ContainSingle();
+        published[0].ProductionOutputId.Should().Be(result.Output!.Id);
+        published[0].Quantity.Should().Be(8.0m);
+    }
+
+    [Fact]
+    public async Task ABatchWithoutADailyMenuItemPublishesNothing()
+    {
+        var (_, versionId, _, _, locationId) = await SeedRecipeAndStockAsync();
+        var batchId = await CreateBatchAsync(versionId, locationId, plannedQuantity: 4.0m);
+
+        var result = await _service.ExecuteBatchStockEffectsAsync(
+            new ExecuteBatchStockEffectsCommand(BatchId: batchId, ActualQuantity: 4.0m, SourceLocationId: locationId));
+
+        (await OutputEventsAsync()).Should().NotContain(e => e.ProductionOutputId == result.Output!.Id);
     }
 
     [Fact]

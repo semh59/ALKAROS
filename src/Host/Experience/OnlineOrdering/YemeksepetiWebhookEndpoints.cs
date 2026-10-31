@@ -1,4 +1,5 @@
 using ALKAROS.Catalog.ProductCatalog;
+using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.OnlineOrdering.Yemeksepeti.OrderNormalization;
 using ALKAROS.OnlineOrdering.Yemeksepeti.Provider;
 using ALKAROS.OnlineOrdering.Providers.Contracts;
@@ -47,6 +48,8 @@ public static class YemeksepetiWebhookEndpoints
         services.TryAddEnumerable(ServiceDescriptor.Transient<IOnlineOrderProvider, YemeksepetiOnlineOrderProvider>());
         services.TryAddTransient<OnlineOrderProviderRegistry>();
         services.TryAddTransient<YemeksepetiStatusSyncService>();
+        services.TryAddSingleton<IBusinessDateProvider, BusinessDateProvider>();
+        services.TryAddSingleton<IDailyMenuItemLocator, PostgresDailyMenuItemLocator>();
         services.TryAddTransient<YemeksepetiOrderIntakeService>();
         services.AddHostedService<YemeksepetiInboxProcessingHostedService>();
         return services;

@@ -1,4 +1,5 @@
 using System.Globalization;
+using ALKAROS.Menu.CounterProjection;
 using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.Menu.StaticMenu;
 
@@ -111,6 +112,27 @@ public sealed record DailyMenuItemV1(
             value.RecipeVersionId, value.Price, value.PlannedPortions, value.PreparedPortions,
             value.AvailablePortions, value.ReservedPortions, value.ConsumedPortions, value.WastePortions,
             value.IsOutOfStock, value.PrinterRoutePolicy, value.IsActive, value.CreatedAt, value.UpdatedAt);
+}
+
+public sealed record DailyMenuCounterRebuildV1(int RebuiltItemCount, long ElapsedMilliseconds)
+{
+    public static DailyMenuCounterRebuildV1 From(DailyMenuCounterRebuildReport value)
+        => new(value.RebuiltItemsCount, (long)value.Elapsed.TotalMilliseconds);
+}
+
+public sealed record DailyMenuCounterDriftItemV1(
+    Guid DailyMenuItemId,
+    decimal PreparedDrift,
+    decimal ReservedDrift,
+    decimal ConsumedDrift,
+    decimal WasteDrift,
+    decimal AvailableDrift);
+
+public sealed record DailyMenuCounterDriftV1(bool HasDrift, IReadOnlyList<DailyMenuCounterDriftItemV1> Items)
+{
+    public static DailyMenuCounterDriftV1 From(DailyMenuCounterDriftReport value)
+        => new(value.HasDrift, value.Drifts.Select(d => new DailyMenuCounterDriftItemV1(
+            d.DailyMenuItemId, d.PreparedDrift, d.ReservedDrift, d.ConsumedDrift, d.WasteDrift, d.AvailableDrift)).ToArray());
 }
 
 public sealed record DailyMenuDetailsV1(DailyMenuV1 Menu, IReadOnlyList<DailyMenuItemV1> Items)

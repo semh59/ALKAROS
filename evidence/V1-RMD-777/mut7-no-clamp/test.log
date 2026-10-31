@@ -1,0 +1,67 @@
+  Geri y�klenecek projeler belirleniyor...
+  Geri y�kleme i�in t�m projeler g�ncel.
+  ALKAROS.ModuleComposition -> D:\PROJECT\ALKAROS\src\BuildingBlocks\ModuleComposition\bin\Debug\net8.0\ALKAROS.ModuleComposition.dll
+  ALKAROS.IntegrationContracts -> D:\PROJECT\ALKAROS\src\BuildingBlocks\IntegrationContracts\bin\Debug\net8.0\ALKAROS.IntegrationContracts.dll
+  ALKAROS.Measurements -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Measurements\bin\Debug\net8.0\ALKAROS.Measurements.dll
+  ALKAROS.Messaging -> D:\PROJECT\ALKAROS\src\BuildingBlocks\Messaging\bin\Debug\net8.0\ALKAROS.Messaging.dll
+  ALKAROS.Menu -> D:\PROJECT\ALKAROS\src\Modules\Menu\bin\Debug\net8.0\ALKAROS.Menu.dll
+  ALKAROS.TestHelpers -> D:\PROJECT\ALKAROS\tests\BuildingBlocks\TestHelpers\bin\Debug\net8.0\ALKAROS.TestHelpers.dll
+  ALKAROS.Inventory -> D:\PROJECT\ALKAROS\src\Modules\Inventory\bin\Debug\net8.0\ALKAROS.Inventory.dll
+  ALKAROS.Menu.CounterProjection.Tests -> D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll
+D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll (.NETCoreApp,Version=v8.0) için test çalıştırması
+Toplam 1 test dosyası belirtilen desenle eşleşti.
+[xUnit.net 00:00:01.22]     ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.ADeliveryThatArrivesTwiceOrOutOfOrderChangesTheCountersOnce [FAIL]
+[xUnit.net 00:00:01.46]     ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.RealReservationsAndTransitionsFillCountersInOrderedPortionsAndMatchTheAuthoritativeSources [FAIL]
+[xUnit.net 00:00:01.56]     ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AProductMappedToTwoStockItemsCountsOnePortionPerOrderItem [FAIL]
+  Başarısız ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.ADeliveryThatArrivesTwiceOrOutOfOrderChangesTheCountersOnce [41 ms]
+  Hata İletisi:
+   Npgsql.PostgresException : 23514: new row for relation "daily_menu_items" violates check constraint "daily_menu_items_available_portions_check"
+
+DETAIL: Detail redacted as it may contain sensitive data. Specify 'Include Error Detail' in the connection string to include this information.
+  Yığın İzleme:
+     at Npgsql.Internal.NpgsqlConnector.ReadMessageLong(Boolean async, DataRowLoadingMode dataRowLoadingMode, Boolean readingNotifications, Boolean isReadingPrependedMessage)
+   at System.Runtime.CompilerServices.PoolingAsyncValueTaskMethodBuilder`1.StateMachineBox`1.System.Threading.Tasks.Sources.IValueTaskSource<TResult>.GetResult(Int16 token)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlDataReader.NextResult(Boolean async, Boolean isConsuming, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at Npgsql.NpgsqlCommand.ExecuteReader(Boolean async, CommandBehavior behavior, CancellationToken cancellationToken)
+   at ALKAROS.Menu.CounterProjection.PostgresDailyMenuCounterProjector.ApplyReservationReservedAsync(ReservationReservedCounterEvent evt, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\CounterProjection\PostgresDailyMenuCounterProjector.cs:line 179
+   at ALKAROS.Menu.CounterProjection.PostgresDailyMenuCounterProjector.ApplyReservationReservedAsync(ReservationReservedCounterEvent evt, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\CounterProjection\PostgresDailyMenuCounterProjector.cs:line 191
+   at ALKAROS.Menu.CounterProjection.PostgresDailyMenuCounterProjector.ApplyReservationReservedAsync(ReservationReservedCounterEvent evt, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\CounterProjection\PostgresDailyMenuCounterProjector.cs:line 191
+   at ALKAROS.Menu.CounterProjection.PostgresDailyMenuCounterProjector.ApplyReservationReservedAsync(ReservationReservedCounterEvent evt, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\CounterProjection\PostgresDailyMenuCounterProjector.cs:line 196
+   at ALKAROS.Menu.CounterProjection.PostgresDailyMenuCounterProjector.ApplyReservationReservedAsync(ReservationReservedCounterEvent evt, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\CounterProjection\PostgresDailyMenuCounterProjector.cs:line 197
+   at ALKAROS.Menu.CounterProjection.PostgresDailyMenuCounterProjector.ApplyReservationReservedAsync(ReservationReservedCounterEvent evt, CancellationToken ct) in D:\PROJECT\ALKAROS\src\Modules\Menu\CounterProjection\PostgresDailyMenuCounterProjector.cs:line 197
+   at ALKAROS.Menu.CounterProjection.DailyMenuCounterEventConsumer.HandleAsync(String eventType, ReadOnlyMemory`1 payload, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Menu\CounterProjection\DailyMenuCounterEventConsumer.cs:line 35
+   at ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.<>c__DisplayClass21_0.<<ADeliveryThatArrivesTwiceOrOutOfOrderChangesTheCountersOnce>g__DeliverAsync|0>d.MoveNext() in D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\DailyMenuCounterEndToEndTests.cs:line 259
+--- End of stack trace from previous location ---
+   at ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.ADeliveryThatArrivesTwiceOrOutOfOrderChangesTheCountersOnce() in D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\DailyMenuCounterEndToEndTests.cs:line 265
+--- End of stack trace from previous location ---
+  Başarısız ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.RealReservationsAndTransitionsFillCountersInOrderedPortionsAndMatchTheAuthoritativeSources [237 ms]
+  Hata İletisi:
+   Expected (CountersAsync(seed.MenuItemId)).ReservedPortions to be 15M, but found 0.000M (difference of -15.000).
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)
+   at ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.RealReservationsAndTransitionsFillCountersInOrderedPortionsAndMatchTheAuthoritativeSources() in D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\DailyMenuCounterEndToEndTests.cs:line 185
+--- End of stack trace from previous location ---
+  Başarısız ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AProductMappedToTwoStockItemsCountsOnePortionPerOrderItem [62 ms]
+  Hata İletisi:
+   Expected (CountersAsync(seed.MenuItemId)).ReservedPortions to be 2M, but found 0.000M (difference of -2.000).
+  Yığın İzleme:
+     at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)
+   at ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AProductMappedToTwoStockItemsCountsOnePortionPerOrderItem() in D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\DailyMenuCounterEndToEndTests.cs:line 218
+--- End of stack trace from previous location ---
+Sonuç Dosyası: D:\PROJECT\ALKAROS\evidence\V1-RMD-777\mut7-no-clamp\semih_SEMH59_2026-10-31_22_51_35_net8.0.trx
+
+Başarısız! - Başarısız:     3, Başarılı:    14, Atlanan:     0, Toplam:    17, Süre: 805 ms - ALKAROS.Menu.CounterProjection.Tests.dll (net8.0)

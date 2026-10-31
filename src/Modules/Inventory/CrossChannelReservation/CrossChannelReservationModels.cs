@@ -30,8 +30,16 @@ public enum CrossChannelReservationOutcome
     NotConfigured
 }
 
-/// <summary>One order item competing for stock: the product sold and how many.</summary>
-public sealed record CrossChannelReservationLine(Guid OrderItemId, Guid ProductId, decimal Quantity);
+/// <summary>
+/// One order item competing for stock: the product sold and how many. <paramref name="DailyMenuItemId"/> is the
+/// published daily menu item the line is sold from, if any; the line then counts as <paramref name="Quantity"/>
+/// portions of it.
+/// </summary>
+public sealed record CrossChannelReservationLine(
+    Guid OrderItemId,
+    Guid ProductId,
+    decimal Quantity,
+    Guid? DailyMenuItemId = null);
 
 /// <summary>
 /// The channel-neutral reservation command. <see cref="ChannelOrderReference"/> is the

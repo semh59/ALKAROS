@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="8a07ed81-07a8-4590-9130-9a3dcacb8b6f" name="semih@SEMH59 2026-10-31 22:52:04" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T22:52:04.5742696+03:00" queuing="2026-10-31T22:52:04.5742699+03:00" start="2026-10-31T22:52:03.1858087+03:00" finish="2026-10-31T22:52:04.6768120+03:00" />
+  <TestSettings name="default" id="a5f92af5-06ef-4a1d-ba30-f96502e3c228">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_22_52_04" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e25cbe7f-b50c-4e0d-a13d-5db055fd106b" testId="f263a0be-0216-c51e-1e6a-5bfd16c0f57f" testName="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ProductionYieldReportComputesAccurateYieldRates" computerName="SEMH59" duration="00:00:00.0211987" startTime="2026-10-31T22:52:04.5149990+03:00" endTime="2026-10-31T22:52:04.5149992+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e25cbe7f-b50c-4e0d-a13d-5db055fd106b" />
+    <UnitTestResult executionId="ce82e0cc-76cf-4ca0-ad55-2476f2ff6fde" testId="07f3f840-1156-6e27-b18f-68dfe55683d1" testName="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.CriticalStockReportIdentifiesLowStockWithReconciliation" computerName="SEMH59" duration="00:00:00.0204402" startTime="2026-10-31T22:52:04.4685694+03:00" endTime="2026-10-31T22:52:04.4685698+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ce82e0cc-76cf-4ca0-ad55-2476f2ff6fde" />
+    <UnitTestResult executionId="79ea79ae-b10b-4eb3-8d7b-0e937ea18ed2" testId="1a03a94a-8108-12ff-786d-61e649216d12" testName="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportExcludesAnItemMissingAnOpeningCount" computerName="SEMH59" duration="00:00:00.0197630" startTime="2026-10-31T22:52:04.3870616+03:00" endTime="2026-10-31T22:52:04.3870618+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="79ea79ae-b10b-4eb3-8d7b-0e937ea18ed2" />
+    <UnitTestResult executionId="5601e6f1-daf9-490e-b7f6-3b8043fc5054" testId="8a9d0a31-b84f-659f-05cf-7b3c7e5c85a5" testName="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.CriticalStockReportPrefersThePersistedReorderPointOverTheCallerSuppliedThreshold" computerName="SEMH59" duration="00:00:00.0242625" startTime="2026-10-31T22:52:04.3449540+03:00" endTime="2026-10-31T22:52:04.3449545+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="5601e6f1-daf9-490e-b7f6-3b8043fc5054" />
+    <UnitTestResult executionId="6a485567-7c84-4fcf-8738-0d5ba2ba44b6" testId="0c0af8a2-228b-bee1-d401-9a7cea69c851" testName="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportCountsProductionConsumptionAndOutput" computerName="SEMH59" duration="00:00:00.0853553" startTime="2026-10-31T22:52:04.3195985+03:00" endTime="2026-10-31T22:52:04.3196163+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6a485567-7c84-4fcf-8738-0d5ba2ba44b6" />
+    <UnitTestResult executionId="cced5c67-dcaa-43c3-9cc8-1dfeac87bf5a" testId="b971f7a8-7c9e-c6d2-5166-afc7edb37c69" testName="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.CriticalStockReportDoesNotAlarmOnALocationTheItemIsNeverStockedAt" computerName="SEMH59" duration="00:00:00.0219789" startTime="2026-10-31T22:52:04.4095202+03:00" endTime="2026-10-31T22:52:04.4095205+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cced5c67-dcaa-43c3-9cc8-1dfeac87bf5a" />
+    <UnitTestResult executionId="810004dc-c1ea-4c35-af1c-08924f3af25f" testId="a89c0a6c-bfa1-b688-1255-eb3234909e44" testName="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportDoesNotCountAVoidedItemWhoseStockWasGivenBack" computerName="SEMH59" duration="00:00:00.0211649" startTime="2026-10-31T22:52:04.3666544+03:00" endTime="2026-10-31T22:52:04.3666548+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="810004dc-c1ea-4c35-af1c-08924f3af25f" />
+    <UnitTestResult executionId="330bfc6c-f3ca-4dc5-968e-ab120b84107f" testId="5d60965a-9ddb-5915-59ab-6600d8b2c070" testName="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.PortionConsumptionReportReturnsAccurateMetricsAndReconciliation" computerName="SEMH59" duration="00:00:00.0485603" startTime="2026-10-31T22:52:04.5640341+03:00" endTime="2026-10-31T22:52:04.5640345+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="330bfc6c-f3ca-4dc5-968e-ab120b84107f" />
+    <UnitTestResult executionId="f8d28c1f-c3e7-46d6-96f3-bce7583cd025" testId="1d5910da-f3d1-d184-1a21-9e67ebe6f82b" testName="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.WasteReportAggregatesPortionAndInventoryWaste" computerName="SEMH59" duration="00:00:00.0376965" startTime="2026-10-31T22:52:04.4476653+03:00" endTime="2026-10-31T22:52:04.4476655+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="f8d28c1f-c3e7-46d6-96f3-bce7583cd025" />
+    <UnitTestResult executionId="3826e82e-ffaf-40c4-983e-5720f6226b80" testId="27096562-1159-299e-3dd8-62acffcad778" testName="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportComputesVarianceForAFullyCoveredItem" computerName="SEMH59" duration="00:00:00.0243184" startTime="2026-10-31T22:52:04.4933428+03:00" endTime="2026-10-31T22:52:04.4933430+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="3826e82e-ffaf-40c4-983e-5720f6226b80" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.CriticalStockReportIdentifiesLowStockWithReconciliation" storage="d:\project\alkaros\tests\modules\reporting\menuinventory\bin\debug\net8.0\alkaros.reporting.menuinventory.tests.dll" id="07f3f840-1156-6e27-b18f-68dfe55683d1">
+      <Execution id="ce82e0cc-76cf-4ca0-ad55-2476f2ff6fde" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\MenuInventory\bin\Debug\net8.0\ALKAROS.Reporting.MenuInventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests" name="CriticalStockReportIdentifiesLowStockWithReconciliation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportCountsProductionConsumptionAndOutput" storage="d:\project\alkaros\tests\modules\reporting\menuinventory\bin\debug\net8.0\alkaros.reporting.menuinventory.tests.dll" id="0c0af8a2-228b-bee1-d401-9a7cea69c851">
+      <Execution id="6a485567-7c84-4fcf-8738-0d5ba2ba44b6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\MenuInventory\bin\Debug\net8.0\ALKAROS.Reporting.MenuInventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests" name="ActualVsTheoreticalReportCountsProductionConsumptionAndOutput" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.PortionConsumptionReportReturnsAccurateMetricsAndReconciliation" storage="d:\project\alkaros\tests\modules\reporting\menuinventory\bin\debug\net8.0\alkaros.reporting.menuinventory.tests.dll" id="5d60965a-9ddb-5915-59ab-6600d8b2c070">
+      <Execution id="330bfc6c-f3ca-4dc5-968e-ab120b84107f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\MenuInventory\bin\Debug\net8.0\ALKAROS.Reporting.MenuInventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests" name="PortionConsumptionReportReturnsAccurateMetricsAndReconciliation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportExcludesAnItemMissingAnOpeningCount" storage="d:\project\alkaros\tests\modules\reporting\menuinventory\bin\debug\net8.0\alkaros.reporting.menuinventory.tests.dll" id="1a03a94a-8108-12ff-786d-61e649216d12">
+      <Execution id="79ea79ae-b10b-4eb3-8d7b-0e937ea18ed2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\MenuInventory\bin\Debug\net8.0\ALKAROS.Reporting.MenuInventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests" name="ActualVsTheoreticalReportExcludesAnItemMissingAnOpeningCount" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportComputesVarianceForAFullyCoveredItem" storage="d:\project\alkaros\tests\modules\reporting\menuinventory\bin\debug\net8.0\alkaros.reporting.menuinventory.tests.dll" id="27096562-1159-299e-3dd8-62acffcad778">
+      <Execution id="3826e82e-ffaf-40c4-983e-5720f6226b80" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\MenuInventory\bin\Debug\net8.0\ALKAROS.Reporting.MenuInventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests" name="ActualVsTheoreticalReportComputesVarianceForAFullyCoveredItem" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.CriticalStockReportPrefersThePersistedReorderPointOverTheCallerSuppliedThreshold" storage="d:\project\alkaros\tests\modules\reporting\menuinventory\bin\debug\net8.0\alkaros.reporting.menuinventory.tests.dll" id="8a9d0a31-b84f-659f-05cf-7b3c7e5c85a5">
+      <Execution id="5601e6f1-daf9-490e-b7f6-3b8043fc5054" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\MenuInventory\bin\Debug\net8.0\ALKAROS.Reporting.MenuInventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests" name="CriticalStockReportPrefersThePersistedReorderPointOverTheCallerSuppliedThreshold" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.CriticalStockReportDoesNotAlarmOnALocationTheItemIsNeverStockedAt" storage="d:\project\alkaros\tests\modules\reporting\menuinventory\bin\debug\net8.0\alkaros.reporting.menuinventory.tests.dll" id="b971f7a8-7c9e-c6d2-5166-afc7edb37c69">
+      <Execution id="cced5c67-dcaa-43c3-9cc8-1dfeac87bf5a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\MenuInventory\bin\Debug\net8.0\ALKAROS.Reporting.MenuInventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests" name="CriticalStockReportDoesNotAlarmOnALocationTheItemIsNeverStockedAt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ProductionYieldReportComputesAccurateYieldRates" storage="d:\project\alkaros\tests\modules\reporting\menuinventory\bin\debug\net8.0\alkaros.reporting.menuinventory.tests.dll" id="f263a0be-0216-c51e-1e6a-5bfd16c0f57f">
+      <Execution id="e25cbe7f-b50c-4e0d-a13d-5db055fd106b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\MenuInventory\bin\Debug\net8.0\ALKAROS.Reporting.MenuInventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests" name="ProductionYieldReportComputesAccurateYieldRates" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.WasteReportAggregatesPortionAndInventoryWaste" storage="d:\project\alkaros\tests\modules\reporting\menuinventory\bin\debug\net8.0\alkaros.reporting.menuinventory.tests.dll" id="1d5910da-f3d1-d184-1a21-9e67ebe6f82b">
+      <Execution id="f8d28c1f-c3e7-46d6-96f3-bce7583cd025" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\MenuInventory\bin\Debug\net8.0\ALKAROS.Reporting.MenuInventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests" name="WasteReportAggregatesPortionAndInventoryWaste" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests.ActualVsTheoreticalReportDoesNotCountAVoidedItemWhoseStockWasGivenBack" storage="d:\project\alkaros\tests\modules\reporting\menuinventory\bin\debug\net8.0\alkaros.reporting.menuinventory.tests.dll" id="a89c0a6c-bfa1-b688-1255-eb3234909e44">
+      <Execution id="810004dc-c1ea-4c35-af1c-08924f3af25f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Reporting\MenuInventory\bin\Debug\net8.0\ALKAROS.Reporting.MenuInventory.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Reporting.MenuInventory.Tests.MenuInventoryReportingDatabaseTests" name="ActualVsTheoreticalReportDoesNotCountAVoidedItemWhoseStockWasGivenBack" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="f263a0be-0216-c51e-1e6a-5bfd16c0f57f" executionId="e25cbe7f-b50c-4e0d-a13d-5db055fd106b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="07f3f840-1156-6e27-b18f-68dfe55683d1" executionId="ce82e0cc-76cf-4ca0-ad55-2476f2ff6fde" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1a03a94a-8108-12ff-786d-61e649216d12" executionId="79ea79ae-b10b-4eb3-8d7b-0e937ea18ed2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8a9d0a31-b84f-659f-05cf-7b3c7e5c85a5" executionId="5601e6f1-daf9-490e-b7f6-3b8043fc5054" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="0c0af8a2-228b-bee1-d401-9a7cea69c851" executionId="6a485567-7c84-4fcf-8738-0d5ba2ba44b6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b971f7a8-7c9e-c6d2-5166-afc7edb37c69" executionId="cced5c67-dcaa-43c3-9cc8-1dfeac87bf5a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="a89c0a6c-bfa1-b688-1255-eb3234909e44" executionId="810004dc-c1ea-4c35-af1c-08924f3af25f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5d60965a-9ddb-5915-59ab-6600d8b2c070" executionId="330bfc6c-f3ca-4dc5-968e-ab120b84107f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1d5910da-f3d1-d184-1a21-9e67ebe6f82b" executionId="f8d28c1f-c3e7-46d6-96f3-bce7583cd025" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="27096562-1159-299e-3dd8-62acffcad778" executionId="3826e82e-ffaf-40c4-983e-5720f6226b80" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="10" executed="10" passed="10" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.21]   Discovering: ALKAROS.Reporting.MenuInventory.Tests&#xD;
+[xUnit.net 00:00:00.24]   Discovered:  ALKAROS.Reporting.MenuInventory.Tests&#xD;
+[xUnit.net 00:00:00.24]   Starting:    ALKAROS.Reporting.MenuInventory.Tests&#xD;
+[xUnit.net 00:00:00.97]   Finished:    ALKAROS.Reporting.MenuInventory.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

@@ -65,6 +65,31 @@ public sealed class CounterProjectionTestDb : PgTestDatabase
         // 10. Migration 073: daily menu counter applied events
         var sql073 = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", "073-daily-menu-counter-applied-events.up.sql"));
         await RunAsync(DataSource, sql073);
+
+        // 11. What the reservation arbiter, its cancellation and the outbox need
+        foreach (var file in new[]
+                 {
+                     "063-waste-records.up.sql",
+                     "065-reservation-balance-projection.up.sql",
+                     "118-stock-items-reorder-point.up.sql",
+                     "087-inventory-stock-balances-non-negative.up.sql",
+                     "002-inbox-messages.up.sql",
+                     "003-outbox-messages.up.sql",
+                     "033-message-lease-generation.up.sql"
+                 })
+        {
+            await RunAsync(DataSource, await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "Fixtures", "sql", file)));
+        }
+
+        await RunAsync(DataSource, """
+            CREATE SCHEMA IF NOT EXISTS kitchen;
+            CREATE TABLE IF NOT EXISTS kitchen.kitchen_ticket_items (
+                id UUID PRIMARY KEY,
+                order_item_id UUID NOT NULL,
+                status VARCHAR(32) NOT NULL,
+                created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+            );
+            """);
     }
 
     public async Task RollbackMigration073Async()
@@ -324,9 +349,9 @@ public sealed class DailyMenuCounterProjectionDatabaseTests : IClassFixture<Coun
                     id, order_id, order_item_id, stock_item_id, stock_location_id,
                     quantity, unit_code, status, version, created_by, metadata
                 ) VALUES
-                    (@r1, @o1, @oi1, @sId, @loc, 2.0000, 'portion', 'Reserved', 1, @usr, @meta::jsonb),
-                    (@r2, @o2, @oi2, @sId, @loc, 3.0000, 'portion', 'Consumed', 2, @usr, @meta::jsonb),
-                    (@r3, @o3, @oi3, @sId, @loc, 1.0000, 'portion', 'Waste', 2, @usr, @meta::jsonb);
+                    (@r1, @o1, @oi1, @sId, @loc, 0.3000, 'kg', 'Reserved', 1, @usr, @meta::jsonb || '{"portion_count": 2}'),
+                    (@r2, @o2, @oi2, @sId, @loc, 0.4500, 'kg', 'Consumed', 2, @usr, @meta::jsonb || '{"portion_count": 3}'),
+                    (@r3, @o3, @oi3, @sId, @loc, 0.1500, 'kg', 'Waste', 2, @usr, @meta::jsonb || '{"portion_count": 1}');
                 """;
             await using var rCmd = new NpgsqlCommand(rSql, conn);
             var stockItemId = Guid.NewGuid();

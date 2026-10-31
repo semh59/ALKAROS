@@ -11,6 +11,8 @@ using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Inventory.Transactions;
 using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Measurements;
+using ALKAROS.Menu.CounterProjection;
+using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.OnlineOrdering.Yemeksepeti.ProductMapping;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.TestHelpers;
@@ -134,6 +136,32 @@ public sealed class OnlineOrderingTestDatabase : PgTestDatabase
     }
 
     /// <summary>An active, 10%-taxed product mapped from a fresh SKU, with <paramref name="onHand"/> portions in stock.</summary>
+    /// <summary>Puts the product on today's published daily menu and returns the menu item.</summary>
+    public async Task<Guid> SeedPublishedDailyMenuItemAsync(Guid productId)
+    {
+        var menuItemId = Guid.NewGuid();
+        var menuId = Guid.NewGuid();
+        await ExecAsync(
+            """
+            INSERT INTO menu.daily_menus (daily_menu_id, business_date, status) VALUES (@menu, @date, 'Open');
+            INSERT INTO menu.daily_menu_items (daily_menu_item_id, daily_menu_id, product_id, product_name_snapshot, price)
+            VALUES (@item, @menu, @product, 'Lahmacun', 150);
+            """,
+            ("menu", menuId),
+            ("date", new BusinessDateProvider().GetCurrentBusinessDate()),
+            ("item", menuItemId),
+            ("product", productId));
+        return menuItemId;
+    }
+
+    /// <summary>Delivers the pending outbox events to the Menu counter consumer, then reads the item's counters.</summary>
+    public async Task<DailyMenuItemCounters> DeliverDailyMenuEventsAsync(Guid menuItemId)
+    {
+        var projector = new PostgresDailyMenuCounterProjector(DataSource);
+        await OutboxTestDrain.DrainAsync(DataSource, [new DailyMenuCounterEventConsumer(projector)]);
+        return (await projector.GetCountersAsync(menuItemId))!;
+    }
+
     public async Task<(Guid ProductId, string Sku)> SeedSellableProductAsync(decimal onHand, string name = "Lahmacun")
     {
         var suffix = Guid.NewGuid().ToString("N")[..8];

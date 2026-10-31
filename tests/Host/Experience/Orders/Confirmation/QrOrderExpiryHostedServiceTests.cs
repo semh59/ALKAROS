@@ -8,6 +8,7 @@ using ALKAROS.Inventory.ModifierStock;
 using ALKAROS.Inventory.StockMaster;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Measurements;
+using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.Recipes.CatalogMapping;
 using ALKAROS.Recipes.TheoreticalConsumption;
@@ -176,5 +177,6 @@ public sealed class QrOrderExpiryHostedServiceTests : IAsyncLifetime
             new PostgresReservationAwareConsumptionGuard()),
         _database.CreateArbiter(),
         new PostgresProductStockMappingRepository(_database.DataSource),
-        new PostgresStockItemRepository(_database.DataSource));
+        new PostgresStockItemRepository(_database.DataSource),
+        new PostgresDailyMenuItemLocator(_database.DataSource, new BusinessDateProvider()));
 }

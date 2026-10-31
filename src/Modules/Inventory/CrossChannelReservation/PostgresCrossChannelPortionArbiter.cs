@@ -1,4 +1,3 @@
-using System.Text.Json;
 using ALKAROS.Inventory.BalanceProjection;
 using ALKAROS.Inventory.PortionReservations.CancellationEffects;
 using Npgsql;
@@ -60,6 +59,7 @@ public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArb
                 continue;
             }
 
+            var counted = line.DailyMenuItemId is not null;
             foreach (var mapping in lineMappings)
             {
                 if (mapping.DefaultLocationId is not { } locationId)
@@ -73,7 +73,10 @@ public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArb
                     mapping.StockItemId,
                     locationId,
                     line.Quantity * mapping.QuantityMultiplier,
-                    mapping.TrackingUnitCode.Trim().ToLowerInvariant()));
+                    mapping.TrackingUnitCode.Trim().ToLowerInvariant(),
+                    counted ? line.DailyMenuItemId : null,
+                    line.Quantity));
+                counted = false;
             }
         }
 
@@ -127,15 +130,12 @@ public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArb
                 .ConfigureAwait(false);
         }
 
-        var metadata = JsonSerializer.Serialize(new
-        {
-            channel = request.Channel.ToString(),
-            channelOrderReference = request.ChannelOrderReference.Trim()
-        });
         var now = DateTimeOffset.UtcNow;
         var holds = new List<CrossChannelHold>(planned.Count);
         foreach (var hold in planned)
         {
+            var metadata = DailyMenuPortionEvents.BuildMetadata(
+                request.Channel, request.ChannelOrderReference.Trim(), hold.DailyMenuItemId, hold.PortionCount);
             var reservationId = Guid.NewGuid();
             await InsertHoldAsync(reservationId, request, hold, metadata, now, connection, transaction, cancellationToken)
                 .ConfigureAwait(false);
@@ -433,6 +433,9 @@ public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArb
         eventCmd.Parameters.AddWithValue(hold.Quantity);
         eventCmd.Parameters.AddWithValue(now);
         await eventCmd.ExecuteNonQueryAsync(cancellationToken).ConfigureAwait(false);
+
+        await DailyMenuPortionEvents.PublishAsync(reservationId, "Reserved", metadata, now, connection, transaction, cancellationToken)
+            .ConfigureAwait(false);
     }
 
     private sealed record StockMapping(
@@ -447,5 +450,7 @@ public sealed class PostgresCrossChannelPortionArbiter : ICrossChannelPortionArb
         Guid StockItemId,
         Guid StockLocationId,
         decimal Quantity,
-        string UnitCode);
+        string UnitCode,
+        Guid? DailyMenuItemId,
+        decimal PortionCount);
 }

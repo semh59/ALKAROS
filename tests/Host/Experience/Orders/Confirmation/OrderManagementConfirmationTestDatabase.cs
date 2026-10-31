@@ -12,6 +12,8 @@ using ALKAROS.Inventory.Transactions;
 using ALKAROS.Inventory.WasteRecording;
 using ALKAROS.Kitchen.TicketLifecycle;
 using ALKAROS.Measurements;
+using ALKAROS.Menu.CounterProjection;
+using ALKAROS.Menu.DailyMenuLifecycle;
 using ALKAROS.Orders.OrderAggregate;
 using ALKAROS.TestHelpers;
 
@@ -743,6 +745,32 @@ public sealed class OrderManagementConfirmationTestDatabase : PgTestDatabase
         while (await reader.ReadAsync())
             holds.Add((reader.GetString(0), reader.GetString(1), reader.GetString(2)));
         return holds;
+    }
+
+    /// <summary>Puts the product on today's published daily menu and returns the menu item.</summary>
+    public async Task<Guid> SeedPublishedDailyMenuItemAsync(Guid productId)
+    {
+        var menuItemId = Guid.NewGuid();
+        var menuId = Guid.NewGuid();
+        await ExecuteAsync(
+            """
+            INSERT INTO menu.daily_menus (daily_menu_id, business_date, status) VALUES (@menu, @date, 'Open');
+            INSERT INTO menu.daily_menu_items (daily_menu_item_id, daily_menu_id, product_id, product_name_snapshot, price)
+            VALUES (@item, @menu, @product, 'Son Porsiyon Mantı', 180);
+            """,
+            ("menu", menuId),
+            ("date", new BusinessDateProvider().GetCurrentBusinessDate()),
+            ("item", menuItemId),
+            ("product", productId));
+        return menuItemId;
+    }
+
+    /// <summary>Delivers the pending outbox events to the Menu counter consumer, then reads the item's counters.</summary>
+    public async Task<DailyMenuItemCounters> DeliverDailyMenuEventsAsync(Guid menuItemId)
+    {
+        var projector = new PostgresDailyMenuCounterProjector(DataSource);
+        await OutboxTestDrain.DrainAsync(DataSource, [new DailyMenuCounterEventConsumer(projector)]);
+        return (await projector.GetCountersAsync(menuItemId))!;
     }
 
     /// <summary>V12-STK-001: (reserved quantity, statuses of every hold) for a product's single stock mapping.</summary>

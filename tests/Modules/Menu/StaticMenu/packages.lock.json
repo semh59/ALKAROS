@@ -143,6 +143,7 @@
       "alkaros.menu": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }

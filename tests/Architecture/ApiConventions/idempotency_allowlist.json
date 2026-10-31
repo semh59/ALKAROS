@@ -185,6 +185,10 @@
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-RMD-131"
     },
+    "POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/counters/rebuild": {
+      "reason": "Sayaçları yetkili kaynaklardan baştan hesaplar; sipariş akışı durmuşken tekrarlandığında aynı sonucu verir, bu yüzden tekrar için ayrı bir anahtar gerekmez; akış sürerken eşzamanlı olay uygulamasına karşı kilitli değildir (RESULT.md açık riski).",
+      "task": "V1-RMD-777"
+    },
     "POST /api/v1/management/menus-and-specials/daily-menus/{dailyMenuId:guid}/items": {
       "reason": "Kayıt oluşturan ya da durum değiştiren komut; isteğinde X-Idempotency-Key başlığı ya da gövdede IdempotencyKey alanı yok. Ağ hatasından sonraki tekrar için güvence bu uçta sağlanmıyor.",
       "task": "V1-RMD-131"

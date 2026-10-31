@@ -1,0 +1,190 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="b15d8bc6-e28d-4731-b09e-9bafcaa9e6c1" name="semih@SEMH59 2026-10-31 22:50:16" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T22:50:16.8064827+03:00" queuing="2026-10-31T22:50:16.8064832+03:00" start="2026-10-31T22:50:15.1603348+03:00" finish="2026-10-31T22:50:17.4741506+03:00" />
+  <TestSettings name="default" id="c0c8278c-e970-4a4d-ba37-052328fdb320">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_22_50_16" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="e0234643-6a53-4fdb-aa30-2925d3be079f" testId="600c0215-a5f4-3ca9-262c-68bef2ad5604" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AProductMappedToTwoStockItemsCountsOnePortionPerOrderItem" computerName="SEMH59" duration="00:00:00.0515597" startTime="2026-10-31T22:50:17.3558818+03:00" endTime="2026-10-31T22:50:17.3558821+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e0234643-6a53-4fdb-aa30-2925d3be079f">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected (CountersAsync(seed.MenuItemId)).ReservedPortions to be 2M, but found 0.000M (difference of -2.000).</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AProductMappedToTwoStockItemsCountsOnePortionPerOrderItem() in D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\DailyMenuCounterEndToEndTests.cs:line 218&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="455f3efb-adcf-4631-91c0-bf19d53e46a8" testId="7f7436f9-e97b-e722-31b1-cccc76523907" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu(status: &quot;Open&quot;, active: True, dayOffset: 1, expected: False)" computerName="SEMH59" duration="00:00:00.0189046" startTime="2026-10-31T22:50:16.7068784+03:00" endTime="2026-10-31T22:50:16.7068789+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="455f3efb-adcf-4631-91c0-bf19d53e46a8" />
+    <UnitTestResult executionId="0df6b2ba-1e0a-4f9d-84d5-78fa4026ea95" testId="323bfd39-c9a8-75a7-766d-7fbdfea0c857" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.ProductionOutputIdempotencyReplayGeneratesZeroAdditionalEffects" computerName="SEMH59" duration="00:00:00.0339826" startTime="2026-10-31T22:50:16.6930274+03:00" endTime="2026-10-31T22:50:16.6930275+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0df6b2ba-1e0a-4f9d-84d5-78fa4026ea95" />
+    <UnitTestResult executionId="0f6b93ec-a081-4f55-9c68-b7a892f4812b" testId="787a600f-bdbf-821c-2e20-b67beb81afac" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AProductionOutputEventAddsPreparedPortionsOnce" computerName="SEMH59" duration="00:00:00.0314233" startTime="2026-10-31T22:50:17.3020857+03:00" endTime="2026-10-31T22:50:17.3020860+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="0f6b93ec-a081-4f55-9c68-b7a892f4812b" />
+    <UnitTestResult executionId="4e8e3698-99ee-46dd-84d2-bb37fbbc259e" testId="283b2ae4-b337-84db-4945-b3e1249b649d" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.DriftDetectionDetectsMismatchAcrossProducerClasses" computerName="SEMH59" duration="00:00:00.0475415" startTime="2026-10-31T22:50:16.7412302+03:00" endTime="2026-10-31T22:50:16.7412305+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4e8e3698-99ee-46dd-84d2-bb37fbbc259e" />
+    <UnitTestResult executionId="de04ad1d-6884-4492-a167-1f606734ba59" testId="42ea27ed-36bd-4135-f95a-4826d8b7fa73" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.ReservationLifecycleTransitionsUpdateCountersAtomically" computerName="SEMH59" duration="00:00:00.0569713" startTime="2026-10-31T22:50:16.8335018+03:00" endTime="2026-10-31T22:50:16.8335023+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="de04ad1d-6884-4492-a167-1f606734ba59" />
+    <UnitTestResult executionId="ba398ba4-f5a1-4d24-976c-7b5d0177ff5f" testId="b0b336d8-d670-9629-ef9c-c6ca7207fff0" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.ProductionOutputIncrementsPreparedAndAvailablePortions" computerName="SEMH59" duration="00:00:00.0196124" startTime="2026-10-31T22:50:16.7759772+03:00" endTime="2026-10-31T22:50:16.7759774+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ba398ba4-f5a1-4d24-976c-7b5d0177ff5f" />
+    <UnitTestResult executionId="aa454a88-0dae-4552-8719-5864fe694f4c" testId="e3d35d35-f807-2f55-3a69-94e42f6a27a4" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu(status: &quot;Open&quot;, active: True, dayOffset: 0, expected: True)" computerName="SEMH59" duration="00:00:00.0245190" startTime="2026-10-31T22:50:16.6676099+03:00" endTime="2026-10-31T22:50:16.6676101+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aa454a88-0dae-4552-8719-5864fe694f4c" />
+    <UnitTestResult executionId="9223fe0c-6716-4840-97bb-551b47472435" testId="835d5af4-136e-3b42-242a-f41956b99cc8" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.ADeliveryThatArrivesTwiceOrOutOfOrderChangesTheCountersOnce" computerName="SEMH59" duration="00:00:00.0802567" startTime="2026-10-31T22:50:17.0983509+03:00" endTime="2026-10-31T22:50:17.0983513+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9223fe0c-6716-4840-97bb-551b47472435" />
+    <UnitTestResult executionId="c0f71386-ece8-4bee-a34a-ecfe619f6777" testId="1d8ffd1f-3f90-7961-321a-26fe374829a0" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.RollbackAndReapplyMigration073SucceedsWithoutErrors" computerName="SEMH59" duration="00:00:00.0140064" startTime="2026-10-31T22:50:16.7714538+03:00" endTime="2026-10-31T22:50:16.7714539+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c0f71386-ece8-4bee-a34a-ecfe619f6777" />
+    <UnitTestResult executionId="8cb5beb0-7034-43ea-b7e7-27f122ad1902" testId="8cb673ed-866d-d2b0-1bd8-92c50cd23e07" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.FullRebuildReconstructsCountersFromAuthoritativeSources" computerName="SEMH59" duration="00:00:00.2695241" startTime="2026-10-31T22:50:16.6576319+03:00" endTime="2026-10-31T22:50:16.6576322+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8cb5beb0-7034-43ea-b7e7-27f122ad1902" />
+    <UnitTestResult executionId="cac3d53a-0030-4b57-9a7b-5f2c73e02f3e" testId="9662b567-8e56-b5cb-9d86-9a88f1426c05" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu(status: &quot;Closed&quot;, active: True, dayOffset: 0, expected: False)" computerName="SEMH59" duration="00:00:00.0192860" startTime="2026-10-31T22:50:16.7266332+03:00" endTime="2026-10-31T22:50:16.7266336+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="cac3d53a-0030-4b57-9a7b-5f2c73e02f3e" />
+    <UnitTestResult executionId="4a614b41-27dd-4ab4-a248-20997a83a33e" testId="26715d6e-3f2e-202a-2df5-ebbb74ec6201" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu(status: &quot;Draft&quot;, active: True, dayOffset: 0, expected: False)" computerName="SEMH59" duration="00:00:00.0192460" startTime="2026-10-31T22:50:16.6873378+03:00" endTime="2026-10-31T22:50:16.6873382+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4a614b41-27dd-4ab4-a248-20997a83a33e" />
+    <UnitTestResult executionId="9a52a355-7f0a-4572-b5ce-4225732aa484" testId="ca2c7841-70d8-644d-af8a-ef18c66c9b4b" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AReservationRolledBackWithItsOrderLeavesTheCountersUntouched" computerName="SEMH59" duration="00:00:00.0377947" startTime="2026-10-31T22:50:17.0176014+03:00" endTime="2026-10-31T22:50:17.0176016+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a52a355-7f0a-4572-b5ce-4225732aa484" />
+    <UnitTestResult executionId="a2fbc46e-5fac-4038-b64f-03c6742ee547" testId="4e6b3866-b105-f990-375a-a957a8e84eaa" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AReservationOfAProductNotOnTheMenuIsNotCounted" computerName="SEMH59" duration="00:00:00.2519307" startTime="2026-10-31T22:50:16.9792012+03:00" endTime="2026-10-31T22:50:16.9792015+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a2fbc46e-5fac-4038-b64f-03c6742ee547" />
+    <UnitTestResult executionId="c13824bb-5130-4f9d-bc3d-1e13e5de8271" testId="09c334b5-b523-f7b4-0a64-1695f2dca685" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.RealReservationsAndTransitionsFillCountersInOrderedPortionsAndMatchTheAuthoritativeSources" computerName="SEMH59" duration="00:00:00.1656720" startTime="2026-10-31T22:50:17.2753950+03:00" endTime="2026-10-31T22:50:17.2753952+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c13824bb-5130-4f9d-bc3d-1e13e5de8271">
+      <Output>
+        <ErrorInfo>
+          <Message>Expected (OutboxTestDrain.DrainAsync(_db.DataSource, Consumers)) to be 5, but found 0 (difference of -5).</Message>
+          <StackTrace>   at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+   at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+   at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+   at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+   at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)&#xD;
+   at ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.RealReservationsAndTransitionsFillCountersInOrderedPortionsAndMatchTheAuthoritativeSources() in D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\DailyMenuCounterEndToEndTests.cs:line 184&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="2d442156-6b5e-4564-a796-d5ef0080d198" testId="389c906a-3acb-72e4-03bd-ee7c70064ded" testName="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu(status: &quot;Open&quot;, active: False, dayOffset: 0, expected: False)" computerName="SEMH59" duration="00:00:00.2524520" startTime="2026-10-31T22:50:16.6430309+03:00" endTime="2026-10-31T22:50:16.6430542+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2d442156-6b5e-4564-a796-d5ef0080d198" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.RealReservationsAndTransitionsFillCountersInOrderedPortionsAndMatchTheAuthoritativeSources" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="09c334b5-b523-f7b4-0a64-1695f2dca685">
+      <Execution id="c13824bb-5130-4f9d-bc3d-1e13e5de8271" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="RealReservationsAndTransitionsFillCountersInOrderedPortionsAndMatchTheAuthoritativeSources" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AProductionOutputEventAddsPreparedPortionsOnce" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="787a600f-bdbf-821c-2e20-b67beb81afac">
+      <Execution id="0f6b93ec-a081-4f55-9c68-b7a892f4812b" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="AProductionOutputEventAddsPreparedPortionsOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AProductMappedToTwoStockItemsCountsOnePortionPerOrderItem" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="600c0215-a5f4-3ca9-262c-68bef2ad5604">
+      <Execution id="e0234643-6a53-4fdb-aa30-2925d3be079f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="AProductMappedToTwoStockItemsCountsOnePortionPerOrderItem" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu(status: &quot;Open&quot;, active: True, dayOffset: 0, expected: True)" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="e3d35d35-f807-2f55-3a69-94e42f6a27a4">
+      <Execution id="aa454a88-0dae-4552-8719-5864fe694f4c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.ReservationLifecycleTransitionsUpdateCountersAtomically" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="42ea27ed-36bd-4135-f95a-4826d8b7fa73">
+      <Execution id="de04ad1d-6884-4492-a167-1f606734ba59" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests" name="ReservationLifecycleTransitionsUpdateCountersAtomically" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.RollbackAndReapplyMigration073SucceedsWithoutErrors" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="1d8ffd1f-3f90-7961-321a-26fe374829a0">
+      <Execution id="c0f71386-ece8-4bee-a34a-ecfe619f6777" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests" name="RollbackAndReapplyMigration073SucceedsWithoutErrors" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu(status: &quot;Open&quot;, active: True, dayOffset: 1, expected: False)" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="7f7436f9-e97b-e722-31b1-cccc76523907">
+      <Execution id="455f3efb-adcf-4631-91c0-bf19d53e46a8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu(status: &quot;Draft&quot;, active: True, dayOffset: 0, expected: False)" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="26715d6e-3f2e-202a-2df5-ebbb74ec6201">
+      <Execution id="4a614b41-27dd-4ab4-a248-20997a83a33e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AReservationRolledBackWithItsOrderLeavesTheCountersUntouched" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="ca2c7841-70d8-644d-af8a-ef18c66c9b4b">
+      <Execution id="9a52a355-7f0a-4572-b5ce-4225732aa484" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="AReservationRolledBackWithItsOrderLeavesTheCountersUntouched" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.ProductionOutputIncrementsPreparedAndAvailablePortions" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="b0b336d8-d670-9629-ef9c-c6ca7207fff0">
+      <Execution id="ba398ba4-f5a1-4d24-976c-7b5d0177ff5f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests" name="ProductionOutputIncrementsPreparedAndAvailablePortions" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.ProductionOutputIdempotencyReplayGeneratesZeroAdditionalEffects" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="323bfd39-c9a8-75a7-766d-7fbdfea0c857">
+      <Execution id="0df6b2ba-1e0a-4f9d-84d5-78fa4026ea95" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests" name="ProductionOutputIdempotencyReplayGeneratesZeroAdditionalEffects" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu(status: &quot;Open&quot;, active: False, dayOffset: 0, expected: False)" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="389c906a-3acb-72e4-03bd-ee7c70064ded">
+      <Execution id="2d442156-6b5e-4564-a796-d5ef0080d198" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AReservationOfAProductNotOnTheMenuIsNotCounted" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="4e6b3866-b105-f990-375a-a957a8e84eaa">
+      <Execution id="a2fbc46e-5fac-4038-b64f-03c6742ee547" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="AReservationOfAProductNotOnTheMenuIsNotCounted" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.ADeliveryThatArrivesTwiceOrOutOfOrderChangesTheCountersOnce" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="835d5af4-136e-3b42-242a-f41956b99cc8">
+      <Execution id="9223fe0c-6716-4840-97bb-551b47472435" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="ADeliveryThatArrivesTwiceOrOutOfOrderChangesTheCountersOnce" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.FullRebuildReconstructsCountersFromAuthoritativeSources" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="8cb673ed-866d-d2b0-1bd8-92c50cd23e07">
+      <Execution id="8cb5beb0-7034-43ea-b7e7-27f122ad1902" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests" name="FullRebuildReconstructsCountersFromAuthoritativeSources" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests.DriftDetectionDetectsMismatchAcrossProducerClasses" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="283b2ae4-b337-84db-4945-b3e1249b649d">
+      <Execution id="4e8e3698-99ee-46dd-84d2-bb37fbbc259e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterProjectionDatabaseTests" name="DriftDetectionDetectsMismatchAcrossProducerClasses" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu(status: &quot;Closed&quot;, active: True, dayOffset: 0, expected: False)" storage="d:\project\alkaros\tests\modules\menu\counterprojection\bin\debug\net8.0\alkaros.menu.counterprojection.tests.dll" id="9662b567-8e56-b5cb-9d86-9a88f1426c05">
+      <Execution id="cac3d53a-0030-4b57-9a7b-5f2c73e02f3e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\bin\Debug\net8.0\ALKAROS.Menu.CounterProjection.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests" name="TheLocatorFindsOnlyTheActiveItemOfTodaysOpenMenu" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="600c0215-a5f4-3ca9-262c-68bef2ad5604" executionId="e0234643-6a53-4fdb-aa30-2925d3be079f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7f7436f9-e97b-e722-31b1-cccc76523907" executionId="455f3efb-adcf-4631-91c0-bf19d53e46a8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="323bfd39-c9a8-75a7-766d-7fbdfea0c857" executionId="0df6b2ba-1e0a-4f9d-84d5-78fa4026ea95" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="787a600f-bdbf-821c-2e20-b67beb81afac" executionId="0f6b93ec-a081-4f55-9c68-b7a892f4812b" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="283b2ae4-b337-84db-4945-b3e1249b649d" executionId="4e8e3698-99ee-46dd-84d2-bb37fbbc259e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="42ea27ed-36bd-4135-f95a-4826d8b7fa73" executionId="de04ad1d-6884-4492-a167-1f606734ba59" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b0b336d8-d670-9629-ef9c-c6ca7207fff0" executionId="ba398ba4-f5a1-4d24-976c-7b5d0177ff5f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3d35d35-f807-2f55-3a69-94e42f6a27a4" executionId="aa454a88-0dae-4552-8719-5864fe694f4c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="835d5af4-136e-3b42-242a-f41956b99cc8" executionId="9223fe0c-6716-4840-97bb-551b47472435" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1d8ffd1f-3f90-7961-321a-26fe374829a0" executionId="c0f71386-ece8-4bee-a34a-ecfe619f6777" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="8cb673ed-866d-d2b0-1bd8-92c50cd23e07" executionId="8cb5beb0-7034-43ea-b7e7-27f122ad1902" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9662b567-8e56-b5cb-9d86-9a88f1426c05" executionId="cac3d53a-0030-4b57-9a7b-5f2c73e02f3e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="26715d6e-3f2e-202a-2df5-ebbb74ec6201" executionId="4a614b41-27dd-4ab4-a248-20997a83a33e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ca2c7841-70d8-644d-af8a-ef18c66c9b4b" executionId="9a52a355-7f0a-4572-b5ce-4225732aa484" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4e6b3866-b105-f990-375a-a957a8e84eaa" executionId="a2fbc46e-5fac-4038-b64f-03c6742ee547" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="09c334b5-b523-f7b4-0a64-1695f2dca685" executionId="c13824bb-5130-4f9d-bc3d-1e13e5de8271" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="389c906a-3acb-72e4-03bd-ee7c70064ded" executionId="2d442156-6b5e-4564-a796-d5ef0080d198" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="17" executed="17" passed="15" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.33]   Discovering: ALKAROS.Menu.CounterProjection.Tests&#xD;
+[xUnit.net 00:00:00.37]   Discovered:  ALKAROS.Menu.CounterProjection.Tests&#xD;
+[xUnit.net 00:00:00.37]   Starting:    ALKAROS.Menu.CounterProjection.Tests&#xD;
+[xUnit.net 00:00:01.64]       Expected (OutboxTestDrain.DrainAsync(_db.DataSource, Consumers)) to be 5, but found 0 (difference of -5).&#xD;
+[xUnit.net 00:00:01.64]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.64]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.64]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.64]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.64]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.64]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.64]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.64]            at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.64]         D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\DailyMenuCounterEndToEndTests.cs(184,0): at ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.RealReservationsAndTransitionsFillCountersInOrderedPortionsAndMatchTheAuthoritativeSources()&#xD;
+[xUnit.net 00:00:01.64]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.72]       Expected (CountersAsync(seed.MenuItemId)).ReservedPortions to be 2M, but found 0.000M (difference of -2.000).&#xD;
+[xUnit.net 00:00:01.72]       Stack Trace:&#xD;
+[xUnit.net 00:00:01.72]            at FluentAssertions.Execution.XUnit2TestFramework.Throw(String message)&#xD;
+[xUnit.net 00:00:01.72]            at FluentAssertions.Execution.TestFrameworkProvider.Throw(String message)&#xD;
+[xUnit.net 00:00:01.72]            at FluentAssertions.Execution.DefaultAssertionStrategy.HandleFailure(String message)&#xD;
+[xUnit.net 00:00:01.72]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.72]            at FluentAssertions.Execution.AssertionScope.FailWith(Func`1 failReasonFunc)&#xD;
+[xUnit.net 00:00:01.72]            at FluentAssertions.Execution.AssertionScope.FailWith(String message, Object[] args)&#xD;
+[xUnit.net 00:00:01.72]            at FluentAssertions.Numeric.NumericAssertions`2.Be(T expected, String because, Object[] becauseArgs)&#xD;
+[xUnit.net 00:00:01.72]         D:\PROJECT\ALKAROS\tests\Modules\Menu\CounterProjection\DailyMenuCounterEndToEndTests.cs(218,0): at ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AProductMappedToTwoStockItemsCountsOnePortionPerOrderItem()&#xD;
+[xUnit.net 00:00:01.72]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:01.77]   Finished:    ALKAROS.Menu.CounterProjection.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T22:50:17.2731196+03:00">
+        <Text>[xUnit.net 00:00:01.64]     ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.RealReservationsAndTransitionsFillCountersInOrderedPortionsAndMatchTheAuthoritativeSources [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T22:50:17.3551631+03:00">
+        <Text>[xUnit.net 00:00:01.72]     ALKAROS.Menu.CounterProjection.Tests.DailyMenuCounterEndToEndTests.AProductMappedToTwoStockItemsCountsOnePortionPerOrderItem [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

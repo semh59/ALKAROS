@@ -33,6 +33,9 @@
     <None Include="../../../../database/migrations/V11/V11-PRD-001/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V11/V11-PRD-002/*.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
     <None Include="../../../../database/migrations/V11/V11-PRD-002/*.down.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-FND-002/002-inbox-messages.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-FND-002/003-outbox-messages.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
+    <None Include="../../../../database/migrations/V1/V1-FND-019/033-message-lease-generation.up.sql" Link="Fixtures/sql/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
 </Project>

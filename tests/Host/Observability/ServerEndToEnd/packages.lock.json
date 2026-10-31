@@ -287,7 +287,9 @@
       "alkaros.inventory": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.Measurements": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
@@ -316,6 +318,7 @@
       "alkaros.menu": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }
@@ -407,7 +410,9 @@
       "alkaros.production": {
         "type": "Project",
         "dependencies": {
+          "ALKAROS.IntegrationContracts": "[1.0.0, )",
           "ALKAROS.Inventory": "[1.0.0, )",
+          "ALKAROS.Messaging": "[1.0.0, )",
           "ALKAROS.ModuleComposition": "[1.0.0, )",
           "Npgsql": "[9.0.2, )"
         }

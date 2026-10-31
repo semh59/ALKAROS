@@ -82,7 +82,7 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
             const string updateSql = """
                 UPDATE menu.daily_menu_items
                 SET prepared_portions = prepared_portions + $1,
-                    available_portions = (prepared_portions + $1) - reserved_portions - consumed_portions - waste_portions,
+                    available_portions = GREATEST(0, (prepared_portions + $1) - reserved_portions - consumed_portions - waste_portions),
                     out_of_stock = (((prepared_portions + $1) - reserved_portions - consumed_portions - waste_portions) <= 0),
                     updated_at = NOW()
                 WHERE daily_menu_item_id = $2
@@ -164,7 +164,7 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
             const string updateSql = """
                 UPDATE menu.daily_menu_items
                 SET reserved_portions = reserved_portions + $1,
-                    available_portions = prepared_portions - (reserved_portions + $1) - consumed_portions - waste_portions,
+                    available_portions = GREATEST(0, prepared_portions - (reserved_portions + $1) - consumed_portions - waste_portions),
                     out_of_stock = ((prepared_portions - (reserved_portions + $1) - consumed_portions - waste_portions) <= 0),
                     updated_at = NOW()
                 WHERE daily_menu_item_id = $2
@@ -253,7 +253,7 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                 updateSql = """
                     UPDATE menu.daily_menu_items
                     SET reserved_portions = GREATEST(0, reserved_portions - $1),
-                        available_portions = prepared_portions - GREATEST(0, reserved_portions - $1) - consumed_portions - waste_portions,
+                        available_portions = GREATEST(0, prepared_portions - GREATEST(0, reserved_portions - $1) - consumed_portions - waste_portions),
                         out_of_stock = ((prepared_portions - GREATEST(0, reserved_portions - $1) - consumed_portions - waste_portions) <= 0),
                         updated_at = NOW()
                     WHERE daily_menu_item_id = $2
@@ -267,7 +267,7 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                     UPDATE menu.daily_menu_items
                     SET reserved_portions = GREATEST(0, reserved_portions - $1),
                         consumed_portions = consumed_portions + $1,
-                        available_portions = prepared_portions - GREATEST(0, reserved_portions - $1) - (consumed_portions + $1) - waste_portions,
+                        available_portions = GREATEST(0, prepared_portions - GREATEST(0, reserved_portions - $1) - (consumed_portions + $1) - waste_portions),
                         out_of_stock = ((prepared_portions - GREATEST(0, reserved_portions - $1) - (consumed_portions + $1) - waste_portions) <= 0),
                         updated_at = NOW()
                     WHERE daily_menu_item_id = $2
@@ -281,7 +281,7 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                     UPDATE menu.daily_menu_items
                     SET reserved_portions = GREATEST(0, reserved_portions - $1),
                         waste_portions = waste_portions + $1,
-                        available_portions = prepared_portions - GREATEST(0, reserved_portions - $1) - consumed_portions - (waste_portions + $1),
+                        available_portions = GREATEST(0, prepared_portions - GREATEST(0, reserved_portions - $1) - consumed_portions - (waste_portions + $1)),
                         out_of_stock = ((prepared_portions - GREATEST(0, reserved_portions - $1) - consumed_portions - (waste_portions + $1)) <= 0),
                         updated_at = NOW()
                     WHERE daily_menu_item_id = $2
@@ -402,7 +402,7 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                 // Authoritative reservations by status:
                 // Look up reservations where metadata->>'daily_menu_item_id' matches this item
                 const string rsvSql = """
-                    SELECT status, COALESCE(SUM(quantity), 0)
+                    SELECT status, COALESCE(SUM((metadata->>'portion_count')::numeric), 0)
                     FROM inventory.portion_reservations
                     WHERE metadata->>'daily_menu_item_id' = $1
                     GROUP BY status;
@@ -434,7 +434,7 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                     INSERT INTO menu.daily_menu_counter_applied_events (
                         id, daily_menu_item_id, event_type, source_event_id, terminal_status, quantity, applied_at
                     )
-                    SELECT gen_random_uuid(), $1, 'Reserved', id, NULL, quantity, reserved_at
+                    SELECT gen_random_uuid(), $1, 'Reserved', id, NULL, (metadata->>'portion_count')::numeric, reserved_at
                     FROM inventory.portion_reservations
                     WHERE metadata->>'daily_menu_item_id' = $2
                     ON CONFLICT (daily_menu_item_id, event_type, source_event_id) DO NOTHING;
@@ -450,7 +450,7 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                     INSERT INTO menu.daily_menu_counter_applied_events (
                         id, daily_menu_item_id, event_type, source_event_id, terminal_status, quantity, applied_at
                     )
-                    SELECT gen_random_uuid(), $1, 'Terminal', id, status, quantity, COALESCE(transitioned_at, NOW())
+                    SELECT gen_random_uuid(), $1, 'Terminal', id, status, (metadata->>'portion_count')::numeric, COALESCE(transitioned_at, NOW())
                     FROM inventory.portion_reservations
                     WHERE metadata->>'daily_menu_item_id' = $2 AND status IN ('Released', 'Consumed', 'Waste')
                     ON CONFLICT (daily_menu_item_id, event_type, source_event_id) DO NOTHING;
@@ -462,7 +462,7 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                     await repRsvCmd2.ExecuteNonQueryAsync(ct);
                 }
 
-                var authAvailable = authPrepared - authReserved - authConsumed - authWaste;
+                var authAvailable = Math.Max(0m, authPrepared - authReserved - authConsumed - authWaste);
                 var isOutOfStock = authAvailable <= 0m;
 
                 // 4. Update projection on menu.daily_menu_items
@@ -529,19 +529,19 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
                 GROUP BY pb.daily_menu_item_id
             ) auth_prep ON auth_prep.daily_menu_item_id = dmi.daily_menu_item_id
             LEFT JOIN (
-                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id, SUM(quantity) AS qty
+                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id, SUM((metadata->>'portion_count')::numeric) AS qty
                 FROM inventory.portion_reservations
                 WHERE status = 'Reserved' AND metadata->>'daily_menu_item_id' IS NOT NULL
                 GROUP BY (metadata->>'daily_menu_item_id')::uuid
             ) auth_rsv ON auth_rsv.item_id = dmi.daily_menu_item_id
             LEFT JOIN (
-                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id, SUM(quantity) AS qty
+                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id, SUM((metadata->>'portion_count')::numeric) AS qty
                 FROM inventory.portion_reservations
                 WHERE status = 'Consumed' AND metadata->>'daily_menu_item_id' IS NOT NULL
                 GROUP BY (metadata->>'daily_menu_item_id')::uuid
             ) auth_cons ON auth_cons.item_id = dmi.daily_menu_item_id
             LEFT JOIN (
-                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id, SUM(quantity) AS qty
+                SELECT (metadata->>'daily_menu_item_id')::uuid AS item_id, SUM((metadata->>'portion_count')::numeric) AS qty
                 FROM inventory.portion_reservations
                 WHERE status = 'Waste' AND metadata->>'daily_menu_item_id' IS NOT NULL
                 GROUP BY (metadata->>'daily_menu_item_id')::uuid
@@ -567,7 +567,7 @@ public sealed class PostgresDailyMenuCounterProjector : IDailyMenuCounterProject
             var authWaste = reader.GetDecimal(8);
             var projAvail = reader.GetDecimal(9);
 
-            var expectedAvail = authPrep - authRsv - authCons - authWaste;
+            var expectedAvail = Math.Max(0m, authPrep - authRsv - authCons - authWaste);
 
             var prepDrift = projPrep - authPrep;
             var rsvDrift = projRsv - authRsv;

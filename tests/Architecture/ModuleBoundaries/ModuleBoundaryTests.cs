@@ -277,7 +277,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.Orders.SentItemVoid"] =
                 ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders"],
             ["ALKAROS.Host.Experience.Orders"] =
-                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Orders", "ALKAROS.Recipes", "ALKAROS.Settings"],
+                ["ALKAROS.Audit", "ALKAROS.Billing", "ALKAROS.Identity", "ALKAROS.Inventory", "ALKAROS.Kitchen", "ALKAROS.Menu", "ALKAROS.Orders", "ALKAROS.Recipes", "ALKAROS.Settings"],
             ["ALKAROS.Host.Experience.KitchenOperations"] =
                 ["ALKAROS.Audit", "ALKAROS.Identity", "ALKAROS.Kitchen", "ALKAROS.Operations", "ALKAROS.Orders", "ALKAROS.Settings"],
             // V11-RCP-003: a manager-only surface saying which recipe a
@@ -321,7 +321,7 @@ public static class ModuleBoundaryTests
             ["ALKAROS.Host.Experience.OfflineReconciliation"] =
                 ["ALKAROS.Identity"],
             ["ALKAROS.Host.Experience.OnlineOrdering"] =
-                ["ALKAROS.Orders", "ALKAROS.Kitchen", "ALKAROS.Catalog", "ALKAROS.Identity", "ALKAROS.Audit", "ALKAROS.Inventory", "ALKAROS.OnlineOrdering", "ALKAROS.Invoicing", "ALKAROS.Secrets"],
+                ["ALKAROS.Orders", "ALKAROS.Kitchen", "ALKAROS.Catalog", "ALKAROS.Identity", "ALKAROS.Audit", "ALKAROS.Inventory", "ALKAROS.Menu", "ALKAROS.OnlineOrdering", "ALKAROS.Invoicing", "ALKAROS.Secrets"],
             ["ALKAROS.Host.Experience.OrderInvoices"] =
                 ["ALKAROS.Invoicing"],
             ["ALKAROS.Host.Experience.PendingOrderNotifications"] =
