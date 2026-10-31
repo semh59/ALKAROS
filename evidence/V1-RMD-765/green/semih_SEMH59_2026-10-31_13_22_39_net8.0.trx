@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="4d11a0a7-c49c-43eb-be46-2e4818928929" name="semih@SEMH59 2026-10-31 13:22:39" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T13:22:39.7538800+03:00" queuing="2026-10-31T13:22:39.7538803+03:00" start="2026-10-31T13:22:35.7120244+03:00" finish="2026-10-31T13:22:50.3746254+03:00" />
+  <TestSettings name="default" id="ec4132c1-6322-48b2-833f-ef6c9ba6c008">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_13_22_39" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="071bfe97-d860-4085-b8e2-616c6880eb70" testId="2b678a45-11f3-95b9-09e5-916f001b8abd" testName="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.BridgesATicketToOnePrintJobPerActivePrinterAtItsStation" computerName="SEMH59" duration="00:00:00.1179088" startTime="2026-10-31T13:22:39.7278412+03:00" endTime="2026-10-31T13:22:39.7278650+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="071bfe97-d860-4085-b8e2-616c6880eb70" />
+    <UnitTestResult executionId="a00f1230-2c6b-4371-b605-1bc66d99dd8e" testId="bf5cb24e-641a-58c4-26d2-42c521ea82c7" testName="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.ATicketThatIsAlreadyReadyIsNotBridged" computerName="SEMH59" duration="00:00:00.0261925" startTime="2026-10-31T13:22:47.8885746+03:00" endTime="2026-10-31T13:22:47.8885748+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="a00f1230-2c6b-4371-b605-1bc66d99dd8e">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 0&#xD;
+Actual:   1</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.ATicketThatIsAlreadyReadyIsNotBridged() in D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\KitchenPrintDispatchHostedServiceTests.cs:line 116&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="76da2410-9738-43b6-8970-dc32940a76d9" testId="ad8ee972-4e1c-7a72-448d-4b6e87dbf855" testName="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.ATicketAtAStationWithNoActivePrinterIsNotBridged" computerName="SEMH59" duration="00:00:00.0171647" startTime="2026-10-31T13:22:45.3753083+03:00" endTime="2026-10-31T13:22:45.3753089+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="76da2410-9738-43b6-8970-dc32940a76d9" />
+    <UnitTestResult executionId="325cf340-6bc1-4085-b818-3cdac75af257" testId="baee795a-362a-84c5-15c8-1d8dffba30f6" testName="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.TicketsAtAStationWithNoActivePrinterDoNotKeepAnotherStationsTicketOutOfTheBatch" computerName="SEMH59" duration="00:00:00.3105891" startTime="2026-10-31T13:22:42.8164255+03:00" endTime="2026-10-31T13:22:42.8164258+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Failed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="325cf340-6bc1-4085-b818-3cdac75af257">
+      <Output>
+        <ErrorInfo>
+          <Message>Assert.Equal() Failure: Values differ&#xD;
+Expected: 1&#xD;
+Actual:   0</Message>
+          <StackTrace>   at ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.TicketsAtAStationWithNoActivePrinterDoNotKeepAnotherStationsTicketOutOfTheBatch() in D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\KitchenPrintDispatchHostedServiceTests.cs:line 103&#xD;
+--- End of stack trace from previous location ---</StackTrace>
+        </ErrorInfo>
+      </Output>
+    </UnitTestResult>
+    <UnitTestResult executionId="9670eb32-25a1-4bb0-b81c-721d2bb50475" testId="12266e50-fa08-7af1-2584-0e2a8bfe0524" testName="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.RunningTheBridgeTwiceDoesNotDuplicatePrintJobs" computerName="SEMH59" duration="00:00:00.0289300" startTime="2026-10-31T13:22:50.3080670+03:00" endTime="2026-10-31T13:22:50.3080673+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9670eb32-25a1-4bb0-b81c-721d2bb50475" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.BridgesATicketToOnePrintJobPerActivePrinterAtItsStation" storage="d:\project\alkaros\tests\host\experience\kitchenoperations\bin\debug\net8.0\alkaros.host.experience.kitchenoperations.tests.dll" id="2b678a45-11f3-95b9-09e5-916f001b8abd">
+      <Execution id="071bfe97-d860-4085-b8e2-616c6880eb70" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\bin\Debug\net8.0\ALKAROS.Host.Experience.KitchenOperations.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests" name="BridgesATicketToOnePrintJobPerActivePrinterAtItsStation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.ATicketAtAStationWithNoActivePrinterIsNotBridged" storage="d:\project\alkaros\tests\host\experience\kitchenoperations\bin\debug\net8.0\alkaros.host.experience.kitchenoperations.tests.dll" id="ad8ee972-4e1c-7a72-448d-4b6e87dbf855">
+      <Execution id="76da2410-9738-43b6-8970-dc32940a76d9" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\bin\Debug\net8.0\ALKAROS.Host.Experience.KitchenOperations.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests" name="ATicketAtAStationWithNoActivePrinterIsNotBridged" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.ATicketThatIsAlreadyReadyIsNotBridged" storage="d:\project\alkaros\tests\host\experience\kitchenoperations\bin\debug\net8.0\alkaros.host.experience.kitchenoperations.tests.dll" id="bf5cb24e-641a-58c4-26d2-42c521ea82c7">
+      <Execution id="a00f1230-2c6b-4371-b605-1bc66d99dd8e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\bin\Debug\net8.0\ALKAROS.Host.Experience.KitchenOperations.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests" name="ATicketThatIsAlreadyReadyIsNotBridged" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.TicketsAtAStationWithNoActivePrinterDoNotKeepAnotherStationsTicketOutOfTheBatch" storage="d:\project\alkaros\tests\host\experience\kitchenoperations\bin\debug\net8.0\alkaros.host.experience.kitchenoperations.tests.dll" id="baee795a-362a-84c5-15c8-1d8dffba30f6">
+      <Execution id="325cf340-6bc1-4085-b818-3cdac75af257" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\bin\Debug\net8.0\ALKAROS.Host.Experience.KitchenOperations.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests" name="TicketsAtAStationWithNoActivePrinterDoNotKeepAnotherStationsTicketOutOfTheBatch" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.RunningTheBridgeTwiceDoesNotDuplicatePrintJobs" storage="d:\project\alkaros\tests\host\experience\kitchenoperations\bin\debug\net8.0\alkaros.host.experience.kitchenoperations.tests.dll" id="12266e50-fa08-7af1-2584-0e2a8bfe0524">
+      <Execution id="9670eb32-25a1-4bb0-b81c-721d2bb50475" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\bin\Debug\net8.0\ALKAROS.Host.Experience.KitchenOperations.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests" name="RunningTheBridgeTwiceDoesNotDuplicatePrintJobs" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="2b678a45-11f3-95b9-09e5-916f001b8abd" executionId="071bfe97-d860-4085-b8e2-616c6880eb70" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bf5cb24e-641a-58c4-26d2-42c521ea82c7" executionId="a00f1230-2c6b-4371-b605-1bc66d99dd8e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="ad8ee972-4e1c-7a72-448d-4b6e87dbf855" executionId="76da2410-9738-43b6-8970-dc32940a76d9" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="baee795a-362a-84c5-15c8-1d8dffba30f6" executionId="325cf340-6bc1-4085-b818-3cdac75af257" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12266e50-fa08-7af1-2584-0e2a8bfe0524" executionId="9670eb32-25a1-4bb0-b81c-721d2bb50475" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Failed">
+    <Counters total="5" executed="5" passed="3" failed="2" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.13]   Discovering: ALKAROS.Host.Experience.KitchenOperations.Tests&#xD;
+[xUnit.net 00:00:00.20]   Discovered:  ALKAROS.Host.Experience.KitchenOperations.Tests&#xD;
+[xUnit.net 00:00:00.21]   Starting:    ALKAROS.Host.Experience.KitchenOperations.Tests&#xD;
+[xUnit.net 00:00:06.37]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:06.37]       Expected: 1&#xD;
+[xUnit.net 00:00:06.37]       Actual:   0&#xD;
+[xUnit.net 00:00:06.37]       Stack Trace:&#xD;
+[xUnit.net 00:00:06.37]         D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\KitchenPrintDispatchHostedServiceTests.cs(103,0): at ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.TicketsAtAStationWithNoActivePrinterDoNotKeepAnotherStationsTicketOutOfTheBatch()&#xD;
+[xUnit.net 00:00:06.37]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:11.45]       Assert.Equal() Failure: Values differ&#xD;
+[xUnit.net 00:00:11.45]       Expected: 0&#xD;
+[xUnit.net 00:00:11.45]       Actual:   1&#xD;
+[xUnit.net 00:00:11.45]       Stack Trace:&#xD;
+[xUnit.net 00:00:11.45]         D:\PROJECT\ALKAROS\tests\Host\Experience\KitchenOperations\KitchenPrintDispatchHostedServiceTests.cs(116,0): at ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.ATicketThatIsAlreadyReadyIsNotBridged()&#xD;
+[xUnit.net 00:00:11.45]         --- End of stack trace from previous location ---&#xD;
+[xUnit.net 00:00:13.87]   Finished:    ALKAROS.Host.Experience.KitchenOperations.Tests&#xD;
+</StdOut>
+    </Output>
+    <RunInfos>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T13:22:42.8145020+03:00">
+        <Text>[xUnit.net 00:00:06.37]     ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.TicketsAtAStationWithNoActivePrinterDoNotKeepAnotherStationsTicketOutOfTheBatch [FAIL]</Text>
+      </RunInfo>
+      <RunInfo computerName="SEMH59" outcome="Error" timestamp="2026-10-31T13:22:47.8884405+03:00">
+        <Text>[xUnit.net 00:00:11.45]     ALKAROS.Host.Experience.KitchenOperations.Tests.KitchenPrintDispatchHostedServiceTests.ATicketThatIsAlreadyReadyIsNotBridged [FAIL]</Text>
+      </RunInfo>
+    </RunInfos>
+  </ResultSummary>
+</TestRun>

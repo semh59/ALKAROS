@@ -168,7 +168,8 @@ public sealed class KitchenPrintDispatchHostedService : BackgroundService
             FROM kitchen.kitchen_tickets t
             JOIN orders.orders o ON o.order_id = t.order_id
             LEFT JOIN table_mgmt.tables tb ON tb.table_id = o.table_id
-            WHERE t.status <> 'Cancelled'
+            WHERE t.status IN ('Queued', 'Accepted', 'Preparing')
+              AND EXISTS (SELECT 1 FROM kitchen.printers p WHERE p.station_id = t.station_id AND p.is_active)
               AND NOT EXISTS (SELECT 1 FROM kitchen.print_jobs pj WHERE pj.ticket_id = t.id)
             ORDER BY t.created_at
             LIMIT @batch_size;

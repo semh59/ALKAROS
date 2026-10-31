@@ -84,6 +84,38 @@ public sealed class KitchenPrintDispatchHostedServiceTests : IAsyncLifetime
         Assert.Equal(0, bridged);
         Assert.Empty(await _printQueueRepository.GetByTicketIdAsync(ticketId));
     }
+
+    [Fact]
+    public async Task TicketsAtAStationWithNoActivePrinterDoNotKeepAnotherStationsTicketOutOfTheBatch()
+    {
+        // 50 is the batch size: older tickets that can never get a job must not fill it.
+        for (var i = 0; i < 50; i++)
+        {
+            var (_, unusedPrinterId, _) = await _database.SeedTicketAwaitingPrintJobAsync();
+            await _database.ExecuteAsync($"UPDATE kitchen.printers SET is_active = FALSE WHERE id = '{unusedPrinterId:D}';");
+        }
+
+        var (ticketId, _, _) = await _database.SeedTicketAwaitingPrintJobAsync();
+
+        var bridged = await KitchenPrintDispatchHostedService.BridgeUnprintedTicketsAsync(
+            _database.DataSource, _ticketRepository, _printerRepository, _printQueueService, CancellationToken.None);
+
+        Assert.Equal(1, bridged);
+        Assert.Single(await _printQueueRepository.GetByTicketIdAsync(ticketId));
+    }
+
+    [Fact]
+    public async Task ATicketThatIsAlreadyReadyIsNotBridged()
+    {
+        var (ticketId, _, _) = await _database.SeedTicketAwaitingPrintJobAsync();
+        await _database.ExecuteAsync($"UPDATE kitchen.kitchen_tickets SET status = 'Ready' WHERE id = '{ticketId:D}';");
+
+        var bridged = await KitchenPrintDispatchHostedService.BridgeUnprintedTicketsAsync(
+            _database.DataSource, _ticketRepository, _printerRepository, _printQueueService, CancellationToken.None);
+
+        Assert.Equal(0, bridged);
+        Assert.Empty(await _printQueueRepository.GetByTicketIdAsync(ticketId));
+    }
 }
 
 [CollectionDefinition("Kitchen print dispatch PostgreSQL", DisableParallelization = true)]
