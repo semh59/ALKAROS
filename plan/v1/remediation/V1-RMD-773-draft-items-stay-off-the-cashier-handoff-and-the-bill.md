@@ -18,6 +18,7 @@ Garson istemcisinin mevcut kuralı bununla aynı yöndedir: "Hesabı kasaya gön
 
 1. `SendCheckToCashierAsync` durumu `Draft` olan siparişi reddeder: yeni `CheckNotYetOrderedException`; filtre bunu 409 `ORDER_NOT_SUBMITTED` + Türkçe mesaja çevirir. Masa ve sipariş olduğu gibi kalır.
 2. `Bill.FromOrder` iptal edilmiş kalemlerin yanında `Draft` kalemleri de dışlar. Mutfağa gönderilmiş (Active) kalemler aynen faturaya girer.
+3. `CreateBillFromOrderAsync` durumu `Draft` olan siparişten fatura açmaz (mevcut `UNSUPPORTED_ORDER_STATE` 409); yoksa kalemsiz 0 TL'lik fatura oluşur ve sipariş sonradan ateşlense de boş kalır.
 
 ## Owned surface
 
@@ -28,6 +29,7 @@ Garson istemcisinin mevcut kuralı bununla aynı yöndedir: "Hesabı kasaya gön
   - src/Host/Experience/Orders/OrderManagementEndpoints.cs (V1-ORD-005) — filtre eşlemesi (yeni hata kodu).
   - src/Modules/Billing/BillFoundation/Bill.cs (V1-RMD-035) — Draft kalem dışlama.
   - tests/Host/Experience/Orders/TableDraft/CheckLifecycleHttpTests.cs (V1-RMD-160) — kasaya gönderme testi.
+  - src/Host/Experience/Billing/BillingSplitStore.cs (V1-RMD-057) — Draft sipariş için fatura açma reddi.
   - tests/Modules/Billing/BillFoundation/PostgresBillTests.cs (V1-RMD-002) — fatura kalem testi ve Active tohum.
   - tests/Host/Experience/Billing/BillingSplitHttpTests.cs (V1-RMD-040) — tohum siparişlerin kalemleri Active.
 - Bu görev, başka bir task'ın owned surface alanını değiştiremez.
@@ -41,7 +43,7 @@ Garson istemcisinin mevcut kuralı bununla aynı yöndedir: "Hesabı kasaya gön
 ## Out of scope
 
 - Eski faturaların/siparişlerin düzeltilmesi, iade veya temizlik (para kararı, Semih'e kalır).
-- `BillSourceOperations` (üretimde çağıran yok), `CreateBillFromOrderAsync` sipariş durumu kuralı, kasa kuyruğu toplamı.
+- `BillSourceOperations` (üretimde çağıran yok), kasa kuyruğu toplamı, ateşlemeden sonra mevcut faturaya kalem ekleme.
 
 ## Dependencies
 
