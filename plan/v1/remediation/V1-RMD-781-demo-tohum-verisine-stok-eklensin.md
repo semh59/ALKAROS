@@ -1,8 +1,8 @@
 # V1-RMD-781 - Docker demo tohum verisine stok kalemi, eşleme ve başlangıç bakiyesi eklensin
 
 - Task ID: V1-RMD-781
-- Status: Planned
-- Assignee: Unassigned
+- Status: InProgress
+- Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
 
