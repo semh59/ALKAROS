@@ -12,3 +12,8 @@ Düzeltme: `ApplyStepAsync` her adımın yazımından önce, aynı transaction v
 ## Sınırlar
 - Kontrol ile yazım aynı transaction'da ama bekletme koyma hesap kilidiyle serileştirilmez: kontrol ile yazım arasındaki dar pencerede konan bekletme hâlâ kaçabilir.
 - Yakın hareket ve bekleyen talep yeniden denetimi (KVK-001 devir notunun diğer yarısı) bu görevde değil.
+
+## İnceleme
+- KVKK/kod ve test/kanıt incelemesi, engelleyici bulgu yok. Sorgu şema ve tetikleyiciyle birebir uyumlu; her test örneği kendi veritabanını açtığından tetikleyici sızmaz.
+- Doğrulanamayanlar: mutasyonun `cmp` çıktısı kanıt klasöründe kayıtlı değil (geri yükleme `git diff HEAD` ile temiz görüldü); mutasyon biçimi (`if (false && ...)`) yalnız bu dosyada yazılı.
+- Düşük: yeni test yalnız ilk adım kontrolünü dener; sonraki adımlar için ayrı test yok. Bekletme koyma hesap kilidini almadığından dar yarış penceresi kalır.
