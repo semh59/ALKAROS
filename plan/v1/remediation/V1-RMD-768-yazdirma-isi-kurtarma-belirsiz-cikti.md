@@ -1,7 +1,7 @@
 # V1-RMD-768 - Süresi dolmuş "Printing" işi körlemesine yeniden basılmaz
 
 - Task ID: V1-RMD-768
-- Status: InProgress
+- Status: Planned
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: remediation
 - Surface state: Existing
