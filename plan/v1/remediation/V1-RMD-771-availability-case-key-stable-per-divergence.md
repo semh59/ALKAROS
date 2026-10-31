@@ -1,7 +1,7 @@
 # V1-RMD-771 - Stok yayını farkı vakasının anahtarı yayın turuyla değişmesin
 
 - Task ID: V1-RMD-771
-- Status: InProgress
+- Status: Done
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing

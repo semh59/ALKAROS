@@ -25,8 +25,8 @@ kapatma koruması gereksizleşir ve kaldırılır.
 
 ## In scope
 
-1. Anahtar `online-availability:{kanal}:{ürün}:{desired_version}` olur. Aynı fark her taramada aynı vakayı
-   bulur; istenen adet değişince (yeni sürüm) yeni vaka açılır.
+1. Anahtar `online-availability:{kanal}:{ürün}:{desired_at mikrosaniye}` olur (V1-RMD-771; ilk teslimatta `desired_version` idi ve her yayın turunda değiştiği için aynı fark tur başına yeni vaka açıyordu). Aynı fark her taramada aynı vakayı
+   bulur; istenen adet değişince (yeni `desired_at`) yeni vaka açılır.
 2. Çözülen ya da kapatılan bir farkın vakası V1-RMD-323 kuralıyla bir daha açılmaz. V12-RMD-006'nın
    `resolved_at >= desired_at` kapatma koruması kaldırılır; uygulama ve veritabanı saatlerini karşılaştırmıyordu
    ve artık gerekmiyor.

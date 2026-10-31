@@ -1,0 +1,1211 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TestRun id="10851918-9e04-4faf-bc90-bdbddfc9ca84" name="semih@SEMH59 2026-10-31 14:13:50" runUser="SEMH59\semih" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
+  <Times creation="2026-10-31T14:13:50.9535742+03:00" queuing="2026-10-31T14:13:50.9535743+03:00" start="2026-10-31T14:13:42.8243513+03:00" finish="2026-10-31T14:15:05.4467680+03:00" />
+  <TestSettings name="default" id="6d726bad-102b-43be-8458-924fdeb34416">
+    <Deployment runDeploymentRoot="semih_SEMH59_2026-10-31_14_13_50" />
+  </TestSettings>
+  <Results>
+    <UnitTestResult executionId="9146af5e-269a-4b48-8bd7-58940264d53a" testId="8ce89276-2aac-0abf-cbf0-47c13660211a" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.TheListHoldsTheDraftsOfTheRangeAndTheDeliveredOrdersStillWaitingForOne" computerName="SEMH59" duration="00:00:00.0447288" startTime="2026-10-31T14:14:35.9237525+03:00" endTime="2026-10-31T14:14:35.9237526+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9146af5e-269a-4b48-8bd7-58940264d53a" />
+    <UnitTestResult executionId="00e7e162-0193-45c1-9011-e87e504a0ada" testId="9b5833b0-46e4-170c-a7be-defc4d1658a7" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintAcceptsTheTwoValidCombinations(status: &quot;Approved&quot;)" computerName="SEMH59" duration="00:00:00.0042445" startTime="2026-10-31T14:13:59.2620834+03:00" endTime="2026-10-31T14:13:59.2620837+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="00e7e162-0193-45c1-9011-e87e504a0ada" />
+    <UnitTestResult executionId="dc3d534e-322f-4291-ac0c-3a20e0817c7e" testId="247cee3f-7117-04dd-1828-df6bd9729148" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests.ANonExistentCaseIsNotFound" computerName="SEMH59" duration="00:00:00.0318592" startTime="2026-10-31T14:14:57.1467867+03:00" endTime="2026-10-31T14:14:57.1467868+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="dc3d534e-322f-4291-ac0c-3a20e0817c7e" />
+    <UnitTestResult executionId="68a9215c-5ede-41cb-ab09-5987d645f691" testId="b129b532-d8f9-deea-f177-1cf1845edb82" testName="ALKAROS.Host.Experience.Reconciliation.Tests.PaymentSettlementHttpTests.AViewOnlySupervisorReadsTheReportWithHonestlyDisabledSectionsButCannotRunTheScan" computerName="SEMH59" duration="00:00:00.0680000" startTime="2026-10-31T14:14:51.8415931+03:00" endTime="2026-10-31T14:14:51.8415934+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="68a9215c-5ede-41cb-ab09-5987d645f691" />
+    <UnitTestResult executionId="06f377a1-838d-4635-96cc-3a2b33ed6ff6" testId="f9cbbc8c-6045-6b95-a586-e1228bce88e5" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHostedServiceTests.AFailedPassIsRetriedOnTheNextPass" computerName="SEMH59" duration="00:00:00.2392340" startTime="2026-10-31T14:14:19.1049918+03:00" endTime="2026-10-31T14:14:19.1049919+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="06f377a1-838d-4635-96cc-3a2b33ed6ff6" />
+    <UnitTestResult executionId="03b768ab-6a61-4998-9775-55b18f49193e" testId="29e3e157-261e-5386-b3a9-1303eff2dd26" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf(status: &quot;Rejected&quot;, setDecidedBy: False, setDecidedAt: True)" computerName="SEMH59" duration="00:00:00.0046185" startTime="2026-10-31T14:14:10.2372598+03:00" endTime="2026-10-31T14:14:10.2372599+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="03b768ab-6a61-4998-9775-55b18f49193e" />
+    <UnitTestResult executionId="9541a925-0e08-4bda-b4d0-ccef8fb42b13" testId="65f0bde0-c695-cf30-79a3-fdc14fbba1af" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf(status: &quot;Approved&quot;, setDecidedBy: True, setDecidedAt: False)" computerName="SEMH59" duration="00:00:00.0045470" startTime="2026-10-31T14:14:12.8220978+03:00" endTime="2026-10-31T14:14:12.8220980+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9541a925-0e08-4bda-b4d0-ccef8fb42b13" />
+    <UnitTestResult executionId="e1caaf0d-fe61-48f1-bb1e-5da81a91a4ec" testId="4579ceaf-40a7-77ef-4d55-874f78a6d97b" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineProblemsHttpTests.AManagerRetriesTheSafeActionAndCanResolveOnlyOnceTheSourceAgrees" computerName="SEMH59" duration="00:00:00.1464353" startTime="2026-10-31T14:14:30.3805656+03:00" endTime="2026-10-31T14:14:30.3805659+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="e1caaf0d-fe61-48f1-bb1e-5da81a91a4ec" />
+    <UnitTestResult executionId="2f1d0ac2-8335-42f0-849f-8691928f41c5" testId="db95c416-e5ba-fec0-0bc4-c18f79b48786" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.ADraftIsOpenedByOrderAndAnUnknownOrderIsANotFoundInTurkish" computerName="SEMH59" duration="00:00:00.0481325" startTime="2026-10-31T14:14:43.7397715+03:00" endTime="2026-10-31T14:14:43.7397718+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="2f1d0ac2-8335-42f0-849f-8691928f41c5" />
+    <UnitTestResult executionId="b4bd7de0-0ea0-43ae-b2b3-f4035c21f748" testId="5e11332a-cfab-73b9-3215-f9089823bf3a" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.AReversedOrTooLongRangeIsRefusedInTurkish(query: &quot;from=2026-08-01&amp;to=2026-09-26&quot;)" computerName="SEMH59" duration="00:00:00.0160583" startTime="2026-10-31T14:14:41.1829611+03:00" endTime="2026-10-31T14:14:41.1829613+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="b4bd7de0-0ea0-43ae-b2b3-f4035c21f748" />
+    <UnitTestResult executionId="914d20b8-98ab-4b54-aaec-f81dc7caf754" testId="1f464b39-a23a-bfd1-cf07-a95e137ba203" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHttpTests.OnlyASessionWithManageMayScanRetryOrResolve" computerName="SEMH59" duration="00:00:00.1047168" startTime="2026-10-31T14:14:21.8503837+03:00" endTime="2026-10-31T14:14:21.8503841+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="914d20b8-98ab-4b54-aaec-f81dc7caf754" />
+    <UnitTestResult executionId="6b8b9019-acac-44da-9ec0-7d9e75838494" testId="39a74b13-409c-127e-eb81-a99fe79845cb" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests.AViewOnlySupervisorCanReadButNotCreateOrMutateACase" computerName="SEMH59" duration="00:00:00.0669155" startTime="2026-10-31T14:15:02.4359805+03:00" endTime="2026-10-31T14:15:02.4359809+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="6b8b9019-acac-44da-9ec0-7d9e75838494" />
+    <UnitTestResult executionId="064ed42c-6108-4e12-9a4c-e825fe9302bc" testId="1451df07-e46c-ab41-e11e-5a438ef8e838" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintAcceptsTheTwoValidCombinations(status: &quot;Pending&quot;)" computerName="SEMH59" duration="00:00:00.0039833" startTime="2026-10-31T14:14:01.9915992+03:00" endTime="2026-10-31T14:14:01.9915996+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="064ed42c-6108-4e12-9a4c-e825fe9302bc" />
+    <UnitTestResult executionId="d3819b03-da6b-4302-aec5-5ca0e11e2c0c" testId="2c174017-1ebc-43fc-bab3-009e4e737511" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" computerName="SEMH59" duration="00:00:00.0336529" startTime="2026-10-31T14:14:59.7308855+03:00" endTime="2026-10-31T14:14:59.7308857+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="d3819b03-da6b-4302-aec5-5ca0e11e2c0c" />
+    <UnitTestResult executionId="397132d6-c9ec-4232-ab44-45e26bb7bcb1" testId="54113281-b012-00ba-ba80-9aad044ab898" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests.TransitioningAndAnnotatingACaseIsReflectedInItsAuditTrail" computerName="SEMH59" duration="00:00:00.1070799" startTime="2026-10-31T14:15:05.3662402+03:00" endTime="2026-10-31T14:15:05.3662406+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="397132d6-c9ec-4232-ab44-45e26bb7bcb1" />
+    <UnitTestResult executionId="c5980ad4-cd71-48fe-afe4-4c85be31b921" testId="d41d24a9-89c6-64f4-6300-67e230583e58" testName="ALKAROS.Host.Experience.Reconciliation.Tests.PaymentSettlementHttpTests.ASupervisorWithManageRunsTheScanAndEveryDisabledSourceReportsItself" computerName="SEMH59" duration="00:00:00.0437805" startTime="2026-10-31T14:14:46.5061928+03:00" endTime="2026-10-31T14:14:46.5061932+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="c5980ad4-cd71-48fe-afe4-4c85be31b921" />
+    <UnitTestResult executionId="32abf311-4707-481b-b013-a76fe60f1787" testId="7fc9de5f-fb91-8b50-5213-c0032455e4f8" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ChannelReportHttpTests.AReversedRangeIsRefusedInTurkish" computerName="SEMH59" duration="00:00:00.0281073" startTime="2026-10-31T14:13:53.6860626+03:00" endTime="2026-10-31T14:13:53.6860627+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="32abf311-4707-481b-b013-a76fe60f1787" />
+    <UnitTestResult executionId="1eb46fed-c613-4de7-b320-95f64064d24f" testId="4582d69e-3a61-bbf4-4004-79f36d37fccb" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintAcceptsTheTwoValidCombinations(status: &quot;Rejected&quot;)" computerName="SEMH59" duration="00:00:00.0077326" startTime="2026-10-31T14:13:56.6111551+03:00" endTime="2026-10-31T14:13:56.6111553+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="1eb46fed-c613-4de7-b320-95f64064d24f" />
+    <UnitTestResult executionId="9de03b2e-95e4-48d1-b090-4b5da51c7eb7" testId="756d22d7-0aa8-7c6c-ea8d-e5ffa0a4dd69" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ChannelReportHttpTests.AViewOnlySupervisorReadsTheVersionedReportAndOthersCannot" computerName="SEMH59" duration="00:00:00.3511843" startTime="2026-10-31T14:13:50.9228517+03:00" endTime="2026-10-31T14:13:50.9228811+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9de03b2e-95e4-48d1-b090-4b5da51c7eb7" />
+    <UnitTestResult executionId="ea5376ca-b84a-451c-99b8-6ad6b430d5cb" testId="12dbcfdf-d09b-b0d3-5bc2-84ec4385cf56" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests.CreatingWithTheSameDeduplicationKeyReturnsTheSameCase" computerName="SEMH59" duration="00:00:00.0685133" startTime="2026-10-31T14:14:54.5693521+03:00" endTime="2026-10-31T14:14:54.5693524+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ea5376ca-b84a-451c-99b8-6ad6b430d5cb" />
+    <UnitTestResult executionId="8dde9e78-3453-481c-87d8-f294398f3649" testId="fe397c65-cf97-73d5-9571-be5a18b4d6a2" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf(status: &quot;Approved&quot;, setDecidedBy: False, setDecidedAt: True)" computerName="SEMH59" duration="00:00:00.0048424" startTime="2026-10-31T14:14:07.5314972+03:00" endTime="2026-10-31T14:14:07.5314973+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="8dde9e78-3453-481c-87d8-f294398f3649" />
+    <UnitTestResult executionId="ad5cef7f-1af1-4306-bc45-150712640fe2" testId="86d5b320-54d5-ff91-6506-5d78db9140ab" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.AReversedOrTooLongRangeIsRefusedInTurkish(query: &quot;from=2026-09-26&amp;to=2026-09-20&quot;)" computerName="SEMH59" duration="00:00:00.0198593" startTime="2026-10-31T14:14:38.6520771+03:00" endTime="2026-10-31T14:14:38.6520773+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="ad5cef7f-1af1-4306-bc45-150712640fe2" />
+    <UnitTestResult executionId="9a565259-9aa2-418a-955e-e6519aab0b09" testId="2c176bf9-7042-6281-00f0-75d5f8e08a81" testName="ALKAROS.Host.Experience.Reconciliation.Tests.PaymentSettlementHttpTests.ReportAndScanRejectAnonymousAndUnpermissionedSessions" computerName="SEMH59" duration="00:00:00.0345616" startTime="2026-10-31T14:14:49.1648677+03:00" endTime="2026-10-31T14:14:49.1648678+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="9a565259-9aa2-418a-955e-e6519aab0b09" />
+    <UnitTestResult executionId="4d2b150f-52ca-4d67-baf8-da8f18097421" testId="d01f91f4-16ec-05a7-c869-dbf65f9b2d07" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineProblemsHttpTests.StaffWhoSeeReportsListOnlyOnlineOrderCasesAndOnlyAReconciliationManagerActs" computerName="SEMH59" duration="00:00:00.1761439" startTime="2026-10-31T14:14:27.7383436+03:00" endTime="2026-10-31T14:14:27.7383454+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="4d2b150f-52ca-4d67-baf8-da8f18097421" />
+    <UnitTestResult executionId="56f430a7-7d25-4a14-9917-dd0281387b06" testId="e3c7a72a-90c7-ad18-00cb-133577d300e7" testName="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf(status: &quot;Rejected&quot;, setDecidedBy: True, setDecidedAt: False)" computerName="SEMH59" duration="00:00:00.0150257" startTime="2026-10-31T14:14:04.8009394+03:00" endTime="2026-10-31T14:14:04.8009395+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="56f430a7-7d25-4a14-9917-dd0281387b06" />
+    <UnitTestResult executionId="18ef6dd9-7b4b-4805-9e9b-8d4d6c743ec8" testId="f46ec54f-a8ff-371b-423f-a90a599ab4b9" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.OnlyASessionWithReportsViewReadsTheInvoices" computerName="SEMH59" duration="00:00:00.0449902" startTime="2026-10-31T14:14:33.0369351+03:00" endTime="2026-10-31T14:14:33.0369352+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="18ef6dd9-7b4b-4805-9e9b-8d4d6c743ec8" />
+    <UnitTestResult executionId="aba89168-00b2-49e2-b5ec-133f411284d3" testId="08248362-b1fa-3222-6fc3-a69195dcc1ad" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHttpTests.ARefusedProviderOrderBecomesACaseItsRetryReprocessesAndItResolvesOnlyWhenTheSourceAgrees" computerName="SEMH59" duration="00:00:00.2632584" startTime="2026-10-31T14:14:24.9786437+03:00" endTime="2026-10-31T14:14:24.9786438+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="aba89168-00b2-49e2-b5ec-133f411284d3" />
+    <UnitTestResult executionId="fc2ced37-dc1d-4b4b-a208-01bc958bf0e5" testId="bec2e74c-c0af-ad2b-c75a-91a13503c4ec" testName="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHostedServiceTests.AScheduledPassTurnsARefusedOrderIntoACaseAndRepeatedPassesNeverDoubleIt" computerName="SEMH59" duration="00:00:00.6041325" startTime="2026-10-31T14:14:16.1888619+03:00" endTime="2026-10-31T14:14:16.1888654+03:00" testType="13cdc9d9-ddb5-4fa4-a97d-d965ccfc6d4b" outcome="Passed" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" relativeResultsDirectory="fc2ced37-dc1d-4b4b-a208-01bc958bf0e5" />
+  </Results>
+  <TestDefinitions>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf(status: &quot;Rejected&quot;, setDecidedBy: False, setDecidedAt: True)" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="29e3e157-261e-5386-b3a9-1303eff2dd26">
+      <Execution id="03b768ab-6a61-4998-9775-55b18f49193e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests" name="TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests.MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="2c174017-1ebc-43fc-bab3-009e4e737511">
+      <Execution id="d3819b03-da6b-4302-aec5-5ca0e11e2c0c" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests" name="MissingAndUnpermissionedSessionsAreRejectedWithoutMutation" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHttpTests.OnlyASessionWithManageMayScanRetryOrResolve" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="1f464b39-a23a-bfd1-cf07-a95e137ba203">
+      <Execution id="914d20b8-98ab-4b54-aaec-f81dc7caf754" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHttpTests" name="OnlyASessionWithManageMayScanRetryOrResolve" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.OnlyASessionWithReportsViewReadsTheInvoices" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="f46ec54f-a8ff-371b-423f-a90a599ab4b9">
+      <Execution id="18ef6dd9-7b4b-4805-9e9b-8d4d6c743ec8" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests" name="OnlyASessionWithReportsViewReadsTheInvoices" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHttpTests.ARefusedProviderOrderBecomesACaseItsRetryReprocessesAndItResolvesOnlyWhenTheSourceAgrees" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="08248362-b1fa-3222-6fc3-a69195dcc1ad">
+      <Execution id="aba89168-00b2-49e2-b5ec-133f411284d3" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHttpTests" name="ARefusedProviderOrderBecomesACaseItsRetryReprocessesAndItResolvesOnlyWhenTheSourceAgrees" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.AReversedOrTooLongRangeIsRefusedInTurkish(query: &quot;from=2026-09-26&amp;to=2026-09-20&quot;)" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="86d5b320-54d5-ff91-6506-5d78db9140ab">
+      <Execution id="ad5cef7f-1af1-4306-bc45-150712640fe2" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests" name="AReversedOrTooLongRangeIsRefusedInTurkish" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintAcceptsTheTwoValidCombinations(status: &quot;Rejected&quot;)" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="4582d69e-3a61-bbf4-4004-79f36d37fccb">
+      <Execution id="1eb46fed-c613-4de7-b320-95f64064d24f" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests" name="TheDecidedConsistencyConstraintAcceptsTheTwoValidCombinations" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineProblemsHttpTests.StaffWhoSeeReportsListOnlyOnlineOrderCasesAndOnlyAReconciliationManagerActs" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="d01f91f4-16ec-05a7-c869-dbf65f9b2d07">
+      <Execution id="4d2b150f-52ca-4d67-baf8-da8f18097421" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineProblemsHttpTests" name="StaffWhoSeeReportsListOnlyOnlineOrderCasesAndOnlyAReconciliationManagerActs" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ChannelReportHttpTests.AReversedRangeIsRefusedInTurkish" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="7fc9de5f-fb91-8b50-5213-c0032455e4f8">
+      <Execution id="32abf311-4707-481b-b013-a76fe60f1787" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ChannelReportHttpTests" name="AReversedRangeIsRefusedInTurkish" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintAcceptsTheTwoValidCombinations(status: &quot;Pending&quot;)" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="1451df07-e46c-ab41-e11e-5a438ef8e838">
+      <Execution id="064ed42c-6108-4e12-9a4c-e825fe9302bc" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests" name="TheDecidedConsistencyConstraintAcceptsTheTwoValidCombinations" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests.AViewOnlySupervisorCanReadButNotCreateOrMutateACase" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="39a74b13-409c-127e-eb81-a99fe79845cb">
+      <Execution id="6b8b9019-acac-44da-9ec0-7d9e75838494" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests" name="AViewOnlySupervisorCanReadButNotCreateOrMutateACase" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests.TransitioningAndAnnotatingACaseIsReflectedInItsAuditTrail" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="54113281-b012-00ba-ba80-9aad044ab898">
+      <Execution id="397132d6-c9ec-4232-ab44-45e26bb7bcb1" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests" name="TransitioningAndAnnotatingACaseIsReflectedInItsAuditTrail" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintAcceptsTheTwoValidCombinations(status: &quot;Approved&quot;)" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="9b5833b0-46e4-170c-a7be-defc4d1658a7">
+      <Execution id="00e7e162-0193-45c1-9011-e87e504a0ada" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests" name="TheDecidedConsistencyConstraintAcceptsTheTwoValidCombinations" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests.CreatingWithTheSameDeduplicationKeyReturnsTheSameCase" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="12dbcfdf-d09b-b0d3-5bc2-84ec4385cf56">
+      <Execution id="ea5376ca-b84a-451c-99b8-6ad6b430d5cb" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests" name="CreatingWithTheSameDeduplicationKeyReturnsTheSameCase" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ChannelReportHttpTests.AViewOnlySupervisorReadsTheVersionedReportAndOthersCannot" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="756d22d7-0aa8-7c6c-ea8d-e5ffa0a4dd69">
+      <Execution id="9de03b2e-95e4-48d1-b090-4b5da51c7eb7" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ChannelReportHttpTests" name="AViewOnlySupervisorReadsTheVersionedReportAndOthersCannot" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.ADraftIsOpenedByOrderAndAnUnknownOrderIsANotFoundInTurkish" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="db95c416-e5ba-fec0-0bc4-c18f79b48786">
+      <Execution id="2f1d0ac2-8335-42f0-849f-8691928f41c5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests" name="ADraftIsOpenedByOrderAndAnUnknownOrderIsANotFoundInTurkish" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.TheListHoldsTheDraftsOfTheRangeAndTheDeliveredOrdersStillWaitingForOne" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="8ce89276-2aac-0abf-cbf0-47c13660211a">
+      <Execution id="9146af5e-269a-4b48-8bd7-58940264d53a" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests" name="TheListHoldsTheDraftsOfTheRangeAndTheDeliveredOrdersStillWaitingForOne" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHostedServiceTests.AFailedPassIsRetriedOnTheNextPass" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="f9cbbc8c-6045-6b95-a586-e1228bce88e5">
+      <Execution id="06f377a1-838d-4635-96cc-3a2b33ed6ff6" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHostedServiceTests" name="AFailedPassIsRetriedOnTheNextPass" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf(status: &quot;Rejected&quot;, setDecidedBy: True, setDecidedAt: False)" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="e3c7a72a-90c7-ad18-00cb-133577d300e7">
+      <Execution id="56f430a7-7d25-4a14-9917-dd0281387b06" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests" name="TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests.AReversedOrTooLongRangeIsRefusedInTurkish(query: &quot;from=2026-08-01&amp;to=2026-09-26&quot;)" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="5e11332a-cfab-73b9-3215-f9089823bf3a">
+      <Execution id="b4bd7de0-0ea0-43ae-b2b3-f4035c21f748" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OrderInvoiceHttpTests" name="AReversedOrTooLongRangeIsRefusedInTurkish" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf(status: &quot;Approved&quot;, setDecidedBy: False, setDecidedAt: True)" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="fe397c65-cf97-73d5-9571-be5a18b4d6a2">
+      <Execution id="8dde9e78-3453-481c-87d8-f294398f3649" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests" name="TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.PaymentSettlementHttpTests.ReportAndScanRejectAnonymousAndUnpermissionedSessions" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="2c176bf9-7042-6281-00f0-75d5f8e08a81">
+      <Execution id="9a565259-9aa2-418a-955e-e6519aab0b09" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.PaymentSettlementHttpTests" name="ReportAndScanRejectAnonymousAndUnpermissionedSessions" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHostedServiceTests.AScheduledPassTurnsARefusedOrderIntoACaseAndRepeatedPassesNeverDoubleIt" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="bec2e74c-c0af-ad2b-c75a-91a13503c4ec">
+      <Execution id="fc2ced37-dc1d-4b4b-a208-01bc958bf0e5" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineOrderReconciliationHostedServiceTests" name="AScheduledPassTurnsARefusedOrderIntoACaseAndRepeatedPassesNeverDoubleIt" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests.ANonExistentCaseIsNotFound" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="247cee3f-7117-04dd-1828-df6bd9729148">
+      <Execution id="dc3d534e-322f-4291-ac0c-3a20e0817c7e" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ReconciliationCaseHttpTests" name="ANonExistentCaseIsNotFound" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.PaymentSettlementHttpTests.AViewOnlySupervisorReadsTheReportWithHonestlyDisabledSectionsButCannotRunTheScan" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="b129b532-d8f9-deea-f177-1cf1845edb82">
+      <Execution id="68a9215c-5ede-41cb-ab09-5987d645f691" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.PaymentSettlementHttpTests" name="AViewOnlySupervisorReadsTheReportWithHonestlyDisabledSectionsButCannotRunTheScan" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.PaymentSettlementHttpTests.ASupervisorWithManageRunsTheScanAndEveryDisabledSourceReportsItself" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="d41d24a9-89c6-64f4-6300-67e230583e58">
+      <Execution id="c5980ad4-cd71-48fe-afe4-4c85be31b921" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.PaymentSettlementHttpTests" name="ASupervisorWithManageRunsTheScanAndEveryDisabledSourceReportsItself" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineProblemsHttpTests.AManagerRetriesTheSafeActionAndCanResolveOnlyOnceTheSourceAgrees" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="4579ceaf-40a7-77ef-4d55-874f78a6d97b">
+      <Execution id="e1caaf0d-fe61-48f1-bb1e-5da81a91a4ec" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.OnlineProblemsHttpTests" name="AManagerRetriesTheSafeActionAndCanResolveOnlyOnceTheSourceAgrees" />
+    </UnitTest>
+    <UnitTest name="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests.TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf(status: &quot;Approved&quot;, setDecidedBy: True, setDecidedAt: False)" storage="d:\project\alkaros\tests\host\experience\reconciliation\bin\debug\net8.0\alkaros.host.experience.reconciliation.tests.dll" id="65f0bde0-c695-cf30-79a3-fdc14fbba1af">
+      <Execution id="9541a925-0e08-4bda-b4d0-ccef8fb42b13" />
+      <TestMethod codeBase="D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0\ALKAROS.Host.Experience.Reconciliation.Tests.dll" adapterTypeName="executor://xunit/VsTestRunner2/netcoreapp" className="ALKAROS.Host.Experience.Reconciliation.Tests.ManualCardConfirmationConstraintTests" name="TheDecidedConsistencyConstraintRejectsAStateMissingEitherHalf" />
+    </UnitTest>
+  </TestDefinitions>
+  <TestEntries>
+    <TestEntry testId="8ce89276-2aac-0abf-cbf0-47c13660211a" executionId="9146af5e-269a-4b48-8bd7-58940264d53a" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="9b5833b0-46e4-170c-a7be-defc4d1658a7" executionId="00e7e162-0193-45c1-9011-e87e504a0ada" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="247cee3f-7117-04dd-1828-df6bd9729148" executionId="dc3d534e-322f-4291-ac0c-3a20e0817c7e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="b129b532-d8f9-deea-f177-1cf1845edb82" executionId="68a9215c-5ede-41cb-ab09-5987d645f691" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f9cbbc8c-6045-6b95-a586-e1228bce88e5" executionId="06f377a1-838d-4635-96cc-3a2b33ed6ff6" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="29e3e157-261e-5386-b3a9-1303eff2dd26" executionId="03b768ab-6a61-4998-9775-55b18f49193e" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="65f0bde0-c695-cf30-79a3-fdc14fbba1af" executionId="9541a925-0e08-4bda-b4d0-ccef8fb42b13" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4579ceaf-40a7-77ef-4d55-874f78a6d97b" executionId="e1caaf0d-fe61-48f1-bb1e-5da81a91a4ec" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="db95c416-e5ba-fec0-0bc4-c18f79b48786" executionId="2f1d0ac2-8335-42f0-849f-8691928f41c5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="5e11332a-cfab-73b9-3215-f9089823bf3a" executionId="b4bd7de0-0ea0-43ae-b2b3-f4035c21f748" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1f464b39-a23a-bfd1-cf07-a95e137ba203" executionId="914d20b8-98ab-4b54-aaec-f81dc7caf754" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="39a74b13-409c-127e-eb81-a99fe79845cb" executionId="6b8b9019-acac-44da-9ec0-7d9e75838494" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="1451df07-e46c-ab41-e11e-5a438ef8e838" executionId="064ed42c-6108-4e12-9a4c-e825fe9302bc" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2c174017-1ebc-43fc-bab3-009e4e737511" executionId="d3819b03-da6b-4302-aec5-5ca0e11e2c0c" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="54113281-b012-00ba-ba80-9aad044ab898" executionId="397132d6-c9ec-4232-ab44-45e26bb7bcb1" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d41d24a9-89c6-64f4-6300-67e230583e58" executionId="c5980ad4-cd71-48fe-afe4-4c85be31b921" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="7fc9de5f-fb91-8b50-5213-c0032455e4f8" executionId="32abf311-4707-481b-b013-a76fe60f1787" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="4582d69e-3a61-bbf4-4004-79f36d37fccb" executionId="1eb46fed-c613-4de7-b320-95f64064d24f" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="756d22d7-0aa8-7c6c-ea8d-e5ffa0a4dd69" executionId="9de03b2e-95e4-48d1-b090-4b5da51c7eb7" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="12dbcfdf-d09b-b0d3-5bc2-84ec4385cf56" executionId="ea5376ca-b84a-451c-99b8-6ad6b430d5cb" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="fe397c65-cf97-73d5-9571-be5a18b4d6a2" executionId="8dde9e78-3453-481c-87d8-f294398f3649" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="86d5b320-54d5-ff91-6506-5d78db9140ab" executionId="ad5cef7f-1af1-4306-bc45-150712640fe2" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="2c176bf9-7042-6281-00f0-75d5f8e08a81" executionId="9a565259-9aa2-418a-955e-e6519aab0b09" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="d01f91f4-16ec-05a7-c869-dbf65f9b2d07" executionId="4d2b150f-52ca-4d67-baf8-da8f18097421" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="e3c7a72a-90c7-ad18-00cb-133577d300e7" executionId="56f430a7-7d25-4a14-9917-dd0281387b06" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="f46ec54f-a8ff-371b-423f-a90a599ab4b9" executionId="18ef6dd9-7b4b-4805-9e9b-8d4d6c743ec8" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="08248362-b1fa-3222-6fc3-a69195dcc1ad" executionId="aba89168-00b2-49e2-b5ec-133f411284d3" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestEntry testId="bec2e74c-c0af-ad2b-c75a-91a13503c4ec" executionId="fc2ced37-dc1d-4b4b-a208-01bc958bf0e5" testListId="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+  </TestEntries>
+  <TestLists>
+    <TestList name="Bir Listede Olmayan Sonuçlar" id="8c84fa94-04c1-424b-9868-57a2d4851a1d" />
+    <TestList name="Yüklenen Tüm Sonuçlar" id="19431567-8539-422a-85d7-44ee4e166bda" />
+  </TestLists>
+  <ResultSummary outcome="Completed">
+    <Counters total="28" executed="28" passed="28" failed="0" error="0" timeout="0" aborted="0" inconclusive="0" passedButRunAborted="0" notRunnable="0" notExecuted="0" disconnected="0" warning="0" completed="0" inProgress="0" pending="0" />
+    <Output>
+      <StdOut>[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 8.0.25)&#xD;
+[xUnit.net 00:00:00.42]   Discovering: ALKAROS.Host.Experience.Reconciliation.Tests&#xD;
+[xUnit.net 00:00:00.49]   Discovered:  ALKAROS.Host.Experience.Reconciliation.Tests&#xD;
+[xUnit.net 00:00:00.50]   Starting:    ALKAROS.Host.Experience.Reconciliation.Tests&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57659&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:57659/api/v1/management/reports/channels?from=2026-09-20&amp;to=2026-09-26 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reports/channels/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reports/channels/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseUnauthorizedException: A valid reconciliation case session is required.&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 196&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 220&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:57659/api/v1/management/reports/channels?from=2026-09-20&amp;to=2026-09-26 - 401 - application/json;+charset=utf-8 108.6403ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:57659/api/v1/management/reports/channels?from=2026-09-20&amp;to=2026-09-26 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reports/channels/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reports/channels/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '6fb89025-3dc7-4d47-8f8a-7d1c715180e6' denied permission 'reports.view': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 221&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:57659/api/v1/management/reports/channels?from=2026-09-20&amp;to=2026-09-26 - 403 - application/json;+charset=utf-8 67.6462ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:57659/api/v1/management/reports/channels?from=2026-09-20&amp;to=2026-09-26 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reports/channels/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ChannelReport' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reports/channels/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:57659/api/v1/management/reports/channels?from=2026-09-20&amp;to=2026-09-26 - 200 - application/json;+charset=utf-8 78.9206ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57666&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:57666/api/v1/management/reports/channels?from=2026-09-26&amp;to=2026-09-20 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reports/channels/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reports/channels/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      System.ArgumentException: The end date cannot be before the start date. (Parameter 'To')&#xD;
+         at ALKAROS.Reporting.Channels.ChannelReportFilter.Validate() in D:\PROJECT\ALKAROS\src\Modules\Reporting\Channels\ChannelReportModels.cs:line 21&#xD;
+         at ALKAROS.Reporting.Channels.PostgresChannelReportService.GetReportAsync(ChannelReportFilter filter, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Reporting\Channels\ChannelReportService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reporting.ChannelReportEndpoints.&lt;&gt;c.&lt;&lt;MapChannelReportApi&gt;b__0_0&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reporting\ChannelReportEndpoints.cs:line 30&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 223&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:57666/api/v1/management/reports/channels?from=2026-09-26&amp;to=2026-09-20 - 400 - application/json;+charset=utf-8 24.9464ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50146&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50146/api/v1/management/reconciliation/online-orders/scan - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/scan'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/scan'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseUnauthorizedException: A valid reconciliation case session is required.&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 196&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 220&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50146/api/v1/management/reconciliation/online-orders/scan - 401 - application/json;+charset=utf-8 59.2408ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50146/api/v1/management/reconciliation/online-orders/scan - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/scan'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/scan'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '6fb89025-3dc7-4d47-8f8a-7d1c715180e6' denied permission 'reports.view': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 221&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50146/api/v1/management/reconciliation/online-orders/scan - 403 - application/json;+charset=utf-8 10.5355ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50146/api/v1/management/reconciliation/online-orders/scan - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/scan'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/scan'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '5f0b5143-181e-4759-a3e1-6a52b3d106de' denied permission 'reconciliation.manage': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.OnlineOrderReconciliationEndpoints.&lt;&gt;c.&lt;&lt;MapOnlineOrderReconciliationApi&gt;b__1_0&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\OnlineOrderReconciliationEndpoints.cs:line 50&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 223&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50146/api/v1/management/reconciliation/online-orders/scan - 403 - application/json;+charset=utf-8 13.0278ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50146/api/v1/management/reconciliation/online-orders/cases/fb4fe4b9-e0d1-4d8e-a4ac-78a6fdc72239/retry - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/retry'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '5f0b5143-181e-4759-a3e1-6a52b3d106de' denied permission 'reconciliation.manage': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.OnlineOrderReconciliationEndpoints.&lt;&gt;c.&lt;&lt;MapOnlineOrderReconciliationApi&gt;b__1_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\OnlineOrderReconciliationEndpoints.cs:line 62&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 223&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50146/api/v1/management/reconciliation/online-orders/cases/fb4fe4b9-e0d1-4d8e-a4ac-78a6fdc72239/retry - 403 - application/json;+charset=utf-8 13.2085ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50153&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/scan - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/scan'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/scan'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/scan - 200 - application/json;+charset=utf-8 69.2580ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/resolve - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'ApiErrorEnvelope' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/resolve - 409 - application/json;+charset=utf-8 27.8024ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/resolve - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'ApiErrorEnvelope' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/resolve - 400 - application/json;+charset=utf-8 8.8952ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/transition - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/transition'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'ApiErrorEnvelope' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/transition'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/transition - 409 - application/json;+charset=utf-8 11.5763ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/transition - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/transition'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ReconciliationCaseV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/transition'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/transition - 200 - application/json;+charset=utf-8 33.6406ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/retry - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OnlineOrderRetryResultV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/retry - 200 - application/json;+charset=utf-8 37.4213ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/resolve - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ReconciliationCaseV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/resolve - 200 - application/json;+charset=utf-8 18.4487ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/retry - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'ApiErrorEnvelope' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/d9b78e5c-955e-4d5d-9433-0112d1753d49/retry - 409 - application/json;+charset=utf-8 11.8601ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/40b91c01-398f-472b-9fda-6e7e485f885f/retry - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type 'ApiErrorEnvelope' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/online-orders/cases/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50153/api/v1/management/reconciliation/online-orders/cases/40b91c01-398f-472b-9fda-6e7e485f885f/retry - 404 - application/json;+charset=utf-8 7.9834ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50159&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50159/api/v1/management/reconciliation/cases - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ReconciliationCaseV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50159/api/v1/management/reconciliation/cases - 200 - application/json;+charset=utf-8 53.5285ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 401.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems - 401 - application/json;+charset=utf-8 12.1367ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems - 403 - application/json;+charset=utf-8 7.4941ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems - 200 - application/json;+charset=utf-8 12.3945ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems/3d96feb0-f0e7-41d9-8597-5858147862cc/retry - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems/3d96feb0-f0e7-41d9-8597-5858147862cc/retry - 403 - application/json;+charset=utf-8 7.4305ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems - 200 - application/json;+charset=utf-8 7.4069ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems/3d96feb0-f0e7-41d9-8597-5858147862cc/resolve - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 403.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50159/api/v1/terminals/83b14ae9-7ec4-428f-afb0-1ab4d357884f/online-problems/3d96feb0-f0e7-41d9-8597-5858147862cc/resolve - 403 - application/json;+charset=utf-8 8.2634ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50167&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems - 200 - application/json;+charset=utf-8 36.5043ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems/382608fe-f925-4694-8e3e-9774aa93bb65/resolve - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 400.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems/382608fe-f925-4694-8e3e-9774aa93bb65/resolve - 400 - application/json;+charset=utf-8 4.8327ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems/382608fe-f925-4694-8e3e-9774aa93bb65/resolve - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 409.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems/382608fe-f925-4694-8e3e-9774aa93bb65/resolve - 409 - application/json;+charset=utf-8 7.5661ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems/382608fe-f925-4694-8e3e-9774aa93bb65/retry - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType53`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems/382608fe-f925-4694-8e3e-9774aa93bb65/retry - 200 - application/json;+charset=utf-8 22.9751ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems - 200 - application/json;+charset=utf-8 9.0329ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems/382608fe-f925-4694-8e3e-9774aa93bb65/resolve - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType53`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/resolve'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems/382608fe-f925-4694-8e3e-9774aa93bb65/resolve - 200 - application/json;+charset=utf-8 11.5331ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/terminals/{terminalId:guid}/online-problems/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems - 200 - application/json;+charset=utf-8 6.0266ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems/782590a6-de63-4f26-babe-a99a858894c7/retry - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/terminals/{terminalId:guid}/online-problems/{caseId:guid}/retry'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50167/api/v1/terminals/f29caa69-e333-4a7f-831c-97585126663d/online-problems/782590a6-de63-4f26-babe-a99a858894c7/retry - 404 - application/json;+charset=utf-8 4.4191ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50173&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50173/api/v1/management/order-invoices?from=2026-09-20&amp;to=2026-09-26 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseUnauthorizedException: A valid reconciliation case session is required.&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 196&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 220&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50173/api/v1/management/order-invoices?from=2026-09-20&amp;to=2026-09-26 - 401 - application/json;+charset=utf-8 10.5751ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50173/api/v1/management/order-invoices?from=2026-09-20&amp;to=2026-09-26 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '6fb89025-3dc7-4d47-8f8a-7d1c715180e6' denied permission 'reports.view': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 221&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50173/api/v1/management/order-invoices?from=2026-09-20&amp;to=2026-09-26 - 403 - application/json;+charset=utf-8 8.4575ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50173/api/v1/management/order-invoices?from=2026-09-20&amp;to=2026-09-26 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderInvoiceListV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50173/api/v1/management/order-invoices?from=2026-09-20&amp;to=2026-09-26 - 200 - application/json;+charset=utf-8 18.6036ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50173/api/v1/management/order-invoices/by-order/12dac9e7-d294-479e-a54c-cea756c82622 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/order-invoices/by-order/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/order-invoices/by-order/{orderId:guid}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseUnauthorizedException: A valid reconciliation case session is required.&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 196&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 220&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50173/api/v1/management/order-invoices/by-order/12dac9e7-d294-479e-a54c-cea756c82622 - 401 - application/json;+charset=utf-8 1.5359ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50180&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50180/api/v1/management/order-invoices?from=2026-09-20&amp;to=2026-09-26 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderInvoiceListV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50180/api/v1/management/order-invoices?from=2026-09-20&amp;to=2026-09-26 - 200 - application/json;+charset=utf-8 21.3880ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50185&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50185/api/v1/management/order-invoices?from=2026-09-26&amp;to=2026-09-20 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      System.ArgumentException: The range must be between one and 31 days.&#xD;
+         at ALKAROS.Host.Experience.OrderInvoices.OrderInvoiceEndpoints.&lt;&gt;c.&lt;&lt;MapOrderInvoiceApi&gt;b__1_0&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\OrderInvoices\OrderInvoiceEndpoints.cs:line 40&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 223&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50185/api/v1/management/order-invoices?from=2026-09-26&amp;to=2026-09-20 - 400 - application/json;+charset=utf-8 17.1787ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50190&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50190/api/v1/management/order-invoices?from=2026-08-01&amp;to=2026-09-26 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/order-invoices/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      System.ArgumentException: The range must be between one and 31 days.&#xD;
+         at ALKAROS.Host.Experience.OrderInvoices.OrderInvoiceEndpoints.&lt;&gt;c.&lt;&lt;MapOrderInvoiceApi&gt;b__1_0&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\OrderInvoices\OrderInvoiceEndpoints.cs:line 40&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 223&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50190/api/v1/management/order-invoices?from=2026-08-01&amp;to=2026-09-26 - 400 - application/json;+charset=utf-8 13.9819ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50195&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50195/api/v1/management/order-invoices/by-order/2ead395b-d8e1-4e68-af4d-cbacfda04548 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/order-invoices/by-order/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'OrderInvoiceDraft' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/order-invoices/by-order/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50195/api/v1/management/order-invoices/by-order/2ead395b-d8e1-4e68-af4d-cbacfda04548 - 200 - application/json;+charset=utf-8 33.6376ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50195/api/v1/management/order-invoices/by-order/9545bf3b-120e-489d-8cb7-ff3876b12187 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/order-invoices/by-order/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[1]&#xD;
+      Setting HTTP status code 404.&#xD;
+info: Microsoft.AspNetCore.Http.Result.JsonResult[3]&#xD;
+      Writing value of type '&lt;&gt;f__AnonymousType0`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/order-invoices/by-order/{orderId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50195/api/v1/management/order-invoices/by-order/9545bf3b-120e-489d-8cb7-ff3876b12187 - 404 - application/json;+charset=utf-8 6.0997ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50200&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50200/api/v1/management/payments/reconciliation-scan - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/payments/reconciliation-scan'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'List`1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/payments/reconciliation-scan'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50200/api/v1/management/payments/reconciliation-scan - 200 - application/json;+charset=utf-8 38.0039ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50205&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50205/api/v1/management/payments/settlement-report?businessDate=2026-09-24 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/payments/settlement-report'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/payments/settlement-report'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseUnauthorizedException: A valid reconciliation case session is required.&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 196&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 220&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50205/api/v1/management/payments/settlement-report?businessDate=2026-09-24 - 401 - application/json;+charset=utf-8 11.5730ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50205/api/v1/management/payments/reconciliation-scan - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/payments/reconciliation-scan'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/payments/reconciliation-scan'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseUnauthorizedException: A valid reconciliation case session is required.&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 196&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 220&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50205/api/v1/management/payments/reconciliation-scan - 401 - application/json;+charset=utf-8 2.0063ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50205/api/v1/management/payments/settlement-report?businessDate=2026-09-24 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/payments/settlement-report'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/payments/settlement-report'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '6fb89025-3dc7-4d47-8f8a-7d1c715180e6' denied permission 'reports.view': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 221&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50205/api/v1/management/payments/settlement-report?businessDate=2026-09-24 - 403 - application/json;+charset=utf-8 8.9470ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50205/api/v1/management/payments/reconciliation-scan - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/payments/reconciliation-scan'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/payments/reconciliation-scan'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '6fb89025-3dc7-4d47-8f8a-7d1c715180e6' denied permission 'reports.view': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 221&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50205/api/v1/management/payments/reconciliation-scan - 403 - application/json;+charset=utf-8 7.8469ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50211&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50211/api/v1/management/payments/settlement-report?businessDate=2026-09-24 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/payments/settlement-report'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'PaymentSettlementReportResult' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/payments/settlement-report'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50211/api/v1/management/payments/settlement-report?businessDate=2026-09-24 - 200 - application/json;+charset=utf-8 49.8896ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50211/api/v1/management/payments/reconciliation-scan - - 0&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/payments/reconciliation-scan'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/payments/reconciliation-scan'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '5f0b5143-181e-4759-a3e1-6a52b3d106de' denied permission 'reconciliation.manage': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.PaymentSettlementEndpoints.&lt;&gt;c.&lt;&lt;MapPaymentSettlementApi&gt;b__0_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\PaymentSettlementEndpoints.cs:line 71&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 223&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50211/api/v1/management/payments/reconciliation-scan - 403 - application/json;+charset=utf-8 15.0489ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50217&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50217/api/v1/management/reconciliation/cases - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ReconciliationCaseV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50217/api/v1/management/reconciliation/cases - 200 - application/json;+charset=utf-8 40.9019ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50217/api/v1/management/reconciliation/cases - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ReconciliationCaseV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50217/api/v1/management/reconciliation/cases - 200 - application/json;+charset=utf-8 17.4353ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50222&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:50222/api/v1/management/reconciliation/cases/d543d2a0-2549-4596-a7e1-9008342e5b94 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reconciliation/cases/{caseId:guid}'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reconciliation/cases/{caseId:guid}'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Reconciliation.CaseFoundation.CaseNotFoundException: Reconciliation case 'd543d2a0-2549-4596-a7e1-9008342e5b94' was not found.&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpoints.&lt;&gt;c.&lt;&lt;MapReconciliationCaseApi&gt;b__4_3&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 124&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 223&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:50222/api/v1/management/reconciliation/cases/d543d2a0-2549-4596-a7e1-9008342e5b94 - 404 - application/json;+charset=utf-8 29.3096ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:50228&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50228/api/v1/management/reconciliation/cases - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseUnauthorizedException: A valid reconciliation case session is required.&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseAuthentication.AuthenticateAsync(HttpContext context, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 196&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 220&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50228/api/v1/management/reconciliation/cases - 401 - application/json;+charset=utf-8 19.6778ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:50228/api/v1/management/reconciliation/cases - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '6fb89025-3dc7-4d47-8f8a-7d1c715180e6' denied permission 'reports.view': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 221&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:50228/api/v1/management/reconciliation/cases - 403 - application/json;+charset=utf-8 10.0610ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:57056&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57056/api/v1/management/reconciliation/cases - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ReconciliationCaseV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57056/api/v1/management/reconciliation/cases - 200 - application/json;+charset=utf-8 39.5648ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:57056/api/v1/management/reconciliation/cases/517c9e4f-7635-451d-a848-36d0493a9b01 - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reconciliation/cases/{caseId:guid}'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ReconciliationCaseV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reconciliation/cases/{caseId:guid}'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:57056/api/v1/management/reconciliation/cases/517c9e4f-7635-451d-a848-36d0493a9b01 - 200 - application/json;+charset=utf-8 8.3061ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:57056/api/v1/management/reconciliation/cases/517c9e4f-7635-451d-a848-36d0493a9b01/notes - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/notes'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/notes'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Identity.Authorization.AuthorizationDeniedException: User '5f0b5143-181e-4759-a3e1-6a52b3d106de' denied permission 'reconciliation.manage': No assigned role grants the permission&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.DenyAsync(Nullable`1 userId, String permissionCode, String reason, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 52&#xD;
+         at ALKAROS.Identity.Authorization.AuthorizationService.AuthorizeAsync(Guid userId, String permissionCode, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Identity\Authorization\AuthorizationService.cs:line 39&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpoints.&lt;&gt;c.&lt;&lt;MapReconciliationCaseApi&gt;b__4_2&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 114&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 223&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:57056/api/v1/management/reconciliation/cases/517c9e4f-7635-451d-a848-36d0493a9b01/notes - 403 - application/json;+charset=utf-8 13.7515ms&#xD;
+info: Microsoft.Hosting.Lifetime[14]&#xD;
+      Now listening on: http://127.0.0.1:53924&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Application started. Press Ctrl+C to shut down.&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Hosting environment: Production&#xD;
+info: Microsoft.Hosting.Lifetime[0]&#xD;
+      Content root path: D:\PROJECT\ALKAROS\tests\Host\Experience\Reconciliation\bin\Debug\net8.0&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53924/api/v1/management/reconciliation/cases - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ReconciliationCaseV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53924/api/v1/management/reconciliation/cases - 200 - application/json;+charset=utf-8 32.1532ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53924/api/v1/management/reconciliation/cases/7bf932b9-897c-4c17-bf39-987560b98ec8/notes - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/notes'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/notes'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53924/api/v1/management/reconciliation/cases/7bf932b9-897c-4c17-bf39-987560b98ec8/notes - 200 0 - 13.5297ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53924/api/v1/management/reconciliation/cases/7bf932b9-897c-4c17-bf39-987560b98ec8/transition - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/transition'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'ReconciliationCaseV1' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/transition'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53924/api/v1/management/reconciliation/cases/7bf932b9-897c-4c17-bf39-987560b98ec8/transition - 200 - application/json;+charset=utf-8 13.6282ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 POST http://127.0.0.1:53924/api/v1/management/reconciliation/cases/7bf932b9-897c-4c17-bf39-987560b98ec8/transition - application/json;+charset=utf-8 -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/transition'&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: POST /api/v1/management/reconciliation/cases/{caseId:guid}/transition'&#xD;
+fail: Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware[1]&#xD;
+      An unhandled exception has occurred while executing the request.&#xD;
+      ALKAROS.Reconciliation.CaseFoundation.ReconciliationConcurrencyException: Concurrency conflict on reconciliation case '7bf932b9-897c-4c17-bf39-987560b98ec8'. Expected version: 1.&#xD;
+         at ALKAROS.Reconciliation.CaseFoundation.PostgresReconciliationRepository.TransitionCaseStatusAsync(TransitionCaseStatusRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Reconciliation\CaseFoundation\PostgresReconciliationRepository.cs:line 221&#xD;
+         at ALKAROS.Reconciliation.CaseFoundation.PostgresReconciliationRepository.TransitionCaseStatusAsync(TransitionCaseStatusRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Reconciliation\CaseFoundation\PostgresReconciliationRepository.cs:line 274&#xD;
+         at ALKAROS.Reconciliation.CaseFoundation.PostgresReconciliationRepository.TransitionCaseStatusAsync(TransitionCaseStatusRequest request, CancellationToken cancellationToken) in D:\PROJECT\ALKAROS\src\Modules\Reconciliation\CaseFoundation\PostgresReconciliationRepository.cs:line 274&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpoints.&lt;&gt;c.&lt;&lt;MapReconciliationCaseApi&gt;b__4_1&gt;d.MoveNext() in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 99&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;TaskOfTToValueTaskOfObject&gt;g__ExecuteAwaited|92_0[T](Task`1 task)&#xD;
+         at ALKAROS.Host.Experience.Reconciliation.ReconciliationCaseEndpointFilter.InvokeAsync(EndpointFilterInvocationContext context, EndpointFilterDelegate next) in D:\PROJECT\ALKAROS\src\Host\Experience\Reconciliation\ReconciliationCaseEndpoints.cs:line 223&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;ExecuteValueTaskOfObject&gt;g__ExecuteAwaited|129_0(ValueTask`1 valueTask, HttpContext httpContext, JsonTypeInfo`1 jsonTypeInfo)&#xD;
+         at Microsoft.AspNetCore.Http.RequestDelegateFactory.&lt;&gt;c__DisplayClass102_2.&lt;&lt;HandleRequestBodyAndCompileRequestDelegateForJson&gt;b__2&gt;d.MoveNext()&#xD;
+      --- End of stack trace from previous location ---&#xD;
+         at Microsoft.AspNetCore.Routing.EndpointMiddleware.&lt;Invoke&gt;g__AwaitRequestTask|7_0(Endpoint endpoint, Task requestTask, ILogger logger)&#xD;
+         at Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddlewareImpl.&lt;Invoke&gt;g__Awaited|10_0(ExceptionHandlerMiddlewareImpl middleware, HttpContext context, Task task)&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 POST http://127.0.0.1:53924/api/v1/management/reconciliation/cases/7bf932b9-897c-4c17-bf39-987560b98ec8/transition - 409 - application/json;+charset=utf-8 18.5282ms&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[1]&#xD;
+      Request starting HTTP/1.1 GET http://127.0.0.1:53924/api/v1/management/reconciliation/cases/7bf932b9-897c-4c17-bf39-987560b98ec8/actions - - -&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[0]&#xD;
+      Executing endpoint 'HTTP: GET /api/v1/management/reconciliation/cases/{caseId:guid}/actions'&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[1]&#xD;
+      Setting HTTP status code 200.&#xD;
+info: Microsoft.AspNetCore.Http.Result.OkObjectResult[3]&#xD;
+      Writing value of type 'CaseActionV1[]' as Json.&#xD;
+info: Microsoft.AspNetCore.Routing.EndpointMiddleware[1]&#xD;
+      Executed endpoint 'HTTP: GET /api/v1/management/reconciliation/cases/{caseId:guid}/actions'&#xD;
+info: Microsoft.AspNetCore.Hosting.Diagnostics[2]&#xD;
+      Request finished HTTP/1.1 GET http://127.0.0.1:53924/api/v1/management/reconciliation/cases/7bf932b9-897c-4c17-bf39-987560b98ec8/actions - 200 - application/json;+charset=utf-8 19.0904ms&#xD;
+[xUnit.net 00:01:21.98]   Finished:    ALKAROS.Host.Experience.Reconciliation.Tests&#xD;
+</StdOut>
+    </Output>
+  </ResultSummary>
+</TestRun>

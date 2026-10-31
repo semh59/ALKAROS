@@ -35,7 +35,7 @@ public sealed class AvailabilityNotDeliveredSourcePair : IOnlineOrderSourcePair
     {
         await using var command = _dataSource.CreateCommand(
             $"""
-            SELECT s.channel, s.product_id, s.external_sku, s.desired_version
+            SELECT s.channel, s.product_id, s.external_sku, (extract(epoch FROM s.desired_at) * 1000000)::bigint
             FROM online_ordering.availability_states s
             WHERE s.delivered_quantity IS DISTINCT FROM s.desired_quantity
               AND (s.desired_at < now() - make_interval(mins => $1) OR s.delivery_attempts >= $2)
@@ -52,9 +52,9 @@ public sealed class AvailabilityNotDeliveredSourcePair : IOnlineOrderSourcePair
             var sku = reader.GetString(2);
             var details = new OnlineOrderCaseDetails(
                 Kind, OnlineOrderNextAction.CheckChannelConnection, Channel: channel, ProductId: productId);
-            // V12-RMD-009: the key names this divergence (the desired quantity's version), not the product. A case
-            // is never reopened once resolved or dismissed (V1-RMD-323), and the next divergence of the same
-            // product is a new version, so it gets a case of its own.
+            // The key names this divergence, not the product: desired_at only moves when the desired quantity
+            // changes, so publishing rounds that keep it find the same case, while a later divergence of the
+            // same product (never reopened once resolved or dismissed) gets a case of its own.
             return new DetectedDiscrepancy(
                 string.Create(CultureInfo.InvariantCulture, $"{DeduplicationPrefix}{channel}:{productId}:{reader.GetInt64(3)}"),
                 CaseType.OnlineOrderMismatch,

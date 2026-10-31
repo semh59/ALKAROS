@@ -1,3 +1,4 @@
+using ALKAROS.OnlineOrdering.AvailabilityPublishing;
 using ALKAROS.Reconciliation.CaseFoundation;
 using ALKAROS.Reconciliation.OnlineOrders.Tests.Fixtures;
 using ALKAROS.Reconciliation.Payments;
@@ -398,9 +399,9 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
 
         await Scanner(new AvailabilityNotDeliveredSourcePair(_dataSource)).ScanAllAsync();
 
-        (await CasesForKeyAsync($"online-availability:yemeksepeti:{fresh}:1")).Should().Be(0);
-        var oldCase = await ActiveCaseAsync($"online-availability:yemeksepeti:{old}:1");
-        await ActiveCaseAsync($"online-availability:yemeksepeti:{failing}:1");
+        (await AvailabilityCasesAsync(fresh)).Should().Be(0);
+        var oldCase = await ActiveCaseAsync(await AvailabilityKeyAsync(old));
+        await ActiveCaseAsync(await AvailabilityKeyAsync(failing));
         OnlineOrderCaseDetails.TryParse(oldCase.DetailsJson)!.NextAction.Should().Be(OnlineOrderNextAction.CheckChannelConnection);
 
         (await Actions().RetryAsync(oldCase.CaseId, Manager)).Outcome.Should().Be(OnlineOrderRetryOutcome.NotRetryable);
@@ -562,7 +563,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         await _database.SeedAvailabilityStateAsync("yemeksepeti", product, desired: 0, delivered: 4, attempts: 0, desiredMinutesAgo: 30);
         var pair = new AvailabilityNotDeliveredSourcePair(_dataSource);
         await Scanner(pair).ScanAllAsync();
-        var firstKey = $"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}:1";
+        var firstKey = await AvailabilityKeyAsync(product);
 
         await DismissAsync(firstKey);
         await Scanner(pair).ScanAllAsync();
@@ -573,9 +574,43 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         await Scanner(pair).ScanAllAsync();
 
         (await CasesForKeyAsync(firstKey)).Should().Be(1);
-        (await _cases.GetActiveCaseByDedupKeyAsync($"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}:2"))
+        (await _cases.GetActiveCaseByDedupKeyAsync(await AvailabilityKeyAsync(product)))
             .Should().NotBeNull();
     }
+
+    [Fact]
+    public async Task PublishingRoundsThatKeepTheSameQuantityKeepTheSameAvailabilityCase()
+    {
+        var product = Guid.NewGuid();
+        await _database.SeedAvailabilityStateAsync("yemeksepeti", product, desired: 0, delivered: 4, attempts: 3, desiredMinutesAgo: 30);
+        var pair = new AvailabilityNotDeliveredSourcePair(_dataSource);
+        var publisher = new AvailabilityPublicationService(_dataSource, []);
+        var published = new PublishedChannelProduct(product, "sku-" + product.ToString("N")[..8]);
+        await Scanner(pair).ScanAllAsync();
+
+        for (var version = 2L; version <= 4; version++)
+        {
+            await publisher.RecordObservationAsync("yemeksepeti", published, 0, version);
+            await Scanner(pair).ScanAllAsync();
+        }
+
+        (await AvailabilityCasesAsync(product)).Should().Be(1);
+
+        await publisher.RecordObservationAsync("yemeksepeti", published, 2, 5);
+        await Scanner(pair).ScanAllAsync();
+
+        (await AvailabilityCasesAsync(product)).Should().Be(2);
+    }
+
+    private async Task<string> AvailabilityKeyAsync(Guid product) =>
+        $"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}:" + await _database.CountAsync(
+            "SELECT (extract(epoch FROM desired_at) * 1000000)::bigint FROM online_ordering.availability_states WHERE product_id = $1;",
+            product);
+
+    private Task<long> AvailabilityCasesAsync(Guid product) =>
+        _database.CountAsync(
+            "SELECT count(*) FROM reconciliation.cases WHERE deduplication_key LIKE $1;",
+            $"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}:%");
 
     [Fact]
     public async Task AProductThatDivergesAgainAfterAResolvedCaseGetsANewCase()
@@ -584,7 +619,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         await _database.SeedAvailabilityStateAsync("yemeksepeti", product, desired: 0, delivered: 4, attempts: 0, desiredMinutesAgo: 30);
         var pair = new AvailabilityNotDeliveredSourcePair(_dataSource);
         await Scanner(pair).ScanAllAsync();
-        var first = await ActiveCaseAsync($"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}:1");
+        var first = await ActiveCaseAsync(await AvailabilityKeyAsync(product));
         await _database.MarkAvailabilityDeliveredAsync("yemeksepeti", product);
         (await Actions().ResolveAsync(first.CaseId, first.RowVersion, "Bağlantı düzeldi.", Manager)).Outcome
             .Should().Be(OnlineOrderResolveOutcome.Resolved);
@@ -593,7 +628,7 @@ public sealed class OnlineOrderReconciliationTests : IClassFixture<OnlineOrderRe
         await MoveAvailabilityAsync(product, desired: 3, version: 2);
         await Scanner(pair).ScanAllAsync();
 
-        await ActiveCaseAsync($"{AvailabilityNotDeliveredSourcePair.DeduplicationPrefix}yemeksepeti:{product}:2");
+        await ActiveCaseAsync(await AvailabilityKeyAsync(product));
     }
 
     [Fact]
