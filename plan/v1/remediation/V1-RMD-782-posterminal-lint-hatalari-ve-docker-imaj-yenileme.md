@@ -1,7 +1,7 @@
 # V1-RMD-782 - PosTerminal lint hataları giderilsin, Docker imajları bugünkü kodla yenilensin
 
 - Task ID: V1-RMD-782
-- Status: Planned
+- Status: InProgress
 - Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
 - Work type: implementation
 - Surface state: Existing
