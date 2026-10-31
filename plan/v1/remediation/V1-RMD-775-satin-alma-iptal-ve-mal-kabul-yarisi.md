@@ -1,8 +1,8 @@
 # V1-RMD-775 - Satın alma siparişi iptali ile mal kabul aynı anda gelince biri diğerinin durumunu ezmesin
 
 - Task ID: V1-RMD-775
-- Status: InProgress
-- Assignee: claude-code-session_01FMN5WVXi1HJCTEk5argkgZ
+- Status: Planned
+- Assignee: Unassigned
 - Work type: implementation
 - Surface state: Existing
 
@@ -22,12 +22,12 @@ V1-RMD-740 sonrası kalan yarış. `PurchasingService.ReceiveGoodsAsync` sipari�
 ## In scope
 
 1. Kilit yöntemi başlık satırını `FOR UPDATE` ile kilitler ve durumu beklenenle karşılaştırır, sonra satırları kilitler.
-2. `ReceiveGoodsAsync` ve `CancelPurchaseOrderAsync` bu yöntemi kendi işlemleri içinde çağırır.
+2. `ReceiveGoodsAsync`, `CancelPurchaseOrderAsync` ve `SubmitPurchaseOrderAsync` bu yöntemi kendi işlemleri içinde çağırır (qa-backend incelemesi: kilitsiz gönderme, araya giren iptali ezip iptal edilmiş siparişi yeniden `Submitted` yapıp mal kabule açabilir).
 3. Gerçek PostgreSQL ile iki yönlü yarış testi: okuma ile yazma arasına giren iptal/kabul reddedilir ve sipariş, stok ve satır miktarı tutarlı kalır.
 
 ## Out of scope
 
-- Başka sipariş geçişleri (Submit), tedarikçi durumu, şema/migration, Host uç noktaları.
+- Başka sipariş geçişleri, tedarikçi durumu, şema/migration, Host uç noktaları.
 
 ## Dependencies
 
