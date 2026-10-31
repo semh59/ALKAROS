@@ -13,3 +13,9 @@ Düzeltme: sorgu yalnız etkin yazıcısı olan istasyonun, hazırlanmakta olan 
 - Yeni bir ürün kuralı eklenmedi: "hazır bilet köprülenmez" kararı, hazır bir biletin kâğıdının işe yaramayacağı varsayımına dayanır. Mutfak biletleri çok hızlı hazır oluyorsa (köprü aralığı 5 sn) ilk baskı kaçabilir; bu görevde ele alınmadı.
 - Zaman penceresi (bilet yaşı) eklenmedi.
 - V1-KIT-003/004 (kurtarma, çökme koruması) kapsam dışı.
+
+## İnceleme
+- Kod/ürün riski ve test/kanıt incelemesi, engelleyici bulgu yok. Bilet durum kısıtı ve enum aynı beş değeri taşır; yazıcı süzgeci köprünün sonraki adımıyla (Ordinal eşleşme) tutarlıdır; mevcut indeksler yeterlidir.
+- Ürün riski (kodda hata değil): bilet `Queued` başlar, `Ready`'ye yalnız `Preparing`'den ya da tüm kalemler hazır olunca geçer; köprü veya yazıcı kapalıyken oluşan, ya da 5 sn içinde bitirilen bilet basılmaz. Gerçekçi bir yol sayılmadı; karar ürün sahibinindir.
+- Test notları (düşük): starvation testi "yazıcı yok" yerine "yazıcı pasif" kurar (SQL ikisini de kapsar); "Cancelled bilet köprülenmez" için ayrı test yoktur; mutant diff'leri ve `cmp` çıktısı kanıt klasörüne kaydedilmedi (geri yükleme `git diff HEAD` ile temiz görüldü).
+- Kapsam: `scope-vs-9292f95e.json` valid=true.
